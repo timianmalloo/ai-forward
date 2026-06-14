@@ -83,6 +83,9 @@ Then ask the user:
 
 If confirmed: run `git add -A && git commit -m "chore: update AI-Forward Pack to revision <N> (<bundle_version>)" && git push` from the target repo root.
 
+## Documentation & discoverability (note)
+Unlike the workflow skills, this is a **pack-lifecycle skill**: it operates on the pack *installation*, not on the repo's product, so it produces no `docs/` knowledge-graph artifact and does **not** write frontmatter or sync `docs/docs-index.js` (V10 does not apply). Its durable record is the advanced `revision` in `docs/ai-forward-pack/INSTALL.md` plus the commit. If a *skill run it triggered* later changes product docs, that run owns its own discoverability.
+
 ## Definition of done
 - [ ] Both revisions read; delta computed; anomalies surfaced before any file operation.
 - [ ] Every `changes` entry applied (or explicitly deferred with user confirmation and a ⚠️ entry in the summary).

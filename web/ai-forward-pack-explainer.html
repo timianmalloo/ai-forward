@@ -10,7 +10,7 @@
   - Runtime: React 18 UMD + htm (no build step) — the same house convention used by
     docs/index.html (the Docs Explorer). Libraries load from CDN; an offline banner shows
     if they cannot.
-  - It explains the KNOWLEDGE (the constitution), the SKILLS (the 10 workflows), the
+  - It explains the KNOWLEDGE (the constitution), the SKILLS (the 12 workflows), the
     RIGOR PROTOCOL (the reasoning spine), the PERSONAS (the dual-mode council), and the
     UI TEMPLATE APPROACH (the archetype grammar) — with a TABLE of every template type and
     LINKABLE, rendered MOCKUPS of each one so a reader can see-then-choose.
@@ -343,7 +343,7 @@ window.addEventListener("DOMContentLoaded",function(){
     ]}
   ];
 
-  // The 10 skills — .claude/skills/*
+  // The 12 skills — .claude/skills/*
   const SKILLS = [
     ["/collectknowledge","Build a sourced domain knowledge base before design — state of the art, comparables, references, glossary — every claim confidence-labeled.","Domain Researcher","support"],
     ["/adddomainexperts","Discover the project's domain from repo evidence and add tailored domain-expert personas (peer + adversary), wiring in backing Claude skills.","Product Strategist","support"],
@@ -354,7 +354,9 @@ window.addEventListener("DOMContentLoaded",function(){
     ["/document","Maintain truth-to-code docs — API reference, four diagram families — and regenerate the full Docs Explorer graph.","Documentation Steward","core"],
     ["/investigate","Find the verified root cause, generalize it to the failure class, produce a phased repair plan — then stop for human review.","SRE & Systems Diagnostician","diagnose"],
     ["/migrate","Characterization-first migrations — pin behavior in golden tests, compute blast radius, migrate in vertical increments, prove equivalence.","language Developer","support"],
-    ["/adopt","Bootstrap the pack's knowledge graph in a brownfield repo — recover architecture from code, mine a glossary, produce a phased adoption plan.","Documentation Steward","support"]
+    ["/adopt","Bootstrap the pack's knowledge graph in a brownfield repo — recover architecture from code, mine a glossary, produce a phased adoption plan.","Documentation Steward","support"],
+    ["/addpacktorepo","Install the pack into another local repo (run from an AI-Forward clone) — recce the target, apply the full deployment map, summarise what was added, offer to commit.","Release Engineer","lifecycle"],
+    ["/updatepack","Refresh a repo that already has the pack to the latest revision — apply only the changelog delta, re-paste managed blocks, summarise actions, offer to commit.","Release Engineer","lifecycle"]
   ];
 
   /* =================================================================
@@ -743,10 +745,12 @@ window.addEventListener("DOMContentLoaded",function(){
       <!-- SKILLS -->
       <section class="block" id="skills"><div class="wrap">
         <div class="sechead"><div class="seclabel">The workflows</div>
-          <h2>Ten skills, one loop</h2>
+          <h2>Twelve skills, one loop</h2>
           <p>Each skill is the Rigor Protocol specialized to one kind of work. The core five carry a piece
           from idea to shipped code; supporting skills prepare the ground or keep it honest;
-          <code>/investigate</code> breaks the loop whenever a defect appears.</p></div>
+          <code>/investigate</code> breaks the loop whenever a defect appears. Two <b>pack-lifecycle</b>
+          skills (<code>/addpacktorepo</code>, <code>/updatepack</code>) sit outside the loop — they install
+          and update the pack itself.</p></div>
         <div class="chain">
           <span class="step"><b>/collectknowledge</b></span><span class="step"><b>/adddomainexperts</b></span>
           <span class="step"><b>/specify</b></span><span class="step"><b>/define-architecture</b></span>
@@ -755,7 +759,7 @@ window.addEventListener("DOMContentLoaded",function(){
         <div class="grid g2">${SKILLS.map((s,k)=>html`<div class="card" key=${k}>
           <div style=${{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
             <h3 class="mono" style=${{fontSize:15,color:"var(--accent)"}}>${s[0]}</h3>
-            <span class="pill">${s[3]==="core"?"core loop":s[3]==="diagnose"?"diagnosis":"supporting"}</span></div>
+            <span class="pill">${s[3]==="core"?"core loop":s[3]==="diagnose"?"diagnosis":s[3]==="lifecycle"?"pack lifecycle":"supporting"}</span></div>
           <p>${s[1]}</p>
           <div class="tag" style=${{marginTop:8}}>lead peer · ${s[2]}</div></div>`)}</div>
       </div></section>

@@ -1,13 +1,13 @@
 ---
 doc: INSTALL
 purpose: 'Manual reconciliation guide and refresh changelog. On a repo refresh, read `changes` below — it is the key guide: it lists exactly what to re-copy and re-paste since the previous revision, so you do not have to diff the whole tree.'
-bundle_version: '2026.06.14.2'
-revision: 4
+bundle_version: '2026.06.14.3'
+revision: 5
 released: '2026-06-14'
 counts: { lenses: 23, skills: 12, knowledge_docs: 18, templates: 15, scripts: 2 }
 refresh_protocol: 'Compare your repo last-applied revision to the `revision` above. If it is lower, apply each entry in `changes` in order — re-copy the listed `paths` to their mapped destinations (deployment map in the body), re-apply the Copilot frontmatter wraps, and where an entry `deploy` says RE-PASTE, replace the managed blocks wholesale between their markers. Never overwrite an accumulated docs/docs-index.js.'
 changes:
-  - { type: changed, area: managed-block, paths: ['adapters/managed-blocks/CLAUDE.block.md', 'adapters/managed-blocks/AGENTS.block.md'], deploy: 'RE-PASTE both blocks wholesale between their BEGIN/END markers', summary: 'Updated skill count 10→12 in both blocks; added /updatepack and /addpacktorepo to the skill/workflow lists so agents in both tools know the new skills exist.' }
+  - { type: changed, area: skill, paths: ['commands/addpacktorepo/SKILL.md', 'commands/updatepack/SKILL.md', 'adapters/copilot/prompts/addpacktorepo.prompt.md'], deploy: 're-copy each SKILL.md to .claude/skills/<name>/ and the prompt to .github/prompts/', summary: 'Hardened the two pack-lifecycle skills: /addpacktorepo now resolves the pack source explicitly (current repo → explicit path → AI_FORWARD_PACK env → sibling ai-forward clone) the same way /updatepack does, so it is no longer broken when invoked from a repo that has no pack/ tree; both skills gained a Documentation & discoverability note explaining why a pack-lifecycle skill writes no knowledge-graph artifact.' }
 ---
 
 ## Changelog — what changed since the last version
@@ -22,6 +22,8 @@ changes:
 So at any moment: the frontmatter `changes` = the latest delta (the refresh guide), and this section = the full rolling history.
 
 ### Prior revisions
+**Revision 4 — 2026-06-14.** Updated skill count 10→12 in both managed blocks (CLAUDE.block.md, AGENTS.block.md); added /updatepack and /addpacktorepo to the skill/workflow lists so agents in both tools know the new skills exist. Managed blocks RE-PASTED.
+
 **Revision 3 — 2026-06-14.** Added /updatepack skill (run from an installed repo to pull latest from a local ai-forward clone; diffs INSTALL.md revisions, applies only the changelog delta, shows a tabular action summary, offers commit+push) and /addpacktorepo skill (run from the AI-Forward repo to install the pack into any local repo by path; recces the target, applies the full deployment map, summarises every artifact and what it does, links to the explainer, offers commit+push). Skills count 10→12.
 
 **Revision 2 — 2026-06-14.** UI Archetype Grammar G1-G16 + 16-archetype catalog (knowledge docs 16–18); UI Interaction Design and Specification Standards cross-referenced to the grammar; /specify, /design, /implement updated to identify and build to the archetype; managed blocks RE-PASTED with the archetype-selection line.
@@ -50,7 +52,7 @@ The model is the same for both tools: **knowledge** files are always-available r
 |---|---|---|
 | Rules of the Road (the always-on rules) | `CLAUDE.md` (link to it) + `.claude/` | `AGENTS.md` |
 | Knowledge docs (`knowledge/*.md`, plus the existing pack) | `.claude/knowledge/` or repo `docs/` referenced from `CLAUDE.md` | `.github/instructions/*.instructions.md` with `applyTo` globs |
-| The 10 skills (`commands/*/SKILL.md`) | `.claude/skills/<name>/SKILL.md` | `.github/prompts/<name>.prompt.md` (wrapper that carries the same flow) |
+| The 12 skills (`commands/*/SKILL.md`) | `.claude/skills/<name>/SKILL.md` | `.github/prompts/<name>.prompt.md` (wrapper that carries the same flow) |
 | Thin command entry points | `.claude/commands/<name>.md` | `.github/prompts/<name>.prompt.md` |
 | Peer agents (orchestrator, product-strategist, domain-researcher) | `.claude/agents/<name>.md` | `.github/agents/<name>.agent.md` |
 | Adversary agents (the existing 11) | `.claude/agents/<name>.md` | `.github/agents/<name>.agent.md` |

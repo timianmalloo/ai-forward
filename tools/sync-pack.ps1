@@ -27,12 +27,15 @@
           pack/templates/docs-explorer.template.html (__PROJECT__ -> AI-Forward)
                                                    -> docs/index.html
 
-    It never touches .claude/settings.local.json or docs/docs-index.js (the accumulated,
-    skill-maintained knowledge-graph index -- V10). It does not touch
-    .github/copilot-instructions.md (manually maintained, repo-specific).
+    It also re-pastes the AI-FORWARD-PACK managed block into the repo's root CLAUDE.md
+    and AGENTS.md (the region between the BEGIN/END markers) so the root entry files stay
+    in lockstep with pack/adapters/managed-blocks/. It never touches
+    .claude/settings.local.json or docs/docs-index.js (the accumulated, skill-maintained
+    knowledge-graph index -- V10), and it does not touch .github/copilot-instructions.md
+    (manually maintained, repo-specific) or create CLAUDE.md/AGENTS.md from scratch.
 
     Run this after editing anything under pack/, then commit pack/, .claude/,
-    .github/{instructions,prompts,agents}/, and docs/ together.
+    .github/{instructions,prompts,agents}/, docs/, and CLAUDE.md/AGENTS.md together.
 
 .NOTES
     The full pack (incl. evals, ci) stays in pack/ for distribution; this install
@@ -141,4 +144,26 @@ $explorerDst = Join-Path $repo "docs\index.html"
     Set-Content $explorerDst -Encoding UTF8 -NoNewline
 Write-Host "  docs/index.html (Docs Explorer)"
 
-Write-Host "Done. Review changes, then commit pack/ + .claude/ + .github/{instructions,prompts,agents}/ + docs/ together." -ForegroundColor Green
+# --- root managed blocks (CLAUDE.md + AGENTS.md) -------------------------------
+# Keep the AI-FORWARD-PACK block in the repo's root entry files in lockstep with the
+# pack source. We replace the marked region wholesale (per INSTALL Sec 1.1) but never
+# create these files automatically -- their preamble is hand-authored.
+function Update-ManagedBlock([string]$file, [string]$blockFile) {
+    $label = Split-Path $file -Leaf
+    if (-not (Test-Path $file)) { Write-Host "  ${label}: not present (skipped)"; return }
+    $block = (Get-Content $blockFile -Raw).TrimEnd("`r", "`n")
+    $content = Get-Content $file -Raw
+    $rx = '(?s)<!-- AI-FORWARD-PACK:BEGIN.*?AI-FORWARD-PACK:END -->'
+    if ($content -match $rx) {
+        $new = [regex]::Replace($content, $rx, { param($m) $block })
+        Set-Content $file -Value $new -Encoding UTF8 -NoNewline
+        Write-Host "  ${label}: managed block re-pasted"
+    } else {
+        Add-Content $file -Value ("`n" + $block) -Encoding UTF8
+        Write-Host "  ${label}: managed block appended"
+    }
+}
+Update-ManagedBlock (Join-Path $repo "CLAUDE.md")  (Join-Path $pack "adapters\managed-blocks\CLAUDE.block.md")
+Update-ManagedBlock (Join-Path $repo "AGENTS.md")  (Join-Path $pack "adapters\managed-blocks\AGENTS.block.md")
+
+Write-Host "Done. Review changes, then commit pack/ + .claude/ + .github/{instructions,prompts,agents}/ + docs/ + CLAUDE.md/AGENTS.md together." -ForegroundColor Green

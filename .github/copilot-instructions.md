@@ -28,13 +28,13 @@ pwsh tools/package-pack.ps1   # writes dist/ai-forward-pack.zip
 
 ```bash
 # Seed workspace and print the golden prompt
-python3 evals/run-evals.py --case evals/cases/design-01-gateway.json --workspace /tmp/eval-ws --setup
+python3 pack/evals/run-evals.py --case pack/evals/cases/design-01-gateway.json --workspace /tmp/eval-ws --setup
 
 # Assert after running the skill
-python3 evals/run-evals.py --case evals/cases/design-01-gateway.json --workspace /tmp/eval-ws --check
+python3 pack/evals/run-evals.py --case pack/evals/cases/design-01-gateway.json --workspace /tmp/eval-ws --check
 
 # Assert all cases (CI-able, exits nonzero on failure)
-python3 evals/run-evals.py --cases evals/cases --workspace /tmp/eval-ws --check
+python3 pack/evals/run-evals.py --cases pack/evals/cases --workspace /tmp/eval-ws --check
 ```
 
 Run affected skill cases on every pack edit; run all cases on model-version changes.

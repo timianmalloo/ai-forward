@@ -11,11 +11,21 @@ Adding the pack to a repo is not a mindless file dump: the target's language, ex
 
 ## Grounding (first action)
 
-Read the target repository before writing to it. Treat existing CLAUDE.md, AGENTS.md, `.claude/`, `.github/`, and `docs/` as **evidence of prior decisions** — the install adapts to them, not over them. The pack source is this repo's `pack/` tree; `pack/adapters/INSTALL.md` is the authoritative deployment map. If `docs/ai-forward-pack/INSTALL.md` already exists in the target, this is an **update scenario** — redirect to `/updatepack` rather than re-running a full install. Skip grounding only if the user explicitly says so.
+Read the target repository before writing to it. Treat existing CLAUDE.md, AGENTS.md, `.claude/`, `.github/`, and `docs/` as **evidence of prior decisions** — the install adapts to them, not over them. `<pack-source>/pack/adapters/INSTALL.md` is the authoritative deployment map. If `docs/ai-forward-pack/INSTALL.md` already exists in the target, this is an **update scenario** — redirect to `/updatepack` rather than re-running a full install. Skip grounding only if the user explicitly says so.
+
+## Locating the pack source
+
+The pack source is the `pack/` tree of an AI-Forward repository. Locate it in this order (the same resolution `/updatepack` uses, so the pair behaves identically whether you run it from the AI-Forward repo itself or from any other repo with a clone nearby):
+1. **The current repo**, if it contains `pack/adapters/INSTALL.md` (you are in the AI-Forward repo — the common case).
+2. An explicit path provided in the user's message.
+3. The `AI_FORWARD_PACK` environment variable.
+4. A sibling directory named `ai-forward` or `AI-Forward` relative to the current repo root.
+
+If none yields a valid path containing `pack/adapters/INSTALL.md`, ask the user for the path before proceeding. (This is why the skill is deployed to every repo yet never assumes it *is* the source — it resolves the source explicitly.)
 
 ## Input
 
-Path to the target repository (`$ARGUMENTS` or as part of the user's message). The path must be a local, accessible directory containing a Git repository (has a `.git/` directory). If the path is missing, invalid, or points to a non-Git directory, ask the user before proceeding.
+Path to the **target** repository (`$ARGUMENTS` or as part of the user's message). The path must be a local, accessible directory containing a Git repository (has a `.git/` directory). If the path is missing, invalid, or points to a non-Git directory, ask the user before proceeding. The target must be different from the resolved pack source.
 
 ## Stages
 
@@ -41,7 +51,7 @@ From the recon, determine for each artifact class:
 Produce a brief "here is what I will install" preview and ask for confirmation before executing if any existing file will be modified.
 
 **Stage 3 — EVIDENCE (apply the full deployment map).**
-Execute the deployment map from INSTALL.md §1, in this order:
+Execute the deployment map from INSTALL.md §1, in this order. All source paths below are relative to the resolved `<pack-source>` (e.g. `<pack-source>/pack/knowledge/*.md`); all destinations are relative to the target repo.
 
 1. **Knowledge → `.claude/knowledge/`:** copy all `pack/knowledge/*.md`. Create the directory if absent.
 
@@ -114,9 +124,9 @@ After the table, output:
 > **Pack installed at revision `<N>` (`<bundle_version>`, released `<date>`).**
 >
 > **Learn more:**
-> - **Interactive explainer** (skill map, persona roster, architecture overview): open `web/ai-forward-pack-explainer.html` from the AI-Forward repo.
-> - **OVERVIEW** (one-page pack summary): `docs/ai-forward-pack/OVERVIEW.md` in this repo.
-> - **Installation guide & deployment map**: `docs/ai-forward-pack/INSTALL.md`.
+> - **Interactive explainer** (skill map, persona roster, architecture overview): `<pack-source>/web/ai-forward-pack-explainer.html` — open it from the AI-Forward repo (the explainer is not deployed into target repos).
+> - **OVERVIEW** (one-page pack summary): `docs/ai-forward-pack/OVERVIEW.md` in the target repo.
+> - **Installation guide & deployment map**: `docs/ai-forward-pack/INSTALL.md` in the target repo.
 > - **Docs Explorer** (knowledge graph browser): `docs/index.html` — populated after the first skill run.
 >
 > **Recommended next steps:**
@@ -130,6 +140,9 @@ Then ask:
 > (y to proceed · n to leave staged · or type a custom commit message)"
 
 If confirmed: run `git -C <target-repo> add -A && git -C <target-repo> commit -m "chore: install AI-Forward Pack revision <N> (<bundle_version>)" && git -C <target-repo> push` (use `-C` to target the correct directory without changing the working directory).
+
+## Documentation & discoverability (note)
+Unlike the workflow skills, this is a **pack-lifecycle skill**: it installs the pack *into* a repo rather than producing a product artifact, so it writes no knowledge-graph frontmatter and does **not** seed or sync `docs/docs-index.js` — the first *workflow* skill run in the target creates the index (V10). Its durable record is the installed `docs/ai-forward-pack/INSTALL.md` (carrying the `revision`) plus the commit. The recommended `/adopt` handoff is what brings the target's existing artifacts into the graph.
 
 ## Definition of done
 - [ ] Target repo reconnaissance complete; install profile built; conflicts surfaced and confirmed before any write.

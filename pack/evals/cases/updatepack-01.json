@@ -1,0 +1,23 @@
+{
+  "skill": "updatepack",
+  "prompt": "Run /updatepack from this repository (which already has the pack installed at an old revision). Resolve the pack source from the local AI-Forward clone, apply only the changelog delta, re-paste the managed blocks, and advance the installed revision.",
+  "setup": [
+    {
+      "path": "docs/ai-forward-pack/INSTALL.md",
+      "content": "---\ndoc: INSTALL\nrevision: 1\nbundle_version: '2026.06.13'\n---\n# Installing the AI-Forward Pack\nStale baseline for the eval.\n"
+    },
+    {
+      "path": "CLAUDE.md",
+      "content": "# Target\n\n<!-- AI-FORWARD-PACK:BEGIN -->\n## AI-Forward Pack\n- **Skills (10):** `/collectknowledge`, `/specify`, `/define-architecture`, `/design`, `/implement`, `/investigate`, `/document`, `/adddomainexperts`, `/adopt`, `/migrate`.\n<!-- AI-FORWARD-PACK:END -->\n"
+    }
+  ],
+  "assertions": [
+    { "type": "not-grep", "path": "docs/ai-forward-pack/INSTALL.md", "pattern": "revision: 1\\b" },
+    { "type": "grep", "path": "docs/ai-forward-pack/INSTALL.md", "pattern": "revision: [2-9]" },
+    { "type": "grep", "path": "CLAUDE.md", "pattern": "/updatepack" },
+    { "type": "grep", "path": "CLAUDE.md", "pattern": "/addpacktorepo" },
+    { "type": "not-grep", "path": "CLAUDE.md", "pattern": "Skills \\(10\\)" },
+    { "type": "grep", "path": "CLAUDE.md", "pattern": "AI-FORWARD-PACK:END" }
+  ],
+  "id": "updatepack-01"
+}

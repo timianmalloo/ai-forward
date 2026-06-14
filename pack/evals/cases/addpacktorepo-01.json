@@ -1,0 +1,28 @@
+{
+  "skill": "addpacktorepo",
+  "prompt": "Run /addpacktorepo on the target repository at <workspace>. Resolve the pack source from the AI-Forward repo you are running in. Install the full pack, then summarise what was added.",
+  "setup": [
+    {
+      "path": "src/app.py",
+      "content": "def main():\n    print('hello')\n"
+    },
+    {
+      "path": "README.md",
+      "content": "# Target Service\nA small Python service.\n"
+    }
+  ],
+  "assertions": [
+    { "type": "file-exists", "path": ".claude/skills/specify/SKILL.md" },
+    { "type": "file-exists", "path": ".claude/agents/orchestrator.md" },
+    { "type": "file-exists", "path": ".github/prompts/specify.prompt.md" },
+    { "type": "file-exists", "path": ".github/instructions/rigor-protocol.instructions.md" },
+    { "type": "grep", "path": ".github/instructions/rigor-protocol.instructions.md", "pattern": "(?s)^---\\s*\\napplyTo:" },
+    { "type": "file-exists", "path": "AGENTS.md" },
+    { "type": "grep", "path": "AGENTS.md", "pattern": "AI-FORWARD-PACK:BEGIN" },
+    { "type": "grep", "path": "CLAUDE.md", "pattern": "AI-FORWARD-PACK:BEGIN" },
+    { "type": "file-exists", "path": "docs/ai-forward-pack/INSTALL.md" },
+    { "type": "file-exists", "path": "docs/index.html" },
+    { "type": "file-absent", "path": "docs/docs-index.js" }
+  ],
+  "id": "addpacktorepo-01"
+}
