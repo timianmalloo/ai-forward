@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git --version)",
+      "Bash(gh --version)",
+      "Bash(gh auth *)",
+      "Bash(git -C /c/projects/AI-Forward status)",
+      "Bash(git init *)",
+      "Bash(git add *)",
+      "Bash(git -c user.email=\"mallalieut@hotmail.com\" -c user.name=\"timianmalloo\" commit -m \"Initial commit\")"
+    ]
+  }
+}
