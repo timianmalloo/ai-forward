@@ -18,12 +18,23 @@
 param()
 
 $ErrorActionPreference = "Stop"
-$repo = Split-Path -Parent $PSScriptRoot
-$pack = Join-Path $repo "pack"
-$jsx  = Join-Path $repo "web\ai-forward-pack-overview.jsx"
+$repo    = Split-Path -Parent $PSScriptRoot
+$pack    = Join-Path $repo "pack"
+$jsx     = Join-Path $repo "web\ai-forward-pack-overview.jsx"
+$install = Join-Path $pack "adapters\INSTALL.md"
 
-if (-not (Test-Path $pack)) { throw "pack/ not found at $pack." }
-if (-not (Test-Path $jsx))  { throw "overview not found at $jsx." }
+if (-not (Test-Path $pack))    { throw "pack/ not found at $pack." }
+if (-not (Test-Path $jsx))     { throw "overview not found at $jsx." }
+if (-not (Test-Path $install)) { throw "INSTALL.md not found at $install." }
+
+# --- Read the pack's revision + bundle from INSTALL.md frontmatter -------------
+$installText = [IO.File]::ReadAllText($install)
+$revMatch    = [regex]::Match($installText, "(?m)^\s*revision:\s*(\d+)")
+$bundleMatch = [regex]::Match($installText, "(?m)^\s*bundle_version:\s*'?([0-9.]+)'?")
+if (-not $revMatch.Success)    { throw "Could not read 'revision:' from $install." }
+if (-not $bundleMatch.Success) { throw "Could not read 'bundle_version:' from $install." }
+$revision = $revMatch.Groups[1].Value
+$bundle   = $bundleMatch.Groups[1].Value
 
 # --- Build the pack zip into a temp file (top-level folder: ai-forward-pack/) ---
 $tmp   = Join-Path ([IO.Path]::GetTempPath()) ("aip-overview-" + [Guid]::NewGuid().ToString("N"))
@@ -42,12 +53,22 @@ if (-not [regex]::IsMatch($content, $pattern)) {
     Remove-Item $tmp -Recurse -Force
     throw ('Could not find the PACK_B64 assignment line in ' + $jsx + '.')
 }
-$replacement = [System.Text.RegularExpressions.MatchEvaluator]{ param($m) "const PACK_B64 = `"$b64`";" }
-$content = [regex]::Replace($content, $pattern, $replacement)
+$b64Eval = [System.Text.RegularExpressions.MatchEvaluator]{ param($m) "const PACK_B64 = `"$b64`";" }
+$content = [regex]::Replace($content, $pattern, $b64Eval)
+
+# --- Stamp the snapshot marker (revision + bundle) so the page shows its currency --
+$snapPattern = 'const PACK_SNAPSHOT = \{[^}]*\}; // AI-FORWARD-PACK:SNAPSHOT[^\r\n]*'
+if (-not [regex]::IsMatch($content, $snapPattern)) {
+    Remove-Item $tmp -Recurse -Force
+    throw ('Could not find the PACK_SNAPSHOT marker line in ' + $jsx + '.')
+}
+$snapLine = "const PACK_SNAPSHOT = { revision: $revision, bundle: `"$bundle`" }; // AI-FORWARD-PACK:SNAPSHOT (managed by tools/rebuild-overview.ps1)"
+$snapEval = [System.Text.RegularExpressions.MatchEvaluator]{ param($m) $snapLine }
+$content = [regex]::Replace($content, $snapPattern, $snapEval)
 
 # Write back with LF endings (.gitattributes normalizes anyway; keep the working tree clean).
 [IO.File]::WriteAllText($jsx, ($content -replace "`r`n", "`n"), (New-Object System.Text.UTF8Encoding($false)))
 
 Remove-Item $tmp -Recurse -Force
 $sizeKB = [math]::Round($b64.Length * 3 / 4 / 1024, 1)
-Write-Host "Refreshed $jsx (embedded pack ~$sizeKB KB)." -ForegroundColor Green
+Write-Host "Refreshed $jsx (embedded pack ~$sizeKB KB, revision $revision / bundle $bundle)." -ForegroundColor Green

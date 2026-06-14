@@ -96,8 +96,12 @@ embedded for download. That snapshot doesn't track `pack/` edits on its own, so 
 sharing the page:
 
 ```powershell
-pwsh tools/rebuild-overview.ps1   # re-zips pack/ and rewrites the embedded snapshot in place
+pwsh tools/rebuild-overview.ps1   # re-zips pack/, rewrites the embedded snapshot, and stamps
+                                  # the pack revision (from pack/adapters/INSTALL.md) onto the page
 ```
+
+The page shows that revision next to the download button (e.g. *rev 2 (2026.06.14)*), so it's
+always obvious how current the embedded download is.
 
 ## License
 
