@@ -1,0 +1,24 @@
+{
+  "skill": "collectknowledge",
+  "prompt": "Run /collectknowledge on 'EU VAT for digital goods' for the checkout domain.",
+  "assertions": [
+    {
+      "type": "file-exists",
+      "path": "docs/knowledge/eu-vat/index.md"
+    },
+    {
+      "type": "frontmatter-valid",
+      "path": "docs/knowledge/eu-vat/index.md"
+    },
+    {
+      "type": "cmd-exit",
+      "cmd": [
+        "python3",
+        "docs/ai-forward-pack/scripts/docs-graph.py",
+        "validate"
+      ],
+      "exit": 0
+    }
+  ],
+  "id": "collectknowledge-01"
+}

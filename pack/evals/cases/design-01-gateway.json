@@ -1,0 +1,57 @@
+{
+  "skill": "design",
+  "prompt": "Run /design for the PaymentGateway component of docs/architecture.md (charge, refund; idempotent; talks to a third-party PSP over HTTPS).",
+  "assertions": [
+    {
+      "type": "file-exists",
+      "path": "docs/design/payment-gateway.md"
+    },
+    {
+      "type": "frontmatter-valid",
+      "path": "docs/design/payment-gateway.md"
+    },
+    {
+      "type": "grep",
+      "path": "docs/design/payment-gateway.md",
+      "pattern": "(?i)failure.?mode"
+    },
+    {
+      "type": "grep",
+      "path": "docs/design/payment-gateway.md",
+      "pattern": "(?i)STRIDE|trust boundar"
+    },
+    {
+      "type": "grep",
+      "path": "docs/design/payment-gateway.md",
+      "pattern": "(?i)error code|RFC 9457"
+    },
+    {
+      "type": "grep",
+      "path": "docs/design/payment-gateway.md",
+      "pattern": "rel: implements|implements"
+    },
+    {
+      "type": "cmd-exit",
+      "cmd": [
+        "python3",
+        "docs/ai-forward-pack/scripts/docs-graph.py",
+        "validate"
+      ],
+      "exit": 0
+    },
+    {
+      "type": "grep",
+      "path": "docs/design/payment-gateway.md",
+      "pattern": "(?i)LINDDUN|no personal data"
+    },
+    {
+      "type": "file-exists",
+      "path": "docs/security/threat-model.md"
+    },
+    {
+      "type": "file-exists",
+      "path": "docs/security/privacy-review.md"
+    }
+  ],
+  "id": "design-01-gateway"
+}

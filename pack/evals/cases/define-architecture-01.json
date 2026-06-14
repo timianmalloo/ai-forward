@@ -1,0 +1,39 @@
+{
+  "skill": "define-architecture",
+  "prompt": "Run /define-architecture for a small order-processing service (API + worker + Postgres) implementing spec-guest-checkout.",
+  "assertions": [
+    {
+      "type": "file-exists",
+      "path": "docs/architecture.md"
+    },
+    {
+      "type": "frontmatter-valid",
+      "path": "docs/architecture.md"
+    },
+    {
+      "type": "grep",
+      "path": "docs/architecture.md",
+      "pattern": "(?i)delivery.?phasing|vertical"
+    },
+    {
+      "type": "grep",
+      "path": "docs/architecture.md",
+      "pattern": "```mermaid"
+    },
+    {
+      "type": "grep",
+      "path": "docs/architecture.md",
+      "pattern": "implements"
+    },
+    {
+      "type": "cmd-exit",
+      "cmd": [
+        "python3",
+        "docs/ai-forward-pack/scripts/docs-graph.py",
+        "validate"
+      ],
+      "exit": 0
+    }
+  ],
+  "id": "define-architecture-01"
+}

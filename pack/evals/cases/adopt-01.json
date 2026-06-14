@@ -1,0 +1,52 @@
+{
+  "skill": "adopt",
+  "prompt": "Run /adopt on this legacy repo (it has code and a stale README, no pack artifacts).",
+  "setup": [
+    {
+      "path": "README.md",
+      "content": "# Legacy Service\nProcesses orders. TODO update.\n"
+    },
+    {
+      "path": "src/OrderProcessor.cs",
+      "content": "public class OrderProcessor { public void Process() {} }\n"
+    }
+  ],
+  "assertions": [
+    {
+      "type": "file-exists",
+      "path": "docs/architecture.md"
+    },
+    {
+      "type": "grep",
+      "path": "docs/architecture.md",
+      "pattern": "(?i)verified|inferred|flagged"
+    },
+    {
+      "type": "file-exists",
+      "path": "docs/knowledge/glossary.md"
+    },
+    {
+      "type": "file-exists",
+      "path": "docs/ai-forward-pack-adoption.md"
+    },
+    {
+      "type": "grep",
+      "path": "docs/ai-forward-pack-adoption.md",
+      "pattern": "(?i)phase"
+    },
+    {
+      "type": "file-exists",
+      "path": "docs/health-history.jsonl"
+    },
+    {
+      "type": "cmd-exit",
+      "cmd": [
+        "python3",
+        "docs/ai-forward-pack/scripts/docs-graph.py",
+        "validate"
+      ],
+      "exit": 0
+    }
+  ],
+  "id": "adopt-01"
+}

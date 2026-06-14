@@ -12,8 +12,11 @@ build/
 .env
 .env.local
 
-# Claude Code local settings
+# Claude Code local settings (the generated .claude/{knowledge,skills,agents} ARE tracked)
 .claude/settings.local.json
+
+# Spike Protocol scratch probes (kept locally unless a probe is worth keeping as evidence)
+spikes/
 
 # Editor / OS
 .DS_Store

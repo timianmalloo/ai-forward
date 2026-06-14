@@ -1,0 +1,34 @@
+{
+  "skill": "investigate",
+  "prompt": "Run /investigate: duplicate charges appear when the PSP times out and the client retries.",
+  "assertions": [
+    {
+      "type": "cmd-exit",
+      "cmd": [
+        "bash",
+        "-lc",
+        "grep -rliE 'root cause' docs/investigations | head -1 | grep -q ."
+      ],
+      "exit": 0
+    },
+    {
+      "type": "cmd-exit",
+      "cmd": [
+        "bash",
+        "-lc",
+        "grep -rliE 'phased repair|repair plan' docs/investigations | head -1 | grep -q ."
+      ],
+      "exit": 0
+    },
+    {
+      "type": "cmd-exit",
+      "cmd": [
+        "python3",
+        "docs/ai-forward-pack/scripts/docs-graph.py",
+        "validate"
+      ],
+      "exit": 0
+    }
+  ],
+  "id": "investigate-01"
+}

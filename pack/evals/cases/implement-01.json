@@ -1,0 +1,39 @@
+{
+  "skill": "implement",
+  "prompt": "Run /implement for docs/design/payment-gateway.md (C#, latest stable SDK).",
+  "assertions": [
+    {
+      "type": "grep",
+      "path": "docs/proofs/payment-gateway.md",
+      "pattern": "(?i)failure modes addressed"
+    },
+    {
+      "type": "grep",
+      "path": "docs/proofs/payment-gateway.md",
+      "pattern": "(?i)threats addressed"
+    },
+    {
+      "type": "grep",
+      "path": "docs/proofs/payment-gateway.md",
+      "pattern": "(?i)privacy findings addressed"
+    },
+    {
+      "type": "frontmatter-valid",
+      "path": "docs/proofs/payment-gateway.md"
+    },
+    {
+      "type": "index-has",
+      "id": "proof-payment-gateway"
+    },
+    {
+      "type": "cmd-exit",
+      "cmd": [
+        "python3",
+        "docs/ai-forward-pack/scripts/docs-graph.py",
+        "validate"
+      ],
+      "exit": 0
+    }
+  ],
+  "id": "implement-01"
+}

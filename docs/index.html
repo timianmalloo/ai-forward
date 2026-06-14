@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AI-Forward — Docs Explorer</title>
+<!-- AI-FORWARD-PACK:DOCS-EXPLORER (managed — regenerated from templates/docs-explorer.template.html) -->
+<!--
+  The Docs Explorer — the standard knowledge/artifact visualization toolkit
+  (knowledge/knowledge-visualization.md, V9). One typed graph, three projections:
+  Hierarchy · Graph · Mind map, plus a Document/diagram panel.
+
+  DATA: loads ONLY docs-index.js (window.DOCS_INDEX) from the same directory — a <script src>
+  so it works over file:// where fetch() of local files is blocked. Skills regenerate the index
+  (V10); this file never needs editing.
+
+  RUNTIME: React UMD + htm (no build), Mermaid for diagrams, marked for markdown — all from CDN
+  with graceful degradation (offline: navigation, graph, mind map and metadata still work;
+  diagrams show their source; served over HTTP the doc body is fetched and rendered too).
+-->
+<script src="docs-index.js"></script>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/htm@3.1.1/dist/htm.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#161922; --ink:#e8eaf0; --muted:#9aa3b2; --line:#262b36;
+    --accent:#6ea8fe; --code-bg:#11141b; --ghost:#5b6573;
+    --c-knowledge:#7ad0a6; --c-spec:#6ea8fe; --c-architecture:#c79bf2; --c-adr:#a78bfa;
+    --c-design:#5ec5d4; --c-investigation:#f2a65a; --c-proof-pack:#e8d26e; --c-api:#f28b82;
+    --c-source:#9aa3b2; --c-doc:#d4a5c9; --c-index:#8fa876; --c-glossary:#b8c46a; --c-decision-note:#dba0e8; --c-threat-model:#e87a7a; --c-privacy-review:#7ab8e8;
+  }
+  @media (prefers-color-scheme: light){
+    :root{ --bg:#fff; --panel:#f6f7f9; --ink:#1b1f27; --muted:#5b6573; --line:#e6e8ec;
+           --accent:#2563eb; --code-bg:#f3f4f6; --ghost:#9aa3b2; }
+  }
+  *{box-sizing:border-box} html,body,#root{height:100%}
+  body{margin:0; background:var(--bg); color:var(--ink);
+       font:14px/1.6 ui-sans-serif,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;}
+  a{color:var(--accent); text-decoration:none} a:hover{text-decoration:underline}
+  .app{display:grid; grid-template-columns:300px 1fr minmax(320px,430px); height:100vh}
+  .nav{background:var(--panel); border-right:1px solid var(--line); overflow:auto; padding:14px}
+  .nav h1{font-size:14px; margin:2px 6px 4px; letter-spacing:.03em}
+  .nav .gen{font-size:11px; color:var(--muted); margin:0 6px 12px}
+  .nav input{width:100%; margin:0 0 10px; padding:7px 9px; border-radius:8px; border:1px solid var(--line);
+             background:var(--bg); color:var(--ink); font:inherit}
+  .group{font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin:14px 6px 4px}
+  .item{display:flex; gap:7px; align-items:center; padding:5px 8px; border-radius:7px; cursor:pointer; font-size:13.5px}
+  .item:hover{background:rgba(127,127,127,.12)}
+  .item.sel{background:var(--accent); color:#fff}
+  .dot{width:8px; height:8px; border-radius:50%; flex:none}
+  .stage{position:relative; overflow:hidden; display:flex; flex-direction:column}
+  .tabs{display:flex; gap:6px; padding:10px 14px; border-bottom:1px solid var(--line); align-items:center}
+  .tab{padding:6px 13px; border-radius:8px; cursor:pointer; font-size:13px; border:1px solid var(--line); color:var(--muted)}
+  .tab.on{background:var(--accent); border-color:var(--accent); color:#fff}
+  .facet{margin-left:auto; font-size:12px; color:var(--muted)}
+  .facet select{background:var(--bg); color:var(--ink); border:1px solid var(--line); border-radius:6px; padding:3px 6px; font:inherit}
+  .canvas{flex:1; overflow:hidden}
+  svg{display:block; width:100%; height:100%; cursor:grab}
+  svg:active{cursor:grabbing}
+  .node circle{stroke:rgba(0,0,0,.35); stroke-width:1; cursor:pointer}
+  .node.sel circle{stroke:#fff; stroke-width:2.5}
+  .node text{font-size:10.5px; fill:var(--ink); pointer-events:none}
+  .edge{stroke:var(--ghost); stroke-opacity:.55; fill:none}
+  .edge.ghost{stroke-dasharray:4 4; stroke-opacity:.35}
+  .edgelabel{font-size:8.5px; fill:var(--muted)}
+  .detail{background:var(--panel); border-left:1px solid var(--line); overflow:auto; padding:18px 20px}
+  .detail .type{font-size:11px; letter-spacing:.07em; text-transform:uppercase}
+  .detail h2{margin:.2em 0 .3em; font-size:19px; line-height:1.25}
+  .meta{font-size:12px; color:var(--muted); margin-bottom:10px}
+  .meta code{background:var(--code-bg); padding:1px 5px; border-radius:5px}
+  .tagrow{display:flex; flex-wrap:wrap; gap:6px; margin:8px 0}
+  .tag{font-size:11px; background:var(--code-bg); border:1px solid var(--line); border-radius:999px; padding:2px 9px; color:var(--muted)}
+  .links h3, .diagrams h3, .body h3{font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); margin:18px 0 6px}
+  .rel{font-size:11px; color:var(--muted)}
+  .linkrow{display:flex; gap:6px; align-items:baseline; padding:3px 0; font-size:13.5px; cursor:pointer}
+  .mermaid-box{background:var(--code-bg); border:1px solid var(--line); border-radius:10px; padding:10px; margin:8px 0; overflow:auto}
+  .mermaid-box .cap{font-size:12px; color:var(--muted); margin-bottom:6px}
+  pre.src{font:12px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace; white-space:pre-wrap; margin:0; color:var(--muted)}
+  .body .md{font-size:13.5px} .body .md h1{font-size:18px} .body .md h2{font-size:15px}
+  .body .md pre{background:var(--code-bg); padding:10px; border-radius:8px; overflow:auto; font-size:12px}
+  .body .md code{background:var(--code-bg); padding:1px 4px; border-radius:4px; font-size:12px}
+  .note{font-size:12px; color:var(--muted); border:1px dashed var(--line); border-radius:8px; padding:8px 10px; margin-top:10px}
+  .empty{color:var(--muted); padding:40px; text-align:center}
+  .legend{display:flex; flex-wrap:wrap; gap:10px; padding:8px 14px; border-top:1px solid var(--line); font-size:11px; color:var(--muted)}
+  .legend span{display:inline-flex; gap:5px; align-items:center}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+(function(){
+"use strict";
+if (!window.React || !window.ReactDOM || !window.htm) {
+  document.getElementById("root").innerHTML =
+    '<div style="padding:40px;font-family:sans-serif">Docs Explorer needs its CDN runtime (React/htm) — open with internet once, or vendor the scripts locally next to this file.</div>';
+  return;
+}
+const { useState, useEffect, useMemo, useRef, createElement: h } = React;
+const html = htm.bind(h);
+const IDX = (window.DOCS_INDEX && Array.isArray(window.DOCS_INDEX.artifacts)) ? window.DOCS_INDEX
+          : { project:"(no index)", generated:"—", artifacts:[] };
+const TYPES = ["knowledge","glossary","spec","architecture","adr","design","investigation","proof-pack","decision-note","threat-model","privacy-review","api","source","doc","index"];
+const color = t => getComputedStyle(document.documentElement).getPropertyValue("--c-"+(TYPES.includes(t)?t:"doc")) || "#888";
+const byId = Object.fromEntries(IDX.artifacts.map(a=>[a.id,a]));
+const backlinks = {}; IDX.artifacts.forEach(a=>(a.links||[]).forEach(l=>{ (backlinks[l.to]=backlinks[l.to]||[]).push({from:a.id, rel:l.rel}); }));
+const TODAY = new Date().toISOString().slice(0,10);
+const isStale = a => a.reviewBy && a.reviewBy < TODAY && a.status!=="superseded" && a.status!=="resolved";
+const isOrphan = a => !(a.links&&a.links.length) && !(backlinks[a.id]&&backlinks[a.id].length);
+const isFlagged = a => Array.isArray(a.reviewSuggested) && a.reviewSuggested.length>0;
+if (window.mermaid) mermaid.initialize({ startOnLoad:false, theme: matchMedia("(prefers-color-scheme: dark)").matches?"dark":"default", securityLevel:"loose" });
+
+/* ---------- layouts: pure functions of the index (V4–V6) ---------- */
+function springLayout(arts, W, H){           // semantic clustering force layout (V5)
+  const types=[...new Set(arts.map(a=>a.type))];
+  const anchor={}; types.forEach((t,i)=>{ const ang=2*Math.PI*i/types.length;
+    anchor[t]={x:W/2+Math.cos(ang)*W*0.27, y:H/2+Math.sin(ang)*H*0.27}; });
+  const N=arts.map(a=>({id:a.id, t:a.type, x:anchor[a.type].x+(Math.random()-.5)*60, y:anchor[a.type].y+(Math.random()-.5)*60}));
+  const pos=Object.fromEntries(N.map(n=>[n.id,n]));
+  const E=[]; arts.forEach(a=>(a.links||[]).forEach(l=>{ if(pos[l.to]) E.push([a.id,l.to]); }));
+  for(let it=0; it<260; it++){
+    for(let i=0;i<N.length;i++) for(let j=i+1;j<N.length;j++){
+      const a=N[i],b=N[j]; let dx=a.x-b.x, dy=a.y-b.y, d2=dx*dx+dy*dy||1, d=Math.sqrt(d2);
+      const f=Math.min(2600/d2, 6); dx/=d; dy/=d; a.x+=dx*f; a.y+=dy*f; b.x-=dx*f; b.y-=dy*f; }
+    E.forEach(([s,t])=>{ const a=pos[s],b=pos[t]; let dx=b.x-a.x, dy=b.y-a.y, d=Math.sqrt(dx*dx+dy*dy)||1;
+      const f=(d-110)*0.015; dx/=d; dy/=d; a.x+=dx*f; a.y+=dy*f; b.x-=dx*f; b.y-=dy*f; });
+    N.forEach(n=>{ const an=anchor[n.t]; n.x+=(an.x-n.x)*0.012; n.y+=(an.y-n.y)*0.012;   // semantic pull
+      n.x=Math.max(40,Math.min(W-40,n.x)); n.y=Math.max(30,Math.min(H-30,n.y)); });
+  }
+  return pos;
+}
+function mindmapLayout(arts, rootId, W, H){  // BFS spanning tree, radial; cross-links = ghosts (V6)
+  const adj={}; arts.forEach(a=>adj[a.id]=new Set());
+  arts.forEach(a=>(a.links||[]).forEach(l=>{ if(adj[l.to]){ adj[a.id].add(l.to); adj[l.to].add(a.id); } }));
+  const depth={[rootId]:0}, parent={}, order=[rootId]; const q=[rootId];
+  while(q.length){ const u=q.shift(); [...adj[u]].forEach(v=>{ if(depth[v]===undefined){ depth[v]=depth[u]+1; parent[v]=u; order.push(v); q.push(v); } }); }
+  const kids={}; order.forEach(n=>{ if(parent[n]!==undefined)(kids[parent[n]]=kids[parent[n]]||[]).push(n); });
+  let leaf=0; const angle={};
+  (function assign(n){ const c=kids[n]||[]; if(!c.length){ angle[n]=leaf++; return; }
+     c.forEach(assign); angle[n]=c.reduce((s,k)=>s+angle[k],0)/c.length; })(rootId);
+  const leaves=Math.max(leaf,1), R=Math.min(W,H)/2-60, maxD=Math.max(...order.map(n=>depth[n]),1);
+  const pos={};
+  order.forEach(n=>{ const a=2*Math.PI*(angle[n]||0)/leaves - Math.PI/2, r=R*depth[n]/maxD;
+    pos[n]={ x:W/2+Math.cos(a)*r, y:H/2+Math.sin(a)*r, t:byId[n]?byId[n].type:"doc" }; });
+  const tree=order.filter(n=>parent[n]!==undefined).map(n=>[parent[n],n]);
+  const ghosts=[]; arts.forEach(a=>(a.links||[]).forEach(l=>{
+    if(pos[a.id]&&pos[l.to]&&parent[l.to]!==a.id&&parent[a.id]!==l.to) ghosts.push([a.id,l.to]); }));
+  const unreached=arts.filter(a=>pos[a.id]===undefined).map(a=>a.id);
+  return { pos, tree, ghosts, unreached };
+}
+
+/* ---------- shared SVG viewport (pan/zoom) ---------- */
+function useViewport(){
+  const [vp,setVp]=useState({x:0,y:0,k:1});
+  const drag=useRef(null);
+  const onWheel=e=>{ e.preventDefault(); const k=Math.max(.25,Math.min(3,vp.k*(e.deltaY<0?1.1:0.9))); setVp({...vp,k}); };
+  const onDown=e=>{ drag.current={sx:e.clientX,sy:e.clientY,ox:vp.x,oy:vp.y}; };
+  const onMove=e=>{ if(!drag.current)return; setVp({...vp,x:drag.current.ox+e.clientX-drag.current.sx,y:drag.current.oy+e.clientY-drag.current.sy}); };
+  const onUp=()=>{ drag.current=null; };
+  return [vp,{onWheel,onMouseDown:onDown,onMouseMove:onMove,onMouseUp:onUp,onMouseLeave:onUp}];
+}
+function Mermaid({code,title}){
+  const ref=useRef(null);
+  useEffect(()=>{ let live=true;
+    if(window.mermaid&&ref.current){ mermaid.render("m"+Math.random().toString(36).slice(2), code)
+      .then(r=>{ if(live&&ref.current) ref.current.innerHTML=r.svg; })
+      .catch(()=>{ if(live&&ref.current) ref.current.innerHTML="<pre class='src'>"+code.replace(/</g,"&lt;")+"</pre>"; }); }
+    return ()=>{live=false}; },[code]);
+  return html`<div class="mermaid-box"><div class="cap">${title||"diagram"}</div>
+    <div ref=${ref}>${window.mermaid?"":html`<pre class="src">${code}</pre>`}</div></div>`;
+}
+
+/* ---------- views ---------- */
+function GraphView({arts, sel, onSel}){
+  const box=useRef(null); const [size,setSize]=useState({w:900,h:600});
+  useEffect(()=>{ const el=box.current; if(!el)return; const ro=new ResizeObserver(()=>setSize({w:el.clientWidth,h:el.clientHeight})); ro.observe(el); return ()=>ro.disconnect(); },[]);
+  const pos=useMemo(()=>springLayout(arts,size.w,size.h),[arts,size.w,size.h]);
+  const [vp,handlers]=useViewport();
+  return html`<div class="canvas" ref=${box}><svg ...${handlers}>
+    <g transform="translate(${vp.x},${vp.y}) scale(${vp.k})">
+      ${arts.flatMap(a=>(a.links||[]).filter(l=>pos[l.to]).map(l=>{
+        const p=pos[a.id],q=pos[l.to],mx=(p.x+q.x)/2,my=(p.y+q.y)/2;
+        return html`<g key=${a.id+">"+l.to}><line class="edge" x1=${p.x} y1=${p.y} x2=${q.x} y2=${q.y}/>
+          <text class="edgelabel" x=${mx} y=${my-3} text-anchor="middle">${l.rel||""}</text></g>`; }))}
+      ${arts.map(a=>{ const p=pos[a.id]; if(!p) return null;
+        return html`<g key=${a.id} class=${"node"+(sel===a.id?" sel":"")} transform="translate(${p.x},${p.y})" onClick=${()=>onSel(a.id)}>
+          <circle r=${sel===a.id?11:8} fill=${color(a.type)}/>
+          <text x="12" y="4">${a.title.length>34?a.title.slice(0,32)+"…":a.title}</text></g>`; })}
+    </g></svg></div>`;
+}
+function MindmapView({arts, focus, onSel}){
+  const box=useRef(null); const [size,setSize]=useState({w:900,h:600});
+  useEffect(()=>{ const el=box.current; if(!el)return; const ro=new ResizeObserver(()=>setSize({w:el.clientWidth,h:el.clientHeight})); ro.observe(el); return ()=>ro.disconnect(); },[]);
+  const root = byId[focus] ? focus : (arts[0]&&arts[0].id);
+  const m=useMemo(()=>root?mindmapLayout(arts,root,size.w,size.h):null,[arts,root,size.w,size.h]);
+  const [vp,handlers]=useViewport();
+  if(!m) return html`<div class="empty">No artifacts in the index yet.</div>`;
+  return html`<div class="canvas" ref=${box}><svg ...${handlers}>
+    <g transform="translate(${vp.x},${vp.y}) scale(${vp.k})">
+      ${m.tree.map(([a,b])=>html`<line key=${a+b} class="edge" x1=${m.pos[a].x} y1=${m.pos[a].y} x2=${m.pos[b].x} y2=${m.pos[b].y}/>`)}
+      ${m.ghosts.map(([a,b],i)=>html`<line key=${"g"+i} class="edge ghost" x1=${m.pos[a].x} y1=${m.pos[a].y} x2=${m.pos[b].x} y2=${m.pos[b].y}/>`)}
+      ${Object.entries(m.pos).map(([id,p])=>html`<g key=${id} class=${"node"+(focus===id?" sel":"")} transform="translate(${p.x},${p.y})" onClick=${()=>onSel(id)}>
+        <circle r=${id===root?12:8} fill=${color(p.t)}/>
+        <text x="12" y="4">${(byId[id]?byId[id].title:id).slice(0,30)}</text></g>`)}
+    </g></svg>
+    ${m.unreached.length?html`<div class="note" style=${{position:"absolute",bottom:10,left:14}}>
+      ${m.unreached.length} artifact(s) not linked to this focus (honest projection — see V12): ${m.unreached.slice(0,4).join(", ")}${m.unreached.length>4?"…":""}</div>`:null}
+  </div>`;
+}
+function HealthChips({health, setHealth}){
+  const stale=IDX.artifacts.filter(isStale).length, orph=IDX.artifacts.filter(isOrphan).length, flag=IDX.artifacts.filter(isFlagged).length;
+  const chip=(key,label,n,colorVar)=>html`<span key=${key} onClick=${()=>setHealth(health===key?"all":key)}
+    style=${{cursor:"pointer", fontSize:"11px", border:"1px solid var(--line)", borderRadius:"999px",
+             padding:"2px 9px", color: n? "var(--ink)":"var(--muted)",
+             background: health===key?"var(--accent)":"var(--code-bg)"}}>
+    ${label}: ${n}</span>`;
+  return html`<div style=${{display:"flex",gap:6,margin:"0 0 10px"}}>
+    ${chip("stale","stale",stale)} ${chip("orphan","orphans",orph)} ${chip("flagged","review",flag)}
+  </div>`;
+}
+function Hierarchy({arts, facet, sel, onSel, filter, setFilter, health, setHealth}){
+  const groups={};
+  arts.forEach(a=>{ const k = facet==="phase" ? ("Phase "+(a.phase||"—")) : (a.type||"doc"); (groups[k]=groups[k]||[]).push(a); });
+  return html`<div class="nav">
+    <h1>${IDX.project} — Docs</h1>
+    <div class="gen">index generated ${IDX.generated}${IDX.generator?" · by "+IDX.generator:""}</div>
+    <input placeholder="filter…" value=${filter} onInput=${e=>setFilter(e.target.value)}/>
+    <${HealthChips} health=${health} setHealth=${setHealth}/>
+    ${Object.keys(groups).sort().map(g=>html`<div key=${g}>
+      <div class="group">${g} (${groups[g].length})</div>
+      ${groups[g].map(a=>html`<div key=${a.id} class=${"item"+(sel===a.id?" sel":"")} onClick=${()=>onSel(a.id)}>
+        <span class="dot" style=${{background:color(a.type)}}></span>${a.title}</div>`)}
+    </div>`)}
+  </div>`;
+}
+function Detail({id, onSel}){
+  const a=byId[id]; const [bodyHtml,setBodyHtml]=useState(null); const [fetchFailed,setFetchFailed]=useState(false);
+  useEffect(()=>{ setBodyHtml(null); setFetchFailed(false);
+    if(!a||!a.path||!window.marked||location.protocol==="file:") return;
+    fetch("../"+a.path.replace(/^docs\//,"")).catch(()=>fetch("../"+a.path)).then(r=>r.ok?r.text():Promise.reject())
+      .then(t=>setBodyHtml(marked.parse(t))).catch(()=>setFetchFailed(true)); },[id]);
+  if(!a) return html`<div class="detail"><div class="empty">Select an artifact in any view.<br/><br/>
+    Hierarchy, Graph and Mind map are three projections of the same index — pick a node anywhere and the others follow.</div></div>`;
+  const out=a.links||[], back=backlinks[a.id]||[];
+  return html`<div class="detail">
+    <div class="type" style=${{color:color(a.type)}}>${a.type}${a.phase?" · phase "+a.phase:""}${a.status?" · "+a.status:""}</div>
+    <h2>${a.title}</h2>
+    <div class="meta"><code>${a.path||""}</code>${a.path?html` · <a href=${"../"+a.path.replace(/^docs\//,"")} target="_blank">open file</a>`:null}</div>
+    <div class="meta">${a.owner?html`owner <b>${a.owner}</b>`:null}${a.reviewBy?html` · review by <b style=${{color:isStale(a)?"#f2a65a":"inherit"}}>${a.reviewBy}${isStale(a)?" — STALE (V13)":""}</b>`:null}</div>
+    <div>${a.summary||""}</div>
+    ${a.tags&&a.tags.length?html`<div class="tagrow">${a.tags.map(t=>html`<span key=${t} class="tag">${t}</span>`)}</div>`:null}
+    ${isFlagged(a)?html`<div class="note" style=${{borderColor:"#dba0e8"}}><b>Review suggested (V16)</b> — upstream change(s):
+      ${a.reviewSuggested.map((r,i)=>html`<div key=${i} class="linkrow" onClick=${()=>byId[r.by]&&onSel(r.by)}>
+        <span class="rel">by</span> ${byId[r.by]?byId[r.by].title:r.by} <span class="rel">on ${r.on||""}</span>${r.reason?html` — ${r.reason}`:null}</div>`)}
+      Review against the change, update or confirm, then clear the flag and bump review-by.</div>`:null}
+    <div class="links">
+      ${out.length?html`<h3>Links out</h3>${out.map((l,i)=>html`<div key=${i} class="linkrow" onClick=${()=>byId[l.to]&&onSel(l.to)}>
+        <span class="rel">${l.rel} →</span> ${byId[l.to]?byId[l.to].title:l.to}</div>`)}`:null}
+      ${back.length?html`<h3>Back-links</h3>${back.map((l,i)=>html`<div key=${i} class="linkrow" onClick=${()=>onSel(l.from)}>
+        <span class="rel">← ${l.rel}</span> ${byId[l.from]?byId[l.from].title:l.from}</div>`)}`:null}
+      ${!out.length&&!back.length?html`<div class="note">Orphan node — no typed links. Per V10.4 this is a finding: connect it into the graph.</div>`:null}
+    </div>
+    ${a.diagrams&&a.diagrams.length?html`<div class="diagrams"><h3>Diagrams</h3>
+      ${a.diagrams.map((d,i)=>html`<${Mermaid} key=${i} code=${d.mermaid} title=${(d.kind?d.kind+" — ":"")+(d.title||"")}/>`)}</div>`:null}
+    <div class="body">
+      ${bodyHtml?html`<h3>Document</h3><div class="md" dangerouslySetInnerHTML=${{__html:bodyHtml}}></div>`:null}
+      ${location.protocol==="file:"?html`<div class="note">Opened via <b>file://</b> — showing index metadata + diagrams (graceful mode, V7). Serve the repo (e.g. <code>python -m http.server</code> or <code>npx serve</code>) to render full documents inline.</div>`:null}
+      ${fetchFailed?html`<div class="note">Couldn't fetch <code>${a.path}</code> — check the path in docs-index.js.</div>`:null}
+    </div>
+  </div>`;
+}
+function App(){
+  const [view,setView]=useState("hierarchy");
+  const [facet,setFacet]=useState("type");
+  const [sel,setSel]=useState(null);
+  const [filter,setFilter]=useState("");
+  const [health,setHealth]=useState("all");
+  const arts=useMemo(()=>IDX.artifacts.filter(a=>{
+    if(health==="stale"&&!isStale(a)) return false;
+    if(health==="orphan"&&!isOrphan(a)) return false;
+    if(health==="flagged"&&!isFlagged(a)) return false;
+    if(!filter) return true; const f=filter.toLowerCase();
+    return (a.title+" "+(a.summary||"")+" "+(a.tags||[]).join(" ")+" "+a.type).toLowerCase().includes(f); }),[filter,health]);
+  const onSel=id=>{ setSel(id); };
+  return html`<div class="app">
+    <${Hierarchy} arts=${arts} facet=${facet} sel=${sel} onSel=${onSel} filter=${filter} setFilter=${setFilter} health=${health} setHealth=${setHealth}/>
+    <div class="stage">
+      <div class="tabs">
+        <div class=${"tab"+(view==="graph"?" on":"")} onClick=${()=>setView("graph")}>Graph</div>
+        <div class=${"tab"+(view==="mindmap"?" on":"")} onClick=${()=>setView("mindmap")}>Mind map${sel?" · "+(byId[sel]?byId[sel].title.slice(0,22):""):""}</div>
+        <div class="facet">group by <select value=${facet} onChange=${e=>setFacet(e.target.value)}>
+          <option value="type">type</option><option value="phase">phase</option></select></div>
+      </div>
+      ${arts.length===0?html`<div class="empty">The index is empty. Skills regenerate <code>docs/docs-index.js</code> at the end of every run (V10).</div>`
+        : view==="graph"?html`<${GraphView} arts=${arts} sel=${sel} onSel=${onSel}/>`
+        : html`<${MindmapView} arts=${arts} focus=${sel||(arts[0]&&arts[0].id)} onSel=${onSel}/>`}
+      <div class="legend">${TYPES.map(t=>html`<span key=${t}><span class="dot" style=${{background:color(t)}}></span>${t}</span>`)}
+        <span style=${{marginLeft:"auto"}}>drag to pan · wheel to zoom · dashed = cross-link (ghost)</span></div>
+    </div>
+    <${Detail} id=${sel} onSel=${onSel}/>
+  </div>`;
+}
+ReactDOM.createRoot(document.getElementById("root")).render(h(App));
+})();
+</script>
+</body>
+</html>

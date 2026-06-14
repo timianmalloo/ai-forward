@@ -1,0 +1,59 @@
+{
+  "id": "design-02-ui-dashboard",
+  "skill": "design",
+  "prompt": "Run /design for a web 'usage dashboard' screen showing per-tenant API call volume (table + chart), with filters. React + the repo's design tokens.",
+  "assertions": [
+    {
+      "type": "file-exists",
+      "path": "docs/design/usage-dashboard.md"
+    },
+    {
+      "type": "frontmatter-valid",
+      "path": "docs/design/usage-dashboard.md"
+    },
+    {
+      "type": "grep",
+      "path": "docs/design/usage-dashboard.md",
+      "pattern": "(?i)medium|platform guidelines|HIG"
+    },
+    {
+      "type": "grep",
+      "path": "docs/design/usage-dashboard.md",
+      "pattern": "(?i)token"
+    },
+    {
+      "type": "grep",
+      "path": "docs/design/usage-dashboard.md",
+      "pattern": "(?i)empty"
+    },
+    {
+      "type": "grep",
+      "path": "docs/design/usage-dashboard.md",
+      "pattern": "(?i)loading"
+    },
+    {
+      "type": "grep",
+      "path": "docs/design/usage-dashboard.md",
+      "pattern": "(?i)error"
+    },
+    {
+      "type": "grep",
+      "path": "docs/design/usage-dashboard.md",
+      "pattern": "(?i)WCAG|AA|contrast|accessib"
+    },
+    {
+      "type": "grep",
+      "path": "docs/design/usage-dashboard.md",
+      "pattern": "(?i)performance|budget|latency"
+    },
+    {
+      "type": "cmd-exit",
+      "cmd": [
+        "python3",
+        "docs/ai-forward-pack/scripts/docs-graph.py",
+        "validate"
+      ],
+      "exit": 0
+    }
+  ]
+}

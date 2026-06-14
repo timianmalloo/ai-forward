@@ -1,0 +1,38 @@
+{
+  "skill": "specify",
+  "prompt": "Run /specify for a 'guest checkout' feature: guests buy without an account; email receipt; payment via the existing PaymentGateway; EU VAT applies.",
+  "assertions": [
+    {
+      "type": "file-exists",
+      "path": "docs/specs/guest-checkout.md"
+    },
+    {
+      "type": "frontmatter-valid",
+      "path": "docs/specs/guest-checkout.md"
+    },
+    {
+      "type": "grep",
+      "path": "docs/specs/guest-checkout.md",
+      "pattern": "type: spec"
+    },
+    {
+      "type": "grep",
+      "path": "docs/specs/guest-checkout.md",
+      "pattern": "review-by:"
+    },
+    {
+      "type": "index-has",
+      "id": "spec-guest-checkout"
+    },
+    {
+      "type": "cmd-exit",
+      "cmd": [
+        "python3",
+        "docs/ai-forward-pack/scripts/docs-graph.py",
+        "validate"
+      ],
+      "exit": 0
+    }
+  ],
+  "id": "specify-01-checkout"
+}

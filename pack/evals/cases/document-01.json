@@ -1,0 +1,52 @@
+{
+  "skill": "document",
+  "prompt": "Run /document over the repo.",
+  "assertions": [
+    {
+      "type": "file-exists",
+      "path": "docs/index.md"
+    },
+    {
+      "type": "file-exists",
+      "path": "docs/docs-index.js"
+    },
+    {
+      "type": "file-exists",
+      "path": "docs/index.html"
+    },
+    {
+      "type": "cmd-exit",
+      "cmd": [
+        "python3",
+        "docs/ai-forward-pack/scripts/docs-graph.py",
+        "freshness",
+        "--gate",
+        "warn"
+      ],
+      "exit": 0
+    },
+    {
+      "type": "cmd-exit",
+      "cmd": [
+        "python3",
+        "docs/ai-forward-pack/scripts/docs-graph.py",
+        "validate"
+      ],
+      "exit": 0
+    },
+    {
+      "type": "file-exists",
+      "path": "docs/security/threat-model.md"
+    },
+    {
+      "type": "file-exists",
+      "path": "docs/security/privacy-review.md"
+    },
+    {
+      "type": "grep",
+      "path": "docs/security/threat-model.md",
+      "pattern": "rolled up from|Threat register"
+    }
+  ],
+  "id": "document-01"
+}

@@ -1,0 +1,24 @@
+{
+  "skill": "adddomainexperts",
+  "prompt": "Run /adddomainexperts for a payments domain (PSD2/SCA expertise).",
+  "assertions": [
+    {
+      "type": "file-exists",
+      "path": "docs/domain-experts.md"
+    },
+    {
+      "type": "frontmatter-valid",
+      "path": "docs/domain-experts.md"
+    },
+    {
+      "type": "cmd-exit",
+      "cmd": [
+        "python3",
+        "docs/ai-forward-pack/scripts/docs-graph.py",
+        "validate"
+      ],
+      "exit": 0
+    }
+  ],
+  "id": "adddomainexperts-01"
+}

@@ -1,0 +1,34 @@
+{
+  "skill": "migrate",
+  "prompt": "Run /migrate: upgrade this service from .NET 8 to the latest stable .NET.",
+  "assertions": [
+    {
+      "type": "cmd-exit",
+      "cmd": [
+        "bash",
+        "-lc",
+        "grep -rliE 'characterization|golden.master' docs | head -1 | grep -q ."
+      ],
+      "exit": 0
+    },
+    {
+      "type": "cmd-exit",
+      "cmd": [
+        "bash",
+        "-lc",
+        "grep -rliE 'equivalence|intentional.difference' docs/proofs | head -1 | grep -q ."
+      ],
+      "exit": 0
+    },
+    {
+      "type": "cmd-exit",
+      "cmd": [
+        "python3",
+        "docs/ai-forward-pack/scripts/docs-graph.py",
+        "validate"
+      ],
+      "exit": 0
+    }
+  ],
+  "id": "migrate-01"
+}
