@@ -20,9 +20,6 @@ pwsh tools/sync-pack.ps1
 
 # Build the distributable zip for sharing
 pwsh tools/package-pack.ps1   # writes dist/ai-forward-pack.zip
-
-# Refresh the embedded snapshot in web/ai-forward-pack-overview.jsx
-pwsh tools/rebuild-overview.ps1
 ```
 
 **Commit discipline:** when changing `pack/`, always commit `pack/`, `.claude/`, and `docs/` together in the same commit so source and install never drift.
@@ -63,8 +60,8 @@ docs/           ← GENERATED
   docs-index.js             ← accumulated knowledge-graph index (skills maintain this — NEVER overwrite)
   ai-forward-pack/          ← templates, scripts, pack docs
 
-tools/          ← sync-pack.ps1  package-pack.ps1  rebuild-overview.ps1
-web/            ← ai-forward-pack-overview.jsx (self-contained overview page with embedded download)
+tools/          ← sync-pack.ps1  package-pack.ps1
+web/            ← ai-forward-pack-explainer.html (self-contained interactive explainer)
 ```
 
 The **deployment map** (every source path → destination per tool) is the contract: `pack/adapters/INSTALL.md`.

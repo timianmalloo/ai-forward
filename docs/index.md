@@ -24,13 +24,12 @@ repository — the development home of the **AI-Forward Pack** and a live instal
 > it walks the knowledge, the skills, the Rigor Protocol, and the UI-template grammar, and lets
 > you preview every interface archetype before choosing one.
 
-## The three documentation surfaces
+## The two documentation surfaces
 
 | Surface | What it is | Open |
 |---|---|---|
 | **Interactive Explainer** | Self-contained React/HTML page explaining the pack's reasoning, personas, skills, and the UI archetype grammar — with a table of all template types and linkable, rendered **mockups** of each. | [`web/ai-forward-pack-explainer.html`](../web/ai-forward-pack-explainer.html) |
 | **Docs Explorer** | The knowledge graph, browsable as hierarchy · graph · mind map · health. Loads `docs/docs-index.js`. | [`docs/index.html`](index.html) |
-| **Downloadable Overview** | A self-contained overview page that carries the entire pack embedded as a `.zip` for download. | [`web/ai-forward-pack-overview.jsx`](../web/ai-forward-pack-overview.jsx) |
 
 ## Architecture of record
 

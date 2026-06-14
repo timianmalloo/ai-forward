@@ -38,12 +38,11 @@ ai-forward/
 │
 ├─ tools/
 │   ├─ sync-pack.ps1       ← regenerate .claude/ + docs/ from pack/  (run after editing pack/)
-│   ├─ package-pack.ps1    ← build dist/ai-forward-pack.zip for sharing
-│   └─ rebuild-overview.ps1 ← refresh the pack snapshot embedded in the overview .jsx
+│   └─ package-pack.ps1    ← build dist/ai-forward-pack.zip for sharing
 │
 ├─ web/
-│   └─ ai-forward-pack-overview.jsx  ← interactive overview with the whole pack embedded
-│                                       for download (refresh it with rebuild-overview.ps1)
+│   └─ ai-forward-pack-explainer.html ← self-contained interactive explainer (knowledge,
+│                                        skills, Rigor Protocol, UI archetype mockups)
 │
 ├─ CLAUDE.md              ← wiring that points Claude Code at the installed pack
 └─ LICENSE                ← Apache-2.0
@@ -91,17 +90,14 @@ update procedure are in [`pack/adapters/INSTALL.md`](pack/adapters/INSTALL.md). 
 mirrors only the Claude Code surface needed *here*; the distributable in `pack/` carries the full
 Claude Code **and** Copilot wiring.)
 
-`web/ai-forward-pack-overview.jsx` is a self-contained overview page that carries the entire pack
-embedded for download. That snapshot doesn't track `pack/` edits on its own, so refresh it before
-sharing the page:
+## Documentation
 
-```powershell
-pwsh tools/rebuild-overview.ps1   # re-zips pack/, rewrites the embedded snapshot, and stamps
-                                  # the pack revision (from pack/adapters/INSTALL.md) onto the page
-```
-
-The page shows that revision next to the download button (e.g. *rev 2 (2026.06.14)*), so it's
-always obvious how current the embedded download is.
+`web/ai-forward-pack-explainer.html` is a self-contained interactive explainer (open it directly
+in a browser) covering the knowledge constitution, the Rigor Protocol, the persona council, the
+ten skills, and the UI archetype grammar — including a table of every template type and linkable,
+rendered mockups of each. The full knowledge graph is browsable at [`docs/index.html`](docs/index.html)
+(the Docs Explorer), and the architecture of record is in [`docs/architecture.md`](docs/architecture.md).
+Both are generated and maintained by the `/document` skill.
 
 ## License
 

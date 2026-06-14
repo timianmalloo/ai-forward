@@ -8,8 +8,7 @@
     "markdownBundle": ["docs/architecture.md", "docs/index.md"],
     "graphIndex": "docs/docs-index.js",
     "docsExplorer": "docs/index.html",
-    "interactiveExplainer": "web/ai-forward-pack-explainer.html",
-    "downloadableOverview": "web/ai-forward-pack-overview.jsx"
+    "interactiveExplainer": "web/ai-forward-pack-explainer.html"
   },
   "diagramFamilies": {
     "component": "docs/architecture.md#component-map--boundaries",
@@ -19,7 +18,7 @@
   },
   "coverage": {
     "publicCodeSurface": "no traditional doc-commented API; public surface is 3 PowerShell tools + docs-graph.py CLI",
-    "toolsDocumented": ["tools/sync-pack.ps1", "tools/package-pack.ps1", "tools/rebuild-overview.ps1", "docs/ai-forward-pack/scripts/docs-graph.py"],
+    "toolsDocumented": ["tools/sync-pack.ps1", "tools/package-pack.ps1", "docs/ai-forward-pack/scripts/docs-graph.py"],
     "toolsCoveragePct": 100,
     "knowledgeDocs": 19,
     "skills": 10,
@@ -44,7 +43,7 @@
     {
       "id": "archetype-count",
       "severity": "resolved",
-      "summary": "Previously CLAUDE.md, the managed blocks, pack/OVERVIEW.md, pack/README.md, pack/adapters/INSTALL.md, and web/ai-forward-pack-overview.jsx said '18-archetype catalog'; ui-archetype-catalog.md enumerates 16 (A1-A4,B1-B4,C1,D1-D3,E1-E2,F1-F2). All source occurrences corrected to 16 and install re-synced from pack/.",
+      "summary": "Previously CLAUDE.md, the managed blocks, pack/OVERVIEW.md, pack/README.md, and pack/adapters/INSTALL.md said '18-archetype catalog'; ui-archetype-catalog.md enumerates 16 (A1-A4,B1-B4,C1,D1-D3,E1-E2,F1-F2). All source occurrences corrected to 16 and install re-synced from pack/.",
       "evidence": "ui-archetype-catalog.md count = 16; grep shows no remaining '18-archetype' in source"
     }
   ],
