@@ -1,0 +1,260 @@
+---
+id: "architecture"
+title: "AI-Forward — Architecture Overview"
+type: architecture
+status: accepted
+owner: "@mallalieut"
+phase: "documentation"
+tags: [pack, knowledge-graph, tooling, source-and-install]
+links:
+  - { to: docs-index, rel: relates-to }
+review-by: "2026-12-14"
+summary: >-
+  The architecture of record for this repository: a dual-purpose repo that is both the
+  canonical SOURCE of the AI-Forward Pack (pack/) and a live INSTALL of it (.claude/, docs/),
+  kept in lockstep by tools/sync-pack.ps1. Includes the four diagram families and the
+  tool/CLI reference, verified against the repo as of the documented commit.
+---
+
+<!--
+Produced by /document (Rigor Protocol run on the codebase as the subject of documentation).
+Ground truth is the repository itself. Confidence labels: [Verified] traced to a file/run;
+[Inferred] reasoned, not executed; [Flagged] carried as a risk. The documented commit and
+coverage are in docs/_meta.json. This bundle is companion to two web surfaces:
+web/ai-forward-pack-overview.jsx (downloadable overview) and
+web/ai-forward-pack-explainer.html (the interactive explainer this run generated).
+-->
+
+# Architecture: AI-Forward (pack source + live dogfood install)
+
+- **Status:** Accepted
+- **Tier:** N/A — this repository is a knowledge/tooling package, not an AI runtime system, so the LOA capability tiers (T0–T4, which allocate *inference* cost) do not apply here. The tier model is part of the pack's *payload*, not this repo's own runtime. `[Verified]` (no inference code in the repo).
+- **Driving context:** `README.md`, `CLAUDE.md`, `pack/OVERVIEW.md`
+- **Documented commit:** see `docs/_meta.json`
+
+## Context & constraints
+
+This repository is **two things at once** (`README.md` §"This repo is two things at once"):
+
+1. **The canonical source** of the AI-Forward Pack — everything you edit to expand the pack lives under `pack/`. `[Verified: README.md, pack/]`
+2. **A live install of the pack** — the pack is installed into this same repo (`.claude/`, `docs/`) so the skills, agents, and knowledge are active in Claude Code *while you work on the pack itself*. Dogfooding: the pack is built using the pack. `[Verified: .claude/, CLAUDE.md]`
+
+The load-bearing constraint that shapes the whole structure:
+
+> **`.claude/` and `docs/` are GENERATED from `pack/`** by `tools/sync-pack.ps1` and committed so a fresh clone has a working install with no setup. `pack/` is the single source of truth — never edit the generated copies directly; they are overwritten on the next sync. `[Verified: CLAUDE.md, tools/sync-pack.ps1]`
+
+Consequence for documentation (a finding surfaced by this run): the generated knowledge documents under `.claude/knowledge/` and `docs/ai-forward-pack/` carry **no YAML frontmatter** (they are vendored prose, not graph nodes). The Knowledge-Visualization graph model (V1–V18) therefore sees **zero artifacts** until frontmatter'd documentation (like this file) is added under `docs/`. See *Flagged risks* below. `[Verified: docs-graph.py inventory → "artifacts": 0]`
+
+## Archetype & rationale
+
+No LOA system archetype (A–I) applies — those classify AI-integrated *runtime* systems. The applicable shape here is a classic **source → build → install → consumer** pipeline with a **dogfood loopback**: the install layer feeds back into the authoring experience (Claude Code reads `.claude/` while you edit `pack/`). `[Inferred from repo structure]`
+
+## Component map & boundaries
+
+The major components and the real dependency edges between them (read from `tools/sync-pack.ps1`, `tools/rebuild-overview.ps1`, `tools/package-pack.ps1`, and the directory layout):
+
+```mermaid
+flowchart TB
+  subgraph SRC["pack/ — canonical source (edit here)"]
+    K["knowledge/*.md<br/>(reasoning spine + roster + foundation)"]
+    C["commands/&lt;name&gt;/SKILL.md<br/>(the 10 skills)"]
+    T["templates/*<br/>(artifacts each skill emits)"]
+    A["adapters/<br/>(Claude Code + Copilot agents, INSTALL.md)"]
+    SC["scripts/  ·  evals/  ·  ci/  ·  examples/"]
+    PD["README · OVERVIEW · research-synthesis"]
+  end
+
+  subgraph TOOLS["tools/ — build"]
+    SYNC["sync-pack.ps1"]
+    PKG["package-pack.ps1"]
+    OVR["rebuild-overview.ps1"]
+  end
+
+  subgraph INSTALL[".claude/ + docs/ — generated install (do not hand-edit)"]
+    CK[".claude/knowledge/*.md"]
+    CS[".claude/skills/*"]
+    CA[".claude/agents/*.md"]
+    DP["docs/ai-forward-pack/<br/>templates + scripts + pack docs"]
+    EXP["docs/index.html<br/>(Docs Explorer)"]
+    IDX["docs/docs-index.js<br/>(accumulated graph index)"]
+    ARCH["docs/architecture.md · index.md · _meta.json<br/>(this bundle)"]
+  end
+
+  subgraph CONSUMERS["consumers"]
+    CC["Claude Code / Copilot<br/>(read .claude/)"]
+    WEBO["web/ai-forward-pack-overview.jsx<br/>(embeds pack .zip for download)"]
+    WEBE["web/ai-forward-pack-explainer.html<br/>(interactive explainer)"]
+    ZIP["dist/ai-forward-pack.zip"]
+  end
+
+  K --> SYNC
+  C --> SYNC
+  T --> SYNC
+  A --> SYNC
+  SYNC --> CK & CS & CA & DP & EXP
+  C -. "skills reference" .-> CK
+  CA -. "agents reference" .-> CK
+  DP --> GRAPH["docs-graph.py<br/>(in docs/ai-forward-pack/scripts)"]
+  GRAPH --> IDX
+  ARCH --> GRAPH
+  IDX --> EXP
+  CK --> CC
+  CS --> CC
+  CA --> CC
+  SRC --> PKG --> ZIP
+  SRC --> OVR --> WEBO
+  CK -. "derived content" .-> WEBE
+```
+
+Boundaries that matter:
+- **Source ↔ install boundary** — crossed *only* by `tools/sync-pack.ps1`. Editing the install side directly is a contract violation (the next sync overwrites it). `[Verified: CLAUDE.md, sync-pack.ps1]`
+- **`sync-pack.ps1` write scope** — it writes only `.claude/{knowledge,skills,agents}`, `docs/ai-forward-pack/**`, and `docs/index.html`; it **intentionally does not touch** `docs/docs-index.js` (skills accumulate it) or other `docs/` root files. This is why this bundle (`docs/architecture.md`, `docs/index.md`, `docs/_meta.json`) and `web/ai-forward-pack-explainer.html` have a stable home that sync will not clobber. `[Verified: tools/sync-pack.ps1 lines 22, 92–98]`
+
+## Key flow — the sandbox / dogfood loop (sequence)
+
+The authoring loop from `README.md` §"Expanding the pack", with the graph-refresh step `/document` adds:
+
+```mermaid
+sequenceDiagram
+  actor Dev as Author
+  participant Pack as pack/ (source)
+  participant Sync as tools/sync-pack.ps1
+  participant Install as .claude/ + docs/
+  participant CC as Claude Code (this repo)
+  participant Graph as docs-graph.py
+  participant Explorer as docs/index.html
+
+  Dev->>Pack: edit a knowledge doc / SKILL.md / persona / template
+  Dev->>Sync: pwsh tools/sync-pack.ps1
+  Sync->>Install: mirror knowledge, skills, agents, templates, scripts
+  Sync->>Install: regenerate docs/index.html from template
+  Note over Sync,Install: docs-index.js is NOT touched (accumulated separately)
+  Dev->>CC: try the change (regenerated skills/agents are now live)
+  CC-->>Dev: run a skill; dogfood the edit
+  Dev->>Graph: /document → docs-graph.py derive
+  Graph->>Install: write docs/docs-index.js from frontmatter
+  Graph->>Explorer: index loaded; hierarchy · graph · mind map · health render
+  Dev->>Pack: commit pack/ + .claude/ + docs/ together (lockstep)
+```
+
+`[Verified: README.md §"Expanding the pack (the sandbox loop)", sync-pack.ps1, docs-graph.py --help]`
+
+## Layered view (source → consumer)
+
+The repo's own layering (distinct from the LOA *capability* tiers it ships as payload):
+
+```mermaid
+flowchart TB
+  subgraph L4["Consumer layer"]
+    direction LR
+    cc[Claude Code / Copilot]:::c
+    ex[Docs Explorer + web explainer]:::c
+    z[dist/ zip for other repos]:::c
+  end
+  subgraph L3["Install layer (generated, committed)"]
+    direction LR
+    claude[.claude/ knowledge·skills·agents]:::i
+    docs[docs/ pack-docs·scripts·templates·index]:::i
+  end
+  subgraph L2["Build layer"]
+    direction LR
+    sync[sync-pack.ps1]:::b
+    pkg[package-pack.ps1]:::b
+    ovr[rebuild-overview.ps1]:::b
+  end
+  subgraph L1["Source layer (single source of truth)"]
+    pack[pack/ knowledge·commands·templates·adapters·scripts]:::s
+  end
+  L1 --> L2 --> L3 --> L4
+  classDef s fill:#1d2b4d,stroke:#5a7cff,color:#dde6ff
+  classDef b fill:#13324a,stroke:#5ad1c7,color:#dffaf6
+  classDef i fill:#2a2440,stroke:#a98bff,color:#efeaff
+  classDef c fill:#163024,stroke:#56d364,color:#dcffe4
+```
+
+Dependency direction points **up only** (source → build → install → consumer); no consumer writes back into source except through the human author editing `pack/`. `[Verified: tools/*.ps1]`
+
+## Domain model (class) — the UI Archetype Grammar
+
+The most code-like structure in the repo is the **Archetype Grammar** (`ui-archetype-grammar.md` EBNF, G1–G16) and its catalog (`ui-archetype-catalog.md`). Documented here as a class model because it is the conceptual schema the experience and the codegen contract are built on:
+
+```mermaid
+classDiagram
+  class Signature {
+    +Name name
+    +FacetList facets
+    +StyleHints? hints
+    +validate() conflicts
+    +roundTrip() bool  %% G10: identify AND generate
+  }
+  class Facet {
+    <<abstract>>
+    +String key
+  }
+  class SingleValuedFacet {
+    +Value value  %% Type, Arch, Layout, Density, Pacing, ...
+  }
+  class MultiValuedFacet {
+    +Value[] values  %% Nav, Input, Feedback, Motion, A11y (joined with +)
+  }
+  class StyleHints {
+    +String[] hints  %% bounded NL decoration, applied last
+  }
+  class Archetype {
+    +String id          %% A1..F2
+    +String name
+    +Exemplar[] exemplars
+    +Signature canonical
+    +String codegenDescriptor
+  }
+  Signature "1" o-- "4..*" Facet : composes
+  Facet <|-- SingleValuedFacet
+  Facet <|-- MultiValuedFacet
+  Signature "0..1" *-- "1" StyleHints : decorated by
+  Archetype "1" *-- "1" Signature : canonical
+  Archetype "1" o-- "1..*" Exemplar
+  note for Signature "G4: MUST carry Type, Arch, Layout, Pacing.\nG1: always composed with a concrete U1–U20 / S1–S18 spec."
+```
+
+`[Verified: ui-archetype-grammar.md §2 EBNF, G1/G4/G5/G10; ui-archetype-catalog.md]`
+
+## Tool & CLI reference (the repo's public surface)
+
+This repo has no traditional doc-commented API. Its public, invocable surface is three PowerShell tools and the Python graph bundle. `[Verified: tools/, docs/ai-forward-pack/scripts/]`
+
+| Command | Purpose | Notes |
+|---|---|---|
+| `pwsh tools/sync-pack.ps1` | Regenerate `.claude/` + `docs/` from `pack/`. | Run after every `pack/` edit. Does not touch `docs/docs-index.js`. |
+| `pwsh tools/package-pack.ps1` | Build `dist/ai-forward-pack.zip` for sharing. | Carries full Claude Code + Copilot wiring. |
+| `pwsh tools/rebuild-overview.ps1` | Re-zip `pack/`, rewrite the base64 snapshot embedded in `web/ai-forward-pack-overview.jsx`, stamp the revision. | Run before sharing the overview page. |
+| `python docs/ai-forward-pack/scripts/docs-graph.py <cmd>` | The knowledge-graph mechanics (V18). | Stdlib-only Python 3.8+. |
+
+`docs-graph.py` subcommands (`[Verified: --help]`): `inventory` (scan the graph → JSON), `derive` (frontmatter → `docs/docs-index.js`), `validate` (inventory + nonzero exit on findings, CI-able), `freshness` (stale + flagged + orphans gate), `flag` / `clear-flag` (V16 review propagation), `stub` (scaffold a schema-correct artifact), `snapshot` (append a graph-health record), `rollup` (aggregate per-design STRIDE / privacy tables into a register).
+
+## Cross-cutting concerns
+
+- **Identity & trust boundaries:** none — this is a static content/tooling repo with no runtime auth surface. `[Verified]`
+- **Failure & resilience:** the only "runtime" is the build tools; `sync-pack.ps1` is idempotent (it mirrors source over install each run). `[Inferred]`
+- **Observability:** N/A at repo runtime; the *Observability Standard* (O1–O13) is shipped as pack payload, not applied to this repo's tools. `[Verified]`
+- **Data governance / privacy:** no personal data is stored or processed. `[Verified]`
+
+## Flagged risks & residual unknowns
+
+- **`[Flagged]` Empty knowledge graph.** `docs-graph.py inventory` reports `0` artifacts because the vendored knowledge docs lack frontmatter and `docs/ai-forward-pack/**` is excluded from the graph by design. The Docs Explorer was non-rendering before this run (no `docs/docs-index.js`). This bundle's frontmatter'd files (`architecture.md`, `index.md`) are the first graph nodes; bringing the *knowledge* docs into the graph would require adding frontmatter to the **`pack/` source** and re-syncing — a pack change, out of scope for this documentation pass.
+- **`[Flagged]` Archetype count discrepancy.** `CLAUDE.md` and `ui-archetype-grammar.md` reference an **"18-archetype catalog"**, but `ui-archetype-catalog.md` enumerates **16** (A1–A4, B1–B4, C1, D1–D3, E1–E2, F1–F2). The documentation (and the explainer) reflect the catalog's actual 16; the "18" wording in `CLAUDE.md`/grammar is the stale number and should be corrected at the `pack/` source. `[Verified: ui-archetype-catalog.md count]`
+- **`[Inferred]` Browser-render verification of the explainer.** `web/ai-forward-pack-explainer.html` passed a JS syntax check and mirrors the proven `docs/index.html` (React UMD + htm) pattern, but was not opened in a live browser in this environment. Recommend a quick visual pass before sharing.
+
+## Status & next action
+
+| | |
+|---|---|
+| **Completed** | Architecture overview + 4 diagram families; tool/CLI reference; interactive explainer; MoC index; `_meta.json`; `docs-index.js` regenerated; findings recorded. |
+| **Remaining** | (At pack source, optional) frontmatter on knowledge docs to populate the graph; correct the 16-vs-18 archetype wording in `CLAUDE.md` + grammar; live browser pass of the explainer. |
+| **Best next action** | Correct the "18-archetype" wording in `pack/` and re-sync, so source and docs agree. |
+
+## Gate record
+
+`GATE document · 2026-06-14 · Documentation Steward (peer→adversary), Patterns Expert, Enterprise Architect, Simplifier · diagrams verified node-by-node against repo structure; CLI verified against --help; discrepancies recorded not hidden · verdict: pass with flagged findings · author did not self-clear`
+
+---
+**Handoff:** → onboarding, review, and `/define-architecture` (these diagrams are the architecture of record). Runs continuously via the freshness trigger.

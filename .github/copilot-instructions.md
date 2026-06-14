@@ -1,0 +1,109 @@
+# GitHub Copilot Instructions — AI-Forward
+
+## Repository purpose
+
+This repo is **two things at once**:
+1. The **canonical source** of the AI-Forward Pack — everything you edit to expand the pack lives in `pack/`.
+2. A **live install** of that pack — `.claude/` and `docs/` are generated from `pack/` and are what Claude Code reads when working here (dogfooding: the pack is built using the pack).
+
+Never edit `.claude/` or `docs/` directly — they are overwritten by the sync tool.
+
+---
+
+## Build / maintenance commands
+
+All tooling is PowerShell scripts in `tools/`:
+
+```powershell
+# After editing anything under pack/ — regenerates .claude/ and docs/
+pwsh tools/sync-pack.ps1
+
+# Build the distributable zip for sharing
+pwsh tools/package-pack.ps1   # writes dist/ai-forward-pack.zip
+
+# Refresh the embedded snapshot in web/ai-forward-pack-overview.jsx
+pwsh tools/rebuild-overview.ps1
+```
+
+**Commit discipline:** when changing `pack/`, always commit `pack/`, `.claude/`, and `docs/` together in the same commit so source and install never drift.
+
+### Evals (regression tests for the pack itself)
+
+```bash
+# Seed workspace and print the golden prompt
+python3 evals/run-evals.py --case evals/cases/design-01-gateway.json --workspace /tmp/eval-ws --setup
+
+# Assert after running the skill
+python3 evals/run-evals.py --case evals/cases/design-01-gateway.json --workspace /tmp/eval-ws --check
+
+# Assert all cases (CI-able, exits nonzero on failure)
+python3 evals/run-evals.py --cases evals/cases --workspace /tmp/eval-ws --check
+```
+
+Run affected skill cases on every pack edit; run all cases on model-version changes.
+
+---
+
+## Architecture overview
+
+```
+pack/           ← SINGLE SOURCE OF TRUTH — edit here only
+  knowledge/    ← 18 knowledge docs (reasoning spine + vendored foundation)
+  commands/     ← 10 skills (one SKILL.md each)
+  templates/    ← 15 artifact templates
+  adapters/     ← INSTALL.md + Claude Code agents + Copilot agents/prompts + managed blocks
+  evals/        ← pack regression suite (NOT deployed to target repos)
+  scripts/  ci/  examples/
+
+.claude/        ← GENERATED (Claude Code reads this) — do not edit by hand
+  knowledge/  skills/  agents/
+
+docs/           ← GENERATED
+  index.html                ← Docs Explorer (hierarchy · graph · mind map · health)
+  docs-index.js             ← accumulated knowledge-graph index (skills maintain this — NEVER overwrite)
+  ai-forward-pack/          ← templates, scripts, pack docs
+
+tools/          ← sync-pack.ps1  package-pack.ps1  rebuild-overview.ps1
+web/            ← ai-forward-pack-overview.jsx (self-contained overview page with embedded download)
+```
+
+The **deployment map** (every source path → destination per tool) is the contract: `pack/adapters/INSTALL.md`.
+
+---
+
+## Key conventions
+
+### Pack update protocol
+When the pack changes, bump `revision` in `pack/adapters/INSTALL.md` frontmatter and update the `changes` list — this is the refresh guide for downstream consumers. The `changes` frontmatter (not a body diff) is what recipients read to know exactly what to re-copy and re-paste.
+
+### Managed blocks
+`pack/adapters/managed-blocks/CLAUDE.block.md` and `AGENTS.block.md` are appended to `CLAUDE.md` / `AGENTS.md` between `AI-FORWARD-PACK:BEGIN` / `AI-FORWARD-PACK:END` markers. On updates, replace the marked region **wholesale** — never merge line-by-line.
+
+### Knowledge doc → Copilot instructions wrapping
+Each `pack/knowledge/<name>.md` installs as `.github/instructions/<name>.instructions.md` by prepending `---` / `applyTo: "**"` / `---` frontmatter. Exception: `csharp-style-guide` uses `applyTo: "**/*.cs,**/*.csx"`. `FOUNDATION.md` is a provenance manifest — copy it but do **not** wrap it as an instruction.
+
+### Persona agent format
+- Claude Code agents (`adapters/claude-code/agents/`) carry `tools: [...]` in frontmatter.
+- When copying to Copilot (`.github/agents/<name>.agent.md`), **strip the `tools:` line** — Copilot ignores unknown tool names and silently falls back to all-tools, making the line misleading.
+- The `adapters/copilot/agents/*_agent.md` files already have no `tools:` line and drop into `.claude/agents/` unchanged — one source per persona, one frontmatter edit at the Copilot boundary.
+
+### Docs Explorer / knowledge graph
+- Every knowledge/content artifact carries YAML frontmatter: `id`, `type`, `owner`, typed links, `review-by`.
+- `docs/docs-index.js` is **derived and accumulated** — skills maintain it; never seed or overwrite it by hand (V10).
+- All graph mechanics go through `docs/ai-forward-pack/scripts/docs-graph.py` — never ad-hoc scripts (V18).
+- Material changes flag inbound neighbors `review-suggested`; sub-ADR decisions become linked decision notes in `docs/notes/`.
+
+### The 10 skills and their natural order
+```
+/collectknowledge → /adddomainexperts → /specify → /define-architecture → /design → /implement → /document
+                                                                                ↑
+                                                            /investigate  (whenever a defect appears)
+```
+`/adopt` onboards a brownfield repo; `/migrate` runs characterization-first refactors.
+Skills in `.claude/skills/` apply automatically by description in Claude Code; in Copilot they map to `.github/prompts/<name>.prompt.md`.
+
+### Spec structure
+`/specify` produces **one spec with three layers**: Functional (what & why), UX (how it works), UI (how it looks) — written bottom-up (UX before UI). Each absent layer is marked N/A with a reason, never silently dropped. The Archetype Signature (from the UI Archetype Grammar) is recorded in Part C of the spec.
+
+### Reasoning discipline
+All non-trivial work runs the Rigor Protocol (`.claude/knowledge/rigor-protocol.md`): map → interrogate → ground in evidence → disconfirm → converge, with a confidence label on every claim. The author never clears their own hard veto.

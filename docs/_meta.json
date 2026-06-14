@@ -1,0 +1,52 @@
+{
+  "generator": "/document (AI-Forward Pack)",
+  "generated": "2026-06-14",
+  "documentedCommit": "840c7c5028242dcf857b71f12acd7a469a66aef5",
+  "documentedCommitShort": "840c7c5",
+  "subject": "AI-Forward — pack source (pack/) + live dogfood install (.claude/, docs/)",
+  "surfaces": {
+    "markdownBundle": ["docs/architecture.md", "docs/index.md"],
+    "graphIndex": "docs/docs-index.js",
+    "docsExplorer": "docs/index.html",
+    "interactiveExplainer": "web/ai-forward-pack-explainer.html",
+    "downloadableOverview": "web/ai-forward-pack-overview.jsx"
+  },
+  "diagramFamilies": {
+    "component": "docs/architecture.md#component-map--boundaries",
+    "sequence": "docs/architecture.md#key-flow--the-sandbox--dogfood-loop-sequence",
+    "layered": "docs/architecture.md#layered-view-source--consumer",
+    "class": "docs/architecture.md#domain-model-class--the-ui-archetype-grammar"
+  },
+  "coverage": {
+    "publicCodeSurface": "no traditional doc-commented API; public surface is 3 PowerShell tools + docs-graph.py CLI",
+    "toolsDocumented": ["tools/sync-pack.ps1", "tools/package-pack.ps1", "tools/rebuild-overview.ps1", "docs/ai-forward-pack/scripts/docs-graph.py"],
+    "toolsCoveragePct": 100,
+    "knowledgeDocs": 19,
+    "skills": 10,
+    "agents": 23,
+    "uiArchetypesDocumented": 16,
+    "uiArchetypesWithMockups": 16
+  },
+  "confidence": {
+    "diagrams": "Verified — each node/edge traced to repo structure and tools/*.ps1",
+    "cliReference": "Verified — traced to docs-graph.py --help",
+    "explainerContent": "Verified — true to .claude/knowledge and .claude/skills",
+    "explainerRender": "Inferred — JS syntax checked; not opened in a live browser in this environment",
+    "mockups": "Inferred — illustrative renderings of each archetype's described behavior, not screenshots"
+  },
+  "findings": [
+    {
+      "id": "graph-empty",
+      "severity": "flagged",
+      "summary": "docs-graph.py inventory reports 0 artifacts: vendored knowledge docs lack frontmatter and docs/ai-forward-pack/** is excluded by design. This bundle's frontmatter'd files are the first graph nodes.",
+      "evidence": "docs-graph.py inventory -> artifacts: 0"
+    },
+    {
+      "id": "archetype-count",
+      "severity": "flagged",
+      "summary": "CLAUDE.md and ui-archetype-grammar.md say '18-archetype catalog'; ui-archetype-catalog.md enumerates 16 (A1-A4,B1-B4,C1,D1-D3,E1-E2,F1-F2). Docs reflect the actual 16; fix the wording at pack/ source.",
+      "evidence": "ui-archetype-catalog.md section count"
+    }
+  ],
+  "freshnessTrigger": "not yet installed — recommend docs-graph.py freshness --gate in CI (.github/workflows/docs.yml)"
+}
