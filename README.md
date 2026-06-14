@@ -37,11 +37,13 @@ ai-forward/
 │   └─ ai-forward-pack/   ← templates/ scripts/ + README/OVERVIEW/research-synthesis/INSTALL
 │
 ├─ tools/
-│   ├─ sync-pack.ps1      ← regenerate .claude/ + docs/ from pack/  (run after editing pack/)
-│   └─ package-pack.ps1   ← build dist/ai-forward-pack.zip for sharing
+│   ├─ sync-pack.ps1       ← regenerate .claude/ + docs/ from pack/  (run after editing pack/)
+│   ├─ package-pack.ps1    ← build dist/ai-forward-pack.zip for sharing
+│   └─ rebuild-overview.ps1 ← refresh the pack snapshot embedded in the overview .jsx
 │
 ├─ web/
-│   └─ ai-forward-pack-overview.jsx  ← interactive overview (a snapshot; not auto-rebuilt)
+│   └─ ai-forward-pack-overview.jsx  ← interactive overview with the whole pack embedded
+│                                       for download (refresh it with rebuild-overview.ps1)
 │
 ├─ CLAUDE.md              ← wiring that points Claude Code at the installed pack
 └─ LICENSE                ← Apache-2.0
@@ -88,6 +90,14 @@ Recipients drop the pack into their own repo by manual reconciliation — the de
 update procedure are in [`pack/adapters/INSTALL.md`](pack/adapters/INSTALL.md). (`tools/sync-pack.ps1`
 mirrors only the Claude Code surface needed *here*; the distributable in `pack/` carries the full
 Claude Code **and** Copilot wiring.)
+
+`web/ai-forward-pack-overview.jsx` is a self-contained overview page that carries the entire pack
+embedded for download. That snapshot doesn't track `pack/` edits on its own, so refresh it before
+sharing the page:
+
+```powershell
+pwsh tools/rebuild-overview.ps1   # re-zips pack/ and rewrites the embedded snapshot in place
+```
 
 ## License
 
