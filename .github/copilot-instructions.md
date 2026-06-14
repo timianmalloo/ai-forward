@@ -46,7 +46,7 @@ Run affected skill cases on every pack edit; run all cases on model-version chan
 ```
 pack/           ← SINGLE SOURCE OF TRUTH — edit here only
   knowledge/    ← 18 knowledge docs (reasoning spine + vendored foundation)
-  commands/     ← 10 skills (one SKILL.md each)
+  commands/     ← 12 skills (one SKILL.md each)
   templates/    ← 15 artifact templates
   adapters/     ← INSTALL.md + Claude Code agents + Copilot agents/prompts + managed blocks
   evals/        ← pack regression suite (NOT deployed to target repos)
@@ -90,14 +90,16 @@ Each `pack/knowledge/<name>.md` installs as `.github/instructions/<name>.instruc
 - All graph mechanics go through `docs/ai-forward-pack/scripts/docs-graph.py` — never ad-hoc scripts (V18).
 - Material changes flag inbound neighbors `review-suggested`; sub-ADR decisions become linked decision notes in `docs/notes/`.
 
-### The 10 skills and their natural order
+### The 12 skills and their natural order
 ```
 /collectknowledge → /adddomainexperts → /specify → /define-architecture → /design → /implement → /document
                                                                                 ↑
                                                             /investigate  (whenever a defect appears)
 ```
 `/adopt` onboards a brownfield repo; `/migrate` runs characterization-first refactors.
-Skills in `.claude/skills/` apply automatically by description in Claude Code; in Copilot they map to `.github/prompts/<name>.prompt.md`.
+`/updatepack` refreshes an installed pack from a local ai-forward clone; `/addpacktorepo` installs the pack into a new local repo by path.
+
+Skills in `.claude/skills/` apply automatically by description in Claude Code; in Copilot they are available as prompts in `.github/prompts/<name>.prompt.md`.
 
 ### Spec structure
 `/specify` produces **one spec with three layers**: Functional (what & why), UX (how it works), UI (how it looks) — written bottom-up (UX before UI). Each absent layer is marked N/A with a reason, never silently dropped. The Archetype Signature (from the UI Archetype Grammar) is recorded in Part C of the spec.

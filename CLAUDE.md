@@ -19,8 +19,9 @@ the Road) and the **AI-Forward Pack** on top of it. Honor them on every non-triv
 - **Personas (dual-mode):** author in Peer Mode, review in Adversary Mode; the author never
   clears its own hard veto. Roster + the operating standard (severity, veto-clears-when,
   conflict rule): `.claude/knowledge/persona-cards.md` and `.claude/knowledge/persona-audit.md`.
-- **Skills (10):** `/collectknowledge`, `/adddomainexperts`, `/specify`, `/define-architecture`,
-  `/design`, `/implement`, `/investigate`, `/document`, `/adopt`, `/migrate` live in
+- **Skills (12):** `/collectknowledge`, `/adddomainexperts`, `/specify`, `/define-architecture`,
+  `/design`, `/implement`, `/investigate`, `/document`, `/adopt`, `/migrate`, `/updatepack`,
+  `/addpacktorepo` live in
   `.claude/skills/`. Templates: `docs/ai-forward-pack/templates/`.
 - **Unfamiliar APIs/SDKs/MCP servers:** run the Spike Protocol (read the source, run a PoC)
   before depending on a contract — `.claude/knowledge/spike-protocol.md`.
