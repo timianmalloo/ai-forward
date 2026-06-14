@@ -1,16 +1,14 @@
 ---
 doc: INSTALL
 purpose: 'Manual reconciliation guide and refresh changelog. On a repo refresh, read `changes` below — it is the key guide: it lists exactly what to re-copy and re-paste since the previous revision, so you do not have to diff the whole tree.'
-bundle_version: '2026.06.14'
-revision: 2
+bundle_version: '2026.06.14.1'
+revision: 3
 released: '2026-06-14'
-counts: { lenses: 23, skills: 10, knowledge_docs: 18, templates: 15, scripts: 2 }
+counts: { lenses: 23, skills: 12, knowledge_docs: 18, templates: 15, scripts: 2 }
 refresh_protocol: 'Compare your repo last-applied revision to the `revision` above. If it is lower, apply each entry in `changes` in order — re-copy the listed `paths` to their mapped destinations (deployment map in the body), re-apply the Copilot frontmatter wraps, and where an entry `deploy` says RE-PASTE, replace the managed blocks wholesale between their markers. Never overwrite an accumulated docs/docs-index.js.'
 changes:
-  - { type: added, area: knowledge, paths: ['knowledge/ui-archetype-grammar.md', 'knowledge/ui-archetype-catalog.md'], deploy: 'copy both to .claude/knowledge/ AND wrap each as .github/instructions/<name>.instructions.md (applyTo all files)', summary: 'UI Archetype Grammar G1-G16 (a hardened two-layer grammar that selects a UI archetype - routing/temporal/data - as a determinism control for code generation) plus a 16-archetype catalog with exemplars, canonical Archetype Signatures, and model-agnostic codegen descriptors. Knowledge docs 16 to 18.' }
-  - { type: changed, area: knowledge, paths: ['knowledge/ui-interaction-design.md', 'knowledge/specification-standards.md'], deploy: 're-copy to .claude/knowledge/ and re-wrap the Copilot instructions' , summary: 'Cross-referenced the archetype grammar: the UI standard notes the grammar sits one level above it; spec standard S8 records the chosen Archetype Signature in Part C as the UI-layer selector.' }
-  - { type: changed, area: skill, paths: ['commands/specify/', 'commands/design/', 'commands/implement/', 'adapters/copilot/prompts/specify.prompt.md', 'adapters/copilot/prompts/design.prompt.md', 'adapters/copilot/prompts/implement.prompt.md'], deploy: 're-copy each SKILL.md to .claude/skills/<name>/ and each prompt to .github/prompts/', summary: '/specify identifies the nearest archetype and records its signature in Part C; /design resolves each facet concrete against tokens/states; /implement builds to the signature facet rules (red-first state/a11y/perf tests) - so an agent reaches for the right archetype instead of a generic dashboard.' }
-  - { type: changed, area: managed-block, paths: ['adapters/managed-blocks/CLAUDE.block.md', 'adapters/managed-blocks/AGENTS.block.md'], deploy: 'RE-PASTE both blocks wholesale between their BEGIN/END markers', summary: 'Added a UI-archetype line: for a user-facing UI, select the archetype as a determinism control before generating and build to its facet rules.' }
+  - { type: added, area: skill, paths: ['commands/updatepack/SKILL.md', 'adapters/copilot/prompts/updatepack.prompt.md'], deploy: 'copy SKILL.md to .claude/skills/updatepack/SKILL.md and prompt to .github/prompts/updatepack.prompt.md', summary: 'New /updatepack skill — run from a repo with the pack installed to pull in the latest revision from a local ai-forward clone; reads both INSTALL.md revisions, applies only the changelog delta (never diffs the tree), shows a tabular action summary, and offers to commit and push.' }
+  - { type: added, area: skill, paths: ['commands/addpacktorepo/SKILL.md', 'adapters/copilot/prompts/addpacktorepo.prompt.md'], deploy: 'copy SKILL.md to .claude/skills/addpacktorepo/SKILL.md and prompt to .github/prompts/addpacktorepo.prompt.md', summary: 'New /addpacktorepo skill — run from the AI-Forward repo to install the pack into a target local repo by path; recces the target (language, existing tooling, existing docs), applies the full deployment map, produces a tabular summary of every artifact installed and what it does, links to the explainer, and offers to commit and push.' }
 ---
 
 ## Changelog — what changed since the last version
@@ -25,6 +23,8 @@ changes:
 So at any moment: the frontmatter `changes` = the latest delta (the refresh guide), and this section = the full rolling history.
 
 ### Prior revisions
+**Revision 2 — 2026-06-14.** UI Archetype Grammar G1-G16 + 16-archetype catalog (knowledge docs 16–18); UI Interaction Design and Specification Standards cross-referenced to the grammar; /specify, /design, /implement updated to identify and build to the archetype; managed blocks RE-PASTED with the archetype-selection line.
+
 **Revision 1 — 2026-06-13 (baseline; changelog tracking began).** Specification Standards S1-S18 + three-layer spec template + UX Researcher/IA persona (roster to 23); UI & Interaction Design Standard U1-U20; threat-model + privacy-review templates (to 15); /adopt + /migrate skills (to 10); foundation-check.py, CI graph-health workflow, evals harness; tool-parity (orchestrator names both Claude Code subagent and Copilot inline-turn; INSTALL 1.2 strip-`tools:`-when-deploying-to-Copilot, 1.3 fit-for-both). Managed blocks RE-PASTED (spec + UI lines). For a repo predating changelog tracking, do one full reconciliation against the deployment map, then track `revision` from here.
 
 ---
@@ -107,7 +107,9 @@ your-repo/
    │  ├─ design/SKILL.md
    │  ├─ implement/SKILL.md
    │  ├─ investigate/SKILL.md
-   │  └─ adddomainexperts/SKILL.md   # tailors the roster to the project's domain
+   │  ├─ adddomainexperts/SKILL.md   # tailors the roster to the project's domain
+   │  ├─ updatepack/SKILL.md         # update an installed pack from a local ai-forward clone
+   │  └─ addpacktorepo/SKILL.md      # install the pack into a new local repo by path
    ├─ agents/
    │  ├─ orchestrator.md
    │  ├─ product-strategist.md
@@ -156,7 +158,9 @@ your-repo/
    │  ├─ investigate.prompt.md
    │  ├─ collectknowledge.prompt.md
    │  ├─ adddomainexperts.prompt.md
-   │  └─ document.prompt.md
+   │  ├─ document.prompt.md
+   │  ├─ updatepack.prompt.md
+   │  └─ addpacktorepo.prompt.md
    └─ agents/
       ├─ orchestrator.agent.md
       ├─ product-strategist.agent.md
