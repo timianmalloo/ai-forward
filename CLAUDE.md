@@ -31,7 +31,7 @@ the Road) and the **AI-Forward Pack** on top of it. Honor them on every non-triv
 - **UI:** whenever the work has a user-facing interface (any medium), the UI & Interaction
 - **UI archetype:** for a user-facing UI, select the **archetype** (routing/temporal/data) as a
   determinism control before generating — `.claude/knowledge/ui-archetype-grammar.md` (G1–G16) + the
-  18-archetype catalog; record the Archetype Signature in the spec, build to its facet rules.
+  16-archetype catalog; record the Archetype Signature in the spec, build to its facet rules.
   Design Standard governs excellence — token systems, complete component states, HAX + Shape-of-AI
   patterns for AI UIs, WCAG 2.2 AA — `.claude/knowledge/ui-interaction-design.md`; the UX &
   Accessibility lens holds the veto.

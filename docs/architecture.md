@@ -241,7 +241,7 @@ This repo has no traditional doc-commented API. Its public, invocable surface is
 ## Flagged risks & residual unknowns
 
 - **`[Flagged]` Empty knowledge graph.** `docs-graph.py inventory` reports `0` artifacts because the vendored knowledge docs lack frontmatter and `docs/ai-forward-pack/**` is excluded from the graph by design. The Docs Explorer was non-rendering before this run (no `docs/docs-index.js`). This bundle's frontmatter'd files (`architecture.md`, `index.md`) are the first graph nodes; bringing the *knowledge* docs into the graph would require adding frontmatter to the **`pack/` source** and re-syncing — a pack change, out of scope for this documentation pass.
-- **`[Flagged]` Archetype count discrepancy.** `CLAUDE.md` and `ui-archetype-grammar.md` reference an **"18-archetype catalog"**, but `ui-archetype-catalog.md` enumerates **16** (A1–A4, B1–B4, C1, D1–D3, E1–E2, F1–F2). The documentation (and the explainer) reflect the catalog's actual 16; the "18" wording in `CLAUDE.md`/grammar is the stale number and should be corrected at the `pack/` source. `[Verified: ui-archetype-catalog.md count]`
+- **`[Resolved]` Archetype count corrected (16, not 18).** `CLAUDE.md`, the managed blocks (`CLAUDE.block.md`, `AGENTS.block.md`), `pack/OVERVIEW.md`, `pack/README.md`, `pack/adapters/INSTALL.md`, and `web/ai-forward-pack-overview.jsx` previously said **"18-archetype catalog"**, but `ui-archetype-catalog.md` enumerates **16** (A1–A4, B1–B4, C1, D1–D3, E1–E2, F1–F2). All source occurrences were corrected to 16 and the install re-synced from `pack/` (the grammar doc itself never stated a count). `[Verified: ui-archetype-catalog.md count = 16; grep shows no remaining "18-archetype" in source]`
 - **`[Inferred]` Browser-render verification of the explainer.** `web/ai-forward-pack-explainer.html` passed a JS syntax check and mirrors the proven `docs/index.html` (React UMD + htm) pattern, but was not opened in a live browser in this environment. Recommend a quick visual pass before sharing.
 
 ## Status & next action
@@ -249,8 +249,8 @@ This repo has no traditional doc-commented API. Its public, invocable surface is
 | | |
 |---|---|
 | **Completed** | Architecture overview + 4 diagram families; tool/CLI reference; interactive explainer; MoC index; `_meta.json`; `docs-index.js` regenerated; findings recorded. |
-| **Remaining** | (At pack source, optional) frontmatter on knowledge docs to populate the graph; correct the 16-vs-18 archetype wording in `CLAUDE.md` + grammar; live browser pass of the explainer. |
-| **Best next action** | Correct the "18-archetype" wording in `pack/` and re-sync, so source and docs agree. |
+| **Remaining** | (At pack source, optional) frontmatter on knowledge docs to populate the graph; live browser pass of the explainer. |
+| **Best next action** | (Optional) add frontmatter to the knowledge docs at `pack/` source so they enter the knowledge graph. |
 
 ## Gate record
 

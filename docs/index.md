@@ -34,7 +34,7 @@ repository — the development home of the **AI-Forward Pack** and a live instal
 
 ## Architecture of record
 
-- **[Architecture Overview](architecture.md)** — the source→build→install→consumer structure, the four diagram families (component, sequence, layered, class), and the tool/CLI reference. Includes the recorded findings (empty graph, the 16-vs-18 archetype discrepancy).
+- **[Architecture Overview](architecture.md)** — the source→build→install→consumer structure, the four diagram families (component, sequence, layered, class), and the tool/CLI reference. Includes the recorded findings (empty graph; the archetype count corrected to 16).
 
 ## The pack itself (payload docs)
 

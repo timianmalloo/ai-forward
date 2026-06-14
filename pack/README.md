@@ -88,7 +88,7 @@ ai-forward-pack/
 │  ├─ knowledge-visualization.md     ← the knowledge graph + Docs Explorer standard (V1–V18): frontmatter-as-record, derived index, three projections, ownership/freshness SLAs, glossary + relation registry, graph-aware grounding, change-impact propagation, decision notes, the docs script bundle
 │  ├─ specification-standards.md     ← spec standards (S1–S18): the three layers — Functional (ISO 29148 + Gherkin + ISO 25010) / UX (Garrett Structure+Skeleton: IA, flows, wireframes) / UI — their bottom-up dependency and separate owners
 │  ├─ ui-archetype-grammar.md        ← UI Archetype Grammar (G1–G16): a hardened two-layer grammar that selects a UI's archetype (routing/temporal/data) as a determinism control for code generation; composes with U1–U20
-│  ├─ ui-archetype-catalog.md        ← 18 UI/UX archetypes with exemplars, canonical Archetype Signatures, and model-agnostic codegen descriptors
+│  ├─ ui-archetype-catalog.md        ← 16 UI/UX archetypes with exemplars, canonical Archetype Signatures, and model-agnostic codegen descriptors
 │  ├─ ui-interaction-design.md       ← UI & interaction design standard (U1–U20): token systems, the Elegance-Formula craft, HAX 18 + Shape-of-AI patterns for AI UIs, WCAG 2.2 AA, per-medium excellence
 │  ├─ FOUNDATION.md                  ← provenance manifest for the 7 vendored base-pack docs (normalized hashes, known divergences)
 │  └─ + 7 vendored Agent-Knowledge-Pack foundation docs (so the bundle is self-contained):

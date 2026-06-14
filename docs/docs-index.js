@@ -1,7 +1,7 @@
 // Derived from artifact frontmatter by scripts/docs-graph.py — DO NOT hand-edit (frontmatter wins; see knowledge-visualization.md V2/V18).
 window.DOCS_INDEX = {
   "project": "AI-Forward",
-  "generated": "2026-06-14T22:31:54Z",
+  "generated": "2026-06-14T22:49:56Z",
   "generator": "docs-graph.py derive",
   "artifacts": [
     {

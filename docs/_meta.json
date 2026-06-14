@@ -43,9 +43,9 @@
     },
     {
       "id": "archetype-count",
-      "severity": "flagged",
-      "summary": "CLAUDE.md and ui-archetype-grammar.md say '18-archetype catalog'; ui-archetype-catalog.md enumerates 16 (A1-A4,B1-B4,C1,D1-D3,E1-E2,F1-F2). Docs reflect the actual 16; fix the wording at pack/ source.",
-      "evidence": "ui-archetype-catalog.md section count"
+      "severity": "resolved",
+      "summary": "Previously CLAUDE.md, the managed blocks, pack/OVERVIEW.md, pack/README.md, pack/adapters/INSTALL.md, and web/ai-forward-pack-overview.jsx said '18-archetype catalog'; ui-archetype-catalog.md enumerates 16 (A1-A4,B1-B4,C1,D1-D3,E1-E2,F1-F2). All source occurrences corrected to 16 and install re-synced from pack/.",
+      "evidence": "ui-archetype-catalog.md count = 16; grep shows no remaining '18-archetype' in source"
     }
   ],
   "freshnessTrigger": "not yet installed — recommend docs-graph.py freshness --gate in CI (.github/workflows/docs.yml)"
