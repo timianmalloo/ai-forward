@@ -48,16 +48,16 @@ The reasoning behind every seat — and the seats deliberately *not* added — i
 
 **The system tests itself.** `evals/` is the pack's own regression suite — golden tasks per skill with objective trajectory assertions (the artifact exists, frontmatter valid, the FMA/STRIDE/phasing fingerprints present, `docs-graph.py validate` clean); skills are prompt-code and are tested like it. `ci/docs-health.yml` is a ready-to-copy GitHub Actions workflow gating PRs on graph health, freshness, and vendored-foundation drift. `knowledge/FOUNDATION.md` + `scripts/foundation-check.py` make divergence between the vendored base docs and your canonical base pack visible (normalized hashes; known intentional divergences cataloged, currently three pending back-port). `docs-graph.py snapshot` appends the governance-health trend every /document run.
 
-**The artifacts.** 15 templates in `templates/` (spec, architecture, design, ADR, investigation, proof-pack, domain-expert, knowledge-base, documentation-bundle, the **glossary**, the **decision note**, the **threat model** and **privacy review** rollups, the self-contained doc-viewer HTML, and the **Docs Explorer** HTML that becomes `docs/index.html`). The artifact templates all carry the V2 frontmatter header. A worked example lives in `examples/finance-repo/`.
+**The artifacts.** 16 templates in `templates/` (spec, architecture, design, ADR, investigation, proof-pack, domain-expert, knowledge-base, documentation-bundle, the **glossary**, the **decision note**, the **project-memory** ledger, the **threat model** and **privacy review** rollups, the self-contained doc-viewer HTML, and the **Docs Explorer** HTML that becomes `docs/index.html`). The artifact templates all carry the V2 frontmatter header. A worked example lives in `examples/finance-repo/`.
 
 **The foundation (vendored, so the bundle is self-contained).** The Agent Knowledge Pack docs this pack builds on ship inside `knowledge/` and install alongside everything else: the **Body of Knowledge**, the **Rules of the Road**, the **Persona Catalog**, the **Layered-Optimized Architecture**, **Engineering Governance**, the **Testing Strategy**, and the **C# Style Guide**. They're heavily referenced throughout the skills and personas; bundling them means the pack works in a repo that doesn't already have the base pack. (They're *copies* — if you maintain the base pack separately, refresh them when it changes.)
 
 ```
 ai-forward-pack/
 ├─ README.md · research-synthesis.md · OVERVIEW.md
-├─ knowledge/   18 docs (+FOUNDATION manifest) — 11 reasoning + 7 vendored Agent-Knowledge-Pack foundation (BoK, Rules of the Road, Persona Catalog, LOA, Governance, Testing Strategy, C# Style)
+├─ knowledge/   20 docs (+FOUNDATION manifest) — 13 reasoning + 7 vendored Agent-Knowledge-Pack foundation (BoK, Rules of the Road, Persona Catalog, LOA, Governance, Testing Strategy, C# Style)
 ├─ commands/    (the 13 skills, one SKILL.md each)
-├─ templates/   (the 15 artifact templates)
+├─ templates/   (the 16 artifact templates)
 ├─ adapters/    (INSTALL.md, claude-code/agents, copilot/agents, copilot/prompts)
 └─ examples/    (finance-repo — a worked /adddomainexperts result)
 ```

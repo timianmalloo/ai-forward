@@ -1,0 +1,9 @@
+{
+  "skill": "pack-doctor",
+  "prompt": "Run the install-health doctor against the AI-Forward repo itself (a healthy install) and confirm it reports all-PASS with exit 0. (Run in an AI-Forward clone workspace.)",
+  "setup": [],
+  "assertions": [
+    { "type": "cmd-exit", "cmd": ["python3", "docs/ai-forward-pack/scripts/pack-doctor.py", "--root", "."], "exit": 0 }
+  ],
+  "id": "pack-doctor-01"
+}

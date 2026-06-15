@@ -1,0 +1,19 @@
+{
+  "skill": "scrub",
+  "prompt": "Run the scrub first-pass over a seeded Markdown file containing an email and a GitHub token; redact in place and confirm the raw secret is gone. (Run in an AI-Forward clone workspace.)",
+  "setup": [
+    {
+      "path": "tmp-scrub-fixture.md",
+      "content": "# Fixture\nContact alice@example.com about the deploy.\nToken ghp_ABCDEFGHIJKLMNOPQRSTUVWXYZ012345 must not leak.\nA normal sha 3f9a1c2b is fine.\n"
+    }
+  ],
+  "assertions": [
+    { "type": "cmd-exit", "cmd": ["python3", "pack/scripts/scrub.py", "tmp-scrub-fixture.md", "--write"], "exit": 0 },
+    { "type": "grep", "path": "tmp-scrub-fixture.md", "pattern": "\\[REDACTED:secret\\]" },
+    { "type": "grep", "path": "tmp-scrub-fixture.md", "pattern": "\\[REDACTED:email\\]" },
+    { "type": "not-grep", "path": "tmp-scrub-fixture.md", "pattern": "ghp_ABCDEFGHIJKLMNOPQRSTUVWXYZ012345" },
+    { "type": "not-grep", "path": "tmp-scrub-fixture.md", "pattern": "alice@example.com" },
+    { "type": "grep", "path": "tmp-scrub-fixture.md", "pattern": "3f9a1c2b" }
+  ],
+  "id": "scrub-01"
+}

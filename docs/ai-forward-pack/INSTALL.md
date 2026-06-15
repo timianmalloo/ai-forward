@@ -1,15 +1,18 @@
 ---
 doc: INSTALL
 purpose: 'Manual reconciliation guide and refresh changelog. On a repo refresh, read `changes` below — it is the key guide: it lists exactly what to re-copy and re-paste since the previous revision, so you do not have to diff the whole tree.'
-bundle_version: '2026.06.14.5'
-revision: 7
+bundle_version: '2026.06.14.6'
+revision: 8
 released: '2026-06-14'
-counts: { lenses: 23, skills: 13, knowledge_docs: 18, templates: 15, scripts: 2 }
+counts: { lenses: 23, skills: 13, knowledge_docs: 20, templates: 16, scripts: 4 }
 refresh_protocol: 'Compare your repo last-applied revision to the `revision` above. If it is lower, apply each entry in `changes` in order — re-copy the listed `paths` to their mapped destinations (deployment map in the body), re-apply the Copilot frontmatter wraps, and where an entry `deploy` says RE-PASTE, replace the managed blocks wholesale between their markers. Never overwrite an accumulated docs/docs-index.js.'
 changes:
-  - { type: added, area: skill, paths: ['commands/extendaibundle/SKILL.md', 'adapters/copilot/prompts/extendaibundle.prompt.md'], deploy: 'copy SKILL.md to .claude/skills/extendaibundle/SKILL.md and the prompt to .github/prompts/extendaibundle.prompt.md', summary: 'New /extendaibundle pack-lifecycle skill — extend the pack itself from a prose prompt, running collectknowledge→specify→design→implement compressed for pack work (Markdown + scripts). It scaffolds both tool surfaces via tools/new-capability.py, enforces the zero-drift invariants, and proves consistency with tools/verify-bundle.ps1 (BUNDLE CONSISTENT). Skills 12→13; the third pack-lifecycle skill alongside /addpacktorepo and /updatepack.' }
-  - { type: changed, area: skill, paths: ['commands/specify/SKILL.md', 'adapters/copilot/prompts/specify.prompt.md'], deploy: 're-copy the SKILL.md to .claude/skills/specify/ and the prompt to .github/prompts/', summary: 'When the spec needs a UI and the user names no UX template, /specify now reasons over the jobs-to-be-done and auto-selects the best-match UI archetype from ui-archetype-catalog.md (A temporal / B operational / C spatial / D feed / E authoring), records the Archetype Signature + JTBD rationale in Part C, and announces the choice in the summary so the user can confirm or override.' }
-  - { type: changed, area: template, paths: ['templates/spec.template.md'], deploy: 're-copy to docs/ai-forward-pack/templates/', summary: 'Part C gained a "UI Archetype Signature (the determinism selector)" subsection recording the chosen archetype, its signature, and whether it was user-specified or auto-selected from the JTBD (with rationale).' }
+  - { type: added, area: script, paths: ['scripts/pack-doctor.py'], deploy: 'copy to docs/ai-forward-pack/scripts/ (deployable; runs in a target repo)', summary: 'New install-health doctor (suggestion 2 from the squad comparison) — reports an installed repo''s revision, both tool surfaces, managed-block integrity, and graph health (composing docs-graph.py validate/freshness) as PASS/WARN/FAIL with fixes; exit 1 on any FAIL. Distinct from the source-only check-consistency.py. Scripts 2→4.' }
+  - { type: added, area: script, paths: ['scripts/scrub.py'], deploy: 'copy to docs/ai-forward-pack/scripts/ (deployable)', summary: 'New stdlib regex PII/secret first-pass redactor (suggestion 4) — emails + common secret shapes in Markdown, with --check/--write/--json; never emits a raw secret, atomic in-place write, idempotent. Explicitly NOT CI-grade — points at gitleaks/Presidio. The on-brand analogue of squad''s scrub-emails.' }
+  - { type: added, area: knowledge, paths: ['knowledge/responsible-ai-policy.md'], deploy: 'copy to .claude/knowledge/ AND wrap as .github/instructions/responsible-ai-policy.instructions.md (applyTo all files)', summary: 'New committed Responsible-AI Policy (suggestion 4) — a crosswalk mapping Microsoft RAI principles + NIST AI RMF functions to the pack''s EXISTING enforcing personas/templates/gates (no new control invented); names the PII/secret scrub + CI tools. Knowledge docs 18→19.' }
+  - { type: added, area: knowledge, paths: ['knowledge/project-memory-and-obsidian.md'], deploy: 'copy to .claude/knowledge/ AND wrap as .github/instructions/project-memory-and-obsidian.instructions.md (applyTo all files)', summary: 'New Project Memory & Continuity doc (suggestion 3) — defines project memory as the committed knowledge graph + a rolling docs/project-memory.md ledger skills read at grounding and append at convergence; resolves the Obsidian question: Obsidian is an OPTIONAL lens (docs/ is already a valid Obsidian vault), never a required dependency. Knowledge docs 19→20.' }
+  - { type: added, area: template, paths: ['templates/project-memory.template.md'], deploy: 'copy to docs/ai-forward-pack/templates/', summary: 'New project-memory ledger template (suggestion 3) — the append-only, graph-linked docs/project-memory.md. Templates 15→16.' }
+  - { type: added, area: tooling, paths: ['../tools/aiforward.py'], deploy: 'source-repo only — NOT deployed (a pack-developer CLI in tools/, like sync-pack.ps1/verify-bundle.ps1)', summary: 'New aiforward developer CLI (suggestion 1) — a stdlib Facade dispatching to the existing scripts (verify/sync/check/new/doctor/graph/scrub) under one --help, propagating child exit codes. Not counted/deployed (tools/, source-repo convenience).' }
 ---
 
 ## Changelog — what changed since the last version
@@ -24,6 +27,8 @@ changes:
 So at any moment: the frontmatter `changes` = the latest delta (the refresh guide), and this section = the full rolling history.
 
 ### Prior revisions
+**Revision 7 — 2026-06-14.** Added /extendaibundle (the 13th skill — extend the pack from a prose prompt, scaffolded by new-capability.py, proven by verify-bundle.ps1); /specify gained JTBD-based UX-archetype auto-selection (records the signature + rationale in spec Part C, announces it in the summary); spec template gained the Archetype Signature subsection.
+
 **Revision 6 — 2026-06-14.** Both pack-lifecycle skills (/addpacktorepo, /updatepack) gained an explicit Modes section — a dry-run/preview that writes nothing and a stated idempotency contract; /addpacktorepo links the explainer's GitHub Pages URL with the local file as offline fallback.
 
 **Revision 5 — 2026-06-14.** Hardened the two pack-lifecycle skills: /addpacktorepo resolves the pack source explicitly (current repo → explicit path → AI_FORWARD_PACK env → sibling ai-forward clone) like /updatepack, so it is no longer broken when invoked from a repo with no pack/ tree; both gained a Documentation & discoverability note explaining why a pack-lifecycle skill writes no knowledge-graph artifact.
