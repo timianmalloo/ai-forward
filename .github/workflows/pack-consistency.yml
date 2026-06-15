@@ -1,0 +1,51 @@
+# Pack-source consistency gate for the AI-Forward repo ITSELF (not deployed to targets).
+# Catches count/skill-list drift, vendored-foundation drift, and malformed eval cases
+# before they merge. The deployed graph-health workflow is pack/ci/docs-health.yml.
+name: pack-consistency
+on:
+  push:
+    branches: [main]
+  pull_request:
+    paths:
+      - "pack/**"
+      - "tools/**"
+      - "README.md"
+      - "CLAUDE.md"
+      - "AGENTS.md"
+      - "web/**"
+      - ".github/copilot-instructions.md"
+  workflow_dispatch:
+
+jobs:
+  consistency:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.x" }
+
+      # Documented counts + skill/prompt parity must match the filesystem.
+      - name: Count & skill-list consistency
+        run: python3 tools/check-consistency.py
+
+      # Uncatalogued edits to the vendored foundation docs.
+      - name: Vendored-foundation drift
+        run: python3 pack/scripts/foundation-check.py
+
+      # Every eval case is valid JSON with compilable regex assertions.
+      - name: Eval cases well-formed
+        run: |
+          python3 - <<'PY'
+          import glob, json, re, sys
+          bad = 0
+          for f in sorted(glob.glob("pack/evals/cases/*.json")):
+              try:
+                  case = json.load(open(f, encoding="utf-8"))
+                  for a in case.get("assertions", []):
+                      if "pattern" in a:
+                          re.compile(a["pattern"])
+              except Exception as e:
+                  print(f"  - {f}: {e}"); bad += 1
+          print(f"{len(glob.glob('pack/evals/cases/*.json'))} eval cases checked")
+          sys.exit(1 if bad else 0)
+          PY

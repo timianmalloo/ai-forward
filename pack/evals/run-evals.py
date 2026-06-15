@@ -16,8 +16,12 @@ Assertion types (all run against --workspace):
   {"type":"cmd-exit","cmd":["python3","docs/ai-forward-pack/scripts/docs-graph.py","validate"],"exit":0}
 
 Flow per case: (1) `--setup` seeds the workspace; (2) YOU run the skill against it (paste
-case["prompt"] into Claude Code / Copilot, or wire --exec to a headless CLI); (3) `--check`
-evaluates assertions. CI runs --check over recorded workspaces. Exit 0 = all pass.
+case["prompt"] into Claude Code / Copilot); (3) `--check` evaluates assertions. Or run all
+three in one pass with `--exec "<command>"`, which seeds, invokes a headless agent CLI, then
+checks. The command may use `{workspace}` / `{prompt}` placeholders and also receives the env
+vars `AIF_EVAL_WORKSPACE`, `AIF_EVAL_PROMPT`, `AIF_EVAL_CASE` (use the env for the prompt to
+avoid shell-quoting issues). With `--exec --cases`, each case runs in its own
+`<workspace>/<id>` subdirectory. CI runs --check (or --exec) over workspaces. Exit 0 = all pass.
 """
 import argparse, importlib.util, json, os, re, subprocess, sys
 
@@ -58,6 +62,22 @@ def check(case, ws):
         except Exception as e: fails.append(f"{t}: error {e}")
     return fails
 
+def seed(case, ws):
+    for s in case.get("setup",[]):
+        p=os.path.join(ws,s["path"]); os.makedirs(os.path.dirname(p) or ".",exist_ok=True)
+        open(p,"w",encoding="utf-8").write(s["content"])
+
+def run_exec(case, ws, template):
+    os.makedirs(ws, exist_ok=True)
+    seed(case, ws)
+    cmd=template.replace("{workspace}", ws).replace("{prompt}", case["prompt"])
+    env=dict(os.environ, AIF_EVAL_WORKSPACE=ws, AIF_EVAL_PROMPT=case["prompt"], AIF_EVAL_CASE=case["id"])
+    print(f"exec: {case['id']} -> {ws}")
+    r=subprocess.run(cmd, shell=True, env=env)
+    fails=check(case, ws)
+    if r.returncode!=0: fails.insert(0, f"exec command returned {r.returncode}")
+    return fails
+
 def main():
     ap=argparse.ArgumentParser()
     ap.add_argument("--cases", default=os.path.join(os.path.dirname(os.path.abspath(__file__)),"cases"))
@@ -65,16 +85,22 @@ def main():
     ap.add_argument("--workspace", required=True)
     ap.add_argument("--setup", action="store_true", help="seed workspace from case setup, then exit")
     ap.add_argument("--check", action="store_true", help="evaluate assertions")
+    ap.add_argument("--exec", default=None, metavar="CMD",
+                    help="seed, run CMD (a headless agent; {workspace}/{prompt} + AIF_EVAL_* env), then check")
     args=ap.parse_args()
     files=[args.case] if args.case else sorted(
         os.path.join(args.cases,f) for f in os.listdir(args.cases) if f.endswith(".json"))
     total_fail=0
     for cf in files:
         case=json.load(open(cf,encoding="utf-8"))
+        if args.exec:
+            ws=args.workspace if args.case else os.path.join(args.workspace, case["id"])
+            fails=run_exec(case, ws, args.exec)
+            print(f"{'PASS' if not fails else 'FAIL'}  {case['id']}" + ("" if not fails else "\n  - "+"\n  - ".join(fails)))
+            total_fail+=len(fails)
+            continue
         if args.setup:
-            for s in case.get("setup",[]):
-                p=os.path.join(args.workspace,s["path"]); os.makedirs(os.path.dirname(p),exist_ok=True)
-                open(p,"w",encoding="utf-8").write(s["content"])
+            seed(case, args.workspace)
             print(f"setup: {case['id']} -> {args.workspace}")
             print(f"PROMPT for the agent:\n{case['prompt']}\n")
         if args.check:

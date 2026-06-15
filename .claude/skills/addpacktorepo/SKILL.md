@@ -27,6 +27,10 @@ If none yields a valid path containing `pack/adapters/INSTALL.md`, ask the user 
 
 Path to the **target** repository (`$ARGUMENTS` or as part of the user's message). The path must be a local, accessible directory containing a Git repository (has a `.git/` directory). If the path is missing, invalid, or points to a non-Git directory, ask the user before proceeding. The target must be different from the resolved pack source.
 
+## Modes — dry-run & idempotency
+- **Dry-run (preview).** If the request contains `dry run`, `--dry-run`, `preview`, or `what would change`, run Stages 0–2 and produce the full **install summary table** (Stage 5) **without writing, staging, committing, or pushing anything** — then state it was a preview and how to apply for real. The commit/push step is *always* confirmed regardless of mode; dry-run additionally suppresses every file write.
+- **Idempotent by construction.** Re-running is safe. An already-installed target (it has `docs/ai-forward-pack/INSTALL.md`) routes to `/updatepack` rather than re-stamping. Otherwise every action is a **wholesale** copy or a wholesale managed-block re-paste between markers — never an append — so re-running over a partial or interrupted install completes it without duplicating a managed block or clobbering an accumulated `docs/docs-index.js` or a pre-existing `docs/index.html`.
+
 ## Stages
 
 **Stage 0 — interdict the rush.** Do not copy files before reading the target. Two failure modes: (1) overwriting repo-specific customizations in CLAUDE.md, AGENTS.md, or an existing `.claude/` setup; (2) a technically-correct but contextually-wrong install (e.g., installing the full C# knowledge set into a Python repo). The recon stage prevents both. The Release Engineer holds a hard veto on any file operation that would destroy existing content without explicit user consent.
@@ -124,7 +128,7 @@ After the table, output:
 > **Pack installed at revision `<N>` (`<bundle_version>`, released `<date>`).**
 >
 > **Learn more:**
-> - **Interactive explainer** (skill map, persona roster, architecture overview): `<pack-source>/web/ai-forward-pack-explainer.html` — open it from the AI-Forward repo (the explainer is not deployed into target repos).
+> - **Interactive explainer** (skill map, persona roster, architecture overview): **https://timianmalloo.github.io/ai-forward/** (published to GitHub Pages from the AI-Forward repo). Offline fallback: open `<pack-source>/web/ai-forward-pack-explainer.html` from the clone (the explainer is not copied into target repos).
 > - **OVERVIEW** (one-page pack summary): `docs/ai-forward-pack/OVERVIEW.md` in the target repo.
 > - **Installation guide & deployment map**: `docs/ai-forward-pack/INSTALL.md` in the target repo.
 > - **Docs Explorer** (knowledge graph browser): `docs/index.html` — populated after the first skill run.
@@ -154,5 +158,6 @@ Unlike the workflow skills, this is a **pack-lifecycle skill**: it installs the 
 - [ ] C# knowledge wrap scoped to `**/*.cs,**/*.csx` only when C# files are present.
 - [ ] Summary table complete; docs and explainer links provided.
 - [ ] Commit offered with exact proposed message; user decision honoured.
+- [ ] Dry-run requests produced the install table with zero writes; a normal run is idempotent (re-runnable over a partial install without duplicate blocks; an already-installed target routes to `/updatepack`).
 
 **Handoff:** direct the user to `/adopt` as the immediate next step — it recovers the existing architecture into the knowledge graph and sets the Docs Explorer baseline.

@@ -1,13 +1,13 @@
 ---
 doc: INSTALL
 purpose: 'Manual reconciliation guide and refresh changelog. On a repo refresh, read `changes` below — it is the key guide: it lists exactly what to re-copy and re-paste since the previous revision, so you do not have to diff the whole tree.'
-bundle_version: '2026.06.14.3'
-revision: 5
+bundle_version: '2026.06.14.4'
+revision: 6
 released: '2026-06-14'
 counts: { lenses: 23, skills: 12, knowledge_docs: 18, templates: 15, scripts: 2 }
 refresh_protocol: 'Compare your repo last-applied revision to the `revision` above. If it is lower, apply each entry in `changes` in order — re-copy the listed `paths` to their mapped destinations (deployment map in the body), re-apply the Copilot frontmatter wraps, and where an entry `deploy` says RE-PASTE, replace the managed blocks wholesale between their markers. Never overwrite an accumulated docs/docs-index.js.'
 changes:
-  - { type: changed, area: skill, paths: ['commands/addpacktorepo/SKILL.md', 'commands/updatepack/SKILL.md', 'adapters/copilot/prompts/addpacktorepo.prompt.md'], deploy: 're-copy each SKILL.md to .claude/skills/<name>/ and the prompt to .github/prompts/', summary: 'Hardened the two pack-lifecycle skills: /addpacktorepo now resolves the pack source explicitly (current repo → explicit path → AI_FORWARD_PACK env → sibling ai-forward clone) the same way /updatepack does, so it is no longer broken when invoked from a repo that has no pack/ tree; both skills gained a Documentation & discoverability note explaining why a pack-lifecycle skill writes no knowledge-graph artifact.' }
+  - { type: changed, area: skill, paths: ['commands/addpacktorepo/SKILL.md', 'commands/updatepack/SKILL.md', 'adapters/copilot/prompts/addpacktorepo.prompt.md', 'adapters/copilot/prompts/updatepack.prompt.md'], deploy: 're-copy each SKILL.md to .claude/skills/<name>/ and each prompt to .github/prompts/', summary: 'Both pack-lifecycle skills gained an explicit Modes section: a dry-run/preview (run OPEN–INTERROGATE, emit the action table, write nothing) and a stated idempotency contract (wholesale copies + wholesale managed-block re-pastes, never appends; re-runnable; revision never advances past source). /addpacktorepo now links the explainer at its GitHub Pages URL (https://timianmalloo.github.io/ai-forward/) with the local file as offline fallback.' }
 ---
 
 ## Changelog — what changed since the last version
@@ -22,6 +22,8 @@ changes:
 So at any moment: the frontmatter `changes` = the latest delta (the refresh guide), and this section = the full rolling history.
 
 ### Prior revisions
+**Revision 5 — 2026-06-14.** Hardened the two pack-lifecycle skills: /addpacktorepo resolves the pack source explicitly (current repo → explicit path → AI_FORWARD_PACK env → sibling ai-forward clone) like /updatepack, so it is no longer broken when invoked from a repo with no pack/ tree; both gained a Documentation & discoverability note explaining why a pack-lifecycle skill writes no knowledge-graph artifact.
+
 **Revision 4 — 2026-06-14.** Updated skill count 10→12 in both managed blocks (CLAUDE.block.md, AGENTS.block.md); added /updatepack and /addpacktorepo to the skill/workflow lists so agents in both tools know the new skills exist. Managed blocks RE-PASTED.
 
 **Revision 3 — 2026-06-14.** Added /updatepack skill (run from an installed repo to pull latest from a local ai-forward clone; diffs INSTALL.md revisions, applies only the changelog delta, shows a tabular action summary, offers commit+push) and /addpacktorepo skill (run from the AI-Forward repo to install the pack into any local repo by path; recces the target, applies the full deployment map, summarises every artifact and what it does, links to the explainer, offers commit+push). Skills count 10→12.

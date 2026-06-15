@@ -94,8 +94,9 @@ Claude Code **and** Copilot wiring.)
 
 ## Documentation
 
-`web/ai-forward-pack-explainer.html` is a self-contained interactive explainer (open it directly
-in a browser) covering the knowledge constitution, the Rigor Protocol, the persona council, the
+`web/ai-forward-pack-explainer.html` is a self-contained interactive explainer — published to
+GitHub Pages at **https://timianmalloo.github.io/ai-forward/** (or open the file directly in a
+browser) — covering the knowledge constitution, the Rigor Protocol, the persona council, the
 twelve skills, and the UI archetype grammar — including a table of every template type and linkable,
 rendered mockups of each. The full knowledge graph is browsable at [`docs/index.html`](docs/index.html)
 (the Docs Explorer), and the architecture of record is in [`docs/architecture.md`](docs/architecture.md).

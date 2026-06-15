@@ -22,6 +22,10 @@ The path to the local AI-Forward repository (from `$ARGUMENTS` or the user's mes
 
 If none of the above yields a valid path that contains `pack/adapters/INSTALL.md`, ask the user for the path before proceeding.
 
+## Modes — dry-run & idempotency
+- **Dry-run (preview).** If the request contains `dry run`, `--dry-run`, `preview`, or `what would change`, run Stages 0–2 and produce the full **action summary table** (Stage 5) **without writing, staging, committing, or pushing anything**. End by stating it was a preview and how to apply for real. The commit/push step is *always* confirmed regardless of mode — dry-run additionally suppresses every file write.
+- **Idempotent by construction.** Re-running is safe: if the target is already at the source `revision` the skill writes nothing and reports "already current" (Stage 1, `delta = 0`). When a delta is applied, every action is a **wholesale** copy or a wholesale managed-block re-paste between markers — never an append — so a duplicate block can never accumulate and re-applying the same delta yields an identical tree. An interrupted update can simply be re-run to completion; the installed `revision` only ever advances to the source revision, never past it.
+
 ## Stages
 
 **Stage 0 — interdict the rush.** A pack update is not "just a file copy." Two failure modes to prevent: (1) overwriting accumulated artifacts — especially `docs/docs-index.js`, which must **never** be touched (V10); (2) missing a managed-block re-paste, the step most commonly skipped. Every action here is driven by the changelog; diffing the directory tree is not a substitute.
@@ -94,5 +98,6 @@ Unlike the workflow skills, this is a **pack-lifecycle skill**: it operates on t
 - [ ] Target `docs/ai-forward-pack/INSTALL.md` advanced to the new revision.
 - [ ] Summary table complete; no ❌ rows without explicit user deferral.
 - [ ] Commit offered with exact proposed message; user decision honoured.
+- [ ] Dry-run requests produced the action table with zero writes; a normal run is idempotent (re-runnable without duplicate blocks or advancing past the source revision).
 
 **Handoff:** if the update added new skills or knowledge docs, mention them by name so the user can orient to the new capabilities.
