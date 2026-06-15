@@ -46,7 +46,7 @@ Run affected skill cases on every pack edit; run all cases on model-version chan
 ```
 pack/           ← SINGLE SOURCE OF TRUTH — edit here only
   knowledge/    ← 18 knowledge docs (reasoning spine + vendored foundation)
-  commands/     ← 12 skills (one SKILL.md each)
+  commands/     ← 13 skills (one SKILL.md each)
   templates/    ← 15 artifact templates
   adapters/     ← INSTALL.md + Claude Code agents + Copilot agents/prompts + managed blocks
   evals/        ← pack regression suite (NOT deployed to target repos)
@@ -90,14 +90,14 @@ Each `pack/knowledge/<name>.md` installs as `.github/instructions/<name>.instruc
 - All graph mechanics go through `docs/ai-forward-pack/scripts/docs-graph.py` — never ad-hoc scripts (V18).
 - Material changes flag inbound neighbors `review-suggested`; sub-ADR decisions become linked decision notes in `docs/notes/`.
 
-### The 12 skills and their natural order
+### The 13 skills and their natural order
 ```
 /collectknowledge → /adddomainexperts → /specify → /define-architecture → /design → /implement → /document
                                                                                 ↑
                                                             /investigate  (whenever a defect appears)
 ```
 `/adopt` onboards a brownfield repo; `/migrate` runs characterization-first refactors.
-`/updatepack` refreshes an installed pack from a local ai-forward clone; `/addpacktorepo` installs the pack into a new local repo by path.
+`/updatepack` refreshes an installed pack from a local ai-forward clone; `/addpacktorepo` installs the pack into a new local repo by path; `/extendaibundle` extends the pack itself with a new capability from a prose prompt (collect→specify→design→implement, scaffolded by `tools/new-capability.py`, proven by `tools/verify-bundle.ps1`, zero drift).
 
 Skills in `.claude/skills/` apply automatically by description in Claude Code; in Copilot they are available as prompts in `.github/prompts/<name>.prompt.md`.
 

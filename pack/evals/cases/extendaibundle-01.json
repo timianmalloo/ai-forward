@@ -1,0 +1,15 @@
+{
+  "skill": "extendaibundle",
+  "prompt": "Run /extendaibundle to add a minimal new skill called /licence-audit (one line: audit a repo's dependency licences). Scaffold it with tools/new-capability.py, write a brief real SKILL.md body and Copilot prompt, curate its eval, wire it into both managed-block lists and the prose counts, bump the revision, and run tools/verify-bundle.ps1. NOTE: run this with --workspace pointing at an AI-Forward pack clone (the skill edits pack/).",
+  "setup": [],
+  "assertions": [
+    { "type": "file-exists", "path": "pack/commands/licence-audit/SKILL.md" },
+    { "type": "file-exists", "path": "pack/adapters/copilot/prompts/licence-audit.prompt.md" },
+    { "type": "file-exists", "path": "pack/evals/cases/licence-audit-01.json" },
+    { "type": "not-grep", "path": "pack/commands/licence-audit/SKILL.md", "pattern": "<lead persona>" },
+    { "type": "grep", "path": "pack/adapters/managed-blocks/CLAUDE.block.md", "pattern": "licence-audit" },
+    { "type": "grep", "path": "pack/adapters/managed-blocks/AGENTS.block.md", "pattern": "licence-audit" },
+    { "type": "cmd-exit", "cmd": ["python3", "tools/check-consistency.py"], "exit": 0 }
+  ],
+  "id": "extendaibundle-01"
+}

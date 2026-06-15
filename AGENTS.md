@@ -20,9 +20,9 @@ every non-trivial task.
 - **Personas (dual-mode):** author in Peer Mode, review in Adversary Mode; the author never
   clears its own hard veto. Agents in `.github/agents/`; the operating standard in the
   `persona-audit` / `persona-cards` instructions.
-- **Workflows (12):** the prompts in `.github/prompts/` (`collectknowledge`, `adddomainexperts`,
+- **Workflows (13):** the prompts in `.github/prompts/` (`collectknowledge`, `adddomainexperts`,
   `specify`, `define-architecture`, `design`, `implement`, `investigate`, `document`, `adopt`,
-  `migrate`, `updatepack`, `addpacktorepo`). Templates: `docs/ai-forward-pack/templates/`.
+  `migrate`, `updatepack`, `addpacktorepo`, `extendaibundle`). Templates: `docs/ai-forward-pack/templates/`.
 - **Unfamiliar APIs/SDKs/MCP servers:** run the Spike Protocol before depending on a contract.
 - **Specification:** `/specify` produces **one spec with three layers** — Functional (what &
   why), UX (how it works: IA, user flows, structure), UI (how it looks) — written bottom-up,

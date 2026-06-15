@@ -1,13 +1,15 @@
 ---
 doc: INSTALL
 purpose: 'Manual reconciliation guide and refresh changelog. On a repo refresh, read `changes` below — it is the key guide: it lists exactly what to re-copy and re-paste since the previous revision, so you do not have to diff the whole tree.'
-bundle_version: '2026.06.14.4'
-revision: 6
+bundle_version: '2026.06.14.5'
+revision: 7
 released: '2026-06-14'
-counts: { lenses: 23, skills: 12, knowledge_docs: 18, templates: 15, scripts: 2 }
+counts: { lenses: 23, skills: 13, knowledge_docs: 18, templates: 15, scripts: 2 }
 refresh_protocol: 'Compare your repo last-applied revision to the `revision` above. If it is lower, apply each entry in `changes` in order — re-copy the listed `paths` to their mapped destinations (deployment map in the body), re-apply the Copilot frontmatter wraps, and where an entry `deploy` says RE-PASTE, replace the managed blocks wholesale between their markers. Never overwrite an accumulated docs/docs-index.js.'
 changes:
-  - { type: changed, area: skill, paths: ['commands/addpacktorepo/SKILL.md', 'commands/updatepack/SKILL.md', 'adapters/copilot/prompts/addpacktorepo.prompt.md', 'adapters/copilot/prompts/updatepack.prompt.md'], deploy: 're-copy each SKILL.md to .claude/skills/<name>/ and each prompt to .github/prompts/', summary: 'Both pack-lifecycle skills gained an explicit Modes section: a dry-run/preview (run OPEN–INTERROGATE, emit the action table, write nothing) and a stated idempotency contract (wholesale copies + wholesale managed-block re-pastes, never appends; re-runnable; revision never advances past source). /addpacktorepo now links the explainer at its GitHub Pages URL (https://timianmalloo.github.io/ai-forward/) with the local file as offline fallback.' }
+  - { type: added, area: skill, paths: ['commands/extendaibundle/SKILL.md', 'adapters/copilot/prompts/extendaibundle.prompt.md'], deploy: 'copy SKILL.md to .claude/skills/extendaibundle/SKILL.md and the prompt to .github/prompts/extendaibundle.prompt.md', summary: 'New /extendaibundle pack-lifecycle skill — extend the pack itself from a prose prompt, running collectknowledge→specify→design→implement compressed for pack work (Markdown + scripts). It scaffolds both tool surfaces via tools/new-capability.py, enforces the zero-drift invariants, and proves consistency with tools/verify-bundle.ps1 (BUNDLE CONSISTENT). Skills 12→13; the third pack-lifecycle skill alongside /addpacktorepo and /updatepack.' }
+  - { type: changed, area: skill, paths: ['commands/specify/SKILL.md', 'adapters/copilot/prompts/specify.prompt.md'], deploy: 're-copy the SKILL.md to .claude/skills/specify/ and the prompt to .github/prompts/', summary: 'When the spec needs a UI and the user names no UX template, /specify now reasons over the jobs-to-be-done and auto-selects the best-match UI archetype from ui-archetype-catalog.md (A temporal / B operational / C spatial / D feed / E authoring), records the Archetype Signature + JTBD rationale in Part C, and announces the choice in the summary so the user can confirm or override.' }
+  - { type: changed, area: template, paths: ['templates/spec.template.md'], deploy: 're-copy to docs/ai-forward-pack/templates/', summary: 'Part C gained a "UI Archetype Signature (the determinism selector)" subsection recording the chosen archetype, its signature, and whether it was user-specified or auto-selected from the JTBD (with rationale).' }
 ---
 
 ## Changelog — what changed since the last version
@@ -22,6 +24,8 @@ changes:
 So at any moment: the frontmatter `changes` = the latest delta (the refresh guide), and this section = the full rolling history.
 
 ### Prior revisions
+**Revision 6 — 2026-06-14.** Both pack-lifecycle skills (/addpacktorepo, /updatepack) gained an explicit Modes section — a dry-run/preview that writes nothing and a stated idempotency contract; /addpacktorepo links the explainer's GitHub Pages URL with the local file as offline fallback.
+
 **Revision 5 — 2026-06-14.** Hardened the two pack-lifecycle skills: /addpacktorepo resolves the pack source explicitly (current repo → explicit path → AI_FORWARD_PACK env → sibling ai-forward clone) like /updatepack, so it is no longer broken when invoked from a repo with no pack/ tree; both gained a Documentation & discoverability note explaining why a pack-lifecycle skill writes no knowledge-graph artifact.
 
 **Revision 4 — 2026-06-14.** Updated skill count 10→12 in both managed blocks (CLAUDE.block.md, AGENTS.block.md); added /updatepack and /addpacktorepo to the skill/workflow lists so agents in both tools know the new skills exist. Managed blocks RE-PASTED.
@@ -54,7 +58,7 @@ The model is the same for both tools: **knowledge** files are always-available r
 |---|---|---|
 | Rules of the Road (the always-on rules) | `CLAUDE.md` (link to it) + `.claude/` | `AGENTS.md` |
 | Knowledge docs (`knowledge/*.md`, plus the existing pack) | `.claude/knowledge/` or repo `docs/` referenced from `CLAUDE.md` | `.github/instructions/*.instructions.md` with `applyTo` globs |
-| The 12 skills (`commands/*/SKILL.md`) | `.claude/skills/<name>/SKILL.md` | `.github/prompts/<name>.prompt.md` (wrapper that carries the same flow) |
+| The 13 skills (`commands/*/SKILL.md`) | `.claude/skills/<name>/SKILL.md` | `.github/prompts/<name>.prompt.md` (wrapper that carries the same flow) |
 | Thin command entry points | `.claude/commands/<name>.md` | `.github/prompts/<name>.prompt.md` |
 | Peer agents (orchestrator, product-strategist, domain-researcher) | `.claude/agents/<name>.md` | `.github/agents/<name>.agent.md` |
 | Adversary agents (the existing 11) | `.claude/agents/<name>.md` | `.github/agents/<name>.agent.md` |

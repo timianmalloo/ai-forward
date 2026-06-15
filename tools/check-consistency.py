@@ -112,6 +112,10 @@ def check_managed_blocks(truth, findings):
         for label, num in hits:
             if int(num) != n:
                 findings.append(f"{name}: '{label} ({num})' but filesystem has {n} skills")
+        # Every skill must be named in the block's skill/workflow list (as `/name` or `name`).
+        for s in truth["skills"]:
+            if not re.search(r"(?:/|`)" + re.escape(s) + r"\b", text):
+                findings.append(f"{name}: skill '{s}' is missing from the skill/workflow list")
 
 
 # (regex, noun-group-index, expected-count-key) tuples for prose totals.

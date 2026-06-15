@@ -159,6 +159,15 @@ specified recovery path from its error state". -->
 acceptance criteria — the full visual design is produced in /design and built in /implement. The
 UX & Accessibility lens holds the U16 accessibility (WCAG 2.2 AA) veto. -->
 
+### UI Archetype Signature (the determinism selector)
+<!-- The chosen UI archetype from the UI Archetype Catalog (ui-archetype-catalog.md), recorded as its
+canonical Archetype Signature (ui-archetype-grammar.md), with any facet deviations noted (G9). -->
+- **Archetype:** <e.g. A2 · Secure Checkout Pipeline>
+- **Signature:** `<the Archetype Signature, with deviations noted>`
+- **Selection:** <"user-specified" — or, when auto-selected because no UX template was named:
+  **"auto-selected from the JTBD"** + the one-line rationale mapping the dominant job-to-be-done to
+  this archetype family/row. This rationale is also surfaced in the /specify summary to the user.>
+
 ### Medium(s) & platform guidelines
 <!-- web / native desktop / mobile / CLI / voice — and the authoritative HIG per medium (Apple HIG,
 Material, Fluent, GNOME, CLI conventions). Excellence is judged relative to the medium (U2). -->

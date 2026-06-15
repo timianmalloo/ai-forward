@@ -13,7 +13,7 @@ This repo is two things at once:
    so the skills, agents, and knowledge are active in Claude Code *while you work on the pack
    itself*. Dogfooding: the pack is built using the pack.
 
-For the pack's own story — why it exists, what's inside, how to use the twelve skills — read
+For the pack's own story — why it exists, what's inside, how to use the thirteen skills — read
 [`pack/README.md`](pack/README.md) and [`pack/OVERVIEW.md`](pack/OVERVIEW.md).
 
 ## Layout
@@ -23,7 +23,7 @@ ai-forward/
 ├─ pack/                  ← CANONICAL SOURCE — edit here to expand the pack
 │   ├─ README.md  OVERVIEW.md  research-synthesis.md
 │   ├─ knowledge/         ← the reasoning spine + 23-persona roster + vendored foundation
-│   ├─ commands/          ← the 12 skills (one SKILL.md each)
+│   ├─ commands/          ← the 13 skills (one SKILL.md each)
 │   ├─ templates/         ← the artifacts each skill produces
 │   ├─ adapters/          ← INSTALL.md + Claude Code / Copilot agents + prompts + managed blocks
 │   ├─ evals/             ← the pack's own regression suite
@@ -64,8 +64,9 @@ automatically by description, or call one explicitly:
 ```
 
 `/adopt` brings a brownfield repo into the pack; `/migrate` runs characterization-first
-refactors. Two **pack-lifecycle** skills manage the pack itself: `/addpacktorepo` installs it
-into another local repo, and `/updatepack` refreshes an installed repo to the latest revision.
+refactors. Three **pack-lifecycle** skills manage the pack itself: `/addpacktorepo` installs it
+into another local repo, `/updatepack` refreshes an installed repo to the latest revision, and
+`/extendaibundle` adds new pack capabilities from a prose prompt with zero drift.
 The natural order and what each skill produces are in [`pack/OVERVIEW.md`](pack/OVERVIEW.md).
 
 ## Expanding the pack (the sandbox loop)
@@ -97,7 +98,7 @@ Claude Code **and** Copilot wiring.)
 `web/ai-forward-pack-explainer.html` is a self-contained interactive explainer — published to
 GitHub Pages at **https://timianmalloo.github.io/ai-forward/** (or open the file directly in a
 browser) — covering the knowledge constitution, the Rigor Protocol, the persona council, the
-twelve skills, and the UI archetype grammar — including a table of every template type and linkable,
+thirteen skills, and the UI archetype grammar — including a table of every template type and linkable,
 rendered mockups of each. The full knowledge graph is browsable at [`docs/index.html`](docs/index.html)
 (the Docs Explorer), and the architecture of record is in [`docs/architecture.md`](docs/architecture.md).
 Both are generated and maintained by the `/document` skill.

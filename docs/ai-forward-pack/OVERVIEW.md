@@ -56,7 +56,7 @@ The reasoning behind every seat — and the seats deliberately *not* added — i
 ai-forward-pack/
 ├─ README.md · research-synthesis.md · OVERVIEW.md
 ├─ knowledge/   18 docs (+FOUNDATION manifest) — 11 reasoning + 7 vendored Agent-Knowledge-Pack foundation (BoK, Rules of the Road, Persona Catalog, LOA, Governance, Testing Strategy, C# Style)
-├─ commands/    (the 12 skills, one SKILL.md each)
+├─ commands/    (the 13 skills, one SKILL.md each)
 ├─ templates/   (the 15 artifact templates)
 ├─ adapters/    (INSTALL.md, claude-code/agents, copilot/agents, copilot/prompts)
 └─ examples/    (finance-repo — a worked /adddomainexperts result)
@@ -66,7 +66,7 @@ ai-forward-pack/
 
 ## 3. How to use the skills
 
-There are **12 skills** — five that carry a piece of work from idea to shipped code, five that support them (knowledge collection, persona tailoring, documentation, brownfield **adoption**, and characterization-first **migration**), and two **pack-lifecycle** skills that manage the pack installation itself (**/addpacktorepo** to install the pack into a repo, **/updatepack** to refresh an installed repo to the latest revision). The ten workflow skills form the loop below; the two lifecycle skills sit outside it.
+There are **13 skills** — five that carry a piece of work from idea to shipped code, five that support them (knowledge collection, persona tailoring, documentation, brownfield **adoption**, and characterization-first **migration**), and three **pack-lifecycle** skills that manage the pack installation itself (**/addpacktorepo** to install the pack into a repo, **/updatepack** to refresh an installed repo to the latest revision, and **/extendaibundle** to extend the pack with new capabilities from a prose prompt, with zero drift). The ten workflow skills form the loop below; the three lifecycle skills sit outside it.
 
 **Built-in delivery discipline.** `/define-architecture` *defines completely but phases vertically*: the whole architecture is specified, then delivery is partitioned into end-to-end vertical slices (Phase 1 a walking skeleton; mocks at unbuilt edges as contract seams) so serial implementation always yields a deployable, human-validatable increment. `/design` performs a mandatory **failure-mode analysis** (each mode → an explicit disposition: prevent/detect/mitigate/recover/accept) and `/implement` carries every mode into code + a negative test. And `/define-architecture`, `/design`, and `/implement` each **end with a status table** — completed / remaining / best next action — so you always know where the build stands.
 
@@ -96,6 +96,7 @@ There are **12 skills** — five that carry a piece of work from idea to shipped
 | **/migrate** | dependency/framework upgrades and large refactors | characterization tests green on the old stack first + vertical increments + the equivalence report with the intentional-difference catalog + V16 flags to dependents | language Developer (Test Architect's characterization veto) |
 | **/addpacktorepo** | installing the pack into another local repo (run from an AI-Forward clone) | the full pack deployed to the target (knowledge, skills, agents, templates, managed blocks) + a tabular install summary + explainer/docs pointers + a commit offer | Enterprise Architect + Release Engineer + Documentation Steward |
 | **/updatepack** | refreshing a repo that already has the pack to the latest revision | only the changelog delta applied (knowledge/skills/agents + managed-block re-pastes) + a tabular action summary + advanced revision + a commit offer | Release Engineer + Documentation Steward |
+| **/extendaibundle** | adding a new capability (skill/knowledge/template/script) to the pack itself from a prose prompt | collect→specify→design→implement compressed for pack work; scaffolded via `new-capability.py`, proven by `verify-bundle.ps1` (BUNDLE CONSISTENT) — both tool surfaces, an eval, reconciled counts, bumped revision, zero drift | Tech Lead + Documentation Steward (Test Architect + Release Engineer gate) |
 
 **A worked example — a new feature in an unfamiliar domain.**
 1. **`/collectknowledge`** with the domain and problem you're solving → a sourced knowledge base in `docs/knowledge/` the whole team reasons from.
