@@ -50,7 +50,7 @@ CategoryV      ::= "Consumer" | "OLTP" | "DSS" | "Hybrid" | "Conversational"
                  | "Kiosk" | "Portal" | "Marketing" | Ext
 Architecture   ::= "Arch"  ":" ArchitectureV
 ArchitectureV  ::= "SPA" | "MPA" | "InfiniteScroll" | "Streaming"
-                 | "SpatialUnbounded" | "HubAndSpoke" | "StateMachine"
+                 | "SpatialUnbounded" | "SpatialBounded" | "HubAndSpoke" | "StateMachine"
                  | "StrictFunnel" | "Branching" | "Islands" | Ext
 
 (* ── Layout & structure ─────────────────────────────────────── *)
@@ -59,13 +59,15 @@ LayoutV        ::= "BentoBox" | "MasterDetail" | "ModularDashboard"
                  | "SpatialCanvas" | "CinematicHero" | "FormWizard"
                  | "BlockDocument" | "StreamingThread" | "CarouselGrid"
                  | "RuggedGrid" | "ProgressiveOrchestrator" | "TunnelCheckout"
-                 | "GamifiedCanvas" | "SplitConfigurator" | "HolyGrail" | Ext
+                 | "GamifiedCanvas" | "SplitConfigurator" | "HolyGrail"
+                 | "ViewportWorkbench" | "VisualizationPipeline" | "NotebookCells"
+                 | "ComputationalGrid" | "ScenarioExplorer" | "MultiPanelWorkstation" | Ext
 Density        ::= "Density" ":" DensityV
 DensityV       ::= "Spacious" | "Comfortable" | "Compact" | "UltraDense"
 Nav            ::= "Nav" ":" NavV ("+" NavV)*        (* set: e.g. Sidebar+CommandPalette *)
 NavV           ::= "TopBar" | "Sidebar" | "CommandPalette" | "FloatingContext"
                  | "Stepper" | "BottomTab" | "LockedFunnel" | "ProgressPills"
-                 | "Breadcrumb" | "Hidden" | Ext
+                 | "Breadcrumb" | "Ribbon" | "Hidden" | Ext
 
 (* ── Context (hardware/viewport/input) ──────────────────────── *)
 Viewport       ::= "Viewport" ":" ViewportV

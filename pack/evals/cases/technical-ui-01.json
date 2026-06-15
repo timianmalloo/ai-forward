@@ -1,0 +1,18 @@
+{
+  "skill": "technical-ui",
+  "prompt": "Verify the technical/scientific/quantitative UI extension landed: the Section G archetypes in the catalog, the new grammar enums, and the base-knowledge doc with its colormap and uncertainty rules. (Run in an AI-Forward clone workspace.)",
+  "setup": [],
+  "assertions": [
+    { "type": "file-exists", "path": "pack/knowledge/technical-ui-design.md" },
+    { "type": "grep", "path": "pack/knowledge/technical-ui-design.md", "pattern": "viridis" },
+    { "type": "grep", "path": "pack/knowledge/technical-ui-design.md", "pattern": "(?i)never.{0,30}jet|jet.{0,30}forbidden|rainbow / jet" },
+    { "type": "grep", "path": "pack/knowledge/technical-ui-design.md", "pattern": "Hypothetical Outcome Plots|quantile dotplots" },
+    { "type": "grep", "path": "pack/knowledge/ui-archetype-catalog.md", "pattern": "G1 . Parametric Modeling Workbench" },
+    { "type": "grep", "path": "pack/knowledge/ui-archetype-catalog.md", "pattern": "G5 . Probabilistic / Uncertainty Explorer" },
+    { "type": "grep", "path": "pack/knowledge/ui-archetype-catalog.md", "pattern": "G6 . Multi-Panel Data Terminal" },
+    { "type": "grep", "path": "pack/knowledge/ui-archetype-grammar.md", "pattern": "\"ViewportWorkbench\"" },
+    { "type": "grep", "path": "pack/knowledge/ui-archetype-grammar.md", "pattern": "\"SpatialBounded\"" },
+    { "type": "grep", "path": "pack/knowledge/ui-archetype-grammar.md", "pattern": "\"ComputationalGrid\"" }
+  ],
+  "id": "technical-ui-01"
+}
