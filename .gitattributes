@@ -1,5 +1,20 @@
-# Normalize line endings: store text as LF in the repo, regardless of contributor OS.
+# Line endings: store text as LF in the repo, regardless of contributor OS.
+# `eol=lf` overrides a contributor's core.autocrlf=true, so the working tree is LF too
+# (this is what stops the "CRLF will be replaced by LF" warnings once normalized).
 * text=auto eol=lf
+
+# Explicit for the source types this repo actually carries (documentation of intent;
+# the catch-all above already covers them).
+*.md     text eol=lf
+*.json   text eol=lf
+*.yml    text eol=lf
+*.yaml   text eol=lf
+*.py     text eol=lf
+*.ps1    text eol=lf
+*.sh     text eol=lf
+*.html   text eol=lf
+*.css    text eol=lf
+*.js     text eol=lf
 
 # Binary assets — never normalize.
 *.png  binary
