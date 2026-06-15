@@ -71,6 +71,8 @@ The governing idea, synthesized from the research below: **great UI is not decor
 
 **U15 — Probabilistic by design.** The AI **will be wrong** — treat that as a first-class state, not an edge case: make correction and regeneration effortless (G9), surface **confidence/uncertainty honestly** (G2), never render a generation as settled fact without a verify path, and degrade gracefully when the system is unsure (G10). Streaming output shows progress and remains interruptible. (This dovetails with the Observability Standard: AI actions are auditable, and with the Privacy Review: prompts/outputs touching personal data follow the data rules.)
 
+**U15a — Cost & commercial transparency (when the AI has a per-use cost).** The product's **commercial model** (`ai-commercial-models.md`: BYO subscription/key · metered pass-through · absorbed subscription) is a UX surface, not just an architecture choice. Build what the model requires: a secure **"connect your AI account"** flow for BYO (masked key/OAuth, F2 settings archetype); a **usage meter + soft/hard quota states + cost breakdown** for metered/credit models (a Trust builder — disclose what a run costs; a *regenerate spends again*, so say so); and, even for an absorbed model where per-call cost is hidden, a **fair-use allowance indicator and a graceful quota wall with an upgrade path** (a silent hard stop is a UX failure). Pair the numbers with the numeric-legibility rules in `technical-ui-design.md` (TQ2).
+
 ---
 
 ## 5. Inclusion and performance (non-negotiable floors)

@@ -1,0 +1,17 @@
+{
+  "skill": "ai-commercial-models",
+  "prompt": "Verify the AI commercial/cost/billing-models knowledge landed: the three models, the LOA pattern mapping, the data-governance posture, and the UX surfaces. (Run in an AI-Forward clone workspace.)",
+  "setup": [],
+  "assertions": [
+    { "type": "file-exists", "path": "pack/knowledge/ai-commercial-models.md" },
+    { "type": "grep", "path": "pack/knowledge/ai-commercial-models.md", "pattern": "(?i)bring your own" },
+    { "type": "grep", "path": "pack/knowledge/ai-commercial-models.md", "pattern": "(?i)pass-through" },
+    { "type": "grep", "path": "pack/knowledge/ai-commercial-models.md", "pattern": "(?i)absorbed" },
+    { "type": "grep", "path": "pack/knowledge/ai-commercial-models.md", "pattern": "Receipt Ledger" },
+    { "type": "grep", "path": "pack/knowledge/ai-commercial-models.md", "pattern": "Token Budget Throttle" },
+    { "type": "grep", "path": "pack/knowledge/ai-commercial-models.md", "pattern": "(?i)zero-retention|no-training" },
+    { "type": "grep", "path": "pack/knowledge/ai-commercial-models.md", "pattern": "(?i)usage meter|quota" },
+    { "type": "grep", "path": "pack/knowledge/ui-interaction-design.md", "pattern": "U15a" }
+  ],
+  "id": "ai-commercial-models-01"
+}
