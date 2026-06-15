@@ -1,7 +1,7 @@
 // Derived from artifact frontmatter by scripts/docs-graph.py — DO NOT hand-edit (frontmatter wins; see knowledge-visualization.md V2/V18).
 window.DOCS_INDEX = {
   "project": "AI-Forward",
-  "generated": "2026-06-15T01:27:31Z",
+  "generated": "2026-06-15T01:36:57Z",
   "generator": "docs-graph.py derive",
   "artifacts": [
     {
@@ -34,6 +34,106 @@ window.DOCS_INDEX = {
           "mermaid": "classDiagram\n  class Signature {\n    +Name name\n    +FacetList facets\n    +StyleHints? hints\n    +validate() conflicts\n    +roundTrip() bool  %% G10: identify AND generate\n  }\n  class Facet {\n    <<abstract>>\n    +String key\n  }\n  class SingleValuedFacet {\n    +Value value  %% Type, Arch, Layout, Density, Pacing, ...\n  }\n  class MultiValuedFacet {\n    +Value[] values  %% Nav, Input, Feedback, Motion, A11y (joined with +)\n  }\n  class StyleHints {\n    +String[] hints  %% bounded NL decoration, applied last\n  }\n  class Archetype {\n    +String id          %% A1..F2\n    +String name\n    +Exemplar[] exemplars\n    +Signature canonical\n    +String codegenDescriptor\n  }\n  Signature \"1\" o-- \"4..*\" Facet : composes\n  Facet <|-- SingleValuedFacet\n  Facet <|-- MultiValuedFacet\n  Signature \"0..1\" *-- \"1\" StyleHints : decorated by\n  Archetype \"1\" *-- \"1\" Signature : canonical\n  Archetype \"1\" o-- \"1..*\" Exemplar\n  note for Signature \"G4: MUST carry Type, Arch, Layout, Pacing.\\nG1: always composed with a concrete U1–U20 / S1–S18 spec.\""
         }
       ]
+    },
+    {
+      "id": "design-aiforward-cli",
+      "path": "docs/design/aiforward-cli.md",
+      "title": "Design — aiforward CLI (suggestion 1)",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2026-12-11",
+      "reviewSuggested": [],
+      "summary": "A single stdlib-only Python developer CLI (tools/aiforward.py) that is a thin Façade dispatcher over the pack's existing scripts (sync, verify, check, new, doctor, graph, scrub) — one memorable entry point with --help, no new runtime dependency.",
+      "tags": [
+        "cli",
+        "tooling",
+        "dx"
+      ],
+      "links": [
+        {
+          "to": "kb-pack-evolution",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": []
+    },
+    {
+      "id": "design-pack-doctor",
+      "path": "docs/design/pack-doctor.md",
+      "title": "Design — installed-repo doctor (suggestion 2)",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2026-12-11",
+      "reviewSuggested": [],
+      "summary": "A deployable, stdlib-only pack-doctor.py that reports the INSTALL health of a target repo (revision, both tool surfaces, managed-block integrity, graph health) as PASS/WARN/FAIL with fixes and a nonzero exit — distinct from the source-only consistency gate.",
+      "tags": [
+        "doctor",
+        "health",
+        "install",
+        "tooling"
+      ],
+      "links": [
+        {
+          "to": "kb-pack-evolution",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": []
+    },
+    {
+      "id": "design-project-memory",
+      "path": "docs/design/project-memory.md",
+      "title": "Design — project memory + Obsidian decision (suggestion 3)",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2026-12-11",
+      "reviewSuggested": [],
+      "summary": "A project-memory convention — an append-only, graph-linked docs/project-memory.md ledger that skills read at grounding and append to at convergence — plus the explicit decision to treat Obsidian as an OPTIONAL lens over the existing vault, never a dependency.",
+      "tags": [
+        "memory",
+        "obsidian",
+        "knowledge-graph",
+        "continuity"
+      ],
+      "links": [
+        {
+          "to": "kb-pack-evolution",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": []
+    },
+    {
+      "id": "design-rai-and-scrub",
+      "path": "docs/design/rai-and-scrub.md",
+      "title": "Design — RAI policy + PII/secret scrub (suggestion 4)",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2026-12-11",
+      "reviewSuggested": [],
+      "summary": "A committed Responsible-AI policy knowledge doc mapping Microsoft RAI principles + NIST AI RMF functions to the pack's EXISTING personas/templates, plus a stdlib regex scrub.py first-pass that redacts obvious PII/secrets from Markdown — explicitly labeled not-a-substitute for gitleaks/Presidio.",
+      "tags": [
+        "responsible-ai",
+        "privacy",
+        "pii",
+        "secrets",
+        "governance"
+      ],
+      "links": [
+        {
+          "to": "kb-pack-evolution",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": []
     },
     {
       "id": "docs-index",
@@ -236,6 +336,85 @@ window.DOCS_INDEX = {
         {
           "to": "kb-pack-evolution",
           "rel": "refines"
+        }
+      ],
+      "diagrams": []
+    },
+    {
+      "id": "privacy-review",
+      "path": "docs/security/privacy-review.md",
+      "title": "Privacy Review",
+      "type": "privacy-review",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2026-12-11",
+      "reviewSuggested": [],
+      "summary": "Repo-level privacy posture for the pack-evolution tooling: the CLI and doctor touch no personal data; project memory may incidentally record handles/names (no special-category data, mitigated by the scrub); the scrub is itself a privacy control.",
+      "tags": [
+        "privacy",
+        "linddun",
+        "data-governance"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        },
+        {
+          "to": "design-aiforward-cli",
+          "rel": "documents"
+        },
+        {
+          "to": "design-pack-doctor",
+          "rel": "documents"
+        },
+        {
+          "to": "design-project-memory",
+          "rel": "documents"
+        },
+        {
+          "to": "design-rai-and-scrub",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": []
+    },
+    {
+      "id": "threat-model",
+      "path": "docs/security/threat-model.md",
+      "title": "Threat Model",
+      "type": "threat-model",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2026-12-11",
+      "reviewSuggested": [],
+      "summary": "Repo-level security posture for the pack-evolution tooling: the only real trust boundary is the scrub reading files that may contain secrets/PII; the CLI, doctor, and memory ledger are local, read-mostly, no-network components with no privilege boundary.",
+      "tags": [
+        "security",
+        "threat-model"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        },
+        {
+          "to": "design-aiforward-cli",
+          "rel": "documents"
+        },
+        {
+          "to": "design-pack-doctor",
+          "rel": "documents"
+        },
+        {
+          "to": "design-project-memory",
+          "rel": "documents"
+        },
+        {
+          "to": "design-rai-and-scrub",
+          "rel": "documents"
         }
       ],
       "diagrams": []
