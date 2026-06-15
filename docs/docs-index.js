@@ -1,7 +1,7 @@
 // Derived from artifact frontmatter by scripts/docs-graph.py — DO NOT hand-edit (frontmatter wins; see knowledge-visualization.md V2/V18).
 window.DOCS_INDEX = {
   "project": "AI-Forward",
-  "generated": "2026-06-14T23:06:04Z",
+  "generated": "2026-06-15T01:27:31Z",
   "generator": "docs-graph.py derive",
   "artifacts": [
     {
@@ -55,6 +55,187 @@ window.DOCS_INDEX = {
         {
           "to": "architecture",
           "rel": "documents"
+        }
+      ],
+      "diagrams": []
+    },
+    {
+      "id": "kb-pack-evolution-glossary",
+      "path": "docs/knowledge/pack-evolution/glossary.md",
+      "title": "Pack Evolution — Glossary",
+      "type": "glossary",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2026-09-12",
+      "reviewSuggested": [],
+      "summary": "The ubiquitous language for the pack-evolution work: pack-lifecycle skill, source consistency vs install health, doctor, project memory / ledger, Obsidian vault, RAI policy, scrub, stdlib-only, zero-drift.",
+      "tags": [
+        "glossary",
+        "cli",
+        "doctor",
+        "memory",
+        "responsible-ai"
+      ],
+      "links": [
+        {
+          "to": "kb-pack-evolution",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": []
+    },
+    {
+      "id": "kb-pack-evolution",
+      "path": "docs/knowledge/pack-evolution/index.md",
+      "title": "Pack Evolution — CLI, Doctor, Project Memory, RAI (domain knowledge)",
+      "type": "knowledge",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2026-09-12",
+      "reviewSuggested": [],
+      "summary": "Sourced evidence base for four capabilities AI-Forward is considering adopting from agent-orchestration products (notably bradygaster/squad): a unified CLI, an installed-repo doctor, persistent project memory (and whether to introduce Obsidian), and a committed Responsible-AI policy plus a PII/secret scrub. Every load-bearing claim is confidence-labeled.",
+      "tags": [
+        "cli",
+        "doctor",
+        "memory",
+        "obsidian",
+        "responsible-ai",
+        "pii",
+        "squad"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": []
+    },
+    {
+      "id": "kb-pack-evolution-comparables",
+      "path": "docs/knowledge/pack-evolution/comparables.md",
+      "title": "Pack Evolution — Comparables",
+      "type": "knowledge",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2026-09-12",
+      "reviewSuggested": [],
+      "summary": "Squad-vs-AI-Forward capability comparison for the four suggestions, what to borrow (intent) and what to reject (runtime form), plus adjacent doctor/changesets/Dataview patterns worth borrowing.",
+      "tags": [
+        "squad",
+        "comparables",
+        "cli",
+        "doctor",
+        "memory",
+        "responsible-ai"
+      ],
+      "links": [
+        {
+          "to": "kb-pack-evolution",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": []
+    },
+    {
+      "id": "kb-pack-evolution-open-questions",
+      "path": "docs/knowledge/pack-evolution/open-questions.md",
+      "title": "Pack Evolution — Open Questions & Failure Modes",
+      "type": "knowledge",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2026-09-12",
+      "reviewSuggested": [],
+      "summary": "Flagged unknowns (regex-scrub recall, ledger freshness, CLI cross-shell), the domain's failure modes (runtime creep, drift, RAI theater, Obsidian lock-in, doctor false confidence), and disconfirming views sought.",
+      "tags": [
+        "risks",
+        "pii",
+        "memory",
+        "responsible-ai",
+        "disconfirmation"
+      ],
+      "links": [
+        {
+          "to": "kb-pack-evolution",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": []
+    },
+    {
+      "id": "kb-pack-evolution-references",
+      "path": "docs/knowledge/pack-evolution/references.md",
+      "title": "Pack Evolution — References",
+      "type": "knowledge",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2026-09-12",
+      "reviewSuggested": [],
+      "summary": "Standards (MS RAI Standard, NIST AI RMF, EU AI Act/GDPR), the pack's own contracts the capabilities conform to (knowledge-visualization V1–V18, INSTALL deployment map, engineering-governance), and tooling references.",
+      "tags": [
+        "responsible-ai",
+        "nist",
+        "standards",
+        "tooling"
+      ],
+      "links": [
+        {
+          "to": "kb-pack-evolution",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": []
+    },
+    {
+      "id": "kb-pack-evolution-sota",
+      "path": "docs/knowledge/pack-evolution/state-of-the-art.md",
+      "title": "Pack Evolution — State of the Art",
+      "type": "knowledge",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2026-09-12",
+      "reviewSuggested": [],
+      "summary": "Current best practice for the four capabilities: CLI distribution (repo-local stdlib Python wins), the doctor pattern, persistent project/agent memory, Obsidian as an optional lens, and RAI policy + PII scrubbing.",
+      "tags": [
+        "cli",
+        "doctor",
+        "memory",
+        "obsidian",
+        "responsible-ai"
+      ],
+      "links": [
+        {
+          "to": "kb-pack-evolution",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": []
+    },
+    {
+      "id": "kb-pack-evolution-sources",
+      "path": "docs/knowledge/pack-evolution/sources.md",
+      "title": "Pack Evolution — Sources",
+      "type": "knowledge",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2026-09-12",
+      "reviewSuggested": [],
+      "summary": "The full source list with access dates for the pack-evolution knowledge base — Squad, the pack's own files, the MS RAI and NIST RMF standards, the scrub tooling, and the web research rows.",
+      "tags": [
+        "sources",
+        "citations"
+      ],
+      "links": [
+        {
+          "to": "kb-pack-evolution",
+          "rel": "refines"
         }
       ],
       "diagrams": []
