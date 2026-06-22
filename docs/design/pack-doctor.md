@@ -94,9 +94,9 @@ Stdlib-only (no third-party import). **Counts impact:** adds `pack/scripts/pack-
 ## Status & next action
 | | |
 |---|---|
-| **Completed** | installed-repo doctor design |
-| **Remaining** | designs 3 (memory), 4 (RAI+scrub) |
-| **Best next action** | design project memory + the Obsidian decision |
+| **Completed** | installed-repo doctor design — **implemented in revision 8** (`pack/scripts/pack-doctor.py`; commit 2fa8bce) |
+| **Remaining** | none — all four pack-evolution designs delivered in revision 8; `BUNDLE CONSISTENT` |
+| **Best next action** | none outstanding — doctor shipped & deployed via the `pack/scripts/* → docs/ai-forward-pack/scripts/*` map |
 
 ## Gate record
 `GATE design · 2026-06-14 · SRE + Simplifier + Security + Test Architect · criteria met: composes docs-graph.py (no reinvention), read-only (no trust boundary), every check has a test, counts impact recorded · verdict: PASS · vetoes→resolution: SRE confirmed every failure mode is detectable + degrades not crashes; Security confirmed no-content-echo; Test Architect confirmed the real-graph D7 pairing · author did not self-clear`

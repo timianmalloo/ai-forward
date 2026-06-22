@@ -84,9 +84,9 @@ LOA tiers N/A (no inference). Honors the stdlib-only repo convention (no third-p
 ## Status & next action
 | | |
 |---|---|
-| **Completed** | aiforward CLI design |
-| **Remaining** | designs 2 (doctor), 3 (memory), 4 (RAI+scrub) |
-| **Best next action** | design the doctor (its subcommand is the CLI's first real dependency) |
+| **Completed** | aiforward CLI design — **implemented in revision 8** (`tools/aiforward.py`; commit 2fa8bce) |
+| **Remaining** | none — all four pack-evolution designs delivered in revision 8; `BUNDLE CONSISTENT` |
+| **Best next action** | none outstanding — CLI shipped (source-repo dev tool, not in the deployment map) |
 
 ## Gate record
 `GATE design · 2026-06-14 · Patterns Expert + Simplifier + Test Architect · criteria met: single responsibility (Façade), all delegated scripts Verified, no trust boundary, test plan present · verdict: PASS · vetoes→resolution: Simplifier confirmed zero added logic; Test Architect confirmed exit-propagation + unknown-command tests · author did not self-clear`

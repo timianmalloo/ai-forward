@@ -1,7 +1,7 @@
 // Derived from artifact frontmatter by scripts/docs-graph.py — DO NOT hand-edit (frontmatter wins; see knowledge-visualization.md V2/V18).
 window.DOCS_INDEX = {
-  "project": "AI-Forward",
-  "generated": "2026-06-15T01:36:57Z",
+  "project": "ai-forward",
+  "generated": "2026-06-22T13:03:55Z",
   "generator": "docs-graph.py derive",
   "artifacts": [
     {
@@ -155,6 +155,33 @@ window.DOCS_INDEX = {
         {
           "to": "architecture",
           "rel": "documents"
+        }
+      ],
+      "diagrams": []
+    },
+    {
+      "id": "project-memory",
+      "path": "docs/project-memory.md",
+      "title": "Project Memory",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2026-09-20",
+      "reviewSuggested": [],
+      "summary": "The durable, append-only record of what this project has learned and decided — read at every skill's grounding and appended to at every skill's convergence. Frontmatter/graph is authority; this ledger is narrative.",
+      "tags": [
+        "memory",
+        "continuity"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        },
+        {
+          "to": "design-project-memory",
+          "rel": "implements"
         }
       ],
       "diagrams": []

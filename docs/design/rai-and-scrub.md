@@ -96,9 +96,9 @@ Stdlib-only. **Counts impact (final tally for the whole pack-evolution batch):**
 ## Status & next action
 | | |
 |---|---|
-| **Completed** | RAI policy + scrub design — **all four designs done** |
-| **Remaining** | none (designs complete); implementation via `/extendaibundle` |
-| **Best next action** | run `/extendaibundle` to apply suggestions 1→4 serially, proving `BUNDLE CONSISTENT` |
+| **Completed** | RAI policy + scrub design — **all four designs done and implemented in revision 8** (`knowledge/responsible-ai-policy.md` + `pack/scripts/scrub.py`; commit 2fa8bce) |
+| **Remaining** | none — shipped via revision 8; `BUNDLE CONSISTENT` (16 eval cases, counts reconcile, foundation clean, graph valid+fresh) |
+| **Best next action** | none outstanding |
 
 ## Gate record
 `GATE design · 2026-06-14 · Privacy & Data Governance + Security & Identity + Test Architect · criteria met: RAI doc maps to existing enforcement (no theater), scrub is a labeled first-pass, no raw secret emitted, path-confined, idempotent, counts impact tallied · verdict: PASS · vetoes→resolution: Security confirmed no-raw-secret + atomic write + no shell; Privacy confirmed the scrub is a control + the accept-with-rationale on recall; Test Architect confirmed the security negative tests · author did not self-clear`

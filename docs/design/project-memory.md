@@ -81,9 +81,9 @@ Triggers: **T7** (a payload/format others consume — the ledger entry shape) �
 ## Status & next action
 | | |
 |---|---|
-| **Completed** | project-memory + Obsidian-decision design |
-| **Remaining** | design 4 (RAI + scrub) |
-| **Best next action** | design the RAI policy + PII scrub |
+| **Completed** | project-memory + Obsidian-decision design — **implemented in revision 8** (`templates/project-memory.template.md` + `knowledge/project-memory-and-obsidian.md`; commit 2fa8bce) |
+| **Remaining** | none — all four pack-evolution designs delivered in revision 8. Ledger **instantiated** at `docs/project-memory.md` (2026-06-22). |
+| **Best next action** | none outstanding — skills read/append the ledger at grounding/convergence |
 
 ## Gate record
 `GATE design · 2026-06-14 · Documentation Steward + Simplifier + Privacy & Data Governance · criteria met: Obsidian decision resolved (optional lens, evidenced), memory is graph-native not a new store, privacy flow analyzed, counts impact recorded · verdict: PASS · vetoes→resolution: Simplifier confirmed no new store (convention + 1 template + 1 doc); Privacy confirmed the no-special-category rule + scrub mitigation · author did not self-clear`
