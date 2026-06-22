@@ -19,10 +19,17 @@ the Road) and the **AI-Forward Pack** on top of it. Honor them on every non-triv
 - **Personas (dual-mode):** author in Peer Mode, review in Adversary Mode; the author never
   clears its own hard veto. Roster + the operating standard (severity, veto-clears-when,
   conflict rule): `.claude/knowledge/persona-cards.md` and `.claude/knowledge/persona-audit.md`.
-- **Skills (13):** `/collectknowledge`, `/adddomainexperts`, `/specify`, `/define-architecture`,
-  `/design`, `/implement`, `/investigate`, `/document`, `/adopt`, `/migrate`, `/updatepack`,
-  `/addpacktorepo`, `/extendaibundle` live in
-  `.claude/skills/`. Templates: `docs/ai-forward-pack/templates/`.
+- **Skills (15):** thirteen reasoning workflows — `/collectknowledge`, `/adddomainexperts`,
+  `/specify`, `/define-architecture`, `/design`, `/implement`, `/investigate`, `/document`,
+  `/adopt`, `/migrate`, `/updatepack`, `/addpacktorepo`, `/extendaibundle` — plus two prompt-log
+  utilities, `/prompts` and `/searchprompts`, that browse and search your logged prompts to reuse.
+  They live in `.claude/skills/`. Templates: `docs/ai-forward-pack/templates/`.
+- **Prompt log (utility):** `/prompts` opens your logged prompts as an arrow-navigable stack
+  (newest on top; → expand, ← collapse, Enter reuse) and `/searchprompts` searches them; reuse
+  copies the chosen prompt to the clipboard to paste-and-edit. Engine:
+  `docs/ai-forward-pack/scripts/prompt-log.py` (stdlib; store `<repo>/.aiforward/prompts.jsonl`,
+  git-ignored). When the user gives a **substantive** request, append it with
+  `prompt-log.py add "<text>"` so it is recallable (no CLI hook auto-captures prompts; stop when asked).
 - **Unfamiliar APIs/SDKs/MCP servers:** run the Spike Protocol (read the source, run a PoC)
   before depending on a contract — `.claude/knowledge/spike-protocol.md`.
 - **Specification:** `/specify` produces **one spec with three layers** — Functional (what &

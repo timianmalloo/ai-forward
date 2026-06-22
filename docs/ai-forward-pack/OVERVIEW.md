@@ -56,7 +56,7 @@ The reasoning behind every seat — and the seats deliberately *not* added — i
 ai-forward-pack/
 ├─ README.md · research-synthesis.md · OVERVIEW.md
 ├─ knowledge/   22 docs (+FOUNDATION manifest) — 15 reasoning + 7 vendored Agent-Knowledge-Pack foundation (BoK, Rules of the Road, Persona Catalog, LOA, Governance, Testing Strategy, C# Style)
-├─ commands/    (the 13 skills, one SKILL.md each)
+├─ commands/    (the 15 skills, one SKILL.md each)
 ├─ templates/   (the 16 artifact templates)
 ├─ adapters/    (INSTALL.md, claude-code/agents, copilot/agents, copilot/prompts)
 └─ examples/    (finance-repo — a worked /adddomainexperts result)
@@ -66,7 +66,7 @@ ai-forward-pack/
 
 ## 3. How to use the skills
 
-There are **13 skills** — five that carry a piece of work from idea to shipped code, five that support them (knowledge collection, persona tailoring, documentation, brownfield **adoption**, and characterization-first **migration**), and three **pack-lifecycle** skills that manage the pack installation itself (**/addpacktorepo** to install the pack into a repo, **/updatepack** to refresh an installed repo to the latest revision, and **/extendaibundle** to extend the pack with new capabilities from a prose prompt, with zero drift). The ten workflow skills form the loop below; the three lifecycle skills sit outside it.
+There are **15 skills** — five that carry a piece of work from idea to shipped code, five that support them (knowledge collection, persona tailoring, documentation, brownfield **adoption**, and characterization-first **migration**), three **pack-lifecycle** skills that manage the pack installation itself (**/addpacktorepo** to install the pack into a repo, **/updatepack** to refresh an installed repo to the latest revision, and **/extendaibundle** to extend the pack with new capabilities from a prose prompt, with zero drift), and two **prompt-log utilities** (**/prompts** to browse your logged prompts as an arrow-navigable stack and **/searchprompts** to search them) for reusing prior prompts. The ten workflow skills form the loop below; the lifecycle and utility skills sit outside it.
 
 **Built-in delivery discipline.** `/define-architecture` *defines completely but phases vertically*: the whole architecture is specified, then delivery is partitioned into end-to-end vertical slices (Phase 1 a walking skeleton; mocks at unbuilt edges as contract seams) so serial implementation always yields a deployable, human-validatable increment. `/design` performs a mandatory **failure-mode analysis** (each mode → an explicit disposition: prevent/detect/mitigate/recover/accept) and `/implement` carries every mode into code + a negative test. And `/define-architecture`, `/design`, and `/implement` each **end with a status table** — completed / remaining / best next action — so you always know where the build stands.
 

@@ -10,9 +10,16 @@ every non-trivial task.
 - **Personas (dual-mode):** author in Peer Mode, review in Adversary Mode; the author never
   clears its own hard veto. Agents in `.github/agents/`; the operating standard in the
   `persona-audit` / `persona-cards` instructions.
-- **Workflows (13):** the prompts in `.github/prompts/` (`collectknowledge`, `adddomainexperts`,
-  `specify`, `define-architecture`, `design`, `implement`, `investigate`, `document`, `adopt`,
-  `migrate`, `updatepack`, `addpacktorepo`, `extendaibundle`). Templates: `docs/ai-forward-pack/templates/`.
+- **Workflows (15):** the prompts in `.github/prompts/` — thirteen reasoning workflows
+  (`collectknowledge`, `adddomainexperts`, `specify`, `define-architecture`, `design`, `implement`,
+  `investigate`, `document`, `adopt`, `migrate`, `updatepack`, `addpacktorepo`, `extendaibundle`),
+  plus two prompt-log utilities, `/prompts` and `/searchprompts`. Templates: `docs/ai-forward-pack/templates/`.
+- **Prompt log (utility):** `/prompts` opens your logged prompts as an arrow-navigable stack
+  (newest on top; → expand, ← collapse, Enter reuse) and `/searchprompts` searches them; reuse
+  copies the chosen prompt to the clipboard to paste-and-edit. Engine:
+  `docs/ai-forward-pack/scripts/prompt-log.py` (stdlib; store `<repo>/.aiforward/prompts.jsonl`,
+  git-ignored). When the user gives a **substantive** request, append it with
+  `prompt-log.py add "<text>"` so it is recallable (no CLI hook auto-captures prompts; stop when asked).
 - **Unfamiliar APIs/SDKs/MCP servers:** run the Spike Protocol before depending on a contract.
 - **Specification:** `/specify` produces **one spec with three layers** — Functional (what &
   why), UX (how it works: IA, user flows, structure), UI (how it looks) — written bottom-up,

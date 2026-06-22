@@ -1,15 +1,15 @@
 ---
 doc: INSTALL
 purpose: 'Manual reconciliation guide and refresh changelog. On a repo refresh, read `changes` below — it is the key guide: it lists exactly what to re-copy and re-paste since the previous revision, so you do not have to diff the whole tree.'
-bundle_version: '2026.06.14.8'
-revision: 10
-released: '2026-06-14'
-counts: { lenses: 23, skills: 13, knowledge_docs: 22, templates: 16, scripts: 4 }
+bundle_version: '2026.06.22.11'
+revision: 11
+released: '2026-06-22'
+counts: { lenses: 23, skills: 15, knowledge_docs: 22, templates: 16, scripts: 5 }
 refresh_protocol: 'Compare your repo last-applied revision to the `revision` above. If it is lower, apply each entry in `changes` in order — re-copy the listed `paths` to their mapped destinations (deployment map in the body), re-apply the Copilot frontmatter wraps, and where an entry `deploy` says RE-PASTE, replace the managed blocks wholesale between their markers. Never overwrite an accumulated docs/docs-index.js.'
 changes:
-  - { type: added, area: knowledge, paths: ['knowledge/ai-commercial-models.md'], deploy: 'copy to .claude/knowledge/ AND wrap as .github/instructions/ai-commercial-models.instructions.md (applyTo all files)', summary: 'New knowledge doc on the commercial/cost/billing models for AI-integrated products — M1 bring-your-own subscription/key (BYOK), M2 metered pass-through, M3 absorbed subscription, M4 credits/packs, M5 hybrid; architecture patterns AC1–AC5 mapped to LOA by name (Receipt Ledger as the meter, Token Budget Throttle as the quota, Capability Router/Cascade as margin control); data-governance AC6–AC7 (whose account/DPA; zero-retention/no-training applies at the commercial-API tier only); UX/UI AC8–AC9 (connect-your-account, usage meter + quota states, cost transparency); decision framework AC10. Knowledge docs 21→22.' }
-  - { type: changed, area: agent, paths: ['adapters/claude-code/agents/ai-systems-engineer.md'], deploy: 'copy to .claude/agents/ (and .github/agents/ for Copilot, stripping tools:)', summary: 'The AI Systems Engineer (owner of inference cost) now authors the commercial/cost model (BYO/pass-through/absorbed) in Peer Mode and interrogates it at the gate — metering, quota, identity boundary, and margin/tier discipline — citing ai-commercial-models.md.' }
-  - { type: changed, area: knowledge, paths: ['knowledge/ui-interaction-design.md'], deploy: 'copy to .claude/knowledge/ and re-wrap the Copilot instruction', summary: 'New directive U15a — cost & commercial transparency: when the AI has a per-use cost, the commercial model (ai-commercial-models.md) is a UX surface — connect-your-account for BYO, usage meter + quota states + cost breakdown for metered/credit, fair-use allowance + graceful quota wall for absorbed.' }
+  - { type: added, area: script, paths: ['scripts/prompt-log.py'], deploy: 'copy to docs/ai-forward-pack/scripts/ (shared by both tools; stdlib Python 3.8+, no third-party import)', summary: 'New stdlib prompt-log engine — a project-local, labelled+timestamped log of prompts you can browse, search, and reuse. Subcommands add/list/search/show/get plus an interactive curses stack (browse/pick): newest on top, up/down move, right-arrow expand a prompt, left-arrow collapse, Enter reuse (copies to the clipboard via pbcopy/xclip/clip to paste-and-edit). Store is <repo>/.aiforward/prompts.jsonl, git-ignored on creation. Scripts 4 to 5.' }
+  - { type: added, area: skill, paths: ['commands/prompts/SKILL.md', 'commands/searchprompts/SKILL.md'], deploy: 'copy each SKILL.md to .claude/skills/<name>/ AND its .github/prompts/<name>.prompt.md wrapper from adapters/copilot/prompts/', summary: 'Two utility skills over the prompt-log engine: /prompts browses the logged-prompt stack (arrow-navigable, right-arrow expand / left-arrow collapse, Enter reuse) and /searchprompts searches it by freeform text (same stack, pre-filtered to prompts containing all terms). Utility skills, not Rigor-Protocol workflows. Skills 13 to 15.' }
+  - { type: changed, area: managed-block, paths: ['adapters/managed-blocks/CLAUDE.block.md', 'adapters/managed-blocks/AGENTS.block.md'], deploy: 'RE-PASTE both managed blocks wholesale between their markers in CLAUDE.md / AGENTS.md', summary: 'Skills/Workflows count 13 to 15; named /prompts and /searchprompts; added a prompt-log convention bullet — when the user gives a substantive request, the agent appends it via prompt-log.py add so it is recallable (no CLI hook auto-captures prompts; reuse is clipboard-paste, never auto-exec).' }
 ---
 
 ## Changelog — what changed since the last version
@@ -24,6 +24,7 @@ changes:
 So at any moment: the frontmatter `changes` = the latest delta (the refresh guide), and this section = the full rolling history.
 
 ### Prior revisions
+**Revision 10 — 2026-06-14.** Added the AI commercial/cost/billing-models knowledge doc `ai-commercial-models.md` (M1 BYOK, M2 metered pass-through, M3 absorbed, M4 credits, M5 hybrid; architecture patterns AC1–AC5 mapped to LOA by name; data-governance AC6–AC7; UX/UI AC8–AC9; decision framework AC10); the AI Systems Engineer agent now authors/interrogates the commercial model; `ui-interaction-design.md` gained directive U15a (cost & commercial transparency as a UX surface). Knowledge docs 21→22.
 **Revision 9 — 2026-06-14.** Added the technical/scientific/quantitative UI capability: a new base-knowledge doc `technical-ui-design.md` (TQ1–TQ12 — density-with-hierarchy, numerical legibility, perceptually-uniform colormaps [viridis; never rainbow/jet], data-ink, uncertainty-first, direct-manipulation-plus-precision, units, provenance, reactive recompute, large-data performance); catalog Section G (six archetypes G1 Parametric Modeling Workbench, G2 Scientific Visualization Pipeline, G3 Computational Notebook, G4 Computational Spreadsheet/Grid, G5 Probabilistic/Uncertainty Explorer, G6 Multi-Panel Data Terminal); grammar enums (Arch:SpatialBounded, Nav:Ribbon, six Layouts); ui-interaction-design + both UX lenses cross-referenced. Knowledge docs 20→21.
 
 **Revision 8 — 2026-06-14.** Applied four squad-comparison suggestions: the `aiforward` developer CLI (tools/, a stdlib Façade over the scripts); a deployable install-health `pack-doctor.py`; a `scrub.py` PII/secret first-pass; project-memory (a ledger template + `project-memory-and-obsidian.md`, Obsidian as an optional lens); and a committed `responsible-ai-policy.md` (MS RAI + NIST RMF crosswalk). Scripts 2→4, knowledge 18→20, templates 15→16.
@@ -64,12 +65,12 @@ The model is the same for both tools: **knowledge** files are always-available r
 |---|---|---|
 | Rules of the Road (the always-on rules) | `CLAUDE.md` (link to it) + `.claude/` | `AGENTS.md` |
 | Knowledge docs (`knowledge/*.md`, plus the existing pack) | `.claude/knowledge/` or repo `docs/` referenced from `CLAUDE.md` | `.github/instructions/*.instructions.md` with `applyTo` globs |
-| The 13 skills (`commands/*/SKILL.md`) | `.claude/skills/<name>/SKILL.md` | `.github/prompts/<name>.prompt.md` (wrapper that carries the same flow) |
+| The 15 skills (`commands/*/SKILL.md`) | `.claude/skills/<name>/SKILL.md` | `.github/prompts/<name>.prompt.md` (wrapper that carries the same flow) |
 | Thin command entry points | `.claude/commands/<name>.md` | `.github/prompts/<name>.prompt.md` |
 | Peer agents (orchestrator, product-strategist, domain-researcher) | `.claude/agents/<name>.md` | `.github/agents/<name>.agent.md` |
 | Adversary agents (the existing 11) | `.claude/agents/<name>.md` | `.github/agents/<name>.agent.md` |
 | Templates (`templates/*`, 15 incl. the glossary, decision note, threat model, privacy review) | `docs/ai-forward-pack/templates/` (referenced by skills) | same (shared) |
-| Script bundle (`scripts/*.py` — `docs-graph.py` + `foundation-check.py`) | `docs/ai-forward-pack/scripts/` (skills invoke docs-graph for all graph mechanics — V18; needs Python 3.8+, stdlib only) | same (shared) |
+| Script bundle (`scripts/*.py` — `docs-graph.py`, `foundation-check.py`, `pack-doctor.py`, `scrub.py`, `prompt-log.py`) | `docs/ai-forward-pack/scripts/` (skills invoke docs-graph for all graph mechanics — V18; prompt-log powers `/prompts` + `/searchprompts`; needs Python 3.8+, stdlib only) | same (shared) |
 | CI reference workflow (`ci/docs-health.yml`) | `.github/workflows/docs-health.yml` (optional but recommended — gates PRs on graph health) | same (shared) |
 | Pack regression suite (`evals/`) | **not deployed** — pack-maintenance tooling; lives wherever you maintain the pack source | — |
 | Pack docs (`README`, `OVERVIEW`, `research-synthesis`, this file) | `docs/ai-forward-pack/` | same (shared) |

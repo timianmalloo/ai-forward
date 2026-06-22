@@ -1,0 +1,12 @@
+{
+  "skill": "prompts",
+  "prompt": "Run /prompts to browse my logged prompts as a stack and reuse one (paste-and-edit). (Run in an AI-Forward clone workspace.)",
+  "setup": [],
+  "assertions": [
+    { "type": "file-exists", "path": "docs/ai-forward-pack/scripts/prompt-log.py" },
+    { "type": "cmd-exit", "cmd": ["python3", "docs/ai-forward-pack/scripts/prompt-log.py", "self-test"], "exit": 0 },
+    { "type": "cmd-exit", "cmd": ["python3", "docs/ai-forward-pack/scripts/prompt-log.py", "--store", ".aiforward/prompts.jsonl", "add", "seed prompt for the prompts eval"], "exit": 0 },
+    { "type": "cmd-exit", "cmd": ["python3", "docs/ai-forward-pack/scripts/prompt-log.py", "--store", ".aiforward/prompts.jsonl", "list"], "exit": 0 }
+  ],
+  "id": "prompts-01"
+}

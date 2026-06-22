@@ -1,0 +1,11 @@
+{
+  "skill": "searchprompts",
+  "prompt": "Run /searchprompts billing to find and reuse a prior prompt containing 'billing'. (Run in an AI-Forward clone workspace.)",
+  "setup": [],
+  "assertions": [
+    { "type": "file-exists", "path": "docs/ai-forward-pack/scripts/prompt-log.py" },
+    { "type": "cmd-exit", "cmd": ["python3", "docs/ai-forward-pack/scripts/prompt-log.py", "--store", ".aiforward/prompts.jsonl", "add", "--label", "billing-fix", "fix the billing pipeline retry logic"], "exit": 0 },
+    { "type": "cmd-exit", "cmd": ["python3", "docs/ai-forward-pack/scripts/prompt-log.py", "--store", ".aiforward/prompts.jsonl", "search", "billing"], "exit": 0 }
+  ],
+  "id": "searchprompts-01"
+}

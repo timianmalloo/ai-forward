@@ -47,6 +47,10 @@ HOW IT WORKS (the convention that makes it load-bearing):
 ## Log (newest first)
 *Append an entry at each skill's convergence. Format: `### <ISO date> — <headline>` + 1–3 sentences + a confidence label + back-links to touched artifacts.*
 
+### 2026-06-22 — Added the prompt-log capability (revision 11): engine + /prompts + /searchprompts
+New stdlib engine `pack/scripts/prompt-log.py` (a project-local labelled+timestamped prompt log: add/list/search/show/get + a curses stack with ↑/↓ move, → expand, ← collapse, Enter reuse-via-clipboard; store `<repo>/.aiforward/prompts.jsonl`, git-ignored) plus two utility skills `/prompts` and `/searchprompts`. Honest limits recorded in the skills: no CLI hook auto-captures every prompt (logging is explicit `add` + a default-on managed-block convention), and reuse is clipboard-paste, not input-injection. Skills 13→15, scripts 4→5; INSTALL revision 10→11; both tool surfaces synced; `BUNDLE CONSISTENT`. *(Verified — self-test, both eval cases PASS, consistency clean, verify-bundle green; the interactive curses rendering itself is Inferred — not exercisable headlessly.)*
+Touches: prompt-log.py, /prompts, /searchprompts, INSTALL.md, managed blocks
+
 ### 2026-06-22 — Outstanding-work audit; design-doc status tables refreshed; this ledger instantiated
 A full repo audit found all gates green (clean working tree; 0 open issues/PRs; `check-consistency.py` clean; graph 0 stale/orphan/flagged/drift) and all four pack-evolution capabilities (CLI, doctor, memory, RAI+scrub) already shipped in **revision 8**. The only real loose end was **Doc Drift**: the four `docs/design/*.md` status tables still advertised completed work as "Remaining / best next action" — now corrected to reflect rev-8 completion. This ledger was created (closing the project-memory adoption gap), and the optional "knowledge-docs-in-graph" item was resolved as a recorded won't-do (see architecture.md Flagged risks). *(Verified — gates re-run green after the changes.)*
 Touches: [[architecture]], [[design-aiforward-cli]], [[design-pack-doctor]], [[design-project-memory]], [[design-rai-and-scrub]]
