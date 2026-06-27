@@ -4,7 +4,7 @@ description: Browse your logged prompts as a stack (newest on top) and reuse one
 ---
 You are running the **/prompts** utility skill (not a Rigor-Protocol round-table — no personas to convene). It lets the user reason over their prior prompts and reuse one.
 
-The engine is the stdlib script `docs/ai-forward-pack/scripts/prompt-log.py` (store: `<repo>/.aiforward/prompts.jsonl`, git-ignored). Do this:
+The engine is the stdlib script `docs/ai-forward-pack/scripts/prompt-log.py` — a reuse lens over the committed **audit log** `docs/audit/audit-log.jsonl` (the same store `/auditlog` reads; `add` writes a `kind:prompt` entry via `audit-log.py`). Do this:
 
 1. **Prefer the interactive stack.** Tell the user to run, in their terminal:
    `python3 docs/ai-forward-pack/scripts/prompt-log.py browse`

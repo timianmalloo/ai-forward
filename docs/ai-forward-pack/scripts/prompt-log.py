@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
-"""prompt-log.py — a project-local log of prompts you can browse, search, and reuse.
+"""prompt-log.py — the fast prompt-reuse lens over the project's audit log.
 
-A tiny, stdlib-only prompt journal for any repo that uses the AI-Forward pack. It gives you
-the thing the CLI's transient history does not: **labelled, timestamped, searchable** prompts
-you can pull back to reuse or start from.
+A tiny, stdlib-only front-end for browsing, searching, and **reusing** the prompts already
+recorded in the committed **audit log** (docs/audit/audit-log.jsonl). Unified with the Audit &
+Change Log Standard (audit-and-change-log.md): there is **one store of prompts** — the audit
+log — and this is the reuse lens over it (its arrow-navigable stack + clipboard reuse), the
+companion to the broader /auditlog timeline/search/change-log/viewer.
 
-  add      append a prompt (auto label + timestamp)      -> .aiforward/prompts.jsonl
+  add      log a prompt (writes a kind:prompt entry to the audit log)  -> via audit-log.py
   list     show the stack, newest first (label · time)
   search   freeform search; matches contain ALL terms
   show     print one entry in full (label, time, text)
@@ -17,12 +19,12 @@ REUSE MODEL (honest about the medium). A script cannot type into the Copilot CLI
 line, so "reuse" copies the chosen prompt to the clipboard (pbcopy, when present) and prints
 it — you paste it into your next prompt (Cmd+V) and edit before sending.
 
-LOGGING MODEL. There is no hook to auto-capture every keystroke-prompt, so logging is explicit:
-run `add` (the /prompts + /searchprompts skills, and the managed-block convention, wire this in
-so the agent appends your substantive requests for you). Stdlib only; no third-party import.
-
-Store: `.aiforward/prompts.jsonl` at the repo root (override with --store or $AIFORWARD_PROMPT_LOG).
-The directory is git-ignored on creation so your prompt history is never committed by accident.
+ONE STORE. The default store is the committed audit log (docs/audit/audit-log.jsonl), so every
+prompt the audit mandate records — skill runs, scripts, and prompts you `add` — is reusable
+here, and there is no second parallel prompt store. `add` writes through audit-log.py (the
+single writer of record, AL0.1) as a kind:prompt entry. Override the store with --store or
+$AIFORWARD_PROMPT_LOG (e.g. a legacy <repo>/.aiforward/prompts.jsonl); the reader adapts to
+either schema. Stdlib only; no third-party import.
 """
 import argparse
 import json
@@ -34,8 +36,9 @@ import uuid
 from datetime import datetime, timezone
 
 ENV_STORE = "AIFORWARD_PROMPT_LOG"
-DEFAULT_DIRNAME = ".aiforward"
-DEFAULT_FILENAME = "prompts.jsonl"
+AUDIT_REL = os.path.join("docs", "audit", "audit-log.jsonl")   # the unified store of record
+LEGACY_DIRNAME = ".aiforward"                                   # pre-unification personal store
+LEGACY_FILENAME = "prompts.jsonl"
 
 
 # ----------------------------------------------------------------------------- store
@@ -58,22 +61,43 @@ def resolve_store(explicit=None):
     env = os.environ.get(ENV_STORE)
     if env:
         return os.path.abspath(env)
-    return os.path.join(_repo_root(), DEFAULT_DIRNAME, DEFAULT_FILENAME)
+    return os.path.join(_repo_root(), AUDIT_REL)  # the unified audit log
 
 
 def _ensure_store_dir(store):
-    """Create the store dir and a `*` .gitignore so the log is never committed (privacy)."""
+    """Create the store dir (used only for a legacy/explicit --store; the audit log dir
+    is owned by audit-log.py)."""
     d = os.path.dirname(store)
     if d and not os.path.isdir(d):
         os.makedirs(d, exist_ok=True)
-    gi = os.path.join(d, ".gitignore") if d else None
-    if gi and not os.path.exists(gi):
-        with open(gi, "w", encoding="utf-8", newline="\n") as f:
-            f.write("# AI-Forward prompt log — local history, never committed.\n*\n")
+    # A legacy .aiforward store stays git-ignored so a personal scratchpad is never committed.
+    if d and os.path.basename(d) == LEGACY_DIRNAME:
+        gi = os.path.join(d, ".gitignore")
+        if not os.path.exists(gi):
+            with open(gi, "w", encoding="utf-8", newline="\n") as f:
+                f.write("# AI-Forward legacy prompt log — local history, never committed.\n*\n")
+
+
+def _adapt(e):
+    """Map a stored entry to the reuse-stack shape {id, ts, label, text, tags}.
+
+    Handles BOTH the audit-log schema (prompt/shortname/datetime, the unified store) and the
+    legacy prompt-log schema (text/label/ts), so the lens reads either store transparently.
+    """
+    text = e.get("prompt")
+    if text is None:
+        text = e.get("text", "")
+    label = e.get("shortname") or e.get("label") or _derive_label(text or "")
+    ts = e.get("datetime") or e.get("ts") or ""
+    return {"id": e.get("id", ""), "ts": ts, "label": label, "text": text or "",
+            "tags": e.get("tags") or [], "kind": e.get("kind"), "skill": e.get("skill")}
 
 
 def load_entries(store):
-    """Return entries oldest-first as stored; callers reverse for newest-first views."""
+    """Return entries oldest-first in the stack shape; callers reverse for newest-first views.
+
+    Reads the unified audit log (or a legacy store) and adapts each row; rows with no prompt
+    text are skipped (you cannot reuse an empty prompt)."""
     if not os.path.exists(store):
         return []
     out = []
@@ -83,9 +107,11 @@ def load_entries(store):
             if not line:
                 continue
             try:
-                out.append(json.loads(line))
+                e = _adapt(json.loads(line))
             except json.JSONDecodeError:
                 continue  # skip a corrupt line rather than crash the whole log
+            if e["text"].strip():
+                out.append(e)
     return out
 
 
@@ -163,8 +189,11 @@ def copy_to_clipboard(text):
 
 # ----------------------------------------------------------------------------- commands
 
+def _sibling(name):
+    return os.path.join(os.path.dirname(os.path.abspath(__file__)), name)
+
+
 def cmd_add(args):
-    store = resolve_store(args.store)
     if args.text:
         text = args.text
     elif args.words:
@@ -178,10 +207,32 @@ def cmd_add(args):
     if not text:
         sys.stderr.write("prompt-log add: empty prompt, nothing logged.\n")
         return 0  # not an error — just nothing to do
+    label = _derive_label(text, args.label)
+
+    # Default: log a kind:prompt entry to the unified audit log via audit-log.py (the single
+    # writer of record, AL0.1) — so a logged prompt is reusable here AND visible in /auditlog.
+    # An explicit --store keeps the legacy direct-append behaviour (a personal/.aiforward store).
+    if not args.store:
+        audit = _sibling("audit-log.py")
+        if os.path.exists(audit):
+            cmd = [sys.executable, audit, "--root", os.path.join(_repo_root(), "docs"),
+                   "append", "--kind", "prompt", "--shortname", label,
+                   "--session", args.session or "prompt-log",
+                   "--summary", args.summary or "prompt logged for reuse",
+                   "--prompt-file", "-"]
+            for t in (args.tag or []):
+                cmd += ["--tag", t]
+            r = subprocess.run(cmd, input=text, text=True)
+            if r.returncode == 0 and not args.quiet:
+                print(f"logged to the audit log: {label}")
+            return r.returncode
+        # audit-log.py absent (unexpected): fall through to a direct write so `add` still works.
+
+    store = resolve_store(args.store)
     entry = {
         "id": datetime.now().strftime("%Y%m%dT%H%M%S") + "-" + uuid.uuid4().hex[:6],
         "ts": _now_iso(),
-        "label": _derive_label(text, args.label),
+        "label": label,
         "text": text,
         "tags": list(args.tag or []),
     }
@@ -421,7 +472,7 @@ def cmd_selftest(args):
                          ("Investigate the flaky test", "flaky-investigation"),
                          ("Refactor the billing pipeline", None)]:
             append_entry(store, {
-                "id": uuid.uuid4().hex, "ts": _now_iso(),
+                "id": "p" + uuid.uuid4().hex, "ts": _now_iso(),
                 "label": _derive_label(txt, lbl), "text": txt, "tags": [],
             })
         entries = newest_first(load_entries(store))
@@ -440,16 +491,26 @@ def cmd_selftest(args):
         idp = entries[2]["id"][:8]
         check(resolve_one(entries, idp) is entries[2], "id-prefix resolve failed")
         check(resolve_one(entries, "999") is None, "out-of-range index should be None")
-        # gitignore privacy guard
-        _ensure_store_dir(os.path.join(d, "sub", "x.jsonl"))
-        check(os.path.exists(os.path.join(d, "sub", ".gitignore")), ".gitignore not created")
+        # legacy-store privacy guard: a .aiforward store still gets a `*` .gitignore
+        _ensure_store_dir(os.path.join(d, ".aiforward", "x.jsonl"))
+        check(os.path.exists(os.path.join(d, ".aiforward", ".gitignore")), ".gitignore not created")
+        # adapter: audit-log schema (prompt/shortname/datetime) maps to the stack shape; empty prompt skipped
+        astore = os.path.join(d, "audit.jsonl")
+        append_entry(astore, {"id": "al-0001", "shortname": "design-gw", "datetime": "2026-06-27T10:00:00Z",
+                              "prompt": "Design the payment gateway", "summary": "x", "kind": "skill"})
+        append_entry(astore, {"id": "al-0002", "shortname": "noop", "datetime": "2026-06-27T10:01:00Z",
+                              "prompt": "", "summary": "y", "kind": "manual"})
+        ad = newest_first(load_entries(astore))
+        check(len(ad) == 1, f"adapter: expected 1 non-empty audit entry, got {len(ad)}")
+        check(bool(ad) and ad[0]["text"] == "Design the payment gateway", "adapter: prompt should map to text")
+        check(bool(ad) and ad[0]["label"] == "design-gw", "adapter: shortname should map to label")
 
     if failures:
         print("SELF-TEST FAILED:")
         for f in failures:
             print(f"  - {f}")
         return 1
-    print("prompt-log self-test: OK (add, newest-first, label, search AND, resolve, gitignore)")
+    print("prompt-log self-test: OK (add, newest-first, label, search AND, resolve, gitignore, audit-adapter)")
     return 0
 
 
@@ -459,14 +520,17 @@ def build_parser():
     p = argparse.ArgumentParser(
         prog="prompt-log",
         description="A project-local log of prompts you can browse, search, and reuse.")
-    p.add_argument("--store", help=f"path to the JSONL store (default: <repo>/{DEFAULT_DIRNAME}/{DEFAULT_FILENAME} "
-                                   f"or ${ENV_STORE})")
+    p.add_argument("--store", help=f"path to the JSONL store (default: the unified audit log "
+                                   f"<repo>/{AUDIT_REL}, or ${ENV_STORE}; pass a legacy "
+                                   f"<repo>/{LEGACY_DIRNAME}/{LEGACY_FILENAME} to read/append that)")
     sub = p.add_subparsers(dest="cmd")
 
-    a = sub.add_parser("add", help="append a prompt to the log")
+    a = sub.add_parser("add", help="log a prompt (to the audit log by default)")
     a.add_argument("words", nargs="*", help="the prompt text (or use --text, or pipe via stdin)")
     a.add_argument("--text", help="the prompt text")
-    a.add_argument("--label", help="a short label (default: derived from the first line)")
+    a.add_argument("--label", help="a short label / shortname (default: derived from the first line)")
+    a.add_argument("--session", help="the session id to record on the audit entry (default: prompt-log)")
+    a.add_argument("--summary", help="the audit summary (default: 'prompt logged for reuse')")
     a.add_argument("--tag", action="append", help="a tag (repeatable)")
     a.add_argument("--quiet", action="store_true", help="don't echo the logged line")
     a.set_defaults(func=cmd_add)

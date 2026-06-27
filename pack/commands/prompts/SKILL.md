@@ -7,10 +7,10 @@ description: Browse your logged prompts as a stack (newest on top) and reuse one
 
 A **utility skill** (not a Rigor-Protocol workflow) for reasoning over your prior prompts. It opens your project-local prompt log as an interactive **stack — newest on top** — that you navigate with the arrow keys: **↑/↓** to move, **→** to expand the highlighted prompt so you can read it in full, **←** to collapse it back to the one-line label, and **Enter** to reuse it. Reuse copies the chosen prompt to your clipboard so you can **paste it into your next prompt (Cmd/Ctrl+V) and edit before sending**.
 
-Companion skill: **/searchprompts** (the same stack, pre-filtered by freeform text). Both read the same log.
+Companion skill: **/searchprompts** (the same stack, pre-filtered by freeform text). Both are reuse lenses over the same unified **audit log** (`docs/audit/audit-log.jsonl`) — the broader timeline/search/change-log/viewer is **/auditlog**.
 
 ## Engine
-All behavior is in the stdlib script **`docs/ai-forward-pack/scripts/prompt-log.py`** (in this source repo: `pack/scripts/prompt-log.py`). No third-party dependency; the store is a JSONL file at `<repo>/.aiforward/prompts.jsonl` (git-ignored on creation, so your prompt history is never committed). Override with `--store` or `$AIFORWARD_PROMPT_LOG`.
+All behavior is in the stdlib script **`docs/ai-forward-pack/scripts/prompt-log.py`** (in this source repo: `pack/scripts/prompt-log.py`). No third-party dependency. **Unified store (one source of truth):** the prompts come from the committed **audit log** `docs/audit/audit-log.jsonl` — the same store `/auditlog` reads — so *every* prompt the Audit Mandate records (skill runs, scripts, and prompts you `add`) is reusable here, and there is no second parallel prompt store. `add` writes a `kind:prompt` entry **through `audit-log.py`** (the single writer of record). Override the store with `--store` (e.g. a legacy `<repo>/.aiforward/prompts.jsonl`) or `$AIFORWARD_PROMPT_LOG`; the reader adapts to either schema.
 
 ## How prompts get logged (read this — it is the one honest limitation)
 There is **no hook** that auto-captures every prompt you type into the CLI, so logging is *explicit*:

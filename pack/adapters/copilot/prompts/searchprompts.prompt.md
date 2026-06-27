@@ -4,7 +4,7 @@ description: Search your logged prompts by freeform text and reuse a match — t
 ---
 You are running the **/searchprompts** utility skill (not a Rigor-Protocol round-table). It finds a past prompt by freeform text and lets the user reuse it. It is **/prompts pre-filtered**.
 
-The engine is the stdlib script `docs/ai-forward-pack/scripts/prompt-log.py` (store: `<repo>/.aiforward/prompts.jsonl`, git-ignored). Take the user's search terms and:
+The engine is the stdlib script `docs/ai-forward-pack/scripts/prompt-log.py` — a reuse lens over the committed **audit log** `docs/audit/audit-log.jsonl` (the same store `/auditlog` reads). Take the user's search terms and:
 
 1. **Prefer the interactive filtered stack.** Tell the user to run:
    `python3 docs/ai-forward-pack/scripts/prompt-log.py pick <their terms>`

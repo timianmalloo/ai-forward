@@ -25,12 +25,13 @@ every non-trivial task.
   `investigate`, `document`, `adopt`, `migrate`, `updatepack`, `addpacktorepo`, `extendaibundle`),
   the `auditlog` lens over the audit & change log, plus two prompt-log utilities, `prompts` and
   `searchprompts`. Templates: `docs/ai-forward-pack/templates/`.
-- **Prompt log (utility):** `/prompts` opens your logged prompts as an arrow-navigable stack
+- **Prompt reuse (utility):** `/prompts` opens the audit log's prompts as an arrow-navigable stack
   (newest on top; → expand, ← collapse, Enter reuse) and `/searchprompts` searches them; reuse
   copies the chosen prompt to the clipboard to paste-and-edit. Engine:
-  `docs/ai-forward-pack/scripts/prompt-log.py` (stdlib; store `<repo>/.aiforward/prompts.jsonl`,
-  git-ignored). When the user gives a **substantive** request, append it with
-  `prompt-log.py add "<text>"` so it is recallable (no CLI hook auto-captures prompts; stop when asked).
+  `docs/ai-forward-pack/scripts/prompt-log.py` (stdlib) — a **reuse lens over the *same* committed
+  audit log** (`docs/audit/audit-log.jsonl`), not a second store. When the user gives a
+  **substantive** request, log it with `prompt-log.py add "<text>"` (it writes a `kind:prompt`
+  audit entry via `audit-log.py`) so it is recallable (no CLI hook auto-captures prompts; stop when asked).
 - **Unfamiliar APIs/SDKs/MCP servers:** run the Spike Protocol before depending on a contract.
 - **Specification:** `/specify` produces **one spec with three layers** — Functional (what &
   why), UX (how it works: IA, user flows, structure), UI (how it looks) — written bottom-up,

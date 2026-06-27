@@ -144,6 +144,8 @@ A discerned change is **promoted** to the change log with `audit-log.py change` 
 
 **AL12 — The `/auditlog` CLI skill.** `/auditlog` is the command-line lens over the bundle: **list** the last *n* entries (`audit-log.py list --n`), **search** by session/date/keyword (`search`), **get** one entry to **re-run** (`get --id <al-NNNN> --field prompt` emits the prompt to copy or pipe), toggle the **change** view (`--kind change`), open the viewer, and **suggest** unlogged meaningful changes (`suggest`). It is a reader/dispatcher over `audit-log.py`; it adds no behavior of its own and does not log its own browsing.
 
+**AL13 — The prompt-reuse lens (`/prompts`, `/searchprompts`) over the same store.** Prompt *reuse* is a second lens over the **one** store, not a second store: `/prompts` and `/searchprompts` (engine `scripts/prompt-log.py`) browse and search the audit log's prompts as an arrow-navigable stack (↑/↓ move · → expand · ← collapse · Enter reuse) and copy a chosen prompt to the clipboard for paste-and-edit. They read `docs/audit/audit-log.jsonl` (adapting each entry's `prompt`→reusable text), so *every* recorded prompt — skill runs, scripts, and prompts you log — is reusable; and `prompt-log.py add` writes a **`kind: prompt`** audit entry **through `audit-log.py`** (AL0.1, the single writer), so a logged prompt is both reusable here and visible in `/auditlog`. There is **no separate prompt store**; a legacy `<repo>/.aiforward/prompts.jsonl` is read only via an explicit `--store`. `/auditlog` is the broad timeline/search/change-log/viewer lens; `/prompts`+`/searchprompts` are the fast reuse lens — same committed store underneath.
+
 ---
 
 ## 6. Self-verification checklist

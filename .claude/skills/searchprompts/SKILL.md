@@ -7,10 +7,10 @@ description: Search your logged prompts by freeform text and reuse a match — t
 
 A **utility skill** (not a Rigor-Protocol workflow): find a past prompt by **freeform text**, then reuse it. It is **/prompts pre-filtered** — you give search terms, and the same interactive **stack (newest on top)** opens over just the prompts whose label or body contains **all** your terms (case-insensitive). Navigate with **↑/↓**, **→** to expand a match and read it in full, **←** to collapse, **Enter** to reuse (copies it to your clipboard to paste-and-edit).
 
-Companion skill: **/prompts** (the full stack, unfiltered). Both read the same log.
+Companion skill: **/prompts** (the full stack, unfiltered). Both are reuse lenses over the same unified **audit log** (`docs/audit/audit-log.jsonl`); the broader timeline/search/change-log/viewer is **/auditlog**.
 
 ## Engine
-All behavior is in the stdlib script **`docs/ai-forward-pack/scripts/prompt-log.py`** (in this source repo: `pack/scripts/prompt-log.py`). The store is `<repo>/.aiforward/prompts.jsonl` (git-ignored on creation); override with `--store` or `$AIFORWARD_PROMPT_LOG`.
+All behavior is in the stdlib script **`docs/ai-forward-pack/scripts/prompt-log.py`** (in this source repo: `pack/scripts/prompt-log.py`). **Unified store:** prompts come from the committed **audit log** `docs/audit/audit-log.jsonl` (the same store `/auditlog` reads); `add` writes a `kind:prompt` entry through `audit-log.py`. Override with `--store` (e.g. a legacy `<repo>/.aiforward/prompts.jsonl`) or `$AIFORWARD_PROMPT_LOG`; the reader adapts to either schema.
 
 ## What this skill does
 1. **Run the filtered interactive browser** with the user's terms:
