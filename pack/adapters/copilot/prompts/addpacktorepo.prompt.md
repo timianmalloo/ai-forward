@@ -10,4 +10,6 @@ OPEN: read the target repo path from the user's input; validate it is an accessi
 
 **Running this in Copilot (single agent — make the dialog visible).** Copilot does not auto-spawn the personas as separate subagents the way Claude Code does, so enact the round-table *inline*: for each peer named above, write a short labeled contribution in that persona's voice (e.g. **Enterprise Architect —** …); then run the adversary round, each reviewer giving a labeled critique with a severity **[Blocker|Major|Minor|Nit]** and, for hard-veto roles, an explicit **PASS/BLOCK** plus the veto-clears-when predicate (`persona-cards.md` §8). Do not collapse this into one unattributed answer — the dialog is the deliverable.
 
+**Audit (last action):** append an audit-log entry to the **target repo's** log via `python3 docs/ai-forward-pack/scripts/audit-log.py append --shortname "addpacktorepo-<target>" --session "<id>" --skill addpacktorepo --kind command --prompt "<verbatim>" --summary "<revision installed>"` (the Audit Mandate, `knowledge/audit-and-change-log.md`, AL5), so the target repo records the install.
+
 ${input}

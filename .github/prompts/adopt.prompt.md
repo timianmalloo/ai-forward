@@ -8,4 +8,6 @@ You are running the **adopt** workflow (`knowledge/rigor-protocol.md` on the rep
 
 **Running this in Copilot (single agent — make the dialog visible).** Copilot does not auto-spawn the personas as separate subagents the way Claude Code does, so enact the round-table *inline*: first **ground** in the prior `docs/` artifacts (spec → architecture → design) and treat them as authoritative; then for each peer named above, write a short labeled contribution in that persona's voice (e.g. **Patterns Expert —** …); then run the adversary round, each reviewer giving a labeled critique with a severity **[Blocker|Major|Minor|Nit]** and, for hard-veto roles, an explicit **PASS/BLOCK** plus the veto-clears-when predicate (`persona-cards.md` §8). Do not collapse this into one unattributed answer — the dialog is the deliverable. (Alternatively `@`-mention a specific agent from `.github/agents/` for a focused single-persona pass, or use agent **handoffs** to chain the stages.)
 
+**Audit (last action):** append an audit-log entry for this run via `python3 docs/ai-forward-pack/scripts/audit-log.py append --shortname "adopt-<repo>" --session "<id>" --skill adopt --kind skill --prompt "<verbatim>" --summary "<recovered + adoption plan>" --artifact docs/architecture.md` (the Audit Mandate, `knowledge/audit-and-change-log.md`, AL5).
+
 ${input}

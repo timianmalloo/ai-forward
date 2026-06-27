@@ -43,4 +43,6 @@ Per the Discoverability Mandate (V10): the adoption artifacts themselves (archit
 - [ ] The adoption plan exists, phased vertically by load-bearing priority, each phase naming its skills.
 - [ ] Gate held: Steward verified claims, Test Architect attacked confidence labels, Simplifier struck speculation; no self-clearing.
 
+**Audit (last action).** Append an audit-log entry for this run — `python3 docs/ai-forward-pack/scripts/audit-log.py append --shortname "adopt-<repo>" --session "<id>" --skill adopt --kind skill --prompt "<the prompt, verbatim>" --summary "<what was recovered + adoption plan>" --artifact docs/architecture.md` — per the Audit Mandate (`knowledge/audit-and-change-log.md`, AL5). A run that left no trace in `docs/audit/` is, like an un-indexed artifact, not done.
+
 **Handoff:** run `/document` for the full documentation bundle over the adopted base, then the adoption plan's Phase 1 skills.

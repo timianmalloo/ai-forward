@@ -10,10 +10,11 @@ every non-trivial task.
 - **Personas (dual-mode):** author in Peer Mode, review in Adversary Mode; the author never
   clears its own hard veto. Agents in `.github/agents/`; the operating standard in the
   `persona-audit` / `persona-cards` instructions.
-- **Workflows (15):** the prompts in `.github/prompts/` — thirteen reasoning workflows
+- **Workflows (16):** the prompts in `.github/prompts/` — thirteen reasoning workflows
   (`collectknowledge`, `adddomainexperts`, `specify`, `define-architecture`, `design`, `implement`,
   `investigate`, `document`, `adopt`, `migrate`, `updatepack`, `addpacktorepo`, `extendaibundle`),
-  plus two prompt-log utilities, `/prompts` and `/searchprompts`. Templates: `docs/ai-forward-pack/templates/`.
+  the `auditlog` lens over the audit & change log, plus two prompt-log utilities, `prompts` and
+  `searchprompts`. Templates: `docs/ai-forward-pack/templates/`.
 - **Prompt log (utility):** `/prompts` opens your logged prompts as an arrow-navigable stack
   (newest on top; → expand, ← collapse, Enter reuse) and `/searchprompts` searches them; reuse
   copies the chosen prompt to the clipboard to paste-and-edit. Engine:
@@ -44,6 +45,14 @@ every non-trivial task.
   inbound neighbors review-suggested; sub-ADR decisions become linked decision notes in
   docs/notes/; grounding traverses the graph; all graph mechanics run through the script bundle
   docs/ai-forward-pack/scripts/docs-graph.py — never ad-hoc scripts (V2/V10/V13–V18).
+- **Audit & change log:** the project keeps a durable, committed history so work compounds across
+  sessions — every meaningful prompt/skill/script in `docs/audit/audit-log.jsonl` (the Audit
+  Mandate: every skill appends an entry as its last action) and every design decision in
+  `docs/audit/change-log.jsonl` (collectknowledge/define-architecture/design/migrate capture the
+  prompt, result, and git before/after). Browse the searchable timeline at `docs/audit/index.html`
+  or via the `auditlog` prompt (last-N, search, recall-and-redo, full-history↔changes toggle); all
+  writes go through `docs/ai-forward-pack/scripts/audit-log.py`; the standard is
+  `.github/instructions/audit-and-change-log.instructions.md`. A new session reads it to learn what was done and why.
 - **Foundation:** the Body of Knowledge, Rules of the Road, Persona Catalog, LOA, and Engineering
   Governance are in `.github/instructions/` (always applied) — the constitution all of this rests on.
 <!-- AI-FORWARD-PACK:END -->

@@ -10,4 +10,6 @@ OPEN: locate the pack source (from the user's input, `AI_FORWARD_PACK` env var, 
 
 **Running this in Copilot (single agent — make the dialog visible).** Copilot does not auto-spawn the personas as separate subagents the way Claude Code does, so enact the round-table *inline*: for each peer named above, write a short labeled contribution in that persona's voice (e.g. **Release Engineer —** …); then run the adversary round, each reviewer giving a labeled critique with a severity **[Blocker|Major|Minor|Nit]** and, for hard-veto roles, an explicit **PASS/BLOCK** plus the veto-clears-when predicate (`persona-cards.md` §8). Do not collapse this into one unattributed answer — the dialog is the deliverable.
 
+**Audit (last action):** append an audit-log entry to the updated repo's log via `python3 docs/ai-forward-pack/scripts/audit-log.py append --shortname "updatepack-r<to>" --session "<id>" --skill updatepack --kind command --prompt "<verbatim>" --summary "<from → to revision>"` (the Audit Mandate, `knowledge/audit-and-change-log.md`, AL5), recording the pack revision history.
+
 ${input}

@@ -160,4 +160,6 @@ Unlike the workflow skills, this is a **pack-lifecycle skill**: it installs the 
 - [ ] Commit offered with exact proposed message; user decision honoured.
 - [ ] Dry-run requests produced the install table with zero writes; a normal run is idempotent (re-runnable over a partial install without duplicate blocks; an already-installed target routes to `/updatepack`).
 
+**Audit (last action).** Append an audit-log entry to the **target repo's** log recording the install — `python3 docs/ai-forward-pack/scripts/audit-log.py append --shortname "addpacktorepo-<target>" --session "<id>" --skill addpacktorepo --kind command --prompt "<the prompt, verbatim>" --summary "<pack revision installed + what landed>"` — per the Audit Mandate (`knowledge/audit-and-change-log.md`, AL5), so the target repo records that the pack was installed and when.
+
 **Handoff:** direct the user to `/adopt` as the immediate next step — it recovers the existing architecture into the knowledge graph and sets the Docs Explorer baseline.

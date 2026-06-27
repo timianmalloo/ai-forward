@@ -45,9 +45,9 @@ Run affected skill cases on every pack edit; run all cases on model-version chan
 
 ```
 pack/           ← SINGLE SOURCE OF TRUTH — edit here only
-  knowledge/    ← 22 knowledge docs (reasoning spine + vendored foundation)
-  commands/     ← 15 skills (one SKILL.md each)
-  templates/    ← 16 artifact templates
+  knowledge/    ← 23 knowledge docs (reasoning spine + vendored foundation)
+  commands/     ← 16 skills (one SKILL.md each)
+  templates/    ← 17 artifact templates
   adapters/     ← INSTALL.md + Claude Code agents + Copilot agents/prompts + managed blocks
   evals/        ← pack regression suite (NOT deployed to target repos)
   scripts/  ci/  examples/
@@ -58,6 +58,7 @@ pack/           ← SINGLE SOURCE OF TRUTH — edit here only
 docs/           ← GENERATED
   index.html                ← Docs Explorer (hierarchy · graph · mind map · health)
   docs-index.js             ← accumulated knowledge-graph index (skills maintain this — NEVER overwrite)
+  audit/                    ← durable audit & change log (audit-log.jsonl, change-log.jsonl, index.html) — skills append, NEVER overwrite the .jsonl
   ai-forward-pack/          ← templates, scripts, pack docs
 
 tools/          ← sync-pack.ps1  package-pack.ps1
@@ -90,14 +91,19 @@ Each `pack/knowledge/<name>.md` installs as `.github/instructions/<name>.instruc
 - All graph mechanics go through `docs/ai-forward-pack/scripts/docs-graph.py` — never ad-hoc scripts (V18).
 - Material changes flag inbound neighbors `review-suggested`; sub-ADR decisions become linked decision notes in `docs/notes/`.
 
-### The 15 skills and their natural order
+### Audit & change log
+- Every skill, as its last action, appends an **audit-log** entry (`docs/audit/audit-log.jsonl`) recording the run — shortname, datetime, session, prompt, summary (+ kind/skill/tool/artifacts). `/collectknowledge`, `/define-architecture`, `/design`, `/migrate` additionally append a **change-log** entry (`docs/audit/change-log.jsonl`) capturing the decision + git before/after.
+- All writes go through `docs/ai-forward-pack/scripts/audit-log.py` (never hand-append JSONL); it regenerates `audit-data.js` + the viewer. The standard is `pack/knowledge/audit-and-change-log.md`.
+- The history is the committed counterpart to a session's ephemeral store — read it at grounding (`audit-log.py list`/`search`) so work compounds across sessions. Browse via `/auditlog` or `docs/audit/index.html`. (The prompt-log — `/prompts` + `/searchprompts`, `.aiforward/prompts.jsonl` — is a separate, lighter prompt-reuse journal.)
+
+### The 16 skills and their natural order
 ```
 /collectknowledge → /adddomainexperts → /specify → /define-architecture → /design → /implement → /document
                                                                                 ↑
                                                             /investigate  (whenever a defect appears)
 ```
 `/adopt` onboards a brownfield repo; `/migrate` runs characterization-first refactors.
-`/updatepack` refreshes an installed pack from a local ai-forward clone; `/addpacktorepo` installs the pack into a new local repo by path; `/extendaibundle` extends the pack itself with a new capability from a prose prompt (collect→specify→design→implement, scaffolded by `tools/new-capability.py`, proven by `tools/verify-bundle.ps1`, zero drift). Two **prompt-log utilities** sit outside the loop: `/prompts` browses your logged prompts as an arrow-navigable stack (→ expand / ← collapse) and `/searchprompts` searches them, both to reuse a prior prompt (engine: `docs/ai-forward-pack/scripts/prompt-log.py`).
+`/updatepack` refreshes an installed pack from a local ai-forward clone; `/addpacktorepo` installs the pack into a new local repo by path; `/extendaibundle` extends the pack itself with a new capability from a prose prompt (collect→specify→design→implement, scaffolded by `tools/new-capability.py`, proven by `tools/verify-bundle.ps1`, zero drift). `/auditlog` is the CLI lens over the audit & change log (last-N, search, recall-and-redo a prompt, open the viewer). Two **prompt-log utilities** sit outside the loop: `/prompts` browses your logged prompts as an arrow-navigable stack (→ expand / ← collapse) and `/searchprompts` searches them, both to reuse a prior prompt (engine: `docs/ai-forward-pack/scripts/prompt-log.py`).
 
 Skills in `.claude/skills/` apply automatically by description in Claude Code; in Copilot they are available as prompts in `.github/prompts/<name>.prompt.md`.
 

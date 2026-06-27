@@ -1,0 +1,14 @@
+{
+  "skill": "auditlog",
+  "prompt": "Append an audit entry and a change entry, then list and search the audit log and recall a prompt verbatim. (Run in an AI-Forward clone workspace.)",
+  "assertions": [
+    { "type": "cmd-exit", "cmd": ["python3", "pack/scripts/audit-log.py", "--root", "tmp-auditeval", "append", "--shortname", "eval-run", "--session", "sess-eval", "--prompt", "the original prompt to recall", "--summary", "produced an artifact", "--kind", "skill", "--skill", "design"], "exit": 0 },
+    { "type": "grep", "path": "tmp-auditeval/audit/audit-log.jsonl", "pattern": "eval-run" },
+    { "type": "grep", "path": "tmp-auditeval/audit/audit-data.js", "pattern": "window.AUDIT_DATA" },
+    { "type": "cmd-exit", "cmd": ["python3", "pack/scripts/audit-log.py", "--root", "tmp-auditeval", "change", "--title", "Decide approach A", "--summary", "A over B", "--kind", "decision"], "exit": 0 },
+    { "type": "grep", "path": "tmp-auditeval/audit/change-log.jsonl", "pattern": "Decide approach A" },
+    { "type": "cmd-exit", "cmd": ["bash", "-lc", "python3 pack/scripts/audit-log.py --root tmp-auditeval search --keyword recall | grep -q eval-run"], "exit": 0 },
+    { "type": "cmd-exit", "cmd": ["bash", "-lc", "python3 pack/scripts/audit-log.py --root tmp-auditeval get --id al-0001 --field prompt | grep -q 'the original prompt to recall'"], "exit": 0 }
+  ],
+  "id": "auditlog-01"
+}

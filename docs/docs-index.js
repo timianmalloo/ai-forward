@@ -1,7 +1,7 @@
 // Derived from artifact frontmatter by scripts/docs-graph.py — DO NOT hand-edit (frontmatter wins; see knowledge-visualization.md V2/V18).
 window.DOCS_INDEX = {
-  "project": "ai-forward",
-  "generated": "2026-06-22T13:03:55Z",
+  "project": "AI-Forward",
+  "generated": "2026-06-27T15:10:56Z",
   "generator": "docs-graph.py derive",
   "artifacts": [
     {
@@ -131,6 +131,36 @@ window.DOCS_INDEX = {
         {
           "to": "kb-pack-evolution",
           "rel": "implements"
+        }
+      ],
+      "diagrams": []
+    },
+    {
+      "id": "audit-log",
+      "path": "docs/audit/audit-log.md",
+      "title": "Audit & Change Log",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-09-25",
+      "reviewSuggested": [],
+      "summary": "The project's durable, committed activity & decision history — an append-only audit log of every meaningful prompt/skill/script and a curated change log of design decisions — the committed counterpart to a session's ephemeral store, so work compounds across sessions. This node represents the bundle in the knowledge graph.",
+      "tags": [
+        "audit",
+        "history",
+        "change-log",
+        "project-memory",
+        "knowledge-graph"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        },
+        {
+          "to": "docs-index",
+          "rel": "relates-to"
         }
       ],
       "diagrams": []

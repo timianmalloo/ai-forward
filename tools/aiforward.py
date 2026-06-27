@@ -20,6 +20,7 @@ Commands
   new       scaffold a new capability                -> python tools/new-capability.py
   doctor    install-health of THIS repo              -> python <scripts>/pack-doctor.py
   graph     knowledge-graph mechanics                -> python <scripts>/docs-graph.py
+  audit     audit & change log (append/list/search)  -> python <scripts>/audit-log.py
   scrub     redact obvious PII/secrets (first-pass)  -> python <scripts>/scrub.py
 """
 import os, subprocess, sys
@@ -51,6 +52,7 @@ def _build(cmd):
         "new":    lambda: (sys.executable, [os.path.join(tools, "new-capability.py")]),
         "doctor": lambda: (sys.executable, [os.path.join(g, "pack-doctor.py")] if g else None),
         "graph":  lambda: (sys.executable, [os.path.join(g, "docs-graph.py")] if g else None),
+        "audit":  lambda: (sys.executable, [os.path.join(g, "audit-log.py")] if g else None),
         "scrub":  lambda: (sys.executable, [os.path.join(g, "scrub.py")] if g else None),
     }
     return table.get(cmd)

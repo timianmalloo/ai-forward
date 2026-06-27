@@ -43,4 +43,6 @@ Per the Discoverability Mandate (V10): the migration's artifacts (the plan, the 
 - [ ] Inbound dependents flagged via V16 with the migration as provenance; index re-derived; version pin recorded per the BoK latest-SDK policy.
 - [ ] No "while-we're-here" changes survived the Simplifier.
 
+**Audit & change (last action).** Append an audit-log entry for this run — `python3 docs/ai-forward-pack/scripts/audit-log.py append --shortname "migrate-<subject>" --session "<id>" --skill migrate --kind skill --prompt "<the prompt, verbatim>" --summary "<what it produced>" --artifact docs/proofs/<id>.md` — per the Audit Mandate (`knowledge/audit-and-change-log.md`, AL5). Because this skill shapes a load-bearing change, **also append a change-log entry** capturing the migration and its git context — `… audit-log.py change --title "<from → to>" --kind migration --skill migrate --prompt "<driving prompt>" --summary "<result + intentional-difference catalog>" --rationale "<why>" --artifact docs/proofs/<id>.md --git-before "<HEAD sha at grounding; from audit-log.py git-context>"` (Change Mandate, CL1–CL2). A run that left no trace in `docs/audit/` is, like an un-indexed artifact, not done.
+
 **Handoff:** `/document --changed` over the touched surface; the flagged dependents' owners review per V16.

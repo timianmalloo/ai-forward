@@ -10,7 +10,7 @@
   - Runtime: React 18 UMD + htm (no build step) — the same house convention used by
     docs/index.html (the Docs Explorer). Libraries load from CDN; an offline banner shows
     if they cannot.
-  - It explains the KNOWLEDGE (the constitution), the SKILLS (the 15 workflows), the
+  - It explains the KNOWLEDGE (the constitution), the SKILLS (the 16 workflows), the
     RIGOR PROTOCOL (the reasoning spine), the PERSONAS (the dual-mode council), and the
     UI TEMPLATE APPROACH (the archetype grammar) — with a TABLE of every template type and
     LINKABLE, rendered MOCKUPS of each one so a reader can see-then-choose.
@@ -343,7 +343,7 @@ window.addEventListener("DOMContentLoaded",function(){
     ]}
   ];
 
-  // The 15 skills — .claude/skills/* (thirteen reasoning workflows + two prompt-log utilities)
+  // The 16 skills — .claude/skills/* (thirteen reasoning workflows + /auditlog + two prompt-log utilities)
   const SKILLS = [
     ["/collectknowledge","Build a sourced domain knowledge base before design — state of the art, comparables, references, glossary — every claim confidence-labeled.","Domain Researcher","support"],
     ["/adddomainexperts","Discover the project's domain from repo evidence and add tailored domain-expert personas (peer + adversary), wiring in backing Claude skills.","Product Strategist","support"],
@@ -358,6 +358,7 @@ window.addEventListener("DOMContentLoaded",function(){
     ["/addpacktorepo","Install the pack into another local repo (run from an AI-Forward clone) — recce the target, apply the full deployment map, summarise what was added, offer to commit.","Release Engineer","lifecycle"],
     ["/updatepack","Refresh a repo that already has the pack to the latest revision — apply only the changelog delta, re-paste managed blocks, summarise actions, offer to commit.","Release Engineer","lifecycle"],
     ["/extendaibundle","Extend the pack itself from a prose prompt (collect→specify→design→implement, compressed for pack work) — scaffold via new-capability.py, prove via verify-bundle.ps1, zero drift across both tools.","Tech Lead","lifecycle"],
+    ["/auditlog","The CLI lens over the project's durable audit & change log — see the last N actions, search by session/date/keyword, recall a past prompt to re-run, toggle the meaningful-change timeline, open the viewer.","—","utility"],
     ["/prompts","Browse your logged prompts as a stack (newest on top) and reuse one — arrow keys move, right-arrow expands a prompt, left-arrow collapses, Enter copies it to the clipboard to paste-and-edit. Engine: prompt-log.py (stdlib).","—","utility"],
     ["/searchprompts","Search your logged prompts by freeform text and reuse a match — the same arrow-navigable expand/collapse stack as /prompts, pre-filtered to prompts containing all your terms.","—","utility"]
   ];
@@ -748,7 +749,7 @@ window.addEventListener("DOMContentLoaded",function(){
       <!-- SKILLS -->
       <section class="block" id="skills"><div class="wrap">
         <div class="sechead"><div class="seclabel">The workflows</div>
-          <h2>Fifteen skills, one loop</h2>
+          <h2>Sixteen skills, one loop</h2>
           <p>Each skill is the Rigor Protocol specialized to one kind of work. The core five carry a piece
           from idea to shipped code; supporting skills prepare the ground or keep it honest;
           <code>/investigate</code> breaks the loop whenever a defect appears. Two <b>pack-lifecycle</b>
@@ -762,7 +763,7 @@ window.addEventListener("DOMContentLoaded",function(){
         <div class="grid g2">${SKILLS.map((s,k)=>html`<div class="card" key=${k}>
           <div style=${{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
             <h3 class="mono" style=${{fontSize:15,color:"var(--accent)"}}>${s[0]}</h3>
-            <span class="pill">${s[3]==="core"?"core loop":s[3]==="diagnose"?"diagnosis":s[3]==="lifecycle"?"pack lifecycle":"supporting"}</span></div>
+            <span class="pill">${s[3]==="core"?"core loop":s[3]==="diagnose"?"diagnosis":s[3]==="lifecycle"?"pack lifecycle":s[3]==="utility"?"utility":"supporting"}</span></div>
           <p>${s[1]}</p>
           <div class="tag" style=${{marginTop:8}}>lead peer · ${s[2]}</div></div>`)}</div>
       </div></section>

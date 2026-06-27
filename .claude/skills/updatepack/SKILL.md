@@ -100,4 +100,6 @@ Unlike the workflow skills, this is a **pack-lifecycle skill**: it operates on t
 - [ ] Commit offered with exact proposed message; user decision honoured.
 - [ ] Dry-run requests produced the action table with zero writes; a normal run is idempotent (re-runnable without duplicate blocks or advancing past the source revision).
 
+**Audit (last action).** Append an audit-log entry to the updated repo's log recording the refresh — `python3 docs/ai-forward-pack/scripts/audit-log.py append --shortname "updatepack-r<to>" --session "<id>" --skill updatepack --kind command --prompt "<the prompt, verbatim>" --summary "<from-revision → to-revision; delta applied>"` — per the Audit Mandate (`knowledge/audit-and-change-log.md`, AL5), so the repo records the revision history of its installed pack.
+
 **Handoff:** if the update added new skills or knowledge docs, mention them by name so the user can orient to the new capabilities.

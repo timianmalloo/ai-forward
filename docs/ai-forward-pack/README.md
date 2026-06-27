@@ -16,7 +16,7 @@ It adds three things and nothing you have to relearn:
 2. **The dual-mode persona model** — collaborating peers plus the rule for moving between collaboration and adversarial review (`knowledge/collaborative-personas.md`), including three new peer-first roles your all-adversary catalog lacks.
 3. **The Spike Protocol** — read-the-code and run-a-PoC discipline for unfamiliar APIs, SDKs, and MCP servers (`knowledge/spike-protocol.md`), so designs rest on established contracts rather than guessed semantics.
 
-On top of these sit **fifteen skills** that any developer can invoke — **five delivery workflows** that carry a piece of work from idea to shipped code, **five supporting skills** (one to *bootstrap domain knowledge before design*, one that *tailors the persona roster* itself to your project's domain, one that *produces and maintains the documentation bundle*, one that *adopts a brownfield repo into the knowledge graph*, and one that *executes migrations and large refactors characterization-first*), **three pack-lifecycle skills** that manage the pack itself (one that *installs the pack into another local repo*, one that *updates an installed repo to the latest revision*, and one that *extends the pack with new capabilities from a prose prompt, with zero drift*), and **two prompt-log utilities** (`/prompts` and `/searchprompts`) that *track, browse, search, and reuse your prior prompts*.
+On top of these sit **sixteen skills** that any developer can invoke — **five delivery workflows** that carry a piece of work from idea to shipped code, **five supporting skills** (one to *bootstrap domain knowledge before design*, one that *tailors the persona roster* itself to your project's domain, one that *produces and maintains the documentation bundle*, one that *adopts a brownfield repo into the knowledge graph*, and one that *executes migrations and large refactors characterization-first*), **three pack-lifecycle skills** that manage the pack itself (one that *installs the pack into another local repo*, one that *updates an installed repo to the latest revision*, and one that *extends the pack with new capabilities from a prose prompt, with zero drift*), **one utility skill** — `/auditlog`, the command-line lens over the project's durable **audit & change log** (the history every skill writes to, so a new session reads what was done and decided) — and **two prompt-log utilities** (`/prompts` and `/searchprompts`) that *track, browse, search, and reuse your prior prompts*.
 
 ---
 
@@ -75,7 +75,7 @@ ai-forward-pack/
 ├─ research-synthesis.md             ← the research: industry/OSS comparison, reasoning
 │                                       disciplines, and the gap analysis vs your pack
 ├─ adapters/managed-blocks/          ← ready-to-paste CLAUDE.md / AGENTS.md blocks (the wiring)
-├─ scripts/                          ← docs-graph.py (the graph mechanics bundle, V18) + foundation-check.py (vendored-doc drift)
+├─ scripts/                          ← docs-graph.py (graph mechanics, V18) + audit-log.py (the audit & change log, AL0.1) + foundation-check.py + pack-doctor.py + scrub.py
 ├─ evals/                            ← the pack's own regression suite: golden tasks + objective trajectory assertions per skill
 ├─ ci/docs-health.yml                ← reference GitHub Actions workflow: graph validate + freshness gate + foundation drift
 ├─ knowledge/
@@ -86,6 +86,7 @@ ai-forward-pack/
 │  ├─ persona-cards.md               ← all 23 lenses as uniform, actionable cards
 │  ├─ observability-and-instrumentation.md  ← logging/tracing/error standard (OTel data model, error codes, RFC 9457)
 │  ├─ knowledge-visualization.md     ← the knowledge graph + Docs Explorer standard (V1–V18): frontmatter-as-record, derived index, three projections, ownership/freshness SLAs, glossary + relation registry, graph-aware grounding, change-impact propagation, decision notes, the docs script bundle
+│  ├─ audit-and-change-log.md        ← the Audit & Change Log Standard: a durable, committed history (docs/audit/) every skill writes to — the audit log (every prompt/skill/script) + the change log (design decisions, with git before/after); the session-history counterpart so work compounds across sessions
 │  ├─ specification-standards.md     ← spec standards (S1–S18): the three layers — Functional (ISO 29148 + Gherkin + ISO 25010) / UX (Garrett Structure+Skeleton: IA, flows, wireframes) / UI — their bottom-up dependency and separate owners
 │  ├─ ui-archetype-grammar.md        ← UI Archetype Grammar (G1–G16): a hardened two-layer grammar that selects a UI's archetype (routing/temporal/data) as a determinism control for code generation; composes with U1–U20
 │  ├─ ui-archetype-catalog.md        ← 16 UI/UX archetypes with exemplars, canonical Archetype Signatures, and model-agnostic codegen descriptors
@@ -94,15 +95,17 @@ ai-forward-pack/
 │  └─ + 7 vendored Agent-Knowledge-Pack foundation docs (so the bundle is self-contained):
 │       body-of-knowledge · rules-of-the-road · persona-catalog · layered-optimized-architecture ·
 │       engineering-governance · testing-strategy · csharp-style-guide
-├─ commands/                         ← the fifteen skills (SKILL.md each)
+├─ commands/                         ← the sixteen skills (SKILL.md each)
 │  ├─ specify/  define-architecture/  design/  implement/  investigate/
 │  ├─ collectknowledge/              ← deep domain research before design → docs/knowledge/
 │  ├─ adddomainexperts/              ← tailors the roster to your project's domain
 │  ├─ document/                      ← API ref + 4 diagram families, md + browsable HTML view
+│  ├─ auditlog/                      ← the CLI lens over the audit & change log (last-N, search, recall-and-redo)
 │  └─ addpacktorepo/  updatepack/  extendaibundle/  ← pack-lifecycle: install · update · extend the pack itself
 ├─ templates/                        ← the committed artifacts each skill produces
 │  ├─ spec · architecture · design · adr · investigation · proof-pack · domain-expert
 │  ├─ knowledge-base (for /collectknowledge)
+│  ├─ audit-explorer.html (for /auditlog — the searchable timeline viewer)
 │  └─ documentation-bundle + doc-viewer.html (for /document)
 ├─ adapters/
 │  ├─ INSTALL.md                     ← manual wiring for Claude Code, Copilot, or both
@@ -134,6 +137,6 @@ Both tools share one model: **knowledge** = always-on reference, **skills** = wo
 
 ## How it fits the Agent Knowledge Pack
 
-This pack is an **extension, not a replacement**. It speaks your pack's vocabulary throughout — the three Prime Directives (D1 correctness over completion, D2 no guessing at contracts, D3 verification never self-certified), Coning and Iterative Critical Thinking, the Proof Pack and the phase gates, the capability tiers and the LOA principles P1–P11 and conformance criteria C1–C11, the persona names and the veto matrix, the Testing Strategy triggers, and the Deviation Protocol. The eleven adversaries ship with your existing pack; this one adds their peer mode, three new authoring personas, four further adversaries that close audited coverage gaps, four more for the UI/app and documentation surface, a Persona Operating Standard that makes every lens uniform and machine-routable, the reasoning protocol they all run, and the fifteen skills that put them to work.
+This pack is an **extension, not a replacement**. It speaks your pack's vocabulary throughout — the three Prime Directives (D1 correctness over completion, D2 no guessing at contracts, D3 verification never self-certified), Coning and Iterative Critical Thinking, the Proof Pack and the phase gates, the capability tiers and the LOA principles P1–P11 and conformance criteria C1–C11, the persona names and the veto matrix, the Testing Strategy triggers, and the Deviation Protocol. The eleven adversaries ship with your existing pack; this one adds their peer mode, three new authoring personas, four further adversaries that close audited coverage gaps, four more for the UI/app and documentation surface, a Persona Operating Standard that makes every lens uniform and machine-routable, the reasoning protocol they all run, and the sixteen skills that put them to work.
 
 New here? **`OVERVIEW.md`** is the practical start — how to install, what's inside, and how to use the skills. Then `research-synthesis.md` for the *why* behind every choice, `knowledge/rigor-protocol.md` for the *how*, and `adapters/INSTALL.md` to wire it in by hand.

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AI-Forward — Audit & Change Log</title>
+<!-- AI-FORWARD-PACK:AUDIT-EXPLORER (managed — regenerated from templates/audit-explorer.template.html) -->
+<!--
+  The Audit & Change Log viewer (knowledge/audit-and-change-log.md).
+  A searchable timeline over the project's own history — every prompt/skill/script (audit)
+  and every meaningful design decision (changes), so a human or a new agent session can read
+  what was done and why.
+
+  DATA: loads ONLY audit-data.js (window.AUDIT_DATA) from the same directory — a <script src>
+  so it works over file:// where fetch() of local files is blocked. audit-log.py regenerates it
+  on every append; this file never needs editing.
+
+  RUNTIME: React UMD + htm (no build) from CDN, with graceful degradation (offline: a plain
+  table still renders). Toggle FULL HISTORY (audit) vs CHANGES (meaningful decisions); search
+  by session, date range, or keyword; expand any row; copy a prompt to re-run it.
+-->
+<script src="audit-data.js"></script>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/htm@3.1.1/dist/htm.umd.js"></script>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#161922; --ink:#e8eaf0; --muted:#9aa3b2; --line:#262b36;
+    --accent:#6ea8fe; --code-bg:#11141b; --ok:#7ad0a6; --warn:#f2a65a; --bad:#f28b82;
+    --k-skill:#6ea8fe; --k-command:#7ad0a6; --k-script:#5ec5d4; --k-prompt:#c79bf2;
+    --k-commit:#e8d26e; --k-manual:#9aa3b2; --k-session-import:#d4a5c9;
+    --c-architecture:#c79bf2; --c-design:#5ec5d4; --c-knowledge:#7ad0a6;
+    --c-migration:#f2a65a; --c-decision:#6ea8fe; --c-spec:#a78bfa; --c-other:#9aa3b2;
+  }
+  @media (prefers-color-scheme: light){
+    :root{ --bg:#fff; --panel:#f6f7f9; --ink:#1b1f27; --muted:#5b6573; --line:#e6e8ec;
+           --accent:#2563eb; --code-bg:#f3f4f6; }
+  }
+  *{box-sizing:border-box} html,body,#root{height:100%}
+  body{margin:0; background:var(--bg); color:var(--ink);
+       font:14px/1.6 ui-sans-serif,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;}
+  a{color:var(--accent); text-decoration:none} a:hover{text-decoration:underline}
+  .wrap{max-width:1080px; margin:0 auto; padding:0 18px 80px}
+  header{position:sticky; top:0; z-index:5; background:var(--bg); border-bottom:1px solid var(--line);
+         padding:14px 0 12px; margin-bottom:8px}
+  .titlerow{display:flex; align-items:baseline; gap:12px; flex-wrap:wrap}
+  h1{font-size:18px; margin:0; letter-spacing:.02em}
+  .gen{font-size:11px; color:var(--muted)}
+  .toggle{display:inline-flex; border:1px solid var(--line); border-radius:9px; overflow:hidden; margin-left:auto}
+  .toggle button{background:transparent; color:var(--muted); border:0; padding:6px 14px; cursor:pointer; font:inherit}
+  .toggle button.on{background:var(--accent); color:#fff}
+  .controls{display:flex; gap:8px; flex-wrap:wrap; margin-top:11px; align-items:center}
+  .controls input, .controls select{background:var(--panel); color:var(--ink); border:1px solid var(--line);
+       border-radius:8px; padding:7px 10px; font:inherit}
+  .controls input.kw{flex:1; min-width:180px}
+  .controls .lbl{font-size:11px; color:var(--muted); margin:0 -2px 0 6px}
+  .count{font-size:12px; color:var(--muted); margin-left:auto}
+  .clear{background:transparent; border:1px solid var(--line); color:var(--muted); border-radius:8px;
+         padding:7px 10px; cursor:pointer; font:inherit}
+  .day{font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted);
+       margin:20px 2px 6px; border-bottom:1px dashed var(--line); padding-bottom:4px}
+  .row{border:1px solid var(--line); border-radius:10px; background:var(--panel); margin:8px 0; overflow:hidden}
+  .head{display:flex; gap:11px; align-items:center; padding:10px 13px; cursor:pointer}
+  .head:hover{background:rgba(127,127,127,.07)}
+  .time{font-size:12px; color:var(--muted); font-variant-numeric:tabular-nums; white-space:nowrap}
+  .badge{font-size:10.5px; letter-spacing:.04em; text-transform:uppercase; padding:2px 8px; border-radius:999px;
+         background:var(--code-bg); border:1px solid var(--line); white-space:nowrap}
+  .label{font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:240px}
+  .summ{color:var(--muted); flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:80px}
+  .chev{color:var(--muted); transition:transform .15s; flex:none}
+  .row.open .chev{transform:rotate(90deg)}
+  .body{padding:2px 14px 14px; border-top:1px solid var(--line)}
+  .kv{display:grid; grid-template-columns:84px 1fr; gap:4px 12px; font-size:12.5px; margin:10px 0}
+  .kv .k{color:var(--muted)}
+  .promptbox{position:relative; margin:10px 0}
+  pre.prompt{background:var(--code-bg); border:1px solid var(--line); border-radius:9px; padding:11px 12px;
+       margin:0; white-space:pre-wrap; word-break:break-word; font:12.5px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace;
+       max-height:340px; overflow:auto}
+  .copy{position:absolute; top:8px; right:8px; background:var(--accent); color:#fff; border:0; border-radius:7px;
+        padding:4px 10px; font-size:12px; cursor:pointer}
+  .copy.done{background:var(--ok); color:#08210f}
+  .tagrow{display:flex; flex-wrap:wrap; gap:6px; margin:8px 0}
+  .tag{font-size:11px; background:var(--code-bg); border:1px solid var(--line); border-radius:999px; padding:1px 9px; color:var(--muted)}
+  .git{font-size:12px; color:var(--muted)} .git code{background:var(--code-bg); padding:1px 5px; border-radius:5px}
+  .commits{margin:6px 0 0; padding-left:18px} .commits li{font-size:12px; color:var(--muted)}
+  .out-success{color:var(--ok)} .out-partial,.out-blocked{color:var(--warn)} .out-failed{color:var(--bad)}
+  .empty{color:var(--muted); padding:48px; text-align:center}
+  .note{font-size:12px; color:var(--muted); border:1px dashed var(--line); border-radius:8px; padding:9px 11px; margin-top:14px}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+(function(){
+"use strict";
+var DATA = (window.AUDIT_DATA && typeof window.AUDIT_DATA==="object")
+  ? window.AUDIT_DATA : {project:"(no data)", generated:"—", audit:[], changes:[]};
+
+/* ---------- graceful no-CDN fallback: a plain table ---------- */
+if(!window.React || !window.ReactDOM || !window.htm){
+  var rows=(DATA.audit||[]).slice().reverse().map(function(e){
+    return "<tr><td>"+(e.datetime||"")+"</td><td>"+(e.shortname||e.skill||e.kind||"")+
+      "</td><td>"+(e.session||"")+"</td><td>"+((e.summary||"").replace(/[<&]/g,""))+"</td></tr>";
+  }).join("");
+  document.getElementById("root").innerHTML=
+    '<div style="padding:24px;font-family:sans-serif">'+
+    '<h1>'+DATA.project+' — Audit Log</h1>'+
+    '<p style="color:#888">Offline view (React/htm CDN unavailable). '+(DATA.audit||[]).length+' entries.</p>'+
+    '<table border="1" cellpadding="6" cellspacing="0" style="border-collapse:collapse;font-size:13px">'+
+    '<tr><th>datetime</th><th>label</th><th>session</th><th>summary</th></tr>'+rows+'</table></div>';
+  return;
+}
+var React=window.React, ReactDOM=window.ReactDOM;
+var h=React.createElement, html=window.htm.bind(h);
+var useState=React.useState, useMemo=React.useMemo;
+
+function copy(text, cb){
+  try{ navigator.clipboard.writeText(text).then(cb, cb); }
+  catch(e){
+    var ta=document.createElement("textarea"); ta.value=text; document.body.appendChild(ta);
+    ta.select(); try{document.execCommand("copy");}catch(_){} document.body.removeChild(ta); cb();
+  }
+}
+function dayOf(dt){ return (dt||"").slice(0,10) || "undated"; }
+function timeOf(dt){ return (dt||"").slice(11,16); }
+
+function CopyBtn(props){
+  var st=useState(false), done=st[0], setDone=st[1];
+  return html`<button class=${"copy"+(done?" done":"")} onClick=${function(e){
+      e.stopPropagation(); copy(props.text, function(){ setDone(true); setTimeout(function(){setDone(false);},1400); });
+    }}>${done?"copied":"copy prompt"}</button>`;
+}
+
+function Row(props){
+  var e=props.e, isChange=props.isChange;
+  var st=useState(false), open=st[0], setOpen=st[1];
+  var label = isChange ? (e.title||e.kind||"—") : (e.shortname||e.skill||e.kind||"—");
+  var kind = e.kind||"manual";
+  var badgeVar = isChange ? ("--c-"+(kind||"other")) : ("--k-"+(kind||"manual"));
+  var col = getComputedStyle(document.documentElement).getPropertyValue(badgeVar) || "var(--muted)";
+  var git = e.git||{};
+  return html`<div class=${"row"+(open?" open":"")}>
+    <div class="head" onClick=${function(){setOpen(!open);}}>
+      <span class="time">${timeOf(e.datetime)}</span>
+      <span class="badge" style=${{color:col, borderColor:col}}>${isChange?kind:(e.skill||kind)}</span>
+      <span class="label">${label}</span>
+      <span class="summ">${e.summary||""}</span>
+      <span class="chev">▶</span>
+    </div>
+    ${open && html`<div class="body">
+      <div class="kv">
+        <span class="k">id</span><span><code>${e.id}</code></span>
+        <span class="k">when</span><span>${e.datetime||"—"}</span>
+        ${e.session && html`<${React.Fragment}><span class="k">session</span><span><code>${e.session}</code></span><//>`}
+        ${e.skill && html`<${React.Fragment}><span class="k">skill</span><span>/${e.skill}</span><//>`}
+        ${e.tool && html`<${React.Fragment}><span class="k">tool</span><span>${e.tool}</span><//>`}
+        ${!isChange && e.outcome && html`<${React.Fragment}><span class="k">outcome</span><span class=${"out-"+e.outcome}>${e.outcome}</span><//>`}
+        ${isChange && e.rationale && html`<${React.Fragment}><span class="k">why</span><span>${e.rationale}</span><//>`}
+      </div>
+      <div><b>Summary.</b> ${e.summary||"—"}</div>
+      ${e.prompt && html`<div class="promptbox">
+        <pre class="prompt">${e.prompt}</pre>
+        <${CopyBtn} text=${e.prompt} />
+      </div>`}
+      ${(e.artifacts&&e.artifacts.length) && html`<div class="git"><b>Artifacts.</b> ${e.artifacts.map(function(a,i){
+        return html`<span key=${i}><code>${a}</code> </span>`; })}</div>`}
+      ${(e.tags&&e.tags.length) && html`<div class="tagrow">${e.tags.map(function(t,i){ return html`<span class="tag" key=${i}>${t}</span>`; })}</div>`}
+      ${isChange && (git.before||git.after) && html`<div class="git">
+        <b>Git.</b> <code>${(git.before||"—").slice(0,9)}</code> → <code>${(git.after||"—").slice(0,9)}</code>
+        ${git.branch?(" on "+git.branch):""}${git.pushed===true?" · pushed":(git.pushed===false?" · unpushed":"")}
+        ${(git.commits&&git.commits.length) && html`<ul class="commits">${git.commits.map(function(c,i){ return html`<li key=${i}>${c}</li>`; })}</ul>`}
+      </div>`}
+    </div>`}
+  </div>`;
+}
+
+function App(){
+  var v=useState("audit"), view=v[0], setView=v[1];
+  var k=useState(""), kw=k[0], setKw=k[1];
+  var s=useState(""), sess=s[0], setSess=s[1];
+  var f=useState(""), from=f[0], setFrom=f[1];
+  var u=useState(""), to=u[0], setTo=u[1];
+  var isChange = view==="change";
+  var all = (isChange ? DATA.changes : DATA.audit) || [];
+
+  var sessions = useMemo(function(){
+    var set={}; ((DATA.audit||[]).concat(DATA.changes||[])).forEach(function(e){ if(e.session) set[e.session]=1; });
+    return Object.keys(set).sort();
+  }, []);
+
+  var rows = useMemo(function(){
+    var q=kw.trim().toLowerCase();
+    return all.filter(function(e){
+      if(sess && String(e.session||"")!==sess) return false;
+      var dt=String(e.datetime||"");
+      if(from && dt.slice(0,10) < from) return false;
+      if(to && dt.slice(0,10) > to) return false;
+      if(q){
+        var hay=[e.id,e.shortname,e.title,e.prompt,e.summary,e.skill,e.kind,e.actor,e.rationale]
+          .concat(e.tags||[]).concat(e.artifacts||[]).join(" ").toLowerCase();
+        if(hay.indexOf(q)===-1) return false;
+      }
+      return true;
+    }).slice().reverse();
+  }, [all,kw,sess,from,to,isChange]);
+
+  var groups = useMemo(function(){
+    var g=[], last=null;
+    rows.forEach(function(e){ var d=dayOf(e.datetime);
+      if(d!==last){ g.push({day:d, items:[]}); last=d; } g[g.length-1].items.push(e); });
+    return g;
+  }, [rows]);
+
+  function clearAll(){ setKw(""); setSess(""); setFrom(""); setTo(""); }
+
+  return html`<div class="wrap">
+    <header>
+      <div class="titlerow">
+        <h1>${DATA.project} — ${isChange?"Change Log":"Audit Log"}</h1>
+        <span class="gen">${(DATA.audit||[]).length} actions · ${(DATA.changes||[]).length} changes · generated ${DATA.generated}</span>
+        <div class="toggle">
+          <button class=${view==="audit"?"on":""} onClick=${function(){setView("audit");}}>Full history</button>
+          <button class=${view==="change"?"on":""} onClick=${function(){setView("change");}}>Changes</button>
+        </div>
+      </div>
+      <div class="controls">
+        <input class="kw" placeholder="Search prompt, summary, shortname, tags…" value=${kw}
+               onInput=${function(e){setKw(e.target.value);}} />
+        <span class="lbl">session</span>
+        <select value=${sess} onChange=${function(e){setSess(e.target.value);}}>
+          <option value="">all</option>
+          ${sessions.map(function(x){ return html`<option key=${x} value=${x}>${x.slice(0,12)}</option>`; })}
+        </select>
+        <span class="lbl">from</span>
+        <input type="date" value=${from} onInput=${function(e){setFrom(e.target.value);}} />
+        <span class="lbl">to</span>
+        <input type="date" value=${to} onInput=${function(e){setTo(e.target.value);}} />
+        <button class="clear" onClick=${clearAll}>clear</button>
+        <span class="count">${rows.length} shown</span>
+      </div>
+    </header>
+    ${groups.length===0
+      ? html`<div class="empty">No ${isChange?"changes":"actions"} match the filters.</div>`
+      : groups.map(function(g){ return html`<div key=${g.day}>
+          <div class="day">${g.day}</div>
+          ${g.items.map(function(e){ return html`<${Row} key=${e.id} e=${e} isChange=${isChange} />`; })}
+        </div>`; })}
+    <div class="note">This is the project's committed history — every meaningful prompt, skill run, and decision.
+      The logs (<code>audit-log.jsonl</code> / <code>change-log.jsonl</code>) are the source of truth; this view is
+      regenerated by <code>audit-log.py</code>. CLI: <code>/auditlog</code>.</div>
+  </div>`;
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(html`<${App} />`);
+})();
+</script>
+</body>
+</html>
