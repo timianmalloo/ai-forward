@@ -75,7 +75,7 @@ ai-forward-pack/
 ├─ research-synthesis.md             ← the research: industry/OSS comparison, reasoning
 │                                       disciplines, and the gap analysis vs your pack
 ├─ adapters/managed-blocks/          ← ready-to-paste CLAUDE.md / AGENTS.md blocks (the wiring)
-├─ scripts/                          ← docs-graph.py (graph mechanics, V18) + audit-log.py (the audit & change log, AL0.1) + foundation-check.py + pack-doctor.py + scrub.py
+├─ scripts/                          ← docs-graph.py (graph mechanics, V18) + audit-log.py (the audit & change log, AL0.1) + foundation-check.py + pack-doctor.py + scrub.py + design-lint.py (design-language token lint, U3a)
 ├─ evals/                            ← the pack's own regression suite: golden tasks + objective trajectory assertions per skill
 ├─ ci/docs-health.yml                ← reference GitHub Actions workflow: graph validate + freshness gate + foundation drift
 ├─ knowledge/

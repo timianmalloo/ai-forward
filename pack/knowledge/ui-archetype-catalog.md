@@ -209,6 +209,25 @@ Then compose the concrete spec: define the **tokens** (the actual corporate pale
 
 ---
 
+## J. Surface design-language exemplars (paired)
+
+The archetypes above fix the *kind*; a **design-language doc** (`DESIGN.md`, `ui-interaction-design.md` U3a) fixes the *Surface tokens*. The **`awesome-design-md`** library (MIT, `voltagent/awesome-design-md`) is a ready source of ~73 real design languages an agent can seed from — pair the archetype with a surface exemplar so *kind* and *surface* travel together. **Adapt, never clone (U12):** these are starting points to specialize, and the pack's floors (U9 complete states, U16 contrast audit, U17 performance budget, the archetype's facet rules) are *added* on top — see the worked, floor-extended example in `examples/design-languages/linear.design.md` (and its `ATTRIBUTION.md`).
+
+| Archetype | Surface exemplar(s) — `awesome-design-md/design-md/<name>` |
+|---|---|
+| **B1** KeyboardVelocity | `linear.app` · `superhuman` · `raycast` · `warp` |
+| **B2** EnterpriseMasterDetail | `stripe` (dashboard) · `shopify` · `sentry` |
+| **B3** TelemetryBento | `posthog` · `vercel` · `kraken` |
+| **A2** CheckoutTunnel | `stripe` · `shopify` · `revolut` |
+| **D1** GenerativeThread | `claude` · `x.ai` · `cohere` |
+| **E1** BlockDocument | `notion` · `sanity` |
+| **E2** Scrollytelling | `apple` · `tesla` · `spacex` · `framer` |
+| **F1** ContentPortal | `theverge` · `wired` |
+| **G3** ComputationalNotebook | `replicate` · `together.ai` |
+| brand / marketing surface | `nike` · `ferrari` · `bugatti` · `starbucks` · `spotify` |
+
+Reference upstream for the rest; the pack vendors only a **handful** as worked exemplars (attributed, MIT — `examples/design-languages/ATTRIBUTION.md`), never the whole library (bloat — the Solution-Selection Ladder applies to artifacts too).
+
 ## I. Provenance
 
 Archetypes A1–A4, B1–B4, C1, D1–D3, E1–E2 originate from the externally-provided *Web Design Theme Taxonomy / UX Grammar v5.0* (Gemini-authored) — names and exemplars retained, signatures **hardened** (multi-valued facets, `A11y` floors, conflict resolution, the `LockedUntilValid` typo fixed) per `ui-archetype-grammar.md`. F1–F2 are pack additions covering common gaps (content portals, settings surfaces). **G1–G6 are pack additions for the technical, scientific & quantitative domains** (CAD, scientific visualization, computational notebooks, spreadsheet modeling, probabilistic simulation, quant terminals); they introduce the grammar enum values `Arch:SpatialBounded`, `Nav:Ribbon`, and `Layout:{ViewportWorkbench, VisualizationPipeline, NotebookCells, ComputationalGrid, ScenarioExplorer, MultiPanelWorkstation}` (versioned per G16), and compose with the base knowledge `technical-ui-design.md` (TQ1–TQ12). Exemplar links are to live products as of authoring; verify on use. All signatures compose with `ui-interaction-design.md` (U1–U20) and `specification-standards.md` (S1–S18).

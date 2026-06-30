@@ -28,7 +28,7 @@ Conventions
 import argparse, json, os, re, sys, datetime
 
 REL_REGISTRY = ["implements","refines","depends-on","supersedes","tested-by","documents","uses-term","relates-to"]
-TYPES = ["knowledge","glossary","spec","architecture","adr","design","investigation","proof-pack","decision-note","threat-model","privacy-review","api","source","doc","index"]
+TYPES = ["knowledge","glossary","spec","architecture","adr","design","design-language","investigation","proof-pack","decision-note","threat-model","privacy-review","api","source","doc","index"]
 REQUIRED = ["id","title","type","status","summary"]
 EXCLUDE_DIRS = {"ai-forward-pack","_site","node_modules",".git"}
 TODAY = datetime.date.today().isoformat()
