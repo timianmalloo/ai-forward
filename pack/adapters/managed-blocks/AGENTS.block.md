@@ -7,6 +7,12 @@ every non-trivial task.
 - **Reasoning spine:** the Rigor Protocol — see `.github/instructions/rigor-protocol.instructions.md`.
   Map, interrogate, ground in evidence, disconfirm, then converge; label every claim with its
   confidence.
+- **Smallest correct (build discipline):** climb the **Solution-Selection Ladder** before writing —
+  YAGNI → reuse-in-codebase → stdlib → native → installed dep → one line → minimum — never cutting
+  validation, security, accessibility, or the failure-mode/test floors; mark bounded shortcuts with an
+  inline `simplify:` comment (ceiling + upgrade trigger); ceremony scales with the tier (T0 code-first,
+  T1/T2 full artifacts). `.github/instructions/solution-selection-ladder.instructions.md`; the
+  Simplifier is its adversarial mirror.
 - **Personas (dual-mode):** author in Peer Mode, review in Adversary Mode; the author never
   clears its own hard veto. Agents in `.github/agents/`; the operating standard in the
   `persona-audit` / `persona-cards` instructions.

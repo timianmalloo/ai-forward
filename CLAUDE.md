@@ -16,6 +16,12 @@ the Road) and the **AI-Forward Pack** on top of it. Honor them on every non-triv
 - **Reasoning spine:** run the Rigor Protocol — `.claude/knowledge/rigor-protocol.md`. Do not
   rush to a plausible answer: map, interrogate, ground in evidence, disconfirm, then converge,
   with a confidence label on every claim.
+- **Smallest correct (build discipline):** climb the **Solution-Selection Ladder** before writing —
+  YAGNI → reuse-in-codebase → stdlib → native → installed dep → one line → minimum — never cutting
+  validation, security, accessibility, or the failure-mode/test floors; mark bounded shortcuts with an
+  inline `simplify:` comment (ceiling + upgrade trigger); ceremony scales with the tier (T0 code-first,
+  T1/T2 full artifacts). `.claude/knowledge/solution-selection-ladder.md`; the Simplifier is its
+  adversarial mirror.
 - **Personas (dual-mode):** author in Peer Mode, review in Adversary Mode; the author never
   clears its own hard veto. Roster + the operating standard (severity, veto-clears-when,
   conflict rule): `.claude/knowledge/persona-cards.md` and `.claude/knowledge/persona-audit.md`.
