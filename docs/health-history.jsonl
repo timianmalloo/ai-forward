@@ -2,3 +2,5 @@
 {"on": "2026-06-14", "artifacts": 2, "by_type": {"architecture": 1, "doc": 1}, "orphans": 0, "stale": 0, "flagged": 0, "notes": 0, "problems": 0}
 {"on": "2026-06-14", "artifacts": 2, "by_type": {"architecture": 1, "doc": 1}, "orphans": 0, "stale": 0, "flagged": 0, "notes": 0, "problems": 0}
 {"on": "2026-06-14", "artifacts": 2, "by_type": {"architecture": 1, "doc": 1}, "orphans": 0, "stale": 0, "flagged": 0, "notes": 0, "problems": 0}
+{"on": "2026-06-30", "artifacts": 17, "by_type": {"architecture": 1, "doc": 3, "design": 4, "knowledge": 6, "glossary": 1, "privacy-review": 1, "threat-model": 1}, "orphans": 0, "stale": 0, "flagged": 0, "notes": 0, "problems": 0}
+{"on": "2026-07-11", "artifacts": 21, "by_type": {"design-language": 1, "adr": 1, "architecture": 1, "doc": 3, "design": 5, "knowledge": 6, "glossary": 1, "proof-pack": 1, "privacy-review": 1, "threat-model": 1}, "orphans": 0, "stale": 0, "flagged": 0, "notes": 0, "problems": 0}

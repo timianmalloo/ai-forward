@@ -10,7 +10,7 @@
   - Runtime: React 18 UMD + htm (no build step) — the same house convention used by
     docs/index.html (the Docs Explorer). Libraries load from CDN; an offline banner shows
     if they cannot.
-  - It explains the KNOWLEDGE (the constitution), the SKILLS (the 16 workflows), the
+  - It explains the KNOWLEDGE (the constitution), the SKILLS (the 17 workflows), the
     RIGOR PROTOCOL (the reasoning spine), the PERSONAS (the dual-mode council), and the
     UI TEMPLATE APPROACH (the archetype grammar) — with a TABLE of every template type and
     LINKABLE, rendered MOCKUPS of each one so a reader can see-then-choose.
@@ -343,7 +343,7 @@ window.addEventListener("DOMContentLoaded",function(){
     ]}
   ];
 
-  // The 16 skills — .claude/skills/* (thirteen reasoning workflows + /auditlog + two prompt-log utilities)
+  // The 17 skills — .claude/skills/* (fourteen reasoning workflows + /auditlog + two prompt-log utilities)
   const SKILLS = [
     ["/collectknowledge","Build a sourced domain knowledge base before design — state of the art, comparables, references, glossary — every claim confidence-labeled.","Domain Researcher","support"],
     ["/adddomainexperts","Discover the project's domain from repo evidence and add tailored domain-expert personas (peer + adversary), wiring in backing Claude skills.","Product Strategist","support"],
@@ -355,6 +355,7 @@ window.addEventListener("DOMContentLoaded",function(){
     ["/investigate","Find the verified root cause, generalize it to the failure class, produce a phased repair plan — then stop for human review.","SRE & Systems Diagnostician","diagnose"],
     ["/migrate","Characterization-first migrations — pin behavior in golden tests, compute blast radius, migrate in vertical increments, prove equivalence.","language Developer","support"],
     ["/adopt","Bootstrap the pack's knowledge graph in a brownfield repo — recover architecture from code, mine a glossary, produce a phased adoption plan.","Documentation Steward","support"],
+    ["/forensicreview","Reconstruct an existing repo's architecture and documentation, review architecture/design/implementation deeply, and produce an evidence-linked P0–P3 risk/issue/todo backlog.","Enterprise Architect","support"],
     ["/addpacktorepo","Install the pack into another local repo (run from an AI-Forward clone) — recce the target, apply the full deployment map, summarise what was added, offer to commit.","Release Engineer","lifecycle"],
     ["/updatepack","Refresh a repo that already has the pack to the latest revision — apply only the changelog delta, re-paste managed blocks, summarise actions, offer to commit.","Release Engineer","lifecycle"],
     ["/extendaibundle","Extend the pack itself from a prose prompt (collect→specify→design→implement, compressed for pack work) — scaffold via new-capability.py, prove via verify-bundle.ps1, zero drift across both tools.","Tech Lead","lifecycle"],
@@ -749,12 +750,12 @@ window.addEventListener("DOMContentLoaded",function(){
       <!-- SKILLS -->
       <section class="block" id="skills"><div class="wrap">
         <div class="sechead"><div class="seclabel">The workflows</div>
-          <h2>Sixteen skills, one loop</h2>
+          <h2>Seventeen skills, one loop</h2>
           <p>Each skill is the Rigor Protocol specialized to one kind of work. The core five carry a piece
           from idea to shipped code; supporting skills prepare the ground or keep it honest;
-          <code>/investigate</code> breaks the loop whenever a defect appears. Two <b>pack-lifecycle</b>
-          skills (<code>/addpacktorepo</code>, <code>/updatepack</code>) sit outside the loop — they install
-          and update the pack itself.</p></div>
+          <code>/investigate</code> breaks the loop whenever a defect appears. Three <b>pack-lifecycle</b>
+          skills (<code>/addpacktorepo</code>, <code>/updatepack</code>, <code>/extendaibundle</code>) sit
+          outside the loop — they install, update, and extend the pack itself.</p></div>
         <div class="chain">
           <span class="step"><b>/collectknowledge</b></span><span class="step"><b>/adddomainexperts</b></span>
           <span class="step"><b>/specify</b></span><span class="step"><b>/define-architecture</b></span>

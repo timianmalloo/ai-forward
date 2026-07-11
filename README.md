@@ -13,7 +13,7 @@ This repo is two things at once:
    so the skills, agents, and knowledge are active in Claude Code *while you work on the pack
    itself*. Dogfooding: the pack is built using the pack.
 
-For the pack's own story — why it exists, what's inside, how to use the sixteen skills — read
+For the pack's own story — why it exists, what's inside, how to use the seventeen skills — read
 [`pack/README.md`](pack/README.md) and [`pack/OVERVIEW.md`](pack/OVERVIEW.md).
 
 ## Layout
@@ -23,7 +23,7 @@ ai-forward/
 ├─ pack/                  ← CANONICAL SOURCE — edit here to expand the pack
 │   ├─ README.md  OVERVIEW.md  research-synthesis.md
 │   ├─ knowledge/         ← the reasoning spine + 23-persona roster + vendored foundation
-│   ├─ commands/          ← the 16 skills (one SKILL.md each)
+│   ├─ commands/          ← the 17 skills (one SKILL.md each)
 │   ├─ templates/         ← the artifacts each skill produces
 │   ├─ adapters/          ← INSTALL.md + Claude Code / Copilot agents + prompts + managed blocks
 │   ├─ evals/             ← the pack's own regression suite
@@ -63,7 +63,8 @@ automatically by description, or call one explicitly:
                                                             /investigate  (whenever a defect appears)
 ```
 
-`/adopt` brings a brownfield repo into the pack; `/migrate` runs characterization-first
+`/adopt` brings a brownfield repo into the pack; `/forensicreview` reconstructs and deeply reviews
+an existing repo, then creates its prioritized risk backlog; `/migrate` runs characterization-first
 refactors. Three **pack-lifecycle** skills manage the pack itself: `/addpacktorepo` installs it
 into another local repo, `/updatepack` refreshes an installed repo to the latest revision, and
 `/extendaibundle` adds new pack capabilities from a prose prompt with zero drift.
@@ -98,7 +99,7 @@ Claude Code **and** Copilot wiring.)
 `web/ai-forward-pack-explainer.html` is a self-contained interactive explainer — published to
 GitHub Pages at **https://timianmalloo.github.io/ai-forward/** (or open the file directly in a
 browser) — covering the knowledge constitution, the Rigor Protocol, the persona council, the
-thirteen reasoning skills, the /auditlog and prompt-log utilities, and the UI archetype grammar — including a table of every template type and linkable,
+fourteen reasoning skills, the /auditlog and prompt-log utilities, and the UI archetype grammar — including a table of every template type and linkable,
 rendered mockups of each. The full knowledge graph is browsable at [`docs/index.html`](docs/index.html)
 (the Docs Explorer), and the architecture of record is in [`docs/architecture.md`](docs/architecture.md).
 Both are generated and maintained by the `/document` skill.

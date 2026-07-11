@@ -166,4 +166,13 @@ function Update-ManagedBlock([string]$file, [string]$blockFile) {
 Update-ManagedBlock (Join-Path $repo "CLAUDE.md")  (Join-Path $pack "adapters\managed-blocks\CLAUDE.block.md")
 Update-ManagedBlock (Join-Path $repo "AGENTS.md")  (Join-Path $pack "adapters\managed-blocks\AGENTS.block.md")
 
+# Regenerate the whole-pack navigable/searchable index that web/index.html renders (freshness contract).
+$buildWebIndex = Join-Path $repo "tools\build-web-index.py"
+if (Test-Path $buildWebIndex) {
+    $pyCmd = Get-Command python -ErrorAction SilentlyContinue
+    if (-not $pyCmd) { $pyCmd = Get-Command python3 -ErrorAction SilentlyContinue }
+    if ($pyCmd) { & $pyCmd.Source $buildWebIndex | ForEach-Object { Write-Host "  $_" } }
+    else { Write-Host "  web/pack-index.js skipped (python not found)" -ForegroundColor Yellow }
+}
+
 Write-Host "Done. Review changes, then commit pack/ + .claude/ + .github/{instructions,prompts,agents}/ + docs/ + CLAUDE.md/AGENTS.md together." -ForegroundColor Green

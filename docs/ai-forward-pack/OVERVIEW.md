@@ -57,7 +57,7 @@ The reasoning behind every seat — and the seats deliberately *not* added — i
 ai-forward-pack/
 ├─ README.md · research-synthesis.md · OVERVIEW.md
 ├─ knowledge/   24 docs (+FOUNDATION manifest) — 17 reasoning + 7 vendored Agent-Knowledge-Pack foundation (BoK, Rules of the Road, Persona Catalog, LOA, Governance, Testing Strategy, C# Style)
-├─ commands/    (the 16 skills, one SKILL.md each)
+├─ commands/    (the 17 skills, one SKILL.md each)
 ├─ templates/   (the 19 artifact templates)
 ├─ adapters/    (INSTALL.md, claude-code/agents, copilot/agents, copilot/prompts)
 └─ examples/    (finance-repo — a worked /adddomainexperts result)
@@ -67,7 +67,7 @@ ai-forward-pack/
 
 ## 3. How to use the skills
 
-There are **16 skills** — five that carry a piece of work from idea to shipped code, five that support them (knowledge collection, persona tailoring, documentation, brownfield **adoption**, and characterization-first **migration**), three **pack-lifecycle** skills that manage the pack installation itself (**/addpacktorepo** to install the pack into a repo, **/updatepack** to refresh an installed repo to the latest revision, and **/extendaibundle** to extend the pack with new capabilities from a prose prompt, with zero drift), one **utility** skill (**/auditlog**) — the CLI lens over the project's durable **audit & change log** — and two **prompt-log utilities** (**/prompts** to browse your logged prompts as an arrow-navigable stack and **/searchprompts** to search them) for reusing prior prompts. The ten workflow skills form the loop below; the lifecycle and utility skills sit outside it.
+There are **17 skills** — five that carry a piece of work from idea to shipped code, six that support them (knowledge collection, persona tailoring, documentation, brownfield **adoption**, whole-repo **forensic review**, and characterization-first **migration**), three **pack-lifecycle** skills that manage the pack installation itself (**/addpacktorepo**, **/updatepack**, and **/extendaibundle**), one **utility** skill (**/auditlog**), and two **prompt-log utilities** (**/prompts** and **/searchprompts**). The eleven workflow/support skills form the engineering surface below; lifecycle and utility skills sit outside it.
 
 **Built-in delivery discipline.** `/define-architecture` *defines completely but phases vertically*: the whole architecture is specified, then delivery is partitioned into end-to-end vertical slices (Phase 1 a walking skeleton; mocks at unbuilt edges as contract seams) so serial implementation always yields a deployable, human-validatable increment. `/design` performs a mandatory **failure-mode analysis** (each mode → an explicit disposition: prevent/detect/mitigate/recover/accept) and `/implement` carries every mode into code + a negative test. And `/define-architecture`, `/design`, and `/implement` each **end with a status table** — completed / remaining / best next action — so you always know where the build stands.
 
@@ -94,6 +94,7 @@ There are **16 skills** — five that carry a piece of work from idea to shipped
 | **/investigate** | a defect that needs a verified root cause | `docs/investigations/<id>.md`: root cause + specific fix + failure-class generalization + phased repair plan — then stops for your review | SRE, Distributed Systems → Security, Test Architect, Data |
 | **/document** | standing up docs, or keeping them current | `docs/` bundle (API ref + 4 diagram families) + the full-sweep Docs Explorer index + `_site` close-up + freshness hook | Documentation Steward, language Dev, Patterns Expert → Steward (adversary), Simplifier, Test Architect |
 | **/adopt** | bringing an existing (brownfield) repo into the pack | recovered `docs/architecture.md` (C4, confidence-labeled) + frontmattered existing docs + seeded glossary + the first index/Explorer + a vertically-phased adoption plan | Enterprise Architect + Documentation Steward |
+| **/forensicreview** | assessing the true state and risk of an existing repo | rebuilt truth-to-code architecture/docs + `docs/reviews/forensic-review.md` + a P0–P3 backlog separating risks, verified issues, and todos | Enterprise Architect + Documentation Steward → full applicable council, Test Architect evidence gate |
 | **/migrate** | dependency/framework upgrades and large refactors | characterization tests green on the old stack first + vertical increments + the equivalence report with the intentional-difference catalog + V16 flags to dependents | language Developer (Test Architect's characterization veto) |
 | **/addpacktorepo** | installing the pack into another local repo (run from an AI-Forward clone) | the full pack deployed to the target (knowledge, skills, agents, templates, managed blocks) + a tabular install summary + explainer/docs pointers + a commit offer | Enterprise Architect + Release Engineer + Documentation Steward |
 | **/updatepack** | refreshing a repo that already has the pack to the latest revision | only the changelog delta applied (knowledge/skills/agents + managed-block re-pastes) + a tabular action summary + advanced revision + a commit offer | Release Engineer + Documentation Steward |

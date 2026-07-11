@@ -1,9 +1,229 @@
 // Derived from artifact frontmatter by scripts/docs-graph.py — DO NOT hand-edit (frontmatter wins; see knowledge-visualization.md V2/V18).
 window.DOCS_INDEX = {
+  "schemaVersion": "docs-index/v2",
   "project": "AI-Forward",
-  "generated": "2026-06-27T15:10:56Z",
+  "generated": "2026-07-11T16:54:52Z",
   "generator": "docs-graph.py derive",
+  "rootId": "architecture",
+  "artifactTypes": [
+    "knowledge",
+    "glossary",
+    "spec",
+    "architecture",
+    "adr",
+    "design",
+    "design-language",
+    "investigation",
+    "proof-pack",
+    "decision-note",
+    "threat-model",
+    "privacy-review",
+    "api",
+    "source",
+    "doc",
+    "index"
+  ],
+  "relationRegistry": [
+    "implements",
+    "refines",
+    "depends-on",
+    "supersedes",
+    "tested-by",
+    "documents",
+    "uses-term",
+    "relates-to"
+  ],
+  "policyVersion": "traversal-policy/v1",
+  "policySha256": "968b035a9618e6f997592e4f7ae91fd412b1c059c0ee89d6d8ff3025c26279fd",
+  "traversalPolicies": {
+    "grounding": [
+      {
+        "rel": "implements",
+        "direction": "outbound",
+        "priority": 0
+      },
+      {
+        "rel": "refines",
+        "direction": "outbound",
+        "priority": 1
+      },
+      {
+        "rel": "depends-on",
+        "direction": "outbound",
+        "priority": 2
+      },
+      {
+        "rel": "uses-term",
+        "direction": "outbound",
+        "priority": 3
+      },
+      {
+        "rel": "tested-by",
+        "direction": "outbound",
+        "priority": 4
+      },
+      {
+        "rel": "documents",
+        "direction": "outbound",
+        "priority": 5
+      }
+    ],
+    "impact": [
+      {
+        "rel": "implements",
+        "direction": "inbound",
+        "priority": 0
+      },
+      {
+        "rel": "refines",
+        "direction": "inbound",
+        "priority": 1
+      },
+      {
+        "rel": "depends-on",
+        "direction": "inbound",
+        "priority": 2
+      },
+      {
+        "rel": "tested-by",
+        "direction": "inbound",
+        "priority": 3
+      },
+      {
+        "rel": "uses-term",
+        "direction": "inbound",
+        "priority": 4
+      }
+    ],
+    "proof": [
+      {
+        "rel": "tested-by",
+        "direction": "outbound",
+        "priority": 0
+      }
+    ],
+    "explore-neighborhood": [
+      {
+        "rel": "depends-on",
+        "direction": "outbound",
+        "priority": 0
+      },
+      {
+        "rel": "depends-on",
+        "direction": "inbound",
+        "priority": 0
+      },
+      {
+        "rel": "documents",
+        "direction": "outbound",
+        "priority": 1
+      },
+      {
+        "rel": "documents",
+        "direction": "inbound",
+        "priority": 1
+      },
+      {
+        "rel": "implements",
+        "direction": "outbound",
+        "priority": 2
+      },
+      {
+        "rel": "implements",
+        "direction": "inbound",
+        "priority": 2
+      },
+      {
+        "rel": "refines",
+        "direction": "outbound",
+        "priority": 3
+      },
+      {
+        "rel": "refines",
+        "direction": "inbound",
+        "priority": 3
+      },
+      {
+        "rel": "relates-to",
+        "direction": "outbound",
+        "priority": 4
+      },
+      {
+        "rel": "relates-to",
+        "direction": "inbound",
+        "priority": 4
+      },
+      {
+        "rel": "supersedes",
+        "direction": "outbound",
+        "priority": 5
+      },
+      {
+        "rel": "supersedes",
+        "direction": "inbound",
+        "priority": 5
+      },
+      {
+        "rel": "tested-by",
+        "direction": "outbound",
+        "priority": 6
+      },
+      {
+        "rel": "tested-by",
+        "direction": "inbound",
+        "priority": 6
+      },
+      {
+        "rel": "uses-term",
+        "direction": "outbound",
+        "priority": 7
+      },
+      {
+        "rel": "uses-term",
+        "direction": "inbound",
+        "priority": 7
+      }
+    ]
+  },
+  "limits": {
+    "indexBytes": 5242880,
+    "artifacts": 1000,
+    "relationships": 5000,
+    "spatialNodes": 500,
+    "spatialEdges": 1000,
+    "visibleLabels": 150
+  },
   "artifacts": [
+    {
+      "id": "adr-0001-grounding-source-corpus-registry",
+      "path": "docs/adr/0001-grounding-source-corpus-registry.md",
+      "title": "ADR-0001: Use a versioned supplemental source-corpus registry",
+      "type": "adr",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "",
+      "reviewSuggested": [],
+      "summary": "Keeps frontmatter-bearing docs as the authoritative project graph while admitting canonical pack knowledge through a separate, versioned supplemental source-corpus registry. Generated Claude and Copilot wrappers remain projections, never parallel graph authorities.",
+      "tags": [
+        "docs-explorer",
+        "grounding",
+        "source-corpus",
+        "knowledge-graph"
+      ],
+      "links": [
+        {
+          "to": "design-docs-explorer-grounding-spatial-navigation",
+          "rel": "implements"
+        },
+        {
+          "to": "architecture",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "eb87d82543bc3da18f2bb7880670dd33396f24ecc6f7cc94dba3b09c3f69dd12"
+    },
     {
       "id": "architecture",
       "path": "docs/architecture.md",
@@ -29,11 +249,27 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [
         {
+          "kind": "flowchart",
+          "title": "Component map & boundaries",
+          "mermaid": "flowchart TB\n  subgraph SRC[\"pack/ — canonical source (edit here)\"]\n    K[\"knowledge/*.md<br/>(reasoning spine + roster + foundation)\"]\n    C[\"commands/&lt;name&gt;/SKILL.md<br/>(the 10 skills)\"]\n    T[\"templates/*<br/>(artifacts each skill emits)\"]\n    A[\"adapters/<br/>(Claude Code + Copilot agents, INSTALL.md)\"]\n    SC[\"scripts/  ·  evals/  ·  ci/  ·  examples/\"]\n    PD[\"README · OVERVIEW · research-synthesis\"]\n  end\n\n  subgraph TOOLS[\"tools/ — build\"]\n    SYNC[\"sync-pack.ps1\"]\n    PKG[\"package-pack.ps1\"]\n  end\n\n  subgraph INSTALL[\".claude/ + docs/ — generated install (do not hand-edit)\"]\n    CK[\".claude/knowledge/*.md\"]\n    CS[\".claude/skills/*\"]\n    CA[\".claude/agents/*.md\"]\n    DP[\"docs/ai-forward-pack/<br/>templates + scripts + pack docs\"]\n    EXP[\"docs/index.html<br/>(Docs Explorer)\"]\n    IDX[\"docs/docs-index.js<br/>(accumulated graph index)\"]\n    ARCH[\"docs/architecture.md · index.md · _meta.json<br/>(this bundle)\"]\n  end\n\n  subgraph CONSUMERS[\"consumers\"]\n    CC[\"Claude Code / Copilot<br/>(read .claude/)\"]\n    WEBE[\"web/ai-forward-pack-explainer.html<br/>(interactive explainer)\"]\n    ZIP[\"dist/ai-forward-pack.zip\"]\n  end\n\n  K --> SYNC\n  C --> SYNC\n  T --> SYNC\n  A --> SYNC\n  SYNC --> CK & CS & CA & DP & EXP\n  C -. \"skills reference\" .-> CK\n  CA -. \"agents reference\" .-> CK\n  DP --> GRAPH[\"docs-graph.py<br/>(in docs/ai-forward-pack/scripts)\"]\n  GRAPH --> IDX\n  ARCH --> GRAPH\n  IDX --> EXP\n  CK --> CC\n  CS --> CC\n  CA --> CC\n  SRC --> PKG --> ZIP\n  CK -. \"derived content\" .-> WEBE"
+        },
+        {
+          "kind": "sequence",
+          "title": "Key flow — the sandbox / dogfood loop (sequence)",
+          "mermaid": "sequenceDiagram\n  actor Dev as Author\n  participant Pack as pack/ (source)\n  participant Sync as tools/sync-pack.ps1\n  participant Install as .claude/ + docs/\n  participant CC as Claude Code (this repo)\n  participant Graph as docs-graph.py\n  participant Explorer as docs/index.html\n\n  Dev->>Pack: edit a knowledge doc / SKILL.md / persona / template\n  Dev->>Sync: pwsh tools/sync-pack.ps1\n  Sync->>Install: mirror knowledge, skills, agents, templates, scripts\n  Sync->>Install: regenerate docs/index.html from template\n  Note over Sync,Install: docs-index.js is NOT touched (accumulated separately)\n  Dev->>CC: try the change (regenerated skills/agents are now live)\n  CC-->>Dev: run a skill; dogfood the edit\n  Dev->>Graph: /document → docs-graph.py derive\n  Graph->>Install: write docs/docs-index.js from frontmatter\n  Graph->>Explorer: index loaded; hierarchy · graph · mind map · health render\n  Dev->>Pack: commit pack/ + .claude/ + docs/ together (lockstep)"
+        },
+        {
+          "kind": "flowchart",
+          "title": "Layered view (source → consumer)",
+          "mermaid": "flowchart TB\n  subgraph L4[\"Consumer layer\"]\n    direction LR\n    cc[Claude Code / Copilot]:::c\n    ex[Docs Explorer + web explainer]:::c\n    z[dist/ zip for other repos]:::c\n  end\n  subgraph L3[\"Install layer (generated, committed)\"]\n    direction LR\n    claude[.claude/ knowledge·skills·agents]:::i\n    docs[docs/ pack-docs·scripts·templates·index]:::i\n  end\n  subgraph L2[\"Build layer\"]\n    direction LR\n    sync[sync-pack.ps1]:::b\n    pkg[package-pack.ps1]:::b\n  end\n  subgraph L1[\"Source layer (single source of truth)\"]\n    pack[pack/ knowledge·commands·templates·adapters·scripts]:::s\n  end\n  L1 --> L2 --> L3 --> L4\n  classDef s fill:#1d2b4d,stroke:#5a7cff,color:#dde6ff\n  classDef b fill:#13324a,stroke:#5ad1c7,color:#dffaf6\n  classDef i fill:#2a2440,stroke:#a98bff,color:#efeaff\n  classDef c fill:#163024,stroke:#56d364,color:#dcffe4"
+        },
+        {
           "kind": "class",
-          "title": "Architecture: AI-Forward (pack source + live dogfood install)\n\n- **Status:** Accepted\n- **Tier:** N/A — this repository is a knowledge/tooling package, not an AI runtime system, so the LOA capability tiers (T0–T4, which allocate *inference* cost) do not apply here. The tier model is part of the pack's *payload*, not this repo's own runtime. `[Verified]` (no inference code in the repo).\n- **Driving context:** `README.md`, `CLAUDE.md`, `pack/OVERVIEW.md`\n- **Documented commit:** see `docs/_meta.json`\n\n## Context & constraints\n\nThis repository is **two things at once** (`README.md` §\"This repo is two things at once\"):\n\n1. **The canonical source** of the AI-Forward Pack — everything you edit to expand the pack lives under `pack/`. `[Verified: README.md, pack/]`\n2. **A live install of the pack** — the pack is installed into this same repo (`.claude/`, `docs/`) so the skills, agents, and knowledge are active in Claude Code *while you work on the pack itself*. Dogfooding: the pack is built using the pack. `[Verified: .claude/, CLAUDE.md]`\n\nThe load-bearing constraint that shapes the whole structure:\n\n> **`.claude/` and `docs/` are GENERATED from `pack/`** by `tools/sync-pack.ps1` and committed so a fresh clone has a working install with no setup. `pack/` is the single source of truth — never edit the generated copies directly; they are overwritten on the next sync. `[Verified: CLAUDE.md, tools/sync-pack.ps1]`\n\nConsequence for documentation (a finding surfaced by this run): the generated knowledge documents under `.claude/knowledge/` and `docs/ai-forward-pack/` carry **no YAML frontmatter** (they are vendored prose, not graph nodes). The Knowledge-Visualization graph model (V1–V18) therefore sees **zero artifacts** until frontmatter'd documentation (like this file) is added under `docs/`. See *Flagged risks* below. `[Verified: docs-graph.py inventory → \"artifacts\": 0]`\n\n## Archetype & rationale\n\nNo LOA system archetype (A–I) applies — those classify AI-integrated *runtime* systems. The applicable shape here is a classic **source → build → install → consumer** pipeline with a **dogfood loopback**: the install layer feeds back into the authoring experience (Claude Code reads `.claude/` while you edit `pack/`). `[Inferred from repo structure]`\n\n## Component map & boundaries\n\nThe major components and the real dependency edges between them (read from `tools/sync-pack.ps1`, `tools/package-pack.ps1`, and the directory layout):\n\n```mermaid\nflowchart TB\n  subgraph SRC[\"pack/ — canonical source (edit here)\"]\n    K[\"knowledge/*.md<br/>(reasoning spine + roster + foundation)\"]\n    C[\"commands/&lt;name&gt;/SKILL.md<br/>(the 10 skills)\"]\n    T[\"templates/*<br/>(artifacts each skill emits)\"]\n    A[\"adapters/<br/>(Claude Code + Copilot agents, INSTALL.md)\"]\n    SC[\"scripts/  ·  evals/  ·  ci/  ·  examples/\"]\n    PD[\"README · OVERVIEW · research-synthesis\"]\n  end\n\n  subgraph TOOLS[\"tools/ — build\"]\n    SYNC[\"sync-pack.ps1\"]\n    PKG[\"package-pack.ps1\"]\n  end\n\n  subgraph INSTALL[\".claude/ + docs/ — generated install (do not hand-edit)\"]\n    CK[\".claude/knowledge/*.md\"]\n    CS[\".claude/skills/*\"]\n    CA[\".claude/agents/*.md\"]\n    DP[\"docs/ai-forward-pack/<br/>templates + scripts + pack docs\"]\n    EXP[\"docs/index.html<br/>(Docs Explorer)\"]\n    IDX[\"docs/docs-index.js<br/>(accumulated graph index)\"]\n    ARCH[\"docs/architecture.md · index.md · _meta.json<br/>(this bundle)\"]\n  end\n\n  subgraph CONSUMERS[\"consumers\"]\n    CC[\"Claude Code / Copilot<br/>(read .claude/)\"]\n    WEBE[\"web/ai-forward-pack-explainer.html<br/>(interactive explainer)\"]\n    ZIP[\"dist/ai-forward-pack.zip\"]\n  end\n\n  K --> SYNC\n  C --> SYNC\n  T --> SYNC\n  A --> SYNC\n  SYNC --> CK & CS & CA & DP & EXP\n  C -. \"skills reference\" .-> CK\n  CA -. \"agents reference\" .-> CK\n  DP --> GRAPH[\"docs-graph.py<br/>(in docs/ai-forward-pack/scripts)\"]\n  GRAPH --> IDX\n  ARCH --> GRAPH\n  IDX --> EXP\n  CK --> CC\n  CS --> CC\n  CA --> CC\n  SRC --> PKG --> ZIP\n  CK -. \"derived content\" .-> WEBE\n```\n\nBoundaries that matter:\n- **Source ↔ install boundary** — crossed *only* by `tools/sync-pack.ps1`. Editing the install side directly is a contract violation (the next sync overwrites it). `[Verified: CLAUDE.md, sync-pack.ps1]`\n- **`sync-pack.ps1` write scope** — it writes only `.claude/{knowledge,skills,agents}`, `docs/ai-forward-pack/**`, and `docs/index.html`; it **intentionally does not touch** `docs/docs-index.js` (skills accumulate it) or other `docs/` root files. This is why this bundle (`docs/architecture.md`, `docs/index.md`, `docs/_meta.json`) and `web/ai-forward-pack-explainer.html` have a stable home that sync will not clobber. `[Verified: tools/sync-pack.ps1 lines 22, 92–98]`\n\n## Key flow — the sandbox / dogfood loop (sequence)\n\nThe authoring loop from `README.md` §\"Expanding the pack\", with the graph-refresh step `/document` adds:\n\n```mermaid\nsequenceDiagram\n  actor Dev as Author\n  participant Pack as pack/ (source)\n  participant Sync as tools/sync-pack.ps1\n  participant Install as .claude/ + docs/\n  participant CC as Claude Code (this repo)\n  participant Graph as docs-graph.py\n  participant Explorer as docs/index.html\n\n  Dev->>Pack: edit a knowledge doc / SKILL.md / persona / template\n  Dev->>Sync: pwsh tools/sync-pack.ps1\n  Sync->>Install: mirror knowledge, skills, agents, templates, scripts\n  Sync->>Install: regenerate docs/index.html from template\n  Note over Sync,Install: docs-index.js is NOT touched (accumulated separately)\n  Dev->>CC: try the change (regenerated skills/agents are now live)\n  CC-->>Dev: run a skill; dogfood the edit\n  Dev->>Graph: /document → docs-graph.py derive\n  Graph->>Install: write docs/docs-index.js from frontmatter\n  Graph->>Explorer: index loaded; hierarchy · graph · mind map · health render\n  Dev->>Pack: commit pack/ + .claude/ + docs/ together (lockstep)\n```\n\n`[Verified: README.md §\"Expanding the pack (the sandbox loop)\", sync-pack.ps1, docs-graph.py --help]`\n\n## Layered view (source → consumer)\n\nThe repo's own layering (distinct from the LOA *capability* tiers it ships as payload):\n\n```mermaid\nflowchart TB\n  subgraph L4[\"Consumer layer\"]\n    direction LR\n    cc[Claude Code / Copilot]:::c\n    ex[Docs Explorer + web explainer]:::c\n    z[dist/ zip for other repos]:::c\n  end\n  subgraph L3[\"Install layer (generated, committed)\"]\n    direction LR\n    claude[.claude/ knowledge·skills·agents]:::i\n    docs[docs/ pack-docs·scripts·templates·index]:::i\n  end\n  subgraph L2[\"Build layer\"]\n    direction LR\n    sync[sync-pack.ps1]:::b\n    pkg[package-pack.ps1]:::b\n  end\n  subgraph L1[\"Source layer (single source of truth)\"]\n    pack[pack/ knowledge·commands·templates·adapters·scripts]:::s\n  end\n  L1 --> L2 --> L3 --> L4\n  classDef s fill:#1d2b4d,stroke:#5a7cff,color:#dde6ff\n  classDef b fill:#13324a,stroke:#5ad1c7,color:#dffaf6\n  classDef i fill:#2a2440,stroke:#a98bff,color:#efeaff\n  classDef c fill:#163024,stroke:#56d364,color:#dcffe4\n```\n\nDependency direction points **up only** (source → build → install → consumer); no consumer writes back into source except through the human author editing `pack/`. `[Verified: tools/*.ps1]`\n\n## Domain model (class) — the UI Archetype Grammar\n\nThe most code-like structure in the repo is the **Archetype Grammar** (`ui-archetype-grammar.md` EBNF, G1–G16) and its catalog (`ui-archetype-catalog.md`). Documented here as a class model because it is the conceptual schema the experience and the codegen contract are built on:",
+          "title": "Domain model (class) — the UI Archetype Grammar",
           "mermaid": "classDiagram\n  class Signature {\n    +Name name\n    +FacetList facets\n    +StyleHints? hints\n    +validate() conflicts\n    +roundTrip() bool  %% G10: identify AND generate\n  }\n  class Facet {\n    <<abstract>>\n    +String key\n  }\n  class SingleValuedFacet {\n    +Value value  %% Type, Arch, Layout, Density, Pacing, ...\n  }\n  class MultiValuedFacet {\n    +Value[] values  %% Nav, Input, Feedback, Motion, A11y (joined with +)\n  }\n  class StyleHints {\n    +String[] hints  %% bounded NL decoration, applied last\n  }\n  class Archetype {\n    +String id          %% A1..F2\n    +String name\n    +Exemplar[] exemplars\n    +Signature canonical\n    +String codegenDescriptor\n  }\n  Signature \"1\" o-- \"4..*\" Facet : composes\n  Facet <|-- SingleValuedFacet\n  Facet <|-- MultiValuedFacet\n  Signature \"0..1\" *-- \"1\" StyleHints : decorated by\n  Archetype \"1\" *-- \"1\" Signature : canonical\n  Archetype \"1\" o-- \"1..*\" Exemplar\n  note for Signature \"G4: MUST carry Type, Arch, Layout, Pacing.\\nG1: always composed with a concrete U1–U20 / S1–S18 spec.\""
         }
-      ]
+      ],
+      "sourceSha256": "1df89886606bad84cca852988c36324028b8bebba95a48ba1ed26ce9b2fb50c3"
     },
     {
       "id": "design-aiforward-cli",
@@ -57,7 +293,52 @@ window.DOCS_INDEX = {
           "rel": "implements"
         }
       ],
-      "diagrams": []
+      "diagrams": [],
+      "sourceSha256": "4c52b72da4a80dc78ea30213c6eefc577fb8af212764b95e8d85b603b7354fde"
+    },
+    {
+      "id": "design-docs-explorer-grounding-spatial-navigation",
+      "path": "docs/design/docs-explorer-grounding-and-spatial-navigation.md",
+      "title": "Docs Explorer — Grounding and Spatial Navigation Design",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2027-01-07",
+      "reviewSuggested": [],
+      "summary": "Detailed design for making the repository knowledge graph a deterministic grounding interface for coding agents and a clearer human exploration surface. It separates selected-node neighborhood context from mind-map rooting, adds provenance-bounded context packets, and treats immersive 3D as an optional enhancement over an accessible 2D baseline.",
+      "tags": [
+        "docs-explorer",
+        "knowledge-graph",
+        "grounding",
+        "project-memory",
+        "accessibility",
+        "3d"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "refines"
+        },
+        {
+          "to": "project-memory",
+          "rel": "refines"
+        },
+        {
+          "to": "docs-index",
+          "rel": "documents"
+        },
+        {
+          "to": "design-language-docs-explorer",
+          "rel": "depends-on"
+        },
+        {
+          "to": "proof-docs-explorer-redesign",
+          "rel": "tested-by"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "66799d8182b93cf159f24c2059f8ec7a03815704a2521facfe90267cfdab54e6"
     },
     {
       "id": "design-pack-doctor",
@@ -82,7 +363,8 @@ window.DOCS_INDEX = {
           "rel": "implements"
         }
       ],
-      "diagrams": []
+      "diagrams": [],
+      "sourceSha256": "25cacb5d72b8027a8bfd8e4c23cf4dae7f6dd939806c5f13eaa063e4526b1762"
     },
     {
       "id": "design-project-memory",
@@ -107,7 +389,8 @@ window.DOCS_INDEX = {
           "rel": "implements"
         }
       ],
-      "diagrams": []
+      "diagrams": [],
+      "sourceSha256": "46cf23771d42d00bdfe2796ab0b3daaba35e0350dda1ae49598cc92951c5de92"
     },
     {
       "id": "design-rai-and-scrub",
@@ -133,7 +416,39 @@ window.DOCS_INDEX = {
           "rel": "implements"
         }
       ],
-      "diagrams": []
+      "diagrams": [],
+      "sourceSha256": "56b1c7e87d28bcfdac3906cb30b403c4a586fe6901d74c5b86960805a5bdc698"
+    },
+    {
+      "id": "design-language-docs-explorer",
+      "path": "docs/DESIGN.md",
+      "title": "Docs Explorer — Design Language",
+      "type": "design-language",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2027-01-07",
+      "reviewSuggested": [],
+      "summary": "Token and interaction language for the Docs Explorer's browse, graph, mind-map, and optional 3D adapter. It defines a high-legibility dark/light system, complete visualization states, reduced-motion behavior, and the performance/accessibility floors that implementation must satisfy.",
+      "tags": [
+        "design-language",
+        "docs-explorer",
+        "ui",
+        "tokens",
+        "accessibility"
+      ],
+      "links": [
+        {
+          "to": "design-docs-explorer-grounding-spatial-navigation",
+          "rel": "refines"
+        },
+        {
+          "to": "docs-index",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "2d9b98d88189bbdf965096b8f7e72d4b955fad121ce02ef41ab389b4e129fb9c"
     },
     {
       "id": "audit-log",
@@ -163,7 +478,8 @@ window.DOCS_INDEX = {
           "rel": "relates-to"
         }
       ],
-      "diagrams": []
+      "diagrams": [],
+      "sourceSha256": "f7da2d40e289e43fb0beb300b45e28b63305ffc1534b7dfe79c114f0006e5cc9"
     },
     {
       "id": "docs-index",
@@ -187,7 +503,8 @@ window.DOCS_INDEX = {
           "rel": "documents"
         }
       ],
-      "diagrams": []
+      "diagrams": [],
+      "sourceSha256": "e17d4f5accd582cb4b2baf375a949ed12fc8d7ff39f70f833dbaee5b048366fa"
     },
     {
       "id": "project-memory",
@@ -214,7 +531,8 @@ window.DOCS_INDEX = {
           "rel": "implements"
         }
       ],
-      "diagrams": []
+      "diagrams": [],
+      "sourceSha256": "9e1da1810b419cd5b9ee05713e16c8bafe8837fe6c0e5a3d5fab9e2ff0bd8583"
     },
     {
       "id": "kb-pack-evolution-glossary",
@@ -240,7 +558,8 @@ window.DOCS_INDEX = {
           "rel": "refines"
         }
       ],
-      "diagrams": []
+      "diagrams": [],
+      "sourceSha256": "a0c670c403ddf6e56e037ac25043bd7a6c2d16bb5f138a6794e412e896814925"
     },
     {
       "id": "kb-pack-evolution",
@@ -268,7 +587,8 @@ window.DOCS_INDEX = {
           "rel": "relates-to"
         }
       ],
-      "diagrams": []
+      "diagrams": [],
+      "sourceSha256": "d4973f47e05c295dbc4ceefd4de2adc9f4abcde61954bcf830c636a01279c2f1"
     },
     {
       "id": "kb-pack-evolution-comparables",
@@ -295,7 +615,8 @@ window.DOCS_INDEX = {
           "rel": "refines"
         }
       ],
-      "diagrams": []
+      "diagrams": [],
+      "sourceSha256": "711863d64f4e49cfa268e819be41d1ec5018b8931d40ea1794049c735ddf18e1"
     },
     {
       "id": "kb-pack-evolution-open-questions",
@@ -321,7 +642,8 @@ window.DOCS_INDEX = {
           "rel": "refines"
         }
       ],
-      "diagrams": []
+      "diagrams": [],
+      "sourceSha256": "c58e35c06ab17a2f55ee41b18653a1bd35fa9519b79269b9007c5038d6d5eb67"
     },
     {
       "id": "kb-pack-evolution-references",
@@ -346,7 +668,8 @@ window.DOCS_INDEX = {
           "rel": "refines"
         }
       ],
-      "diagrams": []
+      "diagrams": [],
+      "sourceSha256": "2256a95932e51eead9e8d49c73f0e2480919eccbfed065cab14e64125a0df60d"
     },
     {
       "id": "kb-pack-evolution-sota",
@@ -372,7 +695,8 @@ window.DOCS_INDEX = {
           "rel": "refines"
         }
       ],
-      "diagrams": []
+      "diagrams": [],
+      "sourceSha256": "7963340d55793856d967c6b7559bd663abf5eadf7e98c4a9e84ce2b97f70f62f"
     },
     {
       "id": "kb-pack-evolution-sources",
@@ -395,7 +719,8 @@ window.DOCS_INDEX = {
           "rel": "refines"
         }
       ],
-      "diagrams": []
+      "diagrams": [],
+      "sourceSha256": "21bfb1d3ca4bd03f9dcae01e0887e3c46dc60fc650d4a17337f353a042fc85da"
     },
     {
       "id": "privacy-review",
@@ -405,9 +730,9 @@ window.DOCS_INDEX = {
       "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "pack-evolution",
-      "reviewBy": "2026-12-11",
+      "reviewBy": "2027-01-07",
       "reviewSuggested": [],
-      "summary": "Repo-level privacy posture for the pack-evolution tooling: the CLI and doctor touch no personal data; project memory may incidentally record handles/names (no special-category data, mitigated by the scrub); the scrub is itself a privacy control.",
+      "summary": "Repo-level privacy posture for the pack-evolution tooling: the CLI and doctor touch no personal data; project memory may incidentally record handles/names (no special-category data, mitigated by the scrub); the scrub is itself a privacy control; Docs Explorer navigation state remains local and introduces no analytics or new personal-data flow.",
       "tags": [
         "privacy",
         "linddun",
@@ -433,9 +758,57 @@ window.DOCS_INDEX = {
         {
           "to": "design-rai-and-scrub",
           "rel": "documents"
+        },
+        {
+          "to": "design-docs-explorer-grounding-spatial-navigation",
+          "rel": "documents"
         }
       ],
-      "diagrams": []
+      "diagrams": [],
+      "sourceSha256": "7d21b9e93708f5a5a8a2aff8fca3586e5b0a52354fa7b5366520c47dfea2113f"
+    },
+    {
+      "id": "proof-docs-explorer-redesign",
+      "path": "docs/proof/docs-explorer-redesign.md",
+      "title": "Docs Explorer Redesign - Proof Pack",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@maintainers",
+      "phase": "implementation",
+      "reviewBy": "2027-01-07",
+      "reviewSuggested": [],
+      "summary": "Accepted implementation evidence for the deterministic, local-first Docs Explorer and bounded grounding packet implementation. The P0/P1 contract is covered by Python, Node, and three-engine browser suites; phase-attributed benchmark evidence separates graph work from process/host overhead. Revision 17 remains intentionally unreleased pending pinned-reference performance proof or a human-approved deviation.",
+      "tags": [
+        "docs-explorer",
+        "grounding",
+        "accessibility",
+        "performance",
+        "verification"
+      ],
+      "links": [
+        {
+          "to": "design-docs-explorer-grounding-spatial-navigation",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0001-grounding-source-corpus-registry",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-language-docs-explorer",
+          "rel": "depends-on"
+        },
+        {
+          "to": "threat-model",
+          "rel": "relates-to"
+        },
+        {
+          "to": "privacy-review",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "a9feb034f1658673ad05cd35727d3d04d9c3f73fcef864ee21360aa19702fc55"
     },
     {
       "id": "threat-model",
@@ -445,9 +818,9 @@ window.DOCS_INDEX = {
       "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "pack-evolution",
-      "reviewBy": "2026-12-11",
+      "reviewBy": "2027-01-07",
       "reviewSuggested": [],
-      "summary": "Repo-level security posture for the pack-evolution tooling: the only real trust boundary is the scrub reading files that may contain secrets/PII; the CLI, doctor, and memory ledger are local, read-mostly, no-network components with no privilege boundary.",
+      "summary": "Repo-level security posture for the pack-evolution tooling. The scrub handles potentially sensitive file content, while the Docs Explorer crosses committed-Markdown, filesystem, browser-rendering, and optional dependency boundaries; the remaining tools are local and read-mostly.",
       "tags": [
         "security",
         "threat-model"
@@ -472,9 +845,15 @@ window.DOCS_INDEX = {
         {
           "to": "design-rai-and-scrub",
           "rel": "documents"
+        },
+        {
+          "to": "design-docs-explorer-grounding-spatial-navigation",
+          "rel": "documents"
         }
       ],
-      "diagrams": []
+      "diagrams": [],
+      "sourceSha256": "6b7799fd721272f6bbe4e2de08189c2e31abd7f084809d675562c015da41fd0e"
     }
-  ]
+  ],
+  "graphSha256": "e61dadd78647e8e9fe3953fb00c07f0036724673e91eef5e9167694c106fe510"
 };

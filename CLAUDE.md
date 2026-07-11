@@ -25,9 +25,9 @@ the Road) and the **AI-Forward Pack** on top of it. Honor them on every non-triv
 - **Personas (dual-mode):** author in Peer Mode, review in Adversary Mode; the author never
   clears its own hard veto. Roster + the operating standard (severity, veto-clears-when,
   conflict rule): `.claude/knowledge/persona-cards.md` and `.claude/knowledge/persona-audit.md`.
-- **Skills (16):** thirteen reasoning workflows — `/collectknowledge`, `/adddomainexperts`,
+- **Skills (17):** fourteen reasoning workflows — `/collectknowledge`, `/adddomainexperts`,
   `/specify`, `/define-architecture`, `/design`, `/implement`, `/investigate`, `/document`,
-  `/adopt`, `/migrate`, `/updatepack`, `/addpacktorepo`, `/extendaibundle` — plus the `/auditlog`
+  `/adopt`, `/forensicreview`, `/migrate`, `/updatepack`, `/addpacktorepo`, `/extendaibundle` — plus the `/auditlog`
   lens over the durable audit & change log, and two prompt-log utilities, `/prompts` and
   `/searchprompts`, that browse and search your logged prompts to reuse. They live in
   `.claude/skills/`. Templates: `docs/ai-forward-pack/templates/`.

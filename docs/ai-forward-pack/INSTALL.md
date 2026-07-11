@@ -1,18 +1,22 @@
 ---
 doc: INSTALL
 purpose: 'Manual reconciliation guide and refresh changelog. On a repo refresh, read `changes` below — it is the key guide: it lists exactly what to re-copy and re-paste since the previous revision, so you do not have to diff the whole tree.'
-bundle_version: '2026.06.30.2'
-revision: 15
-released: '2026-06-30'
-counts: { lenses: 23, skills: 16, knowledge_docs: 24, templates: 19, scripts: 7 }
+bundle_version: '2026.07.10.2'
+revision: 17
+released: ''
+counts: { lenses: 23, skills: 17, knowledge_docs: 24, templates: 19, scripts: 9 }
 refresh_protocol: 'Compare your repo last-applied revision to the `revision` above. If it is lower, apply each entry in `changes` in order — re-copy the listed `paths` to their mapped destinations (deployment map in the body), re-apply the Copilot frontmatter wraps, and where an entry `deploy` says RE-PASTE, replace the managed blocks wholesale between their markers. Never overwrite an accumulated docs/docs-index.js.'
 changes:
-  - { type: added, area: template, paths: ['templates/design-language.template.md', 'templates/design-language-preview.template.html'], deploy: 'copy to docs/ai-forward-pack/templates/ (shared)', summary: 'New project design-language artifact (incorporating the Google Stitch DESIGN.md format from voltagent/awesome-design-md, MIT): YAML token frontmatter (colors/typography/rounded/spacing/elevation/motion) + prose, EXTENDED with the pack floors the raw format omits — a token-layer contrast audit (U16), the complete component-state set incl. empty/loading/error (U9), theme/density modes (U4), the paired UI Archetype Signature (G11), motion+reduced-motion (U10), real copy (U11), perf budget (U17), AI-UX HAX/Shape-of-AI (U13-15). The preview.html renders swatches with computed contrast, the type scale, and every component state, light/dark. Templates 17→19.' }
-  - { type: added, area: script, paths: ['scripts/design-lint.py'], deploy: 'copy to docs/ai-forward-pack/scripts/ (stdlib; skills invoke it)', summary: 'Token-reference linter making U3 (reference a token, never an arbitrary value) a forcing function for a design-language doc: every {group.token} resolves to a frontmatter token (block + inline-flow YAML), warns on raw hex in the body. Scripts 6→7.' }
-  - { type: added, area: example, paths: ['examples/design-languages/linear.design.md', 'examples/design-languages/ATTRIBUTION.md'], deploy: 'source-only (examples are not deployed to targets)', summary: 'One worked, floor-extended exemplar seeded from awesome-design-md (Linear, MIT), demonstrating the synthesis — incl. a real contrast finding (the CTA label is ~4.3:1, under AA for small text). Attributed; adapt-not-clone (U12).' }
-  - { type: changed, area: knowledge, paths: ['knowledge/ui-interaction-design.md', 'knowledge/ui-archetype-catalog.md'], deploy: 'copy to .claude/knowledge/ and re-wrap the Copilot instructions', summary: 'ui-interaction-design gained U3a — the DESIGN.md as the canonical serialization of the U3-U5 token system, extended with the floors and lintable via design-lint.py; ui-archetype-catalog gained Section J pairing archetypes to awesome-design-md surface exemplars (seed-not-clone, U12).' }
-  - { type: changed, area: skill, paths: ['commands/specify/SKILL.md', 'commands/design/SKILL.md', 'commands/implement/SKILL.md'], deploy: 'RE-COPY these skills to .claude/skills/ and re-wrap their Copilot prompts in .github/prompts/', summary: '/specify Part C references the design-language doc; /design produces/updates it (+ preview, design-lint clean) with a DoD item; /implement builds to it and lints it. Wires U3a through the UI lifecycle.' }
-  - { type: changed, area: script, paths: ['scripts/docs-graph.py'], deploy: 'copy to docs/ai-forward-pack/scripts/ (replaces prior)', summary: 'Added design-language to the graph TYPES so the new artifact validates as a first-class node.' }
+  - { type: changed, area: knowledge, paths: ['knowledge/knowledge-visualization.md'], deploy: 'copy to .claude/knowledge/ and re-wrap the Copilot instruction', summary: 'Docs Explorer standard now defines Browse as the canonical projection, separates selection from neighborhood context, requires deterministic semantic layouts and local/offline core behavior, treats Mermaid/3D as progressive enhancements, and documents persistent JSONL lock-file hygiene.' }
+  - { type: changed, area: graph-tooling, paths: ['scripts/docs-graph.py'], deploy: 'copy to docs/ai-forward-pack/scripts/', summary: 'Graph derivation now emits docs-index/v2 identities and limits, extracts Mermaid fences heading-locally, exposes deterministic bounded context packets/errors, rejects linked or changed sources, publishes atomically, and serializes append-only JSONL updates through persistent sibling locks.' }
+  - { type: added, area: explorer-runtime, paths: ['scripts/docs-explorer-core.js'], deploy: 'copy to docs/ai-forward-pack/scripts/', summary: 'Dependency-free deterministic Explorer state/layout core: normalized typed graph, URL state, selection/context separation, search, stable Graph lanes, and context-rooted Mind-map BFS.' }
+  - { type: added, area: process-safety, paths: ['scripts/bounded_process.py'], deploy: 'copy to docs/ai-forward-pack/scripts/', summary: 'Shared stdlib-only subprocess boundary with concurrent stream draining, hard stdout/stderr ceilings, deadlines, and process-tree termination; pack-doctor now uses it for graph validation.' }
+  - { type: changed, area: install-health, paths: ['scripts/pack-doctor.py'], deploy: 'copy to docs/ai-forward-pack/scripts/', summary: 'Pack Doctor now uses bounded structured graph inventory and supports --strict so warnings and inconclusive checks block release gates.' }
+  - { type: changed, area: explorer-ui, paths: ['templates/docs-explorer.template.html'], deploy: 'replace docs/index.html from the template, substituting __PROJECT__; preserve docs/docs-index.js', summary: 'Replaces the randomized CDN/React canvas with the local Browse-first Explorer, responsive Details/Visualization routes, explicit Explore-neighborhood flow, relationship-list parity, history/focus restoration, fail-closed limits, and local source/error states.' }
+  - { type: changed, area: docs, paths: ['README.md'], deploy: 'copy to docs/ai-forward-pack/ (shared)', summary: 'Script inventory documents the grounding-enabled graph tool, deterministic JavaScript Explorer core, and shared bounded subprocess helper. Scripts 7→9.' }
+  - { type: changed, area: eval-safety, paths: ['../evals/run-evals.py', '../../tools/check-consistency.py'], deploy: 'source-only pack-maintenance tooling; not deployed', summary: 'Eval workspaces and prompts no longer interpolate into shell commands, case IDs are containment-safe, and consistency checks mechanically block revision 17 release without qualified reference evidence or an approved human deviation.' }
+  - { type: added, area: tests, paths: ['../tests/docs_explorer/', '../playwright.config.js', '../package.json', '../package-lock.json'], deploy: 'source-only pack-maintenance/browser regression suite; not deployed', summary: 'Adds deterministic Python and Node contract tests plus Chromium/Firefox/WebKit interaction, recovery, offline, accessibility-route, parity, containment, concurrency, process-bound, and benchmark coverage.' }
+  - { type: changed, area: install-hygiene, paths: ['adapters/INSTALL.md'], deploy: 'add *.jsonl.lock to the consuming repository .gitignore', summary: 'Persistent sibling lock files protect append-only JSONL updates from lost writes and must remain local rather than committed.' }
 ---
 
 ## Changelog — what changed since the last version
@@ -27,6 +31,10 @@ changes:
 So at any moment: the frontmatter `changes` = the latest delta (the refresh guide), and this section = the full rolling history.
 
 ### Prior revisions
+**Revision 16 — 2026-07-10.** Added `/forensicreview`: a docs-only deep architecture/design/implementation review that reconstructs architecture and documentation before emitting an evidence-linked P0-P3 backlog of risks, verified issues, and todos. Added its Copilot prompt and eval; registered it in the workflow knowledge, managed blocks, pack docs, and explainer. Skills 16→17.
+
+**Revision 15 — 2026-06-30.** Added the project design-language artifact based on the Google Stitch DESIGN.md format, extended with the pack's UI floors; added `design-lint.py`; added attributed Linear design-language examples; wired the design-language through `/specify`, `/design`, `/implement`, the UI standards/catalog, and `docs-graph.py`. Templates 17→19; scripts 6→7.
+
 **Revision 14 — 2026-06-30.** Added the **Solution-Selection Ladder** (`solution-selection-ladder.md`) — the 7-rung smallest-correct forcing function (YAGNI → reuse-in-codebase → stdlib → native → installed dep → one line → minimum), the inline `simplify:` ceiling/trigger marker, the debt ledger + rot-flag (mapped onto V13/V17), tier-gated ceremony (T0 code-first / T1-T2 full), and the Simplifier's delete-list output format — adapted from the ponytail skill (MIT) and hardened to compose with the Simplifier persona and the correctness floors. Wired into /design, /implement, /migrate and the-simplifier; managed blocks RE-PASTED. Knowledge docs 23→24.
 
 **Revision 13 — 2026-06-27.** Unified the **prompt-log** onto the audit log — one store of prompts, not two. `prompt-log.py` became a reuse lens over the committed audit log (`docs/audit/audit-log.jsonl`): browse/search/list/show/get read the audit log, and `add` writes a `kind:prompt` entry through `audit-log.py` (the single writer) instead of a separate `.aiforward/prompts.jsonl`; a legacy store is read only via `--store`. Knowledge doc `audit-and-change-log.md` gained AL13; `/prompts`, `/searchprompts`, `/auditlog` and their Copilot prompts re-copied; managed blocks RE-PASTED.
@@ -76,12 +84,12 @@ The model is the same for both tools: **knowledge** files are always-available r
 |---|---|---|
 | Rules of the Road (the always-on rules) | `CLAUDE.md` (link to it) + `.claude/` | `AGENTS.md` |
 | Knowledge docs (`knowledge/*.md`, plus the existing pack) | `.claude/knowledge/` or repo `docs/` referenced from `CLAUDE.md` | `.github/instructions/*.instructions.md` with `applyTo` globs |
-| The 16 skills (`commands/*/SKILL.md`) | `.claude/skills/<name>/SKILL.md` | `.github/prompts/<name>.prompt.md` (wrapper that carries the same flow) |
+| The 17 skills (`commands/*/SKILL.md`) | `.claude/skills/<name>/SKILL.md` | `.github/prompts/<name>.prompt.md` (wrapper that carries the same flow) |
 | Thin command entry points | `.claude/commands/<name>.md` | `.github/prompts/<name>.prompt.md` |
 | Peer agents (orchestrator, product-strategist, domain-researcher) | `.claude/agents/<name>.md` | `.github/agents/<name>.agent.md` |
 | Adversary agents (the existing 11) | `.claude/agents/<name>.md` | `.github/agents/<name>.agent.md` |
 | Templates (`templates/*`, 19 incl. the glossary, decision note, threat model, privacy review, design-language + preview) | `docs/ai-forward-pack/templates/` (referenced by skills) | same (shared) |
-| Script bundle (`scripts/*.py` — `docs-graph.py` + `audit-log.py` + `prompt-log.py` + `foundation-check.py` + `pack-doctor.py` + `scrub.py` + `design-lint.py`) | `docs/ai-forward-pack/scripts/` (skills invoke docs-graph for all graph mechanics — V18 — and audit-log for the audit/change logs — AL0.1; prompt-log powers `/prompts` + `/searchprompts`; design-lint checks design-language token references — U3a; needs Python 3.8+, stdlib only) | same (shared) |
+| Script bundle (`scripts/*` — stdlib-only Python tools plus dependency-free `docs-explorer-core.js`) | `docs/ai-forward-pack/scripts/` (`docs-graph.py` owns graph mechanics + bounded grounding packets; `docs-explorer-core.js` owns deterministic browser state/layout; `audit-log.py`/`prompt-log.py` own history/reuse; `design-lint.py` checks design-language references; Python tools need Python 3.8+) | same (shared) |
 | CI reference workflow (`ci/docs-health.yml`) | `.github/workflows/docs-health.yml` (optional but recommended — gates PRs on graph health) | same (shared) |
 | Pack regression suite (`evals/`) | **not deployed** — pack-maintenance tooling; lives wherever you maintain the pack source | — |
 | Pack docs (`README`, `OVERVIEW`, `research-synthesis`, this file) | `docs/ai-forward-pack/` | same (shared) |
@@ -150,7 +158,7 @@ your-repo/
       └─ specify.md               # thin wrappers (optional; skills auto-apply)
 ```
 
-Keep `CLAUDE.md` short — it is always in context. Put the durable reasoning in the knowledge files and let the skills pull them in. Skills auto-apply by their `description`; a command of the same name is just a manual trigger, and the skill takes priority. Spikes run under `spikes/` (see `knowledge/spike-protocol.md`); add `spikes/` to `.gitignore` unless a probe is worth keeping as evidence.
+Keep `CLAUDE.md` short — it is always in context. Put the durable reasoning in the knowledge files and let the skills pull them in. Skills auto-apply by their `description`; a command of the same name is just a manual trigger, and the skill takes priority. Spikes run under `spikes/` (see `knowledge/spike-protocol.md`); add `spikes/` to `.gitignore` unless a probe is worth keeping as evidence. The graph tool's append-only JSONL writes use persistent sibling lock files to prevent inode-replacement races; add `*.jsonl.lock` to `.gitignore` and do not commit those local coordination files.
 
 **Sample thin command** — `.claude/commands/specify.md`:
 

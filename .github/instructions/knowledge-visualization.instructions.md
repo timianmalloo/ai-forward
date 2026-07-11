@@ -3,11 +3,11 @@ applyTo: "**"
 ---
 # Knowledge Visualization & Docs Explorer Standard
 
-*Normative guidance for how knowledge and engineering artifacts are constructed, connected, indexed, and visualized in this repository — and the standard React/HTML toolkit (the **Docs Explorer**) that renders them. It governs any agent that creates knowledge or content (markdown, specs, architecture, designs, ADRs, investigations, proof packs, API docs, source modules). The Testing Strategy governs proof; the Observability Standard governs telemetry; this document governs **discoverability** — work that cannot be found, navigated, and understood by a human is unfinished.*
+*Normative guidance for how knowledge and engineering artifacts are constructed, connected, indexed, and visualized in this repository — and the standard local HTML/JavaScript toolkit (the **Docs Explorer**) that renders them. It governs any agent that creates knowledge or content (markdown, specs, architecture, designs, ADRs, investigations, proof packs, API docs, source modules). The Testing Strategy governs proof; the Observability Standard governs telemetry; this document governs **discoverability** — work that cannot be found, navigated, and understood by a human is unfinished.*
 
 Normative keywords (**MUST**, **SHOULD**, **MAY**, **MUST NOT**) follow RFC 2119.
 
-The governing idea, distilled from the research below: **all knowledge in the repo is one typed graph, and every visualization is a projection of it.** Atomic artifacts are the nodes; explicit, typed links are the edges; the hierarchy view, the graph view, and the mind-map view are three projections of the same underlying model — not three separate documents to maintain. Maintain the graph (the frontmatter on each artifact; the index derives from it); the views come free.
+The governing idea, distilled from the research below: **all knowledge in the repo is one typed graph, and every visualization is a projection of it.** Atomic artifacts are the nodes; explicit, typed links are the edges; the Browse tree, graph view, and mind-map view are three projections of the same underlying model — not three separate documents to maintain. Maintain the graph (the frontmatter on each artifact; the index derives from it); the views come free.
 
 ---
 
@@ -22,7 +22,7 @@ The governing idea, distilled from the research below: **all knowledge in the re
 
 **The transformation insight.** These are not rival formats; they are **projections of one graph**: a mind map is the **BFS/DFS spanning tree of the graph rooted at a chosen focus node** (with the non-tree "cross-links" rendered as secondary/ghost edges, so the projection is honest about what it hides); a hierarchy view is a spanning forest grouped by a chosen facet (type, directory, phase); the concept-map/graph view is the full network with labeled, typed edges. Transformation between paradigms = **choose a root/facet, extract the spanning structure, and overlay the remainder** — so a single index drives every view, and switching views never requires re-authoring content.
 
-**Toolkit findings.** SVG beats canvas for accessibility, CSS styling, and print at documentation scale (canvas wins only for very large graphs); JSON is the de-facto serialization for graph UIs; the most important lesson from production graph UIs: **generic layouts don't reflect meaning** — a layout should encode semantics (cluster by artifact type, lane by phase or layer), not just minimize edge crossings; React should own rendering while layout math stays a pure function of the data.
+**Toolkit findings.** SVG beats canvas for accessibility, CSS styling, and print at documentation scale (canvas wins only for very large graphs); JSON is the de-facto serialization for graph UIs; the most important lesson from production graph UIs: **generic layouts don't reflect meaning** — a layout should encode semantics (cluster by artifact type, lane by phase or layer), not just minimize edge crossings. Rendering can stay native and dependency-free when deterministic state/layout math is isolated in a pure module.
 
 **Diagrams-as-code (UML / C4 / Mermaid).** Text-based diagrams committed to Git are the modern norm: diffable, reviewable, and updated **in the same change** as the code — the proven cure for diagram drift ("living documentation"). The **C4 model** supplies the zoom discipline — Context → Container → Component (Code optional and usually skipped) — and the rule *pick the level for the audience* (Context+Container suffice for most communication). **Mermaid** is the embeddability sweet spot for the UML families this pack uses — sequence (interactions), state, class/object (structure), flowchart-as-activity (flows), C4 (architecture) — while heavier modeling belongs in dedicated tools. UML's value here is its *vocabulary and discipline* (lifelines, swimlanes, multiplicity, level-appropriate abstraction), carried in Mermaid syntax.
 
@@ -86,13 +86,13 @@ Links are **typed** (`rel` is mandatory; the governed vocabulary and each relati
 
 ## 2. The views (three projections + documents)
 
-**V4 — Hierarchy projection.** A tree grouped by a chosen facet — artifact `type` by default (specs / architecture / designs / ADRs / investigations / knowledge / proofs / docs), with delivery `phase` as the alternate facet. This is the orientation view and the default landing.
+**V4 — Browse projection.** An accessible tree grouped by a chosen facet — artifact `type` by default (specs / architecture / designs / ADRs / investigations / knowledge / proofs / docs), with delivery `phase` as the alternate facet. This is the canonical orientation view and the default landing.
 
-**V5 — Graph projection.** The full typed network: nodes colored by `type`, edges labeled by `rel`, layout **semantic-first** (cluster by type or lane by phase, force-directed within clusters — never a meaning-blind hairball). Node click focuses; the traceability chain (`spec → … → proof`) must be followable edge by edge.
+**V5 — Graph projection.** The full typed network: nodes grouped by `type`, directed edges identified by `rel`, and a deterministic **semantic-first** layout (stable type/phase lanes and stable ordering — never a randomized hairball). Selecting a node does not silently change the graph's context; an explicit **Explore neighborhood** action changes context, and the traceability chain (`spec → … → proof`) remains followable edge by edge and in an equivalent relationship list.
 
-**V6 — Mind-map projection.** A radial tree computed from any **focus node**: BFS spanning tree outward from the focus, cross-links drawn as dashed ghost edges. Selecting a node in any view can re-root the mind map — the transformation is a function of the same index, never separate content.
+**V6 — Mind-map projection.** A radial tree computed from the explicit **context node**: BFS spanning tree outward from that context, cross-links drawn as dashed ghost edges. Selection and context are separate: selecting inspects a node; **Explore neighborhood** re-roots the mind map. The transformation is a deterministic function of the same index, never separate content.
 
-**V7 — Document & diagram view.** Selecting an artifact shows its metadata, summary, typed links (outgoing and back-links, computed by inverting `links`), and its **Mermaid diagrams rendered** (sequence, state, class, flowchart/activity, C4). When the Explorer is served over HTTP it also fetches and renders the markdown body; over `file://` it degrades gracefully to summary + diagrams + an *open-file* link — this degradation MUST be graceful, never an error wall.
+**V7 — Document & diagram view.** Selecting an artifact shows its metadata, summary, typed links (outgoing and back-links, computed by inverting `links`), diagram titles/source, and an *open-file* link. When the Explorer is served over HTTP it MAY fetch the markdown body on demand; source or optional diagram-renderer failure MUST preserve metadata, relationships, escaped source, and local navigation rather than produce an error wall. Mermaid rendering is a progressive enhancement over the committed source, not a prerequisite for core use.
 
 **V8 — UML discipline in diagrams.** Use the diagram family fit for the question: **sequence** for interactions over time, **flowchart/activity** for branching flows, **class/object** for structure, **state** for lifecycles, **C4** for architecture zoom (Context → Container → Component; pick the level for the audience; skip Code unless it earns its place). Each artifact type carries its expected families: architecture → C4 Context+Container (+ component map); design → component/class + sequence for the load-bearing interactions; investigation → timeline/sequence of the failure; API docs → sequence per flow + object/class per resource.
 
@@ -100,7 +100,7 @@ Links are **typed** (`rel` is mandatory; the governed vocabulary and each relati
 
 ## 3. The toolkit (the Docs Explorer)
 
-**V9 — One standard Explorer at the docs root.** The repo serves all of this through a **single self-contained HTML/React file at `docs/index.html`** (from `templates/docs-explorer.template.html`): React (UMD) + htm for rendering, hand-rolled SVG layouts (semantic clustering force layout; radial tree), Mermaid from CDN for diagrams, dark/light aware, zero build step. It loads only `docs-index.js` — so regenerating the index updates every view without touching the HTML. The `/document` skill's deep bundle viewer (`docs/_site/index.html`) remains the close-up reading surface; the Explorer is the map that links to it. CDN dependencies degrade gracefully offline (navigation and metadata still work; diagrams show their source).
+**V9 — One standard Explorer at the docs root.** The repo serves all of this through a **single local HTML shell at `docs/index.html`** (from `templates/docs-explorer.template.html`) plus the local renderer-independent core `scripts/docs-explorer-core.js`: native DOM controls, deterministic SVG layouts (stable lanes; radial BFS), dark/light aware, and zero build step. It loads only local `docs-index.js` and the local core — so regenerating the index updates every view without touching the HTML, and core tasks remain usable with the network blocked. The `/document` skill's deep bundle viewer (`docs/_site/index.html`) remains the close-up reading surface; the Explorer is the map that links to it. Optional diagram/3D enhancements MUST degrade to Browse, relationships, metadata, and source.
 
 ---
 
@@ -115,7 +115,7 @@ Skipping the index update is the documentation equivalent of skipping a triggere
 
 **V11 — Same-change updates.** Index and diagram updates land **in the same change** as the artifact they describe (the docs-as-code anti-drift rule). A PR that changes a design but not its index entry/diagrams is incomplete.
 
-**V12 — Honest projections.** Views never invent structure: a mind map shows its cross-links as ghosts rather than hiding them; a hierarchy view discloses its grouping facet; summaries in the index are real summaries, not titles repeated. The Explorer is a lens on the graph, and the graph must be trustworthy.
+**V12 — Honest projections.** Views never invent structure: a mind map shows its cross-links as ghosts rather than hiding them; Browse discloses its grouping facet; selection is not presented as neighborhood context; summaries in the index are real summaries, not titles repeated. The Explorer is a lens on the graph, and the graph must be trustworthy.
 
 
 **V13 — Ownership and freshness SLAs.** Every artifact has an **`owner`** (the human accountable for its truth — pair with a `docs/**` section in `CODEOWNERS` so doc changes route to them) and a **`review-by`** date set per its type's freshness SLA. Defaults (a repo may tighten them): **knowledge** 90 days; **spec / architecture / design** 180 days *or* on any change to a linked downstream artifact, whichever first; **ADR** none while accepted (re-dated only when superseded); **investigation** frozen once resolved (immutable record — no SLA); **proof-pack / api** regenerate per release; **doc / glossary** 90 days; **decision-note** 180 days (an assumption is re-validated against its stated condition, then confirmed, retired, or promoted); **threat-model / privacy-review** 180 days or on any change to a linked design — their `documents` edges make V16 flag them automatically, so a pending flag means the model lags reality. Passing `review-by` does not delete or hide anything — it makes the artifact **stale**, a visible health finding in the Explorer and a freshness-gate condition for `/document`, exactly like stale code-docs. Reviewing = re-reading against reality, fixing or confirming, and bumping the date. The decay literature is blunt about why this is mandatory in an agentic repo: humans route around stale docs; **agents confidently act on them** — stale context produces confidently wrong output.
@@ -155,6 +155,11 @@ Skipping the index update is the documentation equivalent of skipping a triggere
 | aggregate the designs' STRIDE / LINDDUN tables into the threat-model / privacy-review registers (source-attributed, paste-ready) | `docs-graph.py rollup --heading "<section>" --type design` | V8/V16 |
 
 The tool **never invents metadata** (files without frontmatter are findings, not silently indexed) and writes flags by targeted textual edit, preserving the rest of the file. Prompt-time scripting is reserved for judgment work the bundle cannot express — and when a mechanical need recurs, the answer is to **extend the bundle** (a recorded change with tests), not to regenerate the logic per session.
+
+Append-only JSONL operations use a **persistent sibling `.lock` file** so concurrent
+writers keep coordinating on one stable lock inode even when the data file is atomically
+replaced. Repositories using the tool MUST ignore `*.jsonl.lock`; the lock is local
+coordination state, not project history.
 ---
 
 ## 5. Self-verification checklist

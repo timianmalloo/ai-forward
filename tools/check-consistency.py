@@ -17,7 +17,7 @@ Checks (all FAIL the run):
 
 Exit 0 clean, 1 on any finding.
 """
-import os, re, sys
+import json, math, os, re, sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PACK = os.path.join(ROOT, "pack")
@@ -33,7 +33,10 @@ _NUM = r"(\d+|" + _NUMALT + r")"
 
 
 def _read(path):
-    return open(path, encoding="utf-8").read() if os.path.exists(path) else None
+    if not os.path.exists(path):
+        return None
+    with open(path, encoding="utf-8") as source:
+        return source.read()
 
 
 def _val(tok):
@@ -54,7 +57,7 @@ def filesystem_truth():
     knowledge_docs = [f for f in knowledge if f != "FOUNDATION.md"]
     templates = _ls(os.path.join(PACK, "templates"), lambda p, f: os.path.isfile(p))
     scripts = _ls(os.path.join(PACK, "scripts"),
-                  lambda p, f: os.path.isfile(p) and f.endswith(".py"))
+                  lambda p, f: os.path.isfile(p) and f.endswith((".py", ".js")))
     cc = _ls(os.path.join(PACK, "adapters", "claude-code", "agents"),
              lambda p, f: f.endswith(".md"))
     cop = _ls(os.path.join(PACK, "adapters", "copilot", "agents"),
@@ -88,6 +91,114 @@ def check_install_counts(truth, findings):
             findings.append(f"INSTALL counts: missing `{key}` (filesystem has {want})")
         elif got != want:
             findings.append(f"INSTALL counts.{key} = {got}, filesystem has {want}")
+
+
+def _accepted_reference_deviation(path, revision):
+    text = _read(path)
+    if text is None:
+        return False
+    required_fields_present = all(
+        re.search(pattern, text, re.M)
+        for pattern in (
+            r"^status:\s*accepted\s*$",
+            rf"^revision:\s*['\"]?{revision}['\"]?\s*$",
+            r"^decision:\s*accept-reference-performance-risk\s*$",
+        )
+    )
+    approver = re.search(
+        r"^approved-by:\s*['\"]?@([^'\"\s]+)['\"]?\s*$",
+        text,
+        re.M,
+    )
+    if not required_fields_present or not approver:
+        return False
+    handle = approver.group(1).casefold()
+    return (
+        not handle.startswith("copilot")
+        and handle not in {"github-actions", "dependabot", "renovate"}
+        and not handle.endswith("[bot]")
+    )
+
+
+def _finite_number(value):
+    return (
+        isinstance(value, (int, float))
+        and not isinstance(value, bool)
+        and math.isfinite(value)
+    )
+
+
+def _valid_reference_benchmark(proof):
+    if not isinstance(proof, dict):
+        return False
+    environment = proof.get("environment", {})
+    azure = environment.get("azureReferenceMetadata", {})
+    corpus = proof.get("corpus", {})
+    thresholds = proof.get("thresholds", {})
+    summary = proof.get("summary", {})
+    p75 = summary.get("p75WallMilliseconds")
+    peak = summary.get("maxPeakWorkingSetBytes")
+    p75_limit = thresholds.get("p75WallMilliseconds")
+    peak_limit = thresholds.get("peakWorkingSetBytes")
+    return (
+        proof.get("schemaVersion") == "docs-context-benchmark/v1"
+        and proof.get("passed") is True
+        and proof.get("localThresholdsPassed") is True
+        and proof.get("referenceBudgetProved") is True
+        and environment.get("referenceEnvironmentMatched") is True
+        and environment.get("architecture") == "X64"
+        and environment.get("logicalProcessors") == 4
+        and environment.get("python") == "Python 3.11.9"
+        and "Windows Server 2022" in environment.get("windowsCaption", "")
+        and azure.get("vmSize") == "Standard_D4s_v5"
+        and azure.get("offer") == "WindowsServer"
+        and azure.get("osType") == "Windows"
+        and corpus.get("artifacts") == 2000
+        and corpus.get("relationships") == 20000
+        and corpus.get("admittedSourceBytes") == 64 * 1024 * 1024
+        and corpus.get("seed") == 20260710
+        and corpus.get("sha256")
+        == "f055e195583abdd97d673032a5e78ad89155f1adff1a8c4d324bddf8ca0a43b1"
+        and p75_limit == 2000.0
+        and peak_limit == 256 * 1024 * 1024
+        and _finite_number(p75)
+        and _finite_number(peak)
+        and 0 <= p75 <= p75_limit
+        and 0 <= peak <= peak_limit
+    )
+
+
+def check_release_gate(findings):
+    install = _read(os.path.join(PACK, "adapters", "INSTALL.md"))
+    if install is None:
+        return
+    revision_match = re.search(r"^revision:\s*(\d+)\s*$", install, re.M)
+    released_match = re.search(r"^released:\s*['\"]?([^'\"\r\n]*)['\"]?\s*$", install, re.M)
+    if not revision_match or not released_match or not released_match.group(1).strip():
+        return
+    revision = int(revision_match.group(1))
+    if revision < 17:
+        return
+
+    proof_path = os.path.join(ROOT, "docs", "proof", "docs-context-benchmark.reference.json")
+    proof_valid = False
+    try:
+        proof = json.loads(_read(proof_path) or "")
+        proof_valid = _valid_reference_benchmark(proof)
+    except (OSError, ValueError, TypeError):
+        proof_valid = False
+
+    deviation_path = os.path.join(
+        ROOT,
+        "docs",
+        "notes",
+        "docs-explorer-reference-performance-deviation.md",
+    )
+    if not proof_valid and not _accepted_reference_deviation(deviation_path, revision):
+        findings.append(
+            f"INSTALL revision {revision} is marked released without pinned reference "
+            "benchmark proof or an accepted human-approved performance deviation"
+        )
 
 
 def check_skill_prompt_parity(truth, findings):
@@ -159,6 +270,7 @@ def main():
     truth = filesystem_truth()
     findings = []
     check_install_counts(truth, findings)
+    check_release_gate(findings)
     check_skill_prompt_parity(truth, findings)
     check_managed_blocks(truth, findings)
     check_prose(truth, findings)

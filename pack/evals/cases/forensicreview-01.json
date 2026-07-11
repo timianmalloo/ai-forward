@@ -1,0 +1,92 @@
+{
+  "skill": "forensicreview",
+  "prompt": "Run /forensicreview on this small legacy service. Reconstruct its architecture and documentation, review it deeply, and produce the proposed risk/issue/todo backlog. Do not change production code.",
+  "setup": [
+    {
+      "path": "README.md",
+      "content": "# Legacy Orders\nProcesses orders but has no architecture documentation.\n"
+    },
+    {
+      "path": "src/order_service.py",
+      "content": "def charge(order, gateway):\n    # TODO: add idempotency before retrying payment calls\n    return gateway.charge(order['total'])\n"
+    },
+    {
+      "path": "tests/test_order_service.py",
+      "content": "def test_placeholder():\n    assert True\n"
+    }
+  ],
+  "assertions": [
+    {
+      "type": "file-exists",
+      "path": "docs/architecture.md"
+    },
+    {
+      "type": "file-exists",
+      "path": "docs/reviews/forensic-review.md"
+    },
+    {
+      "type": "frontmatter-valid",
+      "path": "docs/reviews/forensic-review.md"
+    },
+    {
+      "type": "grep",
+      "path": "docs/reviews/forensic-review.md",
+      "pattern": "(?i)architecture.*design.*implementation"
+    },
+    {
+      "type": "grep",
+      "path": "docs/reviews/forensic-review.md",
+      "pattern": "(?i)Verified|Inferred|Flagged"
+    },
+    {
+      "type": "file-exists",
+      "path": "docs/backlog/forensic-review.md"
+    },
+    {
+      "type": "frontmatter-valid",
+      "path": "docs/backlog/forensic-review.md"
+    },
+    {
+      "type": "grep",
+      "path": "docs/backlog/forensic-review.md",
+      "pattern": "FR-[0-9]{3}"
+    },
+    {
+      "type": "grep",
+      "path": "docs/backlog/forensic-review.md",
+      "pattern": "(?i)risk|issue|todo"
+    },
+    {
+      "type": "grep",
+      "path": "docs/backlog/forensic-review.md",
+      "pattern": "(?i)acceptance criteria|validation"
+    },
+    {
+      "type": "file-exists",
+      "path": "docs/docs-index.js"
+    },
+    {
+      "type": "index-has",
+      "id": "forensic-review"
+    },
+    {
+      "type": "index-has",
+      "id": "forensic-review-backlog"
+    },
+    {
+      "type": "cmd-exit",
+      "cmd": [
+        "python3",
+        "docs/ai-forward-pack/scripts/docs-graph.py",
+        "validate"
+      ],
+      "exit": 0
+    },
+    {
+      "type": "not-grep",
+      "path": "src/order_service.py",
+      "pattern": "idempotency_key|IdempotencyKey"
+    }
+  ],
+  "id": "forensicreview-01"
+}

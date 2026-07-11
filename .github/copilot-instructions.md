@@ -45,8 +45,8 @@ Run affected skill cases on every pack edit; run all cases on model-version chan
 
 ```
 pack/           ← SINGLE SOURCE OF TRUTH — edit here only
-  knowledge/    ← 23 knowledge docs (reasoning spine + vendored foundation)
-  commands/     ← 16 skills (one SKILL.md each)
+  knowledge/    ← 24 knowledge docs (reasoning spine + vendored foundation)
+  commands/     ← 17 skills (one SKILL.md each)
   templates/    ← 19 artifact templates
   adapters/     ← INSTALL.md + Claude Code agents + Copilot agents/prompts + managed blocks
   evals/        ← pack regression suite (NOT deployed to target repos)
@@ -96,13 +96,13 @@ Each `pack/knowledge/<name>.md` installs as `.github/instructions/<name>.instruc
 - All writes go through `docs/ai-forward-pack/scripts/audit-log.py` (never hand-append JSONL); it regenerates `audit-data.js` + the viewer. The standard is `pack/knowledge/audit-and-change-log.md`.
 - The history is the committed counterpart to a session's ephemeral store — read it at grounding (`audit-log.py list`/`search`) so work compounds across sessions. Browse via `/auditlog` or `docs/audit/index.html`. Prompt **reuse** (`/prompts` + `/searchprompts`, engine `prompt-log.py`) is a second lens over the *same* audit log — `prompt-log.py add` writes a `kind:prompt` entry via `audit-log.py`; there is no separate prompt store.
 
-### The 16 skills and their natural order
+### The 17 skills and their natural order
 ```
 /collectknowledge → /adddomainexperts → /specify → /define-architecture → /design → /implement → /document
                                                                                 ↑
                                                             /investigate  (whenever a defect appears)
 ```
-`/adopt` onboards a brownfield repo; `/migrate` runs characterization-first refactors.
+`/adopt` onboards a brownfield repo; `/forensicreview` rebuilds its documentation and creates an evidence-linked risk backlog; `/migrate` runs characterization-first refactors.
 `/updatepack` refreshes an installed pack from a local ai-forward clone; `/addpacktorepo` installs the pack into a new local repo by path; `/extendaibundle` extends the pack itself with a new capability from a prose prompt (collect→specify→design→implement, scaffolded by `tools/new-capability.py`, proven by `tools/verify-bundle.ps1`, zero drift). `/auditlog` is the CLI lens over the audit & change log (last-N, search, recall-and-redo a prompt, open the viewer). Two **prompt-log utilities** sit outside the loop: `/prompts` browses the audit log's prompts as an arrow-navigable stack (→ expand / ← collapse) and `/searchprompts` searches them, both to reuse a prior prompt (engine: `docs/ai-forward-pack/scripts/prompt-log.py`, a reuse lens over the same `docs/audit/audit-log.jsonl`).
 
 Skills in `.claude/skills/` apply automatically by description in Claude Code; in Copilot they are available as prompts in `.github/prompts/<name>.prompt.md`.

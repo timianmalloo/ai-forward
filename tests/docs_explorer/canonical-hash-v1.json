@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "canonical-hash-v1",
+  "vectors": [
+    {
+      "name": "unicode-and-scalars",
+      "value": {
+        "b": 2,
+        "a": "é",
+        "list": [
+          true,
+          null,
+          "x"
+        ]
+      },
+      "canonical": "{\"a\":\"é\",\"b\":2,\"list\":[true,null,\"x\"]}",
+      "sha256": "79449cfe0022ae1f8189caa3be7d6bf61f85675afbbdc1f0b5efe257fb73c76a"
+    },
+    {
+      "name": "graph-payload",
+      "value": {
+        "schemaVersion": "docs-index/v2",
+        "project": "Fixture",
+        "artifacts": [
+          {
+            "id": "a",
+            "sourceSha256": "00",
+            "links": [
+              {
+                "to": "b",
+                "rel": "depends-on"
+              }
+            ]
+          },
+          {
+            "id": "b",
+            "sourceSha256": "11",
+            "links": []
+          }
+        ]
+      },
+      "canonical": "{\"artifacts\":[{\"id\":\"a\",\"links\":[{\"rel\":\"depends-on\",\"to\":\"b\"}],\"sourceSha256\":\"00\"},{\"id\":\"b\",\"links\":[],\"sourceSha256\":\"11\"}],\"project\":\"Fixture\",\"schemaVersion\":\"docs-index/v2\"}",
+      "sha256": "470a0e714e0508d636c37904e01fd400f78e9d5a7d648233192fa10ccb294ab6"
+    }
+  ]
+}

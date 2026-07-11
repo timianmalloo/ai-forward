@@ -1,0 +1,116 @@
+{
+  "schemaVersion": "traversal-policy/v1",
+  "rootId": "root",
+  "artifacts": [
+    {
+      "id": "root",
+      "title": "Root",
+      "type": "architecture",
+      "status": "accepted",
+      "links": [
+        { "to": "spec", "rel": "implements" },
+        { "to": "adr", "rel": "depends-on" },
+        { "to": "glossary", "rel": "uses-term" },
+        { "to": "proof", "rel": "tested-by" },
+        { "to": "missing", "rel": "relates-to" }
+      ]
+    },
+    {
+      "id": "spec",
+      "title": "Spec",
+      "type": "spec",
+      "status": "accepted",
+      "links": [
+        { "to": "architecture", "rel": "refines" }
+      ]
+    },
+    {
+      "id": "architecture",
+      "title": "Architecture",
+      "type": "architecture",
+      "status": "accepted",
+      "links": [
+        { "to": "root", "rel": "depends-on" }
+      ]
+    },
+    {
+      "id": "adr",
+      "title": "ADR",
+      "type": "adr",
+      "status": "accepted",
+      "links": [
+        { "to": "root", "rel": "depends-on" }
+      ]
+    },
+    {
+      "id": "glossary",
+      "title": "Glossary",
+      "type": "glossary",
+      "status": "accepted",
+      "links": []
+    },
+    {
+      "id": "proof",
+      "title": "Proof",
+      "type": "proof-pack",
+      "status": "accepted",
+      "links": []
+    },
+    {
+      "id": "component",
+      "title": "Component",
+      "type": "design",
+      "status": "accepted",
+      "links": [
+        { "to": "root", "rel": "implements" }
+      ]
+    },
+    {
+      "id": "document",
+      "title": "Document",
+      "type": "doc",
+      "status": "accepted",
+      "links": [
+        { "to": "root", "rel": "documents" }
+      ]
+    }
+  ],
+  "policies": {
+    "grounding": [
+      { "rel": "implements", "direction": "outbound", "priority": 0 },
+      { "rel": "refines", "direction": "outbound", "priority": 1 },
+      { "rel": "depends-on", "direction": "outbound", "priority": 2 },
+      { "rel": "uses-term", "direction": "outbound", "priority": 3 },
+      { "rel": "tested-by", "direction": "outbound", "priority": 4 },
+      { "rel": "documents", "direction": "outbound", "priority": 5 }
+    ],
+    "impact": [
+      { "rel": "implements", "direction": "inbound", "priority": 0 },
+      { "rel": "refines", "direction": "inbound", "priority": 1 },
+      { "rel": "depends-on", "direction": "inbound", "priority": 2 },
+      { "rel": "tested-by", "direction": "inbound", "priority": 3 },
+      { "rel": "uses-term", "direction": "inbound", "priority": 4 }
+    ],
+    "proof": [
+      { "rel": "tested-by", "direction": "outbound", "priority": 0 }
+    ],
+    "explore-neighborhood": [
+      { "rel": "depends-on", "direction": "outbound", "priority": 0 },
+      { "rel": "depends-on", "direction": "inbound", "priority": 0 },
+      { "rel": "documents", "direction": "outbound", "priority": 1 },
+      { "rel": "documents", "direction": "inbound", "priority": 1 },
+      { "rel": "implements", "direction": "outbound", "priority": 2 },
+      { "rel": "implements", "direction": "inbound", "priority": 2 },
+      { "rel": "refines", "direction": "outbound", "priority": 3 },
+      { "rel": "refines", "direction": "inbound", "priority": 3 },
+      { "rel": "relates-to", "direction": "outbound", "priority": 4 },
+      { "rel": "relates-to", "direction": "inbound", "priority": 4 },
+      { "rel": "supersedes", "direction": "outbound", "priority": 5 },
+      { "rel": "supersedes", "direction": "inbound", "priority": 5 },
+      { "rel": "tested-by", "direction": "outbound", "priority": 6 },
+      { "rel": "tested-by", "direction": "inbound", "priority": 6 },
+      { "rel": "uses-term", "direction": "outbound", "priority": 7 },
+      { "rel": "uses-term", "direction": "inbound", "priority": 7 }
+    ]
+  }
+}

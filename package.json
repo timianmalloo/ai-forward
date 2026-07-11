@@ -1,0 +1,12 @@
+{
+  "name": "ai-forward-pack-tests",
+  "private": true,
+  "scripts": {
+    "test:docs-explorer:core": "node --test tests/docs_explorer/docs_explorer_core.test.js",
+    "test:docs-explorer:browser": "playwright test",
+    "test:docs-explorer": "npm run test:docs-explorer:core && npm run test:docs-explorer:browser"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.61.1"
+  }
+}
