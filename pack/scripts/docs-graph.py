@@ -27,6 +27,7 @@ Conventions
   never invents metadata — files without frontmatter are reported, not silently indexed.
 """
 import argparse, concurrent.futures, contextlib, datetime, hashlib, json, os, re, stat, sys, tempfile, time
+from html.parser import HTMLParser
 
 REL_REGISTRY = ["implements","refines","depends-on","supersedes","tested-by","documents","uses-term","relates-to"]
 TYPES = ["knowledge","glossary","spec","architecture","adr","design","design-language","investigation","proof-pack","decision-note","threat-model","privacy-review","api","source","doc","index"]
@@ -64,6 +65,18 @@ CONTEXT_LIMITS = {
 }
 PACKET_MIN_BYTES = 4096
 PACKET_MAX_BYTES = 1024 * 1024
+SURFACE_TITLE_BYTES = 256 * 1024
+SURFACE_LIMIT = 100
+INDEX_BYTE_LIMIT = 5 * 1024 * 1024
+INDEX_ARTIFACT_LIMIT = 1000
+RELATIONSHIP_LIMIT = 5000
+SOURCE_TOTAL_LIMIT = 64 * 1024 * 1024
+SURFACE_KIND_ORDER = {
+    "audit": 0,
+    "documentation": 1,
+    "design-preview": 2,
+    "knowledge-tool": 3,
+}
 
 
 class DocsGraphError(Exception):
@@ -499,6 +512,169 @@ def _markdown_candidates(root, artifact_limit=None):
     return candidates, problems
 
 
+class _TitleParser(HTMLParser):
+    def __init__(self):
+        HTMLParser.__init__(self, convert_charrefs=True)
+        self.in_title = False
+        self.current_parts = []
+        self.titles = []
+
+    def handle_starttag(self, tag, attrs):
+        if tag.lower() == "title" and not self.titles:
+            self.in_title = True
+            self.current_parts = []
+
+    def handle_endtag(self, tag):
+        if tag.lower() == "title" and self.in_title:
+            self.in_title = False
+            title = re.sub(r"\s+", " ", " ".join(self.current_parts)).strip()
+            if title:
+                self.titles.append(title)
+            self.current_parts = []
+
+    def handle_data(self, data):
+        if self.in_title:
+            self.current_parts.append(data)
+
+    def title(self):
+        return self.titles[0] if self.titles else ""
+
+
+def _surface_title(path, relative_to_root):
+    try:
+        source, opened = _open_verified_binary(path)
+        with source:
+            data = source.read(SURFACE_TITLE_BYTES)
+            _verify_open_snapshot(path, source, opened)
+        parser = _TitleParser()
+        parser.feed(data.decode("utf-8"))
+        title = parser.title()
+        if title:
+            return title
+    except (OSError, UnicodeError, _SourceChangedError):
+        return None
+    stem = os.path.splitext(os.path.basename(relative_to_root))[0]
+    if stem.lower() == "index":
+        stem = os.path.basename(os.path.dirname(relative_to_root)) or "Documentation"
+    return re.sub(r"[-_]+", " ", stem).strip().title()
+
+
+def _surface_kind(relative_to_root):
+    normalized = relative_to_root.replace("\\", "/")
+    if normalized == "audit/index.html":
+        return "audit"
+    if normalized == "_site/index.html":
+        return "documentation"
+    if normalized.startswith("design/"):
+        return "design-preview"
+    return "knowledge-tool"
+
+
+def _surface_description(kind):
+    return {
+        "audit": "Browse the committed audit and change timeline.",
+        "documentation": "Open the generated documentation bundle.",
+        "design-preview": "Inspect a rendered design or design-language preview.",
+        "knowledge-tool": "Open an interactive knowledge artifact.",
+    }[kind]
+
+
+def _surface_id(relative_to_root):
+    without_extension = os.path.splitext(relative_to_root.replace("\\", "/"))[0]
+    slug = re.sub(r"[^a-z0-9]+", "-", without_extension.lower()).strip("-")
+    return "surface-" + (slug or "knowledge")
+
+
+def discover_html_surfaces(root, artifacts):
+    absolute_root = os.path.abspath(root)
+    public_parent = os.path.dirname(absolute_root)
+    candidates = []
+    for directory_path, directory_names, file_names in os.walk(absolute_root):
+        retained = []
+        for directory_name in sorted(directory_names):
+            candidate = os.path.join(directory_path, directory_name)
+            relative_directory = os.path.relpath(candidate, absolute_root).replace("\\", "/")
+            if (
+                relative_directory == "ai-forward-pack/templates"
+                or relative_directory.startswith("ai-forward-pack/templates/")
+                or directory_name in {"node_modules", ".git", "__pycache__"}
+            ):
+                continue
+            if not _safe_path_kind(candidate, "directory"):
+                continue
+            retained.append(directory_name)
+        directory_names[:] = retained
+        for file_name in sorted(file_names):
+            if not file_name.lower().endswith(".html"):
+                continue
+            path = os.path.join(directory_path, file_name)
+            relative_to_root = os.path.relpath(path, absolute_root).replace("\\", "/")
+            if relative_to_root == "index.html":
+                continue
+            if (
+                relative_to_root == "ai-forward-pack/templates"
+                or relative_to_root.startswith("ai-forward-pack/templates/")
+            ):
+                continue
+            if not _safe_path_kind(path, "file"):
+                continue
+            if len(candidates) >= SURFACE_LIMIT:
+                raise DocsGraphError(
+                    "SURFACE_LIMIT_EXCEEDED",
+                    "The HTML knowledge-surface limit was exceeded.",
+                    {"limit": "surfaces", "maximum": SURFACE_LIMIT},
+                    4,
+                )
+            title = _surface_title(path, relative_to_root)
+            if not title:
+                continue
+            public_path = os.path.relpath(path, public_parent).replace("\\", "/")
+            candidates.append(
+                {
+                    "id": _surface_id(relative_to_root),
+                    "path": public_path,
+                    "title": title,
+                    "kind": _surface_kind(relative_to_root),
+                    "description": _surface_description(_surface_kind(relative_to_root)),
+                    "_relative": relative_to_root,
+                }
+            )
+    candidates.sort(
+        key=lambda surface: (
+            SURFACE_KIND_ORDER.get(surface["kind"], 999),
+            surface["title"].casefold(),
+            surface["path"],
+        )
+    )
+    artifacts_by_directory = {}
+    artifacts_by_stem = {}
+    for artifact in artifacts:
+        artifact_path = artifact.get("path") or artifact.get("_path") or ""
+        directory = os.path.dirname(artifact_path).replace("\\", "/")
+        artifacts_by_directory.setdefault(directory, []).append(artifact)
+        artifacts_by_stem[os.path.splitext(artifact_path)[0].replace("\\", "/")] = artifact
+    seen_ids = set()
+    for surface in candidates:
+        base_id = surface["id"]
+        if base_id in seen_ids:
+            surface["id"] = "{0}-{1}".format(
+                base_id, hashlib.sha256(surface["path"].encode("utf-8")).hexdigest()[:8]
+            )
+        seen_ids.add(surface["id"])
+        html_stem = os.path.splitext(surface["path"])[0]
+        artifact = artifacts_by_stem.get(html_stem)
+        if artifact is None and os.path.basename(surface["path"]).lower() == "index.html":
+            directory_artifacts = artifacts_by_directory.get(
+                os.path.dirname(surface["path"]).replace("\\", "/"), []
+            )
+            if len(directory_artifacts) == 1:
+                artifact = directory_artifacts[0]
+        if artifact is not None:
+            surface["artifactId"] = artifact["id"]
+        surface.pop("_relative", None)
+    return candidates
+
+
 def scan(root, metadata_only=False, artifact_limit=None):
     candidates, problems = _markdown_candidates(root, artifact_limit)
     arts = []
@@ -775,13 +951,23 @@ def cmd_derive(args):
     arts, problems = scan(
         args.root,
         metadata_only=True,
-        artifact_limit=CONTEXT_LIMITS["artifacts"],
+        artifact_limit=INDEX_ARTIFACT_LIMIT,
     )
     analyze(arts, problems)   # populate problems (reported to stderr, not blocking)
     entries = []
     source_snapshots = {}
+    source_bytes = 0
+    relationships = 0
     for a in sorted(arts, key=lambda x: (x.get("type",""), x.get("id",""))):
         text, _ = _read_source_bounded(a["_fs_path"], a["id"])
+        source_bytes += len(text.encode("utf-8"))
+        if source_bytes > SOURCE_TOTAL_LIMIT:
+            raise DocsGraphError(
+                "DERIVE_SOURCE_LIMIT_EXCEEDED",
+                "The derivation source byte limit was exceeded.",
+                {"maximum": SOURCE_TOTAL_LIMIT, "observed": source_bytes},
+                4,
+            )
         current, error = parse_frontmatter(text)
         if error:
             raise _source_changed_error(a["id"])
@@ -790,6 +976,14 @@ def cmd_derive(args):
             {"to":link.get("to",""),"rel":link.get("rel","")}
             for link in links
         ]
+        relationships += len(current["links"])
+        if relationships > RELATIONSHIP_LIMIT:
+            raise DocsGraphError(
+                "DERIVE_RELATIONSHIP_LIMIT_EXCEEDED",
+                "The derivation relationship limit was exceeded.",
+                {"maximum": RELATIONSHIP_LIMIT, "observed": relationships},
+                4,
+            )
         if canonical_json(_frontmatter_snapshot(a)) != canonical_json(current):
             raise _source_changed_error(a["id"])
         source = normalized_source(text)
@@ -807,19 +1001,30 @@ def cmd_derive(args):
                         "links": a["links"], "diagrams": diagrams,
                         "sourceSha256": sha256_text(source)})
     project = project_identity(args.root, args.project)
+    surfaces = discover_html_surfaces(args.root, entries)
     out = {"schemaVersion":"docs-index/v2", "project": project,
            "generated": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
            "generator": args.generator, "rootId":project_root_id(entries),
            "artifactTypes":TYPES, "relationRegistry":REL_REGISTRY,
            "policyVersion":POLICY_VERSION, "policySha256":policy_hash(),
            "traversalPolicies":POLICIES,
-           "limits":{"indexBytes":5*1024*1024,"artifacts":1000,"relationships":5000,
-                     "spatialNodes":500,"spatialEdges":1000,"visibleLabels":150},
-           "artifacts": entries}
+           "limits":{"indexBytes":INDEX_BYTE_LIMIT,"artifacts":INDEX_ARTIFACT_LIMIT,
+                     "relationships":RELATIONSHIP_LIMIT,
+                     "spatialNodes":500,"spatialEdges":1000,"visibleLabels":150,
+                     "surfaces":SURFACE_LIMIT},
+           "artifacts": entries, "surfaces": surfaces}
     out["graphSha256"] = graph_hash(entries, project)
     body = ("// Derived from artifact frontmatter by scripts/docs-graph.py — DO NOT hand-edit"
             " (frontmatter wins; see knowledge-visualization.md V2/V18).\n"
             "window.DOCS_INDEX = " + json.dumps(out, indent=2, ensure_ascii=False) + ";\n")
+    body_bytes = len(body.encode("utf-8"))
+    if body_bytes > INDEX_BYTE_LIMIT:
+        raise DocsGraphError(
+            "DERIVE_INDEX_LIMIT_EXCEEDED",
+            "The serialized index limit was exceeded.",
+            {"maximum": INDEX_BYTE_LIMIT, "observed": body_bytes},
+            4,
+        )
     dst = args.out or os.path.join(args.root, "docs-index.js")
     for a in arts:
         current, _ = _read_source_bounded(a["_fs_path"], a["id"])
@@ -928,10 +1133,19 @@ def cmd_rollup(args):
                 os.path.relpath(a["_fs_path"], os.path.abspath(args.root)).replace(os.sep,"/") + ") " + r.strip())
     if header is None:
         print(f"no '{args.heading}' tables found", file=sys.stderr); return 1
-    print("| source " + header[0].strip())
-    print("|---" + header[1].strip())
-    for r in out: print(r)
-    print(f"\n<!-- rolled up from {len(set(r.split(']')[0] for r in out))} artifact(s) by docs-graph.py rollup on {TODAY} -->")
+    lines = [
+        "| source " + header[0].strip(),
+        "|---" + header[1].strip(),
+        *out,
+        "",
+        f"<!-- rolled up from {len(set(r.split(']')[0] for r in out))} artifact(s) by docs-graph.py rollup on {TODAY} -->",
+    ]
+    payload = ("\n".join(lines) + "\n").encode("utf-8")
+    stream = getattr(sys.stdout, "buffer", None)
+    if stream is not None:
+        stream.write(payload)
+    else:
+        sys.stdout.write(payload.decode("utf-8"))
     return 0
 
 def cmd_snapshot(args):

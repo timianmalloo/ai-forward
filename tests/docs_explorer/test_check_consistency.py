@@ -43,15 +43,37 @@ class ReleaseGateTests(unittest.TestCase):
                 self.module.check_release_gate(findings)
 
         self.assertEqual(1, len(findings))
-        self.assertIn("without pinned reference benchmark proof", findings[0])
+        self.assertIn("CLI and browser benchmark proof", findings[0])
 
-    def test_matching_reference_proof_clears_release_gate(self):
+    def test_cli_reference_proof_without_browser_proof_does_not_clear_release_gate(self):
         with tempfile.TemporaryDirectory() as temp:
             root = self._root(temp, released="2026-07-10")
             proof = root / "docs" / "proof" / "docs-context-benchmark.reference.json"
             proof.parent.mkdir(parents=True)
             proof.write_text(
                 json.dumps(self._reference_proof()),
+                encoding="utf-8",
+            )
+            findings = []
+            with mock.patch.object(self.module, "ROOT", str(root)), mock.patch.object(
+                self.module, "PACK", str(root / "pack")
+            ):
+                self.module.check_release_gate(findings)
+
+        self.assertEqual(1, len(findings))
+        self.assertIn("CLI and browser benchmark proof", findings[0])
+
+    def test_matching_cli_and_browser_reference_proofs_clear_release_gate(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = self._root(temp, released="2026-07-10")
+            proof_dir = root / "docs" / "proof"
+            proof_dir.mkdir(parents=True)
+            (proof_dir / "docs-context-benchmark.reference.json").write_text(
+                json.dumps(self._reference_proof()),
+                encoding="utf-8",
+            )
+            (proof_dir / "docs-explorer-browser-benchmark.reference.json").write_text(
+                json.dumps(self._browser_reference_proof()),
                 encoding="utf-8",
             )
             findings = []
@@ -80,7 +102,106 @@ class ReleaseGateTests(unittest.TestCase):
                 self.module.check_release_gate(findings)
 
         self.assertEqual(1, len(findings))
-        self.assertIn("without pinned reference benchmark proof", findings[0])
+        self.assertIn("CLI and browser benchmark proof", findings[0])
+
+    def test_mismatched_browser_reference_proof_does_not_clear_release_gate(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = self._root(temp, released="2026-07-10")
+            proof_dir = root / "docs" / "proof"
+            proof_dir.mkdir(parents=True)
+            (proof_dir / "docs-context-benchmark.reference.json").write_text(
+                json.dumps(self._reference_proof()),
+                encoding="utf-8",
+            )
+            invalid = self._browser_reference_proof()
+            invalid["summary"]["initialSpatialP75Milliseconds"] = 501.0
+            (proof_dir / "docs-explorer-browser-benchmark.reference.json").write_text(
+                json.dumps(invalid),
+                encoding="utf-8",
+            )
+            findings = []
+            with mock.patch.object(self.module, "ROOT", str(root)), mock.patch.object(
+                self.module, "PACK", str(root / "pack")
+            ):
+                self.module.check_release_gate(findings)
+
+        self.assertEqual(1, len(findings))
+        self.assertIn("CLI and browser benchmark proof", findings[0])
+
+    def test_browser_reference_proof_without_raw_samples_does_not_clear_release_gate(self):
+        proof = self._browser_reference_proof()
+        del proof["samples"]
+
+        self.assertFalse(self.module._valid_browser_reference_benchmark(proof))
+
+    def test_contradictory_browser_samples_do_not_clear_release_gate(self):
+        proof = self._browser_reference_proof()
+        failing = {
+            "usable2dShellMilliseconds": 5000.0,
+            "selectionSearchMilliseconds": 500.0,
+            "initial2dLayoutMilliseconds": 1500.0,
+            "initialSpatialMilliseconds": 1500.0,
+            "minimumOrbitFramesPerSecond": 10.0,
+        }
+        proof["samples"] = {
+            "cold": [dict(failing) for _ in range(5)],
+            "warm": [dict(failing) for _ in range(5)],
+        }
+
+        self.assertFalse(self.module._valid_browser_reference_benchmark(proof))
+
+    def test_browser_reference_proof_requires_exact_sample_cardinality(self):
+        proof = self._browser_reference_proof()
+
+        for cold_count, warm_count in ((4, 5), (5, 4), (6, 5), (5, 6)):
+            with self.subTest(cold=cold_count, warm=warm_count):
+                mutated = json.loads(json.dumps(proof))
+                mutated["samples"]["cold"] = mutated["samples"]["cold"][:cold_count]
+                if cold_count > 5:
+                    mutated["samples"]["cold"].append(
+                        dict(mutated["samples"]["cold"][0])
+                    )
+                mutated["samples"]["warm"] = mutated["samples"]["warm"][:warm_count]
+                if warm_count > 5:
+                    mutated["samples"]["warm"].append(
+                        dict(mutated["samples"]["warm"][0])
+                    )
+                self.assertFalse(
+                    self.module._valid_browser_reference_benchmark(mutated)
+                )
+
+    def test_browser_reference_proof_rejects_non_finite_raw_metrics(self):
+        proof = self._browser_reference_proof()
+
+        for value in (float("nan"), float("inf"), float("-inf"), "not-a-number"):
+            with self.subTest(value=value):
+                mutated = json.loads(json.dumps(proof))
+                mutated["samples"]["cold"][0]["selectionSearchMilliseconds"] = value
+                self.assertFalse(
+                    self.module._valid_browser_reference_benchmark(mutated)
+                )
+
+    def test_browser_reference_proof_rejects_environment_contract_drift(self):
+        proof = self._browser_reference_proof()
+
+        for field, value in (
+            ("viewport", {"width": 1440, "height": 1000}),
+            ("deviceScaleFactor", 2),
+            ("gpuMode", "hardware"),
+            ("orbitFrameWindowMilliseconds", 500),
+        ):
+            with self.subTest(field=field):
+                mutated = json.loads(json.dumps(proof))
+                mutated["environment"][field] = value
+                self.assertFalse(
+                    self.module._valid_browser_reference_benchmark(mutated)
+                )
+
+    def test_browser_reference_proof_rejects_rewritten_distribution_summary(self):
+        proof = self._browser_reference_proof()
+        proof["summary"]["distributions"]["selectionSearchMilliseconds"]["p50"] = 1.0
+
+        self.assertFalse(self.module._valid_browser_reference_benchmark(proof))
 
     def test_contradictory_reference_proof_does_not_clear_release_gate(self):
         with tempfile.TemporaryDirectory() as temp:
@@ -98,7 +219,7 @@ class ReleaseGateTests(unittest.TestCase):
                 self.module.check_release_gate(findings)
 
         self.assertEqual(1, len(findings))
-        self.assertIn("without pinned reference benchmark proof", findings[0])
+        self.assertIn("CLI and browser benchmark proof", findings[0])
 
     def test_accepted_human_deviation_clears_release_gate(self):
         with tempfile.TemporaryDirectory() as temp:
@@ -223,6 +344,117 @@ class ReleaseGateTests(unittest.TestCase):
             "summary": {
                 "p75WallMilliseconds": 1999.0,
                 "maxPeakWorkingSetBytes": 128 * 1024 * 1024,
+            },
+        }
+
+    @staticmethod
+    def _browser_reference_proof():
+        return {
+            "schemaVersion": "docs-explorer-browser-benchmark/v1",
+            "passed": True,
+            "localThresholdsPassed": True,
+            "referenceBudgetProved": True,
+            "environment": {
+                "architecture": "X64",
+                "windowsCaption": "Microsoft Windows Server 2022 Datacenter",
+                "logicalProcessors": 4,
+                "playwright": "1.61.1",
+                "browserName": "chromium",
+                "chromiumBuild": "145.0.7632.6",
+                "headless": True,
+                "gpuMode": "swiftshader",
+                "launchFlags": [
+                    "--disable-background-timer-throttling",
+                    "--disable-backgrounding-occluded-windows",
+                    "--disable-extensions",
+                    "--disable-renderer-backgrounding",
+                    "--use-angle=swiftshader",
+                ],
+                "viewport": {"width": 1366, "height": 768},
+                "deviceScaleFactor": 1,
+                "cpuSlowdown": 4,
+                "orbitFrameWindowMilliseconds": 1000,
+                "referenceEnvironmentMatched": True,
+                "azureReferenceMetadata": {
+                    "vmSize": "Standard_D4s_v5",
+                    "offer": "WindowsServer",
+                    "osType": "Windows",
+                },
+            },
+            "corpus": {
+                "artifacts": 500,
+                "relationships": 1000,
+                "surfaces": 100,
+                "seed": 20260710,
+                "sha256": "f4b34a29d2f836957f7fe24d0424444ac515881b6618cdfdd759a302ccb3cdef",
+            },
+            "runs": {"cold": 5, "warm": 5},
+            "thresholds": {
+                "usable2dShellP75Milliseconds": 2000.0,
+                "selectionSearchP75Milliseconds": 100.0,
+                "initial2dLayoutP75Milliseconds": 500.0,
+                "initialSpatialP75Milliseconds": 500.0,
+                "minimumOrbitFramesPerSecond": 30.0,
+            },
+            "summary": {
+                "usable2dShellP75Milliseconds": 1500.0,
+                "selectionSearchP75Milliseconds": 80.0,
+                "initial2dLayoutP75Milliseconds": 400.0,
+                "initialSpatialP75Milliseconds": 450.0,
+                "minimumOrbitFramesPerSecond": 45.0,
+                "distributions": {
+                    "usable2dShellMilliseconds": {
+                        "p50": 1500.0,
+                        "p75": 1500.0,
+                        "max": 1500.0,
+                    },
+                    "selectionSearchMilliseconds": {
+                        "p50": 80.0,
+                        "p75": 80.0,
+                        "max": 80.0,
+                    },
+                    "initial2dLayoutMilliseconds": {
+                        "p50": 400.0,
+                        "p75": 400.0,
+                        "max": 400.0,
+                    },
+                    "initialSpatialMilliseconds": {
+                        "p50": 450.0,
+                        "p75": 450.0,
+                        "max": 450.0,
+                    },
+                    "heapDeltaBytes": {
+                        "p50": 1024.0,
+                        "p75": 1024.0,
+                        "max": 1024.0,
+                    },
+                },
+            },
+            "samples": {
+                "cold": [
+                    {
+                        "usable2dShellMilliseconds": 1500.0,
+                        "selectionSearchMilliseconds": 80.0,
+                        "initial2dLayoutMilliseconds": 400.0,
+                        "initialSpatialMilliseconds": 450.0,
+                        "minimumOrbitFramesPerSecond": 45.0,
+                        "heapDeltaBytes": 1024.0,
+                        "cacheMode": "cold",
+                    }
+                    for _ in range(5)
+                ],
+                "warm": [
+                    {
+                        "usable2dShellMilliseconds": 1500.0,
+                        "selectionSearchMilliseconds": 80.0,
+                        "initial2dLayoutMilliseconds": 400.0,
+                        "initialSpatialMilliseconds": 450.0,
+                        "minimumOrbitFramesPerSecond": 45.0,
+                        "heapDeltaBytes": 1024.0,
+                        "cacheMode": "warm",
+                    }
+                    for _ in range(5)
+                ],
             },
         }
 

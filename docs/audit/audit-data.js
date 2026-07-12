@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "AI-Forward",
-  "generated": "2026-07-11T16:56:01Z",
+  "generated": "2026-07-12T00:38:23Z",
   "audit": [
     {
       "id": "al-0001",
@@ -198,6 +198,37 @@ window.AUDIT_DATA = {
         "branch": "main",
         "pushed": true
       }
+    },
+    {
+      "id": "al-0009",
+      "shortname": "implement-grounded-spatial-explorer",
+      "datetime": "2026-07-12T00:38:23Z",
+      "session": "2e5bf44a-cbcf-4e58-b575-16c762f83333",
+      "prompt": "where is the 3d explorer... and the ux could do with some \"polish\" better styling - it should also link to the audit-log and any other html artifacts in the knowledge portion of the repo. Consider it the visual one-stop shop for navigating all knowledge while still optimizing for LLM consumption",
+      "summary": "Delivered and hardened the one-stop Docs Explorer with polished Clawpilot styling, native Spatial 3D focus/orbit controls, safe local knowledge-surface links, deterministic LLM grounding, and complete release evidence: 108 Python, 32 Node, and 231 browser tests passed with 12 intentional skips; revision 17 remains unreleased pending qualified performance proof.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": "@timianmalloo",
+      "artifacts": [
+        "docs/index.html",
+        "docs/_site/index.html",
+        "docs/design/docs-explorer-grounding-and-spatial-navigation.md",
+        "docs/proof/docs-explorer-redesign.md"
+      ],
+      "tags": [
+        "docs-explorer",
+        "spatial3d",
+        "grounding"
+      ],
+      "outcome": "success",
+      "change": "cl-0005",
+      "git": {
+        "sha": "4a19030be8b8bf796e1477efd6136e9b5cdff10b",
+        "short": "4a19030be",
+        "branch": "timianmalloo/docs-explorer-redesign",
+        "pushed": true
+      }
     }
   ],
   "changes": [
@@ -312,6 +343,35 @@ window.AUDIT_DATA = {
         "before": "0319c95017fac251acca91dc4480cbff4b691c96",
         "after": "0319c95017fac251acca91dc4480cbff4b691c96",
         "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0005",
+      "datetime": "2026-07-12T00:38:12Z",
+      "session": "2e5bf44a-cbcf-4e58-b575-16c762f83333",
+      "kind": "design",
+      "skill": "implement",
+      "title": "Promote Docs Explorer to a grounded Spatial knowledge portal",
+      "prompt": "where is the 3d explorer... and the ux could do with some \"polish\" better styling - it should also link to the audit-log and any other html artifacts in the knowledge portion of the repo. Consider it the visual one-stop shop for navigating all knowledge while still optimizing for LLM consumption",
+      "summary": "Completed and hardened the local-first Docs Explorer with deterministic Browse, Graph, Mind-map, and native Spatial 3D; linked audit, documentation, design preview, and safe local HTML surfaces; added bounded grounding, accessibility, security, performance, and cross-browser release gates.",
+      "rationale": "A single deterministic local portal gives humans immersive navigation while preserving bounded, source-citable semantic state for LLM grounding and project memory.",
+      "artifacts": [
+        "docs/design/docs-explorer-grounding-and-spatial-navigation.md",
+        "docs/proof/docs-explorer-redesign.md",
+        "docs/index.html",
+        "docs/_site/index.html"
+      ],
+      "tags": [
+        "docs-explorer",
+        "spatial3d",
+        "grounding"
+      ],
+      "git": {
+        "before": "4a19030be8b8bf796e1477efd6136e9b5cdff10b",
+        "after": "4a19030be8b8bf796e1477efd6136e9b5cdff10b",
+        "branch": "timianmalloo/docs-explorer-redesign",
         "pushed": true,
         "commits": []
       }

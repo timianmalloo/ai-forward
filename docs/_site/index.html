@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI-Forward Documentation</title>
+  <script>
+    (() => {
+      const param = new URLSearchParams(window.location.search).get("clawpilotTheme");
+      const theme =
+        param || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", theme);
+    })();
+  </script>
+  <style>
+    :root {
+      color-scheme: light;
+      --cp-bg: #f7f4ef;
+      --cp-bg-elevated: #fcfbf8;
+      --cp-surface: #ffffff;
+      --cp-surface-soft: #f5f5f5;
+      --cp-border: #dedede;
+      --cp-border-strong: #919191;
+      --cp-text: #242424;
+      --cp-text-muted: #5c5c5c;
+      --cp-text-soft: #6f6f6f;
+      --cp-accent: #b11f4b;
+      --cp-accent-hover: #9a1a41;
+      --cp-accent-soft: rgba(177, 31, 75, 0.08);
+      --cp-accent-fg: #ffffff;
+      --cp-success: #16a34a;
+      --cp-danger: #dc2626;
+      --cp-warning: #f59e0b;
+      --cp-link: #0078d4;
+      --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.12);
+      --cp-overlay: rgba(255, 255, 255, 0.8);
+      --cp-panel: rgba(255, 255, 255, 0.86);
+      --cp-panel-strong: rgba(255, 255, 255, 0.96);
+      --cp-sheen: rgba(255, 255, 255, 0.55);
+      --cp-highlight: rgba(177, 31, 75, 0.12);
+    }
+    html[data-theme="dark"] {
+      color-scheme: dark;
+      --cp-bg: #3d3b3a;
+      --cp-bg-elevated: #343231;
+      --cp-surface: #292929;
+      --cp-surface-soft: #2e2e2e;
+      --cp-border: #474747;
+      --cp-border-strong: #5f5f5f;
+      --cp-text: #dedede;
+      --cp-text-muted: #919191;
+      --cp-text-soft: #b0b0b0;
+      --cp-accent: #fd8ea1;
+      --cp-accent-hover: #fb7b91;
+      --cp-accent-soft: rgba(253, 142, 161, 0.14);
+      --cp-accent-fg: #1a1a1a;
+      --cp-success: #4ade80;
+      --cp-danger: #f87171;
+      --cp-warning: #fbbf24;
+      --cp-link: #4da6ff;
+      --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.32);
+      --cp-overlay: rgba(41, 41, 41, 0.88);
+      --cp-panel: rgba(41, 41, 41, 0.72);
+      --cp-panel-strong: rgba(41, 41, 41, 0.96);
+      --cp-sheen: rgba(255, 255, 255, 0.04);
+      --cp-highlight: rgba(253, 142, 161, 0.12);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--cp-bg);
+      color: var(--cp-text);
+      font-family: "Segoe UI", Aptos, Calibri, -apple-system, BlinkMacSystemFont, sans-serif;
+      line-height: 1.55;
+    }
+    a { color: var(--cp-link); }
+    a:focus-visible {
+      outline: 3px solid var(--cp-link);
+      outline-offset: 3px;
+    }
+    header {
+      border-bottom: 1px solid var(--cp-border);
+      background: var(--cp-bg-elevated);
+    }
+    .header-inner,
+    main {
+      width: min(72rem, calc(100% - 2rem));
+      margin: 0 auto;
+    }
+    .header-inner { padding: 2rem 0; }
+    .eyebrow {
+      margin: 0 0 0.5rem;
+      color: var(--cp-accent);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 6vw, 3.5rem);
+      line-height: 1.05;
+    }
+    .lede {
+      max-width: 48rem;
+      margin: 1rem 0 0;
+      color: var(--cp-text-muted);
+      font-size: 1.05rem;
+    }
+    main { padding: 2rem 0 4rem; }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+    }
+    .action {
+      display: inline-flex;
+      min-height: 44px;
+      align-items: center;
+      padding: 0.625rem 1rem;
+      border: 1px solid var(--cp-accent);
+      border-radius: 0.625rem;
+      background: var(--cp-accent);
+      color: var(--cp-accent-fg);
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .action:hover { background: var(--cp-accent-hover); }
+    .action.secondary {
+      background: var(--cp-surface);
+      color: var(--cp-text);
+      border-color: var(--cp-border-strong);
+    }
+    h2 { margin: 2rem 0 1rem; font-size: 1.4rem; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+      gap: 1rem;
+    }
+    .card {
+      display: block;
+      min-height: 10rem;
+      padding: 1.25rem;
+      border: 1px solid var(--cp-border);
+      border-radius: 16px;
+      background: var(--cp-surface);
+      box-shadow: 0 0 0 1px var(--cp-border);
+      color: var(--cp-text);
+      text-decoration: none;
+    }
+    .card:hover { border-color: var(--cp-accent); }
+    .card strong { display: block; margin-bottom: 0.5rem; font-size: 1.05rem; }
+    .card span { color: var(--cp-text-muted); }
+    .format {
+      display: block;
+      margin-top: 1rem;
+      color: var(--cp-text);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .status {
+      margin-top: 2rem;
+      padding: 1rem 1.25rem;
+      border-left: 4px solid var(--cp-warning);
+      background: var(--cp-surface-soft);
+      color: var(--cp-text-muted);
+    }
+    code { font-family: Consolas, "Courier New", Courier, monospace; }
+    footer {
+      margin-top: 2rem;
+      color: var(--cp-text-soft);
+      font-size: 0.875rem;
+    }
+    @media (forced-colors: active) {
+      :root {
+        --cp-bg: Canvas;
+        --cp-bg-elevated: Canvas;
+        --cp-surface: Canvas;
+        --cp-surface-soft: Canvas;
+        --cp-border: CanvasText;
+        --cp-border-strong: CanvasText;
+        --cp-text: CanvasText;
+        --cp-text-muted: CanvasText;
+        --cp-text-soft: CanvasText;
+        --cp-accent: Highlight;
+        --cp-accent-hover: Highlight;
+        --cp-accent-fg: HighlightText;
+        --cp-link: LinkText;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <p class="eyebrow">AI-Forward knowledge</p>
+      <h1>Documentation hub</h1>
+      <p class="lede">
+        A source-backed entry point to the repository's architecture, design language,
+        implementation design, proof, security review, and durable project history.
+      </p>
+    </div>
+  </header>
+  <main>
+    <nav class="actions" aria-label="Primary documentation destinations">
+      <a class="action" href="../index.html">Open Docs Explorer</a>
+      <a class="action secondary" href="../audit/index.html">Open audit timeline</a>
+    </nav>
+
+    <h2>System documentation</h2>
+    <div class="grid">
+      <a class="card" href="../architecture.md">
+        <strong>Architecture source</strong>
+        <span>The top-level system structure, contracts, and architectural decisions.</span>
+        <span class="format">View source (.md)</span>
+      </a>
+      <a class="card" href="../DESIGN.md">
+        <strong>Design language source</strong>
+        <span>The visual token system, interaction states, accessibility floors, and archetype signature.</span>
+        <span class="format">View source (.md)</span>
+      </a>
+      <a class="card" href="../design/docs-explorer-grounding-and-spatial-navigation.md">
+        <strong>Docs Explorer design source</strong>
+        <span>The accepted grounding, graph, mind-map, and Spatial 3D interaction contract.</span>
+        <span class="format">View source (.md)</span>
+      </a>
+      <a class="card" href="../proof/docs-explorer-redesign.md">
+        <strong>Implementation proof source</strong>
+        <span>The evidence ledger, test oracles, release gates, and known residual risk.</span>
+        <span class="format">View source (.md)</span>
+      </a>
+    </div>
+
+    <h2>Governance and continuity</h2>
+    <div class="grid">
+      <a class="card" href="../security/threat-model.md">
+        <strong>Threat model source</strong>
+        <span>The current trust boundaries, mitigations, accepted risks, and security evidence.</span>
+        <span class="format">View source (.md)</span>
+      </a>
+      <a class="card" href="../project-memory.md">
+        <strong>Project memory source</strong>
+        <span>The chronological record of material decisions and learnings that must survive sessions.</span>
+        <span class="format">View source (.md)</span>
+      </a>
+      <a class="card" href="../skills.md">
+        <strong>Skill catalog source</strong>
+        <span>The repository's workflow surface and the purpose of each AI-Forward skill.</span>
+        <span class="format">View source (.md)</span>
+      </a>
+      <a class="card" href="../audit/audit-log.md">
+        <strong>Audit log guide source</strong>
+        <span>The durable activity and decision history, including prompt reuse and change records.</span>
+        <span class="format">View source (.md)</span>
+      </a>
+    </div>
+
+    <aside class="status">
+      This hub links only to committed, source-backed artifacts. The repository does not currently
+      publish a generated JavaDoc-style API reference; run <code>/document</code> when that code-level
+      reference is required.
+    </aside>
+    <footer>Generated for the AI-Forward repository documentation surface.</footer>
+  </main>
+</body>
+</html>

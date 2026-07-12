@@ -31,6 +31,55 @@ def load_module():
 
 
 class DocsGraphTests(unittest.TestCase):
+    def test_rollup_writes_utf8_when_console_encoding_cannot_encode_source(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp) / "docs"
+            root.mkdir()
+            (root / "design.md").write_text(
+                """---
+id: design-unicode
+title: Unicode design
+type: design
+status: accepted
+owner: "@maintainers"
+tags: [test]
+links: []
+review-by: 2099-01-01
+summary: Exercises Unicode rollup output.
+---
+
+# Unicode design
+
+## Adversarial analysis (STRIDE-lite)
+
+| Boundary | STRIDE | Disposition | Control | Negative test |
+|---|---|---|---|---|
+| source → sink | **T** | mitigate | validate | rejects invalid input |
+""",
+                encoding="utf-8",
+            )
+            environment = {**os.environ, "PYTHONIOENCODING": "cp1252"}
+
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    str(SCRIPT),
+                    "--root",
+                    str(root),
+                    "rollup",
+                    "--heading",
+                    "Adversarial analysis (STRIDE-lite)",
+                    "--type",
+                    "design",
+                ],
+                capture_output=True,
+                env=environment,
+                check=False,
+            )
+
+            self.assertEqual(0, result.returncode, result.stderr.decode("utf-8"))
+            self.assertIn("source → sink", result.stdout.decode("utf-8"))
+
     def test_traversal_policies_match_javascript_for_shared_fixture(self):
         module = load_module()
         fixture = json.loads(TRAVERSAL_FIXTURE.read_text(encoding="utf-8"))
@@ -250,6 +299,164 @@ sequenceDiagram
             self.assertEqual("Stable Project", packet["coverage"]["roots"][0])
             self.assertEqual(index["graphSha256"], packet["graphSha256"])
 
+    def test_derive_discovers_safe_html_surfaces_without_changing_graph_hash(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp) / "docs"
+            (root / "audit").mkdir(parents=True)
+            (root / "design").mkdir()
+            (root / "_site").mkdir()
+            (root / "ai-forward-pack" / "templates").mkdir(parents=True)
+            self._write_artifact(
+                root / "audit" / "audit-log.md",
+                artifact_id="audit-log",
+                title="Audit Log",
+                links=[],
+                body="## Audit\n\nDurable history.\n",
+            )
+            (root / "index.html").write_text(
+                "<html><head><title>Portal</title></head></html>",
+                encoding="utf-8",
+            )
+            (root / "audit" / "index.html").write_text(
+                "<html><head><title>Audit &amp; Change Log</title></head></html>",
+                encoding="utf-8",
+            )
+            (root / "design" / "theme-preview.html").write_text(
+                "<html><body>Preview</body></html>",
+                encoding="utf-8",
+            )
+            (root / "_site" / "index.html").write_text(
+                "<html><head><title>Documentation Bundle</title></head></html>",
+                encoding="utf-8",
+            )
+            (root / "ai-forward-pack" / "templates" / "hidden.html").write_text(
+                "<html><head><title>Template</title></head></html>",
+                encoding="utf-8",
+            )
+
+            module = load_module()
+            module.cmd_derive(
+                SimpleNamespace(
+                    root=str(root),
+                    project="Portal",
+                    generator="test",
+                    out=None,
+                )
+            )
+            first = json.loads(
+                (root / "docs-index.js")
+                .read_text(encoding="utf-8")
+                .split("window.DOCS_INDEX = ", 1)[1]
+                .rsplit(";", 1)[0]
+            )
+            first_hash = first["graphSha256"]
+            (root / "audit" / "index.html").write_text(
+                "<html><head><title>Renamed audit surface</title></head></html>",
+                encoding="utf-8",
+            )
+            module.cmd_derive(
+                SimpleNamespace(
+                    root=str(root),
+                    project="Portal",
+                    generator="test",
+                    out=None,
+                )
+            )
+            second = json.loads(
+                (root / "docs-index.js")
+                .read_text(encoding="utf-8")
+                .split("window.DOCS_INDEX = ", 1)[1]
+                .rsplit(";", 1)[0]
+            )
+
+            self.assertEqual(first_hash, second["graphSha256"])
+            self.assertEqual(module.SURFACE_LIMIT, first["limits"]["surfaces"])
+            self.assertEqual(
+                [
+                    "docs/audit/index.html",
+                    "docs/_site/index.html",
+                    "docs/design/theme-preview.html",
+                ],
+                [surface["path"] for surface in first["surfaces"]],
+            )
+            self.assertEqual(
+                ["audit", "documentation", "design-preview"],
+                [surface["kind"] for surface in first["surfaces"]],
+            )
+            self.assertEqual("Audit & Change Log", first["surfaces"][0]["title"])
+            self.assertEqual("audit-log", first["surfaces"][0]["artifactId"])
+            self.assertEqual("Theme Preview", first["surfaces"][2]["title"])
+            self.assertNotIn("docs/index.html", [surface["path"] for surface in first["surfaces"]])
+            self.assertFalse(
+                any("templates" in surface["path"] for surface in first["surfaces"])
+            )
+
+    def test_html_surface_discovery_preserves_script_shaped_titles_as_data(self):
+        module = load_module()
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp) / "docs"
+            root.mkdir()
+            (root / "tool.html").write_text(
+                "<title><script>window.__surfaceOwned = true</script></title>",
+                encoding="utf-8",
+            )
+
+            surfaces = module.discover_html_surfaces(str(root), [])
+
+        self.assertEqual(
+            "window.__surfaceOwned = true",
+            surfaces[0]["title"],
+        )
+
+    def test_html_surface_discovery_uses_first_non_empty_title(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp) / "docs"
+            root.mkdir()
+            (root / "tool.html").write_text(
+                "<title>   </title><title>First title</title><title>Second title</title>",
+                encoding="utf-8",
+            )
+
+            module = load_module()
+            surfaces = module.discover_html_surfaces(str(root), [])
+
+        self.assertEqual("First title", surfaces[0]["title"])
+
+    def test_html_surface_discovery_fails_closed_above_surface_limit(self):
+        module = load_module()
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp) / "docs"
+            root.mkdir()
+            for index in range(module.SURFACE_LIMIT + 1):
+                (root / f"tool-{index:03d}.html").write_text(
+                    f"<title>Tool {index}</title>",
+                    encoding="utf-8",
+                )
+
+            with self.assertRaises(module.DocsGraphError) as captured:
+                module.discover_html_surfaces(str(root), [])
+
+        self.assertEqual("SURFACE_LIMIT_EXCEEDED", captured.exception.code)
+        self.assertEqual(4, captured.exception.exit_code)
+
+    def test_html_surface_discovery_rejects_non_regular_files_without_reading_them(self):
+        module = load_module()
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp) / "docs"
+            root.mkdir()
+            path = root / "linked.html"
+            path.write_text("not read", encoding="utf-8")
+            fake_stat = SimpleNamespace(
+                st_mode=module.stat.S_IFLNK,
+                st_file_attributes=0,
+            )
+            with mock.patch.object(module.os, "lstat", return_value=fake_stat), mock.patch(
+                "builtins.open", side_effect=AssertionError("symlink should not be opened")
+            ):
+                surfaces = module.discover_html_surfaces(str(root), [])
+
+        self.assertEqual([], surfaces)
+
     def test_context_include_changes_matches_public_paths_for_absolute_root(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp) / "docs"
@@ -415,6 +622,63 @@ sequenceDiagram
                 index_text.split("window.DOCS_INDEX = ", 1)[1].rsplit(";", 1)[0]
             )
             self.assertEqual([], index["artifacts"])
+
+    def test_derive_fails_closed_above_relationship_limit(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp) / "docs"
+            root.mkdir()
+            module = load_module()
+            links = [
+                {"to": f"target-{index}", "rel": "depends-on"}
+                for index in range(module.RELATIONSHIP_LIMIT + 1)
+            ]
+            self._write_artifact(root / "root.md", "root", "Root", links, "Body\n")
+
+            with self.assertRaisesRegex(module.DocsGraphError, "relationship limit"):
+                module.cmd_derive(
+                    SimpleNamespace(
+                        root=str(root),
+                        project="Fixture",
+                        generator="test",
+                        out=str(root / "docs-index.js"),
+                    )
+                )
+
+    def test_derive_fails_closed_above_total_source_limit(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp) / "docs"
+            root.mkdir()
+            module = load_module()
+            self._write_artifact(root / "root.md", "root", "Root", [], "Body\n")
+
+            with mock.patch.object(module, "SOURCE_TOTAL_LIMIT", 1):
+                with self.assertRaisesRegex(module.DocsGraphError, "source byte limit"):
+                    module.cmd_derive(
+                        SimpleNamespace(
+                            root=str(root),
+                            project="Fixture",
+                            generator="test",
+                            out=str(root / "docs-index.js"),
+                        )
+                    )
+
+    def test_derive_fails_closed_above_serialized_index_limit(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp) / "docs"
+            root.mkdir()
+            module = load_module()
+            self._write_artifact(root / "root.md", "root", "Root", [], "Body\n")
+
+            with mock.patch.object(module, "INDEX_BYTE_LIMIT", 1):
+                with self.assertRaisesRegex(module.DocsGraphError, "serialized index limit"):
+                    module.cmd_derive(
+                        SimpleNamespace(
+                            root=str(root),
+                            project="Fixture",
+                            generator="test",
+                            out=str(root / "docs-index.js"),
+                        )
+                    )
 
     def test_context_discards_untraversed_bodies_after_hashing(self):
         with tempfile.TemporaryDirectory() as temp:

@@ -4,7 +4,9 @@ on:
   workflow_dispatch:
 
 permissions:
+  attestations: write
   contents: read
+  id-token: write
 
 jobs:
   benchmark:
@@ -17,7 +19,7 @@ jobs:
         shell: pwsh
         run: |
           if ($env:AIF_EPHEMERAL_RUNNER -ne "1") {
-            throw "Reference benchmark requires a dedicated ephemeral runner."
+            throw "DOC.BENCHMARK.RUNNER_NOT_EPHEMERAL: Reference benchmark requires a dedicated ephemeral runner."
           }
 
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
@@ -30,24 +32,46 @@ jobs:
         with:
           python-version: "3.11.9"
 
-      - name: Run pinned reference benchmark
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install pinned browser benchmark dependencies
+        shell: pwsh
+        run: |
+          npm ci
+          npx playwright install chromium
+
+      - name: Run pinned reference benchmarks
         shell: pwsh
         run: |
           pwsh tests\docs_explorer\benchmark_docs_context.ps1 `
             -Python python `
             -OutputPath docs\proof\docs-context-benchmark.reference.json
-          $result = Get-Content docs\proof\docs-context-benchmark.reference.json -Raw |
+          node tests\docs_explorer\benchmark_docs_explorer.js `
+            --output docs\proof\docs-explorer-browser-benchmark.reference.json
+          $cliResult = Get-Content docs\proof\docs-context-benchmark.reference.json -Raw |
             ConvertFrom-Json
-          if (-not $result.referenceBudgetProved) {
-            throw "Runner does not match the pinned Azure reference environment or missed the budget."
+          $browserResult = Get-Content docs\proof\docs-explorer-browser-benchmark.reference.json -Raw |
+            ConvertFrom-Json
+          if (-not $cliResult.referenceBudgetProved -or -not $browserResult.referenceBudgetProved) {
+            throw "DOC.BENCHMARK.REFERENCE_PROOF_FAILED: Runner does not match the pinned reference environment or a benchmark missed its budget."
           }
+
+      - name: Attest reference evidence
+        uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be # v2
+        with:
+          subject-path: docs/proof/*-benchmark.reference.json
 
       - name: Upload reference evidence
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: docs-context-benchmark-reference
-          path: docs/proof/docs-context-benchmark.reference.json
+          name: docs-explorer-reference-benchmarks
+          path: |
+            docs/proof/docs-context-benchmark.reference.json
+            docs/proof/docs-explorer-browser-benchmark.reference.json
           if-no-files-found: error
 
       - name: Publish evidence handoff
@@ -57,10 +81,10 @@ jobs:
           @"
           ## Reference benchmark evidence
 
-          Download the `docs-context-benchmark-reference` artifact, place the JSON at
-          `docs/proof/docs-context-benchmark.reference.json`, commit it, and rerun
-          `python tools/check-consistency.py`. Revision 17 remains unreleased until that
-          committed evidence passes or a human-approved deviation is recorded. The
+          Download the attested `docs-explorer-reference-benchmarks` artifact, place both
+          JSON files under `docs/proof/`, commit them, verify their GitHub attestations,
+          and rerun `python tools/check-consistency.py`. Revision 17 remains unreleased
+          until both committed evidence files pass or a human-approved deviation is recorded. The
           `docs-context-reference` environment must require human approval, and the runner
           must be a dedicated one-job ephemeral runner labeled `ephemeral` with
           `AIF_EPHEMERAL_RUNNER=1`.

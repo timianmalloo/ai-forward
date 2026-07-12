@@ -1,6 +1,8 @@
 "use strict";
 
 const crypto = require("node:crypto");
+const path = require("node:path");
+const { pathToFileURL } = require("node:url");
 const { test, expect } = require("@playwright/test");
 
 function sourceHash(text) {
@@ -14,6 +16,64 @@ function withRootSource(index, text) {
   copy.artifacts.find((artifact) => artifact.id === "root").sourceSha256 = sourceHash(text);
   return copy;
 }
+
+test("generated Explorer opens directly from file URLs", async ({ page }) => {
+  const explorerUrl = pathToFileURL(path.join(process.cwd(), "docs", "index.html")).href;
+
+  await page.goto(explorerUrl);
+
+  await expect(page.locator("#app")).toHaveAttribute("data-state", "ready");
+  await expect(page.getByRole("heading", { name: /Docs Explorer/ })).toBeVisible();
+});
+
+test("loading shell exposes stable navigation and Browse skeleton rows", async ({ page }) => {
+  await page.route("**/docs-index.js", async (route) => {
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    await route.fulfill({
+      contentType: "application/javascript",
+      body: `window.DOCS_INDEX = ${JSON.stringify(fixtureIndex())};`,
+    });
+  });
+
+  await page.goto("/docs/index.html", { waitUntil: "commit" });
+
+  await expect(page.locator("#app")).toHaveAttribute("data-state", "loading");
+  await expect(page.getByRole("tablist", { name: "Explorer projection" })).toBeVisible();
+  await expect(page.getByRole("tab", { name: "Browse" })).toHaveAttribute(
+    "aria-selected",
+    "true",
+  );
+  await expect(page.getByRole("heading", { name: "Browse project knowledge" })).toBeVisible();
+  await expect(page.locator("[data-skeleton-row]")).toHaveCount(4);
+});
+
+test("ready state is published only after the initial Browse control is rendered", async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    const observeApp = () => {
+      const app = document.getElementById("app");
+      if (!app) {
+        requestAnimationFrame(observeApp);
+        return;
+      }
+      new MutationObserver(() => {
+        if (app.dataset.state === "ready") {
+          window.__docsExplorerReadyHadBrowse = Boolean(
+            document.querySelector('[role="tab"][aria-selected="true"]'),
+          );
+        }
+      }).observe(app, { attributes: true, attributeFilter: ["data-state"] });
+    };
+    observeApp();
+  });
+  await serveIndex(page, fixtureIndex());
+
+  await page.goto("/docs/index.html");
+
+  await expect(page.locator("#app")).toHaveAttribute("data-state", "ready");
+  expect(await page.evaluate(() => window.__docsExplorerReadyHadBrowse)).toBe(true);
+});
 
 function fixtureIndex(overrides = {}) {
   return {
@@ -38,7 +98,32 @@ function fixtureIndex(overrides = {}) {
       spatialNodes: 500,
       spatialEdges: 1000,
       visibleLabels: 150,
+      surfaces: 100,
     },
+    surfaces: [
+      {
+        id: "surface-audit",
+        path: "docs/audit/index.html",
+        title: "Audit and change timeline",
+        kind: "audit",
+        description: "Browse the committed project history.",
+      },
+      {
+        id: "surface-docs",
+        path: "docs/_site/index.html",
+        title: "Documentation bundle",
+        kind: "documentation",
+        description: "Read the generated documentation bundle.",
+      },
+      {
+        id: "surface-design",
+        path: "docs/design/preview.html",
+        title: "Design preview",
+        kind: "design-preview",
+        description: "Inspect the product design language.",
+        artifactId: "child",
+      },
+    ],
     artifacts: [
       {
         id: "root",
@@ -70,6 +155,80 @@ async function serveIndex(page, index) {
   });
 }
 
+async function serveAuditData(page) {
+  await page.route("**/audit-data.js", async (route) => {
+    await route.fulfill({
+      contentType: "text/javascript",
+      body: `window.AUDIT_DATA = ${JSON.stringify({
+        project: "Fixture",
+        generated: "2026-07-11T00:00:00Z",
+        audit: [
+          {
+            id: "al-0001",
+            shortname: "explorer-review",
+            datetime: "2026-07-11T10:30:00Z",
+            session: "session-a",
+            prompt: "Review the Docs Explorer.",
+            summary: "Reviewed the Explorer.",
+            kind: "skill",
+            skill: "forensicreview",
+            outcome: "success",
+            artifacts: ["docs/design/docs-explorer-grounding-and-spatial-navigation.md"],
+            tags: ["explorer"],
+          },
+        ],
+        changes: [
+          {
+            id: "cl-0001",
+            title: "Use deterministic layouts",
+            datetime: "2026-07-11T10:35:00Z",
+            session: "session-a",
+            prompt: "Make graph layouts deterministic.",
+            summary: "Adopted deterministic graph layouts.",
+            rationale: "Stable projections improve grounding and review.",
+            kind: "design",
+            artifacts: ["docs/design/docs-explorer-grounding-and-spatial-navigation.md"],
+          },
+        ],
+      })};`,
+    });
+  });
+}
+
+test("Audit Explorer executes disclosure, filtering, copy feedback, and view switching", async ({
+  page,
+}) => {
+  await serveAuditData(page);
+  await page.goto("/docs/audit/index.html");
+
+  await expect(page.getByRole("heading", { name: "Fixture — Audit Log" })).toBeVisible();
+  const disclosure = page.getByRole("button", { name: "Review entry explorer-review" });
+  await disclosure.focus();
+  await disclosure.press("Enter");
+  await expect(disclosure).toHaveAttribute("aria-expanded", "true");
+  await expect(page.getByRole("region", { name: "explorer-review details" })).toBeVisible();
+
+  await page.getByRole("button", { name: "copy prompt" }).click();
+  await expect(page.locator('.sr-only[role="status"]')).toHaveText("Prompt copied");
+
+  await page.getByRole("searchbox", { name: "Search audit history" }).fill("not-present");
+  await expect(page.getByText("No actions match the filters.")).toBeVisible();
+  await page.getByRole("button", { name: "Clear filters" }).click();
+
+  await page.getByRole("button", { name: "Changes" }).click();
+  await expect(page.getByRole("heading", { name: "Fixture — Change Log" })).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Review entry Use deterministic layouts" }),
+  ).toBeVisible();
+});
+
+test("Audit Explorer exposes an alert when its data file cannot load", async ({ page }) => {
+  await page.route("**/audit-data.js", (route) => route.abort());
+  await page.goto("/docs/audit/index.html");
+
+  await expect(page.getByRole("alert")).toHaveText("Audit data could not be loaded.");
+});
+
 test("Browse is the default and selection does not explore", async ({ page }) => {
   await page.goto("/docs/index.html");
 
@@ -89,7 +248,7 @@ test("Browse is the default and selection does not explore", async ({ page }) =>
 test("search highlights without removing graph nodes", async ({ page }) => {
   await page.goto("/docs/index.html#view=graph");
   const before = await page.locator("[data-node-id]").count();
-  await page.getByRole("searchbox", { name: "Search artifacts" }).fill("architecture");
+  await page.getByRole("searchbox", { name: "Search artifacts and knowledge surfaces" }).fill("architecture");
   const after = await page.locator("[data-node-id]").count();
 
   expect(after).toBe(before);
@@ -195,7 +354,7 @@ test("projection choices use tab semantics and keyboard navigation", async ({ pa
   await page.goto("/docs/index.html");
 
   const tablist = page.getByRole("tablist", { name: "Explorer projection" });
-  await expect(tablist.getByRole("tab")).toHaveCount(3);
+  await expect(tablist.getByRole("tab")).toHaveCount(4);
   const browse = tablist.getByRole("tab", { name: "Browse" });
   const graph = tablist.getByRole("tab", { name: "Graph" });
   await expect(browse).toHaveAttribute("aria-selected", "true");
@@ -259,6 +418,305 @@ test("spatial and relationship-list edge IDs stay in parity", async ({ page }) =
   expect(listIds).toEqual(spatialIds);
 });
 
+test("knowledge surfaces expose audit, documentation, and design destinations", async ({ page }) => {
+  await serveIndex(page, fixtureIndex());
+  await page.goto("/docs/index.html");
+
+  const surfaces = page.getByRole("navigation", { name: "Knowledge surfaces" });
+  await expect(surfaces.getByRole("link", { name: "Open Audit and change timeline" })).toBeVisible();
+  await expect(surfaces.getByRole("link", { name: "Open Documentation bundle" })).toBeVisible();
+  await expect(surfaces.getByRole("link", { name: "Open Design preview" })).toBeVisible();
+  const destinations = await surfaces.locator(".surface-actions a").evaluateAll(
+    (links) => links.map((link) => new URL(link.href).pathname),
+  );
+  expect(destinations).toEqual([
+    "/docs/audit/index.html",
+    "/docs/_site/index.html",
+    "/docs/design/preview.html",
+  ]);
+  await surfaces.getByRole("button", { name: "Locate in graph" }).click();
+  await expect(page.getByRole("tab", { name: "Graph" })).toHaveAttribute("aria-selected", "true");
+  await expect(page.locator('[data-node-id="child"]')).toHaveAttribute("data-selected", "true");
+});
+
+test("knowledge surfaces stay visible with an empty state and follow project search", async ({ page }) => {
+  await serveIndex(page, fixtureIndex({ surfaces: [] }));
+  await page.goto("/docs/index.html");
+
+  const emptySurfaces = page.getByRole("navigation", { name: "Knowledge surfaces" });
+  await expect(emptySurfaces).toContainText("No standalone knowledge surfaces were discovered.");
+
+  await serveIndex(page, fixtureIndex());
+  await page.goto("/docs/index.html?surfaces=search");
+  const surfaces = page.getByRole("navigation", { name: "Knowledge surfaces" });
+  await page.getByRole("searchbox", { name: "Search artifacts and knowledge surfaces" }).fill("audit");
+  await expect(surfaces.getByRole("link", { name: "Open Audit and change timeline" })).toBeVisible();
+  await expect(surfaces.getByRole("link", { name: "Open Documentation bundle" })).toHaveCount(0);
+  await expect(page.locator(".match-count")).toContainText("1 match");
+  await expect(page.locator(".notice", { hasText: "No search results" })).toHaveCount(0);
+  await expect(page.getByRole("status")).not.toContainText("No search results");
+  await page.getByRole("searchbox", { name: "Search artifacts and knowledge surfaces" }).fill("not-present");
+  await expect(surfaces).toContainText("No knowledge surfaces match this search.");
+});
+
+test("Browse tree groups explicitly own their artifact treeitems", async ({ page }) => {
+  await serveIndex(page, fixtureIndex());
+  await page.goto("/docs/index.html");
+
+  const groups = page.locator('[role="treeitem"][data-kind="group"]');
+  await expect(groups).toHaveCount(2);
+  for (const group of await groups.all()) {
+    const ownedId = await group.getAttribute("aria-owns");
+    expect(ownedId).toBeTruthy();
+    const ownedGroup = page.locator(`#${ownedId}`);
+    await expect(ownedGroup).toHaveAttribute("role", "group");
+    await expect(ownedGroup.locator('[role="treeitem"][data-kind="artifact"]')).not.toHaveCount(0);
+  }
+});
+
+test("the real generated index exposes the documentation bundle destination", async ({ page }) => {
+  const explorerUrl = pathToFileURL(path.join(process.cwd(), "docs", "index.html")).href;
+  await page.goto(explorerUrl);
+
+  const surfaces = page.getByRole("navigation", { name: "Knowledge surfaces" });
+  const documentation = surfaces.getByRole("link", { name: /Open .*Documentation/i });
+  await expect(documentation).toBeVisible();
+  const destination = new URL(await documentation.getAttribute("href"), explorerUrl);
+  expect(destination.pathname).toMatch(/\/docs\/_site\/index\.html$/);
+
+  await page.goto(destination.href);
+  await expect(page.getByRole("heading", { name: "Documentation hub" })).toBeVisible();
+  await expect(
+    page.getByText(/does not currently[\s\S]*publish a generated[\s\S]*API reference/i),
+  ).toBeVisible();
+});
+
+test("knowledge surfaces escape titles and reject traversal paths", async ({ page }) => {
+  const index = fixtureIndex({
+    surfaces: [
+      {
+        id: "surface-safe",
+        path: "docs/tools/safe.html",
+        title: "<script>window.__surfaceOwned = true</script>",
+        kind: "knowledge-tool",
+        description: "Safe title fixture.",
+        artifactId: null,
+      },
+      {
+        id: "surface-traversal",
+        path: "../outside.html",
+        title: "Outside",
+        kind: "knowledge-tool",
+        description: "Traversal fixture.",
+        artifactId: null,
+      },
+      {
+        id: "surface-scheme",
+        path: "javascript:alert(1)",
+        title: "Scheme",
+        kind: "knowledge-tool",
+        description: "Scheme fixture.",
+        artifactId: null,
+      },
+    ],
+  });
+  await serveIndex(page, index);
+  await page.goto("/docs/index.html");
+
+  await expect(page.getByText("<script>window.__surfaceOwned = true</script>")).toBeVisible();
+  const safeHref = await page
+    .getByRole("link", { name: "Open <script>window.__surfaceOwned = true</script>" })
+    .getAttribute("href");
+  expect(new URL(safeHref, page.url()).pathname).toBe("/docs/tools/safe.html");
+  await expect(page.getByText("Outside")).toHaveCount(0);
+  await expect(page.getByText("Scheme")).toHaveCount(0);
+  expect(await page.evaluate(() => window.__surfaceOwned)).toBeUndefined();
+});
+
+test("Spatial 3D selects and focuses a node without changing relationship semantics", async ({ page }) => {
+  await serveIndex(page, fixtureIndex());
+  await page.goto("/docs/index.html#view=spatial3d");
+
+  const spatial = page.getByRole("region", { name: "Spatial 3D project graph" });
+  await expect(spatial).toBeVisible();
+  await spatial.locator('[data-action="select"][data-node-id="child"]').click();
+  await expect(spatial.locator("[data-spatial-svg]")).toHaveAttribute("data-camera-target-id", "child");
+  await expect(spatial.locator("[data-spatial-svg]")).toHaveAttribute("data-camera-transitioning", "true");
+  await expect(spatial.locator("[data-spatial-svg]")).toHaveAttribute(
+    "data-camera-transitioning",
+    "false",
+    { timeout: 3_000 },
+  );
+  await expect(spatial.locator('[data-node-id="child"]')).toHaveAttribute("data-selected", "true");
+
+  const spatialIds = await spatial.locator("[data-spatial-edge]").evaluateAll(
+    (items) => items.map((item) => item.dataset.spatialEdge).sort(),
+  );
+  const listIds = await page.locator(".visual-panel li[id^='list-']").evaluateAll(
+    (items) => items.map((item) => item.id.slice(5)).sort(),
+  );
+  expect(listIds).toEqual(spatialIds);
+});
+
+test("Spatial 3D completes canonical focus when a routine render interrupts motion", async ({
+  page,
+}) => {
+  await serveIndex(page, fixtureIndex());
+  await page.goto("/docs/index.html#view=spatial3d");
+  await page.addStyleTag({ content: ":root { --motion-context: 2000ms !important; }" });
+
+  await page.locator('[data-action="select"][data-node-id="child"]').click();
+  await page.waitForTimeout(50);
+  await page.evaluate(() => window.dispatchEvent(new Event("resize")));
+
+  const child = page.locator('[data-spatial-node="child"]');
+  await expect(page.locator("[data-spatial-svg]")).toHaveAttribute(
+    "data-camera-transitioning",
+    "false",
+  );
+  await expect(child).toHaveAttribute("x", "528");
+  await expect(child).toHaveAttribute("y", "356");
+});
+
+test("Spatial 3D re-establishes canonical focus after manual interruption", async ({ page }) => {
+  await serveIndex(page, fixtureIndex());
+  await page.goto("/docs/index.html#view=spatial3d");
+  await page.addStyleTag({ content: ":root { --motion-context: 2000ms !important; }" });
+
+  await page.locator('[data-action="select"][data-node-id="child"]').click();
+  await page.waitForTimeout(50);
+  await page.getByRole("button", { name: "Orbit right" }).click();
+  await expect(page.locator("[data-spatial-svg]")).toHaveAttribute("data-camera-target-id", "");
+
+  await page.evaluate(() => window.dispatchEvent(new Event("resize")));
+
+  const child = page.locator('[data-spatial-node="child"]');
+  await expect(page.locator("[data-spatial-svg]")).toHaveAttribute(
+    "data-camera-transitioning",
+    "false",
+    { timeout: 3_000 },
+  );
+  await expect(page.locator("[data-spatial-svg]")).toHaveAttribute(
+    "data-camera-target-id",
+    "child",
+  );
+  await expect(child).toHaveAttribute("x", "528");
+  await expect(child).toHaveAttribute("y", "356");
+});
+
+test("Spatial 3D camera supports orbit, zoom, focus, and reset controls", async ({ page }) => {
+  await serveIndex(page, fixtureIndex());
+  await page.goto("/docs/index.html#view=spatial3d&selected=child");
+
+  const svg = page.locator("[data-spatial-svg]");
+  const initialYaw = Number(await svg.getAttribute("data-camera-yaw"));
+  const initialPitch = Number(await svg.getAttribute("data-camera-pitch"));
+  const initialZoom = Number(await svg.getAttribute("data-camera-zoom"));
+  await page.getByRole("button", { name: "Orbit right" }).click();
+  expect(Number(await svg.getAttribute("data-camera-yaw"))).toBeGreaterThan(initialYaw);
+  await page.getByRole("button", { name: "Orbit down" }).click();
+  expect(Number(await svg.getAttribute("data-camera-pitch"))).toBeGreaterThan(initialPitch);
+  const box = await svg.boundingBox();
+  await page.mouse.move(box.x + 20, box.y + 20);
+  await page.mouse.down();
+  await page.mouse.move(box.x + 100, box.y + 45);
+  await page.mouse.up();
+  expect(Number(await svg.getAttribute("data-camera-yaw"))).not.toBe(initialYaw);
+
+  await page.getByRole("button", { name: "Zoom in" }).click();
+  expect(Number(await svg.getAttribute("data-camera-zoom"))).toBeGreaterThan(initialZoom);
+  await page.getByRole("button", { name: "Zoom out" }).click();
+  expect(Number(await svg.getAttribute("data-camera-zoom"))).toBeCloseTo(initialZoom);
+  await svg.dispatchEvent("wheel", { deltaY: -100 });
+  await expect.poll(async () => Number(await svg.getAttribute("data-camera-zoom")))
+    .toBeGreaterThan(initialZoom);
+  await page.getByRole("button", { name: "Focus selected" }).click();
+  await expect(svg).toHaveAttribute("data-camera-target-id", "child");
+  await page.getByRole("button", { name: "Reset camera" }).click();
+  await expect(svg).toHaveAttribute("data-camera-target-id", "child");
+  expect(Number(await svg.getAttribute("data-camera-zoom"))).toBe(1);
+});
+
+test("Spatial 3D retargets selected-node geometry after filters change the layout", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await serveIndex(page, fixtureIndex());
+  await page.goto("/docs/index.html#view=spatial3d&selected=child");
+
+  const child = page.locator('[data-spatial-node="child"]');
+  await expect(child).toHaveAttribute("x", "528");
+  await expect(child).toHaveAttribute("y", "356");
+
+  await page.getByRole("checkbox", { name: "design", exact: true }).check();
+  await page.getByRole("button", { name: "Apply filters" }).click();
+
+  await expect(child).toHaveAttribute("x", "528");
+  await expect(child).toHaveAttribute("y", "356");
+  await expect(page.locator("[data-spatial-svg]")).toHaveAttribute(
+    "data-camera-target-id",
+    "child",
+  );
+});
+
+test("Spatial 3D controls do not target a selected node excluded by filters", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await serveIndex(page, fixtureIndex());
+  await page.goto("/docs/index.html#view=spatial3d&selected=child");
+
+  await page.getByRole("checkbox", { name: "architecture", exact: true }).check();
+  await page.getByRole("button", { name: "Apply filters" }).click();
+
+  await expect(page.getByRole("button", { name: "Focus selected" })).toBeDisabled();
+  await page.getByRole("button", { name: "Reset camera" }).click();
+  await expect(page.locator("[data-spatial-svg]")).toHaveAttribute("data-camera-target-id", "");
+  await expect(page.getByRole("status")).toContainText(
+    "Spatial camera reset to the project overview.",
+  );
+});
+
+test("Spatial 3D snaps focus with reduced motion", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await serveIndex(page, fixtureIndex());
+  await page.goto("/docs/index.html#view=spatial3d");
+
+  await page.locator('[data-action="select"][data-node-id="child"]').click();
+
+  await expect(page.locator("[data-spatial-svg]")).toHaveAttribute("data-camera-target-id", "child");
+  await expect(page.locator("[data-spatial-svg]")).toHaveAttribute("data-camera-transitioning", "false");
+  await expect(page.getByRole("status")).toContainText("Selected Child");
+});
+
+test("Spatial 3D unsupported capability fails closed to Graph", async ({ page }) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(window, "PointerEvent", { configurable: true, value: undefined });
+  });
+  await serveIndex(page, fixtureIndex());
+  await page.goto("/docs/index.html#view=spatial3d&selected=child");
+
+  await expect(page.getByRole("tab", { name: "Graph" })).toHaveAttribute("aria-selected", "true");
+  await expect(page.locator(".notice")).toContainText("DOC.SPATIAL3D.UNAVAILABLE");
+  await expect(page.locator('[data-node-id="child"]')).toHaveAttribute("data-selected", "true");
+});
+
+test("Spatial 3D render failure preserves semantic state in Graph", async ({ page }) => {
+  await serveIndex(page, fixtureIndex());
+  await page.goto("/docs/index.html#view=graph&selected=child");
+  await page.evaluate(() => {
+    window.DocsExplorerCore.deterministic3DLayout = () => {
+      throw new Error("spatial failed");
+    };
+  });
+
+  await page.getByRole("tab", { name: "Spatial 3D" }).click();
+
+  await expect(page.getByRole("tab", { name: "Graph" })).toHaveAttribute("aria-selected", "true");
+  await expect(page.locator(".notice")).toContainText("DOC.SPATIAL3D.RENDER_FAILED");
+  await expect(page.locator('[data-node-id="child"]')).toHaveAttribute("data-selected", "true");
+});
+
 test("relationship actions restore focus to stable selected-node context", async ({ page }) => {
   await serveIndex(page, fixtureIndex());
   await page.goto("/docs/index.html#view=graph&selected=root");
@@ -300,7 +758,7 @@ test("narrow match navigation opens Browse before focusing the result", async ({
   await serveIndex(page, fixtureIndex());
   await page.setViewportSize({ width: 320, height: 800 });
   await page.goto("/docs/index.html#route=details&selected=root");
-  await page.getByRole("searchbox", { name: "Search artifacts" }).fill("child");
+  await page.getByRole("searchbox", { name: "Search artifacts and knowledge surfaces" }).fill("child");
 
   await page.getByRole("button", { name: "Next" }).click();
 
@@ -452,6 +910,29 @@ test("spatial arrow navigation transfers the roving tab stop before focus", asyn
   await expect(page.locator('[data-node-id][tabindex="0"]')).toHaveCount(1);
 });
 
+test("Spatial arrow navigation ignores hidden or off-canvas candidates", async ({ page }) => {
+  await serveIndex(page, fixtureIndex());
+  await page.goto("/docs/index.html#view=graph");
+  await page.evaluate(() => {
+    const original = window.DocsExplorerCore.projectSpatialLayout;
+    window.DocsExplorerCore.projectSpatialLayout = (...args) => {
+      const projection = original(...args);
+      projection.nodes = projection.nodes.map((node) =>
+        node.id === "child" ? { ...node, visible: false, screenX: -1000 } : node);
+      return projection;
+    };
+  });
+  await page.getByRole("tab", { name: "Spatial 3D" }).click();
+  const root = page.locator('[data-node-id="root"]');
+  await root.click();
+  await root.focus();
+
+  await root.press("ArrowRight");
+
+  await expect(root).toBeFocused();
+  await expect(root).toHaveAttribute("tabindex", "0");
+});
+
 test("narrow route transitions focus headings and history restores the initiating control", async ({
   page,
 }) => {
@@ -469,6 +950,20 @@ test("narrow route transitions focus headings and history restores the initiatin
 
   await page.goForward();
   await expect(page.locator("#details-heading")).toBeFocused();
+});
+
+test("resizing to the narrow layout restores focus to a visible artifact control", async ({ page }) => {
+  await serveIndex(page, fixtureIndex());
+  await page.goto("/docs/index.html");
+  const artifact = page.locator('[data-kind="artifact"]').first();
+  const artifactId = await artifact.getAttribute("data-id");
+  await artifact.click();
+  await page.getByRole("button", { name: "Load source body" }).focus();
+
+  await page.setViewportSize({ width: 320, height: 800 });
+
+  await expect(page.locator(`[role="treeitem"][data-id="${artifactId}"]`)).toBeFocused();
+  await expect(page.locator(":focus")).toBeVisible();
 });
 
 test("exploring on a narrow screen focuses the visualization heading", async ({ page }) => {
@@ -513,7 +1008,7 @@ test("Explore is disabled with a visible explanation until an artifact is select
 test("search preserves focus and caret and exposes a non-color match indicator", async ({ page }) => {
   await serveIndex(page, fixtureIndex());
   await page.goto("/docs/index.html#view=graph");
-  const search = page.getByRole("searchbox", { name: "Search artifacts" });
+  const search = page.getByRole("searchbox", { name: "Search artifacts and knowledge surfaces" });
   await search.fill("root child");
   await search.evaluate((element) => {
     element.focus();
@@ -532,18 +1027,115 @@ test("search preserves focus and caret and exposes a non-color match indicator",
   await expect(page.locator("[data-search-match='true'] .match-indicator").first()).toBeVisible();
 });
 
-test("empty search results are announced without changing graph topology", async ({ page }) => {
+test("rapid search replacement keeps the live input connected and announcements current", async ({ page }) => {
+  await serveIndex(page, fixtureIndex());
+  await page.goto("/docs/index.html#view=graph");
+
+  const replacement = await page.evaluate(() => new Promise((resolve) => {
+    const first = document.getElementById("search");
+    first.focus();
+    first.value = "not-present";
+    first.setSelectionRange(2, 2);
+    first.dispatchEvent(new InputEvent("beforeinput", {
+      bubbles: true,
+      inputType: "insertText",
+    }));
+    first.dispatchEvent(new InputEvent("input", {
+      bubbles: true,
+      inputType: "insertText",
+    }));
+
+    requestAnimationFrame(() => {
+      const second = document.getElementById("search");
+      second.value = "root";
+      second.setSelectionRange(4, 4);
+      second.dispatchEvent(new InputEvent("beforeinput", {
+        bubbles: true,
+        inputType: "insertReplacementText",
+      }));
+      second.dispatchEvent(new InputEvent("input", {
+        bubbles: true,
+        inputType: "insertReplacementText",
+      }));
+      resolve({
+        sameNode: first === second,
+        connected: second.isConnected,
+        selection: [second.selectionStart, second.selectionEnd],
+        value: second.value,
+      });
+    });
+  }));
+
+  expect(replacement).toEqual({
+    sameNode: true,
+    connected: true,
+    selection: [4, 4],
+    value: "root",
+  });
+  const search = page.getByRole("searchbox", {
+    name: "Search artifacts and knowledge surfaces",
+  });
+  await expect(search).toHaveValue("root");
+  await expect(search).toBeFocused();
+  await expect.poll(
+    () => search.evaluate((element) => [element.selectionStart, element.selectionEnd]),
+    { timeout: 1000 },
+  ).toEqual([4, 4]);
+  await expect(page.locator("[data-search-match='true']")).not.toHaveCount(0);
+  await expect(page.getByRole("status")).toHaveText('Search results available for "root"');
+});
+
+test("popstate restoration synchronizes a preserved focused search input with restored state", async ({
+  page,
+}) => {
+  await serveIndex(page, fixtureIndex());
+  await page.goto("/docs/index.html#view=graph");
+  const search = page.getByRole("searchbox", {
+    name: "Search artifacts and knowledge surfaces",
+  });
+
+  await search.fill("root");
+  await search.focus();
+  await page.evaluate(() => {
+    const restored = { docsExplorerDepth: 0, focusKey: "search" };
+    history.replaceState(restored, "", "#view=graph");
+    dispatchEvent(new PopStateEvent("popstate", { state: restored }));
+  });
+
+  await expect(search).toBeFocused();
+  await expect(search).toHaveValue("");
+  await expect(page.locator("[data-search-match='true']")).toHaveCount(0);
+  await expect(page.locator(".notice").filter({ hasText: "No search results" })).toHaveCount(0);
+});
+
+test("search announces zero-result transitions but not positive counts on every keystroke", async ({
+  page,
+}) => {
   await serveIndex(page, fixtureIndex());
   await page.goto("/docs/index.html#view=graph");
   const before = await page.locator("[data-node-id]").count();
+  const search = page.getByRole("searchbox", {
+    name: "Search artifacts and knowledge surfaces",
+  });
 
-  await page.getByRole("searchbox", { name: "Search artifacts" }).fill("not-present");
+  await search.fill("root");
+  await expect(page.locator("[data-search-match='true']")).not.toHaveCount(0);
+  await expect(page.getByRole("status")).not.toContainText("search match");
+  await search.fill("not-present");
+  await search.fill("not-present");
 
   await expect(page.locator(".notice")).toContainText(
     'No search results for "not-present"',
   );
-  await expect(page.locator('[role="status"]').filter({ hasText: "0 search matches" })).toHaveCount(1);
+  await expect(page.getByRole("button", { name: "Clear filters" })).toBeVisible();
+  await expect(page.getByRole("status")).toContainText(
+    'No search results for "not-present"',
+  );
   await expect(page.locator("[data-node-id]")).toHaveCount(before);
+  await page.getByRole("button", { name: "Clear search" }).click();
+  await expect(search).toHaveValue("");
+  await expect(page.locator("[data-search-match='true']")).toHaveCount(0);
+  await expect(page.getByRole("status")).toContainText("Search cleared");
 });
 
 test("reduced-motion mode removes control transitions and focused controls retain a visible floor", async ({
@@ -567,6 +1159,26 @@ test("reduced-motion mode removes control transitions and focused controls retai
   expect(styles.transitionDuration).toBe("0s");
   expect(styles.outlineStyle).not.toBe("none");
   expect(Number.parseFloat(styles.outlineWidth)).toBeGreaterThanOrEqual(2);
+  await page.getByRole("tab", { name: "Spatial 3D" }).click();
+  await expect.poll(() =>
+    page.locator(".spatial-node-wrap").first().evaluate(
+      (element) => getComputedStyle(element).transitionDuration,
+    ))
+    .toBe("0s");
+});
+
+test("sticky header does not obscure a focused explorer control", async ({ page }) => {
+  await serveIndex(page, fixtureIndex());
+  await page.goto("/docs/index.html");
+  const browseTab = page.getByRole("tab", { name: "Browse" });
+  await browseTab.focus();
+
+  const bounds = await page.evaluate(() => {
+    const header = document.querySelector("header").getBoundingClientRect();
+    const focused = document.activeElement.getBoundingClientRect();
+    return { headerBottom: header.bottom, focusedTop: focused.top };
+  });
+  expect(bounds.focusedTop).toBeGreaterThanOrEqual(bounds.headerBottom);
 });
 
 test("screen text contrast and interactive target sizes meet the declared floors", async ({ page }) => {
@@ -638,6 +1250,52 @@ test("screen text contrast and interactive target sizes meet the declared floors
   }
   expect(audit.undersized).toEqual([]);
   expect(audit.undersizedCheckboxTargets).toEqual([]);
+
+  const surfaceAudit = await page.locator(".surface-card").evaluateAll((elements) => {
+    const parse = (value) => {
+      const channels = value.match(/[\d.]+/g).slice(0, 3).map(Number);
+      return channels.map((channel) => {
+        const normalized = channel / 255;
+        return normalized <= 0.04045
+          ? normalized / 12.92
+          : ((normalized + 0.055) / 1.055) ** 2.4;
+      });
+    };
+    const luminance = (rgb) => 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2];
+    const contrast = (foreground, background) => {
+      const light = Math.max(luminance(parse(foreground)), luminance(parse(background)));
+      const dark = Math.min(luminance(parse(foreground)), luminance(parse(background)));
+      return (light + 0.05) / (dark + 0.05);
+    };
+    return elements.map((element) => {
+      const link = element.querySelector("a");
+      const background = getComputedStyle(element).backgroundColor;
+      return {
+        title: element.querySelector("strong").textContent,
+        textRatio: contrast(getComputedStyle(element).color, background),
+        linkRatio: contrast(getComputedStyle(link).color, background),
+        linkHeight: link.getBoundingClientRect().height,
+      };
+    });
+  });
+  for (const surface of surfaceAudit) {
+    expect(surface.textRatio, `${surface.title} text`).toBeGreaterThanOrEqual(4.5);
+    expect(surface.linkRatio, `${surface.title} link`).toBeGreaterThanOrEqual(4.5);
+    expect(surface.linkHeight, `${surface.title} target`).toBeGreaterThanOrEqual(44);
+  }
+
+  await page.getByRole("tab", { name: "Spatial 3D" }).click();
+  const spatialAudit = await page.locator(".projection-toolbar button, [data-spatial-svg]").evaluateAll(
+    (elements) => elements.map((element) => ({
+      name: element.getAttribute("aria-label"),
+      width: element.getBoundingClientRect().width,
+      height: element.getBoundingClientRect().height,
+    })),
+  );
+  for (const control of spatialAudit) {
+    expect(control.width, `${control.name} width`).toBeGreaterThanOrEqual(44);
+    expect(control.height, `${control.name} height`).toBeGreaterThanOrEqual(44);
+  }
 });
 
 test("light mode uses the accepted accessible token pairs", async ({ page }) => {
@@ -656,15 +1314,90 @@ test("light mode uses the accepted accessible token pairs", async ({ page }) => 
       focus: style.getPropertyValue("--color-focus").trim(),
     };
   });
+  expect(tokens).toEqual({
+    background: "#f7f4ef",
+    surface: "#fcfbf8",
+    text: "#242424",
+    border: "#8a8886",
+    primary: "#b11f4b",
+    focus: "#006cbe",
+  });
+});
+
+test("dark mode follows the browser preference and ignores legacy query overrides", async ({ page }) => {
+  await page.emulateMedia({ colorScheme: "dark" });
+  await serveIndex(page, fixtureIndex());
+  await page.goto("/docs/index.html?clawpilotTheme=light#view=graph");
+
+  const tokens = await page.evaluate(() => {
+    const style = getComputedStyle(document.documentElement);
+    return {
+      colorScheme: style.colorScheme,
+      background: style.getPropertyValue("--color-bg").trim(),
+      text: style.getPropertyValue("--color-text").trim(),
+      primary: style.getPropertyValue("--color-primary").trim(),
+      focus: style.getPropertyValue("--color-focus").trim(),
+    };
+  });
+  const accessibility = await page.evaluate(() => {
+    const channels = (value) => value.match(/[\d.]+/g).slice(0, 3).map(Number).map((channel) => {
+      const normalized = channel / 255;
+      return normalized <= 0.04045
+        ? normalized / 12.92
+        : ((normalized + 0.055) / 1.055) ** 2.4;
+    });
+    const luminance = (rgb) => 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2];
+    const contrast = (foreground, background) => {
+      const values = [luminance(channels(foreground)), luminance(channels(background))];
+      return (Math.max(...values) + 0.05) / (Math.min(...values) + 0.05);
+    };
+    const opaqueBackground = (element) => {
+      let current = element;
+      while (current) {
+        const color = getComputedStyle(current).backgroundColor;
+        if (color !== "rgba(0, 0, 0, 0)") return color;
+        current = current.parentElement;
+      }
+      return getComputedStyle(document.documentElement).backgroundColor;
+    };
+    const textRatios = ["body", ".panel", "button:not(:disabled)", "input", ".surface-card a"]
+      .map((selector) => {
+        const element = document.querySelector(selector);
+        return {
+          selector,
+          ratio: contrast(getComputedStyle(element).color, opaqueBackground(element)),
+        };
+      });
+    const nonTextRatios = [".panel", ".visualization", "[data-node-id]"].map((selector) => {
+      const element = document.querySelector(selector);
+      return {
+        selector,
+        ratio: contrast(getComputedStyle(element).borderColor, opaqueBackground(element)),
+      };
+    });
+    const undersized = [...document.querySelectorAll(
+      "button:not(:disabled), input:not([type='checkbox']), a[href], summary",
+    )].filter((element) => {
+      const box = element.getBoundingClientRect();
+      return box.width > 0 && box.height > 0 && (box.width < 44 || box.height < 44);
+    }).map((element) => element.outerHTML);
+    return { textRatios, nonTextRatios, undersized };
+  });
 
   expect(tokens).toEqual({
-    background: "#ffffff",
-    surface: "#f6f7f9",
-    text: "#1b1f27",
-    border: "#6b7280",
-    primary: "#2563eb",
-    focus: "#005fcc",
+    colorScheme: "dark",
+    background: "#3d3b3a",
+    text: "#dedede",
+    primary: "#fd8ea1",
+    focus: "#62b0ff",
   });
+  for (const pair of accessibility.textRatios) {
+    expect(pair.ratio, `dark ${pair.selector}`).toBeGreaterThanOrEqual(4.5);
+  }
+  for (const pair of accessibility.nonTextRatios) {
+    expect(pair.ratio, `dark ${pair.selector}`).toBeGreaterThanOrEqual(3);
+  }
+  expect(accessibility.undersized).toEqual([]);
 });
 
 test("authored high-contrast mode is reachable through prefers-contrast", async ({
@@ -676,22 +1409,39 @@ test("authored high-contrast mode is reachable through prefers-contrast", async 
   await serveIndex(page, fixtureIndex());
   await page.goto("/docs/index.html#view=graph");
 
-  const tokens = await page.evaluate(() => {
+  const audit = await page.evaluate(() => {
     const style = getComputedStyle(document.documentElement);
+    const body = getComputedStyle(document.body);
+    const channels = (value) => value.match(/[\d.]+/g).slice(0, 3).map(Number).map((channel) => {
+      const normalized = channel / 255;
+      return normalized <= 0.04045
+        ? normalized / 12.92
+        : ((normalized + 0.055) / 1.055) ** 2.4;
+    });
+    const luminance = (rgb) => 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2];
+    const foreground = luminance(channels(body.color));
+    const background = luminance(channels(body.backgroundColor));
     return {
-      background: style.getPropertyValue("--color-bg").trim(),
-      text: style.getPropertyValue("--color-text").trim(),
-      border: style.getPropertyValue("--color-border").trim(),
-      primary: style.getPropertyValue("--color-primary").trim(),
+      tokens: {
+        background: style.getPropertyValue("--color-bg").trim(),
+        text: style.getPropertyValue("--color-text").trim(),
+        border: style.getPropertyValue("--color-border").trim(),
+        primary: style.getPropertyValue("--color-primary").trim(),
+      },
+      bodyBackground: body.backgroundColor,
+      bodyContrast: (Math.max(foreground, background) + 0.05)
+        / (Math.min(foreground, background) + 0.05),
     };
   });
 
-  expect(tokens).toEqual({
+  expect(audit.tokens).toEqual({
     background: "#000000",
     text: "#ffffff",
     border: "#ffffff",
     primary: "#ffff00",
   });
+  expect(audit.bodyBackground).toBe("rgb(0, 0, 0)");
+  expect(audit.bodyContrast).toBeGreaterThanOrEqual(7);
 });
 
 test("source loading states use the single announcement channel", async ({ page }) => {
@@ -703,9 +1453,9 @@ test("source loading states use the single announcement channel", async ({ page 
   });
   await page.goto("/docs/index.html");
 
-  await page.getByRole("searchbox", { name: "Search artifacts" }).fill("root");
+  await page.getByRole("searchbox", { name: "Search artifacts and knowledge surfaces" }).fill("root");
   await expect(page.locator('[role="status"]')).toHaveCount(1);
-  await expect(page.locator("#explorer-status")).toHaveText("");
+  await expect(page.locator("#explorer-status")).toHaveText('Search results available for "root"');
 
   await page.locator('[data-kind="artifact"][data-id="root"]').click();
   await page.getByRole("button", { name: "Load source body" }).click();
@@ -738,8 +1488,8 @@ test("design tokens and the narrow breakpoint match the accepted design language
       mono: style.getPropertyValue("--font-mono").trim(),
     };
   });
-  expect(tokens.border).toMatch(/^#(687386|6b7280)$/i);
-  expect(tokens.ghost).toMatch(/^#(687386|6b7280)$/i);
+  expect(tokens.border).toMatch(/^#(8a8886|797775)$/i);
+  expect(tokens.ghost).toMatch(/^#(8a8886|797775)$/i);
   expect(tokens.body).toContain("Segoe UI");
   expect(tokens.mono).toContain("Consolas");
   expect(
@@ -755,27 +1505,34 @@ test("design tokens and the narrow breakpoint match the accepted design language
 test("IME composition defers rerender until composition ends", async ({ page }) => {
   await serveIndex(page, fixtureIndex());
   await page.goto("/docs/index.html");
-  const search = page.getByRole("searchbox", { name: "Search artifacts" });
+  let search = page.getByRole("searchbox", { name: "Search artifacts and knowledge surfaces" });
+  await search.fill("root");
+  await expect(page.locator("[data-search-match='true']")).not.toHaveCount(0);
+  search = page.getByRole("searchbox", { name: "Search artifacts and knowledge surfaces" });
   const identityBefore = await search.evaluate((element) => {
     window.__searchElement = element;
     return true;
   });
   expect(identityBefore).toBe(true);
+  const statusBeforeComposition = await page.getByRole("status").textContent();
 
   await search.evaluate((element) => {
     element.dispatchEvent(new CompositionEvent("compositionstart", { bubbles: true }));
-    element.value = "設";
+    element.value = "設計なし";
     element.dispatchEvent(new InputEvent("input", { bubbles: true, isComposing: true }));
   });
   expect(await page.evaluate(() => window.__searchElement === document.getElementById("search"))).toBe(
     true,
   );
+  await expect(page.getByRole("status")).toHaveText(statusBeforeComposition);
 
   await search.evaluate((element) => {
     element.dispatchEvent(new CompositionEvent("compositionend", { bubbles: true, data: "計" }));
+    element.dispatchEvent(new InputEvent("input", { bubbles: true, inputType: "insertCompositionText" }));
   });
-  await expect(page.getByRole("searchbox", { name: "Search artifacts" })).toHaveValue("設");
-  await expect(page.getByRole("searchbox", { name: "Search artifacts" })).toBeFocused();
+  await expect(page.getByRole("searchbox", { name: "Search artifacts and knowledge surfaces" })).toHaveValue("設計なし");
+  await expect(page.getByRole("searchbox", { name: "Search artifacts and knowledge surfaces" })).toBeFocused();
+  await expect(page.getByRole("status")).toContainText('No search results for "設計なし"');
 });
 
 test("context styling, fitting, and label ceilings preserve the highest-priority labels", async ({
@@ -811,18 +1568,28 @@ test("context styling, fitting, and label ceilings preserve the highest-priority
   await expect(page.locator('[data-node-id="root"]')).toHaveClass(/context/);
   await expect(page.locator('[data-node-id="child"]')).toHaveClass(/depth-1/);
   await expect(page.locator('[data-node-id="outside"]')).toHaveClass(/unrelated/);
-  await page.locator('[data-node-id="outside"]').focus();
+  await page.locator('[data-node-id="outside"]').evaluate((element) => {
+    element.tabIndex = 0;
+    element.focus();
+  });
+  await expect(page.locator('[data-node-id="outside"]')).toBeFocused();
   const deEmphasizedFocus = await page.locator('[data-node-id="outside"]').evaluate((element) => {
     const computed = getComputedStyle(element);
     return {
       outlineStyle: computed.outlineStyle,
       outlineWidth: computed.outlineWidth,
       outlineOffset: computed.outlineOffset,
+      boxShadow: computed.boxShadow,
     };
   });
-  expect(deEmphasizedFocus.outlineStyle).not.toBe("none");
-  expect(Number.parseFloat(deEmphasizedFocus.outlineWidth)).toBeGreaterThanOrEqual(2);
-  expect(Number.parseFloat(deEmphasizedFocus.outlineOffset)).toBeGreaterThanOrEqual(2);
+  const visibleFocus =
+    deEmphasizedFocus.outlineStyle !== "none" ||
+    deEmphasizedFocus.boxShadow !== "none";
+  expect(visibleFocus).toBe(true);
+  if (deEmphasizedFocus.outlineStyle !== "none") {
+    expect(Number.parseFloat(deEmphasizedFocus.outlineWidth)).toBeGreaterThanOrEqual(2);
+    expect(Number.parseFloat(deEmphasizedFocus.outlineOffset)).toBeGreaterThanOrEqual(2);
+  }
   await expect(page.locator('[data-node-id="root"] .visual-label')).toHaveText("Root");
   await expect(page.locator('[data-node-id="child"] .visual-label')).toHaveText("•");
   expect(await page.locator(".visualization svg").getAttribute("viewBox")).not.toBe("0 0 1000 700");
@@ -862,12 +1629,18 @@ test("selected and context titles remain visible without relying on clipped node
 });
 
 test("an empty index renders a stable first-run recovery state", async ({ page }) => {
-  await serveIndex(page, fixtureIndex({ rootId: null, artifactTypes: [], artifacts: [] }));
+  await serveIndex(
+    page,
+    fixtureIndex({ rootId: null, artifactTypes: [], artifacts: [], surfaces: [] }),
+  );
   await page.goto("/docs/index.html");
 
   const emptyState = page.locator(".notice");
   await expect(emptyState).toContainText("No indexed artifacts yet");
   await expect(emptyState).toContainText("docs-graph.py derive");
+  await expect(page.getByText("No standalone knowledge surfaces were discovered.")).toBeVisible();
+  await expect(page.locator("#app")).toHaveAttribute("data-state", "ready");
+  await expect(page.locator("#app")).toHaveAttribute("data-load-state", "empty");
   await expect(page.locator('[role="status"]')).toHaveCount(1);
   await expect(page.getByRole("alert")).toHaveCount(0);
 });
@@ -902,23 +1675,32 @@ test("forced-colors mode preserves focus, selection, and search-match affordance
   await page.emulateMedia({ forcedColors: "active" });
   await serveIndex(page, fixtureIndex());
   await page.goto("/docs/index.html#view=graph");
-  const search = page.getByRole("searchbox", { name: "Search artifacts" });
+  const auditSurface = page.locator('.surface-card[data-kind="audit"]');
+  await expect(auditSurface).toHaveCSS("border-style", "double");
+  await expect(auditSurface.getByText("audit", { exact: true })).toBeVisible();
+  const search = page.getByRole("searchbox", { name: "Search artifacts and knowledge surfaces" });
   await search.fill("root");
-  await expect(search).toBeFocused();
   const match = page.locator(".node-control[data-search-match='true']").first();
-  await match.focus();
+  await match.click();
 
   await expect(match).toBeFocused();
   expect(await match.evaluate((element) => getComputedStyle(element).outlineStyle)).toBe("double");
   await expect(match.locator(".match-indicator")).toBeVisible();
-  await match.click();
   await page.getByRole("button", { name: "Explore neighborhood" }).click();
   const contextNode = page.locator('[data-node-id="root"].node-control.context');
   await expect(contextNode).toHaveCSS("border-style", "double");
   await expect(contextNode.locator(".context-indicator")).toBeVisible();
   const selectedTab = page.getByRole("tab", { name: "Graph" });
-  expect(await selectedTab.evaluate((element) => getComputedStyle(element).outlineStyle)).toBe("double");
+  expect(await selectedTab.evaluate((element) => getComputedStyle(element).outlineStyle)).not.toBe("double");
   expect(await selectedTab.evaluate((element) => getComputedStyle(element, "::after").content)).not.toBe("none");
+
+  await page.getByRole("tab", { name: "Spatial 3D" }).click();
+  const spatial = page.getByRole("region", { name: "Spatial 3D project graph" });
+  expect(
+    await spatial.evaluate((element) => getComputedStyle(element).outlineStyle),
+  ).not.toBe("double");
+  await expect(page.locator("[data-spatial-node] .node-control[data-selected='true']")).toHaveCount(1);
+  await expect(page.locator("[data-spatial-node] .node-control.context")).toHaveCount(1);
 });
 
 test("each browser resource ceiling fails closed at the correct layer", async ({ page }) => {
@@ -933,6 +1715,7 @@ test("each browser resource ceiling fails closed at the correct layer", async ({
     ["indexBytes", { indexBytes: 1 }, "DOC.INDEX.LIMIT_EXCEEDED"],
     ["artifacts", { artifacts: 1 }, "DOC.INDEX.LIMIT_EXCEEDED"],
     ["relationships", { relationships: 0 }, "DOC.INDEX.LIMIT_EXCEEDED"],
+    ["surfaces", { surfaces: 2 }, "DOC.INDEX.LIMIT_EXCEEDED"],
     ["spatialNodes", { spatialNodes: 1 }, "DOC.INDEX.LIMIT_EXCEEDED"],
     ["spatialEdges", { spatialEdges: 0 }, "DOC.INDEX.LIMIT_EXCEEDED"],
   ];
@@ -959,7 +1742,7 @@ test("oversized source bodies fail without replacing metadata", async ({ page })
   await page.locator('[data-kind="artifact"][data-id="root"]').click();
   await page.getByRole("button", { name: "Load source body" }).click();
 
-  await expect(page.getByRole("alert")).toContainText("DOC.DOCUMENT.UNAVAILABLE");
+  await expect(page.getByRole("alert")).toContainText("DOC.SOURCE.TOO_LARGE");
   await expect(page.locator("#details-heading")).toHaveText("Root");
 });
 
@@ -994,7 +1777,7 @@ test("source byte ceiling is enforced when content length understates the body",
   await page.locator('[data-kind="artifact"][data-id="root"]').click();
   await page.getByRole("button", { name: "Load source body" }).click();
 
-  await expect(page.getByRole("alert")).toContainText("DOC.DOCUMENT.UNAVAILABLE");
+  await expect(page.getByRole("alert")).toContainText("DOC.SOURCE.TOO_LARGE");
   await expect(page.locator("#details-heading")).toHaveText("Root");
 });
 
@@ -1110,7 +1893,7 @@ test("source fetch deadline aborts and preserves metadata", async ({ page, brows
   await page.locator('[data-kind="artifact"][data-id="root"]').click();
   await page.getByRole("button", { name: "Load source body" }).click();
 
-  await expect(page.getByRole("alert")).toContainText("DOC.DOCUMENT.UNAVAILABLE", {
+  await expect(page.getByRole("alert")).toContainText("DOC.SOURCE.TIMEOUT", {
     timeout: 7000,
   });
   await expect(page.locator("#details-heading")).toHaveText("Root");
@@ -1125,7 +1908,7 @@ test("source hash mismatch and unapproved source paths are rejected before rende
   await page.goto("/docs/index.html");
   await page.locator('[data-kind="artifact"][data-id="root"]').click();
   await page.getByRole("button", { name: "Load source body" }).click();
-  await expect(page.getByRole("alert")).toContainText("DOC.DOCUMENT.UNAVAILABLE");
+  await expect(page.getByRole("alert")).toContainText("DOC.SOURCE.INTEGRITY_MISMATCH");
   await expect(page.locator(".details-panel pre")).toHaveCount(0);
 
   const escaped = fixtureIndex();
@@ -1135,7 +1918,7 @@ test("source hash mismatch and unapproved source paths are rejected before rende
   await page.goto("/docs/index.html");
   await page.locator('[data-kind="artifact"][data-id="root"]').click();
   await page.getByRole("button", { name: "Load source body" }).click();
-  await expect(page.getByRole("alert")).toContainText("DOC.DOCUMENT.UNAVAILABLE");
+  await expect(page.getByRole("alert")).toContainText("DOC.SOURCE.PATH_REJECTED");
 });
 
 test("index bootstrap deadline produces a stable local recovery code", async ({
@@ -1152,6 +1935,29 @@ test("index bootstrap deadline produces a stable local recovery code", async ({
   });
   await expect(page.locator("main#main")).toBeVisible();
   await expect(page.getByRole("button", { name: "Retry loading" })).toBeVisible();
+});
+
+test("late index completion cannot replace the bootstrap timeout recovery shell", async ({
+  page,
+  browserName,
+}) => {
+  test.skip(browserName !== "chromium", "Deadline wall-clock proof is pinned to Chromium.");
+  test.setTimeout(15000);
+  await page.route("**/docs-index.js", async (route) => {
+    await new Promise((resolve) => setTimeout(resolve, 5500));
+    await route.fulfill({
+      contentType: "application/javascript",
+      body: `window.DOCS_INDEX = ${JSON.stringify(fixtureIndex())};`,
+    }).catch(() => {});
+  });
+  await page.goto("/docs/index.html", { waitUntil: "commit" });
+
+  await expect(page.getByRole("alert")).toContainText("DOC.INDEX.UNAVAILABLE", {
+    timeout: 7000,
+  });
+  await page.waitForTimeout(1500);
+  await expect(page.getByRole("alert")).toContainText("DOC.INDEX.UNAVAILABLE");
+  await expect(page.getByRole("tab", { name: "Browse" })).toHaveCount(0);
 });
 
 test("index recovery shell retries loading without losing the main landmark", async ({

@@ -31,7 +31,7 @@ Conventions
   every git call degrades gracefully when git or a repo is absent. This tool never invents a
   prompt or a summary; required fields must be supplied (flags, --*-file, or --from-json -).
 """
-import argparse, json, os, re, subprocess, sys, datetime
+import argparse, datetime, html, json, os, re, subprocess, sys
 
 ISO = "%Y-%m-%dT%H:%M:%SZ"
 AUDIT_KINDS = ["skill", "command", "script", "prompt", "commit", "manual", "session-import"]
@@ -125,7 +125,7 @@ def project_name(root):
 
 
 def render(root, project=None):
-    """Regenerate audit-data.js from the JSONL logs; ensure index.html exists."""
+    """Regenerate audit-data.js and the managed viewer from canonical sources."""
     os.makedirs(audit_dir(root), exist_ok=True)
     data = {"project": project or project_name(root), "generated": now_iso(),
             "audit": read_log(root, "audit"), "changes": read_log(root, "change")}
@@ -136,11 +136,12 @@ def render(root, project=None):
             "window.AUDIT_DATA = " + payload + ";\n")
     open(os.path.join(audit_dir(root), "audit-data.js"), "w", encoding="utf-8").write(body)
     idx = os.path.join(audit_dir(root), "index.html")
-    if not os.path.exists(idx):
-        tpl = find_template()
-        if tpl:
-            html = open(tpl, encoding="utf-8").read().replace("__PROJECT__", data["project"])
-            open(idx, "w", encoding="utf-8").write(html)
+    tpl = find_template()
+    if tpl:
+        viewer = open(tpl, encoding="utf-8").read().replace(
+            "__PROJECT__", html.escape(data["project"], quote=True)
+        )
+        open(idx, "w", encoding="utf-8").write(viewer)
     return data
 
 

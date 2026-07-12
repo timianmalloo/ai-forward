@@ -8,7 +8,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : this, function () {
   "use strict";
 
-  const PROJECTIONS = new Set(["browse", "graph", "mindmap"]);
+  const PROJECTIONS = new Set(["browse", "graph", "mindmap", "spatial3d"]);
   const ROUTES = new Set(["browse", "visualization", "details"]);
   const PATH_MODES = new Set(["none", "grounding", "impact", "proof"]);
 
@@ -323,6 +323,138 @@
     };
   }
 
+  function stableStringHash(value) {
+    let hash = 2166136261;
+    for (const character of String(value)) {
+      hash ^= character.codePointAt(0);
+      hash = Math.imul(hash, 16777619);
+    }
+    return hash >>> 0;
+  }
+
+  function deterministic3DLayout(model) {
+    const lanes = new Map();
+    for (const node of model.nodes || []) {
+      const lane = node.lane || "other";
+      if (!lanes.has(lane)) lanes.set(lane, []);
+      lanes.get(lane).push(node);
+    }
+    const laneEntries = [...lanes.entries()].sort((left, right) => {
+      const leftRank = Math.min(...left[1].map((node) => node.laneRank ?? 999));
+      const rightRank = Math.min(...right[1].map((node) => node.laneRank ?? 999));
+      return leftRank - rightRank || left[0].localeCompare(right[0]);
+    });
+    const positioned = [];
+    laneEntries.forEach(([lane, laneNodes], laneIndex) => {
+      const orderedNodes = [...laneNodes].sort((left, right) => left.id.localeCompare(right.id));
+      const laneX = (laneIndex - (laneEntries.length - 1) / 2) * 260;
+      const depthBand = ((laneIndex % 3) - 1) * 150;
+      orderedNodes.forEach((node, rowIndex) => {
+        const hashUnit = stableStringHash(node.id) / 0xffffffff;
+        positioned.push({
+          ...node,
+          lane,
+          x: laneX,
+          y: (rowIndex - (orderedNodes.length - 1) / 2) * 120,
+          z: depthBand + (hashUnit - 0.5) * 120,
+        });
+      });
+    });
+    positioned.sort((left, right) => left.id.localeCompare(right.id));
+    const center = positioned.length
+      ? positioned.reduce(
+        (sum, node) => ({
+          x: sum.x + node.x / positioned.length,
+          y: sum.y + node.y / positioned.length,
+          z: sum.z + node.z / positioned.length,
+        }),
+        { x: 0, y: 0, z: 0 },
+      )
+      : { x: 0, y: 0, z: 0 };
+    const edges = [...(model.edges || [])].sort(
+      (left, right) =>
+        left.source.localeCompare(right.source) ||
+        left.rel.localeCompare(right.rel) ||
+        left.target.localeCompare(right.target),
+    );
+    return {
+      nodes: positioned,
+      edges,
+      center,
+      lanes: laneEntries.map(([lane], laneIndex) => ({
+        id: lane,
+        x: (laneIndex - (laneEntries.length - 1) / 2) * 260,
+      })),
+      work: {
+        nodeVisits: (model.nodes || []).length + positioned.length,
+        edgeVisits: edges.length,
+      },
+    };
+  }
+
+  function canonicalSpatialCamera(layout, selectedNodeId, contextNodeId) {
+    const target =
+      layout.nodes.find((node) => node.id === selectedNodeId) ||
+      layout.nodes.find((node) => node.id === contextNodeId) ||
+      layout.center ||
+      { x: 0, y: 0, z: 0 };
+    return {
+      yaw: -0.55,
+      pitch: -0.24,
+      zoom: 1,
+      distance: 1100,
+      target,
+    };
+  }
+
+  function projectSpatialPoint(point, camera, width, height) {
+    const target = camera.target || { x: 0, y: 0, z: 0 };
+    const dx = point.x - target.x;
+    const dy = point.y - target.y;
+    const dz = point.z - target.z;
+    const cosYaw = Math.cos(camera.yaw || 0);
+    const sinYaw = Math.sin(camera.yaw || 0);
+    const yawX = dx * cosYaw - dz * sinYaw;
+    const yawZ = dx * sinYaw + dz * cosYaw;
+    const cosPitch = Math.cos(camera.pitch || 0);
+    const sinPitch = Math.sin(camera.pitch || 0);
+    const viewY = dy * cosPitch - yawZ * sinPitch;
+    const viewZ = dy * sinPitch + yawZ * cosPitch;
+    const zoom = Math.max(0.35, Math.min(3, Number(camera.zoom) || 1));
+    const distance = Math.max(300, Number(camera.distance) || 1100) / zoom;
+    const depth = distance - viewZ;
+    const focalLength = Math.min(width, height) * 1.15;
+    const scale = focalLength / Math.max(80, depth);
+    return {
+      screenX: width / 2 + yawX * scale,
+      screenY: height / 2 + viewY * scale,
+      depth,
+      scale,
+      visible: depth > 80,
+    };
+  }
+
+  function projectSpatialLayout(layout, camera, width, height) {
+    const projectedNodes = layout.nodes
+      .map((node) => ({
+        ...node,
+        ...projectSpatialPoint(node, camera, width, height),
+      }))
+      .sort((left, right) => right.depth - left.depth || left.id.localeCompare(right.id));
+    const projectedById = new Map(projectedNodes.map((node) => [node.id, node]));
+    return {
+      nodes: projectedNodes,
+      edges: layout.edges.map((edge) => ({
+        ...edge,
+        sourcePoint: projectedById.get(edge.source),
+        targetPoint: projectedById.get(edge.target),
+      })),
+      center: layout.center,
+      width,
+      height,
+    };
+  }
+
   function layoutDimensions(nodeCount) {
     return {
       width: Math.min(12000, Math.max(1000, nodeCount * 60)),
@@ -511,6 +643,10 @@
     encodeUrlState,
     normalizeProjection,
     deterministicLayout,
+    deterministic3DLayout,
+    canonicalSpatialCamera,
+    projectSpatialPoint,
+    projectSpatialLayout,
     layoutDimensions,
     radialLayout,
     neighborhood,

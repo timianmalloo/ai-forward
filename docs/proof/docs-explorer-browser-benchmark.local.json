@@ -1,0 +1,184 @@
+{
+  "schemaVersion": "docs-explorer-browser-benchmark/v1",
+  "passed": false,
+  "localThresholdsPassed": false,
+  "referenceBudgetProved": false,
+  "environment": {
+    "architecture": "X64",
+    "windowsCaption": "Microsoft Windows 11 Enterprise",
+    "logicalProcessors": 16,
+    "playwright": "1.61.1",
+    "browserName": "chromium",
+    "chromiumBuild": "149.0.7827.55",
+    "headless": true,
+    "gpuMode": "swiftshader",
+    "launchFlags": [
+      "--disable-background-timer-throttling",
+      "--disable-backgrounding-occluded-windows",
+      "--disable-extensions",
+      "--disable-renderer-backgrounding",
+      "--use-angle=swiftshader"
+    ],
+    "viewport": {
+      "width": 1366,
+      "height": 768
+    },
+    "deviceScaleFactor": 1,
+    "cpuSlowdown": 4,
+    "orbitFrameWindowMilliseconds": 1000,
+    "referenceEnvironmentMatched": false,
+    "azureReferenceMetadata": {
+      "vmSize": null,
+      "offer": null,
+      "osType": null
+    }
+  },
+  "corpus": {
+    "artifacts": 500,
+    "relationships": 1000,
+    "surfaces": 100,
+    "seed": 20260710,
+    "sha256": "f4b34a29d2f836957f7fe24d0424444ac515881b6618cdfdd759a302ccb3cdef"
+  },
+  "runs": {
+    "cold": 5,
+    "warm": 5
+  },
+  "thresholds": {
+    "usable2dShellP75Milliseconds": 2000,
+    "selectionSearchP75Milliseconds": 100,
+    "initial2dLayoutP75Milliseconds": 500,
+    "initialSpatialP75Milliseconds": 500,
+    "minimumOrbitFramesPerSecond": 30
+  },
+  "summary": {
+    "usable2dShellP75Milliseconds": 1127.2999999523163,
+    "selectionSearchP75Milliseconds": 941.5999999940395,
+    "initial2dLayoutP75Milliseconds": 1105.3499999940395,
+    "initialSpatialP75Milliseconds": 1268.6749999821186,
+    "minimumOrbitFramesPerSecond": 59,
+    "distributions": {
+      "usable2dShellMilliseconds": {
+        "p50": 1067.2999999523163,
+        "p75": 1127.2999999523163,
+        "max": 1261.1000000238419
+      },
+      "selectionSearchMilliseconds": {
+        "p50": 899,
+        "p75": 941.5999999940395,
+        "max": 1004.6999999284744
+      },
+      "initial2dLayoutMilliseconds": {
+        "p50": 1089.5999999642372,
+        "p75": 1105.3499999940395,
+        "max": 1140.7000000476837
+      },
+      "initialSpatialMilliseconds": {
+        "p50": 1170.949999988079,
+        "p75": 1268.6749999821186,
+        "max": 1396.7999999523163
+      },
+      "heapDeltaBytes": {
+        "p50": 4587816,
+        "p75": 7734481,
+        "max": 7819984
+      }
+    }
+  },
+  "samples": {
+    "cold": [
+      {
+        "cacheMode": "cold",
+        "usable2dShellMilliseconds": 1127.2999999523163,
+        "selectionSearchMilliseconds": 1004.6999999284744,
+        "initial2dLayoutMilliseconds": 1064.2999999523163,
+        "initialSpatialMilliseconds": 1288.3999999761581,
+        "minimumOrbitFramesPerSecond": 60,
+        "heapDeltaBytes": 7672348
+      },
+      {
+        "cacheMode": "cold",
+        "usable2dShellMilliseconds": 1067.2999999523163,
+        "selectionSearchMilliseconds": 839,
+        "initial2dLayoutMilliseconds": 1107.1000000238419,
+        "initialSpatialMilliseconds": 1396.7999999523163,
+        "minimumOrbitFramesPerSecond": 60,
+        "heapDeltaBytes": 4384416
+      },
+      {
+        "cacheMode": "cold",
+        "usable2dShellMilliseconds": 1261.1000000238419,
+        "selectionSearchMilliseconds": 994.2999999523163,
+        "initial2dLayoutMilliseconds": 1090.1000000238419,
+        "initialSpatialMilliseconds": 1381.5,
+        "minimumOrbitFramesPerSecond": 60,
+        "heapDeltaBytes": 7755192
+      },
+      {
+        "cacheMode": "cold",
+        "usable2dShellMilliseconds": 1008,
+        "selectionSearchMilliseconds": 871.5,
+        "initial2dLayoutMilliseconds": 1140.7000000476837,
+        "initialSpatialMilliseconds": 1163.6999999284744,
+        "minimumOrbitFramesPerSecond": 60,
+        "heapDeltaBytes": 4582860
+      },
+      {
+        "cacheMode": "cold",
+        "usable2dShellMilliseconds": 1006,
+        "selectionSearchMilliseconds": 885.5999999046326,
+        "initial2dLayoutMilliseconds": 1100.0999999046326,
+        "initialSpatialMilliseconds": 1110,
+        "minimumOrbitFramesPerSecond": 59,
+        "heapDeltaBytes": 3914400
+      }
+    ],
+    "warm": [
+      {
+        "cacheMode": "warm",
+        "usable2dShellMilliseconds": 1215.6999999284744,
+        "selectionSearchMilliseconds": 945.1000000238419,
+        "initial2dLayoutMilliseconds": 1089.0999999046326,
+        "initialSpatialMilliseconds": 1122.7999999523163,
+        "minimumOrbitFramesPerSecond": 60,
+        "heapDeltaBytes": 7797400
+      },
+      {
+        "cacheMode": "warm",
+        "usable2dShellMilliseconds": 1282,
+        "selectionSearchMilliseconds": 861.2999999523163,
+        "initial2dLayoutMilliseconds": 1127.5,
+        "initialSpatialMilliseconds": 1178.2000000476837,
+        "minimumOrbitFramesPerSecond": 60,
+        "heapDeltaBytes": 7819984
+      },
+      {
+        "cacheMode": "warm",
+        "usable2dShellMilliseconds": 1161.3000000715256,
+        "selectionSearchMilliseconds": 877.7000000476837,
+        "initial2dLayoutMilliseconds": 1008.7000000476837,
+        "initialSpatialMilliseconds": 1104.8999999761581,
+        "minimumOrbitFramesPerSecond": 60,
+        "heapDeltaBytes": 4323644
+      },
+      {
+        "cacheMode": "warm",
+        "usable2dShellMilliseconds": 943.6999999284744,
+        "selectionSearchMilliseconds": 931.0999999046326,
+        "initial2dLayoutMilliseconds": 1082.7000000476837,
+        "initialSpatialMilliseconds": 1209.5,
+        "minimumOrbitFramesPerSecond": 60,
+        "heapDeltaBytes": 4592772
+      },
+      {
+        "cacheMode": "warm",
+        "usable2dShellMilliseconds": 1003.6000000238419,
+        "selectionSearchMilliseconds": 912.4000000953674,
+        "initial2dLayoutMilliseconds": 1086.6000000238419,
+        "initialSpatialMilliseconds": 1054.3000000715256,
+        "minimumOrbitFramesPerSecond": 60,
+        "heapDeltaBytes": 4272816
+      }
+    ]
+  }
+}

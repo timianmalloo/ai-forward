@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-Forward",
-  "generated": "2026-07-11T16:54:52Z",
+  "generated": "2026-07-12T00:37:11Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -191,7 +191,8 @@ window.DOCS_INDEX = {
     "relationships": 5000,
     "spatialNodes": 500,
     "spatialEdges": 1000,
-    "visibleLabels": 150
+    "visibleLabels": 150,
+    "surfaces": 100
   },
   "artifacts": [
     {
@@ -306,7 +307,7 @@ window.DOCS_INDEX = {
       "phase": "pack-evolution",
       "reviewBy": "2027-01-07",
       "reviewSuggested": [],
-      "summary": "Detailed design for making the repository knowledge graph a deterministic grounding interface for coding agents and a clearer human exploration surface. It separates selected-node neighborhood context from mind-map rooting, adds provenance-bounded context packets, and treats immersive 3D as an optional enhancement over an accessible 2D baseline.",
+      "summary": "Detailed design for making the repository knowledge graph a deterministic grounding interface for coding agents and a clearer human exploration surface. It separates selected-node neighborhood context from mind-map rooting, adds provenance-bounded context packets, adds a derived directory of standalone HTML knowledge surfaces, and makes deterministic Spatial 3D a first-class progressive projection over an accessible 2D baseline.",
       "tags": [
         "docs-explorer",
         "knowledge-graph",
@@ -338,7 +339,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "66799d8182b93cf159f24c2059f8ec7a03815704a2521facfe90267cfdab54e6"
+      "sourceSha256": "38a09a51a44004a2939929a9c81f95d19b2c074492484fa31a1f097578b76f1f"
     },
     {
       "id": "design-pack-doctor",
@@ -429,7 +430,7 @@ window.DOCS_INDEX = {
       "phase": "pack-evolution",
       "reviewBy": "2027-01-07",
       "reviewSuggested": [],
-      "summary": "Token and interaction language for the Docs Explorer's browse, graph, mind-map, and optional 3D adapter. It defines a high-legibility dark/light system, complete visualization states, reduced-motion behavior, and the performance/accessibility floors that implementation must satisfy.",
+      "summary": "Token and interaction language for the Docs Explorer knowledge portal: browse, graph, mind-map, deterministic Spatial 3D, and derived HTML knowledge surfaces. It defines a high-legibility dark/light system, selected-node focus behavior, complete visualization states, and the performance/accessibility floors that implementation must satisfy.",
       "tags": [
         "design-language",
         "docs-explorer",
@@ -448,7 +449,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "2d9b98d88189bbdf965096b8f7e72d4b955fad121ce02ef41ab389b4e129fb9c"
+      "sourceSha256": "5894c47b0acd2f11f55f2a0c222143c1a1a7dda6b3418c7052756fb524a6de8b"
     },
     {
       "id": "audit-log",
@@ -532,7 +533,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9e1da1810b419cd5b9ee05713e16c8bafe8837fe6c0e5a3d5fab9e2ff0bd8583"
+      "sourceSha256": "ef39aa2634caaccd815ed64e487a2987ff5ef19fd5b3851362cda4f764114c40"
     },
     {
       "id": "kb-pack-evolution-glossary",
@@ -777,7 +778,7 @@ window.DOCS_INDEX = {
       "phase": "implementation",
       "reviewBy": "2027-01-07",
       "reviewSuggested": [],
-      "summary": "Accepted implementation evidence for the deterministic, local-first Docs Explorer and bounded grounding packet implementation. The P0/P1 contract is covered by Python, Node, and three-engine browser suites; phase-attributed benchmark evidence separates graph work from process/host overhead. Revision 17 remains intentionally unreleased pending pinned-reference performance proof or a human-approved deviation.",
+      "summary": "Accepted implementation evidence for the deterministic, local-first Docs Explorer, native Spatial 3D knowledge portal, and bounded grounding packet implementation. The P0/P1 contract is covered by Python, Node, and three-engine browser suites; phase-attributed benchmark evidence separates graph work from process/host overhead. Revision 17 remains intentionally unreleased pending pinned-reference performance proof or a human-approved deviation.",
       "tags": [
         "docs-explorer",
         "grounding",
@@ -808,7 +809,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a9feb034f1658673ad05cd35727d3d04d9c3f73fcef864ee21360aa19702fc55"
+      "sourceSha256": "8596cd2175507a7b8da9f922cf7db6bee84be7eec6622235bc51964b5f370675"
     },
     {
       "id": "threat-model",
@@ -852,8 +853,32 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "6b7799fd721272f6bbe4e2de08189c2e31abd7f084809d675562c015da41fd0e"
+      "sourceSha256": "a6ec4562f4bb1ef81abcb7645c817dae374d64ebff211fcef95165cbe8f09e26"
     }
   ],
-  "graphSha256": "e61dadd78647e8e9fe3953fb00c07f0036724673e91eef5e9167694c106fe510"
+  "surfaces": [
+    {
+      "id": "surface-audit-index",
+      "path": "docs/audit/index.html",
+      "title": "AI-Forward — Audit & Change Log",
+      "kind": "audit",
+      "description": "Browse the committed audit and change timeline.",
+      "artifactId": "audit-log"
+    },
+    {
+      "id": "surface-site-index",
+      "path": "docs/_site/index.html",
+      "title": "AI-Forward Documentation",
+      "kind": "documentation",
+      "description": "Open the generated documentation bundle."
+    },
+    {
+      "id": "surface-design-docs-explorer-design-language-preview",
+      "path": "docs/design/docs-explorer-design-language-preview.html",
+      "title": "Docs Explorer - Design Language Preview",
+      "kind": "design-preview",
+      "description": "Inspect a rendered design or design-language preview."
+    }
+  ],
+  "graphSha256": "a4a1010b23bb1f4e605cb6e1f6e20d7c41faaf27078d6266c0b91f880353f23e"
 };

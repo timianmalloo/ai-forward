@@ -9,24 +9,41 @@ on:
     paths:
       - "pack/**"
       - "tools/**"
+      - "tests/docs_explorer/**"
+      - "docs/_site/**"
+      - "package.json"
+      - "package-lock.json"
       - "README.md"
       - "CLAUDE.md"
       - "AGENTS.md"
       - "web/**"
       - ".github/copilot-instructions.md"
+      - ".github/workflows/pack-consistency.yml"
   workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   consistency:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with: { python-version: "3.x" }
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "22"
+          cache: npm
 
       # Documented counts + skill/prompt parity must match the filesystem.
       - name: Count & skill-list consistency
         run: python3 tools/check-consistency.py
+
+      - name: Docs Explorer core contracts
+        run: |
+          npm ci
+          npm run test:docs-explorer:core
 
       # Uncatalogued edits to the vendored foundation docs.
       - name: Vendored-foundation drift

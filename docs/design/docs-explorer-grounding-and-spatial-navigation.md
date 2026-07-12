@@ -18,7 +18,8 @@ summary: >-
   Detailed design for making the repository knowledge graph a deterministic grounding
   interface for coding agents and a clearer human exploration surface. It separates
   selected-node neighborhood context from mind-map rooting, adds provenance-bounded context packets,
-  and treats immersive 3D as an optional enhancement over an accessible 2D baseline.
+  adds a derived directory of standalone HTML knowledge surfaces, and makes deterministic
+  Spatial 3D a first-class progressive projection over an accessible 2D baseline.
 ---
 
 # Docs Explorer - Grounding and Spatial Navigation Design
@@ -30,21 +31,24 @@ knowledge source set, with frontmatter authoritative for graph metadata, and add
 bounded derived consumers:
 
 1. a deterministic, stdlib-only grounding interface in `docs-graph.py`; and
-2. an accessible browse-first Explorer whose graph, mind map, and optional 3D experiment
-   share selection, neighborhood context, filters, and browser navigation history.
+2. an accessible browse-first knowledge portal whose graph, mind map, deterministic
+   Spatial 3D projection, and standalone HTML knowledge surfaces share selection,
+   neighborhood context, filters, and browser navigation history.
 
 The design does **not** replace the current graph, introduce embeddings, or make 3D the
-primary navigation model. It defines the contracts and implementation backlog required
-to make the existing system reliable for machines and legible for people.
+primary navigation model. Spatial 3D is a required progressive projection over the same
+typed graph model; Browse remains the default and the relationship list remains the
+accessible source of interaction parity.
 
 **Core scenario.** A contributor or coding agent selects an artifact, understands its
 authoritative upstream context, downstream proofs and impacts, recent decisions, and
 exact source passages without losing orientation or receiving stale history as current
 fact.
 
-**Delivery phase.** This is a pack-evolution slice. The grounding CLI and 2D Explorer
-remain independently deployable and testable. Optional 3D is a later renderer experiment
-over the normalized internal projection model, not a prerequisite for either slice.
+**Delivery phase.** This is a pack-evolution slice. The grounding CLI remains
+independently deployable and testable. The human Explorer slice includes Browse, Graph,
+Mind map, Spatial 3D, and a derived directory of HTML knowledge surfaces; all consume
+the normalized index while grounding remains independent from visual presentation.
 
 ### Governing constraints
 
@@ -103,8 +107,8 @@ the pack's canonical artifact model and requires a separate architecture decisio
 4. Use native SVG and browser APIs for the canonical 2D interaction.
 5. Add no dependency for grounding or 2D visualization.
 6. Extract only the renderer-independent state/layout functions needed for tests.
-7. Lazy-load a 3D library only after the 2D design is proven and the bundle/performance
-   budget is measured.
+7. Implement the minimum native 3D coordinate and perspective projection needed for
+   orbit, zoom, and selected-node focus; add no visualization dependency.
 
 ### Named patterns
 
@@ -112,8 +116,9 @@ the pack's canonical artifact model and requires a separate architecture decisio
 |---|---|---|
 | **Materialized View** | Frontmatter graph metadata plus canonical body hashes -> browser index. | Preserves the canonical source set while making browser reads cheap. |
 | **Master-Detail** | Browse tree and visualization beside a persistent detail panel. | Existing UI already uses it; it fits document discovery better than a canvas-first shell. |
-| **Progressive Enhancement** | Accessible 2D first; optional 3D and Mermaid later. | Keeps the core usable offline and on constrained hardware. |
-| **Graceful Degradation (LOA 6.5)** | Offline/CDN loss, spatial-budget failure, slow-frame fallback, and failed 3D experiment retain Browse/list/source paths. | Every optional enhancement has a defined lower-cost usable floor. |
+| **Progressive Enhancement** | Browse/list first; Graph, Mind map, native Spatial 3D, and Mermaid build on that floor. | Keeps the core usable offline and on constrained hardware while making immersive exploration available. |
+| **Graceful Degradation (LOA 6.5)** | Offline/CDN loss, spatial-budget failure, unsupported 3D transforms, and render failure retain Browse/list/source paths. | Every enhancement has a defined lower-cost usable floor. |
+| **Derived Directory / Materialized View** | Safe `docs/**/*.html` discovery emits navigation-only surface metadata beside graph artifacts. | Makes the Explorer a one-stop knowledge portal without hand-maintained links or changing semantic graph hashes. |
 | **Grounded Context Injector (LOA 4.1), deterministic evidence stage only** | Typed traversal, lexical retrieval, and exact source citations feed a downstream consumer; prompt injection and synthesis are explicitly deferred. | Reuses the established pattern vocabulary without claiming the model-facing stages that do not exist yet. |
 | **Pipes and Filters** | Traversal -> chunking -> ranking -> one Grounding Evidence Document. | Makes each pure stage independently testable without adding a service, store, or integration bus. |
 
@@ -121,8 +126,9 @@ Rejected:
 
 - **Embedding/vector retrieval now:** rejected until lexical retrieval fails a committed
   eval set. It adds model/dependency/cost and non-deterministic ranking.
-- **Canvas/WebGL for the canonical graph:** rejected at the current graph size because
-  SVG gives better accessibility and sufficient performance.
+- **Canvas/WebGL or third-party 3D renderer:** rejected at the current graph size because
+  deterministic native geometry plus SVG/DOM projection is smaller, offline, testable,
+  and preserves focusable node controls.
 - **3D-first navigation:** rejected because it weakens scanability, keyboard access,
   text legibility, and offline resilience.
 - **Narrative-history grounding in v1:** rejected because chronology is not authority.
@@ -414,12 +420,13 @@ of truth. The ADR gates only the grounding slice; independent Browse/accessibili
 ```text
 DocsKnowledgeExplorer {
   Type:Portal; Arch:HubAndSpoke; Layout:MasterDetail; Density:Comfortable;
-  Nav:Sidebar+Breadcrumb; Viewport:FluidResponsive;
+  Nav:TopBar+Sidebar+Breadcrumb; Viewport:FluidResponsive;
   Input:KeyboardFirst+PrecisionPointer+TouchPrimary; Color:DarkAdaptive;
-  x-TypeStyle:Utilitarian; Depth:Flat; Sync:Stateless; Persistence:Session;
-  Feedback:Instant; Motion:Micro; Pacing:Freeform; Transition:HardCut;
+  x-TypeStyle:Utilitarian; Depth:SoftShadow; Sync:Stateless; Persistence:Session;
+  Feedback:Instant; Motion:Micro+Fluid; Pacing:Freeform; Transition:Morph;
   A11y:WCAG_2.2_AA+ReducedMotion+HighLegibility+ScreenReaderFirst;
-  x-ProjectionSet:"BrowseGraphMindMap"; x-Immersive:"Optional3DExperiment";
+  x-ProjectionSet:"BrowseGraphMindMapSpatial3D";
+  x-KnowledgeSurfaces:"DerivedHtmlDirectory";
 }
 ```
 
@@ -428,15 +435,17 @@ contract.
 
 ### Information architecture
 
-The canonical application has three projections over one graph state:
+The canonical application has four projections and one derived destination directory:
 
 1. **Browse** (default): type/phase hierarchy and search results.
 2. **Graph**: full typed network with semantic zoom.
 3. **Mind map**: a context-rooted spanning tree with cross-links retained as ghost edges.
+4. **Spatial 3D**: deterministic perspective projection with orbit, zoom, reset, and
+   selected-node camera targeting.
 
-An optional 3D spike may later render a read-only copy of the normalized internal
-projection model through disposable experiment glue. It is not part of the core
-projection enum, required state, or a stable plugin contract.
+A searchable **Knowledge surfaces** directory links to safely discovered standalone HTML
+knowledge tools such as the audit timeline, design previews, and generated documentation
+sites. The portal does not duplicate those tools' behavior.
 
 The right detail panel remains stable across projections and contains:
 
@@ -450,7 +459,7 @@ The right detail panel remains stable across projections and contains:
 ### State model
 
 ```text
-projection: browse | graph | mindmap
+projection: browse | graph | mindmap | spatial3d
 route: browse | visualization | details
 selectedNodeId: string | null
 contextNodeId: string | null
@@ -471,8 +480,10 @@ Rules:
 - Search locates and highlights. Topology changes only after an explicit filter action.
 - Context is encoded in the URL fragment and browser History API; browser Back/Forward
   restores the prior projection, selection, and context.
-- Projection-local viewport state is a renderer detail, not shared application state.
-- On narrow screens, `route=visualization` requires `projection=graph|mindmap`;
+- Projection-local viewport and Spatial 3D camera state are renderer details, not shared
+  application state or graph semantics.
+- On narrow screens, `route=visualization` requires
+  `projection=graph|mindmap|spatial3d`;
   `projection=browse` requires `route=browse`; `route=details` may retain the prior
   projection for Back restoration. Desktop ignores route for layout and normalizes it
   from the visible shell.
@@ -490,7 +501,7 @@ from selection.
 |---|---|---|---|---|---|
 | `SELECT_NODE(id)` | unchanged | set `id` | unchanged | unchanged | invalid ID -> notice, no state change |
 | `EXPLORE_CONTEXT(id)` | visualization | unchanged | set `id` | unchanged | `id` must be visible and valid |
-| `SET_PROJECTION(value)` | narrow: Browse for `browse`, Visualization for `graph|mindmap`; desktop: implied | unchanged | unchanged | unchanged | unsupported value -> Browse; route/projection pair normalized |
+| `SET_PROJECTION(value)` | narrow: Browse for `browse`, Visualization for `graph|mindmap|spatial3d`; desktop: implied | unchanged | unchanged | unchanged | unsupported value -> Browse; route/projection pair normalized |
 | `SET_ROUTE(value)` | set | unchanged | unchanged | unchanged | narrow Visualization + Browse projection -> Graph; narrow Browse -> Browse projection; Details retains prior projection; desktop route is implied |
 | `LEAVE_CONTEXT` | unchanged | unchanged | clear | clear if neighborhood-relative | restore default Mind-map root |
 | `SET_SEARCH(query)` | unchanged | unchanged | unchanged | unchanged | highlights/result cursor only; topology unchanged |
@@ -502,7 +513,7 @@ URL state uses the fragment so it works over `file://`:
 
 ```text
 #route=browse|visualization|details
-&view=browse|graph|mindmap
+&view=browse|graph|mindmap|spatial3d
 &selected=<encoded-artifact-id>
 &context=<encoded-artifact-id>
 &path=none|grounding|impact|proof
@@ -518,11 +529,16 @@ IDs recover to Browse as defined in the failure table. Only explicit user action
 for Back focus restoration, but that hint is not application or URL state. Transient
 search and camera moves never create history entries.
 
+Spatial camera state (`yaw`, `pitch`, `zoom`, and `target`) is renderer-local. It is
+initialized from deterministic layout plus current selection/context and is never
+serialized into URL state, graph hashes, or grounding packets.
+
 ### Selected-node context behavior
 
 On **Explore neighborhood**:
 
-1. center the node with `{motion.context}`;
+1. center the node instantly in Graph/Mind map; in Spatial 3D retarget the camera with
+   `{motion.context}` unless reduced motion is requested;
 2. fit its 1-hop neighborhood with padding;
 3. keep 2-hop nodes visible with the audited reduced-emphasis text/graphical tokens;
 4. retain unrelated node shapes and edges with audited dim/ghost graphical tokens,
@@ -537,6 +553,11 @@ On **Explore neighborhood**:
 to prior context. No global single-character shortcut is registered. Within a focused
 graph widget, Arrow keys move between node controls, Enter selects, and Escape returns
 to the projection toolbar. Editable controls suppress graph navigation keys.
+
+In Spatial 3D, node selection becomes the camera target without changing
+`contextNodeId`. **Focus selected** is an explicit toolbar action. Reduced-motion mode
+snaps to the target; otherwise the one restrained camera transition is interruptible by
+manual orbit/zoom.
 
 ### Semantic zoom
 
@@ -573,38 +594,72 @@ Selected/context flags and visible counts are derived from the stored IDs and ar
 lengths. Nodes sort by lane rank then artifact ID. Edges sort by source, relation, then
 target; stable edge IDs use `<source>|<rel>|<target>`.
 
-### Optional 3D projection spike
+### Deterministic Spatial 3D layout
 
-Because the user explicitly requested immersive 3D exploration, retain it as a bounded
-P3 experiment rather than pre-versioning a plugin API. The spike receives a read-only
-snapshot derived from the same normalized internal projection model as 2D, and it may
-request only host-owned select/explore/path/close actions. Disposable glue owns camera
-state, animation frames, event listeners, and WebGL resources. The spike is eligible only
-when:
+- Input is the same normalized artifacts and relationships consumed by Graph.
+- Place type lanes on stable X coordinates and nodes inside each lane by artifact-ID
+  order on Y.
+- Derive Z from a stable depth band plus a bounded deterministic artifact-ID hash jitter;
+  shuffled input arrays produce identical world coordinates.
+- Return world coordinates from one pure function and apply perspective/camera transforms
+  in a separate pure function.
+- The canonical camera target is the selected node when present, otherwise the context
+  node, otherwise the graph centroid.
+- Orbit changes yaw/pitch, zoom changes camera distance, reset restores the canonical
+  camera, and Focus selected retargets the selected node. Pointer orbit starts only on
+  blank canvas; equivalent labelled keyboard controls adjust yaw and pitch.
+- Depth-sort nodes and edges only for presentation. Camera angle, visual distance, Z
+  depth, and occlusion never influence typed traversal, paths, graph hashes, context
+  packets, or packet ordering.
+- If node/edge limits are exceeded or 3D transforms are unavailable, route to Graph while
+  preserving selection, context, filters, and path state.
 
-- WebGL capability succeeds;
-- `prefers-reduced-motion` does not request reduction;
-- the graph is within a measured device/node budget; and
-- the 3D bundle has been lazy-loaded successfully.
+### Native Spatial 3D projection
 
-The context node becomes the camera target; its neighborhood brightens and unrelated
-nodes fog/dim. Load rejection, initialization failure, render failure, context loss, or
-disposal returns to Graph; core state is unchanged. No fact, relation, or action exists
-only in 3D. Reduced-motion users receive the equivalent 2D Graph, not a partially
-animated 3D mode.
+Spatial 3D is a bounded progressive projection, not a plugin contract. It receives a
+read-only snapshot from the normalized graph model and may request only host-owned
+selection, explore, path, and projection actions. Renderer-local code owns camera state,
+pointer capture, animation frames, and listeners.
 
-Candidate implementation: `3d-force-graph` after a bundle/license/current-API spike.
-No 3D dependency is approved by this design alone.
+The selected node becomes the camera target; its neighborhood brightens and unrelated
+nodes retain accessible but reduced emphasis. Unsupported transforms, limit rejection,
+initialization failure, or render failure route to Graph with core state unchanged. No
+fact, relation, or action exists only in 3D. Reduced-motion users receive the full 3D
+projection with instant camera placement rather than being excluded from the mode.
+
+The implementation uses native JavaScript math and SVG/DOM. No 3D dependency is approved
+or required. Pointer and wheel input update camera state immediately but coalesce
+projection writes through one `requestAnimationFrame`; cached node/edge references avoid
+re-querying the DOM on each event. Rerender or lost pointer capture clears drag state.
 
 ### Offline asset contract
 
-Core Browse, Graph, Mind map, details, and relationship-list assets MUST be pinned and
+Core Browse, Graph, Mind map, Spatial 3D, details, and relationship-list assets MUST be pinned and
 served from relative repository paths copied from canonical `pack/` sources by
 `sync-pack.ps1`. React/htm may remain only if their pinned local copies and licenses are
 recorded; replacing them with native DOM is preferred if implementation evidence shows
-it is smaller. Network access is optional enhancement only. Mermaid and any 3D renderer
-lazy-load from pinned local assets and fail to source text/equivalent 2D; no core task
-depends on a CDN or service worker cache.
+it is smaller. Network access is optional enhancement only. Mermaid lazy-loads and fails
+to source text; Spatial 3D has no external asset. No core task depends on a CDN or service
+worker cache.
+
+### Derived knowledge-surface directory
+
+`docs-graph.py derive` safely scans regular files matching `docs/**/*.html` and emits a
+deterministically ordered `surfaces` collection beside `artifacts`.
+
+Each surface contains stable `id`, repo-relative `path`, extracted or fallback `title`,
+`kind`, concise `description`, and optional linked `artifactId`. The derivation:
+
+- excludes `docs/index.html`, `docs/ai-forward-pack/templates/**`, symlinks/reparse
+  points, and paths outside `docs/`;
+- extracts the first non-empty `<title>` with a stable path-derived fallback;
+- derives known destinations such as `docs/audit/index.html` without hardcoding a portal
+  menu;
+- sorts by `(kind, title, path)`;
+- admits at most 100 surfaces and fails derivation with `SURFACE_LIMIT_EXCEEDED`; the
+  browser independently enforces the same ceiling;
+- keeps `surfaces` outside the canonical graph hash and grounding packet so navigation
+  metadata cannot alter semantic provenance.
 
 ## 6. Complete UI states and copy
 
@@ -614,15 +669,16 @@ depends on a CDN or service worker cache.
 | Browse tree | Skeleton rows with stable headings | "No artifacts in this group." | "This group could not be read. Show all artifacts." | `tree`/`treeitem` hierarchy with selected state | Empty groups disabled; long labels wrap; index over-limit state blocks load. |
 | Breadcrumb/context trail | Keep prior valid trail while restoring URL | Project root only | "This context is unavailable. Return to Browse." | Links reflect browser history state | Current item is not a link; overflow collapses to an accessible menu. |
 | Filters | Current results remain visible while applying | "No filters are available." | Invalid stored filter is cleared with notice | Explicit Apply/Clear and active-filter count | Unavailable values disabled; filtered selection remains in details with notice. |
-| Projection tabs | Current projection remains visible | Browse remains available | Unavailable projection explains why | Selected tab exposes `aria-selected` | 3D is not a core tab; tab list scrolls at narrow width. |
+| Projection tabs | Current projection remains visible | Browse remains available | Unavailable projection explains why | Selected tab exposes `aria-selected` | Spatial 3D is a core progressive tab; tab list scrolls at narrow width. |
 | Search | No blocking state; local incremental match | `No search results for "<query>". The graph remains unchanged.` | Invalid query never crashes; clear action | Match count and next/previous controls | No suggestion list; full results remain in Browse. |
 | Graph | Stable lane skeleton | "No nodes satisfy these filters." | "Graph layout failed. Showing the relationship list instead." | Focusable SVG plus equivalent list | Above 500 visible nodes/1,000 edges, use Browse/list instead. |
 | Mind map | Keep current root while recomputing | "This artifact has no visible relationships." | "Mind map could not be built. Showing direct relationships." | Root, spanning tree, and ghost cross-links | Bounded complete tree; no hidden expansion state. |
+| Spatial 3D | Keep the last valid frame while retargeting | "No nodes satisfy these filters." | "3D is unavailable. Your selection and context were preserved in Graph." | Perspective node field, orbit/zoom/reset/focus controls, equivalent list | Above 500 nodes/1,000 edges or unsupported transforms, route to Graph. |
+| Knowledge surfaces | Stable cards render with shell | "No standalone knowledge surfaces were discovered." | Invalid/unsafe entries are omitted; graph navigation remains available | Searchable cards link directly to audit, previews, and generated sites | Long paths wrap; no template-only files. |
 | Details | Selected shell with metadata placeholders | "Select an artifact to inspect its context." | "The source body is unavailable; metadata and links remain usable." | Summary, health, links, paths, actions | Scroll regions with headings; no horizontal clipping. |
 | Relationship list | Stable group headings | "No visible relationships." | "Relationships are incomplete. Review graph health." | Every visible edge is represented in DOM with the same stable edge ID; node controls retain artifact IDs | Browser index caps guarantee the complete list remains bounded; never silently omit visible edges. |
 | Explore action | N/A — context reduction and deterministic layout are synchronous in the same frame; adding a visual-only loading flash would create churn without observable work | No selection: disabled with explanation | "Could not explore this neighborhood. Return to Browse." | URL/context updated and one completion announcement sent | Leave-neighborhood action restores prior URL state. |
 | Narrow-screen visualization route | Preserve selected title during route load | Same empty state as projection | Return to Browse with message | Full-screen projection with explicit Back link | At 320px/400% zoom all controls reflow in document order. |
-| Optional 3D spike | "Preparing immersive view..." with Cancel | Uses 2D empty state | "3D is unavailable. Returned to Graph with your context preserved." | Camera targets context node | Unmounted after failure/reduced motion/device limit; renderer disposes resources. |
 | Offline/CDN loss | Local shell and index remain active | Same as local data | "Enhanced diagrams are offline; source text is still available." | Browse/graph/mind map work without CDN | Mermaid source is shown as text. |
 
 Load-bearing copy:
@@ -633,6 +689,7 @@ Load-bearing copy:
 - Empty graph: **No artifacts match these filters. Clear filters**
 - Graph-health notice: **Some context is stale or incomplete. Review graph health before using it**
 - 3D fallback: **3D is unavailable. Your selection and context were preserved in Graph**
+- Knowledge surfaces empty: **No standalone knowledge surfaces were discovered**
 
 ## 7. Accessibility and responsive behavior
 
@@ -643,13 +700,16 @@ Load-bearing copy:
   Narrow routes begin with Back -> route heading -> route controls -> content.
 - Browse is a `tree` with `treeitem` children. Up/Down move items, Right expands or
   enters a group, Left collapses or returns to the parent, Enter selects.
-- Graph and Mind map are named `region` elements. Each SVG node contains a focusable
+- Graph, Mind map, and Spatial 3D are named `region` elements. Each SVG node contains a focusable
   HTML `button` through `foreignObject`, with a text equivalent in the relationship
   list. Roving tabindex exposes one node at a time; Arrow keys move to the nearest
   visible node in that direction: filter to the directional half-plane, then minimize
   angular deviation, squared distance, and artifact ID in that order. Enter or Space
   selects; Escape returns to the projection toolbar. The canonical relationship list
   follows the visualization and uses the same canonical node/edge ordering in DOM.
+- The Spatial 3D viewport is focusable and describes its pointer, wheel, and keyboard
+  controls. Six labelled orbit buttons provide yaw/pitch equivalents; zoom, reset, and
+  focus-selected remain native buttons.
 - Reduced-emphasis nodes remain focusable where present. Their focus indicator always
   renders with the full mode-specific focus-ring token, width, and offset; node
   de-emphasis never composites or reduces the focus indicator.
@@ -673,10 +733,15 @@ Load-bearing copy:
 - Screen-reader announcements are limited to deliberate selection/context changes, not
   layout/render updates: one polite announcement per completed selection/context action,
   and zero for intermediate ticks, derived search counts, or viewport moves.
-- Reduced motion uses instant placement or a short opacity change; no camera flight.
+- Reduced motion uses instant placement or a short opacity change; Spatial 3D camera
+  retargeting snaps with no camera flight.
 - Operable HTML node controls, toolbar controls, and relationship-list rows are at least
   `{targets.minimum}` square. Non-interactive overview glyphs may be smaller but never
   become the only operable representation.
+- Sticky header controls use focus scroll compensation so focus scrolling cannot leave
+  the active control hidden beneath the header.
+- Knowledge-surface links expose unique accessible names (`Open <title>`); unsafe
+  entries are omitted rather than rendered as ambiguous repeated links.
 - At `{breakpoints.narrow}` and below, and at 320 CSS pixels/400% zoom, the shell becomes URL-addressable
   Browse -> Visualization -> Details routes. Browser Back returns to the prior route
   and keyboard focus returns to the initiating control. There is no modal bottom sheet
@@ -695,19 +760,22 @@ WCAG 2.4.11/2.4.13 geometry and contrast requirements.
 | Usable 2D shell | <=2.0s p75, cold cache, pinned Chromium, 4x CPU slowdown, `Standard_D4s_v5` reference VM. |
 | Selection/search feedback | <=100ms. |
 | Initial 2D layout | <=500ms at 500 nodes/1,000 edges on the reference machine. |
+| Initial Spatial 3D projection | <=500ms at 500 nodes/1,000 edges on the reference machine. |
 | Navigation frame rate | 60fps target; no 1-second window below 30fps. |
 | Visible labels | <=150, prioritized by semantic zoom. |
 | CLI context | <=2s wall time and <=256 MiB peak RSS at 2,000 artifacts/20,000 edges/64 MiB admitted source. |
 | Core offline | Fresh-cache task completion over `file://` and localhost with network blocked. |
 | Mermaid | Lazy-load only when a document with diagrams is opened; failure shows source. |
-| 3D spike | Must declare compressed bytes, device/node limit, and five-run p75 before adoption. |
+| Spatial 3D | No added runtime dependency; 500-node/1,000-edge ceiling; five-run p75 and active-orbit frame floor reported. |
+| Knowledge surfaces | <=100 safe regular HTML destinations; derivation and browser preflight both fail closed. |
 
 Browser thresholds use five cold and five warm runs; report p50/p75/max. Interaction
 latency uses Event Timing where available or `performance.measure`. Frame rate samples
 the full pan/context transition, not an idle canvas.
 
 Browser preflight rejects a `docs-index.js` payload over 5 MiB, more than 1,000
-artifacts, or more than 5,000 typed edges before layout. Spatial projections additionally
+artifacts, more than 5,000 typed edges, or more than 100 HTML surfaces before layout.
+Spatial projections additionally
 stop at 500 visible nodes/1,000 visible edges and route to Browse plus the full
 relationship list. A source body over 1 MiB is not rendered; a Mermaid block over 64 KiB,
 more than 500 lines, or a document with more than 20 diagrams is shown as escaped source
@@ -760,7 +828,7 @@ build number, headless mode, SwiftShader software rendering, declared launch fla
 disabled extensions/background throttling, a fresh browser context per cold run, a
 1366x768 viewport at DPR 1, and CDP 4x CPU throttling. It uses seed `20260710`, the
 committed 500-node/1,000-edge fixture SHA-256, and both cold-cache and warm-cache runs.
-The planned `docs-explorer.performance.spec` emits `browser-benchmark.v1` JSON with
+The committed browser benchmark emits `docs-explorer-browser-benchmark/v1` JSON with
 OS image, headless/GPU mode, launch flags, CPU rate, cache mode, environment,
 fixture/hash, five run samples, p50/p75/max, frame-floor window, heap delta where
 available, and threshold verdicts. Results missing any required field do not satisfy the
@@ -789,7 +857,9 @@ relationship-list/Browse fallback on every machine.
 | Source/diagram complexity exceeds browser bound | **Prevent:** preflight body/block/line/diagram counts before renderer invocation. | N-1/N/N+1 source/diagram fixtures. |
 | CLI filesystem read stalls | **Bound at process boundary:** only regular non-symlink files are admitted; every shipped caller enforces the documented 10-second subprocess watchdog and discards output on kill. | Blocking parent/child fixture proves exact-tree termination and empty stdout. |
 | CDN or Mermaid fails | **Mitigate:** local shell, metadata, and source remain usable. | Network-blocked browser test. |
-| 3D spike loses context or leaks resources | **Reject experiment:** disposable glue must restore 2D and release listeners/frames/WebGL exactly once. | Spike-only forced context-loss/repeated mount-fail-unmount evidence. |
+| Spatial 3D cannot initialize or exceeds limits | **Mitigate:** route to Graph, preserve semantic state, release pointer/listener/animation resources exactly once. | Unsupported-transform, N/N+1 limit, and repeated mount/fail/unmount tests. |
+| HTML surface path is unsafe or points at a template | **Prevent:** derive only safe regular files under approved docs roots and exclude template/portal paths. | Symlink/reparse, traversal, exclusion, and deterministic-order tests. |
+| HTML surface count exceeds the portal ceiling | **Prevent:** fail derivation with `SURFACE_LIMIT_EXCEEDED`; browser preflight independently rejects oversized metadata. | 100/101 surface fixtures plus browser limit fixture. |
 | Dense graph becomes unreadable | **Mitigate:** semantic zoom, label ceiling, relation/path modes, equivalent list. | Dense fixture and visual/a11y assertions. |
 
 Accepted simplifications:
@@ -802,8 +872,10 @@ Accepted simplifications:
 
 ## Adversarial analysis (STRIDE-lite)
 
-Trust boundaries: committed Markdown/frontmatter -> parser/index; local index/Markdown
--> browser renderer; optional 3D experiment -> browser; CLI input -> filesystem reads.
+Trust boundaries: committed Markdown/frontmatter/HTML metadata -> parser/index; local
+index/Markdown -> browser renderer; Spatial 3D pointer input -> browser camera; protected
+workflow dispatch/environment approval -> self-hosted runner/OIDC attestation; CLI input
+-> filesystem reads.
 
 | Boundary | STRIDE | Disposition | Control | Negative test |
 |---|---|---|---|---|
@@ -815,7 +887,9 @@ Trust boundaries: committed Markdown/frontmatter -> parser/index; local index/Ma
 | Scanner -> packet | **I** unintended files enter grounding context | mitigate | Explicit roots/exclusions; no arbitrary path input; packet lists coverage. | Secret-shaped file outside roots never appears. |
 | Index -> layout/parser | **D** dense or malformed graph exhausts resources | mitigate | Preflight/index/spatial limits, bounded traversal/layout, and fallback list. | Large/cyclic/over-limit synthetic fixtures. |
 | Eval case file -> subprocess | **T/E** a case-controlled `cmd-exit` argv executes with the CI identity | accept | Eval cases are trusted, reviewed repository content; bounded execution limits time, memory, output, and process descendants. CI must not execute `--exec` or `cmd-exit` from unreviewed fork/PR-supplied cases. | Hostile IDs/workspaces fail containment; bounded-process fixtures terminate the full process tree. |
-| Optional 3D experiment -> browser | **T/D** dependency is compromised or exhausts the renderer | mitigate | Not core; current API/license spike; lazy load; capability/size gate; disposal/fallback. | Block/fault candidate renderer and confirm equivalent core. |
+| Spatial 3D -> browser | **T/D/E** pointer/camera path exhausts rendering or exposes hidden actions | mitigate | Native bounded geometry, host-owned actions, explicit limits, pointer release/disposal, Graph fallback. | Exceed limits, force transform/init failure, interrupt pointer capture, repeatedly mount/unmount. |
+| HTML surfaces -> browser | **T/E** crafted title/path becomes executable or escapes docs root | prevent | Safe regular-file discovery, escaped text, repo-relative links, template exclusions. | Script-shaped title, traversal path, symlink/reparse, and external-path fixtures. |
+| Protected workflow -> self-hosted benchmark runner/OIDC attestation | **S/T/E** a dispatcher, approver, or runner administrator executes unreviewed code or attests forged evidence | mitigate | Canonical protected `main` only, required PR review, exact-SHA credential-free checkout, immutable action pins, protected environment, dedicated one-job ephemeral runner, and attested evidence. | Fork/branch dispatch is skipped; a non-ephemeral runner fails with a stable error code; release validation rejects mismatched evidence. Residual: environment/repository administrators retain bypass or self-approval authority. |
 
 No authentication, authorization, secrets, money, or irreversible actions are added.
 
@@ -866,6 +940,9 @@ lost.
 | `DOC.NAVIGATION.TARGET_MISSING` | selected/context artifact removed | clear invalid target; restore Browse/project-root focus |
 | `DOC.SEARCH.INVALID` | decoded search/filter state malformed | clear invalid values; retain valid projection state |
 | `DOC.LAYOUT.UNAVAILABLE` | lane or mind-map construction fails or times out | relationship list + Browse |
+| `DOC.SPATIAL3D.UNAVAILABLE` | browser lacks required local pointer/transform capability | preserve semantic state in Graph |
+| `DOC.SPATIAL3D.LIMIT_EXCEEDED` | 3D node/edge ceiling exceeded | preserve semantic state in Graph |
+| `DOC.SPATIAL3D.RENDER_FAILED` | deterministic 3D construction or projection throws | preserve semantic state in Graph |
 | `DOC.DOCUMENT.UNAVAILABLE` | body missing, over limit, fetch/render failure, or timeout | metadata/escaped-source/open-file fallback |
 | `DOC.DIAGRAM.UNAVAILABLE` | asset/source over limit, asset-load timeout, or render failure | escaped source + local guidance |
 
@@ -999,11 +1076,14 @@ browser automation is the mandatory implementation gate for:
 - Context centers/fits and is restored through URL/browser Back.
 - Search highlights without topology change.
 - Tree, graph, mind-map, toolbar, Escape, and focus-restoration keyboard flows.
+- Spatial 3D pointer orbit plus labelled keyboard yaw/pitch controls.
 - Spatial and relationship-list node/edge/path/action ID sets are equal.
 - Reduced motion suppresses camera/layout animation.
 - 320px and 400% zoom route/back/focus lifecycle.
 - CDN-blocked and source-fetch failure degradation.
 - WCAG checks: labels/roles/focus order/contrast/no color-only meaning.
+- Sticky-header focus visibility, unique knowledge-surface names, actionable empty-state
+  controls, and Spatial 3D/portal target-size, contrast, and forced-colors coverage.
 - Reproducible cold/warm layout and interaction thresholds against synthetic 50, 500,
   and 1,000-node fixtures in pinned Chromium. Firefox/WebKit run functional,
   keyboard/a11y, limit, and fallback parity without asserting Chromium's timing budget.
@@ -1080,7 +1160,7 @@ correctness claims.
 | P1 | todo | Add responsive URL routes and deterministic Back/focus behavior. | Keyboard/touch tests pass at 320px and 400% zoom. |
 | P1 | risk | Make offline/CDN failure degrade to local navigation and source. | Network-blocked test passes. |
 | P2 | todo | Add native performance marks, stable recovery-surface codes, host-owned operation deadlines, and committed benchmark harnesses. | Error/timeout/limit and reproducible benchmark tests pass without remote telemetry or browser diagnostic persistence. |
-| P3 | experiment | Spike `3d-force-graph` as disposable renderer glue over the normalized internal projection model; measure bundle, lifecycle, performance, usability, and 2D parity. | Human evidence and budgets justify adoption; otherwise reject without creating a plugin contract. |
+| P3 | completed decision | Reject `3d-force-graph`; ship native bounded Spatial 3D over the normalized model with no plugin contract or runtime dependency. | Deterministic coordinates, Graph fallback, accessibility, and browser lifecycle tests pass. |
 
 ## 15. Adversarial gate record
 
@@ -1120,6 +1200,6 @@ Residual risk:
 
 | | |
 |---|---|
-| **Completed** | Revised detailed design for deterministic grounding, project-memory boundaries, selected-node context, accessible 2D projections, and an optional 3D renderer experiment. |
-| **Remaining** | Implementation slices and their Proof Pack, the P0 pack-source corpus architecture decision, and an optional measured 3D spike. |
-| **Best next action** | Design is complete. Do not implement Explorer changes unless the user explicitly requests implementation. |
+| **Completed** | Deterministic grounding, Browse/Graph/Mind-map, native bounded Spatial 3D, project-memory boundaries, safe HTML knowledge surfaces, accessibility states, and the implementation Proof Pack. |
+| **Remaining** | Pinned-reference latency evidence (or a human-approved deviation) before revision 17 may be released. |
+| **Best next action** | Keep revision 17 unreleased until the qualified reference benchmark gate passes. |

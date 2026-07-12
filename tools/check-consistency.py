@@ -128,6 +128,18 @@ def _finite_number(value):
     )
 
 
+def _percentile(values, quantile):
+    ordered = sorted(values)
+    if not ordered:
+        return 0.0
+    position = (len(ordered) - 1) * quantile
+    lower = math.floor(position)
+    upper = math.ceil(position)
+    if lower == upper:
+        return ordered[lower]
+    return ordered[lower] + (ordered[upper] - ordered[lower]) * (position - lower)
+
+
 def _valid_reference_benchmark(proof):
     if not isinstance(proof, dict):
         return False
@@ -168,6 +180,174 @@ def _valid_reference_benchmark(proof):
     )
 
 
+def _valid_browser_reference_benchmark(proof):
+    if not isinstance(proof, dict):
+        return False
+    environment = proof.get("environment", {})
+    azure = environment.get("azureReferenceMetadata", {})
+    corpus = proof.get("corpus", {})
+    runs = proof.get("runs", {})
+    thresholds = proof.get("thresholds", {})
+    summary = proof.get("summary", {})
+    samples = proof.get("samples", {})
+    summary_metric_names = (
+        "usable2dShellP75Milliseconds",
+        "selectionSearchP75Milliseconds",
+        "initial2dLayoutP75Milliseconds",
+        "initialSpatialP75Milliseconds",
+        "minimumOrbitFramesPerSecond",
+    )
+    if not all(
+        _finite_number(thresholds.get(name)) and _finite_number(summary.get(name))
+        for name in summary_metric_names
+    ):
+        return False
+    cold = samples.get("cold")
+    warm = samples.get("warm")
+    raw_metric_names = (
+        "usable2dShellMilliseconds",
+        "selectionSearchMilliseconds",
+        "initial2dLayoutMilliseconds",
+        "initialSpatialMilliseconds",
+        "minimumOrbitFramesPerSecond",
+    )
+    if (
+        not isinstance(cold, list)
+        or not isinstance(warm, list)
+        or len(cold) != 5
+        or len(warm) != 5
+        or not all(
+            isinstance(sample, dict)
+            and all(
+                _finite_number(sample.get(name)) and sample.get(name) >= 0
+                for name in raw_metric_names
+            )
+            and _finite_number(sample.get("heapDeltaBytes"))
+            for sample in cold + warm
+        )
+        or any(sample.get("cacheMode") != "cold" for sample in cold)
+        or any(sample.get("cacheMode") != "warm" for sample in warm)
+    ):
+        return False
+    all_samples = cold + warm
+    recomputed = {
+        "usable2dShellP75Milliseconds": _percentile(
+            [sample["usable2dShellMilliseconds"] for sample in cold],
+            0.75,
+        ),
+        "selectionSearchP75Milliseconds": _percentile(
+            [sample["selectionSearchMilliseconds"] for sample in all_samples],
+            0.75,
+        ),
+        "initial2dLayoutP75Milliseconds": _percentile(
+            [sample["initial2dLayoutMilliseconds"] for sample in all_samples],
+            0.75,
+        ),
+        "initialSpatialP75Milliseconds": _percentile(
+            [sample["initialSpatialMilliseconds"] for sample in all_samples],
+            0.75,
+        ),
+        "minimumOrbitFramesPerSecond": min(
+            sample["minimumOrbitFramesPerSecond"] for sample in all_samples
+        ),
+    }
+    if not all(
+        math.isclose(summary[name], recomputed[name], rel_tol=1e-9, abs_tol=1e-6)
+        for name in summary_metric_names
+    ):
+        return False
+    distributions = summary.get("distributions")
+    distribution_values = {
+        "usable2dShellMilliseconds": [
+            sample["usable2dShellMilliseconds"] for sample in cold
+        ],
+        "selectionSearchMilliseconds": [
+            sample["selectionSearchMilliseconds"] for sample in all_samples
+        ],
+        "initial2dLayoutMilliseconds": [
+            sample["initial2dLayoutMilliseconds"] for sample in all_samples
+        ],
+        "initialSpatialMilliseconds": [
+            sample["initialSpatialMilliseconds"] for sample in all_samples
+        ],
+        "heapDeltaBytes": [sample["heapDeltaBytes"] for sample in all_samples],
+    }
+    if not isinstance(distributions, dict):
+        return False
+    for name, values in distribution_values.items():
+        actual = distributions.get(name)
+        expected = {
+            "p50": _percentile(values, 0.5),
+            "p75": _percentile(values, 0.75),
+            "max": max(values),
+        }
+        if not isinstance(actual, dict) or not all(
+            _finite_number(actual.get(key))
+            and math.isclose(
+                actual[key],
+                expected[key],
+                rel_tol=1e-9,
+                abs_tol=1e-6,
+            )
+            for key in expected
+        ):
+            return False
+    return (
+        proof.get("schemaVersion") == "docs-explorer-browser-benchmark/v1"
+        and proof.get("passed") is True
+        and proof.get("localThresholdsPassed") is True
+        and proof.get("referenceBudgetProved") is True
+        and environment.get("referenceEnvironmentMatched") is True
+        and environment.get("architecture") == "X64"
+        and environment.get("logicalProcessors") == 4
+        and environment.get("playwright") == "1.61.1"
+        and environment.get("browserName") == "chromium"
+        and isinstance(environment.get("chromiumBuild"), str)
+        and bool(environment.get("chromiumBuild"))
+        and environment.get("headless") is True
+        and environment.get("gpuMode") == "swiftshader"
+        and environment.get("launchFlags")
+        == [
+            "--disable-background-timer-throttling",
+            "--disable-backgrounding-occluded-windows",
+            "--disable-extensions",
+            "--disable-renderer-backgrounding",
+            "--use-angle=swiftshader",
+        ]
+        and environment.get("viewport") == {"width": 1366, "height": 768}
+        and environment.get("deviceScaleFactor") == 1
+        and environment.get("cpuSlowdown") == 4
+        and environment.get("orbitFrameWindowMilliseconds") == 1000
+        and "Windows Server 2022" in environment.get("windowsCaption", "")
+        and azure.get("vmSize") == "Standard_D4s_v5"
+        and azure.get("offer") == "WindowsServer"
+        and azure.get("osType") == "Windows"
+        and corpus.get("artifacts") == 500
+        and corpus.get("relationships") == 1000
+        and corpus.get("surfaces") == 100
+        and corpus.get("seed") == 20260710
+        and corpus.get("sha256")
+        == "f4b34a29d2f836957f7fe24d0424444ac515881b6618cdfdd759a302ccb3cdef"
+        and runs.get("cold") == 5
+        and runs.get("warm") == 5
+        and thresholds.get("usable2dShellP75Milliseconds") == 2000.0
+        and thresholds.get("selectionSearchP75Milliseconds") == 100.0
+        and thresholds.get("initial2dLayoutP75Milliseconds") == 500.0
+        and thresholds.get("initialSpatialP75Milliseconds") == 500.0
+        and thresholds.get("minimumOrbitFramesPerSecond") == 30.0
+        and 0 <= summary.get("usable2dShellP75Milliseconds")
+        <= thresholds.get("usable2dShellP75Milliseconds")
+        and 0 <= summary.get("selectionSearchP75Milliseconds")
+        <= thresholds.get("selectionSearchP75Milliseconds")
+        and 0 <= summary.get("initial2dLayoutP75Milliseconds")
+        <= thresholds.get("initial2dLayoutP75Milliseconds")
+        and 0 <= summary.get("initialSpatialP75Milliseconds")
+        <= thresholds.get("initialSpatialP75Milliseconds")
+        and summary.get("minimumOrbitFramesPerSecond")
+        >= thresholds.get("minimumOrbitFramesPerSecond")
+    )
+
+
 def check_release_gate(findings):
     install = _read(os.path.join(PACK, "adapters", "INSTALL.md"))
     if install is None:
@@ -180,13 +360,24 @@ def check_release_gate(findings):
     if revision < 17:
         return
 
-    proof_path = os.path.join(ROOT, "docs", "proof", "docs-context-benchmark.reference.json")
-    proof_valid = False
+    proof_dir = os.path.join(ROOT, "docs", "proof")
+    cli_proof_path = os.path.join(proof_dir, "docs-context-benchmark.reference.json")
+    browser_proof_path = os.path.join(
+        proof_dir,
+        "docs-explorer-browser-benchmark.reference.json",
+    )
+    cli_proof_valid = False
+    browser_proof_valid = False
     try:
-        proof = json.loads(_read(proof_path) or "")
-        proof_valid = _valid_reference_benchmark(proof)
+        proof = json.loads(_read(cli_proof_path) or "")
+        cli_proof_valid = _valid_reference_benchmark(proof)
     except (OSError, ValueError, TypeError):
-        proof_valid = False
+        cli_proof_valid = False
+    try:
+        proof = json.loads(_read(browser_proof_path) or "")
+        browser_proof_valid = _valid_browser_reference_benchmark(proof)
+    except (OSError, ValueError, TypeError):
+        browser_proof_valid = False
 
     deviation_path = os.path.join(
         ROOT,
@@ -194,9 +385,12 @@ def check_release_gate(findings):
         "notes",
         "docs-explorer-reference-performance-deviation.md",
     )
-    if not proof_valid and not _accepted_reference_deviation(deviation_path, revision):
+    if (
+        not (cli_proof_valid and browser_proof_valid)
+        and not _accepted_reference_deviation(deviation_path, revision)
+    ):
         findings.append(
-            f"INSTALL revision {revision} is marked released without pinned reference "
+            f"INSTALL revision {revision} is marked released without pinned CLI and browser "
             "benchmark proof or an accepted human-approved performance deviation"
         )
 

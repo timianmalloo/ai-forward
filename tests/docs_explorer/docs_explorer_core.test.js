@@ -198,6 +198,26 @@ test("URL state round-trips sorted explicit fields", () => {
   assert.deepEqual(decoded.filters.relations, ["depends-on", "tested-by"]);
 });
 
+test("Spatial 3D is a URL-addressable projection with semantic state only", () => {
+  const state = {
+    ...core.initialState(index),
+    projection: "spatial3d",
+    route: "visualization",
+    selectedNodeId: "child",
+    contextNodeId: "root",
+  };
+
+  const encoded = core.encodeUrlState(state);
+  const decoded = core.decodeUrlState(new URLSearchParams(encoded), index);
+
+  assert.match(encoded, /view=spatial3d/);
+  assert.equal(decoded.projection, "spatial3d");
+  assert.equal(decoded.selectedNodeId, "child");
+  assert.equal(decoded.contextNodeId, "root");
+  assert.equal(encoded.includes("yaw"), false);
+  assert.equal(encoded.includes("zoom"), false);
+});
+
 test("normalized projection uses deterministic node and edge order", () => {
   const model = core.normalizeProjection(index);
   assert.deepEqual(model.nodes.map((node) => node.id), ["root", "child"]);
@@ -365,4 +385,78 @@ test("500-node and 1000-edge layout stays structurally bounded", () => {
   assert.equal(layout.nodes.length, 500);
   assert.equal(layout.edges.length, 1000);
   assert.deepEqual(layout.work, { nodeVisits: 1000, edgeVisits: 1000 });
+});
+
+test("Spatial 3D world coordinates are deterministic under shuffled input", () => {
+  const nodes = [
+    { id: "zeta", lane: "design", laneRank: 1 },
+    { id: "root", lane: "architecture", laneRank: 0 },
+    { id: "alpha", lane: "design", laneRank: 1 },
+  ];
+  const edges = [
+    { id: "root|depends-on|alpha", source: "root", rel: "depends-on", target: "alpha" },
+    { id: "zeta|tested-by|root", source: "zeta", rel: "tested-by", target: "root" },
+  ];
+
+  const first = core.deterministic3DLayout({ nodes, edges });
+  const second = core.deterministic3DLayout({
+    nodes: [nodes[2], nodes[0], nodes[1]],
+    edges: [edges[1], edges[0]],
+  });
+  const coordinates = (layout) => Object.fromEntries(
+    layout.nodes.map(({ id, x, y, z }) => [id, { x, y, z }]),
+  );
+
+  assert.deepEqual(coordinates(first), coordinates(second));
+  assert.deepEqual(first.edges.map((edge) => edge.id), second.edges.map((edge) => edge.id));
+  assert.deepEqual(first.center, second.center);
+});
+
+test("Spatial camera targets selection before context and graph centroid", () => {
+  const layout = core.deterministic3DLayout({
+    nodes: [
+      { id: "root", lane: "architecture", laneRank: 0 },
+      { id: "child", lane: "design", laneRank: 1 },
+    ],
+    edges: [],
+  });
+
+  const selected = core.canonicalSpatialCamera(layout, "child", "root");
+  const context = core.canonicalSpatialCamera(layout, null, "root");
+  const centroid = core.canonicalSpatialCamera(layout, null, null);
+
+  assert.deepEqual(selected.target, layout.nodes.find((node) => node.id === "child"));
+  assert.deepEqual(context.target, layout.nodes.find((node) => node.id === "root"));
+  assert.deepEqual(centroid.target, layout.center);
+});
+
+test("Spatial camera transforms presentation without changing graph semantics", () => {
+  const layout = core.deterministic3DLayout({
+    nodes: [
+      { id: "root", lane: "architecture", laneRank: 0 },
+      { id: "child", lane: "design", laneRank: 1 },
+    ],
+    edges: [
+      { id: "root|depends-on|child", source: "root", rel: "depends-on", target: "child" },
+    ],
+  });
+  const camera = core.canonicalSpatialCamera(layout, "root", null);
+  const first = core.projectSpatialLayout(layout, camera, 1000, 700);
+  const second = core.projectSpatialLayout(
+    layout,
+    { ...camera, yaw: camera.yaw + 0.5, zoom: 1.25 },
+    1000,
+    700,
+  );
+
+  assert.deepEqual(first.edges.map((edge) => edge.id), ["root|depends-on|child"]);
+  assert.deepEqual(second.edges.map((edge) => edge.id), ["root|depends-on|child"]);
+  assert.deepEqual(
+    first.nodes.map((node) => node.id).sort(),
+    second.nodes.map((node) => node.id).sort(),
+  );
+  assert.notDeepEqual(
+    first.nodes.map(({ id, screenX, screenY }) => ({ id, screenX, screenY })),
+    second.nodes.map(({ id, screenX, screenY }) => ({ id, screenX, screenY })),
+  );
 });
