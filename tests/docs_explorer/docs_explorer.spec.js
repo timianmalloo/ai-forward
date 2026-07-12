@@ -39,11 +39,11 @@ test("loading shell exposes stable navigation and Browse skeleton rows", async (
 
   await expect(page.locator("#app")).toHaveAttribute("data-state", "loading");
   await expect(page.getByRole("tablist", { name: "Explorer projection" })).toBeVisible();
-  await expect(page.getByRole("tab", { name: "Browse" })).toHaveAttribute(
+  await expect(page.getByRole("tab", { name: "Index" })).toHaveAttribute(
     "aria-selected",
     "true",
   );
-  await expect(page.getByRole("heading", { name: "Browse project knowledge" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Knowledge index" })).toBeVisible();
   await expect(page.locator("[data-skeleton-row]")).toHaveCount(4);
 });
 
@@ -232,11 +232,11 @@ test("Audit Explorer exposes an alert when its data file cannot load", async ({ 
 test("Browse is the default and selection does not explore", async ({ page }) => {
   await page.goto("/docs/index.html");
 
-  await expect(page.getByRole("tab", { name: "Browse" })).toHaveAttribute(
+  await expect(page.getByRole("tab", { name: "Index" })).toHaveAttribute(
     "aria-selected",
     "true",
   );
-  const firstArtifact = page.locator('[role="treeitem"][data-kind="artifact"]').first();
+  const firstArtifact = page.locator('[data-artifact-card] [data-action="select"]').first();
   await firstArtifact.click();
   await expect(page.getByRole("button", { name: "Explore neighborhood" })).toBeEnabled();
   await expect(page.locator("body")).not.toHaveAttribute("data-context");
@@ -266,7 +266,7 @@ test("core tasks remain usable with network blocked", async ({ page }) => {
   });
 
   await page.goto("/docs/index.html");
-  await expect(page.getByRole("tree").first()).toBeVisible();
+  await expect(page.locator("[data-artifact-card]").first()).toBeVisible();
   await page.getByRole("tab", { name: "Graph" }).click();
   await expect(page.getByRole("region", { name: "Project graph" })).toBeVisible();
 });
@@ -290,7 +290,7 @@ test("narrow layout exposes route navigation without horizontal overflow", async
 }) => {
   await page.setViewportSize({ width: 320, height: 800 });
   await page.goto("/docs/index.html");
-  await page.locator('[role="treeitem"][data-kind="artifact"]').first().click();
+  await page.locator('[data-artifact-card] [data-action="select"]').first().click();
   await page.getByRole("button", { name: "Open details" }).click();
 
   await expect(page.getByRole("button", { name: "Back" })).toBeVisible();
@@ -306,7 +306,7 @@ test("320 CSS pixels preserves route and focus lifecycle at the 400 percent refl
   await page.setViewportSize({ width: 320, height: 720 });
   await serveIndex(page, fixtureIndex());
   await page.goto("/docs/index.html");
-  const artifact = page.locator('[role="treeitem"][data-kind="artifact"]').first();
+  const artifact = page.locator('[data-artifact-card] [data-action="select"]').first();
   await artifact.click();
   await page.getByRole("button", { name: "Open details" }).click();
   await expect(page.locator("body")).toHaveAttribute("data-route", "details");
@@ -329,7 +329,7 @@ test("app-owned Back falls back to Browse when no Explorer history entry exists"
   await page.getByRole("button", { name: "Back" }).click();
 
   await expect(page.locator("body")).toHaveAttribute("data-route", "browse");
-  await expect(page.getByRole("tab", { name: "Browse" })).toHaveAttribute(
+  await expect(page.getByRole("tab", { name: "Index" })).toHaveAttribute(
     "aria-selected",
     "true",
   );
@@ -341,7 +341,7 @@ test("malformed URL state recovers to the canonical Browse route", async ({ page
     "/docs/index.html#view=unknown&route=missing&selected=absent&context=absent&path=invalid",
   );
 
-  await expect(page.getByRole("tab", { name: "Browse" })).toHaveAttribute(
+  await expect(page.getByRole("tab", { name: "Index" })).toHaveAttribute(
     "aria-selected",
     "true",
   );
@@ -355,7 +355,7 @@ test("projection choices use tab semantics and keyboard navigation", async ({ pa
 
   const tablist = page.getByRole("tablist", { name: "Explorer projection" });
   await expect(tablist.getByRole("tab")).toHaveCount(4);
-  const browse = tablist.getByRole("tab", { name: "Browse" });
+  const browse = tablist.getByRole("tab", { name: "Index" });
   const graph = tablist.getByRole("tab", { name: "Graph" });
   await expect(browse).toHaveAttribute("aria-selected", "true");
   await expect(graph).toHaveAttribute("aria-selected", "false");
@@ -368,7 +368,7 @@ test("projection choices use tab semantics and keyboard navigation", async ({ pa
 test("browser Back restores selected state and keyboard focus", async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 800 });
   await page.goto("/docs/index.html");
-  const firstArtifact = page.locator('[role="treeitem"][data-kind="artifact"]').first();
+  const firstArtifact = page.locator('[data-artifact-card] [data-action="select"]').first();
   const selectedId = await firstArtifact.getAttribute("data-id");
   await firstArtifact.click();
   await page.getByRole("button", { name: "Open details" }).click();
@@ -382,7 +382,7 @@ test("browser Back restores selected state and keyboard focus", async ({ page })
 
 test("filter-cleared context is restored through browser Back", async ({ page }) => {
   await page.goto("/docs/index.html");
-  const firstArtifact = page.locator('[role="treeitem"][data-kind="artifact"]').first();
+  const firstArtifact = page.locator('[data-artifact-card] [data-action="select"]').first();
   const contextId = await firstArtifact.getAttribute("data-id");
   const contextType = await page.evaluate(
     (id) => window.DOCS_INDEX.artifacts.find((artifact) => artifact.id === id).type,
@@ -461,7 +461,7 @@ test("knowledge surfaces stay visible with an empty state and follow project sea
 
 test("Browse tree groups explicitly own their artifact treeitems", async ({ page }) => {
   await serveIndex(page, fixtureIndex());
-  await page.goto("/docs/index.html");
+  await page.goto("/docs/index.html#view=graph");
 
   const groups = page.locator('[role="treeitem"][data-kind="group"]');
   await expect(groups).toHaveCount(2);
@@ -710,7 +710,7 @@ test("Spatial 3D render failure preserves semantic state in Graph", async ({ pag
     };
   });
 
-  await page.getByRole("tab", { name: "Spatial 3D" }).click();
+  await page.getByRole("tab", { name: "3D" }).click();
 
   await expect(page.getByRole("tab", { name: "Graph" })).toHaveAttribute("aria-selected", "true");
   await expect(page.locator(".notice")).toContainText("DOC.SPATIAL3D.RENDER_FAILED");
@@ -763,7 +763,7 @@ test("narrow match navigation opens Browse before focusing the result", async ({
   await page.getByRole("button", { name: "Next" }).click();
 
   await expect(page.locator("body")).toHaveAttribute("data-route", "browse");
-  await expect(page.locator('[role="treeitem"][data-id="child"]')).toBeFocused();
+  await expect(page.locator('[data-focus-key="index-child"]')).toBeFocused();
 });
 
 test("empty Details route keeps its labelled heading", async ({ page }) => {
@@ -809,7 +809,7 @@ test("over-limit indexes are rejected before spatial layout", async ({ page }) =
 test("source-load failure preserves metadata and relationships", async ({ page }) => {
   await page.route("**/*.md", (route) => route.abort());
   await page.goto("/docs/index.html");
-  await page.locator('[role="treeitem"][data-kind="artifact"]').first().click();
+  await page.locator('[data-artifact-card] [data-action="select"]').first().click();
   const title = await page.locator("#details-heading").textContent();
 
   await page.getByRole("button", { name: "Load source body" }).click();
@@ -828,7 +828,7 @@ test("hostile metadata is rendered as inert text", async ({ page }) => {
   await serveIndex(page, index);
 
   await page.goto("/docs/index.html");
-  await page.locator('[role="treeitem"][data-kind="artifact"]').first().click();
+  await page.locator('[data-artifact-card] [data-action="select"]').first().click();
 
   await expect(page.locator(".details-panel img, .details-panel script")).toHaveCount(0);
   expect(await page.evaluate(() => window.__explorerInjected)).toBeUndefined();
@@ -855,7 +855,7 @@ test("reference graph renders through the browser integration path", async ({ pa
 
 test("tree exposes one tab stop and complete disclosure keyboard semantics", async ({ page }) => {
   await serveIndex(page, fixtureIndex());
-  await page.goto("/docs/index.html");
+  await page.goto("/docs/index.html#view=graph");
 
   const tree = page.getByRole("tree", { name: "Project artifacts" });
   const firstGroup = tree.locator('[data-kind="group"]').first();
@@ -881,7 +881,7 @@ test("collapsing a tree group transfers the roving tab stop from its hidden chil
   page,
 }) => {
   await serveIndex(page, fixtureIndex());
-  await page.goto("/docs/index.html");
+  await page.goto("/docs/index.html#view=graph");
   const tree = page.getByRole("tree", { name: "Project artifacts" });
   const group = tree.locator('[data-kind="group"]').first();
   const child = tree.locator('[data-kind="artifact"]').first();
@@ -922,7 +922,7 @@ test("Spatial arrow navigation ignores hidden or off-canvas candidates", async (
       return projection;
     };
   });
-  await page.getByRole("tab", { name: "Spatial 3D" }).click();
+  await page.getByRole("tab", { name: "3D" }).click();
   const root = page.locator('[data-node-id="root"]');
   await root.click();
   await root.focus();
@@ -939,7 +939,7 @@ test("narrow route transitions focus headings and history restores the initiatin
   await serveIndex(page, fixtureIndex());
   await page.setViewportSize({ width: 320, height: 800 });
   await page.goto("/docs/index.html");
-  const artifact = page.locator('[data-kind="artifact"]').first();
+  const artifact = page.locator('[data-artifact-card] [data-action="select"]').first();
   const artifactId = await artifact.getAttribute("data-id");
   await artifact.click();
   await page.getByRole("button", { name: "Open details" }).click();
@@ -955,14 +955,14 @@ test("narrow route transitions focus headings and history restores the initiatin
 test("resizing to the narrow layout restores focus to a visible artifact control", async ({ page }) => {
   await serveIndex(page, fixtureIndex());
   await page.goto("/docs/index.html");
-  const artifact = page.locator('[data-kind="artifact"]').first();
+  const artifact = page.locator('[data-artifact-card] [data-action="select"]').first();
   const artifactId = await artifact.getAttribute("data-id");
   await artifact.click();
   await page.getByRole("button", { name: "Load source body" }).focus();
 
   await page.setViewportSize({ width: 320, height: 800 });
 
-  await expect(page.locator(`[role="treeitem"][data-id="${artifactId}"]`)).toBeFocused();
+  await expect(page.locator(`[data-focus-key="index-${artifactId}"]`)).toBeFocused();
   await expect(page.locator(":focus")).toBeVisible();
 });
 
@@ -970,7 +970,7 @@ test("exploring on a narrow screen focuses the visualization heading", async ({ 
   await serveIndex(page, fixtureIndex());
   await page.setViewportSize({ width: 320, height: 800 });
   await page.goto("/docs/index.html");
-  await page.locator('[data-kind="artifact"]').first().click();
+  await page.locator('[data-artifact-card] [data-action="select"]').first().click();
 
   await page.getByRole("button", { name: "Explore neighborhood" }).click();
 
@@ -981,7 +981,7 @@ test("exploring on a narrow screen focuses the visualization heading", async ({ 
 test("persistent live region announces selection, exploration, and context exit", async ({ page }) => {
   await serveIndex(page, fixtureIndex());
   await page.goto("/docs/index.html");
-  const artifact = page.locator('[data-kind="artifact"]').first();
+  const artifact = page.locator('[data-artifact-card] [data-action="select"]').first();
   await artifact.click();
   await expect(page.locator("#explorer-status")).toContainText("Selected Root");
 
@@ -1144,7 +1144,7 @@ test("reduced-motion mode removes control transitions and focused controls retai
   await page.emulateMedia({ reducedMotion: "reduce" });
   await serveIndex(page, fixtureIndex());
   await page.goto("/docs/index.html");
-  const browseTab = page.getByRole("tab", { name: "Browse" });
+  const browseTab = page.getByRole("tab", { name: "Index" });
   await browseTab.focus();
 
   const styles = await browseTab.evaluate((element) => {
@@ -1159,7 +1159,7 @@ test("reduced-motion mode removes control transitions and focused controls retai
   expect(styles.transitionDuration).toBe("0s");
   expect(styles.outlineStyle).not.toBe("none");
   expect(Number.parseFloat(styles.outlineWidth)).toBeGreaterThanOrEqual(2);
-  await page.getByRole("tab", { name: "Spatial 3D" }).click();
+  await page.getByRole("tab", { name: "3D" }).click();
   await expect.poll(() =>
     page.locator(".spatial-node-wrap").first().evaluate(
       (element) => getComputedStyle(element).transitionDuration,
@@ -1170,7 +1170,7 @@ test("reduced-motion mode removes control transitions and focused controls retai
 test("sticky header does not obscure a focused explorer control", async ({ page }) => {
   await serveIndex(page, fixtureIndex());
   await page.goto("/docs/index.html");
-  const browseTab = page.getByRole("tab", { name: "Browse" });
+  const browseTab = page.getByRole("tab", { name: "Index" });
   await browseTab.focus();
 
   const bounds = await page.evaluate(() => {
@@ -1284,7 +1284,7 @@ test("screen text contrast and interactive target sizes meet the declared floors
     expect(surface.linkHeight, `${surface.title} target`).toBeGreaterThanOrEqual(44);
   }
 
-  await page.getByRole("tab", { name: "Spatial 3D" }).click();
+  await page.getByRole("tab", { name: "3D" }).click();
   const spatialAudit = await page.locator(".projection-toolbar button, [data-spatial-svg]").evaluateAll(
     (elements) => elements.map((element) => ({
       name: element.getAttribute("aria-label"),
@@ -1457,7 +1457,7 @@ test("source loading states use the single announcement channel", async ({ page 
   await expect(page.locator('[role="status"]')).toHaveCount(1);
   await expect(page.locator("#explorer-status")).toHaveText('Search results available for "root"');
 
-  await page.locator('[data-kind="artifact"][data-id="root"]').click();
+  await page.locator('[data-artifact-card] [data-action="select"][data-id="root"]').click();
   await page.getByRole("button", { name: "Load source body" }).click();
   await expect(page.locator("#explorer-status")).toHaveText("Loading source for Root");
   await expect(page.locator("#explorer-status")).toHaveText("Source loaded for Root");
@@ -1661,7 +1661,7 @@ test("a spatial layout failure preserves Browse recovery and relationship access
   await expect(page.getByRole("alert")).toContainText("DOC.LAYOUT.UNAVAILABLE");
   await expect(page.getByRole("heading", { name: /Visible relationships/ })).toBeVisible();
   await page.getByRole("button", { name: "Return to Browse" }).click();
-  await expect(page.getByRole("tab", { name: "Browse" })).toHaveAttribute(
+  await expect(page.getByRole("tab", { name: "Index" })).toHaveAttribute(
     "aria-selected",
     "true",
   );
@@ -1694,7 +1694,7 @@ test("forced-colors mode preserves focus, selection, and search-match affordance
   expect(await selectedTab.evaluate((element) => getComputedStyle(element).outlineStyle)).not.toBe("double");
   expect(await selectedTab.evaluate((element) => getComputedStyle(element, "::after").content)).not.toBe("none");
 
-  await page.getByRole("tab", { name: "Spatial 3D" }).click();
+  await page.getByRole("tab", { name: "3D" }).click();
   const spatial = page.getByRole("region", { name: "Spatial 3D project graph" });
   expect(
     await spatial.evaluate((element) => getComputedStyle(element).outlineStyle),
@@ -1739,7 +1739,7 @@ test("oversized source bodies fail without replacing metadata", async ({ page })
     route.fulfill({ contentType: "text/markdown", body: "x".repeat(1024 * 1024 + 1) }),
   );
   await page.goto("/docs/index.html");
-  await page.locator('[data-kind="artifact"][data-id="root"]').click();
+  await page.locator('[data-artifact-card] [data-action="select"][data-id="root"]').click();
   await page.getByRole("button", { name: "Load source body" }).click();
 
   await expect(page.getByRole("alert")).toContainText("DOC.SOURCE.TOO_LARGE");
@@ -1754,7 +1754,7 @@ test("source bodies at the exact byte ceiling remain loadable", async ({ page, b
     route.fulfill({ contentType: "text/markdown", body: source }),
   );
   await page.goto("/docs/index.html");
-  await page.locator('[data-kind="artifact"][data-id="root"]').click();
+  await page.locator('[data-artifact-card] [data-action="select"][data-id="root"]').click();
   await page.getByRole("button", { name: "Load source body" }).click();
 
   await expect.poll(
@@ -1774,7 +1774,7 @@ test("source byte ceiling is enforced when content length understates the body",
     }),
   );
   await page.goto("/docs/index.html");
-  await page.locator('[data-kind="artifact"][data-id="root"]').click();
+  await page.locator('[data-artifact-card] [data-action="select"][data-id="root"]').click();
   await page.getByRole("button", { name: "Load source body" }).click();
 
   await expect(page.getByRole("alert")).toContainText("DOC.SOURCE.TOO_LARGE");
@@ -1791,7 +1791,7 @@ test("hostile source is rendered inert as text", async ({ page }) => {
     }),
   );
   await page.goto("/docs/index.html");
-  await page.locator('[data-kind="artifact"][data-id="root"]').click();
+  await page.locator('[data-artifact-card] [data-action="select"][data-id="root"]').click();
   await page.getByRole("button", { name: "Load source body" }).click();
 
   await expect(page.locator(".details-panel pre")).toContainText("<img");
@@ -1824,10 +1824,10 @@ test("late source results are ignored after selection changes", async ({ page })
     requestCompleted();
   });
   await page.goto("/docs/index.html");
-  await page.locator('[data-kind="artifact"][data-id="root"]').click();
+  await page.locator('[data-artifact-card] [data-action="select"][data-id="root"]').click();
   await page.getByRole("button", { name: "Load source body" }).click();
   await started;
-  await page.locator('[data-kind="artifact"][data-id="child"]').click();
+  await page.locator('[data-artifact-card] [data-action="select"][data-id="child"]').click();
   await expect.poll(() => page.evaluate(() => window.__sourceAbortCount)).toBe(1);
   release();
   await completed;
@@ -1867,12 +1867,12 @@ test("a same-artifact retry cannot be overwritten by an older request", async ({
     await route.fulfill({ contentType: "text/markdown", body: "newer source" });
   });
   await page.goto("/docs/index.html");
-  await page.locator('[data-kind="artifact"][data-id="root"]').click();
+  await page.locator('[data-artifact-card] [data-action="select"][data-id="root"]').click();
   await page.getByRole("button", { name: "Load source body" }).click();
   await started;
-  await page.locator('[data-kind="artifact"][data-id="child"]').click();
+  await page.locator('[data-artifact-card] [data-action="select"][data-id="child"]').click();
   await expect.poll(() => page.evaluate(() => window.__sourceAbortCount)).toBe(1);
-  await page.locator('[data-kind="artifact"][data-id="root"]').click();
+  await page.locator('[data-artifact-card] [data-action="select"][data-id="root"]').click();
   await page.getByRole("button", { name: "Load source body" }).click();
   await expect(page.locator(".details-panel pre")).toContainText("newer source");
   releaseFirst();
@@ -1890,7 +1890,7 @@ test("source fetch deadline aborts and preserves metadata", async ({ page, brows
     await route.fulfill({ contentType: "text/markdown", body: "too late" }).catch(() => {});
   });
   await page.goto("/docs/index.html");
-  await page.locator('[data-kind="artifact"][data-id="root"]').click();
+  await page.locator('[data-artifact-card] [data-action="select"][data-id="root"]').click();
   await page.getByRole("button", { name: "Load source body" }).click();
 
   await expect(page.getByRole("alert")).toContainText("DOC.SOURCE.TIMEOUT", {
@@ -1906,7 +1906,7 @@ test("source hash mismatch and unapproved source paths are rejected before rende
     route.fulfill({ contentType: "text/markdown", body: "tampered source" }),
   );
   await page.goto("/docs/index.html");
-  await page.locator('[data-kind="artifact"][data-id="root"]').click();
+  await page.locator('[data-artifact-card] [data-action="select"][data-id="root"]').click();
   await page.getByRole("button", { name: "Load source body" }).click();
   await expect(page.getByRole("alert")).toContainText("DOC.SOURCE.INTEGRITY_MISMATCH");
   await expect(page.locator(".details-panel pre")).toHaveCount(0);
@@ -1916,7 +1916,7 @@ test("source hash mismatch and unapproved source paths are rejected before rende
   escaped.artifacts[0].sourceSha256 = sourceHash("outside");
   await serveIndex(page, escaped);
   await page.goto("/docs/index.html");
-  await page.locator('[data-kind="artifact"][data-id="root"]').click();
+  await page.locator('[data-artifact-card] [data-action="select"][data-id="root"]').click();
   await page.getByRole("button", { name: "Load source body" }).click();
   await expect(page.getByRole("alert")).toContainText("DOC.SOURCE.PATH_REJECTED");
 });
@@ -1957,7 +1957,7 @@ test("late index completion cannot replace the bootstrap timeout recovery shell"
   });
   await page.waitForTimeout(1500);
   await expect(page.getByRole("alert")).toContainText("DOC.INDEX.UNAVAILABLE");
-  await expect(page.getByRole("tab", { name: "Browse" })).toHaveCount(0);
+  await expect(page.getByRole("tab", { name: "Index" })).toHaveCount(0);
 });
 
 test("index recovery shell retries loading without losing the main landmark", async ({
@@ -1981,7 +1981,7 @@ test("index recovery shell retries loading without losing the main landmark", as
 
   await page.getByRole("button", { name: "Retry loading" }).click();
 
-  await expect(page.getByRole("tab", { name: "Browse" })).toHaveAttribute(
+  await expect(page.getByRole("tab", { name: "Index" })).toHaveAttribute(
     "aria-selected",
     "true",
   );
