@@ -93,9 +93,11 @@ Execute the deployment map from INSTALL.md §1, in this order. All source paths 
 
 12. **`AGENTS.md` managed block:** same process with `pack/adapters/managed-blocks/AGENTS.block.md` targeting `<target>/AGENTS.md`.
 
-13. **CI workflow (optional — ask first):** copy `pack/ci/docs-health.yml` to `<target>/.github/workflows/docs-health.yml`. This gates PRs on graph health and is recommended but not mandatory. Ask the user before copying.
+13. **`.gitignore` hygiene (INSTALL.md §2):** ensure the target repo's `.gitignore` contains `*.jsonl.lock` (the persistent sibling lock files the graph tool's append-only JSONL writes use — local coordination files that must never be committed) and `spikes/` (throwaway Spike Protocol probes). Append whichever lines are missing; create `.gitignore` if absent. Never remove existing entries — append-only.
 
-14. **`docs/docs-index.js`:** do NOT create or seed. Leave absent; the first skill run creates it (V10).
+14. **CI workflow (optional — ask first):** copy `pack/ci/docs-health.yml` to `<target>/.github/workflows/docs-health.yml`. This gates PRs on graph health and is recommended but not mandatory. Ask the user before copying.
+
+15. **`docs/docs-index.js`:** do NOT create or seed. Leave absent; the first skill run creates it (V10).
 
 **Stage 4 — DISCONFIRM (the gate).**
 Before reporting success:
@@ -153,6 +155,7 @@ Unlike the workflow skills, this is a **pack-lifecycle skill**: it installs the 
 - [ ] Full deployment map applied per INSTALL.md §1 (adjusted for language profile and existing artifacts).
 - [ ] `CLAUDE.md` and `AGENTS.md` managed blocks in place — no pre-existing content overwritten.
 - [ ] `docs/docs-index.js` not seeded or touched (V10).
+- [ ] `.gitignore` contains `*.jsonl.lock` and `spikes/` (appended if missing, existing entries untouched).
 - [ ] `docs/index.html` not overwritten if it pre-existed.
 - [ ] `FOUNDATION.md` deployed but NOT wrapped as a Copilot instruction.
 - [ ] C# knowledge wrap scoped to `**/*.cs,**/*.csx` only when C# files are present.

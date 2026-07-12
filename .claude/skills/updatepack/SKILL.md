@@ -57,9 +57,11 @@ Apply each change in changelog order:
    - Replace the entire region **wholesale** with the new block from `<pack-source>/pack/adapters/managed-blocks/CLAUDE.block.md` (or `AGENTS.block.md`). Include the markers in the replacement.
    - If markers are absent, append the block (with markers) at the end of the file.
 
-3. **Post-copy verify.** For each action, confirm the file exists at the destination and is not zero bytes. Log: ✅ applied | ⚠️ skipped (with reason) | ❌ failed.
+3. **Non-file deploy directives.** Some `changes` entries carry a `deploy` that is neither a copy nor a managed-block re-paste — e.g. rev-17's `install-hygiene` entry (`add *.jsonl.lock to the consuming repository .gitignore`). Apply the directive literally: for a `.gitignore` addition, append any missing line (`*.jsonl.lock`, `spikes/`) to the target repo's `.gitignore` (create it if absent; never remove existing entries). Log it as ✅ applied like any other action.
 
-4. **Advance the installed revision.** Copy `<pack-source>/pack/adapters/INSTALL.md` to `<target-repo>/docs/ai-forward-pack/INSTALL.md` — this advances the installed revision to the current one.
+4. **Post-copy verify.** For each action, confirm the file exists at the destination and is not zero bytes. Log: ✅ applied | ⚠️ skipped (with reason) | ❌ failed.
+
+5. **Advance the installed revision.** Copy `<pack-source>/pack/adapters/INSTALL.md` to `<target-repo>/docs/ai-forward-pack/INSTALL.md` — this advances the installed revision to the current one.
 
 **Stage 4 — DISCONFIRM (the gate).**
 Before reporting success:

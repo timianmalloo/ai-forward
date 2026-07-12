@@ -189,11 +189,14 @@ def parse_frontmatter(text):
                     buf.append(lines[i].strip()); i += 1
                 fm[key] = " ".join(b for b in buf if b)
                 continue
-            if rest == "":                                            # block list (or empty)
+            if rest == "":                                            # block list, or an empty scalar
                 items = []; i += 1
                 while i < len(lines) and lines[i].lstrip().startswith("- "):
                     items.append(parse_scalar(lines[i].lstrip()[2:])); i += 1
-                fm[key] = items
+                # No "- " items after an empty value => an empty scalar (e.g. `review-by:`),
+                # not a list. Returning "" keeps derive/validate/Explorer consistent; list
+                # consumers coalesce with `or []`, so a genuinely-empty list is unaffected.
+                fm[key] = items if items else ""
                 continue
             fm[key] = parse_scalar(rest); i += 1
         return fm, None
