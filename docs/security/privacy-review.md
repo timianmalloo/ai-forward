@@ -8,6 +8,7 @@ phase: "pack-evolution"
 tags: [privacy, linddun, data-governance]
 links:
   - { to: architecture, rel: documents }
+  - { to: forensic-review, rel: documents }
   - { to: design-aiforward-cli, rel: documents }
   - { to: design-pack-doctor, rel: documents }
   - { to: design-project-memory, rel: documents }
@@ -19,7 +20,8 @@ summary: >-
   Repo-level privacy posture for the pack-evolution tooling: the CLI and doctor touch no personal
   data; project memory may incidentally record handles/names (no special-category data, mitigated
   by the scrub); the scrub is itself a privacy control; Docs Explorer navigation state remains
-  local and introduces no analytics or new personal-data flow.
+  local. The reviewed model-orchestration experiment was reverted before an executable
+  provider-routing boundary was added.
 ---
 
 # Privacy Review
@@ -38,8 +40,21 @@ python3 docs/ai-forward-pack/scripts/docs-graph.py rollup --heading "Privacy ana
 - **rai-and-scrub** — the scrub is a **privacy control** (redaction); it holds nothing and transmits nothing (purely local).
 - **Docs Explorer** — processes committed project documentation and local/session navigation
   state only; no remote analytics, model egress, or new personal-data category.
+- **model-orchestration (reverted)** — the standard and lookup were removed after review; no
+  active pack instruction now routes repository/workspace payloads between providers.
 
-## 2. Generated register (LINDDUN-lite, rolled up from the designs)
+## 2. Reverted model-orchestration forensic disposition
+
+| Data flow / category | LINDDUN finding | Disposition | Control / rationale | Retention & rights path |
+|---|---|---|---|---|
+| Skill context / authored artifact → selected author model | **L/I/N** — proposed routing lacked a data-sensitivity axis | retired by removal | No automatic model-routing instruction remains. A future proposal must introduce data class/provider policy before dispatch. | No pack-owned retention was added |
+| Full authored artifact → distinct hard-veto reviewer model | **L/I/N/D** — the proposal could force a cross-provider hop | retired by removal | Existing persona review returns to the pre-experiment host/user-selected model behavior. | Provider/host terms remain outside pack control |
+| Routing decision → audit log | **N/U** — proposed evidence fields were unsupported | retired by removal | No routing evidence is required because no routing capability remains. | Audit retains the review/revert decision history |
+
+No personal data was found in the reviewed orchestration artifacts themselves. The proposed
+downstream dispatch risk was retired by removing the capability, not by accepting it.
+
+## 3. Generated register (LINDDUN-lite, rolled up from the designs)
 
 <!-- BEGIN GENERATED: docs-graph.py rollup -->
 <!-- run: python3 docs/ai-forward-pack/scripts/docs-graph.py rollup --heading "Privacy analysis (LINDDUN-lite)" --type design -->
@@ -50,7 +65,7 @@ python3 docs/ai-forward-pack/scripts/docs-graph.py rollup --heading "Privacy ana
 <!-- rolled up from 1 artifact(s) by docs-graph.py rollup on 2026-07-11 -->
 <!-- END GENERATED -->
 
-## 3. Accepted-risk register (maintained by hand)
+## 4. Accepted-risk register (maintained by hand)
 
 | Accepted risk | Component | Rationale | Residual |
 |---|---|---|---|

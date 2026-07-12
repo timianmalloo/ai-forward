@@ -2,7 +2,7 @@
 id: "note-20260712-model-orchestration-policy"
 title: "Model-orchestration routing policy for AI-Forward skills"
 type: decision-note
-status: accepted
+status: superseded
 owner: "@timianmalloo"
 phase: "pack-evolution"
 tags: [decision-note, model-orchestration, loa, skills, orchestrator]
@@ -11,13 +11,15 @@ links:
 review-by: "2027-01-08"
 review-suggested: []
 summary: >-
-  Resolves the five open questions for applying LOA capability-tier allocation to the pack's
-  own skill execution (model-per-task routing). Blast radius: shapes the new
-  model-orchestration.md directive, the Orchestrator's charter, persona model hints, and how
-  every skill dispatches its stages across models.
+  Historical policy decision for applying LOA tier allocation to skill execution. Superseded
+  after forensic review found the proposed control plane unwired, internally contradictory,
+  unproven, and missing data-governance boundaries.
 ---
 
 # Model-orchestration routing policy for AI-Forward skills
+
+> **Superseded 2026-07-12.** The user reverted this capability after the forensic review.
+> See `note-20260712-revert-model-orchestration`.
 
 *A decision note (`knowledge-visualization.md` V17): below ADR weight, above chat-scrollback
 weight. Captures the five policy calls that settle how the pack routes its own work across

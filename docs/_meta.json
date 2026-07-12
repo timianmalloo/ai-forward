@@ -1,8 +1,8 @@
 {
   "generator": "/document (AI-Forward Pack)",
-  "generated": "2026-06-14",
-  "documentedCommit": "840c7c5028242dcf857b71f12acd7a469a66aef5",
-  "documentedCommitShort": "840c7c5",
+  "generated": "2026-07-12",
+  "documentedCommit": "5d7b95235e664b7779c7a653c000f6a199403070",
+  "documentedCommitShort": "5d7b952",
   "subject": "AI-Forward — pack source (pack/) + live dogfood install (.claude/, docs/)",
   "surfaces": {
     "markdownBundle": ["docs/architecture.md", "docs/index.md"],
@@ -17,11 +17,11 @@
     "class": "docs/architecture.md#domain-model-class--the-ui-archetype-grammar"
   },
   "coverage": {
-    "publicCodeSurface": "no traditional doc-commented API; public surface is 3 PowerShell tools + docs-graph.py CLI",
-    "toolsDocumented": ["tools/sync-pack.ps1", "tools/package-pack.ps1", "docs/ai-forward-pack/scripts/docs-graph.py"],
-    "toolsCoveragePct": 100,
-    "knowledgeDocs": 19,
-    "skills": 10,
+    "publicCodeSurface": "no traditional doc-commented API; public surface is tools/* plus the deployed script bundle",
+    "toolsDocumented": ["tools/sync-pack.ps1", "tools/package-pack.ps1", "tools/verify-bundle.ps1", "tools/new-capability.py", "tools/check-consistency.py", "docs/ai-forward-pack/scripts/docs-graph.py"],
+    "toolsCoveragePct": 78,
+    "knowledgeDocs": 24,
+    "skills": 17,
     "agents": 23,
     "uiArchetypesDocumented": 16,
     "uiArchetypesWithMockups": 16
@@ -36,9 +36,15 @@
   "findings": [
     {
       "id": "graph-empty",
-      "severity": "flagged",
-      "summary": "docs-graph.py inventory reports 0 artifacts: vendored knowledge docs lack frontmatter and docs/ai-forward-pack/** is excluded by design. This bundle's frontmatter'd files are the first graph nodes.",
-      "evidence": "docs-graph.py inventory -> artifacts: 0"
+      "severity": "resolved",
+      "summary": "The dogfood graph is populated; vendored standards remain intentionally outside it as always-applied instructions.",
+      "evidence": "docs-graph.py inventory 2026-07-12 -> artifacts: 22, problems/stale/flagged/orphans/index_drift: []"
+    },
+    {
+      "id": "model-orchestration-control-plane",
+      "severity": "resolved-by-revert",
+      "summary": "The model-orchestration standard, lookup, tests, and active wiring were removed after forensic review; history remains in the review and decision notes.",
+      "evidence": "docs/reviews/forensic-review.md; docs/notes/note-20260712-revert-model-orchestration.md"
     },
     {
       "id": "archetype-count",
@@ -47,5 +53,5 @@
       "evidence": "ui-archetype-catalog.md count = 16; grep shows no remaining '18-archetype' in source"
     }
   ],
-  "freshnessTrigger": "not yet installed — recommend docs-graph.py freshness --gate in CI (.github/workflows/docs.yml)"
+  "freshnessTrigger": "pack/ci/docs-health.yml; docs-graph.py freshness --gate"
 }

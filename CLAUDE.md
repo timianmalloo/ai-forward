@@ -22,11 +22,6 @@ the Road) and the **AI-Forward Pack** on top of it. Honor them on every non-triv
   inline `simplify:` comment (ceiling + upgrade trigger); ceremony scales with the tier (T0 code-first,
   T1/T2 full artifacts). `.claude/knowledge/solution-selection-ladder.md`; the Simplifier is its
   adversarial mirror.
-- **Model orchestration (right model for the task):** route each skill activity to the **cheapest
-  sufficient model tier** — the Orchestrator auto-dispatches (efficiency by default; a `cost` knob;
-  the best model on the highest-rigor work), adversary review runs on a **model distinct from the
-  author**, and deterministic mechanics run as **scripts, not models** — `.claude/knowledge/model-orchestration.md`
-  (M1–M12, `scripts/model-router.py`); the AI Systems Engineer owns it, the audit log records the choice.
 - **Personas (dual-mode):** author in Peer Mode, review in Adversary Mode; the author never
   clears its own hard veto. Roster + the operating standard (severity, veto-clears-when,
   conflict rule): `.claude/knowledge/persona-cards.md` and `.claude/knowledge/persona-audit.md`.

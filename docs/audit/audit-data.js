@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-07-12T22:33:28Z",
+  "generated": "2026-07-12T23:12:36Z",
   "audit": [
     {
       "id": "al-0001",
@@ -248,6 +248,46 @@ window.AUDIT_DATA = {
       ],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-0011",
+      "shortname": "forensicreview-model-orchestration",
+      "datetime": "2026-07-12T22:57:31Z",
+      "session": "3292b997-6f62-45bb-bdee-184b2606170e",
+      "prompt": "this repo, particularly the last changes in orchestration",
+      "summary": "Reconstructed the model-orchestration control plane at commit 5d7b952; corrected architecture/docs/privacy records; produced 10 evidence-backed FR findings and a phased proposed backlog. Repository baseline healthy; model-orchestration readiness BLOCKED pending runtime binding, distinct-model enforcement, T2-aware routing, behavioral eval, audit evidence, and provider/data governance.",
+      "kind": "skill",
+      "skill": "forensicreview",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/reviews/forensic-review.md",
+        "docs/backlog/forensic-review.md",
+        "docs/architecture.md",
+        "docs/security/privacy-review.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0012",
+      "shortname": "revert-model-orchestration",
+      "datetime": "2026-07-12T23:12:36Z",
+      "session": "3292b997-6f62-45bb-bdee-184b2606170e",
+      "prompt": "revert the orchestrator idea given your findings",
+      "summary": "Reverted the model-orchestration experiment after forensic review: removed active standard/router/tests/wiring; retained and indexed the historical report, closed findings, superseded policy, and accepted revert decision. All affected regression and bundle gates passed.",
+      "kind": "command",
+      "skill": "forensicreview",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/note-20260712-revert-model-orchestration.md",
+        "docs/reviews/forensic-review.md",
+        "docs/backlog/forensic-review.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "change": "cl-0007"
     }
   ],
   "changes": [
@@ -412,6 +452,30 @@ window.AUDIT_DATA = {
       "git": {
         "before": "b5bc9080f225d8405445537500260f995d27e9b0",
         "after": "b5bc9080f225d8405445537500260f995d27e9b0",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0007",
+      "datetime": "2026-07-12T23:12:35Z",
+      "session": "3292b997-6f62-45bb-bdee-184b2606170e",
+      "kind": "decision",
+      "skill": "forensicreview",
+      "title": "Revert the model-orchestration capability",
+      "prompt": "revert the orchestrator idea given your findings",
+      "summary": "Removed the model-orchestration standard, static router, test, managed-block and install wiring after the forensic readiness BLOCK; retained the forensic report and superseding decision history. Revision 17 remains unreleased with 24 knowledge docs and 9 scripts.",
+      "rationale": "The capability overclaimed automatic dispatch while unwired, contradicted hard adversary independence, could downgrade T2 work, lacked behavioral proof/audit support, and had no provider/data-governance boundary.",
+      "artifacts": [
+        "docs/notes/note-20260712-revert-model-orchestration.md",
+        "docs/reviews/forensic-review.md",
+        "docs/backlog/forensic-review.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "5d7b95235e664b7779c7a653c000f6a199403070",
+        "after": "5d7b95235e664b7779c7a653c000f6a199403070",
         "branch": "main",
         "pushed": true,
         "commits": []

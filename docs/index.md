@@ -34,13 +34,14 @@ repository — the development home of the **AI-Forward Pack** and a live instal
 
 ## Architecture of record
 
-- **[Architecture Overview](architecture.md)** — the source→build→install→consumer structure, the four diagram families (component, sequence, layered, class), and the tool/CLI reference. Includes the recorded findings (empty graph; the archetype count corrected to 16).
+- **[Architecture Overview](architecture.md)** — the source→build→install→consumer structure, the four diagram families, tool/CLI reference, and the recovered model-orchestration control plane.
+- **[Forensic Review](reviews/forensic-review.md)** · **[Proposed Remediation Backlog](backlog/forensic-review.md)** — evidence-based review of the repository, focused on commit `5d7b952` and model/task orchestration.
 
 ## The pack itself (payload docs)
 
 - **[Pack README](ai-forward-pack/README.md)** · **[Pack OVERVIEW](ai-forward-pack/OVERVIEW.md)** · **[Research synthesis](ai-forward-pack/research-synthesis.md)** · **[INSTALL](ai-forward-pack/INSTALL.md)**
 - **The reasoning spine:** the Rigor Protocol, the Body of Knowledge, the Rules of the Road (`.claude/knowledge/`).
-- **The 16 skills:** thirteen reasoning workflows — `/collectknowledge` · `/adddomainexperts` · `/specify` · `/define-architecture` · `/design` · `/implement` · `/document` · `/investigate` · `/migrate` · `/adopt` · `/updatepack` · `/addpacktorepo` · `/extendaibundle` — plus `/auditlog` (the audit & change-log lens) and two prompt-reuse utilities `/prompts` · `/searchprompts` (`.claude/skills/`).
+- **The 17 skills:** fourteen reasoning workflows — `/collectknowledge` · `/adddomainexperts` · `/specify` · `/define-architecture` · `/design` · `/implement` · `/document` · `/investigate` · `/migrate` · `/adopt` · `/forensicreview` · `/updatepack` · `/addpacktorepo` · `/extendaibundle` — plus `/auditlog` and two prompt-reuse utilities `/prompts` · `/searchprompts` (`.claude/skills/`).
 - **The 23-persona council** and the **UI archetype grammar + catalog** (`.claude/knowledge/`).
 
 ## How this documentation stays current

@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-Forward",
-  "generated": "2026-07-12T22:33:45Z",
+  "generated": "2026-07-12T23:10:13Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -252,7 +252,7 @@ window.DOCS_INDEX = {
         {
           "kind": "flowchart",
           "title": "Component map & boundaries",
-          "mermaid": "flowchart TB\n  subgraph SRC[\"pack/ — canonical source (edit here)\"]\n    K[\"knowledge/*.md<br/>(reasoning spine + roster + foundation)\"]\n    C[\"commands/&lt;name&gt;/SKILL.md<br/>(the 10 skills)\"]\n    T[\"templates/*<br/>(artifacts each skill emits)\"]\n    A[\"adapters/<br/>(Claude Code + Copilot agents, INSTALL.md)\"]\n    SC[\"scripts/  ·  evals/  ·  ci/  ·  examples/\"]\n    PD[\"README · OVERVIEW · research-synthesis\"]\n  end\n\n  subgraph TOOLS[\"tools/ — build\"]\n    SYNC[\"sync-pack.ps1\"]\n    PKG[\"package-pack.ps1\"]\n  end\n\n  subgraph INSTALL[\".claude/ + docs/ — generated install (do not hand-edit)\"]\n    CK[\".claude/knowledge/*.md\"]\n    CS[\".claude/skills/*\"]\n    CA[\".claude/agents/*.md\"]\n    DP[\"docs/ai-forward-pack/<br/>templates + scripts + pack docs\"]\n    EXP[\"docs/index.html<br/>(Docs Explorer)\"]\n    IDX[\"docs/docs-index.js<br/>(accumulated graph index)\"]\n    ARCH[\"docs/architecture.md · index.md · _meta.json<br/>(this bundle)\"]\n  end\n\n  subgraph CONSUMERS[\"consumers\"]\n    CC[\"Claude Code / Copilot<br/>(read .claude/)\"]\n    WEBE[\"web/ai-forward-pack-explainer.html<br/>(interactive explainer)\"]\n    ZIP[\"dist/ai-forward-pack.zip\"]\n  end\n\n  K --> SYNC\n  C --> SYNC\n  T --> SYNC\n  A --> SYNC\n  SYNC --> CK & CS & CA & DP & EXP\n  C -. \"skills reference\" .-> CK\n  CA -. \"agents reference\" .-> CK\n  DP --> GRAPH[\"docs-graph.py<br/>(in docs/ai-forward-pack/scripts)\"]\n  GRAPH --> IDX\n  ARCH --> GRAPH\n  IDX --> EXP\n  CK --> CC\n  CS --> CC\n  CA --> CC\n  SRC --> PKG --> ZIP\n  CK -. \"derived content\" .-> WEBE"
+          "mermaid": "flowchart TB\n  subgraph SRC[\"pack/ — canonical source (edit here)\"]\n    K[\"knowledge/*.md<br/>(reasoning spine + roster + foundation)\"]\n    C[\"commands/&lt;name&gt;/SKILL.md<br/>(the 17 skills)\"]\n    T[\"templates/*<br/>(artifacts each skill emits)\"]\n    A[\"adapters/<br/>(Claude Code + Copilot agents, INSTALL.md)\"]\n    SC[\"scripts/ (9) · evals/ · ci/ · examples/\"]\n    PD[\"README · OVERVIEW · research-synthesis\"]\n  end\n\n  subgraph TOOLS[\"tools/ — build\"]\n    SYNC[\"sync-pack.ps1\"]\n    PKG[\"package-pack.ps1\"]\n  end\n\n  subgraph INSTALL[\".claude/ + docs/ — generated install (do not hand-edit)\"]\n    CK[\".claude/knowledge/*.md\"]\n    CS[\".claude/skills/*\"]\n    CA[\".claude/agents/*.md\"]\n    DP[\"docs/ai-forward-pack/<br/>templates + scripts + pack docs\"]\n    EXP[\"docs/index.html<br/>(Docs Explorer)\"]\n    IDX[\"docs/docs-index.js<br/>(accumulated graph index)\"]\n    ARCH[\"docs/architecture.md · index.md · _meta.json<br/>(this bundle)\"]\n  end\n\n  subgraph CONSUMERS[\"consumers\"]\n    CC[\"Claude Code / Copilot<br/>(read .claude/)\"]\n    WEBE[\"web/ai-forward-pack-explainer.html<br/>(interactive explainer)\"]\n    ZIP[\"dist/ai-forward-pack.zip\"]\n  end\n\n  K --> SYNC\n  C --> SYNC\n  T --> SYNC\n  A --> SYNC\n  SYNC --> CK & CS & CA & DP & EXP\n  C -. \"skills reference\" .-> CK\n  CA -. \"agents reference\" .-> CK\n  DP --> GRAPH[\"docs-graph.py<br/>(in docs/ai-forward-pack/scripts)\"]\n  GRAPH --> IDX\n  ARCH --> GRAPH\n  IDX --> EXP\n  CK --> CC\n  CS --> CC\n  CA --> CC\n  SRC --> PKG --> ZIP\n  CK -. \"derived content\" .-> WEBE"
         },
         {
           "kind": "sequence",
@@ -270,19 +270,19 @@ window.DOCS_INDEX = {
           "mermaid": "classDiagram\n  class Signature {\n    +Name name\n    +FacetList facets\n    +StyleHints? hints\n    +validate() conflicts\n    +roundTrip() bool  %% G10: identify AND generate\n  }\n  class Facet {\n    <<abstract>>\n    +String key\n  }\n  class SingleValuedFacet {\n    +Value value  %% Type, Arch, Layout, Density, Pacing, ...\n  }\n  class MultiValuedFacet {\n    +Value[] values  %% Nav, Input, Feedback, Motion, A11y (joined with +)\n  }\n  class StyleHints {\n    +String[] hints  %% bounded NL decoration, applied last\n  }\n  class Archetype {\n    +String id          %% A1..F2\n    +String name\n    +Exemplar[] exemplars\n    +Signature canonical\n    +String codegenDescriptor\n  }\n  Signature \"1\" o-- \"4..*\" Facet : composes\n  Facet <|-- SingleValuedFacet\n  Facet <|-- MultiValuedFacet\n  Signature \"0..1\" *-- \"1\" StyleHints : decorated by\n  Archetype \"1\" *-- \"1\" Signature : canonical\n  Archetype \"1\" o-- \"1..*\" Exemplar\n  note for Signature \"G4: MUST carry Type, Arch, Layout, Pacing.\\nG1: always composed with a concrete U1–U20 / S1–S18 spec.\""
         }
       ],
-      "sourceSha256": "1df89886606bad84cca852988c36324028b8bebba95a48ba1ed26ce9b2fb50c3"
+      "sourceSha256": "16a98e62ffcbf07734f0f5821870e14beb670118ed185c7c67d0fe724bc209fc"
     },
     {
       "id": "note-20260712-model-orchestration-policy",
       "path": "docs/notes/note-20260712-model-orchestration-policy.md",
       "title": "Model-orchestration routing policy for AI-Forward skills",
       "type": "decision-note",
-      "status": "accepted",
+      "status": "superseded",
       "owner": "@timianmalloo",
       "phase": "pack-evolution",
       "reviewBy": "2027-01-08",
       "reviewSuggested": [],
-      "summary": "Resolves the five open questions for applying LOA capability-tier allocation to the pack's own skill execution (model-per-task routing). Blast radius: shapes the new model-orchestration.md directive, the Orchestrator's charter, persona model hints, and how every skill dispatches its stages across models.",
+      "summary": "Historical policy decision for applying LOA tier allocation to skill execution. Superseded after forensic review found the proposed control plane unwired, internally contradictory, unproven, and missing data-governance boundaries.",
       "tags": [
         "decision-note",
         "model-orchestration",
@@ -297,7 +297,40 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "590830e37ac802b9a82567be76dfb908d942ee88535ed4ed2b7366372ed30b00"
+      "sourceSha256": "ba53a24fa990b5a6e5b9f1ba1f6ab3057bf8d1ed31606d97b97770b9fcbe45dc"
+    },
+    {
+      "id": "note-20260712-revert-model-orchestration",
+      "path": "docs/notes/note-20260712-revert-model-orchestration.md",
+      "title": "Revert the model-orchestration capability",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2027-01-08",
+      "reviewSuggested": [],
+      "summary": "Removes the model-orchestration standard, static router, tests, and active wiring after forensic review found the capability unwired and unsafe to claim as automatic enforcement; retains the review and decision history.",
+      "tags": [
+        "decision-note",
+        "model-orchestration",
+        "revert"
+      ],
+      "links": [
+        {
+          "to": "note-20260712-model-orchestration-policy",
+          "rel": "supersedes"
+        },
+        {
+          "to": "forensic-review",
+          "rel": "depends-on"
+        },
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "a5268718eefb7d1ebe33b490d527fc108fd372a30ee5180d5fa01178c7a43485"
     },
     {
       "id": "design-aiforward-cli",
@@ -532,7 +565,63 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e17d4f5accd582cb4b2baf375a949ed12fc8d7ff39f70f833dbaee5b048366fa"
+      "sourceSha256": "a1e2999d19839b86db84f42619db982b59bbd588ec53a38c7dc432c86dd3295e"
+    },
+    {
+      "id": "forensic-review",
+      "path": "docs/reviews/forensic-review.md",
+      "title": "Forensic Review — AI-Forward model orchestration",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2026-10-10",
+      "reviewSuggested": [],
+      "summary": "Evidence-based assessment of AI-Forward commit 5d7b952 focused on model orchestration. The user accepted the readiness BLOCK and reverted the capability; the report is retained as historical evidence.",
+      "tags": [
+        "forensic-review",
+        "model-orchestration"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        },
+        {
+          "to": "forensic-review-backlog",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "fa87aa62c727adc25d4a055a6f8e8bccaeb03beb87e5652471f47476e80bacd3"
+    },
+    {
+      "id": "forensic-review-backlog",
+      "path": "docs/backlog/forensic-review.md",
+      "title": "Forensic Review Backlog — Model orchestration",
+      "type": "doc",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2026-10-10",
+      "reviewSuggested": [],
+      "summary": "Historical remediation backlog from the model-orchestration forensic review. The capability was reverted; orchestration-specific items are closed by removal. FR-008 and residual FR-010 remain independent repository findings.",
+      "tags": [
+        "backlog",
+        "model-orchestration"
+      ],
+      "links": [
+        {
+          "to": "forensic-review",
+          "rel": "refines"
+        },
+        {
+          "to": "architecture",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "bc04d2b1e8cb3433e7b6ef66c6bb226c89dd760b12d50a09124a272ab5f09f09"
     },
     {
       "id": "project-memory",
@@ -760,7 +849,7 @@ window.DOCS_INDEX = {
       "phase": "pack-evolution",
       "reviewBy": "2027-01-07",
       "reviewSuggested": [],
-      "summary": "Repo-level privacy posture for the pack-evolution tooling: the CLI and doctor touch no personal data; project memory may incidentally record handles/names (no special-category data, mitigated by the scrub); the scrub is itself a privacy control; Docs Explorer navigation state remains local and introduces no analytics or new personal-data flow.",
+      "summary": "Repo-level privacy posture for the pack-evolution tooling: the CLI and doctor touch no personal data; project memory may incidentally record handles/names (no special-category data, mitigated by the scrub); the scrub is itself a privacy control; Docs Explorer navigation state remains local. The reviewed model-orchestration experiment was reverted before an executable provider-routing boundary was added.",
       "tags": [
         "privacy",
         "linddun",
@@ -769,6 +858,10 @@ window.DOCS_INDEX = {
       "links": [
         {
           "to": "architecture",
+          "rel": "documents"
+        },
+        {
+          "to": "forensic-review",
           "rel": "documents"
         },
         {
@@ -793,7 +886,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7d21b9e93708f5a5a8a2aff8fca3586e5b0a52354fa7b5366520c47dfea2113f"
+      "sourceSha256": "1109de89ee851b3fea33548d8c292b525a0c7e6e58e431d5ed1bee65ccb8ab9f"
     },
     {
       "id": "proof-docs-explorer-redesign",
@@ -907,5 +1000,5 @@ window.DOCS_INDEX = {
       "description": "Inspect a rendered design or design-language preview."
     }
   ],
-  "graphSha256": "968536afd469b3b7da272252e73d8821d63b3c33d60eed84c92031dc46126018"
+  "graphSha256": "69bd1e16929afec0d098982a329e861625ee176b18d0a72c1742213c3a7ac46f"
 };
