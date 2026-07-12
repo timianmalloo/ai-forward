@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-Forward",
-  "generated": "2026-07-12T00:37:11Z",
+  "generated": "2026-07-12T22:33:45Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -271,6 +271,33 @@ window.DOCS_INDEX = {
         }
       ],
       "sourceSha256": "1df89886606bad84cca852988c36324028b8bebba95a48ba1ed26ce9b2fb50c3"
+    },
+    {
+      "id": "note-20260712-model-orchestration-policy",
+      "path": "docs/notes/note-20260712-model-orchestration-policy.md",
+      "title": "Model-orchestration routing policy for AI-Forward skills",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2027-01-08",
+      "reviewSuggested": [],
+      "summary": "Resolves the five open questions for applying LOA capability-tier allocation to the pack's own skill execution (model-per-task routing). Blast radius: shapes the new model-orchestration.md directive, the Orchestrator's charter, persona model hints, and how every skill dispatches its stages across models.",
+      "tags": [
+        "decision-note",
+        "model-orchestration",
+        "loa",
+        "skills",
+        "orchestrator"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "590830e37ac802b9a82567be76dfb908d942ee88535ed4ed2b7366372ed30b00"
     },
     {
       "id": "design-aiforward-cli",
@@ -860,7 +887,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "AI-Forward — Audit & Change Log",
+      "title": "ai-forward — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -880,5 +907,5 @@ window.DOCS_INDEX = {
       "description": "Inspect a rendered design or design-language preview."
     }
   ],
-  "graphSha256": "a4a1010b23bb1f4e605cb6e1f6e20d7c41faaf27078d6266c0b91f880353f23e"
+  "graphSha256": "968536afd469b3b7da272252e73d8821d63b3c33d60eed84c92031dc46126018"
 };

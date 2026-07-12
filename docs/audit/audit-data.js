@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "AI-Forward",
-  "generated": "2026-07-12T00:38:23Z",
+  "project": "ai-forward",
+  "generated": "2026-07-12T22:33:28Z",
   "audit": [
     {
       "id": "al-0001",
@@ -229,6 +229,25 @@ window.AUDIT_DATA = {
         "branch": "timianmalloo/docs-explorer-redesign",
         "pushed": true
       }
+    },
+    {
+      "id": "al-0010",
+      "shortname": "extendaibundle-model-orchestration",
+      "datetime": "2026-07-12T22:33:28Z",
+      "session": "3292b997-6f62-45bb-bdee-184b2606170e",
+      "prompt": "extendaibundle: model + task orchestration. Answers 1 auto-dispatch advisory default w/ overrule; 2 efficiency default + cost knob, best model on highest-rigor; 3 adversary hard rule w/ human overrule; 4 move deterministic to script but keep skills-centric; 5 optimize for Copilot CLI on Win/Mac. Capture decision notes, draft model-orchestration.md, then extend the bundle.",
+      "summary": "Added the Model-Orchestration Standard (knowledge/model-orchestration.md, M1-M12) + model-router.py + unit test + decision note; wired managed blocks, counts (knowledge 25, scripts 10), OVERVIEW; BUNDLE CONSISTENT.",
+      "kind": "skill",
+      "skill": "extendaibundle",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "pack/knowledge/model-orchestration.md",
+        "pack/scripts/model-router.py",
+        "docs/notes/note-20260712-model-orchestration-policy.md"
+      ],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [
@@ -372,6 +391,28 @@ window.AUDIT_DATA = {
         "before": "4a19030be8b8bf796e1477efd6136e9b5cdff10b",
         "after": "4a19030be8b8bf796e1477efd6136e9b5cdff10b",
         "branch": "timianmalloo/docs-explorer-redesign",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0006",
+      "datetime": "2026-07-12T22:33:28Z",
+      "session": "3292b997-6f62-45bb-bdee-184b2606170e",
+      "kind": "decision",
+      "skill": "extendaibundle",
+      "title": "Add Model-Orchestration Standard to the AI-Forward pack",
+      "prompt": "extendaibundle: model + task orchestration. Answers 1 auto-dispatch advisory default w/ overrule; 2 efficiency default + cost knob, best model on highest-rigor; 3 adversary hard rule w/ human overrule; 4 move deterministic to script but keep skills-centric; 5 optimize for Copilot CLI on Win/Mac. Capture decision notes, draft model-orchestration.md, then extend the bundle.",
+      "summary": "Reflexively applies LOA tier-allocation to the pack's own execution: 9 activity archetypes routed to cheapest sufficient model, Orchestrator auto-dispatch w/ human overrule, efficiency default + cost knob, adversary-independence hard rule, deterministic-to-script (skills-centric), Copilot-CLI Win/Mac.",
+      "rationale": "The pack taught LOA tiering for products but not for itself; dogfooding it optimizes model-per-task while preserving rigor and determinism.",
+      "artifacts": [
+        "pack/knowledge/model-orchestration.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "b5bc9080f225d8405445537500260f995d27e9b0",
+        "after": "b5bc9080f225d8405445537500260f995d27e9b0",
+        "branch": "main",
         "pushed": true,
         "commits": []
       }
