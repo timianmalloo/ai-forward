@@ -26,7 +26,7 @@ summary: >-
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled `2` · partially-controlled `1` · uncontrolled `20`
+**Status counts:** controlled `2` · partially-controlled `2` · uncontrolled `20`
 **Recurrence since last review:** `0` — *a second occurrence of a known class means the control was wrong, not that someone was careless (CI4).*
 
 ---
@@ -50,6 +50,14 @@ summary: >-
 ## Project classes
 
 *Classes discovered in this repository. Newest first.*
+
+### PACK-D — An array parameter arrives as one comma-joined string when the script is invoked as an executable
+- **Signature:** a PowerShell script declares `[string[]] $Thing` and is invoked as `pwsh script.ps1 -Thing A,B`. Because `pwsh` is being run as a *native executable*, the argument is passed as the single literal string `"A,B"` and never re-parsed into an array. The script then processes one nonsense element. Dot-invoking (`& .\script.ps1 -Thing A,B`) works perfectly, so the script "works on my machine" and fails in the documented invocation.
+- **Why it survives:** the author tests by dot-invoking, which is the natural thing to do while iterating in a session; the README then documents `pwsh script.ps1 ...`, which is the natural thing for a *user* to run. The two are never the same call. Nothing errors — the script proceeds with a wrong value — and if the error path also drops the offending input from its message (the usual pairing), the symptom is an empty "not found" that names nothing.
+- **Instances:**
+  - `2026-08-02` `tools/setup-obsidian-for-repo.ps1` — `-Repo A,B` via `pwsh` produced one iteration reporting `SKIP  - path not found` against an empty path, while both paths existed. Two defects in one: the unsplit argument, and an error message that had already nulled the variable it was reporting on.
+- **Control:** the script now splits any element on `,` and trims at the parameter boundary, and the error path keeps the original input in `$requested` rather than the resolved variable. Verified by running **both** invocation forms plus a genuinely bad path. `NO AUTOMATED CONTROL YET` — the general fix is a lint over `tools/*.ps1` for array parameters lacking boundary normalisation; until then, the rule is: **test a script the way its own documentation says to invoke it.**
+- **Status:** `partially-controlled`
 
 ### PACK-C — An assertion encodes a transient magnitude assumption
 - **Signature:** a check is written while a value is small and quietly bakes in its *magnitude* — a regex like `revision: [2-9]` (single digit), a fixed-width column, a two-character version field, an `id < 100` guard. It is correct on the day it is written and becomes wrong on the day the value grows, with no code change to blame. The failure is a **false negative on correct behaviour**: the thing under test works, and the check says it doesn't.

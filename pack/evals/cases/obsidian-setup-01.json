@@ -1,0 +1,49 @@
+{
+  "skill": "obsidian-setup",
+  "prompt": "Stand up the Obsidian lens over an AI-Forward docs graph: report state, write the committed vault config plus the non-canonical lens notes, and produce the dependency-free structural analysis. (Run in an AI-Forward clone workspace with a derived docs-index.js.)",
+  "setup": [],
+  "assertions": [
+    {
+      "type": "cmd-exit",
+      "cmd": ["python3", "docs/ai-forward-pack/scripts/obsidian-setup.py", "--init", "--root", "."],
+      "exit": 0
+    },
+    {
+      "type": "cmd-exit",
+      "cmd": ["python3", "docs/ai-forward-pack/scripts/obsidian-setup.py", "--analyze", "--root", "."],
+      "exit": 0
+    },
+    { "type": "file-exists", "path": "docs/.obsidian/graph.json" },
+    { "type": "file-exists", "path": "docs/.obsidian/community-plugins.json" },
+    { "type": "file-exists", "path": "docs/lenses/graph-health.md" },
+    { "type": "file-exists", "path": "docs/lenses/graph-structure.md" },
+    { "type": "frontmatter-valid", "path": "docs/lenses/graph-health.md" },
+    { "type": "frontmatter-valid", "path": "docs/lenses/graph-structure.md" },
+    {
+      "type": "grep",
+      "path": "docs/.obsidian/graph.json",
+      "pattern": "\"type\":\"design\""
+    },
+    {
+      "type": "grep",
+      "path": "docs/lenses/graph-health.md",
+      "pattern": "(?i)lens, not a record"
+    },
+    {
+      "type": "grep",
+      "path": "docs/.obsidian/community-plugins.json",
+      "pattern": "knowledge-graph-analysis"
+    },
+    {
+      "type": "not-grep",
+      "path": "docs/.obsidian/community-plugins.json",
+      "pattern": "graphify"
+    },
+    {
+      "type": "cmd-exit",
+      "cmd": ["python3", "docs/ai-forward-pack/scripts/docs-graph.py", "validate"],
+      "exit": 0
+    }
+  ],
+  "id": "obsidian-setup-01"
+}

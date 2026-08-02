@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-Forward",
-  "generated": "2026-08-02T23:18:43Z",
+  "generated": "2026-08-02T23:38:14Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -569,7 +569,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "fb6b6b872809c7c19a3b682bc8910a43b4c7c77e9cd15f9291aed036d800260f"
+      "sourceSha256": "fd0c2ad496c0d51fd1cef23148af2b38e5f40ce1fd8ddd1329c78feee351e2d7"
     },
     {
       "id": "docs-index",
@@ -721,6 +721,83 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "6c4e8d947e823f9469d0f76eabe6cf2059f14662712f1e983faf0319d4fd49aa"
+    },
+    {
+      "id": "lens-graph-health",
+      "path": "docs/lenses/graph-health.md",
+      "title": "Lens - graph health",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@maintainers",
+      "phase": "",
+      "reviewBy": "",
+      "reviewSuggested": [],
+      "summary": "A read-time Dataview lens over the knowledge graph's health - stale artifacts, missing owners, missing freshness SLAs, and review-suggested flags. Derived, never authoritative.",
+      "tags": [
+        "lens",
+        "obsidian",
+        "dataview",
+        "graph-health"
+      ],
+      "links": [
+        {
+          "to": "docs-index",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "ddf4cb98c81f9a40824a1df259782f151f49eef2f3b5fd975633c32142c0a90a"
+    },
+    {
+      "id": "lens-graph-insight",
+      "path": "docs/lenses/graph-insight.md",
+      "title": "Lens - graph insight (computed)",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@maintainers",
+      "phase": "",
+      "reviewBy": "",
+      "reviewSuggested": [],
+      "summary": "Computed structural analysis of the knowledge graph - hubs, bridges, components, orphans and structural gaps. Regenerate with obsidian-setup.py --analyze --write. Derived, never authoritative.",
+      "tags": [
+        "lens",
+        "graph-analysis",
+        "computed"
+      ],
+      "links": [
+        {
+          "to": "lens-graph-structure",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "5d89b28a6d4ba272e5b88ac53c9e08f9c03195ac57e76a51c2b23702f832597b"
+    },
+    {
+      "id": "lens-graph-structure",
+      "path": "docs/lenses/graph-structure.md",
+      "title": "Lens - graph structure",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@maintainers",
+      "phase": "",
+      "reviewBy": "",
+      "reviewSuggested": [],
+      "summary": "A read-time lens over the shape of the knowledge graph - artifacts by type and status, and the traceability chains (spec to design to proof). Derived, never authoritative.",
+      "tags": [
+        "lens",
+        "obsidian",
+        "dataview",
+        "structure"
+      ],
+      "links": [
+        {
+          "to": "lens-graph-health",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "5bf8471b858442580beb4f227c56ae44fb370b0ff6185b66ba14d4d0da90ae07"
     },
     {
       "id": "project-memory",
@@ -1318,5 +1395,5 @@ window.DOCS_INDEX = {
       "description": "Inspect a rendered design or design-language preview."
     }
   ],
-  "graphSha256": "4f779e6103daaa1b39f07fd3afa0ea620de4bfb63f894fedc26ac8d1db416f36"
+  "graphSha256": "bbb9f8b52cd0edc6f4ea6cd0154a6a7b6b62e7d0cc40fd4f22bf105c2c4c2474"
 };

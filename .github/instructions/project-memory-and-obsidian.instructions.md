@@ -37,7 +37,7 @@ The ledger fills the one shape the graph lacked: a **rolling, chronological narr
 `docs/` is **already a valid Obsidian vault**: `knowledge-visualization.md` (§0, V2) designed the per-file YAML frontmatter so that *"Properties, Bases tables, and Obsidian's graph view all read this frontmatter natively."* So Obsidian is **additive at zero cost** — open `docs/` as a vault to get Properties, Dataview queries (`status: draft`, `review-by` past), and an interactive graph over project memory, with **no schema change**.
 
 - **M8 — Obsidian is a reader, never the writer of record.** The pack **MUST NOT** require Obsidian or any plugin to read or maintain canonical memory. A Dataview (or any plugin) query **MUST NOT** be load-bearing inside a canonical document — `docs-graph.py` is the only query engine the pack depends on. This preserves tool-neutrality (the pack works for someone who never installs Obsidian) and avoids plugin-fragility lock-in.
-- **M9 — Optional convenience.** A repo **MAY** add an `.obsidian/` workspace for contributors who use it; it **SHOULD** be git-ignored by default so it never becomes a committed dependency. The Docs Explorer (`docs/index.html`) is the tool-neutral graph view that ships with the pack and needs nothing installed.
+- **M9 — Optional convenience, with the config/state split.** A repo **MAY** stand the lens up. When it does, **commit the vault *configuration*** (`app.json`, `appearance.json`, `core-plugins.json`, `community-plugins.json`, `graph.json`, and each plugin's `manifest.json`) so every contributor sees the same graph, and **git-ignore the per-user *state*** (`workspace.json`, `cache/`, and each plugin's `main.js` / `styles.css` / `data.json` — the last being third-party code and where API keys land). *This refines the earlier blanket advice to ignore `.obsidian/` wholesale, which was correct while the lens was a private convenience and wrong once it is shared: an ignored config means every contributor rebuilds the same colour groups by hand.* The Docs Explorer (`docs/index.html`) remains the tool-neutral graph view that ships with the pack and needs nothing installed. Full standard: **`obsidian-lens.md`** (OB1–OB14), with the stdlib `obsidian-setup.py` doing the mechanics.
 
 **Why not make Obsidian the system of record?** It offers the richest memory UX out of the box, but requiring it imposes per-contributor setup, plugin reliability risk across Obsidian updates, no live co-editing, and a non-WYSIWYG learning curve — costs that violate the pack's dependency-free, tool-neutral promise. Adopted as an *optional lens*, it captures the upside with none of the lock-in.
 
@@ -47,11 +47,12 @@ The ledger fills the one shape the graph lacked: a **rolling, chronological narr
 - [ ] `docs/project-memory.md` exists from the template, is a graph node (frontmatter + a link), and carries a `review-by` (M2, M6).
 - [ ] Skills read it at grounding and append at convergence; entries are append-only with confidence labels + back-links (M2–M4).
 - [ ] No entry contains a secret or PII; `scrub.py` has been run over it (M7).
-- [ ] No canonical doc depends on an Obsidian/Dataview query; Obsidian config (if any) is git-ignored (M8–M9).
+- [ ] No canonical doc depends on an Obsidian/Dataview query; if the lens is stood up, the vault **config is committed** and the per-user **state and plugin code are ignored** (M8–M9; full standard `obsidian-lens.md`).
 
 ## 5. References
 
 - **`knowledge-visualization.md`** (V1–V18) — the graph model project memory composes with; §0/V2 establish the Obsidian-vault compatibility.
+- **`obsidian-lens.md`** (OB1–OB14) — the full Obsidian-lens standard that M9 hands off to: what is committed vs ignored, the plugin set and the seat each must earn, colouring the graph by artifact type, and the dependency-free `--analyze` insight that keeps the value out of a GUI dependency.
 - **`templates/project-memory.template.md`** — the ledger template.
 - **`responsible-ai-policy.md`** + **`scrub.py`** — the no-PII enforcement for memory.
 - **Zettelkasten / PKM practice** (Obsidian community) — atomic, linked notes; Maps of Content — the tradition behind the graph model.

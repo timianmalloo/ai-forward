@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-08-02T23:17:51Z",
+  "generated": "2026-08-02T23:38:15Z",
   "audit": [
     {
       "id": "al-0001",
@@ -370,6 +370,35 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "53e3afe59dc3e20a5e1e20a769311980fd194cb4",
         "short": "53e3afe59",
+        "branch": "main",
+        "pushed": true
+      }
+    },
+    {
+      "id": "al-0016",
+      "shortname": "extendaibundle-obsidian-lens-rev19",
+      "datetime": "2026-08-02T23:38:15Z",
+      "session": "2b932df7-281e-435f-b133-05c86c078c9d",
+      "prompt": "when you are done i want to install obsidian and graphify and have it improve the overall knowledge base and insight for the repo / extend the ai forward to support obsidian and graphify then give me a script for setting them up for my repos",
+      "summary": "Pack revision 18->19: the Obsidian lens. Established first that NO plugin named 'Graphify' exists in the official registry (checked all 6284 entries); the plugin matching the description is knowledge-graph-analysis by luolanaatud. Added knowledge/obsidian-lens.md (OB1-OB14) and the stdlib scripts/obsidian-setup.py (--check/--install-app/--init/--fetch-plugins/--analyze), refined project-memory M9 from ignore-.obsidian-wholesale to commit-the-config/ignore-the-state, added tools/setup-obsidian-for-repo.ps1 for multi-repo rollout, and an eval case. Installed Obsidian 1.13.4 and six plugins; the vault config, colour groups keyed to artifact type, and three lens notes are committed and indexed (39 artifacts, validate exit 0). --analyze computes exact Brandes betweenness dependency-free: architecture is both top hub (degree 16) and dominant bridge (317.77), 13 leaves, 4 designs with no proof-pack, 1 artifact missing review-by. Registered defect class PACK-D (array param arrives as one comma-joined string under pwsh invocation).",
+      "kind": "skill",
+      "skill": "extendaibundle",
+      "tool": "GitHub Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "pack/knowledge/obsidian-lens.md",
+        "pack/scripts/obsidian-setup.py",
+        "tools/setup-obsidian-for-repo.ps1"
+      ],
+      "tags": [
+        "obsidian",
+        "knowledge-graph",
+        "revision-19"
+      ],
+      "outcome": "success",
+      "git": {
+        "sha": "ec22590f2cb152ff7de15e977da10dd0b01cc224",
+        "short": "ec22590f2",
         "branch": "main",
         "pushed": true
       }

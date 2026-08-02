@@ -101,6 +101,15 @@ the Road) and the **AI-Forward Pack** on top of it. Honor them on every non-triv
   or via `/auditlog` (last-N, search, recall-and-redo a prompt, full-history↔changes toggle); all
   writes go through `docs/ai-forward-pack/scripts/audit-log.py`; the standard is
   `.claude/knowledge/audit-and-change-log.md`. A new session reads it to learn what was done and why.
+- **Obsidian lens (optional):** `docs/` is already a valid Obsidian vault — the same V2
+  frontmatter drives Properties, Dataview and the graph view. Stand it up with
+  `docs/ai-forward-pack/scripts/obsidian-setup.py` (`--check` · `--install-app` · `--init` ·
+  `--analyze`): it commits the vault **config** (colour groups keyed to artifact `type`) and
+  git-ignores the per-user **state** and plugin code. Obsidian stays a **reader** — frontmatter
+  is the record, `docs-graph.py` the only writer, and no query is load-bearing in a canonical
+  artifact (queries live only in `docs/lenses/`). `--analyze` computes hubs, exact betweenness
+  bridges, components, orphans and structural gaps **dependency-free**, so the insight is never
+  locked behind a plugin. `.claude/knowledge/obsidian-lens.md` (OB1–OB14).
 - **Foundation:** the Body of Knowledge (directives, anti-patterns), Rules of the Road (tiers,
   gates, the loop), Persona Catalog, LOA, and Engineering Governance live in `.claude/knowledge/`
   — the constitution all of the above rests on.

@@ -101,6 +101,15 @@ every non-trivial task.
   or via the `auditlog` prompt (last-N, search, recall-and-redo, full-history↔changes toggle); all
   writes go through `docs/ai-forward-pack/scripts/audit-log.py`; the standard is
   `.github/instructions/audit-and-change-log.instructions.md`. A new session reads it to learn what was done and why.
+- **Obsidian lens (optional):** `docs/` is already a valid Obsidian vault — the same V2
+  frontmatter drives Properties, Dataview and the graph view. Stand it up with
+  `docs/ai-forward-pack/scripts/obsidian-setup.py` (`--check` · `--install-app` · `--init` ·
+  `--analyze`): it commits the vault **config** (colour groups keyed to artifact `type`) and
+  git-ignores the per-user **state** and plugin code. Obsidian stays a **reader** — frontmatter
+  is the record, `docs-graph.py` the only writer, and no query is load-bearing in a canonical
+  artifact (queries live only in `docs/lenses/`). `--analyze` computes hubs, exact betweenness
+  bridges, components, orphans and structural gaps **dependency-free**, so the insight is never
+  locked behind a plugin. `.github/instructions/obsidian-lens.instructions.md` (OB1–OB14).
 - **Foundation:** the Body of Knowledge, Rules of the Road, Persona Catalog, LOA, and Engineering
   Governance are in `.github/instructions/` (always applied) — the constitution all of this rests on.
 <!-- AI-FORWARD-PACK:END -->
