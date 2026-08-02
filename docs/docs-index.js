@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-Forward",
-  "generated": "2026-07-12T23:10:13Z",
+  "generated": "2026-08-02T19:54:24Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -543,6 +543,35 @@ window.DOCS_INDEX = {
       "sourceSha256": "f7da2d40e289e43fb0beb300b45e28b63305ffc1534b7dfe79c114f0006e5cc9"
     },
     {
+      "id": "defect-classes",
+      "path": "docs/lessons/defect-classes.md",
+      "title": "Defect-class register",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-10-31",
+      "reviewSuggested": [],
+      "summary": "This repository's register of defect classes — the recurring shapes of things that go wrong here, what each one survives, and the control that now fails when the shape recurs. Read at grounding; appended to on every defect, correction or falsified assumption.",
+      "tags": [
+        "lessons",
+        "defect-classes",
+        "continuous-improvement"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-domain-and-data-modelling",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "fb6b6b872809c7c19a3b682bc8910a43b4c7c77e9cd15f9291aed036d800260f"
+    },
+    {
       "id": "docs-index",
       "path": "docs/index.md",
       "title": "AI-Forward — Documentation Map of Content",
@@ -677,6 +706,225 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "a0c670c403ddf6e56e037ac25043bd7a6c2d16bb5f138a6794e412e896814925"
+    },
+    {
+      "id": "kb-ddm-comparables",
+      "path": "docs/knowledge/domain-and-data-modelling/comparables.md",
+      "title": "Domain & Data Modelling — Comparables",
+      "type": "knowledge",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "data-model-primacy",
+      "reviewBy": "2026-10-31",
+      "reviewSuggested": [],
+      "summary": "How other approaches frame and solve \"a durable model that keeps history and an audit trail without a shadow schema\" — CQRS, event sourcing, Data Vault, anchor modelling, temporal tables, and the two in-repo precedents (Meridian ADR-0022, TheTerrace hub-and-satellite).",
+      "tags": [
+        "comparables",
+        "cqrs",
+        "event-sourcing",
+        "data-vault",
+        "anchor-modeling"
+      ],
+      "links": [
+        {
+          "to": "kb-domain-and-data-modelling",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "63d69a0719bfda4a7db15a6286e28d84f1e1840294b47b3760d23c81b11f6647"
+    },
+    {
+      "id": "kb-ddm-data",
+      "path": "docs/knowledge/domain-and-data-modelling/data-and-constants.md",
+      "title": "Domain & Data Modelling — Data, Shapes & Constants",
+      "type": "knowledge",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "data-model-primacy",
+      "reviewBy": "2026-10-31",
+      "reviewSuggested": [],
+      "summary": "The concrete, reusable shapes: the grain statement form, the additivity classes, the Type-2 dimension column set, the append-only fact column set, the aggregate-design checklist, and the expand-migrate-contract sequence.",
+      "tags": [
+        "grain",
+        "scd",
+        "additivity",
+        "invariants",
+        "shapes"
+      ],
+      "links": [
+        {
+          "to": "kb-domain-and-data-modelling",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "f0b9a1af0c6c7900727e1817eb6a23470500ea782bbb44049559488b9ab62001"
+    },
+    {
+      "id": "kb-ddm-glossary",
+      "path": "docs/knowledge/domain-and-data-modelling/glossary.md",
+      "title": "Domain & Data Modelling — Glossary",
+      "type": "knowledge",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "data-model-primacy",
+      "reviewBy": "2026-10-31",
+      "reviewSuggested": [],
+      "summary": "The ubiquitous language of domain and data modelling, each term defined with what it is NOT — the near-miss disambiguation that stops two people using one word for two things.",
+      "tags": [
+        "glossary",
+        "ubiquitous-language"
+      ],
+      "links": [
+        {
+          "to": "kb-domain-and-data-modelling",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "54586633a22a35c2aa7fa6d85c131c99cc8c7516e67fa908f0d2744e9ba97415"
+    },
+    {
+      "id": "kb-ddm-open-questions",
+      "path": "docs/knowledge/domain-and-data-modelling/open-questions.md",
+      "title": "Domain & Data Modelling — Open Questions & Failure Modes",
+      "type": "knowledge",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "data-model-primacy",
+      "reviewBy": "2026-10-31",
+      "reviewSuggested": [],
+      "summary": "What the research could not settle (three Flagged claims), the disconfirming case against this standard's central stance, and the known failure modes of domain and data modelling observed in two production repos.",
+      "tags": [
+        "open-questions",
+        "risks",
+        "failure-modes"
+      ],
+      "links": [
+        {
+          "to": "kb-domain-and-data-modelling",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "2bed5032868f981f5633e654e7d92cf7f2b705a1e31117ea6c0e75a25ec08dc3"
+    },
+    {
+      "id": "kb-ddm-references",
+      "path": "docs/knowledge/domain-and-data-modelling/references.md",
+      "title": "Domain & Data Modelling — References",
+      "type": "knowledge",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "data-model-primacy",
+      "reviewBy": "2026-10-31",
+      "reviewSuggested": [],
+      "summary": "The seminal works, standards and vendor documentation this knowledge base rests on — Evans and Vernon for DDD, Kimball for dimensional modelling, Inmon for the ODS, SQL:2011 for temporal tables, and the current lakehouse layering documentation.",
+      "tags": [
+        "references",
+        "evans",
+        "vernon",
+        "kimball",
+        "inmon",
+        "sql2011"
+      ],
+      "links": [
+        {
+          "to": "kb-domain-and-data-modelling",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "3b69e6287688f12796b780151d06033cb7c9243dad99342f657dc79516bdcd54"
+    },
+    {
+      "id": "kb-ddm-sota",
+      "path": "docs/knowledge/domain-and-data-modelling/state-of-the-art.md",
+      "title": "Domain & Data Modelling — State of the Art",
+      "type": "knowledge",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "data-model-primacy",
+      "reviewBy": "2026-10-31",
+      "reviewSuggested": [],
+      "summary": "Current best practice across the four literatures this standard crosses: tactical DDD (aggregate design rules), conceptual/logical/physical modelling, Kimball dimensional modelling (grain, facts, SCD), and modern history mechanisms (SQL:2011 temporal tables, event sourcing, medallion/lakehouse layering).",
+      "tags": [
+        "ddd",
+        "kimball",
+        "scd",
+        "temporal",
+        "medallion",
+        "event-sourcing"
+      ],
+      "links": [
+        {
+          "to": "kb-domain-and-data-modelling",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "c84b416adefff05967393cf6dd782980d1f997ce05bd09f8e34eabb3b9d84824"
+    },
+    {
+      "id": "kb-ddm-sources",
+      "path": "docs/knowledge/domain-and-data-modelling/sources.md",
+      "title": "Domain & Data Modelling — Sources",
+      "type": "knowledge",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "data-model-primacy",
+      "reviewBy": "2026-10-31",
+      "reviewSuggested": [],
+      "summary": "Full source list with access dates and the confidence each source carries, ordered by the source-of-truth hierarchy: primary works and standards, then vendor documentation, then practitioner synthesis, then in-repo evidence.",
+      "tags": [
+        "sources",
+        "provenance"
+      ],
+      "links": [
+        {
+          "to": "kb-domain-and-data-modelling",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "bf1de4e4c569cd063edd04f24263b8d6a2f6b8f41897799ea8686201cdb25fe1"
+    },
+    {
+      "id": "kb-domain-and-data-modelling",
+      "path": "docs/knowledge/domain-and-data-modelling/index.md",
+      "title": "Domain & Data Modelling — DDD, conceptual models, ODS, star schemas (domain knowledge)",
+      "type": "knowledge",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "data-model-primacy",
+      "reviewBy": "2026-10-31",
+      "reviewSuggested": [],
+      "summary": "Sourced evidence base for the pack's data-model-primacy directive: Domain-Driven Design (bounded contexts, aggregates, entities vs value objects), the conceptual/logical/physical model levels, the Operational Data Store, and Kimball dimensional modelling (grain, facts, Type-2 dimensions, snowflaking). Establishes why \"core entities as dimensions, change-over-time as facts\" gives history and audit without a shadow schema — and where that stance costs.",
+      "tags": [
+        "ddd",
+        "aggregate-root",
+        "conceptual-model",
+        "ods",
+        "star-schema",
+        "dimension",
+        "fact",
+        "scd",
+        "grain",
+        "temporal"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-pack-evolution",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "4e7b5d667bf07b6f22c0c714ddec9241d638c98cd9dc0ec91c291a8f991a7b84"
     },
     {
       "id": "kb-pack-evolution",
@@ -1000,5 +1248,5 @@ window.DOCS_INDEX = {
       "description": "Inspect a rendered design or design-language preview."
     }
   ],
-  "graphSha256": "69bd1e16929afec0d098982a329e861625ee176b18d0a72c1742213c3a7ac46f"
+  "graphSha256": "9fbdab92e16665ffe55099aea2a9a49a2920c2d134cae307b99741dc8a203457"
 };

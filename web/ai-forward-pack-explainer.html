@@ -10,7 +10,7 @@
   - Runtime: React 18 UMD + htm (no build step) — the same house convention used by
     docs/index.html (the Docs Explorer). Libraries load from CDN; an offline banner shows
     if they cannot.
-  - It explains the KNOWLEDGE (the constitution), the SKILLS (the 17 workflows), the
+  - It explains the KNOWLEDGE (the constitution), the SKILLS (the 18 workflows), the
     RIGOR PROTOCOL (the reasoning spine), the PERSONAS (the dual-mode council), and the
     UI TEMPLATE APPROACH (the archetype grammar) — with a TABLE of every template type and
     LINKABLE, rendered MOCKUPS of each one so a reader can see-then-choose.
@@ -343,14 +343,14 @@ window.addEventListener("DOMContentLoaded",function(){
     ]}
   ];
 
-  // The 17 skills — .claude/skills/* (fourteen reasoning workflows + /auditlog + two prompt-log utilities)
+  // The 18 skills — .claude/skills/* (fifteen reasoning workflows + /auditlog + two prompt-log utilities)
   const SKILLS = [
     ["/collectknowledge","Build a sourced domain knowledge base before design — state of the art, comparables, references, glossary — every claim confidence-labeled.","Domain Researcher","support"],
     ["/adddomainexperts","Discover the project's domain from repo evidence and add tailored domain-expert personas (peer + adversary), wiring in backing Claude skills.","Product Strategist","support"],
     ["/specify","Turn a prompt into one spec with three layers (Functional / UX / UI) and testable acceptance criteria.","Product Strategist","core"],
     ["/define-architecture","Produce the top-level shape — LOA archetype, tier allocation, boundaries — spike unfamiliar SDKs, record decisions as ADRs.","Enterprise Architect","core"],
     ["/design","Detailed design — named patterns and contracts, failure-mode / adversarial / privacy analyses, telemetry, test plan.","Patterns Expert","core"],
-    ["/implement","Build in small TDD increments paired with the Test Architect; apply the Testing Strategy; ship a Proof Pack.","Test Architect","core"],
+    ["/ui-design","Create, review or elevate a user-facing surface — direction brief, design language, a self-contained reviewable mockup with a state/persona/viewport harness, and a rubric critique.","UX &amp; Accessibility","core"], paired with the Test Architect; apply the Testing Strategy; ship a Proof Pack.","Test Architect","core"],
     ["/document","Maintain truth-to-code docs — API reference, four diagram families — and regenerate the full Docs Explorer graph.","Documentation Steward","core"],
     ["/investigate","Find the verified root cause, generalize it to the failure class, produce a phased repair plan — then stop for human review.","SRE & Systems Diagnostician","diagnose"],
     ["/migrate","Characterization-first migrations — pin behavior in golden tests, compute blast radius, migrate in vertical increments, prove equivalence.","language Developer","support"],
@@ -750,7 +750,7 @@ window.addEventListener("DOMContentLoaded",function(){
       <!-- SKILLS -->
       <section class="block" id="skills"><div class="wrap">
         <div class="sechead"><div class="seclabel">The workflows</div>
-          <h2>Seventeen skills, one loop</h2>
+          <h2>Eighteen skills, one loop</h2>
           <p>Each skill is the Rigor Protocol specialized to one kind of work. The core five carry a piece
           from idea to shipped code; supporting skills prepare the ground or keep it honest;
           <code>/investigate</code> breaks the loop whenever a defect appears. Three <b>pack-lifecycle</b>

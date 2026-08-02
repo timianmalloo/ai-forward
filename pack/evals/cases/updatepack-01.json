@@ -13,7 +13,7 @@
   ],
   "assertions": [
     { "type": "not-grep", "path": "docs/ai-forward-pack/INSTALL.md", "pattern": "revision: 1\\b" },
-    { "type": "grep", "path": "docs/ai-forward-pack/INSTALL.md", "pattern": "revision: [2-9]" },
+    { "type": "grep", "path": "docs/ai-forward-pack/INSTALL.md", "pattern": "revision: (?:[2-9]|[1-9][0-9]+)" },
     { "type": "grep", "path": "CLAUDE.md", "pattern": "/updatepack" },
     { "type": "grep", "path": "CLAUDE.md", "pattern": "/addpacktorepo" },
     { "type": "not-grep", "path": "CLAUDE.md", "pattern": "Skills \\(10\\)" },

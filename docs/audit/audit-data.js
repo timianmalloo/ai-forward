@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-07-12T23:12:36Z",
+  "generated": "2026-08-02T19:53:10Z",
   "audit": [
     {
       "id": "al-0001",
@@ -288,6 +288,63 @@ window.AUDIT_DATA = {
       "tags": [],
       "outcome": "success",
       "change": "cl-0007"
+    },
+    {
+      "id": "al-0013",
+      "shortname": "collectknowledge-domain-and-data-modelling",
+      "datetime": "2026-08-02T19:52:50Z",
+      "session": "2b932df7-281e-435f-b133-05c86c078c9d",
+      "prompt": "examine the knowledge and new directives in my Meridian and Terrace repos ... #1 data model primacy via DDD + conceptual models + ODS + star schemas; #2 always rigor protocol + collaborative/adversarial review, never decide in a silo, ground end-to-end; #3 always learn from mistakes - log and characterize every bug and mistaken assumption so the class does not repeat (continuous improvement as primary directive). Plus: create a UI-Design skill that pushes UI/UX to best-in-class.",
+      "summary": "Compiled the sourced evidence base docs/knowledge/domain-and-data-modelling/ (8 files, 10 headline findings, 9 Verified / 1 Inferred / 3 Flagged) covering DDD aggregate rules, the three model levels, Kimball grain/additivity/SCD, the ODS-vs-star correction, snowflaking, and append-only-facts vs SQL:2011 temporal tables. Backs the new pack standard domain-and-data-modelling.md.",
+      "kind": "skill",
+      "skill": "collectknowledge",
+      "tool": "GitHub Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/knowledge/domain-and-data-modelling/index.md"
+      ],
+      "tags": [
+        "ddd",
+        "star-schema",
+        "data-model"
+      ],
+      "outcome": "success",
+      "git": {
+        "sha": "8801a477e21cc610d8e6352d4d1953552bda03c6",
+        "short": "8801a477e",
+        "branch": "main",
+        "pushed": true
+      }
+    },
+    {
+      "id": "al-0014",
+      "shortname": "extendaibundle-revision-18",
+      "datetime": "2026-08-02T19:53:09Z",
+      "session": "2b932df7-281e-435f-b133-05c86c078c9d",
+      "prompt": "Incorporate the three owner directives (data-model primacy; unconditional rigor + no silo decisions + end-to-end grounding; continuous improvement from every mistake) into the pack, learning from the Meridian and Terrace repos; and add a UI-Design skill that takes UI/UX to best-in-class.",
+      "summary": "Pack revision 17->18. Added 4 knowledge docs (domain-and-data-modelling DM1-DM18, end-to-end-integrity E1-E18, continuous-improvement CI1-CI12, ui-design-craft DX1-DX25), the /ui-design skill (+Copilot prompt +eval), 3 templates (mockup-harness with a working in-artifact WCAG audit, ui-review rubric, defect-classes register seeded with 20 classes). Wired into /specify /define-architecture /design /implement /investigate, both managed blocks (RE-PASTE), and the Data & Persistence + UX & Accessibility personas. Fixed a pre-existing truncated UI bullet in both managed blocks.",
+      "kind": "skill",
+      "skill": "extendaibundle",
+      "tool": "GitHub Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "pack/knowledge/domain-and-data-modelling.md",
+        "pack/knowledge/end-to-end-integrity.md",
+        "pack/knowledge/continuous-improvement.md",
+        "pack/knowledge/ui-design-craft.md",
+        "pack/commands/ui-design/SKILL.md"
+      ],
+      "tags": [
+        "pack",
+        "revision-18"
+      ],
+      "outcome": "success",
+      "git": {
+        "sha": "8801a477e21cc610d8e6352d4d1953552bda03c6",
+        "short": "8801a477e",
+        "branch": "main",
+        "pushed": true
+      }
     }
   ],
   "changes": [
@@ -476,6 +533,29 @@ window.AUDIT_DATA = {
       "git": {
         "before": "5d7b95235e664b7779c7a653c000f6a199403070",
         "after": "5d7b95235e664b7779c7a653c000f6a199403070",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0008",
+      "datetime": "2026-08-02T19:53:10Z",
+      "session": "2b932df7-281e-435f-b133-05c86c078c9d",
+      "kind": "knowledge",
+      "skill": "collectknowledge",
+      "title": "Data-model primacy, end-to-end integrity, continuous improvement, and the /ui-design craft skill become pack standards",
+      "prompt": "Three standing directives from the owner, distilled from a week of production defects across two pack repos, plus a UI/UX capability gap.",
+      "summary": "The data model is now the highest-priority decision in every workflow (DDD conceptual model -> dimensions + append-only facts -> grain/additivity/history/derive-don't-store); rigor and adversarial review are unconditional and decisions must be grounded end-to-end with an enumerated change-surface list; every defect becomes a registered class with a control that fails when the shape recurs; and /ui-design adds direction-before-pixels, a reviewable mockup harness, and an 18-dimension critique rubric.",
+      "rationale": "Both Meridian and TheTerrace independently wrote local versions of directives 1-3 after production defects the pack did not prevent - convergence across two independent codebases is the signal a lesson is general, not local. Most of their defects were data-model defects presenting as application defects, and the rest were pointwise decisions that were locally correct and globally wrong.",
+      "artifacts": [
+        "pack/knowledge/domain-and-data-modelling.md",
+        "docs/knowledge/domain-and-data-modelling/index.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "8801a477e21cc610d8e6352d4d1953552bda03c6",
+        "after": "8801a477e21cc610d8e6352d4d1953552bda03c6",
         "branch": "main",
         "pushed": true,
         "commits": []

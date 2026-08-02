@@ -1,0 +1,88 @@
+{
+  "id": "ui-design-01",
+  "skill": "ui-design",
+  "prompt": "Run /ui-design in create mode for the 'add a transaction' data-entry surface of a personal-finance web app: an expert-ish household user entering 10-30 line items in one sitting, on desktop and mobile.",
+  "setup": [],
+  "assertions": [
+    {
+      "type": "file-exists",
+      "path": "docs/mockups/add-transaction.html"
+    },
+    {
+      "type": "file-exists",
+      "path": "docs/mockups/add-transaction.md"
+    },
+    {
+      "type": "frontmatter-valid",
+      "path": "docs/mockups/add-transaction.md"
+    },
+    {
+      "type": "grep",
+      "path": "docs/mockups/add-transaction.md",
+      "pattern": "(?i)archetype|signature"
+    },
+    {
+      "type": "grep",
+      "path": "docs/mockups/add-transaction.md",
+      "pattern": "(?i)adjective|direction brief|anti-goal"
+    },
+    {
+      "type": "grep",
+      "path": "docs/mockups/add-transaction.html",
+      "pattern": "(?i)empty"
+    },
+    {
+      "type": "grep",
+      "path": "docs/mockups/add-transaction.html",
+      "pattern": "(?i)loading|skeleton"
+    },
+    {
+      "type": "grep",
+      "path": "docs/mockups/add-transaction.html",
+      "pattern": "(?i)error"
+    },
+    {
+      "type": "grep",
+      "path": "docs/mockups/add-transaction.html",
+      "pattern": "(?i)overflow|truncat|longest"
+    },
+    {
+      "type": "grep",
+      "path": "docs/mockups/add-transaction.html",
+      "pattern": "(?i)viewport|persona|harness|review bar"
+    },
+    {
+      "type": "grep",
+      "path": "docs/mockups/add-transaction.html",
+      "pattern": "(?i)prefers-reduced-motion"
+    },
+    {
+      "type": "not-grep",
+      "path": "docs/mockups/add-transaction.html",
+      "pattern": "(?i)https?://(cdn|unpkg|cdnjs|jsdelivr)"
+    },
+    {
+      "type": "not-grep",
+      "path": "docs/mockups/add-transaction.html",
+      "pattern": "(?i)lorem ipsum"
+    },
+    {
+      "type": "file-exists",
+      "path": "DESIGN.md"
+    },
+    {
+      "type": "grep",
+      "path": "DESIGN.md",
+      "pattern": "(?i)contrast"
+    },
+    {
+      "type": "cmd-exit",
+      "cmd": [
+        "python3",
+        "docs/ai-forward-pack/scripts/docs-graph.py",
+        "validate"
+      ],
+      "exit": 0
+    }
+  ]
+}

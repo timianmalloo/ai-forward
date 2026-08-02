@@ -17,6 +17,36 @@ every non-trivial task.
 - **Reasoning spine:** the Rigor Protocol — see `.github/instructions/rigor-protocol.instructions.md`.
   Map, interrogate, ground in evidence, disconfirm, then converge; label every claim with its
   confidence.
+- **The standing method (unconditional):** the absence of the words *"use the Rigor Protocol"*,
+  *"convene the personas"* or *"run /design first"* is **not permission to skip them** — an
+  interactive prompt carries the same standard as a skill run; only the ceremony scales with the
+  tier, never the rigor. Never decide in a silo: ground in the **whole intent, end to end**, name
+  what the decision constrains, and write down the **surface list** a change must reach before you
+  start (store → model → service → projection/wire → client type → UI → compute reader). Prove the
+  **rendered surface** and the **consistency across surfaces**, not just the units; a gate's green
+  result is evidence the gate passed, not that its contents passed; an exit code is not a result —
+  read the state; and never assert the shape of *our own* code from memory — open the file or label
+  the claim Inferred. `.github/instructions/end-to-end-integrity.instructions.md` (E1–E18).
+- **The data model is the highest-priority decision.** Before any surface, endpoint or table:
+  model the domain in **DDD** terms (bounded context, ubiquitous language, entities vs value
+  objects, **aggregates bounded by an invariant**, small, referenced by identity). Then choose the
+  **durable representation** — by default core entities as **dimensions** and change-over-time as
+  **append-only facts**, so history and the audit trail *are* the data rather than a shadow schema,
+  and new measures are new rows/columns rather than rewrites. **Declare the grain before the
+  columns** ("one row is exactly one ______"), classify every measure additive / semi-additive /
+  non-additive, decide the **history rule per attribute** (Type-2 whenever a change would rewrite
+  the meaning of a past record), **derive don't store** (two definitions of one quantity is a defect
+  signature), and snowflake only when the domain demands the entity. Migrate expand-migrate-contract;
+  a backfill never guesses. `.github/instructions/domain-and-data-modelling.instructions.md`
+  (DM1–DM18); evidence in `docs/knowledge/domain-and-data-modelling/`; the **Data & Persistence
+  Architect** holds the veto.
+- **Continuous improvement (a primary directive):** every bug you create, every mistaken
+  assumption, and every correction you receive is captured — as a **class, not an instance** — in
+  `docs/lessons/defect-classes.md`, and converted into a **control** that fails when the shape
+  recurs. Run **class → sweep → derive → prevent** in writing on every defect fix; a fix that stops
+  at the instance is not finished. **A lesson recorded as prose is a memoir** — it only counts once
+  it is a test, a gate, a lint rule, or a file that is always loaded. Read the register at
+  grounding. `.github/instructions/continuous-improvement.instructions.md` (CI1–CI12).
 - **Smallest correct (build discipline):** climb the **Solution-Selection Ladder** before writing —
   YAGNI → reuse-in-codebase → stdlib → native → installed dep → one line → minimum — never cutting
   validation, security, accessibility, or the failure-mode/test floors; mark bounded shortcuts with an
@@ -26,9 +56,10 @@ every non-trivial task.
 - **Personas (dual-mode):** author in Peer Mode, review in Adversary Mode; the author never
   clears its own hard veto. Agents in `.github/agents/`; the operating standard in the
   `persona-audit` / `persona-cards` instructions.
-- **Workflows (17):** the prompts in `.github/prompts/` — fourteen reasoning workflows
-  (`collectknowledge`, `adddomainexperts`, `specify`, `define-architecture`, `design`, `implement`,
-  `investigate`, `document`, `adopt`, `forensicreview`, `migrate`, `updatepack`, `addpacktorepo`, `extendaibundle`),
+- **Workflows (18):** the prompts in `.github/prompts/` — fifteen reasoning workflows
+  (`collectknowledge`, `adddomainexperts`, `specify`, `define-architecture`, `design`, `ui-design`,
+  `implement`, `investigate`, `document`, `adopt`, `forensicreview`, `migrate`, `updatepack`,
+  `addpacktorepo`, `extendaibundle`),
   the `auditlog` lens over the audit & change log, plus two prompt-log utilities, `prompts` and
   `searchprompts`. Templates: `docs/ai-forward-pack/templates/`.
 - **Prompt reuse (utility):** `/prompts` opens the audit log's prompts as an arrow-navigable stack
@@ -43,13 +74,23 @@ every non-trivial task.
   why), UX (how it works: IA, user flows, structure), UI (how it looks) — written bottom-up,
   UX before UI, each absent layer marked N/A — `.github/instructions/specification-standards.instructions.md`; the
   UX Researcher/IA holds the UX-specification veto, UX & Accessibility the UI veto.
-- **UI:** whenever the work has a user-facing interface (any medium), the UI & Interaction
+- **UI:** whenever the work has a user-facing interface (any medium), the **UI & Interaction
+  Design Standard** governs excellence — token systems, complete component states (incl.
+  empty/loading/error), HAX + Shape-of-AI patterns for AI UIs, WCAG 2.2 AA, performance budget —
+  `.github/instructions/ui-interaction-design.instructions.md` (U1–U20); the UX & Accessibility
+  lens holds the veto.
 - **UI archetype:** for a user-facing UI, select the **archetype** (routing/temporal/data) as a
   determinism control before generating — `.github/instructions/ui-archetype-grammar.instructions.md` (G1–G16) + the
-  16-archetype catalog; record the Archetype Signature in the spec, build to its facet rules.
-  Design Standard governs excellence — token systems, complete component states, HAX + Shape-of-AI
-  patterns for AI UIs, WCAG 2.2 AA — `.github/instructions/ui-interaction-design.instructions.md`;
-  the UX & Accessibility lens holds the veto.
+  archetype catalog; record the Archetype Signature in the spec, build to its facet rules, and
+  verify it against the *shape of the task* even on an existing screen (reading is parallel;
+  entering is serial).
+- **UI craft (`ui-design`):** to create, review or elevate a surface, run the `ui-design` prompt —
+  direction in words before pixels, the design system before the screens, a **self-contained
+  dependency-free mockup** that renders the hard states with a **review harness** (persona ·
+  viewport · state · theme · reduced motion), and a **rubric critique** (location · dimension ·
+  severity · evidence · fix · confidence) run structure-before-surface, ending in a ranked plan.
+  Measure before you diagnose, and self-check against the generic-AI-look tells.
+  `.github/instructions/ui-design-craft.instructions.md` (DX1–DX25).
 - **Testing:** the Testing Strategy governs what to test and what counts as proof —
   `.github/instructions/testing-strategy.instructions.md`; the Test Architect enforces it.
 - **Instrumentation:** structured, trace-correlated telemetry in the OpenTelemetry data model,

@@ -13,7 +13,7 @@ This repo is two things at once:
    so the skills, agents, and knowledge are active in Claude Code *while you work on the pack
    itself*. Dogfooding: the pack is built using the pack.
 
-For the pack's own story — why it exists, what's inside, how to use the seventeen skills — read
+For the pack's own story — why it exists, what's inside, how to use the eighteen skills — read
 [`pack/README.md`](pack/README.md) and [`pack/OVERVIEW.md`](pack/OVERVIEW.md).
 
 ## Layout
@@ -23,7 +23,7 @@ ai-forward/
 ├─ pack/                  ← CANONICAL SOURCE — edit here to expand the pack
 │   ├─ README.md  OVERVIEW.md  research-synthesis.md
 │   ├─ knowledge/         ← the reasoning spine + 23-persona roster + vendored foundation
-│   ├─ commands/          ← the 17 skills (one SKILL.md each)
+│   ├─ commands/          ← the 18 skills (one SKILL.md each)
 │   ├─ templates/         ← the artifacts each skill produces
 │   ├─ adapters/          ← INSTALL.md + Claude Code / Copilot agents + prompts + managed blocks
 │   ├─ evals/             ← the pack's own regression suite
