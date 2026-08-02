@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-08-02T19:53:10Z",
+  "generated": "2026-08-02T23:17:51Z",
   "audit": [
     {
       "id": "al-0001",
@@ -342,6 +342,34 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "8801a477e21cc610d8e6352d4d1953552bda03c6",
         "short": "8801a477e",
+        "branch": "main",
+        "pushed": true
+      }
+    },
+    {
+      "id": "al-0015",
+      "shortname": "forensicreview-ai-forward-rev18",
+      "datetime": "2026-08-02T23:17:51Z",
+      "session": "2b932df7-281e-435f-b133-05c86c078c9d",
+      "prompt": "great do a /forensicreview and full consistency pass on the repo, tell me if you find any other issues",
+      "summary": "Comprehensive forensic review at 53e3afe (revision 18). Baseline all green: verify-bundle CONSISTENT, pytest 107 passed, node 31 passed, docs-graph validate/freshness 0 findings, pack-doctor 6 PASS. Ten findings, no P0: FR-011 (P1) source-install drift has no CI gate, PROVEN by worktree reproduction where all CI gates passed on a drifted tree; FR-020 (P2) Copilot receives 11 of 23 personas though INSTALL maps all to both surfaces; FR-012 (P2) docs-graph rollup emits links relative to root not the output doc so every rollup link is broken in every consuming repo; FR-013 (P2) skill lists ungated - README, copilot-instructions and docs/index omit /ui-design; FR-014 (P2) pytest, Playwright and the graph gate never run in CI; FR-015 (P2) the only privileged workflow uses floating action tags; FR-016..FR-019 (P3) hygiene. FR-008 carried forward, FR-010 closed into FR-020. Readiness: PASS-WITH-CONDITIONS. Stopped for human triage; no production code, CI, or config changed.",
+      "kind": "skill",
+      "skill": "forensicreview",
+      "tool": "GitHub Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/reviews/forensic-review.md",
+        "docs/backlog/forensic-review.md"
+      ],
+      "tags": [
+        "forensic-review",
+        "ci",
+        "consistency"
+      ],
+      "outcome": "success",
+      "git": {
+        "sha": "53e3afe59dc3e20a5e1e20a769311980fd194cb4",
+        "short": "53e3afe59",
         "branch": "main",
         "pushed": true
       }

@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-Forward",
-  "generated": "2026-08-02T19:54:24Z",
+  "generated": "2026-08-02T23:18:43Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -599,9 +599,44 @@ window.DOCS_INDEX = {
     {
       "id": "forensic-review",
       "path": "docs/reviews/forensic-review.md",
-      "title": "Forensic Review — AI-Forward model orchestration",
+      "title": "Forensic Review — AI-Forward repository (revision 18)",
       "type": "doc",
       "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2026-11-02",
+      "reviewSuggested": [],
+      "summary": "Comprehensive evidence-based assessment of the AI-Forward repository at commit 53e3afe (revision 18). Ten findings, none P0. The two load-bearing results are FR-011 — the repository's foundational invariant (pack/ is source, .claude/ and .github/ are generated) has no CI gate, proven by drifting a worktree — and FR-020, Copilot receiving 11 of the 23 personas the deployment map promises.",
+      "tags": [
+        "forensic-review",
+        "ci",
+        "consistency",
+        "supply-chain",
+        "documentation"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        },
+        {
+          "to": "forensic-review-backlog",
+          "rel": "relates-to"
+        },
+        {
+          "to": "forensic-review-20260712",
+          "rel": "supersedes"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "a6e7796549e22a4641b4a00a0d784572c521f0618c68c38ecfc74e87cfc25680"
+    },
+    {
+      "id": "forensic-review-20260712",
+      "path": "docs/reviews/forensic-review-20260712-model-orchestration.md",
+      "title": "Forensic Review — AI-Forward model orchestration",
+      "type": "doc",
+      "status": "superseded",
       "owner": "@timianmalloo",
       "phase": "pack-evolution",
       "reviewBy": "2026-10-10",
@@ -617,16 +652,51 @@ window.DOCS_INDEX = {
           "rel": "documents"
         },
         {
-          "to": "forensic-review-backlog",
+          "to": "forensic-review-backlog-20260712",
           "rel": "relates-to"
         }
       ],
       "diagrams": [],
-      "sourceSha256": "fa87aa62c727adc25d4a055a6f8e8bccaeb03beb87e5652471f47476e80bacd3"
+      "sourceSha256": "9e2abc127f9b4c38c7dc6ed4a7f955ef7ac3a2ef1640c4c86467ad4bb91a7832"
     },
     {
       "id": "forensic-review-backlog",
       "path": "docs/backlog/forensic-review.md",
+      "title": "Forensic Review Backlog — AI-Forward repository (revision 18)",
+      "type": "doc",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2026-11-02",
+      "reviewSuggested": [],
+      "summary": "The proposed backlog from the revision-18 forensic review of AI-Forward at commit 53e3afe — ten findings (FR-011..FR-020) ordered into four phases, plus FR-008 carried forward and FR-010 closed into FR-020. All items are status `proposed` and await human triage; none has been implemented.",
+      "tags": [
+        "backlog",
+        "forensic-review",
+        "ci",
+        "consistency",
+        "supply-chain"
+      ],
+      "links": [
+        {
+          "to": "forensic-review",
+          "rel": "refines"
+        },
+        {
+          "to": "architecture",
+          "rel": "depends-on"
+        },
+        {
+          "to": "forensic-review-backlog-20260712",
+          "rel": "supersedes"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "d08e4bc2de4740f560d2678a04b4d5fa64cc8782d11e24efb56dbe38767aaa35"
+    },
+    {
+      "id": "forensic-review-backlog-20260712",
+      "path": "docs/backlog/forensic-review-20260712-model-orchestration.md",
       "title": "Forensic Review Backlog — Model orchestration",
       "type": "doc",
       "status": "proposed",
@@ -641,7 +711,7 @@ window.DOCS_INDEX = {
       ],
       "links": [
         {
-          "to": "forensic-review",
+          "to": "forensic-review-20260712",
           "rel": "refines"
         },
         {
@@ -650,7 +720,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "bc04d2b1e8cb3433e7b6ef66c6bb226c89dd760b12d50a09124a272ab5f09f09"
+      "sourceSha256": "6c4e8d947e823f9469d0f76eabe6cf2059f14662712f1e983faf0319d4fd49aa"
     },
     {
       "id": "project-memory",
@@ -1248,5 +1318,5 @@ window.DOCS_INDEX = {
       "description": "Inspect a rendered design or design-language preview."
     }
   ],
-  "graphSha256": "9fbdab92e16665ffe55099aea2a9a49a2920c2d134cae307b99741dc8a203457"
+  "graphSha256": "4f779e6103daaa1b39f07fd3afa0ea620de4bfb63f894fedc26ac8d1db416f36"
 };
