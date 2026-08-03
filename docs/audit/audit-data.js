@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-08-03T03:56:59Z",
+  "generated": "2026-08-03T17:04:26Z",
   "audit": [
     {
       "id": "al-0001",
@@ -443,6 +443,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "pack/scripts/obsidian-setup.py"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0019",
+      "shortname": "pack-r24-join-lens-and-freshness",
+      "datetime": "2026-08-03T17:04:26Z",
+      "session": "a653ef29-df17-44c4-b3a0-0e9dc99bb32f",
+      "prompt": "finish all of these",
+      "summary": "Revision 24: the join lens was scanning its own output and reporting itself (42 of 94 rows in a consuming repo, now 0), and --check now reports lens freshness against the commit the lens records about itself, narrowed to source changes only.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "pack/scripts/graphify-setup.py"
       ],
       "tags": [],
       "outcome": "success"

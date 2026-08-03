@@ -22,7 +22,7 @@ summary: >-
 > Findings below are **prompts, not failures** (GK11/OB13) - close the gap, or record
 > why it does not apply.
 
-*Code graph: **2050 nodes**, **2509 edges**, 198 source files. Docs graph: **39 artifacts**, 92 distinct paths referenced.*
+*Code graph: **2050 nodes**, **2509 edges**, 198 source files. Docs graph: **40 artifacts**, 91 distinct paths referenced.*
 
 ## Edge provenance (GK6)
 
@@ -61,14 +61,14 @@ summary: >-
 | `BoundedProcessTests` | 23 | `tests/docs_explorer/test_bounded_process.py:L24` | BoundedProcessTests |
 | `ReleaseGateTests` | 23 | `tests/docs_explorer/test_check_consistency.py:L21` | ReleaseGateTests |
 | `._write_artifact()` | 22 | `tests/docs_explorer/test_docs_graph.py:L1427` | DocsGraphTests |
+| `obsidian-setup.py` | 18 | `pack/scripts/obsidian-setup.py:L1` | obsidian-setup.py |
 | `browser_benchmark.test.js` | 15 | `tests/docs_explorer/browser_benchmark.test.js:L1` | benchmark_docs_explorer.js |
 | `PackDoctorGraphTests` | 15 | `tests/docs_explorer/test_pack_doctor.py:L28` | PackDoctorGraphTests |
 | `run_bounded()` | 14 | `pack/scripts/bounded_process.py:L204` | run_bounded |
 | `.run_python()` | 14 | `tests/docs_explorer/test_bounded_process.py:L28` | BoundedProcessTests |
 | `RunEvalsCommandTests` | 14 | `tests/docs_explorer/test_run_evals.py:L21` | RunEvalsCommandTests |
 | `run-evals.py` | 12 | `pack/evals/run-evals.py:L1` | run_bounded |
-| `._root()` | 12 | `tests/docs_explorer/test_check_consistency.py:L304` | ReleaseGateTests |
-| `graphify-setup.py` | 11 | `pack/scripts/graphify-setup.py:L1` | graphify-setup.py |
+| `main()` | 12 | `pack/scripts/obsidian-setup.py:L702` | obsidian-setup.py |
 
 ## How to act on this
 

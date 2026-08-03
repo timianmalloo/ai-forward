@@ -258,6 +258,56 @@ def resolve_reference(root: str, artifact_path: str, ref: str):
     return os.path.normpath(ref).replace(os.sep, "/"), False
 
 
+def _lens_staleness(root):
+    """Is the committed join lens describing a codebase older than HEAD?
+
+    The code graph itself is a build output and git-ignored, so the only committed evidence
+    of when it was built is the commit the lens records about itself. That record is what
+    rots - silently, because nothing else looks at it. A lens that quietly describes an
+    older codebase is worse than no lens: it is consulted with the same confidence.
+
+    Deliberately narrow: only SOURCE changes count. A documentation-only commit does not
+    invalidate a graph of the code, and reporting one would train people to ignore this -
+    the same wolf-crying that makes a noisy gate worthless.
+    """
+    lens = os.path.join(root, "docs", "lenses", "code-doc-join.md")
+    try:
+        text = open(lens, encoding="utf-8", errors="replace").read()
+    except OSError:
+        return False, "unreadable"
+
+    found = re.search(r"Code graph built at commit `([0-9a-f]{7,40})`", text)
+    if not found:
+        return True, "the lens does not record the commit it was built at"
+
+    built = found.group(1)
+    ok, head = _git(root, "rev-parse", "HEAD")
+    if not ok:
+        return False, "not a git repository - cannot judge"
+
+    ok, _ = _git(root, "cat-file", "-t", built)
+    if not ok:
+        return True, f"recorded commit {built[:12]} is not in this repository"
+
+    ok, changed = _git(root, "diff", "--name-only", built, head.strip(), "--", "src", "tests", "app", "lib")
+    if not ok:
+        return False, "could not compare - cannot judge"
+
+    files = [line for line in changed.splitlines() if line.strip()]
+    if files:
+        return True, f"STALE - {len(files)} source file(s) changed since {built[:12]}"
+    return False, f"current at {built[:12]}"
+
+
+def _git(root, *args):
+    try:
+        proc = subprocess.run(
+            ["git", "-C", root, *args],
+            stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True, timeout=30)
+        return proc.returncode == 0, proc.stdout
+    except (OSError, subprocess.SubprocessError):
+        return False, ""
+
 def join_graphs(root, code, docs, top_n=15):
     """Compute the two gaps between intent and reality (GK11)."""
     nodes = code.get("nodes", [])
@@ -278,6 +328,13 @@ def join_graphs(root, code, docs, top_n=15):
     for art in docs.get("artifacts", []):
         art_path = art.get("path")
         if not art_path:
+            continue
+        # Derived output is not a record. The lenses are GENERATED from this graph, and
+        # code-doc-join.md lists the very paths reported below - so scanning them makes the
+        # lens report ITSELF, and those false positives grow with every run until they drown
+        # the real signal. Measured in a consuming repo: 42 of 94 rows were the lens citing
+        # its own previous table.
+        if art_path.replace(os.sep, "/").startswith("docs/lenses/"):
             continue
         full = os.path.join(root, art_path.replace("/", os.sep))
         try:
@@ -528,6 +585,11 @@ def main() -> int:
             findings.append(docs_err)
         joined = os.path.exists(os.path.join(root, "docs", "lenses", "code-doc-join.md"))
         out(f"  {'code/doc join lens':<24} {'present' if joined else 'not generated - run --join'}")
+        if joined:
+            stale, detail = _lens_staleness(root)
+            out(f"  {'lens freshness':<24} {detail}")
+            if stale:
+                findings.append("code/doc join lens built from source older than HEAD - run --build --join")
         gi = os.path.join(root, ".gitignore")
         ignored = os.path.exists(gi) and "graphify-out/" in open(gi, encoding="utf-8").read()
         out(f"  {'graphify-out ignored':<24} {'yes' if ignored else 'NO - run --init (GK3)'}")

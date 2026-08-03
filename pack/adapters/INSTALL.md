@@ -1,13 +1,12 @@
 ---
 doc: INSTALL
 purpose: 'Manual reconciliation guide and refresh changelog. On a repo refresh, read `changes` below — it is the key guide: it lists exactly what to re-copy and re-paste since the previous revision, so you do not have to diff the whole tree.'
-bundle_version: '2026.08.02.6'
-revision: 23
-released: ''
+bundle_version: '2026.08.03.1'
+revision: 24
 counts: { lenses: 23, skills: 18, knowledge_docs: 31, templates: 22, scripts: 11 }
 refresh_protocol: 'Compare your repo last-applied revision to the `revision` above. If it is lower, apply each entry in `changes` in order — re-copy the listed `paths` to their mapped destinations (deployment map in the body), re-apply the Copilot frontmatter wraps, and where an entry `deploy` says RE-PASTE, replace the managed blocks wholesale between their markers. Never overwrite an accumulated docs/docs-index.js.'
 changes:
-  - { type: changed, area: scripts, paths: ['scripts/obsidian-setup.py'], deploy: 'copy to docs/ai-forward-pack/scripts/', summary: 'USABILITY FIX. "Where do I point Obsidian?" was the first question asked after the lens shipped, which means the affordance was missing rather than the answer unclear. --init already ended with the path, but that output has scrolled away by the time anyone opens the app, and --check - the command people run later - reported state without ever naming it. Every --check now leads with the absolute vault path, the exact menu action (Open folder as vault), and why it is <repo>/docs rather than the repo root (OB5). Verified against a pack-source repo and a consuming repo.' }
+  - { type: changed, area: scripts, paths: ['scripts/graphify-setup.py'], deploy: 'copy to docs/ai-forward-pack/scripts/; then re-run --join in any repo that has the lens', summary: 'TWO FIXES. (1) The join lens was reporting ITSELF: docs/lenses/** are graph artifacts, so the scan read code-doc-join.md''s own table of referenced paths and reported them again as gaps - a feedback loop that grows every run. Measured in a consuming repo: 42 of 94 Gap-1 rows, 45%, were self-referential; after the fix, 0. Derived output is not a record and is now excluded from the scan. (2) --check now reports LENS FRESHNESS: the code graph is git-ignored build output, so the only committed evidence of its age is the commit the lens records about itself, and nothing was looking at it. Deliberately narrow - only SOURCE changes count, because a docs-only commit does not invalidate a graph of the code and firing on one trains people to ignore the check.' }
 ---
 
 ## Changelog — what changed since the last version

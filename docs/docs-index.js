@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-Forward",
-  "generated": "2026-08-03T03:56:59Z",
+  "generated": "2026-08-03T17:04:26Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -746,7 +746,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "df44bff7114709197dab7d7c05d8cfb2d3feebeb64e84255172182a6b716468c"
+      "sourceSha256": "1f4ae92b1f268b6dc29d7f28bfd7a4d7ea53e7114e3bec4a06bc00bad88bb947"
     },
     {
       "id": "lens-graph-health",
@@ -1421,5 +1421,5 @@ window.DOCS_INDEX = {
       "description": "Inspect a rendered design or design-language preview."
     }
   ],
-  "graphSha256": "dac48988531a45d1a9e1fb6d3a147e826c32185d17c20975b45ceadf4d840bf2"
+  "graphSha256": "1d3d6f4adc6701ed870e857051abe5703febac71e8006147cb4907f1b821d638"
 };
