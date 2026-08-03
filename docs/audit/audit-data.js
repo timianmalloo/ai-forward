@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-08-03T01:11:37Z",
+  "generated": "2026-08-03T03:56:59Z",
   "audit": [
     {
       "id": "al-0001",
@@ -429,6 +429,23 @@ window.AUDIT_DATA = {
         "branch": "main",
         "pushed": true
       }
+    },
+    {
+      "id": "al-0018",
+      "shortname": "pack-r22-graph-health-link",
+      "datetime": "2026-08-03T03:56:59Z",
+      "session": "a653ef29-df17-44c4-b3a0-0e9dc99bb32f",
+      "prompt": "yes do all of these",
+      "summary": "Revision 22: obsidian-setup.py generated a graph-health lens linking to docs-index, which is not a graph node, so docs-graph.py validate failed in every repo that ran --init. Repointed at lens-graph-structure.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "pack/scripts/obsidian-setup.py"
+      ],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [

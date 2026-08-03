@@ -6,7 +6,7 @@ status: accepted
 owner: "@maintainers"
 tags: [lens, obsidian, dataview, graph-health]
 links:
-  - { to: docs-index, rel: relates-to }
+  - { to: lens-graph-structure, rel: relates-to }
 review-by: ""
 summary: >-
   A read-time Dataview lens over the knowledge graph's health - stale artifacts, missing
