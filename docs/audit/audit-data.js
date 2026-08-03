@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-08-02T23:38:15Z",
+  "generated": "2026-08-03T01:11:37Z",
   "audit": [
     {
       "id": "al-0001",
@@ -399,6 +399,33 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "ec22590f2cb152ff7de15e977da10dd0b01cc224",
         "short": "ec22590f2",
+        "branch": "main",
+        "pushed": true
+      }
+    },
+    {
+      "id": "al-0017",
+      "shortname": "extendaibundle-no-guessing-rev21",
+      "datetime": "2026-08-03T01:11:37Z",
+      "session": "2b932df7-281e-435f-b133-05c86c078c9d",
+      "prompt": "also for after this work is done - i still keep seeing cases where the coding agent is saying, after a bug, that they guessed or made an assumption / we need a directive to stop guesses and assumptions",
+      "summary": "Pack revision 20->21: the No-Guessing Protocol (NG1-NG11). Diagnosis first: the pack already forbade guessing (D2, Part VIII, E15) and it kept happening, because a guess and a fact are indistinguishable from the inside, so a prohibition alone is unenforceable. The doc supplies the mechanism: three permitted moves when you do not know (check/mark/ask) with no fourth option; the pre-registration rule that an assumption not written down beforehand is a guess, which removes 'I assumed X' as a post-hoc excuse; the linguistic and structural tells; the inline assume: marker carrying belief + confirmation route + consequence; cheapest-check-first so the disciplined path is the lazy path; Verified means observed not likely; no laundering a guess through a citation, tool, sub-agent or INFERRED edge; guess-caused bugs become defect classes; and the moment-of-writing question 'if this is wrong, how would I find out, and when?'. Wired as the FIRST managed-block bullet on both surfaces, cross-linked from E15 and CI9, and the assume: harvest added to /investigate.",
+      "kind": "skill",
+      "skill": "extendaibundle",
+      "tool": "GitHub Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "pack/knowledge/no-guessing-protocol.md"
+      ],
+      "tags": [
+        "no-guessing",
+        "assumptions",
+        "revision-21"
+      ],
+      "outcome": "success",
+      "git": {
+        "sha": "bbb1f7e5292c0528bc9007865efd0b8582a92f76",
+        "short": "bbb1f7e52",
         "branch": "main",
         "pushed": true
       }

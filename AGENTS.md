@@ -14,6 +14,18 @@ When you change anything under `pack/`, re-run `tools/sync-pack.ps1` and commit 
 This repository uses the **Agent Knowledge Pack** and the **AI-Forward Pack**. Honor them on
 every non-trivial task.
 
+- **No guessing (the standing rule):** when you do not know, there are exactly **three** moves —
+  **check it** (the default; open the file, run it, read the signature), **mark it** (an inline
+  `assume:` carrying the belief, what would confirm it, and what breaks if it is false), or
+  **ask** (only when consequential *and* unresolvable by you). Proceeding on an unmarked belief
+  is not a fourth option. **An assumption that was not written down before the work is not an
+  assumption — it is a guess**, so "I assumed X" is unavailable afterwards. Watch the tells —
+  *should be · presumably · typically · I believe · it follows the pattern* — and any API,
+  version, path, count or boundary behaviour asserted without opening it. **Verified means you
+  observed it, never that it is likely**, and a citation, a tool output, a sub-agent's report or
+  an `INFERRED` edge does not promote a claim. Ask of every load-bearing statement as you write
+  it: *"if this is wrong, how would I find out, and when?"* — if the answer is "in production",
+  check it now. `.github/instructions/no-guessing-protocol.instructions.md` (NG1–NG11).
 - **Reasoning spine:** the Rigor Protocol — see `.github/instructions/rigor-protocol.instructions.md`.
   Map, interrogate, ground in evidence, disconfirm, then converge; label every claim with its
   confidence.
