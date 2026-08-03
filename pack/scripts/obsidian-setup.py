@@ -58,11 +58,12 @@ REGISTRY = "https://raw.githubusercontent.com/obsidianmd/obsidian-releases/maste
 # Simplifier's rule applied to someone else's ecosystem. `why` is shown by
 # --check so a maintainer can decline any of them with an informed reason.
 #
-# NOTE ON "Graphify": there is NO plugin with that id or name in the official
-# community registry (verified against all ~6.3k entries). The plugin that
-# matches the description - local graph-theory metrics plus AI-assisted
-# structural insight - is `knowledge-graph-analysis` by luolanaatud, which is
-# what this set installs. Change RECOMMENDED if you meant something else.
+# NOTE ON "Graphify": Graphify (graphify.com) is a SEPARATE PRODUCT, not an
+# Obsidian plugin - an on-device code knowledge graph for AI coding assistants
+# (Apache 2.0, PyPI `graphifyy`). It composes with this lens rather than
+# competing with it; see knowledge/code-knowledge-graph.md and
+# scripts/graphify-setup.py. The Obsidian plugin that provides IN-VAULT graph
+# metrics is `knowledge-graph-analysis` by luolanaatud.
 # ---------------------------------------------------------------------------
 RECOMMENDED = [
     {
@@ -811,8 +812,8 @@ def main() -> int:
         for p in RECOMMENDED:
             out(f"    [{p['tier']:^8}] {p['name']} ({p['id']})")
             out(f"               {p['why']}")
-        out("\n  NOTE: no plugin named 'Graphify' exists in the official Obsidian registry;")
-        out("        'knowledge-graph-analysis' is the plugin matching that description.")
+        out("\n  NOTE: Graphify (graphify.com) is a separate on-device CODE knowledge graph,")
+        out("        not an Obsidian plugin - see code-knowledge-graph.md + graphify-setup.py.")
         if findings:
             out(f"\n{len(findings)} finding(s): " + "; ".join(findings))
             return 2

@@ -119,6 +119,19 @@ the Road) and the **AI-Forward Pack** on top of it. Honor them on every non-triv
   artifact (queries live only in `docs/lenses/`). `--analyze` computes hubs, exact betweenness
   bridges, components, orphans and structural gaps **dependency-free**, so the insight is never
   locked behind a plugin. `.claude/knowledge/obsidian-lens.md` (OB1–OB14).
+- **Code knowledge graph (optional, composes with the above):** **Graphify** (graphify.com,
+  Apache 2.0, PyPI `graphifyy`) builds an **on-device** graph of the *code* — symbols, calls,
+  imports, schemas — that an assistant queries instead of grepping, answering with `file:line`
+  citations. It is the natural partner to the docs graph: **docs hold intent, code holds
+  reality, and the expensive defects live in the gap.** Every edge is tagged `EXTRACTED` /
+  `INFERRED` / `AMBIGUOUS`, which maps onto this pack's **Verified / Inferred / Flagged** — so a
+  cited traversal is how you satisfy *"never assert the shape of our own code from memory"*
+  cheaply, while remembering that **a citation is not a promotion**. Stand it up with
+  `docs/ai-forward-pack/scripts/graphify-setup.py` (`--install` · `--init` · `--build` ·
+  `--join`); `--init` writes a **repo-kind-aware** `.graphifyignore` (in a consuming repo
+  `.claude/` and `docs/ai-forward-pack/` are the *only* copy and are kept). `--join` writes the
+  code↔docs lens: documentation with no implementation, and risk with no governance.
+  `.claude/knowledge/code-knowledge-graph.md` (GK1–GK16).
 - **Foundation:** the Body of Knowledge (directives, anti-patterns), Rules of the Road (tiers,
   gates, the loop), Persona Catalog, LOA, and Engineering Governance live in `.claude/knowledge/`
   — the constitution all of the above rests on.

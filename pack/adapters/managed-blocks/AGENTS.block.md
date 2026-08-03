@@ -110,6 +110,19 @@ every non-trivial task.
   artifact (queries live only in `docs/lenses/`). `--analyze` computes hubs, exact betweenness
   bridges, components, orphans and structural gaps **dependency-free**, so the insight is never
   locked behind a plugin. `.github/instructions/obsidian-lens.instructions.md` (OB1–OB14).
+- **Code knowledge graph (optional, composes with the above):** **Graphify** (graphify.com,
+  Apache 2.0, PyPI `graphifyy`) builds an **on-device** graph of the *code* — symbols, calls,
+  imports, schemas — that an assistant queries instead of grepping, answering with `file:line`
+  citations. It is the natural partner to the docs graph: **docs hold intent, code holds
+  reality, and the expensive defects live in the gap.** Every edge is tagged `EXTRACTED` /
+  `INFERRED` / `AMBIGUOUS`, which maps onto this pack's **Verified / Inferred / Flagged** — so a
+  cited traversal is how you satisfy *"never assert the shape of our own code from memory"*
+  cheaply, while remembering that **a citation is not a promotion**. Stand it up with
+  `docs/ai-forward-pack/scripts/graphify-setup.py` (`--install` · `--init` · `--build` ·
+  `--join`); `--init` writes a **repo-kind-aware** `.graphifyignore` (in a consuming repo
+  `.claude/` and `docs/ai-forward-pack/` are the *only* copy and are kept). `--join` writes the
+  code↔docs lens: documentation with no implementation, and risk with no governance.
+  `.github/instructions/code-knowledge-graph.instructions.md` (GK1–GK16).
 - **Foundation:** the Body of Knowledge, Rules of the Road, Persona Catalog, LOA, and Engineering
   Governance are in `.github/instructions/` (always applied) — the constitution all of this rests on.
 <!-- AI-FORWARD-PACK:END -->

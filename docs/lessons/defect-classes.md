@@ -26,7 +26,7 @@ summary: >-
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled `2` · partially-controlled `2` · uncontrolled `20`
+**Status counts:** controlled `3` · partially-controlled `3` · uncontrolled `20`
 **Recurrence since last review:** `0` — *a second occurrence of a known class means the control was wrong, not that someone was careless (CI4).*
 
 ---
@@ -50,6 +50,22 @@ summary: >-
 ## Project classes
 
 *Classes discovered in this repository. Newest first.*
+
+### PACK-F — A default that is correct in the source repo and inverted in every consuming repo
+- **Signature:** a rule, config or template is authored while working *in* the repo that produces an artifact, validated there, and shipped as the default for repos that *consume* it — where the same rule means the opposite thing. The giveaway is a rule phrased in terms of "the generated copies" without asking *generated from what, and does that source exist over there?*
+- **Why it survives:** it is verified, and verified **in the wrong universe**. Every check passes in the authoring repo, the numbers improve, and the reasoning is sound *for that context*. Nothing in the source repo can detect it, because the condition that inverts the rule (`pack/` absent) never occurs there. It only fails after distribution, in someone else's repo, silently.
+- **Instances:**
+  - `2026-08-02` `.graphifyignore` / `graphify-setup.py` — the first `.graphifyignore` excluded `.claude/`, `.github/{instructions,prompts,agents}` and `docs/ai-forward-pack/` as "generated copies of `pack/`". Correct here: it cut the graph 3,898 → 2,033 nodes and removed duplicate god nodes. **Wrong in every consuming repo**, where there is no `pack/` and those trees are the *only* copy — measured on a real consumer: 153 files removed, **97 of which exist nowhere else** (28 knowledge docs, 17 skills, 23 personas, 19 templates, 10 scripts). A consuming repo would have had a code graph unable to answer "what governs our migrations?". Caught by a reviewer asking *"what will you miss in a project repo that adopts this as a starter?"* — not by any check.
+- **Control:** `graphify-setup.py` now **detects the repo kind** (`pack/adapters/INSTALL.md` present → source; `docs/ai-forward-pack/` or `.claude/knowledge/` present → consumer; else plain) and emits the matching rules, recording the detected kind and canonical copy in the generated file's header. `--check` additionally **warns and exits 2** when an existing `.graphifyignore` excludes `.claude/` or `docs/ai-forward-pack/` in a repo where those are the only copy. Verified across all three repo kinds plus a planted-wrong-rules consumer. The standing question this adds: **before shipping a default, run it mentally in the repo that will receive it, not the one that authored it.**
+- **Status:** `controlled`
+
+### PACK-E — An ambiguous proper noun resolved inside my own frame
+- **Signature:** a name arrives with no namespace ("Graphify", "the graph tool", "our linter"). The current conversation supplies a frame — we were discussing Obsidian — so the name is looked up *within that frame*, rigorously, and the negative result is reported as fact. The lookup was real; the universe was wrong.
+- **Why it survives:** it arrives **with evidence**, which makes it more convincing than a plain guess. "I checked all 6,284 entries of the official registry and no such plugin exists" is a true statement, carries a citation, and is a correct answer to a question nobody asked. The pack's own rigor rules are satisfied — Stage 3 evidence gathered, source cited — because those rules police *how well you answer*, not *whether you answered the right question*. That is exactly the silo decision the standing method warns about: locally correct, globally wrong.
+- **Instances:**
+  - `2026-08-02` revision 19 — the user asked to compose Obsidian with "Graphify". Graphify was resolved against the Obsidian community-plugin registry, found absent, and substituted with `knowledge-graph-analysis`; the substitution was then written into a shipped knowledge doc, a script comment and the INSTALL changelog. Graphify is in fact a separate product (graphify.com) — an on-device **code** knowledge graph — which composes with the pack far better than the substitute. Corrected in revision 20; the substitution is now the worked example in `code-knowledge-graph.md` GK1.
+- **Control:** `code-knowledge-graph.md` **GK1** — *establish the product from its own canonical source before composing with it*. The operational rule: when a proper noun is not already established, resolve it **frame-free first** (the bare name, its own site/registry) before resolving it inside the current topic; and when a lookup returns *absent*, treat that as evidence the **frame** may be wrong, not only the name. `NO AUTOMATED CONTROL` — this is a reasoning failure, not a mechanical one; the cheap alternative is to state the resolution explicitly and let the user correct it, which is what surfaced it here.
+- **Status:** `partially-controlled`
 
 ### PACK-D — An array parameter arrives as one comma-joined string when the script is invoked as an executable
 - **Signature:** a PowerShell script declares `[string[]] $Thing` and is invoked as `pwsh script.ps1 -Thing A,B`. Because `pwsh` is being run as a *native executable*, the argument is passed as the single literal string `"A,B"` and never re-parsed into an array. The script then processes one nonsense element. Dot-invoking (`& .\script.ps1 -Thing A,B`) works perfectly, so the script "works on my machine" and fails in the documented invocation.

@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-Forward",
-  "generated": "2026-08-02T23:38:14Z",
+  "generated": "2026-08-03T01:05:56Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -569,7 +569,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "fd0c2ad496c0d51fd1cef23148af2b38e5f40ce1fd8ddd1329c78feee351e2d7"
+      "sourceSha256": "72646cf65596708ecbe1962a92b5ada4531450f4bb63841ab71ccac557971817"
     },
     {
       "id": "docs-index",
@@ -721,6 +721,32 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "6c4e8d947e823f9469d0f76eabe6cf2059f14662712f1e983faf0319d4fd49aa"
+    },
+    {
+      "id": "lens-code-doc-join",
+      "path": "docs/lenses/code-doc-join.md",
+      "title": "Lens - code/doc join",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@maintainers",
+      "phase": "",
+      "reviewBy": "",
+      "reviewSuggested": [],
+      "summary": "Derived join between the documentation graph (intent) and the Graphify code graph (reality): documentation referencing code that does not exist, and the most connected code symbols no artifact governs. A prompt, never a gate.",
+      "tags": [
+        "lens",
+        "graphify",
+        "code-graph",
+        "traceability"
+      ],
+      "links": [
+        {
+          "to": "lens-graph-structure",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "df44bff7114709197dab7d7c05d8cfb2d3feebeb64e84255172182a6b716468c"
     },
     {
       "id": "lens-graph-health",
@@ -1395,5 +1421,5 @@ window.DOCS_INDEX = {
       "description": "Inspect a rendered design or design-language preview."
     }
   ],
-  "graphSha256": "bbb9f8b52cd0edc6f4ea6cd0154a6a7b6b62e7d0cc40fd4f22bf105c2c4c2474"
+  "graphSha256": "49c469a628e6d0235126e8493db67400d7d64f2c7c47a00caf05876d09052f9a"
 };

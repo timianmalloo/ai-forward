@@ -1,7 +1,7 @@
 #Requires -Version 7.0
 <#
 .SYNOPSIS
-  Stand up the AI-Forward Obsidian lens in one or more of your repositories.
+  Stand up BOTH AI-Forward knowledge-graph lenses - Obsidian (docs) and Graphify (code) - in one or more of your repositories.
 
 .DESCRIPTION
   Run this from an ai-forward clone. For each target repo it:
@@ -39,10 +39,10 @@
   Print the plan and write nothing.
 
 .EXAMPLE
-  pwsh tools/setup-obsidian-for-repo.ps1 -Repo C:\projects\meridian-finance-planner -InstallApp
+  pwsh tools/setup-knowledge-graphs.ps1 -Repo C:\projects\meridian-finance-planner -InstallApp
 
 .EXAMPLE
-  pwsh tools/setup-obsidian-for-repo.ps1 `
+  pwsh tools/setup-knowledge-graphs.ps1 `
       -Repo C:\projects\meridian-finance-planner, C:\projects\TheTerrace `
       -FetchPlugins -AllPlugins
 
@@ -57,6 +57,8 @@ param(
     [switch]   $InstallApp,
     [switch]   $FetchPlugins,
     [switch]   $AllPlugins,
+    [switch]   $Graphify,
+    [switch]   $SkipObsidian,
     [switch]   $DryRun
 )
 
@@ -64,10 +66,12 @@ $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 
 $packRoot   = Split-Path -Parent $PSScriptRoot
-$sourceTool = Join-Path $packRoot 'pack\scripts\obsidian-setup.py'
-if (-not (Test-Path $sourceTool)) {
-    throw "Run this from an ai-forward clone - pack/scripts/obsidian-setup.py not found at $sourceTool"
+$sourceTools = @('obsidian-setup.py', 'graphify-setup.py') | ForEach-Object {
+    $p = Join-Path $packRoot "pack\scripts\$_"
+    if (-not (Test-Path $p)) { throw "Run this from an ai-forward clone - pack/scripts/$_ not found at $p" }
+    $p
 }
+$sourceTool = $sourceTools[0]
 if (-not $Repo) { $Repo = @($packRoot) }
 
 # `pwsh script.ps1 -Repo A,B` passes "A,B" as ONE literal string, because pwsh is invoked as a
@@ -115,21 +119,24 @@ foreach ($target in $Repo) {
         $summary.Add([pscustomobject]@{ Repo = $target; Status = 'pack not installed' }); continue
     }
 
-    # 1. refresh the one script we need (idempotent; content-compared, not blindly copied)
-    $destTool = Join-Path $scriptsDir 'obsidian-setup.py'
-    $needsCopy = -not (Test-Path $destTool) -or
-                 ((Get-FileHash $sourceTool).Hash -ne (Get-FileHash $destTool).Hash)
-    if ($needsCopy) {
-        Write-Host "    obsidian-setup.py -> docs/ai-forward-pack/scripts/" -ForegroundColor DarkGray
-        if (-not $DryRun) {
-            New-Item -ItemType Directory -Force -Path $scriptsDir | Out-Null
-            Copy-Item $sourceTool $destTool -Force
+    # 1. refresh the scripts we need (idempotent; content-compared, not blindly copied)
+    foreach ($src in $sourceTools) {
+        $name = Split-Path -Leaf $src
+        $dest = Join-Path $scriptsDir $name
+        $needsCopy = -not (Test-Path $dest) -or ((Get-FileHash $src).Hash -ne (Get-FileHash $dest).Hash)
+        if ($needsCopy) {
+            Write-Host "    $name -> docs/ai-forward-pack/scripts/" -ForegroundColor DarkGray
+            if (-not $DryRun) {
+                New-Item -ItemType Directory -Force -Path $scriptsDir | Out-Null
+                Copy-Item $src $dest -Force
+            }
+        } else {
+            Write-Host "    $name already current" -ForegroundColor DarkGray
         }
-    } else {
-        Write-Host "    obsidian-setup.py already current" -ForegroundColor DarkGray
     }
 
     $tool  = 'docs/ai-forward-pack/scripts/obsidian-setup.py'
+    $gtool = 'docs/ai-forward-pack/scripts/graphify-setup.py'
     $graph = 'docs/ai-forward-pack/scripts/docs-graph.py'
     $dry   = if ($DryRun) { @('--dry-run') } else { @() }
 
@@ -138,15 +145,26 @@ foreach ($target in $Repo) {
         Invoke-Step 'derive the knowledge graph' @($graph, 'derive') $target -AllowFailure | Out-Null
     }
 
-    # 3. app, config, plugins, analysis
-    if ($InstallApp)   { Invoke-Step 'install Obsidian'        @($tool, '--install-app', '--yes')            $target -AllowFailure | Out-Null }
-    $initArgs = @($tool, '--init') + $(if ($AllPlugins) { @('--all-plugins') } else { @() }) + $dry
-    Invoke-Step 'write vault config + lenses' $initArgs $target | Out-Null
-    if ($FetchPlugins) {
-        $fetchArgs = @($tool, '--fetch-plugins') + $(if ($AllPlugins) { @('--all-plugins') } else { @() }) + $dry
-        Invoke-Step 'fetch plugin releases (third-party code)' $fetchArgs $target -AllowFailure | Out-Null
+    # 3. Obsidian lens: app, config, plugins, analysis  (skip with -SkipObsidian)
+    if (-not $SkipObsidian) {
+        if ($InstallApp)   { Invoke-Step 'install Obsidian'        @($tool, '--install-app', '--yes')            $target -AllowFailure | Out-Null }
+        $initArgs = @($tool, '--init') + $(if ($AllPlugins) { @('--all-plugins') } else { @() }) + $dry
+        Invoke-Step 'write vault config + lenses' $initArgs $target | Out-Null
+        if ($FetchPlugins) {
+            $fetchArgs = @($tool, '--fetch-plugins') + $(if ($AllPlugins) { @('--all-plugins') } else { @() }) + $dry
+            Invoke-Step 'fetch plugin releases (third-party code)' $fetchArgs $target -AllowFailure | Out-Null
+        }
+        Invoke-Step 'structural analysis -> docs/lenses/graph-insight.md' (@($tool, '--analyze', '--write') + $dry) $target -AllowFailure | Out-Null
     }
-    Invoke-Step 'structural analysis -> docs/lenses/graph-insight.md' (@($tool, '--analyze', '--write') + $dry) $target -AllowFailure | Out-Null
+
+    # 3b. Graphify code graph (opt-in with -Graphify). The ignore rules are repo-kind aware:
+    #     in a CONSUMING repo .claude/ and docs/ai-forward-pack/ are the only copy and are kept.
+    if ($Graphify) {
+        Invoke-Step 'install graphifyy + register the /graphify skill' (@($gtool, '--install') + $dry) $target -AllowFailure | Out-Null
+        Invoke-Step 'write .graphifyignore (repo-kind aware de-dup)'   (@($gtool, '--init')    + $dry) $target -AllowFailure | Out-Null
+        Invoke-Step 'build the code graph (full re-extraction)'        (@($gtool, '--build')   + $dry) $target -AllowFailure | Out-Null
+        Invoke-Step 'join code <-> docs -> docs/lenses/code-doc-join.md' (@($gtool, '--join')  + $dry) $target -AllowFailure | Out-Null
+    }
 
     # 4. the new lens notes are artifacts - index and validate them (V10/V11)
     $valid = $true

@@ -34,3 +34,6 @@ docs/.obsidian/cache/
 docs/.obsidian/plugins/*/data.json
 docs/.obsidian/plugins/*/main.js
 docs/.obsidian/plugins/*/styles.css
+
+# Graphify code knowledge graph - a build output, regenerable from source (GK3)
+graphify-out/
