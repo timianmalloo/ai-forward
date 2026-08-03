@@ -792,9 +792,15 @@ def main() -> int:
 
     if args.check or not did_something:
         cfg = os.path.join(root, args.vault, ".obsidian")
+        vault_dir = os.path.join(root, args.vault)
         index, err = load_index(root)
         findings = []
         out("AI-Forward Obsidian lens - status\n")
+        # The single most-asked question is "where do I point Obsidian?" - answer it up front,
+        # every run, not only on --init (whose output has usually scrolled away by then).
+        out(f"  {'vault path':<26} {vault_dir}")
+        out(f"  {'':<26} Obsidian -> 'Open folder as vault' -> select that folder")
+        out(f"  {'':<26} (the vault is <repo>/{args.vault}, never the repo root - OB5)\n")
         out(f"  {'app installed':<26} {'yes' if app_installed() else 'NO - run --install-app'}")
         if not app_installed():
             findings.append("Obsidian not installed")
