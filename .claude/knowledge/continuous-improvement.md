@@ -118,6 +118,9 @@ A new repo adopting this pack **SHOULD** seed `docs/lessons/defect-classes.md` w
 | **OPS-A** | **Migration compiles but is never applied** | The migration builds; the deployer doesn't run it | The build is green | Migrate-before-publish enforcement; exercise the down path (DM16) |
 | **UX-A** | **Archetype mismatched to the task** | A dashboard/bento archetype applied to a data-entry task: everything visible at once, nothing sequenced | Each component is individually fine | Verify the archetype against the job-to-be-done on *changes to existing screens*, not only new ones (`ui-archetype-grammar.md`) |
 | **UX-B** | **Shipped with data-only states** | Loading/empty/error states never designed; "it looked fine with data" | Demos and tests use populated fixtures | Complete component state set as a design gate (U9) |
+| **UX-C** | **Craft rule documented but not controlled** | A named anti-pattern lives in a knowledge doc's prose table while the repo's own artifacts violate it | Prose is not executed; a reviewer has to remember to consult a table at exactly the right moment | The **deterministic detector** in CI (`ui-craft-detection.md` CD8, `ui-craft-gate.py`) — this class was found *by* adopting it: it caught four real instances in this pack's own templates |
+| **VA-A** | **Generated asset referenced by provider URL** | A mockup or page links a generation-provider CDN URL instead of a committed file | It renders perfectly today; provider retention is typically days | Generate once, download, optimize, commit, reference by relative path (`ui-visual-assets.md` VA4) |
+| **VA-B** | **Generated interface passed off as design** | A generated "screenshot" or UI panel embedded in a design artifact | It looks finished, so nobody inspects the illegible text or the invented controls | Never generate the interface, only what it shows (VA5); mockups stay hand-authored dependency-free HTML (DX8) |
 
 ---
 

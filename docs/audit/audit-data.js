@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-08-03T17:04:26Z",
+  "generated": "2026-08-05T14:23:28Z",
   "audit": [
     {
       "id": "al-0001",
@@ -463,6 +463,36 @@ window.AUDIT_DATA = {
       ],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-0020",
+      "shortname": "extendaibundle-ui-detection-and-assets",
+      "datetime": "2026-08-05T14:23:17Z",
+      "session": "0d635851",
+      "prompt": "i want to integrate the impeccable.style project into ai-forward, i also want to integrate higgsfield mcp (i have an account) with impeccable to really superrcharge my ui-design abilities in the ai-forward repo. Ground yourself in everything we have done re: UI and UX already in the repo then consider how best to integrate impeccable and higgsfield to really supercharge our ui/ux capabilities",
+      "summary": "Revision 25: adopted the Impeccable detector as the rung-2 deterministic UI craft control (ui-craft-detection.md CD1-CD19) and the Higgsfield generative pipeline with guardrails (ui-visual-assets.md VA1-VA18); added scripts/ui-craft-gate.py; wired both into /ui-design, /implement, /design on both tool surfaces; fixed the 4 defects the detector found in the pack's own templates; registered UX-C/VA-A/VA-B defect classes; BUNDLE CONSISTENT.",
+      "kind": "skill",
+      "skill": "extendaibundle",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "pack/knowledge/ui-craft-detection.md",
+        "pack/knowledge/ui-visual-assets.md",
+        "pack/scripts/ui-craft-gate.py"
+      ],
+      "tags": [
+        "ui",
+        "design",
+        "detector",
+        "generative"
+      ],
+      "outcome": "success",
+      "git": {
+        "sha": "2fda02eb45ad35cd53ab491dc63169d24197e440",
+        "short": "2fda02eb4",
+        "branch": "main",
+        "pushed": true
+      }
     }
   ],
   "changes": [
@@ -674,6 +704,29 @@ window.AUDIT_DATA = {
       "git": {
         "before": "8801a477e21cc610d8e6352d4d1953552bda03c6",
         "after": "8801a477e21cc610d8e6352d4d1953552bda03c6",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0009",
+      "datetime": "2026-08-05T14:23:28Z",
+      "session": "0d635851",
+      "kind": "decision",
+      "skill": "extendaibundle",
+      "title": "Adopt a deterministic UI craft control and a governed generative asset pipeline",
+      "prompt": "Integrate impeccable.style and Higgsfield MCP to supercharge ui-design in ai-forward",
+      "summary": "Split the integration in two: Impeccable's DETECTOR only (not its competing skill/methodology) as the rung-2 automated control, and Higgsfield as a guardrailed asset generator. The pack keeps authority over process, archetype, spec layers, personas and vetoes.",
+      "rationale": "CI6's control ladder ranks an automated control above an instruction, and the pack's entire UI craft doctrine sat at rungs 3-4 - proven by the detector finding four documented-in-prose defects in the pack's own templates. The seam is free: the detector reads DESIGN.md, which U3a already mandates, so it enforces U3/U20 outward against built source for the first time. Adopting Impeccable's skill too was rejected as installing a second competing methodology (Convention Importer at doctrine scale).",
+      "artifacts": [
+        "pack/knowledge/ui-craft-detection.md",
+        "pack/knowledge/ui-visual-assets.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "2fda02e",
+        "after": "2fda02eb45ad35cd53ab491dc63169d24197e440",
         "branch": "main",
         "pushed": true,
         "commits": []

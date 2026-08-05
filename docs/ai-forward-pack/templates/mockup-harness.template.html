@@ -68,8 +68,10 @@
   .harness .verdict{font-family:var(--font-mono)}
   .harness .pass{color:#5fd08a}.harness .fail{color:#ff8a80}
 
-  /* Viewport simulation — the design region is constrained, no device required. */
-  .frame{margin:0 auto;transition:max-width var(--dur-base) var(--ease-out)}
+  /* Viewport simulation — the design region is constrained, no device required.
+     No transition on max-width: animating a layout property causes layout thrash
+     (U17/DX20), and switching viewport is a discrete comparison, not a journey. */
+  .frame{margin:0 auto}
   [data-viewport="mobile"] .frame{max-width:390px}
   [data-viewport="tablet"] .frame{max-width:768px}
   [data-viewport="desktop"] .frame{max-width:1120px}
@@ -87,8 +89,13 @@
     color:var(--accent-ink);font:600 var(--step-0)/44px var(--font-sans);cursor:pointer;transition:filter var(--dur-fast) var(--ease-out)}
   .btn:hover{filter:brightness(1.08)} .btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
   .btn[disabled]{opacity:.5;cursor:not-allowed}
-  .msg{border-left:3px solid var(--danger);background:color-mix(in srgb,var(--danger) 8%,transparent);
-    padding:var(--sp-3) var(--sp-4);border-radius:0 var(--radius) var(--radius) 0}
+  /* Error message. Deliberately NOT a thick coloured left border — the "side-tab"
+     accent is the single most recognizable tell of AI-generated UI (DX3), and this
+     template shipped it until the detector caught it. A 1px full hairline in the
+     semantic colour over a tinted ground reads as designed, not as the default. */
+  .msg{border:1px solid color-mix(in srgb,var(--danger) 45%,transparent);
+    background:color-mix(in srgb,var(--danger) 8%,transparent);
+    padding:var(--sp-3) var(--sp-4);border-radius:var(--radius)}
   .skeleton{background:linear-gradient(90deg,var(--surface),var(--line),var(--surface));
     background-size:200% 100%;animation:sh 1.2s infinite;border-radius:6px;height:1rem}
   @keyframes sh{to{background-position:-200% 0}}

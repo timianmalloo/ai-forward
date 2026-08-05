@@ -56,7 +56,7 @@ The reasoning behind every seat — and the seats deliberately *not* added — i
 ```
 ai-forward-pack/
 ├─ README.md · research-synthesis.md · OVERVIEW.md
-├─ knowledge/   31 docs (+FOUNDATION manifest) — 24 reasoning + 7 vendored Agent-Knowledge-Pack foundation (BoK, Rules of the Road, Persona Catalog, LOA, Governance, Testing Strategy, C# Style)
+├─ knowledge/   33 docs (+FOUNDATION manifest) — 26 reasoning + 7 vendored Agent-Knowledge-Pack foundation (BoK, Rules of the Road, Persona Catalog, LOA, Governance, Testing Strategy, C# Style)
 ├─ commands/    (the 18 skills, one SKILL.md each)
 ├─ templates/   (the 22 artifact templates)
 ├─ adapters/    (INSTALL.md, claude-code/agents, copilot/agents, copilot/prompts)

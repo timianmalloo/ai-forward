@@ -93,6 +93,25 @@ every non-trivial task.
   severity · evidence · fix · confidence) run structure-before-surface, ending in a ranked plan.
   Measure before you diagnose, and self-check against the generic-AI-look tells.
   `.github/instructions/ui-design-craft.instructions.md` (DX1–DX25).
+- **UI craft detection (the control):** the craft floor is not only prose — the **deterministic,
+  LLM-free 59-rule detector** (`ui-craft-gate.py`, wrapping Impeccable) reads your `DESIGN.md`
+  natively and enforces *outward* against the built source what `design-lint.py` only checks
+  inward: every off-token colour, font, size and radius, plus the mechanized generic-AI-look
+  tells, hierarchy, motion, copy and overflow rules. Run it at `ui-design` Stage 3 (it **is**
+  the measurement), fold its findings into the rubric with the accessibility and token severity
+  floors, and gate CI on it — **a lesson recorded as prose is a memoir** (CI6). A clean run is a
+  **floor, never a verdict**: it cannot see archetype fit, IA, whether the hard states exist at
+  all, or whether the copy is true.
+  `.github/instructions/ui-craft-detection.instructions.md` (CD1–CD19).
+- **Generated visual assets:** imagery, personas and motion a UI *contains* may be generated;
+  the **interface itself may not** (image models render illegible text and invented controls).
+  Direction in words first, then optionally a **visual world** that makes the brief concrete —
+  mood **never** structure, supplementing **never** replacing real named references. Generate
+  once, **download, optimize and commit** (provider results expire and a re-rolling asset is
+  non-determinism in a deterministic artifact); every asset carries a manifest entry with its
+  verbatim prompt, preset, cost, **alt text** and disclosure; never upload a real person's
+  likeness or customer data.
+  `.github/instructions/ui-visual-assets.instructions.md` (VA1–VA18).
 - **Testing:** the Testing Strategy governs what to test and what counts as proof —
   `.github/instructions/testing-strategy.instructions.md`; the Test Architect enforces it.
 - **Instrumentation:** structured, trace-correlated telemetry in the OpenTelemetry data model,

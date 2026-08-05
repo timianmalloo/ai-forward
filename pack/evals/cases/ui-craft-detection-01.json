@@ -1,0 +1,35 @@
+{
+  "id": "ui-craft-detection-01",
+  "skill": "ui-design",
+  "_intent": "The deterministic craft control (ui-craft-detection.md CD1-CD19) and the generated-asset guardrails (ui-visual-assets.md VA1-VA18) are actually applied by /ui-design. Red-first: the two anti-pattern assertions below (side-tab accent border, layout-property transition) BOTH failed against this pack's own mockup-harness.template.html before the detector was adopted - they are the exact defects it found.",
+  "prompt": "Run /ui-design in create mode for the public marketing landing page of a small B2B analytics product. It needs a hero with imagery, a features section and a pricing table. Treat the product as being under an accessibility obligation.",
+  "setup": [],
+  "assertions": [
+    { "type": "file-exists", "path": "docs/mockups/landing.html" },
+    { "type": "file-exists", "path": "docs/mockups/landing.md" },
+    { "type": "frontmatter-valid", "path": "docs/mockups/landing.md" },
+    { "type": "file-exists", "path": "DESIGN.md" },
+
+    { "type": "grep", "path": "docs/mockups/landing.md",
+      "pattern": "(?i)ui-craft-gate|impeccable|detector|craft detection" },
+
+    { "type": "not-grep", "path": "docs/mockups/landing.html",
+      "pattern": "border-left:\\s*(?:[3-9]|[1-9][0-9])(?:px|rem)" },
+    { "type": "not-grep", "path": "docs/mockups/landing.html",
+      "pattern": "transition:[^;\"']*(?:max-width|\\bwidth\\b|\\bheight\\b|\\bpadding\\b|\\bmargin\\b)" },
+
+    { "type": "not-grep", "path": "docs/mockups/landing.html",
+      "pattern": "(?i)https?://[^\"'\\s]*(?:higgsfield|cloudfront|blob\\.core|amazonaws)" },
+    { "type": "grep", "path": "docs/mockups/landing.html", "pattern": "(?i)alt\\s*=" },
+
+    { "type": "grep", "path": "docs/mockups/landing.html", "pattern": "(?i)empty" },
+    { "type": "grep", "path": "docs/mockups/landing.html", "pattern": "(?i)error" },
+    { "type": "grep", "path": "docs/mockups/landing.html", "pattern": "(?i)prefers-reduced-motion" },
+    { "type": "not-grep", "path": "docs/mockups/landing.html",
+      "pattern": "(?i)https?://(cdn|unpkg|cdnjs|jsdelivr)" },
+
+    { "type": "cmd-exit",
+      "cmd": ["python3", "docs/ai-forward-pack/scripts/docs-graph.py", "validate"],
+      "exit": 0 }
+  ]
+}
