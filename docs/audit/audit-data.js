@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-08-05T16:55:49Z",
+  "generated": "2026-08-05T18:43:52Z",
   "audit": [
     {
       "id": "al-0001",
@@ -519,6 +519,34 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "185fdb24fce0bacef158b28e698b8340c4f9e3c1",
         "short": "185fdb24f",
+        "branch": "main",
+        "pushed": false
+      }
+    },
+    {
+      "id": "al-0022",
+      "shortname": "ui-design-trigger-table",
+      "datetime": "2026-08-05T18:43:52Z",
+      "session": "0d635851",
+      "prompt": "why arent these distinct skills or distinct flags on the ui-design skill instead of a pointer to the md",
+      "summary": "Revision 27: answered the challenge and fixed the real defect. Not separate skills (composable, not alternative) and not modes (orthogonal, not exclusive) - they are triggered directives, which the standards already claimed and /design and /implement already implement. Added the triggered-standards table to /ui-design (4 conditional rows, union semantics, mapped at Stage 1). Swept the class: /design, /implement and /specify never referenced technical-ui-design.md at all; fixed on both surfaces. Registered PACK-A.",
+      "kind": "skill",
+      "skill": "extendaibundle",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "pack/commands/ui-design/SKILL.md",
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [
+        "ui",
+        "triggers",
+        "continuous-improvement"
+      ],
+      "outcome": "success",
+      "git": {
+        "sha": "fe4760bc878e12d049e1593c7471674988642625",
+        "short": "fe4760bc8",
         "branch": "main",
         "pushed": false
       }

@@ -175,6 +175,7 @@
   <ol>
     <li><a href="#stack">The stack</a></li>
     <li><a href="#start">Start here</a></li>
+    <li><a href="#triggers">Triggers</a></li>
     <li><a href="#loop">The loop</a></li>
     <li><a href="#commands">Commands</a></li>
     <li><a href="#archetypes">Archetypes</a></li>
@@ -282,20 +283,84 @@
       <article class="card">
         <h3>Dense, scientific or quantitative</h3>
         <p>CAD, notebooks, dashboards, simulation, trading. Density is welcome, but hierarchy must rise with it.</p>
-        <p class="run"><code>/ui-design</code> plus <code>technical-ui-design.md</code></p>
+        <p class="run"><code>/ui-design</code>, which trips <strong>UI-T1</strong></p>
       </article>
 
       <article class="card">
         <h3>Marketing or landing surface</h3>
-        <p>The one place generated imagery and cinematic motion genuinely earn their place, under VA rules.</p>
-        <p class="run"><code>/ui-design</code> plus <code>ui-visual-assets.md</code></p>
+        <p>The one place generated imagery and cinematic motion genuinely earn their place.</p>
+        <p class="run"><code>/ui-design</code>, which trips <strong>UI-T2</strong></p>
       </article>
 
     </div>
   </section>
 
+  <section id="triggers">
+    <h2>3. Triggered standards</h2>
+    <p>Two of the cards above say a job "trips UI-T1" rather than telling you to load a document. That
+      wording is deliberate. The mode you run (create, review, elevate) is <em>mutually exclusive</em>: you
+      are doing exactly one. The standards below are <em>orthogonal and composable</em>: any combination can
+      be true at once, they apply on top of whichever mode you chose, and several often fire together. A
+      CFD post-processing tool with a generated hero image trips two of them.</p>
+    <p>This is the same trigger mechanism the Testing Strategy uses for choosing tests, and it carries the
+      same force. Map the surface against every row, apply all matching directives as a <strong>union</strong>
+      rather than the first match, and treat a triggered-but-unmet directive as a gap the gate catches. The
+      mapping happens at <strong>Stage 1</strong>, because the triggers reshape that stage: a trigger
+      discovered in the definition of done has already cost you the archetype decision it should have
+      informed.</p>
+
+    <table>
+      <caption>Always on, plus the four conditional rows.</caption>
+      <thead>
+        <tr><th scope="col">Trigger</th><th scope="col">The surface</th><th scope="col">What it adds</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Always</strong></td>
+          <td>Renders anything</td>
+          <td>The floors (U1&ndash;U20), the craft process (DX1&ndash;DX25), the deterministic control
+            (CD1&ndash;CD19), and the rule that an unsettled UX layer blocks the surface (S2, S7)</td>
+        </tr>
+        <tr>
+          <td><strong>UI-T1</strong></td>
+          <td>Serves an expert working with quantities: CAD, scientific visualization, notebooks,
+            spreadsheet or financial modelling, simulation and risk, quant terminals</td>
+          <td>The archetype comes from catalog section G rather than A to F. Perceptually-uniform colormaps,
+            tabular unit-bearing numerics, uncertainty-first output, provenance, reactive recompute. A
+            rainbow colormap, a unit-less quantity or a point estimate for a stochastic result is a
+            <em>correctness</em> defect, not a taste one</td>
+        </tr>
+        <tr>
+          <td><strong>UI-T2</strong></td>
+          <td>Contains generated imagery, personas or motion</td>
+          <td>The optional visual world, and the asset rules: mood never structure, supplementing never
+            replacing real references, never the interface itself, committed rather than linked, with a
+            manifest and alt text. Convenes the AI Systems Engineer and the Privacy lens</td>
+        </tr>
+        <tr>
+          <td><strong>UI-T3</strong></td>
+          <td>Fronts a model</td>
+          <td>The wrong answer and uncertainty join empty, loading and error as first-class states. Name the
+            HAX guidelines and the Shape-of-AI patterns. Oversight precedes any consequential action</td>
+        </tr>
+        <tr>
+          <td><strong>UI-T4</strong></td>
+          <td>Ships as a native mobile or desktop app</td>
+          <td>The platform HIG becomes an authority, established from the source rather than recalled, and
+            the platform developer lens attacks idiom, lifecycle, permissions and the store or signing gates</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="note">
+      <p><strong>A trigger is a claim about the surface, so establish it rather than assume it.</strong>
+        "This is not really an expert surface" is a decision with consequences. When it is genuinely
+        borderline, take the higher tier until evidence says otherwise.</p>
+    </div>
+  </section>
+
   <section id="loop">
-    <h2>3. The <code>/ui-design</code> loop</h2>
+    <h2>4. The <code>/ui-design</code> loop</h2>
     <p>Five stages of the Rigor Protocol applied to an interface. The weight sits on the first stage
       (direction, before any visual artifact exists) and the fourth (critique, structure before surface).</p>
 
@@ -356,7 +421,7 @@
   </section>
 
   <section id="commands">
-    <h2>4. Commands</h2>
+    <h2>5. Commands</h2>
 
     <h3>Run the workflow</h3>
     <pre><code>/specify      # functional + UX + UI layers; settles Part B before Part C
@@ -389,7 +454,7 @@ python3 docs/ai-forward-pack/scripts/docs-graph.py freshness  # stale and flagge
   </section>
 
   <section id="archetypes">
-    <h2>5. Archetype picker</h2>
+    <h2>6. Archetype picker</h2>
     <p>Choose the row whose job matches yours, take its Archetype Signature, then adjust facets with a
       recorded rationale. The signature constrains the <em>kind</em> of interface, which is what stops a
       model reaching for the same card grid every time.</p>
@@ -460,7 +525,7 @@ python3 docs/ai-forward-pack/scripts/docs-graph.py freshness  # stale and flagge
   </section>
 
   <section id="gates">
-    <h2>6. Gates and vetoes</h2>
+    <h2>7. Gates and vetoes</h2>
     <p>Who can block, on what, and what clears it. The author never clears their own hard veto, even when
       one model is playing both roles in sequence.</p>
     <table>
@@ -517,7 +582,7 @@ python3 docs/ai-forward-pack/scripts/docs-graph.py freshness  # stale and flagge
   </section>
 
   <section id="tells">
-    <h2>7. Anti-patterns</h2>
+    <h2>8. Anti-patterns</h2>
 
     <h3>The generic look, and what now catches it</h3>
     <p>Models trained on the same corpus converge on the same tells. The craft standard names them in prose;
@@ -563,7 +628,7 @@ python3 docs/ai-forward-pack/scripts/docs-graph.py freshness  # stale and flagge
   </section>
 
   <section id="artifacts">
-    <h2>8. Artifacts</h2>
+    <h2>9. Artifacts</h2>
     <table>
       <caption>Templates, scripts and examples that support UI work.</caption>
       <thead>
