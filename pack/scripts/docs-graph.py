@@ -74,8 +74,9 @@ SOURCE_TOTAL_LIMIT = 64 * 1024 * 1024
 SURFACE_KIND_ORDER = {
     "audit": 0,
     "documentation": 1,
-    "design-preview": 2,
-    "knowledge-tool": 3,
+    "guide": 2,
+    "design-preview": 3,
+    "knowledge-tool": 4,
 }
 
 
@@ -570,6 +571,8 @@ def _surface_kind(relative_to_root):
         return "documentation"
     if normalized.startswith("design/"):
         return "design-preview"
+    if normalized == "guide.html" or normalized.endswith("-guide.html"):
+        return "guide"
     return "knowledge-tool"
 
 
@@ -577,6 +580,7 @@ def _surface_description(kind):
     return {
         "audit": "Browse the committed audit and change timeline.",
         "documentation": "Open the generated documentation bundle.",
+        "guide": "Read a how-to guide for a capability in this repository.",
         "design-preview": "Inspect a rendered design or design-language preview.",
         "knowledge-tool": "Open an interactive knowledge artifact.",
     }[kind]

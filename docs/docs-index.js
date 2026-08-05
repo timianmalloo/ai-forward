@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-Forward",
-  "generated": "2026-08-03T17:04:26Z",
+  "generated": "2026-08-05T16:53:05Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -509,7 +509,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "5894c47b0acd2f11f55f2a0c222143c1a1a7dda6b3418c7052756fb524a6de8b"
+      "sourceSha256": "7eec2f1180943293694b96465bb5c026b4651bd42b8d62a5a7fca60c9c7f001a"
     },
     {
       "id": "audit-log",
@@ -569,7 +569,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "72646cf65596708ecbe1962a92b5ada4531450f4bb63841ab71ccac557971817"
+      "sourceSha256": "15009ce8709ee0083ff6e09bb959d150c5819b86f48a5390d6c09eef32274869"
     },
     {
       "id": "docs-index",
@@ -852,6 +852,38 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "ef39aa2634caaccd815ed64e487a2987ff5ef19fd5b3851362cda4f764114c40"
+    },
+    {
+      "id": "ui-capability-guide",
+      "path": "docs/ui-guide.md",
+      "title": "UI & UX Capability Guide",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2026-11-03",
+      "reviewSuggested": [],
+      "summary": "The how-to layer over this repository's seven UI standards: the layer stack and what each one decides, a job-to-path picker, the /ui-design loop, the command cheat sheet, an archetype picker, the veto table, the anti-pattern tells, and where artifacts land. The browsable surface is ui-guide.html; this node is its place in the graph.",
+      "tags": [
+        "ui",
+        "ux",
+        "guide",
+        "design",
+        "accessibility",
+        "docs-explorer"
+      ],
+      "links": [
+        {
+          "to": "design-language-docs-explorer",
+          "rel": "relates-to"
+        },
+        {
+          "to": "docs-index",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "38c9f5f6595c4765e66b42a121ef6c7fce9708cb988bcfa21388f8e15829db98"
     },
     {
       "id": "kb-pack-evolution-glossary",
@@ -1414,6 +1446,14 @@ window.DOCS_INDEX = {
       "description": "Open the generated documentation bundle."
     },
     {
+      "id": "surface-ui-guide",
+      "path": "docs/ui-guide.html",
+      "title": "UI & UX Capability Guide",
+      "kind": "guide",
+      "description": "Read a how-to guide for a capability in this repository.",
+      "artifactId": "ui-capability-guide"
+    },
+    {
       "id": "surface-design-docs-explorer-design-language-preview",
       "path": "docs/design/docs-explorer-design-language-preview.html",
       "title": "Docs Explorer - Design Language Preview",
@@ -1421,5 +1461,5 @@ window.DOCS_INDEX = {
       "description": "Inspect a rendered design or design-language preview."
     }
   ],
-  "graphSha256": "1d3d6f4adc6701ed870e857051abe5703febac71e8006147cb4907f1b821d638"
+  "graphSha256": "7c09ef98a8bf8696ea15ed636824b866be12454fdec3aae5109468f6968f7f8f"
 };

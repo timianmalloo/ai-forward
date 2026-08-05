@@ -119,6 +119,11 @@ the Road) and the **AI-Forward Pack** on top of it. Honor them on every non-triv
   non-determinism in a deterministic artifact); every asset carries a manifest entry with its
   verbatim prompt, preset, cost, **alt text** and disclosure; never upload a real person's
   likeness or customer data. `.claude/knowledge/ui-visual-assets.md` (VA1–VA18).
+- **Where to start on any UI job:** `docs/ui-guide.html` (also listed under **Knowledge
+  surfaces** in the Docs Explorer) is the how-to layer over all of the above — the layer stack,
+  a job-to-path picker, the `/ui-design` stages, the command sheet, an archetype picker, the veto
+  table, the tells, and where artifacts land. It is **derived** from the standards and never
+  authoritative over them.
 - **Testing:** what to test and what counts as proof is governed by the Testing Strategy —
   `.claude/knowledge/testing-strategy.md`; the Test Architect enforces it.
 - **Instrumentation:** code emits structured, trace-correlated telemetry in the OpenTelemetry

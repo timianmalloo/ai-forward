@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-08-05T14:23:28Z",
+  "generated": "2026-08-05T16:55:49Z",
   "audit": [
     {
       "id": "al-0001",
@@ -492,6 +492,35 @@ window.AUDIT_DATA = {
         "short": "2fda02eb4",
         "branch": "main",
         "pushed": true
+      }
+    },
+    {
+      "id": "al-0021",
+      "shortname": "ui-capability-guide",
+      "datetime": "2026-08-05T16:55:49Z",
+      "session": "0d635851",
+      "prompt": "great add an html overview and instructions on how to levarage all the ui skills and capability in the repo and integrate into the index: file:///C:/Projects/ai-forward/docs/index.html",
+      "summary": "Revision 26: added the UI & UX Capability Guide - a self-contained HTML how-to layer over the seven UI standards (layer stack, job-to-path picker, /ui-design stages, command sheet, archetype picker, veto table, tells, artifact map). Ships as pack template ui-capability-guide.template.html, instantiated as docs/ui-guide.html with a graph hub node, and registers as a new 'guide' surface kind in the Docs Explorer. Dogfooded: 69 detector findings, all fixed in the artifact, zero suppressions.",
+      "kind": "skill",
+      "skill": "extendaibundle",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "pack/templates/ui-capability-guide.template.html",
+        "docs/ui-guide.html",
+        "docs/ui-guide.md"
+      ],
+      "tags": [
+        "ui",
+        "guide",
+        "docs-explorer"
+      ],
+      "outcome": "success",
+      "git": {
+        "sha": "185fdb24fce0bacef158b28e698b8340c4f9e3c1",
+        "short": "185fdb24f",
+        "branch": "main",
+        "pushed": false
       }
     }
   ],
