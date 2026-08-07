@@ -106,7 +106,46 @@ The manifest is what makes a generated asset **reproducible, auditable, and revi
 
 ---
 
-## 6. Self-verification checklist
+## 6. The backend — capability contract, adapters, and the subscription trap
+
+The directives above are backend-agnostic on purpose. This section is the **mechanism**: what a backend must supply, how the two currently-supported ones are wired, and the entitlement trap that catches people before they write a line.
+
+**VA19 — A consumer AI subscription is not API access. Establish which you hold before designing around it.** This is the single most common false start, and it is **Verified** against the provider's own terms: a **Google AI Pro / Ultra** subscription grants the Gemini consumer app, Flow and Whisk — it grants **no programmatic API access whatsoever**. API access is a separate billing relationship: an AI Studio key bound to a Cloud project with **active billing**, on which **image and video generation are not available on the free tier at all**. So *"I have a Google subscription, so my agent can generate images"* is false, and a workflow built on it fails at the first call. The general rule, of which that is one instance: **entitlement is a contract, so check it rather than assume it** (NG1). Before a design depends on generation, confirm (a) which account actually holds the entitlement, (b) whether it exposes an **API** rather than only a web app, and (c) whether the specific capability you need is on the tier you are paying for. Record the answer; it changes what you may build.
+
+**VA20 — The capability contract a backend must satisfy.** A backend is described by *what it can do*, never by vendor name, so substitution costs nothing:
+
+| Capability | What the pipeline needs from it |
+|---|---|
+| `text-to-image` | prompt → image, with a controllable aspect ratio and a resolution at least as large as the largest rendered dimension |
+| `image-to-image` | source image + prompt → edited image (for variants and corrections) |
+| `image-to-video` / `text-to-video` | a still or a prompt → a short clip, with a stated duration and resolution |
+| `character-reference` *(optional)* | a persona that stays consistent across generations, for the harness's persona switcher (VA16) |
+| `style-preset` / `motion-preset` *(optional)* | named registers, which **MUST** be recorded in the manifest rather than left implicit (VA3, VA12) |
+| **provenance** | a stated watermark/disclosure posture and commercial-use terms (VA11) |
+| **retrieval** | a way to fetch the bytes **immediately**, because generated URLs expire (VA4) |
+
+A backend missing `text-to-image` cannot serve this pipeline. Everything else is optional and its absence simply removes the corresponding move.
+
+**VA21 — The supported adapters.** Established by execution or from primary sources at adoption; **re-establish on upgrade** (NG3), because model IDs and prices move faster than this document.
+
+| | **Higgsfield** | **Google** |
+|---|---|---|
+| Reached via | **MCP server** (the agent host holds the credentials) | **SDK** — `google-genai` (Python) / `@google/genai` (JS). *No official MCP server exists* |
+| Configured by | `HIGGSFIELD_API_KEY` + `HIGGSFIELD_SECRET` | `GOOGLE_API_KEY` (takes precedence) or `GEMINI_API_KEY` |
+| Image | Soul, Reve, Seedream v4 (+edit); 106 style presets | `gemini-3.1-flash-image` (workhorse), `-lite-image` (cheap), `gemini-3-pro-image` (premium) |
+| Video | DoP / DoP Standard, Kling v2.1 Pro, Seedance v1 Pro; **121 cinematography motion presets** | `veo-3.1-generate-preview` (async, 8s, native audio), `gemini-omni-flash-preview` (sync) |
+| Distinctive strength | **Named camera moves** (`Dolly In`, `Crane Up`, `Arc`, `Push To Glass`, `360 Orbit`) and **character references** for consistent personas | **Resolution and aspect-ratio control**, multi-reference conditioning, native-audio video |
+| Async model | `job_set_id` / `request_id`, poll to terminal state; `nsfw` is a real outcome | Veo returns a long-running operation (poll ~10s); Omni Flash returns inline |
+| Retention | **~7 days** | download immediately; treat any returned URI as ephemeral |
+| Provenance | check terms at time of use | **invisible SynthID watermark on every generated image**; the provider does not claim ownership but may generate similar for others |
+
+> **Two things that will bite.** Higgsfield's style catalogue skews fashion and social, so the product-appropriate subset is small (VA3). Google's **Imagen** line is deprecated with a near-term shutdown — do not start new work on it; use the Gemini image models.
+
+**VA22 — Wire the backend with the setup script, and never with a committed credential.** `scripts/visual-assets-setup.py` is the mechanism: `--backends` prints the capability matrix, `--check` reports which backends this environment can actually reach and exactly what is missing, and `--init` scaffolds `docs/assets/`, the `assets:` manifest in `DESIGN.md`, and the `.gitignore` hygiene (including `_scratch/` for candidate boards, which are never committed). It **writes no credential and generates nothing**: secrets live in the environment or the agent host's own MCP configuration, and `--check` fails loudly if a key looks committed (VA9). Generation itself runs through **`/visualize`**.
+
+---
+
+## 7. Self-verification checklist
 
 - [ ] The generation contract was **established by execution** (models, statuses, presets, retention), not recalled (VA1–VA2).
 - [ ] The chosen **style/motion presets** come from the product-appropriate subset and are named in the manifest (VA3).
@@ -125,10 +164,13 @@ The manifest is what makes a generated asset **reproducible, auditable, and revi
 - [ ] Personas are **fixtures**, used in the harness, never production data (VA16).
 - [ ] Motion is in the **motion inventory**, has a reduced-motion fallback and a text alternative (VA17).
 - [ ] The rendering surface passed the **detector**, including contrast of text over imagery (VA18).
+- [ ] **Entitlement established, not assumed** — which account holds it, whether it exposes an **API** rather than only a web app, and whether the capability is on the paid tier (VA19).
+- [ ] The backend satisfies the **capability contract** for the moves actually used, and its provenance and commercial terms were checked at time of use (VA20–VA21).
+- [ ] Wired via `visual-assets-setup.py --check/--init`; **no credential in the repo**, `_scratch/` git-ignored (VA22).
 
 ---
 
-## 7. References
+## 8. References
 
 - **Higgsfield** — `platform.higgsfield.ai`, exposed as an MCP server. Models: Soul, Reve, Seedream v4 (+edit), DoP / DoP Standard, Kling v2.1 Pro, Seedance v1 Pro, Speak v2. Surface, presets (106 styles / 121 motions), statuses and the **7-day retention** verified by execution at adoption; re-establish on upgrade.
 - **`ui-design-craft.md`** — **DX1** direction before pixels, **DX4** named references, **DX5** the direction brief, **DX7** the fidelity ladder, **DX8–DX10** the mockup and harness, **DX16** realistic extreme content, **DX19** the motion inventory, **DX3** the tells (whose imagery analogue is VA8).

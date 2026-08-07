@@ -57,10 +57,10 @@ the Road) and the **AI-Forward Pack** on top of it. Honor them on every non-triv
 - **Personas (dual-mode):** author in Peer Mode, review in Adversary Mode; the author never
   clears its own hard veto. Roster + the operating standard (severity, veto-clears-when,
   conflict rule): `.claude/knowledge/persona-cards.md` and `.claude/knowledge/persona-audit.md`.
-- **Skills (18):** fifteen reasoning workflows — `/collectknowledge`, `/adddomainexperts`,
-  `/specify`, `/define-architecture`, `/design`, `/ui-design`, `/implement`, `/investigate`,
-  `/document`, `/adopt`, `/forensicreview`, `/migrate`, `/updatepack`, `/addpacktorepo`,
-  `/extendaibundle` — plus the `/auditlog`
+- **Skills (19):** sixteen reasoning workflows — `/collectknowledge`, `/adddomainexperts`,
+  `/specify`, `/define-architecture`, `/design`, `/ui-design`, `/visualize`, `/implement`,
+  `/investigate`, `/document`, `/adopt`, `/forensicreview`, `/migrate`, `/updatepack`,
+  `/addpacktorepo`, `/extendaibundle` — plus the `/auditlog`
   lens over the durable audit & change log, and two prompt-log utilities, `/prompts` and
   `/searchprompts`, that browse and search your logged prompts to reuse. They live in
   `.claude/skills/`. Templates: `docs/ai-forward-pack/templates/`.
@@ -109,7 +109,7 @@ the Road) and the **AI-Forward Pack** on top of it. Honor them on every non-triv
   once, **download, optimize and commit** (provider results expire and a re-rolling asset is
   non-determinism in a deterministic artifact); every asset carries a manifest entry with its
   verbatim prompt, preset, cost, **alt text** and disclosure; never upload a real person's
-  likeness or customer data. `.claude/knowledge/ui-visual-assets.md` (VA1–VA18).
+  likeness or customer data. `.claude/knowledge/ui-visual-assets.md` (VA1–VA22).
 - **Where to start on any UI job:** `docs/ui-guide.html` (also listed under **Knowledge
   surfaces** in the Docs Explorer) is the how-to layer over all of the above — the layer stack,
   a job-to-path picker, the `/ui-design` stages, the command sheet, an archetype picker, the veto

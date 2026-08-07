@@ -236,7 +236,7 @@
         <tr>
           <td><strong>Visual assets</strong></td>
           <td>May imagery be generated, and under what conditions? Cost, provenance, privacy, alt text, non-determinism.</td>
-          <td><code>VA1&ndash;VA18</code></td>
+          <td><code>VA1&ndash;VA22</code></td>
           <td><code>ui-visual-assets.md</code></td>
         </tr>
       </tbody>
@@ -289,7 +289,8 @@
       <article class="card">
         <h3>Marketing or landing surface</h3>
         <p>The one place generated imagery and cinematic motion genuinely earn their place.</p>
-        <p class="run"><code>/ui-design</code>, which trips <strong>UI-T2</strong></p>
+        <p class="run"><code>/ui-design</code> (trips <strong>UI-T2</strong>), then
+          <code>/visualize</code> to produce the assets</p>
       </article>
 
     </div>
@@ -440,6 +441,20 @@ python3 docs/ai-forward-pack/scripts/ui-craft-gate.py src/ --gate --a11y-obligat
 
 # the detector reads DESIGN.md from the repo root or docs/. Install it once:
 npm install --save-dev impeccable</code></pre>
+
+    <h3>Generate the imagery a surface shows</h3>
+<pre><code># which generation backend can this environment actually reach?
+python3 docs/ai-forward-pack/scripts/visual-assets-setup.py --check
+python3 docs/ai-forward-pack/scripts/visual-assets-setup.py --backends   # capability matrix
+python3 docs/ai-forward-pack/scripts/visual-assets-setup.py --init       # assets dir + manifest + hygiene
+
+/visualize    # board | asset | persona | motion</code></pre>
+    <div class="note">
+      <p><strong>A consumer AI subscription is not API access.</strong> A Google AI Pro or Ultra
+        plan grants the Gemini app, Flow and Whisk, and grants no programmatic API access at all.
+        The API is a separate billing relationship, and image and video generation are not on its
+        free tier. Establish which you hold before designing around it.</p>
+    </div>
 
     <h3>Keep the graph honest</h3>
     <pre><code>python3 docs/ai-forward-pack/scripts/docs-graph.py derive     # frontmatter to index

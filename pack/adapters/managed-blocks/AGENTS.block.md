@@ -58,10 +58,10 @@ every non-trivial task.
 - **Personas (dual-mode):** author in Peer Mode, review in Adversary Mode; the author never
   clears its own hard veto. Agents in `.github/agents/`; the operating standard in the
   `persona-audit` / `persona-cards` instructions.
-- **Workflows (18):** the prompts in `.github/prompts/` — fifteen reasoning workflows
+- **Workflows (19):** the prompts in `.github/prompts/` — sixteen reasoning workflows
   (`collectknowledge`, `adddomainexperts`, `specify`, `define-architecture`, `design`, `ui-design`,
-  `implement`, `investigate`, `document`, `adopt`, `forensicreview`, `migrate`, `updatepack`,
-  `addpacktorepo`, `extendaibundle`),
+  `visualize`, `implement`, `investigate`, `document`, `adopt`, `forensicreview`, `migrate`,
+  `updatepack`, `addpacktorepo`, `extendaibundle`),
   the `auditlog` lens over the audit & change log, plus two prompt-log utilities, `prompts` and
   `searchprompts`. Templates: `docs/ai-forward-pack/templates/`.
 - **Prompt reuse (utility):** `/prompts` opens the audit log's prompts as an arrow-navigable stack
@@ -111,7 +111,7 @@ every non-trivial task.
   non-determinism in a deterministic artifact); every asset carries a manifest entry with its
   verbatim prompt, preset, cost, **alt text** and disclosure; never upload a real person's
   likeness or customer data.
-  `.github/instructions/ui-visual-assets.instructions.md` (VA1–VA18).
+  `.github/instructions/ui-visual-assets.instructions.md` (VA1–VA22).
 - **Where to start on any UI job:** `docs/ui-guide.html` (also listed under **Knowledge
   surfaces** in the Docs Explorer) is the how-to layer over all of the above — the layer stack,
   a job-to-path picker, the `ui-design` stages, the command sheet, an archetype picker, the veto

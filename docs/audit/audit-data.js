@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-08-07T13:00:44Z",
+  "generated": "2026-08-07T13:19:55Z",
   "audit": [
     {
       "id": "al-0001",
@@ -579,6 +579,36 @@ window.AUDIT_DATA = {
         "branch": "main",
         "pushed": false
       }
+    },
+    {
+      "id": "al-0024",
+      "shortname": "visualize-skill-and-backends",
+      "datetime": "2026-08-07T13:19:55Z",
+      "session": "0d635851",
+      "prompt": "i meant that i want to be able to, from a new repo that adopts the pack, leverage my higgsfield and google subscriptions to beautify a site by leveraging their models to produce stunning visuals and animations for whatever site i am working on... i thought the impeccable skills supported that",
+      "summary": "Revision 29: closed the doctrine-without-mechanism gap. Revision 25 shipped ui-visual-assets.md but no way to call anything, and CD3 had declined Impeccable's skill where its visual-world generation lives. Added /visualize (board/asset/persona/motion, standalone-runnable) + visual-assets-setup.py (backend wiring, --check/--init/--backends, writes no credential) + VA19-VA22 (the capability contract and the two adapters). VA19 is the correction: a consumer Google AI Pro/Ultra subscription grants NO API access - verified against the terms - and image/video are not on the API free tier.",
+      "kind": "skill",
+      "skill": "extendaibundle",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "pack/commands/visualize/SKILL.md",
+        "pack/scripts/visual-assets-setup.py",
+        "pack/knowledge/ui-visual-assets.md"
+      ],
+      "tags": [
+        "ui",
+        "generation",
+        "higgsfield",
+        "google"
+      ],
+      "outcome": "success",
+      "git": {
+        "sha": "76cc056a6ca2bb05f347891a4f4718a48a6e41b4",
+        "short": "76cc056a6",
+        "branch": "main",
+        "pushed": false
+      }
     }
   ],
   "changes": [
@@ -815,6 +845,29 @@ window.AUDIT_DATA = {
         "after": "2fda02eb45ad35cd53ab491dc63169d24197e440",
         "branch": "main",
         "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0010",
+      "datetime": "2026-08-07T13:19:55Z",
+      "session": "0d635851",
+      "kind": "decision",
+      "skill": "extendaibundle",
+      "title": "Add a generation mechanism, and correct the subscription-equals-API assumption",
+      "prompt": "leverage my higgsfield and google subscriptions to beautify a site from a new repo that adopts the pack",
+      "summary": "New skill /visualize plus visual-assets-setup.py give the pack an actual generation pipeline; ui-visual-assets.md gains VA19-VA22 (entitlement, capability contract, adapters, wiring).",
+      "rationale": "Shipping doctrine without a mechanism was the defect: a consuming repo got the rules and no way to call anything, and CD3's decision to take only Impeccable's detector had removed its visual-world generation without replacing it. Research also established a load-bearing correction - a consumer Google AI subscription grants no API access at all, so the user's premise could not have worked as stated. Backends are described by capability rather than vendor so substitution stays free.",
+      "artifacts": [
+        "pack/commands/visualize/SKILL.md",
+        "pack/knowledge/ui-visual-assets.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "76cc056",
+        "after": "76cc056a6ca2bb05f347891a4f4718a48a6e41b4",
+        "branch": "main",
+        "pushed": false,
         "commits": []
       }
     }

@@ -1,0 +1,29 @@
+{
+  "id": "visualize-01",
+  "skill": "visualize",
+  "_intent": "The /visualize pipeline enforces the ui-visual-assets guardrails that make a generated asset safe to ship. Red-first: before this skill existed there was no docs/assets/, no assets: manifest in DESIGN.md, and no _scratch/ hygiene - every assertion below would have failed.",
+  "prompt": "Run /visualize in asset mode for the landing page of a small B2B analytics product: it needs one hero image and two supporting section images. Treat the product as being under an accessibility obligation, and state the budget before generating.",
+  "setup": [],
+  "assertions": [
+    { "type": "file-exists", "path": "docs/assets" },
+    { "type": "file-exists", "path": "DESIGN.md" },
+
+    { "type": "grep", "path": "DESIGN.md", "pattern": "(?m)^assets:" },
+    { "type": "grep", "path": "DESIGN.md", "pattern": "(?i)prompt" },
+    { "type": "grep", "path": "DESIGN.md", "pattern": "(?i)\\balt\\b" },
+    { "type": "grep", "path": "DESIGN.md", "pattern": "(?i)disclosure|ai-generated" },
+
+    { "type": "grep", "path": ".gitignore", "pattern": "_scratch" },
+
+    { "type": "not-grep", "path": "DESIGN.md",
+      "pattern": "(?i)https?://[^\"'\\s]*(?:higgsfield|cloudfront|generativelanguage|blob\\.core|amazonaws)" },
+
+    { "type": "cmd-exit",
+      "cmd": ["python3", "docs/ai-forward-pack/scripts/visual-assets-setup.py", "--backends"],
+      "exit": 0 },
+
+    { "type": "cmd-exit",
+      "cmd": ["python3", "docs/ai-forward-pack/scripts/docs-graph.py", "validate"],
+      "exit": 0 }
+  ]
+}
