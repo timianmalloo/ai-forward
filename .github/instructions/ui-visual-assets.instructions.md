@@ -3,7 +3,7 @@ applyTo: "**"
 ---
 # UI Visual Assets — the generative pipeline and its guardrails
 
-*Normative guidance for **generating the imagery, personas and motion a UI contains** — the visual-world direction board that makes a brief concrete, the photographic assets a mockup renders, the consistent characters the review harness switches between, and the cinematic motion a marketing surface uses. The reference implementation is the **Higgsfield** MCP server (`platform.higgsfield.ai`); the directives are written so a different generation backend substitutes without rewriting the standard. `ui-design-craft.md` (DX1–DX25) governs the craft this serves; `ui-craft-detection.md` (CD1–CD19) governs the control that verifies the result; **this document governs what may be generated, how, and at what cost.***
+*Normative guidance for **generating the imagery, personas and motion a UI contains** — the visual-world direction board that makes a brief concrete, the photographic assets a mockup renders, the consistent characters the review harness switches between, and the cinematic motion a marketing surface uses. The reference implementation is the **Higgsfield** MCP server (`platform.higgsfield.ai`); the directives are written so a different generation backend substitutes without rewriting the standard. `ui-design-craft.md` (DX1–DX25) governs the craft this serves; `ui-craft-detection.md` (CD1–CD20) governs the control that verifies the result; **this document governs what may be generated, how, and at what cost.***
 
 Normative keywords (**MUST**, **SHOULD**, **MAY**, **MUST NOT**) follow RFC 2119.
 

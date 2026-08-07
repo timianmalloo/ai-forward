@@ -112,7 +112,7 @@ every non-trivial task.
   floors, and gate CI on it — **a lesson recorded as prose is a memoir** (CI6). A clean run is a
   **floor, never a verdict**: it cannot see archetype fit, IA, whether the hard states exist at
   all, or whether the copy is true.
-  `.github/instructions/ui-craft-detection.instructions.md` (CD1–CD19).
+  `.github/instructions/ui-craft-detection.instructions.md` (CD1–CD20).
 - **Generated visual assets:** imagery, personas and motion a UI *contains* may be generated;
   the **interface itself may not** (image models render illegible text and invented controls).
   Direction in words first, then optionally a **visual world** that makes the brief concrete —

@@ -138,6 +138,8 @@ A DESIGN.md that is `design-lint.py`-clean but whose implementation is riddled w
 
 **CD19 — Scanning a file stays local; scanning a URL does not.** `detect <file|dir>` is offline. `detect <url>` drives a headless browser against that URL. Pointing it at a **private or authenticated** environment is a trust-boundary decision (Security & Identity lens); pointing it at a page rendering **real personal data** is a Privacy decision (hard veto) — never do it as a convenience.
 
+**CD20 — A client-rendered surface is invisible to static scanning, and that silence reads as a pass.** When a page's HTML is a shell and the interface is built at runtime, the detector scans the shell: it reports few findings because there is little to see, and the report is honest about what it scanned while being useless about the surface. Measure it before trusting a clean run — **strip the `<script>` blocks and count what is left**. If the remaining body is a small fraction of the whole, static scanning is advisory only and the real control is `detect <url>` against the rendered page. Two operational consequences worth knowing before you rely on it: URL scanning **requires `puppeteer`**, which is *not* part of the base install and must be added deliberately (a dependency decision in its own right, CD17); and a surface that can only be scanned when it is running is a surface whose control is weaker than one that can be scanned from source — which is one more reason the pack's own HTML artifacts are dependency-free and server-rendered by construction (V9, DX8).
+
 ---
 
 ## 8. Self-verification checklist
@@ -154,6 +156,7 @@ A DESIGN.md that is `design-lint.py`-clean but whose implementation is riddled w
 - [ ] Every **suppression** carries a reason; standing ones follow the Deviation Protocol (CD16).
 - [ ] Any **new rule** worth keeping was promoted through `/extendaibundle`, not silently absorbed (CD7).
 - [ ] URL scanning of private or personal-data-bearing pages was a **deliberate, reviewed** decision (CD19).
+- [ ] For a **client-rendered** surface, the shell was measured (strip `<script>`, count what remains) before a clean static run was trusted; where the body is mostly runtime-built, static scanning was treated as advisory and `detect <url>` (which needs `puppeteer`) is the real control (CD20).
 
 ---
 

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-08-05T18:43:52Z",
+  "generated": "2026-08-07T13:00:44Z",
   "audit": [
     {
       "id": "al-0001",
@@ -547,6 +547,35 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "fe4760bc878e12d049e1593c7471674988642625",
         "short": "fe4760bc8",
+        "branch": "main",
+        "pushed": false
+      }
+    },
+    {
+      "id": "al-0023",
+      "shortname": "ui-design-review-pack-explainer",
+      "datetime": "2026-08-07T13:00:44Z",
+      "session": "0d635851",
+      "prompt": "does this allow me to use higgsfield to beautify the website?",
+      "summary": "Ran /ui-design in review mode on web/ai-forward-pack-explainer.html to answer the question with measurement rather than taste. Verdict BLOCK: the public surface renders blank without three un-hashed unpkg CDN scripts (68,522 body bytes, 216 without script), zero focus-visible/aria/reduced-motion, 166 hex colours against 20 tokens, no DESIGN.md governing web/. Imagery is not a finding anywhere; the highest-leverage change is inlining the runtime. Added CD20 and registered E2E-H after discovering the detector had scanned only the shell.",
+      "kind": "skill",
+      "skill": "ui-design",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/reviews/ui-pack-explainer.md",
+        "pack/knowledge/ui-craft-detection.md"
+      ],
+      "tags": [
+        "ui",
+        "review",
+        "accessibility",
+        "supply-chain"
+      ],
+      "outcome": "success",
+      "git": {
+        "sha": "dd94945654ff4a6ffd94fcd5a8d3e599dba64ede",
+        "short": "dd9494565",
         "branch": "main",
         "pushed": false
       }

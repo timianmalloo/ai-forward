@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-Forward",
-  "generated": "2026-08-05T18:43:28Z",
+  "generated": "2026-08-07T13:00:18Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -569,7 +569,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "22d6c854085eb1f534ba50af968c67a1316dd84b035466f8262fe8c6c745b73d"
+      "sourceSha256": "810b4326058faed411de13270d733d363792120c03afb2fe17c42399a2855710"
     },
     {
       "id": "docs-index",
@@ -884,6 +884,37 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "38c9f5f6595c4765e66b42a121ef6c7fce9708cb988bcfa21388f8e15829db98"
+    },
+    {
+      "id": "ui-review-pack-explainer",
+      "path": "docs/reviews/ui-pack-explainer.md",
+      "title": "UI review — AI-Forward Pack Explainer",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2026-11-05",
+      "reviewSuggested": [],
+      "summary": "Review of web/ai-forward-pack-explainer.html, triggered by the question \"can Higgsfield beautify this?\". Measurement says no: the public surface renders blank without three un-hashed CDN scripts, has no focus styling, ARIA or reduced-motion, and carries 166 hex colours against 20 tokens. Imagery is not the lever. Inlining the runtime is.",
+      "tags": [
+        "ui-review",
+        "ux",
+        "accessibility",
+        "supply-chain",
+        "explainer"
+      ],
+      "links": [
+        {
+          "to": "ui-capability-guide",
+          "rel": "relates-to"
+        },
+        {
+          "to": "docs-index",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "0be650029252586167fcea2b6fc15e2a4363c628d410e708a1533f0dbaec9dbe"
     },
     {
       "id": "kb-pack-evolution-glossary",
@@ -1461,5 +1492,5 @@ window.DOCS_INDEX = {
       "description": "Inspect a rendered design or design-language preview."
     }
   ],
-  "graphSha256": "dcb467d3831ce0320dd1ac3ddae8f98f49ec1f703f23789e2b5e0d6a33dea3b0"
+  "graphSha256": "150e9bd335533f05d8fbb90789848194b2e526981517523b071dcc96f4ac827e"
 };

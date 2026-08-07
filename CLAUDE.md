@@ -110,7 +110,7 @@ the Road) and the **AI-Forward Pack** on top of it. Honor them on every non-triv
   the measurement), fold its findings into the rubric with the accessibility and token severity
   floors, and gate CI on it — **a lesson recorded as prose is a memoir** (CI6). A clean run is a
   **floor, never a verdict**: it cannot see archetype fit, IA, whether the hard states exist at
-  all, or whether the copy is true. `.claude/knowledge/ui-craft-detection.md` (CD1–CD19).
+  all, or whether the copy is true. `.claude/knowledge/ui-craft-detection.md` (CD1–CD20).
 - **Generated visual assets:** imagery, personas and motion a UI *contains* may be generated;
   the **interface itself may not** (image models render illegible text and invented controls).
   Direction in words first, then optionally a **visual world** that makes the brief concrete —
