@@ -134,7 +134,7 @@ A backend missing `text-to-image` cannot serve this pipeline. Everything else is
 | | **Higgsfield** | **Google** |
 |---|---|---|
 | Reached via | **MCP server** (the agent host holds the credentials) | **SDK** — `google-genai` (Python) / `@google/genai` (JS). *No official MCP server exists* |
-| Configured by | `HIGGSFIELD_API_KEY` + `HIGGSFIELD_SECRET` | `GOOGLE_API_KEY` (takes precedence) or `GEMINI_API_KEY` |
+| Configured by | `HF_API_KEY` + `HF_SECRET` (**verified from the server source**, not inferred from the vendor name) | `GOOGLE_API_KEY` (takes precedence) or `GEMINI_API_KEY` |
 | Image | Soul, Reve, Seedream v4 (+edit); 106 style presets | `gemini-3.1-flash-image` (workhorse), `-lite-image` (cheap), `gemini-3-pro-image` (premium) |
 | Video | DoP / DoP Standard, Kling v2.1 Pro, Seedance v1 Pro; **121 cinematography motion presets** | `veo-3.1-generate-preview` (async, 8s, native audio), `gemini-omni-flash-preview` (sync) |
 | Distinctive strength | **Named camera moves** (`Dolly In`, `Crane Up`, `Arc`, `Push To Glass`, `360 Orbit`) and **character references** for consistent personas | **Resolution and aspect-ratio control**, multi-reference conditioning, native-audio video |
@@ -144,7 +144,12 @@ A backend missing `text-to-image` cannot serve this pipeline. Everything else is
 
 > **Two things that will bite.** Higgsfield's style catalogue skews fashion and social, so the product-appropriate subset is small (VA3). Google's **Imagen** line is deprecated with a near-term shutdown — do not start new work on it; use the Gemini image models.
 
-**VA22 — Wire the backend with the setup script, and never with a committed credential.** `scripts/visual-assets-setup.py` is the mechanism: `--backends` prints the capability matrix, `--check` reports which backends this environment can actually reach and exactly what is missing, and `--init` scaffolds `docs/assets/`, the `assets:` manifest in `DESIGN.md`, and the `.gitignore` hygiene (including `_scratch/` for candidate boards, which are never committed). It **writes no credential and generates nothing**: secrets live in the environment or the agent host's own MCP configuration, and `--check` fails loudly if a key looks committed (VA9). Generation itself runs through **`/visualize`**.
+**VA22 — Wire the backend with the setup script, and never with a committed credential.** `scripts/visual-assets-setup.py` is the mechanism: `--backends` prints the capability matrix, `--check` reports which backends this environment can actually reach and exactly what is missing, `--init` scaffolds `docs/assets/`, the `assets:` manifest in `DESIGN.md`, and the `.gitignore` hygiene (including `_scratch/` for candidate boards, which are never committed), and **`--init-mcp`** wires an MCP backend at the *project* level. It **writes no credential into anything committed and generates nothing**; generation runs through **`/visualize`**.
+
+For an MCP backend specifically, three things are established rather than assumed and each changes the design:
+- **Project-level config is supported and takes precedence.** The host reads `.mcp.json` (from the working directory up to the repo root) and `.github/mcp.json`, and a project definition overrides the user-level one. So a repo *can* carry its own wiring.
+- **But a committed config cannot carry the credentials.** Environment variables in the server's `env` block **must be given literally** — auto-inclusion is documented only for variables referenced in `command`, `args` or `cwd`, and `${VAR}` expansion inside `env` is **not** established. Anything that relies on it is a guess (NG1). Therefore `--init-mcp` writes a **git-ignored `.mcp.json`** holding the real values, plus a **committed `.mcp.json.example`** carrying placeholders, and adds the ignore rule itself.
+- **Read the state back, do not trust the exit code.** A `.gitignore` pattern with a trailing `# reason` on the *same line* is not a comment — `#` opens a comment only at the start of a line — so the pattern silently becomes a literal that matches nothing and the credential file stays trackable. The write succeeds, the tool reports success, and the protection does not exist. After wiring, **verify with `git check-ignore -v .mcp.json` and confirm `git status` does not list it** (E14; defect class OPS-B).
 
 ---
 

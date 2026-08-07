@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-08-07T13:19:55Z",
+  "generated": "2026-08-07T22:15:50Z",
   "audit": [
     {
       "id": "al-0001",
@@ -606,6 +606,34 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "76cc056a6ca2bb05f347891a4f4718a48a6e41b4",
         "short": "76cc056a6",
+        "branch": "main",
+        "pushed": false
+      }
+    },
+    {
+      "id": "al-0025",
+      "shortname": "configure-higgsfield-mcp",
+      "datetime": "2026-08-07T22:15:50Z",
+      "session": "0d635851",
+      "prompt": "configure higgsfield mcp locally",
+      "summary": "Wired Higgsfield MCP at the project level via a git-ignored .mcp.json plus a committed .mcp.json.example, added --init-mcp to visual-assets-setup.py, and fixed two defects I had shipped: guessed env var names (HF_API_KEY/HF_SECRET, not HIGGSFIELD_*) and an inline gitignore comment that silently voided every pattern, leaving a real-credential file trackable. Registered OPS-B and RIG-D.",
+      "kind": "manual",
+      "skill": "extendaibundle",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "pack/scripts/visual-assets-setup.py",
+        ".mcp.json.example"
+      ],
+      "tags": [
+        "mcp",
+        "higgsfield",
+        "security"
+      ],
+      "outcome": "success",
+      "git": {
+        "sha": "c636b7a6c17b18add4205e484118dc12f2f8c453",
+        "short": "c636b7a6c",
         "branch": "main",
         "pushed": false
       }

@@ -14,8 +14,11 @@ environment or the agent host's own MCP configuration, never in the repository.
 Modes
   --check      what is configured, what is missing, and exactly how to fix it
   --init       scaffold docs/assets/, the DESIGN.md assets manifest, and .gitignore hygiene
+  --init-mcp   write a GIT-IGNORED project-level .mcp.json for an MCP backend, plus a
+               committed .mcp.json.example. Credentials come from the environment, or are
+               reused from an agent-host config that already has them. Never committed.
   --backends   print the backend capability matrix and exit
-  --dry-run    with --init: print what would change, write nothing
+  --dry-run    with --init/--init-mcp: print what would change, write nothing
   --json       machine-readable output for --check
 
 Exit codes: 0 fine, 1 nothing usable is configured (with --check), 2 a hygiene problem was
@@ -40,20 +43,28 @@ BACKENDS = {
     "higgsfield": {
         "label": "Higgsfield",
         "kind": "mcp",
-        "env": ["HIGGSFIELD_API_KEY", "HIGGSFIELD_SECRET"],
+        "env": ["HF_API_KEY", "HF_SECRET"],
         "any_of": False,          # both are required
+        "mcp": {
+            "server_name": "higgsfield",
+            "package": "higgsfield-mcp",
+            "entry": os.path.join("higgsfield-mcp", "src", "server.js"),
+        },
         "capabilities": ["text-to-image", "image-to-image", "image-to-video",
                          "talking-head", "character-reference", "style-presets",
                          "motion-presets"],
         "notes": (
-            "Exposed as an MCP server, so the agent host holds the credentials rather than "
-            "the repo. Style presets skew fashion/lifestyle; the product-appropriate subset "
-            "is small (VA3). Results are retained ~7 days, which is why VA4 requires "
-            "download-and-commit rather than linking."),
+            "Exposed as an MCP server (npm `higgsfield-mcp`, MIT), so the agent host holds the "
+            "credentials rather than the repo. The server reads HF_API_KEY and HF_SECRET - "
+            "verified from its source, not from the vendor name. Style presets skew "
+            "fashion/lifestyle; the product-appropriate subset is small (VA3). Results are "
+            "retained ~7 days, which is why VA4 requires download-and-commit rather than "
+            "linking."),
         "howto": (
-            "Configure the Higgsfield MCP server in your agent host (Claude Code: .mcp.json "
-            "or the user config; Copilot CLI: the MCP settings), supplying HIGGSFIELD_API_KEY "
-            "and HIGGSFIELD_SECRET from platform.higgsfield.ai. Do not put them in the repo."),
+            "npm install -g higgsfield-mcp, then either `copilot mcp add` / the /mcp wizard for "
+            "a user-level server, or `visual-assets-setup.py --init-mcp` to write a "
+            "GIT-IGNORED project-level .mcp.json from HF_API_KEY and HF_SECRET in your "
+            "environment. Never commit the credentials."),
     },
     "google": {
         "label": "Google (Gemini image / Veo video)",
@@ -90,6 +101,7 @@ BACKENDS = {
 GITIGNORE_ENTRIES = [
     ("# --- AI-Forward: visual-asset hygiene (ui-visual-assets.md) ---", None),
     ("docs/assets/**/_scratch/", "candidate boards and rejected generations - never committed"),
+    (".mcp.json", "project MCP config holds real credentials (VA9, VA22) - the .example is committed"),
     ("*.env", "credentials live in the environment, never in the repo (VA9)"),
     (".env", "credentials live in the environment, never in the repo (VA9)"),
 ]
@@ -195,6 +207,120 @@ def scan_for_committed_secrets(root):
     return hits
 
 
+def resolve_mcp_entry(spec):
+    """Find the installed server entry point. Established by looking, not assumed:
+    the global npm root differs per platform and per install method."""
+    entry = spec["mcp"]["entry"]
+    roots = []
+    if os.name == "nt":
+        roots.append(os.path.join(os.environ.get("APPDATA", ""), "npm", "node_modules"))
+    roots += [
+        os.path.join(os.environ.get("HOME", os.path.expanduser("~")), ".npm-global", "lib", "node_modules"),
+        "/usr/local/lib/node_modules",
+        "/usr/lib/node_modules",
+        os.path.join(os.path.abspath("."), "node_modules"),
+    ]
+    for root in roots:
+        candidate = os.path.join(root, entry)
+        if root and os.path.isfile(candidate):
+            return candidate
+    return None
+
+
+def read_user_mcp_credentials(spec):
+    """Reuse credentials already configured in the agent host, so `--init-mcp` works for
+    someone who set the server up interactively and never exported the variables.
+    Returns (creds, source) and NEVER logs a value."""
+    name = spec["mcp"]["server_name"]
+    candidates = [
+        os.path.join(os.path.expanduser("~"), ".copilot", "mcp-config.json"),
+        os.path.join(os.path.expanduser("~"), ".mcp.json"),
+    ]
+    for path in candidates:
+        if not os.path.isfile(path):
+            continue
+        try:
+            with open(path, "r", encoding="utf-8") as handle:
+                data = json.load(handle)
+        except (OSError, ValueError):
+            continue
+        servers = data.get("mcpServers", data)
+        server = servers.get(name) if isinstance(servers, dict) else None
+        if isinstance(server, dict) and isinstance(server.get("env"), dict):
+            found = {k: v for k, v in server["env"].items() if k in spec["env"] and v}
+            if len(found) == len(spec["env"]):
+                return found, path
+    return None, None
+
+
+def cmd_init_mcp(root, backend, dry_run):
+    """Write a GIT-IGNORED project-level .mcp.json plus a committed .example.
+
+    Copilot CLI reads project config from `.mcp.json` (cwd up to the repo root) and
+    `.github/mcp.json`, and project definitions take precedence over the user config.
+    Verified from the official docs. What is NOT established is `${VAR}` expansion inside
+    the `env` block - the docs say environment variables "must be configured here" and the
+    changelog only documents auto-inclusion for vars referenced in command/args/cwd. So a
+    committed config cannot carry the credentials, and this writes a git-ignored one
+    instead of relying on expansion that was never verified (NG1/NG6).
+    """
+    spec = BACKENDS.get(backend)
+    if not spec or spec["kind"] != "mcp":
+        print("--init-mcp applies to an MCP backend; '%s' is not one." % backend)
+        return 1
+
+    entry = resolve_mcp_entry(spec)
+    creds = {v: os.environ[v] for v in spec["env"] if os.environ.get(v)}
+    source = "environment"
+    if len(creds) != len(spec["env"]):
+        creds, found_in = read_user_mcp_credentials(spec)
+        source = found_in
+
+    print("visual-assets-setup --init-mcp %s%s\n" % (backend, " (dry run)" if dry_run else ""))
+    print("  server package : %s" % spec["mcp"]["package"])
+    print("  entry point    : %s" % (entry or "NOT FOUND - run: npm install -g %s"
+                                     % spec["mcp"]["package"]))
+    print("  credentials    : %s" % ("found in %s" % source if creds else
+                                     "NOT FOUND - export %s" % " and ".join(spec["env"])))
+
+    server = {
+        "type": "local",
+        "command": "node",
+        "args": [entry or "<path to %s>" % spec["mcp"]["entry"]],
+        "tools": ["*"],
+    }
+    example = dict(server, env={v: "<your %s>" % v for v in spec["env"]})
+    example_path = os.path.join(root, ".mcp.json.example")
+    real_path = os.path.join(root, ".mcp.json")
+
+    if dry_run:
+        print("\n  would write %s (committed, placeholders only)" % os.path.basename(example_path))
+        if creds:
+            print("  would write %s (GIT-IGNORED, real credentials)" % os.path.basename(real_path))
+        print("  would ensure .gitignore covers .mcp.json")
+        return 0
+
+    with open(example_path, "w", encoding="utf-8") as handle:
+        json.dump({"mcpServers": {spec["mcp"]["server_name"]: example}}, handle, indent=2)
+        handle.write("\n")
+    print("\n  wrote .mcp.json.example  (safe to commit - placeholders only)")
+
+    if creds:
+        payload = dict(server, env=creds)
+        with open(real_path, "w", encoding="utf-8") as handle:
+            json.dump({"mcpServers": {spec["mcp"]["server_name"]: payload}}, handle, indent=2)
+            handle.write("\n")
+        print("  wrote .mcp.json          (GIT-IGNORED - contains real credentials)")
+    else:
+        print("  skipped .mcp.json        (no credentials found; export %s then re-run)"
+              % " and ".join(spec["env"]))
+
+    print("  %s" % ensure_gitignore(root, False))
+    print("\n  Project MCP servers load only after folder trust is confirmed, and a new")
+    print("  server is picked up on the next CLI start. Never commit .mcp.json.")
+    return 0
+
+
 def cmd_backends():
     print("Generation backends known to the pack\n")
     for name, spec in BACKENDS.items():
@@ -297,20 +423,27 @@ def ensure_gitignore(root, dry_run):
     if os.path.isfile(path):
         with open(path, "r", encoding="utf-8") as handle:
             existing = handle.read()
-    additions = [entry for entry, _ in GITIGNORE_ENTRIES if entry not in existing]
+    # Compare against the pattern only. A trailing "# reason" on the SAME line is NOT a
+    # gitignore comment - '#' starts a comment only at the beginning of a line - so an
+    # inline comment silently turns the pattern into a literal that matches nothing.
+    # This function shipped that bug once; the reason now goes on its own line above.
+    additions = [entry for entry, _ in GITIGNORE_ENTRIES
+                 if not re.search(r"(?m)^\s*%s\s*$" % re.escape(entry), existing)]
     if not additions:
         return "gitignore already covers visual-asset hygiene"
     if dry_run:
-        return "would append %d line(s) to .gitignore" % len(additions)
+        return "would append %d pattern(s) to .gitignore" % len(additions)
     with open(path, "a", encoding="utf-8") as handle:
         if existing and not existing.endswith("\n"):
             handle.write("\n")
         handle.write("\n")
         for entry, why in GITIGNORE_ENTRIES:
-            if entry in existing:
+            if re.search(r"(?m)^\s*%s\s*$" % re.escape(entry), existing):
                 continue
-            handle.write(entry + ("\n" if why is None else "    # %s\n" % why))
-    return "appended %d line(s) to .gitignore" % len(additions)
+            if why:
+                handle.write("# %s\n" % why)
+            handle.write(entry + "\n")
+    return "appended %d pattern(s) to .gitignore" % len(additions)
 
 
 def ensure_manifest(root, dry_run):
@@ -390,13 +523,19 @@ def main(argv=None):
     parser.add_argument("--root", default=".", help="repository root (default: .)")
     parser.add_argument("--check", action="store_true", help="report what is configured")
     parser.add_argument("--init", action="store_true", help="scaffold assets dir, manifest and hygiene")
+    parser.add_argument("--init-mcp", metavar="BACKEND", nargs="?", const="higgsfield",
+                        dest="init_mcp",
+                        help="write a git-ignored project .mcp.json (+ committed .example) "
+                             "for an MCP backend (default: higgsfield)")
     parser.add_argument("--backends", action="store_true", help="print the capability matrix")
-    parser.add_argument("--dry-run", action="store_true", help="with --init, write nothing")
+    parser.add_argument("--dry-run", action="store_true", help="with --init/--init-mcp, write nothing")
     parser.add_argument("--json", action="store_true", dest="as_json", help="machine-readable --check")
     args = parser.parse_args(argv)
 
     if args.backends:
         return cmd_backends()
+    if args.init_mcp:
+        return cmd_init_mcp(args.root, args.init_mcp, args.dry_run)
     if args.init:
         return cmd_init(args.root, args.dry_run)
     return cmd_check(args.root, args.as_json)

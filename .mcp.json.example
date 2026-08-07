@@ -1,0 +1,18 @@
+{
+  "mcpServers": {
+    "higgsfield": {
+      "type": "local",
+      "command": "node",
+      "args": [
+        "C:\\Users\\malla\\AppData\\Roaming\\npm\\node_modules\\higgsfield-mcp\\src\\server.js"
+      ],
+      "tools": [
+        "*"
+      ],
+      "env": {
+        "HF_API_KEY": "<your HF_API_KEY>",
+        "HF_SECRET": "<your HF_SECRET>"
+      }
+    }
+  }
+}

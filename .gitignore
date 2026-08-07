@@ -37,3 +37,11 @@ docs/.obsidian/plugins/*/styles.css
 
 # Graphify code knowledge graph - a build output, regenerable from source (GK3)
 graphify-out/
+
+# --- AI-Forward: visual-asset hygiene (ui-visual-assets.md) ---
+# candidate boards and rejected generations - never committed
+docs/assets/**/_scratch/
+# project MCP config holds real credentials (VA9, VA22) - the .example is committed
+.mcp.json
+# credentials live in the environment, never in the repo (VA9)
+*.env
