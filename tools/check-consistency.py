@@ -560,6 +560,28 @@ def check_directive_ranges(findings):
                     f"the citation names {cited - real} directive(s) that do not exist")
 
 
+def check_static_page_links(findings):
+    """FR-036. `docs/_site/index.html` is a hand-maintained landing page - fully static, no
+    index read - so it drifts silently as documents move. Found pointing at `../skills.md`,
+    a file that has never existed in this repo. Nothing checked it because it is HTML, not
+    a graph node, so `docs-graph.py validate` never sees it.
+    """
+    pages = [os.path.join(ROOT, "docs", "_site", "index.html")]
+    for page in pages:
+        if not os.path.isfile(page):
+            continue
+        with open(page, "r", encoding="utf-8") as handle:
+            text = handle.read()
+        base = os.path.dirname(page)
+        rel = os.path.relpath(page, ROOT).replace(os.sep, "/")
+        for href in re.findall(r'href="((?:\.\./|\./)[^"#?]+)"', text):
+            target = os.path.normpath(os.path.join(base, href))
+            if not os.path.exists(target):
+                findings.append(
+                    f"{rel}: link `{href}` points at a file that does not exist - "
+                    f"a static page is invisible to docs-graph validate, so nothing else checks it")
+
+
 def main():
     truth = filesystem_truth()
     findings = []
@@ -568,6 +590,7 @@ def main():
     check_skill_prompt_parity(truth, findings)
     check_deployed_agent_parity(truth, findings)
     check_directive_ranges(findings)
+    check_static_page_links(findings)
     check_managed_blocks(truth, findings)
     check_prose(truth, findings)
 

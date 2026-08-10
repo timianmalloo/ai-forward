@@ -94,7 +94,12 @@ summary: >-
 - **Acceptance criteria:** no citation names a directive that does not exist; the checker fails when a standard gains or loses a directive without its citations following.
 - **Validation:** add a directive to a standard without updating citations; confirm the checker fails. **Owner:** Documentation Steward. **Next skill:** `/implement`. **Depends on:** none. **Status:** proposed.
 
-## FR-036 — Regenerate the documentation bundle
+## FR-036 — Regenerate the documentation bundle — **PARTIALLY RESOLVED**
+- **Partially resolved at revision 32 — and measuring it changed the item.** The proposal said "regenerate the stale bundle via `/document`". Establishing the evidence showed regeneration is not the fix, because the artifact is not a *stale render* — it is **fully static and hand-maintained**: 3,284 body bytes, unchanged by stripping `<script>`, reading no index at all. So it does not go stale between regenerations; it drifts continuously and silently.
+- **Measured drift:** 10 hard-coded links against **48 graph artifacts (21% coverage)**, and **one link (`../skills.md`) pointing at a file that has never existed in this repo**. Nothing caught it because a static HTML page is not a graph node, so `docs-graph.py validate` never sees it.
+- **Done:** the broken link now points at the real skill catalog, and `check-consistency.py` gained `check_static_page_links()`, which resolves every relative `href` on the page and fails on any that does not exist. **Proved red-first.**
+- **Still open — and it is a design decision, not a defect fix, so it stops here for triage:** a hand-curated landing page duplicating `docs/index.html` (which is *derived* from the graph and therefore always current) is the exact anti-pattern V2 exists to prevent. The options are to **derive** `_site` from `docs-index.js`, or to **retire** it and redirect to the Explorer — the latter would change a deliverable `pack/OVERVIEW.md` currently promises, which is not a call to make unilaterally inside a review.
+
 - **Kind:** issue · **Priority:** P2 · **Scope:** `docs/_site/`
 - **Evidence:** newest file 2026-07-12; repository at revision 30 (2026-08-10), so the bundle omits revisions 19–30.
 - **Remediation:** run `/document`; then add a freshness check so the bundle cannot silently lag.
