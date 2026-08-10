@@ -36,7 +36,7 @@ summary: >-
 
 **Nine of twelve are resolved** at revisions 31-32. **Two proposals were overturned at triage** — FR-031 (no portable token exists, so the proposed search-and-replace was never available) and FR-037 (the references were already correctly past-tense; the real defect was one present-tense phrase plus a status row that FR-032's own fix invalidated). Both corrections came from establishing the contract instead of trusting the finding, which is the review's own standard applied to itself.
 
-**Open: FR-036** (regenerate the stale `docs/_site` bundle) and **FR-039** (the public explainer's CDN dependency and accessibility floor — the largest remaining item). **Also still unverified: `/addpacktorepo` has never been run end-to-end against a scratch repo** — the single highest-value outstanding check of the adoption path, and it is not represented by any FR id.
+**FR-043 (the adoption path) was raised and resolved at revision 33 — see below; it was the most serious finding of the review and had no id.** **Open: FR-036** (regenerate the stale `docs/_site` bundle) and **FR-039** (the public explainer's CDN dependency and accessibility floor — the largest remaining item). **Also still unverified: `/addpacktorepo` has never been run end-to-end against a scratch repo** — the single highest-value outstanding check of the adoption path, and it is not represented by any FR id.
 
 **Every resolution below carries the control that stops the class from recurring** (CI6), not only the instance fix.
 
@@ -113,6 +113,15 @@ summary: >-
 - **Remediation:** remove or explicitly past-tense every live reference; keep `note-20260712-revert-model-orchestration.md` and the dated review as history, clearly marked as describing reverted work; regenerate `code-doc-join.md`.
 - **Acceptance criteria:** no artifact describing current state references a deleted file; historical artifacts say so in their summary.
 - **Validation:** grep `docs/` for both names and confirm every hit is explicitly historical. **Owner:** Documentation Steward. **Next skill:** `/document`. **Depends on:** none. **Status:** proposed.
+
+## FR-043 — The adoption path had never been executed — **RESOLVED**
+- **Kind:** issue · **Priority:** P0 in effect · **Raised and resolved at revision 33.** The revision-30 review flagged that `/addpacktorepo` *"has never been run end-to-end against a scratch repo"* but gave it no id, so it sat outside the backlog. Running it produced the most serious finding of the whole review.
+- **Evidence (executed, not inferred):** a fresh install **fails `docs-graph.py validate` on the adopter's first command**, and fails whichever way the installing agent resolves it. The deployment map promised `docs/ui-guide.md` with **no source in the pack**, so an installing agent copies the source repo's version — whose `links` point at `design-language-docs-explorer` and `docs-index`, artifacts a fresh install does not have → **dangling link, exit 1**. Emptying the links does not help: the node is then an **orphan → also exit 1**. Separately, `docs/audit/audit-log.md` — the graph hub node **AL7 has always mandated** — was created by nothing; a fresh install produced `audit-data.js`, `audit-log.jsonl` and `index.html` but no `.md`, leaving the audit bundle invisible to the graph.
+- **Why every gate stayed green:** all of it passes in *this* repo, because this repo has both files, hand-authored. The defect is only observable in a target repo. That is the class, now registered as **PACK-E**.
+- **Fix:** ship `templates/ui-guide-hub.template.md` with portable frontmatter and one `relates-to` edge to the audit hub; bootstrap the AL7 hub in `audit-log.py`'s `render()` alongside the viewer (AL11 — same trigger). Links on the audit hub are deliberately empty: an **inbound** link clears the orphan check, established by execution rather than assumed.
+- **Verified:** a clean install from the committed state now returns `validate` exit 0 with **2 artifacts, 0 problems, 0 orphans**, and `pack-doctor` reports **0 FAIL / 1 WARN / 6 PASS** (the WARN is the Windows interpreter note, working as designed).
+- **Residual:** the install was executed mechanically against the deployment map. The *judgment* stages of `/addpacktorepo` — language detection, tier assessment, adapting to a repo that already has `CLAUDE.md` — remain unexercised. **Owner:** maintainer. **Next skill:** none.
+
 
 ## FR-039 — Triage the public explainer's blockers
 - **Kind:** risk · **Priority:** P2 · **Scope:** `web/ai-forward-pack-explainer.html`
