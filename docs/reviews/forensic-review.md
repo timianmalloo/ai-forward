@@ -158,3 +158,82 @@ Every finding above is **Verified** by execution or direct file inspection. No f
 | **Completed** | Baseline captured; all five gates run; contradiction, reference-integrity, deployment-map, graph-health and adoption-path sweeps done; 12 findings evidenced and deduplicated; prior review archived |
 | **Remaining** | Human triage of the backlog. Nothing has been remediated — by contract this review stops at proposal |
 | **Best next action** | Triage **FR-031** (the `python3` fix), then run `/addpacktorepo` against a scratch repository to verify the adoption path end to end |
+
+
+---
+
+# Revision-33 forensic review
+
+**Target:** `a587952` on `main`, revision 33. **Worktree at start:** dirty in one path (`web/pack-index.js`, a timestamp-only re-sync artifact — see FR-048); otherwise clean. **Scope:** comprehensive, with deliberate emphasis on what the previous two reviews could not see.
+
+## Baseline (recorded before any judgment; nothing here is attributed to this review)
+
+| Gate | Result |
+|---|---|
+| `check-consistency.py` | exit 0 |
+| `docs-graph.py validate` | exit 0 — 48 artifacts, 0 problems, 0 stale, 0 orphans, 0 index drift |
+| `pytest tests -q` | 119 passed, 1 skipped, 108 subtests |
+| Docs Explorer core (node) | 31 passed, exit 0 |
+| `verify-bundle.ps1` | `BUNDLE CONSISTENT` |
+| `foundation-check.py` | clean |
+
+**Every gate is green, and the repository is not ready.** That sentence is the finding, not a paradox — it is the third consecutive review in which the defects that matter were invisible to every automated check, because each one lives in a place nothing looks.
+
+## Method note — where the findings came from
+
+The revision-30 review missed the broken adoption path (later FR-043) because it reasoned over the repository rather than *executing* it. This review therefore weighted three probes that gates structurally cannot perform:
+
+1. **Sweep a class the project has already fixed once.** FR-043 registered PACK-E (*a deployment map promises an artifact the project does not ship*) and fixed one instance. Sweeping every backticked repo path promised across `pack/**` found **15 promised-but-missing paths**, of which two are genuine defects (FR-044, FR-045) and the rest are correctly created-at-runtime by skills.
+2. **Run the things nothing runs.** Smoke-invoking all 12 deployed scripts surfaced FR-047 in the one script no test or gate touches.
+3. **Attack a control I added myself.** The FR-033 drift gate was simulated exactly as CI runs it. The hypothesis that it always fails was **disconfirmed** (exit 0) — but the simulation surfaced FR-048.
+
+## Findings
+
+| id | kind | pri | title | confidence |
+|---|---|---|---|---|
+| FR-044 | issue | P1 | Deployment map still promises `.claude/commands/`, which nothing creates | Verified |
+| FR-045 | issue | P1 | A second, contradictory deployment map inside an always-loaded document | Verified |
+| FR-046 | risk | P1 | Seven deployed scripts have no tests and no gate — including the PII control | Verified |
+| FR-047 | issue | P2 | `prompt-log.py --help` crashes on Windows; the encoding fix was never swept | Verified |
+| FR-048 | risk | P2 | A generated artifact excluded from the only gate that checks generated artifacts | Verified |
+
+Full evidence, disconfirming checks and acceptance criteria: `docs/backlog/forensic-review.md`.
+
+## The pattern across all five
+
+Four of the five are **the same shape**: *a fix was applied to the instance and never swept to the class.*
+
+- FR-044 is PACK-E, in the very file FR-043 corrected, one revision later.
+- FR-045 is a second deployment map that nobody reconciled when the first was authored.
+- FR-047 is a console-encoding guard applied to exactly one of seven scripts.
+- FR-046 is the general case: controls exist, but only some are themselves controlled.
+
+`continuous-improvement.md` CI2 mandates **class → sweep → derive → prevent**, and CI3 says a discovered sibling must be fixed or explicitly registered. The register already carries **RIG-C — "sweep stopped at the instance"** as `uncontrolled`. This review is its third confirmed occurrence, which promotes it from an observed class to the project's **dominant defect signature**. The honest reading is that the pack teaches the sweep discipline better than it practises it, and that nothing in the toolchain enforces it.
+
+## Lenses
+
+**Reviewed:** architecture (source→install invariant, deployment map conformance), documentation truth, traceability, testing/proof coverage, supply chain (pinned action SHAs verified), operations/CI, portability, and the adoption path.
+**N/A with rationale:** runtime concurrency, data migration, and distributed consistency — the pack ships no runtime service, no database and no message transport. Security/identity is **partially** reviewed: no credential surface changed since revision 30, and the `.mcp.json` ignore rule verified at revision 30 was re-confirmed by `git check-ignore`.
+**Not reviewable here:** the CI workflow has still **never executed on a runner**. Its correctness is Inferred from YAML parse plus faithful local simulation. This is unchanged from revision 32 and remains the largest single unverified claim in the repository.
+
+## Adversarial gate
+
+- **Test Architect — PASS with a condition.** Every finding carries an executed oracle. FR-046 and FR-048 were reclassified from *issue* to *risk* on challenge, because neither has an observed failure — only an absent proof. **Condition:** FR-046 is not cleared by adding tests that merely import the module.
+- **Simplifier — PASS.** Three candidate findings were removed as preference rather than defect: the `docs/_site` structural question (already recorded and deliberately left for the maintainer), the CRLF warnings on sync (cosmetic; `.gitattributes` normalises), and `scrub.py`'s Windows mojibake (folded into FR-047 rather than filed separately).
+- **Documentation Steward — BLOCK, resolved into FR-045.** An always-loaded document instructing agents to load six non-existent files is a documentation defect of the first order.
+- **Enterprise Architect — PASS with concern.** The source→install invariant holds and is now gated, but FR-048 shows the gate's boundary was drawn by convenience rather than by the invariant.
+- **Security & Identity — PASS.** No new credential surface; the ignore rule holds.
+
+No author cleared their own veto: the findings were authored in Peer Mode and attacked in Adversary Mode, and the two that survived reclassification did so by losing severity, not by being defended.
+
+## Readiness verdict
+
+**Adoptable, with two caveats to fix first.** This is an upgrade from revision 30's *NOT READY*: the adoption path now demonstrably works end-to-end (FR-043, verified on a scratch repo), all 23 personas reach both surfaces, and CI gates drift, tests and graph health.
+
+The two caveats are **FR-044 and FR-045** — both are *instructions that send an adopting agent to files that do not exist*, and both are cheap to fix. FR-046 is the one that should not be deferred twice: shipping an unverified PII control is a governance position the project would not accept from a consumer.
+
+## Residual risk
+
+- The CI workflow has never run on a runner (unchanged since revision 32).
+- `/updatepack`, `/visualize` and the judgment stages of `/addpacktorepo` (language detection, tier assessment, adapting to a repo that already has `CLAUDE.md`) remain unexercised. FR-043 established that an unexercised path is where this project's most serious defects live.
+- FR-039 (the public explainer's CDN dependency and absent accessibility floor) is unchanged and remains the largest open item.

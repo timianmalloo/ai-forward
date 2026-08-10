@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-Forward",
-  "generated": "2026-08-10T15:12:41Z",
+  "generated": "2026-08-10T17:00:20Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -569,7 +569,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "02073b9c23df0fdf6cf319432faf9c38e7fedd3bb92c9d88caab54dc7c2d6da1"
+      "sourceSha256": "7c96a50b71fdf1e64f2d9491de5f3a5249b0dffbaf3a9e9a7805f5f89d308385"
     },
     {
       "id": "docs-index",
@@ -630,7 +630,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b23c9cfb53a2a66559bd12c5cf186ea4f6bd4c7b45073eca8575c1634276c35b"
+      "sourceSha256": "60d6556eea4a4a56a7dc4f0a4c97509bc4782930b3edf2d56d76d35981570317"
     },
     {
       "id": "forensic-review-20260712",
@@ -758,7 +758,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "1fe45d81a9d384aadde55e4864ae326ade5ac54efc634c8006eb2bd68add439a"
+      "sourceSha256": "eee506b1da56e818b2fa041872e84939761699e3178febf5b89f6cc3bc39c922"
     },
     {
       "id": "forensic-review-backlog-20260712",
@@ -1558,5 +1558,5 @@ window.DOCS_INDEX = {
       "description": "Inspect a rendered design or design-language preview."
     }
   ],
-  "graphSha256": "9932f79a2d67d05f774ecdb28937af8e5ff284d659f34f73194d147ce2a2d5c1"
+  "graphSha256": "4b82984f1b5aac917d2f78ddeece982bba125aced6f6a5890d390b1e9f6dad42"
 };

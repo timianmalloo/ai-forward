@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-08-10T15:11:34Z",
+  "generated": "2026-08-10T17:00:53Z",
   "audit": [
     {
       "id": "al-0001",
@@ -746,6 +746,33 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "8b6b8cae21ebfedb95af27929d560d68d37cf075",
         "short": "8b6b8cae2",
+        "branch": "main",
+        "pushed": false
+      }
+    },
+    {
+      "id": "al-0030",
+      "shortname": "forensicreview-rev33",
+      "datetime": "2026-08-10T17:00:53Z",
+      "session": "0d635851-2754-44cf-8597-a72228967201",
+      "prompt": "do one more /forensicreview and see what else needs addressing",
+      "summary": "Third forensic review, at revision 33. Every gate green and 5 new findings (FR-044..FR-048): 2 P1 issues, 1 P1 risk, 1 P2 issue, 1 P2 risk. Four of five are the SAME shape - a fix applied to the instance and never swept to the class - promoting RIG-C to the project's dominant defect signature on its third occurrence. Verdict upgraded to ADOPTABLE WITH TWO CAVEATS from NOT READY at rev 30. Stopped for human triage; no production code changed.",
+      "kind": "skill",
+      "skill": "forensicreview",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/reviews/forensic-review.md",
+        "docs/backlog/forensic-review.md"
+      ],
+      "tags": [
+        "forensic",
+        "adoption"
+      ],
+      "outcome": "success",
+      "git": {
+        "sha": "a587952201cf5b4aacc7944a9f493db9e9b4c6af",
+        "short": "a58795220",
         "branch": "main",
         "pushed": false
       }

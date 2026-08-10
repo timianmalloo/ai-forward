@@ -151,3 +151,68 @@ summary: >-
 ## Not raised (and why)
 
 The Simplifier removed these as preference-not-defect: the `__pycache__` entry for the reverted `test_model_router` (untracked build noise); the `npm run` PATH failure (a local machine issue, not a repo defect — the tests pass when node is invoked directly); mixed dash conventions across knowledge docs (stylistic); and the absence of a LICENSE header in individual script files (the repository LICENSE covers it).
+
+---
+
+# Revision-33 review — new findings (FR-044..FR-048)
+
+## FR-044 — The deployment map still promises `.claude/commands/`, which nothing creates
+- **Kind:** issue · **Priority:** P1 · **Confidence:** Verified · **Status:** proposed
+- **Evidence:** `pack/adapters/INSTALL.md:139` — `| Thin command entry points | `.claude/commands/<name>.md` | ... |` — and `:215` gives a worked *"Sample thin command — `.claude/commands/specify.md`"*. The directory does not exist in this repo, and `tools/sync-pack.ps1` contains no `.claude/commands` branch (grep: no match).
+- **Violated contract:** PACK-E — a deployment map promising an artifact the project does not ship. **This is the same class, in the same file, that FR-043 corrected at revision 33.** The fix stopped at `docs/ui-guide.md` and never swept the rest of the map, which is exactly the CI2 failure the register exists to prevent — the second occurrence of "the sweep stopped at the instance" in this project.
+- **Consequence:** an adopting agent following the map creates a directory with no source, then authors thin command files from the worked sample — pure invention, unversioned, and drifting from the skills they duplicate.
+- **Disconfirming check attempted:** searched `sync-pack.ps1` for both path separators, and checked whether Claude Code requires the directory. Skills in `.claude/skills/` are auto-discovered by description, so the entry points appear to be **unnecessary** rather than missing — which makes the *map* wrong, not the install.
+- **Remediation:** either delete the row and the sample, or ship a generator. Prefer deletion (Simplifier) unless a concrete need is named.
+- **Acceptance criteria:** every destination named in the deployment map either exists after a fresh install, or is explicitly marked *created by skill X at runtime*. **Validation:** re-run the FR-043 scratch-repo install and diff installed paths against the map. **Owner:** maintainer. **Next skill:** `/implement`.
+
+## FR-045 — A second, contradictory deployment map inside an always-loaded document
+- **Kind:** issue · **Priority:** P1 · **Confidence:** Verified · **Status:** proposed
+- **Evidence:** `pack/knowledge/agent-rules-of-the-road.md` §6 *"Deployment map — wiring these documents into the toolchain"* names paths that do not exist anywhere in this repo:
+
+  | It says | Actually deployed as |
+  |---|---|
+  | `.github/instructions/knowledge.instructions.md` | `agent-body-of-knowledge.instructions.md` |
+  | `.github/instructions/csharp.instructions.md` | `csharp-style-guide.instructions.md` |
+  | `.github/instructions/loa.instructions.md` | `layered-optimized-architecture.instructions.md` |
+  | `.github/instructions/tests.instructions.md` | `testing-strategy.instructions.md` |
+  | `.github/knowledge/testing-strategy.md` | **`.github/knowledge/` does not exist at all** |
+  | `.github/knowledge/engineering-governance.md` | same — no such directory |
+
+- **Violated contract:** single source of truth. `INSTALL.md` is the authoritative deployment map; this is a **second map that disagrees with it**, and it sits in a document the managed block loads on **every session**, on both surfaces.
+- **Consequence:** an agent grounding itself is told, authoritatively, to look for six files that do not exist. Worst case it concludes the install is broken and "repairs" it toward the wrong layout.
+- **Disconfirming check attempted:** verified each path with `Test-Path` and by listing `.github/instructions/`; confirmed `.github/knowledge/` is absent. Also confirmed the §6 **persona row is correct** (`.github/agents/<persona>.agent.md`) — it in fact corroborates the naming FR-043 corrected, so the section is not uniformly stale.
+- **Note on editability:** these are vendored foundation docs, but `FOUNDATION.md` maintains a **known-divergence list** and `foundation-check.py --update` re-hashes after an intentional edit. A precedent divergence is already recorded. So this is correctable, not frozen.
+- **Acceptance criteria:** §6 either matches the real deployment map or is replaced by a pointer to `INSTALL.md`; `foundation-check.py` clean with the divergence recorded. **Validation:** assert every path named in §6 resolves. **Owner:** maintainer. **Next skill:** `/implement`.
+
+## FR-046 — Seven deployed scripts have no tests and no gate, including the PII control
+- **Kind:** risk · **Priority:** P1 · **Confidence:** Verified · **Status:** proposed
+- **Evidence:** of the 12 scripts deployed to every adopting repo, gate/test coverage is:
+
+  | Script | Gated by | Tests |
+  |---|---|---|
+  | `docs-graph.py` · `audit-log.py` · `pack-doctor.py` · `bounded_process.py` · `foundation-check.py` | yes | yes (except foundation-check) |
+  | **`scrub.py`** · **`design-lint.py`** · **`ui-craft-gate.py`** · **`prompt-log.py`** · `graphify-setup.py` · `obsidian-setup.py` · `visual-assets-setup.py` | **none** | **none** |
+
+- **Violated contract:** the pack's own doctrine — CI6 (a lesson only counts once it is a test or a gate) and the Test Architect's hard veto (a correctness claim with no verification path). **`scrub.py` is named in `responsible-ai-policy.md` §4 as the PII/secret first-pass control, and `design-lint.py` is the U3a token control.** The pack ships controls that are themselves unverified.
+- **Consequence:** a regression in the redaction regexes or the token resolver ships silently to every adopting repo, and the first evidence is a leaked address or a drifted design system.
+- **Disconfirming check attempted:** smoke-ran all seven; six exit 0 on `--help`, so they are not obviously broken — the gap is *proof*, not an observed defect. That is why this is filed as **risk**, not **issue**. (The seventh is FR-047.)
+- **Acceptance criteria:** each of the four load-bearing scripts (`scrub`, `design-lint`, `ui-craft-gate`, `prompt-log`) has a test asserting both a true positive and a true negative, and runs in `pack-consistency.yml`. **Validation:** delete a regex and confirm a test fails. **Owner:** maintainer. **Next skill:** `/implement`.
+
+## FR-047 — `prompt-log.py --help` crashes on Windows; the console-encoding fix was never swept
+- **Kind:** issue · **Priority:** P2 · **Confidence:** Verified · **Status:** proposed
+- **Evidence:** `python pack/scripts/prompt-log.py --help` exits 1 with `UnicodeEncodeError: 'charmap' codec can't encode character '\u2191'` — the help text contains `↑ ↓ → ← ▸ ▾`, none of which exist in cp1252, the default Windows console encoding.
+- **Scope, established by sweeping rather than assuming:** seven pack scripts contain non-ASCII; **`pack-doctor.py` alone guards stdout** with `reconfigure(...)`. The other six do not. They survive only because their glyphs (`—`, `·`, `…`, `•`) happen to exist in cp1252 — so this is not a near-miss, it is an **unenforced invariant**. `scrub.py` additionally renders its masked output as mojibake on a Windows console, degrading the control's legibility.
+- **Violated contract:** PACK-C (documented command assumed portable), now in code rather than prose — and CI2: someone already fixed exactly this in `pack-doctor.py` and did not sweep the class.
+- **Consequence bounded honestly:** `list`, `search`, `add` and `browse` all work (verified, exit 0). Only `--help` dies — but `--help` is the first thing a new adopter runs, and the two skills it backs are the pack's prompt-reuse surface.
+- **Disconfirming check attempted:** ran every documented subcommand, not just the failing one, specifically to avoid inflating the severity.
+- **Acceptance criteria:** every deployed script guards stdout; `prompt-log.py --help` exits 0 on Windows; a test asserts it. **Validation:** run each script's `--help` under `PYTHONIOENCODING=cp1252`. **Owner:** maintainer. **Next skill:** `/implement`.
+
+## FR-048 — A generated artifact excluded from the only gate that checks generated artifacts
+- **Kind:** risk · **Priority:** P2 · **Confidence:** Verified · **Status:** proposed
+- **Evidence:** `web/pack-index.js` is generated (`// Generated by tools/build-web-index.py — do not hand-edit`) and is rebuilt by `sync-pack.ps1`. The FR-033 drift gate diffs `.claude .github/instructions .github/prompts .github/agents docs CLAUDE.md AGENTS.md` — **`web/` is not in scope.** It cannot simply be added: the file embeds `"generated": "<ISO timestamp>"`, so a re-sync always produces a one-line diff (verified: `1 file changed, 1 insertion(+), 1 deletion(-)`, the timestamp alone).
+- **Violated contract:** the repository's foundational invariant — `pack/` is source, generated surfaces are derived — is gated everywhere except here.
+- **Consequence:** a `pack/` change committed without a sync leaves the public explainer's index silently stale, and nothing catches it. Latent trap: three further timestamped artifacts (`docs/docs-index.js`, `docs/audit/audit-data.js`, `docs/_meta.json`) sit *inside* the gate scope and are safe **only because `sync-pack.ps1` does not regenerate them** — adding `docs-graph.py derive` to sync, a natural change, would break the drift gate permanently with a timestamp-only diff.
+- **Disconfirming check attempted:** simulated the CI gate faithfully (`sync` then `git diff --exit-code` over the exact scope) — **exit 0**, so the gate is sound today. This is filed as *risk*, not *issue*; the initial hypothesis that the gate always fails was **disconfirmed**.
+- **Remediation:** make the generator's timestamp deterministic (content hash, or omit), then add `web/` to the gate scope. Add a comment at the `docs-graph derive` call site recording why sync must not regenerate the index.
+- **Acceptance criteria:** `web/` is in the drift-gate scope and a no-op sync produces no diff. **Validation:** sync twice, diff. **Owner:** maintainer. **Next skill:** `/implement`.
+
