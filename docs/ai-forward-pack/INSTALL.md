@@ -1,14 +1,15 @@
 ---
 doc: INSTALL
 purpose: 'Manual reconciliation guide and refresh changelog. On a repo refresh, read `changes` below — it is the key guide: it lists exactly what to re-copy and re-paste since the previous revision, so you do not have to diff the whole tree.'
-bundle_version: '2026.08.07.3'
-revision: 30
+bundle_version: '2026.08.10.1'
+revision: 31
 counts: { lenses: 23, skills: 19, knowledge_docs: 33, templates: 23, scripts: 13 }
 refresh_protocol: 'Compare your repo last-applied revision to the `revision` above. If it is lower, apply each entry in `changes` in order — re-copy the listed `paths` to their mapped destinations (deployment map in the body), re-apply the Copilot frontmatter wraps, and where an entry `deploy` says RE-PASTE, replace the managed blocks wholesale between their markers. Never overwrite an accumulated docs/docs-index.js.'
 changes:
-  - { type: changed, area: scripts, paths: ['scripts/visual-assets-setup.py'], deploy: 'copy to docs/ai-forward-pack/scripts/', summary: 'TWO DEFECTS FIXED, BOTH MINE, BOTH FOUND BY READING STATE BACK. (1) RIG-D - the Higgsfield env vars were GUESSED from the vendor name as HIGGSFIELD_API_KEY/HIGGSFIELD_SECRET; the server actually reads HF_API_KEY/HF_SECRET, verified by opening its source (npm higgsfield-mcp 0.2.0, MIT). A setup script full of confident wrong variable names looks complete and fails only at integration. (2) OPS-B - ensure_gitignore wrote the pattern with a trailing inline comment, and # opens a gitignore comment only at the START of a line, so every pattern became a literal matching nothing. The write succeeded, the tool said appended 4 lines, the exit code was 0, and .mcp.json holding REAL CREDENTIALS was still trackable. Caught by git check-ignore rather than by trusting the report. Also adds --init-mcp: writes a git-ignored .mcp.json plus a committed .mcp.json.example, resolving the server entry point by looking for it and reusing credentials already present in the agent-host config.' }
-  - { type: changed, area: knowledge, paths: ['knowledge/ui-visual-assets.md'], deploy: 'copy to .claude/knowledge/ and re-wrap into .github/instructions/', summary: 'VA21 corrected to the verified env var names. VA22 expanded with the three things established about project-level MCP wiring: project config IS supported at .mcp.json / .github/mcp.json and takes precedence over the user config; a COMMITTED config cannot carry credentials, because env vars in the server env block must be literal and ${VAR} expansion there is NOT established (auto-inclusion is documented only for command/args/cwd); and the ignore rule must be VERIFIED with git check-ignore rather than trusted from a success message.' }
-  - { type: changed, area: knowledge, paths: ['knowledge/continuous-improvement.md'], deploy: 'copy to .claude/knowledge/ and re-wrap into .github/instructions/', summary: 'Seed register gains OPS-B (ignore rule written, never verified to take effect - the write succeeds, the exit code is 0, and the first evidence is a leaked credential) and RIG-D (external contract guessed from the vendor name).' }
+  - { type: changed, area: scripts, paths: ['scripts/pack-doctor.py'], deploy: 'copy to docs/ai-forward-pack/scripts/', summary: 'FR-031 RESOLVED - the doctor gained a `python interpreter` check that probes python3 / python / py -3 and NAMES THE WORKING SUBSTITUTION for the machine it runs on. The proposal (from the revision-30 review) said this was a search-and-replace. Establishing the contract proved it was not: python.org Windows ships python.exe and py.exe and NO python3.exe, so python3 cannot work there even with a correct install; and a blind python3->python swap would break macOS, which ships no python. There is no portable bare token, so the fix is a stated convention plus a detection control (CI6 rung 2), not a substitution. Locked with 5 regression tests - including one asserting a bad call RAISES rather than being swallowed into a plausible FAIL, which is the bug this very check shipped with.' }
+  - { type: changed, area: docs, paths: ['adapters/INSTALL.md', 'adapters/managed-blocks/CLAUDE.block.md', 'adapters/managed-blocks/AGENTS.block.md'], deploy: 'copy INSTALL to docs/ai-forward-pack/; RE-PASTE both managed blocks wholesale between their markers', summary: 'New INSTALL section 0 - Running the scripts: python3 in this documentation means YOUR Python 3 interpreter; on Windows use python or py -3; the python3 you may see on Windows is a Microsoft Store alias that is not Python (prints Python was not found, exit 9009) and its presence does not mean Python is missing. A one-line form of the same rule was added to both managed blocks so an agent on either surface knows before it runs a command.' }
+  - { type: changed, area: knowledge, paths: ['knowledge/continuous-improvement.md'], deploy: 'copy to .claude/knowledge/ and re-wrap into .github/instructions/', summary: 'Seed register gains PACK-C - documented command assumed portable. Nothing executes documentation, so the first evidence is an adopter reporting a missing dependency that is installed. Control: state the convention once, add a detection control, and verify any substitution on every supported platform before applying it.' }
+  - { type: changed, area: docs, paths: ['docs/backlog/forensic-review.md'], deploy: 'repo-local; not deployed', summary: 'FR-031 marked resolved with the corrected rationale recorded, including why the original proposal was wrong. Remaining P1 items unchanged: FR-032 (Copilot receives 11 of 23 personas), FR-033 (source-install drift ungated in CI), FR-034 (the 107-test Python suite and the graph gate never run in CI).' }
 
 ---
 
@@ -92,6 +93,32 @@ The model is the same for both tools: **knowledge** files are always-available r
 > **Managed blocks.** `adapters/managed-blocks/CLAUDE.block.md` and `adapters/managed-blocks/AGENTS.block.md` are ready-to-paste: append each (markers included) to the repo's `CLAUDE.md` / `AGENTS.md`, creating the file if absent — they are the wiring that points each tool at everything else (reasoning spine, personas, skills, testing, instrumentation, Docs Explorer, foundation). On update, replace everything between the markers rather than merging line by line. (§1.1 below.)
 
 > **Two one-time docs steps.** Copy `templates/docs-explorer.template.html` to `docs/index.html`, replacing `__PROJECT__` with the repo name (skip if the repo already owns a docs site there). Do **not** seed `docs/docs-index.js` by hand — the first skill run creates it (Discoverability Mandate, V10), and an accumulated index must never be overwritten.
+
+---
+
+## 0. Running the scripts (read this once)
+
+Every command in this pack is written **`python3 <script>`**. That is deliberate: `python3` is the POSIX name and it matches the shebang on every script in the bundle. It is **not** universally available, and the failure is confusing enough to be worth naming up front.
+
+**On Windows, `python3` does not work — and that does not mean Python is missing.** python.org's Windows installer ships `python.exe` and `py.exe` and **no `python3.exe`**. Worse, Windows ships a `python3` App-Execution-Alias that is not Python at all: it prints *"Python was not found; run without arguments to install from the Microsoft Store"* and exits `9009`. A reader who copy-pastes a documented command sees what looks like a broken Python installation on a machine where Python is installed and working.
+
+**The rule:** `python3` in this documentation means *your Python 3 interpreter*. Substitute the form your platform actually provides.
+
+| Platform | Use |
+|---|---|
+| Linux / macOS | `python3` — as written |
+| Windows (python.org) | **`python`** or **`py -3`** |
+
+Optionally, Windows users can remove the misleading alias: **Settings → Apps → Advanced app settings → App execution aliases**, and turn off the `python3.exe` entry.
+
+**You do not have to remember this.** `pack-doctor.py` reports the working form for the machine it runs on:
+
+```
+python docs/ai-forward-pack/scripts/pack-doctor.py        # Windows
+python3 docs/ai-forward-pack/scripts/pack-doctor.py       # Linux / macOS
+```
+
+It emits a `python interpreter` check that names the exact substitution to use, so this is discovered once rather than one failing command at a time.
 
 ---
 

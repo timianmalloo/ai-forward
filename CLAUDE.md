@@ -124,6 +124,12 @@ the Road) and the **AI-Forward Pack** on top of it. Honor them on every non-triv
   a job-to-path picker, the `/ui-design` stages, the command sheet, an archetype picker, the veto
   table, the tells, and where artifacts land. It is **derived** from the standards and never
   authoritative over them.
+- **Running the pack's scripts:** commands are written `python3 <script>` (the POSIX name, and
+  the shebang on every script). **On Windows that fails — use `python` or `py -3`**: python.org
+  ships no `python3.exe`, and the `python3` present there is a Microsoft Store alias that is not
+  Python (it prints *"Python was not found"* and exits `9009`). This is a substitution, not a
+  missing install. `pack-doctor.py`'s `python interpreter` check names the working form for the
+  current machine.
 - **Testing:** what to test and what counts as proof is governed by the Testing Strategy —
   `.claude/knowledge/testing-strategy.md`; the Test Architect enforces it.
 - **Instrumentation:** code emits structured, trace-correlated telemetry in the OpenTelemetry

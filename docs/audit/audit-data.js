@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-08-10T13:44:46Z",
+  "generated": "2026-08-10T14:20:18Z",
   "audit": [
     {
       "id": "al-0001",
@@ -662,6 +662,35 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "22276321e84fec1f714ae11c2a68bfda9ad3e517",
         "short": "22276321e",
+        "branch": "main",
+        "pushed": false
+      }
+    },
+    {
+      "id": "al-0027",
+      "shortname": "triage-fr031-python3-portability",
+      "datetime": "2026-08-10T14:20:18Z",
+      "session": "0d635851",
+      "prompt": "triage FR-031 (a search-and-replace that unblocks every other instruction)",
+      "summary": "FR-031 resolved at revision 31 - and the proposal's premise was wrong. python.org Windows ships no python3.exe and macOS ships no python, so no portable bare token exists and a substitution was impossible. Kept python3 canonical, stated the convention in INSTALL section 0 + README + both managed blocks, and converted it into a control: pack-doctor.py now names the working interpreter form for the current machine. 5 regression tests, one guarding the swallowed-TypeError bug this check shipped with. Registered PACK-C.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "pack/scripts/pack-doctor.py",
+        "pack/adapters/INSTALL.md",
+        "docs/backlog/forensic-review.md"
+      ],
+      "tags": [
+        "portability",
+        "adoption",
+        "fr-031"
+      ],
+      "outcome": "success",
+      "git": {
+        "sha": "164445008f9376944e9c733ff20896e8a2e444e7",
+        "short": "164445008",
         "branch": "main",
         "pushed": false
       }

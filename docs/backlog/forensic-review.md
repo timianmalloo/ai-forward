@@ -28,22 +28,27 @@ summary: >-
 
 | Phase | Goal | Items |
 |---|---|---|
-| **1 — Unblock adoption** | A newcomer can follow the instructions and get the promised install | FR-031, FR-032, FR-038 |
+| **1 — Unblock adoption** | A newcomer can follow the instructions and get the promised install | ~~FR-031~~ (resolved), FR-032, FR-038 |
 | **2 — Make the gates gate** | The checks that exist actually run where they matter | FR-033, FR-034, FR-035 |
 | **3 — Restore documentation truth** | Nothing published contradicts the code | FR-036, FR-037, FR-039 |
 | **4 — Hygiene** | Low-risk quality of life | FR-040, FR-041, FR-042 |
 
-**Highest improvement-to-effort item: FR-031.** A search-and-replace that unblocks every other documented instruction.
+**FR-031 is resolved** (revision 31) — and the proposal's premise was wrong: no single token is portable, so the fix was a stated convention plus a detection control, not a substitution. **Next highest: FR-032.**
 **Most user-visible: FR-032.** Copilot adopters are missing 12 of 23 personas, including hard vetoes.
 
 ---
 
-## FR-031 — Make the documented commands run on Windows
-- **Kind:** issue · **Priority:** P1 · **Scope:** 183 instructions across `pack/`, `docs/`, `.claude/`, `.github/`
-- **Evidence:** `python3 …/docs-graph.py validate` → exit 9009, *"Python was not found"*. `run-evals.py` already remaps `python3`→`python` on `nt`.
-- **Remediation:** pick one convention and apply it everywhere. Options: (a) document `python` and note the POSIX alternative; (b) keep `python3` and add a documented one-line shim; (c) wrap the script bundle in `aiforward.py`, which already exists as a façade. Add a portability note to `INSTALL.md`.
-- **Acceptance criteria:** every documented invocation, copy-pasted verbatim on a clean Windows install with Python from python.org, exits 0. A test asserts no doc instructs a command that fails on the host platform.
-- **Validation:** run each documented command form in a clean shell. **Owner:** maintainer. **Next skill:** `/implement`. **Depends on:** none. **Status:** proposed.
+## FR-031 — Make the documented commands run on Windows — **RESOLVED**
+- **Kind:** issue · **Priority:** P1 · **Status:** **resolved at revision 31** (triaged 2026-08-10)
+- **The proposal was wrong, and establishing the contract corrected it.** This item was written as *"a search-and-replace"*. It is not. Verified at triage: python.org's Windows installer ships `python.exe` and `py.exe` and **no `python3.exe`** — so `python3` cannot work on a correctly-installed Windows Python, and the Store alias is a second, separate problem rather than the only one. Equally, a blind `python3`→`python` swap would **break macOS**, where stock systems ship no `python`. **There is no single bare token that is correct on both platforms**, so the fix could not be a substitution at all.
+- **What was done instead:**
+  1. **Kept `python3` as the canonical documented form** — it is the POSIX name and matches the shebang on all 13 scripts. Churning 183 sites would have traded a Windows failure for a macOS one.
+  2. **Stated the convention once, where adopters land:** `INSTALL.md` §0 (new), `README.md`, and both managed blocks — `python3` means *your Python 3 interpreter*; on Windows use `python` or `py -3`; the alias is not Python.
+  3. **Converted it into a control (CI6 rung 2):** `pack-doctor.py` gained a `python interpreter` check that probes `python3` / `python` / `py -3` and **names the working substitution for the machine it runs on**. An adopter learns this once, from the health check, instead of one failing command at a time.
+  4. **Locked it with 5 regression tests** in `test_pack_doctor.py`, including one asserting that a bad call raises rather than being swallowed into a plausible-looking FAIL — the bug this very check shipped with.
+- **Acceptance criteria met:** the doctor reports `WARN · python interpreter · use \`python\` instead` on this Windows machine and `PASS` where `python3` works; tests cover PASS / WARN / FAIL / launch-failure / programming-error.
+- **Residual:** the 183 instructions still read `python3`. That is now a *documented convention* rather than a defect, but a reader who skips §0 still hits it once. If that proves too sharp in practice, the follow-up is a deployed cross-platform launcher — deliberately **not** built now (Simplifier: a stated convention plus a detection control is the smaller correct thing).
+- **Validation:** `pack-doctor.py` on Windows and on a POSIX host; `pytest tests/docs_explorer/test_pack_doctor.py`. **Owner:** maintainer. **Next skill:** none.
 
 ## FR-032 — Deploy all 23 personas to the Copilot surface
 - **Kind:** issue · **Priority:** P1 · **Scope:** `pack/adapters/`, `tools/sync-pack.ps1`, `tools/check-consistency.py`

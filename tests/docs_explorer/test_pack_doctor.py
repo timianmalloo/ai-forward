@@ -25,6 +25,58 @@ def load_module():
         sys.path.remove(str(SCRIPTS))
 
 
+class PackDoctorInterpreterTests(unittest.TestCase):
+    """FR-031. The pack documents `python3`, which does not exist on a python.org Windows
+    install. The doctor must name the working substitution rather than let the reader
+    discover it one failing command at a time."""
+
+    def setUp(self):
+        self.module = load_module()
+
+    def _fake(self, ok_labels):
+        """Stub run_bounded so only the given argv[0..1] forms report Python 3."""
+        def runner(argv, **kwargs):
+            label = " ".join(argv[:-1])
+            if label in ok_labels:
+                return SimpleNamespace(returncode=0, stdout="Python 3.12.10\n", stderr="")
+            return SimpleNamespace(returncode=9009, stdout="", stderr="Python was not found")
+        return runner
+
+    def test_python3_available_passes(self):
+        with mock.patch.object(self.module, "run_bounded", self._fake({"python3"})):
+            result = self.module.check_interpreter()
+        self.assertEqual("PASS", result["status"])
+
+    def test_windows_shape_warns_and_names_the_substitution(self):
+        # python3 absent, python present - the python.org Windows shape.
+        with mock.patch.object(self.module, "run_bounded", self._fake({"python"})):
+            result = self.module.check_interpreter()
+        self.assertEqual("WARN", result["status"])
+        self.assertIn("`python`", result["detail"])
+        self.assertIn("python3", result["fix"])
+
+    def test_no_interpreter_fails(self):
+        with mock.patch.object(self.module, "run_bounded", self._fake(set())):
+            result = self.module.check_interpreter()
+        self.assertEqual("FAIL", result["status"])
+
+    def test_launch_failure_is_a_miss_not_a_crash(self):
+        def raiser(argv, **kwargs):
+            raise OSError("not found")
+        with mock.patch.object(self.module, "run_bounded", raiser):
+            result = self.module.check_interpreter()
+        self.assertEqual("FAIL", result["status"])
+
+    def test_a_bad_call_is_not_swallowed_into_a_plausible_result(self):
+        # Guards the bug this check shipped with: a TypeError from a wrong keyword was
+        # caught by a bare `except Exception` and reported as "no Python found".
+        def bug(argv, **kwargs):
+            raise TypeError("unexpected keyword argument")
+        with mock.patch.object(self.module, "run_bounded", bug):
+            with self.assertRaises(TypeError):
+                self.module.check_interpreter()
+
+
 class PackDoctorGraphTests(unittest.TestCase):
     def setUp(self):
         self.module = load_module()

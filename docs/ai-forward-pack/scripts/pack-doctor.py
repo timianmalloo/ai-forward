@@ -126,9 +126,63 @@ def check_graph(root):
                        "run docs-graph.py validate manually")
 
 
+def check_interpreter():
+    """Report the invocation form that actually runs Python 3 on THIS machine.
+
+    The pack documents `python3 …` because that is the POSIX-correct name and matches every
+    script's shebang. It is not universally available: python.org's Windows installer ships
+    `python.exe` and `py.exe` but **no `python3.exe`**, and Windows additionally provides a
+    `python3` App-Execution-Alias that is not Python at all - it prints "Python was not
+    found" and exits 9009. So a Windows reader copy-pasting a documented command sees what
+    looks like a missing Python installation when Python is installed and working.
+
+    This check exists so that failure is reported once, here, with the right answer, instead
+    of being discovered one command at a time (continuous-improvement.md CI6 - convert the
+    lesson into a control that fires at the moment of the mistake).
+    """
+    candidates = [("python3", ["python3", "--version"]),
+                  ("python", ["python", "--version"]),
+                  ("py -3", ["py", "-3", "--version"])]
+    working = []
+    for label, argv in candidates:
+        try:
+            proc = run_bounded(argv, timeout_seconds=15)
+        except (OSError, ValueError):
+            # Only "this command could not be launched" is an expected miss. A TypeError
+            # here would be a bug in this call, and swallowing it would turn a programming
+            # error into a plausible-looking FAIL - which is exactly how this check shipped
+            # broken the first time.
+            continue
+        out = ((proc.stdout or "") + (proc.stderr or "")).strip()
+        if proc.returncode == 0 and out.startswith("Python 3"):
+            working.append((label, out.splitlines()[0]))
+
+    if not working:
+        return _result("python interpreter", FAIL,
+                       "no working Python 3 found as python3, python, or py -3",
+                       "install Python 3 from python.org and re-run")
+
+    forms = [w[0] for w in working]
+    version = working[0][1]
+    if "python3" in forms:
+        return _result("python interpreter", PASS,
+                       "`python3` works here (%s); documented commands run as written" % version)
+
+    # Python 3 exists but not under the documented name - the Windows case.
+    return _result(
+        "python interpreter", WARN,
+        "`python3` does not work here; use `%s` instead (%s). The pack documents `python3` "
+        "because it is the POSIX name and matches the script shebangs." % (forms[0], version),
+        "substitute `%s` for `python3` in documented commands. On Windows, python.org ships "
+        "no python3.exe, and the `python3` you may see is a Microsoft Store alias that is not "
+        "Python. Optionally disable it: Settings > Apps > Advanced app settings > App "
+        "execution aliases." % forms[0])
+
+
 def run(root):
     checks = [
         check_installed(root)[0],
+        check_interpreter(),
         check_surface(root, ".claude", [".claude/knowledge", ".claude/skills", ".claude/agents"]),
         check_surface(root, ".github", [".github/instructions", ".github/prompts", ".github/agents"]),
         check_block(root, "CLAUDE.md"),

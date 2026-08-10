@@ -54,6 +54,12 @@ copies directly; they're overwritten on the next sync.
 
 ## Using the pack (in this repo)
 
+> **Running the scripts.** Commands are written `python3 <script>` (the POSIX name, matching every
+> script's shebang). **On Windows use `python` or `py -3`** — python.org ships no `python3.exe`, and
+> the `python3` you may see there is a Microsoft Store alias that is not Python (it prints *"Python
+> was not found"* and exits `9009`). Run `pack-doctor.py` and its `python interpreter` check names
+> the exact form for your machine. Full note: [`pack/adapters/INSTALL.md` §0](pack/adapters/INSTALL.md).
+
 The pack is already installed, so in Claude Code here you can just run the skills — they apply
 automatically by description, or call one explicitly:
 
