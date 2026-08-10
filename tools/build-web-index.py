@@ -14,6 +14,27 @@ graph slice. Stdlib only. Re-run after any pack change (wired into sync-pack.ps1
 """
 import datetime, glob, html, json, os, re
 
+
+def _stable_stamp():
+    """Deterministic build stamp: identical inputs must produce an identical file, or the
+    drift gate can never cover this artifact (FR-048)."""
+    epoch = os.environ.get("SOURCE_DATE_EPOCH")
+    if epoch and epoch.isdigit():
+        newest = int(epoch)
+    else:
+        newest = 0
+        for base, dirs, names in os.walk(os.path.join(ROOT, "pack")):
+            dirs[:] = [d for d in dirs if not d.startswith(".")]
+            for name in names:
+                try:
+                    newest = max(newest, int(os.path.getmtime(os.path.join(base, name))))
+                except OSError:
+                    pass
+    return datetime.datetime.fromtimestamp(
+        newest, datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PACK = os.path.join(ROOT, "pack")
 TEXT_CAP = 6000          # per-item searchable-text budget (keeps the index lean)
@@ -235,7 +256,12 @@ def main():
     counts = {c: sum(1 for it in items if it["cat"] == c) for c, _ in CATEGORIES}
     payload = {
         "repo": "AI-Forward",
-        "generated": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        # FR-048. A wall-clock stamp made this file differ on every re-sync, so it could never join
+        # the source-install drift gate - the one gate that exists to prove generated surfaces
+        # match their source. SOURCE_DATE_EPOCH honours reproducible-builds; otherwise the stamp
+        # is the newest mtime across the inputs, so it changes when the CONTENT does and not
+        # merely because time passed.
+        "generated": _stable_stamp(),
         "generator": "tools/build-web-index.py",
         "categories": [{"id": c, "label": l, "count": counts[c]} for c, l in CATEGORIES],
         "total": len(items),

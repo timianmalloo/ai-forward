@@ -55,8 +55,8 @@ jobs:
           pwsh tools/sync-pack.ps1
           Write-Host "If the next command fails, pack/ and the generated surfaces have drifted."
           Write-Host "Fix: run 'pwsh tools/sync-pack.ps1' locally and commit the result."
-          git --no-pager diff --stat -- .claude .github/instructions .github/prompts .github/agents docs CLAUDE.md AGENTS.md
-          git diff --exit-code -- .claude .github/instructions .github/prompts .github/agents docs CLAUDE.md AGENTS.md
+          git --no-pager diff --stat -- .claude .github/instructions .github/prompts .github/agents docs web CLAUDE.md AGENTS.md
+          git diff --exit-code -- .claude .github/instructions .github/prompts .github/agents docs web CLAUDE.md AGENTS.md
 
       # FR-034. The largest suite in the repository (112 tests covering docs-graph,
       # audit-log, check-consistency, pack-doctor, run-evals, bounded_process) was advisory
