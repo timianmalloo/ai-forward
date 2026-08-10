@@ -1,213 +1,160 @@
 ---
 id: forensic-review
-title: "Forensic Review — AI-Forward repository (revision 18)"
+title: "Forensic Review — AI-Forward repository (revision 30)"
 type: doc
 status: accepted
 owner: "@timianmalloo"
 phase: "pack-evolution"
-tags: [forensic-review, ci, consistency, supply-chain, documentation]
+tags: [forensic-review, adoption-readiness, consistency, ci, documentation, portability]
 links:
   - { to: architecture, rel: documents }
   - { to: forensic-review-backlog, rel: relates-to }
-  - { to: forensic-review-20260712, rel: supersedes }
-review-by: "2026-11-02"
+  - { to: forensic-review-20260802, rel: supersedes }
+review-by: "2026-11-08"
 review-suggested: []
 summary: >-
-  Comprehensive evidence-based assessment of the AI-Forward repository at commit 53e3afe
-  (revision 18). Ten findings, none P0. The two load-bearing results are FR-011 — the
-  repository's foundational invariant (pack/ is source, .claude/ and .github/ are generated)
-  has no CI gate, proven by drifting a worktree — and FR-020, Copilot receiving 11 of the 23
-  personas the deployment map promises.
+  Adoption-readiness assessment at commit 2227632 (revision 30), scoped to inconsistencies
+  and contradictions. Every self-declared gate is green and the repository is still not ready
+  to hand to adopters. Two findings dominate: 183 documented commands invoke `python3`, which
+  on a default Windows install is a broken Store alias, and the Copilot surface receives 11 of
+  the 23 personas the deployment map promises — first raised twelve revisions ago, never closed.
 ---
 
-# Forensic Review — AI-Forward repository (revision 18)
+# Forensic Review — AI-Forward repository (revision 30)
 
-## 1. Scope and baseline
+**Target:** commit `2227632`, branch `main`, **clean worktree**. 46 commits, 462 tracked files.
+**Scope:** whole repository, weighted by the request toward **inconsistencies, contradictions, and cleanup required before asking others to adopt**.
+**Mode:** Peer Mode to reconstruct, Adversary Mode at the gate. No production code, dependency, schema, CI behaviour or runtime configuration was changed.
+**Supersedes:** the revision-18 review, archived at `forensic-review-20260802`.
 
-- **Repository:** `timianmalloo/ai-forward`
-- **Target commit:** `53e3afe59dc3e20a5e1e20a769311980fd194cb4` (`53e3afe`), branch `main`, **0 ahead / 0 behind** `origin/main`
-- **Worktree state at review:** **clean** (0 modified files) — no dirty-state caveat applies
-- **Scope:** whole repository, comprehensive. 407 tracked files (305 `.md`, 30 `.json`, 30 `.py`, 16 `.html`, 12 `.js`, 4 `.ps1`, 4 `.yml`)
-- **Supersedes:** `forensic-review-20260712` (scoped to model orchestration; that capability was reverted in `8801a47`). Its still-open findings **FR-008** and the residual documentation half of **FR-010** are carried forward here rather than duplicated.
-- **Constraint honoured:** no production code, dependency, schema, CI behaviour, or runtime configuration was modified. The review archived the superseded review/backlog and wrote this report and its backlog; nothing else changed.
+---
 
-### Baseline commands (run before judging; results are evidence, not review artifacts)
+## 1. Verdict
 
-| Command | Result |
+> **NOT READY FOR ADOPTION.** Not because the pack is weak — the reasoning corpus is strong and internally coherent — but because **the path a new adopter walks is broken at its first step**, and because a prior review's findings were never triaged.
+
+| | Count |
 |---|---|
-| `pwsh tools/verify-bundle.ps1` | **BUNDLE CONSISTENT** — counts, skill/prompt parity, managed-block lists, prose, vendored-foundation drift, 23 eval cases |
-| `python -m pytest tests -q` | **107 passed, 1 skipped, 108 subtests** in 38.9 s |
-| `node --test tests/docs_explorer/*.test.js` | **31 pass, 1 skipped, 0 fail** (32 tests) |
-| `docs-graph.py validate` | **exit 0** — schema-valid, 0 dangling links, 0 orphans |
-| `docs-graph.py freshness` | **0 findings** — nothing stale or flagged |
-| `pack-doctor.py --strict` | **6 PASS · 0 WARN · 0 FAIL** — reports revision 18 |
-| `scrub.py --check docs pack` | **2 findings** (both the same false positive — see FR-017) |
-| `npm test` | **fails — "Missing script: test"** (see FR-016) |
+| P0 | 0 |
+| **P1** | **4** |
+| P2 | 5 |
+| P3 | 3 |
 
-**Caveat on the node/npm baseline.** `npm run test:docs-explorer:core` fails locally because npm spawns `cmd.exe`, which does not have `node` on PATH in this environment; invoking `node --test` directly succeeds. This is a **local environment artifact, not a repository defect** — CI runs on `ubuntu-latest` where the npm script works. Recorded so the failure is not mistaken for a finding.
+**Highest improvement-to-effort change: FR-031.** Every documented command in the pack is prefixed `python3`. On a default Windows install that resolves to the Microsoft Store alias, which prints *"Python was not found"* and exits `9009`. It is a search-and-replace plus one portability note, and it unblocks essentially every other instruction in the pack.
 
-## 2. Recovered system map
+**The uncomfortable result.** Every gate this repository owns is green: `check-consistency.py` clean, `docs-graph.py validate` reporting zero problems across 42 artifacts, 107 Python tests passing, 26 JS tests passing, `verify-bundle.ps1` printing BUNDLE CONSISTENT. All of that is true, and none of it caught anything below. This is the repository's own **CD13 / E2E-E** lesson landing on itself: *a gate's green result is evidence the gate passed, not that its contents passed.*
 
-The architecture doc (`docs/architecture.md`) was checked against the code and is **substantially accurate**; it describes the pack correctly as a knowledge/tooling package with no inference client, and refers to knowledge docs categorically (`knowledge/*.md`) rather than enumerating them, so revision 18's four new docs do not falsify it. One stale claim was found (a diagram node reading "the 17 skills") and is folded into FR-013.
+---
 
-**What the repository actually is:** a dual-purpose repo — the canonical **source** of the AI-Forward Pack (`pack/`) *and* a live **install** of it (`.claude/`, `.github/{instructions,prompts,agents}`, `docs/`), generated from source by `tools/sync-pack.ps1`.
+## 2. Baseline (evidence, not attribution)
 
-```
-pack/                     SOURCE OF TRUTH (edit only here)
-  knowledge/  28 docs     commands/  18 skills     templates/  22
-  adapters/   INSTALL.md + managed blocks + per-tool agents/prompts
-  evals/ 23 cases   scripts/ 9 deployables   ci/ docs-health.yml (shipped, not self-applied)
-        │
-        │  tools/sync-pack.ps1   ← the ONLY sanctioned generator
-        ▼
-.claude/{knowledge,skills,agents}      .github/{instructions,prompts,agents}
-docs/{architecture,knowledge,audit,design,security,reviews,backlog,lessons,ai-forward-pack}
-tools/  sync-pack · verify-bundle · check-consistency · new-capability · build-web-index · aiforward
-tests/  7 pytest modules · 3 node suites · 1 Playwright spec (3 browsers)
-.github/workflows/  pack-consistency · docs-context-reference-benchmark · pages
-```
+| Gate | Result | Note |
+|---|---|---|
+| `tools/check-consistency.py` | **clean** | 19 skills, 23 lenses, 33 knowledge, 23 templates, 13 scripts, 19 prompts |
+| `docs-graph.py validate` | **clean** | 42 artifacts; 0 problems, stale, flagged, orphans, index drift |
+| `pytest tests/` | **107 passed**, 1 skipped | not run in CI (FR-034) |
+| `node --test` (core) | **26 passed** | the `npm run` wrapper fails on a local PATH quirk only |
+| `verify-bundle.ps1` | **BUNDLE CONSISTENT** | not run in CI (FR-033) |
 
-**The load-bearing invariant** — stated in `CLAUDE.md`, `AGENTS.md` and `README.md` — is *"when you change anything under `pack/`, re-run `tools/sync-pack.ps1` and commit `pack/`, `.claude/`, `.github/`, and `docs/` together so source and install stay in lockstep."* FR-011 is that this invariant is unenforced.
+No pre-existing failures. Everything below was found *despite* a fully green baseline.
 
-## 3. Assessment by layer
+---
 
-### 3.1 Architecture — **sound**
-Boundaries are clean and the generator is single-sourced. `pack/` has no inbound dependency from the generated trees; the deployment map in `pack/adapters/INSTALL.md` is the stated contract and matches the sync tool's behaviour. Dependency direction is correct (source → generated, never the reverse). No cycles. The dual-purpose design (source + dogfooded install) is unusual but deliberate, documented, and is the reason the pack's own guidance is continuously exercised.
+## 3. Findings
 
-The one architectural weakness is not structural but **operational**: the invariant that makes the dual-purpose design safe is asserted in prose and enforced only by a local PowerShell script a contributor must remember to run (FR-011).
+Each carries location, evidence, consequence, confidence, and the disconfirming check attempted. Remediation detail is in the backlog.
 
-### 3.2 Design — **sound, with one tool defect**
-Scripts are stdlib-only Python plus PowerShell, consistent with the stated dependency-averse posture. `docs-graph.py` is the single graph mechanic (V18) and is honoured — no ad-hoc graph scripts were found. The templates and skills are mutually consistent: **all 19 referenced templates and all 4 referenced scripts exist; no template is shipped unreferenced.**
+### P1 — blocks adoption
 
-The defect is in `docs-graph.py cmd_rollup`, which computes generated links relative to `--root` rather than to the directory of the document it writes into (FR-012). Because `/design` mandates rollups into `docs/security/{threat-model,privacy-review}.md` — always one directory below the root — **every generated rollup link is broken, in this repo and in every consuming repo.**
+**FR-031 · issue · Portability · Verified.** **183 documented commands invoke `python3`, which does not work on a default Windows install.**
+*Evidence:* `python3 docs/ai-forward-pack/scripts/docs-graph.py validate` → `Python was not found; run without arguments to install from the Microsoft Store`, **exit 9009**. `python3` resolves to `…\WindowsApps\python3.exe`, the Store alias; `python` resolves correctly. 183 instructions across `pack/`, `docs/`, `.claude/` and `.github/` use the `python3` form.
+*Consequence:* a Windows adopter following any documented instruction gets an error that looks like a missing Python installation. The pack ships PowerShell tooling and targets Windows-friendly workflows, so this is the mainstream path, not an edge case.
+*Notable:* `pack/evals/run-evals.py` already contains `if os.name == "nt" and resolved and resolved[0] == "python3"` — the problem was known and worked around **in exactly one place**, and never fixed in the documentation or the other twelve scripts.
+*Disconfirming check:* ran the command verbatim; confirmed `python` succeeds where `python3` fails.
 
-### 3.3 Implementation — **healthy**
-All three test suites pass. No dangling template/script references. `__pycache__`, `node_modules`, `test-results/` and `*.jsonl.lock` are correctly gitignored, and **zero `.pyc` files are tracked** (a stale `test_model_router.cpython-312.pyc` exists locally from the reverted experiment but is untracked and therefore not a repository defect — ruled out during review). Audit and change logs are integrity-clean: 14/14 and 8/8 entries parse, all ids unique, and the derived `audit-data.js` is in step with the JSONL.
+**FR-032 · issue · Deployment contract · Verified.** **Copilot receives 11 of the 23 personas the deployment map promises.**
+*Evidence:* `pack/adapters/claude-code/agents` = 12 files, `pack/adapters/copilot/agents` = 11. Sync deploys 12+11 = **23 to `.claude/agents/`** and **11 to `.github/agents/`**. `INSTALL.md`'s deployment map promises both *"Peer agents (orchestrator, product-strategist, domain-researcher)"* and *"Adversary agents"* to `.github/agents/<name>.agent.md`.
+*Consequence:* Copilot users are missing 12 personas, including hard-veto lenses. The pack's adversarial-review discipline — its core claim — is materially weaker on one of its two supported tools.
+*Why every gate misses it:* `check-consistency.py` computes `lenses = len(cc) + len(cop)` from the **pack source**. It never counts the **deployed** `.github/agents/`. The "23 lenses" claim is true of the source and false of the Copilot install, and the checker is structurally incapable of seeing the difference.
+*Status:* **first raised at revision 18 as FR-020. Twelve revisions later, unchanged.**
 
-### 3.4 Traceability — **partial**
-Spec → architecture → design → code → proof holds for the deliberately-designed subsystems (Docs Explorer, pack-doctor, RAI/scrub, project memory each have a `docs/design/` artifact and proof). The gap is in the **reverse** direction: the consistency checker gates *counts* in six files but not *lists*, and does not scan `docs/index.md` or `docs/architecture.md` at all — so three documents currently claim a skill count they do not enumerate (FR-013). A second traceability break runs from the deployment map to the generator: `INSTALL.md` §1 promises every persona on both tool surfaces and `sync-pack.ps1` delivers only 11 of 23 to Copilot (FR-020).
+**FR-033 · issue · CI enforcement · Verified.** **The repository's foundational invariant is still not gated in CI.**
+*Evidence:* `.github/workflows/pack-consistency.yml` runs `check-consistency.py`, `foundation-check.py`, the JS core tests and eval validation. It does **not** run `sync-pack.ps1` and check for drift — the check that proves `pack/` is source and `.claude/`/`.github/` are generated. `verify-bundle.ps1` performs that check and is never invoked by CI.
+*Consequence:* source↔install drift, the single failure mode the whole architecture exists to prevent, can merge.
+*Status:* first raised at revision 18 as **FR-011**, described then as *"a handful of CI lines."* Unchanged.
 
-### 3.5 Testing & CI — **strong suites, incomplete gates**
-This is the weakest lens. The repository has genuinely good tests — 107 Python assertions, 32 node contract tests, a 3-browser Playwright spec, deterministic fixtures, canonical-hash parity. **CI runs only a subset:** `pack-consistency.yml` executes four gates and omits pytest entirely, omits the Playwright suite, and omits `docs-graph.py validate/freshness` — the very graph gate the pack *ships to consumers* as `pack/ci/docs-health.yml` (FR-014). Its `paths:` filter also excludes `.claude/**`, `.github/{instructions,prompts,agents}/**` and most of `docs/**`, so a PR touching only the generated trees triggers no workflow at all.
+**FR-034 · issue · CI enforcement · Verified.** **The 107-test Python suite and the graph gate never run in CI.**
+*Evidence:* the workflow runs `npm run test:docs-explorer:core` but not `pytest tests/` (107 tests, including `test_docs_graph.py`, `test_audit_log.py`, `test_check_consistency.py`) and not `docs-graph.py validate`.
+*Consequence:* the largest test suite in the repository is advisory. A regression in `docs-graph.py` or `audit-log.py` merges green.
+*Status:* raised at revision 18 as **FR-014**; the JS half was added, the Python half was left.
 
-### 3.6 Security & supply chain — **good, one inconsistency**
-No secrets found; the two scrub hits are a GitHub noreply bot address in a commented-out CI example (FR-017). Permissions are least-privilege per workflow. `pack-consistency.yml` and `docs-context-reference-benchmark.yml` pin every action by 40-character SHA. **`pages.yml` — the only workflow holding `pages: write` and `id-token: write` — pins none of its four actions**, and the shipped `pack/ci/docs-health.yml` is likewise unpinned, propagating the pattern to every consuming repo (FR-015).
+### P2 — material debt
 
-### 3.7 Lenses explicitly N/A
-- **Data & persistence / migrations:** N/A — the repo has no database, schema, or migration. The only persisted state is append-only JSONL, reviewed above.
-- **Distributed systems / concurrency:** N/A — no services, queues, or concurrent writers beyond `docs-graph.py`'s sibling lock files, which are covered by `test_bounded_process.py` and `test_docs_graph.py`.
-- **AI systems / inference cost:** N/A — as `docs/architecture.md` states, this package has no inference client.
-- **Accessibility / UX:** partially in scope and **passing** — the Docs Explorer, Audit Explorer and design-language preview are dependency-free local HTML with accessibility contracts under test (`knowledge_surfaces.test.js`, the Playwright accessibility route). The revision-18 mockup harness was render-tested across 7 states, 3 themes, 4 viewports and reduced motion with 0 contrast failures.
-- **Privacy:** in scope, no findings — no personal data is collected or stored; `docs/security/privacy-review.md` exists and is graph-linked.
+**FR-035 · issue · Documentation truth · Verified.** **`S1–S18` is cited in ~30 files; `specification-standards.md` defines only S1–S10.** Likewise **`G1–G18` in 8 files against a standard defining G1–G16.**
+*Evidence:* enumerated every `**S<n>` and `**G<n>` definition in the source standards and cross-scanned all range citations. The `S1–S18` figure traces to the revision-1 changelog (*"Specification Standards S1-S18"*); the standard was later consolidated to S10 and no citation followed.
+*Consequence:* every skill's Authority line over-claims the extent of a governing standard. An agent told to satisfy `S1–S18` is pointed at eight directives that do not exist.
+*Why no gate catches it:* `check-consistency.py` verifies *file counts*, never *directive-range integrity*. This is mechanically checkable and unchecked.
 
-## 4. Findings
+**FR-036 · issue · Documentation truth · Verified.** **The generated documentation bundle is twelve revisions stale.** `docs/_site/` newest file is dated **2026-07-12**; the repository is at **revision 30** (2026-08-10). It predates revisions 19–30 entirely — the Obsidian lens, Graphify, the No-Guessing Protocol, the UI detection and visual-assets layer, and `/visualize`. *Status:* raised at revision 18 as **FR-019**; unchanged.
 
-Ten findings. **No P0.** One P1, five P2, four P3. One prior finding carried forward; the other resolved into FR-020.
+**FR-037 · issue · Documentation truth · Verified.** **`docs/` still documents a reverted capability.** Model-orchestration was reverted in `8801a47`; `pack/knowledge/model-orchestration.md` and `pack/scripts/model-router.py` do not exist. Ten `docs/` files still reference them, including **`docs/architecture.md`**, `docs/index.md`, `docs/security/privacy-review.md` and the derived `docs/lenses/code-doc-join.md`. The revert is honestly recorded in `docs/notes/note-20260712-revert-model-orchestration.md`, so this is stale propagation rather than concealment — but an adopter reading the architecture doc is told about a script that was deleted.
 
-| id | kind | pri | title | confidence |
-|---|---|---|---|---|
-| **FR-011** | issue | **P1** | Source↔install drift has no CI gate — proven undetectable | **Verified** |
-| **FR-012** | issue | **P2** | `docs-graph.py rollup` emits links relative to the wrong base — every rollup link is broken | **Verified** |
-| **FR-013** | issue | **P2** | Skill *lists* are ungated: three docs claim a count they do not enumerate | **Verified** |
-| **FR-014** | issue | **P2** | pytest, Playwright, and the graph gate never run in CI | **Verified** |
-| **FR-015** | risk | **P2** | The only privileged workflow uses floating action tags; the shipped CI template does too | **Verified** |
-| **FR-020** | issue | **P2** | Copilot receives 11 of 23 personas — the deployment map promises all of them | **Verified** |
-| **FR-016** | issue | **P3** | `npm test` is undefined — the conventional entry point errors | **Verified** |
-| **FR-017** | issue | **P3** | `scrub.py` flags GitHub noreply bot addresses (permanent false positive) | **Verified** |
-| **FR-018** | todo | **P3** | Ownership hygiene: three owner handles, no CODEOWNERS | **Verified** |
-| **FR-019** | todo | **P3** | The `/document` bundle (`docs/_site/`) is stale relative to revision 18 | **Verified** |
-| FR-008 | issue | P2 | *(carried forward)* Make bundle/CI consistency a real oracle | Verified |
-| FR-010 | — | — | *(closed)* Resolved into FR-020 — the residual was verified and re-scoped | — |
+**FR-038 · issue · Adoption · Verified.** **`.mcp.json.example` is committed containing a machine-specific absolute path** — `C:\\Users\\malla\\AppData\\Roaming\\npm\\node_modules\\higgsfield-mcp\\src\\server.js`. Anyone adopting gets a path that cannot resolve. Introduced three commits ago by `visual-assets-setup.py --init-mcp`, which writes the resolved local path into the *example* as well as the real config.
 
-Full remediation detail, acceptance criteria and validation for every item are in **`docs/backlog/forensic-review.md`**.
+**FR-039 · risk · Security / UX · Verified.** **The public explainer's blockers are open and untriaged.** `web/ai-forward-pack-explainer.html` still loads three unpkg CDN scripts with **0** integrity hashes, and has **0** `:focus-visible` rules, **0** `aria-*` attributes and **0** `prefers-reduced-motion` against 2 animation declarations. The page renders blank without the CDN (216 of 68,522 body bytes survive a `<script>` strip). Documented at revision 28 in `docs/reviews/ui-pack-explainer.md`; nothing has changed since.
 
-### 4.1 FR-011 — the load-bearing finding, with its proof
+### P3 — hygiene
 
-The repository's foundational invariant is that `pack/` is source and `.claude/`/`.github/` are generated. **Nothing enforces it.** `verify-bundle.ps1` checks it locally as step 5 (git-clean-after-sync) but is not run in CI, and `check-consistency.py` — which *is* run in CI — compares counts, skill/prompt parity, managed-block lists and prose totals, never the *content* of the generated trees against source.
+**FR-040 · todo · Ownership · Verified.** No `CODEOWNERS`, and three distinct owner handles across `docs/`: `@timianmalloo` (35), `@maintainers` (5), `@mallalieut` (2). Template placeholders are correctly confined to templates. *Status:* revision-18 **FR-018**; unchanged.
 
-**Disconfirming test performed** (in a detached `git worktree` under `%TEMP%`, so the real tree was never touched):
+**FR-041 · todo · Tooling · Verified.** `package.json` defines no `test` script — only `test:docs-explorer:*`, so `npm test` fails. *Status:* revision-18 **FR-016**; unchanged.
 
-1. Confirmed `pack/knowledge/rigor-protocol.md` and `.claude/knowledge/rigor-protocol.md` were byte-identical (`54ED3586…`).
-2. Appended one line to the `pack/` copy only — deliberately skipping `sync-pack.ps1`, exactly as a hurried contributor would.
-3. Ran every gate `pack-consistency.yml` runs:
+**FR-042 · todo · Tooling · Verified.** `pack/scripts/scrub.py` does not allowlist `*@users.noreply.github.com`, so the repository's own commit trailers read as PII. *Status:* revision-18 **FR-017**; unchanged.
 
-| CI gate | Result on the drifted tree |
+---
+
+## 4. The meta-finding
+
+**Seven of the twelve findings in the revision-18 backlog are still open, unchanged, twelve revisions later** — FR-011, FR-014 (partially), FR-016, FR-017, FR-018, FR-019, FR-020. Every one is still `status: proposed`. In the same period the pack gained twelve revisions of new capability.
+
+That is the pattern worth naming before adoption: **this repository is far better at adding capability than at closing its own backlog.** The prior review correctly stopped for human triage, as its contract requires; triage then did not happen, and nothing in the system noticed. A backlog with no review cadence and no gate is a memoir in exactly the sense `continuous-improvement.md` CI6 warns about.
+
+Registered as defect class **PACK-B**.
+
+---
+
+## 5. Persona verdicts
+
+| Lens | Verdict | Basis |
+|---|---|---|
+| Enterprise Architect | **BLOCK** | The source↔install invariant that defines the architecture is ungated in CI (FR-033) |
+| Documentation Steward | **BLOCK** | Range citations over-claim (FR-035); the bundle is twelve revisions stale (FR-036); reverted work is still documented (FR-037) |
+| Security & Identity | **CONCERNS** | Un-hashed CDN scripts on the public surface (FR-039). No secret is committed — verified: `git log -S` on the live key returns nothing |
+| Test Architect | **BLOCK** | The largest suite in the repo gates nothing (FR-034) |
+| UX & Accessibility | **BLOCK** | The public explainer meets none of the keyboard, ARIA or reduced-motion floors (FR-039) |
+| SRE | **CONCERNS** | CI does not exercise the checks that already exist |
+| The Simplifier | **PASS** | Four candidate findings removed as preference-not-defect; no speculative items retained |
+| Data & Persistence | **N/A** | No schema, migration or persistent store in this repository |
+| Distributed Systems | **N/A** | No messaging, async delivery or consistency boundary |
+| AI Systems | **PASS** | `/visualize` and the detector ship with evals; no model capability without a verification path |
+| Privacy | **PASS** | `.mcp.json` verified git-ignored and absent from history |
+
+Authors did not self-clear. Findings the Test Architect rejected for lacking an oracle are not present.
+
+---
+
+## 6. Confidence ledger and residual risk
+
+Every finding above is **Verified** by execution or direct file inspection. No finding rests on inference.
+
+**Residual risk — what this review did not cover.** The Playwright browser suite was not run (it needs a browser install, and adding one would have changed the environment being assessed). The three CI workflows were read but never executed, so their behaviour is inferred from their definitions rather than observed. `/addpacktorepo` was not run end to end against a scratch repository, so the adoption path is assessed from the deployment map and the artifacts rather than from a real installation — **that end-to-end install is the single most valuable next verification**, and FR-031 and FR-038 are exactly the defects it would catch. Non-Windows portability was not tested.
+
+---
+
+## 7. Status
+
+| | |
 |---|---|
-| `check-consistency.py` | `clean` — **exit 0** |
-| `foundation-check.py` | `clean` — **exit 0** |
-| eval well-formedness | `eval cases ok` — **exit 0** |
-| node core contracts | not re-run (tests the Explorer core, unrelated to knowledge-doc sync) — *Inferred pass* |
-
-**The drift merges undetected.** The consequence is not local: `/updatepack` copies the *generated* `.claude/` tree into consuming repositories, so a stale generated file propagates outward to every installed repo as though it were the current standard. This is the strongest possible form of the class the prior review named in FR-008; that finding is now backed by a reproduction.
-
-### 4.2 FR-020 — Copilot receives half the persona roster
-
-The pack advertises **23 lenses**, and `AGENTS.md` — the always-on Copilot instruction — tells Copilot users *"Agents in `.github/agents/`"*. The deployment map in `pack/adapters/INSTALL.md` §1 maps **both** categories to both surfaces:
-
-> L91 · `| Peer agents (orchestrator, product-strategist, domain-researcher) | .claude/agents/<name>.md | .github/agents/<name>.agent.md |`
-> L92 · `| Adversary agents (the existing 11) | .claude/agents/<name>.md | .github/agents/<name>.agent.md |`
-
-and §1.2 supplies the exact transform for doing so (*"Strip the `tools:` line"*).
-
-**Measured at `53e3afe`:** `.claude/agents/` holds **23**; `.github/agents/` holds **11**. Twelve personas never reach the Copilot surface:
-
-`ai-systems-engineer` · `data-persistence-architect` · `documentation-steward` · `domain-researcher` · `mobile-app-developer` · `native-desktop-developer` · `orchestrator` · `privacy-data-governance` · `product-strategist` · `release-engineer` · `ux-accessibility` · `ux-researcher-ia`
-
-The cause is in the generator: `tools/sync-pack.ps1` populates `.claude/agents/` from **both** `adapters/claude-code/agents/` and `adapters/copilot/agents/`, but populates `.github/agents/` from `adapters/copilot/agents/` **only** — the §1.2 transform is documented and never executed.
-
-Two things make this material rather than cosmetic:
-
-1. **It removes vetoes on one tool.** Every persona revision 18 depends on is in the missing set — the **Data & Persistence Architect** (owner of the new data-modelling standard and its migration hard veto) and **UX & Accessibility** (lead of `/ui-design`, holder of the accessibility hard veto). A Copilot user following `AGENTS.md` cannot `@`-mention either.
-2. **INSTALL.md contradicts itself.** L108 states the three peer agents are instead *"described in `knowledge/collaborative-personas.md`"* — a partial rationale that directly conflicts with L91, and that does not account for the other nine missing personas at all.
-
-**Why it survived every gate.** `check-consistency.py` derives the roster from the **source adapters** — `verify-bundle` reports it as *"23 lenses (12 claude-code + 11 copilot)"* — so the count is correct at source and the deployment shortfall is structurally invisible to the only check that counts lenses. Nothing compares the roster against what each surface actually receives. This is the same shape as FR-011 and FR-013: the checker validates source, never the generated result.
-
-The prior review's FR-010 residual named this concern but left it unverified; it is now Verified and re-scoped as FR-020. Note the pack's own rule **is** honoured where it applies: **no** `.github/agents/*.md` carries a `tools:` line, so nothing that *did* ship violates §1.2.
-
-## 5. Persona verdicts (Adversary Mode)
-
-| Persona | Verdict | Note |
-|---|---|---|
-| **Enterprise Architect** | **PASS** | Boundaries and generator single-sourcing are sound; the weakness is operational enforcement, not structure. |
-| **Test Architect** | **PASS-WITH-CONDITIONS** | Every finding carries an oracle: FR-011 and FR-012 are reproductions, FR-016/017 are executions, the rest are file reads. Condition: the node-gate row of the FR-011 table is labelled *Inferred*, not claimed as run. **Rejected** during review: a proposed finding that `docs/lessons/defect-classes.md` is mostly `uncontrolled` — that is its designed initial state, not a defect. |
-| **Documentation Steward** | **BLOCK → recorded** | FR-013, FR-019 and FR-020's INSTALL.md self-contradiction are documentation-truth failures; a file that states "18 skills" and lists 17, and a deployment map that promises 23 agents on a surface holding 11, are self-contradicting. Blocks documentation readiness only; does not suppress this report. |
-| **Enterprise Architect (2nd pass)** | **BLOCK → recorded** | FR-020: the generator does not implement the documented deployment map. Tool-parity is a stated architectural property of this pack (INSTALL §1.3, "fit for both"); it is currently false on the Copilot surface. |
-| **Security & Identity** | **PASS-WITH-CONDITIONS** | No secrets, least-privilege permissions. Condition: FR-015 — the highest-privilege workflow is the only unpinned one, and the pattern is shipped to consumers. Not P1: all four actions are first-party `actions/*` and no compromise is evidenced. |
-| **Release Engineer** | **BLOCK → recorded** | FR-011 + FR-014 mean the release gate does not gate what it claims to. |
-| **SRE** | **PASS** | Deterministic, bounded tooling; `bounded_process.py` is exercised by tests. |
-| **The Simplifier** | **PASS** | Removed three candidate findings as preference-not-defect: the overloaded `skill` field on four knowledge/script eval cases (by design), the untracked stale `.pyc` (gitignored), and the archived review's historical "17 skills" prose (accurate as history). |
-| **Data & Persistence · Distributed Systems · AI Systems · Privacy** | **N/A** | Scoped out with rationale in §3.7. |
-
-**No persona cleared its own authored work.** Findings were authored in Peer Mode and attacked in Adversary Mode before entering the backlog.
-
-## 6. Readiness verdict
-
-> **PASS-WITH-CONDITIONS.** The repository is healthy: every test suite is green, the knowledge graph is valid and fresh, pack-doctor is clean, no secrets, and no P0. It is *shippable today*.
->
-> It is **not adequately gated**, and it is **not at parity across its two tools**. The single most important invariant in the repository — that the generated trees match their source — can be violated silently and shipped outward to every consuming repo (FR-011). Separately, Copilot users receive half the persona roster the pack advertises, including both vetoes revision 18 introduced (FR-020).
->
-> **FR-011 is the highest-leverage action** and the cheapest: the check already exists in `verify-bundle.ps1`; it simply is not run where it matters. **FR-020 is the highest-impact on users**, and its fix is a handful of lines in `sync-pack.ps1` implementing a transform INSTALL.md already specifies.
-
-## 7. Confidence ledger
-
-| Claim | Evidence | Confidence |
-|---|---|---|
-| Drifted `pack/` passes all CI gates | Worktree reproduction, 3 gates executed, exits recorded | **Verified** |
-| The node gate would also pass on that drift | Reasoned from what the suite asserts; not re-executed | **Inferred** |
-| Rollup links are broken wherever output is not at root | `os.path.relpath` computation: emitted `design/…` does not resolve, `../design/…` does | **Verified** |
-| README, copilot-instructions and docs/index omit `/ui-design` | Pattern count = 0 in each; count strings say 17/18 | **Verified** |
-| pytest/Playwright/graph gates absent from CI | Full read of all three workflow files | **Verified** |
-| `pages.yml` is the only unpinned workflow | Enumerated `uses:` across all workflows against a 40-hex-SHA test | **Verified** |
-| No secrets in committed content | `scrub.py --check` over `docs` + `pack`, 2 hits, both inspected in context | **Verified** (tool is a first-pass, not CI-grade — its own stated limit) |
-| Architecture doc is substantially truth-to-code | Read against the tree; knowledge docs referenced categorically | **Verified** |
-| No dangling template/script references | Enumerated all `templates/…` and `scripts/…` mentions in skills against the filesystem | **Verified** |
-| Copilot surface holds 11 of 23 personas | Directory enumeration on both surfaces; set difference listed; `sync-pack.ps1` copy rules read | **Verified** |
-| No `.github/agents/*.md` violates the strip-`tools:` rule | Pattern scan for `^tools:` across the Copilot agent surface — 0 hits | **Verified** |
-
-## 8. Residual risk — what this review did not cover
-
-- **Deep semantic review of all 305 markdown files.** Standards were reviewed structurally (references resolve, counts, links, frontmatter) and the revision-18 additions were read in full; the older knowledge docs were **not** re-read line-by-line for internal contradiction.
-- **Runtime behaviour of the skills themselves.** The eval cases were checked for well-formedness, not *executed* — running them requires a live agent session per case. The evals therefore prove the harness, not the skills' outputs.
-- **The self-hosted benchmark workflow** (`docs-context-reference-benchmark.yml`) could not be exercised; it requires a dedicated ephemeral runner.
-- **`scrub.py` recall.** A regex first-pass cannot prove the absence of secrets. The RAI policy already transfers real enforcement to gitleaks/Presidio in CI; neither is currently wired (a known, documented position, not a new finding).
-- **Cross-platform CI.** All gates run on `ubuntu-latest`; the PowerShell tooling (`sync-pack.ps1`, `verify-bundle.ps1`) is never exercised in CI on any platform. Folded into FR-014's remediation.
+| **Completed** | Baseline captured; all five gates run; contradiction, reference-integrity, deployment-map, graph-health and adoption-path sweeps done; 12 findings evidenced and deduplicated; prior review archived |
+| **Remaining** | Human triage of the backlog. Nothing has been remediated — by contract this review stops at proposal |
+| **Best next action** | Triage **FR-031** (the `python3` fix), then run `/addpacktorepo` against a scratch repository to verify the adoption path end to end |

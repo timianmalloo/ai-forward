@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-Forward",
-  "generated": "2026-08-07T13:19:23Z",
+  "generated": "2026-08-10T13:44:09Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -569,7 +569,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "810b4326058faed411de13270d733d363792120c03afb2fe17c42399a2855710"
+      "sourceSha256": "b1f80b6edc77dcc68433473ab82e1668f44234881817e4bc3eb0cff1103f9c95"
     },
     {
       "id": "docs-index",
@@ -599,20 +599,21 @@ window.DOCS_INDEX = {
     {
       "id": "forensic-review",
       "path": "docs/reviews/forensic-review.md",
-      "title": "Forensic Review — AI-Forward repository (revision 18)",
+      "title": "Forensic Review — AI-Forward repository (revision 30)",
       "type": "doc",
       "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "pack-evolution",
-      "reviewBy": "2026-11-02",
+      "reviewBy": "2026-11-08",
       "reviewSuggested": [],
-      "summary": "Comprehensive evidence-based assessment of the AI-Forward repository at commit 53e3afe (revision 18). Ten findings, none P0. The two load-bearing results are FR-011 — the repository's foundational invariant (pack/ is source, .claude/ and .github/ are generated) has no CI gate, proven by drifting a worktree — and FR-020, Copilot receiving 11 of the 23 personas the deployment map promises.",
+      "summary": "Adoption-readiness assessment at commit 2227632 (revision 30), scoped to inconsistencies and contradictions. Every self-declared gate is green and the repository is still not ready to hand to adopters. Two findings dominate: 183 documented commands invoke `python3`, which on a default Windows install is a broken Store alias, and the Copilot surface receives 11 of the 23 personas the deployment map promises — first raised twelve revisions ago, never closed.",
       "tags": [
         "forensic-review",
-        "ci",
+        "adoption-readiness",
         "consistency",
-        "supply-chain",
-        "documentation"
+        "ci",
+        "documentation",
+        "portability"
       ],
       "links": [
         {
@@ -624,12 +625,12 @@ window.DOCS_INDEX = {
           "rel": "relates-to"
         },
         {
-          "to": "forensic-review-20260712",
+          "to": "forensic-review-20260802",
           "rel": "supersedes"
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a6e7796549e22a4641b4a00a0d784572c521f0618c68c38ecfc74e87cfc25680"
+      "sourceSha256": "b23c9cfb53a2a66559bd12c5cf186ea4f6bd4c7b45073eca8575c1634276c35b"
     },
     {
       "id": "forensic-review-20260712",
@@ -660,8 +661,43 @@ window.DOCS_INDEX = {
       "sourceSha256": "9e2abc127f9b4c38c7dc6ed4a7f955ef7ac3a2ef1640c4c86467ad4bb91a7832"
     },
     {
-      "id": "forensic-review-backlog",
-      "path": "docs/backlog/forensic-review.md",
+      "id": "forensic-review-20260802",
+      "path": "docs/reviews/forensic-review-20260802-rev18.md",
+      "title": "Forensic Review — AI-Forward repository (revision 18, archived)",
+      "type": "doc",
+      "status": "superseded",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2026-11-02",
+      "reviewSuggested": [],
+      "summary": "Comprehensive evidence-based assessment of the AI-Forward repository at commit 53e3afe (revision 18). Ten findings, none P0. The two load-bearing results are FR-011 — the repository's foundational invariant (pack/ is source, .claude/ and .github/ are generated) has no CI gate, proven by drifting a worktree — and FR-020, Copilot receiving 11 of the 23 personas the deployment map promises.",
+      "tags": [
+        "forensic-review",
+        "ci",
+        "consistency",
+        "supply-chain",
+        "documentation"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        },
+        {
+          "to": "forensic-review-20260802-backlog",
+          "rel": "relates-to"
+        },
+        {
+          "to": "forensic-review-20260712",
+          "rel": "supersedes"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "17cc455044845c62f23f5013a78809fe422ead390bc3375d23561d1eb51502cd"
+    },
+    {
+      "id": "forensic-review-20260802-backlog",
+      "path": "docs/backlog/forensic-review-20260802-rev18.md",
       "title": "Forensic Review Backlog — AI-Forward repository (revision 18)",
       "type": "doc",
       "status": "proposed",
@@ -679,7 +715,7 @@ window.DOCS_INDEX = {
       ],
       "links": [
         {
-          "to": "forensic-review",
+          "to": "forensic-review-20260802",
           "rel": "refines"
         },
         {
@@ -692,7 +728,37 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d08e4bc2de4740f560d2678a04b4d5fa64cc8782d11e24efb56dbe38767aaa35"
+      "sourceSha256": "e9dff6862d5cce87e6dfb4a40923f941a0f2a5a20fd569c8b7a592a663992fe1"
+    },
+    {
+      "id": "forensic-review-backlog",
+      "path": "docs/backlog/forensic-review.md",
+      "title": "Forensic Review Backlog — AI-Forward repository (revision 30)",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2026-11-08",
+      "reviewSuggested": [],
+      "summary": "Twelve proposed items (FR-031..FR-042) from the revision-30 review, ordered into four independently deliverable phases. Seven carry forward unchanged from the revision-18 backlog. All items are status `proposed` and await human triage; nothing has been remediated.",
+      "tags": [
+        "backlog",
+        "forensic-review",
+        "adoption-readiness",
+        "triage"
+      ],
+      "links": [
+        {
+          "to": "forensic-review",
+          "rel": "refines"
+        },
+        {
+          "to": "forensic-review-20260802-backlog",
+          "rel": "supersedes"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "6f9f6c3cf3732d5ee307941aa847649c9ce04fe265cf668ca7d59afc88566d39"
     },
     {
       "id": "forensic-review-backlog-20260712",
@@ -1492,5 +1558,5 @@ window.DOCS_INDEX = {
       "description": "Inspect a rendered design or design-language preview."
     }
   ],
-  "graphSha256": "150e9bd335533f05d8fbb90789848194b2e526981517523b071dcc96f4ac827e"
+  "graphSha256": "30d2326abbf65d04933fd2a96af3c97dc103682dda7c18081a6bca594eaa2895"
 };

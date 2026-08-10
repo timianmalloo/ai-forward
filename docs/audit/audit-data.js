@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-08-07T22:15:50Z",
+  "generated": "2026-08-10T13:44:46Z",
   "audit": [
     {
       "id": "al-0001",
@@ -634,6 +634,34 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "c636b7a6c17b18add4205e484118dc12f2f8c453",
         "short": "c636b7a6c",
+        "branch": "main",
+        "pushed": false
+      }
+    },
+    {
+      "id": "al-0026",
+      "shortname": "forensicreview-rev30",
+      "datetime": "2026-08-10T13:44:46Z",
+      "session": "0d635851",
+      "prompt": "do a full /forensicreview of this repo, look for inconsistencies and contradictions and where we need to do clean up before we ask folks to adopt the existing changes",
+      "summary": "Adoption-readiness forensic review at 2227632 (revision 30). Verdict NOT READY: 0 P0, 4 P1, 5 P2, 3 P3. Every self-declared gate green and none caught anything. Headline: 183 documented commands use python3 which is a broken Store alias on default Windows (exit 9009); Copilot gets 11 of the 23 personas the deployment map promises. Meta-finding: 7 of 12 revision-18 findings still open unchanged twelve revisions later - registered as PACK-B. Prior review archived to forensic-review-20260802.",
+      "kind": "skill",
+      "skill": "forensicreview",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/reviews/forensic-review.md",
+        "docs/backlog/forensic-review.md"
+      ],
+      "tags": [
+        "forensic-review",
+        "adoption",
+        "consistency"
+      ],
+      "outcome": "success",
+      "git": {
+        "sha": "22276321e84fec1f714ae11c2a68bfda9ad3e517",
+        "short": "22276321e",
         "branch": "main",
         "pushed": false
       }
