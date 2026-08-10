@@ -19,6 +19,18 @@ Exit: --check -> 1 if any finding else 0 ; --write -> 0.
 """
 import argparse, json, os, re, sys
 
+# Windows consoles default to cp1252, which cannot encode the box/arrow glyphs this
+# tool prints - `prompt-log.py --help` crashed outright with UnicodeEncodeError (FR-047).
+# The other scripts survived only because their glyphs happen to exist in cp1252, which is
+# luck rather than an invariant, so the guard is applied uniformly.
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        try:
+            _stream.reconfigure(encoding="utf-8", errors="replace")
+        except (ValueError, OSError):
+            pass
+
+
 # Pattern: Pattern registry — (category, compiled regex). Email + known secret prefixes by default;
 # the broad high-length token is gated behind --aggressive to control false positives.
 _BASE = [

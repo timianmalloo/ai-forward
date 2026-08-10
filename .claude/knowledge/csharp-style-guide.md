@@ -1,6 +1,6 @@
 # C# Coding Style Guide
 
-*Version 2.0 — Default target platform: the latest stable LTS / C# version (currently .NET 10 (LTS) / C# 14). This is the portable baseline; a consuming repository's own target framework is authoritative where it differs (see that repo's `.github/instructions/csharp.instructions.md` / `Directory.Build.props`).*
+*Version 2.0 — Default target platform: the latest stable LTS / C# version (currently .NET 10 (LTS) / C# 14). This is the portable baseline; a consuming repository's own target framework is authoritative where it differs (see that repo's `.github/instructions/csharp-style-guide.instructions.md` / `Directory.Build.props`).*
 
 A specification for writing C# that is legible, intentional, and durable. The guide is opinionated; defaults exist so reviewers can spend energy on design, not formatting.
 

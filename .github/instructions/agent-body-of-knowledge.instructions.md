@@ -156,7 +156,7 @@ The most common failure of AI-generated TDD is **tests that pass but prove nothi
 
 #### IV.2.1 — Testing Strategy selection is normative
 
-The **Testing Strategy** (`.github/knowledge/testing-strategy.md`) is the governing decision procedure for what tests the agent writes. Before writing tests, the agent **MUST** map the implementation to the strategy's trigger table and apply every matching directive as a union. D0 (test hygiene and determinism) applies to every test, without exception.
+The **Testing Strategy** (`.github/instructions/testing-strategy.instructions.md`) is the governing decision procedure for what tests the agent writes. Before writing tests, the agent **MUST** map the implementation to the strategy's trigger table and apply every matching directive as a union. D0 (test hygiene and determinism) applies to every test, without exception.
 
 The strategy's prime directives are part of this BoK's correctness standard:
 

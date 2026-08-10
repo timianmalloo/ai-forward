@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-08-10T17:00:53Z",
+  "generated": "2026-08-10T17:09:59Z",
   "audit": [
     {
       "id": "al-0001",
@@ -773,6 +773,34 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "a587952201cf5b4aacc7944a9f493db9e9b4c6af",
         "short": "a58795220",
+        "branch": "main",
+        "pushed": false
+      }
+    },
+    {
+      "id": "al-0031",
+      "shortname": "remediate-rev33-findings",
+      "datetime": "2026-08-10T17:09:58Z",
+      "session": "0d635851-2754-44cf-8597-a72228967201",
+      "prompt": "do one more /forensicreview and see what else needs addressing",
+      "summary": "Remediated 4 of 5 revision-33 findings at revision 34 and, more importantly, built the control for the class behind them. check_promised_paths() enforces CI2's sweep step for its highest-frequency shape and caught FR-044/FR-045 the moment it was written. FR-047's guard applied to all seven scripts, not the one that crashed, proved red-first. FR-046 covers the two named controls with true-positive and true-negative tests; suite 119 to 126. Corrected a wrong claim in the committed backlog: no script was guarded, contrary to what the review first stated. RIG-C moved from uncontrolled to partially-controlled.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "tools/check-consistency.py",
+        "tests/docs_explorer/test_deployed_scripts.py",
+        "docs/backlog/forensic-review.md"
+      ],
+      "tags": [
+        "forensic",
+        "control"
+      ],
+      "outcome": "success",
+      "git": {
+        "sha": "3bf11bb5a5c739fae71ed398ba28aa88e6cb6733",
+        "short": "3bf11bb5a",
         "branch": "main",
         "pushed": false
       }

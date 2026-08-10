@@ -1,16 +1,16 @@
 ---
 doc: INSTALL
 purpose: 'Manual reconciliation guide and refresh changelog. On a repo refresh, read `changes` below — it is the key guide: it lists exactly what to re-copy and re-paste since the previous revision, so you do not have to diff the whole tree.'
-bundle_version: '2026.08.10.3'
-revision: 33
+bundle_version: '2026.08.10.4'
+revision: 34
 counts: { lenses: 23, skills: 19, knowledge_docs: 33, templates: 24, scripts: 13 }
 refresh_protocol: 'Compare your repo last-applied revision to the `revision` above. If it is lower, apply each entry in `changes` in order — re-copy the listed `paths` to their mapped destinations (deployment map in the body), re-apply the Copilot frontmatter wraps, and where an entry `deploy` says RE-PASTE, replace the managed blocks wholesale between their markers. Never overwrite an accumulated docs/docs-index.js.'
 changes:
-  - { type: added, area: templates, paths: ['templates/ui-guide-hub.template.md'], deploy: 'copy to docs/ai-forward-pack/templates/; instantiate as docs/ui-guide.md substituting __REVIEW_BY__', summary: 'THE ADOPTION PATH WAS BROKEN AND NOBODY HAD RUN IT. Executing an install against a scratch repo for the first time showed a fresh install FAILS docs-graph.py validate on the adopters very first command. The deployment map promised docs/ui-guide.md with NO SOURCE in the pack, so an installing agent copies the source repos version - whose links point at artifacts a fresh install does not have (dangling -> exit 1). Emptying the links does not help: the node is then an orphan (also exit 1). This template ships the node with portable frontmatter and a single relates-to edge to the audit hub.' }
-  - { type: changed, area: scripts, paths: ['scripts/audit-log.py'], deploy: 'copy to docs/ai-forward-pack/scripts/', summary: 'audit-log.py now bootstraps docs/audit/audit-log.md, the graph hub node AL7 has always mandated and which nothing ever created - a fresh install produced audit-data.js, audit-log.jsonl and index.html but no .md, so the audit bundle was invisible to the knowledge graph. Bootstrapped in render() alongside the viewer (AL11 - same trigger: if it is missing, make it). Links are deliberately empty; an INBOUND link from the UI-guide hub clears the orphan check, verified by execution.' }
-  - { type: changed, area: adapters, paths: ['adapters/INSTALL.md', 'OVERVIEW.md'], deploy: 'copy INSTALL and OVERVIEW to docs/ai-forward-pack/', summary: 'The deployment map now names the template for every destination it promises. Also corrected the template count, which read 19 in the map prose and 23 in the counts frontmatter while the filesystem had 24.' }
-  - { type: changed, area: knowledge, paths: ['knowledge/continuous-improvement.md'], deploy: 'copy to .claude/knowledge/ and re-wrap into .github/instructions/', summary: 'Seed register gains PACK-E - deployment map promises an artifact the project does not ship. The source repo has the file so every check passes there; the failure appears only in a target repo, on the adopters first command, as an error about artifacts they have never heard of. Verify installs on a scratch repo, not in the repo that already has the file.' }
-  - { type: changed, area: scripts, paths: ['tools/check-consistency.py'], deploy: 'repo-local tooling; not deployed', summary: 'check_static_page_links() resolves every relative href on the hand-maintained docs/_site landing page and fails on any that does not exist; it was pointing at ../skills.md, a file that has never existed here. A static page is not a graph node, so docs-graph.py validate never saw it. Proved red-first.' }
+  - { type: changed, area: scripts, paths: ['tools/check-consistency.py'], deploy: 'repo-local tooling; not deployed', summary: 'THE CONTROL FOR THIS PROJECTS DOMINANT DEFECT. check_promised_paths() fails when any pack artifact names a repo path that neither exists, nor is claimed by a SKILL.md as created-at-runtime, nor is allowlisted with a stated reason. The revision-33 review found that four of its five findings were the same shape - a fix applied to the instance and never swept to the class (RIG-C, third occurrence) - and that nothing enforced CI2s sweep step. This is that enforcement: it caught FR-044 and FR-045 the moment it was written, and would have caught FR-043.' }
+  - { type: changed, area: adapters, paths: ['adapters/INSTALL.md'], deploy: 'copy to docs/ai-forward-pack/', summary: 'FR-044 RESOLVED - the deployment map promised thin command entry points at .claude/commands/<name>.md that nothing creates and Claude Code does not need (it auto-discovers .claude/skills/*/SKILL.md by description). The row now says none, and the worked sample that invited adopters to hand-author unversioned duplicates of the skills was deleted. Same class as FR-043, in the same file, one revision later.' }
+  - { type: changed, area: knowledge, paths: ['knowledge/agent-rules-of-the-road.md', 'knowledge/agent-body-of-knowledge.md', 'knowledge/csharp-style-guide.md', 'knowledge/FOUNDATION.md'], deploy: 'copy to .claude/knowledge/ and re-wrap into .github/instructions/', summary: 'FR-045 RESOLVED - the vendored Rules of the Road carried a SECOND deployment map naming six paths that do not exist (.github/knowledge/ has never existed; four instruction filenames were wrong), in documents the managed block loads every session on both surfaces. An agent grounding itself was told authoritatively to load files that are not there. Corrected, and recorded as a known intentional divergence in FOUNDATION.md with foundation-check.py --update.' }
+  - { type: changed, area: scripts, paths: ['scripts/prompt-log.py', 'scripts/audit-log.py', 'scripts/docs-graph.py', 'scripts/scrub.py', 'scripts/design-lint.py', 'scripts/pack-doctor.py', 'scripts/foundation-check.py'], deploy: 'copy to docs/ai-forward-pack/scripts/', summary: 'FR-047 RESOLVED - prompt-log.py --help crashed outright on Windows because its help text carries arrow glyphs absent from cp1252. The stdout/stderr guard is applied to ALL SEVEN scripts that print non-ASCII, not just the one that crashed. Correction to the finding as first written: NO script was guarded; the claim that pack-doctor.py was came from a heuristic rather than from opening the file. Six survived only because their glyphs happen to exist in cp1252 - luck, not an invariant.' }
+  - { type: added, area: scripts, paths: ['tests/docs_explorer/test_deployed_scripts.py'], deploy: 'repo-local; not deployed', summary: 'FR-046 - scrub.py (the PII/secret control named in responsible-ai-policy.md) and design-lint.py (the U3a token control) shipped to every adopting repo with no test and no gate. Now covered by true-positive AND true-negative assertions, plus a cp1252 encoding assertion across every deployed script, proved red-first. Suite 119 -> 126.' }
 
   # ---- Prior revisions ----
 
@@ -136,7 +136,7 @@ It emits a `python interpreter` check that names the exact substitution to use, 
 | Rules of the Road (the always-on rules) | `CLAUDE.md` (link to it) + `.claude/` | `AGENTS.md` |
 | Knowledge docs (`knowledge/*.md`, plus the existing pack) | `.claude/knowledge/` or repo `docs/` referenced from `CLAUDE.md` | `.github/instructions/*.instructions.md` with `applyTo` globs |
 | The 19 skills (`commands/*/SKILL.md`) | `.claude/skills/<name>/SKILL.md` | `.github/prompts/<name>.prompt.md` (wrapper that carries the same flow) |
-| Thin command entry points | `.claude/commands/<name>.md` | `.github/prompts/<name>.prompt.md` |
+| Thin command entry points | *(none - Claude Code auto-discovers `.claude/skills/*/SKILL.md` by description)* | `.github/prompts/<name>.prompt.md` |
 | Peer agents (orchestrator, product-strategist, domain-researcher) | `.claude/agents/<name>.md` | `.github/agents/<name>.agent.md` |
 | Adversary agents (the existing 11) | `.claude/agents/<name>.md` | `.github/agents/<name>.agent.md` |
 | Templates (`templates/*`, 24 incl. the glossary, decision note, threat model, privacy review, design-language + preview) | `docs/ai-forward-pack/templates/` (referenced by skills) | same (shared) |
@@ -211,19 +211,6 @@ your-repo/
 ```
 
 Keep `CLAUDE.md` short — it is always in context. Put the durable reasoning in the knowledge files and let the skills pull them in. Skills auto-apply by their `description`; a command of the same name is just a manual trigger, and the skill takes priority. Spikes run under `spikes/` (see `knowledge/spike-protocol.md`); add `spikes/` to `.gitignore` unless a probe is worth keeping as evidence. The graph tool's append-only JSONL writes use persistent sibling lock files to prevent inode-replacement races; add `*.jsonl.lock` to `.gitignore` and do not commit those local coordination files.
-
-**Sample thin command** — `.claude/commands/specify.md`:
-
-```markdown
----
-description: Turn a prompt or idea into a crisp, testable product spec (runs the /specify skill).
----
-Run the **specify** skill on the following input, in Peer Mode for authoring and
-Adversary Mode at the gate. Produce the spec artifact from templates/spec.template.md
-and do not let the authors clear their own hard veto.
-
-Input: $ARGUMENTS
-```
 
 ---
 

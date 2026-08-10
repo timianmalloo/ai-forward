@@ -582,6 +582,71 @@ def check_static_page_links(findings):
                     f"a static page is invisible to docs-graph validate, so nothing else checks it")
 
 
+# A path the pack names but does not ship is only legitimate when something creates it at
+# runtime. These are the cases with no owning SKILL.md, each with the reason it is exempt.
+PROMISED_PATH_ALLOWLIST = {
+    ".github/mcp.json": "written by visual-assets-setup.py --init-mcp; git-ignored (carries credentials)",
+    "docs/.obsidian/workspace.json": "per-user Obsidian state, deliberately git-ignored (obsidian-lens OB4)",
+    "docs/design/conceptual-model.md": "authored by /design when a domain is modelled (DM18)",
+    "docs/lessons/defect-classes.md": "seeded per-repo from the template",
+}
+
+
+def check_promised_paths(findings):
+    """FR-044/FR-045, and the control for PACK-E generally.
+
+    A deployment map or standard that names a repo path the project does not ship sends an
+    adopting agent to a file that is not there. FR-043 found one instance and fixed it; FR-044
+    found another *in the same file* one revision later, because the fix never swept the class.
+    RIG-C - "sweep stopped at the instance" - is this project's dominant defect signature, and
+    nothing enforced CI2's sweep step. This is that enforcement.
+
+    A referenced path is legitimate when it (a) exists, (b) is claimed by a SKILL.md as
+    something that skill creates, or (c) is allowlisted above with a stated reason. Anything
+    else is a promise with no source.
+    """
+    skill_text = []
+    for base, _dirs, names in os.walk(os.path.join(PACK, "commands")):
+        for name in names:
+            if name == "SKILL.md":
+                with open(os.path.join(base, name), "r", encoding="utf-8") as handle:
+                    skill_text.append(handle.read())
+    skills = "\n".join(skill_text)
+
+    rx = re.compile(
+        r"`((?:docs/|tools/|web/|tests/|\.claude/|\.github/)[A-Za-z0-9_./-]+"
+        r"\.(?:md|py|ps1|js|html|yml|json))`")
+
+    seen = {}
+    for base, dirs, names in os.walk(PACK):
+        dirs[:] = [d for d in dirs if d != "evals"]
+        for name in names:
+            if not name.endswith((".md", ".html")):
+                continue
+            path = os.path.join(base, name)
+            try:
+                with open(path, "r", encoding="utf-8") as handle:
+                    text = handle.read()
+            except OSError:
+                continue
+            for match in rx.finditer(text):
+                ref = match.group(1)
+                if "<" in ref or "*" in ref:
+                    continue
+                if os.path.exists(os.path.join(ROOT, ref)):
+                    continue
+                if ref in PROMISED_PATH_ALLOWLIST or ref in skills:
+                    continue
+                seen.setdefault(ref, set()).add(
+                    os.path.relpath(path, ROOT).replace(os.sep, "/"))
+
+    for ref in sorted(seen):
+        where = sorted(seen[ref])
+        findings.append(
+            f"promised path `{ref}` does not exist and nothing creates it "
+            f"(named in {where[0]}" + (f" +{len(where)-1} more" if len(where) > 1 else "") + ")")
+
+
 def main():
     truth = filesystem_truth()
     findings = []
@@ -591,6 +656,7 @@ def main():
     check_deployed_agent_parity(truth, findings)
     check_directive_ranges(findings)
     check_static_page_links(findings)
+    check_promised_paths(findings)
     check_managed_blocks(truth, findings)
     check_prose(truth, findings)
 

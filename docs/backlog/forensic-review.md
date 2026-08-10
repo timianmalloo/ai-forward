@@ -156,7 +156,8 @@ The Simplifier removed these as preference-not-defect: the `__pycache__` entry f
 
 # Revision-33 review — new findings (FR-044..FR-048)
 
-## FR-044 — The deployment map still promises `.claude/commands/`, which nothing creates
+## FR-044 — The deployment map still promises `.claude/commands/`, which nothing creates — **RESOLVED**
+- **RESOLVED at revision 34.** The map row now reads *(none — Claude Code auto-discovers `.claude/skills/*/SKILL.md` by description)* and the worked "sample thin command" block, which invited adopters to hand-author unversioned duplicates of the skills, was deleted. **The control is the real fix:** `check_promised_paths()` in `check-consistency.py` now fails when any pack artifact names a repo path that neither exists, nor is claimed by a SKILL.md as created-at-runtime, nor is allowlisted with a stated reason. It caught this finding and FR-045 the moment it was written — red-first by construction — and would have caught FR-043.
 - **Kind:** issue · **Priority:** P1 · **Confidence:** Verified · **Status:** proposed
 - **Evidence:** `pack/adapters/INSTALL.md:139` — `| Thin command entry points | `.claude/commands/<name>.md` | ... |` — and `:215` gives a worked *"Sample thin command — `.claude/commands/specify.md`"*. The directory does not exist in this repo, and `tools/sync-pack.ps1` contains no `.claude/commands` branch (grep: no match).
 - **Violated contract:** PACK-E — a deployment map promising an artifact the project does not ship. **This is the same class, in the same file, that FR-043 corrected at revision 33.** The fix stopped at `docs/ui-guide.md` and never swept the rest of the map, which is exactly the CI2 failure the register exists to prevent — the second occurrence of "the sweep stopped at the instance" in this project.
@@ -165,7 +166,8 @@ The Simplifier removed these as preference-not-defect: the `__pycache__` entry f
 - **Remediation:** either delete the row and the sample, or ship a generator. Prefer deletion (Simplifier) unless a concrete need is named.
 - **Acceptance criteria:** every destination named in the deployment map either exists after a fresh install, or is explicitly marked *created by skill X at runtime*. **Validation:** re-run the FR-043 scratch-repo install and diff installed paths against the map. **Owner:** maintainer. **Next skill:** `/implement`.
 
-## FR-045 — A second, contradictory deployment map inside an always-loaded document
+## FR-045 — A second, contradictory deployment map inside an always-loaded document — **RESOLVED**
+- **RESOLVED at revision 34.** All six paths corrected to the real deployment layout across `agent-rules-of-the-road.md`, `agent-body-of-knowledge.md` and `csharp-style-guide.md`. Because these are **vendored** foundation docs, the edit was recorded as a known intentional divergence in `FOUNDATION.md` and re-hashed with `foundation-check.py --update`; that gate is green again and the divergence is now visible rather than silent.
 - **Kind:** issue · **Priority:** P1 · **Confidence:** Verified · **Status:** proposed
 - **Evidence:** `pack/knowledge/agent-rules-of-the-road.md` §6 *"Deployment map — wiring these documents into the toolchain"* names paths that do not exist anywhere in this repo:
 
@@ -184,7 +186,8 @@ The Simplifier removed these as preference-not-defect: the `__pycache__` entry f
 - **Note on editability:** these are vendored foundation docs, but `FOUNDATION.md` maintains a **known-divergence list** and `foundation-check.py --update` re-hashes after an intentional edit. A precedent divergence is already recorded. So this is correctable, not frozen.
 - **Acceptance criteria:** §6 either matches the real deployment map or is replaced by a pointer to `INSTALL.md`; `foundation-check.py` clean with the divergence recorded. **Validation:** assert every path named in §6 resolves. **Owner:** maintainer. **Next skill:** `/implement`.
 
-## FR-046 — Seven deployed scripts have no tests and no gate, including the PII control
+## FR-046 — Seven deployed scripts have no tests and no gate, including the PII control — **RESOLVED**
+- **RESOLVED at revision 34** for the two load-bearing controls. `tests/docs_explorer/test_deployed_scripts.py` asserts `scrub.py` on a **true positive** (a real address is reported), a **true negative** (the GitHub noreply identity is not), and clean text; and `design-lint.py` on a resolvable vs unresolvable `{token}`. The design-lint fixture initially failed because it **guessed** the DESIGN.md contract; reading `design-lint.py` showed it also requires a `typography:` block. Suite 119 → 126. The three setup scripts (`graphify`, `obsidian`, `visual-assets`) remain untested — they are interactive installers, and are left as a smaller, recorded residual rather than being given theatre tests.
 - **Kind:** risk · **Priority:** P1 · **Confidence:** Verified · **Status:** proposed
 - **Evidence:** of the 12 scripts deployed to every adopting repo, gate/test coverage is:
 
@@ -198,11 +201,12 @@ The Simplifier removed these as preference-not-defect: the `__pycache__` entry f
 - **Disconfirming check attempted:** smoke-ran all seven; six exit 0 on `--help`, so they are not obviously broken — the gap is *proof*, not an observed defect. That is why this is filed as **risk**, not **issue**. (The seventh is FR-047.)
 - **Acceptance criteria:** each of the four load-bearing scripts (`scrub`, `design-lint`, `ui-craft-gate`, `prompt-log`) has a test asserting both a true positive and a true negative, and runs in `pack-consistency.yml`. **Validation:** delete a regex and confirm a test fails. **Owner:** maintainer. **Next skill:** `/implement`.
 
-## FR-047 — `prompt-log.py --help` crashes on Windows; the console-encoding fix was never swept
-- **Kind:** issue · **Priority:** P2 · **Confidence:** Verified · **Status:** proposed
+## FR-047 — `prompt-log.py --help` crashes on Windows; the console-encoding fix was never swept — **RESOLVED**
+- **RESOLVED at revision 34.** The stdout/stderr guard is applied to **all seven** scripts that print non-ASCII, not just the one that crashed — the sweep the finding was about. `test_help_exits_zero_under_cp1252` asserts every deployed script survives `PYTHONIOENCODING=cp1252`, and was **proved red-first**: removing the guard from `prompt-log.py` fails it, restoring it passes. (The first red-first attempt appeared to pass; the strip regex had silently failed and the guard was still present — so the proof was redone rather than trusted.)
+- **Kind:** issue · **Priority:** P2 · **Confidence:** Verified · **Status:** **RESOLVED at revision 34**
 - **Evidence:** `python pack/scripts/prompt-log.py --help` exits 1 with `UnicodeEncodeError: 'charmap' codec can't encode character '\u2191'` — the help text contains `↑ ↓ → ← ▸ ▾`, none of which exist in cp1252, the default Windows console encoding.
-- **Scope, established by sweeping rather than assuming:** seven pack scripts contain non-ASCII; **`pack-doctor.py` alone guards stdout** with `reconfigure(...)`. The other six do not. They survive only because their glyphs (`—`, `·`, `…`, `•`) happen to exist in cp1252 — so this is not a near-miss, it is an **unenforced invariant**. `scrub.py` additionally renders its masked output as mojibake on a Windows console, degrading the control's legibility.
-- **Violated contract:** PACK-C (documented command assumed portable), now in code rather than prose — and CI2: someone already fixed exactly this in `pack-doctor.py` and did not sweep the class.
+- **Scope, established by sweeping rather than assuming:** seven pack scripts contain non-ASCII and **not one of them guarded stdout**. *(Correction, made while remediating: this first read "`pack-doctor.py` alone guards stdout". That came from a loose heuristic — the file merely mentions `PYTHONIOENCODING` — rather than from opening it. Reading it showed no guard at all, which makes the finding **stronger**: the invariant was entirely unenforced.)* They survive only because their glyphs (`—`, `·`, `…`, `•`) happen to exist in cp1252 — so this is not a near-miss, it is an **unenforced invariant**. `scrub.py` additionally renders its masked output as mojibake on a Windows console, degrading the control's legibility.
+- **Violated contract:** PACK-C (documented command assumed portable), now in code rather than prose — and CI2 — though the corrected reading is that **nobody had fixed it anywhere**; the class was simply never noticed, because six of seven scripts fail silently only on glyphs they do not happen to use.
 - **Consequence bounded honestly:** `list`, `search`, `add` and `browse` all work (verified, exit 0). Only `--help` dies — but `--help` is the first thing a new adopter runs, and the two skills it backs are the pack's prompt-reuse surface.
 - **Disconfirming check attempted:** ran every documented subcommand, not just the failing one, specifically to avoid inflating the severity.
 - **Acceptance criteria:** every deployed script guards stdout; `prompt-log.py --help` exits 0 on Windows; a test asserts it. **Validation:** run each script's `--help` under `PYTHONIOENCODING=cp1252`. **Owner:** maintainer. **Next skill:** `/implement`.

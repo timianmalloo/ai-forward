@@ -29,6 +29,18 @@ Conventions
 import argparse, concurrent.futures, contextlib, datetime, hashlib, json, os, re, stat, sys, tempfile, time
 from html.parser import HTMLParser
 
+# Windows consoles default to cp1252, which cannot encode the box/arrow glyphs this
+# tool prints - `prompt-log.py --help` crashed outright with UnicodeEncodeError (FR-047).
+# The other scripts survived only because their glyphs happen to exist in cp1252, which is
+# luck rather than an invariant, so the guard is applied uniformly.
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        try:
+            _stream.reconfigure(encoding="utf-8", errors="replace")
+        except (ValueError, OSError):
+            pass
+
+
 REL_REGISTRY = ["implements","refines","depends-on","supersedes","tested-by","documents","uses-term","relates-to"]
 TYPES = ["knowledge","glossary","spec","architecture","adr","design","design-language","investigation","proof-pack","decision-note","threat-model","privacy-review","api","source","doc","index"]
 REQUIRED = ["id","title","type","status","summary"]
