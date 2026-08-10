@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-08-10T14:58:41Z",
+  "generated": "2026-08-10T15:11:34Z",
   "audit": [
     {
       "id": "al-0001",
@@ -719,6 +719,33 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "1189187cfcfc9561338cd2285c99d574668fc210",
         "short": "1189187cf",
+        "branch": "main",
+        "pushed": false
+      }
+    },
+    {
+      "id": "al-0029",
+      "shortname": "verify-adoption-path",
+      "datetime": "2026-08-10T15:11:33Z",
+      "session": "0d635851-2754-44cf-8597-a72228967201",
+      "prompt": "do all the next steps",
+      "summary": "Executed the /addpacktorepo adoption path end-to-end against a scratch repo for the first time. It was BROKEN: a fresh install failed docs-graph.py validate on the adopters first command, because the deployment map promised docs/ui-guide.md with no source in the pack, and the AL7-mandated docs/audit/audit-log.md was never created by anything. Fixed by shipping a hub template with portable frontmatter and bootstrapping the audit hub in audit-log.py; verified a clean install now validates (2 artifacts, 0 problems, 0 orphans). Registered PACK-E.",
+      "kind": "skill",
+      "skill": "forensicreview",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "pack/templates/ui-guide-hub.template.md",
+        "pack/scripts/audit-log.py"
+      ],
+      "tags": [
+        "adoption",
+        "forensic"
+      ],
+      "outcome": "success",
+      "git": {
+        "sha": "8b6b8cae21ebfedb95af27929d560d68d37cf075",
+        "short": "8b6b8cae2",
         "branch": "main",
         "pushed": false
       }

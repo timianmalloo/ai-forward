@@ -47,7 +47,7 @@ Run affected skill cases on every pack edit; run all cases on model-version chan
 pack/           ← SINGLE SOURCE OF TRUTH — edit here only
   knowledge/    ← 24 knowledge docs (reasoning spine + vendored foundation)
   commands/     ← 19 skills (one SKILL.md each)
-  templates/    ← 23 artifact templates
+  templates/    ← 24 artifact templates
   adapters/     ← INSTALL.md + Claude Code agents + Copilot agents/prompts + managed blocks
   evals/        ← pack regression suite (NOT deployed to target repos)
   scripts/  ci/  examples/

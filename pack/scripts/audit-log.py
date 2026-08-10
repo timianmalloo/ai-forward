@@ -110,6 +110,51 @@ def commits_between(before, after, root):
     return [ln for ln in (out or "").split("\n") if ln.strip()]
 
 
+# ---------- graph hub node (AL7: the bundle must BE a graph node) ----------
+HUB = """---
+id: audit-log
+title: "Audit & Change Log"
+type: doc
+status: accepted
+owner: "@maintainers"
+tags: [audit, history, change-log, project-memory]
+links: []
+review-by: %s
+review-suggested: []
+summary: >-
+  The durable, committed history of what was prompted, done, and decided in this
+  repository, so work compounds across sessions. The two JSONL files are the source
+  of truth; audit-data.js and index.html are derived projections.
+---
+
+# Audit & Change Log
+
+`audit-log.jsonl` records every meaningful prompt, skill run and script; `change-log.jsonl`
+records the design decisions. Browse them at [`index.html`](index.html) or via `/auditlog`.
+All writes go through `audit-log.py` - never hand-append the JSONL.
+"""
+
+
+def ensure_hub(adir):
+    """AL7 requires the bundle be registered in the knowledge graph through a hub artifact.
+    Nothing created it: a fresh install produced audit-data.js, audit-log.jsonl and
+    index.html but no .md, so the bundle was invisible to the graph. Bootstrapped here
+    alongside the viewer (AL11) because the same trigger applies - if it is missing, make it.
+
+    Links are deliberately EMPTY: a fresh install has no other artifact to point at, and a
+    dangling link fails `docs-graph.py validate` outright. An INBOUND link (from the UI guide
+    hub, or the first skill-authored artifact) clears the orphan check - verified by execution.
+    """
+    path = os.path.join(adir, "audit-log.md")
+    if os.path.exists(path):
+        return False
+    stamp = now_iso()
+    review = "%d%s" % (int(stamp[:4]) + 1, stamp[4:10])
+    with open(path, "w", encoding="utf-8") as handle:
+        handle.write(HUB % review)
+    return True
+
+
 # ---------- viewer (self-bootstrap from the template) ----------
 def find_template():
     here = os.path.dirname(os.path.abspath(__file__))
@@ -126,6 +171,7 @@ def project_name(root):
 
 def render(root, project=None):
     """Regenerate audit-data.js and the managed viewer from canonical sources."""
+    ensure_hub(audit_dir(root))
     os.makedirs(audit_dir(root), exist_ok=True)
     data = {"project": project or project_name(root), "generated": now_iso(),
             "audit": read_log(root, "audit"), "changes": read_log(root, "change")}
