@@ -117,10 +117,36 @@ $ghPromptsCount = (Get-ChildItem $ghPrompts -File).Count
 Write-Host "  .github/prompts: $ghPromptsCount prompts"
 
 # --- .github/agents (Copilot agents — dogfood) --------------------------------
-# These carry no tools: line (per INSTALL §1.2) — Copilot drops them in as-is.
+# The deployment map promises BOTH peers and adversaries on this surface. The
+# copilot/agents/*_agent.md files already carry no tools: line and drop in as-is.
+# The claude-code/agents/*.md files are the other 12 personas; they carry a tools:
+# line that Copilot ignores (and which is therefore misleading), so it is stripped
+# at this boundary per INSTALL §1.2 — one source per persona, one frontmatter edit.
+# Shipping only the first group left Copilot with 11 of 23 personas (FR-032).
 $ghAgents = Join-Path $repo ".github\agents"
 Reset-Dir $ghAgents
-Copy-Item (Join-Path $pack "adapters\copilot\agents\*_agent.md") $ghAgents -Force
+# Copilot's documented convention is `<name>.agent.md` (docs.github.com, "Create custom
+# agents for CLI"). `*_agent.md` is the pack's SOURCE naming (INSTALL 1.2), so the deploy
+# step RENAMES rather than copying verbatim - shipping the source name deployed a
+# non-standard filename that happened to load, which is not the same as being correct.
+foreach ($cop in Get-ChildItem (Join-Path $pack "adapters\copilot\agents") -Filter *_agent.md -File) {
+    $name = $cop.BaseName -replace '_agent$', ''
+    Copy-Item $cop.FullName (Join-Path $ghAgents ("{0}.agent.md" -f $name)) -Force
+}
+foreach ($cc in Get-ChildItem (Join-Path $pack "adapters\claude-code\agents") -Filter *.md -File) {
+    $dest = Join-Path $ghAgents ("{0}.agent.md" -f $cc.BaseName)
+    $lines = Get-Content $cc.FullName
+    # Drop the frontmatter `tools:` line (and any indented continuation of it).
+    $out = New-Object System.Collections.Generic.List[string]
+    $inTools = $false
+    foreach ($line in $lines) {
+        if ($line -match '^tools:') { $inTools = $true; continue }
+        if ($inTools -and $line -match '^\s+\S') { continue }
+        $inTools = $false
+        $out.Add($line)
+    }
+    Set-Content -Path $dest -Value $out -Encoding UTF8
+}
 $ghAgentsCount = (Get-ChildItem $ghAgents -File).Count
 Write-Host "  .github/agents: $ghAgentsCount agents"
 

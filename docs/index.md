@@ -3,7 +3,7 @@ id: "docs-index"
 title: "AI-Forward — Documentation Map of Content"
 type: doc
 status: accepted
-owner: "@mallalieut"
+owner: "@timianmalloo"
 phase: "documentation"
 tags: [moc, navigation, knowledge-graph]
 links:
@@ -34,7 +34,7 @@ repository — the development home of the **AI-Forward Pack** and a live instal
 
 ## Architecture of record
 
-- **[Architecture Overview](architecture.md)** — the source→build→install→consumer structure, the four diagram families, tool/CLI reference, and the recovered model-orchestration control plane.
+- **[Architecture Overview](architecture.md)** — the source→build→install→consumer structure, the four diagram families, and the tool/CLI reference.
 - **[Forensic Review](reviews/forensic-review.md)** · **[Proposed Remediation Backlog](backlog/forensic-review.md)** — evidence-based review of the repository, focused on commit `5d7b952` and model/task orchestration.
 
 ## The pack itself (payload docs)

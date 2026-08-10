@@ -1,0 +1,27 @@
+# CODEOWNERS — routes review to the humans accountable for each surface (FR-040).
+#
+# The per-artifact `owner:` field in V2 frontmatter remains the source of truth for
+# *artifact* ownership (knowledge-visualization.md V13). This file exists so GitHub
+# routes review automatically; CODEOWNERS patterns go stale in a way frontmatter does
+# not, so review them on a cadence rather than trusting them indefinitely.
+
+# Default: everything, unless a more specific rule below wins.
+*                       @timianmalloo
+
+# The canonical pack source. Every change here must be re-synced to the generated
+# surfaces in the same commit, so it carries the highest review bar.
+/pack/                  @timianmalloo
+/tools/                 @timianmalloo
+
+# Generated surfaces. These are outputs of tools/sync-pack.ps1 — a hand edit here is
+# drift by definition, and the CI drift gate will reject it.
+/.claude/               @timianmalloo
+/.github/instructions/  @timianmalloo
+/.github/prompts/       @timianmalloo
+/.github/agents/        @timianmalloo
+
+# Documentation and the knowledge graph.
+/docs/                  @timianmalloo
+
+# Privileged surfaces: CI has repo permissions, so changes get the same scrutiny as code.
+/.github/workflows/     @timianmalloo

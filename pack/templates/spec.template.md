@@ -187,7 +187,7 @@ default / hover / focus / active / disabled / loading / empty / error / success 
 WCAG 2.2 AA approach (U16); the performance budget for the medium (U17). -->
 
 ### AI-UX (AI-facing UIs only)
-<!-- Applicable HAX guidelines (G1–G18) and Shape-of-AI patterns (Wayfinders / Tuners / Governors /
+<!-- Applicable HAX guidelines (G1–G16) and Shape-of-AI patterns (Wayfinders / Tuners / Governors /
 Trust builders / Identifiers); the wrong answer and uncertainty designed as first-class states
 (U13–U15). -->
 

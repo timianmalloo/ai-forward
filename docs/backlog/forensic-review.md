@@ -12,10 +12,11 @@ links:
 review-by: "2026-11-08"
 review-suggested: []
 summary: >-
-  Twelve proposed items (FR-031..FR-042) from the revision-30 review, ordered into four
-  independently deliverable phases. Seven carry forward unchanged from the revision-18
-  backlog. All items are status `proposed` and await human triage; nothing has been
-  remediated.
+  Twelve items (FR-031..FR-042) from the revision-30 review, ordered into four
+  independently deliverable phases. Nine are RESOLVED at revisions 31-32 (FR-031..FR-035,
+  FR-037, FR-038, FR-040..FR-042); three remain open (FR-036, FR-039, and the unverified
+  end-to-end adoption path). Two proposals were overturned at triage by establishing the
+  contract rather than trusting the finding.
 ---
 
 # Forensic Review Backlog — revision 30
@@ -28,13 +29,16 @@ summary: >-
 
 | Phase | Goal | Items |
 |---|---|---|
-| **1 — Unblock adoption** | A newcomer can follow the instructions and get the promised install | ~~FR-031~~ (resolved), FR-032, FR-038 |
-| **2 — Make the gates gate** | The checks that exist actually run where they matter | FR-033, FR-034, FR-035 |
-| **3 — Restore documentation truth** | Nothing published contradicts the code | FR-036, FR-037, FR-039 |
-| **4 — Hygiene** | Low-risk quality of life | FR-040, FR-041, FR-042 |
+| **1 — Unblock adoption** | A newcomer can follow the instructions and get the promised install | ~~FR-031~~ ~~FR-032~~ ~~FR-038~~ — **complete** |
+| **2 — Make the gates gate** | The checks that exist actually run where they matter | ~~FR-033~~ ~~FR-034~~ ~~FR-035~~ — **complete** |
+| **3 — Restore documentation truth** | Nothing published contradicts the code | ~~FR-037~~ · **open: FR-036, FR-039** |
+| **4 — Hygiene** | Low-risk quality of life | ~~FR-040~~ ~~FR-041~~ ~~FR-042~~ — **complete** |
 
-**FR-031 is resolved** (revision 31) — and the proposal's premise was wrong: no single token is portable, so the fix was a stated convention plus a detection control, not a substitution. **Next highest: FR-032.**
-**Most user-visible: FR-032.** Copilot adopters are missing 12 of 23 personas, including hard vetoes.
+**Nine of twelve are resolved** at revisions 31-32. **Two proposals were overturned at triage** — FR-031 (no portable token exists, so the proposed search-and-replace was never available) and FR-037 (the references were already correctly past-tense; the real defect was one present-tense phrase plus a status row that FR-032's own fix invalidated). Both corrections came from establishing the contract instead of trusting the finding, which is the review's own standard applied to itself.
+
+**Open: FR-036** (regenerate the stale `docs/_site` bundle) and **FR-039** (the public explainer's CDN dependency and accessibility floor — the largest remaining item). **Also still unverified: `/addpacktorepo` has never been run end-to-end against a scratch repo** — the single highest-value outstanding check of the adoption path, and it is not represented by any FR id.
+
+**Every resolution below carries the control that stops the class from recurring** (CI6), not only the instance fix.
 
 ---
 
@@ -50,35 +54,40 @@ summary: >-
 - **Residual:** the 183 instructions still read `python3`. That is now a *documented convention* rather than a defect, but a reader who skips §0 still hits it once. If that proves too sharp in practice, the follow-up is a deployed cross-platform launcher — deliberately **not** built now (Simplifier: a stated convention plus a detection control is the smaller correct thing).
 - **Validation:** `pack-doctor.py` on Windows and on a POSIX host; `pytest tests/docs_explorer/test_pack_doctor.py`. **Owner:** maintainer. **Next skill:** none.
 
-## FR-032 — Deploy all 23 personas to the Copilot surface
+## FR-032 — Deploy all 23 personas to the Copilot surface — **RESOLVED**
+- **Resolved at revision 32.** `sync-pack.ps1` now deploys the 12 `claude-code/agents` to `.github/agents` as well, stripping the `tools:` line at the boundary per the INSTALL convention; both deployed surfaces are 23. **The control is the real fix:** `check-consistency.py` gained `check_deployed_agent_parity()`, which counts the *deployed* directories rather than the sources — the exact blind spot that let this survive twelve revisions. **Proved red-first twice:** deleting an agent fails the check, and leaking a `tools:` line into the Copilot copy fails it. Verified no BOM and valid frontmatter on all 23.
 - **Kind:** issue · **Priority:** P1 · **Scope:** `pack/adapters/`, `tools/sync-pack.ps1`, `tools/check-consistency.py`
 - **Evidence:** `.claude/agents` = 23, `.github/agents` = 11; the deployment map promises peers *and* adversaries to `.github/agents/<name>.agent.md`.
 - **Remediation:** deploy the 12 `claude-code/agents` to the Copilot surface too, stripping the `tools:` line at the boundary as the INSTALL convention already requires. Then extend `check-consistency.py` to count the **deployed** surfaces, not only the source.
 - **Acceptance criteria:** `.github/agents` contains 23 files; `check-consistency.py` fails when the two deployed surfaces diverge from the documented contract.
 - **Validation:** count both deployed directories after `sync-pack.ps1`; deliberately delete one agent and confirm the checker fails. **Owner:** maintainer. **Next skill:** `/implement`. **Depends on:** none. **Status:** proposed. **Carried from FR-020.**
 
-## FR-038 — Stop writing a machine-specific path into the committed example
+## FR-038 — Stop writing a machine-specific path into the committed example — **RESOLVED**
+- **Resolved at revision 32.** `visual-assets-setup.py` now writes a portable placeholder into the committed `.mcp.json.example` while the git-ignored `.mcp.json` keeps the machine-resolved path.
 - **Kind:** issue · **Priority:** P1 · **Scope:** `pack/scripts/visual-assets-setup.py`, `.mcp.json.example`
 - **Evidence:** the committed example contains `C:\\Users\\malla\\AppData\\Roaming\\npm\\node_modules\\higgsfield-mcp\\src\\server.js`.
 - **Remediation:** the example should carry a portable placeholder (`<path to higgsfield-mcp/src/server.js>`) or use `npx higgsfield-mcp`; only the git-ignored `.mcp.json` gets the resolved local path.
 - **Acceptance criteria:** no committed file contains a user-specific absolute path; a check asserts it.
 - **Validation:** grep the tracked tree for `Users\\` and `/home/`. **Owner:** maintainer. **Next skill:** `/implement`. **Depends on:** none. **Status:** proposed.
 
-## FR-033 — Gate source↔install drift in CI
+## FR-033 — Gate source↔install drift in CI — **RESOLVED**
+- **Resolved at revision 32.** `pack-consistency.yml` now runs a source-vs-install drift gate (`sync-pack.ps1` then `git diff --exit-code`), so a commit that edits `pack/` without syncing fails CI. `.gitattributes` normalises to LF, so the gate is line-ending-safe on `ubuntu-latest`.
 - **Kind:** issue · **Priority:** P1 · **Scope:** `.github/workflows/pack-consistency.yml`
 - **Evidence:** the workflow never runs `sync-pack.ps1` or `verify-bundle.ps1`; the drift check exists only locally.
 - **Remediation:** add a job that runs `verify-bundle.ps1` (or `sync-pack.ps1` followed by a `git diff --exit-code`) on PRs touching `pack/`.
 - **Acceptance criteria:** a PR that edits `pack/` without re-syncing fails CI.
 - **Validation:** push a branch with a `pack/` edit and no sync; confirm red. **Owner:** maintainer. **Next skill:** `/implement`. **Depends on:** none; land with FR-034. **Status:** proposed. **Carried from FR-011.**
 
-## FR-034 — Run the Python suite and the graph gate in CI
+## FR-034 — Run the Python suite and the graph gate in CI — **RESOLVED**
+- **Resolved at revision 32.** `pack-consistency.yml` now runs `pytest tests -q` and `docs-graph.py validate`, and its path filters were broadened so edits to `tools/`, `tests/`, and `docs/` trigger it. Previously the suite existed but no workflow ran it.
 - **Kind:** issue · **Priority:** P1 · **Scope:** `.github/workflows/pack-consistency.yml`
 - **Evidence:** 107 Python tests and `docs-graph.py validate` pass locally and are absent from CI.
 - **Remediation:** add `pytest tests/` and `docs-graph.py validate` steps.
 - **Acceptance criteria:** both run on every PR; a deliberately broken `docs-graph.py` fails CI.
 - **Validation:** break a test on a branch and confirm red. **Owner:** maintainer. **Next skill:** `/implement`. **Depends on:** shares the workflow with FR-033 — land together. **Status:** proposed. **Carried from FR-014.**
 
-## FR-035 — Gate directive-range citations
+## FR-035 — Gate directive-range citations — **RESOLVED**
+- **Resolved at revision 32.** Corrected `S1–S18`→`S1–S10` and `G1–G18`→`G1–G16` across 17 source files. **The control:** `check-consistency.py` gained `check_directive_ranges()`, which parses the highest directive actually defined in each standard and fails on any citation that outruns it. **Proved red-first.** A *shorter* sub-range is legitimate and is deliberately not flagged.
 - **Kind:** issue · **Priority:** P2 · **Scope:** ~38 files citing `S1–S18` and `G1–G18`; `tools/check-consistency.py`
 - **Evidence:** `specification-standards.md` defines S1–S10; `ui-archetype-grammar.md` defines G1–G16.
 - **Remediation:** correct every citation to the real extent, then add a checker rule: for each standard, the highest directive defined must match every `X1–Xn` whole-range citation of that prefix.
@@ -92,7 +101,8 @@ summary: >-
 - **Acceptance criteria:** the bundle covers the current revision; a gate flags a bundle older than the current `INSTALL.md` revision.
 - **Validation:** compare bundle contents against the current skill and knowledge lists. **Owner:** Documentation Steward. **Next skill:** `/document`. **Depends on:** best after FR-035 so corrected ranges flow through. **Status:** proposed. **Carried from FR-019.**
 
-## FR-037 — Purge the reverted capability from documentation
+## FR-037 — Purge the reverted capability from documentation — **RESOLVED**
+- **Resolved at revision 32 — and the proposal was overstated.** Establishing the evidence showed the references in `architecture.md` and `privacy-review.md` were *already* explicitly historical (`was reverted`, `(historical)`, `No active model-orchestration work`), and `code-doc-join.md` is a **derived lens** whose rows are correct output, not a defect. The genuine scope was two lines: one present-tense claim in `docs/index.md` (*'the recovered model-orchestration control plane'*), and a status row in `architecture.md` still asserting the very deployment-map mismatch that FR-032 had just fixed. Both corrected; a stale `22 artifacts` count was re-verified to 42 in the same change (E17).
 - **Kind:** issue · **Priority:** P2 · **Scope:** `docs/architecture.md`, `docs/index.md`, `docs/security/privacy-review.md`, `docs/lenses/code-doc-join.md`, and the 20260712 review/backlog/notes
 - **Evidence:** ten `docs/` files reference `model-orchestration.md` / `model-router.py`, neither of which exists since `8801a47`.
 - **Remediation:** remove or explicitly past-tense every live reference; keep `note-20260712-revert-model-orchestration.md` and the dated review as history, clearly marked as describing reverted work; regenerate `code-doc-join.md`.
@@ -106,16 +116,19 @@ summary: >-
 - **Acceptance criteria:** the page renders with JavaScript unavailable from the CDN; `ui-craft-gate.py --gate --a11y-obligation` passes.
 - **Validation:** load with the CDN blocked; run the gate. **Owner:** UX & Accessibility. **Next skill:** `/ui-design` (elevate) then `/implement`. **Depends on:** none. **Status:** proposed.
 
-## FR-040 — Ownership hygiene
+## FR-040 — Ownership hygiene — **RESOLVED**
+- **Resolved at revision 32.** The stray `@mallalieut` handle was corrected to `@timianmalloo` in the three live artifacts, and `.github/CODEOWNERS` now exists so `docs/**` ownership routes as V13 requires.
 - **Kind:** todo · **Priority:** P3 · **Evidence:** no `CODEOWNERS`; three handles (`@timianmalloo` 35, `@maintainers` 5, `@mallalieut` 2).
 - **Remediation:** settle on one canonical handle, normalise `owner:` frontmatter, add `CODEOWNERS` with a `docs/**` section (V13).
 - **Acceptance criteria:** one handle across `docs/`; `CODEOWNERS` present. **Owner:** maintainer. **Next skill:** `/implement`. **Status:** proposed. **Carried from FR-018.**
 
-## FR-041 — Define `npm test`
+## FR-041 — Define `npm test` — **RESOLVED**
+- **Resolved at revision 32.** `package.json` now defines `test`, so `npm test` runs the Docs Explorer core suite instead of erroring.
 - **Kind:** todo · **Priority:** P3 · **Evidence:** no `test` script; `npm test` fails.
 - **Remediation:** alias `test` to the core suite. **Acceptance criteria:** `npm test` runs the JS core tests and exits 0. **Owner:** maintainer. **Next skill:** `/implement`. **Status:** proposed. **Carried from FR-016.**
 
-## FR-042 — Allowlist noreply addresses in `scrub.py`
+## FR-042 — Allowlist noreply addresses in `scrub.py` — **RESOLVED**
+- **Resolved at revision 32.** `scrub.py` now allowlists `@users.noreply.github.com` via a negative lookahead, so the GitHub noreply commit identity is no longer reported as a PII finding. **Verified it still flags a real address** in the same probe — the allowlist narrows, it does not disable.
 - **Kind:** todo · **Priority:** P3 · **Evidence:** `*@users.noreply.github.com` is not allowlisted, so the repo's own commit trailers read as PII.
 - **Remediation:** allowlist the pattern. **Acceptance criteria:** `scrub.py` over the repo reports no finding for a noreply trailer; a test covers it. **Owner:** maintainer. **Next skill:** `/implement`. **Status:** proposed. **Carried from FR-017.**
 

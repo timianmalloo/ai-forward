@@ -460,12 +460,114 @@ def check_prose(truth, findings):
                         f"filesystem has {want}")
 
 
+def check_deployed_agent_parity(truth, findings):
+    """FR-032. Every other check here reads the pack SOURCE. That is exactly why the
+    Copilot surface could ship 11 of 23 personas for twelve revisions while this script
+    printed "23 lenses" and exited 0: `lenses` is len(cc)+len(cop) from pack/, and nothing
+    ever counted what was actually deployed.
+
+    The deployment map promises both peers and adversaries on both surfaces, so the
+    invariant is: each deployed agent directory carries one file per persona. Checking the
+    installed state rather than the source is the whole point (end-to-end-integrity E11).
+    """
+    expected = len(truth["cc_agents"]) + len(truth["cop_agents"])
+    for label, rel, suffix in ((".claude/agents", os.path.join(ROOT, ".claude", "agents"), ".md"),
+                               (".github/agents", os.path.join(ROOT, ".github", "agents"), ".agent.md")):
+        if not os.path.isdir(rel):
+            findings.append(f"{label}: directory missing; expected {expected} deployed personas")
+            continue
+        actual = len([f for f in os.listdir(rel) if f.endswith(suffix)])
+        if actual != expected:
+            findings.append(
+                f"{label}: {actual} personas deployed, but the pack source defines {expected} "
+                f"({len(truth['cc_agents'])} claude-code + {len(truth['cop_agents'])} copilot). "
+                f"The deployment map promises every persona on both surfaces - re-run sync-pack.ps1")
+
+    # A tools: line on the Copilot surface is misleading (Copilot ignores unknown tool
+    # names and silently falls back to all-tools), so INSTALL 1.2 requires it stripped.
+    gh = os.path.join(ROOT, ".github", "agents")
+    if os.path.isdir(gh):
+        leaked = []
+        for name in sorted(os.listdir(gh)):
+            if not name.endswith(".agent.md"):
+                continue
+            with open(os.path.join(gh, name), "r", encoding="utf-8") as handle:
+                if re.search(r"(?m)^tools:", handle.read()):
+                    leaked.append(name)
+        if leaked:
+            findings.append(
+                f".github/agents: {len(leaked)} agent(s) still carry a `tools:` line, which "
+                f"INSTALL 1.2 requires stripped at the Copilot boundary: {', '.join(leaked[:4])}")
+
+
+def check_directive_ranges(findings):
+    """FR-035. Standards are cited by range — "ui-interaction-design.md (U1–U20)". Nothing
+    verified that the cited extent matched the standard, so `S1–S18` survived in ~30 files
+    after the specification standard was consolidated to S10, and `G1–G18` against a grammar
+    defining G16. Every skill's Authority line was pointing at directives that do not exist.
+
+    The invariant: for a standard defining directives with prefix X, any whole-range citation
+    `X1–Xn` anywhere in the corpus must have n == the highest X actually defined.
+    """
+    prefixes = {
+        "U": "ui-interaction-design", "DX": "ui-design-craft", "TQ": "technical-ui-design",
+        "G": "ui-archetype-grammar", "S": "specification-standards", "CD": "ui-craft-detection",
+        "VA": "ui-visual-assets", "DM": "domain-and-data-modelling", "E": "end-to-end-integrity",
+        "CI": "continuous-improvement", "NG": "no-guessing-protocol", "OB": "obsidian-lens",
+        "GK": "code-knowledge-graph", "L": "solution-selection-ladder",
+        "V": "knowledge-visualization", "O": "observability-and-instrumentation",
+    }
+    highest = {}
+    for prefix, doc in prefixes.items():
+        path = os.path.join(PACK, "knowledge", "%s.md" % doc)
+        if not os.path.isfile(path):
+            continue
+        with open(path, "r", encoding="utf-8") as handle:
+            nums = [int(m) for m in re.findall(r"\*\*%s(\d+)\s*[\u2014-]" % prefix, handle.read())]
+        if nums:
+            highest[prefix] = max(nums)
+
+    # Scan the pack SOURCE only; the generated surfaces are copies and would double-report.
+    targets = []
+    for base, _dirs, names in os.walk(PACK):
+        for name in names:
+            if name.endswith((".md", ".html")):
+                targets.append(os.path.join(base, name))
+
+    rx = re.compile(r"\b([A-Z]{1,2})1\s*(?:\u2013|-|&ndash;)\s*(?:\1)?(\d+)\b")
+    seen = set()
+    for path in sorted(targets):
+        try:
+            with open(path, "r", encoding="utf-8") as handle:
+                text = handle.read()
+        except OSError:
+            continue
+        for match in rx.finditer(text):
+            prefix, cited = match.group(1), int(match.group(2))
+            if prefix not in highest:
+                continue
+            real = highest[prefix]
+            # Only a citation that OUTRUNS the standard is a defect. A shorter range is a
+            # deliberate sub-range ("CI1-CI6"), which is legitimate and common.
+            if cited > real:
+                key = (prefix, cited, real)
+                if key in seen:
+                    continue
+                seen.add(key)
+                findings.append(
+                    f"directive range: `{prefix}1-{prefix}{cited}` is cited, but "
+                    f"{prefixes[prefix]}.md defines only up to {prefix}{real} - "
+                    f"the citation names {cited - real} directive(s) that do not exist")
+
+
 def main():
     truth = filesystem_truth()
     findings = []
     check_install_counts(truth, findings)
     check_release_gate(findings)
     check_skill_prompt_parity(truth, findings)
+    check_deployed_agent_parity(truth, findings)
+    check_directive_ranges(findings)
     check_managed_blocks(truth, findings)
     check_prose(truth, findings)
 

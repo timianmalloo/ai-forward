@@ -4,7 +4,7 @@
       "type": "local",
       "command": "node",
       "args": [
-        "C:\\Users\\malla\\AppData\\Roaming\\npm\\node_modules\\higgsfield-mcp\\src\\server.js"
+        "<path to higgsfield-mcp/src/server.js>"
       ],
       "tools": [
         "*"

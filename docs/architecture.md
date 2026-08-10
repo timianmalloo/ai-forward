@@ -3,7 +3,7 @@ id: "architecture"
 title: "AI-Forward — Architecture Overview"
 type: architecture
 status: accepted
-owner: "@mallalieut"
+owner: "@timianmalloo"
 phase: "documentation"
 tags: [pack, knowledge-graph, tooling, source-and-install]
 links:
@@ -44,7 +44,7 @@ The load-bearing constraint that shapes the whole structure:
 
 > **`.claude/` and `docs/` are GENERATED from `pack/`** by `tools/sync-pack.ps1` and committed so a fresh clone has a working install with no setup. `pack/` is the single source of truth — never edit the generated copies directly; they are overwritten on the next sync. `[Verified: CLAUDE.md, tools/sync-pack.ps1]`
 
-Generated knowledge documents under `.claude/knowledge/` and `docs/ai-forward-pack/` carry **no YAML frontmatter** (they are vendored prose, not graph nodes). Project documentation under `docs/` is the graph authority; at the model-orchestration forensic baseline it contains **22 valid artifacts with no stale, flagged, orphan, dangling, or index-drift findings**. `[Verified: docs-graph.py inventory, 2026-07-12]`
+Generated knowledge documents under `.claude/knowledge/` and `docs/ai-forward-pack/` carry **no YAML frontmatter** (they are vendored prose, not graph nodes). Project documentation under `docs/` is the graph authority; it contains **42 valid artifacts with no stale, flagged, orphan, dangling, or index-drift findings**. `[Verified: docs-graph.py validate, revision 32]`
 
 ## Archetype & rationale
 
@@ -222,7 +222,7 @@ classDiagram
   Signature "0..1" *-- "1" StyleHints : decorated by
   Archetype "1" *-- "1" Signature : canonical
   Archetype "1" o-- "1..*" Exemplar
-  note for Signature "G4: MUST carry Type, Arch, Layout, Pacing.\nG1: always composed with a concrete U1–U20 / S1–S18 spec."
+  note for Signature "G4: MUST carry Type, Arch, Layout, Pacing.\nG1: always composed with a concrete U1–U20 / S1–S10 spec."
 ```
 
 `[Verified: ui-archetype-grammar.md §2 EBNF, G1/G4/G5/G10; ui-archetype-catalog.md]`
@@ -260,7 +260,7 @@ This repo has no traditional doc-commented API. Its public, invocable surface is
 | | |
 |---|---|
 | **Completed** | Architecture overview + 4 diagram families; tool/CLI reference; interactive explainer; MoC index; `_meta.json`; `docs-index.js` regenerated; findings recorded. **2026-06-22 audit:** design-doc status tables refreshed (rev-8 Doc Drift), `project-memory` ledger instantiated, explainer headless-verified, knowledge-docs-in-graph decision recorded. |
-| **Remaining** | No active model-orchestration work. Two repo-level review findings remain independent of the reverted experiment: the bundle verifier's dirty-tree oracle (FR-008) and the pre-existing Copilot peer-agent deployment-map mismatch (residual FR-010). |
+| **Remaining** | No active model-orchestration work. The Copilot deployment-map mismatch (revision-18 FR-010/FR-020, re-raised as FR-032) was **closed at revision 32**: both surfaces now deploy all 23 personas and `check-consistency.py` gates the deployed count. The open backlog is `docs/backlog/forensic-review.md`. |
 | **Best next action** | Triage FR-008 / residual FR-010 only if they are worth addressing; any future model-routing proposal starts as a new spec/ADR. |
 
 ## Gate record

@@ -459,5 +459,110 @@ class ReleaseGateTests(unittest.TestCase):
         }
 
 
+
+class DeployedAgentParityTests(unittest.TestCase):
+    """FR-032. The source counts matched while `.github/agents` shipped 11 of 23 personas for
+    twelve revisions, because every check counted SOURCES. These assert the DEPLOYED surfaces."""
+
+    def setUp(self):
+        self.module = load_module()
+
+    def _root(self, temp, claude=12, copilot=11, deployed_claude=23, deployed_copilot=23,
+              copilot_tools=False):
+        root = Path(temp)
+        for n in range(claude):
+            d = root / "pack" / "adapters" / "claude-code" / "agents"
+            d.mkdir(parents=True, exist_ok=True)
+            (d / f"peer{n}.md").write_text("---\nname: peer\ntools: [read]\n---\nx\n", encoding="utf-8")
+        for n in range(copilot):
+            d = root / "pack" / "adapters" / "copilot" / "agents"
+            d.mkdir(parents=True, exist_ok=True)
+            (d / f"adv{n}_agent.md").write_text("---\nname: adv\n---\nx\n", encoding="utf-8")
+        for n in range(deployed_claude):
+            d = root / ".claude" / "agents"
+            d.mkdir(parents=True, exist_ok=True)
+            (d / f"a{n}.md").write_text("---\nname: a\n---\nx\n", encoding="utf-8")
+        for n in range(deployed_copilot):
+            d = root / ".github" / "agents"
+            d.mkdir(parents=True, exist_ok=True)
+            body = "---\nname: a\n" + ("tools: [read]\n" if copilot_tools else "") + "---\nx\n"
+            (d / f"a{n}.agent.md").write_text(body, encoding="utf-8")
+        return root
+
+    def _run(self, root):
+        findings = []
+        truth = {"cc_agents": ["p%d" % n for n in range(12)],
+                 "cop_agents": ["a%d" % n for n in range(11)]}
+        with mock.patch.object(self.module, "ROOT", str(root)), mock.patch.object(
+            self.module, "PACK", str(root / "pack")
+        ):
+            self.module.check_deployed_agent_parity(truth, findings)
+        return findings
+
+    def test_matched_surfaces_are_clean(self):
+        with tempfile.TemporaryDirectory() as temp:
+            self.assertEqual(self._run(self._root(temp)), [])
+
+    def test_missing_copilot_agent_is_reported(self):
+        """The exact defect FR-032 fixed: Copilot short of the source count."""
+        with tempfile.TemporaryDirectory() as temp:
+            findings = self._run(self._root(temp, deployed_copilot=11))
+            self.assertTrue(findings, "a 12-persona shortfall on the Copilot surface must fail")
+            self.assertTrue(any(".github/agents" in f for f in findings), findings)
+
+    def test_missing_claude_agent_is_reported(self):
+        with tempfile.TemporaryDirectory() as temp:
+            findings = self._run(self._root(temp, deployed_claude=22))
+            self.assertTrue(findings)
+
+    def test_leaked_tools_line_on_copilot_surface_is_reported(self):
+        """INSTALL requires the `tools:` line be stripped at the Copilot boundary."""
+        with tempfile.TemporaryDirectory() as temp:
+            findings = self._run(self._root(temp, copilot_tools=True))
+            self.assertTrue(findings, "a leaked tools: line must fail")
+            self.assertTrue(any("tools:" in f for f in findings), findings)
+
+
+class DirectiveRangeTests(unittest.TestCase):
+    """FR-035. `S1-S18` was cited against a standard defining S10, in ~30 files."""
+
+    def setUp(self):
+        self.module = load_module()
+
+    def _root(self, temp, highest=10, cited=10):
+        root = Path(temp)
+        k = root / "pack" / "knowledge"
+        k.mkdir(parents=True, exist_ok=True)
+        body = "\n".join(f"**S{n} \u2014 directive {n}.** text" for n in range(1, highest + 1))
+        (k / "specification-standards.md").write_text(body, encoding="utf-8")
+        c = root / "pack" / "commands" / "specify"
+        c.mkdir(parents=True, exist_ok=True)
+        (c / "SKILL.md").write_text(
+            f"Authority: specification-standards.md (S1\u2013S{cited}).\n", encoding="utf-8")
+        return root
+
+    def _run(self, root):
+        findings = []
+        with mock.patch.object(self.module, "ROOT", str(root)), mock.patch.object(
+            self.module, "PACK", str(root / "pack")
+        ):
+            self.module.check_directive_ranges(findings)
+        return findings
+
+    def test_accurate_range_is_clean(self):
+        with tempfile.TemporaryDirectory() as temp:
+            self.assertEqual(self._run(self._root(temp, highest=10, cited=10)), [])
+
+    def test_citation_that_outruns_the_standard_is_reported(self):
+        with tempfile.TemporaryDirectory() as temp:
+            findings = self._run(self._root(temp, highest=10, cited=18))
+            self.assertTrue(findings, "S1-S18 against an S10 standard must fail")
+            self.assertIn("S10", findings[0])
+
+    def test_shorter_subrange_is_legitimate_and_not_flagged(self):
+        """`CI1-CI6` against a CI12 standard is a deliberate sub-range, not a defect."""
+        with tempfile.TemporaryDirectory() as temp:
+            self.assertEqual(self._run(self._root(temp, highest=10, cited=6)), [])
+
 if __name__ == "__main__":
     unittest.main()

@@ -130,4 +130,4 @@ summary: >-
 |---|---|
 | @timianmalloo | 33 |
 | @maintainers | 3 |
-| @mallalieut | 2 |
+| @timianmalloo | 2 |

@@ -176,7 +176,7 @@ The floors in U1–U20 are necessary and not sufficient. These are the moves tha
 - **`ui-interaction-design.md`** (U1–U20) — the floor: medium, tokens/`DESIGN.md`, hierarchy, complete states, motion, copy, familiar-then-novel, HAX + Shape-of-AI, WCAG 2.2 AA, performance budget. This document tells you how to *reach* it.
 - **`ui-archetype-grammar.md`** (G1–G16) + **`ui-archetype-catalog.md`** — the determinism-of-kind selector, the codegen descriptors, and the surface design-language exemplars (§J).
 - **`technical-ui-design.md`** (TQ1–TQ12) — expert/quantitative surfaces: density-with-hierarchy, numeric legibility, perceptually-uniform colormaps, uncertainty-first.
-- **`specification-standards.md`** (S1–S18) — the three spec layers and the bottom-up gating that DX24 mirrors.
+- **`specification-standards.md`** (S1–S10) — the three spec layers and the bottom-up gating that DX24 mirrors.
 - **Nielsen Norman Group** — the ten usability heuristics and severity rating scale; heuristic evaluation as an expert method (3–5 evaluators find ~75% of problems).
 - **Practitioner research on generative UI (2025–2026)** — the "AI look" as a *process* failure: split creative planning from implementation, build the design system first, use reference-backed direction, iterate in a sandbox before production, add motion and micro-interaction for personality, encode tokens as code.
 - **In-repo precedents** — a pack repo's measured data-entry diagnosis (archetype mismatch, 138 controls, three redundant modes) and another's self-contained mockup with a persona/viewport/state/theme review bar: the two worked examples behind DX23 and DX10.

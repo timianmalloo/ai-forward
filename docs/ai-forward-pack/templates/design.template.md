@@ -105,7 +105,7 @@ up mechanically (`docs-graph.py rollup`).*
 
 **Accessibility (WCAG 2.2 AA) & performance budget:** "<contrast at token level, keyboard path, focus, semantics/labeling, target size; perceived-load / latency / frame-rate / payload budget for the medium>" (U16–U17)
 
-**AI-UX (AI-facing UIs only):** applicable **HAX** guidelines "<G1–G18 across initially / during / when-wrong / over-time>" and **Shape-of-AI** patterns "<Wayfinders / Tuners / Governors (action plan, stream-of-thought, verification before irreversible) / Trust builders (disclosure, citations, provenance) / Identifiers>"; wrong-answer + uncertainty as first-class states "<correction, regeneration, honest confidence, graceful degradation>" (U13–U15)
+**AI-UX (AI-facing UIs only):** applicable **HAX** guidelines "<G1–G16 across initially / during / when-wrong / over-time>" and **Shape-of-AI** patterns "<Wayfinders / Tuners / Governors (action plan, stream-of-thought, verification before irreversible) / Trust builders (disclosure, citations, provenance) / Identifiers>"; wrong-answer + uncertainty as first-class states "<correction, regeneration, honest confidence, graceful degradation>" (U13–U15)
 
 
 ## Telemetry

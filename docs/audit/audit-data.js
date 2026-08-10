@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-08-10T14:20:18Z",
+  "generated": "2026-08-10T14:58:41Z",
   "audit": [
     {
       "id": "al-0001",
@@ -691,6 +691,34 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "164445008f9376944e9c733ff20896e8a2e444e7",
         "short": "164445008",
+        "branch": "main",
+        "pushed": false
+      }
+    },
+    {
+      "id": "al-0028",
+      "shortname": "forensic-backlog-rev32",
+      "datetime": "2026-08-10T14:58:41Z",
+      "session": "0d635851-2754-44cf-8597-a72228967201",
+      "prompt": "do all the next steps",
+      "summary": "Worked the revision-30 forensic backlog: 9 of 12 items resolved at revision 32 (FR-032..FR-035, FR-037, FR-038, FR-040..FR-042). Two proposals overturned at triage by establishing the contract. Three new controls proved red-first: deployed-agent parity, directive-range integrity, CI drift/pytest/graph gates. Found and fixed a second defect while gating FR-032 - the Copilot deploy copied the source filename verbatim instead of renaming to the documented .agent.md; registered RIG-E. Open: FR-036, FR-039, and the unverified /addpacktorepo end-to-end path.",
+      "kind": "skill",
+      "skill": "forensicreview",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/backlog/forensic-review.md",
+        "tools/check-consistency.py",
+        "tools/sync-pack.ps1"
+      ],
+      "tags": [
+        "forensic",
+        "adoption"
+      ],
+      "outcome": "success",
+      "git": {
+        "sha": "1189187cfcfc9561338cd2285c99d574668fc210",
+        "short": "1189187cf",
         "branch": "main",
         "pushed": false
       }

@@ -9,8 +9,12 @@ on:
     paths:
       - "pack/**"
       - "tools/**"
-      - "tests/docs_explorer/**"
-      - "docs/_site/**"
+      - "tests/**"
+      - "docs/**"
+      - ".claude/**"
+      - ".github/instructions/**"
+      - ".github/prompts/**"
+      - ".github/agents/**"
       - "package.json"
       - "package-lock.json"
       - "README.md"
@@ -40,10 +44,37 @@ jobs:
       - name: Count & skill-list consistency
         run: python3 tools/check-consistency.py
 
+      # FR-033. The repository's foundational invariant: pack/ is source, .claude/ and
+      # .github/ are generated. verify-bundle.ps1 has always checked this locally and CI
+      # never ran it, so source↔install drift — the one failure mode the whole architecture
+      # exists to prevent — could merge. A re-sync that produces a diff IS the drift, so
+      # `git diff --exit-code` is the whole oracle; it fails the step by itself.
+      - name: Source↔install drift (pack/ is the only source of truth)
+        shell: pwsh
+        run: |
+          pwsh tools/sync-pack.ps1
+          Write-Host "If the next command fails, pack/ and the generated surfaces have drifted."
+          Write-Host "Fix: run 'pwsh tools/sync-pack.ps1' locally and commit the result."
+          git --no-pager diff --stat -- .claude .github/instructions .github/prompts .github/agents docs CLAUDE.md AGENTS.md
+          git diff --exit-code -- .claude .github/instructions .github/prompts .github/agents docs CLAUDE.md AGENTS.md
+
+      # FR-034. The largest suite in the repository (112 tests covering docs-graph,
+      # audit-log, check-consistency, pack-doctor, run-evals, bounded_process) was advisory
+      # until now — it passed locally and gated nothing.
+      - name: Python test suite
+        run: |
+          python3 -m pip install --disable-pip-version-check --quiet pytest
+          python3 -m pytest tests -q
+
       - name: Docs Explorer core contracts
         run: |
           npm ci
           npm run test:docs-explorer:core
+
+      # FR-034. The knowledge graph gate: schema-valid frontmatter, no dangling links,
+      # no orphans, no index drift.
+      - name: Knowledge-graph validation
+        run: python3 docs/ai-forward-pack/scripts/docs-graph.py validate
 
       # Uncatalogued edits to the vendored foundation docs.
       - name: Vendored-foundation drift

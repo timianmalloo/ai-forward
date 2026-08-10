@@ -140,7 +140,7 @@ during motion/scroll, payload/asset weight (web) or cold-start (native/mobile). 
 perceived-performance techniques in play (skeletons, optimistic UI, prefetch).
 
 ## 10. AI surface (U13–U15) — *only if the UI fronts AI*
-The applicable **HAX** guidelines (G1–G18) and **Shape-of-AI** patterns — Wayfinders,
+The applicable **HAX** guidelines (G1–G16) and **Shape-of-AI** patterns — Wayfinders,
 Tuners, **Governors** (action plan before an irreversible step, stream-of-thought,
 verification), Trust builders (disclosure that content is AI, citations, provenance),
 Identifiers — and the **wrong-answer/uncertainty** design (effortless correction &

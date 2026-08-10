@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-Forward",
-  "generated": "2026-08-10T13:44:09Z",
+  "generated": "2026-08-10T14:58:01Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -231,7 +231,7 @@ window.DOCS_INDEX = {
       "title": "AI-Forward — Architecture Overview",
       "type": "architecture",
       "status": "accepted",
-      "owner": "@mallalieut",
+      "owner": "@timianmalloo",
       "phase": "documentation",
       "reviewBy": "2026-12-14",
       "reviewSuggested": [],
@@ -267,10 +267,10 @@ window.DOCS_INDEX = {
         {
           "kind": "class",
           "title": "Domain model (class) — the UI Archetype Grammar",
-          "mermaid": "classDiagram\n  class Signature {\n    +Name name\n    +FacetList facets\n    +StyleHints? hints\n    +validate() conflicts\n    +roundTrip() bool  %% G10: identify AND generate\n  }\n  class Facet {\n    <<abstract>>\n    +String key\n  }\n  class SingleValuedFacet {\n    +Value value  %% Type, Arch, Layout, Density, Pacing, ...\n  }\n  class MultiValuedFacet {\n    +Value[] values  %% Nav, Input, Feedback, Motion, A11y (joined with +)\n  }\n  class StyleHints {\n    +String[] hints  %% bounded NL decoration, applied last\n  }\n  class Archetype {\n    +String id          %% A1..F2\n    +String name\n    +Exemplar[] exemplars\n    +Signature canonical\n    +String codegenDescriptor\n  }\n  Signature \"1\" o-- \"4..*\" Facet : composes\n  Facet <|-- SingleValuedFacet\n  Facet <|-- MultiValuedFacet\n  Signature \"0..1\" *-- \"1\" StyleHints : decorated by\n  Archetype \"1\" *-- \"1\" Signature : canonical\n  Archetype \"1\" o-- \"1..*\" Exemplar\n  note for Signature \"G4: MUST carry Type, Arch, Layout, Pacing.\\nG1: always composed with a concrete U1–U20 / S1–S18 spec.\""
+          "mermaid": "classDiagram\n  class Signature {\n    +Name name\n    +FacetList facets\n    +StyleHints? hints\n    +validate() conflicts\n    +roundTrip() bool  %% G10: identify AND generate\n  }\n  class Facet {\n    <<abstract>>\n    +String key\n  }\n  class SingleValuedFacet {\n    +Value value  %% Type, Arch, Layout, Density, Pacing, ...\n  }\n  class MultiValuedFacet {\n    +Value[] values  %% Nav, Input, Feedback, Motion, A11y (joined with +)\n  }\n  class StyleHints {\n    +String[] hints  %% bounded NL decoration, applied last\n  }\n  class Archetype {\n    +String id          %% A1..F2\n    +String name\n    +Exemplar[] exemplars\n    +Signature canonical\n    +String codegenDescriptor\n  }\n  Signature \"1\" o-- \"4..*\" Facet : composes\n  Facet <|-- SingleValuedFacet\n  Facet <|-- MultiValuedFacet\n  Signature \"0..1\" *-- \"1\" StyleHints : decorated by\n  Archetype \"1\" *-- \"1\" Signature : canonical\n  Archetype \"1\" o-- \"1..*\" Exemplar\n  note for Signature \"G4: MUST carry Type, Arch, Layout, Pacing.\\nG1: always composed with a concrete U1–U20 / S1–S10 spec.\""
         }
       ],
-      "sourceSha256": "16a98e62ffcbf07734f0f5821870e14beb670118ed185c7c67d0fe724bc209fc"
+      "sourceSha256": "278a15e60eeb168b89ffb59cb751f1835ba038a6c68f684407d57c3ee96bb40c"
     },
     {
       "id": "note-20260712-model-orchestration-policy",
@@ -569,7 +569,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b1f80b6edc77dcc68433473ab82e1668f44234881817e4bc3eb0cff1103f9c95"
+      "sourceSha256": "02073b9c23df0fdf6cf319432faf9c38e7fedd3bb92c9d88caab54dc7c2d6da1"
     },
     {
       "id": "docs-index",
@@ -577,7 +577,7 @@ window.DOCS_INDEX = {
       "title": "AI-Forward — Documentation Map of Content",
       "type": "doc",
       "status": "accepted",
-      "owner": "@mallalieut",
+      "owner": "@timianmalloo",
       "phase": "documentation",
       "reviewBy": "2026-12-14",
       "reviewSuggested": [],
@@ -594,7 +594,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a1e2999d19839b86db84f42619db982b59bbd588ec53a38c7dc432c86dd3295e"
+      "sourceSha256": "12bb237176e77568df0d5e1b3c00eaeace976e20055bc5dbee1686b6f3dd6b98"
     },
     {
       "id": "forensic-review",
@@ -740,7 +740,7 @@ window.DOCS_INDEX = {
       "phase": "pack-evolution",
       "reviewBy": "2026-11-08",
       "reviewSuggested": [],
-      "summary": "Twelve proposed items (FR-031..FR-042) from the revision-30 review, ordered into four independently deliverable phases. Seven carry forward unchanged from the revision-18 backlog. All items are status `proposed` and await human triage; nothing has been remediated.",
+      "summary": "Twelve items (FR-031..FR-042) from the revision-30 review, ordered into four independently deliverable phases. Nine are RESOLVED at revisions 31-32 (FR-031..FR-035, FR-037, FR-038, FR-040..FR-042); three remain open (FR-036, FR-039, and the unverified end-to-end adoption path). Two proposals were overturned at triage by establishing the contract rather than trusting the finding.",
       "tags": [
         "backlog",
         "forensic-review",
@@ -758,7 +758,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "6f9f6c3cf3732d5ee307941aa847649c9ce04fe265cf668ca7d59afc88566d39"
+      "sourceSha256": "f64f22be324c133d13814cdcaf82eb69958ddb11f80474936f1295e8d30d274e"
     },
     {
       "id": "forensic-review-backlog-20260712",
@@ -863,7 +863,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "5d89b28a6d4ba272e5b88ac53c9e08f9c03195ac57e76a51c2b23702f832597b"
+      "sourceSha256": "75e75721568488011950601e2ef7862557c3bc52dd9907a3a6f7b209caf1f580"
     },
     {
       "id": "lens-graph-structure",
@@ -1558,5 +1558,5 @@ window.DOCS_INDEX = {
       "description": "Inspect a rendered design or design-language preview."
     }
   ],
-  "graphSha256": "30d2326abbf65d04933fd2a96af3c97dc103682dda7c18081a6bca594eaa2895"
+  "graphSha256": "4e86c10637ec91faef6905db5add847c450673bc39fc3ea0893dddd62a995ed9"
 };

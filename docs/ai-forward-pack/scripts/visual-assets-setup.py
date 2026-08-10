@@ -289,7 +289,11 @@ def cmd_init_mcp(root, backend, dry_run):
         "args": [entry or "<path to %s>" % spec["mcp"]["entry"]],
         "tools": ["*"],
     }
-    example = dict(server, env={v: "<your %s>" % v for v in spec["env"]})
+    # The EXAMPLE is committed, so it must never carry a resolved local path (FR-038):
+    # `entry` is this machine's npm root and means nothing on anyone else's.
+    example = dict(server,
+                   args=["<path to %s>" % spec["mcp"]["entry"].replace("\\", "/")],
+                   env={v: "<your %s>" % v for v in spec["env"]})
     example_path = os.path.join(root, ".mcp.json.example")
     real_path = os.path.join(root, ".mcp.json")
 

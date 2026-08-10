@@ -22,7 +22,12 @@ import argparse, json, os, re, sys
 # Pattern: Pattern registry — (category, compiled regex). Email + known secret prefixes by default;
 # the broad high-length token is gated behind --aggressive to control false positives.
 _BASE = [
-    ("email",  re.compile(r"[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}")),
+    # GitHub noreply addresses are a *pseudonymous* identifier - they are literally
+    # what GitHub issues to keep a real address private, and every Co-authored-by
+    # trailer in this repo carries one. Flagging them made the tool report the
+    # repo's own commit metadata as PII, which trains people to ignore it (FR-042).
+    ("email",  re.compile(r"(?!\S*@users\.noreply\.github\.com)"
+                          r"[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}")),
     ("secret", re.compile(r"\b(?:ghp_[A-Za-z0-9]{20,}"
                           r"|github_pat_[A-Za-z0-9_]{20,}"
                           r"|xox[baprs]-[A-Za-z0-9\-]{10,}"
