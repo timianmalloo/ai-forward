@@ -30,6 +30,7 @@ Usage:
                    [--markdown] [--json] [--impeccable <cmd>]
 """
 import argparse
+import re
 import json
 import os
 import shutil
@@ -144,6 +145,22 @@ def run_detector(prefix, targets):
             "the detector produced no JSON, so nothing was scanned (exit %d): %s\n"
             "  A clean report here would be a false pass. Install the detector "
             "(`npm i -g impeccable`) or pass --impeccable <command>." % (proc.returncode, detail[:400]))
+    # A detector can also fail while emitting perfectly valid EMPTY JSON: URL scanning
+    # without puppeteer prints "[]" to stdout, "Error: puppeteer is required" to stderr,
+    # and exits 0. That is the same false pass as the empty-output case wearing a
+    # different costume - and it survived the first fix, in this very function, because
+    # the fix stopped at the instance (RIG-C). Empty findings plus an error on stderr is
+    # never reported as a clean scan.
+    stderr = (proc.stderr or "").strip()
+    if stderr and re.search(r"\b(error|required|not recognized|cannot|failed|unable)\b",
+                            stderr, re.I):
+        stripped = out.strip()
+        if stripped in ("[]", "[ ]", ""):
+            return None, (
+                "the detector reported no findings but also reported an error, so nothing "
+                "was scanned: %s\n  A clean report here would be a false pass."
+                % stderr[:400])
+
     start = out.find("[")
     if start == -1:
         return None, (

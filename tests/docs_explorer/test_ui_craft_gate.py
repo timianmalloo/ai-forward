@@ -62,6 +62,32 @@ class NonScanIsNotACleanScanTests(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("no JSON", result.stdout + result.stderr)
 
+    def test_empty_json_plus_error_on_stderr_is_reported_not_passed(self):
+        """The sibling that survived the first fix. URL scanning without puppeteer prints
+        "[]" to stdout, an error to stderr, and exits 0 - valid empty JSON, so the
+        empty-output guard never sees it. Empty findings alongside an error is a non-scan."""
+        det = fake_detector(textwrap.dedent("""
+            import sys
+            print("[]")
+            sys.stderr.write("Error: puppeteer is required for URL scanning")
+        """), self.temp)
+        result = run_gate(self.target, det)
+        self.assertNotEqual(result.returncode, 0,
+                            "empty findings + an error must not exit 0")
+        self.assertIn("nothing was scanned", result.stdout + result.stderr)
+
+    def test_clean_scan_with_harmless_stderr_still_passes(self):
+        """The guard keys on error words, so ordinary chatter on stderr must not fail a
+        genuine clean run - otherwise the fix trades a false pass for a false alarm."""
+        det = fake_detector(textwrap.dedent("""
+            import sys
+            print("[]")
+            sys.stderr.write("scanned 1 file in 12ms")
+        """), self.temp)
+        result = run_gate(self.target, det)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("_no findings_", result.stdout)
+
     def test_a_genuine_clean_scan_still_passes(self):
         """The guard must not turn every clean run into a failure - the true negative."""
         det = fake_detector('print("[]")', self.temp)
