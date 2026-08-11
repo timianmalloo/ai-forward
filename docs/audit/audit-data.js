@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-08-10T17:09:59Z",
+  "generated": "2026-08-11T13:41:23Z",
   "audit": [
     {
       "id": "al-0001",
@@ -801,6 +801,33 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "3bf11bb5a5c739fae71ed398ba28aa88e6cb6733",
         "short": "3bf11bb5a",
+        "branch": "main",
+        "pushed": false
+      }
+    },
+    {
+      "id": "al-0032",
+      "shortname": "fix-craft-gate-false-pass",
+      "datetime": "2026-08-11T13:41:23Z",
+      "session": "0d635851-2754-44cf-8597-a72228967201",
+      "prompt": "if i wanted to use the ui-design and impeccable capabilities do i have to integrate into my repo (e.g. my TheTerrace repo) OR could i create a critique repo which i can point at an existing repo and the production website and have it critique the content and come up with up-leveled designs and user interface",
+      "summary": "Answering the cross-repo critique question surfaced a false pass in ui-craft-gate.py: it rendered a non-scan as a clean scan because the detector uses exit 1 for findings, making empty-output-plus-exit-1 ambiguous. Demonstrated by running the gate from ai-forward against TheTerrace-ui - it reported no findings on a file it had never opened; after the fix the same command reports 21. Registered E2E-I, locked with 4 tests proved red-first. Cross-repo critique confirmed working: the gate takes any path or URL, so a standalone critique repo is viable.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "pack/scripts/ui-craft-gate.py",
+        "tests/docs_explorer/test_ui_craft_gate.py"
+      ],
+      "tags": [
+        "ui",
+        "control"
+      ],
+      "outcome": "success",
+      "git": {
+        "sha": "aab19b7a4ce233cfe49b641723d0ec94c935e9ba",
+        "short": "aab19b7a4",
         "branch": "main",
         "pushed": false
       }

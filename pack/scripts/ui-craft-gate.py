@@ -128,12 +128,27 @@ def run_detector(prefix, targets):
         return None, "could not run the detector: %s" % exc
     out = (proc.stdout or "").strip()
     if not out:
-        if proc.returncode not in (0, 1, 2):
-            return None, (proc.stderr or "detector produced no output").strip()
-        return [], None
+        # A detector that produced NO JSON did not scan anything, and "nothing scanned"
+        # must never render as "nothing wrong". The detector uses exit 1 for "found
+        # anti-patterns", so exit-1-with-empty-output is ambiguous between a real clean
+        # run and a failed invocation - and defaulting that to clean is exactly the
+        # failure end-to-end-integrity E13 names (a gate's green result is evidence the
+        # gate passed, not that its contents passed) and defect class E2E-H.
+        #
+        # Observed: `npx --yes impeccable` on a machine without the package exits 1 with
+        # "'impeccable' is not recognized" on stderr and no stdout, and this function
+        # previously returned [] - so the gate reported a clean scan of a file it had
+        # never opened.
+        detail = (proc.stderr or "").strip() or "the detector produced no output"
+        return None, (
+            "the detector produced no JSON, so nothing was scanned (exit %d): %s\n"
+            "  A clean report here would be a false pass. Install the detector "
+            "(`npm i -g impeccable`) or pass --impeccable <command>." % (proc.returncode, detail[:400]))
     start = out.find("[")
     if start == -1:
-        return [], None
+        return None, (
+            "the detector emitted output but no JSON array, so no findings could be read: %s"
+            % out[:300])
     try:
         return json.loads(out[start:]), None
     except json.JSONDecodeError as exc:

@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-Forward",
-  "generated": "2026-08-10T17:08:55Z",
+  "generated": "2026-08-11T13:41:23Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -569,7 +569,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "6ac7608bf98f101a4e8aab9959de69151785cdfd4991329822492665b7550250"
+      "sourceSha256": "006c950364d83f035fa36382adb6d0950b7394e9b2e5e4ab3fdf155fcdcf215c"
     },
     {
       "id": "docs-index",
@@ -758,7 +758,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b794a4a837da2b3290d6926e1f5f7c3358d68dd965689a965b6fac044450aa9c"
+      "sourceSha256": "044ba2d9f8fded68d249becbeb2104db9c2d89043bc94fa934f9125bfe81a145"
     },
     {
       "id": "forensic-review-backlog-20260712",
@@ -1558,5 +1558,5 @@ window.DOCS_INDEX = {
       "description": "Inspect a rendered design or design-language preview."
     }
   ],
-  "graphSha256": "13179d060175ea0c852bc7a41111f0ec6d6e8549e032d1de06bdcd8becf94e83"
+  "graphSha256": "0463e3c5c4da400b7985836210d4e6ae28f113eaeb8d4531c8e16b958b008236"
 };
