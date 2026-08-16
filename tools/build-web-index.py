@@ -12,26 +12,8 @@ docs/ knowledge graph (docs/docs-index.js) from V2 frontmatter; this tool indexe
 whole pack, most of which has no V2 frontmatter, and *reuses* docs-graph's output for the
 graph slice. Stdlib only. Re-run after any pack change (wired into sync-pack.ps1).
 """
-import datetime, glob, html, json, os, re
+import glob, html, json, os, re
 
-
-def _stable_stamp():
-    """Deterministic build stamp: identical inputs must produce an identical file, or the
-    drift gate can never cover this artifact (FR-048)."""
-    epoch = os.environ.get("SOURCE_DATE_EPOCH")
-    if epoch and epoch.isdigit():
-        newest = int(epoch)
-    else:
-        newest = 0
-        for base, dirs, names in os.walk(os.path.join(ROOT, "pack")):
-            dirs[:] = [d for d in dirs if not d.startswith(".")]
-            for name in names:
-                try:
-                    newest = max(newest, int(os.path.getmtime(os.path.join(base, name))))
-                except OSError:
-                    pass
-    return datetime.datetime.fromtimestamp(
-        newest, datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 
@@ -258,12 +240,11 @@ def main():
     counts = {c: sum(1 for it in items if it["cat"] == c) for c, _ in CATEGORIES}
     payload = {
         "repo": "AI-Forward",
-        # FR-048. A wall-clock stamp made this file differ on every re-sync, so it could never join
-        # the source-install drift gate - the one gate that exists to prove generated surfaces
-        # match their source. SOURCE_DATE_EPOCH honours reproducible-builds; otherwise the stamp
-        # is the newest mtime across the inputs, so it changes when the CONTENT does and not
-        # merely because time passed.
-        "generated": _stable_stamp(),
+        # No build timestamp: a wall-clock/mtime stamp made this file differ between the author's
+        # machine and a CI checkout (mtimes are the checkout time), so it could never pass the
+        # source-install drift gate cross-platform (PACK-I, and the FR-048 timestamp class). The
+        # field is unconsumed by the UI, so the deterministic fix is to omit it entirely - the
+        # sibling portal generator does the same.
         "generator": "tools/build-web-index.py",
         "categories": [{"id": c, "label": l, "count": counts[c]} for c, l in CATEGORIES],
         "total": len(items),
