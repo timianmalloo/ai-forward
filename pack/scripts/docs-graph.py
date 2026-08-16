@@ -308,11 +308,11 @@ def _verify_open_snapshot(path, source_file, opened):
         raise _SourceChangedError("source changed during read")
 
 
-def _atomic_write_text(path, text):
-    destination = os.path.abspath(path)
-    directory = os.path.dirname(destination)
-    os.makedirs(directory, exist_ok=True)
-    existing_mode = None
+def _reject_unsafe_destination(destination):
+    """Reject a write to a destination that exists and is NOT a regular file (symlink, reparse
+    point, device, ...). Runs BEFORE any lock or temp-file side effect, so an append rejects a
+    bad destination deterministically on every OS (PACK-J) rather than tripping over a lock-file
+    FileExistsError first. Returns the existing file mode (or None) for callers that preserve it."""
     if os.path.lexists(destination):
         metadata = os.stat(destination, follow_symlinks=False)
         if (
@@ -326,7 +326,15 @@ def _atomic_write_text(path, text):
                 {"artifactId": os.path.basename(destination)},
                 3,
             )
-        existing_mode = stat.S_IMODE(metadata.st_mode)
+        return stat.S_IMODE(metadata.st_mode)
+    return None
+
+
+def _atomic_write_text(path, text):
+    destination = os.path.abspath(path)
+    directory = os.path.dirname(destination)
+    os.makedirs(directory, exist_ok=True)
+    existing_mode = _reject_unsafe_destination(destination)
     descriptor, temporary = tempfile.mkstemp(
         prefix=".docs-graph-",
         suffix=".tmp",
@@ -426,6 +434,9 @@ def _exclusive_file_lock(path, timeout_seconds=10.0):
 
 
 def _atomic_append_text(path, text):
+    # Reject an unsafe destination (symlink / non-regular / reparse) BEFORE taking the lock, so the
+    # rejection is deterministic across OSes rather than racing a lock-file side effect (PACK-J).
+    _reject_unsafe_destination(os.path.abspath(path))
     with _exclusive_file_lock(path):
         existing = ""
         if os.path.lexists(path):
@@ -543,7 +554,12 @@ class _TitleParser(HTMLParser):
     def handle_endtag(self, tag):
         if tag.lower() == "title" and self.in_title:
             self.in_title = False
-            title = re.sub(r"\s+", " ", " ".join(self.current_parts)).strip()
+            # <title> is an RCDATA element: on newer CPython (3.12.11+/3.13/3.14) a script/style-
+            # shaped title arrives as raw text that KEEPS its tags, while older builds parsed the
+            # inner tag away. Strip any residual tag spans so the extracted title is identical across
+            # versions and platforms (PACK-J) - a title is display text, never markup.
+            joined = re.sub(r"<[^>]+>", "", " ".join(self.current_parts))
+            title = re.sub(r"\s+", " ", joined).strip()
             if title:
                 self.titles.append(title)
             self.current_parts = []

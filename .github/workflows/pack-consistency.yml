@@ -34,14 +34,7 @@ jobs:
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
-        # Pinned to 3.12 (verified-green locally) as an INTERIM: the runner's "3.x" now resolves to
-        # Python 3.14, which changed two stdlib behaviours the deployed docs-graph.py depends on -
-        # HTMLParser now treats <title> as RCDATA (a script-shaped title keeps its tags), and a
-        # tempfile/os.stat-mock interaction in the atomic-write path. Both are pre-existing and
-        # unrelated to any feature change; they pass on 3.12/3.13 and fail only on 3.14. Tracked as
-        # a follow-up (defect class PACK-J) to make docs-graph.py version-independent, after which
-        # this pin can return to "3.x".
-        with: { python-version: "3.12" }
+        with: { python-version: "3.x" }
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: "22"
