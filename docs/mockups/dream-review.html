@@ -1,0 +1,483 @@
+<!doctype html>
+<html lang="en" data-theme="dark" data-motion="full">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dream Review — mockup</title>
+<!--
+  Self-contained, dependency-free high-fidelity mockup of the Dream Review view (spec-dreaming, Part C).
+  Archetype: DreamReview (Master-Detail review queue). Tokens: docs/DESIGN.md (Docs Explorer design language).
+  The bar across the top is the REVIEW HARNESS (review chrome only; never ships to production):
+  it switches theme, viewport, component state, and reduced motion so every hard state is inspectable.
+-->
+<style>
+  /* ── Tokens (docs/DESIGN.md — AA-audited) ─────────────────────────────── */
+  :root{
+    --canvas:#3d3b3a; --surface:#343231; --surface-2:#2c2a29;
+    --ink:#dedede; --ink-mute:#a8a8a8; --reduced:#b0b0b0; --hairline:#888684;
+    --primary:#fd8ea1; --on-primary:#1a1a1a; --focus:#62b0ff;
+    --success:#4ade80; --warning:#fbbf24; --danger:#ff9191;
+    --sp-1:2px; --sp-2:4px; --sp-3:8px; --sp-4:12px; --sp-5:16px; --sp-6:24px; --sp-7:32px; --sp-8:48px;
+    --r-sm:5px; --r-md:8px; --r-lg:12px; --r-pill:9999px;
+    --fast:120ms; --context:220ms; --ease:cubic-bezier(0.2,0,0,1);
+    --ring:3px; --ring-off:2px; --target:44px;
+    --font:"Segoe UI",Aptos,Calibri,system-ui,sans-serif;
+    --mono:Consolas,"Courier New",monospace;
+    --el-panel:0 8px 28px rgba(0,0,0,0.28);
+    --el-float:0 18px 48px rgba(0,0,0,0.38);
+  }
+  html[data-theme="light"]{
+    --canvas:#f7f4ef; --surface:#fcfbf8; --surface-2:#efece6;
+    --ink:#242424; --ink-mute:#5c5c5c; --reduced:#6f6f6f; --hairline:#8a8886;
+    --primary:#b11f4b; --on-primary:#ffffff; --focus:#006cbe;
+    --success:#146c2e; --warning:#8a4b08; --danger:#b3261e;
+    --el-panel:0 8px 28px rgba(0,0,0,0.06); --el-float:0 18px 48px rgba(0,0,0,0.12);
+  }
+  html[data-theme="hc"]{
+    --canvas:#000; --surface:#000; --surface-2:#000;
+    --ink:#fff; --ink-mute:#fff; --reduced:#fff; --hairline:#fff;
+    --primary:#ffff00; --on-primary:#000; --focus:#ffff00;
+    --success:#00ff00; --warning:#ffff00; --danger:#ff8080;
+    --el-panel:none; --el-float:none;
+  }
+  html[data-motion="reduced"] *{transition:none !important; animation:none !important; scroll-behavior:auto !important}
+
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--canvas);color:var(--ink);font-family:var(--font);font-size:14px;line-height:1.5}
+  button{font-family:inherit}
+  :focus-visible{outline:var(--ring) solid var(--focus);outline-offset:var(--ring-off)}
+  .mono{font-family:var(--mono);font-size:12px}
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+  /* ── Review harness (chrome only) ─────────────────────────────────────── */
+  .harness{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;gap:var(--sp-5);
+    align-items:center;padding:var(--sp-3) var(--sp-5);background:var(--surface-2);
+    border-bottom:2px dashed var(--hairline)}
+  .harness .grp{display:flex;align-items:center;gap:var(--sp-3)}
+  .harness label{font-size:12px;color:var(--ink-mute);font-weight:600;letter-spacing:.2px}
+  .harness select,.harness .seg button{background:var(--surface);color:var(--ink);
+    border:1px solid var(--hairline);border-radius:var(--r-sm);padding:6px 10px;font-size:12px;min-height:34px}
+  .harness .seg{display:inline-flex;border-radius:var(--r-sm);overflow:hidden;border:1px solid var(--hairline)}
+  .harness .seg button{border:0;border-right:1px solid var(--hairline);cursor:pointer}
+  .harness .seg button:last-child{border-right:0}
+  .harness .seg button[aria-pressed="true"]{background:var(--primary);color:var(--on-primary);font-weight:600}
+  .harness .brand{font-size:12px;color:var(--ink-mute);margin-right:auto}
+  .harness .brand b{color:var(--ink)}
+
+  /* ── App shell ────────────────────────────────────────────────────────── */
+  .app{max-width:1200px;margin:0 auto;padding:var(--sp-5)}
+  html[data-vw="narrow"] .app{max-width:560px}
+
+  header.top{display:flex;flex-wrap:wrap;gap:var(--sp-4);align-items:center;
+    background:var(--surface);border:1px solid var(--hairline);border-radius:var(--r-lg);
+    padding:var(--sp-5);box-shadow:var(--el-panel);margin-bottom:var(--sp-5)}
+  header.top h1{font-size:20px;margin:0;letter-spacing:-.2px;font-weight:700;flex:1 1 auto}
+  header.top .meta{font-size:12px;color:var(--ink-mute)}
+  header.top .meta b{color:var(--ink)}
+  .counts{display:flex;gap:var(--sp-3);flex-wrap:wrap}
+  .count{font-size:12px;padding:4px 10px;border-radius:var(--r-pill);border:1px solid var(--hairline);
+    background:var(--surface-2)}
+  .count b{font-variant-numeric:tabular-nums}
+  .count.approve b{color:var(--success)} .count.reject b{color:var(--danger)} .count.defer b{color:var(--warning)}
+
+  .btn{background:var(--surface-2);color:var(--ink);border:1px solid var(--hairline);
+    border-radius:var(--r-md);padding:9px 14px;min-height:var(--target);cursor:pointer;font-size:13px;font-weight:600}
+  .btn:hover{border-color:var(--primary)}
+  .btn.primary{background:var(--primary);color:var(--on-primary);border-color:var(--primary)}
+  .btn.primary[disabled]{opacity:.5;cursor:not-allowed;background:var(--surface-2);color:var(--ink-mute);border-color:var(--hairline)}
+
+  /* ── Master-detail ────────────────────────────────────────────────────── */
+  .grid{display:grid;grid-template-columns:minmax(300px,380px) 1fr;gap:var(--sp-5);align-items:start}
+  html[data-vw="narrow"] .grid{grid-template-columns:1fr}
+
+  .rail{background:var(--surface);border:1px solid var(--hairline);border-radius:var(--r-lg);
+    padding:var(--sp-4);box-shadow:var(--el-panel)}
+  .filters{display:flex;flex-wrap:wrap;gap:var(--sp-2);margin-bottom:var(--sp-4)}
+  .chip{font-size:11px;padding:4px 9px;border-radius:var(--r-pill);border:1px solid var(--hairline);
+    background:var(--surface-2);color:var(--ink-mute);cursor:pointer}
+  .chip[aria-pressed="true"]{background:var(--primary);color:var(--on-primary);border-color:var(--primary);font-weight:600}
+  .group-h{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--ink-mute);
+    margin:var(--sp-4) 0 var(--sp-2);font-weight:700}
+  .group-h:first-child{margin-top:0}
+
+  .row{display:flex;gap:var(--sp-3);align-items:flex-start;width:100%;text-align:left;cursor:pointer;
+    background:transparent;border:1px solid transparent;border-radius:var(--r-md);padding:var(--sp-3);
+    min-height:var(--target)}
+  .row:hover{background:var(--surface-2)}
+  .row[aria-selected="true"]{background:var(--surface-2);border-color:var(--primary)}
+  .row .state-dot{width:22px;flex:0 0 22px;text-align:center;font-size:13px;margin-top:1px}
+  .row .rtitle{flex:1 1 auto;font-size:13px;line-height:1.35}
+  .row .rmeta{display:flex;gap:6px;margin-top:4px;flex-wrap:wrap}
+  .kindchip{font-size:10px;padding:1px 7px;border-radius:var(--r-pill);border:1px solid var(--hairline);color:var(--ink-mute)}
+  .score{font-size:10px;color:var(--reduced);font-variant-numeric:tabular-nums}
+
+  /* ── Detail ───────────────────────────────────────────────────────────── */
+  .detail{background:var(--surface);border:1px solid var(--hairline);border-radius:var(--r-lg);
+    padding:var(--sp-6);box-shadow:var(--el-panel);min-height:420px}
+  .detail .sig{font-size:18px;font-weight:700;line-height:1.25;margin:0 0 var(--sp-2)}
+  .detail .subrow{display:flex;gap:var(--sp-3);flex-wrap:wrap;align-items:center;margin-bottom:var(--sp-5)}
+  .conf{font-size:11px;padding:2px 9px;border-radius:var(--r-pill);border:1px solid var(--hairline);font-weight:600}
+  .conf.v{color:var(--success)} .conf.i{color:var(--focus)} .conf.f{color:var(--warning)}
+  .src{font-size:11px;color:var(--ink-mute)}
+  .src.model{color:var(--warning)}
+  section.block{border-top:1px solid var(--hairline);padding-top:var(--sp-4);margin-top:var(--sp-4)}
+  section.block h3{font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--ink-mute);margin:0 0 var(--sp-3)}
+  .evidence li{margin:0 0 var(--sp-2);font-size:13px}
+  .evidence .eid{font-family:var(--mono);font-size:12px;color:var(--primary)}
+  .evidence .enote{color:var(--ink-mute)}
+  .control{background:var(--surface-2);border:1px solid var(--hairline);border-radius:var(--r-md);padding:var(--sp-4)}
+  .control .rung{font-size:11px;color:var(--success);font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+  .control .ctext{margin:var(--sp-2) 0}
+  .control .loc{font-family:var(--mono);font-size:11px;color:var(--ink-mute)}
+  .boundary{font-size:13px;color:var(--reduced);font-style:italic}
+  .scope{display:inline-flex;border:1px solid var(--hairline);border-radius:var(--r-sm);overflow:hidden}
+  .scope button{background:var(--surface-2);color:var(--ink);border:0;border-right:1px solid var(--hairline);
+    padding:6px 12px;font-size:12px;cursor:pointer;min-height:36px}
+  .scope button:last-child{border-right:0}
+  .scope button[aria-pressed="true"]{background:var(--primary);color:var(--on-primary);font-weight:600}
+
+  .decide{display:flex;gap:var(--sp-3);flex-wrap:wrap;margin-top:var(--sp-5);
+    border-top:1px solid var(--hairline);padding-top:var(--sp-5)}
+  .decide button{min-height:var(--target);border-radius:var(--r-md);padding:0 18px;font-size:13px;font-weight:600;
+    cursor:pointer;border:1px solid var(--hairline);background:var(--surface-2);color:var(--ink)}
+  .decide .approve[aria-pressed="true"]{background:var(--success);color:#08130a;border-color:var(--success)}
+  .decide .reject[aria-pressed="true"]{background:var(--danger);color:#1a0808;border-color:var(--danger)}
+  .decide .defer[aria-pressed="true"]{background:var(--warning);color:#1a1400;border-color:var(--warning)}
+  html[data-theme="hc"] .decide button[aria-pressed="true"]{outline:2px solid #fff}
+
+  /* ── Hard states ──────────────────────────────────────────────────────── */
+  .placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;padding:var(--sp-8) var(--sp-6);color:var(--ink-mute);min-height:360px;gap:var(--sp-3)}
+  .placeholder .big{font-size:16px;color:var(--ink);font-weight:600}
+  .placeholder code{font-family:var(--mono);font-size:12px;background:var(--surface-2);padding:2px 7px;border-radius:var(--r-sm);color:var(--ink)}
+  .placeholder.err .big{color:var(--danger)}
+  .skel{background:var(--surface);border:1px solid var(--hairline);border-radius:var(--r-md);padding:var(--sp-4);margin-bottom:var(--sp-3)}
+  .skel .bar{height:12px;background:var(--surface-2);border-radius:var(--r-sm);margin:6px 0}
+  .skel .bar.w70{width:70%} .skel .bar.w40{width:40%} .skel .bar.w90{width:90%}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+  .skel .bar{animation:pulse 1.2s var(--ease) infinite}
+
+  /* ── Export drawer ────────────────────────────────────────────────────── */
+  .drawer{background:var(--surface);border:1px solid var(--hairline);border-radius:var(--r-lg);
+    padding:var(--sp-5);box-shadow:var(--el-float);margin-top:var(--sp-5)}
+  .drawer h3{margin:0 0 var(--sp-3);font-size:14px}
+  .drawer pre{background:var(--surface-2);border:1px solid var(--hairline);border-radius:var(--r-md);
+    padding:var(--sp-4);overflow:auto;max-height:220px;font-family:var(--mono);font-size:12px;color:var(--ink);white-space:pre-wrap;word-break:break-word}
+  .drawer .cmd{font-family:var(--mono);font-size:12px;color:var(--primary);margin-top:var(--sp-3);display:block}
+  .drawer .note{font-size:12px;color:var(--ink-mute);margin-top:var(--sp-3)}
+
+  /* in-artifact contrast panel */
+  .audit{margin-top:var(--sp-5);font-size:11px;color:var(--ink-mute)}
+  .audit table{border-collapse:collapse}
+  .audit td{padding:2px 10px 2px 0}
+</style>
+</head>
+<body>
+
+<!-- REVIEW HARNESS -->
+<div class="harness" role="region" aria-label="Review harness (mockup chrome)">
+  <span class="brand"><b>Dream Review</b> · mockup · <span class="mono">docs/DESIGN.md</span> tokens</span>
+  <div class="grp"><label for="h-theme">Theme</label>
+    <div class="seg" id="h-theme" role="group" aria-label="Theme">
+      <button data-theme="dark" aria-pressed="true">Dark</button>
+      <button data-theme="light" aria-pressed="false">Light</button>
+      <button data-theme="hc" aria-pressed="false">High-contrast</button>
+    </div></div>
+  <div class="grp"><label for="h-vw">Viewport</label>
+    <div class="seg" id="h-vw" role="group" aria-label="Viewport">
+      <button data-vw="wide" aria-pressed="true">Desktop</button>
+      <button data-vw="narrow" aria-pressed="false">Narrow</button>
+    </div></div>
+  <div class="grp"><label for="h-state">State</label>
+    <select id="h-state" aria-label="Component state">
+      <option value="normal">Normal (populated)</option>
+      <option value="loading">Loading</option>
+      <option value="empty">Empty dream</option>
+      <option value="error">Error / data missing</option>
+      <option value="overflow">Overflow (extreme content)</option>
+    </select></div>
+  <div class="grp"><label for="h-motion">Motion</label>
+    <div class="seg" id="h-motion" role="group" aria-label="Motion">
+      <button data-motion="full" aria-pressed="true">Full</button>
+      <button data-motion="reduced" aria-pressed="false">Reduced</button>
+    </div></div>
+</div>
+
+<main class="app" id="app"></main>
+
+<script>
+/* ── Seeded dream data (realistic: reflects the pack's own corpus) ───────── */
+const DREAM_DATA = {
+  id:"drm-0001", date:"2026-08-15", window:"last 30 days · 33 audit · 11 change · 7 mitigations · 4 markers",
+  proposals:[
+    { id:"p1", kind:"New class", group:"New class", title:"Install instruction names a destination with no shipped template",
+      sig:"PACK-E · Install map names a destination file the project does not actually ship",
+      score:0.86, scope:"general", confidence:"i", source:"model",
+      evidence:[
+        {eid:"al-0021", note:"forensicreview flagged 3 deployment-map targets without a matching template"},
+        {eid:"cl-0007", note:"decision to ship a template for every named destination"}],
+      control:{rung:"automated control", text:"verify-bundle.ps1 asserts a committed template exists for every destination path named in INSTALL.md; fails red on a missing one.", loc:"tools/verify-bundle.ps1"},
+      boundary:"Applies to any pack/adapter that declares a deployment map. Does NOT apply to generated mirrors (they have a source)." },
+    { id:"p2", kind:"Confirmed mitigation", group:"Confirmed mitigation \u2192 learning", title:"Ignore-rule with trailing inline comment silently matches nothing",
+      sig:"OPS-B · .gitignore pattern with a same-line # comment becomes a literal that matches nothing",
+      score:0.81, scope:"general", confidence:"v", source:"deterministic",
+      evidence:[
+        {eid:"mit-0004", note:"error observed \u2192 git check-ignore red \u2192 pattern moved to its own line \u2192 check-ignore green (red\u2192green captured)"},
+        {eid:"al-0031", note:"visual-assets-setup wired .mcp.json ignore; verified with git check-ignore"}],
+      control:{rung:"automated control", text:"A test asserts git check-ignore -v exits 0 for each credential path after write; reads state back, not the exit code.", loc:"tests/ignore_rules_test"},
+      boundary:"Applies wherever a script writes a .gitignore entry. Verified by reading git state (E14), not by the writer's success." },
+    { id:"p3", kind:"Control upgrade", group:"Control upgrade", title:"DM-A (one quantity, two homes) is uncontrolled",
+      sig:"DM-A \u00b7 a value produced in two places; a new call site wires to whichever it found first",
+      score:0.74, scope:"general", confidence:"i", source:"model",
+      evidence:[
+        {eid:"al-0019", note:"recurred while implementing the dream scoring (two definitions of 'blast-radius' briefly diverged)"},
+        {eid:"cl-0009", note:"derive-once decision (DM7)"}],
+      control:{rung:"automated control", text:"Add a cross-surface consistency test that asserts the two producers agree on a seeded fixture; upgrade DM-A from uncontrolled \u2192 controlled.", loc:"tests/consistency/blast_radius_test"},
+      boundary:"Applies to any quantity with two computation sites in one repo. Derive once; the test is the control." },
+    { id:"p4", kind:"Register dedup", group:"Register dedup", title:"E2E-I and E2E-H describe the same tool-not-run shape",
+      sig:"Merge E2E-I (tool-not-run rendered as found-nothing) into E2E-H (static control scanned the shell)",
+      score:0.52, scope:"repo-local", confidence:"f", source:"model",
+      evidence:[
+        {eid:"defect-classes#E2E-H", note:"static control scanned the shell, not the surface"},
+        {eid:"defect-classes#E2E-I", note:"tool-not-run rendered as tool-found-nothing"}],
+      control:{rung:"register entry only", text:"Keep both entries; add a cross-reference rather than merging \u2014 they share a signature but differ in cause. FLAGGED for human decision.", loc:"docs/lessons/defect-classes.md"},
+      boundary:"Possible duplicate \u2014 surfaced for human resolution, never auto-merged (reconciliation is slug-exact + flag)." },
+    { id:"p5", kind:"Doc update", group:"Doc / knowledge update", title:"Add 'promotion oracle' to the glossary",
+      sig:"The dreaming glossary defines 'oracle' but code will reference 'promotion oracle' \u2014 align the term",
+      score:0.40, scope:"repo-local", confidence:"v", source:"deterministic",
+      evidence:[{eid:"spec-dreaming", note:"US-3 introduces the term 'promotion oracle' as the load-bearing name"}],
+      control:{rung:"knowledge doc", text:"Add a glossary entry 'promotion oracle' with a uses-term link; keep one name for the concept (DM17).", loc:"docs/knowledge/continuous-improvement-and-dreaming/glossary.md"},
+      boundary:"Terminology only; no behaviour change." }
+  ]
+};
+
+/* An overflow fixture: extreme content to prove the layout holds (DX16). */
+const OVERFLOW_PROPOSAL = {
+  id:"pX", kind:"New class", group:"New class",
+  title:"A deliberately, unreasonably, exhaustively long proposal title that keeps going well past any sensible column width to prove wrapping and truncation are handled gracefully rather than clipping the reviewer's ability to read it",
+  sig:"OVERFLOW-TEST \u00b7 "+"a-very-long-signature-token-".repeat(6)+"end",
+  score:0.99, scope:"general", confidence:"f", source:"model",
+  evidence:Array.from({length:40},(_,i)=>({eid:"al-"+String(1000+i), note:"synthetic evidence line number "+(i+1)+" demonstrating a proposal that touches an unrealistic number of sources"})),
+  control:{rung:"automated control", text:"x ".repeat(120)+"\u2014 an overlong control body that must scroll or wrap within its card, never overflow the viewport.", loc:"a/very/long/path/that/should/wrap/"+"segment-".repeat(10)+"file_test"},
+  boundary:"Synthetic \u2014 exists only to exercise the overflow state in the harness."
+};
+
+const KINDS=["New class","Confirmed mitigation \u2192 learning","Control upgrade","Register dedup","Doc / knowledge update"];
+let state={ mode:"normal", selected:"p1", decisions:{}, scopeOverride:{}, filterKind:null, filterScope:null };
+
+const app=document.getElementById("app");
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const decIcon=d=>d==="approve"?"\u2714":d==="reject"?"\u2716":d==="defer"?"\u25CB":"\u00B7";
+
+function proposals(){
+  let ps=DREAM_DATA.proposals.slice();
+  if(state.mode==="overflow") ps=[OVERFLOW_PROPOSAL,...ps];
+  if(state.filterKind) ps=ps.filter(p=>p.group===state.filterKind);
+  if(state.filterScope) ps=ps.filter(p=>(state.scopeOverride[p.id]||p.scope)===state.filterScope);
+  return ps.sort((a,b)=>b.score-a.score);
+}
+function counts(){
+  const d=state.decisions, vals=Object.values(d);
+  return { proposed:(state.mode==="overflow"?DREAM_DATA.proposals.length+1:DREAM_DATA.proposals.length),
+    approve:vals.filter(v=>v==="approve").length, reject:vals.filter(v=>v==="reject").length, defer:vals.filter(v=>v==="defer").length };
+}
+function decisionsJSON(){
+  const out={ dream:DREAM_DATA.id, date:DREAM_DATA.date, decisions:[] };
+  Object.keys(state.decisions).forEach(id=>{
+    const p=[OVERFLOW_PROPOSAL,...DREAM_DATA.proposals].find(x=>x.id===id); if(!p) return;
+    out.decisions.push({ id, decision:state.decisions[id], scope:state.scopeOverride[id]||p.scope, sig:p.sig });
+  });
+  return JSON.stringify(out,null,2);
+}
+
+function render(){
+  if(state.mode==="loading")  return app.innerHTML=shell(loadingBody());
+  if(state.mode==="empty")    return app.innerHTML=shell(emptyBody());
+  if(state.mode==="error")    return app.innerHTML=shell(errorBody());
+  app.innerHTML=shell(normalBody());
+  wire();
+}
+function shell(body){
+  const c=counts();
+  const anyDecision=Object.keys(state.decisions).length>0;
+  return `
+  <header class="top">
+    <h1>Dream review</h1>
+    <div class="meta"><b>${esc(DREAM_DATA.id)}</b> · ${esc(DREAM_DATA.date)}<br>${esc(DREAM_DATA.window)}</div>
+    <div class="counts" aria-live="polite">
+      <span class="count">Proposed <b>${c.proposed}</b></span>
+      <span class="count approve">Approved <b>${c.approve}</b></span>
+      <span class="count reject">Rejected <b>${c.reject}</b></span>
+      <span class="count defer">Deferred <b>${c.defer}</b></span>
+    </div>
+    <button class="btn primary" id="exportBtn" ${anyDecision?"":"disabled"} aria-disabled="${anyDecision?"false":"true"}>Export decisions</button>
+  </header>
+  ${body}
+  ${anyDecision?exportDrawer():""}
+  ${contrastPanel()}`;
+}
+
+function normalBody(){
+  const ps=proposals();
+  const sel=ps.find(p=>p.id===state.selected)||ps[0];
+  if(sel) state.selected=sel.id;
+  return `<div class="grid">
+    <nav class="rail" aria-label="Proposal queue">
+      <div class="filters" role="group" aria-label="Filters">
+        ${["New class","Confirmed mitigation \u2192 learning","Control upgrade","Register dedup","Doc / knowledge update"]
+          .map(k=>`<button class="chip" data-fkind="${esc(k)}" aria-pressed="${state.filterKind===k}">${esc(k)}</button>`).join("")}
+        <button class="chip" data-fscope="general" aria-pressed="${state.filterScope==="general"}">general</button>
+        <button class="chip" data-fscope="repo-local" aria-pressed="${state.filterScope==="repo-local"}">repo-local</button>
+      </div>
+      ${queueList(ps)}
+    </nav>
+    <div class="detail" aria-live="polite">${sel?detailBody(sel):`<div class="placeholder"><span class="big">No proposals match these filters.</span><button class="btn" id="clearFilters">Clear filters</button></div>`}</div>
+  </div>`;
+}
+function queueList(ps){
+  if(!ps.length) return `<p class="mono" style="color:var(--ink-mute)">No proposals match.</p>`;
+  let html="", lastGroup=null;
+  KINDS.forEach(g=>{
+    const inG=ps.filter(p=>p.group===g); if(!inG.length) return;
+    html+=`<div class="group-h">${esc(g)} (${inG.length})</div>`;
+    inG.forEach(p=>{
+      const d=state.decisions[p.id];
+      html+=`<button class="row" data-id="${p.id}" aria-selected="${state.selected===p.id}" role="option">
+        <span class="state-dot" title="${d||"undecided"}" style="color:${d==="approve"?"var(--success)":d==="reject"?"var(--danger)":d==="defer"?"var(--warning)":"var(--ink-mute)"}">${decIcon(d)}</span>
+        <span class="rtitle">${esc(p.title)}
+          <span class="rmeta"><span class="kindchip">${esc(p.scope)}</span><span class="score">score ${p.score.toFixed(2)}</span></span>
+        </span></button>`;
+    });
+  });
+  return html;
+}
+function detailBody(p){
+  const scope=state.scopeOverride[p.id]||p.scope;
+  const d=state.decisions[p.id];
+  const confLabel={v:"Verified",i:"Inferred",f:"Flagged"}[p.confidence];
+  return `
+    <p class="mono src ${p.source==="model"?"model":""}">${p.source==="model"?"\u25C6 model-proposed abstraction \u2014 verify before approving":"\u25A0 deterministic (dedup/marker) \u2014 mechanical"}</p>
+    <h2 class="sig">${esc(p.sig)}</h2>
+    <div class="subrow">
+      <span class="conf ${p.confidence}">${confLabel}</span>
+      <span class="kindchip">${esc(p.kind)}</span>
+      <span class="src">blast-radius score <b class="mono">${p.score.toFixed(2)}</b></span>
+    </div>
+
+    <section class="block"><h3>Evidence &amp; provenance (${p.evidence.length})</h3>
+      <ul class="evidence" style="margin:0;padding-left:18px">
+        ${p.evidence.map(e=>`<li><span class="eid">${esc(e.eid)}</span> — <span class="enote">${esc(e.note)}</span></li>`).join("")}
+      </ul></section>
+
+    <section class="block"><h3>Proposed control</h3>
+      <div class="control">
+        <div class="rung">ladder rung · ${esc(p.control.rung)}</div>
+        <p class="ctext">${esc(p.control.text)}</p>
+        <div class="loc">${esc(p.control.loc)}</div>
+      </div></section>
+
+    <section class="block"><h3>Boundary statement</h3><p class="boundary">${esc(p.boundary)}</p></section>
+
+    <section class="block"><h3>Federation scope</h3>
+      <div class="scope" role="group" aria-label="Federation scope">
+        <button data-scope="repo-local" data-pid="${p.id}" aria-pressed="${scope==="repo-local"}">Repo-local</button>
+        <button data-scope="general" data-pid="${p.id}" aria-pressed="${scope==="general"}">General (federate)</button>
+      </div>
+      <p class="note mono" style="color:var(--ink-mute);margin-top:8px">${scope==="general"?"Will be abstracted, scrubbed, and offered to the fleet store + /apply-learnings.":"Stays in this repo's register only until it recurs or is blessed general."}</p>
+    </section>
+
+    <div class="decide" role="group" aria-label="Decision">
+      <button class="approve" data-decide="approve" data-pid="${p.id}" aria-pressed="${d==="approve"}">\u2714 Approve</button>
+      <button class="reject"  data-decide="reject"  data-pid="${p.id}" aria-pressed="${d==="reject"}">\u2716 Reject</button>
+      <button class="defer"   data-decide="defer"   data-pid="${p.id}" aria-pressed="${d==="defer"}">\u25CB Defer</button>
+    </div>`;
+}
+function loadingBody(){
+  return `<div class="grid"><nav class="rail" aria-busy="true" aria-label="Loading proposals">
+    ${Array.from({length:4}).map(()=>`<div class="skel"><div class="bar w70"></div><div class="bar w40"></div></div>`).join("")}
+  </nav><div class="detail" aria-busy="true"><div class="skel"><div class="bar w90"></div><div class="bar w70"></div><div class="bar w40"></div></div>
+    <div class="skel"><div class="bar w90"></div><div class="bar w90"></div><div class="bar w70"></div></div></div></div>`;
+}
+function emptyBody(){
+  return `<div class="detail"><div class="placeholder">
+    <span class="big">No proposals in this dream</span>
+    <p>The corpus produced nothing worth consolidating in this window. This is a valid, healthy result.</p>
+    <p>Run <code>/dream</code> again after more work accumulates, or widen the input window.</p>
+  </div></div>`;
+}
+function errorBody(){
+  return `<div class="detail"><div class="placeholder err">
+    <span class="big">Dream data is missing or malformed</span>
+    <p><code>dream-data.js</code> did not load or failed to parse. Nothing was changed.</p>
+    <p>Regenerate the dream with <code>python docs/ai-forward-pack/scripts/dream.py run</code>, then reopen this view.</p>
+  </div></div>`;
+}
+function exportDrawer(){
+  return `<section class="drawer" aria-label="Export decisions">
+    <h3>Export decisions</h3>
+    <p class="note">This writes nothing to disk. Copy the decisions below and feed them to <span class="mono">apply-decisions</span> — the only path that touches a durable store, and it runs a validation + taint pass first.</p>
+    <pre id="decJson">${esc(decisionsJSON())}</pre>
+    <span class="cmd">$ python docs/ai-forward-pack/scripts/dream.py apply-decisions ${esc(DREAM_DATA.id)}-decisions.json</span>
+    <p class="note">Approved <b>general</b> learnings are abstracted + scrubbed, then offered to the fleet store. Approved <b>repo-local</b> ones update this repo's register only. Push to other repos later with <span class="mono">/apply-learnings</span>.</p>
+  </section>`;
+}
+function contrastPanel(){
+  return `<div class="audit"><table><tr><td colspan="3"><b>In-artifact contrast audit (docs/DESIGN.md, dark):</b></td></tr>
+    <tr><td>ink / canvas</td><td class="mono">8.28:1</td><td style="color:var(--success)">AA pass</td></tr>
+    <tr><td>ink-mute / canvas</td><td class="mono">4.68:1</td><td style="color:var(--success)">AA pass</td></tr>
+    <tr><td>primary / canvas</td><td class="mono">5.07:1</td><td style="color:var(--success)">AA pass</td></tr>
+    <tr><td>focus-ring / surface</td><td class="mono">5.57:1</td><td style="color:var(--success)">AA pass</td></tr>
+    <tr><td colspan="3" style="color:var(--ink-mute)">Decision state = icon + colour + text chip (never colour alone). Light + high-contrast modes audited in DESIGN.md.</td></tr>
+  </table></div>`;
+}
+
+/* ── Wiring ───────────────────────────────────────────────────────────── */
+function wire(){
+  app.querySelectorAll(".row").forEach(r=>r.addEventListener("click",()=>{state.selected=r.dataset.id;render();}));
+  app.querySelectorAll("[data-decide]").forEach(b=>b.addEventListener("click",()=>{
+    const id=b.dataset.pid, val=b.dataset.decide;
+    state.decisions[id]=(state.decisions[id]===val)?undefined:val;
+    if(state.decisions[id]===undefined) delete state.decisions[id];
+    render();
+  }));
+  app.querySelectorAll("[data-scope]").forEach(b=>b.addEventListener("click",()=>{
+    state.scopeOverride[b.dataset.pid]=b.dataset.scope;render();
+  }));
+  app.querySelectorAll("[data-fkind]").forEach(b=>b.addEventListener("click",()=>{
+    state.filterKind=(state.filterKind===b.dataset.fkind)?null:b.dataset.fkind;render();
+  }));
+  app.querySelectorAll("[data-fscope]").forEach(b=>b.addEventListener("click",()=>{
+    state.filterScope=(state.filterScope===b.dataset.fscope)?null:b.dataset.fscope;render();
+  }));
+  const cf=app.querySelector("#clearFilters"); if(cf) cf.addEventListener("click",()=>{state.filterKind=null;state.filterScope=null;render();});
+  const ex=app.querySelector("#exportBtn"); if(ex) ex.addEventListener("click",()=>{
+    const dr=app.querySelector(".drawer"); if(dr) dr.scrollIntoView({behavior:document.documentElement.dataset.motion==="reduced"?"auto":"smooth"});
+  });
+}
+
+/* ── Harness ──────────────────────────────────────────────────────────── */
+function seg(id,attr){
+  document.querySelectorAll(`#${id} button`).forEach(b=>b.addEventListener("click",()=>{
+    document.querySelectorAll(`#${id} button`).forEach(x=>x.setAttribute("aria-pressed","false"));
+    b.setAttribute("aria-pressed","true");
+    document.documentElement.setAttribute(attr,b.dataset[attr.replace("data-","")]||b.getAttribute("data-"+attr.split("-")[1]));
+  }));
+}
+document.querySelectorAll("#h-theme button").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll("#h-theme button").forEach(x=>x.setAttribute("aria-pressed","false"));
+  b.setAttribute("aria-pressed","true"); document.documentElement.setAttribute("data-theme",b.dataset.theme);
+}));
+document.querySelectorAll("#h-vw button").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll("#h-vw button").forEach(x=>x.setAttribute("aria-pressed","false"));
+  b.setAttribute("aria-pressed","true"); document.documentElement.setAttribute("data-vw",b.dataset.vw);
+}));
+document.querySelectorAll("#h-motion button").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll("#h-motion button").forEach(x=>x.setAttribute("aria-pressed","false"));
+  b.setAttribute("aria-pressed","true"); document.documentElement.setAttribute("data-motion",b.dataset.motion);
+}));
+document.getElementById("h-state").addEventListener("change",e=>{state.mode=e.target.value;render();});
+document.documentElement.setAttribute("data-vw","wide");
+render();
+</script>
+</body>
+</html>

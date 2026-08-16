@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="en" data-theme="dark" data-motion="full" data-vw="wide">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AI-Forward — Documentation Portal (mockup)</title>
+<!--
+  Self-contained, dependency-free high-fidelity mockup of the Documentation Portal (spec-documentation-portal, Part C).
+  Archetype: DocsPortal (Content Portal / HolyGrail reading layout). Tokens: docs/DESIGN.md (AA-audited).
+  The top bar carries the REVIEW HARNESS (mockup chrome only): theme, viewport, state, reduced motion.
+  Production: build-docs-portal.py emits portal-data.js in this shape; the template loads it instead of the embedded seed.
+-->
+<style>
+  :root{
+    --canvas:#3d3b3a; --surface:#343231; --surface-2:#2c2a29;
+    --ink:#dedede; --ink-mute:#a8a8a8; --reduced:#b0b0b0; --hairline:#888684;
+    --primary:#fd8ea1; --on-primary:#1a1a1a; --focus:#62b0ff;
+    --success:#4ade80; --warning:#fbbf24; --danger:#ff9191;
+    --sp-2:4px; --sp-3:8px; --sp-4:12px; --sp-5:16px; --sp-6:24px; --sp-7:32px; --sp-8:48px;
+    --r-sm:5px; --r-md:8px; --r-lg:12px; --r-pill:9999px;
+    --fast:120ms; --context:220ms; --ease:cubic-bezier(0.2,0,0,1); --ring:3px; --ring-off:2px; --target:44px;
+    --font:"Segoe UI",Aptos,Calibri,system-ui,sans-serif; --serif:"Iowan Old Style",Palatino,Georgia,serif;
+    --mono:Consolas,"Courier New",monospace;
+    --el-panel:0 8px 28px rgba(0,0,0,0.28); --el-float:0 18px 48px rgba(0,0,0,0.38);
+    --nav-w:264px; --measure:74ch;
+  }
+  html[data-theme="light"]{--canvas:#f7f4ef;--surface:#fcfbf8;--surface-2:#efece6;--ink:#242424;--ink-mute:#5c5c5c;--reduced:#6f6f6f;--hairline:#8a8886;--primary:#b11f4b;--on-primary:#fff;--focus:#006cbe;--success:#146c2e;--warning:#8a4b08;--danger:#b3261e;--el-panel:0 8px 28px rgba(0,0,0,0.06);--el-float:0 18px 48px rgba(0,0,0,0.12)}
+  html[data-theme="hc"]{--canvas:#000;--surface:#000;--surface-2:#000;--ink:#fff;--ink-mute:#fff;--reduced:#fff;--hairline:#fff;--primary:#ff0;--on-primary:#000;--focus:#ff0;--success:#0f0;--warning:#ff0;--danger:#ff8080;--el-panel:none;--el-float:none}
+  html[data-motion="reduced"] *{transition:none!important;animation:none!important;scroll-behavior:auto!important}
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;background:var(--canvas);color:var(--ink);font-family:var(--font);font-size:15px;line-height:1.6;display:flex;flex-direction:column}
+  :focus-visible{outline:var(--ring) solid var(--focus);outline-offset:var(--ring-off)}
+  a{color:var(--primary);text-decoration:none}a:hover{text-decoration:underline}
+  .mono{font-family:var(--mono);font-size:max(0.85em,11px)}
+  .skip{position:absolute;left:-999px;top:8px;z-index:100;background:var(--primary);color:var(--on-primary);padding:8px 14px;border-radius:var(--r-sm)}
+  .skip:focus{left:8px}
+
+  /* harness */
+  .harness{position:sticky;top:0;z-index:30;display:flex;flex-wrap:wrap;gap:var(--sp-5);align-items:center;padding:var(--sp-3) var(--sp-5);background:var(--surface-2);border-bottom:2px dashed var(--hairline);font-size:12px}
+  .harness .brand{color:var(--ink-mute);margin-right:auto}.harness .brand b{color:var(--ink)}
+  .harness label{color:var(--ink-mute);font-weight:600;margin-right:6px}
+  .seg{display:inline-flex;border:1px solid var(--hairline);border-radius:var(--r-sm);overflow:hidden}
+  .seg button{background:var(--surface);color:var(--ink);border:0;border-right:1px solid var(--hairline);padding:6px 10px;font-size:12px;min-height:32px;cursor:pointer}
+  .seg button:last-child{border-right:0}.seg button[aria-pressed="true"]{background:var(--primary);color:var(--on-primary);font-weight:600}
+  .harness select{background:var(--surface);color:var(--ink);border:1px solid var(--hairline);border-radius:var(--r-sm);padding:6px 8px;font-size:12px;min-height:32px}
+
+  /* top bar */
+  .topbar{position:sticky;top:0;z-index:20;display:flex;gap:var(--sp-5);align-items:center;padding:var(--sp-4) var(--sp-6);background:color-mix(in srgb,var(--canvas) 92%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--hairline)}
+  .topbar .logo{font-family:var(--serif);font-size:19px;font-weight:700;letter-spacing:-.3px;white-space:nowrap}
+  .topbar .tag{color:var(--ink-mute);font-size:13px;border-left:1px solid var(--hairline);padding-left:var(--sp-5)}
+  .topbar .search{margin-left:auto;display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--hairline);border-radius:var(--r-pill);padding:6px 14px;min-width:220px}
+  .topbar .search input{background:transparent;border:0;color:var(--ink);font-size:13px;width:100%;outline:none}
+  .topbar .search .k{font-family:var(--mono);font-size:11px;color:var(--ink-mute);border:1px solid var(--hairline);border-radius:4px;padding:0 5px}
+
+  /* shell: holy grail */
+  .shell{flex:1 1 auto;display:grid;grid-template-columns:var(--nav-w) 1fr;min-height:0}
+  html[data-vw="narrow"] .shell{grid-template-columns:1fr}
+  nav.rail{border-right:1px solid var(--hairline);background:var(--surface);padding:var(--sp-5) var(--sp-4);overflow:auto}
+  html[data-vw="narrow"] nav.rail{display:none}
+  html[data-vw="narrow"] .navselect{display:block}
+  .navselect{display:none;padding:var(--sp-4) var(--sp-6) 0}
+  .navselect select{width:100%;background:var(--surface);color:var(--ink);border:1px solid var(--hairline);border-radius:var(--r-md);padding:10px;font-size:14px;min-height:var(--target)}
+  .rail .sec{display:block;width:100%;text-align:left;background:transparent;border:0;border-radius:var(--r-md);padding:10px 12px;color:var(--ink);font-size:14px;cursor:pointer;min-height:var(--target);display:flex;gap:10px;align-items:center}
+  .rail .sec:hover{background:var(--surface-2)}
+  .rail .sec[aria-current="true"]{background:var(--surface-2);color:var(--primary);font-weight:700;box-shadow:inset 3px 0 0 var(--primary)}
+  .rail .sec .n{font-family:var(--mono);font-size:11px;color:var(--ink-mute);width:16px}
+  .rail .sub{padding:2px 0 8px 38px}
+  .rail .sub a{display:block;font-size:12.5px;color:var(--ink-mute);padding:4px 0}
+  .rail .sub a:hover{color:var(--ink);text-decoration:none}
+
+  main{overflow:auto;padding:var(--sp-7) var(--sp-8) var(--sp-8)}
+  .content{max-width:960px}
+  .lede-h{font-family:var(--serif);font-size:clamp(26px,4vw,36px);line-height:1.12;letter-spacing:-.4px;margin:0 0 var(--sp-4)}
+  .lede{font-size:18px;color:var(--ink-mute);max-width:var(--measure);margin:0 0 var(--sp-7)}
+  h2.band{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--primary);margin:var(--sp-8) 0 var(--sp-4);font-weight:700}
+  h2.band:first-child{margin-top:0}
+  h3{font-size:21px;margin:var(--sp-6) 0 var(--sp-3);letter-spacing:-.2px}
+  p{max-width:var(--measure)}
+
+  /* counts strip */
+  .counts{display:flex;flex-wrap:wrap;gap:var(--sp-3);margin:0 0 var(--sp-6)}
+  .stat{background:var(--surface);border:1px solid var(--hairline);border-radius:var(--r-md);padding:var(--sp-4) var(--sp-5);min-width:96px}
+  .stat b{display:block;font-size:24px;font-variant-numeric:tabular-nums;font-family:var(--serif)}
+  .stat span{font-size:11px;color:var(--ink-mute);text-transform:uppercase;letter-spacing:.5px}
+
+  /* capability grid */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:var(--sp-4)}
+  .cap{background:var(--surface);border:1px solid var(--hairline);border-radius:var(--r-lg);padding:var(--sp-5)}
+  .cap h4{margin:0 0 6px;font-size:15px}
+  .cap p{margin:0;font-size:13.5px;color:var(--ink-mute)}
+
+  /* skill cards */
+  .group-band{display:flex;align-items:center;gap:12px;margin:var(--sp-7) 0 var(--sp-4)}
+  .group-band .gt{font-size:15px;font-weight:700}
+  .group-band .gl{flex:1 1 auto;height:1px;background:var(--hairline)}
+  .group-band .gc{font-family:var(--mono);font-size:11px;color:var(--ink-mute)}
+  .skill{background:var(--surface);border:1px solid var(--hairline);border-radius:var(--r-lg);padding:var(--sp-5) var(--sp-6);margin-bottom:var(--sp-4);box-shadow:var(--el-panel)}
+  .skill .cmd{font-family:var(--mono);font-size:15px;color:var(--primary);font-weight:700}
+  .skill .desc{margin:6px 0 var(--sp-4);color:var(--ink)}
+  .skill .meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:var(--sp-4) var(--sp-6);font-size:13px}
+  .skill .meta .k{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--ink-mute);display:block;margin-bottom:2px}
+  .skill .meta .v{color:var(--reduced)}
+  .skill .src{margin-top:var(--sp-4);font-size:12px}
+  .skill .src a{font-family:var(--mono);font-size:11.5px}
+
+  /* ui standards stack */
+  .stack .std{display:grid;grid-template-columns:170px 1fr;gap:var(--sp-5);padding:var(--sp-4) 0;border-top:1px solid var(--hairline)}
+  .stack .std:first-child{border-top:0}
+  .stack .std .sn{font-family:var(--mono);font-size:12px;color:var(--primary)}
+  .stack .std .sd{font-size:13.5px;color:var(--ink-mute);margin:0}
+
+  /* reference table */
+  table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:var(--sp-3)}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--hairline);vertical-align:top}
+  th{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--ink-mute)}
+  td .mono{color:var(--primary)}
+
+  /* getting started steps */
+  ol.steps{counter-reset:s;list-style:none;padding:0;margin:0;max-width:var(--measure)}
+  ol.steps li{counter-increment:s;position:relative;padding:0 0 var(--sp-6) var(--sp-8);border-left:1px solid var(--hairline);margin-left:16px}
+  ol.steps li:last-child{border-left-color:transparent}
+  ol.steps li::before{content:counter(s);position:absolute;left:-16px;top:-2px;width:32px;height:32px;border-radius:var(--r-pill);background:var(--surface);border:1px solid var(--primary);color:var(--primary);font-family:var(--serif);font-weight:700;display:flex;align-items:center;justify-content:center}
+  ol.steps li h4{margin:0 0 4px;font-size:15px}
+  ol.steps li p{margin:0 0 8px;color:var(--ink-mute);font-size:14px}
+  code.cmd{font-family:var(--mono);font-size:13px;background:var(--surface-2);border:1px solid var(--hairline);border-radius:var(--r-sm);padding:2px 8px;color:var(--ink);display:inline-block}
+
+  /* placeholders */
+  .ph{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:var(--sp-8);color:var(--ink-mute);gap:var(--sp-3);min-height:340px}
+  .ph .big{font-size:17px;color:var(--ink);font-weight:600}.ph.err .big{color:var(--danger)}
+  .ph code{font-family:var(--mono);font-size:12px;background:var(--surface-2);padding:2px 7px;border-radius:var(--r-sm);color:var(--ink)}
+  .skel .bar{height:14px;background:var(--surface);border:1px solid var(--hairline);border-radius:var(--r-sm);margin:10px 0;animation:pulse 1.2s var(--ease) infinite}
+  .skel .bar.w40{width:40%}.skel .bar.w70{width:70%}.skel .bar.w90{width:90%}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+  .comingsoon{background:var(--surface);border:1px dashed var(--hairline);border-radius:var(--r-lg);padding:var(--sp-6);color:var(--ink-mute);font-size:14px}
+  .linkout{background:var(--surface);border:1px solid var(--hairline);border-radius:var(--r-md);padding:var(--sp-4) var(--sp-5);display:flex;gap:var(--sp-4);align-items:baseline;margin-bottom:var(--sp-3)}
+  .linkout .lname{font-weight:700;min-width:140px}
+  .linkout .missing{color:var(--warning);font-size:12px}
+</style>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+
+<!-- HARNESS -->
+<div class="harness" role="region" aria-label="Review harness (mockup chrome)">
+  <span class="brand"><b>Documentation Portal</b> · mockup · <span class="mono">docs/DESIGN.md</span> tokens</span>
+  <span><label>Theme</label><span class="seg" id="h-theme" role="group" aria-label="Theme">
+    <button data-theme="dark" aria-pressed="true">Dark</button><button data-theme="light" aria-pressed="false">Light</button><button data-theme="hc" aria-pressed="false">HC</button></span></span>
+  <span><label>Viewport</label><span class="seg" id="h-vw" role="group" aria-label="Viewport">
+    <button data-vw="wide" aria-pressed="true">Desktop</button><button data-vw="narrow" aria-pressed="false">Narrow</button></span></span>
+  <span><label>State</label><select id="h-state" aria-label="Component state">
+    <option value="normal">Normal</option><option value="loading">Loading</option><option value="empty">Empty section</option><option value="error">Error / data missing</option></select></span>
+  <span><label>Motion</label><span class="seg" id="h-motion" role="group" aria-label="Motion">
+    <button data-motion="full" aria-pressed="true">Full</button><button data-motion="reduced" aria-pressed="false">Reduced</button></span></span>
+</div>
+
+<div class="topbar">
+  <span class="logo">AI-Forward</span>
+  <span class="tag">a methodology pack for directing coding agents — reasoning spine · 23 persona lenses · 21 skills</span>
+  <span class="search"><input id="q" type="search" placeholder="Search skills &amp; sections…" aria-label="Search" /><span class="k">/</span></span>
+</div>
+
+<div class="shell">
+  <nav class="rail" id="rail" aria-label="Sections"></nav>
+  <div class="navselect"><select id="navsel" aria-label="Section"></select></div>
+  <main id="content" tabindex="-1"><div class="content" id="pane"></div></main>
+</div>
+
+<script>
+/* ── Seeded portal data (the shape build-docs-portal.py emits as window.PORTAL_DATA) ── */
+const PORTAL_DATA = {
+  meta:{ counts:{skills:21,personas:23,knowledge:33,templates:25,scripts:15},
+    whatIs:"AI-Forward is a committed Markdown methodology pack that installs into a repo so Claude Code and GitHub Copilot direct work with a shared reasoning spine, adversarial persona review, and a library of workflow skills — nothing runs as a service; everything is versioned files and stdlib scripts." },
+  sections:[
+    {id:"start",  n:"1", title:"Getting Started"},
+    {id:"caps",   n:"2", title:"Capabilities"},
+    {id:"skills", n:"3", title:"The 21 Skills"},
+    {id:"ui",     n:"4", title:"UI Capabilities"},
+    {id:"systems",n:"5", title:"Systems"},
+    {id:"ref",    n:"6", title:"Reference"}
+  ],
+  gettingStarted:[
+    {h:"Understand what it is", p:"A methodology pack, not a runtime. It ships knowledge docs (the reasoning constitution), persona lenses (adversarial review), and skills (workflows), plus stdlib scripts for the knowledge graph, audit log, and dreaming. Everything is committed files you can read.", cmd:null},
+    {h:"Install it into a repo", p:"Add the pack to a new or existing local repo. From an ai-forward clone, run the installer skill; a brownfield repo also runs /adopt to bootstrap its knowledge graph.", cmd:"/addpacktorepo   (or /adopt for an existing repo)"},
+    {h:"Know how skills are invoked", p:"In Claude Code, skills apply by description (.claude/skills/). In GitHub Copilot, they are prompts (.github/prompts/). Both surfaces read the same knowledge docs and personas.", cmd:null},
+    {h:"Run your first skill", p:"Start where the loop starts: collect the domain knowledge your work rests on, then specify. The pack grounds every skill in what the repo already knows.", cmd:"/collectknowledge   then   /specify"},
+    {h:"Keep the repo learning", p:"As you work, the audit log captures every run; run /dream to consolidate learnings into reviewable improvements, and /apply-learnings to share them across your repos.", cmd:"/dream"}
+  ],
+  capabilities:[
+    {h:"Reason with rigor", p:"A Rigor Protocol (map → interrogate → ground → disconfirm → converge) and a No-Guessing rule under every non-trivial task."},
+    {h:"Review adversarially", p:"23 persona lenses author in Peer Mode and attack in Adversary Mode; the author never clears its own hard veto."},
+    {h:"Specify before building", p:"One spec, three layers — Functional, UX, UI — with a conceptual data model taken first."},
+    {h:"Design interfaces to a floor", p:"Seven UI standards, an archetype grammar, a deterministic craft detector, and a visual-assets pipeline."},
+    {h:"Build under TDD", p:"Red→green→refactor paired with the Test Architect; a triggered test directive is applied, not chosen."},
+    {h:"Remember across sessions", p:"A committed knowledge graph, an append-only audit & change log, and dreaming — offline consolidation of learnings."}
+  ],
+  skills:[
+    {group:"Collect & frame", items:[
+      {cmd:"/collectknowledge", desc:"Build a sourced domain knowledge base before design so work rests on evidence, not assumption.", when:"Starting in an unfamiliar or high-stakes domain.", produces:"docs/knowledge/<topic>/", handoff:"/adddomainexperts → /specify"},
+      {cmd:"/adddomainexperts", desc:"Add project-specific expert persona lenses derived from the repo's own evidence.", when:"The domain needs subject-matter lenses beyond the general engineering ones.", produces:"docs/domain-experts.md", handoff:"/specify"},
+      {cmd:"/specify", desc:"Turn a prompt into a testable, three-layer specification with a conceptual data model.", when:"Any non-trivial feature, before architecture.", produces:"docs/specs/<feature>.md", handoff:"/define-architecture or /design"}
+    ]},
+    {group:"Architect & design", items:[
+      {cmd:"/define-architecture", desc:"Produce the top-level architecture: archetype, tier allocation, durable data model, ADRs, vertical phasing.", when:"New systems or load-bearing architecture.", produces:"docs/architecture.md + ADRs", handoff:"/design"},
+      {cmd:"/design", desc:"Detailed component design: contracts, patterns, failure modes, telemetry, test plan.", when:"A feature within an existing architecture.", produces:"docs/design/<component>.md", handoff:"/implement"},
+      {cmd:"/ui-design", desc:"Take a user-facing surface to best-in-class: direction, design language, a reviewable mockup, a rubric critique.", when:"Any surface to create, review, or elevate.", produces:"docs/mockups/ + DESIGN.md", handoff:"/design or /implement"}
+    ]},
+    {group:"Build & verify", items:[
+      {cmd:"/implement", desc:"Build under TDD paired with the Test Architect; carry failure-mode, security, and privacy analyses into red-first tests.", when:"Building the thing.", produces:"code + tests + Proof Pack", handoff:"ship or /investigate"},
+      {cmd:"/investigate", desc:"Find the verified root cause, generalise to the failure class, and produce a phased repair plan.", when:"Something is broken or behaving wrong.", produces:"investigation report", handoff:"/implement"},
+      {cmd:"/document", desc:"Generate and maintain the documentation bundle — API reference and diagrams — with a post-commit freshness check.", when:"After a feature lands, before a release.", produces:"docs bundle + diagrams", handoff:"—"}
+    ]},
+    {group:"Continuous improvement", items:[
+      {cmd:"/dream", desc:"Offline consolidation of the corpus into reviewable proposed learnings with controls — the 'asleep half'.", when:"Periodically, to compound learnings across sessions.", produces:"docs/dreams/ + HTML review", handoff:"/apply-learnings"},
+      {cmd:"/apply-learnings", desc:"Push approved learnings to other repos as reviewable plans, reconciling each repo's existing register.", when:"Sharing a learning across the fleet.", produces:"learnings/plans/", handoff:"review + apply"}
+    ]},
+    {group:"Lifecycle & pack", items:[
+      {cmd:"/adopt", desc:"Bootstrap the knowledge graph in a brownfield repo — recover architecture, mine a glossary, plan adoption.", when:"Once per legacy repo, right after dropping in the pack.", produces:"initial graph + plan", handoff:"/document"},
+      {cmd:"/forensicreview", desc:"Deep evidence-based review of an existing repo, producing a prioritised risk & remediation backlog.", when:"Assessing an unfamiliar or drifting repo.", produces:"risk backlog", handoff:"/investigate"},
+      {cmd:"/migrate", desc:"Characterization-first dependency upgrades, framework migrations, and large-scale refactors.", when:"SDK bumps, library swaps, platform moves.", produces:"migrated code + equivalence proof", handoff:"—"},
+      {cmd:"/addpacktorepo", desc:"Install the pack into a local repo by path, reasoning over its language and tooling first.", when:"Adding the pack to a new repo.", produces:"installed pack + summary", handoff:"/adopt"},
+      {cmd:"/updatepack", desc:"Refresh an installed pack to the latest revision, applying exactly the changed artifacts.", when:"Pulling pack updates (the federation pull path).", produces:"updated install", handoff:"—"},
+      {cmd:"/extendaibundle", desc:"Extend the pack itself with a new capability from a prose prompt, scaffolded and proven with zero drift.", when:"Adding a skill, knowledge doc, template, or script.", produces:"new pack capability", handoff:"—"}
+    ]},
+    {group:"Utilities & lenses", items:[
+      {cmd:"/visualize", desc:"Generate, curate, and commit the visual assets a site shows — hero imagery, personas, motion.", when:"Making a surface look produced, not templated.", produces:"docs/assets/ + manifest", handoff:"/ui-design"},
+      {cmd:"/auditlog", desc:"The CLI lens over the durable audit & change log — recall, search, and re-run past prompts.", when:"Recalling what was done or decided across sessions.", produces:"—", handoff:"—"},
+      {cmd:"/prompts", desc:"Browse your logged prompts as an arrow-navigable stack and reuse one.", when:"Reusing a prior prompt.", produces:"—", handoff:"—"},
+      {cmd:"/searchprompts", desc:"Search your logged prompts by text and reuse a match.", when:"Finding a specific prior prompt.", produces:"—", handoff:"—"}
+    ]}
+  ],
+  ui:{
+    intro:"The pack treats UI as a first-class engineering surface with a floor, not an afterthought. Seven composable standards, an archetype grammar that makes generated UI deterministic in kind, a deterministic craft detector, and a governed generated-asset pipeline.",
+    standards:[
+      {n:"ui-interaction-design (U1–U20)", d:"The floor: design tokens, complete component states (incl. empty/loading/error), motion, real copy, WCAG 2.2 AA, performance budget, and HAX + Shape-of-AI patterns for AI UIs."},
+      {n:"ui-design-craft (DX1–DX25)", d:"The craft: direction before pixels, the generic-AI-look tells, the fidelity ladder, the review harness, and the critique rubric."},
+      {n:"ui-archetype-grammar + catalog", d:"Selects the UI's kind (routing/temporal/data archetype) as a determinism control, then composes down into tokens and states."},
+      {n:"technical-ui-design (TQ1–TQ12)", d:"Expert/quantitative surfaces: numeric legibility, perceptually-uniform colormaps (never jet), uncertainty-first output, provenance, reactive recompute."},
+      {n:"ui-craft-detection (CD1–CD20)", d:"The deterministic 59-rule detector that enforces token discipline outward against the built source — the control beneath the craft."},
+      {n:"ui-visual-assets (VA1–VA22)", d:"The generated-imagery pipeline: never generate the interface itself; generate once, download, optimize, commit; mood never structure."},
+      {n:"specification-standards (S1–S10)", d:"The three spec layers (Functional/UX/UI) and their bottom-up dependency — the UX layer gates the Surface."}
+    ],
+    stages:"The /ui-design workflow runs: direction brief (words before pixels) → build the design language (DESIGN.md) → produce a self-contained reviewable mockup that renders the hard states → rubric critique (structure before surface) → a ranked plan. Where each artifact lands: DESIGN.md at the repo root, mockups under docs/mockups/, reviews under docs/reviews/."
+  },
+  systems:[
+    {h:"Knowledge graph & Docs Explorer", p:"Every artifact carries YAML frontmatter (id, type, owner, typed links, review-by). docs/docs-index.js is derived from it and browsable at docs/index.html — hierarchy, graph, mind-map, and a health view. Grounding traverses the graph; material changes flag inbound neighbours for review.", link:{name:"Docs Explorer", path:"../index.html"}},
+    {h:"Dreaming — continuous improvement", p:"The 'asleep half': /dream consolidates the audit log, defect-class register, captured mitigations, and triggered markers into reviewable proposed learnings with controls; a promotion oracle captures successful mitigations (red→green tests or human validation); /apply-learnings federates approved learnings across repos.", link:{name:"Dream review", path:"../dreams/"}},
+    {h:"Audit & change log", p:"A durable, committed, append-only history: every skill records its run (audit-log.jsonl) and every design decision its rationale + git context (change-log.jsonl). A new session reads it to learn what was done and why, instead of starting blind.", link:{name:"Audit viewer", path:"../audit/index.html"}},
+    {h:"Personas — the review swarm", p:"23 lenses (architects, security, data, test, SRE, the Simplifier, platform developers, UX) that convene by the cost-of-error of a change, author in Peer Mode and attack in Adversary Mode, each with a severity, a falsifiable veto-clears-when, and the anti-pattern it owns.", link:null}
+  ],
+  surfaces:[
+    {name:"Docs Explorer", path:"../index.html", what:"Browse/graph/mind-map the knowledge graph of artifacts."},
+    {name:"UI Guide", path:"../ui-guide.html", what:"The how-to layer over the seven UI standards."},
+    {name:"Audit viewer", path:"../audit/index.html", what:"Timeline + search over the durable audit & change log."},
+    {name:"Whole-pack index", path:"../../web/index.html", what:"Searchable index of every artifact + the narrative explainer."},
+    {name:"Dream review", path:"../dreams/", what:"Approve proposed learnings from a dream pass."}
+  ]
+};
+
+/* ── router ── */
+let state={ mode:"normal", section:"start", q:"" };
+const D=PORTAL_DATA, esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const rail=document.getElementById("rail"), navsel=document.getElementById("navsel"), pane=document.getElementById("pane");
+
+function renderNav(){
+  rail.innerHTML=D.sections.map(s=>`<button class="sec" data-sec="${s.id}" aria-current="${state.section===s.id}"><span class="n">${s.n}</span>${esc(s.title)}</button>`).join("");
+  navsel.innerHTML=D.sections.map(s=>`<option value="${s.id}" ${state.section===s.id?"selected":""}>${s.n}. ${esc(s.title)}</option>`).join("");
+  rail.querySelectorAll(".sec").forEach(b=>b.addEventListener("click",()=>{state.section=b.dataset.sec;render();}));
+  navsel.onchange=e=>{state.section=e.target.value;render();};
+}
+function render(){
+  renderNav();
+  if(state.mode==="loading"){pane.innerHTML=`<div class="skel"><div class="bar w40"></div><div class="bar w90"></div><div class="bar w70"></div><div class="bar w90"></div><div class="bar w40"></div></div>`;return;}
+  if(state.mode==="error"){pane.innerHTML=`<div class="ph err"><span class="big">Portal data missing or malformed</span><p><code>portal-data.js</code> did not load. Nothing to show.</p><p>Regenerate with <code>python tools/build-docs-portal.py</code>, then reopen.</p></div>`;return;}
+  if(state.mode==="empty"){pane.innerHTML=`<h2 class="band">${esc(sectionTitle())}</h2><div class="comingsoon">This section has no content yet. It is generated from committed sources under <code>pack/</code> — add content there and re-run the generator. (An empty section is a valid, defined state — never a blank screen.)</div>`;return;}
+  pane.innerHTML=({start:secStart,caps:secCaps,skills:secSkills,ui:secUi,systems:secSystems,ref:secRef}[state.section]||secStart)();
+  document.getElementById("content").focus({preventScroll:true});
+  document.getElementById("content").scrollTop=0;
+}
+function sectionTitle(){return (D.sections.find(s=>s.id===state.section)||{}).title||"";}
+
+function secStart(){
+  return `<h1 class="lede-h">Get started in five steps</h1>
+    <p class="lede">${esc(D.meta.whatIs)}</p>
+    <ol class="steps">${D.gettingStarted.map(s=>`<li><h4>${esc(s.h)}</h4><p>${esc(s.p)}</p>${s.cmd?`<code class="cmd">${esc(s.cmd)}</code>`:""}</li>`).join("")}</ol>`;
+}
+function secCaps(){
+  const c=D.meta.counts;
+  return `<h1 class="lede-h">What it can do</h1><p class="lede">${esc(D.meta.whatIs)}</p>
+    <div class="counts">
+      ${[["skills","skills"],["personas","personas"],["knowledge","knowledge docs"],["templates","templates"],["scripts","scripts"]].map(([k,l])=>`<div class="stat"><b>${c[k]}</b><span>${l}</span></div>`).join("")}
+    </div>
+    <div class="grid">${D.capabilities.map(x=>`<div class="cap"><h4>${esc(x.h)}</h4><p>${esc(x.p)}</p></div>`).join("")}</div>`;
+}
+function secSkills(){
+  const q=state.q.toLowerCase();
+  let groups=D.skills.map(g=>({group:g.group,items:g.items.filter(it=>!q||(it.cmd+" "+it.desc+" "+it.when).toLowerCase().includes(q))})).filter(g=>g.items.length);
+  const total=D.skills.reduce((n,g)=>n+g.items.length,0);
+  let body=`<h1 class="lede-h">The ${total} skills</h1><p class="lede">Every skill, grouped by the natural loop. Each is derived from its <span class="mono">SKILL.md</span> — this list is complete by construction and cannot drift.</p>`;
+  if(!groups.length){ body+=`<div class="comingsoon">No skills match "<b>${esc(state.q)}</b>". <a href="#" id="clr">Clear search</a>.</div>`; setTimeout(()=>{const c=document.getElementById("clr");if(c)c.onclick=e=>{e.preventDefault();state.q="";document.getElementById("q").value="";render();};},0); return body; }
+  body+=groups.map(g=>`<div class="group-band"><span class="gt">${esc(g.group)}</span><span class="gl"></span><span class="gc">${g.items.length}</span></div>`+
+    g.items.map(it=>`<article class="skill"><div class="cmd">${esc(it.cmd)}</div><p class="desc">${esc(it.desc)}</p>
+      <div class="meta">
+        <div><span class="k">When to use</span><span class="v">${esc(it.when)}</span></div>
+        <div><span class="k">Produces</span><span class="v">${esc(it.produces)}</span></div>
+        <div><span class="k">Hands off to</span><span class="v">${esc(it.handoff)}</span></div>
+      </div>
+      <div class="src"><a href="../../pack/commands/${esc(it.cmd.replace('/',''))}/SKILL.md">pack/commands/${esc(it.cmd.replace('/',''))}/SKILL.md →</a></div></article>`).join("")).join("");
+  return body;
+}
+function secUi(){
+  return `<h1 class="lede-h">UI capabilities</h1><p class="lede">${esc(D.ui.intro)}</p>
+    <h2 class="band">The standards stack</h2>
+    <div class="stack">${D.ui.standards.map(s=>`<div class="std"><div class="sn">${esc(s.n)}</div><p class="sd">${esc(s.d)}</p></div>`).join("")}</div>
+    <h2 class="band">The /ui-design workflow</h2><p>${esc(D.ui.stages)}</p>
+    <p><a href="../ui-guide.html">Open the full UI Guide →</a></p>`;
+}
+function secSystems(){
+  return `<h1 class="lede-h">Systems that make work compound</h1><p class="lede">Beyond the skills, the pack maintains durable memory so every session builds on the last.</p>
+    ${D.systems.map(s=>`<h3>${esc(s.h)}</h3><p>${esc(s.p)}</p>${s.link?`<p><a href="${esc(s.link.path)}">${esc(s.link.name)} →</a></p>`:""}`).join("")}`;
+}
+function secRef(){
+  const c=D.meta.counts;
+  return `<h1 class="lede-h">Reference</h1><p class="lede">Live counts (derived from the filesystem, never hand-typed) and the specialised surfaces this portal fronts.</p>
+    <h2 class="band">Counts</h2>
+    <table><thead><tr><th>Artifact</th><th>Count</th></tr></thead><tbody>
+      ${[["Skills","skills"],["Persona lenses","personas"],["Knowledge docs","knowledge"],["Templates","templates"],["Scripts","scripts"]].map(([l,k])=>`<tr><td>${l}</td><td class="mono">${c[k]}</td></tr>`).join("")}
+    </tbody></table>
+    <h2 class="band">Specialised surfaces (which one for which job)</h2>
+    ${D.surfaces.map(s=>`<div class="linkout"><span class="lname"><a href="${esc(s.path)}">${esc(s.name)}</a></span><span>${esc(s.what)}</span></div>`).join("")}
+    <p class="comingsoon" style="margin-top:16px">Every link above is relative and resolves over <code>file://</code>. A surface not generated yet shows as <span class="missing">not generated yet</span> rather than a broken link.</p>`;
+}
+
+/* search */
+const qbox=document.getElementById("q");
+qbox.addEventListener("input",e=>{state.q=e.target.value; if(state.q && state.section!=="skills"){state.section="skills";} render();});
+document.addEventListener("keydown",e=>{if(e.key==="/"&&document.activeElement!==qbox){e.preventDefault();qbox.focus();}});
+
+/* harness */
+["h-theme","h-vw","h-motion"].forEach(id=>{const attr=id.replace("h-","data-").replace("vw","vw").replace("theme","theme").replace("motion","motion");
+  document.querySelectorAll("#"+id+" button").forEach(b=>b.addEventListener("click",()=>{
+    document.querySelectorAll("#"+id+" button").forEach(x=>x.setAttribute("aria-pressed","false"));
+    b.setAttribute("aria-pressed","true");
+    const key=id==="h-theme"?"data-theme":id==="h-vw"?"data-vw":"data-motion";
+    const val=id==="h-theme"?b.dataset.theme:id==="h-vw"?b.dataset.vw:b.dataset.motion;
+    document.documentElement.setAttribute(key,val); if(id==="h-vw") render();
+  }));});
+document.getElementById("h-state").addEventListener("change",e=>{state.mode=e.target.value;render();});
+render();
+</script>
+</body>
+</html>

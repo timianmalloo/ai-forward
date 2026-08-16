@@ -647,6 +647,73 @@ def check_promised_paths(findings):
             f"(named in {where[0]}" + (f" +{len(where)-1} more" if len(where) > 1 else "") + ")")
 
 
+def check_html_inline_scripts(findings):
+    """PACK-G: a client-rendered surface with a syntax error in an embedded <script> renders a
+    success-shaped blank (the mount target stays empty -> a black page), and nothing in the build
+    parses the JavaScript. This gate runs `node --check` over the inline scripts of the committed
+    HTML surfaces the site serves, so a broken data literal can never ship green again. If Node is
+    not on PATH it is skipped with a note (the Python consistency gate stays dependency-free)."""
+    import shutil, subprocess, glob, tempfile
+    node = shutil.which("node")
+    if not node:
+        return  # dependency-free skip: no node -> no gate (do not fail the Python-only path)
+    targets = []
+    for pat in ("web/*.html", "docs/portal/index.html", "docs/mockups/*.html", "docs/*.html"):
+        targets.extend(glob.glob(os.path.join(ROOT, *pat.split("/"))))
+    seen = set()
+    for path in sorted(targets):
+        if path in seen or not os.path.isfile(path):
+            continue
+        seen.add(path)
+        try:
+            html = open(path, "r", encoding="utf-8", errors="ignore").read()
+        except OSError:
+            continue
+        # inline scripts only: those WITHOUT a src= attribute
+        for m in re.finditer(r"(?is)<script(?![^>]*\ssrc=)[^>]*>(.*?)</script>", html):
+            body = m.group(1).strip()
+            if not body or ("application/json" in (m.group(0)[:120].lower())):
+                continue  # skip empty and JSON data blocks (not executable JS)
+            tf = tempfile.NamedTemporaryFile("w", suffix=".js", delete=False, encoding="utf-8")
+            try:
+                tf.write(body); tf.close()
+                r = subprocess.run([node, "--check", tf.name], capture_output=True, text=True, timeout=30)
+                if r.returncode != 0:
+                    err = (r.stderr or r.stdout or "").strip().splitlines()
+                    msg = next((l for l in err if "Error" in l), (err[-1] if err else "syntax error"))
+                    rel = os.path.relpath(path, ROOT).replace(os.sep, "/")
+                    findings.append(
+                        f"{rel}: inline <script> has a JavaScript syntax error "
+                        f"({msg.strip()}) - this surface renders blank/black at runtime (PACK-G).")
+            except (OSError, subprocess.SubprocessError):
+                pass
+            finally:
+                try:
+                    os.unlink(tf.name)
+                except OSError:
+                    pass
+
+
+def check_docs_portal(findings):
+    """The Documentation Portal (docs/portal/portal-data.js) is a DERIVED artifact; assert it is
+    current by re-running its generator in --check mode. A stale portal is a failing build, not a
+    matter of discipline (spec-documentation-portal US-4)."""
+    import subprocess
+    gen = os.path.join(ROOT, "tools", "build-docs-portal.py")
+    if not os.path.isfile(gen):
+        return
+    try:
+        r = subprocess.run([sys.executable, gen, "--check"], cwd=ROOT,
+                           capture_output=True, text=True, timeout=60)
+    except (OSError, subprocess.SubprocessError) as e:
+        findings.append(f"docs portal: could not run drift check ({e})")
+        return
+    if r.returncode != 0:
+        msg = (r.stderr or r.stdout or "portal-data.js is stale").strip().splitlines()
+        findings.append("docs portal: " + (msg[0] if msg else "stale") +
+                        " (run: python tools/build-docs-portal.py)")
+
+
 def main():
     truth = filesystem_truth()
     findings = []
@@ -659,6 +726,8 @@ def main():
     check_promised_paths(findings)
     check_managed_blocks(truth, findings)
     check_prose(truth, findings)
+    check_docs_portal(findings)
+    check_html_inline_scripts(findings)
 
     c = truth["counts"]
     print(f"filesystem: {c['skills']} skills, {c['lenses']} lenses "

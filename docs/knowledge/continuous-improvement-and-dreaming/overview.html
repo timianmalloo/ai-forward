@@ -1,0 +1,561 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Continuous Improvement &amp; Dreaming — techniques overview</title>
+<style>
+  :root{
+    --bg:#0e1116; --panel:#161b22; --panel-2:#1b222c; --line:#2a3441;
+    --ink:#e6edf3; --ink-dim:#9aa7b4; --ink-faint:#6b7784;
+    --accent:#6ea8fe; --accent-2:#7ee0c0; --warn:#f0b866; --danger:#f2836b;
+    --have:#7ee0c0; --gap:#f0b866; --guard:#f2836b;
+    --radius:14px; --maxw:1080px;
+    --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  }
+  html[data-theme="light"]{
+    --bg:#f6f8fa; --panel:#ffffff; --panel-2:#f0f3f6; --line:#d8dee4;
+    --ink:#1b2530; --ink-dim:#54626f; --ink-faint:#8592a0;
+    --accent:#2f6bd6; --accent-2:#128a67; --warn:#9a6a14; --danger:#c0492f;
+    --have:#128a67; --gap:#9a6a14; --guard:#c0492f;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);
+    line-height:1.6;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+
+  /* header */
+  header.hero{border-bottom:1px solid var(--line);
+    background:linear-gradient(180deg,var(--panel) 0%,var(--bg) 100%)}
+  .hero .wrap{padding:56px 24px 40px}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--accent-2);margin:0 0 14px}
+  h1{font-family:var(--serif);font-size:clamp(30px,5vw,46px);line-height:1.1;
+    margin:0 0 16px;letter-spacing:-.01em}
+  .lede{font-size:clamp(17px,2.4vw,20px);color:var(--ink-dim);max-width:64ch;margin:0}
+  .meta{margin-top:22px;font-family:var(--mono);font-size:12.5px;color:var(--ink-faint)}
+  .meta b{color:var(--ink-dim);font-weight:600}
+
+  /* theme toggle */
+  .toggle{position:fixed;top:16px;right:16px;z-index:10;
+    background:var(--panel);border:1px solid var(--line);color:var(--ink-dim);
+    border-radius:999px;padding:7px 14px;font-size:12.5px;font-family:var(--mono);
+    cursor:pointer}
+  .toggle:hover{color:var(--ink);border-color:var(--accent)}
+
+  /* nav */
+  nav.toc{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 88%,transparent);
+    backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+  nav.toc .wrap{display:flex;gap:6px 18px;flex-wrap:wrap;padding:12px 24px;
+    font-size:13px;font-family:var(--mono)}
+  nav.toc a{color:var(--ink-faint)}
+  nav.toc a:hover{color:var(--ink);text-decoration:none}
+
+  section{padding:44px 0;border-bottom:1px solid var(--line)}
+  section:last-of-type{border-bottom:0}
+  h2{font-family:var(--serif);font-size:clamp(23px,3.4vw,30px);margin:0 0 6px;letter-spacing:-.01em}
+  .sub{color:var(--ink-dim);margin:0 0 26px;max-width:70ch}
+  h3{font-size:17px;margin:26px 0 8px;letter-spacing:-.005em}
+
+  /* the loop diagram */
+  .loop{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:stretch;margin:8px 0 4px}
+  .loop .col{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px}
+  .loop .awake{border-top:3px solid var(--accent)}
+  .loop .asleep{border-top:3px solid var(--accent-2)}
+  .loop .arrow{display:flex;align-items:center;justify-content:center;color:var(--ink-faint);
+    font-family:var(--mono);font-size:12px;text-align:center;flex-direction:column;gap:6px}
+  .loop h4{margin:0 0 4px;font-size:15px}
+  .loop .tag{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint)}
+  .loop ul{margin:12px 0 0;padding-left:18px;color:var(--ink-dim);font-size:14.5px}
+  .loop li{margin:4px 0}
+
+  /* cards grid */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:20px 20px 18px}
+  .card h4{margin:0 0 2px;font-size:16px;display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+  .card .kind{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--ink-faint);white-space:nowrap}
+  .card p{margin:8px 0 0;font-size:14px;color:var(--ink-dim)}
+  .card .take{margin-top:12px;padding-top:12px;border-top:1px dashed var(--line);font-size:13px;color:var(--ink)}
+  .card .take b{color:var(--accent-2)}
+  .pill{display:inline-block;font-family:var(--mono);font-size:10.5px;padding:2px 8px;border-radius:999px;
+    border:1px solid var(--line);color:var(--ink-faint);margin-right:6px;margin-top:8px}
+
+  /* five parts */
+  .parts{counter-reset:p;display:grid;gap:12px}
+  .part{display:grid;grid-template-columns:44px 1fr;gap:16px;background:var(--panel);
+    border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;align-items:start}
+  .part::before{counter-increment:p;content:counter(p);font-family:var(--serif);font-size:22px;
+    color:var(--accent);width:44px;height:44px;border-radius:10px;background:var(--panel-2);
+    display:flex;align-items:center;justify-content:center;border:1px solid var(--line)}
+  .part h4{margin:2px 0 3px;font-size:15.5px}
+  .part p{margin:0;font-size:14px;color:var(--ink-dim)}
+  .part .status{font-family:var(--mono);font-size:11px;margin-top:6px}
+  .s-have{color:var(--have)} .s-gap{color:var(--gap)} .s-partial{color:var(--warn)}
+
+  /* have/gap table */
+  table{width:100%;border-collapse:collapse;font-size:14px;margin-top:6px}
+  th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-faint);font-weight:600}
+  td code{font-family:var(--mono);font-size:12.5px;background:var(--panel-2);padding:1px 5px;border-radius:5px}
+  .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px;vertical-align:middle}
+  .d-have{background:var(--have)} .d-gap{background:var(--gap)} .d-partial{background:var(--warn)}
+
+  /* pipeline */
+  .pipe{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:6px}
+  .phase{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px}
+  .phase.light{border-left:3px solid var(--accent)}
+  .phase.rem{border-left:3px solid var(--warn)}
+  .phase.deep{border-left:3px solid var(--accent-2)}
+  .phase h4{margin:0 0 2px;font-size:15px}
+  .phase .w{font-family:var(--mono);font-size:11px;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.08em}
+  .phase ul{margin:10px 0 0;padding-left:17px;font-size:13.5px;color:var(--ink-dim)}
+  .phase li{margin:3px 0}
+  .writes{margin-top:10px;font-family:var(--mono);font-size:11.5px}
+  .writes.no{color:var(--ink-faint)} .writes.yes{color:var(--accent-2)}
+
+  .callout{background:var(--panel-2);border:1px solid var(--line);border-left:3px solid var(--accent);
+    border-radius:10px;padding:16px 18px;margin:18px 0;font-size:14.5px}
+  .callout b{color:var(--ink)}
+  .callout.warn{border-left-color:var(--warn)}
+  .callout.guard{border-left-color:var(--guard)}
+
+  ol.steps{padding-left:20px} ol.steps li{margin:8px 0;color:var(--ink-dim)}
+  ol.steps li b{color:var(--ink)}
+  ul.clean{list-style:none;padding:0;margin:0}
+  ul.clean li{padding:10px 0;border-bottom:1px solid var(--line);font-size:14.5px;color:var(--ink-dim)}
+  ul.clean li:last-child{border-bottom:0}
+  ul.clean li b{color:var(--ink)}
+  .q{font-family:var(--mono);font-size:11px;color:var(--danger);margin-right:8px}
+
+  .conf{font-family:var(--mono);font-size:11px;padding:1px 7px;border-radius:5px;border:1px solid var(--line)}
+  .v{color:var(--have)} .i{color:var(--accent)} .f{color:var(--warn)}
+
+  footer{padding:36px 0 60px;color:var(--ink-faint);font-size:13px}
+  footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+  .kbd{font-family:var(--mono);font-size:12px;background:var(--panel-2);border:1px solid var(--line);
+    padding:1px 6px;border-radius:5px;color:var(--ink-dim)}
+
+  @media (max-width:720px){
+    .loop{grid-template-columns:1fr} .loop .arrow{transform:rotate(90deg);padding:6px 0}
+    .pipe{grid-template-columns:1fr}
+  }
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<button class="toggle" id="themeBtn" aria-label="Toggle light/dark theme">◐ theme</button>
+
+<header class="hero">
+  <div class="wrap">
+    <p class="eyebrow">AI-Forward · Domain knowledge · /collectknowledge</p>
+    <h1>Dreaming: harvesting learnings across a fleet of repos, and sharing them so every repo gets better</h1>
+    <p class="lede">A map of the techniques, the academic roots, and the concrete engineering behind
+      continuous self-improvement for coding agents — set against what AI-Forward already ships — so you
+      can specify what we build. The short version: <b>we already built the “awake” half (capture). The
+      missing half is “asleep” — a scheduled, reviewable consolidation pass — plus federation across repos.</b></p>
+    <p class="meta"><b>Compiled</b> 2026-08-15 &nbsp;·&nbsp; <b>Lead</b> Domain Researcher &nbsp;·&nbsp;
+      <b>Confidence</b> 6 Verified · 1 Inferred · 1 Flagged &nbsp;·&nbsp;
+      <b>Full base</b> <a href="./index.md">docs/knowledge/continuous-improvement-and-dreaming/</a></p>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="wrap">
+    <a href="#idea">The idea</a>
+    <a href="#techniques">Techniques</a>
+    <a href="#anatomy">Anatomy</a>
+    <a href="#have-gap">Have vs. gap</a>
+    <a href="#pipeline">The dream pass</a>
+    <a href="#evolve">Evolving the audit log</a>
+    <a href="#federation">Federation</a>
+    <a href="#skill-job">Skill &amp; job</a>
+    <a href="#guardrails">Guardrails</a>
+    <a href="#specify">What to specify</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <!-- THE IDEA -->
+  <section id="idea">
+    <h2>The organising idea: an awake/asleep loop</h2>
+    <p class="sub">Every self-improving-agent design in the field — whatever it calls itself — splits into two
+      phases. <b>Capture is easy and cheap; consolidation is where the value is.</b> A write-only log rots into
+      “duplicates, contradictions, and stale entries” (Claude Dreams’ own words). The dreaming pass is what keeps
+      it useful.</p>
+    <div class="loop">
+      <div class="col awake">
+        <span class="tag">Online · continuous · high-noise</span>
+        <h4>AWAKE — capture</h4>
+        <p style="margin:6px 0 0;color:var(--ink-dim);font-size:14px">The agent acts and records what happened.</p>
+        <ul>
+          <li>audit log · change log</li>
+          <li>session transcripts</li>
+          <li><code>simplify:</code> / <code>assume:</code> markers</li>
+          <li>outcome signal (did it work?)</li>
+        </ul>
+      </div>
+      <div class="arrow">↓ dream ↓<br><span style="opacity:.6">consolidate</span><br>↑ ground ↑</div>
+      <div class="col asleep">
+        <span class="tag">Offline · periodic · high-signal</span>
+        <h4>ASLEEP — consolidate (“dream”)</h4>
+        <p style="margin:6px 0 0;color:var(--ink-dim);font-size:14px">A scheduled pass distils the raw history.</p>
+        <ul>
+          <li>dedupe · resolve contradictions</li>
+          <li>compress many instances → a few rules</li>
+          <li>surface cross-cutting classes</li>
+          <li>promote → a durable, linked store</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout"><b>Named by analogy to sleep.</b> When humans sleep the brain replays the day, keeps
+      the signal, discards the noise, and moves short-term memory to long-term. “Dreaming” runs that offline
+      pass over an agent’s session history. It is memory <i>curation</i> — explicitly <b>not</b> model retraining.</div>
+  </section>
+
+  <!-- TECHNIQUES -->
+  <section id="techniques">
+    <h2>The techniques landscape</h2>
+    <p class="sub">Two shipping products, three foundational papers, one practitioner trend, and the ops culture
+      that got here first. Each cell of the confidence label: <span class="conf v">Verified</span>
+      <span class="conf i">Inferred</span> <span class="conf f">Flagged</span>.</p>
+    <div class="grid">
+      <div class="card">
+        <h4>Claude Dreams <span class="kind">product · preview</span></h4>
+        <p>Async job: a memory store + <b>1–100 session transcripts</b> → a <b>new</b> reorganised store.
+          Duplicates merged, stale entries replaced, insights surfaced. Steer with an <code>instructions</code>
+          field. <b>Input never mutated</b> → review &amp; discard.</p>
+        <div class="take"><b>Borrow:</b> the review-and-discard shape. <b>Reject:</b> the vendor runtime store —
+          our store is committed Markdown.</div>
+        <span class="pill">Verified</span>
+      </div>
+      <div class="card">
+        <h4>OpenClaw <code>memory-core</code> <span class="kind">product · local</span></h4>
+        <p>File-based dreaming: <b>light → REM → deep</b> phases; only <b>deep</b> writes durable memory, behind
+          score/recall/diversity gates + a provenance <b>taint gate</b>. Keeps a <b>Dream Diary</b>, stores a
+          preimage, requires source refs, nightly cron.</p>
+        <div class="take"><b>Borrow:</b> almost everything — it is the closest design to what we need.</div>
+        <span class="pill">Verified</span>
+      </div>
+      <div class="card">
+        <h4>Reflexion <span class="kind">paper · 2023</span></h4>
+        <p>Actor → <b>Evaluator</b> → Reflector. A failure signal becomes a <b>textual lesson</b> stored in
+          episodic memory and re-injected next attempt. No weight update. 91% vs 80% pass@1 on HumanEval.</p>
+        <div class="take"><b>Borrow:</b> the <b>outcome/Evaluator signal</b> — a log is only mine-able if it
+          records whether the action worked.</div>
+        <span class="pill">Verified · arXiv:2303.11366</span>
+      </div>
+      <div class="card">
+        <h4>Generative Agents <span class="kind">paper · 2023</span></h4>
+        <p>A <b>memory stream</b> + periodic <b>reflection</b> (synthesise higher-level inferences), retrieved by
+          <b>importance × recency × relevance</b>. OpenClaw’s six weighted signals descend from this.</p>
+        <div class="take"><b>Borrow:</b> the scoring maths for <i>which</i> candidate deserves promotion.</div>
+        <span class="pill">Verified · arXiv:2304.03442</span>
+      </div>
+      <div class="card">
+        <h4>A-MEM <span class="kind">paper · 2025</span></h4>
+        <p>Zettelkasten agentic memory: typed notes, auto bi-directional links, memory that <b>evolves</b> as
+          new notes arrive. A self-organising note graph.</p>
+        <div class="take"><b>Borrow:</b> nothing new — this <i>is</i> our knowledge graph (V2 frontmatter +
+          typed links + glossary). We already built the wiki.</div>
+        <span class="pill">Verified paper · Flagged numbers</span>
+      </div>
+      <div class="card">
+        <h4>Karpathy’s “LLM wiki” <span class="kind">thesis · 2026</span></h4>
+        <p>Agents collaboratively maintain a <b>Markdown knowledge base</b> — ingest, summarise, cross-ref,
+          refactor. “Context = RAM, LLM = CPU, memory = disk.” Dreaming = the refactor step; dreams fight
+          overfitting by generalising.</p>
+        <div class="take"><b>Borrow:</b> the mental model. <b>Flag:</b> the overfitting analogy is neuroscience,
+          not proof about LLMs.</div>
+        <span class="pill">Verified pattern · Flagged specifics</span>
+      </div>
+      <div class="card">
+        <h4>Self-improving AGENTS.md <span class="kind">trend · 2025–26</span></h4>
+        <p>Agents append “learnings” to a steering file; some auto-generate them and open a <b>PR</b>;
+          cross-project patterns migrate via <code>&lt;org&gt;/.agent-memory/</code>. Universal rule:
+          <b>never auto-approve — review via PR.</b></p>
+        <div class="take"><b>Borrow:</b> the cross-project half + the never-auto-merge guardrail.</div>
+        <span class="pill">Verified trend</span>
+      </div>
+      <div class="card">
+        <h4>SRE &amp; NASA lessons-learned <span class="kind">ops culture</span></h4>
+        <p>Blameless postmortems; a central searchable KB tagged by failure mode; <b>recurrence</b> as the
+          effectiveness metric; NASA’s <b>Collect → Record → Disseminate → Apply</b> lifecycle.</p>
+        <div class="take"><b>Borrow:</b> capture is worthless without <b>dissemination + application</b> — that
+          is federation.</div>
+        <span class="pill">Verified</span>
+      </div>
+    </div>
+    <div class="callout"><b>The theory tying it together — sleep-time compute (arXiv:2504.13171):</b> spending
+      compute <i>offline, between queries</i> to pre-consolidate context is the warrant for making dreaming a
+      <b>scheduled job</b> rather than an inline step.</div>
+  </section>
+
+  <!-- ANATOMY -->
+  <section id="anatomy">
+    <h2>Everyone builds the same five parts</h2>
+    <p class="sub">Read across the products and papers and the same architecture recurs, whatever the label. This
+      is the checklist to design against — and it is how we see exactly what AI-Forward is missing.</p>
+    <div class="parts">
+      <div class="part"><div></div><div><h4>Capture</h4><p>A running record of what happened.</p>
+        <div class="status s-have">AI-Forward: ✓ audit log + change log + session exhaust</div></div></div>
+      <div class="part"><div></div><div><h4>An outcome signal</h4><p>Did it work? The Evaluator that makes an entry mine-able.</p>
+        <div class="status s-partial">AI-Forward: ◐ the <code>outcome</code> field exists but is under-used / self-reported</div></div></div>
+      <div class="part"><div></div><div><h4>Consolidation</h4><p>An offline pass: dedupe, resolve contradictions, compress instances → rules.</p>
+        <div class="status s-gap">AI-Forward: ✗ done one-defect-at-a-time (CI2), never in bulk offline</div></div></div>
+      <div class="part"><div></div><div><h4>A durable, linked store</h4><p>Where promoted knowledge lives and is retrieved.</p>
+        <div class="status s-have">AI-Forward: ✓ defect-class register + the knowledge graph</div></div></div>
+      <div class="part"><div></div><div><h4>Dissemination + application</h4><p>Getting the learning to where it will fire — including across repos.</p>
+        <div class="status s-gap">AI-Forward: ✗ read-at-grounding within a repo; no cross-repo federation</div></div></div>
+    </div>
+  </section>
+
+  <!-- HAVE VS GAP -->
+  <section id="have-gap">
+    <h2>What we already have vs. the gap</h2>
+    <p class="sub">The strongest signal that this capability <i>fits</i> is that the pack independently arrived at
+      most of the guardrails. We are not importing a foreign system — we are completing a loop we half-built.</p>
+    <table>
+      <thead><tr><th style="width:34%">Capability the field describes</th><th>AI-Forward today</th><th style="width:18%">Status</th></tr></thead>
+      <tbody>
+        <tr><td>Continuous capture of actions</td><td><code>docs/audit/audit-log.jsonl</code> — every skill’s last action</td><td><span class="dot d-have"></span>Have</td></tr>
+        <tr><td>Decision/change history with git context</td><td><code>change-log.jsonl</code></td><td><span class="dot d-have"></span>Have</td></tr>
+        <tr><td>Instances compressed into recurring classes</td><td><code>defect-classes.md</code> · <code>class → sweep → derive → prevent</code></td><td><span class="dot d-have"></span>Have</td></tr>
+        <tr><td>A learning becomes a control, not prose</td><td>the control ladder · “a lesson recorded as prose is a memoir” (CI6)</td><td><span class="dot d-have"></span>Have</td></tr>
+        <tr><td>A durable, linked, evolving note graph (“the wiki”)</td><td>knowledge graph — V2 frontmatter, typed links, glossary</td><td><span class="dot d-have"></span>Have</td></tr>
+        <tr><td>Read prior learnings at the start of work</td><td>grounding reads the register + audit history (CI5, AL10)</td><td><span class="dot d-have"></span>Have</td></tr>
+        <tr><td>Human-in-the-loop, never self-certify</td><td>BoK D3 · Rules of the Road gates</td><td><span class="dot d-have"></span>Have</td></tr>
+        <tr><td>Append-only, provenance-labelled inputs</td><td>append-only JSONL · confidence labels · citations</td><td><span class="dot d-have"></span>Have</td></tr>
+        <tr><td>A trustworthy success/outcome signal</td><td><code>outcome</code> field exists, self-reported, rarely mined</td><td><span class="dot d-partial"></span>Partial</td></tr>
+        <tr><td>Session transcript ingestion (redacted, taint-gated)</td><td><code>audit-log.py import</code> exists; not wired into a consolidation pass</td><td><span class="dot d-partial"></span>Partial</td></tr>
+        <tr><td><b>Scheduled offline consolidation (“the dream pass”)</b></td><td>—</td><td><span class="dot d-gap"></span>Gap</td></tr>
+        <tr><td><b>Cross-repo federation of learnings</b></td><td>CI8 says “raise it upstream” — manual, one-way, not systematic</td><td><span class="dot d-gap"></span>Gap</td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><b>The one-sentence gap:</b> AI-Forward has best-in-class <i>capture</i>, <i>classification</i>,
+      and a <i>linked note graph</i> — all in committed Markdown with a human in the loop — but it consolidates
+      one defect at a time and never shares across repos. <b>Add the dream pass (bulk offline consolidation) and
+      federation (share the class, everywhere).</b></div>
+  </section>
+
+  <!-- PIPELINE -->
+  <section id="pipeline">
+    <h2>The dream pass, concretely</h2>
+    <p class="sub">Borrowing OpenClaw’s three-phase model, mapped onto AI-Forward’s corpus. The deterministic
+      steps (stage, score, taint-gate) are stdlib scripts over JSONL; only the reflect/consolidate step needs a
+      model — keeping the pass cheap, auditable, and mostly reproducible.</p>
+    <div class="pipe">
+      <div class="phase light">
+        <span class="w">Phase 1</span><h4>Light — stage</h4>
+        <ul>
+          <li>read the audit + change logs, recent session exhaust, triggered <code>assume:</code>/<code>simplify:</code> markers</li>
+          <li>dedupe raw signals; attach outcome + provenance</li>
+          <li>run <code>scrub.py</code>; drop untrusted/tool-authored origins</li>
+        </ul>
+        <div class="writes no">writes durable memory: NO</div>
+      </div>
+      <div class="phase rem">
+        <span class="w">Phase 2</span><h4>REM — reflect</h4>
+        <ul>
+          <li>cluster staged signals into recurring <b>themes</b></li>
+          <li>abstract instance → candidate <b>class</b> (the value step)</li>
+          <li>note contradictions with the existing register/graph</li>
+        </ul>
+        <div class="writes no">writes durable memory: NO</div>
+      </div>
+      <div class="phase deep">
+        <span class="w">Phase 3</span><h4>Deep — promote</h4>
+        <ul>
+          <li>score candidates (relevance/frequency/diversity/recency/recurrence)</li>
+          <li>gate: score + recall-count + query-diversity must <b>all</b> pass</li>
+          <li>emit <b>proposals</b> (register entries + controls + doc edits) as a <b>reviewable diff</b> + Dream Diary</li>
+        </ul>
+        <div class="writes yes">writes: a PROPOSAL branch — human accepts</div>
+      </div>
+    </div>
+    <div class="callout guard"><b>The promotion target is a control, not a note.</b> A dream pass that emits prose
+      has done nothing (CI6). Deep-phase output climbs the control ladder: <i>make it impossible → automated
+      control → always-loaded instruction → knowledge doc → register entry</i> — and a proposed control must be
+      shown failing on the un-fixed code before it counts.</div>
+  </section>
+
+  <!-- EVOLVE AUDIT LOG -->
+  <section id="evolve">
+    <h2>How the audit log must evolve</h2>
+    <p class="sub">Today the audit log is a <b>write-only history</b> — excellent for grounding, unused as a
+      corpus. To feed a dream pass it must become a <b>mined corpus</b>. Four additions, each named by a source.</p>
+    <ol class="steps">
+      <li><b>A trustworthy outcome signal (Reflexion’s Evaluator).</b> The <code>outcome</code> field exists but is
+        self-reported and optimistic. Enrich it with independent signal — CI pass/fail, whether a fix later got
+        reverted, whether a defect re-referenced the same area. <span class="conf f">the promotion oracle</span></li>
+      <li><b>Session-transcript ingestion, redacted &amp; taint-gated (OpenClaw).</b> Ingest only interactive,
+        redacted sessions; structurally exclude cron/subagent/tool-output/untrusted origins <i>before</i>
+        consolidation — removal, not a score penalty.</li>
+      <li><b>A promotion pipeline with deterministic thresholds (Generative Agents / OpenClaw).</b> Score, then
+        gate on score + recall-count + diversity as an AND — so one-off noise never reaches durable memory.</li>
+      <li><b>A Dream Diary (OpenClaw).</b> A human-readable narrative of what each pass added/merged/superseded,
+        kept <b>separate</b> from the durable store and <b>excluded</b> from being re-ingested — or the corpus
+        poisons itself.</li>
+    </ol>
+    <div class="callout warn"><b>Do not touch the source of truth.</b> The JSONL logs stay append-only and
+      immutable; a pass reads them and writes <i>elsewhere</i> (a proposal branch, a Diary). This mirrors Claude
+      Dreams’ “input never modified” and the pack’s own append-only stance — reversibility is the whole point.</div>
+  </section>
+
+  <!-- FEDERATION -->
+  <section id="federation">
+    <h2>Federation: share the learning across every repo</h2>
+    <p class="sub">The user’s actual ask — “run against all my local repos and share the knowledge so they all
+      benefit.” This is NASA’s <b>Collect → Record → Disseminate → Apply</b>, and CI8 (“raise it upstream”) done
+      systematically and in both directions.</p>
+    <div class="loop">
+      <div class="col awake">
+        <h4>Each repo → the fleet store</h4>
+        <p style="margin:6px 0 0;color:var(--ink-dim);font-size:14px">A repo’s dream pass contributes:</p>
+        <ul>
+          <li>the <b>generalised class</b> (instance stripped away)</li>
+          <li>its named <b>control</b> (test/lint/instruction)</li>
+          <li>PII/secret-scrubbed, provenance-labelled</li>
+        </ul>
+      </div>
+      <div class="arrow">→ contribute →<br><span style="opacity:.6">fleet learnings store</span><br>← pull at grounding ←</div>
+      <div class="col asleep">
+        <h4>The fleet store → every repo</h4>
+        <p style="margin:6px 0 0;color:var(--ink-dim);font-size:14px">Every repo pulls at grounding:</p>
+        <ul>
+          <li>a mistake made once in repo A …</li>
+          <li>… becomes a control available everywhere</li>
+          <li>general, control-bearing classes ship via <code>/extendaibundle</code></li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout guard"><b>The federation guardrail (the highest-risk surface):</b> nothing crosses a repo
+      boundary until it is <b>abstracted to a class</b> (no path, no name, no transcript) and <b>PII/secret-scrubbed</b>.
+      The shared item is a <i>shape + a control</i>, never a raw instance. The Privacy lens holds a veto here.</div>
+    <h3>Where does the fleet store live? <span class="q">OPEN</span></h3>
+    <ul class="clean">
+      <li><b>The AI-Forward pack itself</b> (via <code>/extendaibundle</code>) — general, control-bearing classes
+        become pack changes, so tests &amp; lints ship to every installed repo <i>for free</i>. Heavier to change.</li>
+      <li><b>A dedicated <code>learnings/</code> repo</b> (submodule / synced by the job) — lighter, but ships
+        <i>prose</i> unless paired with the pack for the controls.</li>
+      <li><b>Likely answer:</b> both — general control-bearing classes → the pack; repo-specific or still-prose
+        learnings → a local <code>learnings/</code> store. <b>To decide in <code>/specify</code>.</b></li>
+    </ul>
+  </section>
+
+  <!-- SKILL & JOB -->
+  <section id="skill-job">
+    <h2>One capability, three faces</h2>
+    <p class="sub">The same consolidation pass, exposed three ways — matching how the user framed it (“a skill
+      <i>and</i> a job that can run in claude-cowork / OpenClaw”).</p>
+    <div class="grid">
+      <div class="card">
+        <h4><code>/dream</code> skill <span class="kind">interactive</span></h4>
+        <p>A human runs (or reviews) an on-demand pass over <i>this</i> repo’s corpus. Emits proposals + a Diary
+          entry as a reviewable diff — never an auto-commit. It is <code>class → sweep → derive → prevent</code>
+          run in bulk instead of one defect at a time.</p>
+        <div class="take"><b>Lead:</b> Domain Researcher (evidence) + Simplifier (strike noise) + Test Architect
+          (a lesson isn’t done until it’s a control).</div>
+      </div>
+      <div class="card">
+        <h4><code>dream</code> job <span class="kind">scheduled · per repo</span></h4>
+        <p>The same pass wired to run offline on a schedule (cron / GitHub Action / claude-cowork / OpenClaw),
+          opening a <b>branch/PR of proposals</b> per repo. Threshold- or schedule-triggered; bounded input
+          window; throttled model call.</p>
+        <div class="take"><b>Ships:</b> the deterministic harness + prompts; the model call belongs to the runner
+          (same call the pack made for CLI/doctor).</div>
+      </div>
+      <div class="card">
+        <h4>federation <span class="kind">fleet · cross-repo</span></h4>
+        <p>Each job contributes generalised, scrubbed classes to a central store and pulls from it at grounding —
+          so learnings compound across the whole fleet, not just within one repo.</p>
+        <div class="take"><b>The user’s core ask.</b> Collect → Record → Disseminate → Apply, automated and
+          two-way.</div>
+      </div>
+    </div>
+    <div class="callout"><b>What NOT to build</b> (the Simplifier’s standing veto): not a vector DB, not a runtime
+      memory service, not a model fine-tune, not a dependency-heavy framework. We already have the note graph,
+      the append-only history, the class register, and the grounding habit. This is <b>a consolidation pass over
+      artifacts that already exist</b> — stdlib scripts + a skill + a schedulable job. Nothing more.</div>
+  </section>
+
+  <!-- GUARDRAILS -->
+  <section id="guardrails">
+    <h2>The non-negotiable guardrails</h2>
+    <p class="sub">Self-improving loops <b>degrade without these</b> and are <b>bounded with them</b>. Every source
+      independently arrives at the same list — and it is the same list the pack already enforces.</p>
+    <ul class="clean">
+      <li><b>Never auto-merge a learning.</b> Every promotion is a PR/diff a human accepts. (Claude Dreams’
+        discard-model · self-improving-AGENTS.md · BoK D3.)</li>
+      <li><b>Never mutate the source of truth in place.</b> Emit a new artifact; keep inputs append-only; store a
+        preimage. (Dreaming emits a new store · append-only JSONL.)</li>
+      <li><b>Never promote untrusted content.</b> A structural taint gate + <code>scrub.py</code> run before
+        consolidation — removal, not a penalty. (OpenClaw · AL4.)</li>
+      <li><b>Provenance + confidence on every promoted item.</b> <code>Source: file#Lx-Ly</code> or the
+        <code>al-</code>/<code>cl-</code> id, and Verified/Inferred/Flagged. (OpenClaw source-refs · BoK §III.1.)</li>
+      <li><b>A control is not a control until observed failing on the un-fixed code.</b> Red-first, or it doesn’t
+        count. (CI6.)</li>
+      <li><b>Federation abstracts to the class and strips specifics.</b> No raw instance, path, name, or token
+        crosses a repo boundary. (Minimisation · Privacy veto.)</li>
+      <li><b>Recurrence is the metric.</b> The pass works when a known class does <i>not</i> recur; a repeat means
+        the control was wrong, not that someone was careless. (CI4.)</li>
+      <li><b>The Diary is a narrative, not a source.</b> Excluded from being re-ingested as promotable memory, or
+        the corpus poisons itself. (OpenClaw.)</li>
+    </ul>
+  </section>
+
+  <!-- WHAT TO SPECIFY -->
+  <section id="specify">
+    <h2>Starting points for the specification</h2>
+    <p class="sub">The open decisions to resolve in <code>/specify</code> — each is a real fork, not a detail.
+      Full discussion in <a href="./open-questions.md">open-questions.md</a>.</p>
+    <ul class="clean">
+      <li><span class="q">Q1</span><b>Where does the fleet store live?</b> The pack (ships controls everywhere) vs.
+        a <code>learnings/</code> repo (lighter, prose) vs. both.</li>
+      <li><span class="q">Q2</span><b>What is the promotion oracle?</b> Without a runtime Evaluator, how do we get a
+        <i>trustworthy</i> “did it work?” — CI results, revert history, later-defect recurrence?</li>
+      <li><span class="q">Q3</span><b>How do we abstract instance → class safely?</b> The value step, and the one most
+        prone to over-generalising into false universals. Needs a rubric + human review.</li>
+      <li><span class="q">Q4</span><b>Cadence &amp; trigger?</b> Nightly vs. weekly vs. threshold (N new entries) vs.
+        manual — likely a small per-repo policy, not a constant.</li>
+      <li><span class="q">Q5</span><b>Which runner?</b> claude-cowork / OpenClaw / GitHub Action / cron differ in
+        scheduling, session access, and model surface — verify with a spike, don’t assume.</li>
+      <li><span class="q">Q6</span><b>Does a model-in-the-loop job fit the pack’s stdlib-only identity?</b> Ship the
+        deterministic harness + prompts; leave the model call to the runner (as with CLI/doctor)?</li>
+    </ul>
+    <div class="callout"><b>Recommended first move:</b> run <span class="kbd">/specify</span> on “a <code>/dream</code>
+      consolidation skill + a schedulable <code>dream</code> job + a federation layer,” citing this base. Then
+      <span class="kbd">/adddomainexperts</span> if the fleet spans unfamiliar domains, then
+      <span class="kbd">/design</span>. Because every guardrail is one the pack already holds, the design risk is
+      low; the real work is Q2 (the oracle) and Q3 (safe abstraction).</div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>AI-Forward · <code style="font-family:var(--mono)">/collectknowledge</code> → <code style="font-family:var(--mono)">docs/knowledge/continuous-improvement-and-dreaming/</code></span>
+    <span>Derived from the evidence base — see <a href="./sources.md">sources.md</a>. Not authoritative over it.</span>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    var btn=document.getElementById('themeBtn');
+    var root=document.documentElement;
+    try{var saved=localStorage.getItem('ci-dream-theme');if(saved)root.setAttribute('data-theme',saved);}catch(e){}
+    btn.addEventListener('click',function(){
+      var next=root.getAttribute('data-theme')==='dark'?'light':'dark';
+      root.setAttribute('data-theme',next);
+      try{localStorage.setItem('ci-dream-theme',next);}catch(e){}
+    });
+  })();
+</script>
+</body>
+</html>

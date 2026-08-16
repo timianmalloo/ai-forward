@@ -10,7 +10,7 @@
   - Runtime: React 18 UMD + htm (no build step) — the same house convention used by
     docs/index.html (the Docs Explorer). Libraries load from CDN; an offline banner shows
     if they cannot.
-  - It explains the KNOWLEDGE (the constitution), the SKILLS (the 19 workflows), the
+  - It explains the KNOWLEDGE (the constitution), the SKILLS (the 21 workflows), the
     RIGOR PROTOCOL (the reasoning spine), the PERSONAS (the dual-mode council), and the
     UI TEMPLATE APPROACH (the archetype grammar) — with a TABLE of every template type and
     LINKABLE, rendered MOCKUPS of each one so a reader can see-then-choose.
@@ -191,12 +191,43 @@
 </head>
 <body>
 <div id="offline">Couldn't load React/htm from the CDN — this page needs a network connection the first time. The content is still embedded; reconnect and reload.</div>
+<div id="afp-fallback" style="display:none">
+  <div class="wrap" style="padding:56px 22px;max-width:760px">
+    <span class="kicker">AI-Forward Pack</span>
+    <h1 style="font-size:clamp(26px,4vw,40px);letter-spacing:-.02em;margin:.2em 0 .3em">The interactive explainer couldn't start</h1>
+    <p class="lead" style="color:var(--muted);font-size:17px">This page renders with React loaded from a CDN. If your network blocked it or a script failed, the interactive view can't mount — but everything it describes is available on self-contained pages that need no CDN:</p>
+    <div class="grid g2" style="margin-top:26px">
+      <a class="card" href="../docs/portal/index.html"><h3>Documentation Portal →</h3><p>The front door: getting started, the 21 skills, foundations, UI &amp; design, architecture, and the knowledge graph.</p></a>
+      <a class="card" href="index.html"><h3>Whole-pack index &amp; search →</h3><p>Every artifact — knowledge, skills, templates, scripts, personas — searchable.</p></a>
+      <a class="card" href="../docs/index.html"><h3>Docs Explorer →</h3><p>Browse / graph / mind-map the knowledge graph of artifacts.</p></a>
+      <a class="card" href="https://github.com/timianmalloo/ai-forward"><h3>Repository →</h3><p>The source of the pack on GitHub.</p></a>
+    </div>
+    <p class="faint" style="margin-top:24px;font-size:13px">Tip: reload once you have a connection, or open the pages above directly — they work offline.</p>
+  </div>
+</div>
 <div id="root"></div>
+
+<script>
+  // Watchdog: the interactive view mounts React from a CDN into #root. If the CDN is blocked,
+  // a script fails, or the render throws, #root stays empty and the near-black background reads
+  // as a "black page". Reveal a readable, dependency-free fallback instead (CD20 / E2E-H class).
+  (function(){
+    window.__afpShowFallback = function(){
+      var f = document.getElementById("afp-fallback"); if(f) f.style.display="block";
+      var r = document.getElementById("root"); if(r) r.style.display="none";
+    };
+    setTimeout(function(){
+      var r = document.getElementById("root");
+      if(!r || r.childElementCount === 0){ window.__afpShowFallback(); }
+    }, 4000);
+  })();
+</script>
 
 <script>
 window.addEventListener("DOMContentLoaded",function(){
   if(!(window.React && window.ReactDOM && window.htm)){
-    document.getElementById("offline").style.display="block"; return;
+    document.getElementById("offline").style.display="block";
+    window.__afpShowFallback && window.__afpShowFallback(); return;
   }
   const {useState, useEffect} = React;
   const html = htm.bind(React.createElement);
@@ -343,14 +374,15 @@ window.addEventListener("DOMContentLoaded",function(){
     ]}
   ];
 
-  // The 19 skills — .claude/skills/* (fifteen reasoning workflows + /auditlog + two prompt-log utilities)
+  // The 21 skills — .claude/skills/* (fifteen reasoning workflows + /auditlog + two prompt-log utilities)
   const SKILLS = [
     ["/collectknowledge","Build a sourced domain knowledge base before design — state of the art, comparables, references, glossary — every claim confidence-labeled.","Domain Researcher","support"],
     ["/adddomainexperts","Discover the project's domain from repo evidence and add tailored domain-expert personas (peer + adversary), wiring in backing Claude skills.","Product Strategist","support"],
     ["/specify","Turn a prompt into one spec with three layers (Functional / UX / UI) and testable acceptance criteria.","Product Strategist","core"],
     ["/define-architecture","Produce the top-level shape — LOA archetype, tier allocation, boundaries — spike unfamiliar SDKs, record decisions as ADRs.","Enterprise Architect","core"],
     ["/design","Detailed design — named patterns and contracts, failure-mode / adversarial / privacy analyses, telemetry, test plan.","Patterns Expert","core"],
-    ["/ui-design","Create, review or elevate a user-facing surface — direction brief, design language, a self-contained reviewable mockup with a state/persona/viewport harness, and a rubric critique.","UX &amp; Accessibility","core"], paired with the Test Architect; apply the Testing Strategy; ship a Proof Pack.","Test Architect","core"],
+    ["/ui-design","Create, review or elevate a user-facing surface — direction brief, design language, a self-contained reviewable mockup with a state/persona/viewport harness, and a rubric critique.","UX &amp; Accessibility","core"],
+    ["/implement","Build the feature under TDD — decompose into verifiable tasks, red→green→refactor paired with the Test Architect; apply the Testing Strategy; ship a Proof Pack.","Test Architect","core"],
     ["/document","Maintain truth-to-code docs — API reference, four diagram families — and regenerate the full Docs Explorer graph.","Documentation Steward","core"],
     ["/investigate","Find the verified root cause, generalize it to the failure class, produce a phased repair plan — then stop for human review.","SRE & Systems Diagnostician","diagnose"],
     ["/migrate","Characterization-first migrations — pin behavior in golden tests, compute blast radius, migrate in vertical increments, prove equivalence.","language Developer","support"],
@@ -750,7 +782,7 @@ window.addEventListener("DOMContentLoaded",function(){
       <!-- SKILLS -->
       <section class="block" id="skills"><div class="wrap">
         <div class="sechead"><div class="seclabel">The workflows</div>
-          <h2>Nineteen skills, one loop</h2>
+          <h2>Twenty-one skills, one loop</h2>
           <p>Each skill is the Rigor Protocol specialized to one kind of work. The core five carry a piece
           from idea to shipped code; supporting skills prepare the ground or keep it honest;
           <code>/investigate</code> breaks the loop whenever a defect appears. Three <b>pack-lifecycle</b>
@@ -856,7 +888,11 @@ A11y         ::= "A11y" ":" A11yV ("+" A11yV)*   (* a SET — co-apply *)</pre>
     </${React.Fragment}>`;
   }
 
-  ReactDOM.createRoot(document.getElementById("root")).render(html`<${App}/>`);
+  try {
+    ReactDOM.createRoot(document.getElementById("root")).render(html`<${App}/>`);
+  } catch(err){
+    window.__afpShowFallback && window.__afpShowFallback();
+  }
 
   // theme toggle
   const apply=(t)=>{ document.documentElement.setAttribute("data-theme",t);

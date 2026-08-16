@@ -13,7 +13,7 @@ This repo is two things at once:
    so the skills, agents, and knowledge are active in Claude Code *while you work on the pack
    itself*. Dogfooding: the pack is built using the pack.
 
-For the pack's own story — why it exists, what's inside, how to use the nineteen skills — read
+For the pack's own story — why it exists, what's inside, how to use the twenty-one skills — read
 [`pack/README.md`](pack/README.md) and [`pack/OVERVIEW.md`](pack/OVERVIEW.md).
 
 ## Layout
@@ -23,7 +23,7 @@ ai-forward/
 ├─ pack/                  ← CANONICAL SOURCE — edit here to expand the pack
 │   ├─ README.md  OVERVIEW.md  research-synthesis.md
 │   ├─ knowledge/         ← the reasoning spine + 23-persona roster + vendored foundation
-│   ├─ commands/          ← the 19 skills (one SKILL.md each)
+│   ├─ commands/          ← the 21 skills (one SKILL.md each)
 │   ├─ templates/         ← the artifacts each skill produces
 │   ├─ adapters/          ← INSTALL.md + Claude Code / Copilot agents + prompts + managed blocks
 │   ├─ evals/             ← the pack's own regression suite
@@ -101,6 +101,12 @@ mirrors only the Claude Code surface needed *here*; the distributable in `pack/`
 Claude Code **and** Copilot wiring.)
 
 ## Documentation
+
+**Start here:** [`docs/portal/index.html`](docs/portal/index.html) is the **Documentation Portal** — the single, unified front door to the whole repo. Nine sections make everything navigable and discoverable from one place: **Getting Started · Capabilities · The Skills · Foundations · UI & Design · Architecture · Systems · Graph · Reference**. It covers a capabilities overview and a getting-started guide; concrete reference for every skill; the **Foundations** (the reasoning constitution, engineering guidance, and coding-style guides — the always-loaded knowledge docs); an in-depth **UI & Design** section (the seven UI standards + the UX/UI examples); the **Architecture** (the architecture of record, ADRs, specs, and component designs); the **Systems** (knowledge graph, dreaming, audit, personas); an embedded **Graph** view of the knowledge graph; and a **Reference** map that links out to every specialised surface. Open it over `file://`; it needs no server or build.
+
+> **The portal is a lens, not a copy.** It is the *high-level, user-facing* layer. The repo's core knowledge stays exactly as structured as it is — the portal's Foundations, UI, and Architecture sections **list and link** the structured artifacts (knowledge docs, ADRs, specs, designs) with *derived summaries*; the artifacts themselves remain individually-owned Markdown in the knowledge graph.
+
+> **Keep-current directive (how the portal never rots).** The portal is a **derived artifact** — its content (`docs/portal/portal-data.js`) is *generated* by `tools/build-docs-portal.py` as a pure function of committed sources: the **skill list + count** from `pack/commands/`, each **skill description** from its Copilot prompt, the **counts** from `INSTALL.md`, the **Foundations** from `pack/knowledge/*.md` (grouped by `tools/docs-portal-editorial.json`), the **Architecture** from `docs/architecture*.md` + `docs/adr/` + `docs/specs/` + `docs/design/`, the **UI examples** from `docs/mockups/`, and the **Graph** from `docs/docs-index.js`. The generator is **re-run by `sync-pack.ps1`** on every pack change, and **`check-consistency.py` drift-gates it** (it regenerates and asserts byte-identical output, so a stale portal is a failing build, not a matter of discipline). Therefore **adding a skill, a knowledge doc, an ADR, a spec, or a design automatically appears in the portal** on the next generation — nothing to hand-edit. When you change any of those sources, run `pwsh tools/sync-pack.ps1` (or `python tools/build-docs-portal.py`) and commit `docs/portal/portal-data.js` with it. Editorial framing (getting-started, capability cards, per-skill when/produces/handoff, the knowledge-doc grouping) lives in `tools/docs-portal-editorial.json`; the HTML shell `docs/portal/index.html` is stable.
 
 `web/ai-forward-pack-explainer.html` is a self-contained interactive explainer — published to
 GitHub Pages at **https://timianmalloo.github.io/ai-forward/** (or open the file directly in a

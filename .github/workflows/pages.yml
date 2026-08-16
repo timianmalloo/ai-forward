@@ -1,11 +1,21 @@
-# Publishes the self-contained pack explainer (web/) to GitHub Pages so it is reachable
-# from any repo that installs the pack — /addpacktorepo links to the hosted URL.
+# Publishes the AI-Forward site to GitHub Pages with the portal as the shareable front door.
+# Approved "Option A + publish boundary" (docs/notes/hosting-and-dream-manifest.md):
+#   * serve from a root where the portal's relative links resolve (root index.html redirects to
+#     docs/portal/index.html), so timianmalloo.github.io/ai-forward/ lands on the Documentation Portal;
+#   * enforce the publish boundary in tools/build-pages-bundle.py - raw dreams, the audit log, and the
+#     operational federation data (manifests, plans, working ledgers) are KEPT LOCAL and never published.
 # One-time setup: repo Settings > Pages > Build and deployment > Source = "GitHub Actions".
 name: pages
 on:
   push:
     branches: [main]
-    paths: ["web/**", ".github/workflows/pages.yml"]
+    paths:
+      - "docs/**"
+      - "pack/**"
+      - "web/**"
+      - "learnings/fleet-classes.*"
+      - "tools/build-pages-bundle.py"
+      - ".github/workflows/pages.yml"
   workflow_dispatch:
 
 permissions:
@@ -25,9 +35,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      # Assemble the publishable bundle. The script FAILS (non-zero) if any local-only tree
+      # (raw dreams / audit / manifests / plans / working ledgers) leaked into the bundle,
+      # so a boundary violation blocks the deploy rather than publishing sensitive data.
+      - name: Build Pages bundle (publish boundary enforced)
+        run: python tools/build-pages-bundle.py --out _site
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: "web"
+          path: "_site"
       - id: deployment
         uses: actions/deploy-pages@v4

@@ -68,10 +68,10 @@ every non-trivial task.
 - **Personas (dual-mode):** author in Peer Mode, review in Adversary Mode; the author never
   clears its own hard veto. Agents in `.github/agents/`; the operating standard in the
   `persona-audit` / `persona-cards` instructions.
-- **Workflows (19):** the prompts in `.github/prompts/` — sixteen reasoning workflows
+- **Workflows (21):** the prompts in `.github/prompts/` — eighteen reasoning workflows
   (`collectknowledge`, `adddomainexperts`, `specify`, `define-architecture`, `design`, `ui-design`,
   `visualize`, `implement`, `investigate`, `document`, `adopt`, `forensicreview`, `migrate`,
-  `updatepack`, `addpacktorepo`, `extendaibundle`),
+  `updatepack`, `addpacktorepo`, `extendaibundle`, `dream`, `apply-learnings`),
   the `auditlog` lens over the audit & change log, plus two prompt-log utilities, `prompts` and
   `searchprompts`. Templates: `docs/ai-forward-pack/templates/`.
 - **Prompt reuse (utility):** `/prompts` opens the audit log's prompts as an arrow-navigable stack

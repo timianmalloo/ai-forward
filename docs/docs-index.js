@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-Forward",
-  "generated": "2026-08-11T13:43:53Z",
+  "generated": "2026-08-16T18:57:25Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -226,6 +226,188 @@ window.DOCS_INDEX = {
       "sourceSha256": "eb87d82543bc3da18f2bb7880670dd33396f24ecc6f7cc94dba3b09c3f69dd12"
     },
     {
+      "id": "adr-0002-fleet-learnings-store",
+      "path": "docs/adr/0002-fleet-learnings-store.md",
+      "title": "ADR-0002: Fleet learnings store in ai-forward; append-only facts + slug-keyed learnings; two federation paths",
+      "type": "adr",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "dreaming",
+      "reviewBy": "",
+      "reviewSuggested": [],
+      "summary": "The fleet learnings store lives in the ai-forward repo; corpus/oracle records are append-only facts and a Learning is a slug-keyed dimension whose instances are append-only; general classes federate two ways — a push skill (/apply-learnings) and a pull path (/updatepack).",
+      "tags": [
+        "dreaming",
+        "federation",
+        "data-model",
+        "fleet-store"
+      ],
+      "links": [
+        {
+          "to": "architecture-dreaming",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-dreaming",
+          "rel": "implements"
+        },
+        {
+          "to": "architecture",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "16dbd4f89c26f9d69b17c99cec63caae55d37522991bdeb4475fa7a3f97b757c"
+    },
+    {
+      "id": "adr-0003-promotion-oracle",
+      "path": "docs/adr/0003-promotion-oracle.md",
+      "title": "ADR-0003: The promotion oracle is captured successful mitigations (red→green test or human validation)",
+      "type": "adr",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "dreaming",
+      "reviewBy": "",
+      "reviewSuggested": [],
+      "summary": "The oracle for 'the fix worked' is a captured MitigationRecord whose verification is either a red-observed→green test pair or an explicit human validation; a fix with neither is 'unverified' and is never mined as a successful mitigation.",
+      "tags": [
+        "dreaming",
+        "promotion-oracle",
+        "mitigations",
+        "reflexion",
+        "testing"
+      ],
+      "links": [
+        {
+          "to": "architecture-dreaming",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-dreaming",
+          "rel": "implements"
+        },
+        {
+          "to": "architecture",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "0bbcd43185920644d77c385d47b6136d4499fe3d7270ddfcd967c100b3c397f3"
+    },
+    {
+      "id": "adr-0004-instance-to-class-abstraction",
+      "path": "docs/adr/0004-instance-to-class-abstraction.md",
+      "title": "ADR-0004: Safe instance→class abstraction — deterministic strip, model name, generalisation guards, human gate",
+      "type": "adr",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "dreaming",
+      "reviewBy": "",
+      "reviewSuggested": [],
+      "summary": "Defines the safe instance→class abstraction: deterministically strip specifics + PII, model-name the shape, enforce five generalisation guards (evidence threshold, falsifiable control, boundary statement, retained provenance, no PII across the boundary), and never promote without the human gate.",
+      "tags": [
+        "dreaming",
+        "abstraction",
+        "federation",
+        "privacy",
+        "over-generalisation"
+      ],
+      "links": [
+        {
+          "to": "architecture-dreaming",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-dreaming",
+          "rel": "implements"
+        },
+        {
+          "to": "architecture",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "3136333b0464909987a084d89b193ca1019a4b1ea7d4d8aae216fdb3fa170503"
+    },
+    {
+      "id": "adr-0005-harness-runner-boundary",
+      "path": "docs/adr/0005-harness-runner-boundary.md",
+      "title": "ADR-0005: Ship a stdlib deterministic harness; the model call is an injected boundary owned by the runner; human-gate, no auto-merge",
+      "type": "adr",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "dreaming",
+      "reviewBy": "",
+      "reviewSuggested": [],
+      "summary": "The pack ships a stdlib-only deterministic harness (dream.py) + prompts; the one model call per phase is an injected boundary the runner (claude-cowork / OpenClaw / Claude Dreams / a skill session) owns; every durable write and every cross-repo change passes a human gate — never an auto-merge.",
+      "tags": [
+        "dreaming",
+        "pack-identity",
+        "model-boundary",
+        "human-gate",
+        "runner"
+      ],
+      "links": [
+        {
+          "to": "architecture-dreaming",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-dreaming",
+          "rel": "implements"
+        },
+        {
+          "to": "architecture",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "c19375435db43149cd158dfc6ae6e8abd87566abf49caf4db9455d7f5e19869a"
+    },
+    {
+      "id": "adr-0006-dream-manifest",
+      "path": "docs/adr/0006-dream-manifest.md",
+      "title": "ADR-0006: The Dream Manifest — a learnings×repos targeting/record layer for federation, composed in a UI, consumed by apply-learnings --manifest, local-only by default",
+      "type": "adr",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "dreaming",
+      "reviewBy": "",
+      "reviewSuggested": [],
+      "summary": "Federation had a distribution mechanism (apply-learnings push -> per-repo plans) but no targeting/record layer: which learnings go to which repos, and what happened when they did. The Dream Manifest is that layer — a learnings×repos assignment matrix (learnings/manifests/<id>.json) composed in a self-contained HTML, consumed by `apply-learnings.py push --manifest`, which reconciles per assignment and writes status back. Manifests carry repo identifiers so they are LOCAL-ONLY by default (excluded from the published Pages bundle), consistent with the publish boundary.",
+      "tags": [
+        "dreaming",
+        "federation",
+        "manifest",
+        "targeting",
+        "publish-boundary"
+      ],
+      "links": [
+        {
+          "to": "architecture-dreaming",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-dreaming",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0002-fleet-learnings-store",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0005-harness-runner-boundary",
+          "rel": "depends-on"
+        },
+        {
+          "to": "architecture",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "9f580ef9588475df5621e901b78dff2399aa057e52a760bc6147b3735dd1814b"
+    },
+    {
       "id": "architecture",
       "path": "docs/architecture.md",
       "title": "AI-Forward — Architecture Overview",
@@ -271,6 +453,60 @@ window.DOCS_INDEX = {
         }
       ],
       "sourceSha256": "278a15e60eeb168b89ffb59cb751f1835ba038a6c68f684407d57c3ee96bb40c"
+    },
+    {
+      "id": "architecture-dreaming",
+      "path": "docs/architecture-dreaming.md",
+      "title": "Dreaming subsystem — architecture",
+      "type": "architecture",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "dreaming",
+      "reviewBy": "2027-02-11",
+      "reviewSuggested": [],
+      "summary": "Subsystem architecture for AI-Forward's dreaming capability — the offline consolidation pipeline (light/REM/deep) over the committed corpus, the HTML review/approval surface, the promotion oracle, the safe instance→class abstraction, the fleet learnings store, and the /apply-learnings federation path — as an LOA Continuous Sentinel with determinism at the floor and a human gate before any durable write. Refines the pack's top-level architecture; it is a subsystem, not a new system.",
+      "tags": [
+        "dreaming",
+        "architecture",
+        "consolidation",
+        "federation",
+        "oracle",
+        "loa-continuous-sentinel"
+      ],
+      "links": [
+        {
+          "to": "spec-dreaming",
+          "rel": "implements"
+        },
+        {
+          "to": "architecture",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0002-fleet-learnings-store",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0003-promotion-oracle",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0004-instance-to-class-abstraction",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0005-harness-runner-boundary",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "3. Components & boundaries",
+          "mermaid": "flowchart LR\n  subgraph Consolidation [Consolidation context - T0 + one T3 step]\n    C1[corpus reader\\naudit/change/register/mitigations/markers] --> C2[light: stage + dedup + taint gate + scrub]\n    C2 --> C3[REM: reflect -> candidate classes\\n(model boundary - injected)]\n    C3 --> C4[deep: score + threshold gate -> proposals]\n    C4 --> C5[render: dream.json + dream-data.js + review HTML + Dream Diary]\n  end\n  subgraph Governance [Governance context - human gate]\n    C5 --> G1[[Dream Review HTML\\napprove/edit/reject/defer]]\n    G1 --> G2[decisions.json]\n    G2 --> G3[apply-decisions: validate + taint re-check]\n  end\n  subgraph Federation [Federation context]\n    G3 -->|approved general| F1[abstract instance->class\\n+ scrub + boundary]\n    F1 --> F2[(fleet learnings store\\nin ai-forward)]\n    G3 -->|approved repo-local| F3[(repo defect-classes.md)]\n    F2 -->|/apply-learnings push| F4[reconcile vs target repo\\n-> reviewable diff/branch]\n    F2 -->|/updatepack pull| F5[deployment map -> repo]\n  end\n  ORACLE[(mitigations.jsonl)]:::o --> C1\n  IMPL[/implement, /investigate,\\nhuman validation/] --> ORACLE\n  classDef o fill:#2c2a29,stroke:#888684;"
+        }
+      ],
+      "sourceSha256": "a3975ab26cb8083b799bfb77026c6bf0ddaf8da812fe0cbbd5a5bc492d1c8987"
     },
     {
       "id": "note-20260712-model-orchestration-policy",
@@ -481,6 +717,68 @@ window.DOCS_INDEX = {
       "sourceSha256": "56b1c7e87d28bcfdac3906cb30b403c4a586fe6901d74c5b86960805a5bdc698"
     },
     {
+      "id": "mockup-documentation-portal",
+      "path": "docs/mockups/documentation-portal.md",
+      "title": "Documentation Portal — mockup",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "documentation-portal",
+      "reviewBy": "2027-02-11",
+      "reviewSuggested": [],
+      "summary": "Self-contained, dependency-free high-fidelity mockup of the Documentation Portal — the DocsPortal (Content Portal / HolyGrail reading layout) front door: persistent sidebar nav over six sections (Getting Started · Capabilities · The 21 Skills · UI Capabilities · Systems · Reference), search, and reading-optimised content. Renders the hard states (loading/empty/error) via a review harness (theme · viewport · state · motion) and reuses docs/DESIGN.md's AA-audited knowledge-surface tokens.",
+      "tags": [
+        "documentation",
+        "portal",
+        "mockup",
+        "content-portal",
+        "ui"
+      ],
+      "links": [
+        {
+          "to": "spec-documentation-portal",
+          "rel": "implements"
+        },
+        {
+          "to": "design-language-docs-explorer",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "ead16153a64b0f7b7be20781c0f518b40cb453c8351bb919b90a81d8c2dff1dc"
+    },
+    {
+      "id": "mockup-dream-review",
+      "path": "docs/mockups/dream-review.md",
+      "title": "Dream Review — mockup",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "dreaming",
+      "reviewBy": "2027-02-11",
+      "reviewSuggested": [],
+      "summary": "Self-contained, dependency-free high-fidelity mockup of the Dream Review view — the Master-Detail approval queue the maintainer uses to review a dream's proposals (evidence, provenance, confidence, proposed control, federation scope) and Approve/Edit/Reject/Defer each, then export decisions. Renders the hard states (empty/loading/error/overflow) via a review harness (theme · viewport · state · motion) and reuses docs/DESIGN.md's AA-audited knowledge-surface tokens.",
+      "tags": [
+        "dreaming",
+        "mockup",
+        "review-view",
+        "master-detail",
+        "ui"
+      ],
+      "links": [
+        {
+          "to": "spec-dreaming",
+          "rel": "implements"
+        },
+        {
+          "to": "design-language-docs-explorer",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "47760a4a638e2b08e5acf59575b589ef336fa6651e8aa331b60e388d5b25d654"
+    },
+    {
       "id": "design-language-docs-explorer",
       "path": "docs/DESIGN.md",
       "title": "Docs Explorer — Design Language",
@@ -569,7 +867,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "29b50ee33338b108f882cb4496094f6935bfcbfaeb72a4b0a9bcc5a3a0e67b77"
+      "sourceSha256": "8a9ce71344df2cd1c59265ff1feec9077b230a6de5da193e8f7e4637dea00120"
     },
     {
       "id": "docs-index",
@@ -595,6 +893,31 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "12bb237176e77568df0d5e1b3c00eaeace976e20055bc5dbee1686b6f3dd6b98"
+    },
+    {
+      "id": "dream-diary",
+      "path": "docs/dreams/DREAMS.md",
+      "title": "Dream Diary",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "dreaming",
+      "reviewBy": "",
+      "reviewSuggested": [],
+      "summary": "Human-readable narrative of each dream pass (what it added/merged/superseded). NOT a promotion source - excluded from re-ingestion (no self-poisoning). Generated by dream.py.",
+      "tags": [
+        "dreaming",
+        "dream-diary",
+        "continuous-improvement"
+      ],
+      "links": [
+        {
+          "to": "spec-dreaming",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "80babae6da65a0c8bbf3c586cad9acb04df7023be4169a10285e8f4f213a5934"
     },
     {
       "id": "forensic-review",
@@ -920,6 +1243,47 @@ window.DOCS_INDEX = {
       "sourceSha256": "ef39aa2634caaccd815ed64e487a2987ff5ef19fd5b3851362cda4f764114c40"
     },
     {
+      "id": "proposal-hosting-and-dream-manifest",
+      "path": "docs/notes/hosting-and-dream-manifest.md",
+      "title": "Proposal / dialog: GitHub Pages hosting + the Dream Manifest",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "dreaming",
+      "reviewBy": "2026-11-13",
+      "reviewSuggested": [],
+      "summary": "An RFC/dialog opener on (1) whether to host the Documentation Portal and surfaces on GitHub Pages, (2) how that impacts dream output and privacy, and (3) a proposed Dream Manifest - a first-class, reviewable, hostable artifact recording which approved learnings from a dream session target which repos (the missing 'targeting' layer between apply-decisions and /apply-learnings). Ends with the open decisions for the maintainer.",
+      "tags": [
+        "hosting",
+        "github-pages",
+        "dreaming",
+        "federation",
+        "manifest",
+        "dialog",
+        "rfc"
+      ],
+      "links": [
+        {
+          "to": "spec-documentation-portal",
+          "rel": "relates-to"
+        },
+        {
+          "to": "architecture-dreaming",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0002-fleet-learnings-store",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0006-dream-manifest",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "69a9739b5ab387e841ebdf338c644cff7a93a61b48d89658622637b720687c5c"
+    },
+    {
       "id": "ui-capability-guide",
       "path": "docs/ui-guide.md",
       "title": "UI & UX Capability Guide",
@@ -1008,6 +1372,263 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "a0c670c403ddf6e56e037ac25043bd7a6c2d16bb5f138a6794e412e896814925"
+    },
+    {
+      "id": "investigation-blank-explainer-live",
+      "path": "docs/investigations/blank-explainer-live.md",
+      "title": "Investigation: the hosted explainer renders blank even after the 'fix'",
+      "type": "investigation",
+      "status": "resolved",
+      "owner": "@timianmalloo",
+      "phase": "hosting",
+      "reviewBy": "",
+      "reviewSuggested": [],
+      "summary": "The hosted explainer stayed blank after a fix was declared, because the fix lived only in the working tree — it was never deployed, so the live URL still served the old syntax-broken file. A compounding cause: the earlier fix was proven with `node --check` (syntax) but never with a render check (the mounted surface). Both verified here: the live file is the old corrupted version; a jsdom load-and-run proves the fixed file MOUNTS while the old one stays BLANK. Root cause = not-deployed + verified-at-the-wrong-level. Registered as class PACK-H.",
+      "tags": [
+        "ui",
+        "hosting",
+        "github-pages",
+        "explainer",
+        "deploy",
+        "render-verification"
+      ],
+      "links": [
+        {
+          "to": "adr-0006-dream-manifest",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proposal-hosting-and-dream-manifest",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "46e5f217c033da9259feb835777164a77af2e65d275f0a63e9f72be650a43ba7"
+    },
+    {
+      "id": "kb-continuous-improvement-and-dreaming",
+      "path": "docs/knowledge/continuous-improvement-and-dreaming/index.md",
+      "title": "Continuous Improvement & Dreaming — harvesting learnings across repos (domain knowledge)",
+      "type": "knowledge",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "continuous-improvement",
+      "reviewBy": "2026-11-13",
+      "reviewSuggested": [],
+      "summary": "Sourced evidence base for continuously harvesting learnings, mistakes, patterns and anti-patterns across a fleet of local repositories and sharing them so every repo benefits. Synthesises the \"dreaming\" wave (Claude Dreams, OpenClaw, Karpathy's LLM-wiki), its academic roots (Reflexion, Generative Agents reflection, A-MEM, sleep-time compute), the self-improving AGENTS.md trend, and SRE/NASA lessons-learned practice — then maps them onto what AI-Forward already ships (audit/change logs, the defect-class register, the knowledge graph) and states the gap: the pack has built the *awake* half (capture) and lacks the *asleep* half (scheduled offline consolidation + cross-repo federation).",
+      "tags": [
+        "continuous-improvement",
+        "dreaming",
+        "agent-memory",
+        "self-improvement",
+        "audit-log",
+        "defect-classes",
+        "cross-repo",
+        "federation"
+      ],
+      "links": [
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        },
+        {
+          "to": "audit-log",
+          "rel": "relates-to"
+        },
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "ca59c1f18a31d75efe01b13b72c3066f239f04cbf7ca02ea48d7db2f1d243472"
+    },
+    {
+      "id": "kb-continuous-improvement-and-dreaming-comparables",
+      "path": "docs/knowledge/continuous-improvement-and-dreaming/comparables.md",
+      "title": "Continuous Improvement & Dreaming — Comparables",
+      "type": "knowledge",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "continuous-improvement",
+      "reviewBy": "2026-11-13",
+      "reviewSuggested": [],
+      "summary": "How Claude Dreams, OpenClaw, Reflexion, Generative Agents, A-MEM, the LLM-wiki, self-improving AGENTS.md, and SRE/NASA lessons-learned frame and solve the problem — and what AI-Forward should borrow or reject; plus the five-part architecture everyone independently builds.",
+      "tags": [
+        "dreaming",
+        "comparables",
+        "claude-dreams",
+        "openclaw",
+        "postmortem",
+        "agents-md"
+      ],
+      "links": [
+        {
+          "to": "kb-continuous-improvement-and-dreaming",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "b73485876844dabcbd46db5a9000c3dc2f1961690f753bed45344a381788c59e"
+    },
+    {
+      "id": "kb-continuous-improvement-and-dreaming-data",
+      "path": "docs/knowledge/continuous-improvement-and-dreaming/data-and-constants.md",
+      "title": "Continuous Improvement & Dreaming — Data, Constants & Invariants",
+      "type": "knowledge",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "continuous-improvement",
+      "reviewBy": "2026-11-13",
+      "reviewSuggested": [],
+      "summary": "The concrete parameters (Claude Dreams 1-100 sessions; OpenClaw's six weighted deep-ranking signals and threshold gates; nightly cron), the AI-Forward corpus a dream pass reads, the eight testable invariants (guardrails), and an order-of-magnitude cost/cadence model.",
+      "tags": [
+        "dreaming",
+        "constants",
+        "invariants",
+        "guardrails",
+        "scoring",
+        "corpus"
+      ],
+      "links": [
+        {
+          "to": "kb-continuous-improvement-and-dreaming",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "b51bd3d2499fd2de488db29041e050e4cca00be8356d9cc0aaacd3244933c5b3"
+    },
+    {
+      "id": "kb-continuous-improvement-and-dreaming-glossary",
+      "path": "docs/knowledge/continuous-improvement-and-dreaming/glossary.md",
+      "title": "Continuous Improvement & Dreaming — Glossary",
+      "type": "knowledge",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "continuous-improvement",
+      "reviewBy": "2026-11-13",
+      "reviewSuggested": [],
+      "summary": "The ubiquitous language for the dreaming/consolidation capability — dream pass, light/REM/deep phases, candidate, promotion, provenance taint gate, Dream Diary, outcome signal, defect class, control ladder, federation, fleet learnings store — for use in the spec, design, and code.",
+      "tags": [
+        "dreaming",
+        "glossary",
+        "ubiquitous-language"
+      ],
+      "links": [
+        {
+          "to": "kb-continuous-improvement-and-dreaming",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "3bed1089c00c0bdb194f4dcae879b034629f799f2cb013fb1d915a14dc6f3bf7"
+    },
+    {
+      "id": "kb-continuous-improvement-and-dreaming-open-questions",
+      "path": "docs/knowledge/continuous-improvement-and-dreaming/open-questions.md",
+      "title": "Continuous Improvement & Dreaming — Open Questions & Failure Modes",
+      "type": "knowledge",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "continuous-improvement",
+      "reviewBy": "2026-11-13",
+      "reviewSuggested": [],
+      "summary": "The unresolved forks to carry into /specify (fleet store location, the promotion oracle, safe instance-to-class abstraction, cadence, runner), the known failure modes to design against (prose memoir, auto-merge, in-place mutation, memory poisoning, over-generalisation, PII leakage), and the disconfirming views deliberately sought.",
+      "tags": [
+        "dreaming",
+        "open-questions",
+        "failure-modes",
+        "disconfirming",
+        "federation"
+      ],
+      "links": [
+        {
+          "to": "kb-continuous-improvement-and-dreaming",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "f4d7e4339569fde71420f34a2746e64c557dbd0c260ac4359601d88175584096"
+    },
+    {
+      "id": "kb-continuous-improvement-and-dreaming-references",
+      "path": "docs/knowledge/continuous-improvement-and-dreaming/references.md",
+      "title": "Continuous Improvement & Dreaming — References",
+      "type": "knowledge",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "continuous-improvement",
+      "reviewBy": "2026-11-13",
+      "reviewSuggested": [],
+      "summary": "Primary product/platform sources, seminal papers (Reflexion, Generative Agents, A-MEM, sleep-time compute), SRE/NASA practice, and the in-repo standards this capability composes with (continuous-improvement, audit-and-change-log, defect-classes, knowledge-visualization) plus runners.",
+      "tags": [
+        "dreaming",
+        "references",
+        "standards",
+        "papers",
+        "in-repo-standards"
+      ],
+      "links": [
+        {
+          "to": "kb-continuous-improvement-and-dreaming",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "397766d1b8e558028c3ca34cb528aef9cd411cf60eb3237a9a02d71e408c2406"
+    },
+    {
+      "id": "kb-continuous-improvement-and-dreaming-sota",
+      "path": "docs/knowledge/continuous-improvement-and-dreaming/state-of-the-art.md",
+      "title": "Continuous Improvement & Dreaming — State of the Art",
+      "type": "knowledge",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "continuous-improvement",
+      "reviewBy": "2026-11-13",
+      "reviewSuggested": [],
+      "summary": "Current best practice for continuous self-improvement: the awake/asleep loop; Claude Dreams and OpenClaw's phased local dreaming; Reflexion and Generative Agents as the academic root; A-MEM and Karpathy's LLM-wiki as the durable-store shape; sleep-time compute as the scheduling warrant.",
+      "tags": [
+        "dreaming",
+        "agent-memory",
+        "self-improvement",
+        "reflexion",
+        "sleep-time-compute"
+      ],
+      "links": [
+        {
+          "to": "kb-continuous-improvement-and-dreaming",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "0ef079786afc923b5edb436a794704433acd3727d918d3a554f76c1410303989"
+    },
+    {
+      "id": "kb-continuous-improvement-and-dreaming-sources",
+      "path": "docs/knowledge/continuous-improvement-and-dreaming/sources.md",
+      "title": "Continuous Improvement & Dreaming — Sources",
+      "type": "knowledge",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "continuous-improvement",
+      "reviewBy": "2026-11-13",
+      "reviewSuggested": [],
+      "summary": "Full source list with access dates and confidence labels — primary product/platform docs (Claude Dreams, OpenClaw), seminal papers, SRE/NASA practice, and the in-repo standards — with a currency note on which sources are research-preview or secondary framing.",
+      "tags": [
+        "dreaming",
+        "sources",
+        "citations"
+      ],
+      "links": [
+        {
+          "to": "kb-continuous-improvement-and-dreaming",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "bb27d016b82e07af7bd4a1dd442aef75611c794638d7b7c2b1da04bf4009d26a"
     },
     {
       "id": "kb-ddm-comparables",
@@ -1482,6 +2103,90 @@ window.DOCS_INDEX = {
       "sourceSha256": "8596cd2175507a7b8da9f922cf7db6bee84be7eec6622235bc51964b5f370675"
     },
     {
+      "id": "spec-documentation-portal",
+      "path": "docs/specs/documentation-portal.md",
+      "title": "Documentation Portal — a derived, self-maintaining interactive front door",
+      "type": "spec",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "documentation-portal",
+      "reviewBy": "2027-02-11",
+      "reviewSuggested": [],
+      "summary": "Specification for a single, polished, interactive HTML documentation portal that is the front door to the AI-Forward repo — a capabilities overview, concrete reference for all 21 skills, an in-depth UI-capabilities section, and an explicit getting-started guide. The portal is a DERIVED artifact (a pure function of committed pack sources), regenerated on every sync and drift-gated in CI, so it cannot rot as the repo evolves; editorial sections live in committed source, structured content (skills, counts, UI standards) is pulled from the pack.",
+      "tags": [
+        "documentation",
+        "portal",
+        "onboarding",
+        "derived-artifact",
+        "getting-started",
+        "discoverability"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "refines"
+        },
+        {
+          "to": "design-language-docs-explorer",
+          "rel": "depends-on"
+        },
+        {
+          "to": "docs-index",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "User flows (happy + alternate + error + recovery)",
+          "mermaid": "flowchart TD\n  open([Open docs/portal/index.html over file://]) --> load{portal-data.js present & valid?}\n  load -->|no/malformed| err[Error state: 'Portal data missing - regenerate with build-docs-portal.py'] --> done1([Close])\n  load -->|yes| land[Land on Getting Started - the guided descent]\n  land --> nav{What does the reader want?}\n  nav -->|orient| cap[Capabilities overview + live counts]\n  nav -->|start| gs[Getting Started steps -> run first skill]\n  nav -->|look up a skill| skills[Skills reference, grouped by the loop]\n  nav -->|UI depth| ui[UI Capabilities deep-dive]\n  nav -->|systems| sys[Dreaming / graph / audit / personas]\n  nav -->|specialised surface| ref[Reference -> link out]\n  skills --> pick[Select a skill card]\n  pick --> detail[what it does / when / produces / handoff / source link]\n  ref --> out{target exists?}\n  out -->|yes| surface([Open Docs Explorer / UI guide / audit / dreams])\n  out -->|no| miss[Link shown as 'not generated yet' - never a broken link]\n  search([Search/filter]) --> skills"
+        }
+      ],
+      "sourceSha256": "a8753bab54f21bb987df9032becd79016980c60af68168e9e160bdb38aa407eb"
+    },
+    {
+      "id": "spec-dreaming",
+      "path": "docs/specs/dreaming-continuous-improvement.md",
+      "title": "Dreaming — continuous-improvement consolidation, review, and cross-repo federation",
+      "type": "spec",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "dreaming",
+      "reviewBy": "2027-02-11",
+      "reviewSuggested": [],
+      "summary": "Specification for AI-Forward's dreaming capability: a /dream consolidation skill that mines the committed corpus (audit/change logs, defect-class register, captured mitigations, triggered markers) and emits an HTML review view of proposed learnings; a schedulable dream job; a promotion oracle that captures successful mitigations (error→red test→green, or human validation); a safe instance→class abstraction procedure; a fleet learnings store in the ai-forward repo; and an /apply-learnings push skill that reconciles approved learnings into target repos.",
+      "tags": [
+        "dreaming",
+        "continuous-improvement",
+        "consolidation",
+        "federation",
+        "promotion-oracle",
+        "review-view"
+      ],
+      "links": [
+        {
+          "to": "kb-continuous-improvement-and-dreaming",
+          "rel": "implements"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        },
+        {
+          "to": "audit-log",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "User flows (happy + alternate + error + recovery)",
+          "mermaid": "flowchart TD\n  open([Open dream view over file://]) --> load{dream-data.js present & valid?}\n  load -->|no/empty| empty[Empty state: 'No proposals in this dream' or 'Data missing — regenerate with /dream'] --> done1([Close])\n  load -->|yes| queue[Review queue, grouped by kind, highest-leverage first]\n  queue --> pick[Select a proposal]\n  pick --> inspect[Inspect evidence, provenance, control, boundary, scope]\n  inspect --> decide{Decision}\n  decide -->|Approve| mark[Mark approved]\n  decide -->|Edit| edit[Adjust control/boundary inline, then approve]\n  decide -->|Reject| rej[Mark rejected + optional reason]\n  decide -->|Defer| def[Mark deferred]\n  mark --> more{More proposals?}\n  edit --> more\n  rej --> more\n  def --> more\n  more -->|yes| pick\n  more -->|no| export[Export decisions]\n  export --> emit[[View emits decisions JSON + apply command]]\n  emit --> apply[Run dream.py apply-decisions file]\n  apply --> promote{Any approved & general?}\n  promote -->|yes| store[Promote to fleet learnings store in ai-forward]\n  promote -->|no| localonly[Repo-local learnings updated only]\n  store --> push([Later: /apply-learnings --repos ... reconciles into targets])\n  apply -->|malformed decisions file| aerr[Validation error: reject file, nothing written] --> export"
+        }
+      ],
+      "sourceSha256": "3a1b4242dc83c313fbc9b3e14877e875e9e44eb3b5eeb59025efd5abd1b0a13d"
+    },
+    {
       "id": "threat-model",
       "path": "docs/security/threat-model.md",
       "title": "Threat Model",
@@ -1556,7 +2261,44 @@ window.DOCS_INDEX = {
       "title": "Docs Explorer - Design Language Preview",
       "kind": "design-preview",
       "description": "Inspect a rendered design or design-language preview."
+    },
+    {
+      "id": "surface-portal-index",
+      "path": "docs/portal/index.html",
+      "title": "AI-Forward — Documentation",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact."
+    },
+    {
+      "id": "surface-mockups-documentation-portal",
+      "path": "docs/mockups/documentation-portal.html",
+      "title": "AI-Forward — Documentation Portal (mockup)",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "mockup-documentation-portal"
+    },
+    {
+      "id": "surface-knowledge-continuous-improvement-and-dreaming-overview",
+      "path": "docs/knowledge/continuous-improvement-and-dreaming/overview.html",
+      "title": "Continuous Improvement & Dreaming — techniques overview",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact."
+    },
+    {
+      "id": "surface-dreams-drm-0002-index",
+      "path": "docs/dreams/drm-0002/index.html",
+      "title": "Dream Review",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact."
+    },
+    {
+      "id": "surface-mockups-dream-review",
+      "path": "docs/mockups/dream-review.html",
+      "title": "Dream Review — mockup",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "mockup-dream-review"
     }
   ],
-  "graphSha256": "e090b95c16dd935821293850142650757474e09f83d95103065457fdb8b20042"
+  "graphSha256": "55dee9f51e003a51b1ac596fcfb1c0a1608520d0388eea3fa8392571c87f8d69"
 };

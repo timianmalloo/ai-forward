@@ -201,4 +201,14 @@ if (Test-Path $buildWebIndex) {
     else { Write-Host "  web/pack-index.js skipped (python not found)" -ForegroundColor Yellow }
 }
 
+# Regenerate the Documentation Portal data (docs/portal/portal-data.js) - the derived, drift-gated
+# front door (spec-documentation-portal). Derived from pack sources so it cannot rot as the repo evolves.
+$buildPortal = Join-Path $repo "tools\build-docs-portal.py"
+if (Test-Path $buildPortal) {
+    $pyCmd2 = Get-Command python -ErrorAction SilentlyContinue
+    if (-not $pyCmd2) { $pyCmd2 = Get-Command python3 -ErrorAction SilentlyContinue }
+    if ($pyCmd2) { & $pyCmd2.Source $buildPortal | ForEach-Object { Write-Host "  $_" } }
+    else { Write-Host "  docs/portal/portal-data.js skipped (python not found)" -ForegroundColor Yellow }
+}
+
 Write-Host "Done. Review changes, then commit pack/ + .claude/ + .github/{instructions,prompts,agents}/ + docs/ + CLAUDE.md/AGENTS.md together." -ForegroundColor Green

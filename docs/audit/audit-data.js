@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-08-11T13:41:23Z",
+  "generated": "2026-08-16T18:57:25Z",
   "audit": [
     {
       "id": "al-0001",
@@ -831,6 +831,440 @@ window.AUDIT_DATA = {
         "branch": "main",
         "pushed": false
       }
+    },
+    {
+      "id": "al-0033",
+      "shortname": "collectknowledge-continuous-improvement-and-dreaming",
+      "datetime": "2026-08-15T14:43:41Z",
+      "session": "0a0ed8db-7e35-441c-955a-2b438bd01548",
+      "prompt": "I want to think about how to best harvest all the knowledge, learnings, mistakes, patterns and anti-patterns in our repos to continuously improve. Consider what Karpathy has said about dreaming (OpenAI/Claude dreaming links + YouTube). Think about best practices to create continuous improvement across all my local repos and share knowledge across repos so they all benefit. Collect this into our knowledge base, create a synthesized perspective on how to organize/structure it as a skill and a job that can run in claude-cowork/open claw, and consider how our audit logs and learning capture need to evolve. Give me an HTML overview as a starting point to specify what we should do.",
+      "summary": "Built docs/knowledge/continuous-improvement-and-dreaming/ (8 files + overview.html): sourced base on the dreaming wave (Claude Dreams, OpenClaw light/REM/deep), roots (Reflexion, Generative Agents, A-MEM, sleep-time compute), self-improving AGENTS.md, SRE/NASA lessons-learned; 6 Verified/1 Inferred/1 Flagged. Key finding: the pack already built the awake half (capture) and lacks the asleep half (scheduled offline consolidation) + cross-repo federation; audit log must evolve from write-only history to a mined corpus (outcome signal, session ingestion, promotion thresholds, Dream Diary).",
+      "kind": "skill",
+      "skill": "collectknowledge",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/knowledge/continuous-improvement-and-dreaming/index.md",
+        "docs/knowledge/continuous-improvement-and-dreaming/overview.html"
+      ],
+      "tags": [
+        "continuous-improvement",
+        "dreaming",
+        "agent-memory",
+        "cross-repo"
+      ],
+      "outcome": "success",
+      "git": {
+        "sha": "4966ea34a1b9b3bf795cbdd178d86e83f514fc72",
+        "short": "4966ea34a",
+        "branch": "main",
+        "pushed": false
+      }
+    },
+    {
+      "id": "al-0034",
+      "shortname": "dream-run",
+      "datetime": "2026-08-15T16:27:32Z",
+      "session": "0a0ed8db-7e35-441c-955a-2b438bd01548",
+      "prompt": "dream.py dream-run",
+      "summary": "Dream drm-0001: 5 proposals over last 60 days · 33 audit · 11 change · 0 mitigations · 4 markers",
+      "kind": "script",
+      "skill": "dream",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/dreams/drm-0001/index.html"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0035",
+      "shortname": "capture-mitigation",
+      "datetime": "2026-08-15T16:28:04Z",
+      "session": "0a0ed8db-7e35-441c-955a-2b438bd01548",
+      "prompt": "dream.py capture-mitigation",
+      "summary": "Captured mit-0001 (red-green): docs-graph validate flagged 'unknown type: mockup'; changed the mockup hub frontmatter type to 'desi",
+      "kind": "script",
+      "skill": "dream",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/lessons/mitigations.jsonl"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0036",
+      "shortname": "dream-run",
+      "datetime": "2026-08-15T16:28:04Z",
+      "session": "0a0ed8db-7e35-441c-955a-2b438bd01548",
+      "prompt": "dream.py dream-run",
+      "summary": "Dream drm-0002: 6 proposals over last 60 days · 35 audit · 11 change · 1 mitigations · 4 markers",
+      "kind": "script",
+      "skill": "dream",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/dreams/drm-0002/index.html"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0037",
+      "shortname": "apply-decisions",
+      "datetime": "2026-08-15T16:28:22Z",
+      "session": "0a0ed8db-7e35-441c-955a-2b438bd01548",
+      "prompt": "dream.py apply-decisions",
+      "summary": "Applied 1 general + 1 repo-local (skipped 0, rejected 0) from drm-0002",
+      "kind": "script",
+      "skill": "dream",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "learnings/fleet-classes.jsonl"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0038",
+      "shortname": "apply-decisions",
+      "datetime": "2026-08-15T16:28:22Z",
+      "session": "0a0ed8db-7e35-441c-955a-2b438bd01548",
+      "prompt": "dream.py apply-decisions",
+      "summary": "Applied 0 general + 0 repo-local (skipped 2, rejected 0) from drm-0002",
+      "kind": "script",
+      "skill": "dream",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "learnings/fleet-classes.jsonl"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0039",
+      "shortname": "apply-learnings",
+      "datetime": "2026-08-15T16:29:48Z",
+      "session": "0a0ed8db-7e35-441c-955a-2b438bd01548",
+      "prompt": "apply-learnings.py apply-learnings",
+      "summary": "Planned federation to 1 repo(s): ai-forward(+1~0!0)",
+      "kind": "script",
+      "skill": "apply-learnings",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "learnings/plans/"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0040",
+      "shortname": "specify-dreaming",
+      "datetime": "2026-08-15T16:37:41Z",
+      "session": "0a0ed8db-7e35-441c-955a-2b438bd01548",
+      "prompt": "yes /specify a dream consolidation skill and a schedulable dream job and a federation layer ... plus an approval HTML view, a complementary push skill that reconciles per-repo, a promotion oracle from error->test->pass or human validation, a safe instance->class abstraction, fleet store in ai-forward",
+      "summary": "docs/specs/dreaming-continuous-improvement.md - one spec, three layers (Functional incl. DDD conceptual model with 4 aggregates+invariants, UX with drawn flows, UI archetype DreamReview). Covers /dream + dream job + federation + /apply-learnings + oracle + abstraction. Gate PASS.",
+      "kind": "skill",
+      "skill": "specify",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/specs/dreaming-continuous-improvement.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0041",
+      "shortname": "ui-design-dream-review",
+      "datetime": "2026-08-15T16:37:41Z",
+      "session": "0a0ed8db-7e35-441c-955a-2b438bd01548",
+      "prompt": "use /ui-design to design the dream results view i will use to see the results of dreams",
+      "summary": "docs/mockups/dream-review.html + hub node - self-contained Master-Detail review queue (approve/edit/reject/defer + export decisions) reusing docs/DESIGN.md AA-audited tokens; harness renders empty/loading/error/overflow; UI-T3 (model-assisted) applied; craft gate clean on scanned corpus (CD20: client-rendered, static scan advisory).",
+      "kind": "skill",
+      "skill": "ui-design",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/mockups/dream-review.html"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0042",
+      "shortname": "define-architecture-dreaming",
+      "datetime": "2026-08-15T16:37:41Z",
+      "session": "0a0ed8db-7e35-441c-955a-2b438bd01548",
+      "prompt": "then /define-architecture for this and then execute on it until the skill is complete",
+      "summary": "docs/architecture-dreaming.md + ADR-0002..0005 - LOA Continuous Sentinel + Adversarial Ensemble; T0 floor + one injected T3 step + human gate; 4 vertical phases (walking skeleton -> oracle -> approve&promote -> federation); C1-C11 checked.",
+      "kind": "skill",
+      "skill": "define-architecture",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/architecture-dreaming.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0043",
+      "shortname": "implement-dreaming",
+      "datetime": "2026-08-15T16:37:41Z",
+      "session": "0a0ed8db-7e35-441c-955a-2b438bd01548",
+      "prompt": "execute on it until the skill is complete",
+      "summary": "Built + verified end-to-end: dream.py (run/capture-mitigation/apply-decisions, stdlib) + apply-learnings.py (reconcile push, plans not merges) + dream-review.template.html + /dream & /apply-learnings SKILLs + Copilot prompts + fleet store. P1-P4 all demonstrated on the real corpus (5-6 proposals, 1 mitigation captured, 1 general promoted idempotently, 1 reconciliation plan). Synced to pack (skills 21, scripts 15, templates 25); consistency clean; graph validate exit 0.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/architecture-dreaming.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0044",
+      "shortname": "specify-documentation-portal",
+      "datetime": "2026-08-15T20:40:17Z",
+      "session": "0a0ed8db-7e35-441c-955a-2b438bd01548",
+      "prompt": "i am realizing that there is more and more in the repo and when i share with folks its a lot to discover ... create a rich set of interactive html documentation: capabilities, concrete docs for all skills, in-depth UI review, an explicit getting-started section, plus directives to keep the interactive documentation up to date as the repo evolves",
+      "summary": "docs/specs/documentation-portal.md - one spec, three layers. Core decision: the portal is a DERIVED artifact (pure function of committed pack sources) so it cannot rot; the 'keep up to date' requirement becomes a drift gate, not a discipline note. DocsPortal archetype. Gate PASS.",
+      "kind": "skill",
+      "skill": "specify",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/specs/documentation-portal.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0045",
+      "shortname": "ui-design-documentation-portal",
+      "datetime": "2026-08-15T20:40:17Z",
+      "session": "0a0ed8db-7e35-441c-955a-2b438bd01548",
+      "prompt": "/ui-design an elevated and highly polished experience for this documentation",
+      "summary": "docs/mockups/documentation-portal.html + hub - DocsPortal (Content Portal / HolyGrail): persistent sidebar over 6 sections (Getting Started, Capabilities, 21 Skills, UI Capabilities, Systems, Reference), search, skip-link, keyboard nav; reuses docs/DESIGN.md AA tokens; hard states via harness. Craft gate: undersized-text Major fixed; one flat-hierarchy Minor accepted with reason (CD16).",
+      "kind": "skill",
+      "skill": "ui-design",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/mockups/documentation-portal.html"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0046",
+      "shortname": "implement-documentation-portal",
+      "datetime": "2026-08-15T20:40:17Z",
+      "session": "0a0ed8db-7e35-441c-955a-2b438bd01548",
+      "prompt": "/implement the documentation",
+      "summary": "Built + verified: tools/build-docs-portal.py (derives portal-data.js from pack sources - skill list/desc/counts + editorial json; deterministic, byte-identical), docs/portal/index.html (committed shell), tools/docs-portal-editorial.json. Wired into sync-pack.ps1 (regenerates on every sync) and check-consistency.py (drift gate, verified red-first: stale->exit1, current->exit0). README keep-current directive. Consistency clean; graph validate exit 0; 21 skills / 6 sections complete by construction.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/portal/index.html",
+        "tools/build-docs-portal.py"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0047",
+      "shortname": "unify-portal-ia",
+      "datetime": "2026-08-15T21:06:54Z",
+      "session": "0a0ed8db-7e35-441c-955a-2b438bd01548",
+      "prompt": "step back and think about ALL artifacts and how they relate; come up with a single information architecture that unifies all of this stemming from /portal; include UX examples depth, architecture guidance, coding style guides; portal = user-facing lens, core knowledge stays structured; incorporate a graph view (obsidian web view or equivalent); ensure maintenance directives understand the new IA; start the dialog on github pages hosting + dream output + a dream manifest",
+      "summary": "Elevated docs/portal to the unified front door: 9 sections (added Foundations from pack/knowledge incl. coding style + LOA architecture guidance; Architecture from architecture/adr/spec/design; embedded dependency-free Graph view from docs-index.js; UI examples from mockups). Extended build-docs-portal.py to derive all - deterministic + drift-gated. Portal is a lens (lists+links structured artifacts, never copies). README keep-current directive + spec IA updated. Obsidian answer: Publish is paid -> shipped equivalent SVG graph + local-vault + Docs Explorer link.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/portal/index.html",
+        "tools/build-docs-portal.py"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0048",
+      "shortname": "hosting-dream-manifest-dialog",
+      "datetime": "2026-08-15T21:06:54Z",
+      "session": "0a0ed8db-7e35-441c-955a-2b438bd01548",
+      "prompt": "start the dialog on whether its worth hosting in github pages and how it impacts dream output + composing a manifest of what from a dream session applies to a corpus of repos",
+      "summary": "docs/notes/hosting-and-dream-manifest.md - RFC/dialog: Pages today deploys web/ only (repo public); recommend Option A (deploy root, portal as front door) with a publish boundary (portal/graph/knowledge/architecture/promoted-fleet-learnings public; raw dreams+audit local); proposes the Dream Manifest (learnings x repos matrix, composed in a UI, consumed by /apply-learnings --manifest, hostable read-only). 5 open decisions for the maintainer.",
+      "kind": "manual",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/notes/hosting-and-dream-manifest.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0049",
+      "shortname": "manifest-init",
+      "datetime": "2026-08-16T15:45:32Z",
+      "session": "apply-learnings",
+      "prompt": "apply-learnings.py manifest-init",
+      "summary": "Scaffolded manifest manifest-test: 1 learning(s) x 2 repo(s).",
+      "kind": "script",
+      "skill": "apply-learnings",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "learnings/manifests/manifest-test.json"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0050",
+      "shortname": "apply-learnings-manifest",
+      "datetime": "2026-08-16T15:45:50Z",
+      "session": "apply-learnings",
+      "prompt": "apply-learnings.py apply-learnings-manifest",
+      "summary": "Manifest manifest-test: pushed per-assignment to 2 repo(s); status recorded.",
+      "kind": "script",
+      "skill": "apply-learnings",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "learnings/manifests/manifest-test.json"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0051",
+      "shortname": "apply-learnings-manifest",
+      "datetime": "2026-08-16T15:46:03Z",
+      "session": "apply-learnings",
+      "prompt": "apply-learnings.py apply-learnings-manifest",
+      "summary": "Manifest manifest-test: pushed per-assignment to 2 repo(s); status recorded.",
+      "kind": "script",
+      "skill": "apply-learnings",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "learnings/manifests/manifest-test.json"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0052",
+      "shortname": "manifest-init",
+      "datetime": "2026-08-16T15:46:30Z",
+      "session": "apply-learnings",
+      "prompt": "apply-learnings.py manifest-init",
+      "summary": "Scaffolded manifest mt2: 1 learning(s) x 1 repo(s).",
+      "kind": "script",
+      "skill": "apply-learnings",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "learnings/manifests/mt2.json"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0053",
+      "shortname": "apply-learnings-manifest",
+      "datetime": "2026-08-16T15:46:30Z",
+      "session": "apply-learnings",
+      "prompt": "apply-learnings.py apply-learnings-manifest",
+      "summary": "Manifest mt2: pushed per-assignment to 2 repo(s); status recorded.",
+      "kind": "script",
+      "skill": "apply-learnings",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "learnings/manifests/mt2.json"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0054",
+      "shortname": "hosting-and-dream-manifest",
+      "datetime": "2026-08-16T15:51:29Z",
+      "session": "0a0ed8db-7e35-441c-955a-2b438bd01548",
+      "prompt": "Implement approved Option A GitHub Pages hosting (portal front door + publish boundary) and the Dream Manifest (learnings x repos targeting/record layer consumed by apply-learnings --manifest).",
+      "summary": "Shipped GitHub Pages hosting (build-pages-bundle.py + pages.yml, publish boundary enforced, portal hosting-aware) and the Dream Manifest (ADR-0006): manifest-init + push --manifest with per-assignment targeting and status write-back, self-contained compose/rollout HTML. INSTALL rev 36->37, templates 25->26. All gates green.",
+      "kind": "script",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/adr/0006-dream-manifest.md"
+      ],
+      "tags": [
+        "dreaming",
+        "federation",
+        "hosting"
+      ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0055",
+      "shortname": "fix-explainer-black-page",
+      "datetime": "2026-08-16T18:40:47Z",
+      "session": "0a0ed8db-7e35-441c-955a-2b438bd01548",
+      "prompt": "The explainer in the ai-forward pack just renders as a black page: https://timianmalloo.github.io/ai-forward/",
+      "summary": "Root cause: a corrupted skills-array row in web/ai-forward-pack-explainer.html merged the /ui-design and /implement entries, a JS SyntaxError, so the React app never mounted (empty #root = black); the offline detector could not catch it (libs loaded, app never ran). Fixed the data; /implement restored. Added a watchdog + try/catch fallback (blank never reads as finished), defaulted web/index.html to its self-contained Index tab, registered defect class PACK-G, and wired a node --check inline-script gate into check-consistency.py (red-first proven; runs in pack-consistency CI).",
+      "kind": "manual",
+      "skill": "investigate",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "web/ai-forward-pack-explainer.html"
+      ],
+      "tags": [
+        "ui",
+        "hosting",
+        "defect"
+      ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0056",
+      "shortname": "investigate-blank-explainer-live",
+      "datetime": "2026-08-16T18:57:25Z",
+      "session": "0a0ed8db-7e35-441c-955a-2b438bd01548",
+      "prompt": "you claim it is fixed but i still see a blank page: https://timianmalloo.github.io/ai-forward/ai-forward-pack-explainer.html",
+      "summary": "Verified root cause: the fix was never DEPLOYED - the live URL still serves the old syntax-broken explainer (confirmed: live has the corruption, lacks the watchdog). Compounded by verification at the wrong level (node --check syntax, not render). Proved the fix renders via a jsdom load-and-run: FIXED mounts (#root 11 children, 29974 chars), OLD stays BLANK (SyntaxError). Registered class PACK-H (hosted-surface fix declared done from the working tree, not verified on the live surface; E11 render-not-syntax). Phased plan: deploy -> live re-verify -> render gate -> sibling sweep.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/investigations/blank-explainer-live.md"
+      ],
+      "tags": [
+        "hosting",
+        "ui",
+        "defect"
+      ],
+      "outcome": "success"
     }
   ],
   "changes": [
@@ -1088,6 +1522,123 @@ window.AUDIT_DATA = {
       "git": {
         "before": "76cc056",
         "after": "76cc056a6ca2bb05f347891a4f4718a48a6e41b4",
+        "branch": "main",
+        "pushed": false,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0011",
+      "datetime": "2026-08-15T14:43:55Z",
+      "session": "0a0ed8db-7e35-441c-955a-2b438bd01548",
+      "kind": "knowledge",
+      "skill": "collectknowledge",
+      "title": "Established the Continuous Improvement & Dreaming knowledge base",
+      "prompt": "How to best harvest learnings/mistakes/patterns/anti-patterns across all local repos to continuously improve (Karpathy 'dreaming'); collect into the knowledge base and synthesize how to structure it as a skill + a schedulable job (claude-cowork/open claw) and how audit logs must evolve; produce an HTML overview.",
+      "summary": "Sourced evidence base + HTML overview at docs/knowledge/continuous-improvement-and-dreaming/. Names the capability to specify: a /dream consolidation skill + a scheduled dream job + a cross-repo federation layer, all as committed Markdown + stdlib scripts (adopt the dreaming shape, reject the vendor runtime store).",
+      "rationale": "The pack has best-in-class capture (audit/change logs, defect-class register, knowledge graph) but consolidates one defect at a time and never shares across repos; the sources independently arrive at the pack's own guardrails, so the missing asleep half + federation fit cleanly. This base grounds the next /specify so design stands on sourced ground, not assumption.",
+      "artifacts": [
+        "docs/knowledge/continuous-improvement-and-dreaming/index.md",
+        "docs/knowledge/continuous-improvement-and-dreaming/overview.html"
+      ],
+      "tags": [],
+      "git": {
+        "before": "4966ea3",
+        "after": "4966ea34a1b9b3bf795cbdd178d86e83f514fc72",
+        "branch": "main",
+        "pushed": false,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0012",
+      "datetime": "2026-08-15T16:37:41Z",
+      "session": "0a0ed8db-7e35-441c-955a-2b438bd01548",
+      "kind": "architecture",
+      "skill": "define-architecture",
+      "title": "Dreaming subsystem: consolidation + review + oracle + federation",
+      "prompt": "specify + design + architect + execute a dream consolidation skill, a schedulable dream job, a federation/push skill, a promotion oracle, and a safe instance->class abstraction, located in ai-forward",
+      "summary": "Shipped the dreaming capability as committed Markdown + stdlib scripts + two skills: /dream (light/REM/deep over the corpus -> HTML review -> apply-decisions promote) and /apply-learnings (reconcile push, never merges). Oracle = captured MitigationRecord (red-green or human-validated). Fleet store in ai-forward; /updatepack is the pull path.",
+      "rationale": "Completes the loop the pack half-built (it had capture + classification + a note graph + read-at-grounding, but no offline consolidation and no cross-repo federation). Every guardrail is one the pack already held, so the fit is clean; the model step is injected so the harness builds/runs with no runner SDK.",
+      "artifacts": [
+        "docs/architecture-dreaming.md",
+        "docs/specs/dreaming-continuous-improvement.md",
+        "docs/adr/0005-harness-runner-boundary.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "4966ea3",
+        "after": "4966ea34a1b9b3bf795cbdd178d86e83f514fc72",
+        "branch": "main",
+        "pushed": false,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0013",
+      "datetime": "2026-08-15T20:40:17Z",
+      "session": "0a0ed8db-7e35-441c-955a-2b438bd01548",
+      "kind": "design",
+      "skill": "implement",
+      "title": "Documentation Portal: a derived, self-maintaining front door",
+      "prompt": "create rich interactive documentation (capabilities, all skills, UI deep-dive, getting-started) with directives that keep it up to date as the repo evolves",
+      "summary": "Shipped docs/portal/ - a single polished front door generated from committed pack sources by tools/build-docs-portal.py, regenerated on sync and drift-gated in check-consistency.py. Fronts (does not duplicate) the Docs Explorer, UI guide, audit viewer, and whole-pack index.",
+      "rationale": "Discovery overload + doc rot were the twin problems. Making the portal a pure function of committed sources turns 'keep it up to date' from a discipline note into a byte-identical drift gate - a stale portal is a failing build, so it cannot silently drift as skills/counts change.",
+      "artifacts": [
+        "docs/portal/index.html",
+        "tools/build-docs-portal.py",
+        "docs/specs/documentation-portal.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "4966ea3",
+        "after": "4966ea34a1b9b3bf795cbdd178d86e83f514fc72",
+        "branch": "main",
+        "pushed": false,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0014",
+      "datetime": "2026-08-15T21:06:54Z",
+      "session": "0a0ed8db-7e35-441c-955a-2b438bd01548",
+      "kind": "design",
+      "skill": "implement",
+      "title": "Unified information architecture: /portal as the single front door (lens over the structured core)",
+      "prompt": "single IA unifying all artifacts, stemming from /portal, incl. foundations/architecture/coding-style + a graph view; portal is user-facing, core knowledge stays structured",
+      "summary": "docs/portal is now the 9-section unified front door, all derived from committed sources (skills, knowledge docs, architecture/adr/spec/design, mockups, docs-index.js graph). Adding any of those auto-appears (proven: the new hosting note became graph node 63 with no hand-edit). Obsidian Publish is paid; shipped a dependency-free equivalent graph view.",
+      "rationale": "Discovery overload across many surfaces was the problem; a single derived front door that lists+links (never copies) the structured core fixes it without creating a rot-prone hand-maintained doc, and keeps the core knowledge as structured as it was.",
+      "artifacts": [
+        "docs/portal/index.html",
+        "tools/build-docs-portal.py",
+        "docs/specs/documentation-portal.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "4966ea3",
+        "after": "4966ea34a1b9b3bf795cbdd178d86e83f514fc72",
+        "branch": "main",
+        "pushed": false,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0015",
+      "datetime": "2026-08-16T15:51:29Z",
+      "session": "0a0ed8db-7e35-441c-955a-2b438bd01548",
+      "kind": "architecture",
+      "skill": "implement",
+      "title": "Dream Manifest — the learnings x repos targeting/record layer for federation (ADR-0006)",
+      "prompt": "Manifest a targeting/record layer for federation, composed in a UI, consumed by apply-learnings --manifest, hostable read-only.",
+      "summary": "apply-learnings gains manifest-init (scaffold matrix + compose HTML) and push --manifest (reconcile per assignment, record status back, rollout HTML). Manifests name repos -> local-only (git-ignored + excluded from Pages). Hosting is Option A: portal is the shareable front door with a publish boundary keeping raw dreams + audit + manifests/plans local.",
+      "rationale": "Federation had distribution but no who-gets-what and no what-happened; the manifest adds routing + record with no new store, reusing reconcile/scrub/slug; never merges.",
+      "artifacts": [
+        "docs/adr/0006-dream-manifest.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "4966ea3",
+        "after": "4966ea34a1b9b3bf795cbdd178d86e83f514fc72",
         "branch": "main",
         "pushed": false,
         "commits": []
