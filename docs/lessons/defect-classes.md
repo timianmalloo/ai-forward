@@ -26,7 +26,7 @@ summary: >-
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled `5` · partially-controlled `4` · uncontrolled `20`
+**Status counts:** controlled `5` · partially-controlled `5` · uncontrolled `20`
 **Recurrence since last review:** `0` — *a second occurrence of a known class means the control was wrong, not that someone was careless (CI4).*
 
 ---
@@ -50,6 +50,13 @@ summary: >-
 ## Project classes
 
 *Classes discovered in this repository. Newest first.*
+
+### PACK-J — A deployed script's behaviour depends on Python-version-specific stdlib behaviour, and a runner auto-upgrade silently breaks it
+- **Signature:** a script that ships to every adopting repo relies on a stdlib behaviour that is not guaranteed across Python versions (HTMLParser tag-vs-RCDATA handling, tempfile naming, dict/set ordering, `os.stat` internals), and/or a test that over-mocks a stdlib primitive (`os.stat`, `open`) globally. It is green on the author's interpreter and green in CI — until the CI runner's floating `python-version: "3.x"` rolls to a new minor that changed the behaviour, at which point a suite that touched nothing starts failing. The tell: a test failure whose diff is a *parsing/formatting* difference (tags kept vs stripped) or an *unexpected* `FileExistsError`/`PermissionError` from a stdlib call, appearing only in CI, only after a runner image bump.
+- **Why it survives:** the author's local interpreter is a fixed older minor, so every local run is green; CI's `3.x` silently advances, so the *same commit* that was green last month is red today with no code change. Over-mocking a stdlib primitive couples the test to that version's internal call sequence.
+- **Instances:** 2026-08-16 — `pack-consistency` went red on the first run after GitHub's runner began resolving `python-version: "3.x"` to 3.14: (1) `_TitleParser` returned `<script>window.__surfaceOwned = true</script>` on 3.14 (which now treats `<title>` as RCDATA) vs the stripped `window.__surfaceOwned = true` on 3.12 — `test_html_surface_discovery_preserves_script_shaped_titles_as_data`; (2) `_atomic_append_text`, whose test globally mocks `os.stat` to a fake symlink stat, hit `FileExistsError: /tmp/tmp…` on 3.14 — `test_atomic_append_rejects_link_destination_before_rewrite`. Both pass on 3.12 (verified locally). Interim: pinned CI to `python-version: "3.12"`.
+- **Control:** `INTERIM: CI Python pinned to a verified-green minor (3.12) so a runner auto-upgrade cannot silently break the gate. FOLLOW-UP (proper): make docs-graph.py version-independent - strip any residual <...> tag spans from an extracted <title> so RCDATA-vs-CDATA parsing yields the same result on every minor; narrow the atomic-write test's os.stat mock to the destination path only (not a global patch). Then restore python-version: "3.x" plus a matrix that includes the newest minor, so the next stdlib change is caught by CI on a branch, not on main. Not yet fully implemented - this is a separate, tracked investigation distinct from the blank-explainer fix that surfaced it.`
+- **Status:** `partially-controlled`
 
 ### PACK-I — A generated artifact's element order depends on unsorted directory iteration, so it differs across platforms
 - **Signature:** a derived, committed artifact (an index, a manifest, a bundle listing) is built by walking a directory tree, and the **order** of its elements follows `os.walk`/`os.listdir`/`glob` iteration order — which is filesystem/OS-dependent. It regenerates **byte-identically on the author's machine** (so local drift gates pass) but **reorders on another platform** (so a CI drift gate that regenerates-and-compares fails). The tell: a drift diff that is "N insertions, N deletions" of the *same* content in a *different order*, and it only appears in CI, never locally. A sibling of the timestamp-nondeterminism class (FR-048) — same defect, `order` instead of `time`.

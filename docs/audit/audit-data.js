@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-08-16T18:57:25Z",
+  "generated": "2026-08-16T19:03:22Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1262,6 +1262,26 @@ window.AUDIT_DATA = {
       "tags": [
         "hosting",
         "ui",
+        "defect"
+      ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0057",
+      "shortname": "fix-deploy-followups",
+      "datetime": "2026-08-16T19:03:22Z",
+      "session": "0a0ed8db-7e35-441c-955a-2b438bd01548",
+      "prompt": "post-deploy live verification of the explainer fix",
+      "summary": "Live re-verify (PACK-H control) caught two deploy-time defects the working-tree gates could not: (1) web/pack-index.js element order was OS-dependent (unsorted os.walk descent) -> source-install drift failed on CI though green locally; fixed with _dirs.sort() and registered PACK-I. (2) Option A moved web/ under /web/, 404ing the user's bookmarked /ai-forward-pack-explainer.html; added backward-compat root aliases in build-pages-bundle.py (PACK-H 2nd instance). All local gates green; redeploying.",
+      "kind": "manual",
+      "skill": "investigate",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "tools/build-pages-bundle.py"
+      ],
+      "tags": [
+        "hosting",
         "defect"
       ],
       "outcome": "success"

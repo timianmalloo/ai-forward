@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-Forward",
-  "generated": "2026-08-16T19:03:21Z",
+  "generated": "2026-08-16T19:13:37Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -867,7 +867,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "338111e969c1a512cd70fed5dd6aa955d5b796e263ddd384aec8a703680de04d"
+      "sourceSha256": "08c4a50b776716dc51332ace93d6d945967150c230c0e4f4a432e5e820783174"
     },
     {
       "id": "docs-index",
@@ -1403,7 +1403,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "46e5f217c033da9259feb835777164a77af2e65d275f0a63e9f72be650a43ba7"
+      "sourceSha256": "e59e7f378cb77f3a1415a4f668103234ae3ea175b167ec46b6e37aaf0cae22c6"
     },
     {
       "id": "kb-continuous-improvement-and-dreaming",
@@ -2300,5 +2300,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-dream-review"
     }
   ],
-  "graphSha256": "6ffc24ef6f6f61b6a15789e1e24b7ee51d4f56ce532aec539bb504e70556ac7a"
+  "graphSha256": "6042c87c1aa7536d9c9d4a540b7c766d591fb37ccf7edd71d2de5de326e3d87a"
 };
