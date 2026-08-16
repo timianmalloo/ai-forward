@@ -53,6 +53,24 @@ REDIRECT = """<!doctype html>
 </body></html>
 """
 
+# Backward-compat aliases at the OLD root paths. Before Option A the bundle served web/ AT the root,
+# so /ai-forward-pack-explainer.html and /index.html (the whole-pack front door) were bookmarkable.
+# Option A moves web/ under /web/, which would 404 those bookmarks (PACK-H: a URL a user has). Keep
+# them working with a one-hop redirect to the new location.
+ALIASES = {
+    "ai-forward-pack-explainer.html": "web/ai-forward-pack-explainer.html",
+    "pack-index.html": "web/index.html",
+}
+
+def _alias_html(target):
+    return (
+        '<!doctype html>\n<html lang="en"><head><meta charset="utf-8">\n'
+        '<meta http-equiv="refresh" content="0; url=%s">\n'
+        '<title>AI-Forward</title><link rel="canonical" href="%s">\n'
+        '</head><body><p>This page has moved to <a href="%s">%s</a>&hellip;</p></body></html>\n'
+        % (target, target, target, target)
+    )
+
 
 def is_local_only(rel):
     rel = rel.replace("\\", "/")
@@ -120,6 +138,12 @@ def main():
         fh.write(REDIRECT)
     open(os.path.join(out, ".nojekyll"), "w").close()
     stats["files"] += 2
+
+    # backward-compat aliases for the pre-Option-A root URLs (bookmarks must not 404)
+    for old_path, target in ALIASES.items():
+        with open(os.path.join(out, old_path), "w", encoding="utf-8", newline="\n") as fh:
+            fh.write(_alias_html(target))
+        stats["files"] += 1
 
     if not args.quiet:
         print("pages bundle -> %s" % args.out)

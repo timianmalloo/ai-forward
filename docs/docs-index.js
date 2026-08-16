@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-Forward",
-  "generated": "2026-08-16T18:57:25Z",
+  "generated": "2026-08-16T19:03:21Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -867,7 +867,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "8a9ce71344df2cd1c59265ff1feec9077b230a6de5da193e8f7e4637dea00120"
+      "sourceSha256": "338111e969c1a512cd70fed5dd6aa955d5b796e263ddd384aec8a703680de04d"
     },
     {
       "id": "docs-index",
@@ -2300,5 +2300,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-dream-review"
     }
   ],
-  "graphSha256": "55dee9f51e003a51b1ac596fcfb1c0a1608520d0388eea3fa8392571c87f8d69"
+  "graphSha256": "6ffc24ef6f6f61b6a15789e1e24b7ee51d4f56ce532aec539bb504e70556ac7a"
 };

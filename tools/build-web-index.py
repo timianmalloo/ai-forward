@@ -191,6 +191,8 @@ def scan_personas(items):
 def scan_examples(items):
     base = os.path.join(PACK, "examples")
     for dirpath, _dirs, files in os.walk(base):  # os.walk descends into dot-dirs (.claude)
+        _dirs.sort()  # deterministic descent order across OS (Windows vs CI Linux) - else the
+                      # generated index reorders per platform and the source-install drift gate fails
         for fn in sorted(files):
             p = os.path.join(dirpath, fn)
             body = read(p)
