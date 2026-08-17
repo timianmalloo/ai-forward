@@ -135,6 +135,12 @@ every non-trivial task.
   current machine.
 - **Testing:** the Testing Strategy governs what to test and what counts as proof —
   `.github/instructions/testing-strategy.instructions.md`; the Test Architect enforces it.
+- **CI & test efficiency:** best coverage at minimum time and cost — profile before optimizing (the
+  bottleneck is rarely the suspect), rings of integration (fast every-push / slow at-readiness /
+  post-merge), the cheapest minute is the one never billed (runner multiplier, build-once, don't run
+  the full gate twice), and cheaper is **never** weaker (no muted steps, fail-closed required check) —
+  `.github/instructions/ci-and-test-efficiency.instructions.md` (CE1–CE26); the SRE owns it, the Test
+  Architect holds the veto that speed never costs coverage.
 - **Instrumentation:** structured, trace-correlated telemetry in the OpenTelemetry data model,
   stable error codes, RFC 9457 error responses —
   `.github/instructions/observability-and-instrumentation.instructions.md`; the SRE enforces it.

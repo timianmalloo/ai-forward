@@ -123,6 +123,12 @@ the Road) and the **AI-Forward Pack** on top of it. Honor them on every non-triv
   current machine.
 - **Testing:** what to test and what counts as proof is governed by the Testing Strategy —
   `.claude/knowledge/testing-strategy.md`; the Test Architect enforces it.
+- **CI & test efficiency:** best coverage at minimum time and cost — profile before optimizing (the
+  bottleneck is rarely the suspect), rings of integration (fast every-push / slow at-readiness /
+  post-merge), the cheapest minute is the one never billed (runner multiplier, build-once, don't run
+  the full gate twice), and cheaper is **never** weaker (no muted steps, fail-closed required check) —
+  `.claude/knowledge/ci-and-test-efficiency.md` (CE1–CE26); the SRE owns it, the Test Architect holds
+  the veto that speed never costs coverage.
 - **Instrumentation:** code emits structured, trace-correlated telemetry in the OpenTelemetry
   data model, with stable error codes and RFC 9457 error responses —
   `.claude/knowledge/observability-and-instrumentation.md`; the SRE enforces it.

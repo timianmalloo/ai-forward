@@ -17,7 +17,7 @@ content (CRLF→LF, trailing whitespace stripped) so line endings never masquera
 | `agent-persona-catalog.md` | The persona roster's source | `eaed01f23beb50a4` |
 | `layered-optimized-architecture.md` | LOA — AI-integrated architecture | `05fbe0cf47f89c78` |
 | `engineering-governance.md` | SDLC lenses around the code | `513c4a28581dc94f` |
-| `testing-strategy.md` | The proof discipline | `f8fe2b508718f43c` |
+| `testing-strategy.md` | The proof discipline | `c6351b2f55ee543d` |
 | `csharp-style-guide.md` | C# house style | `17e7d5f02faf740e` |
 
 ## Known intentional divergences (vendored ≠ base, by design)

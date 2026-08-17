@@ -4,6 +4,8 @@
 
 This file governs any agent that writes or modifies code in this repository. It is the testing companion to the Body of Knowledge: the BoK says correctness must be demonstrated; this file defines the test selection and quality bar used to demonstrate it.
 
+> **Execution economics is a companion, not this file's job.** This file governs *what* to test and *what counts as proof*. **How that verification is executed cheaply and quickly without weakening the gate** — runner economics, rings of integration, build-once, profiling the suite's real bottleneck, and the cost-budget control — is governed by `ci-and-test-efficiency.md` (CE1–CE26). The two compose: same coverage, fewer minutes and dollars. D0 determinism (no wall-clock, no sleeps) is the shared floor — the TEST-CLOCK defect class lives on both sides.
+
 Normative keywords (**MUST**, **SHOULD**, **MAY**, **MUST NOT**) follow RFC 2119.
 
 ---

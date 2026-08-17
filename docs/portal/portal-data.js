@@ -3,7 +3,7 @@ window.PORTAL_DATA = {
     "counts": {
       "skills": 21,
       "personas": 23,
-      "knowledge": 33,
+      "knowledge": 34,
       "templates": 26,
       "scripts": 15
     },
@@ -476,6 +476,17 @@ window.PORTAL_DATA = {
             "title": "Responsible AI Policy",
             "summary": "---",
             "path": "../../pack/knowledge/responsible-ai-policy.md"
+          }
+        ]
+      },
+      {
+        "group": "Other",
+        "items": [
+          {
+            "name": "ci-and-test-efficiency",
+            "title": "CI & Test Execution Efficiency — best coverage at minimum time and cost",
+            "summary": "Normative keywords (MUST, SHOULD, MAY, MUST NOT) follow RFC 2119.",
+            "path": "../../pack/knowledge/ci-and-test-efficiency.md"
           }
         ]
       }
