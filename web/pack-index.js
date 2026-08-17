@@ -383,10 +383,10 @@ window.PACK_INDEX = {
 "cat": "skills",
 "id": "apply-learnings",
 "title": "/apply-learnings",
-"summary": "",
+"summary": "Push approved, generalised fleet learnings (promoted from /dream into the ai-forward learnings/ store) into one or more target repos, reconciling each against that repo's existing register so nothing is duplicated or contradicted. Produces…",
 "path": "pack/commands/apply-learnings/SKILL.md",
 "kind": "skill",
-"text": "/apply-learnings skill: /apply-learnings grounding (first action) input flow — broadcast (`--repos`) or, for every sibling repo that has the pack: flow — targeted (`--manifest`, the dream manifest — adr-0006) the other federation path (pull) definition of done documentation & discoverability (last action)"
+"text": "/apply-learnings push approved, generalised fleet learnings (promoted from /dream into the ai-forward learnings/ store) into one or more target repos, reconciling each against that repo's existing register so nothing is duplicated or contradicted. produces a reviewable plan per repo — never merges, never executes. skill: /apply-learnings grounding (first action) input flow — broadcast (`--repos`) or, for every sibling repo that has the pack: flow — targeted (`--manifest`, the dream manifest — adr-0006) the other federation path (pull) definition of done documentation & discoverability (last action)"
 },
 {
 "cat": "skills",
@@ -437,10 +437,10 @@ window.PACK_INDEX = {
 "cat": "skills",
 "id": "dream",
 "title": "/dream",
-"summary": "",
+"summary": "Run an offline, reviewable consolidation pass over this repo's committed corpus (audit & change logs, defect-class register, captured mitigations, triggered simplify:/assume: markers) and produce a dream — proposed learnings with controls,…",
 "path": "pack/commands/dream/SKILL.md",
 "kind": "skill",
-"text": "/dream skill: /dream grounding (first action) input the pass (light → rem → deep — adr-0005 boundary) review (the human gate) promote (the only durable write) the promotion oracle (capture successful mitigations) definition of done documentation & discoverability (last action)"
+"text": "/dream run an offline, reviewable consolidation pass over this repo's committed corpus (audit & change logs, defect-class register, captured mitigations, triggered simplify:/assume: markers) and produce a dream — proposed learnings with controls, rendered as an html review view you approve/edit/reject/defer, then promote. the \"asleep half\" of continuous improvement. skill: /dream grounding (first action) input the pass (light → rem → deep — adr-0005 boundary) review (the human gate) promote (the only durable write) the promotion oracle (capture successful mitigations) definition of done documentation & discoverability (last action)"
 },
 {
 "cat": "skills",

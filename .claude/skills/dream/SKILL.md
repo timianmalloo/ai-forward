@@ -1,3 +1,8 @@
+---
+name: dream
+description: Run an offline, reviewable consolidation pass over this repo's committed corpus (audit & change logs, defect-class register, captured mitigations, triggered simplify:/assume: markers) and produce a dream — proposed learnings with controls, rendered as an HTML review view you approve/edit/reject/defer, then promote. The "asleep half" of continuous improvement.
+---
+
 # Skill: /dream
 
 Run an offline, reviewable **consolidation pass** over this repo's committed corpus — the audit &amp; change logs, the defect-class register, captured **mitigations** (the promotion oracle), and triggered `simplify:`/`assume:` markers — and produce a **dream**: a set of proposed learnings (new/updated defect classes with controls, register de-duplications, control upgrades, confirmed-mitigation promotions, doc updates) rendered as an **HTML review view** you approve, edit, reject, or defer. This is `class → sweep → derive → prevent` (CI2) run **in bulk over the accumulated corpus** instead of one defect at a time — the "asleep half" of continuous improvement (`docs/knowledge/continuous-improvement-and-dreaming/`).

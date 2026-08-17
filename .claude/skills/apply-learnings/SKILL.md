@@ -1,3 +1,8 @@
+---
+name: apply-learnings
+description: Push approved, generalised fleet learnings (promoted from /dream into the ai-forward learnings/ store) into one or more target repos, reconciling each against that repo's existing register so nothing is duplicated or contradicted. Produces a reviewable plan per repo — never merges, never executes.
+---
+
 # Skill: /apply-learnings
 
 **Push** approved, generalised **fleet learnings** — the control-bearing classes promoted from `/dream` into the ai-forward `learnings/` store — into one or more **target repos**, **reconciling** each against that repo's existing directives and defect-class register so nothing is duplicated or silently contradicted. It is the **push** half of federation (the pull half is `/updatepack`); it operationalises NASA's *Disseminate → Apply* and CI8 ("raise it upstream / share it across") **automatically and safely**.
