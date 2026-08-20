@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 65
+"count": 67
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 200,
+"total": 202,
 "items": [
 {
 "cat": "knowledge",
@@ -1272,6 +1272,15 @@ window.PACK_INDEX = {
 },
 {
 "cat": "graph",
+"id": "note-20260818-dream-rerun-unchanged-corpus",
+"title": "Re-running /dream over an unchanged corpus re-surfaces already-promoted classes under new proposal ids",
+"summary": "Observed in drm-0004: a dream over a corpus unchanged since the prior dream re-emits the same control-upgrade/marker/mitigation proposals under fresh (dream, proposal) ids, and apply-decisions' per-(dream,proposal) idempotency does not…",
+"path": "docs/notes/note-20260818-dream-rerun-unchanged-corpus.md",
+"kind": "decision-note",
+"text": "re-running /dream over an unchanged corpus re-surfaces already-promoted classes under new proposal ids observed in drm-0004: a dream over a corpus unchanged since the prior dream re-emits the same control-upgrade/marker/mitigation proposals under fresh (dream, proposal) ids, and apply-decisions' per-(dream,proposal) idempotency does not treat them as duplicates — so approving them re-appends the same class to the fleet store. push-stage slug dedup (\"latest wins per class slug\") absorbs the downstream harm, so the correct operating response is defer/reject at the review gate, not a code change. decision-note dreaming continuous-improvement idempotency relates-to architecture-dreaming relates-to spec-dreaming"
+},
+{
+"cat": "graph",
 "id": "design-aiforward-cli",
 "title": "Design — aiforward CLI (suggestion 1)",
 "summary": "A single stdlib-only Python developer CLI (tools/aiforward.py) that is a thin Façade dispatcher over the pack's existing scripts (sync, verify, check, new, doctor, graph, scrub) — one memorable entry point with --help, no new runtime…",
@@ -1737,6 +1746,15 @@ window.PACK_INDEX = {
 "path": "docs/proof/docs-explorer-redesign.md",
 "kind": "proof-pack",
 "text": "docs explorer redesign - proof pack accepted implementation evidence for the deterministic, local-first docs explorer, native spatial 3d knowledge portal, and bounded grounding packet implementation. the p0/p1 contract is covered by python, node, and three-engine browser suites; phase-attributed benchmark evidence separates graph work from process/host overhead. revision 17 remains intentionally unreleased pending pinned-reference performance proof or a human-approved deviation. docs-explorer grounding accessibility performance verification relates-to design-docs-explorer-grounding-spatial-navigation depends-on adr-0001-grounding-source-corpus-registry depends-on design-language-docs-explorer relates-to threat-model relates-to privacy-review"
+},
+{
+"cat": "graph",
+"id": "spec-agent-coordination",
+"title": "Agent coordination — shared context and explicit coordination across worktrees and agents",
+"summary": "Specification for a repo-local, model-agnostic coordination layer that lets several agents and worktrees work one repository at once without losing work or time. Grounded in measured evidence from TheTerrace, HealthWatch and Meridian, it…",
+"path": "docs/specs/agent-coordination.md",
+"kind": "spec",
+"text": "agent coordination — shared context and explicit coordination across worktrees and agents specification for a repo-local, model-agnostic coordination layer that lets several agents and worktrees work one repository at once without losing work or time. grounded in measured evidence from theterrace, healthwatch and meridian, it targets four distinct failure modes — structural conflict on derived artifacts, allocation collision on client-minted ids, silent semantic divergence, and outright work loss in a shared tree — and requires each rule to ship as a mechanism that fails rather than a paragraph that is read. coordination worktrees multi-agent merge-conflicts leases allocation continuous-improvement relates-to defect-classes relates-to audit-log relates-to architecture relates-to spec-dreaming"
 },
 {
 "cat": "graph",
