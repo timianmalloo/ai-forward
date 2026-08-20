@@ -404,6 +404,50 @@ def check_skill_prompt_parity(truth, findings):
         findings.append(f"Copilot prompt '{p}.prompt.md' has no skill (commands/{p}/SKILL.md)")
 
 
+def _frontmatter_lines(text):
+    """Yield (key, raw_value) for the top-level scalar lines of a --- fenced frontmatter block."""
+    if not text or not text.startswith("---"):
+        return
+    end = text.find("\n---", 3)
+    if end == -1:
+        return
+    block = text[3:end]
+    for line in block.splitlines():
+        m = re.match(r"^([A-Za-z0-9_-]+):\s?(.*)$", line)
+        if m:
+            yield m.group(1), m.group(2)
+
+
+def check_frontmatter_yaml(truth, findings):
+    """Every SKILL.md / prompt frontmatter must parse as YAML.
+
+    The load-bearing failure this catches: an unquoted `description:` scalar containing a
+    colon-followed-by-space (e.g. "... assume: markers") is read by YAML as a nested mapping,
+    the whole frontmatter fails to parse, and the tool silently drops the skill/prompt from
+    the roster (it becomes unrecognized). Enforce the class, not the instance: a plain
+    (unquoted) scalar value MUST NOT contain ': '. Stdlib-only — no PyYAML dependency.
+    """
+    files = [os.path.join(PACK, "commands", s, "SKILL.md") for s in truth["skills"]]
+    files += [os.path.join(PACK, "adapters", "copilot", "prompts", p) for p in truth["prompts"]]
+    for path in files:
+        text = _read(path)
+        if text is None:
+            continue
+        rel = os.path.relpath(path, ROOT)
+        for key, value in _frontmatter_lines(text):
+            v = value.strip()
+            if not v:
+                continue
+            quoted = (v[0] in "\"'" and v[-1] == v[0] and len(v) >= 2)
+            block_scalar = v[0] in "|>"
+            if not quoted and not block_scalar and re.search(r":\s", v):
+                findings.append(
+                    f"{rel}: frontmatter '{key}:' value contains an unquoted colon-space "
+                    f"(': ') — YAML reads it as a mapping and the whole frontmatter fails to "
+                    f"parse, silently dropping this skill/prompt. Quote the value or remove the "
+                    f"': '.")
+
+
 def check_managed_blocks(truth, findings):
     n = truth["counts"]["skills"]
     for name in ("CLAUDE.block.md", "AGENTS.block.md"):
@@ -720,6 +764,7 @@ def main():
     check_install_counts(truth, findings)
     check_release_gate(findings)
     check_skill_prompt_parity(truth, findings)
+    check_frontmatter_yaml(truth, findings)
     check_deployed_agent_parity(truth, findings)
     check_directive_ranges(findings)
     check_static_page_links(findings)

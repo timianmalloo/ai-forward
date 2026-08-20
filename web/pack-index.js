@@ -446,10 +446,10 @@ window.PACK_INDEX = {
 "cat": "skills",
 "id": "dream",
 "title": "/dream",
-"summary": "Run an offline, reviewable consolidation pass over this repo's committed corpus (audit & change logs, defect-class register, captured mitigations, triggered simplify:/assume: markers) and produce a dream — proposed learnings with controls,…",
+"summary": "Run an offline, reviewable consolidation pass over this repo's committed corpus (audit & change logs, defect-class register, captured mitigations, triggered simplify/assume markers) and produce a dream — proposed learnings with controls,…",
 "path": "pack/commands/dream/SKILL.md",
 "kind": "skill",
-"text": "/dream run an offline, reviewable consolidation pass over this repo's committed corpus (audit & change logs, defect-class register, captured mitigations, triggered simplify:/assume: markers) and produce a dream — proposed learnings with controls, rendered as an html review view you approve/edit/reject/defer, then promote. the \"asleep half\" of continuous improvement. skill: /dream grounding (first action) input the pass (light → rem → deep — adr-0005 boundary) review (the human gate) promote (the only durable write) the promotion oracle (capture successful mitigations) definition of done documentation & discoverability (last action)"
+"text": "/dream run an offline, reviewable consolidation pass over this repo's committed corpus (audit & change logs, defect-class register, captured mitigations, triggered simplify/assume markers) and produce a dream — proposed learnings with controls, rendered as an html review view you approve/edit/reject/defer, then promote. the \"asleep half\" of continuous improvement. skill: /dream grounding (first action) input the pass (light → rem → deep — adr-0005 boundary) review (the human gate) promote (the only durable write) the promotion oracle (capture successful mitigations) definition of done documentation & discoverability (last action)"
 },
 {
 "cat": "skills",

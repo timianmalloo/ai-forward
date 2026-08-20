@@ -1,6 +1,6 @@
 ---
 name: dream
-description: Run an offline, reviewable consolidation pass over this repo's committed corpus (audit & change logs, defect-class register, captured mitigations, triggered simplify:/assume: markers) and produce a dream — proposed learnings with controls, rendered as an HTML review view you approve/edit/reject/defer, then promote. The "asleep half" of continuous improvement.
+description: Run an offline, reviewable consolidation pass over this repo's committed corpus (audit & change logs, defect-class register, captured mitigations, triggered simplify/assume markers) and produce a dream — proposed learnings with controls, rendered as an HTML review view you approve/edit/reject/defer, then promote. The "asleep half" of continuous improvement.
 ---
 
 # Skill: /dream

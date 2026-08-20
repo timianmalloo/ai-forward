@@ -1,0 +1,242 @@
+window.DREAM_DATA = {
+  "id": "drm-0003",
+  "date": "2026-08-16",
+  "generated": "2026-08-17T04:56:51Z",
+  "window": "last 60 days · 57 audit · 15 change · 1 mitigations · 4 markers",
+  "counts": {
+    "audit": 57,
+    "change": 15,
+    "mitigations": 1,
+    "classes": 11,
+    "markers": 4
+  },
+  "proposals": [
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "Build a control for PACK-E (partially-controlled)",
+      "sig": "PACK-E · An ambiguous proper noun resolved inside my own frame",
+      "scope": "general",
+      "confidence": "i",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "defect-classes#PACK-E",
+          "note": "status: partially-controlled"
+        },
+        {
+          "eid": "al-0004",
+          "note": "recent reference"
+        },
+        {
+          "eid": "al-0023",
+          "note": "recent reference"
+        },
+        {
+          "eid": "al-0029",
+          "note": "recent reference"
+        },
+        {
+          "eid": "al-0055",
+          "note": "recent reference"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled.",
+        "loc": "docs/lessons/defect-classes.md#PACK-E"
+      },
+      "boundary": "Applies wherever the class's signature recurs; a control is not a control until observed failing.",
+      "id": "p3",
+      "score": 0.68
+    },
+    {
+      "kind": "Doc update",
+      "group": "Doc / knowledge update",
+      "title": "Harvest 3 simplify: marker(s) - each is a bounded shortcut with an upgrade trigger",
+      "sig": "simplify marker harvest",
+      "scope": "repo-local",
+      "confidence": "v",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "pack/knowledge/solution-selection-ladder.md#L44",
+          "note": "global lock, ok at current write volume — go per-account if throughput becomes the bottleneck"
+        },
+        {
+          "eid": "pack/knowledge/solution-selection-ladder.md#L45",
+          "note": "O(n²) match, fine for n<1k batches — index it when batch size grows"
+        },
+        {
+          "eid": "web/pack-index.js#L272",
+          "note": "global lock, ok at current write volume — go per-account if throughput becomes the bottleneck # simplify: o(n²) match, fine for n<1k batches — index it when batch size grows ``` the token is **`simpli"
+        }
+      ],
+      "control": {
+        "rung": "knowledge doc",
+        "text": "Review each simplify: marker against its upgrade trigger; a triggered one is debt due (L6).",
+        "loc": "solution-selection-ladder.md L6 / no-guessing NG9"
+      },
+      "boundary": "Markers in this repo only; harvested at consolidation time.",
+      "id": "p7",
+      "score": 0.65
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "Build a control for PACK-D (partially-controlled)",
+      "sig": "PACK-D · An array parameter arrives as one comma-joined string when the script is invoked as an executable",
+      "scope": "general",
+      "confidence": "i",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "defect-classes#PACK-D",
+          "note": "status: partially-controlled"
+        },
+        {
+          "eid": "al-0015",
+          "note": "recent reference"
+        },
+        {
+          "eid": "al-0016",
+          "note": "recent reference"
+        },
+        {
+          "eid": "al-0027",
+          "note": "recent reference"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled.",
+        "loc": "docs/lessons/defect-classes.md#PACK-D"
+      },
+      "boundary": "Applies wherever the class's signature recurs; a control is not a control until observed failing.",
+      "id": "p4",
+      "score": 0.62
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "Build a control for PACK-C (partially-controlled)",
+      "sig": "PACK-C · An assertion encodes a transient magnitude assumption",
+      "scope": "general",
+      "confidence": "i",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "defect-classes#PACK-C",
+          "note": "status: partially-controlled"
+        },
+        {
+          "eid": "al-0027",
+          "note": "recent reference"
+        },
+        {
+          "eid": "al-0055",
+          "note": "recent reference"
+        },
+        {
+          "eid": "cl-0001",
+          "note": "recent reference"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled.",
+        "loc": "docs/lessons/defect-classes.md#PACK-C"
+      },
+      "boundary": "Applies wherever the class's signature recurs; a control is not a control until observed failing.",
+      "id": "p5",
+      "score": 0.62
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "Build a control for PACK-H (partially-controlled)",
+      "sig": "PACK-H · A fix to a hosted surface reported \"done\" from the working tree, not verified on the live surface",
+      "scope": "general",
+      "confidence": "i",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "defect-classes#PACK-H",
+          "note": "status: partially-controlled"
+        },
+        {
+          "eid": "al-0056",
+          "note": "recent reference"
+        },
+        {
+          "eid": "al-0057",
+          "note": "recent reference"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled.",
+        "loc": "docs/lessons/defect-classes.md#PACK-H"
+      },
+      "boundary": "Applies wherever the class's signature recurs; a control is not a control until observed failing.",
+      "id": "p2",
+      "score": 0.56
+    },
+    {
+      "kind": "Doc update",
+      "group": "Doc / knowledge update",
+      "title": "Harvest 1 assume: marker(s) - each is an unverified belief with a stated trigger",
+      "sig": "assume marker harvest",
+      "scope": "repo-local",
+      "confidence": "v",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "pack/knowledge/no-guessing-protocol.md#L53",
+          "note": "the provider returns ISO-8601 in UTC. Seen in one sample payload, NOT stated in"
+        }
+      ],
+      "control": {
+        "rung": "knowledge doc",
+        "text": "Review each assume: marker; a triggered one is a bug already written down (NG9). Verify or convert to a control.",
+        "loc": "solution-selection-ladder.md L6 / no-guessing NG9"
+      },
+      "boundary": "Markers in this repo only; harvested at consolidation time.",
+      "id": "p6",
+      "score": 0.45
+    },
+    {
+      "kind": "Confirmed mitigation",
+      "group": "Confirmed mitigation → learning",
+      "title": "Successful mitigation: docs-graph validate flagged 'unknown type: mockup'; changed the mockup hub frontmatter type to 'design'; validate then p",
+      "sig": "unknown-artifact-type-in-frontmatter",
+      "scope": "general",
+      "confidence": "v",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "mit-0001",
+          "note": "oracle=red-green; red-observed then green"
+        },
+        {
+          "eid": "docs-graph.py validate",
+          "note": "verification test"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "docs-graph.py validate rejects any frontmatter 'type' not in the TYPES enum; run it after adding a graph node.",
+        "loc": "docs-graph.py validate"
+      },
+      "boundary": "Applies to any new .md graph node; type must be one of the known TYPES.",
+      "id": "p1",
+      "score": 0.34
+    }
+  ],
+  "diary": {
+    "added": 1,
+    "merged": 0,
+    "superseded": 0,
+    "excluded": 0
+  }
+};

@@ -26,7 +26,7 @@ summary: >-
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled `6` · partially-controlled `4` · uncontrolled `20`
+**Status counts:** controlled `7` · partially-controlled `4` · uncontrolled `20`
 **Recurrence since last review:** `0` — *a second occurrence of a known class means the control was wrong, not that someone was careless (CI4).*
 
 ---
@@ -50,6 +50,13 @@ summary: >-
 ## Project classes
 
 *Classes discovered in this repository. Newest first.*
+
+### PACK-K — A skill/prompt frontmatter description contains an unquoted colon-space, so YAML fails to parse and the skill is silently dropped from the roster
+- **Signature:** a `SKILL.md` or `*.prompt.md` frontmatter `description:` (or any unquoted scalar) contains a `: ` (colon immediately followed by a space) mid-value — typically prose naming a token like `assume: markers` or `note: foo`. YAML reads the `: ` as a nested mapping key, the whole frontmatter block fails to parse, and the loader **silently omits the skill/prompt from the roster** — it is simply "not recognized," with no error surfaced to the user. The tell: one skill is missing from the available list while every sibling is present, it is missing on *both* tool surfaces (Claude skill + Copilot prompt) because both carry the same description, and a "reset" doesn't fix it because the file itself is malformed.
+- **Why it survives:** the file exists, the counts match (the file is on disk, so parity/count gates pass), and every human eye reads the description as fine prose — the `: ` is invisible unless you parse it as YAML. `check-consistency.py` counted the file and checked skill↔prompt parity but never *parsed* the frontmatter, so a file that is present-but-unparseable looked identical to a healthy one. No gate executed the YAML.
+- **Instances:** 2026-08-16 — `/dream` was absent from the recognized-skills roster on both surfaces ("still doesn't work even after a reset"). Root cause: the description `"… captured mitigations, triggered simplify:/assume: markers) and produce a dream …"` — the `assume: markers` colon-space made `yaml.safe_load` raise `ScannerError: mapping values are not allowed here` at that column, dropping `dream` from `.claude/skills/` and `.github/prompts/`. All 20 siblings parsed clean. Fixed by rewording to `simplify/assume markers` in both pack sources and re-syncing; verified all four files (`pack/` + generated) now parse.
+- **Control:** `check-consistency.py :: check_frontmatter_yaml()` (stdlib-only, no PyYAML) parses every `pack/commands/*/SKILL.md` and `pack/adapters/copilot/prompts/*.prompt.md` frontmatter and fails the run when any unquoted (non-`"`/`'`/`|`/`>`) scalar value contains `: `. Observed failing red-first on the original `assume: markers` shape and passing clean after the reword (CI6 rung 2, automated control). Enforces the class (any unquoted colon-space in any frontmatter scalar), not just the `dream` instance. Wired into `main()` and thus `verify-bundle.ps1`.
+- **Status:** `controlled`
 
 ### PACK-J — A deployed script's behaviour depends on Python-version-specific stdlib behaviour, and a runner auto-upgrade silently breaks it
 - **Signature:** a script that ships to every adopting repo relies on a stdlib behaviour that is not guaranteed across Python versions (HTMLParser tag-vs-RCDATA handling, tempfile naming, dict/set ordering, `os.stat` internals), and/or a test that over-mocks a stdlib primitive (`os.stat`, `open`) globally. It is green on the author's interpreter and green in CI — until the CI runner's floating `python-version: "3.x"` rolls to a new minor that changed the behaviour, at which point a suite that touched nothing starts failing. The tell: a test failure whose diff is a *parsing/formatting* difference (tags kept vs stripped) or an *unexpected* `FileExistsError`/`PermissionError` from a stdlib call, appearing only in CI, only after a runner image bump.

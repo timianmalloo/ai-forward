@@ -28,3 +28,18 @@ summary: >-
 - proposals: 6 (added 1 - merged 0 - superseded 0 - excluded/tainted 0)
 - highest-leverage: Harvest 3 simplify: marker(s) - each is a bounded shortcut with an upgrade trigger
 
+## drm-0003 - 2026-08-16
+- window: last 60 days · 57 audit · 15 change · 1 mitigations · 4 markers
+- proposals: 7 (added 1 - merged 0 - superseded 0 - excluded/tainted 0)
+- highest-leverage: Build a control for PACK-E (partially-controlled)
+
+## drm-0004 - 2026-08-18
+- window: last 30 days · 48 audit · 8 change · 1 mitigations · 4 markers
+- proposals: 7 (added 1 - merged 0 - superseded 0 - excluded/tainted 0)
+- highest-leverage: Build a control for PACK-E (partially-controlled)
+
+## drm-0005 - 2026-08-18
+- window: last 30 days · 49 audit · 8 change · 1 mitigations · 4 markers
+- proposals: 7 (added 1 - merged 0 - superseded 0 - excluded/tainted 0)
+- highest-leverage: Build a control for PACK-E (partially-controlled)
+

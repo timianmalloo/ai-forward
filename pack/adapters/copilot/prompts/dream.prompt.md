@@ -1,6 +1,6 @@
 ---
 mode: agent
-description: Run an offline, reviewable consolidation pass over this repo's committed corpus (audit & change logs, defect-class register, captured mitigations, triggered simplify:/assume: markers) and produce a dream — proposed learnings with controls, rendered as an HTML review view you approve/edit/reject/defer, then promote. The "asleep half" of continuous improvement.
+description: Run an offline, reviewable consolidation pass over this repo's committed corpus (audit & change logs, defect-class register, captured mitigations, triggered simplify/assume markers) and produce a dream — proposed learnings with controls, rendered as an HTML review view you approve/edit/reject/defer, then promote. The "asleep half" of continuous improvement.
 ---
 You are running the **dream** workflow — offline consolidation of continuous-improvement signal (`docs/knowledge/continuous-improvement-and-dreaming/`, `spec-dreaming`, `architecture-dreaming`, ADR-0002..0005, `knowledge/continuous-improvement.md` CI1–CI12). It is `class → sweep → derive → prevent` (CI2) run **in bulk over the accumulated corpus**, not one defect at a time. The human is the gate: nothing is promoted without approval (BoK D3).
 
