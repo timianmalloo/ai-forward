@@ -1,0 +1,829 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Agent coordination — specification</title>
+<!--
+  Reviewable HTML view of docs/specs/agent-coordination.md.
+  Self-contained: no CDN, no build, no network. Opens directly via file://.
+  The markdown is the record; this view is derived and never authoritative over it.
+-->
+<style>
+  :root{
+    --bg:#0e1116; --panel:#161b22; --panel-2:#1b222c; --line:#2a3441;
+    --ink:#e6edf3; --ink-dim:#9aa7b4; --ink-faint:#6b7784;
+    --accent:#6ea8fe; --accent-2:#7ee0c0; --warn:#f0b866; --danger:#f2836b;
+    --ok:#7ee0c0; --radius:14px; --maxw:1080px;
+    --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  }
+  html[data-theme="light"]{
+    --bg:#f6f8fa; --panel:#ffffff; --panel-2:#f0f3f6; --line:#d8dee4;
+    --ink:#1b2530; --ink-dim:#54626f; --ink-faint:#8592a0;
+    --accent:#2f6bd6; --accent-2:#128a67; --warn:#9a6a14; --danger:#c0492f;
+    --ok:#128a67;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);
+    line-height:1.65;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+
+  header.hero{border-bottom:1px solid var(--line);
+    background:linear-gradient(180deg,var(--panel) 0%,var(--bg) 100%)}
+  .hero .wrap{padding:56px 24px 40px}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--accent-2);margin:0 0 14px}
+  h1{font-family:var(--serif);font-size:clamp(30px,5vw,46px);line-height:1.1;
+    margin:0 0 16px;letter-spacing:-.01em}
+  .lede{font-size:clamp(17px,2.4vw,20px);color:var(--ink-dim);max-width:66ch;margin:0}
+  .meta{margin-top:24px;font-family:var(--mono);font-size:12.5px;color:var(--ink-faint);
+    display:flex;flex-wrap:wrap;gap:6px 20px}
+  .meta b{color:var(--ink-dim);font-weight:600}
+
+  .toggle{position:fixed;top:16px;right:16px;z-index:20;
+    background:var(--panel);border:1px solid var(--line);color:var(--ink-dim);
+    border-radius:999px;padding:7px 14px;font-size:12.5px;font-family:var(--mono);cursor:pointer}
+  .toggle:hover{color:var(--ink);border-color:var(--accent)}
+
+  nav.toc{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 88%,transparent);
+    backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+  nav.toc .wrap{display:flex;gap:4px 18px;flex-wrap:wrap;padding:12px 24px;
+    font-size:13px;font-family:var(--mono)}
+  nav.toc a{color:var(--ink-faint)}
+  nav.toc a:hover{color:var(--ink);text-decoration:none}
+
+  section{padding:46px 0;border-bottom:1px solid var(--line)}
+  section:last-of-type{border-bottom:0}
+  h2{font-family:var(--serif);font-size:clamp(24px,3.4vw,32px);margin:0 0 6px;letter-spacing:-.01em}
+  .sub{color:var(--ink-faint);font-family:var(--mono);font-size:12.5px;margin:0 0 26px}
+  h3{font-size:17px;margin:32px 0 10px;letter-spacing:.01em}
+  h4{font-size:14px;margin:22px 0 8px;font-family:var(--mono);color:var(--ink-dim);
+     text-transform:uppercase;letter-spacing:.08em}
+  p{margin:0 0 14px;max-width:78ch}
+  ul,ol{max-width:78ch;padding-left:20px;margin:0 0 14px}
+  li{margin:0 0 8px}
+  code{font-family:var(--mono);font-size:.88em;background:var(--panel-2);
+    border:1px solid var(--line);border-radius:5px;padding:1px 5px}
+  strong{color:var(--ink)}
+  em{color:var(--ink-dim)}
+
+  .scroller{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 0 20px}
+  table{border-collapse:collapse;width:100%;min-width:640px;font-size:14px}
+  th,td{text-align:left;vertical-align:top;padding:10px 12px;border-bottom:1px solid var(--line)}
+  th{font-family:var(--mono);font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;
+     color:var(--ink-faint);font-weight:600;border-bottom:1px solid var(--line)}
+  tbody tr:hover{background:var(--panel-2)}
+
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    padding:20px 22px;margin:0 0 18px}
+  .card h3{margin-top:0}
+  .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+
+  .mode{border-left:3px solid var(--danger);padding-left:16px;margin:0 0 22px}
+  .mode .tag{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--danger);display:block;margin-bottom:4px}
+  .mode h3{margin:0 0 6px;font-size:18px}
+
+  .kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin:0 0 26px}
+  .kpi div{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px}
+  .kpi b{display:block;font-family:var(--mono);font-size:26px;color:var(--accent-2);line-height:1.1}
+  .kpi span{display:block;font-size:12.5px;color:var(--ink-dim);margin-top:7px}
+
+  pre{background:var(--panel-2);border:1px solid var(--line);border-radius:10px;
+    padding:16px 18px;overflow-x:auto;font-family:var(--mono);font-size:13px;line-height:1.55;
+    margin:0 0 18px}
+  pre code{background:none;border:0;padding:0;font-size:inherit}
+
+  .flow{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    padding:18px 20px;margin:0 0 20px}
+  .flow > .name{font-family:var(--mono);font-size:12px;letter-spacing:.08em;
+    text-transform:uppercase;color:var(--accent);margin:0 0 14px}
+  .step{position:relative;padding:0 0 14px 26px;border-left:2px solid var(--line);margin-left:5px}
+  .step:last-child{border-left-color:transparent;padding-bottom:0}
+  .step::before{content:"";position:absolute;left:-7px;top:4px;width:12px;height:12px;
+    border-radius:50%;background:var(--panel);border:2px solid var(--ink-faint)}
+  .step.go::before{border-color:var(--ok)}
+  .step.no::before{border-color:var(--danger)}
+  .step.q::before{border-color:var(--accent);border-radius:3px;transform:rotate(45deg)}
+  .step .lbl{font-size:14.5px}
+  .step .lbl b{font-family:var(--mono);font-size:11.5px;letter-spacing:.07em;
+    text-transform:uppercase;margin-right:8px}
+  .step.go .lbl b{color:var(--ok)} .step.no .lbl b{color:var(--danger)}
+  .step.q .lbl b{color:var(--accent)}
+  .step .note{display:block;color:var(--ink-dim);font-size:13px;margin-top:3px}
+
+  .badge{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.06em;
+    text-transform:uppercase;border:1px solid var(--line);border-radius:999px;
+    padding:2px 9px;color:var(--ink-dim);background:var(--panel-2)}
+  .badge.v{color:var(--ok);border-color:color-mix(in srgb,var(--ok) 45%,transparent)}
+  .badge.i{color:var(--warn);border-color:color-mix(in srgb,var(--warn) 45%,transparent)}
+  .badge.f{color:var(--danger);border-color:color-mix(in srgb,var(--danger) 45%,transparent)}
+
+  .callout{background:var(--panel-2);border:1px solid var(--line);border-left:3px solid var(--warn);
+    border-radius:0 10px 10px 0;padding:16px 18px;margin:0 0 20px}
+  .callout p:last-child{margin-bottom:0}
+
+  footer{padding:36px 0 60px;color:var(--ink-faint);font-size:13px;font-family:var(--mono)}
+  @media (max-width:640px){ .hero .wrap{padding:40px 20px 30px} section{padding:34px 0} }
+  @media print{ .toggle,nav.toc{display:none} body{background:#fff;color:#000} }
+</style>
+</head>
+<body>
+<button class="toggle" id="t">◐ theme</button>
+
+<header class="hero">
+  <div class="wrap">
+    <p class="eyebrow">Specification · draft · tier T2</p>
+    <h1>Agent coordination</h1>
+    <p class="lede">Shared context and explicit coordination across worktrees and agents — so several
+      agents can work one repository at once without losing work or time. Grounded in measured evidence
+      from TheTerrace, HealthWatch and Meridian, not in preference.</p>
+    <div class="meta">
+      <span><b>id</b> spec-agent-coordination</span>
+      <span><b>owner</b> @timianmalloo</span>
+      <span><b>date</b> 2026-08-20</span>
+      <span><b>record</b> docs/specs/agent-coordination.md</span>
+      <span><b>verdict</b> pass with conditions</span>
+    </div>
+  </div>
+</header>
+
+<nav class="toc"><div class="wrap">
+  <a href="#draft">vs. the draft</a>
+  <a href="#problem">problem</a>
+  <a href="#scenario">core scenario</a>
+  <a href="#scope">scope</a>
+  <a href="#model">domain model</a>
+  <a href="#stories">stories</a>
+  <a href="#nfr">NFRs</a>
+  <a href="#evidence">evidence</a>
+  <a href="#ux">UX</a>
+  <a href="#decisions">decisions</a>
+  <a href="#risks">risks</a>
+  <a href="#gate">gate</a>
+</div></nav>
+
+<main>
+
+<!-- ─────────────────────────────── vs the draft ─────────────────────────────── -->
+<section id="draft"><div class="wrap">
+  <h2>What changed from the draft, and why</h2>
+  <p class="sub">Converges AGENT-COORDINATION-SPEC.md v0.1 and its decision explorer</p>
+
+  <p>The draft is a good design for <strong>one</strong> of the four failure modes actually observed. Its
+  thesis — <em>claims, not commits, are the unit of coordination</em> — is kept and sharpened. Four things
+  are corrected, each by measurement rather than by preference.</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>The draft says</th><th>The evidence says</th><th>Consequence</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>Path/symbol <strong>leases</strong> are the central mechanism.</td>
+        <td>The six busiest files in TheTerrace are <strong>all generated</strong> — 58/60, 58/60, 58/60,
+            54/60, 35/60, 33/60 of the last 60 commits — against <strong>13/60</strong> for the busiest
+            hand-written source file. Neither agent's authored work disagrees; <em>the generator ran
+            twice.</em> A lease would have prevented <strong>none</strong> of these, and would have
+            serialized work that is not in contention.</td>
+        <td>Leases are <strong>scoped by artifact class</strong>. Derived artifacts are
+            <strong>regenerated — never leased, never merged</strong>.</td>
+      </tr>
+      <tr>
+        <td>The log is safe because ids are ULIDs.</td>
+        <td>True for the new log, and it leaves the <strong>existing</strong> collision untouched.
+            <code>KG-B</code> has <strong>nine</strong> recorded occurrences, twice reaching
+            <code>main</code>, once <strong>silently destroying an entry</strong>. A full 22-branch remote
+            scan was built, works, and <strong>still collided within the hour</strong>.</td>
+        <td><strong>Collision-proof allocation becomes a first-class service</strong> of this layer,
+            serving the repo's <em>existing</em> registers — the only rung
+            (<em>make it impossible</em>) the evidence shows holding.</td>
+      </tr>
+      <tr>
+        <td>The worst case is a stale lease.</td>
+        <td>The worst case observed is <strong>lost work</strong>. Two sessions shared one directory;
+            <code>git add -A</code> swept one's files into the other's commit; the swept product work
+            became reachable from <strong>exactly one ref</strong>. A later sweep of 27 worktrees found
+            <strong>five holding 19 commits that existed nowhere else</strong>.</td>
+        <td><strong>Work preservation is a goal of equal rank</strong>, with its own invariants and its own
+            acceptance criteria.</td>
+      </tr>
+      <tr>
+        <td>Invariants are “enforced by <code>agentctl</code>, stated in <code>AGENTS.md</code>”.</td>
+        <td><code>CLAUDE.md</code> had warned against <code>git add -A</code> in prose, in the file every
+            session reads at grounding — <strong>and the delivery script did it anyway</strong>, because
+            prose does not fail.</td>
+        <td><strong>A rule that ships only as prose is out of scope.</strong> Every invariant carries a
+            named mechanism and a red-first proof obligation.</td>
+      </tr>
+    </tbody>
+  </table></div>
+
+  <div class="callout"><p>A fifth correction is about cost, not correctness: the draft assumes a .NET 10
+  global tool. Three of the four repositories in evidence are .NET, but the layer is federated by a pack
+  whose entire script surface is dependency-free and whose install target may have no .NET SDK. That is an
+  <strong>architecture</strong> decision, recorded here only as a portability requirement
+  (<code>NFR-P2</code>).</p></div>
+</div></section>
+
+<!-- ─────────────────────────────── problem ─────────────────────────────── -->
+<section id="problem"><div class="wrap">
+  <h2>The problem is four problems</h2>
+  <p class="sub">Part A · functional — only the first is a merge conflict</p>
+
+  <div class="kpi">
+    <div><b>58/60</b><span>commits touching the busiest file — and it is generated</span></div>
+    <div><b>9</b><span>recorded id collisions across branches, two reaching main</span></div>
+    <div><b>19</b><span>commits found existing in exactly one place, across 27 worktrees</span></div>
+    <div><b>20%</b><span>of the last 100 gate runs produced nothing at all</span></div>
+  </div>
+
+  <div class="mode">
+    <span class="tag">M1 · structural conflict</span>
+    <h3>Two branches regenerate the same committed artifact</h3>
+    <p>Nobody's authored work disagrees; the generator ran twice. With 26 worktrees in play, any two
+    concurrent branches conflict <em>by construction</em>. Its real cost is indirect and compounding:
+    <strong>a conflicting PR runs no gate at all</strong> — GitHub builds a merge commit to run
+    <code>pull_request</code> workflows, so a conflicting PR runs none of them, and
+    <code>gh pr checks</code> answers <em>“no checks reported on this branch”</em>, which is
+    indistinguishable from a trigger that failed to fire. Two pushes were spent re-triggering a gate that
+    was never going to start.</p>
+  </div>
+
+  <div class="mode">
+    <span class="tag">M2 · allocation collision</span>
+    <h3>A shared register mints its next id by reading the local file and adding one</h3>
+    <p>Two branches both take the next free number, because neither can see the other. The conflict then
+    presents as an ordinary content conflict, and the obvious resolution — dedupe by id, keep one —
+    <strong>silently destroys one of the two entries</strong>. Nine occurrences; one recurred
+    <em>during the work that was preventing it</em>.</p>
+  </div>
+
+  <div class="mode">
+    <span class="tag">M3 · silent divergence</span>
+    <h3>Two agents independently author the same rule, and git merges both cleanly</h3>
+    <p>Nothing fails, because each copy is correct on the day it is written. In Meridian one quantity —
+    “what an account is worth” — had <strong>six</strong> implementations, one already drifted
+    (<code>!= 0</code> where every money-deciding path tested <code>&gt; 0</code>), so two surfaces reported
+    different net worths and nothing compared them. <strong>The most expensive mode, and the only one git
+    will never report.</strong></p>
+  </div>
+
+  <div class="mode">
+    <span class="tag">M4 · work loss</span>
+    <h3>In a shared tree, one session's checkout moves another's HEAD</h3>
+    <p>An unscoped <code>git add -A</code> commits another session's files under a message describing
+    neither, and work ends up reachable from a single transient ref. One near-miss during the writing of the
+    investigation that found it; then five of 27 worktrees holding 19 commits that existed in exactly one
+    place. <strong>Recovery depended on a human noticing, which is not a control.</strong></p>
+  </div>
+
+  <div class="callout"><p>Underneath all four is one shape the repository's own doctrine already names:
+  <strong>procedure that exists as knowledge rather than as mechanism</strong>. An ordering rule, a canonical
+  command, a merge strategy, an id scheme — each written down, each read, each violated by someone who had
+  just cited it. <code>CI6</code>: <em>a lesson recorded as prose is a memoir.</em></p>
+  <p>So this spec is not “a lease server”. It is: <strong>give concurrent agents the smallest set of shared
+  facts that makes each of the four modes impossible to express, and ship each of those facts as something
+  that fails.</strong></p></div>
+</div></section>
+
+<!-- ─────────────────────────────── scenario ─────────────────────────────── -->
+<section id="scenario"><div class="wrap">
+  <h2>Core scenario</h2>
+  <p class="sub">If this works end to end, the capability is worth building</p>
+
+  <p>Three sessions are open on one repository, each in its own worktree: <strong>Opus</strong> on a
+  data-ingestion work item, <strong>Copilot</strong> extracting a client interface, and a <strong>GPT
+  harness</strong> on a page that consumes both.</p>
+
+  <p>Opus announces its intent and claims <code>src/Ingest/**</code>, stating in the announcement what it
+  searched for first and what came back. The claim is granted. It needs a new entry in the defect-class
+  register, and asks the layer for an id; it is issued one that no other session can be issued, ever,
+  without either of them coordinating. It edits, and its harness lets the edits through because it holds
+  the lease.</p>
+
+  <p>Copilot claims <code>src/Clients/**</code> — disjoint, granted immediately, no serialization. It then
+  needs to touch the composition root, which is registered as a hotspot: the claim is refused with the
+  reason and the owner, and Copilot instead records a request against the integrator and continues with the
+  rest of its work item.</p>
+
+  <p>The GPT harness announces a work item that depends on a type Opus has not written yet. Before it
+  starts, it reads the decisions in force for the artifacts it will touch and finds one Opus recorded twenty
+  minutes ago — <em>this DTO lives in the contracts assembly</em> — so it does not invent a second home for
+  it. It records that it is blocked, and the block is visible to Opus rather than being discovered at
+  merge.</p>
+
+  <p>Opus finishes, releases, and pushes. Its branch conflicts on two committed derived artifacts, because
+  Copilot merged first and the generator ran twice. The conflict is resolved by <strong>regenerating</strong>,
+  not by merging, and the resolution stages the files it wrote <strong>by name</strong> — so the untracked
+  work sitting in the tree from another task is not swept into the commit. Opus then asks the layer whether
+  it is safe to move HEAD; because everything is pushed, the answer is yes.</p>
+
+  <p>At the end of the day the Operator asks one question and gets one answer: which trees are waiting, what
+  has been decided, and whether anything exists in only one place. Nothing does.</p>
+
+  <div class="callout"><p><strong>Every clause in that scenario corresponds to a defect with an instance and
+  a date.</strong></p></div>
+</div></section>
+
+<!-- ─────────────────────────────── scope ─────────────────────────────── -->
+<section id="scope"><div class="wrap">
+  <h2>Scope, and the non-goals with their reasons</h2>
+  <p class="sub">An explicit non-goal is as load-bearing as a goal</p>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>In scope</h3>
+      <ol>
+        <li>A shared, append-only record of <strong>intent</strong> — claims, decisions, blocks, completion
+            — written before the working tree moves, one writer per file.</li>
+        <li><strong>Leases</strong> over artifacts, scoped by <strong>artifact class</strong>, enforced at
+            each harness's edit boundary and at the commit boundary universally.</li>
+        <li><strong>Collision-proof id allocation</strong> as a service to the repo's <em>existing</em>
+            registers, not only to this layer's own log.</li>
+        <li>A <strong>decision register</strong> with an enforced pre-write read (M3).</li>
+        <li><strong>Work-preservation invariants</strong>: stage by name, never move HEAD over unique work,
+            one session per working tree.</li>
+        <li>A <strong>derived-artifact declaration</strong>, so structural conflicts are resolved by
+            regeneration rather than by merge.</li>
+        <li>A <strong>projection</strong>: a bounded per-agent context view, and an operator status view.</li>
+        <li><strong>Federation</strong> — installed and updated by the pack, configured per repo.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h3>Out of scope</h3>
+      <ul>
+        <li><strong>Semantic merge resolution.</strong> Regeneration and refusal are in; understanding both
+            sides is a different, much harder capability.</li>
+        <li><strong>Replacing GitHub Issues / Projects.</strong> Work items here are in-flight handles; the
+            backlog stays the system of record.</li>
+        <li><strong>A planner that assigns work.</strong> Nothing in the corpus attributes overlap to bad
+            assignment, and a planner's dependency model goes stale faster than it is consulted.</li>
+        <li><strong>Multi-machine / cloud agents.</strong> Designed for — nothing may assume a shared
+            filesystem or a single clock — not built.</li>
+        <li><strong>A second audit log.</strong> The pack's audit log records what <em>was done</em>; this
+            records what is <em>being attempted</em>. Different grain, different lifecycle. They share the
+            allocator and duplicate nothing.</li>
+        <li><strong>Replacing the docs knowledge graph.</strong> A coordination “graph” that re-modelled
+            documentation would be a second source for one quantity.</li>
+        <li><strong>A merge queue.</strong> GitHub has one; this layer supplies the ordering signal.</li>
+        <li><strong>Enforcing an agent's reasoning.</strong> The layer can refuse an edit; it cannot make an
+            agent think. Every mechanism fails closed on a <em>fact</em>, never on a judgement.</li>
+      </ul>
+    </div>
+  </div>
+</div></section>
+
+<!-- ─────────────────────────────── domain model ─────────────────────────────── -->
+<section id="model"><div class="wrap">
+  <h2>Conceptual domain model</h2>
+  <p class="sub">Bounded context: agent coordination — work in flight. Adjacent and deliberately not absorbed: Delivery, Knowledge Graph, Audit &amp; Change Log</p>
+
+  <h3>Ubiquitous language</h3>
+  <div class="scroller"><table>
+    <thead><tr><th>Term</th><th>Means</th><th>Explicitly does <em>not</em> mean</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Agent</strong></td><td>A logical actor identity — <code>opus</code>, <code>copilot</code>. Stable across sessions.</td><td>The model string. One agent may run several models.</td></tr>
+      <tr><td><strong>Session</strong></td><td>One agent's continuous run inside one working tree. <strong>The unit of writership.</strong></td><td>A conversation or a process. A restarted process resuming the same tree is the same session.</td></tr>
+      <tr><td><strong>Working tree</strong></td><td>A checkout. <strong>At most one session at a time</strong> — an invariant, not a convention.</td><td>A branch.</td></tr>
+      <tr><td><strong>Work item</strong></td><td>The unit of intended change, and the handle everything hangs from.</td><td>A backlog item. It references one; it is not one.</td></tr>
+      <tr><td><strong>Artifact</strong></td><td>A thing a change can touch, addressed by pattern or symbol.</td><td>A file. A symbol in a shared file is an artifact; a directory of generated output is one artifact.</td></tr>
+      <tr><td><strong>Artifact class</strong></td><td><strong>What kind of contention it is subject to</strong> — authored / derived / register / hotspot. The load-bearing concept.</td><td>A file type or a language.</td></tr>
+      <tr><td><strong>Claim</strong></td><td>Declared intent over an artifact set, <strong>before</strong> the tree moves.</td><td>A lock. A claim may be refused, and a refusal is a normal outcome.</td></tr>
+      <tr><td><strong>Lease</strong></td><td>The time-bounded hold a granted claim confers.</td><td>Ownership. It expires; an unheartbeated session loses all of them.</td></tr>
+      <tr><td><strong>Decision</strong></td><td>A convention others must honour, recorded against the artifacts it applies to.</td><td>An ADR. This one may be superseded within the hour.</td></tr>
+      <tr><td><strong>Allocation</strong></td><td>An id from a scheme where two issuers who cannot see each other still cannot collide.</td><td>A sequence number — precisely the thing that failed nine times.</td></tr>
+      <tr><td><strong>Unique work</strong></td><td>Commits reachable from exactly one ref.</td><td>Unpushed work. Work on a branch about to be deleted is still unique.</td></tr>
+      <tr><td><strong>Projection</strong></td><td>The bounded view of shared state rendered into one agent's context.</td><td>The state. The state is a fold; the projection is a lossy, budgeted view of it.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Aggregates — each bounded by exactly one invariant</h3>
+  <div class="scroller"><table>
+    <thead><tr><th>Aggregate</th><th>Root</th><th>The one invariant it protects</th></tr></thead>
+    <tbody>
+      <tr><td>Session record</td><td>SessionId</td><td><em>A session's record has exactly one writer, for its whole life.</em> This is what keeps the coordination substrate from becoming the next M1.</td></tr>
+      <tr><td>Lease set</td><td>ArtifactPattern</td><td><em>No two unexpired hard leases overlap.</em> An ambiguous intersection resolves to <strong>refuse</strong> — a false refusal costs a message, a false grant costs a merge.</td></tr>
+      <tr><td>Allocation scheme</td><td>SchemeId</td><td><em>An issued identifier is never issued twice, and issuance requires no communication between issuers.</em> The second half is the whole point.</td></tr>
+      <tr><td>Work item</td><td>WorkItemId</td><td><em>Owned by at most one session at a time; status is derived from the record, never written.</em></td></tr>
+      <tr><td>Decision</td><td>DecisionId</td><td><em>Superseded, never edited.</em> Editing a decision rewrites the past for every session that already read it.</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="callout"><p><strong>Durable representation.</strong> The record is an append-only stream of
+  facts; leases, work-item status, blocked-on relationships and the operator view are <strong>folds</strong>
+  over it and are never a second stored source. <strong>Grain, declared before any column:</strong>
+  <em>one row of the coordination record is exactly one event emitted by one session at one
+  instant.</em></p></div>
+</div></section>
+
+<!-- ─────────────────────────────── stories ─────────────────────────────── -->
+<section id="stories"><div class="wrap">
+  <h2>User stories &amp; acceptance criteria</h2>
+  <p class="sub">Every criterion falsifiable; every threshold drawn from a measured baseline</p>
+
+  <div class="card">
+    <h3>US-1 — Know before I edit whether another session is already changing this artifact</h3>
+    <ul>
+      <li><strong>Given</strong> no unexpired lease overlaps <code>src/Ingest/**</code> <strong>When</strong> a session claims it <strong>Then</strong> the claim is granted, within <code>NFR-P1</code>.</li>
+      <li><strong>Given</strong> A holds an unexpired hard lease on <code>src/Ingest/**</code> <strong>When</strong> B claims <code>src/Ingest/Reader.cs</code> <strong>Then</strong> the claim is <strong>refused</strong>, naming holder, work item, expiry, and one remedy.</li>
+      <li><strong>Given</strong> two patterns whose intersection cannot be decided <strong>Then</strong> the claim is <strong>refused</strong> — a false refusal is preferred to a false grant, and the layer says which it did.</li>
+      <li><strong>Given</strong> a lease-holding session stops emitting liveness past its TTL <strong>Then</strong> an overlapping claim is granted, and the expiry appears in the operator view as an <em>event</em>, not as an absence.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>US-2 — An edit to an unclaimed artifact is refused, not warned about</h3>
+    <ul>
+      <li><strong>Given</strong> enforcement is enabled <strong>When</strong> a session writes an <code>authored</code> artifact it holds no lease on <strong>Then</strong> the write is <strong>refused before it happens</strong>, in a form the model can act on.</li>
+      <li><strong>Given</strong> a harness with no pre-edit hook <strong>When</strong> it commits an artifact it never claimed <strong>Then</strong> the commit is refused. <em>The commit boundary is the universal floor: every harness has one.</em></li>
+      <li><strong>Given</strong> the lease state cannot be determined <strong>Then</strong> enforcement <strong>says so and refuses to imply it looked</strong>. A control that cannot see is not licensed to accuse, and certainly not to report a pass.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>US-3 — An identifier that cannot collide, even if neither session has pushed</h3>
+    <ul>
+      <li><strong>Given</strong> two sessions request an id for the same register <strong>within the same second, in separate worktrees, with no network</strong> <strong>Then</strong> the two identifiers differ. <em>This is the exact shape that defeated a working 22-branch remote scan.</em></li>
+      <li><strong>Given</strong> a register whose ids are currently sequential <strong>When</strong> the layer is adopted <strong>Then</strong> every existing identifier keeps its value and no reference is rewritten.</li>
+      <li><strong>Given</strong> an id was issued <strong>When</strong> its branch is abandoned <strong>Then</strong> it is never reissued.</li>
+      <li><strong>Given</strong> two branches each appended to the same register <strong>When</strong> merged <strong>Then</strong> the result contains <strong>both</strong>, and a resolution reducing the entry count below the sum of distinct entries <strong>fails closed</strong>. <em>A “dedupe by id” resolution reported “203 ours + 203 theirs → 203 unique” and destroyed an entry. Arithmetic caught it; nothing else did.</em></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>US-4 — Know what has already been decided about what I am about to touch</h3>
+    <ul>
+      <li><strong>Given</strong> decisions are in force on claimed artifacts <strong>Then</strong> they are returned <strong>with the grant</strong> — the agent does not have to know to ask.</li>
+      <li><strong>Given</strong> a session disagrees <strong>Then</strong> it must record a <em>superseding</em> decision; the original is retained and marked superseded, never edited.</li>
+      <li><strong>Given</strong> an announcement to create a new artifact carries no record of a prior-art search <strong>Then</strong> it is reported incomplete. <em>An unevidenced search is indistinguishable from no search.</em></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>US-5 — Conflicts on generated files stop being conflicts</h3>
+    <ul>
+      <li><strong>Given</strong> an artifact declared <code>derived</code> <strong>When</strong> two branches both regenerate it and merge <strong>Then</strong> resolution is by <strong>regeneration</strong>, byte-identical to a clean generation from the merged source.</li>
+      <li><strong>Given</strong> a conflict outside the declared derived set <strong>Then</strong> the tool <strong>fails closed</strong> and changes nothing.</li>
+      <li><strong>Given</strong> a resolution has run <strong>Then</strong> it stages <strong>only the paths it wrote, by name</strong>, and <strong>names every file it left alone</strong> — silently declining to touch a file is indistinguishable from never noticing it.</li>
+      <li><strong>Given</strong> a PR is conflicted <strong>Then</strong> the status distinguishes <em>“conflicted, therefore no gate will run”</em> from <em>“the gate has not reported yet.”</em> These are the same silence today.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>US-6 — Refuse any operation that would leave work reachable from nowhere</h3>
+    <ul>
+      <li><strong>Given</strong> HEAD holds commits reachable from no other ref <strong>When</strong> a <code>checkout</code>, <code>reset --hard</code>, <code>rebase</code> or <code>branch -D</code> is attempted <strong>Then</strong> it is refused, the at-risk commits are listed, and push is offered as the remedy.</li>
+      <li><strong>Given</strong> a <em>single</em> at-risk commit <strong>Then</strong> it is counted. <em>The first implementation of this guard reported SAFE for exactly the case it existed to catch; a second bug lost the count when there was only one. A guard that fails open is worse than no guard, because it is trusted.</em></li>
+      <li><strong>Given</strong> a tree already occupied by a live session <strong>Then</strong> a second session is refused, with the occupant named.</li>
+      <li><strong>Given</strong> any tool in this layer stages <strong>Then</strong> it stages by explicit path. A wildcard stage anywhere in the layer's own surface — or in any agent-facing prompt it ships — is a defect, detectable by scanning the shipped text.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>US-7 — One place that answers “which tree is waiting, and is anything held in only one place”</h3>
+    <ul>
+      <li><strong>Given</strong> any number of worktrees <strong>Then</strong> each is listed with branch, drift, held leases and <strong>unique-commit count</strong>, and a non-zero count is visually <em>and</em> exit-code distinguishable.</li>
+      <li><strong>Given</strong> a prune <strong>Then</strong> no branch that is checked out anywhere, and no branch carrying unique work, is deleted — the two ways an automated cleanup does damage.</li>
+      <li><strong>Given</strong> the last N hours <strong>Then</strong> claims, refusals, decisions, blocks and completions appear in one chronological view across all agents.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>US-8 — Installed and updated by the pack, in every repository</h3>
+    <ul>
+      <li><strong>Given</strong> a pack update <strong>Then</strong> the layer arrives with it and the repo's own configuration is <strong>preserved</strong>, not overwritten.</li>
+      <li><strong>Given</strong> no artifact-class registry is configured <strong>Then</strong> the layer runs in advisory mode <strong>and says that it is advisory</strong>, rather than implying enforcement it cannot deliver.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>US-9 — The layer's own record is incorruptible by the operations performed on it</h3>
+    <ul>
+      <li><strong>Given</strong> a record file whose last byte is not a newline <strong>When</strong> the next event is appended <strong>Then</strong> the two records do <strong>not</strong> fuse. <em>The prior instance fused two entries into one unparseable 2,323-character line, exit code 0, and <strong>both</strong> were lost — the new one and the innocent one before it. The duplicate-id and ordering checks both reported PASS on the file that had just eaten two records.</em></li>
+      <li><strong>Given</strong> any step returns non-zero <strong>Then</strong> the tool throws by step name. No tool here may print a success line that is a statement about having reached the last line. <em>A failed push printed its usage hint into a discarded stream while the script announced “rebased on origin/main”; four commits stayed local for twenty minutes.</em></li>
+      <li><strong>Given</strong> a tool claims to have changed state <strong>Then</strong> it has <strong>read the state back</strong>. An exit code is not a result.</li>
+    </ul>
+  </div>
+</div></section>
+
+<!-- ─────────────────────────────── NFRs ─────────────────────────────── -->
+<section id="nfr"><div class="wrap">
+  <h2>Non-functional requirements</h2>
+  <p class="sub">ISO/IEC 25010 — each a threshold, each with the instance that set it</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>Ref</th><th>Requirement</th><th>Why this number</th></tr></thead>
+    <tbody>
+      <tr><td><code>NFR-P1</code><br><span class="badge">performance</span></td>
+          <td>A pre-edit check adds <strong>&lt; 100 ms p95</strong> at ≥ 5,000 tracked files and a 10,000-event record. Claim / release / allocate <strong>&lt; 250 ms p95</strong>. A full fold <strong>&lt; 2 s</strong>.</td>
+          <td>The check sits on <em>every</em> edit. A hook that costs a visible pause is a hook that gets disabled — and a disabled hook is worse than none, because the invariant is still assumed.</td></tr>
+      <tr><td><code>NFR-R1</code><br><span class="badge">reliability</span></td>
+          <td>Zero record-fusing appends under a named adversarial corpus. Zero success reports from a tool whose step failed. Replaying the record twice yields identical folded state.</td>
+          <td>Both fusing and false-success have instances with dates. Fold idempotence is what makes the record, rather than a database, the source of truth.</td></tr>
+      <tr><td><code>NFR-R2</code><br><span class="badge">reliability</span></td>
+          <td>The layer <strong>fails safe, never open</strong>: any state it cannot determine produces a refusal-with-reason or an explicit “not checked”, never a silent pass.</td>
+          <td>A guard that reported SAFE for the case it existed to catch; a control that accused its own branch because CI checks out a detached HEAD.</td></tr>
+      <tr><td><code>NFR-S1</code><br><span class="badge f">security</span></td>
+          <td>Content written by one agent and rendered into another's context is <strong>untrusted data</strong>: length-bounded, structurally delimited, never carrying instruction authority.</td>
+          <td>The projection is a model-to-model channel. This is a prompt-injection boundary and the one genuinely new trust boundary this layer creates.</td></tr>
+      <tr><td><code>NFR-S2</code><br><span class="badge f">security</span></td>
+          <td>Enforcement is a <strong>local integrity control, not a security control</strong>: an agent with shell access can bypass it — and the layer says so.</td>
+          <td>Claiming a security property the mechanism does not have is how a control gets trusted past its limit.</td></tr>
+      <tr><td><code>NFR-V1</code><br><span class="badge">privacy</span></td>
+          <td>Anything git-tracked and pushed passes the pack's existing scrub first; intents are length-capped.</td>
+          <td>Intent text is model-authored and unbounded; the record is pushed.</td></tr>
+      <tr><td><code>NFR-C1</code><br><span class="badge">compatibility</span></td>
+          <td><strong>Three</strong> harness families can perform every verb. No verb reachable only through one vendor's surface. Nothing assumes a shared filesystem or a single clock.</td>
+          <td>“Model/tool agnostic” is a stated goal; the honest test of it is three, not two.</td></tr>
+      <tr><td><code>NFR-C2</code><br><span class="badge">compatibility</span></td>
+          <td>Adoption changes <strong>no existing identifier</strong> and requires <strong>no rewrite of history</strong>.</td>
+          <td>The reason the last prevention was applied to one id scheme and not its sibling.</td></tr>
+      <tr><td><code>NFR-P2</code><br><span class="badge">portability</span></td>
+          <td>Windows, Linux and macOS, with <strong>no runtime the pack does not already require</strong>, no network, and no daemon that must be started before an agent can work. Its control suite runs on all three in CI.</td>
+          <td>A control suite silently coupled to one OS; a deployed script broken by a runner's language-version auto-upgrade; a documented interpreter name that is a store alias, not the interpreter.</td></tr>
+      <tr><td><code>NFR-M1</code><br><span class="badge">maintainability</span></td>
+          <td>Emits the four metrics it exists to move: <strong>conflicts per merged PR</strong>, <strong>% of edits under a held lease</strong>, <strong>mean/p95 wait on a refused claim</strong>, <strong>commits reachable from exactly one ref</strong> — all derivable from the record plus git.</td>
+          <td>A layer that cannot show it moved the numbers will be kept or removed on taste.</td></tr>
+      <tr><td><code>NFR-M2</code><br><span class="badge">maintainability</span></td>
+          <td>Every invariant is a named control, <strong>observed failing on the un-fixed shape</strong> before it is trusted, and enumerable. An invariant that reaches only the “always-loaded instruction” rung must say so.</td>
+          <td><code>CI6</code>, and the control ladder: <em>make it impossible</em> &gt; <em>automated control</em> &gt; <em>always-loaded instruction</em> &gt; <em>knowledge doc</em>.</td></tr>
+      <tr><td><code>NFR-U1</code><br><span class="badge">usability</span></td>
+          <td>Per-turn coordination context <strong>≤ 2,000 tokens</strong>, always a projection. A refusal is actionable in one read.</td>
+          <td>Context spent on coordination is context not spent on the work.</td></tr>
+    </tbody>
+  </table></div>
+</div></section>
+
+<!-- ─────────────────────────────── evidence ─────────────────────────────── -->
+<section id="evidence"><div class="wrap">
+  <h2>Evidence</h2>
+  <p class="sub">Every row read directly from a committed artifact on this machine. No figure is estimated.</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>Claim</th><th>Source</th><th>Confidence</th></tr></thead>
+    <tbody>
+      <tr><td>The six busiest files in TheTerrace are all generated — 58/60, 58/60, 58/60, 54/60, 35/60, 33/60 of the last 60 commits — against 13/60 for the busiest hand-written source file. With 26 worktrees, any two concurrent branches conflict by construction.</td><td>delivery-orchestration.md §F4; defect-classes → <code>CI-B</code></td><td><span class="badge v">verified</span></td></tr>
+      <tr><td>A conflicting PR runs <em>no</em> <code>pull_request</code> workflow, and <code>gh pr checks</code> reports “no checks reported on this branch” — indistinguishable from a trigger that failed to fire.</td><td>entries/conflicting-pr-runs-no-gate.md; <code>CI-A</code></td><td><span class="badge v">verified</span></td></tr>
+      <tr><td>20% of the 100 most recent gate runs produced nothing (10 failed, 10 cancelled) — ~440 billable minutes and ~86 minutes of waiting per 100 runs.</td><td>delivery-orchestration.md §F2</td><td><span class="badge v">verified</span></td></tr>
+      <tr><td>Client-minted sequential ids collided <strong>nine</strong> times across branches, twice reaching <code>main</code>; one “dedupe by id” resolution silently destroyed an entry, caught only because “203 + 203 → 203 unique” is arithmetically impossible.</td><td>defect-classes → <code>KG-B</code> + addenda 1–5</td><td><span class="badge v">verified</span></td></tr>
+      <tr><td>A remote-branch-scanning allocator was built, works, scans 22 branches in ~1 s — <strong>and collided within the hour</strong>. Two sessions minting before either has pushed cannot be separated by scanning.</td><td><code>KG-B</code> addendum 4</td><td><span class="badge v">verified</span></td></tr>
+      <tr><td>The prevention was applied to the <code>FR-</code> scheme and <em>not</em> to the <code>al-</code> scheme with identical mechanics, which then collided again between two branches of one session.</td><td><code>KG-B</code> addendum 5</td><td><span class="badge v">verified</span></td></tr>
+      <tr><td>Two sessions shared one working directory; <code>git add -A</code> swept an in-progress report into the other's commit; the swept product work became reachable from exactly one ref, and recovery depended on a human noticing.</td><td>delivery-orchestration.md §F5</td><td><span class="badge v">verified</span></td></tr>
+      <tr><td>A subsequent sweep of 27 worktrees found <strong>five</strong> holding <strong>19</strong> commits that existed nowhere else.</td><td>commit <code>27361844</code>; worktree-status.ps1</td><td><span class="badge v">verified</span></td></tr>
+      <tr><td>A script written to make rebasing safe <strong>lost work twice in one day and reported success both times</strong> — an unread exit code, and no comparison of commits across the rebase.</td><td><code>CTRL-E</code>; commit <code>80954bae</code></td><td><span class="badge v">verified</span></td></tr>
+      <tr><td>The delivery script every session is told to run ended with <code>git add -A</code>, sweeping 2,917 lines of unrelated work into a commit whose message described only the regeneration — while <code>CLAUDE.md</code> had warned against exactly that, in the file every session reads at grounding.</td><td><code>CTRL-G</code>; commit <code>b4ff1a7d</code></td><td><span class="badge v">verified</span></td></tr>
+      <tr><td>An append-only writer that emitted <code>record + "\n"</code> without checking the file already ended in one <strong>fused two entries into one unparseable line</strong>; exit code 0; both lost; the duplicate-id and ordering checks reported PASS on that file.</td><td><code>LOG-A</code></td><td><span class="badge v">verified</span></td></tr>
+      <tr><td>135 local branches, 31 fully merged and never pruned; in-flight branches 20–26 behind, and protected <code>main</code> requires up-to-date branches, so every merge invalidates the ones behind it.</td><td>delivery-orchestration.md §F6</td><td><span class="badge v">verified</span></td></tr>
+      <tr><td>The shape is not one repo's: HealthWatch merged <code>main</code> with a conflict in <code>docs/lessons/defect-classes.md</code> — the append-heavy shared register — and separately in <code>audit-data.js</code> + <code>docs-index.js</code>, both derived.</td><td>HealthWatch <code>9641067</code>, <code>3d72eb3</code></td><td><span class="badge v">verified</span></td></tr>
+      <tr><td>Silent divergence is real and expensive: one quantity had <strong>six</strong> implementations in Meridian, one already drifted, so two surfaces reported different net worths and nothing compared them. A <strong>seventh</strong> copy was written by the author <em>while fixing the class</em>.</td><td>Meridian defect-classes → <code>ONE-A</code>, <code>DUP-A</code></td><td><span class="badge v">verified</span></td></tr>
+      <tr><td>The pack's own consolidation pass currently proposes controls whose text is “derive a falsifiable control for this class” — several classes are still prose rather than mechanism.</td><td>learnings/fleet-classes.md; drm-0005</td><td><span class="badge v">verified</span></td></tr>
+      <tr><td>Re-running the consolidation over an unchanged corpus re-emits already-promoted proposals, because idempotency is keyed on <code>(dream, proposal)</code> rather than on the class.</td><td>note-20260818-dream-rerun-unchanged-corpus.md</td><td><span class="badge v">verified</span></td></tr>
+      <tr><td>Prior art for the mechanism family: advisory/exclusive locking in centralized VCS (Perforce, <code>svn lock</code>, Git LFS); lease-with-TTL-and-heartbeat as the standard distributed-lock shape (Chubby, etcd leases); time-ordered non-coordinating ids (ULID, UUIDv7); event-sourced state as a fold.</td><td>Established practice, named without a fresh source read</td><td><span class="badge i">inferred</span></td></tr>
+      <tr><td>Copilot's edit-time hook surface may differ from Claude Code's <code>PreToolUse</code>, and must be verified at implementation time.</td><td>The draft §5.3, which flags it itself</td><td><span class="badge f">flagged</span></td></tr>
+    </tbody>
+  </table></div>
+</div></section>
+
+<!-- ─────────────────────────────── UX ─────────────────────────────── -->
+<section id="ux"><div class="wrap">
+  <h2>Part B — UX specification</h2>
+  <p class="sub">Medium: command-line and tool surfaces. Two readers — a model, and a human. Part C is N/A: no visual UI in v1.</p>
+
+  <div class="grid2">
+    <div class="card"><h3>The Agent</h3>
+      <p>No memory between sessions, cannot see the other worktrees, optimising for finishing. As measured
+      repeatedly: <em>it will comply with a rule it is told, right up until the moment complying is
+      inconvenient — at which point only a mechanism holds.</em></p>
+      <p><strong>Success:</strong> it never has to ask “is anyone else in here?”, because the answer arrives
+      with the grant.</p></div>
+    <div class="card"><h3>The Operator</h3>
+      <p>Opens a terminal after hours of unattended fleet work. 27 trees, 135 branches, limited attention,
+      and a real fear — justified once — that something is held in exactly one place.</p>
+      <p><strong>Success:</strong> one command, one screen, and the dangerous thing is the visually loudest
+      thing on it.</p></div>
+  </div>
+
+  <h3>Information architecture — four surfaces, each answering exactly one question</h3>
+  <ol>
+    <li><strong>The claim path</strong> — <em>may I touch this, and what should I know first?</em> The grant carries the decisions in force; the refusal carries holder, reason, remedy.</li>
+    <li><strong>The stream</strong> — <em>what has been happening?</em> One merged chronological view across all sessions.</li>
+    <li><strong>The status view</strong> — <em>which tree is waiting on me, and is anything held in only one place?</em></li>
+    <li><strong>The projection</strong> — <em>what do I, specifically, need in context?</em> Budget-capped, regenerated rather than accumulated.</li>
+  </ol>
+  <p>One label is deliberately blunt: <strong><code>refused</code></strong> — never “denied”, “blocked” or
+  “unavailable”. The reader is a model that must not be able to read the outcome as a transient failure
+  worth retrying. In every surface the order is: <em>what must I not do</em> → <em>what is waiting on
+  me</em> → <em>what happened</em>. Never chronological-first.</p>
+
+  <h3>Flows</h3>
+
+  <div class="flow">
+    <p class="name">Flow 1 · claim → edit → release, with its unhappy paths</p>
+    <div class="step"><span class="lbl"><b>step</b>Announce intent + prior-art search</span></div>
+    <div class="step q"><span class="lbl"><b>gate</b>Announcement complete?<span class="note">No search recorded → reported incomplete, and back to announce.</span></span></div>
+    <div class="step"><span class="lbl"><b>step</b>Claim artifacts</span></div>
+    <div class="step q"><span class="lbl"><b>gate</b>Any overlapping unexpired lease?</span></div>
+    <div class="step go"><span class="lbl"><b>granted</b>Lease held — and the decisions in force are returned <em>with the grant</em></span></div>
+    <div class="step no"><span class="lbl"><b>refused</b>Held by another session<span class="note">Holder · work item · expiry · remedy. The session either proceeds on the unblocked part, or records a block naming what it needs — visible to the holder now, not at merge.</span></span></div>
+    <div class="step no"><span class="lbl"><b>refused</b>Undecidable overlap — refused as a precaution, and says so</span></div>
+    <div class="step no"><span class="lbl"><b>refused</b>Hotspot — owned by the integrator; a request is recorded instead</span></div>
+    <div class="step q"><span class="lbl"><b>gate</b>Liveness maintained?<span class="note">TTL elapsed → leases expire, <em>recorded as an event, not as an absence</em>, and the claim must be re-made.</span></span></div>
+    <div class="step go"><span class="lbl"><b>done</b>Release — leases dropped, work item closed</span></div>
+  </div>
+
+  <div class="flow">
+    <p class="name">Flow 2 · the unclaimed edit — enforcement, and its honest failure</p>
+    <div class="step q"><span class="lbl"><b>gate</b>Is the lease state determinable?</span></div>
+    <div class="step no"><span class="lbl"><b>not checked</b>No record / no git / unreadable registry — stated explicitly, <em>never a silent pass</em></span></div>
+    <div class="step q"><span class="lbl"><b>gate</b>Artifact class?</span></div>
+    <div class="step go"><span class="lbl"><b>allow</b><code>derived</code> — regenerated, never leased</span></div>
+    <div class="step no"><span class="lbl"><b>refuse</b><code>hotspot</code> — owned by the integrator</span></div>
+    <div class="step q"><span class="lbl"><b>gate</b><code>authored</code> / <code>register</code> — lease held by me?</span></div>
+    <div class="step go"><span class="lbl"><b>allow</b>Yes</span></div>
+    <div class="step no"><span class="lbl"><b>refuse</b>Free — claim it first, with the command given verbatim</span></div>
+    <div class="step no"><span class="lbl"><b>refuse</b>Held by another — holder, work item, expiry, remedy</span></div>
+    <div class="step no"><span class="lbl"><b>floor</b>At the commit boundary, any staged artifact never claimed refuses the commit<span class="note">The universal floor: every harness has a commit boundary, whether or not it has an edit hook.</span></span></div>
+  </div>
+
+  <div class="flow">
+    <p class="name">Flow 3 · a conflict on a derived artifact, and the gate that will not run</p>
+    <div class="step q"><span class="lbl"><b>gate</b>Is the PR mergeable?</span></div>
+    <div class="step no"><span class="lbl"><b>conflicted</b>Say it plainly: <em>no gate will run</em><span class="note">Distinguished from “the gate has not reported yet” — today these are the same silence, and the difference is measured in wasted gate cycles.</span></span></div>
+    <div class="step"><span class="lbl"><b>step</b>Rebase, then <em>regenerate</em> the derived artifacts</span></div>
+    <div class="step no"><span class="lbl"><b>fail closed</b>Conflict outside the declared derived set → change nothing, name the paths, hand to a human</span></div>
+    <div class="step"><span class="lbl"><b>step</b>Stage only the paths written, <em>by name</em> — and name every file deliberately left alone</span></div>
+    <div class="step q"><span class="lbl"><b>gate</b>Commits in == commits out?<span class="note">No → refuse the push; a commit was dropped.</span></span></div>
+    <div class="step q"><span class="lbl"><b>gate</b>Does the remote ref match the local one?<span class="note">No → fail by name. An exit code is not a result.</span></span></div>
+    <div class="step go"><span class="lbl"><b>clean</b>The gate runs</span></div>
+  </div>
+
+  <div class="flow">
+    <p class="name">Flow 4 · allocation — including the case that defeated the previous fix</p>
+    <div class="step"><span class="lbl"><b>step</b>Request an id from the allocator</span></div>
+    <div class="step no"><span class="lbl"><b>rejected design</b>A scheme that requires seeing other sessions<span class="note">Two sessions minting before either pushes still collide. This is rejected as a design, not as an implementation.</span></span></div>
+    <div class="step go"><span class="lbl"><b>issued</b>A non-coordinating, time-ordered identifier</span></div>
+    <div class="step q"><span class="lbl"><b>gate</b>After a merge, are both entries present?</span></div>
+    <div class="step no"><span class="lbl"><b>fail closed</b>The count fell — a resolution that loses an entry is refused</span></div>
+    <div class="step go"><span class="lbl"><b>merged</b>Both entries kept</span></div>
+  </div>
+
+  <div class="flow">
+    <p class="name">Flow 5 · work preservation</p>
+    <div class="step"><span class="lbl"><b>step</b>About to move HEAD — <code>checkout</code> / <code>reset --hard</code> / <code>rebase</code> / <code>branch -D</code></span></div>
+    <div class="step"><span class="lbl"><b>step</b>Count commits reachable from HEAD and from no other ref</span></div>
+    <div class="step no"><span class="lbl"><b>refuse</b>Cannot determine — say so; <em>never a silent SAFE</em></span></div>
+    <div class="step no"><span class="lbl"><b>refuse</b>Count &gt; 0, <em>including exactly 1</em> — list the commits, offer push as the remedy</span></div>
+    <div class="step go"><span class="lbl"><b>safe</b>Nothing would become unreachable</span></div>
+  </div>
+
+  <h3>Wireframe-level structure</h3>
+  <h4>The refusal — the most-read output in the system</h4>
+  <pre><code>REFUSED  src/Ingest/Reader.cs
+  held by   opus · WI-142 · expires in 3m12s
+  because   an unexpired lease overlaps your pattern
+  remedy    wait, or claim a disjoint subset, or record a block on WI-142</code></pre>
+  <p>Four labelled lines, fixed order, no prose. <em>What happened · who · why · what to do.</em> The remedy
+  is last because it is what the reader acts on.</p>
+
+  <h4>The status view — the dangerous column is not last, and not colour-only</h4>
+  <pre><code>TREE               UNIQUE  BRANCH                   BEHIND  LEASES  SESSION
+../wt-opus-142        0     agent/opus/WI-142            3       2   opus (live, 40s)
+../wt-copilot-151     2 !   agent/copilot/WI-151        21       1   copilot (stale, 14m)
+../wt-gpt-140         0     agent/gpt/WI-140             3       0   -  blocked on WI-142
+C:/Projects/Repo      0     main                         0       0   ! 2 sessions detected</code></pre>
+
+  <h3>UX acceptance criteria</h3>
+  <div class="scroller"><table>
+    <thead><tr><th>#</th><th>Criterion</th><th>Falsified by</th></tr></thead>
+    <tbody>
+      <tr><td>UX-1</td><td>A refusal names holder, reason and remedy in one screen, in that order, no prose paragraph.</td><td>Any refusal path whose output omits a remedy.</td></tr>
+      <tr><td>UX-2</td><td>A conflicted PR and an unreported gate produce <em>different</em> text.</td><td>Any state in which both render the same string.</td></tr>
+      <tr><td>UX-3</td><td>The status view answers “is anything held in only one place?” without a second command, and sets a distinguishing exit code.</td><td>A non-zero unique count visible only in colour, or only after a follow-up command.</td></tr>
+      <tr><td>UX-4</td><td>Every surface that cannot determine its answer prints “not checked” and its reason.</td><td>Any path where an indeterminate state renders identically to a clean one.</td></tr>
+      <tr><td>UX-5</td><td>Decisions in force arrive <em>with the grant</em>; no flow requires an agent to know to ask.</td><td>A granted claim whose response omits decisions that exist for those artifacts.</td></tr>
+      <tr><td>UX-6</td><td>The projection never exceeds its budget, and when it truncates it names what it dropped.</td><td>A projection over budget, or a truncation with no notice.</td></tr>
+      <tr><td>UX-7</td><td>Every flow has a recovery path; every refusal is recoverable without a human <em>except</em> the two that must not be.</td><td>An unrecoverable refusal outside those two, or an auto-resolution of either.</td></tr>
+      <tr><td>UX-8</td><td>A first-time agent is told in one line that the layer is <em>advisory</em>, and what would make it enforcing.</td><td>An advisory-mode grant indistinguishable from an enforced one.</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="callout"><p><strong>Part C — UI specification: N/A.</strong> Command-line and tool surfaces
+  only. A browsable HTML lens over the record is an obvious later addition and is <em>deliberately
+  deferred</em>: the measured operator need is answered by a terminal in one command, and an HTML surface
+  would add a build step and a generated committed artifact — a new instance of the exact class
+  (<code>CI-B</code>) this spec exists to remove.</p></div>
+</div></section>
+
+<!-- ─────────────────────────────── decisions ─────────────────────────────── -->
+<section id="decisions"><div class="wrap">
+  <h2>Decisions the evidence settles — and those it does not</h2>
+  <p class="sub">A spec converges where the evidence forces an answer, and hands the rest downstream with the constraint attached</p>
+
+  <h3>Settled here, by evidence</h3>
+  <div class="scroller"><table>
+    <thead><tr><th>Question</th><th>Verdict</th><th>What forces it</th></tr></thead>
+    <tbody>
+      <tr><td>Is the coordination substrate itself allowed to conflict?</td><td><strong>No — one writer per record file, always.</strong></td><td>The substrate becoming the hotspot is the first-order failure; <code>CI-B</code> shows what a shared append-region costs at 27 worktrees.</td></tr>
+      <tr><td>Are leases uniform across artifacts?</td><td><strong>No — scoped by artifact class.</strong> Derived artifacts are regenerated and never leased.</td><td>6 of the 6 busiest files are generated; a lease would have prevented none of those conflicts and would have serialized non-contention.</td></tr>
+      <tr><td>Are ids allocated by scanning or by scheme?</td><td><strong>By scheme.</strong> Scanning is rejected as a <em>design</em>, not as an implementation.</td><td>A working 22-branch scanner collided within the hour; nine occurrences; the failure is structural.</td></tr>
+      <tr><td>Advisory or hard?</td><td><strong>Hard where it can be enforced; advisory only where a harness has no edit hook — and it must say which.</strong></td><td>Prose in the always-loaded file did not stop the script that swept another session's work.</td></tr>
+      <tr><td>Is work preservation in scope?</td><td><strong>Yes, at equal rank.</strong></td><td>The only failure in the corpus not measured in minutes.</td></tr>
+      <tr><td>Is a planner in v1?</td><td><strong>No.</strong></td><td>Nothing attributes overlap to assignment; a planner's model goes stale faster than it is read.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Left to <code>/define-architecture</code>, with the constraint that binds it</h3>
+  <div class="scroller"><table>
+    <thead><tr><th>Question</th><th>The constraint this spec imposes</th></tr></thead>
+    <tbody>
+      <tr><td>Storage substrate — files / local store / daemon / hosted</td><td><code>NFR-P1</code> (&lt; 100 ms p95 on the edit path), <code>NFR-P2</code> (no daemon required before an agent can work), <code>NFR-R1</code> (fold idempotence). The record must survive a clone.</td></tr>
+      <tr><td>Implementation language and packaging</td><td><code>NFR-P2</code>. The draft's .NET 10 tool is permitted <strong>only</strong> if the layer stays fully usable in a repo with no .NET SDK.</td></tr>
+      <tr><td>Claim granularity beyond file (symbol / Roslyn)</td><td><code>NFR-C1</code> — no verb reachable only through one language's tooling. Symbol claims are an <em>optimisation</em>, permitted only as a refinement of a file-level claim.</td></tr>
+      <tr><td>Transport — CLI, MCP, hooks</td><td>All three reach the same core; three harness families perform every verb.</td></tr>
+      <tr><td>Graph representation</td><td>Must be a <strong>fold</strong>, never a second write path. It may not restate what the docs graph already owns.</td></tr>
+      <tr><td>Threat model</td><td><code>NFR-S1</code> — completed <em>before</em> the projection renders one agent's text into another's context.</td></tr>
+    </tbody>
+  </table></div>
+</div></section>
+
+<!-- ─────────────────────────────── risks ─────────────────────────────── -->
+<section id="risks"><div class="wrap">
+  <h2>Flagged risks &amp; residual unknowns</h2>
+  <p class="sub">Each with the cheapest next probe that would resolve it</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>#</th><th>Risk / unknown</th><th>Cheapest next probe</th></tr></thead>
+    <tbody>
+      <tr><td><strong>F1</strong></td><td>Other harnesses' edit-time hook surfaces may not exist or may differ, leaving those agents advisory-only at the edit boundary.</td><td>Spike Protocol per harness — documentation <em>and</em> an executed hello-world hook — before the enforcement phase is scoped. Until then the commit boundary is the honest floor.</td></tr>
+      <tr><td><strong>F2</strong></td><td>Agents may route around a refusal, because they optimise for finishing. <code>NFR-S2</code> concedes this is not a security control.</td><td>Measure it: “% of edits made under a held lease” <em>is</em> this number. If it does not reach a high fraction, enforcement has failed regardless of implementation quality.</td></tr>
+      <tr><td><strong>F3</strong></td><td>The pre-edit latency budget may be unachievable if the fold is recomputed per call.</td><td>Benchmark the fold on a 10,000-event record and a 5,000-file tree before committing to a substrate.</td></tr>
+      <tr><td><strong>F4</strong></td><td>Coordination overhead may exceed conflict cost on a <em>single-agent</em> repo — the common case for most repos the pack installs into.</td><td>Advisory default plus a measured before/after. If a single-agent repo pays anything measurable, the layer must be inert until a second session appears.</td></tr>
+      <tr><td><strong>F5</strong></td><td>The layer adds a new always-loaded instruction surface, and the corpus shows always-loaded prose changing nothing.</td><td><code>NFR-M2</code>: any invariant that reaches only that rung must be labelled as such, so its weakness is visible rather than assumed away.</td></tr>
+      <tr><td><strong>F6</strong></td><td>The record is git-tracked and pushed; model-authored intent may carry secrets or PII.</td><td>Reuse the pack's existing scrub at the write boundary — proven red on a planted secret before the first record is pushed.</td></tr>
+      <tr><td><strong>F7</strong></td><td><strong>Unquantified:</strong> how much of the cost is agent-vs-agent versus human-vs-agent. Every measured instance involves at least one agent, but the mechanism does not care, and a fix aimed only at agents would miss half the population.</td><td>The four metrics, segmented by actor, over two weeks on one repository.</td></tr>
+      <tr><td><strong>F8</strong></td><td>Two of the four modes are already <em>partially</em> solved in TheTerrace by repo-local scripts. Federating a second mechanism risks <code>ONE-A</code> — a shared rule accreting private copies — one of the classes this spec cites.</td><td>Before implementation, an explicit reconciliation per script: it becomes the implementation, or it is deleted, or the difference is written down. Two answers to one question is the defect signature.</td></tr>
+    </tbody>
+  </table></div>
+</div></section>
+
+<!-- ─────────────────────────────── gate ─────────────────────────────── -->
+<section id="gate"><div class="wrap">
+  <h2>Gate record</h2>
+  <p class="sub">GATE specify · 2026-08-20 · verdict: <strong>pass with conditions</strong> · the authors did not clear their own hard veto</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>Adversary</th><th>Finding</th><th>Severity</th><th>Resolution</th></tr></thead>
+    <tbody>
+      <tr><td>The Simplifier</td><td>Six in-scope capabilities is a large v1; four of them read as adjacent problems bolted onto a lease server.</td><td>soft veto</td><td><strong>Partially upheld; scope kept.</strong> Leases alone address the <em>minority</em> of observed cost. A layer that shipped leases alone would be correct and would not move the numbers. <em>Condition:</em> each capability carries its own metric, and any that does not move is removed rather than defended.</td></tr>
+      <tr><td>The Simplifier</td><td>The planner and the HTML lens.</td><td>soft veto</td><td><strong>Upheld.</strong> Both moved to explicit non-goals with the reason recorded.</td></tr>
+      <tr><td>Test Architect</td><td>“Cannot collide” is unfalsifiable — you cannot test a negative over all time.</td><td>hard veto</td><td><strong>Resolved.</strong> Restated as the executable shape that actually failed: two sessions, same second, separate worktrees, no network — the identifiers differ. Plus the merge-conservation assertion that caught the real instance.</td></tr>
+      <tr><td>Test Architect</td><td>“Zero fusing appends” needs a named adversarial corpus or it is a wish.</td><td>hard veto</td><td><strong>Resolved.</strong> Enumerated in the boundary set: missing trailing newline, CRLF, concurrent appenders, a merge-rewritten file, a partial final line.</td></tr>
+      <tr><td>Test Architect</td><td>Every control cited in evidence had a red-first proof; the spec must require the same of its own.</td><td>hard veto</td><td><strong>Resolved</strong> — <code>NFR-M2</code>: each control observed failing on the un-fixed shape before it is trusted.</td></tr>
+      <tr><td>Data &amp; Persistence Architect</td><td>No declared grain, no aggregate invariants; “the graph” risked becoming a second write path.</td><td>veto</td><td><strong>Resolved.</strong> Grain declared; five aggregates each bounded by one invariant; folds derived, never stored.</td></tr>
+      <tr><td>Data &amp; Persistence Architect</td><td>Migrating existing registers could rewrite live identifiers.</td><td>veto</td><td><strong>Resolved</strong> — additive only, every existing id keeps its value, expand-migrate-contract, no backfill by guessing.</td></tr>
+      <tr><td>UX Researcher / IA</td><td>No unhappy-path flows: no refusal, no expiry, no indeterminate state, no “conflicted, so no gate will run”.</td><td>UX-spec veto</td><td><strong>Resolved.</strong> Five flows drawn covering alternate/error/recovery; the refusal given a fixed four-line structure; “not checked” made a first-class output.</td></tr>
+      <tr><td>UX Researcher / IA</td><td>The status view buried the one thing that matters.</td><td>advisory</td><td><strong>Resolved</strong> — unique work is a leading column with a distinguishing exit code, not colour-only.</td></tr>
+      <tr><td>Security &amp; Identity Architect</td><td>The projection renders one agent's model-authored text into another agent's context. The draft did not name this boundary.</td><td>hard veto</td><td><strong>Resolved as a requirement, open as a threat model.</strong> Cross-agent content is untrusted data with no instruction authority; the STRIDE pass is a named gap closed in <code>/define-architecture</code> <em>before</em> any projection is rendered.</td></tr>
+      <tr><td>Security &amp; Identity Architect</td><td>Hard leases could be read as an isolation guarantee they cannot provide.</td><td>hard veto</td><td><strong>Resolved</strong> — stated plainly as a local integrity control, bypassable by any agent with shell access.</td></tr>
+      <tr><td>Security &amp; Identity Architect</td><td>Git-tracked, pushed, model-authored intent text.</td><td>advisory</td><td><strong>Resolved</strong> — reuse the existing scrub, cap intent length.</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="callout">
+    <p><strong>Conditions of pass — all three before implementation begins:</strong></p>
+    <ol>
+      <li>The <strong>STRIDE threat model</strong> for the projection boundary is completed in <code>/define-architecture</code>.</li>
+      <li>The <strong>F8 reconciliation</strong> — for each existing repo-local script covering M2/M4, it becomes the implementation, or it is deleted, or the difference is written down.</li>
+      <li>The <strong>F1 spike</strong> — each target harness's edit-time hook surface established by execution, not by documentation.</li>
+    </ol>
+    <p><strong>Handoff:</strong> → <code>/define-architecture</code>. A new load-bearing capability with an
+    unsettled substrate, an unsettled implementation language, and an open threat model — three
+    architecture-level decisions, none of which a spec may take.</p>
+  </div>
+</div></section>
+
+</main>
+
+<footer><div class="wrap">
+  Derived view · the record is <code>docs/specs/agent-coordination.md</code> and is authoritative wherever the two disagree.
+</div></footer>
+
+<script>
+  (function(){
+    var root=document.documentElement, key='spec-agent-coordination-theme';
+    try{ var s=localStorage.getItem(key); if(s){ root.setAttribute('data-theme',s); }
+         else if(window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches){
+           root.setAttribute('data-theme','light'); } }catch(e){}
+    document.getElementById('t').addEventListener('click',function(){
+      var next = root.getAttribute('data-theme')==='light' ? 'dark' : 'light';
+      root.setAttribute('data-theme',next);
+      try{ localStorage.setItem(key,next); }catch(e){}
+    });
+  })();
+</script>
+</body>
+</html>
