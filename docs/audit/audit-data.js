@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-08-16T19:03:22Z",
+  "generated": "2026-08-20T17:37:49Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1285,6 +1285,151 @@ window.AUDIT_DATA = {
         "defect"
       ],
       "outcome": "success"
+    },
+    {
+      "id": "al-0058",
+      "shortname": "dream-run",
+      "datetime": "2026-08-17T04:56:51Z",
+      "session": "ad91aa43-d81e-4926-b3f2-5c242f25a7a1",
+      "prompt": "dream.py dream-run",
+      "summary": "Dream drm-0003: 7 proposals over last 60 days · 57 audit · 15 change · 1 mitigations · 4 markers",
+      "kind": "script",
+      "skill": "dream",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/dreams/drm-0003/index.html"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0059",
+      "shortname": "apply-decisions",
+      "datetime": "2026-08-17T12:49:20Z",
+      "session": "ad91aa43-d81e-4926-b3f2-5c242f25a7a1",
+      "prompt": "dream.py apply-decisions",
+      "summary": "Applied 4 general + 2 repo-local (skipped 0, rejected 0) from drm-0003",
+      "kind": "script",
+      "skill": "dream",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "learnings/fleet-classes.jsonl"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0060",
+      "shortname": "apply-learnings",
+      "datetime": "2026-08-17T12:49:40Z",
+      "session": "ad91aa43-d81e-4926-b3f2-5c242f25a7a1",
+      "prompt": "apply-learnings.py apply-learnings",
+      "summary": "Planned federation to 11 repo(s): BioHacker(+5~0!0); HealthWatch(+5~0!0); TheTerrace(+5~0!0); TheTerrace-identity(+5~0!0); TheTerrace-s00(+5~0!0); TheTerrace-season(+5~0!0); TheTerrace-ui(+5~0!0); ai-forward(+1~4!0); backlot(+5~0!0); meridian-finance-planner(+5~0!0); video-1(+5~0!0)",
+      "kind": "script",
+      "skill": "apply-learnings",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "learnings/plans/"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0061",
+      "shortname": "dream-run",
+      "datetime": "2026-08-18T13:43:13Z",
+      "session": "ad91aa43-d81e-4926-b3f2-5c242f25a7a1",
+      "prompt": "dream.py dream-run",
+      "summary": "Dream drm-0004: 7 proposals over last 30 days · 48 audit · 8 change · 1 mitigations · 4 markers",
+      "kind": "script",
+      "skill": "dream",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/dreams/drm-0004/index.html"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0062",
+      "shortname": "dream-run",
+      "datetime": "2026-08-18T13:49:30Z",
+      "session": "ad91aa43-d81e-4926-b3f2-5c242f25a7a1",
+      "prompt": "dream.py dream-run",
+      "summary": "Dream drm-0005: 7 proposals over last 30 days · 49 audit · 8 change · 1 mitigations · 4 markers",
+      "kind": "script",
+      "skill": "dream",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/dreams/drm-0005/index.html"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0063",
+      "shortname": "dream-branch-stage-production",
+      "datetime": "2026-08-18T13:52:35Z",
+      "session": "ad91aa43-d81e-4926-b3f2-5c242f25a7a1",
+      "prompt": "/dream — one key area to consider is clean up after branching and staging vs. production",
+      "summary": "Produced drm-0005 and REM-enriched PACK-H into a lifecycle-stage closure proposal: capture branch/commit/dirty state, promote one immutable artifact through staging to production, live-verify digest/behavior, then clean temporary branches/worktrees/previews after the rollback window. Disconfirmed a separate stale-branch class because only main and one worktree exist.",
+      "kind": "skill",
+      "skill": "dream",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/dreams/drm-0005/dream.json",
+        "docs/dreams/drm-0005/index.html"
+      ],
+      "tags": [
+        "dreaming",
+        "release-hygiene",
+        "staging-production"
+      ],
+      "outcome": "success",
+      "git": {
+        "sha": "6d3aeef75fdf6ebf5f7758b96de9be6cbf44410b",
+        "short": "6d3aeef75",
+        "branch": "main",
+        "pushed": true
+      }
+    },
+    {
+      "id": "al-0064",
+      "shortname": "ground yourself in the repo, specifically look at lesson from our dream …",
+      "datetime": "2026-08-20T17:23:04Z",
+      "session": "prompt-log",
+      "prompt": "ground yourself in the repo, specifically look at lesson from our dream results; then look through my TheTerrace, Meridian and HealthWatch repos at places where we have had merge conflicts or contention between worktrees; then ground yourself in the thinking here: C:\\Users\\malla\\Downloads\\agent-coordination << this is a draft for how to implement cross-worktree and cross-agent coordination to improve efficiency and minimize conflicts through shared context and explicit coordination. /specify a final spec on a solution for this provide the spec in md and html",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0065",
+      "shortname": "specify-agent-coordination",
+      "datetime": "2026-08-20T17:37:30Z",
+      "session": "6c74f4f4",
+      "prompt": "ground yourself in the repo, specifically look at lesson from our dream results; then look through my TheTerrace, Meridian and HealthWatch repos at places where we have had merge conflicts or contention between worktrees; then ground yourself in the thinking here: C:\\Users\\malla\\Downloads\\agent-coordination << this is a draft for how to implement cross-worktree and cross-agent coordination to improve efficiency and minimize conflicts through shared context and explicit coordination. /specify a final spec on a solution for this provide the spec in md and html",
+      "summary": "Three-layer spec for a repo-local, model-agnostic agent-coordination layer. Reframes the draft from one failure mode (path leases) to the four measured ones: structural conflict on derived artifacts, allocation collision on client-minted ids, silent semantic divergence, and work loss in a shared tree. Evidence read directly from TheTerrace (CI-A/CI-B/KG-B x9/CTRL-E/CTRL-G/LOG-A, delivery-orchestration F1-F6), HealthWatch (defect-classes merge conflict) and Meridian (ONE-A/DUP-A). 9 user stories with falsifiable Gherkin, 12 NFRs, 5 UX flows, gate record: pass with three conditions.",
+      "kind": "skill",
+      "skill": "specify",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/specs/agent-coordination.md"
+      ],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [
@@ -1663,6 +1808,29 @@ window.AUDIT_DATA = {
         "pushed": false,
         "commits": []
       }
+    },
+    {
+      "id": "cl-0016",
+      "datetime": "2026-08-20T17:37:49Z",
+      "session": "6c74f4f4",
+      "kind": "spec",
+      "skill": "specify",
+      "title": "Agent coordination is scoped by measured failure mode, not by the draft's single mechanism",
+      "prompt": null,
+      "summary": "The draft's central mechanism (path/symbol leases) addresses the minority of measured cost. Four corrections: leases are scoped by artifact class (derived artifacts are regenerated, never leased); collision-proof id allocation becomes a first-class service to the repo's EXISTING registers, since scanning provably cannot prevent the collision; work preservation is a goal of equal rank to conflict avoidance; and a rule that ships only as prose is out of scope. Planner, HTML lens, semantic merge and multi-machine are explicit non-goals.",
+      "rationale": "6 of 6 busiest files in TheTerrace are generated (58/60 down to 33/60 vs 13/60 for the busiest source file) so leases would have prevented none of the dominant conflicts; KG-B has 9 recorded id collisions and a working 22-branch scanner still collided within the hour; 5 of 27 worktrees held 19 commits existing nowhere else; and CTRL-G proved that a prose warning in the always-loaded file changed nothing (CI6).",
+      "artifacts": [
+        "docs/specs/agent-coordination.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": null,
+        "after": "6d3aeef75fdf6ebf5f7758b96de9be6cbf44410b",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      },
+      "audit_ref": "al-0065"
     }
   ]
 };

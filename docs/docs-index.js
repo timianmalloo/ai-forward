@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-Forward",
-  "generated": "2026-08-16T19:21:35Z",
+  "generated": "2026-08-20T17:37:16Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -569,6 +569,36 @@ window.DOCS_INDEX = {
       "sourceSha256": "a5268718eefb7d1ebe33b490d527fc108fd372a30ee5180d5fa01178c7a43485"
     },
     {
+      "id": "note-20260818-dream-rerun-unchanged-corpus",
+      "path": "docs/notes/note-20260818-dream-rerun-unchanged-corpus.md",
+      "title": "Re-running /dream over an unchanged corpus re-surfaces already-promoted classes under new proposal ids",
+      "type": "decision-note",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "dreaming",
+      "reviewBy": "2027-02-14",
+      "reviewSuggested": [],
+      "summary": "Observed in drm-0004: a dream over a corpus unchanged since the prior dream re-emits the same control-upgrade/marker/mitigation proposals under fresh (dream, proposal) ids, and apply-decisions' per-(dream,proposal) idempotency does not treat them as duplicates — so approving them re-appends the same class to the fleet store. Push-stage slug dedup (\"latest wins per class slug\") absorbs the downstream harm, so the correct operating response is Defer/Reject at the review gate, not a code change.",
+      "tags": [
+        "decision-note",
+        "dreaming",
+        "continuous-improvement",
+        "idempotency"
+      ],
+      "links": [
+        {
+          "to": "architecture-dreaming",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-dreaming",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "e034436a95ed2a8bec9d0db465dfd0c28d31fe2911944d00c003e5be9c58e622"
+    },
+    {
       "id": "design-aiforward-cli",
       "path": "docs/design/aiforward-cli.md",
       "title": "Design — aiforward CLI (suggestion 1)",
@@ -867,7 +897,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "be92a1a34f0b0e92c958cf8cdc3b0dc5795138873f27ef953de82cd6922c3bcf"
+      "sourceSha256": "26528bd6bb7b933b336131f6cf86f99c217b6784206644e27857c83c0c3825c2"
     },
     {
       "id": "docs-index",
@@ -917,7 +947,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "80babae6da65a0c8bbf3c586cad9acb04df7023be4169a10285e8f4f213a5934"
+      "sourceSha256": "1d3a3d212d0338e9500f1df53f5f6b1b4f2dbf99c27754fa17eddb9cfe5cfa1c"
     },
     {
       "id": "forensic-review",
@@ -2103,6 +2133,73 @@ window.DOCS_INDEX = {
       "sourceSha256": "8596cd2175507a7b8da9f922cf7db6bee84be7eec6622235bc51964b5f370675"
     },
     {
+      "id": "spec-agent-coordination",
+      "path": "docs/specs/agent-coordination.md",
+      "title": "Agent coordination — shared context and explicit coordination across worktrees and agents",
+      "type": "spec",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-02-20",
+      "reviewSuggested": [],
+      "summary": "Specification for a repo-local, model-agnostic coordination layer that lets several agents and worktrees work one repository at once without losing work or time. Grounded in measured evidence from TheTerrace, HealthWatch and Meridian, it targets four distinct failure modes — structural conflict on derived artifacts, allocation collision on client-minted ids, silent semantic divergence, and outright work loss in a shared tree — and requires each rule to ship as a mechanism that fails rather than a paragraph that is read.",
+      "tags": [
+        "coordination",
+        "worktrees",
+        "multi-agent",
+        "merge-conflicts",
+        "leases",
+        "allocation",
+        "continuous-improvement"
+      ],
+      "links": [
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        },
+        {
+          "to": "audit-log",
+          "rel": "relates-to"
+        },
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-dreaming",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "User flows",
+          "mermaid": "flowchart TD\n  A([Session begins work item]) --> B[Announce intent + prior-art search]\n  B --> C{Announcement complete?}\n  C -->|no search recorded| C1[Reported incomplete: state what you searched for] --> B\n  C -->|yes| D[Claim artifacts]\n  D --> E{Any overlapping unexpired lease?}\n  E -->|no| F[Granted + decisions in force returned with the grant]\n  E -->|yes, another session| G[REFUSED: holder, work item, expiry, remedy]\n  E -->|undecidable overlap| G2[REFUSED as a precaution, and says so]\n  E -->|hotspot| H[REFUSED: owned by integrator] --> H1[Record request against integrator] --> I\n  G --> I{Can I do other work in this item?}\n  G2 --> I\n  I -->|yes| J[Proceed on the unblocked part]\n  I -->|no| K[Record block, naming what is needed] --> K1([Visible to the holder now, not at merge])\n  F --> L[Edit - permitted, lease held]\n  L --> M{Liveness maintained?}\n  M -->|no, TTL elapsed| N[Leases expire - recorded as an event, not an absence] --> D\n  M -->|yes| O[Release / done]\n  O --> P([Leases dropped, work item closed])"
+        },
+        {
+          "kind": "flowchart",
+          "title": "User flows",
+          "mermaid": "flowchart TD\n  A([Harness about to write a file]) --> B{Lease state determinable?}\n  B -->|no record / no git / unreadable registry| C[NOT CHECKED - stated explicitly, never a silent pass] --> L\n  B -->|yes| E{Artifact class?}\n  E -->|derived| F[Allow - derived artifacts are regenerated, never leased]\n  E -->|hotspot| G[REFUSE - owned by integrator]\n  E -->|authored / register| H{Lease held by me?}\n  H -->|yes| I[Allow]\n  H -->|no, free| J[REFUSE: claim it first - one command, given verbatim]\n  H -->|no, held by other| K[REFUSE: holder + work item + expiry + remedy]\n  F --> L{Commit boundary}\n  I --> L\n  L --> M{Any staged artifact never claimed?}\n  M -->|yes| N[REFUSE the commit - the universal floor, present in every harness]\n  M -->|no| O([Commit proceeds])"
+        },
+        {
+          "kind": "flowchart",
+          "title": "User flows",
+          "mermaid": "flowchart TD\n  A([PR opened]) --> B{Mergeable?}\n  B -->|conflicting| C[State it plainly: CONFLICTED - no gate will run]\n  C --> C1[Distinguished from 'gate has not reported yet' - today these are the same silence]\n  C1 --> D[Resolve: rebase, then REGENERATE derived artifacts]\n  D --> E{Conflict outside the declared derived set?}\n  E -->|yes| F[FAIL CLOSED - change nothing, name the paths] --> G([Human resolves])\n  E -->|no| H[Stage only the paths written, BY NAME]\n  H --> I[Name every file deliberately left alone]\n  I --> J{Commits in == commits out?}\n  J -->|no| K[REFUSE the push - a commit was dropped] --> G\n  J -->|yes| L[Push with an explicit refspec]\n  L --> M{Remote ref matches local?}\n  M -->|no| N[FAIL by name - an exit code is not a result] --> G\n  M -->|yes| B\n  B -->|clean| O([Gate runs])"
+        },
+        {
+          "kind": "flowchart",
+          "title": "User flows",
+          "mermaid": "flowchart TD\n  A([Session needs an id for a shared register]) --> B[Request from the allocator]\n  B --> C{Requires seeing other sessions?}\n  C -->|yes - scanning| C1[REJECTED DESIGN: two sessions minting before either pushes still collide]\n  C -->|no - non-coordinating scheme| D[Id issued]\n  D --> E[Entry written to the register]\n  E --> F[Merge with another branch]\n  F --> G{Both entries present after merge?}\n  G -->|count fell| H[FAIL CLOSED - a resolution that loses an entry is refused] --> I([Human resolves, both entries kept])\n  G -->|both present| J([Merged])"
+        },
+        {
+          "kind": "flowchart",
+          "title": "User flows",
+          "mermaid": "flowchart TD\n  A([About to move HEAD: checkout / reset / rebase / branch -D]) --> B[Count commits reachable from HEAD and from no other ref]\n  B --> C{Count > 0?}\n  C -->|cannot determine| D[REFUSE and say it could not determine - never a silent SAFE]\n  C -->|yes, including exactly 1| E[REFUSE - list the commits, offer push as the remedy]\n  C -->|no| F([Safe to move])\n  E --> G[Push] --> B"
+        }
+      ],
+      "sourceSha256": "6d92efaafdbf157502c92422c2cab588ba17c1630d806b480cb7e21fa12742dd"
+    },
+    {
       "id": "spec-documentation-portal",
       "path": "docs/specs/documentation-portal.md",
       "title": "Documentation Portal — a derived, self-maintaining interactive front door",
@@ -2263,6 +2360,14 @@ window.DOCS_INDEX = {
       "description": "Inspect a rendered design or design-language preview."
     },
     {
+      "id": "surface-specs-agent-coordination",
+      "path": "docs/specs/agent-coordination.html",
+      "title": "Agent coordination — specification",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "spec-agent-coordination"
+    },
+    {
       "id": "surface-portal-index",
       "path": "docs/portal/index.html",
       "title": "AI-Forward — Documentation",
@@ -2292,6 +2397,27 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     },
     {
+      "id": "surface-dreams-drm-0003-index",
+      "path": "docs/dreams/drm-0003/index.html",
+      "title": "Dream Review",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact."
+    },
+    {
+      "id": "surface-dreams-drm-0004-index",
+      "path": "docs/dreams/drm-0004/index.html",
+      "title": "Dream Review",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact."
+    },
+    {
+      "id": "surface-dreams-drm-0005-index",
+      "path": "docs/dreams/drm-0005/index.html",
+      "title": "Dream Review",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact."
+    },
+    {
       "id": "surface-mockups-dream-review",
       "path": "docs/mockups/dream-review.html",
       "title": "Dream Review — mockup",
@@ -2300,5 +2426,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-dream-review"
     }
   ],
-  "graphSha256": "098f8decce64a0ee948321b1123eecd4385cafddbd35e174e7f98674d203d88c"
+  "graphSha256": "56b9b9211c8e534c4e9a662bccf1e8e27a07b9defed0c580fa78c337783fe233"
 };

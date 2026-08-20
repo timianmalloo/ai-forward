@@ -202,7 +202,7 @@ window.PORTAL_DATA = {
         },
         {
           "cmd": "/dream",
-          "desc": "Run an offline, reviewable consolidation pass over this repo's committed corpus (audit & change logs, defect-class register, captured mitigations, triggered simplify:/assume: markers) and produce a dream — proposed learnings with controls, rendered as an HTML review view you approve/edit/reject/defer, then promote. The \"asleep half\" of continuous improvement.",
+          "desc": "Run an offline, reviewable consolidation pass over this repo's committed corpus (audit & change logs, defect-class register, captured mitigations, triggered simplify/assume markers) and produce a dream — proposed learnings with controls, rendered as an HTML review view you approve/edit/reject/defer, then promote. The \"asleep half\" of continuous improvement.",
           "when": "Periodically, to compound learnings across sessions.",
           "produces": "docs/dreams/ + HTML review",
           "handoff": "/apply-learnings"
@@ -596,6 +596,11 @@ window.PORTAL_DATA = {
       {
         "group": "Specifications",
         "items": [
+          {
+            "title": "Agent coordination — shared context and explicit coordination across worktrees and agents",
+            "summary": "Specification for a repo-local, model-agnostic coordination layer that lets several agents and worktrees work one repository at once without losing work or time. Grounded in measured evidence from TheTerrace, HealthWatch and Meridian, it targets four distinct...",
+            "path": "../../docs/specs/agent-coordination.md"
+          },
           {
             "title": "Documentation Portal — a derived, self-maintaining interactive front door",
             "summary": "Specification for a single, polished, interactive HTML documentation portal that is the front door to the AI-Forward repo — a capabilities overview, concrete reference for all 21 skills, an in-depth UI-capabilities section, and an explicit getting-started...",
@@ -1010,6 +1015,12 @@ window.PORTAL_DATA = {
         "summary": "Removes the model-orchestration standard, static router, tests, and active wiring after forensic review found the capability unwired and unsafe to claim as..."
       },
       {
+        "id": "note-20260818-dream-rerun-unchanged-corpus",
+        "type": "decision-note",
+        "title": "Re-running /dream over an unchanged corpus re-surfaces already-promoted classes under new proposal ids",
+        "summary": "Observed in drm-0004: a dream over a corpus unchanged since the prior dream re-emits the same control-upgrade/marker/mitigation proposals under fresh (dream,..."
+      },
+      {
         "id": "privacy-review",
         "type": "privacy-review",
         "title": "Privacy Review",
@@ -1032,6 +1043,12 @@ window.PORTAL_DATA = {
         "type": "doc",
         "title": "Proposal / dialog: GitHub Pages hosting + the Dream Manifest",
         "summary": "An RFC/dialog opener on (1) whether to host the Documentation Portal and surfaces on GitHub Pages, (2) how that impacts dream output and privacy, and (3) a..."
+      },
+      {
+        "id": "spec-agent-coordination",
+        "type": "spec",
+        "title": "Agent coordination — shared context and explicit coordination across worktrees and agents",
+        "summary": "Specification for a repo-local, model-agnostic coordination layer that lets several agents and worktrees work one repository at once without losing work or..."
       },
       {
         "id": "spec-documentation-portal",
@@ -1556,6 +1573,16 @@ window.PORTAL_DATA = {
         "rel": "supersedes"
       },
       {
+        "from": "note-20260818-dream-rerun-unchanged-corpus",
+        "to": "architecture-dreaming",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260818-dream-rerun-unchanged-corpus",
+        "to": "spec-dreaming",
+        "rel": "relates-to"
+      },
+      {
         "from": "privacy-review",
         "to": "architecture",
         "rel": "documents"
@@ -1643,6 +1670,26 @@ window.PORTAL_DATA = {
       {
         "from": "proposal-hosting-and-dream-manifest",
         "to": "spec-documentation-portal",
+        "rel": "relates-to"
+      },
+      {
+        "from": "spec-agent-coordination",
+        "to": "architecture",
+        "rel": "relates-to"
+      },
+      {
+        "from": "spec-agent-coordination",
+        "to": "audit-log",
+        "rel": "relates-to"
+      },
+      {
+        "from": "spec-agent-coordination",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "spec-agent-coordination",
+        "to": "spec-dreaming",
         "rel": "relates-to"
       },
       {
