@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-Forward",
-  "generated": "2026-08-22T18:30:47Z",
+  "generated": "2026-08-22T18:36:59Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1562,7 +1562,7 @@ window.DOCS_INDEX = {
       "phase": "pack-evolution",
       "reviewBy": "2026-11-20",
       "reviewSuggested": [],
-      "summary": "Forensic assessment at commit e4eae82 (revision 42), clean tree, all seven CI gates green and verified green on a runner. Four findings carried from revision 33 are now verified RESOLVED and the largest standing residual risk — \"CI has never executed on a runner\" — is closed by evidence. Eight findings remain or are new. The dominant one is convergent, not incidental: the three newest capabilities (/dream, /apply-learnings, /optimize-graph) have neither unit tests nor eval cases, while writing durable cross-repo stores. That is RIG-C — sweep stopped at the instance — on its fourth confirmed occurrence, and this time the un-swept sibling is the federation path. A second finding (FR-056) was discovered by obeying V16: correct change-propagation turns the CI graph gate red, so the incentive runs against the discipline.",
+      "summary": "Forensic assessment at commit e4eae82 (revision 42), clean tree, all seven CI gates green and verified green on a runner. Four findings carried from revision 33 are now verified RESOLVED and the largest standing residual risk — \"CI has never executed on a runner\" — is closed by evidence. Nine findings remain or are new. The dominant one is convergent, not incidental: the three newest capabilities (/dream, /apply-learnings, /optimize-graph) have neither unit tests nor eval cases, while writing durable cross-repo stores. That is RIG-C — sweep stopped at the instance — on its fourth confirmed occurrence, and this time the un-swept sibling is the federation path. A second finding (FR-056) was discovered by obeying V16: correct change-propagation turns the CI graph gate red, so the incentive runs against the discipline.",
       "tags": [
         "forensic-review",
         "adoption-readiness",
@@ -1586,7 +1586,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a6b803b846050b70a76159bd8229afbc02686c8d516b903b81d428774ca7a925"
+      "sourceSha256": "eb4ee397f9d5c03173fe87d5d96820e078bcc99b154627311033db26810e1e7c"
     },
     {
       "id": "forensic-review-rev42-backlog",
@@ -1622,7 +1622,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4cdd5392350c2f8760ea9ecafef384d26960d64739fa20d89add4a3c52ea2a6f"
+      "sourceSha256": "553e2f6c3e22e4be5da53c92b513bc6d34278b42442e1e8104c32d72f8f2aeb7"
     },
     {
       "id": "lens-code-doc-join",
@@ -3208,5 +3208,5 @@ window.DOCS_INDEX = {
       "artifactId": "backtest-optimize-graph"
     }
   ],
-  "graphSha256": "6f62f14ae536e3e1d63984ae12d221253c73525f0d8fac4e06e1033e09b363ee"
+  "graphSha256": "2c4b2b5040aa570382c1ccbea84997a72b4eaad65f4cc83bb03155802fa73d51"
 };

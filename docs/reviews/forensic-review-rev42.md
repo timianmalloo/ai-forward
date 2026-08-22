@@ -16,7 +16,7 @@ summary: >-
   Forensic assessment at commit e4eae82 (revision 42), clean tree, all seven CI gates green and
   verified green on a runner. Four findings carried from revision 33 are now verified RESOLVED and
   the largest standing residual risk — "CI has never executed on a runner" — is closed by evidence.
-  Eight findings remain or are new. The dominant one is convergent, not incidental: the three newest
+  Nine findings remain or are new. The dominant one is convergent, not incidental: the three newest
   capabilities (/dream, /apply-learnings, /optimize-graph) have neither unit tests nor eval cases,
   while writing durable cross-repo stores. That is RIG-C — sweep stopped at the instance — on its
   fourth confirmed occurrence, and this time the un-swept sibling is the federation path. A second
@@ -80,7 +80,7 @@ That last row matters most. The repository's most-repeated caveat across three p
 
 ## 4. Findings
 
-Eight findings. Full evidence, disconfirming checks and acceptance criteria in `docs/backlog/forensic-review-rev42.md`.
+Nine findings. Full evidence, disconfirming checks and acceptance criteria in `docs/backlog/forensic-review-rev42.md`.
 
 | id | kind | pri | title | confidence |
 |---|---|---|---|---|
@@ -89,11 +89,18 @@ Eight findings. Full evidence, disconfirming checks and acceptance criteria in `
 | FR-051 | risk | P2 | Public explainer: three CDN dependencies, zero ARIA, no skip link (carried FR-039) | Verified |
 | FR-052 | issue | P2 | The system-of-record audit log silently discards a malformed line; a marker-store write failure is swallowed | Verified |
 | FR-056 | issue | P2 | A correct V16 propagation turns the CI graph gate red until every flag is hand-cleared | Verified |
+| FR-057 | issue | P2 | The documented local verification is not equivalent to CI, and never diffs its own sync | Verified |
 | FR-053 | issue | P3 | Four file handles opened without a context manager in `audit-log.py` | Verified |
 | FR-054 | todo | P3 | `docs-graph.py` is 1,599 lines with three functions over 90 | Verified |
 | FR-055 | issue | P3 | `npm run test:docs-explorer:core` is not portable to Windows (PACK-C sibling) | Verified |
 
-**FR-056 was found by obeying the pack's own mandate, not by reading code.** Marking the prior review `superseded` and running the V16-mandated `docs-graph.py flag` propagated `review-suggested` to four inbound neighbours — and `validate`, which is CI gate G5, exits non-zero on *any* flag. So propagating a change correctly turns `main` red until every flagged owner responds, while *skipping* the propagation leaves CI green and is undetectable. The incentive runs against the discipline. V16 calls the flag "a suggestion with provenance"; the gate calls it a build failure. The pack's own `freshness` command already solves this with `--gate warn|fail`; `validate` has no equivalent.
+**Two findings were discovered by doing the work rather than reading code, and they are the same shape from opposite directions.**
+
+**FR-056** — marking the prior review `superseded` and running the V16-mandated `docs-graph.py flag` propagated `review-suggested` to four inbound neighbours, and `validate` (CI gate G5) exits non-zero on *any* flag. Propagating a change correctly turns `main` red until every flagged owner responds; *skipping* the propagation leaves CI green and is undetectable. V16 calls the flag "a suggestion with provenance"; the gate calls it a build failure. The pack's own `freshness` command already solves this with `--gate warn|fail`.
+
+**FR-057** — this review's own artifacts entered the graph, and my final local pass (G1, G5, G6 — all green) missed the drift gate. CI then failed on `web/pack-index.js`. The documented local command, `verify-bundle.ps1`, **would not have caught it either**: it runs `sync-pack.ps1` but never runs the `git diff --exit-code` comparison, so it silently *creates* the corrected file and reports `CONSISTENT`. Fixed in `2b5fb9a`; CI green.
+
+Together: **compliance is punished (FR-056) and non-compliance is invisible (FR-057)** — in a repository whose central invariant is that generated surfaces must never drift from their source. Both are one comparison away from correct.
 
 ### FR-049 is the finding of this review, and it is convergent
 

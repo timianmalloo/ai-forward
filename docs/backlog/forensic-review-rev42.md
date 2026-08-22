@@ -154,6 +154,24 @@ summary: >-
   - [ ] The chosen semantics are stated in `knowledge-visualization.md` so gate behaviour and V16's wording agree.
 - **Validation.** `pytest tests/docs_explorer/test_docs_graph.py`; flag a node and confirm the gate's verdict matches the documented intent. **Owner:** maintainer. **Next skill:** `/implement`.
 
+## FR-057 — The documented local verification is not equivalent to CI, and its sync step is never compared
+
+- **Kind:** `issue` · **Priority:** P2 · **Status:** `proposed`
+- **Scope:** `tools/verify-bundle.ps1`, contributor documentation
+- **Evidence (Verified — by making the mistake during this review, then reproducing it).** `verify-bundle.ps1` runs **three** steps: `sync-pack.ps1`, `check-consistency.py`, `foundation-check.py`. CI's `pack-consistency` runs **seven** gates. The omissions that matter:
+  1. It runs `sync-pack.ps1` but **never runs the `git diff --exit-code` comparison**. Regeneration without comparison cannot detect drift — it *creates* the corrected file and leaves it uncommitted, then reports `CONSISTENT`.
+  2. It does not run `pytest`, `docs-graph.py validate`, the Docs Explorer core tests, or the eval-case check.
+- **Live reproduction.** During this review the two new artifacts entered the knowledge graph. I ran `docs-graph derive`, `build-docs-portal.py`, `check-consistency.py` (**PASS**), `docs-graph validate` (**PASS**) and `foundation-check.py` (**PASS**) — then committed and pushed. **CI failed** on the drift gate: `web/pack-index.js`, 24 insertions / 6 deletions, because only `sync-pack.ps1` regenerates it and only the diff step compares it. Fixed in `2b5fb9a`; CI green.
+- **Violated contract.** `end-to-end-integrity.md` **E13** (*a gate's green result is evidence the gate passed, not that its contents passed*) and **E14** (*read the state back — an exit code is not a result*): `verify-bundle.ps1` reports success having performed a regeneration whose result it never inspects. Registered class **CI-ENV** (a control proven only where it was authored) is the sibling shape.
+- **Consequence.** A contributor who runs the documented verification gets a green result and a red CI, and — worse — a **dirty tree they did not know they had**. The failure mode is not "CI is stricter"; it is that **the local command performs the fix and then declines to notice it was needed**. This is precisely the incentive problem FR-056 describes, from the opposite direction.
+- **Disconfirming check attempted.** *Is a separate lighter local command intentional (fast inner loop)?* Defensible — but then it must not be presented as *verification*, and it must at minimum fail when its own sync produced a diff, which costs one line. *Did I simply use the wrong command?* Partly — but `verify-bundle.ps1` is the documented one and **would not have caught this either**. Both disconfirmations reduce blame, neither removes the finding.
+- **Recommended remediation.** Smallest correct fix: add the `git diff --exit-code` comparison to `verify-bundle.ps1` immediately after its sync step, so the command that regenerates is also the command that reports drift. Then either extend it to the full seven gates or rename it to reflect what it actually checks and point contributors at a single `verify-all` entry point.
+- **Acceptance criteria (falsifiable).**
+  - [ ] Running `verify-bundle.ps1` on a tree whose generated surfaces are stale **fails**, naming the drifted files — observed failing red-first by reverting a generated file.
+  - [ ] Either the local command runs the same gate set as CI, or the documentation states plainly which gates it does **not** run and names the command that does.
+  - [ ] A clean tree still passes.
+- **Validation.** Revert `web/pack-index.js` to a prior revision, run `verify-bundle.ps1`, confirm it fails. **Owner:** maintainer. **Next skill:** `/implement`.
+
 ---
 
 ## Summary
@@ -161,11 +179,16 @@ summary: >-
 | Priority | Count | Items |
 |---|---|---|
 | **P1** | 1 | FR-049 |
-| P2 | 4 | FR-050, FR-051, FR-052, FR-056 |
+| P2 | 5 | FR-050, FR-051, FR-052, FR-056, FR-057 |
 | P3 | 3 | FR-053, FR-054, FR-055 |
 
-**Kinds:** 5 `issue` · 2 `risk` · 1 `todo`.
+**Kinds:** 6 `issue` · 2 `risk` · 1 `todo`.
 
 **One item gates the readiness verdict: FR-049.** Everything else is deferrable without changing the assessment. Two items (FR-050, FR-051) are carried unchanged from revision 30 and have now survived twelve revisions — the **PACK-B** pattern this repository registered about itself. If they are genuinely won't-do, closing them explicitly is better than carrying them a fourth time.
 
-**FR-056 was discovered by obeying the pack's own mandate** rather than by inspecting code: propagating a supersession exactly as V16 requires turned the CI graph gate red. It is the review's clearest example of a control whose incentives run against the discipline it enforces, and it is cheap to fix.
+**Two findings were discovered by doing the work, not by reading code**, and they are the same shape from opposite directions:
+
+- **FR-056** — obeying the V16 propagation mandate turned the CI graph gate red. *Compliance is punished.*
+- **FR-057** — the documented local verification regenerated a stale artifact, never compared it, and reported CONSISTENT; CI then failed on the drift. *Non-compliance is invisible.*
+
+Together they describe a gate set whose **local and CI halves disagree**, in a repository whose central invariant is that generated surfaces must never drift from their source. Both are cheap to fix and both are one line of comparison away from being correct.
