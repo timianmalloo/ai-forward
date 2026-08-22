@@ -32,7 +32,7 @@ Every one of those is a measurement claim with no measurement behind it. Check i
 
 **IO4 — Absence of instrumentation is a finding, not a neutral state.** "We can't tell" is a defect report about the system, not a property of the universe. Record it, and record what it prevents.
 
-**IO5 — Instrument the agent's own work too.** The pack's own artifacts are subject to this: the audit log records *what happened*, and it MUST also record **how long it took** (`--started` → `started_at` + `duration_seconds`). Skills capture the stamp at grounding (`audit-log.py start`) and pass it at the close. Without it, every future question about the cost of a class of work is unanswerable — which is exactly what happened here.
+**IO5 — Instrument the agent's own work too, and make it default-on.** The pack's own artifacts are subject to this: the audit log records *what happened*, and it MUST also record **how long it took**. The mechanism is deliberately **not** a flag someone has to remember — a skill marks its start at grounding (`audit-log.py start --session <id>`, the Audit Mandate AL4a) and the closing `append` picks the stamp up **automatically**, recording `started_at` and `duration_seconds` with nothing extra passed. *An opt-in measurement is not "measurable by default" (IO1); it is a measurement that will be forgotten.* Without this, every future question about the cost of a class of work is unanswerable — which is exactly what happened here.
 
 **IO6 — Instrument the cost axes, not only the correctness ones.** Latency, spend/tokens, volume and failure rate are the four that make optimization possible at all. `ci-and-test-efficiency.md` CE1–CE2 makes the same point from the other end: **profile before optimizing, because the bottleneck is reliably not the suspect.** You cannot profile what does not emit.
 
@@ -87,7 +87,7 @@ The through-line: **the pack's whole posture is that a claim must be established
 - [ ] At least one real run has been observed and the value **read back** (IO10.3, E14).
 - [ ] No claim about deployed behaviour rests on reading the source; the **tells** in IO3 were swept.
 - [ ] **Cost axes** — latency, spend/tokens, volume, failure rate — are instrumented, not just correctness (IO6).
-- [ ] The agent's own run recorded its **duration** (`--started`), not just its timestamp (IO5).
+- [ ] The agent's own run recorded its **duration** automatically via the AL4a start marker — not opt-in, not forgotten (IO5).
 - [ ] Any modeled figure is labelled **Inferred**, states its model, and **names the instrumentation gap** that forced it (IO7).
 - [ ] Every measurement path **degrades to "not recorded"** rather than to a plausible wrong value (IO8).
 - [ ] Gaps hit during the work were **closed**, not modeled around (IO9).
@@ -104,4 +104,5 @@ The through-line: **the pack's whole posture is that a claim must be established
 - **`ci-and-test-efficiency.md`** — CE1–CE3: profile before optimizing, and the measured lesson that the bottleneck is reliably not the suspect.
 - **`execution-graph-optimization.md`** — GO3 (measured, or labelled Inferred) and GO18 (record planned vs actual); the back-test that had to model time and tokens is IO1's worked failure.
 - **`continuous-improvement.md`** — CI6's control ladder: an instrumentation gap closed by a control outranks one closed by a note.
-- **`scripts/audit-log.py`** — `start` and `append --started` are the pack's own IO5 implementation, added after this exact gap was hit.
+- **`scripts/audit-log.py`** — `start --session` (at grounding) + automatic pickup in `append` are the pack's own IO5 implementation, added after this exact gap was hit and then made **default-on** because an opt-in flag is a measurement waiting to be forgotten.
+- **`audit-and-change-log.md`** — **AL4a** (mark the start as the first action) and **AL5** (append as the last); together they make every skill run self-timing.

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-08-22T17:00:31Z",
+  "generated": "2026-08-22T17:06:13Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1545,6 +1545,39 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "dc5ffc7b72ce97a605677d55e53731eb64dd9161",
         "short": "dc5ffc7b7",
+        "branch": "main",
+        "pushed": false
+      }
+    },
+    {
+      "id": "al-0071",
+      "shortname": "instrumentation-default-on",
+      "datetime": "2026-08-22T17:06:13Z",
+      "session": "ad91aa43-d81e-4926-b3f2-5c242f25a7a1",
+      "prompt": "also a key principle that must be applied to all reasoning in any repo derived from this repo (and this repo itself) is instrumentation over inference. There is still a tendency to assume or infer on deployed solutions instead of ensuring we have the instrumentation coverage to measure precisely and deterministically. This should be both a directive and a gate where any feature delivered must be instrumented so that measurement is available by default. This even goes for the issue you had in the audit log where completion times for prompts were not present.",
+      "summary": "Closed my own IO1 violation. Revision 41 shipped duration capture as an OPT-IN flag (append --started), which is not 'measurable by default' - it is a measurement waiting to be forgotten, the exact failure IO1 names. Now default-on: audit-log.py start --session persists the run start keyed by session at grounding (new mandate AL4a) and append picks it up AUTOMATICALLY with no flag and no variable threaded through; explicit --started still overrides. Marker store docs/audit/.run-starts.json is git-ignored ephemeral state, auto-pruned after 7 days, consumed on use so one marker measures one run. EVERY degradation path yields no duration rather than a wrong one (IO8): absent/unknown session, corrupt store, unparseable stamp, clock skew. Verified in a scratch repo across three cases - duration recorded with NO flag (2s), second append on the same session correctly has none, unknown session no-ops without crashing. The gitignore was verified by READING THE STATE BACK (git check-ignore -v + git status), not by trusting the write, per defect class OPS-B. The consistency gate then caught the new path as a promise-with-no-source (PACK-E control); resolved honestly via its own PROMISED_PATH_ALLOWLIST with a stated reason rather than by rewording to evade it. INSTALL rev 41->42.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "pack/scripts/audit-log.py",
+        "pack/knowledge/audit-and-change-log.md",
+        "pack/knowledge/instrumentation-over-inference.md",
+        "tools/check-consistency.py"
+      ],
+      "tags": [
+        "instrumentation",
+        "io1",
+        "default-on",
+        "measurement"
+      ],
+      "outcome": "success",
+      "started_at": "2026-08-22T17:00:13Z",
+      "duration_seconds": 360.0,
+      "git": {
+        "sha": "ea09ac399891a24aecf6558b1fb31d7f640a2524",
+        "short": "ea09ac399",
         "branch": "main",
         "pushed": false
       }

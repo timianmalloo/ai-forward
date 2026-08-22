@@ -54,3 +54,8 @@ _site/
 # they are LOCAL working/record data - never committed to the public repo, never published.
 learnings/manifests/
 learnings/plans/
+
+# Per-run start markers for audit duration capture (IO1). Ephemeral session state, not
+# project history: absence degrades to 'no duration recorded', never to a wrong one.
+docs/audit/.run-starts.json
+docs/audit/.run-starts.json.tmp

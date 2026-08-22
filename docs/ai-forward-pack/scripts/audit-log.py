@@ -83,6 +83,75 @@ def duration_fields(started, ended_iso):
     return {"started_at": s.strftime(ISO), "duration_seconds": round(secs, 1)}
 
 
+# --- run-start markers: make duration DEFAULT-ON (IO1) -------------------------------
+# A flag someone has to remember is not "measurable by default". The grounding step calls
+# `start --session <id>`, which persists the stamp; `append` then picks it up automatically,
+# so no caller threads a variable through and no skill can silently forget the measurement.
+# The store is ephemeral per-run state, not project history -- it is git-ignored, and its
+# absence degrades to "no duration recorded", never to a wrong one (IO8).
+STARTS_FILE = ".run-starts.json"
+STARTS_MAX_AGE_DAYS = 7
+
+
+def _starts_path(root):
+    return os.path.join(audit_dir(root), STARTS_FILE)
+
+
+def _read_starts(root):
+    try:
+        with open(_starts_path(root), "r", encoding="utf-8") as f:
+            d = json.load(f)
+        return d if isinstance(d, dict) else {}
+    except (OSError, ValueError):
+        return {}  # unreadable/corrupt -> no duration, never a wrong duration (IO8)
+
+
+def _write_starts(root, data):
+    p = _starts_path(root)
+    try:
+        os.makedirs(os.path.dirname(p), exist_ok=True)
+        tmp = p + ".tmp"
+        with open(tmp, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, sort_keys=True)
+        os.replace(tmp, p)
+    except OSError:
+        pass  # never let bookkeeping fail the audit write itself
+
+
+def _prune_starts(data):
+    """Drop markers older than the max age so an abandoned run cannot later attach an absurd
+    duration to an unrelated entry."""
+    cutoff = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=STARTS_MAX_AGE_DAYS)
+    out = {}
+    for k, v in data.items():
+        t = parse_iso(v)
+        if t is not None and t >= cutoff:
+            out[k] = v
+    return out
+
+
+def record_start(root, session, stamp=None):
+    stamp = stamp or now_iso()
+    data = _prune_starts(_read_starts(root))
+    if session:
+        data[str(session)] = stamp
+    _write_starts(root, data)
+    return stamp
+
+
+def consume_start(root, session):
+    """Return the recorded start for this session and clear it, so one marker measures one
+    run. Returns None when there is none -- which degrades to no duration (IO8)."""
+    if not session:
+        return None
+    data = _prune_starts(_read_starts(root))
+    stamp = data.pop(str(session), None)
+    if stamp is not None:
+        _write_starts(root, data)
+    return stamp
+
+
+
 def audit_dir(root):
     return os.path.join(root, "audit")
 
@@ -251,10 +320,12 @@ def _from_json(arg):
 
 # ---------- subcommands ----------
 def cmd_start(args):
-    """Instrumentation over inference (IO1): emit the start stamp a skill captures at grounding
-    and passes back as `append --started`, so the run's elapsed time is a measurement rather than
-    something a future reader has to model."""
-    print(now_iso())
+    """Instrumentation over inference (IO1): called as a skill's FIRST action (grounding). It
+    persists the run's start stamp keyed by session, so the closing `append` records
+    duration_seconds automatically -- no flag to remember, no variable to thread through.
+    That is what makes the measurement default-on rather than opt-in."""
+    stamp = record_start(args.root, args.session)
+    print(stamp)
     return 0
 
 
@@ -285,11 +356,14 @@ def cmd_append(args):
         "tags": (args.tag or []) or base.get("tags") or [],
         "outcome": args.outcome or base.get("outcome") or "success",
     }
-    # Instrumentation over inference (IO1): if a start stamp was captured at grounding, the
-    # elapsed time is MEASURED here. Without it a future reader can only model the duration --
-    # which is exactly the gap that forced the optimize-graph back-test to estimate rather than
-    # measure. Absent/unparseable --started degrades to no duration, never a wrong one.
-    entry.update(duration_fields(args.started or base.get("started_at"), entry["datetime"]))
+    # Instrumentation over inference (IO1): duration is DEFAULT-ON. An explicit --started wins;
+    # otherwise the stamp recorded by `start --session` at grounding is picked up automatically,
+    # so no caller has to remember a flag. Absent/unparseable/skewed -> no duration, never a
+    # wrong one (IO8). This closes the gap that forced the optimize-graph back-test to model
+    # elapsed time instead of measuring it.
+    _started = (args.started or base.get("started_at")
+                or consume_start(args.root, session))
+    entry.update(duration_fields(_started, entry["datetime"]))
     if args.change or base.get("change"):
         entry["change"] = args.change or base.get("change")
     if args.git:
@@ -557,8 +631,9 @@ def main():
     ap_imp.add_argument("--file", default="-", help="JSON file (or - for stdin)")
     ap_imp.add_argument("--session"); ap_imp.add_argument("--tool")
 
-    sub.add_parser("start", help="print an ISO-8601 UTC start stamp to pass back as "
-                                 "`append --started` so the run's elapsed time is measured (IO1)")
+    ap_st = sub.add_parser("start", help="record this run's start stamp (call at grounding) so the "
+                                         "closing `append` records duration automatically (IO1)")
+    ap_st.add_argument("--session", help="session id the closing append will use")
 
     args = ap.parse_args()
     dispatch = {

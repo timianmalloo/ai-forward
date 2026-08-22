@@ -69,6 +69,16 @@ Each audit entry records one meaningful action. The five **required** fields are
 
 ## 2. The Audit Mandate — every skill writes to the log
 
+**AL4a — Mark the run's start as the first action (instrumentation over inference, IO1).** Every skill, as part of its **grounding step**, **MUST** record the run's start so its elapsed time is **measured rather than modeled**:
+
+```bash
+python3 docs/ai-forward-pack/scripts/audit-log.py start --session "<id>"
+```
+
+This persists the stamp keyed by session; the closing `append` (AL5) then records `started_at` and `duration_seconds` **automatically** — there is no flag to remember and no variable to thread through, which is what makes the measurement *default-on* rather than opt-in. An explicit `--started <ISO>` overrides it when a caller genuinely knows better.
+
+**Why this is mandatory rather than nice-to-have:** the log recorded a single `datetime` and no duration for its first 750 entries, so *not one* measured elapsed time existed and a later analysis had to **model** run cost instead of reading it. You cannot backfill a measurement nobody took. Degradation is deliberate and safe — an absent, unparseable, or clock-skewed start yields **no duration**, never a wrong one (IO8).
+
 **AL5 — Append an audit entry as the last action.** Every skill, as part of its **last action** (alongside the Discoverability Mandate, V10), **MUST** append an audit-log entry recording the run:
 
 ```bash
@@ -77,6 +87,8 @@ python3 docs/ai-forward-pack/scripts/audit-log.py append \
   --tool "<assistant>" --prompt "<the user prompt, verbatim>" \
   --summary "<what the run produced>" --artifact docs/<...> --tag <keyword> [--git]
 ```
+
+The duration is picked up from the AL4a marker automatically; nothing extra is passed here.
 
 This is the activity-history sibling of writing frontmatter + syncing the index: a skill run that left no trace in the audit log is, like an un-indexed artifact, **not done**. For a long prompt, use `--prompt-file -` (stdin) or pass the whole entry with `--from-json -`. The `/auditlog` skill itself is a **reader** and does not log its own browsing (AL3).
 

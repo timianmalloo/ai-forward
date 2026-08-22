@@ -633,6 +633,8 @@ PROMISED_PATH_ALLOWLIST = {
     "docs/.obsidian/workspace.json": "per-user Obsidian state, deliberately git-ignored (obsidian-lens OB4)",
     "docs/design/conceptual-model.md": "authored by /design when a domain is modelled (DM18)",
     "docs/lessons/defect-classes.md": "seeded per-repo from the template",
+    "docs/audit/.run-starts.json": "written by audit-log.py `start --session` at grounding and consumed by `append`; ephemeral per-run duration markers, git-ignored (AL4a / IO1)",
+    "docs/audit/.run-starts.json.tmp": "atomic-replace temp for the marker store above; never persists",
 }
 
 

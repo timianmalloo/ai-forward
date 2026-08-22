@@ -105,8 +105,9 @@ every non-trivial task.
   the bottleneck"*. Where a measurement genuinely does not exist you may model, but label it
   **Inferred**, state the model, and **name the gap that forced it** — then close the gap rather than
   modeling around it. Every measurement path **degrades to "not recorded", never to a plausible wrong
-  number**. This applies to the agent's own work too: record a run's **duration**, not just its
-  timestamp (`audit-log.py start` → `append --started`).
+  number**. This applies to the agent's own work too: a skill marks its start at grounding
+  (`audit-log.py start --session <id>`) so the closing audit entry records **duration_seconds**
+  automatically — measured, not modeled, with no flag to remember (AL4a).
   `.github/instructions/instrumentation-over-inference.instructions.md` (IO1–IO12).
 - **Personas (dual-mode):** author in Peer Mode, review in Adversary Mode; the author never
   clears its own hard veto. Agents in `.github/agents/`; the operating standard in the
