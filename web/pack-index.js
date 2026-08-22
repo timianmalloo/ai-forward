@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 87
+"count": 89
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 227,
+"total": 229,
 "items": [
 {
 "cat": "knowledge",
@@ -1534,11 +1534,11 @@ window.PACK_INDEX = {
 {
 "cat": "graph",
 "id": "forensic-review",
-"title": "Forensic Review — AI-Forward repository (revision 30)",
+"title": "Forensic Review — AI-Forward repository (revisions 30 & 33)",
 "summary": "Adoption-readiness assessment at commit 2227632 (revision 30), scoped to inconsistencies and contradictions. Every self-declared gate is green and the repository is still not ready to hand to adopters. Two findings dominate: 183 documented…",
 "path": "docs/reviews/forensic-review.md",
 "kind": "doc",
-"text": "forensic review — ai-forward repository (revision 30) adoption-readiness assessment at commit 2227632 (revision 30), scoped to inconsistencies and contradictions. every self-declared gate is green and the repository is still not ready to hand to adopters. two findings dominate: 183 documented commands invoke `python3`, which on a default windows install is a broken store alias, and the copilot surface receives 11 of the 23 personas the deployment map promises — first raised twelve revisions ago, never closed. forensic-review adoption-readiness consistency ci documentation portability documents architecture relates-to forensic-review-backlog supersedes forensic-review-20260802"
+"text": "forensic review — ai-forward repository (revisions 30 & 33) adoption-readiness assessment at commit 2227632 (revision 30), scoped to inconsistencies and contradictions. every self-declared gate is green and the repository is still not ready to hand to adopters. two findings dominate: 183 documented commands invoke `python3`, which on a default windows install is a broken store alias, and the copilot surface receives 11 of the 23 personas the deployment map promises — first raised twelve revisions ago, never closed. forensic-review adoption-readiness consistency ci documentation portability documents architecture relates-to forensic-review-backlog supersedes forensic-review-20260802"
 },
 {
 "cat": "graph",
@@ -1570,11 +1570,11 @@ window.PACK_INDEX = {
 {
 "cat": "graph",
 "id": "forensic-review-backlog",
-"title": "Forensic Review Backlog — AI-Forward repository (revision 30)",
+"title": "Forensic Review Backlog — AI-Forward repository (revisions 30 & 33)",
 "summary": "Twelve items (FR-031..FR-042) from the revision-30 review, ordered into four independently deliverable phases. Nine are RESOLVED at revisions 31-32 (FR-031..FR-035, FR-037, FR-038, FR-040..FR-042); three remain open (FR-036, FR-039, and…",
 "path": "docs/backlog/forensic-review.md",
 "kind": "doc",
-"text": "forensic review backlog — ai-forward repository (revision 30) twelve items (fr-031..fr-042) from the revision-30 review, ordered into four independently deliverable phases. nine are resolved at revisions 31-32 (fr-031..fr-035, fr-037, fr-038, fr-040..fr-042); three remain open (fr-036, fr-039, and the unverified end-to-end adoption path). two proposals were overturned at triage by establishing the contract rather than trusting the finding. backlog forensic-review adoption-readiness triage refines forensic-review supersedes forensic-review-20260802-backlog"
+"text": "forensic review backlog — ai-forward repository (revisions 30 & 33) twelve items (fr-031..fr-042) from the revision-30 review, ordered into four independently deliverable phases. nine are resolved at revisions 31-32 (fr-031..fr-035, fr-037, fr-038, fr-040..fr-042); three remain open (fr-036, fr-039, and the unverified end-to-end adoption path). two proposals were overturned at triage by establishing the contract rather than trusting the finding. backlog forensic-review adoption-readiness triage refines forensic-review supersedes forensic-review-20260802-backlog"
 },
 {
 "cat": "graph",
@@ -1584,6 +1584,24 @@ window.PACK_INDEX = {
 "path": "docs/backlog/forensic-review-20260712-model-orchestration.md",
 "kind": "doc",
 "text": "forensic review backlog — model orchestration historical remediation backlog from the model-orchestration forensic review. the capability was reverted; orchestration-specific items are closed by removal. fr-008 and residual fr-010 remain independent repository findings. backlog model-orchestration refines forensic-review-20260712 depends-on architecture"
+},
+{
+"cat": "graph",
+"id": "forensic-review-rev42",
+"title": "Forensic Review — AI-Forward repository (revision 42)",
+"summary": "Forensic assessment at commit e4eae82 (revision 42), clean tree, all seven CI gates green and verified green on a runner. Four findings carried from revision 33 are now verified RESOLVED and the largest standing residual risk — \"CI has…",
+"path": "docs/reviews/forensic-review-rev42.md",
+"kind": "doc",
+"text": "forensic review — ai-forward repository (revision 42) forensic assessment at commit e4eae82 (revision 42), clean tree, all seven ci gates green and verified green on a runner. four findings carried from revision 33 are now verified resolved and the largest standing residual risk — \"ci has never executed on a runner\" — is closed by evidence. eight findings remain or are new. the dominant one is convergent, not incidental: the three newest capabilities (/dream, /apply-learnings, /optimize-graph) have neither unit tests nor eval cases, while writing durable cross-repo stores. that is rig-c — sweep stopped at the instance — on its fourth confirmed occurrence, and this time the un-swept sibling is the federation path. a second finding (fr-056) was discovered by obeying v16: correct change-propagation turns the ci graph gate red, so the incentive runs against the discipline. forensic-review adoption-readiness testing verification documentation ci documents architecture relates-to forensic-review-rev42-backlog supersedes forensic-review"
+},
+{
+"cat": "graph",
+"id": "forensic-review-rev42-backlog",
+"title": "Forensic Review Backlog — revision 42",
+"summary": "Proposed backlog from the revision-42 forensic review at commit e4eae82. Seven items in four phases. FR-049 is the only P1 and gates the readiness verdict: the /dream, /apply-learnings and /optimize-graph cluster writes durable cross-repo…",
+"path": "docs/backlog/forensic-review-rev42.md",
+"kind": "doc",
+"text": "forensic review backlog — revision 42 proposed backlog from the revision-42 forensic review at commit e4eae82. seven items in four phases. fr-049 is the only p1 and gates the readiness verdict: the /dream, /apply-learnings and /optimize-graph cluster writes durable cross-repo stores with neither unit tests nor eval cases, which is rig-c on its fourth occurrence. two items are carried unchanged from revisions 30 and 33. every item stops at proposal — triage before any remediation. forensic-review backlog testing verification documentation accessibility relates-to forensic-review-rev42 relates-to architecture relates-to defect-classes"
 },
 {
 "cat": "graph",
