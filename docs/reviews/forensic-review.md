@@ -1,8 +1,8 @@
 ---
 id: forensic-review
-title: "Forensic Review — AI-Forward repository (revision 30)"
+title: "Forensic Review — AI-Forward repository (revisions 30 & 33)"
 type: doc
-status: accepted
+status: superseded
 owner: "@timianmalloo"
 phase: "pack-evolution"
 tags: [forensic-review, adoption-readiness, consistency, ci, documentation, portability]

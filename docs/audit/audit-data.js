@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-08-22T17:06:13Z",
+  "generated": "2026-08-22T18:31:24Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1580,6 +1580,37 @@ window.AUDIT_DATA = {
         "short": "ea09ac399",
         "branch": "main",
         "pushed": false
+      }
+    },
+    {
+      "id": "al-0072",
+      "shortname": "forensicreview-ai-forward-rev42",
+      "datetime": "2026-08-22T18:31:24Z",
+      "session": "ad91aa43-d81e-4926-b3f2-5c242f25a7a1",
+      "prompt": "push everything then /forensicreview",
+      "summary": "Forensic review at e4eae82 (revision 42), clean tree. Baseline: all SEVEN CI gates green locally (pytest 183 passed/1 skipped/122 subtests; graph 0 problems/orphans/stale/drift across 87 artifacts; no source-install drift; 26 eval cases; foundation clean). VERIFIED CLOSED since rev 33: FR-044/FR-045 (now gated by check_promised_paths), FR-047 (swept - all 16 deployed scripts respond to --help on Windows), FR-048 (web/ inside the drift gate), and the largest standing residual risk since rev 32 - CI HAS NOW EXECUTED ON A RUNNER (12 runs; pack-consistency green on the target commit). EIGHT findings. P1 FR-049 is convergent and gates the verdict: dream.py and apply-learnings.py have NO tests and dream/apply-learnings/optimize-graph have NO eval cases, while those scripts write the fleet learnings store, the defect register, and plans that mutate OTHER repos - FR-046 fixed its named instance (scrub.py) and never swept the class, making this RIG-C's fourth occurrence. FR-056 was discovered by OBEYING the pack's own V16 mandate: propagating a supersession flagged four inbound neighbours and docs-graph validate (CI gate G5) exits non-zero on any flag, so correct propagation turns main red while skipping it stays green and undetectable - the incentive runs against the discipline. Also FR-050 (docs/_site 12 revisions stale, carried FR-036), FR-051 (explainer 3 CDN deps, 0 aria, no skip link, carried FR-039 unchanged), FR-052 (the system-of-record audit log silently discards a malformed JSONL line), FR-053, FR-054, FR-055. A delegated implementation scan reported 'silent-failure: none found' which was materially WRONG - direct inspection found six exception swallows in audit-log.py including one I added this session; FR-052 exists because the delegated claim was checked (E16). Verdict: ADOPTABLE, conditional on FR-049. No production code, dependency, schema, CI behaviour or runtime config changed - docs only. Stopped for human triage.",
+      "kind": "skill",
+      "skill": "forensicreview",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/reviews/forensic-review-rev42.md",
+        "docs/backlog/forensic-review-rev42.md"
+      ],
+      "tags": [
+        "forensic-review",
+        "adoption-readiness",
+        "testing",
+        "rig-c"
+      ],
+      "outcome": "success",
+      "started_at": "2026-08-22T18:17:07Z",
+      "duration_seconds": 857.0,
+      "git": {
+        "sha": "e4eae82fab8840d6296a0a7435f0233d05ad85a3",
+        "short": "e4eae82fa",
+        "branch": "main",
+        "pushed": true
       }
     }
   ],

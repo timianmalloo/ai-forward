@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-Forward",
-  "generated": "2026-08-22T17:05:05Z",
+  "generated": "2026-08-22T18:30:47Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1363,9 +1363,9 @@ window.DOCS_INDEX = {
     {
       "id": "forensic-review",
       "path": "docs/reviews/forensic-review.md",
-      "title": "Forensic Review — AI-Forward repository (revision 30)",
+      "title": "Forensic Review — AI-Forward repository (revisions 30 & 33)",
       "type": "doc",
-      "status": "accepted",
+      "status": "superseded",
       "owner": "@timianmalloo",
       "phase": "pack-evolution",
       "reviewBy": "2026-11-08",
@@ -1394,7 +1394,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "60d6556eea4a4a56a7dc4f0a4c97509bc4782930b3edf2d56d76d35981570317"
+      "sourceSha256": "3ad50771ca4b95400a6af418f366f314636bfb1893d3908343fb9fd45304dac1"
     },
     {
       "id": "forensic-review-20260712",
@@ -1497,9 +1497,9 @@ window.DOCS_INDEX = {
     {
       "id": "forensic-review-backlog",
       "path": "docs/backlog/forensic-review.md",
-      "title": "Forensic Review Backlog — AI-Forward repository (revision 30)",
+      "title": "Forensic Review Backlog — AI-Forward repository (revisions 30 & 33)",
       "type": "doc",
-      "status": "accepted",
+      "status": "superseded",
       "owner": "@timianmalloo",
       "phase": "pack-evolution",
       "reviewBy": "2026-11-08",
@@ -1522,7 +1522,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "044ba2d9f8fded68d249becbeb2104db9c2d89043bc94fa934f9125bfe81a145"
+      "sourceSha256": "c4411d9595b1c3b09a77b6929db90fc253c5ae9de95e0ca0205bbf7fbc0e9d20"
     },
     {
       "id": "forensic-review-backlog-20260712",
@@ -1551,6 +1551,78 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "6c4e8d947e823f9469d0f76eabe6cf2059f14662712f1e983faf0319d4fd49aa"
+    },
+    {
+      "id": "forensic-review-rev42",
+      "path": "docs/reviews/forensic-review-rev42.md",
+      "title": "Forensic Review — AI-Forward repository (revision 42)",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2026-11-20",
+      "reviewSuggested": [],
+      "summary": "Forensic assessment at commit e4eae82 (revision 42), clean tree, all seven CI gates green and verified green on a runner. Four findings carried from revision 33 are now verified RESOLVED and the largest standing residual risk — \"CI has never executed on a runner\" — is closed by evidence. Eight findings remain or are new. The dominant one is convergent, not incidental: the three newest capabilities (/dream, /apply-learnings, /optimize-graph) have neither unit tests nor eval cases, while writing durable cross-repo stores. That is RIG-C — sweep stopped at the instance — on its fourth confirmed occurrence, and this time the un-swept sibling is the federation path. A second finding (FR-056) was discovered by obeying V16: correct change-propagation turns the CI graph gate red, so the incentive runs against the discipline.",
+      "tags": [
+        "forensic-review",
+        "adoption-readiness",
+        "testing",
+        "verification",
+        "documentation",
+        "ci"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        },
+        {
+          "to": "forensic-review-rev42-backlog",
+          "rel": "relates-to"
+        },
+        {
+          "to": "forensic-review",
+          "rel": "supersedes"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "a6b803b846050b70a76159bd8229afbc02686c8d516b903b81d428774ca7a925"
+    },
+    {
+      "id": "forensic-review-rev42-backlog",
+      "path": "docs/backlog/forensic-review-rev42.md",
+      "title": "Forensic Review Backlog — revision 42",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2026-11-20",
+      "reviewSuggested": [],
+      "summary": "Proposed backlog from the revision-42 forensic review at commit e4eae82. Seven items in four phases. FR-049 is the only P1 and gates the readiness verdict: the /dream, /apply-learnings and /optimize-graph cluster writes durable cross-repo stores with neither unit tests nor eval cases, which is RIG-C on its fourth occurrence. Two items are carried unchanged from revisions 30 and 33. Every item stops at proposal — triage before any remediation.",
+      "tags": [
+        "forensic-review",
+        "backlog",
+        "testing",
+        "verification",
+        "documentation",
+        "accessibility"
+      ],
+      "links": [
+        {
+          "to": "forensic-review-rev42",
+          "rel": "relates-to"
+        },
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "4cdd5392350c2f8760ea9ecafef384d26960d64739fa20d89add4a3c52ea2a6f"
     },
     {
       "id": "lens-code-doc-join",
@@ -3136,5 +3208,5 @@ window.DOCS_INDEX = {
       "artifactId": "backtest-optimize-graph"
     }
   ],
-  "graphSha256": "bb1aa03523e943a83f113ec77df6a84dd42a28fdbfcb23be61ba63c1f5412dd9"
+  "graphSha256": "6f62f14ae536e3e1d63984ae12d221253c73525f0d8fac4e06e1033e09b363ee"
 };

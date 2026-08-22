@@ -919,7 +919,7 @@ window.PORTAL_DATA = {
       {
         "id": "forensic-review",
         "type": "doc",
-        "title": "Forensic Review — AI-Forward repository (revision 30)",
+        "title": "Forensic Review — AI-Forward repository (revisions 30 & 33)",
         "summary": "Adoption-readiness assessment at commit 2227632 (revision 30), scoped to inconsistencies and contradictions. Every self-declared gate is green and the..."
       },
       {
@@ -943,7 +943,7 @@ window.PORTAL_DATA = {
       {
         "id": "forensic-review-backlog",
         "type": "doc",
-        "title": "Forensic Review Backlog — AI-Forward repository (revision 30)",
+        "title": "Forensic Review Backlog — AI-Forward repository (revisions 30 & 33)",
         "summary": "Twelve items (FR-031..FR-042) from the revision-30 review, ordered into four independently deliverable phases. Nine are RESOLVED at revisions 31-32..."
       },
       {
@@ -951,6 +951,18 @@ window.PORTAL_DATA = {
         "type": "doc",
         "title": "Forensic Review Backlog — Model orchestration",
         "summary": "Historical remediation backlog from the model-orchestration forensic review. The capability was reverted; orchestration-specific items are closed by removal...."
+      },
+      {
+        "id": "forensic-review-rev42",
+        "type": "doc",
+        "title": "Forensic Review — AI-Forward repository (revision 42)",
+        "summary": "Forensic assessment at commit e4eae82 (revision 42), clean tree, all seven CI gates green and verified green on a runner. Four findings carried from revision..."
+      },
+      {
+        "id": "forensic-review-rev42-backlog",
+        "type": "doc",
+        "title": "Forensic Review Backlog — revision 42",
+        "summary": "Proposed backlog from the revision-42 forensic review at commit e4eae82. Seven items in four phases. FR-049 is the only P1 and gates the readiness verdict: the..."
       },
       {
         "id": "investigation-blank-explainer-live",
@@ -1721,6 +1733,36 @@ window.PORTAL_DATA = {
         "from": "forensic-review-backlog-20260712",
         "to": "forensic-review-20260712",
         "rel": "refines"
+      },
+      {
+        "from": "forensic-review-rev42",
+        "to": "architecture",
+        "rel": "documents"
+      },
+      {
+        "from": "forensic-review-rev42",
+        "to": "forensic-review",
+        "rel": "supersedes"
+      },
+      {
+        "from": "forensic-review-rev42",
+        "to": "forensic-review-rev42-backlog",
+        "rel": "relates-to"
+      },
+      {
+        "from": "forensic-review-rev42-backlog",
+        "to": "architecture",
+        "rel": "relates-to"
+      },
+      {
+        "from": "forensic-review-rev42-backlog",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "forensic-review-rev42-backlog",
+        "to": "forensic-review-rev42",
+        "rel": "relates-to"
       },
       {
         "from": "investigation-blank-explainer-live",

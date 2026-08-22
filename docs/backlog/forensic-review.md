@@ -1,8 +1,8 @@
 ---
 id: forensic-review-backlog
-title: "Forensic Review Backlog — AI-Forward repository (revision 30)"
+title: "Forensic Review Backlog — AI-Forward repository (revisions 30 & 33)"
 type: doc
-status: accepted
+status: superseded
 owner: "@timianmalloo"
 phase: "pack-evolution"
 tags: [backlog, forensic-review, adoption-readiness, triage]
