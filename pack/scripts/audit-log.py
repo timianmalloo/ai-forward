@@ -22,6 +22,8 @@ Subcommands
   get         Print one entry by --id (use --field prompt to extract the prompt to re-run).
   render      Regenerate audit-data.js from the JSONL and ensure the viewer exists (repair).
   git-context Print the current git {sha, short, branch, pushed} as JSON (a helper).
+  verify      Fail when any log line is unreadable — the system of record must never lose
+              an entry silently (FR-052). CI-able.
   suggest     Discern unlogged meaningful changes (recent commits + new ADRs/notes not in the change log).
   import      Ingest a session-export JSON array of turns into the audit log (build on session history).
 
@@ -114,8 +116,11 @@ def _write_starts(root, data):
         with open(tmp, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2, sort_keys=True)
         os.replace(tmp, p)
-    except OSError:
-        pass  # never let bookkeeping fail the audit write itself
+    except OSError as exc:
+        # FR-052. Never let bookkeeping fail the audit write itself — but never lose the
+        # measurement silently either (IO8: degrade to "not recorded", AND say so).
+        print(f"warning: could not persist the run-start marker at {p} ({exc}). "
+              f"This run will have no measured duration.", file=sys.stderr)
 
 
 def _prune_starts(data):
@@ -161,19 +166,33 @@ def log_path(root, which):
 
 
 # ---------- JSONL read / append ----------
-def read_log(root, which):
+# FR-052. A malformed line must not be fatal (the log has to keep working) but it must not
+# be INVISIBLE either: this file is the system of record and the corpus /dream mines, so a
+# silently-dropped entry means a consolidation pass reasons over an incomplete corpus while
+# reporting success — a success-shaped failure in the system built to prevent them. So the
+# read still succeeds, and every skip is counted, warned about, and assertable by `verify`.
+LOG_READ_SKIPS = []
+
+
+def read_log(root, which, warn=True):
     p = log_path(root, which)
     if not os.path.exists(p):
         return []
     out = []
-    for ln in open(p, encoding="utf-8"):
-        ln = ln.strip()
-        if not ln:
-            continue
-        try:
-            out.append(json.loads(ln))
-        except json.JSONDecodeError:
-            pass  # a malformed line is skipped, never fatal — the log keeps working
+    with open(p, encoding="utf-8") as handle:
+        for lineno, ln in enumerate(handle, 1):
+            ln = ln.strip()
+            if not ln:
+                continue
+            try:
+                out.append(json.loads(ln))
+            except json.JSONDecodeError as exc:
+                LOG_READ_SKIPS.append({"file": p, "line": lineno, "error": str(exc)})
+                if warn:
+                    print(f"warning: {p}:{lineno} is not valid JSON and was SKIPPED ({exc}). "
+                          f"This log is the system of record — repair the line; "
+                          f"`audit-log.py verify` fails while it is unreadable.",
+                          file=sys.stderr)
     return out
 
 
@@ -290,14 +309,17 @@ def render(root, project=None):
     body = ("// Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit"
             " (the JSONL logs are the source of truth; see audit-and-change-log.md).\n"
             "window.AUDIT_DATA = " + payload + ";\n")
-    open(os.path.join(audit_dir(root), "audit-data.js"), "w", encoding="utf-8").write(body)
+    with open(os.path.join(audit_dir(root), "audit-data.js"), "w", encoding="utf-8") as out:
+        out.write(body)
     idx = os.path.join(audit_dir(root), "index.html")
     tpl = find_template()
     if tpl:
-        viewer = open(tpl, encoding="utf-8").read().replace(
-            "__PROJECT__", html.escape(data["project"], quote=True)
-        )
-        open(idx, "w", encoding="utf-8").write(viewer)
+        with open(tpl, encoding="utf-8") as src:
+            viewer = src.read().replace(
+                "__PROJECT__", html.escape(data["project"], quote=True)
+            )
+        with open(idx, "w", encoding="utf-8") as out:
+            out.write(viewer)
     return data
 
 
@@ -306,14 +328,18 @@ def _read_field(value, value_file):
     if value_file:
         if value_file == "-":
             return sys.stdin.read().rstrip("\n")
-        return open(value_file, encoding="utf-8").read().rstrip("\n")
+        with open(value_file, encoding="utf-8") as handle:
+            return handle.read().rstrip("\n")
     return value
-
 
 def _from_json(arg):
     if not arg:
         return {}
-    text = sys.stdin.read() if arg == "-" else open(arg, encoding="utf-8").read()
+    if arg == "-":
+        text = sys.stdin.read()
+    else:
+        with open(arg, encoding="utf-8") as handle:
+            text = handle.read()
     obj = json.loads(text)
     return obj if isinstance(obj, dict) else {}
 
@@ -499,6 +525,29 @@ def cmd_git_context(args):
     return 0
 
 
+def cmd_verify(args):
+    """FR-052. Assert the system of record is fully readable.
+
+    `read_log` deliberately survives a malformed line so the tooling keeps working — but a
+    line that is silently dropped is a line /dream will never see, and the consolidation
+    would report success over an incomplete corpus. This makes the skip COUNTABLE and
+    therefore gateable: exit 1 while any line is unreadable, naming file and line number.
+    """
+    del LOG_READ_SKIPS[:]
+    counts = {}
+    for which in ("audit", "change"):
+        counts[which] = len(read_log(args.root, which, warn=False))
+    if not LOG_READ_SKIPS:
+        print(f"audit log verified: {counts['audit']} audit + {counts['change']} change "
+              f"entries, 0 unreadable lines")
+        return 0
+    for skip in LOG_READ_SKIPS:
+        print(f"UNREADABLE {skip['file']}:{skip['line']}: {skip['error']}", file=sys.stderr)
+    print(f"audit log verify: {len(LOG_READ_SKIPS)} unreadable line(s) — these entries are "
+          f"invisible to every reader, including /dream. Repair them.", file=sys.stderr)
+    return 1
+
+
 def cmd_suggest(args):
     """Advisory: surface meaningful changes that may not be in the change log yet."""
     changes = read_log(args.root, "change")
@@ -536,7 +585,11 @@ def cmd_suggest(args):
 
 def cmd_import(args):
     """Ingest a session-export JSON array of turns into the audit log (build on session history)."""
-    text = sys.stdin.read() if args.file == "-" else open(args.file, encoding="utf-8").read()
+    if args.file == "-":
+        text = sys.stdin.read()
+    else:
+        with open(args.file, encoding="utf-8") as handle:
+            text = handle.read()
     rows = json.loads(text)
     if isinstance(rows, dict):
         rows = rows.get("turns") or rows.get("entries") or [rows]
@@ -623,6 +676,7 @@ def main():
 
     sub.add_parser("render", help="regenerate audit-data.js and ensure the viewer exists")
     sub.add_parser("git-context", help="print current git context as JSON")
+    sub.add_parser("verify", help="fail if any log line is unreadable (FR-052; CI-able)")
 
     ap_sug = sub.add_parser("suggest", help="surface meaningful changes not yet in the change log")
     ap_sug.add_argument("--n", type=int, default=15)
@@ -640,6 +694,7 @@ def main():
         "append": cmd_append, "change": cmd_change, "list": cmd_list, "search": cmd_search,
         "get": cmd_get, "render": cmd_render, "git-context": cmd_git_context,
         "suggest": cmd_suggest, "import": cmd_import, "start": cmd_start,
+        "verify": cmd_verify,
     }
     sys.exit(dispatch[args.cmd](args))
 

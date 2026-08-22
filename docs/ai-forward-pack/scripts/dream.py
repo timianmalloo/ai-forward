@@ -76,6 +76,20 @@ def scrub(text):
             text = rx.sub("[REDACTED]", text)
     return text, hit
 
+def control_text(record):
+    """The control on a learning may be a {rung, text} object (what a dream writes) or a bare
+    string (a hand-edited store, or an older record — this JSONL is a plain committed file
+    anyone can edit). Chaining `.get("control", {}).get("text")` crashed with an unhandled
+    AttributeError on the string form. A genuinely absent control still returns "" and is
+    rejected by the caller, so the CI6 guard is unchanged; only the crash is gone."""
+    control = record.get("control")
+    if isinstance(control, dict):
+        return str(control.get("text") or "").strip()
+    if isinstance(control, str):
+        return control.strip()
+    return ""
+
+
 def is_tainted(sig):
     origin = str(sig.get("origin", "")).lower()
     if origin in UNTRUSTED_ORIGINS:
@@ -431,8 +445,11 @@ def cmd_apply_decisions(args):
             print("  ! {0}: excluded at apply-time (taint/scrub hit) - not promoted".format(pid), file=sys.stderr)
             continue
         scope = dec.get("scope", p.get("scope", "repo-local"))
-        # G2 guard: a promotable learning must carry a falsifiable control
-        if not p.get("control", {}).get("text"):
+        # G2 guard: a promotable learning must carry a falsifiable control.
+        # control_text() tolerates both the {rung,text} object and a bare string; chaining
+        # .get().get() here crashed with AttributeError on the string form (swept as a class
+        # alongside the identical line in apply-learnings.py).
+        if not control_text(p):
             conflicts += 1
             print("  ! {0}: no control - rejected (a lesson without a control is a memoir, CI6)".format(pid), file=sys.stderr)
             continue
@@ -457,10 +474,14 @@ def _promote_fleet(root, rec):
     md = os.path.join(root, "learnings", "fleet-classes.md")
     if not os.path.isfile(md):
         os.makedirs(os.path.dirname(md), exist_ok=True)
-        open(md, "w", encoding="utf-8").write("# Fleet learnings (general, control-bearing classes)\n\n")
+        with open(md, "w", encoding="utf-8") as handle:
+            handle.write("# Fleet learnings (general, control-bearing classes)\n\n")
+    # rec["control"] may be a bare string in a hand-edited store; normalise before .get().
+    control = rec.get("control")
+    control_body = control if isinstance(control, dict) else {"text": control_text(rec), "rung": ""}
     with open(md, "a", encoding="utf-8") as f:
         f.write("\n### {0}\n- **Signature:** {1}\n- **Control:** {2} ({3})\n- **Boundary:** {4}\n- **Confidence:** {5}\n- **From:** {6} / {7}\n".format(
-            rec["sig"][:100], rec["sig"], rec["control"].get("text", ""), rec["control"].get("rung", ""),
+            rec["sig"][:100], rec["sig"], control_body.get("text", ""), control_body.get("rung", ""),
             rec.get("boundary", ""), rec.get("confidence", ""), rec["dream"], rec["proposal"]))
 
 def _promote_repo_local(root, rec):

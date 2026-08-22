@@ -112,6 +112,22 @@ def load_fleet(root):
         by_slug[slug(l.get("sig", ""))] = l
     return list(by_slug.values())
 
+def control_text(record):
+    """The control on a learning may be a {rung, text} object (what a dream writes) or a bare
+    string (a hand-edited store, or an older record — this JSONL is a plain committed file
+    anyone can edit). Chaining `.get("control", {}).get("text")` crashed with an unhandled
+    AttributeError on the string form, in the script that writes into other people's
+    repositories, AFTER it may already have written plans for earlier targets. Neither shape
+    is malformed enough to justify that; a genuinely absent control still returns "" and is
+    skipped by the caller. Swept as a class: the identical line existed in dream.py."""
+    control = record.get("control")
+    if isinstance(control, dict):
+        return str(control.get("text") or "").strip()
+    if isinstance(control, str):
+        return control.strip()
+    return ""
+
+
 def plan_repo(repo, learnings):
     """Reconcile a set of learnings into one target repo -> a plan list (add|merge|conflict|skip).
     Shared by `push --repos` and `push --manifest`; never merges, only plans (ADR-0005)."""
@@ -124,7 +140,7 @@ def plan_repo(repo, learnings):
         if tainted:
             plan.append({"action": "skip", "why": "taint/scrub hit at boundary", **l})
             continue
-        if not l.get("control", {}).get("text"):
+        if not control_text(l):
             plan.append({"action": "skip", "why": "no control (a lesson without a control is a memoir, CI6)", **l})
             continue
         plan.append({"action": reconcile(l, reg), **l})
@@ -156,11 +172,13 @@ def render_manifest_html(root, manifest, learnings, mode):
     data = {"id": manifest["id"], "created": manifest.get("created", ""), "dream": manifest.get("dream"),
             "mode": mode, "repos": repos, "learnings": lrows,
             "assignments": manifest.get("assignments", [])}
-    html = open(tpl, "r", encoding="utf-8").read().replace(
-        "__MANIFEST_DATA__", json.dumps(data, ensure_ascii=False).replace("</", "<\\/"))
+    with open(tpl, "r", encoding="utf-8") as template:
+        html = template.read().replace(
+            "__MANIFEST_DATA__", json.dumps(data, ensure_ascii=False).replace("</", "<\\/"))
     out = os.path.join(root, "learnings", "manifests", manifest["id"] + ".html")
     os.makedirs(os.path.dirname(out), exist_ok=True)
-    open(out, "w", encoding="utf-8").write(html)
+    with open(out, "w", encoding="utf-8") as handle:
+        handle.write(html)
     return out
 
 def render_patch(repo, plan):
@@ -221,7 +239,8 @@ def cmd_push(args):
         plan = plan_repo(repo, learnings)
         patch = render_patch(repo, plan)
         pf = os.path.join(out_dir, os.path.basename(os.path.abspath(repo)) + ".plan.md")
-        open(pf, "w", encoding="utf-8").write(patch)
+        with open(pf, "w", encoding="utf-8") as handle:
+            handle.write(patch)
         adds = sum(1 for p in plan if p["action"] == "add")
         merges = sum(1 for p in plan if p["action"] == "merge")
         confs = sum(1 for p in plan if p["action"] == "conflict")
@@ -263,7 +282,8 @@ def _push_manifest(root, args):
             action_by[(slug(p.get("sig", "")), repo)] = p["action"]
         patch = render_patch(repo, plan)
         pf = os.path.join(out_dir, os.path.basename(os.path.abspath(repo)) + ".plan.md")
-        open(pf, "w", encoding="utf-8").write(patch)
+        with open(pf, "w", encoding="utf-8") as handle:
+            handle.write(patch)
         per_repo_counts[repo] = (sum(1 for p in plan if p["action"] == "add"),
                                  sum(1 for p in plan if p["action"] == "merge"),
                                  sum(1 for p in plan if p["action"] == "conflict"))
@@ -278,7 +298,8 @@ def _push_manifest(root, args):
             else:
                 st[repo] = "pending"
     manifest["last_push"] = now_iso()
-    open(mpath, "w", encoding="utf-8").write(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n")
+    with open(mpath, "w", encoding="utf-8") as handle:
+        handle.write(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n")
     html = render_manifest_html(root, manifest, learnings, "rollout")
 
     for repo in repos:
@@ -311,7 +332,8 @@ def cmd_manifest_init(args):
     mdir = os.path.join(root, "learnings", "manifests")
     os.makedirs(mdir, exist_ok=True)
     jpath = os.path.join(mdir, mid + ".json")
-    open(jpath, "w", encoding="utf-8").write(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n")
+    with open(jpath, "w", encoding="utf-8") as handle:
+        handle.write(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n")
     html = render_manifest_html(root, manifest, learnings, "compose")
     _audit(root, "manifest-init",
            "Scaffolded manifest {0}: {1} learning(s) x {2} repo(s).".format(mid, len(learnings), len(repos)),

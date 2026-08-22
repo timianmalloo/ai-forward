@@ -50,10 +50,12 @@ def main():
     args = ap.parse_args()
     rows, bad = read_manifest(), 0
     if args.update:
-        text = open(MANIFEST, encoding="utf-8").read()
+        with open(MANIFEST, encoding="utf-8") as source:
+            text = source.read()
         for f, old in rows:
             text = text.replace(f"`{old}`", f"`{nhash(os.path.join(PACK,'knowledge',f))}`", 1)
-        open(MANIFEST, "w", encoding="utf-8").write(text)
+        with open(MANIFEST, "w", encoding="utf-8") as handle:
+            handle.write(text)
         print(f"manifest updated for {len(rows)} docs"); return 0
     for f, want in rows:
         p = os.path.join(PACK, "knowledge", f)

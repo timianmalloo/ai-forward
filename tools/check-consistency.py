@@ -544,6 +544,103 @@ def check_deployed_agent_parity(truth, findings):
                 f"INSTALL 1.2 requires stripped at the Copilot boundary: {', '.join(leaked[:4])}")
 
 
+def check_proof_coverage(truth, findings):
+    """FR-049 / class RIG-C on its fourth occurrence. FR-046 raised exactly this and only the
+    NAMED INSTANCE was fixed (scrub.py); the class was never swept. The result: five deployed
+    scripts and three skills shipped with no automated proof at all — and the intersection was
+    not random, it was the continuous-improvement / federation cluster. `dream.py` writes the
+    fleet learnings store and the defect-class register; `apply-learnings.py` generates plans
+    that MUTATE OTHER REPOSITORIES. The two scripts whose defects propagate across the fleet
+    were the two with nothing checking them.
+
+    So this is the control, not five hand-written test files: it DERIVES both lists from the
+    filesystem (the CTRL-D lesson — a hand-maintained list is the blind spot, not the fix) and
+    fails when any deployed script has no test reference or any skill has no eval case. Adding
+    a script or a skill therefore *cannot* silently ship unproven; the gate notices before CI.
+
+    Honest limit, stated rather than implied: the floor asserted here is EXISTENCE of proof,
+    not its STRENGTH. A test that merely imports a module satisfies this gate. Strength is the
+    Test Architect's judgment at review (focal call + meaningful assertion, Testing Strategy
+    D0) and mutation resistance — neither of which a filesystem check can see. A control that
+    overstated its own reach would be the same defect one level up.
+    """
+    # The only hard-coded part, and each entry carries a written reason (never a bare name).
+    exempt_scripts = {}   # e.g. "foo": "reason it genuinely cannot be tested"
+    exempt_skills = {}
+
+    # --- deployed scripts must have a test that references them ---
+    tests_root = os.path.join(ROOT, "tests")
+    corpus = []
+    for dirpath, dirnames, filenames in os.walk(tests_root):
+        dirnames[:] = [d for d in dirnames if d != "__pycache__"]
+        for name in filenames:
+            if name.endswith((".py", ".js")):
+                text = _read(os.path.join(dirpath, name))
+                if text:
+                    corpus.append(text)
+    blob = "\n".join(corpus)
+    # A CODE-shaped reference, not a substring. Both directions were caught by disconfirming
+    # this function's own verdicts while building it, which is the only reason it is correct:
+    #   false NEGATIVE - matching `stem in blob` certified `dream` because the word appears in
+    #     an unrelated docstring. The single highest-risk script in the pack would have been
+    #     proven by a comment. A gate satisfiable by prose is not a gate.
+    #   false POSITIVE - hard-coding `.py` reported `docs-explorer-core.js` as unproven while
+    #     `require("../../pack/scripts/docs-explorer-core.js")` sat in the suite. A gate that
+    #     cries wolf gets allowlisted into silence, which is the same failure wearing a hat.
+    def _referenced(filename):
+        stem = os.path.splitext(filename)[0]
+        underscored = stem.replace("-", "_")
+        patterns = [
+            r"[\"'/]" + re.escape(filename),                                  # path/require form
+            r"[\"']" + re.escape(stem) + r"[\"']",                            # quoted-list form
+            r"(?m)^\s*(?:from|import)\s+" + re.escape(underscored) + r"\b",   # python import
+            r"[\"'/]" + re.escape(underscored) + re.escape(os.path.splitext(filename)[1]),
+            r"[\"']" + re.escape(underscored) + r"[\"']",
+        ]
+        return any(re.search(p, blob) for p in patterns)
+
+    unproven = []
+    for script in truth["scripts"]:
+        stem = os.path.splitext(script)[0]
+        if stem in exempt_scripts:
+            continue
+        if not _referenced(script):
+            unproven.append(stem)
+    if unproven:
+        findings.append(
+            f"proof coverage: {len(unproven)} deployed script(s) referenced by no test - "
+            f"{', '.join(unproven)}. These ship to every adopting repo; a control with no "
+            f"test is a claim, not a control (CI6). Add a test under tests/, or add an "
+            f"exemption WITH A WRITTEN REASON to exempt_scripts in this function.")
+
+    # --- skills must have an eval case (derived from each case's own `skill` field) ---
+    cases_dir = os.path.join(PACK, "evals", "cases")
+    covered = set()
+    if os.path.isdir(cases_dir):
+        for name in sorted(os.listdir(cases_dir)):
+            if not name.endswith(".json"):
+                continue
+            raw = _read(os.path.join(cases_dir, name))
+            try:
+                case = json.loads(raw) if raw else {}
+            except ValueError as exc:
+                findings.append(f"proof coverage: eval case {name} is not valid JSON ({exc})")
+                continue
+            if case.get("skill"):
+                covered.add(case["skill"])
+    else:
+        findings.append(f"proof coverage: {cases_dir} is missing - no skill has an eval case")
+        return
+    uncovered = [s for s in truth["skills"] if s not in covered and s not in exempt_skills]
+    if uncovered:
+        findings.append(
+            f"proof coverage: {len(uncovered)} skill(s) with no eval case - "
+            f"{', '.join(uncovered)}. An eval case is the only regression protection a "
+            f"skill's instructions have (Testing Strategy A6: a skill instruction is a "
+            f"contract). Add pack/evals/cases/<skill>-01.json, or add an exemption WITH A "
+            f"WRITTEN REASON to exempt_skills in this function.")
+
+
 def check_directive_ranges(findings):
     """FR-035. Standards are cited by range — "ui-interaction-design.md (U1–U20)". Nothing
     verified that the cited extent matched the standard, so `S1–S18` survived in ~30 files
@@ -769,6 +866,7 @@ def main():
     check_skill_prompt_parity(truth, findings)
     check_frontmatter_yaml(truth, findings)
     check_deployed_agent_parity(truth, findings)
+    check_proof_coverage(truth, findings)
     check_directive_ranges(findings)
     check_static_page_links(findings)
     check_promised_paths(findings)

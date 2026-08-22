@@ -1,0 +1,20 @@
+{
+  "skill": "optimize-graph",
+  "prompt": "Run /optimize-graph on this prompt before executing it: \"Add a `--json` flag to three deployed scripts, regenerate the docs index, and verify the full gate set.\" Produce the optimized execution graph as a plan artifact.",
+  "assertions": [
+    { "type": "file-exists", "path": "docs/plans/optimize-graph-json-flag.md" },
+    { "type": "frontmatter-valid", "path": "docs/plans/optimize-graph-json-flag.md" },
+    { "type": "grep", "path": "docs/plans/optimize-graph-json-flag.md", "pattern": "(?i)work[^\\n]{0,40}span" },
+    { "type": "grep", "path": "docs/plans/optimize-graph-json-flag.md", "pattern": "(?i)ceiling" },
+    { "type": "grep", "path": "docs/plans/optimize-graph-json-flag.md", "pattern": "(?i)exit condition" },
+    { "type": "grep", "path": "docs/plans/optimize-graph-json-flag.md", "pattern": "(?i)variant|termination" },
+    { "type": "grep", "path": "docs/plans/optimize-graph-json-flag.md", "pattern": "(?i)fan-?out" },
+    { "type": "grep", "path": "docs/plans/optimize-graph-json-flag.md", "pattern": "(?i)oracle" },
+    { "type": "grep", "path": "docs/plans/optimize-graph-json-flag.md", "pattern": "(?i)immovable|floor" },
+    { "type": "grep", "path": "docs/plans/optimize-graph-json-flag.md", "pattern": "(?i)completeness[^\\n]{0,60}rigor" },
+    { "type": "grep", "path": "docs/plans/optimize-graph-json-flag.md", "pattern": "(?i)verified|inferred" },
+    { "type": "grep", "path": "docs/plans/optimize-graph-json-flag.md", "pattern": "```mermaid" },
+    { "type": "cmd-exit", "cmd": ["python3", "docs/ai-forward-pack/scripts/docs-graph.py", "validate"], "exit": 0 }
+  ],
+  "id": "optimize-graph-01"
+}

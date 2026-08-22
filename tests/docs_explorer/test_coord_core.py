@@ -12,6 +12,7 @@ Two of these are the point of the exercise and were written to fail first:
 import importlib.util
 import json
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -388,6 +389,172 @@ class CliTests(CoordTestCase):
         self.run_cli("release", "--path", "src/**", session="s1")
         self.assertEqual(self.run_cli("claim", "--wi", "WI-2", "--path", "src/a.cs",
                                       session="s2").returncode, 0)
+
+
+class WorktreeLifecycleTests(unittest.TestCase):
+    """WT1-WT12. A new session starts in its own worktree, and nothing is left behind.
+
+    The half that actually rots is cleanup, so these concentrate on the fail-safe conditions:
+    every one is a HARD STOP that reports rather than removes. A cleanup that deletes on a
+    heuristic will eventually delete the tree that mattered, and that single event ends the
+    adoption of the whole practice — so 'refuses to delete' is the property under test, not
+    'deletes successfully'.
+
+    Real git, real trees: `testing-strategy.md` D4 forbids mocking engine semantics, and
+    `unique_commits` in particular carries a spike-proven note about `--all` returning 0 for
+    the exact case the guard exists to catch. A mock would have re-introduced that bug.
+    """
+
+    def setUp(self):
+        self.m = load_module()
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.base = Path(self.tmp.name)
+        self.repo = self.base / "primary"
+        self.repo.mkdir()
+        self.root = self.repo / ".agents"
+        (self.root / "log").mkdir(parents=True)
+        self._git("init", "-q", "-b", "main")
+        # CI-ENV: the control supplies its own identity rather than borrowing an ambient one.
+        self._git("config", "user.email", "t@example.invalid")
+        self._git("config", "user.name", "Test")
+        (self.repo / "seed.txt").write_text("seed\n", encoding="utf-8")
+        self._git("add", "-A")
+        self._git("commit", "-q", "-m", "seed")
+
+    def _git(self, *args):
+        return subprocess.run(["git", *args], cwd=str(self.repo),
+                              capture_output=True, text=True, timeout=60)
+
+    def _verdicts(self, cwd=None):
+        records, err = self.m.worktree_inventory(self.repo)
+        self.assertIsNone(err, err)
+        primary = records[0]["path"]
+        index = {}
+        for r in records:
+            if r.get("branch"):
+                index[r["branch"]] = index.get(r["branch"], 0) + 1
+        out = {}
+        for r in records:
+            safe, why = self.m.worktree_safety(r, primary, cwd or str(self.base), set(), index)
+            out[Path(r["path"]).name] = (safe, why)
+        return out
+
+    def _add_tree(self, name="feature-x", branch="feature/x"):
+        target = self.base / name
+        result = self._git("worktree", "add", "-b", branch, str(target))
+        self.assertEqual(0, result.returncode, result.stderr)
+        return target
+
+    # -- the hard stops ---------------------------------------------------
+    def test_the_primary_checkout_is_never_removable(self):
+        self.assertFalse(self._verdicts()["primary"][0])
+        self.assertIn("primary", self._verdicts()["primary"][1])
+
+    def test_the_current_working_directory_is_never_removable(self):
+        tree = self._add_tree()
+        safe, why = self._verdicts(cwd=str(tree))[tree.name]
+        self.assertFalse(safe, "deleting the floor you stand on")
+        self.assertIn("current working directory", why)
+
+    def test_an_untracked_file_blocks_removal(self):
+        """The most dangerous condition: a new file nobody committed exists NOWHERE else."""
+        tree = self._add_tree()
+        (tree / "only-copy.md").write_text("work that exists nowhere else\n", encoding="utf-8")
+        safe, why = self._verdicts()[tree.name]
+        self.assertFalse(safe)
+        self.assertIn("untracked", why)
+
+    def test_a_modified_file_blocks_removal(self):
+        tree = self._add_tree()
+        (tree / "seed.txt").write_text("edited\n", encoding="utf-8")
+        safe, why = self._verdicts()[tree.name]
+        self.assertFalse(safe)
+
+    def test_an_unmerged_commit_blocks_removal(self):
+        tree = self._add_tree()
+        (tree / "new.txt").write_text("x\n", encoding="utf-8")
+        subprocess.run(["git", "add", "-A"], cwd=str(tree), capture_output=True, timeout=60)
+        subprocess.run(["git", "-c", "user.email=t@example.invalid", "-c", "user.name=Test",
+                        "commit", "-q", "-m", "unmerged"], cwd=str(tree),
+                       capture_output=True, timeout=60)
+        safe, why = self._verdicts()[tree.name]
+        self.assertFalse(safe, "a commit that exists nowhere else is the only copy")
+        self.assertIn("nowhere else", why)
+
+    def test_a_live_session_blocks_removal(self):
+        tree = self._add_tree()
+        records, _ = self.m.worktree_inventory(self.repo)
+        key = self.m._worktree_key(str(tree))
+        for r in records:
+            if self.m._worktree_key(r["path"]) == key:
+                safe, why = self.m.worktree_safety(r, records[0]["path"], str(self.base),
+                                                   {key}, {})
+                self.assertFalse(safe)
+                self.assertIn("live session", why)
+                return
+        self.fail("the added worktree was not in the inventory")
+
+    def test_a_clean_merged_unheld_tree_is_safe(self):
+        """The negative control: if nothing is ever safe, the tool is useless and will be
+        bypassed — which is worse than deleting too eagerly, because it is silent."""
+        tree = self._add_tree()
+        safe, why = self._verdicts()[tree.name]
+        self.assertTrue(safe, why)
+
+    # -- the command contract ---------------------------------------------
+    def test_cleanup_deletes_nothing_without_the_remove_flag(self):
+        tree = self._add_tree()
+        rc = self.m.cmd_worktree(self.root, self.repo, "cleanup", str(self.base), time.time())
+        self.assertEqual(0, rc)
+        self.assertTrue(tree.is_dir(), "cleanup must report a plan, never delete by default")
+
+    def test_cleanup_with_remove_deletes_only_the_safe_tree(self):
+        safe_tree = self._add_tree("safe-one", "feature/safe")
+        held_tree = self._add_tree("held-one", "feature/held")
+        (held_tree / "only-copy.md").write_text("nowhere else\n", encoding="utf-8")
+        self.m.cmd_worktree(self.root, self.repo, "cleanup", str(self.base), time.time(),
+                            remove=True)
+        self.assertFalse(safe_tree.is_dir(), "the safe tree should have been reaped")
+        self.assertTrue(held_tree.is_dir(), "the held tree must survive --remove")
+
+    def test_cleanup_prunes_stale_metadata(self):
+        """WT9: a hand-deleted directory leaves .git/worktrees/<name> and git keeps the name
+        reserved, so the next `worktree add` fails describing a state the filesystem does not
+        show."""
+        tree = self._add_tree("ghost", "feature/ghost")
+        shutil.rmtree(tree)          # simulate someone deleting the directory by hand
+        self.m.cmd_worktree(self.root, self.repo, "cleanup", str(self.base), time.time(),
+                            remove=True)
+        records, err = self.m.worktree_inventory(self.repo)
+        self.assertIsNone(err, err)
+        names = [Path(r["path"]).name for r in records]
+        self.assertNotIn("ghost", names, "stale metadata must be pruned")
+
+    def test_new_creates_a_sibling_tree_not_a_nested_one(self):
+        """A tree inside the repo would be walked by docs-graph, check-consistency and every
+        test that scans the tree."""
+        rc = self.m.cmd_worktree(self.root, self.repo, "new", str(self.base), time.time(),
+                                 session="s-new", branch="feature/sibling")
+        self.assertEqual(0, rc)
+        created = [p for p in self.base.iterdir() if p.name.startswith("primary-")]
+        self.assertEqual(1, len(created), [p.name for p in self.base.iterdir()])
+        self.assertFalse(str(created[0]).startswith(str(self.repo) + os.sep),
+                         "the new tree must not be nested inside the primary checkout")
+
+    def test_new_refuses_without_a_name(self):
+        rc = self.m.cmd_worktree(self.root, self.repo, "new", str(self.base), time.time())
+        self.assertEqual(2, rc, "an unnamed tree is one nobody can ever safely clean up")
+
+    def test_new_registers_the_session_in_the_new_tree(self):
+        self.m.cmd_worktree(self.root, self.repo, "new", str(self.base), time.time(),
+                            session="s-reg", branch="feature/registered")
+        events, errors, _ = self.m.read_events(self.root)
+        self.assertEqual([], errors)
+        starts = [e for e in events if e.get("kind") == "session-start"
+                  and e.get("session") == "s-reg"]
+        self.assertEqual(1, len(starts), events)
+        self.assertIn("registered", starts[0]["worktree"])
 
 
 if __name__ == "__main__":

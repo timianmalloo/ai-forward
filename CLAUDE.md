@@ -50,6 +50,16 @@ the Road) and the **AI-Forward Pack** on top of it. Honor them on every non-triv
   signature), and snowflake only when the domain demands the entity. Migrate expand-migrate-contract;
   a backfill never guesses. `.claude/knowledge/domain-and-data-modelling.md` (DM1–DM18); evidence in
   `docs/knowledge/domain-and-data-modelling/`; the **Data & Persistence Architect** holds the veto.
+- **A new session starts in a new worktree.** Any session that will **write** to the repo begins
+  by creating and entering its **own git worktree on its own branch** — two agents in one checkout
+  share an index, a HEAD and one set of generated artifacts, so a stash in one silently reaches
+  into the other's uncommitted work and nothing fails loudly. Working in the primary checkout is
+  the **recorded exception**, not the default. More trees are fine when the work needs them; each
+  follows the same lifecycle. **Cleanup is the half that rots**, so it is fail-safe: a tree is
+  removable only when it is not primary, not your cwd, **clean including untracked**, carries no
+  commit that exists nowhere else, and is unheld — anything else is *reported, never removed*, and
+  deletion is opt-in (`--remove`). `coord worktree new|list|cleanup`;
+  `.claude/knowledge/session-worktree-discipline.md` (WT1–WT12).
 - **Continuous improvement (a primary directive):** every bug you create, every mistaken
   assumption, and every correction you receive is captured — as a **class, not an instance** — in
   `docs/lessons/defect-classes.md`, and converted into a **control** that fails when the shape

@@ -564,5 +564,113 @@ class DirectiveRangeTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             self.assertEqual(self._run(self._root(temp, highest=10, cited=6)), [])
 
+class ProofCoverageTests(unittest.TestCase):
+    """FR-049 / class RIG-C, fourth occurrence. FR-046 raised 'a deployed control with no
+    test' and only the named instance was fixed; the class was never swept, so five scripts
+    and three skills shipped unproven — including the two whose defects propagate across the
+    whole fleet. This tests the CONTROL, because a control with no test is exactly the thing
+    it exists to forbid.
+
+    Two of these are regression guards for false verdicts caught while building it: a prose
+    mention must not certify a script, and a `.js` require must not be missed."""
+
+    def setUp(self):
+        self.module = load_module()
+
+    def _root(self, temp, scripts=(), tests=(), cases=(), skills=()):
+        root = Path(temp)
+        (root / "pack" / "scripts").mkdir(parents=True)
+        (root / "pack" / "evals" / "cases").mkdir(parents=True)
+        (root / "tests").mkdir()
+        for name in scripts:
+            (root / "pack" / "scripts" / name).write_text("# script\n", encoding="utf-8")
+        for name, body in tests:
+            (root / "tests" / name).write_text(body, encoding="utf-8")
+        for name, skill in cases:
+            (root / "pack" / "evals" / "cases" / name).write_text(
+                json.dumps({"skill": skill, "id": name[:-5], "prompt": "p", "assertions": []}),
+                encoding="utf-8")
+        for name in skills:
+            (root / "pack" / "commands" / name).mkdir(parents=True)
+            (root / "pack" / "commands" / name / "SKILL.md").write_text("# s\n", encoding="utf-8")
+        return root
+
+    def _run(self, root, truth):
+        findings = []
+        with mock.patch.object(self.module, "ROOT", str(root)), \
+             mock.patch.object(self.module, "PACK", str(root / "pack")):
+            self.module.check_proof_coverage(truth, findings)
+        return findings
+
+    def test_an_untested_script_is_reported(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = self._root(temp, scripts=["lonely.py"])
+            findings = self._run(root, {"scripts": ["lonely.py"], "skills": []})
+            self.assertEqual(1, len(findings), findings)
+            self.assertIn("lonely", findings[0])
+
+    def test_a_referenced_script_is_accepted(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = self._root(temp, scripts=["covered.py"],
+                              tests=[("test_x.py", 'SCRIPT = "covered.py"\n')])
+            self.assertEqual([], self._run(root, {"scripts": ["covered.py"], "skills": []}))
+
+    def test_a_prose_mention_does_not_count_as_proof(self):
+        """The false negative that nearly shipped: `dream` was certified because the word
+        appears in an unrelated docstring. A gate satisfiable by prose is not a gate."""
+        with tempfile.TemporaryDirectory() as temp:
+            root = self._root(
+                temp, scripts=["dream.py"],
+                tests=[("test_x.py", '"""The corpus /dream consolidates over."""\n')])
+            findings = self._run(root, {"scripts": ["dream.py"], "skills": []})
+            self.assertEqual(1, len(findings),
+                             "a comment mentioning the name must not certify the script")
+
+    def test_a_javascript_require_counts_as_proof(self):
+        """The false positive that nearly shipped: hard-coding `.py` reported a genuinely
+        tested `.js` module as unproven. A gate that cries wolf gets allowlisted into
+        silence — the same failure wearing a hat."""
+        with tempfile.TemporaryDirectory() as temp:
+            root = self._root(
+                temp, scripts=["core.js"],
+                tests=[("core.test.js", 'const c = require("../../pack/scripts/core.js");\n')])
+            self.assertEqual([], self._run(root, {"scripts": ["core.js"], "skills": []}))
+
+    def test_a_skill_without_an_eval_case_is_reported(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = self._root(temp, skills=["orphan"])
+            findings = self._run(root, {"scripts": [], "skills": ["orphan"]})
+            self.assertEqual(1, len(findings), findings)
+            self.assertIn("orphan", findings[0])
+
+    def test_a_skill_with_an_eval_case_is_accepted(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = self._root(temp, skills=["good"], cases=[("good-01.json", "good")])
+            self.assertEqual([], self._run(root, {"scripts": [], "skills": ["good"]}))
+
+    def test_coverage_is_derived_from_the_case_body_not_its_filename(self):
+        """A case filename can disagree with the skill it exercises (ui-craft-detection-01
+        declares skill `ui-design`). Deriving from the declared field is the robust read."""
+        with tempfile.TemporaryDirectory() as temp:
+            root = self._root(temp, skills=["real"], cases=[("unrelated-name.json", "real")])
+            self.assertEqual([], self._run(root, {"scripts": [], "skills": ["real"]}))
+
+    def test_a_malformed_eval_case_is_reported_rather_than_ignored(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = self._root(temp, skills=["s"], cases=[("s-01.json", "s")])
+            (root / "pack" / "evals" / "cases" / "broken.json").write_text("{oops", encoding="utf-8")
+            findings = self._run(root, {"scripts": [], "skills": ["s"]})
+            self.assertTrue(any("broken.json" in f for f in findings), findings)
+
+    def test_the_lists_are_derived_so_a_new_script_cannot_ship_unproven(self):
+        """The CTRL-D lesson: a hand-maintained list IS the blind spot. Adding a script must
+        be noticed by the gate without anyone editing the gate."""
+        with tempfile.TemporaryDirectory() as temp:
+            root = self._root(temp, scripts=["a.py", "brand-new.py"],
+                              tests=[("test_a.py", 'S = "a.py"\n')])
+            findings = self._run(root, {"scripts": ["a.py", "brand-new.py"], "skills": []})
+            self.assertTrue(any("brand-new" in f for f in findings), findings)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -182,3 +182,4 @@ These five carry a piece of work from idea to shipped code. **Four supporting sk
 ## 6. The protocol, in one breath
 
 > Don't answer yet. Open the whole space and sketch the system before touching a part. Interrogate each element with precise, one-at-a-time questions — never a vague "why." Establish every load-bearing claim against a cited source or an executed result; read the code and run a spike for anything unfamiliar. Then try to break your own conclusion — verify it independently, name the input that would falsify it, assert its negation and see if it survives, and for anything that can hurt, let a separate adversary attack it. Only then converge — to exactly what the evidence supports, with your confidence and your residual risk written down, and the one thing that would change your mind named out loud.
+

@@ -71,6 +71,14 @@ jobs:
           npm ci
           npm run test:docs-explorer:core
 
+      # FR-051. The public explainer is client-rendered, so a static scan sees a shell and
+      # reports clean for the wrong reason (CD20 / class E2E-H). This runs the page's own
+      # vendored bundles in a DOM shim and asserts the result: no third-party origin, the
+      # libraries define their globals, #root has a real mount, and the WCAG landmarks and
+      # skip link exist. Observed failing on the pre-fix page with 12 assertions red.
+      - name: Explainer render + accessibility proof
+        run: node tools/verify-explainer-render.js
+
       # FR-034. The knowledge graph gate: schema-valid frontmatter, no dangling links,
       # no orphans, no index drift.
       - name: Knowledge-graph validation

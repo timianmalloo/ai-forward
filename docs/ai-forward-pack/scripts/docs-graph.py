@@ -9,7 +9,8 @@ Subcommands
   inventory   Scan the graph: artifacts, missing/invalid frontmatter, bad links,
               unregistered rels, orphans, stale (V13), flagged (V16), index drift. JSON out.
   derive      Full derivation sweep: frontmatter -> docs/docs-index.js (V2/V10).
-  validate    inventory + nonzero exit on findings (CI-able).
+  validate    inventory + nonzero exit on DEFECTS (CI-able). `--gate fail` also fails on
+              suggestions (V16 flags, V13 staleness), which only warn by default.
   freshness   The freshness gate's time-based half: stale + flagged + orphans; exit code.
   flag        V16 propagation: --changed <id> --reason "..." flags inbound neighbors.
   clear-flag  Clear a review-suggested flag (--id <artifact> --by <changed-id>) and
@@ -889,13 +890,43 @@ def cmd_inventory(args, exit_on_findings=False):
     arts, problems = scan(args.root, metadata_only=True, artifact_limit=CONTEXT_LIMITS["artifacts"])
     by_id, inbound, stale, flagged, orphans = analyze(arts, problems)
     drift = index_drift(args, arts)
+    # FR-056. Findings are two different KINDS and must not share one exit code.
+    #   defects     - the graph is wrong: invalid frontmatter, dangling link, unregistered
+    #                 rel, duplicate id, orphan (V10), index drift (V11). An author can fix
+    #                 every one of these before pushing. These always fail the gate.
+    #   suggestions - `review-suggested` (V16) and `review-by` decay (V13). V16 defines a
+    #                 flag as "a suggestion with provenance, not a status change", cleared
+    #                 by the NEIGHBOUR'S OWNER on a human timescale. Failing a build on one
+    #                 makes the correct act - propagating a material change - turn main red
+    #                 for everyone, so the rational move becomes skipping the propagation
+    #                 the mandate requires. A control that punishes compliance is worse than
+    #                 no control: it is unobservable non-compliance.
+    # Both stay in the JSON either way (IO4: a suggestion that vanishes is worse than one
+    # that fails); --gate fail restores the strict behaviour for maintainers who want it.
+    defects = {"problems": problems, "orphans": orphans, "index_drift": drift}
+    suggestions = {"flagged": flagged, "stale": stale}
+    n_defects = sum(len(v) for v in defects.values())
+    n_suggestions = sum(len(v) for v in suggestions.values())
     report = {"root": args.root, "today": TODAY, "artifacts": len(arts),
               "problems": problems, "stale": stale, "flagged": flagged,
               "orphans": orphans, "index_drift": drift,
+              "defects": n_defects, "suggestions": n_suggestions,
               "by_type": count_by(arts, "type")}
     print(json.dumps(report, indent=2))
-    findings = bool(problems or stale or flagged or orphans or drift)
-    return 1 if (exit_on_findings and findings) else 0
+    if not exit_on_findings:
+        return 0
+    strict = getattr(args, "gate", "warn") == "fail"
+    if n_suggestions and not strict:
+        # Visible on stderr so a warn is never silence (IO8: degrade, and say so).
+        print(f"warning: {n_suggestions} suggestion(s) - "
+              f"{len(flagged)} review-suggested (V16), {len(stale)} stale (V13). "
+              f"Not failing the gate; run with --gate fail to treat them as errors.",
+              file=sys.stderr)
+    if n_defects:
+        print(f"validate: {n_defects} defect(s) - "
+              f"{len(problems)} problem(s), {len(orphans)} orphan(s), "
+              f"{len(drift)} index-drift item(s).", file=sys.stderr)
+    return 1 if (n_defects or (n_suggestions and strict)) else 0
 
 def count_by(arts, key):
     d = {}
@@ -1525,9 +1556,12 @@ def main():
     ap.add_argument("--root", default="docs", help="docs root (default: docs)")
     sub = ap.add_subparsers(dest="cmd", required=True)
     sub.add_parser("inventory")
-    d = sub.add_parser("derive"); sub.add_parser("validate"); fr = sub.add_parser("freshness")
+    d = sub.add_parser("derive"); va = sub.add_parser("validate"); fr = sub.add_parser("freshness")
     d.add_argument("--out", default=None); d.add_argument("--project", default=None)
     d.add_argument("--generator", default="docs-graph.py derive")
+    # FR-056: defects always fail; suggestions (V16 flags, V13 staleness) warn by default.
+    va.add_argument("--gate", choices=["warn","fail"], default="warn",
+                    help="fail = treat review-suggested/stale as errors too (default: warn)")
     fr.add_argument("--gate", choices=["warn","fail"], default="warn")
     fl = sub.add_parser("flag"); fl.add_argument("--changed", required=True); fl.add_argument("--reason", required=True)
     fl.add_argument("--out", default=None); fl.add_argument("--project", default=None); fl.add_argument("--generator", default="docs-graph.py flag")

@@ -2,7 +2,7 @@
 id: forensic-review-rev42-backlog
 title: "Forensic Review Backlog — revision 42"
 type: doc
-status: accepted
+status: resolved
 owner: "@timianmalloo"
 phase: "pack-evolution"
 tags: [forensic-review, backlog, testing, verification, documentation, accessibility]
@@ -13,11 +13,14 @@ links:
 review-by: "2026-11-20"
 review-suggested: []
 summary: >-
-  Proposed backlog from the revision-42 forensic review at commit e4eae82. Seven items in four
-  phases. FR-049 is the only P1 and gates the readiness verdict: the /dream, /apply-learnings and
-  /optimize-graph cluster writes durable cross-repo stores with neither unit tests nor eval cases,
-  which is RIG-C on its fourth occurrence. Two items are carried unchanged from revisions 30 and 33.
-  Every item stops at proposal — triage before any remediation.
+  Backlog from the revision-42 forensic review at commit e4eae82, ALL NINE ITEMS TRIAGED AND
+  DISPOSITIONED at revision 43. Seven resolved with a control observed failing first, FR-050
+  closed as not-a-defect (its premise - staleness inferred from an mtime - did not survive
+  checking, and its recommended deletion would have broken the build), FR-054 closed won't-do
+  with a falsifiable re-open trigger. Three of the most useful findings emerged from doing the
+  work: a crash in the script that writes into other repositories, found by the first assertion
+  ever written against it; a false staleness premise; and a coverage gate that was wrong in both
+  directions until its own verdicts were disconfirmed.
 ---
 
 # Forensic Review Backlog — revision 42
@@ -41,7 +44,7 @@ summary: >-
 
 ## FR-049 — The newest capability cluster ships with no automated proof
 
-- **Kind:** `risk` · **Priority:** **P1** · **Status:** `proposed`
+- **Kind:** `risk` · **Priority:** **P1** · **Status:** `resolved`
 - **Scope:** `pack/scripts/{dream,apply-learnings,graphify-setup,obsidian-setup,visual-assets-setup}.py`, `pack/evals/cases/`, `tools/check-consistency.py`
 - **Evidence (Verified).** Cross-referencing the deployed script bundle against `tests/` and `pack/evals/cases/`:
   - **5 of 15 deployed scripts have no test:** `dream.py`, `apply-learnings.py`, `graphify-setup.py`, `obsidian-setup.py`, `visual-assets-setup.py`.
@@ -64,9 +67,12 @@ summary: >-
 - **Validation.** `pytest tests -q`; `python tools/check-consistency.py`; delete a test file and confirm the gate goes red.
 - **Dependencies.** None. **Owner:** maintainer. **Next skill:** `/implement` (the control is well-specified; no investigation needed).
 
+> **RESOLVED 2026-08-22 (revision 43).** The control was built first and it told us what was missing: `check_proof_coverage` in `tools/check-consistency.py` DERIVES the deployed-script list and the skill list from the filesystem (never hard-coded - the CTRL-D lesson) and fails when either lacks proof. Observed **red** naming exactly 5 scripts and 3 skills, independently matching this finding's own count. Two false verdicts were caught by disconfirming the gate's own output before trusting it: a substring match certified `dream` because the word appears in an unrelated **docstring** (a gate satisfiable by prose is not a gate), and a hard-coded `.py` reported `docs-explorer-core.js` unproven while `require("../../pack/scripts/docs-explorer-core.js")` sat in the suite (a gate that cries wolf gets allowlisted into silence). Proof then added: `tests/docs_explorer/test_federation_scripts.py` (25 tests - taint gate, promotion oracle, reconcile merge-vs-add, and the **never-merges** invariant asserted as byte-identity of the target after a push), `SetupHelperDryRunTests` (a `--dry-run` that writes anything is the worst defect - the user asked for the safe path), and eval cases `dream-01`, `apply-learnings-01`, `optimize-graph-01`. The two deterministic cases were **executed end to end**: 17 assertions, 0 failures - they are satisfiable, not aspirational. The control is now clean because the proof exists, not because it was silenced. **The first assertion ever written against `apply-learnings.py` found a crash** - see class **PACK-L**.
+
+
 ## FR-050 — The `docs/_site` documentation bundle is twelve revisions stale
 
-- **Kind:** `issue` · **Priority:** P2 · **Status:** `proposed` · **Carried from FR-036 (revision 30, "partially resolved")**
+- **Kind:** `issue` · **Priority:** P2 · **Status:** `closed-not-a-defect` · **Carried from FR-036 (revision 30, "partially resolved")**
 - **Scope:** `docs/_site/`, `docs/reviews/forensic-review.md` frontmatter
 - **Evidence (Verified).** `docs/_site/` contains **one file** (`index.html`, 9,309 bytes) last modified **2026-08-10**. The repository is at revision 42; revision 30 was the era of that timestamp. Its ten relative links all resolve, so it is not broken — it is **out of date**. Additionally the prior review's frontmatter reads `title: "… (revision 30)"` while its body also covers revision 33 (deduplicated into this item: documentation trailing the code).
 - **Violated contract.** `knowledge-visualization.md` **V11** (index and docs land in the same change as the content); **V13** freshness.
@@ -78,9 +84,12 @@ summary: >-
   - [ ] No document's frontmatter states a revision its body contradicts.
 - **Validation.** `docs-graph.py freshness`; `check-consistency.py`. **Owner:** maintainer. **Next skill:** `/document` (regenerate) or `/implement` (remove).
 
+> **CLOSED 2026-08-22 - NOT A DEFECT. This finding was wrong, and the way it was wrong is now a registered class.** `docs/_site/index.html` is not a stale generated bundle: it is a **hand-maintained** documentation hub (`check_static_page_links` says so in its own docstring), all **8** of its card links resolve, it contains **zero** hard-coded counts that could drift, and it is asserted by `knowledge_surfaces.test.js`, `docs_explorer.spec.js` and a CI gate. Deleting it - the remedy this item recommended - would have broken the build. The 2026-08-10 mtime meant *nothing needed changing*, which is the correct state for an unchanged file whose every claim is still true. The second half is also void: the prior review's frontmatter already reads `(revisions 30 & 33)`, matching its body. **Staleness was inferred from a timestamp and never checked against content truth** - a proxy standing in for the property actually cared about, which is precisely what `instrumentation-over-inference.md` forbids. Registered as class **PACK-N**.
+
+
 ## FR-051 — The public explainer has three CDN dependencies, no ARIA and no skip link
 
-- **Kind:** `risk` · **Priority:** P2 · **Status:** `proposed` · **Carried from FR-039 (revision 30), unchanged**
+- **Kind:** `risk` · **Priority:** P2 · **Status:** `resolved` · **Carried from FR-039 (revision 30), unchanged**
 - **Scope:** `web/ai-forward-pack-explainer.html`
 - **Evidence (Verified).** Three runtime CDN dependencies — `unpkg.com/react@18`, `unpkg.com/react-dom@18`, `unpkg.com/htm@3.1.1`. Accessibility scan: `lang` attribute present (1), **`aria-` attributes: 0**, **skip links: 0**.
 - **Violated contract.** `ui-interaction-design.md` **U16** (WCAG 2.2 AA is a floor, and the UX & Accessibility lens holds a hard veto); the pack's own dependency-free house pattern (**V9**, **DX8**) which every other committed surface follows.
@@ -93,9 +102,12 @@ summary: >-
   - [ ] A render proof asserts `#root` fills, observed failing on the un-fixed file.
 - **Validation.** Load offline; `ui-craft-gate.py`; the existing render-proof pattern in `tools/verify-backtest-render.js`. **Owner:** maintainer. **Next skill:** `/ui-design` then `/implement`.
 
+> **RESOLVED 2026-08-22 (revision 43).** React 18, ReactDOM and htm are **vendored** under `web/vendor/` (with `ATTRIBUTION.md` recording package, version, licence and source URL) and loaded by relative path, so the public front door renders with the network blocked. Accessibility: a focusable skip link, a `<main>` landmark that is its target, `role="banner"`/`contentinfo`, a labelled section nav, accessible names on all **9** sections, `aria-hidden` on decorative glyphs, `role="alert"` on the offline notice, and a proper `role="tablist"`/`tab`/`tabpanel` with `aria-selected` on the Rigor stage rail - which previously conveyed selected state **by CSS class alone**. Proof: `tools/verify-explainer-render.js` runs the page's own bundles in a dependency-free DOM shim and asserts the *result* (CD20 - a client-rendered page is invisible to static scanning). **Observed red on the pre-fix file with 12 assertions failing**; now green, wired into `package.json`, `verify-bundle.ps1` gate 4b, and a new CI step.
+
+
 ## FR-052 — The system-of-record audit log discards a malformed line silently
 
-- **Kind:** `issue` · **Priority:** P2 · **Status:** `proposed`
+- **Kind:** `issue` · **Priority:** P2 · **Status:** `resolved`
 - **Scope:** `pack/scripts/audit-log.py`
 - **Evidence (Verified).** `audit-log.py:175` — `except json.JSONDecodeError: pass  # a malformed line is skipped, never fatal — the log keeps working`. A corrupted entry in `audit-log.jsonl` is dropped from every read with **no warning, no counter, no signal**. Separately `audit-log.py:117` — `except OSError: pass` in `_write_starts` means a failure to persist the run-start marker silently loses that run's duration measurement.
 - **Violated contract.** `instrumentation-over-inference.md` **IO4** (*absence of instrumentation is a finding, not a neutral state*) and **IO8** (degrade to "not recorded", **and say so**); `end-to-end-integrity.md` **E13** (a green result must not mask a failure); the append-only-fact model in `domain-and-data-modelling.md`.
@@ -108,9 +120,12 @@ summary: >-
   - [ ] Both behaviours are covered by tests **observed failing** on the current code.
 - **Validation.** `pytest tests/docs_explorer/test_audit_log.py`. **Owner:** maintainer. **Next skill:** `/implement`.
 
+> **RESOLVED 2026-08-22 (revision 43).** Every skipped line is counted, warned about on stderr naming `file:line`, and assertable by the new `audit-log.py verify` (exit 1 while any line is unreadable; CI-able). The reader still survives one bad line - refusing to crash was always right; discarding invisibly was not, and the two are separable. The swallowed marker-store write now warns (IO8: degrade, **and say so**). 6 tests, **5 observed failing** on the pre-fix code.
+
+
 ## FR-053 — Four file handles opened without a context manager
 
-- **Kind:** `issue` · **Priority:** P3 · **Status:** `proposed`
+- **Kind:** `issue` · **Priority:** P3 · **Status:** `resolved`
 - **Scope:** `pack/scripts/audit-log.py:169, 293, 297, 300`
 - **Evidence (Verified).** `for ln in open(p, encoding="utf-8"):` · `open(…, "w", …).write(body)` · `viewer = open(tpl, …).read()…` · `open(idx, "w", …).write(viewer)`.
 - **Violated contract.** BoK §VII.3 (context managers for resources); the pack's own Python idiom guidance.
@@ -118,18 +133,24 @@ summary: >-
 - **Disconfirming check attempted.** *Is this a real defect or style?* It is behaviour-relevant only outside CPython, so it is filed P3 rather than P2; it is not struck, because the same file is the system of record (FR-052).
 - **Acceptance criteria.** [ ] All four sites use `with`; `pytest` green. **Validation.** `pytest`. **Owner:** maintainer. **Next skill:** `/implement`.
 
+> **RESOLVED 2026-08-22 (revision 43).** All bare handles in `audit-log.py` converted - **7**, not the 4 named, because the class was swept rather than the instances patched. The sweep then found **the same shape in five other scripts**; the write sites (truncation on the exception path is the real hazard) were fixed in `apply-learnings.py`, `dream.py` and `foundation-check.py`, and `test_no_bare_file_handles_remain` guards the system of record. The remaining read sites are recorded here as known, unfixed, and deliberately not blind-refactored mid-session (CI3 permits registering a sibling with an owner rather than sweeping 30 sites by hand in scripts whose coverage is thin - which is what FR-049 was about). **My own scripted fix introduced an IndentationError and the suite caught it within seconds** - the control working.
+
+
 ## FR-054 — `docs-graph.py` is 1,599 lines with three functions over 90
 
-- **Kind:** `todo` · **Priority:** P3 · **Status:** `proposed`
+- **Kind:** `todo` · **Priority:** P3 · **Status:** `wont-do`
 - **Scope:** `pack/scripts/docs-graph.py` — `discover_html_surfaces` (623–712, 90 lines), `cmd_derive` (985–1088, 104), `cmd_context` (1412–1512, 101)
 - **Evidence (Verified).** Line counts measured. It is the largest file in scope and the most-invoked script in the pack.
 - **Simplifier challenge (recorded).** Raised as **preference rather than defect**. **Retained at P3 `todo` explicitly, not as an issue** — no failure is attributed to it. It is listed because change-risk concentrates here, not because anything is broken.
 - **Consequence.** Change risk in the script every skill depends on for V10/V18.
 - **Acceptance criteria.** [ ] If undertaken, each extracted unit has a test and behaviour is unchanged (characterization-first). **Validation.** `pytest`; `docs-graph.py validate`. **Owner:** maintainer. **Next skill:** `/migrate` (characterization-first) — **or close as won't-do**, which is an acceptable outcome for a `todo`.
 
+> **CLOSED 2026-08-22 as WON'T-DO (revision 43), which this item explicitly allows for a `todo`.** The reasoning is recorded rather than assumed: (1) **no failure is attributed to it** - the Simplifier's challenge is captured in the item itself, and it was retained as `todo`, not `issue`, precisely because nothing is broken; (2) it is the **most-invoked script in the pack** (every skill depends on it for V10/V18), so a characterization-first split is a `/migrate` job with a real blast radius, not a tidy-up; (3) undertaking it in the same change as nine other findings and a new capability would violate the discipline this pack teaches - a large refactor that is red in the middle is one you cannot bisect when it breaks (BoK V.2). The file grew by ~40 lines this revision (the FR-056 gate split), which does not change the assessment. **Re-open when a defect is actually attributed to its size** - that is the trigger, and it is falsifiable. Until then, carrying it forward a fourth time would be the **PACK-B** pattern this repository registered about itself.
+
+
 ## FR-055 — `npm run test:docs-explorer:core` is not portable to Windows
 
-- **Kind:** `issue` · **Priority:** P3 · **Status:** `proposed`
+- **Kind:** `issue` · **Priority:** P3 · **Status:** `resolved`
 - **Scope:** `package.json` scripts, contributor documentation
 - **Evidence (Verified).** On this Windows host the npm-spawned shell reports `'node' is not recognized`, while `node --version` succeeds (v24.18.0, `C:\Program Files\nodejs\node.exe`) and the **identical test invocation run directly passes 31/31**. So the tests are green and only the documented launcher fails.
 - **Violated contract.** Registered class **PACK-C** — *a documented command assumed portable*, whose stated control is to name the working form for the current machine rather than assume one.
@@ -138,9 +159,12 @@ summary: >-
 - **Recommended remediation.** Extend `pack-doctor.py`'s interpreter check to cover Node/npm and name the working invocation for the current machine, mirroring the `python3`/`python`/`py -3` precedent.
 - **Acceptance criteria.** [ ] `pack-doctor.py` reports the working Node invocation, or a `WARN` naming the substitution, on a machine where `npm run` cannot resolve `node`. [ ] Covered by a test. **Validation.** `pack-doctor.py`; `pytest tests/docs_explorer/test_pack_doctor.py`. **Owner:** maintainer. **Next skill:** `/implement`.
 
+> **RESOLVED 2026-08-22 (revision 43).** New `check_node_runner()` in `pack-doctor.py`. The probe **is** the diagnosis: `npm run` executes scripts through a child shell, so node resolving *for you* proves nothing - it spawns the same shell npm uses (`cmd`/`sh`) and asks *that* for node. Empirically confirmed on the host with the bug: `node --version` -> v24.18.0, `where node` -> `C:\Program Files\nodejs\node.exe`, `cmd /c node --version` -> **not recognized**. It WARNs naming the invocation that does work, mirroring the `python3` precedent. 5 tests, **all observed failing** pre-fix; verified firing live on this machine.
+
+
 ## FR-056 — A correct V16 propagation turns the CI graph gate red until every flag is hand-cleared
 
-- **Kind:** `issue` · **Priority:** P2 · **Status:** `proposed`
+- **Kind:** `issue` · **Priority:** P2 · **Status:** `resolved`
 - **Scope:** `pack/scripts/docs-graph.py` (`cmd_inventory(..., exit_on_findings=True)`), `.github/workflows/pack-consistency.yml` gate G5
 - **Evidence (Verified, discovered by following the pack's own mandate during this review).** `docs-graph.py:897` — `findings = bool(problems or stale or flagged or orphans or drift)` and `validate` is `cmd_inventory(exit_on_findings=True)` (`:1589`). So **any** `review-suggested` flag makes `validate` exit 1. Marking this review's predecessor `superseded` and running the mandated `docs-graph.py flag --changed forensic-review` propagated flags to **four** inbound neighbours (`forensic-review-rev42`, `privacy-review`, `forensic-review-backlog`, `note-20260712-revert-model-orchestration`). `validate` exited 1 until **all four** were individually reviewed and cleared. `validate` is CI gate **G5**.
 - **Violated contract.** `knowledge-visualization.md` **V16** defines `review-suggested` as *"a **suggestion** with provenance, not a status change"*, reviewed and cleared by the neighbour's **owner** — an inherently human-paced, possibly multi-day act. Gate semantics that treat it as a build failure contradict that definition. The pack is internally inconsistent here: **`freshness` exposes `--gate warn|fail`** precisely so a time-based signal need not fail a build, while **`validate` offers no such choice** and is the command CI runs.
@@ -154,9 +178,12 @@ summary: >-
   - [ ] The chosen semantics are stated in `knowledge-visualization.md` so gate behaviour and V16's wording agree.
 - **Validation.** `pytest tests/docs_explorer/test_docs_graph.py`; flag a node and confirm the gate's verdict matches the documented intent. **Owner:** maintainer. **Next skill:** `/implement`.
 
+> **RESOLVED 2026-08-22 (revision 43).** `validate` now separates **defects** (invalid frontmatter, dangling link, unregistered rel, duplicate id, orphan, index drift - all fixable by the author before pushing) which always fail, from **suggestions** (`review-suggested` V16, `review-by` decay V13 - cleared by the *neighbour's* owner on a human timescale) which warn on stderr and stay in the JSON. `--gate fail` restores strictness; `freshness` has carried the same choice from the start. Semantics documented as **V16a** in `knowledge-visualization.md` so the gate and V16's wording agree. 7 tests, **3 observed failing** pre-fix - precisely the 3 encoding new behaviour; the other 4 are regression guards for behaviour that was already correct.
+
+
 ## FR-057 — The documented local verification is not equivalent to CI, and its sync step is never compared
 
-- **Kind:** `issue` · **Priority:** P2 · **Status:** `proposed`
+- **Kind:** `issue` · **Priority:** P2 · **Status:** `resolved`
 - **Scope:** `tools/verify-bundle.ps1`, contributor documentation
 - **Evidence (Verified — by making the mistake during this review, then reproducing it).** `verify-bundle.ps1` runs **three** steps: `sync-pack.ps1`, `check-consistency.py`, `foundation-check.py`. CI's `pack-consistency` runs **seven** gates. The omissions that matter:
   1. It runs `sync-pack.ps1` but **never runs the `git diff --exit-code` comparison**. Regeneration without comparison cannot detect drift — it *creates* the corrected file and leaves it uncommitted, then reports `CONSISTENT`.
@@ -174,21 +201,38 @@ summary: >-
 
 ---
 
+> **RESOLVED 2026-08-22 (revision 43).** `verify-bundle.ps1` rewritten to run the **same gate set CI runs**, in CI's order, reporting every failure rather than stopping at the first. Gate 2 now runs `git diff --exit-code` **in the same command that performed the sync** - regeneration without comparison cannot detect drift, it silently creates the corrected file and reports CONSISTENT. Node gates invoke node **directly** rather than through `npm run` (FR-055), and a skip is printed loudly and named in the summary: *"a skip here is not a pass there."* Acceptance proven cleanly: baseline clean -> edit `pack/` source without regenerating -> **gate 2 FAILS, exit 1** -> probe removed -> passes.
+
+
 ## Summary
 
-| Priority | Count | Items |
-|---|---|---|
-| **P1** | 1 | FR-049 |
-| P2 | 5 | FR-050, FR-051, FR-052, FR-056, FR-057 |
-| P3 | 3 | FR-053, FR-054, FR-055 |
+| Priority | Count | Items | Outcome |
+|---|---|---|---|
+| **P1** | 1 | FR-049 | **resolved** - control built first, then the proof it demanded |
+| P2 | 5 | FR-050, FR-051, FR-052, FR-056, FR-057 | 4 **resolved**; FR-050 **closed as not-a-defect** |
+| P3 | 3 | FR-053, FR-054, FR-055 | 2 **resolved**; FR-054 closed **won't-do** with a re-open trigger |
 
-**Kinds:** 6 `issue` · 2 `risk` · 1 `todo`.
+**All nine triaged and dispositioned at revision 43.** Eight carried a control that was **observed
+failing before the fix** (CI6 - a control never seen to fail is not a control); the ninth was
+withdrawn because its premise did not survive checking.
 
-**One item gates the readiness verdict: FR-049.** Everything else is deferrable without changing the assessment. Two items (FR-050, FR-051) are carried unchanged from revision 30 and have now survived twelve revisions — the **PACK-B** pattern this repository registered about itself. If they are genuinely won't-do, closing them explicitly is better than carrying them a fourth time.
+**Three findings emerged from doing the work rather than reading code**, and they are more useful
+than the eight that were planned:
 
-**Two findings were discovered by doing the work, not by reading code**, and they are the same shape from opposite directions:
+- **A crash in `apply-learnings.py`** - the tool that writes into *other people's repositories* -
+  found by the **first assertion ever written against it**. Chained `.get()` assumed a shape the
+  hand-editable fleet store does not guarantee. The sweep found the identical line in `dream.py`:
+  one class, two instances (class **PACK-L**).
+- **FR-050's premise was false.** `docs/_site` was called stale on the evidence of an **mtime**;
+  it is hand-maintained, all its links resolve, and two tests plus a CI gate assert it. Deleting it
+  - the recommended remedy - would have broken the build. Registered as class **PACK-N**: staleness
+  inferred from a timestamp rather than from content truth, which is the exact substitution
+  `instrumentation-over-inference.md` forbids.
+- **The proof-coverage gate was wrong twice before it was right**, in both directions, and only
+  because its own verdicts were disconfirmed rather than trusted: a docstring certified `dream`,
+  and a hard-coded `.py` extension condemned a genuinely tested `.js` module.
 
-- **FR-056** — obeying the V16 propagation mandate turned the CI graph gate red. *Compliance is punished.*
-- **FR-057** — the documented local verification regenerated a stale artifact, never compared it, and reported CONSISTENT; CI then failed on the drift. *Non-compliance is invisible.*
-
-Together they describe a gate set whose **local and CI halves disagree**, in a repository whose central invariant is that generated surfaces must never drift from their source. Both are cheap to fix and both are one line of comparison away from being correct.
+The two findings the review itself flagged as *"one shape from two directions"* are now closed
+from both: **FR-056** (compliance is punished - a correct V16 propagation reddened CI) and
+**FR-057** (non-compliance is invisible - the local gate regenerated a stale artifact and declined
+to compare it). The local and CI halves of the gate set now agree.

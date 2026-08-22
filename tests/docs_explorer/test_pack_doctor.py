@@ -259,5 +259,57 @@ class PackDoctorGraphTests(unittest.TestCase):
         return root
 
 
+class PackDoctorNodeRunnerTests(unittest.TestCase):
+    """FR-055 / class PACK-C — a documented command assumed portable. `npm run` executes
+    scripts through a CHILD SHELL whose PATH can differ from the caller's, so node resolving
+    for you proves nothing about whether the documented command works. Observed on a real
+    Windows host: `node --version` -> v24.18.0, `cmd /c node --version` -> not recognized,
+    `npm run test:docs-explorer:core` -> the same failure, tests themselves 31/31 green."""
+
+    def setUp(self):
+        self.module = load_module()
+
+    def _fake(self, direct_ok=True, shell_ok=True):
+        def runner(argv, **kwargs):
+            is_shell = argv[0] in ("cmd", "sh")
+            ok = shell_ok if is_shell else direct_ok
+            if ok:
+                return SimpleNamespace(returncode=0, stdout="v24.18.0\n", stderr="")
+            return SimpleNamespace(
+                returncode=1, stdout="",
+                stderr="'node' is not recognized as an internal or external command")
+        return runner
+
+    def test_passes_when_the_spawned_shell_can_resolve_node(self):
+        with mock.patch.object(self.module, "run_bounded", self._fake(True, True)):
+            result = self.module.check_node_runner()
+        self.assertEqual("PASS", result["status"])
+
+    def test_warns_when_only_the_child_shell_cannot_find_node(self):
+        """The exact FR-055 shape: green for you, red for `npm run`."""
+        with mock.patch.object(self.module, "run_bounded", self._fake(True, False)):
+            result = self.module.check_node_runner()
+        self.assertEqual("WARN", result["status"],
+                         "a documented command that cannot run must be reported, not assumed")
+
+    def test_the_warning_names_the_working_invocation(self):
+        """PACK-C's stated control is to NAME the form that works here, not just complain."""
+        with mock.patch.object(self.module, "run_bounded", self._fake(True, False)):
+            result = self.module.check_node_runner()
+        text = json.dumps(result)
+        self.assertIn("node --test", text, "must name the direct invocation that does work")
+
+    def test_missing_node_is_reported_without_pretending_it_is_a_path_problem(self):
+        with mock.patch.object(self.module, "run_bounded", self._fake(False, False)):
+            result = self.module.check_node_runner()
+        self.assertEqual("WARN", result["status"])
+        self.assertIn("not on PATH", json.dumps(result))
+
+    def test_the_check_is_wired_into_the_doctor_run(self):
+        """A check nobody calls is not a control."""
+        source = SCRIPT.read_text(encoding="utf-8")
+        self.assertIn("check_node_runner()", source.split("def run(root)")[1][:800])
+
+
 if __name__ == "__main__":
     unittest.main()

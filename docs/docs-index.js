@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-Forward",
-  "generated": "2026-08-22T18:36:59Z",
+  "generated": "2026-08-22T20:59:48Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -896,6 +896,41 @@ window.DOCS_INDEX = {
       "sourceSha256": "bc92c7e129284b9993f97548093f6989d1a2f73057a9f190898dbc64af6dea87"
     },
     {
+      "id": "note-20260822-backlog-triage-and-worktree-discipline",
+      "path": "docs/notes/note-20260822-backlog-triage-and-worktree-discipline.md",
+      "title": "Decision note — revision-42 backlog triage, and worktree-per-session",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2027-02-22",
+      "reviewSuggested": [],
+      "summary": "Four sub-ADR decisions taken while clearing the revision-42 backlog and adding worktree-per-session: withdrawing FR-050 rather than acting on it, closing FR-054 as won't-do with a falsifiable trigger, bounding the bare-handle sweep at write sites, and extending coord-core.py rather than adding a parallel worktree tool.",
+      "tags": [
+        "forensic-review",
+        "triage",
+        "worktree",
+        "coordination",
+        "continuous-improvement"
+      ],
+      "links": [
+        {
+          "to": "forensic-review-rev42-backlog",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        },
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "e2331adf193cdda5220425ea89ae8c999cdcc6b80f86c5d2fa5df8a77d2fc869"
+    },
+    {
       "id": "design-aiforward-cli",
       "path": "docs/design/aiforward-cli.md",
       "title": "Design — aiforward CLI (suggestion 1)",
@@ -1308,7 +1343,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "26528bd6bb7b933b336131f6cf86f99c217b6784206644e27857c83c0c3825c2"
+      "sourceSha256": "fb1bbce65fe50af62c0997874fa057e346312eb28973c3d20df82028689a851d"
     },
     {
       "id": "docs-index",
@@ -1593,12 +1628,12 @@ window.DOCS_INDEX = {
       "path": "docs/backlog/forensic-review-rev42.md",
       "title": "Forensic Review Backlog — revision 42",
       "type": "doc",
-      "status": "accepted",
+      "status": "resolved",
       "owner": "@timianmalloo",
       "phase": "pack-evolution",
       "reviewBy": "2026-11-20",
       "reviewSuggested": [],
-      "summary": "Proposed backlog from the revision-42 forensic review at commit e4eae82. Seven items in four phases. FR-049 is the only P1 and gates the readiness verdict: the /dream, /apply-learnings and /optimize-graph cluster writes durable cross-repo stores with neither unit tests nor eval cases, which is RIG-C on its fourth occurrence. Two items are carried unchanged from revisions 30 and 33. Every item stops at proposal — triage before any remediation.",
+      "summary": "Backlog from the revision-42 forensic review at commit e4eae82, ALL NINE ITEMS TRIAGED AND DISPOSITIONED at revision 43. Seven resolved with a control observed failing first, FR-050 closed as not-a-defect (its premise - staleness inferred from an mtime - did not survive checking, and its recommended deletion would have broken the build), FR-054 closed won't-do with a falsifiable re-open trigger. Three of the most useful findings emerged from doing the work: a crash in the script that writes into other repositories, found by the first assertion ever written against it; a false staleness premise; and a coverage gate that was wrong in both directions until its own verdicts were disconfirmed.",
       "tags": [
         "forensic-review",
         "backlog",
@@ -1622,7 +1657,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "553e2f6c3e22e4be5da53c92b513bc6d34278b42442e1e8104c32d72f8f2aeb7"
+      "sourceSha256": "e509f32db3c5fd2e4daeb66ed2bc9db4eec6d1710923b0570a4845aaee00e745"
     },
     {
       "id": "lens-code-doc-join",
@@ -3208,5 +3243,5 @@ window.DOCS_INDEX = {
       "artifactId": "backtest-optimize-graph"
     }
   ],
-  "graphSha256": "2c4b2b5040aa570382c1ccbea84997a72b4eaad65f4cc83bb03155802fa73d51"
+  "graphSha256": "b1b756766ec775e42e678c5cd2dad2ed034836f9236e225cff3056ef6fa94a51"
 };

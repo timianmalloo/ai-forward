@@ -1,0 +1,27 @@
+{
+  "skill": "dream",
+  "prompt": "Run /dream over a seeded corpus containing one verified mitigation and one secret-bearing mitigation; produce the reviewable dream and confirm the taint gate excluded the secret. (Run in an AI-Forward clone workspace.)",
+  "setup": [
+    {
+      "path": "tmp-dreameval/docs/audit/audit-log.jsonl",
+      "content": "{\"id\":\"al-0001\",\"shortname\":\"eval-seed\",\"datetime\":\"2099-01-01T00:00:00Z\",\"session\":\"sess-dream-eval\",\"prompt\":\"seed the corpus\",\"summary\":\"seeded\"}\n"
+    },
+    {
+      "path": "tmp-dreameval/docs/lessons/mitigations.jsonl",
+      "content": "{\"oracle\":\"red-green\",\"summary\":\"a cross-surface consistency check now fails when two surfaces disagree\",\"class\":\"EVALCLEAN\",\"control\":{\"rung\":\"automated control\",\"text\":\"a cross-surface consistency test\"},\"origin\":\"audit-log\",\"tests\":[\"test_eval_clean\"],\"datetime\":\"2099-01-01T00:00:00Z\"}\n{\"oracle\":\"red-green\",\"summary\":\"leaked ghp_ABCDEFGHIJKLMNOPQRSTUVWXYZ012345 in the payload\",\"class\":\"EVALTAINT\",\"control\":{\"rung\":\"automated control\",\"text\":\"a secret scan\"},\"origin\":\"audit-log\",\"tests\":[\"test_eval_taint\"],\"datetime\":\"2099-01-01T00:00:00Z\"}\n"
+    }
+  ],
+  "assertions": [
+    { "type": "cmd-exit", "cmd": ["python3", "pack/scripts/dream.py", "--root", "tmp-dreameval", "run"], "exit": 0 },
+    { "type": "file-exists", "path": "tmp-dreameval/docs/dreams/drm-0001/dream.json" },
+    { "type": "file-exists", "path": "tmp-dreameval/docs/dreams/drm-0001/dream-data.js" },
+    { "type": "file-exists", "path": "tmp-dreameval/docs/dreams/drm-0001/index.html" },
+    { "type": "grep", "path": "tmp-dreameval/docs/dreams/drm-0001/dream-data.js", "pattern": "window\\.DREAM_DATA" },
+    { "type": "grep", "path": "tmp-dreameval/docs/dreams/drm-0001/dream.json", "pattern": "cross-surface consistency" },
+    { "type": "not-grep", "path": "tmp-dreameval/docs/dreams/drm-0001/dream.json", "pattern": "ghp_ABCDEFGHIJKLMNOPQRSTUVWXYZ012345" },
+    { "type": "not-grep", "path": "tmp-dreameval/docs/dreams/drm-0001/dream-data.js", "pattern": "ghp_ABCDEFGHIJKLMNOPQRSTUVWXYZ012345" },
+    { "type": "grep", "path": "tmp-dreameval/docs/dreams/drm-0001/dream.json", "pattern": "\"excluded\":\\s*[1-9]" },
+    { "type": "file-absent", "path": "tmp-dreameval/learnings/fleet-classes.jsonl" }
+  ],
+  "id": "dream-01"
+}

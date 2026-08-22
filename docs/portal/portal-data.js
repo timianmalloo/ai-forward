@@ -3,7 +3,7 @@ window.PORTAL_DATA = {
     "counts": {
       "skills": 22,
       "personas": 23,
-      "knowledge": 37,
+      "knowledge": 38,
       "templates": 26,
       "scripts": 16
     },
@@ -517,6 +517,12 @@ window.PORTAL_DATA = {
             "title": "Instrumentation over Inference",
             "summary": "Normative keywords (MUST, SHOULD, MAY, MUST NOT) follow RFC 2119.",
             "path": "../../pack/knowledge/instrumentation-over-inference.md"
+          },
+          {
+            "name": "session-worktree-discipline",
+            "title": "Session Worktree Discipline",
+            "summary": "Normative keywords (MUST, SHOULD, MAY, MUST NOT) follow RFC 2119.",
+            "path": "../../pack/knowledge/session-worktree-discipline.md"
           }
         ]
       }
@@ -962,7 +968,7 @@ window.PORTAL_DATA = {
         "id": "forensic-review-rev42-backlog",
         "type": "doc",
         "title": "Forensic Review Backlog — revision 42",
-        "summary": "Proposed backlog from the revision-42 forensic review at commit e4eae82. Seven items in four phases. FR-049 is the only P1 and gates the readiness verdict: the..."
+        "summary": "Backlog from the revision-42 forensic review at commit e4eae82, ALL NINE ITEMS TRIAGED AND DISPOSITIONED at revision 43. Seven resolved with a control observed..."
       },
       {
         "id": "investigation-blank-explainer-live",
@@ -1215,6 +1221,12 @@ window.PORTAL_DATA = {
         "type": "decision-note",
         "title": "A verification script reported COLLISION-FREE over zero identifiers, because it only compared set size to list size",
         "summary": "While spiking the allocator for ADR-0008, the verification harness printed \"COLLISION-FREE WITHOUT COORDINATION\" over an empty result set — the worker..."
+      },
+      {
+        "id": "note-20260822-backlog-triage-and-worktree-discipline",
+        "type": "decision-note",
+        "title": "Decision note — revision-42 backlog triage, and worktree-per-session",
+        "summary": "Four sub-ADR decisions taken while clearing the revision-42 backlog and adding worktree-per-session: withdrawing FR-050 rather than acting on it, closing..."
       },
       {
         "id": "plan-optimize-graph-live-01",
@@ -2032,6 +2044,21 @@ window.PORTAL_DATA = {
       {
         "from": "note-20260820-spike-corpus-assertion",
         "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260822-backlog-triage-and-worktree-discipline",
+        "to": "architecture",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260822-backlog-triage-and-worktree-discipline",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260822-backlog-triage-and-worktree-discipline",
+        "to": "forensic-review-rev42-backlog",
         "rel": "relates-to"
       },
       {

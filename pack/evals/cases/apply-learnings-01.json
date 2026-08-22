@@ -1,0 +1,24 @@
+{
+  "skill": "apply-learnings",
+  "prompt": "Push an approved fleet learning into a target repo that already holds one unrelated class; produce a reviewable plan and confirm the target repository was not modified. (Run in an AI-Forward clone workspace.)",
+  "setup": [
+    {
+      "path": "tmp-alroot/learnings/fleet-classes.jsonl",
+      "content": "{\"sig\":\"EVALNEW \\u00b7 a shape this target has never seen\",\"kind\":\"class\",\"scope\":\"general\",\"control\":{\"rung\":\"automated control\",\"text\":\"a gate that fails when the shape recurs\"},\"origin\":\"dream\",\"confidence\":\"v\",\"datetime\":\"2099-01-01T00:00:00Z\"}\n{\"sig\":\"EVALHELD \\u00b7 a class the target already registered\",\"kind\":\"class\",\"scope\":\"general\",\"control\":{\"rung\":\"automated control\",\"text\":\"an existing gate\"},\"origin\":\"dream\",\"confidence\":\"v\",\"datetime\":\"2099-01-01T00:00:00Z\"}\n"
+    },
+    {
+      "path": "tmp-altarget/docs/lessons/defect-classes.md",
+      "content": "# Defect classes\n\n### EVALHELD - a class the target already registered\n- **Signature:** the target already knows this shape.\n- **Control:** an existing gate.\n- **Status:** `controlled`\n"
+    }
+  ],
+  "assertions": [
+    { "type": "cmd-exit", "cmd": ["python3", "pack/scripts/apply-learnings.py", "--root", "tmp-alroot", "push", "--repos", "tmp-altarget"], "exit": 0 },
+    { "type": "file-exists", "path": "tmp-alroot/learnings/plans/tmp-altarget.plan.md" },
+    { "type": "grep", "path": "tmp-alroot/learnings/plans/tmp-altarget.plan.md", "pattern": "(?i)add" },
+    { "type": "grep", "path": "tmp-alroot/learnings/plans/tmp-altarget.plan.md", "pattern": "(?i)merge" },
+    { "type": "not-grep", "path": "tmp-altarget/docs/lessons/defect-classes.md", "pattern": "EVALNEW" },
+    { "type": "grep", "path": "tmp-altarget/docs/lessons/defect-classes.md", "pattern": "EVALHELD - a class the target already registered" },
+    { "type": "grep", "path": "tmp-altarget/docs/lessons/defect-classes.md", "pattern": "\\*\\*Status:\\*\\* `controlled`" }
+  ],
+  "id": "apply-learnings-01"
+}

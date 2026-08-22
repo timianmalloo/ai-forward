@@ -2,11 +2,13 @@
   "name": "ai-forward-pack-tests",
   "private": true,
   "scripts": {
-    "test": "npm run test:docs-explorer:core",
+    "test": "npm run test:docs-explorer:core && npm run test:explainer-render",
     "test:docs-explorer:core": "node --test tests/docs_explorer/docs_explorer_core.test.js tests/docs_explorer/browser_benchmark.test.js tests/docs_explorer/knowledge_surfaces.test.js",
     "test:docs-explorer:browser": "playwright test",
     "benchmark:docs-explorer:browser": "node tests/docs_explorer/benchmark_docs_explorer.js",
-    "test:docs-explorer": "npm run test:docs-explorer:core && npm run test:docs-explorer:browser"
+    "test:docs-explorer": "npm run test:docs-explorer:core && npm run test:docs-explorer:browser",
+    "test:explainer-render": "node tools/verify-explainer-render.js",
+    "test:backtest-render": "node tools/verify-backtest-render.js"
   },
   "devDependencies": {
     "@playwright/test": "1.61.1"

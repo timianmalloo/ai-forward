@@ -18,6 +18,7 @@ import argparse
 import fnmatch
 import json
 import os
+import re
 import subprocess
 import sys
 import time
@@ -473,6 +474,18 @@ def _build_parser():
     guard.add_argument("--fix", action="store_true", help="push, the cheapest second copy")
     ses = sub.add_parser("session", help="one session per working tree")
     ses.add_argument("action", choices=["start", "end"])
+    # WT1-WT12: a new session starts in a new worktree, and nothing is left behind.
+    wt = sub.add_parser("worktree", help="session worktree lifecycle: new | list | cleanup")
+    wt.add_argument("action", choices=["new", "list", "cleanup"])
+    wt.add_argument("--branch", help="branch to create; name it for the WORK, not the session")
+    wt.add_argument("--base", help="commit/branch to branch from (default: current HEAD)")
+    # `worktree new` is the FIRST command of a session, before AGENT_SESSION is necessarily
+    # exported, so the id may be passed directly. Everywhere else the env var remains the
+    # convention and this flag simply overrides it.
+    wt.add_argument("--session", dest="wt_session",
+                    help="session id to register (default: $AGENT_SESSION)")
+    wt.add_argument("--remove", action="store_true",
+                    help="cleanup: actually delete. Off by default - deletion is irreversible")
     met = sub.add_parser("metrics", help="the four measures this layer exists to move")
     met.add_argument("--json", action="store_true")
     sub.add_parser("install", help="write the pre-commit hook; print the settings entry")
@@ -638,6 +651,206 @@ def _worktree_key(cwd):
     return str(Path(cwd).resolve()).replace("\\", "/")
 
 
+# --- worktree lifecycle (session-worktree-discipline.md WT1-WT12) ------------
+# This file already resolves the primary checkout from any tree and keys occupancy by
+# worktree, so the lifecycle belongs here rather than in a parallel tool. WT1 makes a fresh
+# worktree the DEFAULT unit of session isolation; WT6-WT12 close the half that actually rots:
+# an isolation mechanism nobody cleans up becomes a disk of half-finished trees, one of which
+# is eventually the only copy of some real work.
+
+def _slug(text):
+    return re.sub(r"[^a-z0-9]+", "-", (text or "").lower()).strip("-")[:48] or "session"
+
+
+def worktree_inventory(repo):
+    """Parse `git worktree list --porcelain`. Returns (records, error).
+
+    Porcelain is used rather than the human format because a path containing a space is
+    otherwise unparseable - the same reasoning as staged_paths()'s -z form.
+    """
+    out, err = _git(repo, "worktree", "list", "--porcelain")
+    if err:
+        return None, err
+    records, current = [], {}
+    for line in (out or "").splitlines():
+        if not line.strip():
+            if current:
+                records.append(current)
+                current = {}
+            continue
+        key, _, value = line.partition(" ")
+        if key == "worktree":
+            current["path"] = value
+        elif key == "branch":
+            current["branch"] = value.replace("refs/heads/", "")
+        elif key == "HEAD":
+            current["head"] = value
+        elif key in ("bare", "detached", "locked", "prunable"):
+            current[key] = value or True
+    if current:
+        records.append(current)
+    return records, None
+
+
+def worktree_is_clean(path):
+    """True when there is nothing modified, staged OR UNTRACKED.
+
+    Untracked is the condition that matters most: a new file nobody has committed exists
+    nowhere else, so deleting its tree destroys the only copy. `git status --porcelain`
+    includes untracked by default and the -z form survives paths with spaces or quotes.
+    """
+    out, err = _git(path, "status", "--porcelain", "-z")
+    if err:
+        return None, err
+    return not [p for p in (out or "").split("\0") if p.strip()], None
+
+
+def worktree_safety(record, primary, cwd, live_keys, index):
+    """WT7, in order, fail-safe. Returns (safe, reason).
+
+    Every condition is a HARD STOP that reports rather than removes. A cleanup that deletes
+    on a heuristic will eventually delete the tree that mattered, and that single event ends
+    the adoption of the whole practice.
+    """
+    path = record.get("path", "")
+    resolved = _worktree_key(path)
+    if resolved == _worktree_key(primary):
+        return False, "primary checkout - the reference tree is never cleanup"
+    if resolved == _worktree_key(cwd):
+        return False, "current working directory - deleting the floor you stand on"
+    if record.get("locked"):
+        return False, "locked by git"
+    if resolved in live_keys:
+        return False, "a live session holds it (coord session start, not ended)"
+    if not os.path.isdir(path):
+        return True, "directory is gone; only the git metadata remains (prunable)"
+    clean, err = worktree_is_clean(path)
+    if err:
+        return False, "could not read status: {}".format(_safe(err, 120))
+    if not clean:
+        return False, "uncommitted or untracked changes - the only copy of that work"
+    count, code = unique_commits(path)
+    if count is None:
+        return False, "could not compute unique commits ({})".format(code)
+    if count > 0:
+        return False, "{} commit(s) exist nowhere else - unmerged work".format(count)
+    branch = record.get("branch")
+    if branch and index.get(branch, 0) > 1:
+        return False, "branch {} is checked out in another tree".format(_safe(branch, 60))
+    return True, "clean, merged, unheld"
+
+
+def cmd_worktree(root, repo, action, cwd, now, session=None, agent=None,
+                 branch=None, base=None, remove=False):
+    records, err = worktree_inventory(repo)
+    if err:
+        print("COORD-NOT-CHECKED-GIT: {}".format(_safe(err, 200)))
+        return 4
+    primary = records[0]["path"] if records else str(repo)
+
+    if action == "new":
+        name = branch or (session and "session/" + _slug(session))
+        if not name:
+            print("worktree new needs --branch <name> (or --session to derive one).\n"
+                  "  Name it for the WORK, not the session (WT5): a tree called\n"
+                  "  session-2026-08-22-a is one nobody can ever safely clean up.")
+            return 2
+        # Sibling of the primary, never inside it: a tree inside the repo would be walked by
+        # docs-graph, check-consistency and every test that scans the tree.
+        parent = os.path.dirname(os.path.abspath(primary))
+        target = os.path.join(parent, "{}-{}".format(os.path.basename(os.path.abspath(primary)),
+                                                     _slug(name)))
+        if os.path.exists(target):
+            print("COORD-WORKTREE-EXISTS  {}\n  remedy    cd there, or pick another --branch"
+                  .format(_safe(target, 300)))
+            return 3
+        args = ["worktree", "add", "-b", name, target]
+        if base:
+            args.append(base)
+        out, err = _git(repo, *args)
+        if err:
+            print("COORD-WORKTREE-ADD-FAILED: {}".format(_safe(err, 300)))
+            return 4
+        if session:
+            append_event(root, {"kind": "session-start", "session": session,
+                                "agent": agent or session, "wi": "WI-0", "path": "-",
+                                "at": now, "worktree": _worktree_key(target)})
+        print("worktree ready\n  branch    {}\n  path      {}\n  next      cd {}"
+              .format(name, target, target))
+        if session:
+            print("  session   {} registered there".format(session))
+        return 0
+
+    # Shared state for list/cleanup.
+    STALE_SECONDS = 8 * 3600
+    events, errors, _ = read_events(root)
+    if errors:
+        print("COORD-NOT-CHECKED-RECORD: {}".format(_safe("; ".join(errors[:2]), 200)))
+        return 4
+    live = {}
+    for event in events:
+        key = event.get("worktree")
+        if event.get("kind") == "session-start":
+            live[key] = max(live.get(key, 0.0), event.get("at", 0.0))
+        elif event.get("kind") == "session-end":
+            live.pop(key, None)
+    live_keys = {k for k, t in live.items() if k and now - t < STALE_SECONDS}
+    index = {}
+    for record in records:
+        if record.get("branch"):
+            index[record["branch"]] = index.get(record["branch"], 0) + 1
+
+    verdicts = []
+    for record in records:
+        safe, reason = worktree_safety(record, primary, cwd, live_keys, index)
+        verdicts.append((record, safe, reason))
+
+    if action == "list":
+        print("{} worktree(s); primary {}".format(len(records), _safe(primary, 200)))
+        for record, safe, reason in verdicts:
+            print("  {:<10} {:<44} {:<22} {}".format(
+                "SAFE" if safe else "HELD",
+                _safe(record.get("path", "?"), 140),
+                _safe(record.get("branch") or "(detached)", 40),
+                reason))
+        return 0
+
+    # cleanup: reports by default; --remove is the explicit gate on an irreversible act (WT8).
+    removable = [(r, why) for r, safe, why in verdicts if safe]
+    held = [(r, why) for r, safe, why in verdicts if not safe]
+    # WT12: refusals are printed, because a silent skip is indistinguishable from finding
+    # nothing - and the difference is exactly what the human needs.
+    for record, why in held:
+        print("KEEP    {:<44} {}".format(_safe(record.get("path", "?"), 140), why))
+    if not removable:
+        print("nothing to remove ({} tree(s) kept)".format(len(held)))
+        out, err = _git(repo, "worktree", "prune")   # WT9: metadata still gets tidied
+        return 0 if not err else 4
+    for record, why in removable:
+        print("{} {:<44} {}".format("REMOVE " if remove else "WOULD   ",
+                                    _safe(record.get("path", "?"), 140), why))
+    if not remove:
+        print("\n{} tree(s) are safe to remove. Nothing was deleted - deleting a directory is\n"
+              "irreversible and git cannot undo it, so it is opt-in (WT8):\n"
+              "  coord worktree cleanup --remove".format(len(removable)))
+        return 0
+    failed = 0
+    for record, _why in removable:
+        out, err = _git(repo, "worktree", "remove", "--force", record.get("path", ""))
+        if err:
+            failed += 1
+            print("  FAILED  {}: {}".format(_safe(record.get("path", "?"), 140), _safe(err, 160)))
+    # WT9: a hand-deleted directory leaves .git/worktrees/<name> behind and git keeps the
+    # name reserved, so the next `worktree add` fails describing a state the filesystem does
+    # not show. Prune so the administrative record matches reality, then read it back (E14).
+    _git(repo, "worktree", "prune")
+    after, err = worktree_inventory(repo)
+    remaining = len(after) if after else "?"
+    print("removed {} of {} tree(s); {} remain".format(
+        len(removable) - failed, len(removable), remaining))
+    return 4 if failed else 0
+
+
 def cmd_session(root, action, session, agent, cwd, now):
     # simplify: occupancy is the newest session-start with no matching session-end,
     #   inside a staleness window.
@@ -798,6 +1011,15 @@ def main(argv=None):
 
     if args.cmd == "metrics":
         return cmd_metrics(root, repo, args.json)
+
+    # Dispatched BEFORE the identity gate: `worktree list` and `cleanup` are read/maintenance
+    # commands, and refusing to tell someone what trees exist because AGENT_SESSION is unset
+    # would make the orphan check unreachable exactly when it is most needed (WT10).
+    if args.cmd == "worktree":
+        chosen = getattr(args, "wt_session", None) or session
+        return cmd_worktree(root, repo, args.action, os.getcwd(), now,
+                            session=chosen, agent=agent or chosen, branch=args.branch,
+                            base=args.base, remove=args.remove)
 
     if args.cmd == "check":
         decision = check(root, args.path, session, now)

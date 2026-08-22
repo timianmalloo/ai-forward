@@ -1449,5 +1449,116 @@ summary: >-
         )
 
 
+class ValidateGateSemanticsTests(unittest.TestCase):
+    """FR-056. `validate` failed on ANY finding, so a correct V16 propagation reddened CI
+    until every flagged owner responded — making the rational move 'skip the propagation'.
+    Defects (fixable by the author before pushing) must fail; suggestions (cleared by the
+    NEIGHBOUR'S owner, on a human timescale) must warn. Each test below was observed
+    failing on the pre-fix code."""
+
+    ART = """---
+id: {aid}
+title: "{aid}"
+type: doc
+status: accepted
+owner: "@owner"
+tags: [test]
+links:
+  - {{ to: {target}, rel: relates-to }}
+review-by: 2099-01-01
+review-suggested: {flag}
+summary: >-
+  Fixture artifact for the validate gate.
+---
+
+# {aid}
+"""
+
+    def _build(self, temp, flag="[]", target_b="a", derive=True):
+        root = Path(temp) / "docs"
+        root.mkdir(parents=True)
+        (root / "a.md").write_text(
+            self.ART.format(aid="a", target="b", flag=flag), encoding="utf-8")
+        (root / "b.md").write_text(
+            self.ART.format(aid="b", target=target_b, flag="[]"), encoding="utf-8")
+        if derive:
+            # Derive AFTER the mutation so index drift is not an accidental second finding.
+            subprocess.run([sys.executable, str(SCRIPT), "--root", str(root), "derive"],
+                           capture_output=True, check=True, timeout=60)
+        return root
+
+    def _validate(self, root, *extra):
+        return subprocess.run(
+            [sys.executable, str(SCRIPT), "--root", str(root), "validate", *extra],
+            capture_output=True, text=True, timeout=60)
+
+    def test_clean_graph_passes(self):
+        with tempfile.TemporaryDirectory() as temp:
+            result = self._validate(self._build(temp))
+            self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+
+    def test_review_suggested_flag_alone_does_not_fail_the_gate(self):
+        """The whole point: propagating a material change must not break the build."""
+        flag = '[{ by: other, on: 2026-01-01, reason: "contract changed" }]'
+        with tempfile.TemporaryDirectory() as temp:
+            result = self._validate(self._build(temp, flag=flag))
+            self.assertEqual(0, result.returncode,
+                             "a V16 suggestion must warn, not fail:\n" + result.stderr)
+
+    def test_the_flag_is_still_reported_when_it_only_warns(self):
+        """A warn that is silent is worse than a failure (IO4/IO8)."""
+        flag = '[{ by: other, on: 2026-01-01, reason: "contract changed" }]'
+        with tempfile.TemporaryDirectory() as temp:
+            result = self._validate(self._build(temp, flag=flag))
+            self.assertIn('"flagged"', result.stdout)
+            self.assertIn('"a"', result.stdout)
+            self.assertIn("review-suggested", result.stderr)
+
+    def test_gate_fail_restores_strictness_for_maintainers_who_want_it(self):
+        flag = '[{ by: other, on: 2026-01-01, reason: "contract changed" }]'
+        with tempfile.TemporaryDirectory() as temp:
+            result = self._validate(self._build(temp, flag=flag), "--gate", "fail")
+            self.assertEqual(1, result.returncode,
+                             "--gate fail must still treat a suggestion as an error")
+
+    def test_a_dangling_link_still_fails(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = self._build(temp, target_b="does-not-exist")
+            result = self._validate(root)
+            self.assertEqual(1, result.returncode, "a dangling link is a defect")
+            self.assertIn("defect", result.stderr)
+
+    def test_index_drift_still_fails(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = self._build(temp)          # derives a matching index...
+            (root / "c.md").write_text(       # ...then adds an artifact without re-deriving
+                self.ART.format(aid="c", target="a", flag="[]"), encoding="utf-8")
+            result = self._validate(root)
+            self.assertEqual(1, result.returncode, "index drift is a defect (V11)")
+
+    def test_an_orphan_still_fails(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp) / "docs"
+            root.mkdir(parents=True)
+            (root / "lonely.md").write_text("""---
+id: lonely
+title: "lonely"
+type: doc
+status: accepted
+owner: "@owner"
+tags: [test]
+links: []
+review-by: 2099-01-01
+review-suggested: []
+summary: >-
+  No inbound and no outbound edges.
+---
+""", encoding="utf-8")
+            subprocess.run([sys.executable, str(SCRIPT), "--root", str(root), "derive"],
+                           capture_output=True, check=True, timeout=60)
+            result = self._validate(root)
+            self.assertEqual(1, result.returncode, "an orphan is a defect (V10)")
+
+
 if __name__ == "__main__":
     unittest.main()

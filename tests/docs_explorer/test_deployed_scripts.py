@@ -15,15 +15,22 @@ REPO = Path(__file__).resolve().parents[2]
 SCRIPTS = REPO / "pack" / "scripts"
 
 DEPLOYED = ["audit-log", "design-lint", "docs-graph", "foundation-check",
-            "pack-doctor", "prompt-log", "scrub"]
+            "pack-doctor", "prompt-log", "scrub",
+            # FR-049: the setup helpers were unreferenced by any test for four revisions.
+            "graphify-setup", "obsidian-setup", "visual-assets-setup"]
 
 
 def run(script, *args, env=None):
     e = dict(os.environ)
     if env:
         e.update(env)
+    # Decode as UTF-8 explicitly. The scripts deliberately reconfigure stdout to UTF-8 (the
+    # FR-047 fix) so their glyphs survive a legacy console — which means a harness decoding
+    # by locale chokes on the very bytes that prove the fix works, and reports a reader-thread
+    # UnicodeDecodeError that has nothing to do with the script under test.
     return subprocess.run([sys.executable, str(SCRIPTS / f"{script}.py"), *args],
-                          capture_output=True, text=True, env=e, timeout=60)
+                          capture_output=True, text=True, encoding="utf-8",
+                          errors="replace", env=e, timeout=60)
 
 
 class HelpSurvivesLegacyConsoleTests(unittest.TestCase):
@@ -110,6 +117,53 @@ Buttons use {colors.nonexistent}.
         result = self._lint(self.BAD)
         self.assertNotEqual(result.returncode, 0,
                             "an unresolvable {token} must fail - that is the whole control")
+
+
+class SetupHelperDryRunTests(unittest.TestCase):
+    """FR-049. The three `*-setup.py` helpers write configuration INTO a user's repository —
+    vault config, ignore rules, MCP wiring, credential-adjacent files. Each advertises
+    `--dry-run`, and a dry run that writes anything is the worst kind of defect: the user
+    explicitly asked for the safe path. So the assertion is the contract itself — a byte-level
+    before/after comparison of the whole tree, not merely 'it did not raise'."""
+
+    HELPERS = ["graphify-setup", "obsidian-setup", "visual-assets-setup"]
+
+    @staticmethod
+    def _snapshot(root):
+        tree = {}
+        for dirpath, dirnames, filenames in os.walk(root):
+            dirnames[:] = sorted(dirnames)
+            for name in sorted(filenames):
+                full = Path(dirpath) / name
+                tree[str(full.relative_to(root))] = full.read_bytes()
+        return tree
+
+    def test_dry_run_init_writes_nothing(self):
+        for helper in self.HELPERS:
+            with self.subTest(helper=helper):
+                with tempfile.TemporaryDirectory() as temp:
+                    root = Path(temp)
+                    (root / "docs").mkdir()
+                    (root / "docs" / "seed.md").write_text("seed\n", encoding="utf-8")
+                    before = self._snapshot(root)
+                    run(helper, "--root", str(root), "--init", "--dry-run")
+                    self.assertEqual(before, self._snapshot(root),
+                                     f"{helper} --dry-run must not modify the tree")
+
+    def test_check_does_not_mutate_the_repository(self):
+        """`--check` is a report. A reporting mode that writes is a surprise in someone
+        else's repo."""
+        for helper in self.HELPERS:
+            with self.subTest(helper=helper):
+                with tempfile.TemporaryDirectory() as temp:
+                    root = Path(temp)
+                    (root / "docs").mkdir()
+                    before = self._snapshot(root)
+                    result = run(helper, "--root", str(root), "--check")
+                    self.assertEqual(before, self._snapshot(root),
+                                     f"{helper} --check must be read-only")
+                    self.assertNotIn("Traceback", result.stderr,
+                                     f"{helper} --check crashed:\n{result.stderr[-500:]}")
 
 
 if __name__ == "__main__":
