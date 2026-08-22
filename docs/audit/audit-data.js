@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-08-22T18:37:40Z",
+  "generated": "2026-08-22T21:06:07Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1640,6 +1640,39 @@ window.AUDIT_DATA = {
         "branch": "main",
         "pushed": true
       }
+    },
+    {
+      "id": "al-0074",
+      "shortname": "backlog-clear-and-worktree-discipline",
+      "datetime": "2026-08-22T21:05:51Z",
+      "session": "ad91aa43-d81e-4926-b3f2-5c242f25a7a1",
+      "prompt": "two things 1: Do these next steps 2: Add a new directive that every new session always starts in a new work tree to ensure no colisions, and yes other work trees can be created if that session needs but to maintain hygiene and avoid mistakes a new session always starts a new work tree. Also ensure we have the right clean-up so no work tree orphans get left behind",
+      "summary": "Revision 43. (1) Cleared the whole revision-42 forensic backlog - all NINE findings triaged and dispositioned, eight with a control OBSERVED FAILING before the fix. FR-049 (the only P1): built check_proof_coverage FIRST, deriving the deployed-script and skill lists from the filesystem (never hard-coded - the CTRL-D lesson); it went red naming exactly 5 scripts and 3 skills, independently matching the review's own count. It was wrong TWICE before it was right, in both directions, caught only by disconfirming its own verdicts: a substring match certified dream.py because the word appears in an unrelated docstring, and a hard-coded .py condemned a genuinely tested .js module. Then wrote the proof it demanded - 25 tests on the two fleet-critical scripts asserting the taint gate, the promotion oracle, merge-vs-add reconciliation and the never-merges invariant as BYTE-IDENTITY of the target after a push; dry-run safety on the three setup helpers; three eval cases, the two deterministic ones executed end to end at 17 assertions and 0 failures. FR-051: vendored React/ReactDOM/htm with attribution, added skip link, main/banner/contentinfo landmarks, 9 named sections and a real tablist replacing selected-state-by-CSS-class; render proof runs the page's own bundles in a DOM shim, 12 assertions red pre-fix. FR-052/053: the system of record no longer drops a line silently - counted, warned with file:line, gateable by a new verify subcommand now in CI; seven bare handles converted, not the four named. FR-055: pack-doctor spawns the shell npm actually uses and names the working invocation. FR-056/057 - the two halves of one shape, closed together: a correct V16 propagation no longer reddens CI (defects fail, suggestions warn), and verify-bundle now runs CI's whole gate set and DIFFS ITS OWN SYNC. FR-050 WITHDRAWN - its evidence was an mtime; the file is hand-maintained, all 8 links resolve, two tests and a CI gate assert it, and the deletion it recommended would have broken the build (class PACK-N). FR-054 closed won't-do with a falsifiable re-open trigger. (2) NEW worktree-per-session directive WT1-WT12 plus coord worktree new/list/cleanup, extending coord-core.py which already owned worktree identity and occupancy rather than adding a parallel tool. Cleanup is fail-safe by construction: removable only when not primary, not the cwd, clean INCLUDING UNTRACKED, carrying no commit absent from every other ref, and unheld; every refusal is printed with its reason and deletion is opt-in. Proven end to end on a real repo through all four hard stops, then reaped and pruned. Found by doing the work: an unhandled AttributeError in apply-learnings.py - the tool that writes into OTHER repositories - surfaced by the first assertion ever written against it, with the identical line in dream.py (class PACK-L). Three new classes registered: PACK-L, PACK-M, PACK-N. All 9 gates green; CI green.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "pack/knowledge/session-worktree-discipline.md",
+        "pack/scripts/coord-core.py",
+        "tools/check-consistency.py",
+        "tools/verify-bundle.ps1",
+        "docs/backlog/forensic-review-rev42.md",
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [
+        "backlog",
+        "worktree",
+        "continuous-improvement",
+        "rev43"
+      ],
+      "outcome": "success",
+      "git": {
+        "sha": "2c298f84bc32ce52fb013d99858c336cebffde2c",
+        "short": "2c298f84b",
+        "branch": "main",
+        "pushed": true
+      }
     }
   ],
   "changes": [
@@ -2143,6 +2176,32 @@ window.AUDIT_DATA = {
         "branch": "main",
         "pushed": true,
         "commits": []
+      }
+    },
+    {
+      "id": "cl-0021",
+      "datetime": "2026-08-22T21:06:07Z",
+      "session": "ad91aa43-d81e-4926-b3f2-5c242f25a7a1",
+      "kind": "decision",
+      "skill": "implement",
+      "title": "Worktree-per-session becomes the default unit of session isolation",
+      "prompt": "Add a new directive that every new session always starts in a new work tree to ensure no colisions ... Also ensure we have the right clean-up so no work tree orphans get left behind",
+      "summary": "WT1-WT12: a session that will WRITE to the repo starts in its own git worktree on its own branch; working in the primary checkout becomes a recorded exception. Cleanup is specified with the same force as creation and is fail-safe: a tree is removable only when it is not primary, not the cwd, clean INCLUDING UNTRACKED, carries no commit absent from every other ref, its branch is not checked out elsewhere, and its session is ended or stale - anything else is REPORTED, NEVER REMOVED, with its specific reason. Deletion is opt-in and git worktree prune reconciles metadata with the filesystem.",
+      "rationale": "Two agents in one checkout share an index, a HEAD and one set of generated artifacts, so a stash in one silently reaches into the other's uncommitted work and a regenerated surface is attributed to whichever session synced last. Nothing fails loudly - the evidence simply stops meaning what it says, which is the worst class of failure this pack exists to prevent. Care does not scale across concurrent sessions and does not survive a session that crashes mid-edit, so the countermeasure is isolation by default. Implemented by EXTENDING coord-core.py, which already owned worktree identity, one-session-per-tree occupancy and primary-checkout resolution, rather than adding a parallel tool that would have re-implemented all three and then had to agree with them.",
+      "artifacts": [
+        "pack/knowledge/session-worktree-discipline.md",
+        "pack/scripts/coord-core.py"
+      ],
+      "tags": [],
+      "git": {
+        "before": "ae9ac82",
+        "after": "2c298f84bc32ce52fb013d99858c336cebffde2c",
+        "branch": "main",
+        "pushed": true,
+        "commits": [
+          "2c298f8 chore(gates): wire audit-log verify into CI and verify-bundle; mark rev-42 review resolved",
+          "fbcd019 feat(pack): clear the rev-42 backlog + worktree-per-session discipline (rev 43)"
+        ]
       }
     }
   ]
