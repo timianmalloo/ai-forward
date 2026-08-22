@@ -2,7 +2,7 @@
 id: forensic-review-rev42
 title: "Forensic Review — AI-Forward repository (revision 42)"
 type: doc
-status: accepted
+status: resolved
 owner: "@timianmalloo"
 phase: "pack-evolution"
 tags: [forensic-review, adoption-readiness, testing, verification, documentation, ci]
@@ -25,6 +25,17 @@ summary: >-
 ---
 
 # Forensic Review — AI-Forward repository, revision 42
+
+> **RESOLVED at revision 43 (2026-08-22, commit `fbcd019`).** All nine findings were triaged and
+> dispositioned; see `docs/backlog/forensic-review-rev42.md` for the per-item record. Seven were
+> fixed with a control **observed failing before the fix**; **FR-050 was withdrawn** because its
+> premise — staleness inferred from an mtime — did not survive checking, and the deletion it
+> recommended would have broken the build (class **PACK-N**); **FR-054** was closed won't-do with
+> a falsifiable re-open trigger. The readiness verdict below was *conditional on FR-049*; that
+> condition is now met, so the verdict reads **ADOPTABLE** without qualification. Three of the most
+> useful findings emerged from doing the work rather than reading code, including a crash in the
+> script that writes into other repositories, found by the first assertion ever written against it.
+
 
 ## 1. Scope and baseline
 

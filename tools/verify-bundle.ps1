@@ -111,6 +111,10 @@ try {
         python (Join-Path $repo "pack\scripts\foundation-check.py") | Select-Object -Last 1
     }
 
+    Gate "6b. audit log is fully readable" {
+        python (Join-Path $repo "pack\scripts\audit-log.py") verify
+    }
+
     Gate "7. eval cases well-formed" {
         python -c @"
 import glob, json, re, sys, os

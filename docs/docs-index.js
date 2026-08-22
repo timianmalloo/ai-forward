@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-Forward",
-  "generated": "2026-08-22T20:59:48Z",
+  "generated": "2026-08-22T21:04:15Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1592,7 +1592,7 @@ window.DOCS_INDEX = {
       "path": "docs/reviews/forensic-review-rev42.md",
       "title": "Forensic Review — AI-Forward repository (revision 42)",
       "type": "doc",
-      "status": "accepted",
+      "status": "resolved",
       "owner": "@timianmalloo",
       "phase": "pack-evolution",
       "reviewBy": "2026-11-20",
@@ -1621,7 +1621,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "eb4ee397f9d5c03173fe87d5d96820e078bcc99b154627311033db26810e1e7c"
+      "sourceSha256": "3a862faa10dc303b47f30e8d0dc130307ca089f35de24a041fc0dee039518449"
     },
     {
       "id": "forensic-review-rev42-backlog",
@@ -3243,5 +3243,5 @@ window.DOCS_INDEX = {
       "artifactId": "backtest-optimize-graph"
     }
   ],
-  "graphSha256": "b1b756766ec775e42e678c5cd2dad2ed034836f9236e225cff3056ef6fa94a51"
+  "graphSha256": "08ea63b167509a082f4af4fedd61f79bbd1ae4ac6d45c070493b7333afacf61e"
 };

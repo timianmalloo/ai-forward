@@ -84,9 +84,15 @@ jobs:
       - name: Knowledge-graph validation
         run: python3 docs/ai-forward-pack/scripts/docs-graph.py validate
 
-      # Uncatalogued edits to the vendored foundation docs.
+      # Vendored-foundation drift
       - name: Vendored-foundation drift
         run: python3 pack/scripts/foundation-check.py
+
+      # FR-052. The audit log is this project's durable memory and the corpus /dream
+      # consolidates over. read_log survives a malformed line on purpose, so a corrupted
+      # entry would otherwise be invisible to every reader while the tooling reports success.
+      - name: Audit log is fully readable
+        run: python3 pack/scripts/audit-log.py verify
 
       # Every eval case is valid JSON with compilable regex assertions.
       - name: Eval cases well-formed
