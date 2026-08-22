@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-08-22T18:31:24Z",
+  "generated": "2026-08-22T18:37:40Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1609,6 +1609,34 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "e4eae82fab8840d6296a0a7435f0233d05ad85a3",
         "short": "e4eae82fa",
+        "branch": "main",
+        "pushed": true
+      }
+    },
+    {
+      "id": "al-0073",
+      "shortname": "forensicreview-rev42-correction",
+      "datetime": "2026-08-22T18:37:40Z",
+      "session": "ad91aa43-d81e-4926-b3f2-5c242f25a7a1",
+      "prompt": "push everything then /forensicreview",
+      "summary": "CORRECTION to al-0072, which stated EIGHT findings: the review carries NINE. After that entry was written, CI failed on my own pushed commit (d3698f5) - web/pack-index.js was stale because creating the two review artifacts added graph nodes and I re-ran docs-graph derive and build-docs-portal.py but NOT sync-pack.ps1, and my final local pass ran G1/G5/G6 but not G2 the drift gate. Fixed in 2b5fb9a, CI green. Investigating my own error produced FR-057 (P2): the DOCUMENTED local verification, verify-bundle.ps1, would not have caught it either - it runs sync-pack.ps1 but never runs the git diff --exit-code comparison, so it regenerates the stale artifact, declines to compare it, and reports CONSISTENT (E13/E14). It also omits pytest, graph validate, Docs Explorer core and the eval-case check - 3 of 7 gates. Paired with FR-056 this is one shape from two directions: compliance is punished (a correct V16 propagation reddens CI) and non-compliance is invisible (the local gate cannot see the drift it just created), in the repository whose central invariant is that generated surfaces must not drift from source. Final state: 9 findings (1 P1, 5 P2, 3 P3), main green at 8bbcce4, tree clean, no production code changed. Verdict unchanged - ADOPTABLE conditional on FR-049.",
+      "kind": "skill",
+      "skill": "forensicreview",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/reviews/forensic-review-rev42.md",
+        "docs/backlog/forensic-review-rev42.md"
+      ],
+      "tags": [
+        "forensic-review",
+        "correction",
+        "ci"
+      ],
+      "outcome": "success",
+      "git": {
+        "sha": "8bbcce4d1f93eadff72ccffb4451b972e733685a",
+        "short": "8bbcce4d1",
         "branch": "main",
         "pushed": true
       }
