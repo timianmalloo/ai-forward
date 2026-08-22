@@ -25,12 +25,13 @@ The measured warrant that this is achievable rather than aspirational: LLMCompil
 
 ## 1. Prime directives
 
-1. **Optimization is a completeness amplifier, never a trade.** The rigor floors are **inputs** to the plan, not variables in it. A plan that meets its budget by dropping a gate is rejected, not scored (GO12).
-2. **Optimize the span before the width.** No amount of parallelism can beat the critical path. Ask "can this chain be shorter?" before "what can run at once?" (GO4).
-3. **A loop without a variant is not bounded — it is hoped to terminate.** A cap is a circuit breaker, not a termination argument (GO8).
-4. **Independence is proven, not assumed; and "may" is not "should."** Concurrency needs the independence test; paying for it needs the coupling test (GO5–GO6).
-5. **Profile before you reshape.** A plan that optimizes an unmeasured bottleneck is the Hunch Optimization anti-pattern with a bigger blast radius (GO3).
-6. **Determinism is a first-class target.** A more reproducible plan is a better plan at equal cost (GO11).
+1. **The objective is lexicographic, and speed is last.** Rank every candidate plan in this strict order — **(1) completeness and rigor · (2) token cost · (3) speed**. Each axis is optimized only *subject to* every axis above it. Trade speed for tokens; trade tokens for completeness and rigor; **never trade completeness or rigor for anything** (GO4a).
+2. **Optimization is a completeness amplifier, never a trade.** The rigor floors are **inputs** to the plan, not variables in it. A plan that meets its budget by dropping a gate is rejected, not scored (GO12).
+3. **Optimize the span before the width.** No amount of parallelism can beat the critical path. Ask "can this chain be shorter?" before "what can run at once?" (GO4).
+4. **A loop without a variant is not bounded — it is hoped to terminate.** A cap is a circuit breaker, not a termination argument (GO8).
+5. **Independence is proven, not assumed; and "may" is not "should."** Concurrency needs the independence test; paying for it needs the coupling test (GO5–GO6).
+6. **Profile before you reshape.** A plan that optimizes an unmeasured bottleneck is the Hunch Optimization anti-pattern with a bigger blast radius (GO3).
+7. **Determinism is a first-class target.** A more reproducible plan is a better plan at equal cost (GO11).
 
 ---
 
@@ -47,6 +48,20 @@ The measured warrant that this is achievable rather than aspirational: LLMCompil
 ## 3. Shorten the span, then widen the graph
 
 **GO4 — Compute and report work, span, and the ceiling.** State `T₁` (total node cost), `T∞` (the longest dependency chain), and the resulting bound `Tₚ ≤ (T₁ − T∞)/p + T∞`. Because `Tₚ ≥ T∞` **always**, the plan **MUST** state what parallelism can and cannot buy it. A plan reporting a wide graph with an unexamined long chain has optimized the wrong axis.
+
+**GO4a — The objective function, and when a slower plan is acceptable.** Score every candidate plan on four axes and rank them **lexicographically**:
+
+| Rank | Axis | Rule |
+|---|---|---|
+| **1** | **Completeness** and **rigor** | **Never decrease** — a decrease is a rejected plan, not a low-scoring one. Improving them is the highest-value outcome available and outranks every other consideration. |
+| **2** | **Token cost** | Reduce it — but never at the expense of rank 1. |
+| **3** | **Speed** | Faster is the ideal. But it is the **lowest-priority** axis and is never bought at the expense of rank 1 or rank 2. |
+
+**The acceptance rule for a slower plan.** A plan that is *slower* than the alternative is acceptable **only when all three of these hold together**: completeness improves **and** rigor improves **and** token cost falls. This is a **conjunction, not a choice** — if any one of the three fails to improve, the slower plan is **rejected**, because a slowdown that is not fully paid for on every higher-ranked axis is simply waste.
+
+**The corollary that catches the common error:** a change that is *slower* and leaves completeness, rigor and tokens **unchanged** is not a neutral trade — **it is pure loss**, and independence alone never justifies it. *Measured in this repo:* three genuinely independent verification gates were parallelised and the wave ran **19% slower** (0.84×) while completeness, rigor and tokens were all unchanged — because one gate was 83% of the work (ceiling only 1.20×) and fan-out overhead exceeded the entire available gain. Independence was necessary and **not sufficient**. Before widening a graph, **compare the ceiling `T₁ − T∞` against the cost of the fan-out itself**; where the overhead is the larger number, keep it serial and say so.
+
+Among all plans that clear the floors and this rule, **prefer the fastest** — speed is genuinely the goal, it is simply the last thing traded for.
 
 **GO5 — Independence test (may these run concurrently?).** All three **MUST** hold: **(a)** no data edge between them; **(b)** no decision edge — neither's result changes the other's shape; **(c)** no shared exclusive resource (same file to write, same lock, same rate-limited provider beyond its budget). If any fails, they stay serial **and the plan names which one failed**.
 
@@ -106,6 +121,9 @@ This is not theoretical. In this fleet, **five parallel model calls with no cap 
 - [ ] **Incidental ordering removed** — every remaining edge is a data or decision dependency (GO2).
 - [ ] Bottleneck **measured, or the estimate labelled Inferred** (GO3).
 - [ ] **Work, span, and the ceiling reported**; the span examined before the width (GO4).
+- [ ] **Plans ranked lexicographically — completeness/rigor, then tokens, then speed** (GO4a).
+- [ ] Any **slower** plan is justified by completeness ↑ **and** rigor ↑ **and** tokens ↓ — all three, or it is rejected (GO4a).
+- [ ] Before widening, the **ceiling `T₁ − T∞` was compared against the fan-out overhead** (GO4a).
 - [ ] Concurrency justified by the **independence test**, and paid for by the **coupling test** (GO5–GO6).
 - [ ] Every fan-out carries **width cap, transient policy, per-branch exit, join rule, containment** (GO7).
 - [ ] Every loop declares **variant, well-founded floor, exit condition, cap** — and no loop relies on the cap (GO8–GO10).

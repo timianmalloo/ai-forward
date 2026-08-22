@@ -73,11 +73,28 @@ the Road) and the **AI-Forward Pack** on top of it. Honor them on every non-triv
   parallelise only what passes the **independence** *and* **coupling** tests and only under a bounded
   fan-out contract (width cap, transient-retry, per-branch exit, join rule, containment), collapse or
   promote nodes to the right granularity, and give **every loop a termination variant** — a cap is a
-  circuit breaker whose firing is a *defect signal*, never a termination argument. **Rigor floors are
-  immovable nodes: optimization may reorder them, never remove them**, and a plan that is faster
-  because it proves less is rejected. Record planned vs actual so the next plan is better.
-  `.claude/knowledge/execution-graph-optimization.md` (GO1–GO18); evidence in
+  circuit breaker whose firing is a *defect signal*, never a termination argument. **The objective is
+  lexicographic and speed is last: (1) completeness and rigor · (2) token cost · (3) speed**, each
+  optimized only subject to those above it — so a *slower* plan is acceptable **only when completeness
+  ↑ AND rigor ↑ AND tokens ↓** (a conjunction), and slower-while-unchanged is pure loss. **Rigor floors
+  are immovable nodes: optimization may reorder them, never remove them.** Record planned vs actual so
+  the next plan is better. `.claude/knowledge/execution-graph-optimization.md` (GO1–GO18); evidence in
   `docs/knowledge/graph-and-loop-engineering/`; the skill is `/optimize-graph`.
+- **Instrumentation over inference (a standing bias, and a gate):** when you want to know how
+  something behaves, **measure it — do not reason about it**. An uninstrumented system does not become
+  unknowable, it becomes one you *reason* about, which is worse: an answer with no error bar and no
+  way to be surprised. So **a feature is not done until its behaviour is measurable by default** —
+  emitted on the normal path, no flag, no re-run. Name the questions an operator will ask (how long,
+  how often, how much, which path, did it fail) **before** building, and give each a named emitting
+  source; instrument the **cost axes** (latency, spend/tokens, volume, failure rate), not just
+  correctness. **Never infer a deployed system's behaviour from its source** — that is E15 pointed at
+  runtime; the tells are *"it should be fast · probably rare · typically about · mostly · obviously
+  the bottleneck"*. Where a measurement genuinely does not exist you may model, but label it
+  **Inferred**, state the model, and **name the gap that forced it** — then close the gap rather than
+  modeling around it. Every measurement path **degrades to "not recorded", never to a plausible wrong
+  number**. This applies to the agent's own work too: record a run's **duration**, not just its
+  timestamp (`audit-log.py start` → `append --started`).
+  `.claude/knowledge/instrumentation-over-inference.md` (IO1–IO12).
 - **Personas (dual-mode):** author in Peer Mode, review in Adversary Mode; the author never
   clears its own hard veto. Roster + the operating standard (severity, veto-clears-when,
   conflict rule): `.claude/knowledge/persona-cards.md` and `.claude/knowledge/persona-audit.md`.

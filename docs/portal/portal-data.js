@@ -3,7 +3,7 @@ window.PORTAL_DATA = {
     "counts": {
       "skills": 22,
       "personas": 23,
-      "knowledge": 36,
+      "knowledge": 37,
       "templates": 26,
       "scripts": 16
     },
@@ -511,6 +511,12 @@ window.PORTAL_DATA = {
             "title": "Execution-Graph Optimization",
             "summary": "Normative keywords (MUST, SHOULD, MAY, MUST NOT) follow RFC 2119.",
             "path": "../../pack/knowledge/execution-graph-optimization.md"
+          },
+          {
+            "name": "instrumentation-over-inference",
+            "title": "Instrumentation over Inference",
+            "summary": "Normative keywords (MUST, SHOULD, MAY, MUST NOT) follow RFC 2119.",
+            "path": "../../pack/knowledge/instrumentation-over-inference.md"
           }
         ]
       }
@@ -1197,6 +1203,12 @@ window.PORTAL_DATA = {
         "type": "decision-note",
         "title": "A verification script reported COLLISION-FREE over zero identifiers, because it only compared set size to list size",
         "summary": "While spiking the allocator for ADR-0008, the verification harness printed \"COLLISION-FREE WITHOUT COORDINATION\" over an empty result set — the worker..."
+      },
+      {
+        "id": "plan-optimize-graph-live-01",
+        "type": "doc",
+        "title": "optimize-graph live run 01 — commit the rev-40 change set",
+        "summary": "First live /optimize-graph run, on the prompt that asked for it. Records the plan, the planned-vs-actual ledger (GO18), and the run's headline measurement —..."
       },
       {
         "id": "privacy-review",
@@ -1979,6 +1991,21 @@ window.PORTAL_DATA = {
         "from": "note-20260820-spike-corpus-assertion",
         "to": "defect-classes",
         "rel": "relates-to"
+      },
+      {
+        "from": "plan-optimize-graph-live-01",
+        "to": "audit-log",
+        "rel": "relates-to"
+      },
+      {
+        "from": "plan-optimize-graph-live-01",
+        "to": "backtest-optimize-graph",
+        "rel": "relates-to"
+      },
+      {
+        "from": "plan-optimize-graph-live-01",
+        "to": "kb-graph-and-loop-engineering",
+        "rel": "depends-on"
       },
       {
         "from": "privacy-review",

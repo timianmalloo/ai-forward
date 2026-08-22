@@ -90,3 +90,30 @@ Source: `docs/audit/audit-log.jsonl` in `TheTerrace`, `meridian-finance-planner`
 | Default loop iteration cap (circuit breaker) | **5** for refinement loops; **3** for verification retries | far below LangGraph's 25; a firing cap is a defect signal |
 | Planning threshold | skip planning when the graph is **1–2 nodes** with no loop and no gate | planning must not cost more than the work |
 | Re-plan checkpoint | after any node whose result **changes the shape** of remaining work | LOA Archetype H |
+
+## ★ Measured in this repo — the fan-out overhead constant (Verified)
+
+*From the first live `/optimize-graph` run (`docs/plans/optimize-graph-live-01.md`, 2026-08-22). This **replaces a modeled assumption with a measurement** and is the evidence behind GO4a.*
+
+Three genuinely independent verification gates (`check-consistency.py`, `docs-graph validate`, the render proof), each timed individually best-of-3, then run as concurrent processes best-of-3:
+
+| Quantity | Measured |
+|---|---|
+| `check-consistency.py` | **0.49 s** (83% of the work) |
+| `docs-graph validate` | **0.06 s** |
+| render proof | **0.04 s** |
+| **Work `T₁`** | **0.59 s** |
+| **Span `T∞`** | **0.49 s** |
+| Ceiling `T₁/T∞` | **1.20×** — *not* 3× |
+| Brent bound at p=3 | 0.52 s |
+| **Parallel actual** | **0.70 s** |
+| **Speedup** | **0.84× — 19% SLOWER** |
+| Process fan-out overhead | **≈0.2 s** — roughly **2× the entire available gain** |
+
+**Three findings that generalise:**
+
+1. **Independence is necessary and not sufficient.** All three gates passed the independence test cleanly, and parallelising them still made things worse.
+2. **The ceiling must be computed, not assumed.** A 3-wide graph bought at most 1.20× because one node held 83% of the work. Intuition said 3×; the arithmetic said 1.20×; reality said 0.84×.
+3. **Fan-out overhead is roughly fixed, so it dominates small nodes.** ≈0.2 s is negligible against a node measured in minutes and fatal against one measured in tenths of a second. **The correct generalisation is "compare the ceiling against the overhead," not "parallelism is slow."**
+
+This is the classical granularity trade-off (finding #7) and CE3/CE16 — now measured here rather than cited. It also revises the **back-test's uniform-node-cost model**: that model holds where node costs are comparable and **overstates** the gain where one node dominates, so its modeled time index is an **upper bound**, not an expectation. The back-test's structural results (span, completeness, rigor) are unaffected.

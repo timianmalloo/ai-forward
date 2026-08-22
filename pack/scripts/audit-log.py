@@ -54,6 +54,35 @@ def now_iso():
     return datetime.datetime.now(datetime.timezone.utc).strftime(ISO)
 
 
+def parse_iso(s):
+    """Parse an ISO-8601 UTC stamp. Returns None on anything unparseable -- an unusable
+    --started value must degrade to 'no duration recorded', never to a wrong duration."""
+    if not s:
+        return None
+    t = str(s).strip().replace("Z", "+00:00")
+    try:
+        d = datetime.datetime.fromisoformat(t)
+    except ValueError:
+        return None
+    return d if d.tzinfo else d.replace(tzinfo=datetime.timezone.utc)
+
+
+def duration_fields(started, ended_iso):
+    """Instrumentation over inference: when a start stamp is supplied, RECORD the elapsed
+    seconds rather than leaving a future reader to model it. Returns {} when the start is
+    absent or unparseable, and refuses a negative duration (clock skew) rather than
+    emitting a number that is precise and wrong."""
+    s = parse_iso(started)
+    e = parse_iso(ended_iso) or datetime.datetime.now(datetime.timezone.utc)
+    if s is None:
+        return {}
+    secs = (e - s).total_seconds()
+    if secs < 0:
+        return {"started_at": s.strftime(ISO), "duration_seconds": None,
+                "duration_note": "start is after end (clock skew); duration not recorded"}
+    return {"started_at": s.strftime(ISO), "duration_seconds": round(secs, 1)}
+
+
 def audit_dir(root):
     return os.path.join(root, "audit")
 
@@ -221,6 +250,14 @@ def _from_json(arg):
 
 
 # ---------- subcommands ----------
+def cmd_start(args):
+    """Instrumentation over inference (IO1): emit the start stamp a skill captures at grounding
+    and passes back as `append --started`, so the run's elapsed time is a measurement rather than
+    something a future reader has to model."""
+    print(now_iso())
+    return 0
+
+
 def cmd_append(args):
     base = _from_json(getattr(args, "from_json", None))
     prompt = _read_field(args.prompt, args.prompt_file) or base.get("prompt")
@@ -248,6 +285,11 @@ def cmd_append(args):
         "tags": (args.tag or []) or base.get("tags") or [],
         "outcome": args.outcome or base.get("outcome") or "success",
     }
+    # Instrumentation over inference (IO1): if a start stamp was captured at grounding, the
+    # elapsed time is MEASURED here. Without it a future reader can only model the duration --
+    # which is exactly the gap that forced the optimize-graph back-test to estimate rather than
+    # measure. Absent/unparseable --started degrades to no duration, never a wrong one.
+    entry.update(duration_fields(args.started or base.get("started_at"), entry["datetime"]))
     if args.change or base.get("change"):
         entry["change"] = args.change or base.get("change")
     if args.git:
@@ -478,6 +520,9 @@ def main():
     ap_a.add_argument("--outcome", choices=["success", "partial", "failed", "blocked"])
     ap_a.add_argument("--change", help="link to a change-log id (cl-NNNN)")
     ap_a.add_argument("--git", action="store_true", help="capture current git context")
+    ap_a.add_argument("--started", help="ISO-8601 UTC start stamp captured at grounding; records "
+                                        "started_at + duration_seconds so elapsed time is MEASURED, "
+                                        "not modeled (instrumentation over inference, IO1)")
     ap_a.add_argument("--from-json", dest="from_json", help="read fields from a JSON object (path or - for stdin)")
 
     ap_c = sub.add_parser("change", help="add a change-log entry")
@@ -512,11 +557,14 @@ def main():
     ap_imp.add_argument("--file", default="-", help="JSON file (or - for stdin)")
     ap_imp.add_argument("--session"); ap_imp.add_argument("--tool")
 
+    sub.add_parser("start", help="print an ISO-8601 UTC start stamp to pass back as "
+                                 "`append --started` so the run's elapsed time is measured (IO1)")
+
     args = ap.parse_args()
     dispatch = {
         "append": cmd_append, "change": cmd_change, "list": cmd_list, "search": cmd_search,
         "get": cmd_get, "render": cmd_render, "git-context": cmd_git_context,
-        "suggest": cmd_suggest, "import": cmd_import,
+        "suggest": cmd_suggest, "import": cmd_import, "start": cmd_start,
     }
     sys.exit(dispatch[args.cmd](args))
 

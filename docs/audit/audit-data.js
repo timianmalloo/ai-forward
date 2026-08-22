@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-08-22T16:30:46Z",
+  "generated": "2026-08-22T17:00:31Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1514,6 +1514,39 @@ window.AUDIT_DATA = {
         "short": "8e0bd5d84",
         "branch": "main",
         "pushed": true
+      }
+    },
+    {
+      "id": "al-0070",
+      "shortname": "optimize-graph-live-01-and-instrumentation",
+      "datetime": "2026-08-22T17:00:31Z",
+      "session": "ad91aa43-d81e-4926-b3f2-5c242f25a7a1",
+      "prompt": "commit pack/ + .claude/ + .github/ + docs/ together, then run /optimize-graph live and record planned-vs-actual (GO18) to replace the modeled constants with measurements",
+      "summary": "Committed the rev-40 change set as one atomic commit (dc5ffc7, 61 files) after finding at plan time that the four named paths would have MISSED CLAUDE.md/AGENTS.md/README.md/tools/web and caused exactly the drift the atomicity rule prevents. First live /optimize-graph run: plan matched actual exactly (span 11->6, zero rework, six floor gates before the commit, loop variant 15->1->0 in one iteration). HEADLINE MEASUREMENT: parallelising three genuinely independent verification gates ran 19 pct SLOWER (0.84x) - one gate was 83 pct of the work so the ceiling was 1.20x not 3x, and fan-out overhead was ~2x the whole available gain. Independence proved necessary and NOT sufficient. That produced GO4a (the lexicographic objective - completeness/rigor, then tokens, then speed; a slower plan needs ALL THREE of completeness up AND rigor up AND tokens down) and replaced a modeled constant in data-and-constants.md. Then added instrumentation-over-inference.md (IO1-IO12) as directive AND delivery gate, and CLOSED the instance that forced the modeling: audit-log.py gains start + append --started so a run records duration_seconds, degrading to not-recorded rather than to a wrong number. This entry is the first to carry a MEASURED duration. INSTALL rev 40->41, knowledge 36->37.",
+      "kind": "skill",
+      "skill": "optimize-graph",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/plans/optimize-graph-live-01.md",
+        "pack/knowledge/instrumentation-over-inference.md",
+        "pack/knowledge/execution-graph-optimization.md",
+        "pack/scripts/audit-log.py"
+      ],
+      "tags": [
+        "optimize-graph",
+        "instrumentation",
+        "measurement",
+        "go4a"
+      ],
+      "outcome": "success",
+      "started_at": "2026-08-22T16:47:15Z",
+      "duration_seconds": 796.0,
+      "git": {
+        "sha": "dc5ffc7b72ce97a605677d55e53731eb64dd9161",
+        "short": "dc5ffc7b7",
+        "branch": "main",
+        "pushed": false
       }
     }
   ],

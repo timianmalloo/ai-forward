@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-Forward",
-  "generated": "2026-08-22T16:29:56Z",
+  "generated": "2026-08-22T17:00:02Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1656,6 +1656,41 @@ window.DOCS_INDEX = {
       "sourceSha256": "5bf8471b858442580beb4f227c56ae44fb370b0ff6185b66ba14d4d0da90ae07"
     },
     {
+      "id": "plan-optimize-graph-live-01",
+      "path": "docs/plans/optimize-graph-live-01.md",
+      "title": "optimize-graph live run 01 — commit the rev-40 change set",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "execution-optimization",
+      "reviewBy": "2027-02-18",
+      "reviewSuggested": [],
+      "summary": "First live /optimize-graph run, on the prompt that asked for it. Records the plan, the planned-vs-actual ledger (GO18), and the run's headline measurement — parallelising three independent verification gates ran 19% SLOWER (0.84x) while completeness, rigor and tokens were all unchanged, which under the lexicographic objective is pure loss and a rejected plan. The span was 83% of the work so the ceiling was only 1.20x, and fan-out overhead exceeded the whole available gain. The measurement replaced a modeled constant and produced GO4a.",
+      "tags": [
+        "optimize-graph",
+        "plan",
+        "cost-vs-delivery",
+        "measurement",
+        "live-run"
+      ],
+      "links": [
+        {
+          "to": "kb-graph-and-loop-engineering",
+          "rel": "depends-on"
+        },
+        {
+          "to": "backtest-optimize-graph",
+          "rel": "relates-to"
+        },
+        {
+          "to": "audit-log",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "fb30d636f0c68014b333a7182f767e54d66af70659c3c027f266805d9a4539bb"
+    },
+    {
       "id": "project-memory",
       "path": "docs/project-memory.md",
       "title": "Project Memory",
@@ -2384,7 +2419,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c6a2b206c454a8c1a4670ac16bf83f2688333dea5618cae269e542eff76d0bd5"
+      "sourceSha256": "244fc6f0ec27f438d5d0e0d0d1000430b5363ad5aea2658479c1010660d433a4"
     },
     {
       "id": "kb-graph-and-loop-engineering-glossary",
@@ -3101,5 +3136,5 @@ window.DOCS_INDEX = {
       "artifactId": "backtest-optimize-graph"
     }
   ],
-  "graphSha256": "98542159ef3c6f5140c8f96c26ab3ad403c1c7e17b3d213f8dcdbb8c59231e34"
+  "graphSha256": "bb1aa03523e943a83f113ec77df6a84dd42a28fdbfcb23be61ba63c1f5412dd9"
 };
