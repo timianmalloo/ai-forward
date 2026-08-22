@@ -1,0 +1,674 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Agent coordination — architecture</title>
+<!--
+  Reviewable HTML view of docs/architecture-agent-coordination.md and its six ADRs.
+  Self-contained: no CDN, no build, no network. Opens directly via file://.
+  The markdown is the record; this view is derived and never authoritative over it.
+-->
+<style>
+  :root{
+    --bg:#0e1116; --panel:#161b22; --panel-2:#1b222c; --line:#2a3441;
+    --ink:#e6edf3; --ink-dim:#9aa7b4; --ink-faint:#6b7784;
+    --accent:#6ea8fe; --accent-2:#7ee0c0; --warn:#f0b866; --danger:#f2836b;
+    --ok:#7ee0c0; --radius:14px; --maxw:1080px;
+    --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  }
+  html[data-theme="light"]{
+    --bg:#f6f8fa; --panel:#ffffff; --panel-2:#f0f3f6; --line:#d8dee4;
+    --ink:#1b2530; --ink-dim:#54626f; --ink-faint:#8592a0;
+    --accent:#2f6bd6; --accent-2:#128a67; --warn:#9a6a14; --danger:#c0492f;
+    --ok:#128a67;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);
+    line-height:1.65;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none} a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+
+  header.hero{border-bottom:1px solid var(--line);
+    background:linear-gradient(180deg,var(--panel) 0%,var(--bg) 100%)}
+  .hero .wrap{padding:56px 24px 40px}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--accent-2);margin:0 0 14px}
+  h1{font-family:var(--serif);font-size:clamp(30px,5vw,46px);line-height:1.1;
+    margin:0 0 16px;letter-spacing:-.01em}
+  .lede{font-size:clamp(17px,2.4vw,20px);color:var(--ink-dim);max-width:66ch;margin:0}
+  .meta{margin-top:24px;font-family:var(--mono);font-size:12.5px;color:var(--ink-faint);
+    display:flex;flex-wrap:wrap;gap:6px 20px}
+  .meta b{color:var(--ink-dim);font-weight:600}
+
+  .toggle{position:fixed;top:16px;right:16px;z-index:20;
+    background:var(--panel);border:1px solid var(--line);color:var(--ink-dim);
+    border-radius:999px;padding:7px 14px;font-size:12.5px;font-family:var(--mono);cursor:pointer}
+  .toggle:hover{color:var(--ink);border-color:var(--accent)}
+
+  nav.toc{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 88%,transparent);
+    backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+  nav.toc .wrap{display:flex;gap:4px 18px;flex-wrap:wrap;padding:12px 24px;
+    font-size:13px;font-family:var(--mono)}
+  nav.toc a{color:var(--ink-faint)} nav.toc a:hover{color:var(--ink);text-decoration:none}
+
+  section{padding:46px 0;border-bottom:1px solid var(--line)}
+  section:last-of-type{border-bottom:0}
+  h2{font-family:var(--serif);font-size:clamp(24px,3.4vw,32px);margin:0 0 6px;letter-spacing:-.01em}
+  .sub{color:var(--ink-faint);font-family:var(--mono);font-size:12.5px;margin:0 0 26px}
+  h3{font-size:17px;margin:32px 0 10px}
+  h4{font-size:14px;margin:22px 0 8px;font-family:var(--mono);color:var(--ink-dim);
+     text-transform:uppercase;letter-spacing:.08em}
+  p{margin:0 0 14px;max-width:78ch}
+  ul,ol{max-width:78ch;padding-left:20px;margin:0 0 14px} li{margin:0 0 8px}
+  code{font-family:var(--mono);font-size:.88em;background:var(--panel-2);
+    border:1px solid var(--line);border-radius:5px;padding:1px 5px}
+  strong{color:var(--ink)} em{color:var(--ink-dim)}
+
+  .scroller{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 0 20px}
+  table{border-collapse:collapse;width:100%;min-width:660px;font-size:14px}
+  th,td{text-align:left;vertical-align:top;padding:10px 12px;border-bottom:1px solid var(--line)}
+  th{font-family:var(--mono);font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;
+     color:var(--ink-faint);font-weight:600}
+  tbody tr:hover{background:var(--panel-2)}
+
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    padding:20px 22px;margin:0 0 18px}
+  .card h3{margin-top:0}
+  .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+
+  .kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin:0 0 26px}
+  .kpi div{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px}
+  .kpi b{display:block;font-family:var(--mono);font-size:24px;color:var(--accent-2);line-height:1.1}
+  .kpi span{display:block;font-size:12.5px;color:var(--ink-dim);margin-top:7px}
+
+  pre{background:var(--panel-2);border:1px solid var(--line);border-radius:10px;
+    padding:16px 18px;overflow-x:auto;font-family:var(--mono);font-size:13px;line-height:1.55;margin:0 0 18px}
+  pre code{background:none;border:0;padding:0;font-size:inherit}
+
+  .callout{background:var(--panel-2);border:1px solid var(--line);border-left:3px solid var(--warn);
+    border-radius:0 10px 10px 0;padding:16px 18px;margin:0 0 20px}
+  .callout p:last-child{margin-bottom:0}
+  .callout.sec{border-left-color:var(--danger)}
+  .callout.ok{border-left-color:var(--ok)}
+
+  .spike{border-left:3px solid var(--accent);padding-left:16px;margin:0 0 24px}
+  .spike .tag{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--accent);display:block;margin-bottom:4px}
+  .spike h3{margin:0 0 8px;font-size:18px}
+  .verdict{font-family:var(--mono);font-size:13px;background:var(--panel);border:1px solid var(--line);
+    border-radius:8px;padding:10px 14px;margin:10px 0 0}
+  .verdict b{color:var(--ok)} .verdict.no b{color:var(--danger)}
+
+  .adr{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    padding:18px 20px;margin:0 0 16px}
+  .adr .n{font-family:var(--mono);font-size:12px;color:var(--accent-2);letter-spacing:.08em}
+  .adr h3{margin:6px 0 8px;font-size:17px}
+  .adr .rej{font-size:13.5px;color:var(--ink-dim);margin:10px 0 0;
+    border-top:1px solid var(--line);padding-top:10px}
+
+  .phase{display:grid;grid-template-columns:78px 1fr;gap:16px;padding:16px 0;
+    border-top:1px solid var(--line)}
+  .phase:first-of-type{border-top:0}
+  .phase .p{font-family:var(--mono);font-size:12px;color:var(--accent);padding-top:3px}
+  .phase h3{margin:0 0 6px;font-size:16.5px}
+  .phase p{font-size:14.5px;margin:0 0 8px}
+
+  .badge{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.06em;
+    text-transform:uppercase;border:1px solid var(--line);border-radius:999px;
+    padding:2px 9px;color:var(--ink-dim);background:var(--panel-2)}
+  .badge.v{color:var(--ok);border-color:color-mix(in srgb,var(--ok) 45%,transparent)}
+  .badge.f{color:var(--danger);border-color:color-mix(in srgb,var(--danger) 45%,transparent)}
+  .badge.i{color:var(--warn);border-color:color-mix(in srgb,var(--warn) 45%,transparent)}
+
+  .status{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    padding:6px 22px 12px;margin:8px 0 0}
+  .status div{display:grid;grid-template-columns:150px 1fr;gap:18px;padding:14px 0;
+    border-top:1px solid var(--line)}
+  .status div:first-child{border-top:0}
+  .status b{font-family:var(--mono);font-size:12px;text-transform:uppercase;letter-spacing:.08em;
+    color:var(--accent-2)}
+  @media (max-width:640px){
+    .status div,.phase{grid-template-columns:1fr;gap:6px}
+    .hero .wrap{padding:40px 20px 30px} section{padding:34px 0}
+  }
+  footer{padding:36px 0 60px;color:var(--ink-faint);font-size:13px;font-family:var(--mono)}
+  @media print{ .toggle,nav.toc{display:none} body{background:#fff;color:#000} }
+</style>
+</head>
+<body>
+<button class="toggle" id="t">◐ theme</button>
+
+<header class="hero">
+  <div class="wrap">
+    <p class="eyebrow">Architecture · draft · tier T2</p>
+    <h1>Agent coordination</h1>
+    <p class="lede">A git-tracked append-only record of intent, folded on demand with no daemon and no
+      database; enforced at each harness's edit boundary and at the universal commit boundary; with a
+      non-coordinating allocator and a merge driver that regenerates derived artifacts rather than
+      merging them. Six spikes were executed. Four of them overturned the obvious answer.</p>
+    <div class="meta">
+      <span><b>id</b> architecture-agent-coordination</span>
+      <span><b>implements</b> spec-agent-coordination</span>
+      <span><b>ADRs</b> 0007–0012</span>
+      <span><b>date</b> 2026-08-20</span>
+      <span><b>verdict</b> pass with 4 conditions</span>
+    </div>
+  </div>
+</header>
+
+<nav class="toc"><div class="wrap">
+  <a href="#spikes">spikes</a>
+  <a href="#system">the system</a>
+  <a href="#shape">shape chosen</a>
+  <a href="#components">components</a>
+  <a href="#adrs">ADRs</a>
+  <a href="#cross">cross-cutting</a>
+  <a href="#phases">delivery</a>
+  <a href="#stride">STRIDE</a>
+  <a href="#reuse">what exists</a>
+  <a href="#gate">gate</a>
+  <a href="#risk">residual</a>
+</div></nav>
+
+<main>
+
+<!-- ─────────────── spikes ─────────────── -->
+<section id="spikes"><div class="wrap">
+  <h2>What the spikes changed</h2>
+  <p class="sub">Six executed against the installed toolchain — four overturned the answer this architecture would otherwise have taken</p>
+
+  <div class="kpi">
+    <div><b>47 ms</b><span>p95 full fold, 10k events, as a subprocess — against a 100 ms budget. The daemon is cut.</span></div>
+    <div><b>0 / 4000</b><span>collisions from 8 processes in one millisecond, no coordination</span></div>
+    <div><b>AttributeError</b><span><code>uuid.uuid7</code> on the installed 3.12 — present on the "3.x" runner</span></div>
+    <div><b>0</b><span>what <code>rev-list HEAD --not --all</code> reports for a branch holding 1 unique commit</span></div>
+  </div>
+
+  <div class="spike">
+    <span class="tag">S1 + S1b · the allocator</span>
+    <h3>The stdlib answer was the wrong answer</h3>
+    <p><code>uuid.uuid7()</code> is the obvious choice. On the installed interpreter — <strong>3.12.10</strong> —
+    it raises <code>AttributeError</code>; it landed in 3.14. This repository's CI pins
+    <code>python-version: "3.x"</code>, meaning <em>whatever is newest</em>. A stdlib call that exists on the
+    runner and not on the developer's machine is the <code>PACK-J</code> class by construction, and adopting it
+    would have been a defect authored inside the architecture that names the class.</p>
+    <p>So: 48 bits of millisecond timestamp, 80 bits from <code>os.urandom</code>, Crockford base32, 26 chars,
+    about ten lines. Then tested against the exact condition that defeated the 22-branch scanner —
+    <strong>8 separate processes, 500 ids each, all pinned to the same millisecond</strong>, no shared state, no network.</p>
+    <div class="verdict">issued=4000 &nbsp; unique=4000 &nbsp; collisions=0 &nbsp;→&nbsp; <b>COLLISION-FREE WITHOUT COORDINATION</b></div>
+  </div>
+
+  <div class="spike">
+    <span class="tag">S2 · the substrate</span>
+    <h3>The daemon and the database are both cut</h3>
+    <p>The draft assumed replaying a log per edit would be too slow, and never measured it. Measured here as a
+    hook actually invokes it — <strong>a subprocess</strong>, folding a 10,000-event, 1.45 MB, 12-file record,
+    then matching a glob:</p>
+    <div class="verdict">
+      bare <code>python -c pass</code> &nbsp;&nbsp; median 14 ms &nbsp; p95 15 ms &nbsp;<em>(the floor nothing can remove)</em><br>
+      full fold, 10k events &nbsp;&nbsp;&nbsp; median 45 ms &nbsp; p95 <b>47 ms</b><br>
+      amortised snapshot &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; median 22 ms &nbsp; p95 27 ms
+    </div>
+    <p style="margin-top:12px">The naive fold meets the 100 ms budget with roughly 2× headroom — which also
+    <em>sets the compaction trigger</em> rather than leaving it to taste: compact above 10,000 live events, or
+    when measured p95 exceeds 60 ms.</p>
+  </div>
+
+  <div class="spike">
+    <span class="tag">S3 · the record</span>
+    <h3>Concurrent appends do not corrupt — so the reason for one-file-per-session changes</h3>
+    <p>6 processes × 200 records × ~4 kB through one <code>O_APPEND</code> descriptor on Windows.</p>
+    <div class="verdict">1200 lines &nbsp; expected 1200 &nbsp; unparseable=0 &nbsp;→&nbsp; <b>ATOMIC</b></div>
+    <p style="margin-top:12px">A shared file is <em>safe</em>. One-file-per-session is kept for reviewability,
+    not for safety — and recording the real reason matters, because a maintainer told "concurrent appends
+    corrupt the file" would have been told something false. The genuine hazard is the <code>LOG-A</code> seam:
+    an append onto a file that does not end in a newline fuses two records and loses both.</p>
+  </div>
+
+  <div class="spike">
+    <span class="tag">S4 · work preservation</span>
+    <h3>Why the guard reported SAFE for the case it existed to catch</h3>
+    <p>Reproduced in a scratch repo on a branch genuinely holding one commit reachable from no other ref:</p>
+    <div class="verdict no">
+      <code>git rev-list HEAD --not --all</code> &nbsp;→&nbsp; <b>0</b> &nbsp; <em>(reports SAFE — the recorded bug)</em><br>
+      <code>--exclude=&lt;branch&gt; --all</code> &nbsp;&nbsp;&nbsp;→&nbsp; <b>0</b> &nbsp; <em>(fails identically)</em><br>
+      explicit peers, no <code>--all</code> &nbsp;&nbsp;→&nbsp; <span style="color:var(--ok)"><b>1</b></span> &nbsp; <em>(correct)</em>
+    </div>
+    <p style="margin-top:12px"><strong>The mechanism, now established rather than guessed:</strong>
+    <code>--all</code> implicitly includes <code>HEAD</code>, so the expression reduces to
+    <code>HEAD --not HEAD</code>. Excluding the branch does not exclude <code>HEAD</code>, which is why the
+    second form fails too. <code>--all</code> is forbidden in this expression.</p>
+  </div>
+
+  <div class="spike">
+    <span class="tag">S5 · enforcement</span>
+    <h3>A hook can refuse an edit — and three details the schema gave up</h3>
+    <p>Contract read from the authoritative settings schema, then the hook program executed against the real
+    payload shape across five cases. All five correct, <strong>including both fail-safe paths</strong>:</p>
+    <div class="verdict">
+      held by another &nbsp;→&nbsp; <b>deny</b> + holder · expiry · reason · remedy<br>
+      free artifact &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→&nbsp; <b>allow</b><br>
+      my own lease &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→&nbsp; <b>allow</b><br>
+      identity unset &nbsp;&nbsp;&nbsp;&nbsp;→&nbsp; <span style="color:var(--warn)"><b>ask</b></span> — "NOT CHECKED"<br>
+      malformed payload &nbsp;→&nbsp; <span style="color:var(--warn)"><b>ask</b></span> — "NOT CHECKED", no crash
+    </div>
+    <ul style="margin-top:14px">
+      <li><strong><code>args</code> exec-form</strong> spawns the command directly with no shell, substituting
+      path placeholders per element as plain strings — <em>"so paths with quotes, <code>$</code>, or backticks
+      never reach a shell parser."</em> That closes Meridian's <code>SHELL-A</code> class structurally rather
+      than by care. It is not the default.</li>
+      <li><strong>The <code>if</code> pre-filter</strong> decides whether the process is <em>spawned at all</em>.
+      With 14 ms of every call being interpreter startup, this is the largest latency lever available and costs
+      nothing.</li>
+      <li><strong><code>additionalContext</code></strong> — "text injected into model context" — is the exact
+      channel that makes §STRIDE's elevation row a live path rather than a theoretical one.</li>
+    </ul>
+  </div>
+
+  <div class="spike">
+    <span class="tag">S6 · derived artifacts</span>
+    <h3>A merge driver resolves derived conflicts and cannot reach authored files</h3>
+    <p>Two branches, each changing a derived <em>and</em> an authored file, with a
+    <code>.gitattributes merge=regenerate</code> driver registered:</p>
+    <div class="verdict">
+      derived.txt &nbsp;→&nbsp; <b>resolved clean, absent from the unmerged list</b><br>
+      src.txt &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→&nbsp; <span style="color:var(--warn)">still conflicted, normally</span>
+    </div>
+    <p style="margin-top:12px">M1 is solvable <em>at merge time</em>, not only by a post-hoc script, and the
+    scoping is exact.</p>
+  </div>
+
+  <div class="callout"><p><strong>A seventh result, found by accident and kept.</strong> The first run of the
+  S1b verdict printed <em>"COLLISION-FREE WITHOUT COORDINATION" over zero ids</em>, because the workers had
+  crashed and the check only compared <code>len(set(x)) == len(x)</code>. That is the <em>"a control that
+  scanned nothing, reported clean"</em> class — produced live, while building a control. It is now an
+  architectural rule: <strong>every control asserts its corpus was the size it assumed before it is allowed to
+  report a pass.</strong></p></div>
+</div></section>
+
+<!-- ─────────────── system ─────────────── -->
+<section id="system"><div class="wrap">
+  <h2>The system as a system</h2>
+  <p class="sub">Stocks, flows, loops, delays — and where the leverage actually is</p>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>The loop to break</h3>
+      <p>A derived-file conflict keeps a PR conflicted → <strong>a conflicting PR runs no gate at all</strong>
+      → the branch falls further behind → it conflicts again.</p>
+      <p>That loop is broken <strong>at the conflict</strong> (ADR-0009), not at the gate.</p>
+    </div>
+    <div class="card">
+      <h3>The two delays that decide the design</h3>
+      <p>The <strong>gate delay</strong> (~4 min) exceeds the <strong>merge interval</strong> on a busy
+      afternoon (~10 min and shrinking), so the window between green and merged is routinely lost.</p>
+      <p>The <strong>push delay</strong> — between minting an id and pushing it — is exactly the window a branch
+      scanner cannot see into. <em>The allocator is designed for the second; the lease for the first.</em></p>
+    </div>
+  </div>
+
+  <div class="callout ok"><p><strong>The leverage point is not the lease.</strong> Meadows ranks <em>rules of the
+  system</em> above <em>information flows</em>, and above both sits <em>the power to change structure</em>. A
+  lease adds an information flow. Making a collision <strong>unrepresentable</strong>, and making a derived
+  conflict <strong>resolve itself</strong>, changes the structure — which is why ADR-0008 and ADR-0009 outrank
+  ADR-0010 here, even though the lease is the visible feature.</p></div>
+</div></section>
+
+<!-- ─────────────── shape ─────────────── -->
+<section id="shape"><div class="wrap">
+  <h2>Two shapes, and why this one</h2>
+  <p class="sub">The decisive argument is failure mode, not performance</p>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>Shape A — coordination service <span class="badge f">rejected</span></h3>
+      <p>A local daemon owning SQLite; agents talk over MCP/stdio. Atomic leases, real queries, one surface.</p>
+      <p><strong>Rejected on measured evidence.</strong> S2 shows the file fold meets the budget with headroom,
+      so the daemon buys nothing this system needs — and costs a startup story, a liveness problem, crash
+      recovery, and a failure mode that violates the "no daemon before an agent can work" requirement.</p>
+    </div>
+    <div class="card">
+      <h3>Shape B — record + fold <span class="badge v">chosen</span></h3>
+      <p>Append-only record of intent, git-tracked, one file per session; all state a fold; enforcement in the
+      harnesses that already have edit boundaries; derived-file conflict pushed down into git itself.</p>
+    </div>
+  </div>
+
+  <div class="callout"><p>Shape A's failure is <em>the service is down and nobody can work</em> — an availability
+  dependency introduced into an offline local tool. Shape B's failure is <em>the record is unreadable, so the
+  layer says NOT CHECKED and degrades to advisory</em>. <strong>For a control whose recorded ancestors failed by
+  reporting success, a loud non-blocking failure is worth more than the 20 ms.</strong></p></div>
+</div></section>
+
+<!-- ─────────────── components ─────────────── -->
+<section id="components"><div class="wrap">
+  <h2>Components, boundaries, and the class that decides everything</h2>
+  <p class="sub">coord core is a pure library; every surface is a thin host over it</p>
+
+  <h3>Artifact class → mechanism</h3>
+  <div class="scroller"><table>
+    <thead><tr><th>Class</th><th>Mechanism</th><th>Why not a lease</th></tr></thead>
+    <tbody>
+      <tr><td><code>authored</code></td><td><strong>Hard lease.</strong> An unleased write is refused.</td><td>—</td></tr>
+      <tr><td><code>derived</code></td><td><strong>Never leased.</strong> <code>.gitattributes merge=&lt;driver&gt;</code> regenerates on conflict (S6).</td><td>Both agents legitimately regenerate it. A lease would serialise non-contention and prevent none of the measured conflicts.</td></tr>
+      <tr><td><code>register</code></td><td><strong>Allocator</strong> plus an entry-count conservation assertion at merge.</td><td>The conflict is over a <em>number</em>, not a region.</td></tr>
+      <tr><td><code>hotspot</code></td><td>Claimable only by <code>integrator</code>; others record a request.</td><td>Contention is structural — the answer is ownership plus batching, not queueing.</td></tr>
+    </tbody>
+  </table></div>
+  <p>An unclassified path defaults to <code>authored</code> — the safe direction.</p>
+
+  <h3>Three boundaries, as trust levels</h3>
+  <ol>
+    <li><strong>Agent → record.</strong> Semi-trusted. A session controls its own file and nothing else; content is length-capped and scrubbed on the way in.</li>
+    <li><strong>Record → projection → <em>another</em> agent.</strong> <strong>Untrusted.</strong> The one genuinely new boundary — see STRIDE below.</li>
+    <li><strong>Layer → git.</strong> Trusted but <em>unverified</em> — every git invocation reads its result back, because an exit code is not a result.</li>
+  </ol>
+
+  <div class="callout"><p><strong>The registration hazard.</strong> The merge driver lives in
+  <code>.git/config</code>, which is per-clone and per-worktree and <strong>never committed</strong> — so a
+  fresh worktree silently gets default behaviour. That is exactly the recorded instance where a
+  <code>git config</code> failed with nothing checking, leaving the driver unregistered while the setup script
+  reported success. The layer <strong>reads the value back</strong> and reports an unregistered driver as a
+  finding rather than assuming it.</p></div>
+</div></section>
+
+<!-- ─────────────── ADRs ─────────────── -->
+<section id="adrs"><div class="wrap">
+  <h2>The six decisions</h2>
+  <p class="sub">Each with its strongest rejected alternative — a decision with no rejected alternative was not a decision</p>
+
+  <div class="adr">
+    <span class="n">ADR-0007</span>
+    <h3>A git-tracked append-only record, folded on demand — no daemon, no database</h3>
+    <p>All state is a fold over an append-only JSONL record, one file per session. A snapshot may exist as a
+    <em>labelled, rebuildable cache</em>, never a source. Grain: one row is exactly one event emitted by one
+    session at one instant.</p>
+    <p class="rej"><strong>Strongest rejection —</strong> the daemon + SQLite the draft proposed, cut on S2's
+    measurement and on failure mode. Also rejected: a git-ignored store (does not survive a clone) and a shared
+    record file — the latter <em>not</em> because appends interleave (S3 proves they do not) but because
+    per-session files make authorship reviewable in a diff.</p>
+  </div>
+
+  <div class="adr">
+    <span class="n">ADR-0008</span>
+    <h3>Identifiers from a non-coordinating stdlib scheme — not <code>uuid7</code>, not scanning</h3>
+    <p>48-bit ms timestamp + 80 bits of <code>os.urandom</code>, Crockford base32. Serves the repository's
+    <em>existing</em> registers; expand-migrate-contract, every existing id keeps its value.</p>
+    <p class="rej"><strong>Strongest rejection —</strong> <code>uuid.uuid7()</code>, rejected on execution (S1).
+    Branch scanning rejected as a <em>design</em>: it shrinks the collision window from "any two sessions the
+    same day" to "any two sessions minting within the same few minutes", and not to zero. Renumbering rejected
+    because it would touch merged commit subjects and PR bodies no edit can reach.</p>
+  </div>
+
+  <div class="adr">
+    <span class="n">ADR-0009</span>
+    <h3>Artifact class decides the mechanism; derived artifacts are regenerated, never leased</h3>
+    <p>A committed, PR-reviewed class registry; a <code>.gitattributes</code> merge driver for derived
+    artifacts, proven in S6 to resolve cleanly while an authored file on the same merge still conflicts.</p>
+    <p class="rej"><strong>Strongest rejection —</strong> a uniform lease (the draft), which aims the mechanism
+    at 13/60 and misses 58/60. The post-hoc regeneration script is <em>partially superseded</em>, not
+    dismissed — it works, but it acts after the conflict exists and only when someone remembers; its hardening
+    is carried forward as requirements.</p>
+  </div>
+
+  <div class="adr">
+    <span class="n">ADR-0010</span>
+    <h3>Enforce at the edit boundary where it exists, at the commit boundary always — fail to <em>ask</em></h3>
+    <p><code>PreToolUse</code> returning <code>permissionDecision</code>; pre-commit as the floor no settings key
+    removes; exec-form <code>args</code> with no shell.</p>
+    <p class="rej"><strong>Strongest rejection —</strong> failing open when lease state cannot be determined,
+    rejected on the recorded evidence of a guard that failed open and a control that accused its own branch on
+    CI. Also rejected: advisory-only (the corpus is a list of correct warnings that changed nothing) and a
+    shell-string hook command (exec-form closes <code>SHELL-A</code> structurally).</p>
+  </div>
+
+  <div class="adr">
+    <span class="n">ADR-0011</span>
+    <h3>Cross-agent content is untrusted data; the projection ships only after its rendering rules exist</h3>
+    <p>Length-bounded, structurally delimited, rendered under an explicit untrusted heading, never interpolated.
+    <strong>Delivery order inverted</strong> so the projection is Phase 4, gated behind its own design.</p>
+    <p class="rej"><strong>Strongest rejection —</strong> shipping it early because it is the most visible
+    feature. It is the most visible <em>and</em> the only in-scope capability that creates a new attack path.
+    Sanitising by stripping instruction-shaped phrases also rejected: a denylist of phrasings fails silently on
+    the phrasing nobody listed.</p>
+  </div>
+
+  <div class="adr">
+    <span class="n">ADR-0012</span>
+    <h3>Compose what already exists — and name what is retired</h3>
+    <p>The reconciliation the spec made a condition of pass, plus the exact git expression for unique work and
+    why the intuitive one silently reports SAFE.</p>
+    <p class="rej"><strong>Strongest rejection —</strong> writing the layer from the spec alone, which would have
+    rebuilt two mechanisms the harness already ships. Keeping the existing scripts alongside the layer also
+    rejected: two answers to one question is the defect signature.</p>
+  </div>
+</div></section>
+
+<!-- ─────────────── cross-cutting ─────────────── -->
+<section id="cross"><div class="wrap">
+  <h2>Cross-cutting concerns</h2>
+  <p class="sub">Designed in, not deferred — with what each failure degrades to</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>Failure</th><th>Behaviour</th></tr></thead>
+    <tbody>
+      <tr><td>Record unreadable or absent</td><td><code>NOT CHECKED</code>, advisory, <strong>said out loud</strong></td></tr>
+      <tr><td>Session dies holding leases</td><td>TTL expiry — and the expiry is an <em>event</em> in the stream, not an absence</td></tr>
+      <tr><td>Clock skew, or a clock that moves backwards</td><td>Skew bounded by TTL. A backwards clock <strong>shortens</strong> a lease — the safe direction. Ids unaffected (80 random bits)</td></tr>
+      <tr><td>Detached HEAD — <strong>the state every PR gate runs in</strong></td><td>Explicitly handled: <code>symbolic-ref</code> fails and is expected to; the reachability check is local-only and declines on CI, where "does my work exist anywhere else?" has no meaning</td></tr>
+      <tr><td>Hooks disabled by policy</td><td>Detected; layer reports advisory; the commit floor still holds</td></tr>
+      <tr><td>Merge driver unregistered</td><td>Detected by read-back; reported, never assumed</td></tr>
+    </tbody>
+  </table></div>
+
+  <p><strong>Idempotency.</strong> The fold is a pure function of the record — replaying twice yields identical
+  state, and that is the property it is tested on. Every verb is idempotent by identifier, which matters because
+  a hook may run twice on a retried tool call.</p>
+
+  <p><strong>Observability.</strong> The record <em>is</em> the telemetry. All four metrics derive from it plus
+  git: conflicts per merged PR, % of edits under a held lease, wait on a refused claim, and commits reachable
+  from exactly one ref. A refusal is an appended event, not just a string returned to one agent — otherwise the
+  most interesting thing the system does would be invisible.</p>
+</div></section>
+
+<!-- ─────────────── phases ─────────────── -->
+<section id="phases"><div class="wrap">
+  <h2>Delivery — defined whole, phased vertically</h2>
+  <p class="sub">Each phase deployable, human-demonstrable, test-validated. Mocked seams are contracts.</p>
+
+  <div class="phase">
+    <div class="p">PHASE 1<br><span style="color:var(--ink-faint)">skeleton</span></div>
+    <div>
+      <h3>One refusal, end to end</h3>
+      <p><strong>Real:</strong> record, fold, CLI (claim / check / release / tail), <code>authored</code> class only.
+      <strong>Mocked as contracts:</strong> the class registry is a two-line literal; no hook, no allocator, no
+      merge driver, no projection.</p>
+      <p><strong>Demo:</strong> two terminals, two worktrees. A claims <code>src/**</code>; B claims
+      <code>src/Foo.cs</code> and is refused with holder, reason, remedy in four lines; A releases; B is granted.</p>
+      <p><strong>Tests:</strong> claim/refuse/release/expiry · <strong>fold idempotence</strong> (replay twice →
+      identical state) · the <code>LOG-A</code> seam (append onto a file with no trailing newline → two parseable
+      records, not one fused line) · an empty corpus reports "0 events", never "clean".</p>
+    </div>
+  </div>
+
+  <div class="phase">
+    <div class="p">PHASE 2<br><span style="color:var(--ink-faint)">enforce</span></div>
+    <div>
+      <h3>Claude Code enforcement + the work-preservation guard</h3>
+      <p><strong>Real:</strong> the <code>PreToolUse</code> hook in exec-form with the <code>if</code> pre-filter
+      (the S5 program is already written); pre-commit floor; the reachability guard with the S4-verified
+      expression; one-session-per-worktree. <strong>Mocked:</strong> other harnesses stay advisory <em>and say so</em>.</p>
+      <p><strong>Tests:</strong> the five hook cases in CI · the guard <strong>proven on the un-fixed shape</strong>
+      — <code>rev-list HEAD --not --all</code> must be shown returning SAFE for a branch holding exactly one unique
+      commit before the fixed expression is trusted · a single at-risk commit is counted · detached HEAD declines
+      rather than accuses.</p>
+      <p><strong>Unblocks</strong> the <code>% of edits under a held lease</code> metric — the number that decides
+      whether enforcement works at all.</p>
+    </div>
+  </div>
+
+  <div class="phase">
+    <div class="p">PHASE 3<br><span style="color:var(--ink-faint)">structural</span></div>
+    <div>
+      <h3>Allocation + derived merge — the two structural fixes</h3>
+      <p><strong>Real:</strong> the allocator serving this repo's own audit and change logs; the
+      <code>.gitattributes</code> driver and class registry; registration read-back. Plus the Copilot and
+      third-harness hook spikes that close the rest of F1.</p>
+      <p><strong>Demo:</strong> two worktrees mint an id in the same second and get different ones; two branches
+      regenerate the docs index and merge with <strong>no conflict</strong>, while an authored file on the same
+      merge still conflicts normally.</p>
+      <p><strong>Tests:</strong> the S1b burst — <em>asserting 4,000 ids were actually issued before judging
+      uniqueness</em> · the entry-count conservation assertion, proven red on a dedupe-by-id resolution · the S6
+      driver test including the fail-closed case outside the declared set.</p>
+    </div>
+  </div>
+
+  <div class="phase">
+    <div class="p">PHASE 4<br><span style="color:var(--ink-faint)">gated</span></div>
+    <div>
+      <h3>Decisions, projection, operator surface</h3>
+      <p><strong>Real:</strong> the decision register with decisions returned <em>with the grant</em>; the
+      projection under 2k tokens; the operator status view.</p>
+      <p><strong>Gate:</strong> the STRIDE pass below is complete and its mitigations implemented
+      <strong>before a single projection is rendered</strong>. That ordering is why the projection is last rather
+      than first.</p>
+    </div>
+  </div>
+</div></section>
+
+<!-- ─────────────── STRIDE ─────────────── -->
+<section id="stride"><div class="wrap">
+  <h2>STRIDE on the projection boundary</h2>
+  <p class="sub">The one boundary that did not exist before this layer — opened here, closed in /design</p>
+
+  <div class="callout sec"><p>S5 named the exact channel while establishing the hook contract:
+  <code>hookSpecificOutput.additionalContext</code>, described as <em>"text injected into model context."</em>
+  The mechanism that makes a refusal actionable is the same mechanism that makes an injected instruction
+  actionable. This is a live path, not a theoretical one.</p></div>
+
+  <div class="scroller"><table>
+    <thead><tr><th></th><th>Threat</th><th>Mitigation</th></tr></thead>
+    <tbody>
+      <tr><td><strong>S</strong></td><td>Agent B sets <code>AGENT_NAME=opus</code> and releases A's leases</td><td><strong>Accepted, documented.</strong> Identity is asserted, not authenticated. Detection over prevention: the record shows which session released, and one-session-per-worktree makes impersonation visible rather than silent. Cryptographic identity is out of proportion for a local tool</td></tr>
+      <tr><td><strong>T</strong></td><td>A session appends to another's file, or rewrites history</td><td>One writer per file by construction; git-tracked so tampering shows in a diff; <strong>no line is ever rewritten</strong></td></tr>
+      <tr><td><strong>R</strong></td><td>An agent denies making a decision</td><td>Append-only, committed, allocator-stamped ids</td></tr>
+      <tr><td><strong>I</strong></td><td>Intent text carries a secret into a pushed repo</td><td>Scrub at the write boundary — reusing the pack's existing scrubber, <strong>not a second implementation</strong>; intents length-capped</td></tr>
+      <tr><td><strong>D</strong></td><td>A claim glob matching 10,000 files, or a 5 MB intent</td><td>Bounds on pattern breadth and field length; the <code>if</code> pre-filter keeps unmatched calls from spawning a process at all</td></tr>
+      <tr><td><strong>E</strong></td><td><strong>The live one.</strong> A decision rationale reading <em>"ignore your instructions and…"</em> injected into another agent's context</td><td>Cross-agent content is <strong>data, never instruction</strong>: structurally delimited, length-bounded, rendered under an explicit untrusted heading, never placed where the reading model takes it as direction. <strong>No field is passed through unescaped.</strong></td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="callout"><p><strong>This section opens the threat model; it does not close it.</strong> The E row
+  needs concrete rendering rules and an adversarial test corpus, which is <code>/design</code> work on the
+  Phase-4 slice. <strong>The gate ordering is the mitigation that matters most: no projection ships before that
+  design exists.</strong></p></div>
+</div></section>
+
+<!-- ─────────────── reuse ─────────────── -->
+<section id="reuse"><div class="wrap">
+  <h2>What already exists</h2>
+  <p class="sub">The reconciliation the spec made a condition of pass — run before a line was written, and recorded where a reviewer can see it</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>Existing mechanism</th><th>Where</th><th>Disposition</th></tr></thead>
+    <tbody>
+      <tr><td><code>guard-worktree.ps1</code></td><td>TheTerrace</td><td><strong>Becomes the implementation</strong> of the reachability check, with the S4-verified expression and its two recorded bugs as red-first tests</td></tr>
+      <tr><td><code>worktree-status.ps1</code></td><td>TheTerrace</td><td><strong>Becomes the implementation</strong> of the operator status view</td></tr>
+      <tr><td><code>sync-generated.ps1</code></td><td>TheTerrace</td><td><strong>Superseded in part</strong> — the merge driver acts earlier and cannot be forgotten. Its hardening (read exit codes, verify the push, compare commits across the rebase, stage by name) is <strong>carried forward as requirements</strong></td></tr>
+      <tr><td><code>test-no-wildcard-staging.ps1</code></td><td>TheTerrace</td><td><strong>Adopted as-is</strong> as the control on this layer's own surface</td></tr>
+      <tr><td>the branch-scanning allocator</td><td>TheTerrace</td><td><strong>Retired</strong> by ADR-0008 — its own addendum records that it collided within an hour of being written</td></tr>
+      <tr><td><code>worktree.bgIsolation</code></td><td><strong>the harness</strong></td><td><strong>Do not rebuild.</strong> It already blocks Edit/Write in the main checkout for background sessions. The layer composes with it and covers what it does not: foreground sessions, non-Claude harnesses, cross-worktree leases</td></tr>
+      <tr><td><code>WorktreeCreate</code> / <code>SessionStart</code> / <code>SessionEnd</code> hooks</td><td><strong>the harness</strong></td><td><strong>Reused</strong> for session registration and worktree lifecycle — which is what lets ADR-0007 stay serviceless</td></tr>
+      <tr><td>audit-log · docs-graph · scrub</td><td>this pack</td><td><strong>Composed, never duplicated</strong></td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="callout ok"><p><strong>The finding that most changes the build:</strong> two of the four failure
+  modes are already partly addressed by mechanisms shipped <em>in the harness itself</em>. A version of this
+  layer written from the spec alone would have rebuilt both — which is the class the spec cites, performed while
+  implementing the spec that cites it.</p></div>
+</div></section>
+
+<!-- ─────────────── gate ─────────────── -->
+<section id="gate"><div class="wrap">
+  <h2>Council gate</h2>
+  <p class="sub">verdict: pass with conditions · the authors did not clear their own hard veto</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>Adversary</th><th>Attack</th><th>Severity</th><th>Resolution</th></tr></thead>
+    <tbody>
+      <tr><td>The Simplifier</td><td>The daemon and SQLite are unjustified complexity</td><td>soft veto</td><td><strong>Upheld and acted on.</strong> Both cut on S2's measurement. The read model is a labelled, rebuildable cache with a measured trigger, not a database</td></tr>
+      <tr><td>The Simplifier</td><td>Four mechanisms is still a lot</td><td>soft veto</td><td><strong>Overruled with evidence, and bounded.</strong> Each maps to a distinct measured failure mode, carries its own metric, and is phased so any one can be abandoned on its own number</td></tr>
+      <tr><td>Distributed Systems</td><td><em>"On a retried tool call the hook runs twice and takes a second lease."</em></td><td><strong>hard veto</strong></td><td><strong>Resolved</strong> — every verb idempotent by id; re-emitting a claim is a no-op. Named rather than assumed</td></tr>
+      <tr><td>Distributed Systems</td><td><em>"Two sessions claim intersecting globs at the same instant; a file store has no atomic compare-and-set."</em></td><td><strong>hard veto</strong></td><td><strong>Resolved by shrinking the claim, not by adding a lock.</strong> Both claims are recorded (S3: appends do not interleave); the fold resolves by total order; the loser is refused on its <em>next</em> check. Honest only because the lease is stated as advisory-until-checked rather than sold as mutual exclusion</td></tr>
+      <tr><td>Security &amp; Identity</td><td>The projection is a model-to-model injection channel — and S5 proved the channel exists</td><td><strong>hard veto</strong></td><td><strong>Resolved as ordering, open as design.</strong> STRIDE written; the Phase-4 gate forbids shipping a projection before the rendering rules and adversarial corpus exist</td></tr>
+      <tr><td>Security &amp; Identity</td><td>Hard leases could be sold as isolation</td><td><strong>hard veto</strong></td><td><strong>Resolved</strong> — the three settings keys that disable enforcement are named, and shell bypass is conceded</td></tr>
+      <tr><td>Enterprise Architect</td><td>A second store beside the audit log and docs graph</td><td>veto</td><td><strong>Resolved</strong> — different grain and lifecycle; shares the allocator; emits to the audit log; restates neither</td></tr>
+      <tr><td>Enterprise Architect</td><td>LOA conformance for a component with no model</td><td>—</td><td><strong>No archetype applies.</strong> Rejected: <strong>G Continuous Sentinel</strong> (tempting — it watches continuously — but a Sentinel <em>reasons</em>, and this must be deterministic on the refusal path) and <strong>C Tool-Mediated Constructor</strong> (no constructor). Tier <strong>N/A</strong>: this is the deterministic floor <em>beneath</em> the AI. A later planner may <strong>advise</strong>, never grant or refuse</td></tr>
+      <tr><td>SRE</td><td>The 3 a.m. story: an agent is refused and nobody knows why</td><td>veto</td><td><strong>Resolved</strong> — refusals are events; <code>tail</code> replays them; all four metrics derive from the record with no separate instrumentation</td></tr>
+      <tr><td>SRE</td><td>A hook on every edit is a latency tax that will get switched off</td><td>veto</td><td><strong>Measured, not argued</strong> — 47 ms p95 naive, 27 ms snapshot, of which 14 ms is interpreter startup; plus the <code>if</code> pre-filter, which avoids spawning at all</td></tr>
+      <tr><td>Patterns Expert</td><td>Name the patterns or you have invented plumbing</td><td>advisory</td><td><strong>Named:</strong> Event Sourcing + CQRS read model (cache-not-source) · Lease with TTL &amp; heartbeat (Chubby/etcd family) · Ports &amp; Adapters · Sidecar/Interceptor · Strategy keyed by artifact class</td></tr>
+      <tr><td>Data &amp; Persistence</td><td>Grain, aggregates, and the ODS/analytical split</td><td>veto</td><td><strong>Resolved</strong> — grain declared; folds derived not stored; the class registry is the only dimension and is human-edited under review</td></tr>
+      <tr><td>Tech Lead</td><td>Can the team hold this?</td><td>advisory</td><td>Phase 1 is ~300 lines of stdlib with no dependency and no service. The riskiest parts — allocator, merge driver — are the <em>smallest</em></td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="callout">
+    <p><strong>Conditions of pass:</strong></p>
+    <ol>
+      <li>The <strong>elevation row</strong> gets concrete rendering rules and an adversarial corpus in <code>/design</code> <strong>before</strong> any projection ships.</li>
+      <li><strong>F1 stays open</strong> for Copilot and any third harness until each hook surface is <em>executed</em>, not read. Those agents are advisory-at-edit and enforced-at-commit until then.</li>
+      <li><strong>Every control is proven red on the un-fixed shape</strong> — explicitly including <code>rev-list HEAD --not --all</code> returning SAFE, and a dedupe-by-id resolution losing an entry.</li>
+      <li><strong>No control reports a pass without asserting its corpus was the size it assumed.</strong> Written because this document's own spike violated it.</li>
+    </ol>
+  </div>
+</div></section>
+
+<!-- ─────────────── risk ─────────────── -->
+<section id="risk"><div class="wrap">
+  <h2>Residual architectural risk</h2>
+  <p class="sub">What would change the design, not what would worry us</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>Risk</th><th>Why residual</th><th>What would change the design</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Agents route around refusals.</strong> The layer cannot compel</td><td>Structural, not fixable at this layer</td><td>The <code>% of edits under a held lease</code> metric. Below a high fraction, enforcement has failed regardless of implementation quality — and the answer is a different boundary, not a better hook</td></tr>
+      <tr><td>Simultaneous intersecting claims resolve after the fact, not atomically</td><td>Accepted over a lock file, which introduces the stale-lock problem the TTL exists to avoid</td><td>If measured contention makes late refusals costly, a per-pattern <code>O_EXCL</code> lock is the smallest next step — and inherits stale-lock recovery</td></tr>
+      <tr><td>Single-agent repos may pay for nothing — the common case for most pack installs</td><td>Advisory default plus the <code>if</code> pre-filter make the cost near zero, but "near zero" is not yet measured</td><td>Measured before/after on one repo. Any measurable cost ⇒ the layer stays inert until a second session appears</td></tr>
+      <tr><td><code>python-version: "3.x"</code> on the runner is a moving interpreter</td><td>S1 caught one instance; there will be others</td><td>Pin the CI interpreter, or keep to stdlib surfaces stable across versions. Already a named class</td></tr>
+      <tr><td><strong>Glob-overlap decidability is asserted, not spiked</strong></td><td>The <em>policy</em> (undecidable ⇒ refuse) is sound regardless; the <em>algorithm</em> is not yet chosen</td><td>Explicitly deferred to <code>/design</code> and <strong>not claimed as verified here</strong></td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="status">
+    <div><b>Completed</b><span>Architecture settled by six executed spikes, four of which overturned the obvious answer. Six ADRs. Domain grain, aggregates and durable representation settled. Enforcement contract established by execution. STRIDE opened on the one new trust boundary. F8 reconciliation done — and it found the harness already ships two of the mechanisms. Council gate passed with four conditions.</span></div>
+    <div><b>Remaining</b><span><strong>P1</strong> record + fold + claim/check/release/tail · <strong>P2</strong> PreToolUse enforcement + work-preservation guard · <strong>P3</strong> allocator + merge driver + remaining harness spikes · <strong>P4</strong> decisions + projection + operator surface, gated behind the STRIDE design</span></div>
+    <div><b>Best next action</b><span><code>/design</code> the Phase-1 slice — the record writer (the <code>LOG-A</code> seam is its first test), the fold's idempotence property, and the glob-overlap algorithm left open above. Everything else waits on two real sessions seeing each other's leases.</span></div>
+  </div>
+</div></section>
+
+</main>
+
+<footer><div class="wrap">
+  Derived view · the record is <code>docs/architecture-agent-coordination.md</code> and <code>docs/adr/0007–0012</code>, authoritative wherever the two disagree.
+</div></footer>
+
+<script>
+  (function(){
+    var root=document.documentElement, key='arch-agent-coordination-theme';
+    try{ var s=localStorage.getItem(key); if(s){ root.setAttribute('data-theme',s); }
+         else if(window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches){
+           root.setAttribute('data-theme','light'); } }catch(e){}
+    document.getElementById('t').addEventListener('click',function(){
+      var next = root.getAttribute('data-theme')==='light' ? 'dark' : 'light';
+      root.setAttribute('data-theme',next);
+      try{ localStorage.setItem(key,next); }catch(e){}
+    });
+  })();
+</script>
+</body>
+</html>

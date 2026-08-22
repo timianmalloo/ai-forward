@@ -702,7 +702,8 @@ def check_html_inline_scripts(findings):
     if not node:
         return  # dependency-free skip: no node -> no gate (do not fail the Python-only path)
     targets = []
-    for pat in ("web/*.html", "docs/portal/index.html", "docs/mockups/*.html", "docs/*.html"):
+    for pat in ("web/*.html", "docs/portal/index.html", "docs/mockups/*.html", "docs/*.html",
+                "docs/backtest/*/index.html"):
         targets.extend(glob.glob(os.path.join(ROOT, *pat.split("/"))))
     seen = set()
     for path in sorted(targets):

@@ -6,12 +6,12 @@ window.PACK_INDEX = {
 {
 "id": "knowledge",
 "label": "Knowledge docs",
-"count": 35
+"count": 37
 },
 {
 "id": "skills",
 "label": "Skills",
-"count": 21
+"count": 22
 },
 {
 "id": "templates",
@@ -21,7 +21,7 @@ window.PACK_INDEX = {
 {
 "id": "scripts",
 "label": "Scripts",
-"count": 15
+"count": 16
 },
 {
 "id": "personas",
@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 67
+"count": 86
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 202,
+"total": 225,
 "items": [
 {
 "cat": "knowledge",
@@ -129,6 +129,15 @@ window.PACK_INDEX = {
 },
 {
 "cat": "knowledge",
+"id": "communication-and-task-discipline",
+"title": "Communication & Task Discipline",
+"summary": "Normative guidance for **how the agent writes and how much work it takes on**. The Rigor Protocol governs how you think; `end-to-end-integrity.md` governs the scope you must think across; the Solution-Selection Ladder governs how big the…",
+"path": "pack/knowledge/communication-and-task-discipline.md",
+"kind": "knowledge",
+"text": "communication & task discipline normative guidance for **how the agent writes and how much work it takes on**. the rigor protocol governs how you think; `end-to-end-integrity.md` governs the scope you must think across; the solution-selection ladder governs how big the solution may be; **this document governs the prose you emit and the boundary of the task you accept**. it is the answer to two costs that no correctness rule prices: the reader's time, and the drift from the thing that was actually asked. communication & task discipline 0. when this applies 1. simplified technical english 2. precision and concision in the response channel 3. the artifact channel is governed differently 4. task focus and proportionality 5. the reconciliation (why these do not conflict) 6. self-verification checklist 7. references # communication & task discipline *normative guidance for **how the agent writes and how much work it takes on**. the rigor protocol governs how you think; `end-to-end-integrity.md` governs the scope you must think across; the solution-selection ladder governs how big the solution may be; **this document governs the prose you emit and the boundary of the task you accept**. it is the answer to two costs that no correctness rule prices: the reader's time, and the drift from the thing that was actually asked.* normative keywords (**must**, **should**, **may**, **must not**) follow rfc 2119. the governing idea, and the distinction the whole document turns on: **compress the expression, never the obligation.** an agent's output has two channels with opposite economics — the **response channel** (what it says to the human, which is read once and then discarded) and the **artifact channel** (what it commits to the repository, which is read for years by humans and agents). concision is close to a free win in the first and can be a straight loss in the second. a rule that fails to separate them will either produce padded chat or thin, useless knowledge docs — and in a repository whose *product is its documentation*, the second failure is the more expensive one. so: be ruthless with narration, and never with evidence. --- ## 0. when this applies every response, every session, unconditionally — it does not scale with tier (the way rigor does not scale with tier, `end-to-end-integrity.md` e1). what scales is the **artifact ceremony** (l7), not the writing discipline. a t0 typo fix and a t2 architecture change are both written in plain, result-first language; only one of them produces a design document. --- ## 1. simplified technical english **ct1 — write in simplified technical english.** short sentences. common words. active voice. **one idea per sentence.** define a specialist term the first time it appears, then use it consistently (dm17: one concept, one name). this is the same discipline aviation and defence maintenance manuals adopted for the same reason — the reader may be tired, under pressure, or reading in a second language, and ambiguity is expensive. **ct2 — state the result first.** lead with the outcome, then the evidence, then the detail. a reader who stops after one sentence should have the answer. never build to a conclusion; a response is not an argument being constructed, it is a finding being reported. **ct3 — prefer the plain word.** do not inflate. `use` not `utilise`; `so` not `in order to`; `now` not `at this point in time`; `because` not `due to the fact that`. jargon is permitted only where it is *load-bearing* — where the precise term carries a meaning the plain one loses (`idempotent`, `span`, `variant`, `aggregate root`). jargon used for register rather than precision is noise. **ct4 — formalism where it is denser than prose.** a table, a formula, a signature, or a short list is frequently the most precise and the most compact form available. use it. `tₚ ≤ (t₁ − t∞)/p + t∞` beats a paragraph describing it. this is not a licence to omit the reasoning — it is a requirement to express it in its tightest true form. --- ## 2. precision and concision in the response channel **ct5 — full disclosure of thought, minimum ceremony.** these are not in tension and the rule exists to say so. disclose everything that is load-bearing: the assumptions, the confidence labels, the sources, the residual risk, the thing that did not work. cut everything that is not: the preamble, the restatement of the request, the recap of what was just read, the closing summary of the summary. **ct6 — do not emit performance.** the following **must not** appear: internal monologue; self-encouragement; hopes and feelings about the work; rhetorical transitions that carry no information (*\"now, let's dive into…\"*, *\"great question!\"*, *\"perfect!\"*); narration of obvious tool use (*\"now i'll read the file\"* immediately before reading the file); flattery; apology theatre. **announcing a step and then taking it costs the reader twice and tells them nothing the action does not.** **ct7 — the interim-update test.** an interim update **must** carry at least one of: a **verified result**, a **real blocker**, a **decision the user should know about**, or the **next necessary action** — and it earns its place by being *new*. if none applies, say nothing and keep working. silence is a legitimate and often correct output. **ct8 — know the tells (this rule is detectable, like ng3).** in any response, these are signals that the response channel has been padded: > *\"let me…\" immediately before doing it · \"now i'll…\" · \"great/perfect/excellent!\" as a sentence · \"as you can see\" · \"it's worth noting that\" · \"in summary,\" followed by the summary of a summary · restating the user's request back to them · a paragraph whose deletion changes no fact · a closing paragraph that repeats the opening one* delete on sight. the one exception is a **genuinely new** orientation sentence at a phase transition, which is information, not narration. **ct9 — concision never removes evidence.** this is the hard line and it outranks every…"
+},
+{
+"cat": "knowledge",
 "id": "continuous-improvement",
 "title": "Continuous Improvement — the defect-class discipline",
 "summary": "Normative guidance for the agent's standing obligation to **get better**: every bug it creates, every assumption it gets wrong, and every correction it receives is captured, generalised to a **class**, and converted into a control that…",
@@ -171,6 +180,15 @@ window.PACK_INDEX = {
 "path": "pack/knowledge/engineering-governance.md",
 "kind": "knowledge",
 "text": "engineering governance — the sdlc lenses the craft docs don't cover version 1.0. a reference companion to the agent knowledge pack. engineering governance — the sdlc lenses the craft docs don't cover 1. requirements traceability 2. quality attributes (the non-functional spec) 3. threat modeling (lightweight stride) 4. privacy & data governance 5. accessibility 6. performance budgets 7. release, rollback & data migration 8. observability & operations (sre lens) 9. supply chain & licensing 10. incident readiness governance checklist (walk this at specify time) # engineering governance — the sdlc lenses the craft docs don't cover *version 1.0. a reference companion to the agent knowledge pack.* the body of knowledge governs *reasoning*, the style guide governs *c#*, and loa governs *ai-integrated architecture*. this document governs the **software-development lifecycle concerns** that sit around the code: the non-functional requirements, governance, and operational obligations a change must satisfy before it is truly \"done\" (rules of the road d1). it is **reference, not auto-ingested** — pull the relevant section in when a change touches that concern, proportional to the tier (rules of the road §0.2). normative keywords follow rfc 2119. > **how to use this.** during phase 1 (frame) and phase 4 (specify), walk the > checklist below and mark each lens *applies / does-not-apply / flagged*. a lens > that applies but has no answer in the spec is a gap, not a silence. --- ## 1. requirements traceability every shipped behaviour traces back to a spec statement, and every spec statement forward to a test (test architect, persona catalog §2). the **proof pack** (rules of the road §3.1) is the join table. for t2 work, maintain the chain `requirement → spec → test → proof pack row`; an orphan in either direction is a finding — untested behaviour, or behaviour no one asked for (yagni; tech lead). ## 2. quality attributes (the non-functional spec) functional correctness is necessary, not sufficient. for t1/t2 work, the spec **must** state targets (or explicit non-goals) for the attributes the change touches: - **performance & latency** — see §6 budgets. - **reliability & availability** — failure modes, retries, timeouts, degradation. - **security** — see §3 and the security & identity architect. - **privacy & data protection** — see §4. - **accessibility** — see §5. - **maintainability** — the style guide and loa are the standing answer. - **observability** — see §8. unstated quality attributes default to \"no worse than today\" — and that default **must** be verified, not assumed. ## 3. threat modeling (lightweight stride) for any change crossing a trust boundary — new input, new endpoint, new subprocess, new mcp tool, new stored artifact — run a quick **stride** pass (spoofing, tampering, repudiation, information disclosure, denial of service, elevation of privilege) and record the result in the spec. this is mandatory for t2 and is the security & identity architect's standing agenda (hard veto). for this repo specifically: - **subprocess / agent surface** — the copilot sdk agent and cli invocation are a command and prompt-injection surface; model output that triggers a side effect **must** pass a verifier or human gate (loa p3/p5). - **mcp server** — every exposed tool is an external entry point; enumerate authz, input validation, and resource bounds per tool. ## 4. privacy & data governance this product operates **on behalf of a signed-in leader** over m365 / work iq data — the most sensitive class of data in the system. therefore: - **delegated identity is a hard boundary.** all data access stays strictly inside the signed-in user's permissions, sensitivity labels, and audit scope. never broaden scope or cache another principal's data. (security & identity architect.) - **data at rest** — observation bundles, assessment snapshots, and artifacts are encrypted (dpapi currentuser) when `coachdata:encryptobservationsatrest=true`. new persisted personal data **must** route through the encrypted store, not a bare file write. - **minimization & retention** — collect only what the assessment needs; state a retention/exclusion posture for any new personal data field. - **logs & telemetry** — personal data and secrets **must not** appear in logs, traces, or exception messages (style guide §7; §8 below). ## 5. accessibility ui lives in `coachapp.components` and is hosted by maui blazor today and blazor server tomorrow. new components **must** be operable by keyboard, expose accessible names/roles, maintain a logical focus order and adequate contrast, and not convey state by colour alone. the components test suite includes an accessibility smoke check (bunit) — extend it, do not skip it. ## 6. performance budgets assign a budget to the resources a change consumes before writing it (loa p-budget): - **model calls** — every call has a token/time budget and a timeout. real work iq / m365 copilot queries take minutes; honour the configured `timeoutms` / `overalltimeoutms` / heartbeat rather than inventing shorter ones. - **ui thread** — no synchronous i/o on the ui thread; stream long results. - **allocations / i/o** — name the expected order of magnitude; a regression against it is a finding even when tests are green. ## 7. release, rollback & data migration - **reversibility.** every change states how it is rolled back. irreversible actions are a part 2 stop condition and a security hard-veto trigger. - **schema / persisted-format changes** are migrations: provide a forward path, preserve or upgrade existing on-disk artifacts (run logs, assessments, snapshots), and never make a change that silently corrupts data written by a prior version. versioned formats get an explicit version bump and a read path for the old version. - **feature gating.** risky behaviour ships behind configuration that defaults to the safe state. ## 8. observability & operations (sre lens) for load-bearing or long-running paths (the run…"
+},
+{
+"cat": "knowledge",
+"id": "execution-graph-optimization",
+"title": "Execution-Graph Optimization",
+"summary": "Normative guidance for **planning the shape of the work before doing it** — modelling a prompt as a dependency graph, shortening its critical path, running independent work concurrently under a bounded contract, collapsing and promoting…",
+"path": "pack/knowledge/execution-graph-optimization.md",
+"kind": "knowledge",
+"text": "execution-graph optimization normative guidance for **planning the shape of the work before doing it** — modelling a prompt as a dependency graph, shortening its critical path, running independent work concurrently under a bounded contract, collapsing and promoting nodes to the right granularity, proving that every loop terminates, and recording cost against delivery so the next plan is better. the rigor protocol governs how you reason; the solution-selection ladder governs how big the solution may be; **this governs the order, width, and boundedness of the execution itself.** the evidence base is `docs/knowledge/graph-and-loop-engineering/`; the skill that applies it is `/optimize-graph`. execution-graph optimization 0. when this applies, and who owns it 1. prime directives 2. build the graph 3. shorten the span, then widen the graph 4. loop engineering — terminate by construction 5. granularity and determinism 6. bounds, revision, and learning 7. self-verification checklist 8. references # execution-graph optimization *normative guidance for **planning the shape of the work before doing it** — modelling a prompt as a dependency graph, shortening its critical path, running independent work concurrently under a bounded contract, collapsing and promoting nodes to the right granularity, proving that every loop terminates, and recording cost against delivery so the next plan is better. the rigor protocol governs how you reason; the solution-selection ladder governs how big the solution may be; **this governs the order, width, and boundedness of the execution itself.** the evidence base is `docs/knowledge/graph-and-loop-engineering/`; the skill that applies it is `/optimize-graph`.* normative keywords (**must**, **should**, **may**, **must not**) follow rfc 2119. the governing idea, and the constraint that makes this document unusual: **optimization here may only ever increase completeness, rigor, and determinism.** every other optimization discipline trades quality for speed at some exchange rate. this one is forbidden to. it exists because the naive execution shape — everything serial, in the order the tasks were thought of, with loops that stop by running out — spends the budget badly, and spending it *well* buys more verification, not less. **if a plan is faster because it checks less, it is not an optimized plan; it is a smaller one, and it is rejected.** the measured warrant that this is achievable rather than aspirational: llmcompiler's dag-planned parallel execution delivered up to **3.7x latency and 6.7x cost improvement while accuracy went *up* ~9%** — the reordering itself improved the answer (`kb-graph-and-loop-engineering` finding #2). --- ## 0. when this applies, and who owns it **applies** to any non-trivial prompt before execution — that is, any prompt whose work is **more than two steps**, contains a **loop**, contains a **fan-out**, or triggers a **rigor gate**. it is *triggered* in the testing-strategy sense: a triggered-but-unmet directive is a gap the gate catches. **does not apply** below that threshold. a one-node prompt is executed, not planned — planning a task smaller than its plan is its own waste (go16). in this fleet's own corpus, **36% of 750 audit entries were single-step work**, so the skip path is the common path, not an edge case. **owner:** the **orchestrator** (which already owns sequencing, gates, and the mode-switch) with the **sre & systems diagnostician** (profiling, resource bounds, backpressure), the **test architect** (hard veto: no plan may reduce what is proven), and **the simplifier** (soft veto: no node, branch, or boundary that does not earn its place). --- ## 1. prime directives 1. **optimization is a completeness amplifier, never a trade.** the rigor floors are **inputs** to the plan, not variables in it. a plan that meets its budget by dropping a gate is rejected, not scored (go12). 2. **optimize the span before the width.** no amount of parallelism can beat the critical path. ask \"can this chain be shorter?\" before \"what can run at once?\" (go4). 3. **a loop without a variant is not bounded — it is hoped to terminate.** a cap is a circuit breaker, not a termination argument (go8). 4. **independence is proven, not assumed; and \"may\" is not \"should.\"** concurrency needs the independence test; paying for it needs the coupling test (go5–go6). 5. **profile before you reshape.** a plan that optimizes an unmeasured bottleneck is the hunch optimization anti-pattern with a bigger blast radius (go3). 6. **determinism is a first-class target.** a more reproducible plan is a better plan at equal cost (go11). --- ## 2. build the graph **go1 — make the execution graph explicit before executing.** enumerate the **nodes** (each with a goal, its inputs, its **exit condition**, and its capability **tier**) and the **edges** (each a *real* dependency). nothing else in this document is possible without it — and the act itself is a correctness intervention, because mast's largest failure category across 200+ traces of 7 frameworks is **specification**, including *ill-defined stopping conditions* (evidence base finding #5). **go2 — classify every edge, and delete the ones that are not real.** an edge is legitimate only if it is a **data edge** (b consumes a's output) or a **decision edge** (a's result changes b's *shape*). anything else is **incidental ordering** — two tasks in sequence because they were thought of in that order — and it **must** be removed. this is the cheapest win available and usually the largest. **go3 — profile before reshaping.** where cost data exists (prior audit entries, measured runs, known tool latencies), use it. where it does not, **say so and label the estimate inferred** rather than asserting a bottleneck. never reshape around an assumed hot spot: the pack's own measured lesson is that a suite everyone blamed on a migration chain was **73% app-boot time** (ce1), and that parallelism layered on contention runs *slower* while…"
 },
 {
 "cat": "knowledge",
@@ -498,6 +516,15 @@ window.PACK_INDEX = {
 },
 {
 "cat": "skills",
+"id": "optimize-graph",
+"title": "/optimize-graph",
+"summary": "Analyse a prompt BEFORE executing it and produce an optimized execution graph — dependencies made explicit, incidental ordering removed, the critical path shortened, independent work parallelised under a bounded fan-out contract, nodes…",
+"path": "pack/commands/optimize-graph/SKILL.md",
+"kind": "skill",
+"text": "/optimize-graph analyse a prompt before executing it and produce an optimized execution graph — dependencies made explicit, incidental ordering removed, the critical path shortened, independent work parallelised under a bounded fan-out contract, nodes collapsed or promoted to the right granularity, every loop given a termination variant, and cost recorded against delivery. it may only increase completeness, rigor and determinism, never trade them. skill: /optimize-graph grounding (first action) input the pass stage 0 — triage. is planning worth it? (go16) stage 1 — build the naive graph (what would happen with no planning) stage 2 — add the mandatory floor nodes (go12) stage 3 — classify the edges and delete the fake ones (go2) stage 4 — measure the graph and attack the span (go4) stage 5 — decide concurrency (go5–go7) stage 6 — granularity and determinism (go11, go13–go14) stage 7 — bound every loop (go8–go10) stage 8 — disconfirm (the gate) stage 9 — converge — emit the plan stage 10 — execute, then record cost vs delivery (go18) output artifact definition of done (exit gate) documentation & discoverability (last action)"
+},
+{
+"cat": "skills",
 "id": "prompts",
 "title": "/prompts",
 "summary": "Browse your logged prompts as a stack (newest on top) and reuse one — arrow keys to move, right-arrow to expand a prompt, left-arrow to collapse, Enter to copy it for paste-and-edit. A utility skill backed by the stdlib prompt-log engine.",
@@ -810,6 +837,15 @@ window.PACK_INDEX = {
 "path": "pack/scripts/bounded_process.py",
 "kind": "script",
 "text": "bounded_process.py bounded subprocess execution for pack-owned tool invocations. __init__ __init__ terminate close _terminate_tree _wait_after_termination _merge_errors _release_windows_gate run_bounded terminate_once drain"
+},
+{
+"cat": "scripts",
+"id": "coord-core.py",
+"title": "coord-core.py",
+"summary": "coord-core.py - agent coordination, Phase 1 walking skeleton.",
+"path": "pack/scripts/coord-core.py",
+"kind": "script",
+"text": "coord-core.py coord-core.py - agent coordination, phase 1 walking skeleton. holds the record of intent and answers \"may this session touch this artifact?\" from it. append-only jsonl, one file per session; every piece of state is a fold over it. no daemon, no database, no dependency beyond the standard library (adr-0007). four controls here were observed failing on the un-fixed shape before they were trusted: log-a an append onto a file not ending in a newline fuses two records and loses both r4 a check that scanned nothing must not report \"free\" ctrl-port os.open without o_binary translates newlines on windows -- which also masked the log-a control, because a stray cr still terminates a line f8 a claim over the coordination record itself would lock the substrate design: docs/design/coord-core-phase1.md __init__ repo_root resolve_root _norm _literal_segments overlaps make_event _next_seq append_event read_events fold check _safe render append_decision read_decisions _git unique_commits staged_paths _identity _build_parser _reject_path hook_response cmd_hook cmd_precommit cmd_guard _worktree_key cmd_session cmd_metrics cmd_install _print_settings_entry main"
 },
 {
 "cat": "scripts",
@@ -1236,12 +1272,75 @@ window.PACK_INDEX = {
 },
 {
 "cat": "graph",
+"id": "adr-0007-coordination-substrate",
+"title": "ADR-0007: A git-tracked append-only record folded on demand — no daemon, no database",
+"summary": "Coordination state lives in an append-only JSONL record, one file per session, git-tracked, and every piece of state is a fold over it. The daemon and the SQLite read model the draft proposed are both cut, because a measured full fold of a…",
+"path": "docs/adr/0007-coordination-substrate.md",
+"kind": "adr",
+"text": "adr-0007: a git-tracked append-only record folded on demand — no daemon, no database coordination state lives in an append-only jsonl record, one file per session, git-tracked, and every piece of state is a fold over it. the daemon and the sqlite read model the draft proposed are both cut, because a measured full fold of a 10,000-event record costs 47 ms p95 against a 100 ms budget — and because a service introduces an availability dependency into an offline local tool. coordination substrate event-sourcing fold latency spike implements architecture-agent-coordination implements spec-agent-coordination refines architecture"
+},
+{
+"cat": "graph",
+"id": "adr-0008-non-coordinating-allocation",
+"title": "ADR-0008: Identifiers come from a non-coordinating stdlib scheme — not uuid7, and not branch scanning",
+"summary": "Shared-register identifiers are issued from a stdlib-only, time-ordered, non-coordinating scheme — 48 bits of millisecond timestamp plus 80 bits from os.urandom, Crockford base32. uuid.uuid7 is rejected because it is absent on the…",
+"path": "docs/adr/0008-non-coordinating-allocation.md",
+"kind": "adr",
+"text": "adr-0008: identifiers come from a non-coordinating stdlib scheme — not uuid7, and not branch scanning shared-register identifiers are issued from a stdlib-only, time-ordered, non-coordinating scheme — 48 bits of millisecond timestamp plus 80 bits from os.urandom, crockford base32. uuid.uuid7 is rejected because it is absent on the installed 3.12 interpreter and present on the \"3.x\" ci runner; branch scanning is rejected because a working 22-branch scanner still collided within the hour. coordination allocation ulid kg-b spike stdlib implements architecture-agent-coordination implements spec-agent-coordination relates-to defect-classes"
+},
+{
+"cat": "graph",
+"id": "adr-0009-artifact-class-and-derived-merge",
+"title": "ADR-0009: Artifact class decides the mechanism — derived artifacts are regenerated by a merge driver, never leased",
+"summary": "Every path pattern is classified authored / derived / register / hotspot, and the class decides the coordination mechanism entirely. Derived artifacts — which are the six busiest files in the measured repository — are resolved by a…",
+"path": "docs/adr/0009-artifact-class-and-derived-merge.md",
+"kind": "adr",
+"text": "adr-0009: artifact class decides the mechanism — derived artifacts are regenerated by a merge driver, never leased every path pattern is classified authored / derived / register / hotspot, and the class decides the coordination mechanism entirely. derived artifacts — which are the six busiest files in the measured repository — are resolved by a .gitattributes merge driver that regenerates them, proven in a spike to resolve cleanly while an authored file on the same merge still conflicts normally. coordination artifact-class merge-driver gitattributes ci-b spike implements architecture-agent-coordination implements spec-agent-coordination relates-to defect-classes"
+},
+{
+"cat": "graph",
+"id": "adr-0010-enforcement-topology",
+"title": "ADR-0010: Enforce at the harness edit boundary where it exists, at the commit boundary always — and fail to ask, never to allow",
+"summary": "A PreToolUse hook returning permissionDecision deny refuses an unleased edit before it happens; the pre-commit boundary is the universal floor no settings key can remove. Every indeterminate path returns ask with a reason beginning NOT…",
+"path": "docs/adr/0010-enforcement-topology.md",
+"kind": "adr",
+"text": "adr-0010: enforce at the harness edit boundary where it exists, at the commit boundary always — and fail to ask, never to allow a pretooluse hook returning permissiondecision deny refuses an unleased edit before it happens; the pre-commit boundary is the universal floor no settings key can remove. every indeterminate path returns ask with a reason beginning not checked. the hook runs in exec-form with no shell, which closes the shell-a class structurally rather than by care. coordination enforcement hooks pretooluse fail-safe spike shell-a implements architecture-agent-coordination implements spec-agent-coordination relates-to defect-classes"
+},
+{
+"cat": "graph",
+"id": "adr-0011-projection-trust-boundary",
+"title": "ADR-0011: Cross-agent content is untrusted data — the projection ships only after its rendering rules exist",
+"summary": "The projection renders text authored by one agent's model into another agent's context, which the hook schema confirms is a live injection channel. Cross-agent content is therefore treated as data with no instruction authority, and the…",
+"path": "docs/adr/0011-projection-trust-boundary.md",
+"kind": "adr",
+"text": "adr-0011: cross-agent content is untrusted data — the projection ships only after its rendering rules exist the projection renders text authored by one agent's model into another agent's context, which the hook schema confirms is a live injection channel. cross-agent content is therefore treated as data with no instruction authority, and the delivery order is inverted so no projection ships before its rendering rules and adversarial corpus exist. coordination security prompt-injection trust-boundary stride projection implements architecture-agent-coordination implements spec-agent-coordination refines architecture"
+},
+{
+"cat": "graph",
+"id": "adr-0012-reuse-existing-mechanisms",
+"title": "ADR-0012: Compose the mechanisms that already exist — the harness ships two of them, and the fleet ships three more",
+"summary": "The F8 reconciliation the spec made a condition of pass. Two of the four failure modes are already partly addressed by mechanisms shipped in the harness itself, and three more by scripts in TheTerrace; each is adopted, superseded, or…",
+"path": "docs/adr/0012-reuse-existing-mechanisms.md",
+"kind": "adr",
+"text": "adr-0012: compose the mechanisms that already exist — the harness ships two of them, and the fleet ships three more the f8 reconciliation the spec made a condition of pass. two of the four failure modes are already partly addressed by mechanisms shipped in the harness itself, and three more by scripts in theterrace; each is adopted, superseded, or retired explicitly. also records the exact git expression for unique work, and why the obvious one silently reports safe. coordination reuse dup-a one-a worktree reachability git implements architecture-agent-coordination implements spec-agent-coordination relates-to defect-classes"
+},
+{
+"cat": "graph",
 "id": "architecture",
 "title": "AI-Forward — Architecture Overview",
 "summary": "The architecture of record for this repository: a dual-purpose repo that is both the canonical SOURCE of the AI-Forward Pack (pack/) and a live INSTALL of it (.claude/, docs/), kept in lockstep by tools/sync-pack.ps1. Includes the four…",
 "path": "docs/architecture.md",
 "kind": "architecture",
 "text": "ai-forward — architecture overview the architecture of record for this repository: a dual-purpose repo that is both the canonical source of the ai-forward pack (pack/) and a live install of it (.claude/, docs/), kept in lockstep by tools/sync-pack.ps1. includes the four diagram families and the tool/cli reference, verified against the repo as of the documented commit. pack knowledge-graph tooling source-and-install relates-to docs-index"
+},
+{
+"cat": "graph",
+"id": "architecture-agent-coordination",
+"title": "Agent coordination — architecture",
+"summary": "The architecture for the agent-coordination layer: a git-tracked append-only record of intent, folded on demand with no daemon and no database, enforced at each harness's edit boundary and at the universal commit boundary, with a…",
+"path": "docs/architecture-agent-coordination.md",
+"kind": "architecture",
+"text": "agent coordination — architecture the architecture for the agent-coordination layer: a git-tracked append-only record of intent, folded on demand with no daemon and no database, enforced at each harness's edit boundary and at the universal commit boundary, with a non-coordinating identifier allocator and a merge driver that regenerates derived artifacts rather than merging them. every load-bearing choice here was settled by an executed spike, several of which overturned the obvious answer. coordination worktrees multi-agent leases allocation hooks merge-driver spikes implements spec-agent-coordination refines architecture relates-to defect-classes relates-to audit-log"
 },
 {
 "cat": "graph",
@@ -1281,12 +1380,39 @@ window.PACK_INDEX = {
 },
 {
 "cat": "graph",
+"id": "note-20260820-spike-corpus-assertion",
+"title": "A verification script reported COLLISION-FREE over zero identifiers, because it only compared set size to list size",
+"summary": "While spiking the allocator for ADR-0008, the verification harness printed \"COLLISION-FREE WITHOUT COORDINATION\" over an empty result set — the worker processes had died on a syntax error and the check only asserted len(set(x)) == len(x),…",
+"path": "docs/notes/note-20260820-spike-corpus-assertion.md",
+"kind": "decision-note",
+"text": "a verification script reported collision-free over zero identifiers, because it only compared set size to list size while spiking the allocator for adr-0008, the verification harness printed \"collision-free without coordination\" over an empty result set — the worker processes had died on a syntax error and the check only asserted len(set(x)) == len(x), which is trivially true of nothing. recorded as an architectural rule (r4) rather than a code fix, because the defect was in the shape of the assertion. decision-note controls spike empty-corpus continuous-improvement relates-to architecture-agent-coordination relates-to defect-classes"
+},
+{
+"cat": "graph",
 "id": "design-aiforward-cli",
 "title": "Design — aiforward CLI (suggestion 1)",
 "summary": "A single stdlib-only Python developer CLI (tools/aiforward.py) that is a thin Façade dispatcher over the pack's existing scripts (sync, verify, check, new, doctor, graph, scrub) — one memorable entry point with --help, no new runtime…",
 "path": "docs/design/aiforward-cli.md",
 "kind": "design",
 "text": "design — aiforward cli (suggestion 1) a single stdlib-only python developer cli (tools/aiforward.py) that is a thin façade dispatcher over the pack's existing scripts (sync, verify, check, new, doctor, graph, scrub) — one memorable entry point with --help, no new runtime dependency. cli tooling dx implements kb-pack-evolution"
+},
+{
+"cat": "graph",
+"id": "design-coord-core-phase1",
+"title": "Design — coord core, Phase 1 walking skeleton (record · fold · claim/check/release/tail)",
+"summary": "The Phase-1 walking skeleton: an append-only per-session record, a pure fold over it, and four verbs (claim, check, release, tail) that let two sessions in two worktrees see each other's leases. Stdlib only, no daemon, no dependency. The…",
+"path": "docs/design/coord-core-phase1.md",
+"kind": "design",
+"text": "design — coord core, phase 1 walking skeleton (record · fold · claim/check/release/tail) the phase-1 walking skeleton: an append-only per-session record, a pure fold over it, and four verbs (claim, check, release, tail) that let two sessions in two worktrees see each other's leases. stdlib only, no daemon, no dependency. the log-a seam — an append onto a file that does not end in a newline fuses two records and loses both — is the record writer's first test, not a hardening. coordination walking-skeleton append-only fold leases log-a stdlib implements architecture-agent-coordination implements spec-agent-coordination implements adr-0007-coordination-substrate relates-to defect-classes"
+},
+{
+"cat": "graph",
+"id": "design-coord-enforcement-phase2",
+"title": "Design — coord enforcement, Phase 2 (PreToolUse hook · pre-commit floor · work-preservation guard)",
+"summary": "Phase 2 makes the Phase-1 lease actually hold: a PreToolUse hook that refuses an unleased edit, a pre-commit floor no settings key can switch off, and a guard that refuses to move HEAD over work reachable from exactly one ref. Splits the…",
+"path": "docs/design/coord-enforcement-phase2.md",
+"kind": "design",
+"text": "design — coord enforcement, phase 2 (pretooluse hook · pre-commit floor · work-preservation guard) phase 2 makes the phase-1 lease actually hold: a pretooluse hook that refuses an unleased edit, a pre-commit floor no settings key can switch off, and a guard that refuses to move head over work reachable from exactly one ref. splits the store in two — intent stays folded, enforcement decisions never are — because phase 1's measurement put the fold at its compaction trigger at 10k events. coordination enforcement pretooluse pre-commit reachability work-loss ctrl-g stdlib implements architecture-agent-coordination implements adr-0010-enforcement-topology refines design-coord-core-phase1 relates-to defect-classes"
 },
 {
 "cat": "graph",
@@ -1359,6 +1485,15 @@ window.PACK_INDEX = {
 "path": "docs/audit/audit-log.md",
 "kind": "doc",
 "text": "audit & change log the project's durable, committed activity & decision history — an append-only audit log of every meaningful prompt/skill/script and a curated change log of design decisions — the committed counterpart to a session's ephemeral store, so work compounds across sessions. this node represents the bundle in the knowledge graph. audit history change-log project-memory knowledge-graph relates-to architecture relates-to docs-index"
+},
+{
+"cat": "graph",
+"id": "backtest-optimize-graph",
+"title": "optimize-graph back-test — twelve real prompts replanned",
+"summary": "Back-test of the /optimize-graph skill against twelve real prompts drawn from 750 committed audit entries across TheTerrace, meridian-finance-planner and HealthWatch. Reports modeled time and token indices alongside rubric-scored…",
+"path": "docs/backtest/optimize-graph/backtest.md",
+"kind": "doc",
+"text": "optimize-graph back-test — twelve real prompts replanned back-test of the /optimize-graph skill against twelve real prompts drawn from 750 committed audit entries across theterrace, meridian-finance-planner and healthwatch. reports modeled time and token indices alongside rubric-scored completeness and rigor, with an explicit measured-vs-modeled integrity split — session timings in those logs span days of human-paced work and are therefore not execution times. headline: completeness +14.8 pts, rigor +9.4 pts, and no case lost either. optimize-graph back-test evaluation execution-graph cost-vs-delivery depends-on kb-graph-and-loop-engineering relates-to audit-log"
 },
 {
 "cat": "graph",
@@ -1677,6 +1812,78 @@ window.PACK_INDEX = {
 },
 {
 "cat": "graph",
+"id": "kb-graph-and-loop-engineering",
+"title": "Graph engineering, loop engineering & graph optimization (domain knowledge)",
+"summary": "Sourced evidence base for planning an agent's work as an explicit dependency graph before executing it: the classical work/span and critical-path theory that bounds any possible speedup, the termination theory (ranking functions over a…",
+"path": "docs/knowledge/graph-and-loop-engineering/index.md",
+"kind": "knowledge",
+"text": "graph engineering, loop engineering & graph optimization (domain knowledge) sourced evidence base for planning an agent's work as an explicit dependency graph before executing it: the classical work/span and critical-path theory that bounds any possible speedup, the termination theory (ranking functions over a well-founded order) that is the only real guarantee against runaway loops, the measured agentic results (llmcompiler 3.7x latency / 6.7x cost; anthropic's orchestrator-worker 90.2% uplift at 15x tokens), and the mast failure taxonomy showing that most multi-agent failure is specification and verification, not model capability. concludes that graph optimization must be a completeness-and-rigor amplifier, never a trade. graph-engineering loop-engineering graph-optimization dag parallelism critical-path termination agent-orchestration cost-vs-delivery relates-to architecture relates-to defect-classes relates-to kb-continuous-improvement-and-dreaming"
+},
+{
+"cat": "graph",
+"id": "kb-graph-and-loop-engineering-comparables",
+"title": "Graph & loop engineering — Comparables",
+"summary": "How existing systems frame and solve execution-graph planning — workflow engines (Airflow, Temporal, Dagster), agent frameworks (LangGraph, LLMCompiler, orchestrator-worker), and compiler approaches (DSPy) — plus the in-fleet evidence from…",
+"path": "docs/knowledge/graph-and-loop-engineering/comparables.md",
+"kind": "knowledge",
+"text": "graph & loop engineering — comparables how existing systems frame and solve execution-graph planning — workflow engines (airflow, temporal, dagster), agent frameworks (langgraph, llmcompiler, orchestrator-worker), and compiler approaches (dspy) — plus the in-fleet evidence from theterrace, meridian and healthwatch audit logs, including a measured unbounded-fan-out failure and a measured successful parallel run. comparables langgraph llmcompiler airflow temporal dspy in-repo-evidence refines kb-graph-and-loop-engineering"
+},
+{
+"cat": "graph",
+"id": "kb-graph-and-loop-engineering-data",
+"title": "Graph & loop engineering — Data & constants",
+"summary": "The numbers — published benchmark results (LLMCompiler, orchestrator-worker, MAST failure rates), framework defaults (LangGraph recursion_limit 25), 2026 cost ranges, and the measurements taken from this fleet's own 750 committed audit…",
+"path": "docs/knowledge/graph-and-loop-engineering/data-and-constants.md",
+"kind": "knowledge",
+"text": "graph & loop engineering — data & constants the numbers — published benchmark results (llmcompiler, orchestrator-worker, mast failure rates), framework defaults (langgraph recursion_limit 25), 2026 cost ranges, and the measurements taken from this fleet's own 750 committed audit entries — each with its confidence label and a currency warning on the fast-moving ones. data constants benchmarks token-cost defaults fleet-measurements refines kb-graph-and-loop-engineering"
+},
+{
+"cat": "graph",
+"id": "kb-graph-and-loop-engineering-glossary",
+"title": "Graph & loop engineering — Glossary",
+"summary": "The ubiquitous language for execution-graph planning — work, span, critical path, node, edge, wave, fan-out/join, collapse/promote, variant, well-founded order, circuit breaker, gate node, cost-vs-delivery ledger — for use in the skill,…",
+"path": "docs/knowledge/graph-and-loop-engineering/glossary.md",
+"kind": "knowledge",
+"text": "graph & loop engineering — glossary the ubiquitous language for execution-graph planning — work, span, critical path, node, edge, wave, fan-out/join, collapse/promote, variant, well-founded order, circuit breaker, gate node, cost-vs-delivery ledger — for use in the skill, the plans it produces, and any code. glossary ubiquitous-language dag span variant fan-out refines kb-graph-and-loop-engineering"
+},
+{
+"cat": "graph",
+"id": "kb-graph-and-loop-engineering-open-questions",
+"title": "Graph & loop engineering — Open questions & failure modes",
+"summary": "What the research could not settle, the disconfirming evidence against graph optimization, and the domain's known failure modes — including the ones that argue against decomposition and parallelism and the ones that would make an optimizer…",
+"path": "docs/knowledge/graph-and-loop-engineering/open-questions.md",
+"kind": "knowledge",
+"text": "graph & loop engineering — open questions & failure modes what the research could not settle, the disconfirming evidence against graph optimization, and the domain's known failure modes — including the ones that argue against decomposition and parallelism and the ones that would make an optimizer actively harmful if ignored. open-questions risks failure-modes disconfirming-evidence refines kb-graph-and-loop-engineering"
+},
+{
+"cat": "graph",
+"id": "kb-graph-and-loop-engineering-references",
+"title": "Graph & loop engineering — Reference information",
+"summary": "The formulae, invariants, decision rules and edge cases of the domain — the work/span bounds, Amdahl and Brent, the independence and coupling tests, the termination obligation, the granularity rules, and the boundary set an execution-graph…",
+"path": "docs/knowledge/graph-and-loop-engineering/references.md",
+"kind": "knowledge",
+"text": "graph & loop engineering — reference information the formulae, invariants, decision rules and edge cases of the domain — the work/span bounds, amdahl and brent, the independence and coupling tests, the termination obligation, the granularity rules, and the boundary set an execution-graph planner must handle. reference formulae brent amdahl ranking-function invariants edge-cases refines kb-graph-and-loop-engineering"
+},
+{
+"cat": "graph",
+"id": "kb-graph-and-loop-engineering-sota",
+"title": "Graph & loop engineering — State of the Art",
+"summary": "Current best practice across the three joined literatures — DAG scheduling and the work/span bound, agentic parallel planning (LLMCompiler, orchestrator-worker, the five Anthropic workflow patterns), loop termination via ranking functions,…",
+"path": "docs/knowledge/graph-and-loop-engineering/state-of-the-art.md",
+"kind": "knowledge",
+"text": "graph & loop engineering — state of the art current best practice across the three joined literatures — dag scheduling and the work/span bound, agentic parallel planning (llmcompiler, orchestrator-worker, the five anthropic workflow patterns), loop termination via ranking functions, and the compiler loop-transformation tradition — with what each contributes to planning an agent's execution graph. dag scheduling critical-path termination parallel-function-calling orchestrator-worker refines kb-graph-and-loop-engineering"
+},
+{
+"cat": "graph",
+"id": "kb-graph-and-loop-engineering-sources",
+"title": "Graph & loop engineering — Sources",
+"summary": "Full source list with access dates and confidence labels — primary papers (LLMCompiler, MAST), framework documentation (LangGraph), vendor engineering writeups (Anthropic), classical parallel-computing and termination theory, this fleet's…",
+"path": "docs/knowledge/graph-and-loop-engineering/sources.md",
+"kind": "knowledge",
+"text": "graph & loop engineering — sources full source list with access dates and confidence labels — primary papers (llmcompiler, mast), framework documentation (langgraph), vendor engineering writeups (anthropic), classical parallel-computing and termination theory, this fleet's own committed audit logs, and the in-pack standards this base composes with — plus the currency warning on the fast-moving material. sources citations currency refines kb-graph-and-loop-engineering"
+},
+{
+"cat": "graph",
 "id": "kb-pack-evolution",
 "title": "Pack Evolution — CLI, Doctor, Project Memory, RAI (domain knowledge)",
 "summary": "Sourced evidence base for four capabilities AI-Forward is considering adopting from agent-orchestration products (notably bradygaster/squad): a unified CLI, an installed-repo doctor, persistent project memory (and whether to introduce…",
@@ -1736,7 +1943,7 @@ window.PACK_INDEX = {
 "summary": "Repo-level privacy posture for the pack-evolution tooling: the CLI and doctor touch no personal data; project memory may incidentally record handles/names (no special-category data, mitigated by the scrub); the scrub is itself a privacy…",
 "path": "docs/security/privacy-review.md",
 "kind": "privacy-review",
-"text": "privacy review repo-level privacy posture for the pack-evolution tooling: the cli and doctor touch no personal data; project memory may incidentally record handles/names (no special-category data, mitigated by the scrub); the scrub is itself a privacy control; docs explorer navigation state remains local. the reviewed model-orchestration experiment was reverted before an executable provider-routing boundary was added. privacy linddun data-governance documents architecture documents forensic-review documents design-aiforward-cli documents design-pack-doctor documents design-project-memory documents design-rai-and-scrub documents design-docs-explorer-grounding-spatial-navigation"
+"text": "privacy review repo-level privacy posture for the pack-evolution tooling: the cli and doctor touch no personal data; project memory may incidentally record handles/names (no special-category data, mitigated by the scrub); the scrub is itself a privacy control; docs explorer navigation state remains local. the reviewed model-orchestration experiment was reverted before an executable provider-routing boundary was added. privacy linddun data-governance documents architecture documents forensic-review documents design-aiforward-cli documents design-coord-core-phase1 documents design-coord-enforcement-phase2 documents design-pack-doctor documents design-project-memory documents design-rai-and-scrub documents design-docs-explorer-grounding-spatial-navigation"
 },
 {
 "cat": "graph",
@@ -1781,7 +1988,7 @@ window.PACK_INDEX = {
 "summary": "Repo-level security posture for the pack-evolution tooling. The scrub handles potentially sensitive file content, while the Docs Explorer crosses committed-Markdown, filesystem, browser-rendering, and optional dependency boundaries; the…",
 "path": "docs/security/threat-model.md",
 "kind": "threat-model",
-"text": "threat model repo-level security posture for the pack-evolution tooling. the scrub handles potentially sensitive file content, while the docs explorer crosses committed-markdown, filesystem, browser-rendering, and optional dependency boundaries; the remaining tools are local and read-mostly. security threat-model documents architecture documents design-aiforward-cli documents design-pack-doctor documents design-project-memory documents design-rai-and-scrub documents design-docs-explorer-grounding-spatial-navigation"
+"text": "threat model repo-level security posture for the pack-evolution tooling. the scrub handles potentially sensitive file content, while the docs explorer crosses committed-markdown, filesystem, browser-rendering, and optional dependency boundaries; the remaining tools are local and read-mostly. security threat-model documents architecture documents design-aiforward-cli documents design-coord-core-phase1 documents design-coord-enforcement-phase2 documents design-pack-doctor documents design-project-memory documents design-rai-and-scrub documents design-docs-explorer-grounding-spatial-navigation"
 },
 {
 "cat": "guides",

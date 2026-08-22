@@ -65,13 +65,38 @@ every non-trivial task.
   inline `simplify:` comment (ceiling + upgrade trigger); ceremony scales with the tier (T0 code-first,
   T1/T2 full artifacts). `.github/instructions/solution-selection-ladder.instructions.md`; the
   Simplifier is its adversarial mirror.
+- **How you write, and how much you take on:** **compress the expression, never the obligation.**
+  Simplified technical English — short sentences, common words, active voice, one idea per sentence,
+  **result first**. No monologue, no self-encouragement, no rhetorical transitions, and never announce
+  a step and then take it; an interim update earns its place only by carrying a verified result, a real
+  blocker, a decision, or the next action. But **concision never drops a confidence label, a citation,
+  an assumption, a residual risk, or a correction** — and the response channel is compressed while a
+  **committed artifact is written for a reader who was not in the session** (so L8's anti-prose rule is
+  scoped to T0 inline prose and must never thin a required artifact). Stay on the requested outcome:
+  smallest change, smallest sufficient proof; name the failure any unrequested test/review/control
+  prevents or drop it; reviewer findings are advice, not automatic scope; **capture new ideas as next
+  steps rather than chasing them**; stop when the result is proven. **Proportionality never reaches the
+  floors** — a triggered hard veto, the Testing-Strategy union, the E7 surface list, red-first, and the
+  audit entries are not discretionary.
+  `.github/instructions/communication-and-task-discipline.instructions.md` (CT1–CT18).
+- **Plan the shape before you execute it:** for work beyond two steps, or containing a loop, a
+  fan-out, or a triggered gate, model it as an **execution graph** — real dependencies only (delete
+  incidental ordering), **shorten the critical path before widening the graph** (`Tₚ ≥ T∞` always),
+  parallelise only what passes the **independence** *and* **coupling** tests and only under a bounded
+  fan-out contract (width cap, transient-retry, per-branch exit, join rule, containment), collapse or
+  promote nodes to the right granularity, and give **every loop a termination variant** — a cap is a
+  circuit breaker whose firing is a *defect signal*, never a termination argument. **Rigor floors are
+  immovable nodes: optimization may reorder them, never remove them**, and a plan that is faster
+  because it proves less is rejected. Record planned vs actual so the next plan is better.
+  `.github/instructions/execution-graph-optimization.instructions.md` (GO1–GO18); evidence in
+  `docs/knowledge/graph-and-loop-engineering/`; the workflow is the `optimize-graph` prompt.
 - **Personas (dual-mode):** author in Peer Mode, review in Adversary Mode; the author never
   clears its own hard veto. Agents in `.github/agents/`; the operating standard in the
   `persona-audit` / `persona-cards` instructions.
-- **Workflows (21):** the prompts in `.github/prompts/` — eighteen reasoning workflows
+- **Workflows (22):** the prompts in `.github/prompts/` — nineteen reasoning workflows
   (`collectknowledge`, `adddomainexperts`, `specify`, `define-architecture`, `design`, `ui-design`,
   `visualize`, `implement`, `investigate`, `document`, `adopt`, `forensicreview`, `migrate`,
-  `updatepack`, `addpacktorepo`, `extendaibundle`, `dream`, `apply-learnings`),
+  `updatepack`, `addpacktorepo`, `extendaibundle`, `optimize-graph`, `dream`, `apply-learnings`),
   the `auditlog` lens over the audit & change log, plus two prompt-log utilities, `prompts` and
   `searchprompts`. Templates: `docs/ai-forward-pack/templates/`.
 - **Prompt reuse (utility):** `/prompts` opens the audit log's prompts as an arrow-navigable stack

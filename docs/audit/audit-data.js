@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-08-20T17:37:49Z",
+  "generated": "2026-08-22T16:30:46Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1430,6 +1430,91 @@ window.AUDIT_DATA = {
       ],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-0066",
+      "shortname": "define-architecture-agent-coordination",
+      "datetime": "2026-08-20T19:46:00Z",
+      "session": "6c74f4f4",
+      "prompt": "C:/Program Files/Git/define-architecture for this and provide in html and md",
+      "summary": "Architecture + 6 ADRs (0007-0012) for the agent-coordination layer, settled by six EXECUTED spikes, four of which overturned the obvious answer: uuid.uuid7 absent on the installed 3.12 while CI pins 3.x (PACK-J by construction) so the allocator is hand-rolled stdlib and proven collision-free at 4000 ids from 8 processes in one millisecond; a full fold of a 10k-event record costs 47ms p95 as a subprocess against a 100ms budget, so the daemon AND the SQLite read model are both cut; O_APPEND is atomic across 6 concurrent Windows processes so one-file-per-session is a reviewability choice not a safety one; and 'git rev-list HEAD --not --all' returns 0 for a branch holding one unique commit because --all includes HEAD. Also established the PreToolUse contract by execution (5 cases incl. both fail-safe paths) and proved a .gitattributes merge driver resolves derived conflicts while authored files still conflict. Council gate PASS WITH 4 CONDITIONS; Security hard veto resolved-as-ordering with an open threat model. F8 reconciliation found the harness already ships worktree.bgIsolation and worktree/session lifecycle hooks.",
+      "kind": "skill",
+      "skill": "define-architecture",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/architecture-agent-coordination.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0067",
+      "shortname": "design-implement-coord-core-phase1",
+      "datetime": "2026-08-21T01:40:51Z",
+      "session": "6c74f4f4",
+      "prompt": "C:/Program Files/Git/design and /implement the phase-1 slice",
+      "summary": "Design + TDD implementation of the agent-coordination Phase-1 walking skeleton: pack/scripts/coord-core.py (stdlib, ~330 lines, no dependency) and 24 tests, all green; full suite 156 passed. FOUR controls were observed failing on the un-fixed shape before being trusted, and two of them were found the hard way. LOG-A: an append onto a file not ending in a newline fuses two records and loses BOTH - fixed at rung 1 (impossible to express). CTRL-PORT: os.open without O_BINARY translates newlines on Windows, making the git-tracked record CRLF against .gitattributes AND MASKING the LOG-A test, because a stray CR still terminates a line - the LOG-A control passed for the wrong reason until this was found. R4: a check over zero files reported the path free. F8: a claim over the coordination record itself. Running the human demo then exposed a real gap in my own architecture: the record defaulted to cwd/.agents, so every worktree had a private record and two sessions could NEVER see each other - which is the entire Phase-1 exit criterion. Fixed by resolving the repo root from the git worktree layout; the first fix shelled out to git rev-parse and cost 35ms of the 100ms edit-path budget (82ms p95), so it was rewritten to read the filesystem (63ms p95). Demo verified end to end: claim, refuse with the four-line message, release, grant, shared stream.",
+      "kind": "skill",
+      "skill": "design",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/design/coord-core-phase1.md",
+        "pack/scripts/coord-core.py"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0068",
+      "shortname": "design-implement-coord-enforcement-phase2",
+      "datetime": "2026-08-22T16:10:01Z",
+      "session": "6c74f4f4",
+      "prompt": "C:/Program Files/Git/design the phase-2 slice and /implement it",
+      "summary": "Design + TDD implementation of Phase 2 (enforcement): a PreToolUse hook that refuses an unleased edit, a pre-commit floor no settings key can remove, a work-preservation guard, one-session-per-worktree, and the metric that decides whether the phase worked. 27 new tests, 51 across both phases, full suite 183 green. Six git-plumbing spikes ran first (S8-S10 plus S9's five reachability cases). Key design change: the store SPLITS IN TWO - intent stays folded, enforcement decisions never are - because Phase 1's own measurement put the fold at its 60ms compaction trigger at 10k events, and Phase 2 records a decision per EDIT rather than per claim. Three defects were found by the tests and one by the demo: traversal paths were not rejected; an unconfigured repo blocked every commit instead of running advisory (US-8); the stored kind used the internal word 'deny' rather than the ubiquitous-language 'refused'; and the printed settings entry was hand-formatted JSON carrying literal double-braces and an unescaped Windows path - invalid the moment it was pasted, now generated with json.dumps. Demo verified end to end including a REAL git commit refused by the installed floor.",
+      "kind": "skill",
+      "skill": "design",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/design/coord-enforcement-phase2.md",
+        "pack/scripts/coord-core.py"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0069",
+      "shortname": "collectknowledge-graph-and-loop-engineering",
+      "datetime": "2026-08-22T16:30:26Z",
+      "session": "ad91aa43-d81e-4926-b3f2-5c242f25a7a1",
+      "prompt": "/collectknowledge on graph engineering, loop engineering and graph optimization. Refine the TheTerrace communication/task directives and apply them to ai-forward for both GitHub Copilot and Claude Code. Then create a new skill optimize-graph that analyses a prompt before execution and builds an optimized graph (parallelism vs serialization, promote/collapse, performance, determinism, no infinite loops or runaway conditions, cost vs delivery learning) that never harms completeness or rigor. Back-test against audit logs from theterrace, meridian and health watch and produce an HTML output showing the impact on time, tokens, completeness and rigor.",
+      "summary": "Built docs/knowledge/graph-and-loop-engineering/ (8 sourced files). Headlines: the span bounds any speedup (Tp >= T-infinity, so shorten the chain before widening); LLMCompiler measured 3.7x latency / 6.7x cost with accuracy UP ~9%, so reordering need not trade correctness; orchestrator-worker is +90.2% at ~15x tokens and only for loosely-coupled breadth-first work; a step cap is not a termination proof - only a ranking function over a well-founded order is; MAST shows failure clusters in specification and verification, not capability; cost is dominated by context not generation. Disconfirming evidence recorded (multi-agent topologies degrading plan quality 39-70%; decomposition creating MAST's inter-agent-misalignment category). Shipped 2 knowledge docs (communication-and-task-discipline CT1-CT18, execution-graph-optimization GO1-GO18) + the /optimize-graph skill on both surfaces, INSTALL rev 39->40, skills 21->22, knowledge 34->36. Back-tested 12 real prompts over 750 audit entries: time -34.3 pct and tokens -4.5 pct (both MODELED), completeness +14.8 and rigor +9.4, with zero cases losing either. Render proof and the extended PACK-G gate both observed failing red-first.",
+      "kind": "skill",
+      "skill": "collectknowledge",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/knowledge/graph-and-loop-engineering/index.md",
+        "pack/knowledge/execution-graph-optimization.md",
+        "pack/knowledge/communication-and-task-discipline.md",
+        "pack/commands/optimize-graph/SKILL.md",
+        "docs/backtest/optimize-graph/index.html"
+      ],
+      "tags": [
+        "graph-engineering",
+        "loop-engineering",
+        "optimize-graph",
+        "communication-discipline"
+      ],
+      "outcome": "success",
+      "git": {
+        "sha": "8e0bd5d8459178e2444b2f0a475228a35de9eaaa",
+        "short": "8e0bd5d84",
+        "branch": "main",
+        "pushed": true
+      }
     }
   ],
   "changes": [
@@ -1831,6 +1916,109 @@ window.AUDIT_DATA = {
         "commits": []
       },
       "audit_ref": "al-0065"
+    },
+    {
+      "id": "cl-0017",
+      "datetime": "2026-08-20T19:46:21Z",
+      "session": "6c74f4f4",
+      "kind": "architecture",
+      "skill": "define-architecture",
+      "title": "Agent coordination is a serviceless record-and-fold, with a non-coordinating allocator and a merge driver — all four settled by executed spikes",
+      "prompt": null,
+      "summary": "No daemon and no database: all coordination state is a fold over a git-tracked append-only record. Identifiers come from a stdlib non-coordinating scheme, not uuid.uuid7 and not branch scanning. Artifact CLASS decides the mechanism, with derived artifacts regenerated by a .gitattributes merge driver rather than leased. Enforcement is PreToolUse where a harness offers it and pre-commit always, failing to 'ask' with NOT CHECKED rather than to allow. The projection is a trust boundary and is deliberately phased last, gated behind its own design. Delivery is four vertical slices, Phase 1 a walking skeleton.",
+      "rationale": "Four of six spikes overturned the answer the architecture would otherwise have taken. S2: a full fold of a 10,000-event record invoked as a subprocess costs 47ms p95 against a 100ms budget, so the draft's daemon+SQLite buys no latency this system needs while adding an availability dependency to an offline tool. S1: uuid.uuid7 raises AttributeError on the installed 3.12 and exists on the 3.x-pinned CI runner, which is PACK-J by construction. S3: O_APPEND is atomic across 6 concurrent Windows processes, so one-file-per-session is for reviewability, not safety - and recording the real reason matters. S4: 'rev-list HEAD --not --all' reports 0 for a branch holding one unique commit because --all implicitly includes HEAD, which is the mechanism behind the recorded guard that reported SAFE for the case it existed to catch. S6 proved the merge driver resolves derived conflicts while an authored file on the same merge still conflicts normally. S5 established the PreToolUse contract by execution and surfaced exec-form args (closing SHELL-A structurally), the if pre-filter (the largest latency lever), and additionalContext (making the injection boundary a live path). F8 also found the harness already ships worktree.bgIsolation and worktree/session lifecycle hooks, so a layer written from the spec alone would have rebuilt two mechanisms.",
+      "artifacts": [
+        "docs/architecture-agent-coordination.md",
+        "docs/adr/0007-coordination-substrate.md",
+        "docs/adr/0008-non-coordinating-allocation.md",
+        "docs/adr/0009-artifact-class-and-derived-merge.md",
+        "docs/adr/0010-enforcement-topology.md",
+        "docs/adr/0011-projection-trust-boundary.md",
+        "docs/adr/0012-reuse-existing-mechanisms.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "8e0bd5d8459178e2444b2f0a475228a35de9eaaa",
+        "after": "8e0bd5d8459178e2444b2f0a475228a35de9eaaa",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      },
+      "audit_ref": "al-0066"
+    },
+    {
+      "id": "cl-0018",
+      "datetime": "2026-08-21T01:41:06Z",
+      "session": "6c74f4f4",
+      "kind": "design",
+      "skill": "design",
+      "title": "The coordination record is per REPOSITORY, not per checkout — and the writer owns the newline seam",
+      "prompt": null,
+      "summary": "Phase-1 coord core: append-only per-session JSONL, a pure fold, four verbs. Two design decisions changed during implementation. (1) The record root resolves to the PRIMARY checkout via the git worktree layout read from the filesystem, not to cwd - the default of cwd/.agents gave every worktree a private record, so two sessions could never see each other, which is the whole Phase-1 exit criterion. (2) The writer emits a LEADING newline when the file does not already end in one, and opens with O_BINARY - closing LOG-A at rung 1 and stopping Windows newline translation from making the git-tracked record CRLF.",
+      "rationale": "Both were found by running the thing rather than by reading it. The worktree gap surfaced the moment the human demo was executed - the design and the architecture both missed it because 'git-tracked so it is shared' conflates durable review with live cross-worktree visibility, and only the second is sub-second. The newline seam is worse: the CTRL-PORT defect (os.open without O_BINARY translating newlines) MASKED the LOG-A control, because stripping a trailing newline left a CR that still terminated a line - so the LOG-A test passed for the wrong reason and would have shipped as false assurance. It was caught only by reading the raw bytes. The first worktree fix shelled out to git rev-parse and cost 35ms of the 100ms edit-path budget (82ms p95 measured), which met NFR-P1 but blew through ADR-0007's own 60ms compaction trigger; rewritten to read the filesystem it is 63ms p95. A subprocess on the hot path of every edit is not free, and only measuring it says so.",
+      "artifacts": [
+        "docs/design/coord-core-phase1.md",
+        "pack/scripts/coord-core.py"
+      ],
+      "tags": [],
+      "git": {
+        "before": "8e0bd5d8459178e2444b2f0a475228a35de9eaaa",
+        "after": "8e0bd5d8459178e2444b2f0a475228a35de9eaaa",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      },
+      "audit_ref": "al-0067"
+    },
+    {
+      "id": "cl-0019",
+      "datetime": "2026-08-22T16:10:14Z",
+      "session": "6c74f4f4",
+      "kind": "design",
+      "skill": "design",
+      "title": "Enforcement decisions leave the folded log — two stores, two grains, one reader each",
+      "prompt": null,
+      "summary": "Phase 2 adds hook / precommit / guard / session / metrics / install, and changes one thing Phase 1 decided: a refusal is no longer appended to the folded intent log. log/ holds INTENT (claim, release, session) and is folded; decisions/ holds ENFORCEMENT DECISIONS (allowed, refused, not_checked) and is never folded. tail reads both because it is the human stream; check reads only log/ because it is the machine verdict. The precommit floor runs ADVISORY in a repository with no coordination record (US-8) rather than blocking every commit.",
+      "rationale": "Phase 1 measured the end-to-end check at 63ms p95 over 10,000 events - already at ADR-0007's own 60ms compaction trigger. Phase 2 records a decision per EDIT, one to three orders of magnitude more traffic than one per claim, so folding those would push the hot path past its budget within a day of real use. Splitting the stores keeps the fold proportional to claims rather than edits, and makes the metric that decides whether enforcement works (edits_under_lease_pct, spec F2's own probe) free to collect. The advisory default follows from the same reasoning as the floor itself: a control that blocks every commit in every unconfigured repo gets deleted rather than adopted, and US-8 already required the layer to say when it is advisory rather than imply enforcement it is not performing.",
+      "artifacts": [
+        "docs/design/coord-enforcement-phase2.md",
+        "pack/scripts/coord-core.py"
+      ],
+      "tags": [],
+      "git": {
+        "before": "8e0bd5d8459178e2444b2f0a475228a35de9eaaa",
+        "after": "8e0bd5d8459178e2444b2f0a475228a35de9eaaa",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      },
+      "audit_ref": "al-0068"
+    },
+    {
+      "id": "cl-0020",
+      "datetime": "2026-08-22T16:30:46Z",
+      "session": "ad91aa43-d81e-4926-b3f2-5c242f25a7a1",
+      "kind": "knowledge",
+      "skill": "collectknowledge",
+      "title": "Execution-graph optimization and communication/task discipline become pack standards; /optimize-graph is the pre-execution planning skill",
+      "prompt": "/collectknowledge on graph engineering, loop engineering and graph optimization; refine the TheTerrace directives for ai-forward on both surfaces; create the optimize-graph skill; back-test it against three repos' audit logs with an HTML output.",
+      "summary": "Three additions, one evidence base. (1) docs/knowledge/graph-and-loop-engineering/ - 8 sourced files establishing that the SPAN bounds any speedup, that DAG-planned parallelism has been measured to improve accuracy while cutting latency and cost, that only a ranking function over a well-founded order proves termination, and that multi-agent failure is dominated by specification and verification rather than capability. (2) knowledge/execution-graph-optimization.md (GO1-GO18) - the normative standard: floors are INPUTS not variables, optimize the span before the width, independence-then-coupling before any concurrency, a five-part fan-out contract, a variant for every loop, oracle-declaring verification nodes, and a planned-vs-actual ledger. (3) knowledge/communication-and-task-discipline.md (CT1-CT18) - simplified technical English and task focus, refined over the source directives with the RESPONSE-vs-ARTIFACT channel split and an explicit rule that concision and proportionality never reach the rigor floors. (4) /optimize-graph on both surfaces. Back-test over 750 audit entries from three repos: modeled time -34.3 pct, modeled tokens -4.5 pct, completeness +14.8, rigor +9.4, zero regressions.",
+      "rationale": "The pack governed how the agent REASONS (Rigor Protocol), how big the solution may be (Solution-Selection Ladder), and what counts as proof (Testing Strategy) - but never the ORDER, WIDTH and BOUNDEDNESS of the execution itself, nor the prose it emits. Both gaps cost real money in this fleet: five uncapped parallel calls failed an entire advisor panel, fourteen FRs fanned out with no per-branch exit condition produced four open and four partial, and three independent defects on three layers were discovered one at a time. The governing constraint - that optimization may only ever increase completeness, rigor and determinism - is what makes this safe to always-load: it cannot become a licence to check less.",
+      "artifacts": [
+        "docs/knowledge/graph-and-loop-engineering/index.md",
+        "pack/knowledge/execution-graph-optimization.md",
+        "pack/knowledge/communication-and-task-discipline.md",
+        "pack/commands/optimize-graph/SKILL.md",
+        "docs/backtest/optimize-graph/index.html"
+      ],
+      "tags": [],
+      "git": {
+        "before": "8e0bd5d",
+        "after": "8e0bd5d8459178e2444b2f0a475228a35de9eaaa",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
     }
   ]
 };

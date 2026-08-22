@@ -1,14 +1,14 @@
 window.PORTAL_DATA = {
   "meta": {
     "counts": {
-      "skills": 21,
+      "skills": 22,
       "personas": 23,
-      "knowledge": 34,
+      "knowledge": 36,
       "templates": 26,
-      "scripts": 15
+      "scripts": 16
     },
     "whatIs": "AI-Forward is a committed Markdown methodology pack that installs into a repo so Claude Code and GitHub Copilot direct work with a shared reasoning spine, adversarial persona review, and a library of workflow skills - nothing runs as a service; everything is versioned files and stdlib scripts.",
-    "skillCount": 21,
+    "skillCount": 22,
     "precisionNote": "This portal is the high-level, user-facing front door. It is a LENS over the repo's core knowledge, not a copy of it: the Foundations, UI, and Architecture sections list and link the structured artifacts (knowledge docs, ADRs, specs, designs) with derived summaries, while the artifacts themselves stay exactly where they are - as structured, individually-owned Markdown. Nothing here is hand-typed content that must be kept in sync; it is generated from those sources, so it cannot drift."
   },
   "sections": [
@@ -25,7 +25,7 @@ window.PORTAL_DATA = {
     {
       "id": "skills",
       "n": "3",
-      "title": "The 21 Skills"
+      "title": "The 22 Skills"
     },
     {
       "id": "foundations",
@@ -288,6 +288,18 @@ window.PORTAL_DATA = {
           "handoff": "/ui-design"
         }
       ]
+    },
+    {
+      "group": "Delivery",
+      "items": [
+        {
+          "cmd": "/optimize-graph",
+          "desc": "Analyse a prompt BEFORE executing it and produce an optimized execution graph — dependencies made explicit, incidental ordering removed, the critical path shortened, independent work parallelised under a bounded fan-out contract, nodes collapsed or promoted to the right granularity, every loop given a termination variant, and cost recorded against delivery. It may only increase completeness, rigor and determinism, never trade them.",
+          "when": "Before executing any prompt beyond two steps, or one with a loop, a fan-out, or a triggered gate.",
+          "produces": "docs/plans/ + a cost-vs-delivery ledger",
+          "handoff": "the workflow skill it wraps, then /dream"
+        }
+      ]
     }
   ],
   "foundations": {
@@ -487,6 +499,18 @@ window.PORTAL_DATA = {
             "title": "CI & Test Execution Efficiency — best coverage at minimum time and cost",
             "summary": "Normative keywords (MUST, SHOULD, MAY, MUST NOT) follow RFC 2119.",
             "path": "../../pack/knowledge/ci-and-test-efficiency.md"
+          },
+          {
+            "name": "communication-and-task-discipline",
+            "title": "Communication & Task Discipline",
+            "summary": "Normative keywords (MUST, SHOULD, MAY, MUST NOT) follow RFC 2119.",
+            "path": "../../pack/knowledge/communication-and-task-discipline.md"
+          },
+          {
+            "name": "execution-graph-optimization",
+            "title": "Execution-Graph Optimization",
+            "summary": "Normative keywords (MUST, SHOULD, MAY, MUST NOT) follow RFC 2119.",
+            "path": "../../pack/knowledge/execution-graph-optimization.md"
           }
         ]
       }
@@ -590,6 +614,36 @@ window.PORTAL_DATA = {
             "title": "ADR-0006: The Dream Manifest — a learnings×repos targeting/record layer for federation, composed in a UI, consumed by apply-learnings --manifest, local-only by default",
             "summary": "Federation had a distribution mechanism (apply-learnings push -> per-repo plans) but no targeting/record layer: which learnings go to which repos, and what happened when they did. The Dream Manifest is that layer — a learnings×repos assignment matrix...",
             "path": "../../docs/adr/0006-dream-manifest.md"
+          },
+          {
+            "title": "ADR-0007: A git-tracked append-only record folded on demand — no daemon, no database",
+            "summary": "Coordination state lives in an append-only JSONL record, one file per session, git-tracked, and every piece of state is a fold over it. The daemon and the SQLite read model the draft proposed are both cut, because a measured full fold of a 10,000-event record...",
+            "path": "../../docs/adr/0007-coordination-substrate.md"
+          },
+          {
+            "title": "ADR-0008: Identifiers come from a non-coordinating stdlib scheme — not uuid7, and not branch scanning",
+            "summary": "Shared-register identifiers are issued from a stdlib-only, time-ordered, non-coordinating scheme — 48 bits of millisecond timestamp plus 80 bits from os.urandom, Crockford base32. uuid.uuid7 is rejected because it is absent on the installed 3.12 interpreter...",
+            "path": "../../docs/adr/0008-non-coordinating-allocation.md"
+          },
+          {
+            "title": "ADR-0009: Artifact class decides the mechanism — derived artifacts are regenerated by a merge driver, never leased",
+            "summary": "Every path pattern is classified authored / derived / register / hotspot, and the class decides the coordination mechanism entirely. Derived artifacts — which are the six busiest files in the measured repository — are resolved by a .gitattributes merge driver...",
+            "path": "../../docs/adr/0009-artifact-class-and-derived-merge.md"
+          },
+          {
+            "title": "ADR-0010: Enforce at the harness edit boundary where it exists, at the commit boundary always — and fail to ask, never to allow",
+            "summary": "A PreToolUse hook returning permissionDecision deny refuses an unleased edit before it happens; the pre-commit boundary is the universal floor no settings key can remove. Every indeterminate path returns ask with a reason beginning NOT CHECKED. The hook runs...",
+            "path": "../../docs/adr/0010-enforcement-topology.md"
+          },
+          {
+            "title": "ADR-0011: Cross-agent content is untrusted data — the projection ships only after its rendering rules exist",
+            "summary": "The projection renders text authored by one agent's model into another agent's context, which the hook schema confirms is a live injection channel. Cross-agent content is therefore treated as data with no instruction authority, and the delivery order is...",
+            "path": "../../docs/adr/0011-projection-trust-boundary.md"
+          },
+          {
+            "title": "ADR-0012: Compose the mechanisms that already exist — the harness ships two of them, and the fleet ships three more",
+            "summary": "The F8 reconciliation the spec made a condition of pass. Two of the four failure modes are already partly addressed by mechanisms shipped in the harness itself, and three more by scripts in TheTerrace; each is adopted, superseded, or retired explicitly. Also...",
+            "path": "../../docs/adr/0012-reuse-existing-mechanisms.md"
           }
         ]
       },
@@ -620,6 +674,16 @@ window.PORTAL_DATA = {
             "title": "Design — aiforward CLI (suggestion 1)",
             "summary": "A single stdlib-only Python developer CLI (tools/aiforward.py) that is a thin Façade dispatcher over the pack's existing scripts (sync, verify, check, new, doctor, graph, scrub) — one memorable entry point with --help, no new runtime dependency.",
             "path": "../../docs/design/aiforward-cli.md"
+          },
+          {
+            "title": "Design — coord core, Phase 1 walking skeleton (record · fold · claim/check/release/tail)",
+            "summary": "The Phase-1 walking skeleton: an append-only per-session record, a pure fold over it, and four verbs (claim, check, release, tail) that let two sessions in two worktrees see each other's leases. Stdlib only, no daemon, no dependency. The LOG-A seam — an...",
+            "path": "../../docs/design/coord-core-phase1.md"
+          },
+          {
+            "title": "Design — coord enforcement, Phase 2 (PreToolUse hook · pre-commit floor · work-preservation guard)",
+            "summary": "Phase 2 makes the Phase-1 lease actually hold: a PreToolUse hook that refuses an unleased edit, a pre-commit floor no settings key can switch off, and a guard that refuses to move HEAD over work reachable from exactly one ref. Splits the store in two — intent...",
+            "path": "../../docs/design/coord-enforcement-phase2.md"
           },
           {
             "title": "Docs Explorer — Grounding and Spatial Navigation Design",
@@ -715,10 +779,52 @@ window.PORTAL_DATA = {
         "summary": "Federation had a distribution mechanism (apply-learnings push -> per-repo plans) but no targeting/record layer: which learnings go to which repos, and what..."
       },
       {
+        "id": "adr-0007-coordination-substrate",
+        "type": "adr",
+        "title": "ADR-0007: A git-tracked append-only record folded on demand — no daemon, no database",
+        "summary": "Coordination state lives in an append-only JSONL record, one file per session, git-tracked, and every piece of state is a fold over it. The daemon and the..."
+      },
+      {
+        "id": "adr-0008-non-coordinating-allocation",
+        "type": "adr",
+        "title": "ADR-0008: Identifiers come from a non-coordinating stdlib scheme — not uuid7, and not branch scanning",
+        "summary": "Shared-register identifiers are issued from a stdlib-only, time-ordered, non-coordinating scheme — 48 bits of millisecond timestamp plus 80 bits from..."
+      },
+      {
+        "id": "adr-0009-artifact-class-and-derived-merge",
+        "type": "adr",
+        "title": "ADR-0009: Artifact class decides the mechanism — derived artifacts are regenerated by a merge driver, never leased",
+        "summary": "Every path pattern is classified authored / derived / register / hotspot, and the class decides the coordination mechanism entirely. Derived artifacts — which..."
+      },
+      {
+        "id": "adr-0010-enforcement-topology",
+        "type": "adr",
+        "title": "ADR-0010: Enforce at the harness edit boundary where it exists, at the commit boundary always — and fail to ask, never to allow",
+        "summary": "A PreToolUse hook returning permissionDecision deny refuses an unleased edit before it happens; the pre-commit boundary is the universal floor no settings key..."
+      },
+      {
+        "id": "adr-0011-projection-trust-boundary",
+        "type": "adr",
+        "title": "ADR-0011: Cross-agent content is untrusted data — the projection ships only after its rendering rules exist",
+        "summary": "The projection renders text authored by one agent's model into another agent's context, which the hook schema confirms is a live injection channel. Cross-agent..."
+      },
+      {
+        "id": "adr-0012-reuse-existing-mechanisms",
+        "type": "adr",
+        "title": "ADR-0012: Compose the mechanisms that already exist — the harness ships two of them, and the fleet ships three more",
+        "summary": "The F8 reconciliation the spec made a condition of pass. Two of the four failure modes are already partly addressed by mechanisms shipped in the harness..."
+      },
+      {
         "id": "architecture",
         "type": "architecture",
         "title": "AI-Forward — Architecture Overview",
         "summary": "The architecture of record for this repository: a dual-purpose repo that is both the canonical SOURCE of the AI-Forward Pack (pack/) and a live INSTALL of it..."
+      },
+      {
+        "id": "architecture-agent-coordination",
+        "type": "architecture",
+        "title": "Agent coordination — architecture",
+        "summary": "The architecture for the agent-coordination layer: a git-tracked append-only record of intent, folded on demand with no daemon and no database, enforced at..."
       },
       {
         "id": "architecture-dreaming",
@@ -733,6 +839,12 @@ window.PORTAL_DATA = {
         "summary": "The project's durable, committed activity & decision history — an append-only audit log of every meaningful prompt/skill/script and a curated change log of..."
       },
       {
+        "id": "backtest-optimize-graph",
+        "type": "doc",
+        "title": "optimize-graph back-test — twelve real prompts replanned",
+        "summary": "Back-test of the /optimize-graph skill against twelve real prompts drawn from 750 committed audit entries across TheTerrace, meridian-finance-planner and..."
+      },
+      {
         "id": "defect-classes",
         "type": "doc",
         "title": "Defect-class register",
@@ -743,6 +855,18 @@ window.PORTAL_DATA = {
         "type": "design",
         "title": "Design — aiforward CLI (suggestion 1)",
         "summary": "A single stdlib-only Python developer CLI (tools/aiforward.py) that is a thin Façade dispatcher over the pack's existing scripts (sync, verify, check, new,..."
+      },
+      {
+        "id": "design-coord-core-phase1",
+        "type": "design",
+        "title": "Design — coord core, Phase 1 walking skeleton (record · fold · claim/check/release/tail)",
+        "summary": "The Phase-1 walking skeleton: an append-only per-session record, a pure fold over it, and four verbs (claim, check, release, tail) that let two sessions in two..."
+      },
+      {
+        "id": "design-coord-enforcement-phase2",
+        "type": "design",
+        "title": "Design — coord enforcement, Phase 2 (PreToolUse hook · pre-commit floor · work-preservation guard)",
+        "summary": "Phase 2 makes the Phase-1 lease actually hold: a PreToolUse hook that refuses an unleased edit, a pre-commit floor no settings key can switch off, and a guard..."
       },
       {
         "id": "design-docs-explorer-grounding-spatial-navigation",
@@ -925,6 +1049,54 @@ window.PORTAL_DATA = {
         "summary": "Sourced evidence base for the pack's data-model-primacy directive: Domain-Driven Design (bounded contexts, aggregates, entities vs value objects), the..."
       },
       {
+        "id": "kb-graph-and-loop-engineering",
+        "type": "knowledge",
+        "title": "Graph engineering, loop engineering & graph optimization (domain knowledge)",
+        "summary": "Sourced evidence base for planning an agent's work as an explicit dependency graph before executing it: the classical work/span and critical-path theory that..."
+      },
+      {
+        "id": "kb-graph-and-loop-engineering-comparables",
+        "type": "knowledge",
+        "title": "Graph & loop engineering — Comparables",
+        "summary": "How existing systems frame and solve execution-graph planning — workflow engines (Airflow, Temporal, Dagster), agent frameworks (LangGraph, LLMCompiler,..."
+      },
+      {
+        "id": "kb-graph-and-loop-engineering-data",
+        "type": "knowledge",
+        "title": "Graph & loop engineering — Data & constants",
+        "summary": "The numbers — published benchmark results (LLMCompiler, orchestrator-worker, MAST failure rates), framework defaults (LangGraph recursion_limit 25), 2026 cost..."
+      },
+      {
+        "id": "kb-graph-and-loop-engineering-glossary",
+        "type": "knowledge",
+        "title": "Graph & loop engineering — Glossary",
+        "summary": "The ubiquitous language for execution-graph planning — work, span, critical path, node, edge, wave, fan-out/join, collapse/promote, variant, well-founded..."
+      },
+      {
+        "id": "kb-graph-and-loop-engineering-open-questions",
+        "type": "knowledge",
+        "title": "Graph & loop engineering — Open questions & failure modes",
+        "summary": "What the research could not settle, the disconfirming evidence against graph optimization, and the domain's known failure modes — including the ones that argue..."
+      },
+      {
+        "id": "kb-graph-and-loop-engineering-references",
+        "type": "knowledge",
+        "title": "Graph & loop engineering — Reference information",
+        "summary": "The formulae, invariants, decision rules and edge cases of the domain — the work/span bounds, Amdahl and Brent, the independence and coupling tests, the..."
+      },
+      {
+        "id": "kb-graph-and-loop-engineering-sota",
+        "type": "knowledge",
+        "title": "Graph & loop engineering — State of the Art",
+        "summary": "Current best practice across the three joined literatures — DAG scheduling and the work/span bound, agentic parallel planning (LLMCompiler,..."
+      },
+      {
+        "id": "kb-graph-and-loop-engineering-sources",
+        "type": "knowledge",
+        "title": "Graph & loop engineering — Sources",
+        "summary": "Full source list with access dates and confidence labels — primary papers (LLMCompiler, MAST), framework documentation (LangGraph), vendor engineering writeups..."
+      },
+      {
         "id": "kb-pack-evolution",
         "type": "knowledge",
         "title": "Pack Evolution — CLI, Doctor, Project Memory, RAI (domain knowledge)",
@@ -1019,6 +1191,12 @@ window.PORTAL_DATA = {
         "type": "decision-note",
         "title": "Re-running /dream over an unchanged corpus re-surfaces already-promoted classes under new proposal ids",
         "summary": "Observed in drm-0004: a dream over a corpus unchanged since the prior dream re-emits the same control-upgrade/marker/mitigation proposals under fresh (dream,..."
+      },
+      {
+        "id": "note-20260820-spike-corpus-assertion",
+        "type": "decision-note",
+        "title": "A verification script reported COLLISION-FREE over zero identifiers, because it only compared set size to list size",
+        "summary": "While spiking the allocator for ADR-0008, the verification harness printed \"COLLISION-FREE WITHOUT COORDINATION\" over an empty result set — the worker..."
       },
       {
         "id": "privacy-review",
@@ -1178,9 +1356,119 @@ window.PORTAL_DATA = {
         "rel": "implements"
       },
       {
+        "from": "adr-0007-coordination-substrate",
+        "to": "architecture",
+        "rel": "refines"
+      },
+      {
+        "from": "adr-0007-coordination-substrate",
+        "to": "architecture-agent-coordination",
+        "rel": "implements"
+      },
+      {
+        "from": "adr-0007-coordination-substrate",
+        "to": "spec-agent-coordination",
+        "rel": "implements"
+      },
+      {
+        "from": "adr-0008-non-coordinating-allocation",
+        "to": "architecture-agent-coordination",
+        "rel": "implements"
+      },
+      {
+        "from": "adr-0008-non-coordinating-allocation",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "adr-0008-non-coordinating-allocation",
+        "to": "spec-agent-coordination",
+        "rel": "implements"
+      },
+      {
+        "from": "adr-0009-artifact-class-and-derived-merge",
+        "to": "architecture-agent-coordination",
+        "rel": "implements"
+      },
+      {
+        "from": "adr-0009-artifact-class-and-derived-merge",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "adr-0009-artifact-class-and-derived-merge",
+        "to": "spec-agent-coordination",
+        "rel": "implements"
+      },
+      {
+        "from": "adr-0010-enforcement-topology",
+        "to": "architecture-agent-coordination",
+        "rel": "implements"
+      },
+      {
+        "from": "adr-0010-enforcement-topology",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "adr-0010-enforcement-topology",
+        "to": "spec-agent-coordination",
+        "rel": "implements"
+      },
+      {
+        "from": "adr-0011-projection-trust-boundary",
+        "to": "architecture",
+        "rel": "refines"
+      },
+      {
+        "from": "adr-0011-projection-trust-boundary",
+        "to": "architecture-agent-coordination",
+        "rel": "implements"
+      },
+      {
+        "from": "adr-0011-projection-trust-boundary",
+        "to": "spec-agent-coordination",
+        "rel": "implements"
+      },
+      {
+        "from": "adr-0012-reuse-existing-mechanisms",
+        "to": "architecture-agent-coordination",
+        "rel": "implements"
+      },
+      {
+        "from": "adr-0012-reuse-existing-mechanisms",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "adr-0012-reuse-existing-mechanisms",
+        "to": "spec-agent-coordination",
+        "rel": "implements"
+      },
+      {
         "from": "architecture",
         "to": "docs-index",
         "rel": "relates-to"
+      },
+      {
+        "from": "architecture-agent-coordination",
+        "to": "architecture",
+        "rel": "refines"
+      },
+      {
+        "from": "architecture-agent-coordination",
+        "to": "audit-log",
+        "rel": "relates-to"
+      },
+      {
+        "from": "architecture-agent-coordination",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "architecture-agent-coordination",
+        "to": "spec-agent-coordination",
+        "rel": "implements"
       },
       {
         "from": "architecture-dreaming",
@@ -1223,6 +1511,16 @@ window.PORTAL_DATA = {
         "rel": "relates-to"
       },
       {
+        "from": "backtest-optimize-graph",
+        "to": "audit-log",
+        "rel": "relates-to"
+      },
+      {
+        "from": "backtest-optimize-graph",
+        "to": "kb-graph-and-loop-engineering",
+        "rel": "depends-on"
+      },
+      {
         "from": "defect-classes",
         "to": "architecture",
         "rel": "relates-to"
@@ -1236,6 +1534,46 @@ window.PORTAL_DATA = {
         "from": "design-aiforward-cli",
         "to": "kb-pack-evolution",
         "rel": "implements"
+      },
+      {
+        "from": "design-coord-core-phase1",
+        "to": "adr-0007-coordination-substrate",
+        "rel": "implements"
+      },
+      {
+        "from": "design-coord-core-phase1",
+        "to": "architecture-agent-coordination",
+        "rel": "implements"
+      },
+      {
+        "from": "design-coord-core-phase1",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "design-coord-core-phase1",
+        "to": "spec-agent-coordination",
+        "rel": "implements"
+      },
+      {
+        "from": "design-coord-enforcement-phase2",
+        "to": "adr-0010-enforcement-topology",
+        "rel": "implements"
+      },
+      {
+        "from": "design-coord-enforcement-phase2",
+        "to": "architecture-agent-coordination",
+        "rel": "implements"
+      },
+      {
+        "from": "design-coord-enforcement-phase2",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "design-coord-enforcement-phase2",
+        "to": "design-coord-core-phase1",
+        "rel": "refines"
       },
       {
         "from": "design-docs-explorer-grounding-spatial-navigation",
@@ -1478,6 +1816,56 @@ window.PORTAL_DATA = {
         "rel": "relates-to"
       },
       {
+        "from": "kb-graph-and-loop-engineering",
+        "to": "architecture",
+        "rel": "relates-to"
+      },
+      {
+        "from": "kb-graph-and-loop-engineering",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "kb-graph-and-loop-engineering",
+        "to": "kb-continuous-improvement-and-dreaming",
+        "rel": "relates-to"
+      },
+      {
+        "from": "kb-graph-and-loop-engineering-comparables",
+        "to": "kb-graph-and-loop-engineering",
+        "rel": "refines"
+      },
+      {
+        "from": "kb-graph-and-loop-engineering-data",
+        "to": "kb-graph-and-loop-engineering",
+        "rel": "refines"
+      },
+      {
+        "from": "kb-graph-and-loop-engineering-glossary",
+        "to": "kb-graph-and-loop-engineering",
+        "rel": "refines"
+      },
+      {
+        "from": "kb-graph-and-loop-engineering-open-questions",
+        "to": "kb-graph-and-loop-engineering",
+        "rel": "refines"
+      },
+      {
+        "from": "kb-graph-and-loop-engineering-references",
+        "to": "kb-graph-and-loop-engineering",
+        "rel": "refines"
+      },
+      {
+        "from": "kb-graph-and-loop-engineering-sota",
+        "to": "kb-graph-and-loop-engineering",
+        "rel": "refines"
+      },
+      {
+        "from": "kb-graph-and-loop-engineering-sources",
+        "to": "kb-graph-and-loop-engineering",
+        "rel": "refines"
+      },
+      {
         "from": "kb-pack-evolution",
         "to": "architecture",
         "rel": "relates-to"
@@ -1583,6 +1971,16 @@ window.PORTAL_DATA = {
         "rel": "relates-to"
       },
       {
+        "from": "note-20260820-spike-corpus-assertion",
+        "to": "architecture-agent-coordination",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260820-spike-corpus-assertion",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
         "from": "privacy-review",
         "to": "architecture",
         "rel": "documents"
@@ -1590,6 +1988,16 @@ window.PORTAL_DATA = {
       {
         "from": "privacy-review",
         "to": "design-aiforward-cli",
+        "rel": "documents"
+      },
+      {
+        "from": "privacy-review",
+        "to": "design-coord-core-phase1",
+        "rel": "documents"
+      },
+      {
+        "from": "privacy-review",
+        "to": "design-coord-enforcement-phase2",
         "rel": "documents"
       },
       {
@@ -1730,6 +2138,16 @@ window.PORTAL_DATA = {
       {
         "from": "threat-model",
         "to": "design-aiforward-cli",
+        "rel": "documents"
+      },
+      {
+        "from": "threat-model",
+        "to": "design-coord-core-phase1",
+        "rel": "documents"
+      },
+      {
+        "from": "threat-model",
+        "to": "design-coord-enforcement-phase2",
         "rel": "documents"
       },
       {

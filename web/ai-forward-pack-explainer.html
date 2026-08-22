@@ -10,7 +10,7 @@
   - Runtime: React 18 UMD + htm (no build step) — the same house convention used by
     docs/index.html (the Docs Explorer). Libraries load from CDN; an offline banner shows
     if they cannot.
-  - It explains the KNOWLEDGE (the constitution), the SKILLS (the 21 workflows), the
+  - It explains the KNOWLEDGE (the constitution), the SKILLS (the 22 workflows), the
     RIGOR PROTOCOL (the reasoning spine), the PERSONAS (the dual-mode council), and the
     UI TEMPLATE APPROACH (the archetype grammar) — with a TABLE of every template type and
     LINKABLE, rendered MOCKUPS of each one so a reader can see-then-choose.
@@ -197,7 +197,7 @@
     <h1 style="font-size:clamp(26px,4vw,40px);letter-spacing:-.02em;margin:.2em 0 .3em">The interactive explainer couldn't start</h1>
     <p class="lead" style="color:var(--muted);font-size:17px">This page renders with React loaded from a CDN. If your network blocked it or a script failed, the interactive view can't mount — but everything it describes is available on self-contained pages that need no CDN:</p>
     <div class="grid g2" style="margin-top:26px">
-      <a class="card" href="../docs/portal/index.html"><h3>Documentation Portal →</h3><p>The front door: getting started, the 21 skills, foundations, UI &amp; design, architecture, and the knowledge graph.</p></a>
+      <a class="card" href="../docs/portal/index.html"><h3>Documentation Portal →</h3><p>The front door: getting started, the 22 skills, foundations, UI &amp; design, architecture, and the knowledge graph.</p></a>
       <a class="card" href="index.html"><h3>Whole-pack index &amp; search →</h3><p>Every artifact — knowledge, skills, templates, scripts, personas — searchable.</p></a>
       <a class="card" href="../docs/index.html"><h3>Docs Explorer →</h3><p>Browse / graph / mind-map the knowledge graph of artifacts.</p></a>
       <a class="card" href="https://github.com/timianmalloo/ai-forward"><h3>Repository →</h3><p>The source of the pack on GitHub.</p></a>
@@ -374,7 +374,7 @@ window.addEventListener("DOMContentLoaded",function(){
     ]}
   ];
 
-  // The 21 skills — .claude/skills/* (fifteen reasoning workflows + /auditlog + two prompt-log utilities)
+  // The 22 skills — .claude/skills/* (fifteen reasoning workflows + /auditlog + two prompt-log utilities)
   const SKILLS = [
     ["/collectknowledge","Build a sourced domain knowledge base before design — state of the art, comparables, references, glossary — every claim confidence-labeled.","Domain Researcher","support"],
     ["/adddomainexperts","Discover the project's domain from repo evidence and add tailored domain-expert personas (peer + adversary), wiring in backing Claude skills.","Product Strategist","support"],
@@ -782,7 +782,7 @@ window.addEventListener("DOMContentLoaded",function(){
       <!-- SKILLS -->
       <section class="block" id="skills"><div class="wrap">
         <div class="sechead"><div class="seclabel">The workflows</div>
-          <h2>Twenty-one skills, one loop</h2>
+          <h2>Twenty-two skills, one loop</h2>
           <p>Each skill is the Rigor Protocol specialized to one kind of work. The core five carry a piece
           from idea to shipped code; supporting skills prepare the ground or keep it honest;
           <code>/investigate</code> breaks the loop whenever a defect appears. Three <b>pack-lifecycle</b>

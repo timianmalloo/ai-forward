@@ -54,13 +54,37 @@ the Road) and the **AI-Forward Pack** on top of it. Honor them on every non-triv
   inline `simplify:` comment (ceiling + upgrade trigger); ceremony scales with the tier (T0 code-first,
   T1/T2 full artifacts). `.claude/knowledge/solution-selection-ladder.md`; the Simplifier is its
   adversarial mirror.
+- **How you write, and how much you take on:** **compress the expression, never the obligation.**
+  Simplified technical English — short sentences, common words, active voice, one idea per sentence,
+  **result first**. No monologue, no self-encouragement, no rhetorical transitions, and never announce
+  a step and then take it; an interim update earns its place only by carrying a verified result, a real
+  blocker, a decision, or the next action. But **concision never drops a confidence label, a citation,
+  an assumption, a residual risk, or a correction** — and the response channel is compressed while a
+  **committed artifact is written for a reader who was not in the session** (so L8's anti-prose rule is
+  scoped to T0 inline prose and must never thin a required artifact). Stay on the requested outcome:
+  smallest change, smallest sufficient proof; name the failure any unrequested test/review/control
+  prevents or drop it; reviewer findings are advice, not automatic scope; **capture new ideas as next
+  steps rather than chasing them**; stop when the result is proven. **Proportionality never reaches the
+  floors** — a triggered hard veto, the Testing-Strategy union, the E7 surface list, red-first, and the
+  audit entries are not discretionary. `.claude/knowledge/communication-and-task-discipline.md` (CT1–CT18).
+- **Plan the shape before you execute it:** for work beyond two steps, or containing a loop, a
+  fan-out, or a triggered gate, model it as an **execution graph** — real dependencies only (delete
+  incidental ordering), **shorten the critical path before widening the graph** (`Tₚ ≥ T∞` always),
+  parallelise only what passes the **independence** *and* **coupling** tests and only under a bounded
+  fan-out contract (width cap, transient-retry, per-branch exit, join rule, containment), collapse or
+  promote nodes to the right granularity, and give **every loop a termination variant** — a cap is a
+  circuit breaker whose firing is a *defect signal*, never a termination argument. **Rigor floors are
+  immovable nodes: optimization may reorder them, never remove them**, and a plan that is faster
+  because it proves less is rejected. Record planned vs actual so the next plan is better.
+  `.claude/knowledge/execution-graph-optimization.md` (GO1–GO18); evidence in
+  `docs/knowledge/graph-and-loop-engineering/`; the skill is `/optimize-graph`.
 - **Personas (dual-mode):** author in Peer Mode, review in Adversary Mode; the author never
   clears its own hard veto. Roster + the operating standard (severity, veto-clears-when,
   conflict rule): `.claude/knowledge/persona-cards.md` and `.claude/knowledge/persona-audit.md`.
-- **Skills (21):** eighteen reasoning workflows — `/collectknowledge`, `/adddomainexperts`,
+- **Skills (22):** nineteen reasoning workflows — `/collectknowledge`, `/adddomainexperts`,
   `/specify`, `/define-architecture`, `/design`, `/ui-design`, `/visualize`, `/implement`,
   `/investigate`, `/document`, `/adopt`, `/forensicreview`, `/migrate`, `/updatepack`,
-  `/addpacktorepo`, `/extendaibundle`, `/dream`, `/apply-learnings` — plus the `/auditlog`
+  `/addpacktorepo`, `/extendaibundle`, `/optimize-graph`, `/dream`, `/apply-learnings` — plus the `/auditlog`
   lens over the durable audit & change log, and two prompt-log utilities, `/prompts` and
   `/searchprompts`, that browse and search your logged prompts to reuse. They live in
   `.claude/skills/`. Templates: `docs/ai-forward-pack/templates/`.

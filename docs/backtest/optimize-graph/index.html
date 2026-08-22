@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>optimize-graph back-test — AI-Forward</title>
+<style>
+  :root{
+    --bg:#0f1115; --surface:#171a21; --surface-2:#1e222b; --line:#2b313d;
+    --ink:#e8ecf3; --ink-2:#a9b4c6; --ink-3:#7d879a;
+    --accent:#6ea8fe; --good:#5cd6a5; --warn:#f2c14e; --bad:#f2836b; --neutral:#8b95a8;
+    --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px; --s6:32px; --s7:48px;
+    --r:10px; --r-sm:6px;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  @media (prefers-color-scheme: light){
+    :root{ --bg:#f6f7f9; --surface:#fff; --surface-2:#f0f2f6; --line:#d8dde6;
+           --ink:#12151c; --ink-2:#4a5468; --ink-3:#6b7488; --accent:#1f5fd0; }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 var(--sans);
+       -webkit-font-smoothing:antialiased}
+  .wrap{max-width:1180px;margin:0 auto;padding:var(--s6) var(--s5) var(--s7)}
+  h1{font-size:30px;line-height:1.2;margin:0 0 var(--s2);letter-spacing:-.02em}
+  h2{font-size:20px;margin:var(--s6) 0 var(--s3);letter-spacing:-.01em}
+  h3{font-size:15px;margin:0 0 var(--s2)}
+  p{margin:0 0 var(--s3)}
+  .sub{color:var(--ink-2);font-size:16px;margin-bottom:var(--s4)}
+  .meta{color:var(--ink-3);font-size:13px;font-family:var(--mono)}
+  code{font-family:var(--mono);font-size:.9em;background:var(--surface-2);
+       padding:1px 5px;border-radius:var(--r-sm)}
+  a{color:var(--accent)}
+
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
+        padding:var(--s5);margin-bottom:var(--s4)}
+  .grid{display:grid;gap:var(--s4)}
+  @media(min-width:820px){ .grid-2{grid-template-columns:1fr 1fr} .grid-4{grid-template-columns:repeat(4,1fr)} }
+
+  .banner{border-left:3px solid var(--warn);background:var(--surface-2)}
+  .banner h2{margin-top:0}
+  .integ{display:grid;gap:var(--s3)}
+  .integ div{padding:var(--s3);background:var(--surface);border-radius:var(--r-sm);
+             border:1px solid var(--line)}
+  .integ b{display:block;font-size:13px;margin-bottom:var(--s1);color:var(--ink)}
+  .integ span{font-size:13.5px;color:var(--ink-2)}
+
+  .kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:var(--s4)}
+  .kpi .lab{font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-3)}
+  .kpi .val{font-size:30px;font-weight:650;letter-spacing:-.02em;margin:var(--s2) 0 2px}
+  .kpi .hint{font-size:12.5px;color:var(--ink-3)}
+  .up{color:var(--good)} .down{color:var(--good)} .flat{color:var(--neutral)}
+
+  .bar{height:8px;border-radius:99px;background:var(--surface-2);overflow:hidden;margin:3px 0}
+  .bar i{display:block;height:100%;border-radius:99px}
+  .mrow{display:grid;grid-template-columns:96px 1fr 104px;gap:var(--s3);align-items:center;
+        margin-bottom:var(--s2)}
+  .mrow .mlab{font-size:12.5px;color:var(--ink-2)}
+  .mrow .mval{font-size:12.5px;font-family:var(--mono);color:var(--ink-2);text-align:right}
+
+  .controls{display:flex;flex-wrap:wrap;gap:var(--s2);align-items:center;
+            padding:var(--s3) var(--s4);background:var(--surface-2);
+            border:1px solid var(--line);border-radius:var(--r);margin-bottom:var(--s4);
+            position:sticky;top:0;z-index:5}
+  .controls label{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-3);
+                  margin-right:2px}
+  button{font:inherit;font-size:13px;padding:5px 11px;border-radius:99px;cursor:pointer;
+         background:var(--surface);color:var(--ink-2);border:1px solid var(--line)}
+  button:hover{border-color:var(--accent);color:var(--ink)}
+  button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#08111f;font-weight:600}
+  button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+  .case{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
+        padding:var(--s5);margin-bottom:var(--s4)}
+  .case header{display:flex;flex-wrap:wrap;gap:var(--s2);align-items:baseline;margin-bottom:var(--s3)}
+  .case h3{font-size:17px;margin:0;flex:1 1 260px}
+  .chip{font-size:11px;font-family:var(--mono);padding:2px 8px;border-radius:99px;
+        border:1px solid var(--line);color:var(--ink-2);background:var(--surface-2);white-space:nowrap}
+  .chip.tag{border-color:var(--accent);color:var(--accent)}
+  .chip.partial{border-color:var(--bad);color:var(--bad)}
+  .chip.success{border-color:var(--good);color:var(--good)}
+  .quote{border-left:2px solid var(--line);padding:var(--s2) 0 var(--s2) var(--s3);
+         margin:0 0 var(--s3);font-size:13.5px;color:var(--ink-2)}
+  .quote b{color:var(--ink-3);font-size:11px;text-transform:uppercase;letter-spacing:.07em;
+           display:block;margin-bottom:3px}
+  .plan{background:var(--surface-2);border-radius:var(--r-sm);padding:var(--s3);font-size:13.5px}
+  .plan b{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.07em;
+          margin-bottom:var(--s1)}
+  .plan .n{color:var(--ink-3);font-family:var(--mono);font-size:12px;margin-top:var(--s2);display:block}
+  .naive b{color:var(--ink-3)} .opt b{color:var(--accent)}
+  ul.moves{margin:var(--s3) 0 0;padding-left:18px;font-size:13.5px;color:var(--ink-2)}
+  ul.moves li{margin-bottom:3px}
+  .note{margin-top:var(--s3);padding:var(--s3);background:var(--surface-2);
+        border-radius:var(--r-sm);font-size:13.5px;color:var(--ink-2);border-left:2px solid var(--accent)}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{text-align:left;padding:7px 9px;border-bottom:1px solid var(--line)}
+  th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-3);font-weight:600}
+  td.num{text-align:right;font-family:var(--mono)}
+  .empty{padding:var(--s6);text-align:center;color:var(--ink-3);border:1px dashed var(--line);
+         border-radius:var(--r)}
+  footer{margin-top:var(--s7);padding-top:var(--s4);border-top:1px solid var(--line);
+         color:var(--ink-3);font-size:12.5px}
+  #fallback{display:none;padding:var(--s5);margin:var(--s5);border:1px solid var(--bad);
+            border-radius:var(--r);background:var(--surface)}
+  @media (prefers-reduced-motion: no-preference){ .bar i{transition:width .35s ease-out} }
+</style>
+</head>
+<body>
+<div id="fallback" role="alert">
+  <h2 style="margin-top:0">This page did not render</h2>
+  <p>The report data (<code>backtest-data.js</code>) did not load, or the render failed. Keep
+  <code>index.html</code> and <code>backtest-data.js</code> in the same folder and reopen.</p>
+  <p class="meta">A blank page must never read as a finished one (defect class PACK-G).</p>
+</div>
+<noscript>
+  <div class="wrap"><div class="card"><h1>JavaScript required</h1>
+  <p>This report renders from <code>backtest-data.js</code>. The underlying data is plain
+  JavaScript and readable in a text editor.</p></div></div>
+</noscript>
+<main id="root" class="wrap"></main>
+
+<script src="./backtest-data.js"></script>
+<script>
+(function(){
+  "use strict";
+  var W = setTimeout(function(){
+    var r = document.getElementById("root");
+    if (!r || r.children.length === 0) document.getElementById("fallback").style.display = "block";
+  }, 3000);
+
+  function el(t, c, txt){ var n=document.createElement(t); if(c) n.className=c;
+    if(txt!==undefined && txt!==null) n.textContent=String(txt); return n; }
+  function html(t, c, h){ var n=document.createElement(t); if(c) n.className=c;
+    if(h!==undefined) n.innerHTML=h; return n; }
+  function pct(n){ return Math.max(0, Math.min(100, n)); }
+  function mean(a){ return a.reduce(function(s,x){return s+x;},0)/a.length; }
+  function r1(n){ return Math.round(n*10)/10; }
+
+  function metricRow(label, naive, opt, invert){
+    // invert=true -> lower is better (time, tokens). Otherwise higher is better.
+    var row = el("div","mrow");
+    row.appendChild(el("div","mlab",label));
+    var barWrap = el("div");
+    var b1 = el("div","bar"); var i1 = el("i");
+    i1.style.width = pct(naive)+"%"; i1.style.background = "var(--neutral)";
+    b1.appendChild(i1);
+    var b2 = el("div","bar"); var i2 = el("i");
+    i2.style.width = pct(opt)+"%";
+    var better = invert ? (opt < naive) : (opt > naive);
+    var worse  = invert ? (opt > naive) : (opt < naive);
+    i2.style.background = better ? "var(--good)" : (worse ? "var(--bad)" : "var(--neutral)");
+    b2.appendChild(i2);
+    barWrap.appendChild(b1); barWrap.appendChild(b2);
+    row.appendChild(barWrap);
+    var delta = opt - naive;
+    var txt = invert
+      ? (delta === 0 ? "no change" : (delta < 0 ? delta + "%" : "+" + delta + "%"))
+      : (delta === 0 ? "no change" : (delta > 0 ? "+" + delta + " pts" : delta + " pts"));
+    var v = el("div","mval", txt);
+    row.appendChild(v);
+    return row;
+  }
+
+  function render(){
+    var D = window.BACKTEST;
+    var root = document.getElementById("root");
+    if (!D || !D.cases || !D.cases.length){
+      root.appendChild(html("div","empty","<h2>No back-test data</h2><p>"+
+        "<code>window.BACKTEST</code> is missing or empty.</p>"));
+      return;
+    }
+    root.innerHTML = "";
+
+    // ---- header
+    root.appendChild(html("h1", null, "optimize-graph <span style='color:var(--ink-3);font-weight:400'>back-test</span>"));
+    root.appendChild(el("p","sub", D.meta.subtitle));
+    root.appendChild(html("p","meta", D.meta.corpus + "<br>" + D.meta.multistep +
+      "<br>Generated " + D.meta.generated + " · Authority: " + D.meta.authority));
+
+    // ---- integrity banner (first, deliberately)
+    var b = el("section","card banner");
+    b.appendChild(el("h2",null,"What is measured, and what is modeled"));
+    b.appendChild(html("p",null,"This back-test replans <strong>real prompts</strong> from committed audit logs. "+
+      "The distinction below is the whole basis on which its numbers should be read — a modeled estimate is "+
+      "labelled <em>Inferred</em> and is never reported as a measurement."));
+    var ig = el("div","integ");
+    D.integrity.forEach(function(x){
+      var d = el("div"); d.appendChild(el("b",null,x.label));
+      d.appendChild(html("span",null,x.body)); ig.appendChild(d);
+    });
+    b.appendChild(ig);
+    root.appendChild(b);
+
+    // ---- aggregates
+    var cs = D.cases;
+    var tMean = mean(cs.map(function(c){return c.m.timeO;}));
+    var kMean = mean(cs.map(function(c){return c.m.tokO;}));
+    var compD = mean(cs.map(function(c){return c.m.compO - c.m.compN;}));
+    var rigD  = mean(cs.map(function(c){return c.m.rigO  - c.m.rigN;}));
+    var moved = cs.filter(function(c){return c.m.timeO < 100;});
+    var tMeanMoved = moved.length ? mean(moved.map(function(c){return c.m.timeO;})) : 100;
+    var rigDrop = cs.filter(function(c){return c.m.rigO < c.m.rigN;}).length;
+    var compDrop = cs.filter(function(c){return c.m.compO < c.m.compN;}).length;
+
+    root.appendChild(el("h2",null,"Across all twelve cases"));
+    var k = el("section","grid grid-4");
+    function kpi(lab,val,cls,hint){
+      var d=el("div","kpi"); d.appendChild(el("div","lab",lab));
+      d.appendChild(el("div","val "+cls,val)); d.appendChild(el("div","hint",hint)); return d;
+    }
+    k.appendChild(kpi("Time to execute", "−"+r1(100-tMean)+"%","down",
+      "modeled span ratio · −"+r1(100-tMeanMoved)+"% across the 9 cases that changed"));
+    k.appendChild(kpi("Token usage", "−"+r1(100-kMean)+"%","down",
+      "modeled · parallelism saves none; only collapse + avoided rework do"));
+    k.appendChild(kpi("Completeness", "+"+r1(compD)+" pts","up",
+      "rubric · "+compDrop+" of 12 cases got worse"));
+    k.appendChild(kpi("Rigor", "+"+r1(rigD)+" pts","up",
+      "rubric · "+rigDrop+" of 12 cases got worse"));
+    root.appendChild(k);
+
+    root.appendChild(html("div","card","<h3>Reading these four numbers</h3>"+
+      "<p style='color:var(--ink-2);font-size:14px;margin:0'>The headline is <strong>not</strong> the time figure. "+
+      "It is that <strong>completeness rose "+r1(compD)+" points and rigor rose "+r1(rigD)+" points while "+
+      rigDrop+" case lost rigor and "+compDrop+" case lost completeness</strong> — which is the constraint the skill is "+
+      "built around: optimization may only ever increase what is proven. The token saving is deliberately small "+
+      "("+r1(100-kMean)+"%) because <em>parallelism does not reduce tokens</em>; every branch still loads its context. "+
+      "Only collapsing nodes and avoiding rework do, and this back-test does not pretend otherwise.</p>"));
+
+    // ---- summary table
+    root.appendChild(el("h2",null,"Case summary"));
+    var tw = el("div","card");
+    var tbl = el("table");
+    tbl.innerHTML = "<thead><tr><th>Case</th><th>Repo</th><th>Size</th><th>Outcome</th>"+
+      "<th class='num'>Span</th><th class='num'>Time</th><th class='num'>Tokens</th>"+
+      "<th class='num'>Complete</th><th class='num'>Rigor</th></tr></thead>";
+    var tb = el("tbody");
+    cs.forEach(function(c){
+      var tr = el("tr");
+      tr.innerHTML =
+        "<td><code>"+c.id+"</code> "+c.title+"</td>"+
+        "<td>"+c.repo+"</td>"+
+        "<td>"+c.size+"</td>"+
+        "<td>"+c.outcome+"</td>"+
+        "<td class='num'>"+c.naive.span+" → "+c.optimized.span+"</td>"+
+        "<td class='num'>"+(c.m.timeO===100?"—":"−"+(100-c.m.timeO)+"%")+"</td>"+
+        "<td class='num'>"+(c.m.tokO===100?"—":"−"+(100-c.m.tokO)+"%")+"</td>"+
+        "<td class='num'>"+(c.m.compO===c.m.compN?"—":"+"+(c.m.compO-c.m.compN))+"</td>"+
+        "<td class='num'>"+(c.m.rigO===c.m.rigN?"—":"+"+(c.m.rigO-c.m.rigN))+"</td>";
+      tb.appendChild(tr);
+    });
+    tbl.appendChild(tb); tw.appendChild(tbl); root.appendChild(tw);
+
+    // ---- controls (review harness)
+    root.appendChild(el("h2",null,"The twelve cases"));
+    var ctl = el("div","controls");
+    var state = { repo:"all", size:"all" };
+    function group(labelText, key, values){
+      ctl.appendChild(el("label",null,labelText));
+      values.forEach(function(v){
+        var btn = el("button",null, v === "all" ? "All" : v);
+        btn.setAttribute("aria-pressed", String(state[key] === v));
+        btn.setAttribute("type","button");
+        btn.onclick = function(){
+          state[key] = v;
+          Array.prototype.forEach.call(ctl.querySelectorAll("button"), function(o){
+            if (o.dataset.k === key) o.setAttribute("aria-pressed", String(o.dataset.v === v));
+          });
+          draw();
+        };
+        btn.dataset.k = key; btn.dataset.v = v;
+        ctl.appendChild(btn);
+      });
+    }
+    group("Repo","repo",["all","TheTerrace","meridian","HealthWatch"]);
+    group("Size","size",["all","small","medium","large"]);
+    root.appendChild(ctl);
+
+    var list = el("div");
+    root.appendChild(list);
+
+    function draw(){
+      list.innerHTML = "";
+      var shown = cs.filter(function(c){
+        return (state.repo==="all" || c.repo===state.repo) &&
+               (state.size==="all" || c.size===state.size);
+      });
+      if (!shown.length){
+        list.appendChild(html("div","empty","<h3>No cases match</h3>"+
+          "<p>Clear a filter to see the other cases.</p>"));
+        return;
+      }
+      shown.forEach(function(c){
+        var s = el("article","case");
+        var h = el("header");
+        h.appendChild(el("h3",null,c.title));
+        h.appendChild(el("span","chip tag",c.tag));
+        h.appendChild(el("span","chip",c.repo+" · "+c.id));
+        h.appendChild(el("span","chip",c.skill==="—"?"no skill":"/"+c.skill));
+        h.appendChild(el("span","chip "+c.outcome, c.outcome));
+        h.appendChild(el("span","chip", c.artifacts+" artifacts"));
+        s.appendChild(h);
+
+        var q1 = el("div","quote"); q1.appendChild(el("b",null,"Prompt (verbatim, Verified)"));
+        q1.appendChild(el("span",null,c.prompt)); s.appendChild(q1);
+        var q2 = el("div","quote"); q2.appendChild(el("b",null,"What actually happened (Verified)"));
+        q2.appendChild(el("span",null,c.summary)); s.appendChild(q2);
+
+        var g = el("div","grid grid-2");
+        var p1 = el("div","plan naive");
+        p1.appendChild(el("b",null,"Naive plan (as run)"));
+        p1.appendChild(html("span",null,c.naive.desc));
+        p1.appendChild(el("span","n","work "+c.naive.nodes+" nodes · span "+c.naive.span));
+        var p2 = el("div","plan opt");
+        p2.appendChild(el("b",null,"optimize-graph plan"));
+        p2.appendChild(html("span",null,c.optimized.desc));
+        p2.appendChild(el("span","n","work "+c.optimized.nodes+" nodes · span "+c.optimized.span));
+        g.appendChild(p1); g.appendChild(p2); s.appendChild(g);
+
+        var ul = el("ul","moves");
+        c.moves.forEach(function(m){ ul.appendChild(el("li",null,m)); });
+        s.appendChild(ul);
+
+        var mw = el("div"); mw.style.marginTop = "16px";
+        mw.appendChild(metricRow("Time", c.m.timeN, c.m.timeO, true));
+        mw.appendChild(metricRow("Tokens", c.m.tokN, c.m.tokO, true));
+        mw.appendChild(metricRow("Completeness", c.m.compN, c.m.compO, false));
+        mw.appendChild(metricRow("Rigor", c.m.rigN, c.m.rigO, false));
+        s.appendChild(mw);
+
+        s.appendChild(html("div","note", c.note));
+        list.appendChild(s);
+      });
+    }
+    draw();
+
+    // ---- footer
+    var f = el("footer");
+    f.appendChild(html("p",null,
+      "<strong>Rubric — completeness:</strong> "+D.rubric.completeness+"<br>"+
+      "<strong>Rubric — rigor:</strong> "+D.rubric.rigor));
+    f.appendChild(html("p",null,
+      "Each grey bar is the naive plan, each coloured bar the optimized plan. Time and token bars are "+
+      "<em>modeled indices</em> where lower is better; completeness and rigor are rubric scores where higher "+
+      "is better. Source data: <code>backtest-data.js</code>. Skill: <code>/optimize-graph</code>."));
+    root.appendChild(f);
+    clearTimeout(W);
+  }
+
+  try { render(); }
+  catch (e){
+    clearTimeout(W);
+    var fb = document.getElementById("fallback");
+    fb.style.display = "block";
+    fb.appendChild(el("p","meta","Render error: " + (e && e.message ? e.message : e)));
+  }
+})();
+</script>
+</body>
+</html>
