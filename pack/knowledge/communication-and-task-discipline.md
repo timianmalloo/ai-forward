@@ -81,7 +81,26 @@ Delete on sight. The one exception is a **genuinely new** orientation sentence a
 
 ---
 
-## 5. The reconciliation (why these do not conflict)
+## 5. The opening contract — the two-step front matter (start before you act)
+
+The pack has always mandated the **close** (CT10 / E18: every response ends with *Completed / Remaining / Next*) and never the **open** — so a turn reported *where it got to* without ever stating *where it was going*. That asymmetry is the gap this section fills. Every turn begins with a **two-step front matter**, written **before the first substantive tool call**: **step 1** defines the goal state (CT19), **step 2** plans the turn's shape (CT24). Four clauses (CT20–CT23) protect the contract once it exists. This is **universal** — it does not scale away at T0; a trivial turn still states its goal in one line, and only a pure conversational reply (a greeting, a thanks) is exempt, because it is its own goal.
+
+**CT19 — Define the goal state before the first action (step 1).** Open every non-trivial turn with **Goal**, **Done when**, and **Not in scope** — the preventive mirror of the E18 close. The **Done when** line is a **terminal condition**, not an aspiration: it must be possible to point at a result and say whether it is met. For a closed question the goal state is *the answer*, met the moment the answer is in hand. **A gap discovered en route is a finding (CT14), never a new goal.** The failure this prevents is a turn with no exit condition — which, per `execution-graph-optimization.md` GO1, is MAST's largest failure category (specification, including *ill-defined stopping conditions*), not capability and not tooling.
+
+**CT20 — Autonomy is latitude in the *how*, never in the *what*.** "Work autonomously" or an autopilot mode removes the obligation to ask permission per step; it does **not** transfer authorship of the objective. The goal state originates with the user. Where a genuinely new goal appears necessary, it is **proposed and stopped on**, not adopted. Converting a question into a change proposal is authoring a goal the user never set — the exact scope inflation this document exists to prevent.
+
+**CT21 — An explicit stop ends the current track and voids any goal the agent authored.** On *stop · wait · hold on · step back · that's not what I asked*: report state, answer what was actually asked, or end the turn. **Asking how to proceed on the halted track is re-entry, not compliance** — it presumes the invented goal survived, which is precisely what a stop denies.
+
+**CT22 — Completion pressure is a cap firing, not a termination argument** (`execution-graph-optimization.md` GO9, applied to the turn). A harness "you have not finished" reminder or an autopilot nudge carries **no scope**. Its correct handling is to **re-read the goal state**: if met, conclude and say so; if not, continue toward *that* goal — never toward a newly found one. A cap firing where the goal state was never written is a **defect signal about the missing definition**, not licence to continue. *(This is the clause that most needs to be in context at the moment a cap fires, so it lives in the always-loaded managed block.)*
+
+**CT23 — Know the tells** (the clause that makes the other four detectable, modelled on NG3, because a disposition is not observable):
+> beginning work without having written what *done* looks like · "so I can wire it in" · "let me look at the structure" · opening a file you do not need in order to answer · a closed question whose answer is in hand while the turn continues · asking *how* to do a thing never requested · "while I'm here" · "I should also" · resuming after a stop because a reminder arrived · a multi-step turn begun with no execution graph (step 2 skipped) · being unable to say, in one line, what would end this turn
+
+**CT24 — Plan the whole turn with `/optimize-graph` once, across all tasks (step 2).** After the goal state is written, run `/optimize-graph` on the turn as a whole: its tasks become nodes, the repo's skills are the candidate node implementations, and the pass returns a bounded execution graph with incidental ordering deleted and every loop given a termination variant. It is invoked **once per turn, not embedded in each skill** — that is the distinction between *the skill* and *the turn*, and it keeps this out of per-skill scope inflation. **Its Stage-0 triage is the point** (GO16): a 1–2 node turn with no loop and no gate — a closed question is exactly this — triages to *skip planning, execute, stop*, so step 2 **is** the termination argument rather than new ceremony; a multi-task turn gets the bounded graph it needs. Either way the turn has a written shape before it spends a single wasted call.
+
+---
+
+## 6. The reconciliation (why these do not conflict)
 
 The three disciplines answer three different questions and are applied in this order:
 
@@ -95,8 +114,11 @@ Read downward. **Rigor first, then size, then wording.** Compressing the third n
 
 ---
 
-## 6. Self-verification checklist
+## 7. Self-verification checklist
 
+- [ ] **Opened with the goal state** — Goal / Done when / Not in scope, written before the first substantive tool call (CT19).
+- [ ] The turn's shape was **planned once with `/optimize-graph`** across all its tasks; a 1–2 node turn triaged to skip-execute-stop (CT24).
+- [ ] Autonomy stayed **latitude in the *how***; no question was converted into an authored goal (CT20); an explicit stop was honoured as a track-end, not re-entered (CT21); a completion nudge was read as a cap firing, not new scope (CT22).
 - [ ] Plain, active, one idea per sentence; specialist terms defined once and reused (CT1, CT3).
 - [ ] **Result stated first**; a reader who stops after one sentence has the answer (CT2).
 - [ ] Tables/formulae used where they are denser and more precise than prose (CT4).
@@ -114,8 +136,9 @@ Read downward. **Rigor first, then size, then wording.** Compressing the third n
 
 ---
 
-## 7. References
+## 8. References
 
+- **`execution-graph-optimization.md`** — **GO1** (ill-defined stopping conditions are the dominant failure class — the root cause CT19 addresses), **GO9** (a cap firing is a defect signal, not a termination argument — CT22), **GO16** (Stage-0 triage — the termination argument CT24 relies on); the **`/optimize-graph`** skill is front-matter step 2.
 - **`end-to-end-integrity.md`** — **E1** (the discipline is unconditional, ceremony scales but rigor does not) and **E18** (the Completed/Remaining/Next close CT10 requires).
 - **`solution-selection-ladder.md`** — **L5** the `simplify:` marker (a CT14 capture site), **L7** tier-gated ceremony, **L8** the anti-prose rule that **CT12 scopes**.
 - **`no-guessing-protocol.md`** — **NG3**'s tell-list is the model for CT8; **NG6/NG10** are why CT9 outranks concision.
@@ -124,4 +147,5 @@ Read downward. **Rigor first, then size, then wording.** Compressing the third n
 - **`knowledge-visualization.md`** — **V17** decision notes, the CT14 capture site for session judgements.
 - **`agent-rules-of-the-road.md`** §0.2 (tiers) and §3 (show-your-work — the obligation CT9 defends).
 - **`persona-audit.md`** §8.4/§8.7 — the veto predicates and convene triggers CT18 declares out of scope for trimming.
-- **Provenance:** distilled from the communication and task-focus directives authored for the *TheTerrace* repository, refined here with the **response/artifact channel split** (CT11–CT13) and the explicit **floors-are-not-trimmable** rule (CT9, CT18) — both of which are required in a repository whose product is its documentation and whose changes routinely write always-loaded directives.
+- **`continuous-improvement.md`** §6 — defect class **PACK-O** (a turn begun with no stated goal state or exit condition), the class CT19–CT24 are the control for.
+- **Provenance:** distilled from the communication and task-focus directives authored for the *TheTerrace* repository, refined here with the **response/artifact channel split** (CT11–CT13) and the explicit **floors-are-not-trimmable** rule (CT9, CT18). **CT19–CT24 (the two-step front matter)** were added after a session answered a precise closed question on its first tool call, then ran to an eighteen-file change proposal over ten more — the harness "you haven't finished" reminder was a cap firing (GO9) that got obeyed instead of investigated. The turn had no exit condition because none was ever written.

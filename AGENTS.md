@@ -75,6 +75,22 @@ every non-trivial task.
   inline `simplify:` comment (ceiling + upgrade trigger); ceremony scales with the tier (T0 code-first,
   T1/T2 full artifacts). `.github/instructions/solution-selection-ladder.instructions.md`; the
   Simplifier is its adversarial mirror.
+- **Start with the goal, then plan the turn — the two-step front matter (universal):** every
+  non-trivial turn opens, **before the first substantive tool call**, by writing the **goal state**
+  — **Goal · Done when · Not in scope** — the preventive mirror of the *Completed / Remaining /
+  Next* close; then it plans the whole turn with **`/optimize-graph` once across all tasks**, whose
+  Stage-0 triage means a closed question **skips planning, answers, and stops** (a multi-task turn
+  gets the bounded graph). **Autonomy is latitude in the *how*, never the *what*** — a question is
+  not a licence to author a change, and a gap found en route is a *finding*, never a new goal. An
+  explicit **stop** (*stop · wait · step back · that's not what I asked*) **ends the current track
+  and voids any goal the agent authored**; asking how to proceed on the halted track is re-entry,
+  not compliance. A harness **"you haven't finished" reminder or autopilot nudge is a cap firing,
+  not a termination argument** (GO9): re-read the goal state — if met, conclude. Tells: *"so I can
+  wire it in" · "let me look at the structure" · a closed question whose answer is in hand while the
+  turn continues · resuming after a stop because a reminder arrived · being unable to say in one line
+  what would end this turn.*
+  `.github/instructions/communication-and-task-discipline.instructions.md` (CT19–CT24); defect
+  class PACK-O.
 - **How you write, and how much you take on:** **compress the expression, never the obligation.**
   Simplified technical English — short sentences, common words, active voice, one idea per sentence,
   **result first**. No monologue, no self-encouragement, no rhetorical transitions, and never announce

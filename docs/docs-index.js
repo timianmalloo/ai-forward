@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-Forward",
-  "generated": "2026-08-22T21:04:15Z",
+  "generated": "2026-08-23T02:58:47Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1867,6 +1867,51 @@ window.DOCS_INDEX = {
       "sourceSha256": "69a9739b5ab387e841ebdf338c644cff7a93a61b48d89658622637b720687c5c"
     },
     {
+      "id": "proposal-turn-goal-state-and-stopping",
+      "path": "docs/notes/turn-goal-state-and-stopping.md",
+      "title": "Proposal: define the goal state before acting — bounding the agent turn",
+      "type": "doc",
+      "status": "in-review",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2026-11-20",
+      "reviewSuggested": [],
+      "summary": "An incident analysis and proposal. A closed question (\"is /optimize-graph wired into the skills?\") was answered on the first tool call and then became an eighteen-file change proposal over ten more; two explicit stops did not stop it. Root cause is not the harness — it is that the turn had no stated goal state and no exit condition, so it had no termination argument. Proposes CT19-CT23, led by an opening contract (Goal / Done when / Not in scope) that is the symmetric partner of the E18 closing table the pack already mandates. Awaiting maintainer decision.",
+      "tags": [
+        "task-discipline",
+        "stopping-conditions",
+        "goal-state",
+        "autonomy",
+        "harness",
+        "communication",
+        "rfc"
+      ],
+      "links": [
+        {
+          "to": "kb-graph-and-loop-engineering",
+          "rel": "depends-on"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        },
+        {
+          "to": "audit-log",
+          "rel": "relates-to"
+        },
+        {
+          "to": "project-memory",
+          "rel": "relates-to"
+        },
+        {
+          "to": "plan-optimize-graph-live-01",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "8797e7ae3db7665bfeb5789d1e1cbb761fffc3de9563c5eae1c0557eacbba0df"
+    },
+    {
       "id": "ui-capability-guide",
       "path": "docs/ui-guide.md",
       "title": "UI & UX Capability Guide",
@@ -3241,7 +3286,15 @@ window.DOCS_INDEX = {
       "kind": "knowledge-tool",
       "description": "Open an interactive knowledge artifact.",
       "artifactId": "backtest-optimize-graph"
+    },
+    {
+      "id": "surface-notes-turn-goal-state-and-stopping",
+      "path": "docs/notes/turn-goal-state-and-stopping.html",
+      "title": "Proposal — Goal state before action: bounding the agent turn",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "proposal-turn-goal-state-and-stopping"
     }
   ],
-  "graphSha256": "08ea63b167509a082f4af4fedd61f79bbd1ae4ac6d45c070493b7333afacf61e"
+  "graphSha256": "55945af49d37e46efa128eb9b4db0b0f860a87efab9d12943511b53c83adb5ea"
 };

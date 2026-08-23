@@ -1259,6 +1259,12 @@ window.PORTAL_DATA = {
         "summary": "An RFC/dialog opener on (1) whether to host the Documentation Portal and surfaces on GitHub Pages, (2) how that impacts dream output and privacy, and (3) a..."
       },
       {
+        "id": "proposal-turn-goal-state-and-stopping",
+        "type": "doc",
+        "title": "Proposal: define the goal state before acting — bounding the agent turn",
+        "summary": "An incident analysis and proposal. A closed question (\"is /optimize-graph wired into the skills?\") was answered on the first tool call and then became an..."
+      },
+      {
         "id": "spec-agent-coordination",
         "type": "spec",
         "title": "Agent coordination — shared context and explicit coordination across worktrees and agents",
@@ -2174,6 +2180,31 @@ window.PORTAL_DATA = {
       {
         "from": "proposal-hosting-and-dream-manifest",
         "to": "spec-documentation-portal",
+        "rel": "relates-to"
+      },
+      {
+        "from": "proposal-turn-goal-state-and-stopping",
+        "to": "audit-log",
+        "rel": "relates-to"
+      },
+      {
+        "from": "proposal-turn-goal-state-and-stopping",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "proposal-turn-goal-state-and-stopping",
+        "to": "kb-graph-and-loop-engineering",
+        "rel": "depends-on"
+      },
+      {
+        "from": "proposal-turn-goal-state-and-stopping",
+        "to": "plan-optimize-graph-live-01",
+        "rel": "relates-to"
+      },
+      {
+        "from": "proposal-turn-goal-state-and-stopping",
+        "to": "project-memory",
         "rel": "relates-to"
       },
       {
