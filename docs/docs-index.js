@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-Forward",
-  "generated": "2026-08-23T02:58:47Z",
+  "generated": "2026-08-23T15:04:27Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -931,6 +931,36 @@ window.DOCS_INDEX = {
       "sourceSha256": "e2331adf193cdda5220425ea89ae8c999cdcc6b80f86c5d2fa5df8a77d2fc869"
     },
     {
+      "id": "note-autopilot-open-questions-decisions",
+      "path": "docs/notes/autopilot-open-questions-decisions.md",
+      "title": "Decisions on PACK-O open questions (logging, class granularity, autopilot caps)",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-02-21",
+      "reviewSuggested": [],
+      "summary": "The user's answers to the three open questions from the task-discipline / front-matter proposal (revision 3), which gate the next change: making PACK-O controllable.",
+      "tags": [
+        "PACK-O",
+        "front-matter",
+        "decisions",
+        "autopilot"
+      ],
+      "links": [
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-agent-autopilot-controls",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "a03a4d07731e5e681d1662fb8a683c96ce491c39c711844cbf4d4e104095b6de"
+    },
+    {
       "id": "design-aiforward-cli",
       "path": "docs/design/aiforward-cli.md",
       "title": "Design — aiforward CLI (suggestion 1)",
@@ -1343,7 +1373,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "fb1bbce65fe50af62c0997874fa057e346312eb28973c3d20df82028689a851d"
+      "sourceSha256": "25c872f3fb474ecb8b7650b0197486fd6a70f620e9df2aef83f6a686f265cec3"
     },
     {
       "id": "docs-index",
@@ -2032,6 +2062,220 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "f16679f8cf89726bce68ed00a6d3e8d29fed442dae57701e709204121043d2af"
+    },
+    {
+      "id": "kb-agent-autopilot-controls",
+      "path": "docs/knowledge/agent-autopilot-controls/index.md",
+      "title": "Agent autopilot & autonomous-continuation controls (Copilot CLI ↔ Claude Code)",
+      "type": "knowledge",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2026-11-21",
+      "reviewSuggested": [],
+      "summary": "Sourced comparison of the autonomous-execution controls in GitHub Copilot CLI and Claude Code — the autonomy modes, the full-permission \"YOLO\" switches, and (the load-bearing finding) the step/turn caps that bound a runaway agent: Copilot's --max-autopilot-continues and Claude Code's --max-turns. Both vendors frame the cap exactly as the pack's GO9 does (\"avoid infinite loops\"), independently validating CT22, and both expose a rung-1 environment control that complements the in-context front matter (CT19–CT24). The answer to open question 3 (PACK-O mitigation): yes, a symmetric step cap exists on both surfaces.",
+      "tags": [
+        "autopilot",
+        "autonomy",
+        "permission-modes",
+        "max-turns",
+        "max-autopilot-continues",
+        "copilot-cli",
+        "claude-code",
+        "termination",
+        "GO9",
+        "PACK-O",
+        "CT22"
+      ],
+      "links": [
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-graph-and-loop-engineering",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "c7485145e3939b00fdf0576fff98380a0ac28e660b95ea534a4b8a905ab82939"
+    },
+    {
+      "id": "kb-agent-autopilot-controls-comparables",
+      "path": "docs/knowledge/agent-autopilot-controls/comparables.md",
+      "title": "Agent autopilot controls — Symmetry map (Copilot CLI ↔ Claude Code)",
+      "type": "knowledge",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-21",
+      "reviewSuggested": [],
+      "summary": "The load-bearing artifact: a concept-by-concept symmetry table mapping GitHub Copilot CLI autonomy controls to their Claude Code equivalents, plus the asymmetries that do not map cleanly (the step-cap unit, credit caps, sandbox model).",
+      "tags": [
+        "symmetry",
+        "comparables",
+        "copilot-cli",
+        "claude-code"
+      ],
+      "links": [
+        {
+          "to": "kb-agent-autopilot-controls",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "a05625fe2b9044324ecf64be35a54847dc2920d674aeb79a16c3ab00449c07f4"
+    },
+    {
+      "id": "kb-agent-autopilot-controls-data",
+      "path": "docs/knowledge/agent-autopilot-controls/data-and-constants.md",
+      "title": "Agent autopilot controls — Data, defaults & invariants",
+      "type": "knowledge",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-21",
+      "reviewSuggested": [],
+      "summary": "The concrete defaults, stopping conditions, and invariants of autonomous execution on each surface — the numbers and rules a recommendation must respect.",
+      "tags": [
+        "defaults",
+        "constants",
+        "invariants"
+      ],
+      "links": [
+        {
+          "to": "kb-agent-autopilot-controls",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "96721d846fcc23f0feb85d05b776abd91604f5f085adeea9d4b7bf4a5ec8f60e"
+    },
+    {
+      "id": "kb-agent-autopilot-controls-glossary",
+      "path": "docs/knowledge/agent-autopilot-controls/glossary.md",
+      "title": "Agent autopilot controls — Glossary",
+      "type": "knowledge",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-21",
+      "reviewSuggested": [],
+      "summary": "The ubiquitous language of agent autonomy across both surfaces, defined so the two vocabularies can be discussed without conflation.",
+      "tags": [
+        "glossary"
+      ],
+      "links": [
+        {
+          "to": "kb-agent-autopilot-controls",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "f662902e8daea479a0f8497094ade80d170209682473bc2ae23095034c49a2f4"
+    },
+    {
+      "id": "kb-agent-autopilot-controls-open-questions",
+      "path": "docs/knowledge/agent-autopilot-controls/open-questions.md",
+      "title": "Agent autopilot controls — Open questions & failure modes",
+      "type": "knowledge",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-21",
+      "reviewSuggested": [],
+      "summary": "What this research could not fully settle, the failure modes of autonomous execution, and the disconfirming views deliberately sought.",
+      "tags": [
+        "open-questions",
+        "failure-modes",
+        "disconfirmation"
+      ],
+      "links": [
+        {
+          "to": "kb-agent-autopilot-controls",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "f9421bb57cc7a647254cedae7dd4ace5fcdb3e593a0c679abec052181a24ba1f"
+    },
+    {
+      "id": "kb-agent-autopilot-controls-references",
+      "path": "docs/knowledge/agent-autopilot-controls/references.md",
+      "title": "Agent autopilot controls — Reference (flags, settings, commands)",
+      "type": "knowledge",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-21",
+      "reviewSuggested": [],
+      "summary": "The authoritative flag/setting/command surface for autonomous execution on each CLI, with the primary-source page for each.",
+      "tags": [
+        "reference",
+        "flags",
+        "settings",
+        "commands"
+      ],
+      "links": [
+        {
+          "to": "kb-agent-autopilot-controls",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "1498ea9837782aad493301cd21811cd91c64ecfadf538442403f4de8dadb9b4c"
+    },
+    {
+      "id": "kb-agent-autopilot-controls-sota",
+      "path": "docs/knowledge/agent-autopilot-controls/state-of-the-art.md",
+      "title": "Agent autopilot controls — State of the Art",
+      "type": "knowledge",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-21",
+      "reviewSuggested": [],
+      "summary": "How the two surfaces implement autonomous execution today: Copilot CLI's autopilot mode + its permission and continuation switches, and Claude Code's permission-mode ladder (default → acceptEdits → auto → bypassPermissions) plus its headless -p / --max-turns automation model.",
+      "tags": [
+        "autopilot",
+        "permission-modes",
+        "state-of-the-art"
+      ],
+      "links": [
+        {
+          "to": "kb-agent-autopilot-controls",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "5252acad5d5244266ea2d3424c4dee6a0de877701fc56c03a55523641d1e6896"
+    },
+    {
+      "id": "kb-agent-autopilot-controls-sources",
+      "path": "docs/knowledge/agent-autopilot-controls/sources.md",
+      "title": "Agent autopilot controls — Sources",
+      "type": "knowledge",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-21",
+      "reviewSuggested": [],
+      "summary": "Full source list with access dates and the claims each supports. Primary vendor docs first.",
+      "tags": [
+        "sources"
+      ],
+      "links": [
+        {
+          "to": "kb-agent-autopilot-controls",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "df18745528c70a4182046e6fbddd37c201ee7f8c94e1ab90f32fa60b714ea0ca"
     },
     {
       "id": "kb-continuous-improvement-and-dreaming",
@@ -3294,7 +3538,14 @@ window.DOCS_INDEX = {
       "kind": "knowledge-tool",
       "description": "Open an interactive knowledge artifact.",
       "artifactId": "proposal-turn-goal-state-and-stopping"
+    },
+    {
+      "id": "surface-proposal-proposal-goal-state-before-action-bounding-the-agent-turn",
+      "path": "docs/proposal/Proposal — Goal state before action_ bounding the agent turn.html",
+      "title": "Proposal — Goal state before action: bounding the agent turn",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "55945af49d37e46efa128eb9b4db0b0f860a87efab9d12943511b53c83adb5ea"
+  "graphSha256": "a8b25084c99d79c6e7bd62f07e08f5da898e993d5c62e78b3c31853190817cca"
 };

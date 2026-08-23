@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-08-23T03:34:06Z",
+  "generated": "2026-08-23T15:04:48Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1695,6 +1695,29 @@ window.AUDIT_DATA = {
         "PACK-O"
       ],
       "outcome": "success"
+    },
+    {
+      "id": "al-0076",
+      "shortname": "collectknowledge-agent-autopilot-controls",
+      "datetime": "2026-08-23T15:04:48Z",
+      "session": "6bbacd4c-2cee-4e4d-87cc-e4692a044cfa",
+      "prompt": "/collectknowledge on GH Copilot autopilot usage including flags, settings and limits (e.g. max-autopilot-continues), with symmetry between gh copilot and claude code",
+      "summary": "Built docs/knowledge/agent-autopilot-controls/: both surfaces expose a step/turn cap (Copilot --max-autopilot-continues, Claude --max-turns); symmetry map produced; answers PACK-O open question 3",
+      "kind": "skill",
+      "skill": "collectknowledge",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/knowledge/agent-autopilot-controls/index.md"
+      ],
+      "tags": [
+        "autopilot",
+        "copilot-cli",
+        "claude-code"
+      ],
+      "outcome": "success",
+      "started_at": "2026-08-23T14:55:35Z",
+      "duration_seconds": 553.0
     }
   ],
   "changes": [
@@ -2224,6 +2247,28 @@ window.AUDIT_DATA = {
           "2c298f8 chore(gates): wire audit-log verify into CI and verify-bundle; mark rev-42 review resolved",
           "fbcd019 feat(pack): clear the rev-42 backlog + worktree-per-session discipline (rev 43)"
         ]
+      }
+    },
+    {
+      "id": "cl-0022",
+      "datetime": "2026-08-23T15:04:48Z",
+      "session": "6bbacd4c-2cee-4e4d-87cc-e4692a044cfa",
+      "kind": "knowledge",
+      "skill": "collectknowledge",
+      "title": "Autopilot/autonomy control surface established across Copilot CLI and Claude Code",
+      "prompt": "/collectknowledge on GH Copilot autopilot usage + symmetry with claude code",
+      "summary": "Both surfaces expose an opt-in step/turn cap (--max-autopilot-continues / --max-turns) framed as anti-runaway; validates pack GO9/CT22 and gives a rung-1 complement to CT19-CT24. Symmetry map + asymmetries (cap unit, credit vs turns, sandbox) recorded.",
+      "rationale": "Answers PACK-O open question 3 with a sourced, surface-symmetric evidence base the next change (P2 + optional PACK-O control update) can cite.",
+      "artifacts": [
+        "docs/knowledge/agent-autopilot-controls/index.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "3b55797",
+        "after": "3b557972092c8e998027192d977787fa188b11ec",
+        "branch": "main",
+        "pushed": false,
+        "commits": []
       }
     }
   ]
