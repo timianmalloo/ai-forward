@@ -43,3 +43,8 @@ summary: >-
 - proposals: 7 (added 1 - merged 0 - superseded 0 - excluded/tainted 0)
 - highest-leverage: Build a control for PACK-E (partially-controlled)
 
+## drm-0006 - 2026-08-23
+- window: last 45 days · 75 audit · 21 change · 1 mitigations · 5 markers
+- proposals: 9 (added 1 - merged 0 - superseded 0 - excluded/tainted 0)
+- highest-leverage: Build a control for PACK-N (uncontrolled)
+

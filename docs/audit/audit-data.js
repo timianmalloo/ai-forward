@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-08-23T15:45:09Z",
+  "generated": "2026-08-23T15:49:36Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1742,6 +1742,23 @@ window.AUDIT_DATA = {
       "outcome": "success",
       "goal": "Implement P2 - promote PACK-O from rung-3 instruction to a rung-2 control (logging + dream mining)",
       "done_when": "audit-log records goal/done_when; /dream flags PACK-O presence gaps + drift pairs; red-first tests green; PACK-O -> partially-controlled; bundle verifies"
+    },
+    {
+      "id": "al-0078",
+      "shortname": "dream-run",
+      "datetime": "2026-08-23T15:49:36Z",
+      "session": "dream-job",
+      "prompt": "dream.py dream-run",
+      "summary": "Dream drm-0006: 9 proposals over last 45 days · 75 audit · 21 change · 1 mitigations · 5 markers",
+      "kind": "script",
+      "skill": "dream",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/dreams/drm-0006/index.html"
+      ],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [
