@@ -382,6 +382,12 @@ def cmd_append(args):
         "tags": (args.tag or []) or base.get("tags") or [],
         "outcome": args.outcome or base.get("outcome") or "success",
     }
+    # Front-matter goal-state (CT19): done_when is the terminal condition, and is the PACK-O
+    # PRESENCE signal /dream mines (a substantive turn without it skipped the front matter, AL5b).
+    for _opt in ("goal", "done_when"):
+        _v = getattr(args, _opt, None) or base.get(_opt)
+        if _v:
+            entry[_opt] = _v
     # Instrumentation over inference (IO1): duration is DEFAULT-ON. An explicit --started wins;
     # otherwise the stamp recorded by `start --session` at grounding is picked up automatically,
     # so no caller has to remember a flag. Absent/unparseable/skewed -> no duration, never a
@@ -646,6 +652,8 @@ def main():
     ap_a.add_argument("--artifact", action="append"); ap_a.add_argument("--tag", action="append")
     ap_a.add_argument("--outcome", choices=["success", "partial", "failed", "blocked"])
     ap_a.add_argument("--change", help="link to a change-log id (cl-NNNN)")
+    ap_a.add_argument("--goal", help="the turn's goal (front matter CT19)")
+    ap_a.add_argument("--done-when", dest="done_when", help="the terminal condition (front matter CT19); the PACK-O presence signal /dream mines (AL5b)")
     ap_a.add_argument("--git", action="store_true", help="capture current git context")
     ap_a.add_argument("--started", help="ISO-8601 UTC start stamp captured at grounding; records "
                                         "started_at + duration_seconds so elapsed time is MEASURED, "

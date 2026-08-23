@@ -977,6 +977,54 @@ window.PORTAL_DATA = {
         "summary": "The hosted explainer stayed blank after a fix was declared, because the fix lived only in the working tree — it was never deployed, so the live URL still..."
       },
       {
+        "id": "kb-agent-autopilot-controls",
+        "type": "knowledge",
+        "title": "Agent autopilot & autonomous-continuation controls (Copilot CLI ↔ Claude Code)",
+        "summary": "Sourced comparison of the autonomous-execution controls in GitHub Copilot CLI and Claude Code — the autonomy modes, the full-permission \"YOLO\" switches, and..."
+      },
+      {
+        "id": "kb-agent-autopilot-controls-comparables",
+        "type": "knowledge",
+        "title": "Agent autopilot controls — Symmetry map (Copilot CLI ↔ Claude Code)",
+        "summary": "The load-bearing artifact: a concept-by-concept symmetry table mapping GitHub Copilot CLI autonomy controls to their Claude Code equivalents, plus the..."
+      },
+      {
+        "id": "kb-agent-autopilot-controls-data",
+        "type": "knowledge",
+        "title": "Agent autopilot controls — Data, defaults & invariants",
+        "summary": "The concrete defaults, stopping conditions, and invariants of autonomous execution on each surface — the numbers and rules a recommendation must respect."
+      },
+      {
+        "id": "kb-agent-autopilot-controls-glossary",
+        "type": "knowledge",
+        "title": "Agent autopilot controls — Glossary",
+        "summary": "The ubiquitous language of agent autonomy across both surfaces, defined so the two vocabularies can be discussed without conflation."
+      },
+      {
+        "id": "kb-agent-autopilot-controls-open-questions",
+        "type": "knowledge",
+        "title": "Agent autopilot controls — Open questions & failure modes",
+        "summary": "What this research could not fully settle, the failure modes of autonomous execution, and the disconfirming views deliberately sought."
+      },
+      {
+        "id": "kb-agent-autopilot-controls-references",
+        "type": "knowledge",
+        "title": "Agent autopilot controls — Reference (flags, settings, commands)",
+        "summary": "The authoritative flag/setting/command surface for autonomous execution on each CLI, with the primary-source page for each."
+      },
+      {
+        "id": "kb-agent-autopilot-controls-sota",
+        "type": "knowledge",
+        "title": "Agent autopilot controls — State of the Art",
+        "summary": "How the two surfaces implement autonomous execution today: Copilot CLI's autopilot mode + its permission and continuation switches, and Claude Code's..."
+      },
+      {
+        "id": "kb-agent-autopilot-controls-sources",
+        "type": "knowledge",
+        "title": "Agent autopilot controls — Sources",
+        "summary": "Full source list with access dates and the claims each supports. Primary vendor docs first."
+      },
+      {
         "id": "kb-continuous-improvement-and-dreaming",
         "type": "knowledge",
         "title": "Continuous Improvement & Dreaming — harvesting learnings across repos (domain knowledge)",
@@ -1227,6 +1275,12 @@ window.PORTAL_DATA = {
         "type": "decision-note",
         "title": "Decision note — revision-42 backlog triage, and worktree-per-session",
         "summary": "Four sub-ADR decisions taken while clearing the revision-42 backlog and adding worktree-per-session: withdrawing FR-050 rather than acting on it, closing..."
+      },
+      {
+        "id": "note-autopilot-open-questions-decisions",
+        "type": "decision-note",
+        "title": "Decisions on PACK-O open questions (logging, class granularity, autopilot caps)",
+        "summary": "The user's answers to the three open questions from the task-discipline / front-matter proposal (revision 3), which gate the next change: making PACK-O..."
       },
       {
         "id": "plan-optimize-graph-live-01",
@@ -1793,6 +1847,56 @@ window.PORTAL_DATA = {
         "rel": "relates-to"
       },
       {
+        "from": "kb-agent-autopilot-controls",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "kb-agent-autopilot-controls",
+        "to": "kb-graph-and-loop-engineering",
+        "rel": "relates-to"
+      },
+      {
+        "from": "kb-agent-autopilot-controls-comparables",
+        "to": "kb-agent-autopilot-controls",
+        "rel": "relates-to"
+      },
+      {
+        "from": "kb-agent-autopilot-controls-data",
+        "to": "kb-agent-autopilot-controls",
+        "rel": "relates-to"
+      },
+      {
+        "from": "kb-agent-autopilot-controls-glossary",
+        "to": "kb-agent-autopilot-controls",
+        "rel": "relates-to"
+      },
+      {
+        "from": "kb-agent-autopilot-controls-open-questions",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "kb-agent-autopilot-controls-open-questions",
+        "to": "kb-agent-autopilot-controls",
+        "rel": "relates-to"
+      },
+      {
+        "from": "kb-agent-autopilot-controls-references",
+        "to": "kb-agent-autopilot-controls",
+        "rel": "relates-to"
+      },
+      {
+        "from": "kb-agent-autopilot-controls-sota",
+        "to": "kb-agent-autopilot-controls",
+        "rel": "relates-to"
+      },
+      {
+        "from": "kb-agent-autopilot-controls-sources",
+        "to": "kb-agent-autopilot-controls",
+        "rel": "relates-to"
+      },
+      {
         "from": "kb-continuous-improvement-and-dreaming",
         "to": "architecture",
         "rel": "relates-to"
@@ -2065,6 +2169,16 @@ window.PORTAL_DATA = {
       {
         "from": "note-20260822-backlog-triage-and-worktree-discipline",
         "to": "forensic-review-rev42-backlog",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-autopilot-open-questions-decisions",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-autopilot-open-questions-decisions",
+        "to": "kb-agent-autopilot-controls",
         "rel": "relates-to"
       },
       {

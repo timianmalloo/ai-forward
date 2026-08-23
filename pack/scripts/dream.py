@@ -280,6 +280,42 @@ def build_proposals(corpus):
                 "boundary": "Markers in this repo only; harvested at consolidation time.",
                 "_freq": len(items), "_days": 1, "_has_control": False, "_score": round(0.35 + min(len(items) / 10.0, 0.3), 2)})
 
+    # 5. PACK-O: front-matter presence + scope-drift review (the rung-2 control for PACK-O).
+    #    Presence is mechanical (a substantive turn either recorded done_when or it did not);
+    #    "summary exceeds goal" is surfaced as review material, never auto-judged (dream proposes,
+    #    the human decides). This is what promotes PACK-O from rung-3 instruction to a rung-2 control.
+    PACKO_SUBSTANTIVE = {"skill", "manual", "prompt", "command"}
+    subst = [e for e in corpus["audit"] if e.get("kind") in PACKO_SUBSTANTIVE]
+    if subst:
+        missing = [e for e in subst if not e.get("done_when")]
+        have = [e for e in subst if e.get("done_when")]
+        ev = [{"eid": e.get("id", "al-?"),
+               "note": "{0} - no done_when recorded (front matter skipped)".format(e.get("shortname", "?"))}
+              for e in missing[:8]]
+        # drift-review material: goal -> summary pairs a human can scan for scope drift
+        for e in have[:4]:
+            ev.append({"eid": e.get("id", "al-?"),
+                       "note": "done_when='{0}' -> summary='{1}'".format(
+                           (e.get("done_when") or "")[:60], (e.get("summary") or "")[:80])})
+        if ev:
+            pct = (len(missing) * 100) // max(1, len(subst))
+            proposals.append({
+                "kind": "Control upgrade", "group": "Control upgrade",
+                "title": "PACK-O: {0}/{1} substantive turns ({2}%) recorded no goal-state (done_when)".format(
+                    len(missing), len(subst), pct),
+                "sig": "PACK-O front-matter presence + scope-drift review",
+                "scope": "general", "confidence": "v", "source": "deterministic",
+                "evidence": ev,
+                "control": {"rung": "automated control",
+                            "text": ("Presence (mechanical): every substantive turn records done_when (CT19); a missing "
+                                     "one skipped the front matter. Satisfaction: review each done_when->summary pair "
+                                     "where the summary exceeds the goal (scope drift, PACK-O). The audit done_when "
+                                     "field + this miner ARE the rung-2 control (CI6)."),
+                            "loc": "docs/lessons/defect-classes.md#PACK-O"},
+                "boundary": ("Presence is mechanical; 'summary exceeds goal' is surfaced for human review, not "
+                             "auto-judged. Trivial/conversational turns are exempt from logging (AL5b)."),
+                "_freq": max(1, len(missing)), "_days": min(max(len(missing), 1), 3), "_has_control": True})
+
     # finalize scores + ids + threshold gate
     out = []
     for k, p in enumerate(proposals, 1):

@@ -43,6 +43,7 @@ Each audit entry records one meaningful action. The five **required** fields are
   "artifacts": ["docs/design/payment-gateway.md"], // files created/changed — graph links (§4)
   "tags": ["payments", "resilience"],    // keywords for search
   "outcome": "success",                  // success|partial|failed|blocked
+  "goal": "…", "done_when": "…",         // the turn's goal-state (front matter CT19); done_when is the PACK-O presence signal
   "change": "cl-0003",                   // link to a change-log entry, when this action was also a decision
   "git": { "sha": "…", "short": "…", "branch": "main", "pushed": true }  // optional, via --git
 }
@@ -56,6 +57,7 @@ Each audit entry records one meaningful action. The five **required** fields are
 - **`artifacts`** — the files the action touched, which are **graph links** (§4): the audit log joins to the knowledge graph through them, so "what produced this design?" is answerable.
 - **`tags`** + **`outcome`** — keyword search and the honest record of whether the action succeeded, was partial, failed, or was blocked (a failed/blocked action is *more* worth recording, not less).
 - **`change`** — when an action was also a meaningful decision, it links to the change-log entry (§3), so the two logs cross-reference.
+- **`goal`** + **`done_when`** — the turn's goal-state (front matter CT19): the objective and its **terminal condition**. `done_when` is the **PACK-O presence signal** — a substantive turn without it skipped the front matter — and the `done_when`→`summary` pair is what `/dream` mines for scope drift (a summary that plainly exceeds the goal). Captured via `--goal` / `--done-when`.
 - **`git`** — the commit context at the time, for actions worth pinning to a sha.
 
 **AL3 — Granularity: meaningful, not every keystroke.** An audit entry is written for a **meaningful unit of work** — a skill run, a script invocation, a deliberate prompt that changed the repo or the plan — not for every tool call or trivial read. The bar is *"would a future session want to know this happened?"*. Over-logging buries the signal; under-logging loses the history. When in doubt for a load-bearing action, log it.
@@ -90,6 +92,17 @@ The duration is picked up from the AL4a marker automatically; nothing extra is p
 This is the activity-history sibling of writing frontmatter + syncing the index: a skill run that left no trace in the audit log is, like an un-indexed artifact, **not done**. For a long prompt, use `--prompt-file -` (stdin) or pass the whole entry with `--from-json -`. The `/auditlog` skill itself is a **reader** and does not log its own browsing (AL3).
 
 **AL6 — Scripts and notable manual actions log too.** A deployable script with a lasting effect (a migration run, a scrub, a generated artifact) and a deliberate human/agent action that changed the repo **SHOULD** append an entry with the appropriate `kind` (`script` / `manual` / `commit`). The point is a single timeline a future session can read, regardless of *what* did the work.
+
+**AL5b — A substantive interactive turn logs its goal-state (the PACK-O corpus).** Because only skill runs are auto-logged (AL5), the corpus is otherwise blind to interactive work — exactly where defect class **PACK-O** lives. So a **substantive interactive (non-skill) turn** — one that changed the repo or the plan (AL3's bar) — **SHOULD** append an entry at close recording its **full prompt**, its **`goal`** and **`done_when`**, and its summary:
+
+```bash
+python3 docs/ai-forward-pack/scripts/audit-log.py append \
+  --shortname "<subject>" --session "<id>" --kind manual --tool "<assistant>" \
+  --prompt "<the full prompt, verbatim>" --goal "<the goal>" \
+  --done-when "<the terminal condition>" --summary "<what the turn produced>"
+```
+
+Trivial and purely conversational turns are exempt (AL3). This is the **logging half of the rung-2 control for PACK-O**: presence (`done_when` recorded or not) is mechanical, and `/dream`'s PACK-O miner reads it; satisfaction (summary vs goal) is surfaced for human review, never auto-judged. Timing is default-on via AL4a. No secrets/PII (AL4).
 
 ---
 

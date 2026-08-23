@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-08-23T15:04:48Z",
+  "generated": "2026-08-23T15:45:09Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1718,6 +1718,30 @@ window.AUDIT_DATA = {
       "outcome": "success",
       "started_at": "2026-08-23T14:55:35Z",
       "duration_seconds": 553.0
+    },
+    {
+      "id": "al-0077",
+      "shortname": "implement-pack-o-rung2",
+      "datetime": "2026-08-23T15:45:09Z",
+      "session": "6bbacd4c-2cee-4e4d-87cc-e4692a044cfa",
+      "prompt": "yes implement P2 Logging and deam mining to make PACK-0 a rung-2 control",
+      "summary": "Added --goal/--done-when + AL5b logging clause; dream PACK-O miner (build_proposals section 5); red-first tests (test_dream_pack_o.py, test_audit_log.py); PACK-O uncontrolled->partially-controlled in both registers; INSTALL revision 45; synced",
+      "kind": "manual",
+      "skill": null,
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "pack/scripts/dream.py",
+        "pack/scripts/audit-log.py"
+      ],
+      "tags": [
+        "PACK-O",
+        "P2",
+        "dream"
+      ],
+      "outcome": "success",
+      "goal": "Implement P2 - promote PACK-O from rung-3 instruction to a rung-2 control (logging + dream mining)",
+      "done_when": "audit-log records goal/done_when; /dream flags PACK-O presence gaps + drift pairs; red-first tests green; PACK-O -> partially-controlled; bundle verifies"
     }
   ],
   "changes": [

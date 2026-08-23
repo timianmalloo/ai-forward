@@ -1,3 +1,4 @@
+import json
 import pathlib
 import re
 import subprocess
@@ -105,6 +106,40 @@ class AuditLogDataLossTests(unittest.TestCase):
             if re.search(r"(?<!with )\bopen\(", line) and "with open" not in line
         ]
         self.assertEqual([], offenders, f"bare open() without a context manager: {offenders}")
+
+
+class AuditLogGoalStateTests(unittest.TestCase):
+    """P2 / PACK-O: the audit entry records the front-matter goal-state (CT19). `done_when`
+    is the presence signal /dream mines — a substantive turn without it skipped the front
+    matter. These assert the field round-trips into the committed corpus."""
+
+    def _append(self, root, *extra):
+        return subprocess.run(
+            [sys.executable, str(SCRIPT), "--root", str(root), "append",
+             "--shortname", "t", "--session", "s", "--prompt", "p", "--summary", "did the thing",
+             *extra],
+            cwd=ROOT, capture_output=True, text=True, timeout=30)
+
+    def _entries(self, root):
+        text = (pathlib.Path(root) / "audit" / "audit-log.jsonl").read_text(encoding="utf-8")
+        return [json.loads(line) for line in text.splitlines() if line.strip()]
+
+    def test_goal_and_done_when_are_recorded(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = pathlib.Path(directory) / "docs"
+            result = self._append(root, "--goal", "answer the question",
+                                  "--done-when", "the answer is stated")
+            self.assertEqual(0, result.returncode, result.stderr)
+            entry = self._entries(root)[-1]
+            self.assertEqual("answer the question", entry.get("goal"))
+            self.assertEqual("the answer is stated", entry.get("done_when"))
+
+    def test_done_when_absent_when_not_supplied(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = pathlib.Path(directory) / "docs"
+            result = self._append(root)
+            self.assertEqual(0, result.returncode, result.stderr)
+            self.assertNotIn("done_when", self._entries(root)[-1])
 
 
 if __name__ == "__main__":
