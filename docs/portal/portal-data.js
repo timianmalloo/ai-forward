@@ -91,6 +91,10 @@ window.PORTAL_DATA = {
       "p": "A Rigor Protocol (map -> interrogate -> ground -> disconfirm -> converge) and a No-Guessing rule under every non-trivial task."
     },
     {
+      "h": "Bound and optimize every turn",
+      "p": "Each turn opens with a written goal-state and stop point (the two-step front matter, CT19-CT24), then plans its work as an execution graph - critical path first, every loop given a termination variant, cost recorded against delivery."
+    },
+    {
       "h": "Review adversarially",
       "p": "Persona lenses author in Peer Mode and attack in Adversary Mode; the author never clears its own hard veto."
     },
@@ -347,6 +351,35 @@ window.PORTAL_DATA = {
         ]
       },
       {
+        "group": "Discipline & optimization",
+        "items": [
+          {
+            "name": "communication-and-task-discipline",
+            "title": "Communication & Task Discipline",
+            "summary": "Normative keywords (MUST, SHOULD, MAY, MUST NOT) follow RFC 2119.",
+            "path": "../../pack/knowledge/communication-and-task-discipline.md"
+          },
+          {
+            "name": "execution-graph-optimization",
+            "title": "Execution-Graph Optimization",
+            "summary": "Normative keywords (MUST, SHOULD, MAY, MUST NOT) follow RFC 2119.",
+            "path": "../../pack/knowledge/execution-graph-optimization.md"
+          },
+          {
+            "name": "instrumentation-over-inference",
+            "title": "Instrumentation over Inference",
+            "summary": "Normative keywords (MUST, SHOULD, MAY, MUST NOT) follow RFC 2119.",
+            "path": "../../pack/knowledge/instrumentation-over-inference.md"
+          },
+          {
+            "name": "session-worktree-discipline",
+            "title": "Session Worktree Discipline",
+            "summary": "Normative keywords (MUST, SHOULD, MAY, MUST NOT) follow RFC 2119.",
+            "path": "../../pack/knowledge/session-worktree-discipline.md"
+          }
+        ]
+      },
+      {
         "group": "Specification & domain",
         "items": [
           {
@@ -400,6 +433,12 @@ window.PORTAL_DATA = {
             "title": "AI Commercial, Cost & Billing Models",
             "summary": "Normative keywords (MUST, SHOULD, MAY, MUST NOT) follow RFC 2119.",
             "path": "../../pack/knowledge/ai-commercial-models.md"
+          },
+          {
+            "name": "ci-and-test-efficiency",
+            "title": "CI & Test Execution Efficiency — best coverage at minimum time and cost",
+            "summary": "Normative keywords (MUST, SHOULD, MAY, MUST NOT) follow RFC 2119.",
+            "path": "../../pack/knowledge/ci-and-test-efficiency.md"
           },
           {
             "name": "engineering-governance",
@@ -488,41 +527,6 @@ window.PORTAL_DATA = {
             "title": "Responsible AI Policy",
             "summary": "---",
             "path": "../../pack/knowledge/responsible-ai-policy.md"
-          }
-        ]
-      },
-      {
-        "group": "Other",
-        "items": [
-          {
-            "name": "ci-and-test-efficiency",
-            "title": "CI & Test Execution Efficiency — best coverage at minimum time and cost",
-            "summary": "Normative keywords (MUST, SHOULD, MAY, MUST NOT) follow RFC 2119.",
-            "path": "../../pack/knowledge/ci-and-test-efficiency.md"
-          },
-          {
-            "name": "communication-and-task-discipline",
-            "title": "Communication & Task Discipline",
-            "summary": "Normative keywords (MUST, SHOULD, MAY, MUST NOT) follow RFC 2119.",
-            "path": "../../pack/knowledge/communication-and-task-discipline.md"
-          },
-          {
-            "name": "execution-graph-optimization",
-            "title": "Execution-Graph Optimization",
-            "summary": "Normative keywords (MUST, SHOULD, MAY, MUST NOT) follow RFC 2119.",
-            "path": "../../pack/knowledge/execution-graph-optimization.md"
-          },
-          {
-            "name": "instrumentation-over-inference",
-            "title": "Instrumentation over Inference",
-            "summary": "Normative keywords (MUST, SHOULD, MAY, MUST NOT) follow RFC 2119.",
-            "path": "../../pack/knowledge/instrumentation-over-inference.md"
-          },
-          {
-            "name": "session-worktree-discipline",
-            "title": "Session Worktree Discipline",
-            "summary": "Normative keywords (MUST, SHOULD, MAY, MUST NOT) follow RFC 2119.",
-            "path": "../../pack/knowledge/session-worktree-discipline.md"
           }
         ]
       }

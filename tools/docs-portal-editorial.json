@@ -13,6 +13,7 @@
   ],
   "foundationGroupOrder": [
     "Reasoning constitution",
+    "Discipline & optimization",
     "Specification & domain",
     "Personas & review",
     "Architecture & engineering",
@@ -28,6 +29,11 @@
     "no-guessing-protocol": "Reasoning constitution",
     "end-to-end-integrity": "Reasoning constitution",
     "spike-protocol": "Reasoning constitution",
+    "communication-and-task-discipline": "Discipline & optimization",
+    "execution-graph-optimization": "Discipline & optimization",
+    "instrumentation-over-inference": "Discipline & optimization",
+    "session-worktree-discipline": "Discipline & optimization",
+    "ci-and-test-efficiency": "Architecture & engineering",
     "specification-standards": "Specification & domain",
     "domain-and-data-modelling": "Specification & domain",
     "agent-persona-catalog": "Personas & review",
@@ -90,6 +96,10 @@
     {
       "h": "Reason with rigor",
       "p": "A Rigor Protocol (map -> interrogate -> ground -> disconfirm -> converge) and a No-Guessing rule under every non-trivial task."
+    },
+    {
+      "h": "Bound and optimize every turn",
+      "p": "Each turn opens with a written goal-state and stop point (the two-step front matter, CT19-CT24), then plans its work as an execution graph - critical path first, every loop given a termination variant, cost recorded against delivery."
     },
     {
       "h": "Review adversarially",

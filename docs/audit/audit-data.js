@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-08-23T15:49:36Z",
+  "generated": "2026-08-23T15:57:58Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1759,6 +1759,30 @@ window.AUDIT_DATA = {
       ],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-0079",
+      "shortname": "document-portal-latest-work",
+      "datetime": "2026-08-23T15:57:58Z",
+      "session": "6bbacd4c-2cee-4e4d-87cc-e4692a044cfa",
+      "prompt": "/document the repo and update the portal to ensure the latest work (precision, rigor, discipline, graph optimization) is reflected",
+      "summary": "Full graph sweep clean (0 defects/orphans/stale); added portal 'Discipline & optimization' group mapping the 5 previously-ungrouped docs (communication-and-task-discipline, execution-graph-optimization, instrumentation-over-inference, session-worktree-discipline, ci-and-test-efficiency) + a 'Bound and optimize every turn' capability card; regenerated portal-data.js; snapshot appended",
+      "kind": "skill",
+      "skill": "document",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/portal/portal-data.js"
+      ],
+      "tags": [
+        "document",
+        "portal"
+      ],
+      "outcome": "success",
+      "goal": "Reconcile the graph and make the published portal reflect the latest precision/rigor/discipline/graph-optimization work",
+      "done_when": "graph clean (0 defects), portal groups+highlights the 5 new docs, health snapshot recorded, committed+pushed so Pages updates",
+      "started_at": "2026-08-23T15:54:46Z",
+      "duration_seconds": 192.0
     }
   ],
   "changes": [
