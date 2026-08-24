@@ -12,6 +12,7 @@ links:
   - { to: design-aiforward-cli, rel: documents }
   - { to: design-coord-core-phase1, rel: documents }
   - { to: design-coord-enforcement-phase2, rel: documents }
+  - { to: design-coord-federation-phase3, rel: documents }
   - { to: design-pack-doctor, rel: documents }
   - { to: design-project-memory, rel: documents }
   - { to: design-rai-and-scrub, rel: documents }

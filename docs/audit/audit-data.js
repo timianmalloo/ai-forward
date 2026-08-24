@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-08-23T15:57:58Z",
+  "generated": "2026-08-24T13:00:15Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1783,6 +1783,103 @@ window.AUDIT_DATA = {
       "done_when": "graph clean (0 defects), portal groups+highlights the 5 new docs, health snapshot recorded, committed+pushed so Pages updates",
       "started_at": "2026-08-23T15:54:46Z",
       "duration_seconds": 192.0
+    },
+    {
+      "id": "al-0080",
+      "shortname": "design-coord-federation-phase3",
+      "datetime": "2026-08-23T16:14:30Z",
+      "session": "6c74f4f4",
+      "prompt": "C:/Program Files/Git/design Phase 3 - allocator, derived-artifact merge driver, and the remaining harness hook spikes",
+      "summary": "Phase-3 design: collision-proof allocator serving the EXISTING registers under expand-migrate-contract, artifact-class registry plus the derived-artifact merge driver, and the harness adapters. Six spikes executed. S14 CLOSES THE F1 CONDITION open since the architecture: Copilot CLI 1.0.80 does invoke PreToolUse (11,419 hook.start/hook.end pairs recorded), consumes the CLAUDE PLUGIN FORMAT (.claude-plugin/plugin.json + hooks/hooks.json, same matcher/hooks shape, CLAUDE_PLUGIN_ROOT) so one bundle serves both harnesses, and FAILS OPEN on a 30s hook timeout - the opposite of NFR-R2. Not verified and not claimed: whether Copilot honours a deny response, since the only installed plugin is observational. S12 corrected ADR-0009's own framing - an unregistered merge driver degrades to a VISIBLE 3-way conflict, so the cost is lost benefit not lost work - and found the genuinely dangerous case: a driver exiting non-zero leaves the file unmerged with OURS content and NO conflict markers, so a git add . silently discards theirs. S11 established the driver runs under rebase, not only merge, which is the case that actually matters under protected main. Also surfaced a drift: cmd_worktree (~390 lines) landed in commit fbcd019 despite the Phase-2 gate recording worktree-status as deferred to Phase 4 and dropped - tested and green but with no design, no ADR, and no phasing entry.",
+      "kind": "skill",
+      "skill": "design",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/design/coord-federation-phase3.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0081",
+      "shortname": "implement-coord-phase3-derived-slice",
+      "datetime": "2026-08-23T19:05:38Z",
+      "session": "6c74f4f4",
+      "prompt": "C:/Program Files/Git/implement this design. Start with Q7 - the failing-driver case that leaves a clean-looking unmerged file",
+      "summary": "Implemented the Phase-3 artifact-class registry + derived merge driver slice (Q6-Q14 plus doctor and regen). 21 new tests, full suite 275 green. Q7 passes: the driver ALWAYS exits 0 and writes conventional conflict markers whenever it cannot resolve, so the S12b hazard - an unmerged file carrying OURS content with no markers, which looks clean and loses theirs on git add . - is impossible to express. THREE defects found during implementation, none of them in the design's failure-mode table: (1) the design had the driver REGENERATING during the merge, which cannot be correct because git runs drivers per file in arbitrary order so the artifact's own sources may still be unmerged - corrected to resolve-then-regenerate matching the sync-generated.ps1 prior art, design amended and decision note written; (2) the registry format had nowhere to put a regenerate command, so a derived class could not do its job - added, and a derived entry without one is now a registry error; (3) installing the pre-commit floor BLOCKED every commit by anyone without AGENT_SESSION set, including a human by hand - made advisory, same trade as the missing-registry case. Also registered defect class PACK-P after R4 recurred a third time, in coord doctor, written the same afternoon the rule was cited in the Phase-3 design.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "pack/scripts/coord-core.py",
+        "tests/docs_explorer/test_coord_derived.py",
+        "docs/design/coord-federation-phase3.md",
+        "docs/notes/note-20260823-merge-driver-resolves-not-regenerates.md",
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0082",
+      "shortname": "implement-coord-phase3-allocator",
+      "datetime": "2026-08-23T20:28:21Z",
+      "session": "6c74f4f4",
+      "prompt": "do this that you suggested: The allocator, Q3 first - test_merge_losing_an_entry_fails_closed, red-first on a dedupe-by-id resolution",
+      "summary": "Implemented the Phase-3 allocator slice (Q1-Q5 plus the register merge driver). 15 new tests, 291 full suite green. Q3 passes red-first: the recorded KG-B resolution is reconstructed exactly - two branches minting al-0203 for different work, deduped by id, reporting '203 ours + 203 theirs -> 203 unique' - and conservation_lost refuses it. The fingerprint deliberately EXCLUDES the id, because the register's own write-up names the lost entries by shortname after rebases renumbered their ids three times. Also implemented: the collision-proof allocator (48-bit ms + 80 bits os.urandom, Crockford base32, 1500 ids from 6 processes in one millisecond, 0 collisions, with the corpus size asserted BEFORE uniqueness per R4/PACK-P); prefix recall (the git short-hash idiom, restoring the human usability ADR-0008 traded away without naming the consumer, never picking a first match); and the register merge driver wired through the artifact-class Strategy. Went one step beyond the design and implemented KG-B's own prescribed resolution: an entry whose id this merge INTRODUCES on a collision is renumbered from the allocator with a renumbered_from provenance field, while anything already in the base (%O) is never rewritten, so NFR-C2 holds. The conservation check caught my own renumber as a loss, which was correct - the fingerprint had to exclude the provenance field too.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "pack/scripts/coord-core.py",
+        "tests/docs_explorer/test_coord_allocator.py"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M0R8XN8AGFRB2ZYZ2TQN7DN0",
+      "shortname": "implement-q17-allocator-seam",
+      "datetime": "2026-08-23T21:37:42Z",
+      "session": "6c74f4f4",
+      "prompt": "do Q17 now",
+      "summary": "Q17: wired the collision-proof allocator into audit-log.py under expand-migrate-contract, and this entry is the first identifier this repository has ever minted from it.\n\nEXPAND. next_id delegates to a new shared module, coord_ids.py, imported by both coord-core.py and audit-log.py. One implementation, not two -- six duplicated lines across two scripts is ONE-A, and the copies are identical at birth and only diverge later when one is edited. coord-core.py's inline copy was deleted in favour of the import. The underscore in the filename is deliberate: a hyphen is not importable, which is why bounded_process.py is named the way it is.\n\nMIGRATE. New entries take a collision-proof id; every existing al-NNNN keeps its value; there is no backfill at all, which is the point -- nothing is rewritten, so nothing is guessed. Both formats coexist and every reader tolerates both: `get --id` is exact string equality, and `coord resolve` adds git-style prefix recall on top so a human can still ask for an entry by its short form.\n\nCONTRACT. Deliberately NOT in this phase. The sequential path is retained, and COORD_LEGACY_IDS=1 restores it entirely -- a rollback that is exercised by a test rather than assumed.\n\nThe seam was verified against the real defect, not a proxy. test_Q17g copies the log to a second location and appends to each independently -- the actual KG-B condition of two branches that cannot see each other -- and asserts the ids differ. Under max+1 both sides produce the same number, which is how al-0203 was minted twice and one entry was destroyed by the dedupe that followed.\n\nH11/PACK-D is why three of the eleven tests are parity tests: audit-log.py is pack-managed, sync-pack.ps1 copies pack/scripts/ over docs/ai-forward-pack/scripts/, and a seam added to only one copy is silently reverted by the next sync. The tests assert the seam exists in both copies and that the two copies of coord_ids.py are byte-identical.\n\nGrounding established before any code, rather than assumed: the id format is parsed in exactly one place for the al- and cl- schemes (next_id itself); `get --id` uses exact string equality; the docs-explorer sorts artifact ids, not audit ids; and dream.py, prompt-log.py and the tests use al- strings only as fixtures. The blast radius was small, and it was checked rather than hoped.\n\nTwo of my own test bugs were caught by running it: an invalid --kind value, and a helper that swallowed env_extra into the CLI argument list and passed a dict to subprocess.\n\nFull suite 302 green.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "pack/scripts/coord_ids.py",
+        "pack/scripts/audit-log.py",
+        "pack/scripts/coord-core.py",
+        "tests/docs_explorer/test_coord_allocator_seam.py"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M0SXP5CTNHVMSB94DDFNR8NV",
+      "shortname": "implement-q18-harness-conformance",
+      "datetime": "2026-08-24T12:59:51Z",
+      "session": "6c74f4f4",
+      "prompt": "do Q18 now",
+      "summary": "Q18: the harness-adapter conformance suite, plus Q15/Q16 (coord plugin --emit). 16 new tests + 8 subtests, full suite 318 green.\n\nTHE SUITE CAUGHT WHAT IT WAS WRITTEN TO CATCH, before any of it shipped. The Phase-2 hook read tool_input.file_path -- the Claude Code shape, established by execution in spike S5. Extracting the REAL Copilot payload from ~/.copilot/session-state/*/events.jsonl (55,541 recorded preToolUse invocations) showed the request envelope differs at least as much as the response: input.toolCalls is a LIST (Copilot batches N calls per invocation), args is a JSON STRING rather than an object, the path key is `path` not `file_path`, and the path is ABSOLUTE. The hook found no path and returned ALLOW for every Copilot edit -- a silent no-op wearing the shape of enforcement. Registered as defect class PACK-Q: an adapter written to a contract's documented shape rather than to a recorded one.\n\nThe near-miss worth naming: the architecture had already recorded \"Copilot consumes the Claude plugin format\" from the MANIFEST shape, which made the request envelope look settled by association. A shared plugin format does not imply a shared payload format, and the difference was invisible until the payload itself was read.\n\nImplemented: parse_hook_request normalises any harness envelope to [(tool, repo-relative path)]; batch semantics (any refused call refuses the batch -- a false refusal costs a message, a false grant costs a merge); absolute-to-relative path resolution; and a parser/policy split so a READ of a leased artifact is allowed (reads are parallel, writes serialize) while the parser still reports every path it saw. Also coord plugin --emit, which writes the .claude-plugin bundle both harnesses read, refuses to overwrite a foreign plugin, and NEVER installs or edits ~/.copilot/settings.json or .claude/settings.json -- the same rule install follows, because a layer that grants itself tool permissions is the elevation it exists to prevent.\n\nWHAT IS STILL NOT ESTABLISHED, and is not claimed: whether Copilot HONOURS a deny. hook.end records only {hookInvocationId, hookType, success} and never the hook's response, so the recorded corpus proves invocation and cannot prove obedience. HARNESS_STATUS marks Copilot advisory at the edit boundary, coord doctor prints that limit with its reason, and the commit floor is the real enforcement there. Closing it is running one live session -- copilot --plugin-dir loads the emitted bundle without touching the user's config -- which is a billed agent run and therefore the user's call, not mine.\n\nOne measured aside: powershell is the single commonest recorded tool call at 26,210 of 55,541 -- the shell-bypass path named as G4 in the Phase-2 design, now observed rather than supposed.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "pack/scripts/coord-core.py",
+        "tests/docs_explorer/test_harness_conformance.py",
+        "tests/docs_explorer/fixtures/harness",
+        "docs/design/coord-federation-phase3.md",
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [
@@ -2335,6 +2432,126 @@ window.AUDIT_DATA = {
         "pushed": false,
         "commits": []
       }
+    },
+    {
+      "id": "cl-0023",
+      "datetime": "2026-08-23T16:14:47Z",
+      "session": "6c74f4f4",
+      "kind": "design",
+      "skill": "design",
+      "title": "F1 closed for Copilot by execution: PreToolUse exists, the plugin format is shared, and it fails OPEN",
+      "prompt": null,
+      "summary": "Phase 3 designs the allocator, the artifact-class registry with its derived-artifact merge driver, and the harness adapters. Three decisions changed by spikes: (1) one plugin bundle serves BOTH harnesses, because Copilot CLI consumes the Claude plugin format verbatim - NFR-C1 is far cheaper than the architecture assumed; (2) the merge driver ALWAYS exits 0 and writes its own conflict markers on failure; (3) the allocator performs NO backfill and keeps every existing identifier, with prefix recall (the git short-hash idiom) restoring the human usability ADR-0008 traded away without naming the consumer.",
+      "rationale": "S14 executed against the installed Copilot CLI 1.0.80 rather than reading its docs: 11,419 recorded hook.start/hook.end pairs prove PreToolUse is really invoked, the installed plugin's manifest is .claude-plugin/plugin.json with an identical hooks.json shape, and the logs carry the verbatim line 'preToolUse hook timed out; allowing the tool call to proceed' - so Copilot fails OPEN where NFR-R2 requires fail-safe. Our 63ms p95 against its 30s budget is 475x headroom, so a timeout means hung rather than slow; it is a named residual, measured per harness, not a solved problem. What the spike did NOT establish is whether Copilot honours a deny, because the only installed plugin is observational - so Copilot stays advisory-at-edit and enforced-at-commit, and the conformance harness is written so closing that is running one test rather than writing one. S12b found the driver hazard that matters: exiting non-zero leaves an unmerged file carrying OURS content with no conflict markers, which looks clean and silently discards theirs on git add . - hence exit 0 always. S12a corrected ADR-0009: an unregistered driver degrades to an ordinary visible conflict, so the cost is a lost benefit, not lost work.",
+      "artifacts": [
+        "docs/design/coord-federation-phase3.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "07488efcf0a7282c6737120fec7262eba26acb27",
+        "after": "07488efcf0a7282c6737120fec7262eba26acb27",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      },
+      "audit_ref": "al-0080"
+    },
+    {
+      "id": "cl-0024",
+      "datetime": "2026-08-23T19:05:54Z",
+      "session": "6c74f4f4",
+      "kind": "design",
+      "skill": "implement",
+      "title": "The merge driver resolves; it does not regenerate — git runs drivers before the sources are merged",
+      "prompt": null,
+      "summary": "The Phase-3 derived-artifact contract is amended: coord merge-derived resolves a derived artifact to ours and records that a regeneration is owed; coord regen clears the debt once the tree is whole; a failed regeneration stays owed and reports non-zero. The registry gains a regenerate command per derived pattern, and a derived entry without one is a registry error. Separately, the pre-commit floor is now ADVISORY when AGENT_SESSION is unset rather than blocking.",
+      "rationale": "Git invokes merge drivers per file in arbitrary order, so a derived artifact's own sources may still be unmerged when its driver runs - regenerating there produces output from a half-merged tree, which is worse than a conflict because it is plausible and matches neither side. It would also force the generator to write the working tree mid-merge, the exact hazard test Q8 and STRIDE row B8 exist to prevent, since the driver is handed a temp file and %P is identity rather than a write target. The corrected shape is the one the prior art already used: sync-generated.ps1 rebases and THEN regenerates. The floor change has the same shape of reasoning as the missing-registry decision: the pre-commit hook runs on every commit in the repository including a human's by hand, and a floor that refuses all of them is a floor that gets deleted rather than adopted; NFR-S2 already concedes this is an integrity control, not a security one.",
+      "artifacts": [
+        "docs/design/coord-federation-phase3.md",
+        "docs/notes/note-20260823-merge-driver-resolves-not-regenerates.md",
+        "pack/scripts/coord-core.py"
+      ],
+      "tags": [],
+      "git": {
+        "before": "07488efcf0a7282c6737120fec7262eba26acb27",
+        "after": "07488efcf0a7282c6737120fec7262eba26acb27",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      },
+      "audit_ref": "al-0081"
+    },
+    {
+      "id": "cl-0025",
+      "datetime": "2026-08-23T20:28:37Z",
+      "session": "6c74f4f4",
+      "kind": "design",
+      "skill": "implement",
+      "title": "A register merge conserves every entry and renumbers the id the merge introduces — KG-B's own prescribed resolution, implemented",
+      "prompt": null,
+      "summary": "Register-class artifacts now merge by union under a conservation assertion keyed on a fingerprint that EXCLUDES the id, and an entry whose id the merge introduces on a collision is renumbered from the allocator with a renumbered_from trace. Ids already present in the merge base are never rewritten. With no readable base the driver conserves and does not guess a renumber.",
+      "rationale": "The design specified conservation only, which is enough to stop the recorded loss but leaves the register holding two entries under one id forever - nothing destroyed, but the id permanently unrecallable, and  can only ever report ambiguity. KG-B's own write-up states the correct rule: the id is a sequence, not an identity; the merged side is authoritative for every id it already holds, and the incoming entry is renumbered to a free id rather than deduped away. The merge base (%O) is exactly what distinguishes an already-published id from one this merge is introducing, so NFR-C2 still holds. The fingerprint excludes the id because the recorded entries are named by shortname in the register's own write-up - rebases had renumbered their ids three times, so an id-keyed fingerprint would both miss the real loss and cry wolf on every legitimate renumber. It also had to exclude the renumbered_from provenance field, which the conservation check discovered by correctly reporting my own renumber as a destroyed entry.",
+      "artifacts": [
+        "pack/scripts/coord-core.py",
+        "docs/design/coord-federation-phase3.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "07488efcf0a7282c6737120fec7262eba26acb27",
+        "after": "07488efcf0a7282c6737120fec7262eba26acb27",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      },
+      "audit_ref": "al-0082"
+    },
+    {
+      "id": "cl-0026",
+      "datetime": "2026-08-23T20:29:37Z",
+      "session": "6c74f4f4",
+      "kind": "other",
+      "skill": "implement",
+      "title": "Correction to cl-0025: one word lost to shell command substitution (SHELL-A)",
+      "prompt": null,
+      "summary": "Corrects cl-0025, whose rationale lost one word. The text reads \"...the id permanently unrecallable, and  can only ever report ambiguity\"; the missing subject is the resolve verb (coord resolve). It was written inside backticks and passed to the shell, which performed command substitution and replaced it with the empty output of a failed `resolve` lookup (\"resolve: command not found\" on stderr).\n\nThe change log is append-only, so this is appended rather than edited into cl-0025 -- the same discipline the register-merge conservation control implemented in that very entry exists to protect.\n\nThe class is SHELL-A: content routed through a shell construct that performs substitution on it. Third occurrence in this session -- twice it corrupted Python source being patched via heredoc (caught immediately by a syntax error), and this third time it corrupted a durable record, where nothing failed and only re-reading the entry found it. That is the more dangerous shape: the two source instances were loud, this one was silent.\n\nThe control that actually holds: never pass prose through a shell argument. audit-log.py already offers --summary-file and --prompt-file for exactly this; --rationale has no file form, which is the gap this occurrence exposes. Until it does, rationale text goes in via a file-backed field or is written with no backticks.",
+      "rationale": null,
+      "artifacts": [
+        "docs/audit/change-log.jsonl"
+      ],
+      "tags": [],
+      "git": {
+        "before": null,
+        "after": "07488efcf0a7282c6737120fec7262eba26acb27",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      },
+      "audit_ref": "al-0082"
+    },
+    {
+      "id": "cl-01M0SXPXKHE6M8CS75GBXRJM7B",
+      "datetime": "2026-08-24T13:00:15Z",
+      "session": "6c74f4f4",
+      "kind": "design",
+      "skill": "implement",
+      "title": "Harness adapters normalise the envelope; Copilot is recorded advisory at the edit boundary, not assumed enforcing",
+      "prompt": null,
+      "summary": "Harness adapters are envelope-normalising rather than vendor-shaped, and Copilot is recorded as advisory at the edit boundary rather than assumed enforcing.\n\nparse_hook_request now normalises any harness PreToolUse envelope to a list of (tool, repo-relative path); cmd_hook applies the write policy on top. Batch semantics: any refused call refuses the whole batch. Reads are allowed even on a leased artifact. coord plugin --emit writes the bundle both harnesses read and never installs it. HARNESS_STATUS records each harness's edit-boundary standing, and coord doctor prints the limit with its reason.\n\nRATIONALE. The Phase-2 hook read tool_input.file_path -- correct for Claude Code, established by execution in spike S5. The real Copilot envelope, extracted from 55,541 recorded preToolUse invocations rather than from documentation, is structurally different: toolCalls is a list because Copilot batches, args is a JSON string rather than an object, the path key is path rather than file_path, and the path is absolute. The hook therefore extracted nothing and returned allow for every Copilot edit. Nothing threw, every existing test passed, and the failure mode was a silent no-op wearing the shape of enforcement. That is defect class PACK-Q, and the conformance suite is its control: one committed fixture per harness taken from the recorded corpus, and every adapter must pass the same suite, so adding a harness is adding a fixture.\n\nThe near-miss is the instructive part. The architecture had already recorded that Copilot consumes the Claude plugin format, established from the manifest shape. True, and it made the request envelope look settled by association. A shared plugin format does not imply a shared payload format.\n\nThe parser/policy split exists because conflating them lost information: a parser that returns no path for a read cannot distinguish \"this envelope is not mine\" from \"this call carries no path\", and that conflation is exactly what makes the failure silent. The parser now extracts every path it can see; the hook decides which tools matter.\n\nWhat remains deliberately unclosed: whether Copilot honours a deny. hook.end records only hookInvocationId, hookType and success, never the response, so the corpus proves invocation and cannot prove obedience. Copilot is therefore advisory at the edit boundary and enforced at the commit floor, and the layer says so rather than implying enforcement it has not established. copilot --plugin-dir makes the live confirmation possible without touching the user config, but it is a billed agent run and so is the owner's decision.",
+      "rationale": null,
+      "artifacts": [
+        "pack/scripts/coord-core.py",
+        "tests/docs_explorer/test_harness_conformance.py",
+        "docs/design/coord-federation-phase3.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "07488efcf0a7282c6737120fec7262eba26acb27",
+        "after": "07488efcf0a7282c6737120fec7262eba26acb27",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      },
+      "audit_ref": "al-01M0SXP5CTNHVMSB94DDFNR8NV"
     }
   ]
 };

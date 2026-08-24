@@ -21,7 +21,7 @@ window.PACK_INDEX = {
 {
 "id": "scripts",
 "label": "Scripts",
-"count": 16
+"count": 17
 },
 {
 "id": "personas",
@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 100
+"count": 102
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 241,
+"total": 244,
 "items": [
 {
 "cat": "knowledge",
@@ -845,7 +845,7 @@ window.PACK_INDEX = {
 "summary": "audit-log.py — the AI-Forward Pack audit & change log bundle (audit-and-change-log.md).",
 "path": "pack/scripts/audit-log.py",
 "kind": "script",
-"text": "audit-log.py audit-log.py — the ai-forward pack audit & change log bundle (audit-and-change-log.md). durable, committed, history-as-knowledge for a repo: an append-only record of every meaningful prompt / skill / script / decision, so any future copilot or claude code session reads the project's own history instead of starting blind. the canonical logs are append-only jsonl (clean git diffs, like docs/health-history.jsonl); the viewer reads a derived window.audit_data js (loadable over file://, like docs/docs-index.js). python 3.8+, stdlib only — no dependencies. two logs, one bundle: docs/audit/audit-log.jsonl every action (shortname, datetime, session, prompt, summary, …) docs/audit/change-log.jsonl the meaningful design changes / decisions (+ git before/after) docs/audit/audit-data.js derived window.audit_data = {audit:[…], changes:[…]} (the viewer's data) docs/audit/index.html the interactive viewer (self-bootstrapped from the template) subcommands append add an audit entry. (audit mandate — every skill's last action) change add a change-log entry. (change mandate — collectknowledge/define-architecture/design/migrate) list show the last n entries (audit|change). for the cli skill. search filter by --session / --since / --until / --keyword. for the cli skill. get print one entry by --id (use --field prompt to extract the prompt to re-run). render regenerate audit-data.js from the jsonl and ensure the viewer exists (repair). git-context print the current git {sha, short, branch, pushed} as json (a helper). verify fail when any log line is unreadable — the system of record must never lose an entry silently (fr-052). ci-able. suggest discern unlogged meaningful changes (recent commits + new adrs/notes not in the change log). import ingest a session-export json array of turns into the audit log (build on session history). conventions --root defaults to docs/. the audit dir is <root>/audit. the viewer template is resolved relative to this script (pack/templates or docs/ai-forward-pack/templates). git is optional — every git call degrades gracefully when git or a repo is absent. this tool never invents a prompt or a summary; required fields must be supplied (flags, --*-file, or --from-json -). now_iso parse_iso duration_fields _starts_path _read_starts _write_starts _prune_starts record_start consume_start audit_dir log_path read_log append_log next_id git git_context commits_between ensure_hub find_template project_name render _read_field _from_json cmd_start cmd_append cmd_change _fmt_row cmd_list _matches cmd_search cmd_get cmd_render cmd_git_context cmd_verify cmd_suggest cmd_import main"
+"text": "audit-log.py audit-log.py — the ai-forward pack audit & change log bundle (audit-and-change-log.md). durable, committed, history-as-knowledge for a repo: an append-only record of every meaningful prompt / skill / script / decision, so any future copilot or claude code session reads the project's own history instead of starting blind. the canonical logs are append-only jsonl (clean git diffs, like docs/health-history.jsonl); the viewer reads a derived window.audit_data js (loadable over file://, like docs/docs-index.js). python 3.8+, stdlib only — no dependencies. two logs, one bundle: docs/audit/audit-log.jsonl every action (shortname, datetime, session, prompt, summary, …) docs/audit/change-log.jsonl the meaningful design changes / decisions (+ git before/after) docs/audit/audit-data.js derived window.audit_data = {audit:[…], changes:[…]} (the viewer's data) docs/audit/index.html the interactive viewer (self-bootstrapped from the template) subcommands append add an audit entry. (audit mandate — every skill's last action) change add a change-log entry. (change mandate — collectknowledge/define-architecture/design/migrate) list show the last n entries (audit|change). for the cli skill. search filter by --session / --since / --until / --keyword. for the cli skill. get print one entry by --id (use --field prompt to extract the prompt to re-run). render regenerate audit-data.js from the jsonl and ensure the viewer exists (repair). git-context print the current git {sha, short, branch, pushed} as json (a helper). verify fail when any log line is unreadable — the system of record must never lose an entry silently (fr-052). ci-able. suggest discern unlogged meaningful changes (recent commits + new adrs/notes not in the change log). import ingest a session-export json array of turns into the audit log (build on session history). conventions --root defaults to docs/. the audit dir is <root>/audit. the viewer template is resolved relative to this script (pack/templates or docs/ai-forward-pack/templates). git is optional — every git call degrades gracefully when git or a repo is absent. this tool never invents a prompt or a summary; required fields must be supplied (flags, --*-file, or --from-json -). now_iso parse_iso duration_fields _starts_path _read_starts _write_starts _prune_starts record_start consume_start audit_dir log_path read_log append_log _load_allocator next_id git git_context commits_between ensure_hub find_template project_name render _read_field _from_json cmd_start cmd_append cmd_change _fmt_row cmd_list _matches cmd_search cmd_get cmd_render cmd_git_context cmd_verify cmd_suggest cmd_import main"
 },
 {
 "cat": "scripts",
@@ -863,7 +863,16 @@ window.PACK_INDEX = {
 "summary": "coord-core.py - agent coordination, Phase 1 walking skeleton.",
 "path": "pack/scripts/coord-core.py",
 "kind": "script",
-"text": "coord-core.py coord-core.py - agent coordination, phase 1 walking skeleton. holds the record of intent and answers \"may this session touch this artifact?\" from it. append-only jsonl, one file per session; every piece of state is a fold over it. no daemon, no database, no dependency beyond the standard library (adr-0007). four controls here were observed failing on the un-fixed shape before they were trusted: log-a an append onto a file not ending in a newline fuses two records and loses both r4 a check that scanned nothing must not report \"free\" ctrl-port os.open without o_binary translates newlines on windows -- which also masked the log-a control, because a stray cr still terminates a line f8 a claim over the coordination record itself would lock the substrate design: docs/design/coord-core-phase1.md __init__ repo_root resolve_root _norm _literal_segments overlaps make_event _next_seq append_event read_events fold check _safe render append_decision read_decisions _git unique_commits staged_paths _identity _build_parser _reject_path hook_response cmd_hook cmd_precommit cmd_guard _worktree_key _slug worktree_inventory worktree_is_clean worktree_safety cmd_worktree cmd_session cmd_metrics cmd_install _print_settings_entry main"
+"text": "coord-core.py coord-core.py - agent coordination, phase 1 walking skeleton. holds the record of intent and answers \"may this session touch this artifact?\" from it. append-only jsonl, one file per session; every piece of state is a fold over it. no daemon, no database, no dependency beyond the standard library (adr-0007). four controls here were observed failing on the un-fixed shape before they were trusted: log-a an append onto a file not ending in a newline fuses two records and loses both r4 a check that scanned nothing must not report \"free\" ctrl-port os.open without o_binary translates newlines on windows -- which also masked the log-a control, because a stray cr still terminates a line f8 a claim over the coordination record itself would lock the substrate design: docs/design/coord-core-phase1.md __init__ repo_root resolve_root _norm _literal_segments overlaps make_event _next_seq append_event read_events fold check _safe render append_decision read_decisions _git unique_commits staged_paths _identity _build_parser entry_fingerprint conservation_lost merge_register _read_jsonl cmd_merge_register load_registry classify regen_command record_regen_owed regen_owed clear_regen_owed _reject_path _relativise parse_hook_request detect_harness hook_decision_of hook_response_is_valid hook_response _not_checked cmd_hook cmd_precommit cmd_guard _worktree_key _slug worktree_inventory worktree_is_clean worktree_safety cmd_worktree cmd_session cmd_metrics cmd_install _install_merge_driver _write_conflict read cmd_merge_derived cmd_regen driver_status cmd_doctor cmd_plugin_emit _print_settings_entry main"
+},
+{
+"cat": "scripts",
+"id": "coord_ids.py",
+"title": "coord_ids.py",
+"summary": "coord_ids.py - collision-proof identifiers, in ONE place.",
+"path": "pack/scripts/coord_ids.py",
+"kind": "script",
+"text": "coord_ids.py coord_ids.py - collision-proof identifiers, in one place. imported by both `coord-core.py` and `audit-log.py`. it exists as its own module rather than as a copy in each because six lines duplicated across two scripts is one-a -- a shared rule with no gate accretes private copies, and the copies only diverge later, when one is edited. the underscore in the filename is deliberate: a hyphen is not importable, which is why `bounded_process.py` is named the way it is. why not `uuid.uuid7()`: absent on the installed 3.12 (it landed in 3.14) and present on the \"3.x\"-pinned ci runner. a stdlib call that exists on the runner and not on the developer's machine is pack-j by construction. established by spike s1, not assumed. why not scanning: the prevention built for kg-b scans every remote branch before allocating. it works, it takes about a second over 22 branches, and it collided again within the hour -- two sessions that mint before either has pushed are invisible to each other. scanning is rejected as a design, not as an implementation. design: docs/design/coord-federation-phase3.md · adr-0008. new_id resolve_prefix"
 },
 {
 "cat": "scripts",
@@ -1416,6 +1425,15 @@ window.PACK_INDEX = {
 },
 {
 "cat": "graph",
+"id": "note-20260823-merge-driver-resolves-not-regenerates",
+"title": "A merge driver cannot regenerate a derived artifact — git runs drivers before the sources are merged",
+"summary": "The Phase-3 design had the .gitattributes merge driver regenerating a derived artifact during the merge. Git runs merge drivers per file in arbitrary order, so the artifact's own sources may still be unmerged when its driver runs. The…",
+"path": "docs/notes/note-20260823-merge-driver-resolves-not-regenerates.md",
+"kind": "decision-note",
+"text": "a merge driver cannot regenerate a derived artifact — git runs drivers before the sources are merged the phase-3 design had the .gitattributes merge driver regenerating a derived artifact during the merge. git runs merge drivers per file in arbitrary order, so the artifact's own sources may still be unmerged when its driver runs. the corrected contract is resolve-then-regenerate: the driver takes ours and records a debt, and `coord regen` clears it once the tree is whole. decision-note coordination merge-driver git design-amendment relates-to design-coord-federation-phase3 relates-to adr-0009-artifact-class-and-derived-merge"
+},
+{
+"cat": "graph",
 "id": "note-autopilot-open-questions-decisions",
 "title": "Decisions on PACK-O open questions (logging, class granularity, autopilot caps)",
 "summary": "The user's answers to the three open questions from the task-discipline / front-matter proposal (revision 3), which gate the next change: making PACK-O controllable.",
@@ -1449,6 +1467,15 @@ window.PACK_INDEX = {
 "path": "docs/design/coord-enforcement-phase2.md",
 "kind": "design",
 "text": "design — coord enforcement, phase 2 (pretooluse hook · pre-commit floor · work-preservation guard) phase 2 makes the phase-1 lease actually hold: a pretooluse hook that refuses an unleased edit, a pre-commit floor no settings key can switch off, and a guard that refuses to move head over work reachable from exactly one ref. splits the store in two — intent stays folded, enforcement decisions never are — because phase 1's measurement put the fold at its compaction trigger at 10k events. coordination enforcement pretooluse pre-commit reachability work-loss ctrl-g stdlib implements architecture-agent-coordination implements adr-0010-enforcement-topology refines design-coord-core-phase1 relates-to defect-classes"
+},
+{
+"cat": "graph",
+"id": "design-coord-federation-phase3",
+"title": "Design — coord Phase 3 (collision-proof allocator · artifact-class registry & derived merge driver · harness adapters)",
+"summary": "Phase 3 closes the two structural failure modes — allocation collision and derived-artifact conflict — and turns the harness adapter from an assumption into a contract. Six spikes ran; one closed the F1 condition open since the…",
+"path": "docs/design/coord-federation-phase3.md",
+"kind": "design",
+"text": "design — coord phase 3 (collision-proof allocator · artifact-class registry & derived merge driver · harness adapters) phase 3 closes the two structural failure modes — allocation collision and derived-artifact conflict — and turns the harness adapter from an assumption into a contract. six spikes ran; one closed the f1 condition open since the architecture (copilot cli does invoke pretooluse, in the claude plugin format, and fails open on a 30 s timeout), and one corrected adr-0009's own framing of what an unregistered merge driver costs. coordination allocator kg-b merge-driver gitattributes copilot harness-adapter spikes implements architecture-agent-coordination implements adr-0008-non-coordinating-allocation implements adr-0009-artifact-class-and-derived-merge refines design-coord-enforcement-phase2 relates-to defect-classes"
 },
 {
 "cat": "graph",
@@ -2087,7 +2114,7 @@ window.PACK_INDEX = {
 "summary": "Repo-level privacy posture for the pack-evolution tooling: the CLI and doctor touch no personal data; project memory may incidentally record handles/names (no special-category data, mitigated by the scrub); the scrub is itself a privacy…",
 "path": "docs/security/privacy-review.md",
 "kind": "privacy-review",
-"text": "privacy review repo-level privacy posture for the pack-evolution tooling: the cli and doctor touch no personal data; project memory may incidentally record handles/names (no special-category data, mitigated by the scrub); the scrub is itself a privacy control; docs explorer navigation state remains local. the reviewed model-orchestration experiment was reverted before an executable provider-routing boundary was added. privacy linddun data-governance documents architecture documents forensic-review documents design-aiforward-cli documents design-coord-core-phase1 documents design-coord-enforcement-phase2 documents design-pack-doctor documents design-project-memory documents design-rai-and-scrub documents design-docs-explorer-grounding-spatial-navigation"
+"text": "privacy review repo-level privacy posture for the pack-evolution tooling: the cli and doctor touch no personal data; project memory may incidentally record handles/names (no special-category data, mitigated by the scrub); the scrub is itself a privacy control; docs explorer navigation state remains local. the reviewed model-orchestration experiment was reverted before an executable provider-routing boundary was added. privacy linddun data-governance documents architecture documents forensic-review documents design-aiforward-cli documents design-coord-core-phase1 documents design-coord-enforcement-phase2 documents design-coord-federation-phase3 documents design-pack-doctor documents design-project-memory documents design-rai-and-scrub documents design-docs-explorer-grounding-spatial-navigation"
 },
 {
 "cat": "graph",
@@ -2132,7 +2159,7 @@ window.PACK_INDEX = {
 "summary": "Repo-level security posture for the pack-evolution tooling. The scrub handles potentially sensitive file content, while the Docs Explorer crosses committed-Markdown, filesystem, browser-rendering, and optional dependency boundaries; the…",
 "path": "docs/security/threat-model.md",
 "kind": "threat-model",
-"text": "threat model repo-level security posture for the pack-evolution tooling. the scrub handles potentially sensitive file content, while the docs explorer crosses committed-markdown, filesystem, browser-rendering, and optional dependency boundaries; the remaining tools are local and read-mostly. security threat-model documents architecture documents design-aiforward-cli documents design-coord-core-phase1 documents design-coord-enforcement-phase2 documents design-pack-doctor documents design-project-memory documents design-rai-and-scrub documents design-docs-explorer-grounding-spatial-navigation"
+"text": "threat model repo-level security posture for the pack-evolution tooling. the scrub handles potentially sensitive file content, while the docs explorer crosses committed-markdown, filesystem, browser-rendering, and optional dependency boundaries; the remaining tools are local and read-mostly. security threat-model documents architecture documents design-aiforward-cli documents design-coord-core-phase1 documents design-coord-enforcement-phase2 documents design-coord-federation-phase3 documents design-pack-doctor documents design-project-memory documents design-rai-and-scrub documents design-docs-explorer-grounding-spatial-navigation"
 },
 {
 "cat": "guides",

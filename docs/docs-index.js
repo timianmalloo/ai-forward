@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-Forward",
-  "generated": "2026-08-23T15:04:27Z",
+  "generated": "2026-08-24T12:57:52Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -931,6 +931,37 @@ window.DOCS_INDEX = {
       "sourceSha256": "e2331adf193cdda5220425ea89ae8c999cdcc6b80f86c5d2fa5df8a77d2fc869"
     },
     {
+      "id": "note-20260823-merge-driver-resolves-not-regenerates",
+      "path": "docs/notes/note-20260823-merge-driver-resolves-not-regenerates.md",
+      "title": "A merge driver cannot regenerate a derived artifact — git runs drivers before the sources are merged",
+      "type": "decision-note",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-02-23",
+      "reviewSuggested": [],
+      "summary": "The Phase-3 design had the .gitattributes merge driver regenerating a derived artifact during the merge. Git runs merge drivers per file in arbitrary order, so the artifact's own sources may still be unmerged when its driver runs. The corrected contract is resolve-then-regenerate: the driver takes ours and records a debt, and `coord regen` clears it once the tree is whole.",
+      "tags": [
+        "decision-note",
+        "coordination",
+        "merge-driver",
+        "git",
+        "design-amendment"
+      ],
+      "links": [
+        {
+          "to": "design-coord-federation-phase3",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0009-artifact-class-and-derived-merge",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "c4fbb0fa3f8a9b08a474678af22be024a1aaa2deed40ad25829eb893036d799e"
+    },
+    {
       "id": "note-autopilot-open-questions-decisions",
       "path": "docs/notes/autopilot-open-questions-decisions.md",
       "title": "Decisions on PACK-O open questions (logging, class granularity, autopilot caps)",
@@ -1067,6 +1098,52 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "223442bf4c429ba48ed47b7c7f67a0a3dd9f4d8ed7ac9b2c36fc078df4a4c604"
+    },
+    {
+      "id": "design-coord-federation-phase3",
+      "path": "docs/design/coord-federation-phase3.md",
+      "title": "Design — coord Phase 3 (collision-proof allocator · artifact-class registry & derived merge driver · harness adapters)",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-02-23",
+      "reviewSuggested": [],
+      "summary": "Phase 3 closes the two structural failure modes — allocation collision and derived-artifact conflict — and turns the harness adapter from an assumption into a contract. Six spikes ran; one closed the F1 condition open since the architecture (Copilot CLI does invoke PreToolUse, in the Claude plugin format, and fails OPEN on a 30 s timeout), and one corrected ADR-0009's own framing of what an unregistered merge driver costs.",
+      "tags": [
+        "coordination",
+        "allocator",
+        "kg-b",
+        "merge-driver",
+        "gitattributes",
+        "copilot",
+        "harness-adapter",
+        "spikes"
+      ],
+      "links": [
+        {
+          "to": "architecture-agent-coordination",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0008-non-coordinating-allocation",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0009-artifact-class-and-derived-merge",
+          "rel": "implements"
+        },
+        {
+          "to": "design-coord-enforcement-phase2",
+          "rel": "refines"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "cfd6d521e9f92b95d7516f198f7c2110f6c2ee607a8f80e41588337af77c60ba"
     },
     {
       "id": "design-docs-explorer-grounding-spatial-navigation",
@@ -1373,7 +1450,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "25c872f3fb474ecb8b7650b0197486fd6a70f620e9df2aef83f6a686f265cec3"
+      "sourceSha256": "ba45606d62b24499d0367d3507a3923b746e9850d30f494d01627df331019b0b"
     },
     {
       "id": "docs-index",
@@ -1423,7 +1500,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "1d3a3d212d0338e9500f1df53f5f6b1b4f2dbf99c27754fa17eddb9cfe5cfa1c"
+      "sourceSha256": "56a385c26e3b2855c15c03ebd4b9d25422cfb98bbe76389b306c9014b4a8e889"
     },
     {
       "id": "forensic-review",
@@ -3152,6 +3229,10 @@ window.DOCS_INDEX = {
           "rel": "documents"
         },
         {
+          "to": "design-coord-federation-phase3",
+          "rel": "documents"
+        },
+        {
           "to": "design-pack-doctor",
           "rel": "documents"
         },
@@ -3169,7 +3250,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "07a53576dc1e7d9a2a94a18354777885feabcf414c71edf7bfa93835376372f0"
+      "sourceSha256": "08f8b520fda36c55c20b234d7b861f3e94ab6a52ed7857651ffda7533f6e8e5f"
     },
     {
       "id": "proof-docs-explorer-redesign",
@@ -3398,6 +3479,10 @@ window.DOCS_INDEX = {
           "rel": "documents"
         },
         {
+          "to": "design-coord-federation-phase3",
+          "rel": "documents"
+        },
+        {
           "to": "design-pack-doctor",
           "rel": "documents"
         },
@@ -3415,7 +3500,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "5f9763bd812cd9ce960f788835c92cf73dc06fb0d0cbce93243618c9cc16dd42"
+      "sourceSha256": "0f3bc2af375b8bea18afdb1cb7f2451d03aee789f20b01aa0adc23e37b338d2e"
     }
   ],
   "surfaces": [
@@ -3516,6 +3601,13 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     },
     {
+      "id": "surface-dreams-drm-0006-index",
+      "path": "docs/dreams/drm-0006/index.html",
+      "title": "Dream Review",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact."
+    },
+    {
       "id": "surface-mockups-dream-review",
       "path": "docs/mockups/dream-review.html",
       "title": "Dream Review — mockup",
@@ -3547,5 +3639,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "a8b25084c99d79c6e7bd62f07e08f5da898e993d5c62e78b3c31853190817cca"
+  "graphSha256": "0e9f11cd7d2e517d5ec48642c637573a0ff7df1611c3bac0e55d4aa972e3c414"
 };

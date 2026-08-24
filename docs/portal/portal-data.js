@@ -5,7 +5,7 @@ window.PORTAL_DATA = {
       "personas": 23,
       "knowledge": 38,
       "templates": 26,
-      "scripts": 16
+      "scripts": 17
     },
     "whatIs": "AI-Forward is a committed Markdown methodology pack that installs into a repo so Claude Code and GitHub Copilot direct work with a shared reasoning spine, adversarial persona review, and a library of workflow skills - nothing runs as a service; everything is versioned files and stdlib scripts.",
     "skillCount": 22,
@@ -702,6 +702,11 @@ window.PORTAL_DATA = {
             "path": "../../docs/design/coord-enforcement-phase2.md"
           },
           {
+            "title": "Design — coord Phase 3 (collision-proof allocator · artifact-class registry & derived merge driver · harness adapters)",
+            "summary": "Phase 3 closes the two structural failure modes — allocation collision and derived-artifact conflict — and turns the harness adapter from an assumption into a contract. Six spikes ran; one closed the F1 condition open since the architecture (Copilot CLI does...",
+            "path": "../../docs/design/coord-federation-phase3.md"
+          },
+          {
             "title": "Docs Explorer — Grounding and Spatial Navigation Design",
             "summary": "Detailed design for making the repository knowledge graph a deterministic grounding interface for coding agents and a clearer human exploration surface. It separates selected-node neighborhood context from mind-map rooting, adds provenance-bounded context...",
             "path": "../../docs/design/docs-explorer-grounding-and-spatial-navigation.md"
@@ -883,6 +888,12 @@ window.PORTAL_DATA = {
         "type": "design",
         "title": "Design — coord enforcement, Phase 2 (PreToolUse hook · pre-commit floor · work-preservation guard)",
         "summary": "Phase 2 makes the Phase-1 lease actually hold: a PreToolUse hook that refuses an unleased edit, a pre-commit floor no settings key can switch off, and a guard..."
+      },
+      {
+        "id": "design-coord-federation-phase3",
+        "type": "design",
+        "title": "Design — coord Phase 3 (collision-proof allocator · artifact-class registry & derived merge driver · harness adapters)",
+        "summary": "Phase 3 closes the two structural failure modes — allocation collision and derived-artifact conflict — and turns the harness adapter from an assumption into a..."
       },
       {
         "id": "design-docs-explorer-grounding-spatial-navigation",
@@ -1281,6 +1292,12 @@ window.PORTAL_DATA = {
         "summary": "Four sub-ADR decisions taken while clearing the revision-42 backlog and adding worktree-per-session: withdrawing FR-050 rather than acting on it, closing..."
       },
       {
+        "id": "note-20260823-merge-driver-resolves-not-regenerates",
+        "type": "decision-note",
+        "title": "A merge driver cannot regenerate a derived artifact — git runs drivers before the sources are merged",
+        "summary": "The Phase-3 design had the .gitattributes merge driver regenerating a derived artifact during the merge. Git runs merge drivers per file in arbitrary order, so..."
+      },
+      {
         "id": "note-autopilot-open-questions-decisions",
         "type": "decision-note",
         "title": "Decisions on PACK-O open questions (logging, class granularity, autopilot caps)",
@@ -1673,6 +1690,31 @@ window.PORTAL_DATA = {
       {
         "from": "design-coord-enforcement-phase2",
         "to": "design-coord-core-phase1",
+        "rel": "refines"
+      },
+      {
+        "from": "design-coord-federation-phase3",
+        "to": "adr-0008-non-coordinating-allocation",
+        "rel": "implements"
+      },
+      {
+        "from": "design-coord-federation-phase3",
+        "to": "adr-0009-artifact-class-and-derived-merge",
+        "rel": "implements"
+      },
+      {
+        "from": "design-coord-federation-phase3",
+        "to": "architecture-agent-coordination",
+        "rel": "implements"
+      },
+      {
+        "from": "design-coord-federation-phase3",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "design-coord-federation-phase3",
+        "to": "design-coord-enforcement-phase2",
         "rel": "refines"
       },
       {
@@ -2176,6 +2218,16 @@ window.PORTAL_DATA = {
         "rel": "relates-to"
       },
       {
+        "from": "note-20260823-merge-driver-resolves-not-regenerates",
+        "to": "adr-0009-artifact-class-and-derived-merge",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260823-merge-driver-resolves-not-regenerates",
+        "to": "design-coord-federation-phase3",
+        "rel": "relates-to"
+      },
+      {
         "from": "note-autopilot-open-questions-decisions",
         "to": "defect-classes",
         "rel": "relates-to"
@@ -2218,6 +2270,11 @@ window.PORTAL_DATA = {
       {
         "from": "privacy-review",
         "to": "design-coord-enforcement-phase2",
+        "rel": "documents"
+      },
+      {
+        "from": "privacy-review",
+        "to": "design-coord-federation-phase3",
         "rel": "documents"
       },
       {
@@ -2393,6 +2450,11 @@ window.PORTAL_DATA = {
       {
         "from": "threat-model",
         "to": "design-coord-enforcement-phase2",
+        "rel": "documents"
+      },
+      {
+        "from": "threat-model",
+        "to": "design-coord-federation-phase3",
         "rel": "documents"
       },
       {
