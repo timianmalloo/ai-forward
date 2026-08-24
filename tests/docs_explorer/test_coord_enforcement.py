@@ -176,7 +176,10 @@ class HookTests(GitCase):
                               stdin='{"tool_name":"Bash","tool_input":{"command":"ls"}}')
         out = json.loads(result.stdout)
         self.assertEqual(out["hookSpecificOutput"]["permissionDecision"], "allow")
-        self.assertIn("no file_path", out["hookSpecificOutput"]["permissionDecisionReason"])
+        # Phase 3 widened this: the reason now covers reads as well as path-less calls,
+        # because the parser normalises the envelope and the hook applies the write policy.
+        self.assertIn("no write to a coordinated path",
+                      out["hookSpecificOutput"]["permissionDecisionReason"])
 
     def test_P8_hook_asks_on_malformed_payload_and_never_raises(self):
         """G1. A hook that crashes on a bad payload blocks every edit in the session."""

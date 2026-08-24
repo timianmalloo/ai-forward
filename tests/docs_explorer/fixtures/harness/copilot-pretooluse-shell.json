@@ -1,0 +1,15 @@
+{
+  "hookInvocationId": "INVOCATION-REDACTED",
+  "hookType": "preToolUse",
+  "input": {
+    "sessionId": "SESSION-REDACTED",
+    "cwd": "C:\\Projects\\example-repo",
+    "toolCalls": [
+      {
+        "id": "toolu_C",
+        "name": "powershell",
+        "args": "{\"command\": \"git log --oneline -5\"}"
+      }
+    ]
+  }
+}

@@ -202,7 +202,44 @@ def append_log(root, which, entry):
         f.write(json.dumps(entry, ensure_ascii=False) + "\n")
 
 
-def next_id(entries, prefix):
+_MISSING = object()     # distinguishes "not supplied" from an explicit allocator=None
+
+
+def _load_allocator():
+    """The collision-proof allocator, if this install has it. None if it does not.
+
+    A GRACEFUL fallback, not an optional feature: audit-log.py is pack-managed and ships to
+    repositories whose installed pack may predate coord_ids.py. Returning None there keeps
+    the legacy sequence working rather than crashing somebody's audit log.
+    """
+    if os.environ.get("COORD_LEGACY_IDS"):
+        return None                       # the rollback half of expand-migrate-contract
+    here = os.path.dirname(os.path.abspath(__file__))
+    if here not in sys.path:
+        sys.path.insert(0, here)
+    try:
+        from coord_ids import new_id
+    except ImportError:
+        return None
+    return new_id
+
+
+def next_id(entries, prefix, allocator=_MISSING):
+    """Mint the next identifier. EXPAND step of expand-migrate-contract (ADR-0008).
+
+    This function was literally the KG-B shape: max(existing) + 1 over the LOCAL file only.
+    Two branches minting before either has pushed cannot see each other, so the collision is
+    structural -- nine recorded occurrences, twice reaching main, once destroying an entry
+    when the conflict was resolved by deduping on the id.
+
+    The sequential path is RETAINED, not deleted: every existing al-NNNN keeps its value,
+    there is no backfill (so nothing is guessed), and COORD_LEGACY_IDS=1 restores the old
+    scheme entirely. Removing it is the CONTRACT step and is a later decision.
+    """
+    if allocator is _MISSING:
+        allocator = _load_allocator()
+    if allocator is not None:
+        return allocator(prefix)
     n = 0
     for e in entries:
         m = re.match(prefix + r"-(\d+)$", str(e.get("id", "")))

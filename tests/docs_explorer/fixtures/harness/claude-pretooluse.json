@@ -1,0 +1,7 @@
+{
+  "session_id": "SESSION-REDACTED",
+  "tool_name": "Edit",
+  "tool_input": {
+    "file_path": "src/Ingest/Reader.cs"
+  }
+}

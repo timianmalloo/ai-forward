@@ -1,0 +1,20 @@
+{
+  "hookInvocationId": "INVOCATION-REDACTED",
+  "hookType": "preToolUse",
+  "input": {
+    "sessionId": "SESSION-REDACTED",
+    "cwd": "C:\\Projects\\example-repo",
+    "toolCalls": [
+      {
+        "id": "toolu_A",
+        "name": "view",
+        "args": "{\"path\": \"C:\\\\Projects\\\\example-repo\\\\README.md\"}"
+      },
+      {
+        "id": "toolu_B",
+        "name": "edit",
+        "args": "{\"path\": \"C:\\\\Projects\\\\example-repo\\\\src\\\\Ingest\\\\Reader.cs\", \"old_str\": \"a\", \"new_str\": \"b\"}"
+      }
+    ]
+  }
+}
