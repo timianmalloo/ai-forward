@@ -837,14 +837,14 @@ HARNESS_STATUS = {
                "honoured (spike S5, five cases incl. both fail-safe paths).",
     },
     "copilot": {
-        # The architecture's condition 2, kept open rather than quietly assumed.
-        "edit_boundary": "advisory",
-        "why": "Copilot invokes PreToolUse (55,541 recorded invocations) and consumes the "
-               "same plugin format, but whether it honours a deny response is NOT "
-               "established -- hook.end records only success, never the response, and the "
-               "only installed plugin is observational. It also fails OPEN on a 30s "
-               "timeout. Enforced at the commit boundary until a live session proves "
-               "otherwise.",
+        # The architecture's condition 2, CLOSED by a live session on 2026-08-24 rather
+        # than assumed either way.
+        "edit_boundary": "enforcing",
+        "why": "A live Copilot CLI 1.0.80 session honoured a deny: a read of an unleased "
+               "file succeeded, a write to a leased one was refused with our reason "
+               "rendered verbatim into the transcript, and the file was unmodified. "
+               "RESIDUAL, unchanged: Copilot fails OPEN on a 30s hook timeout, so a hung "
+               "hook allows. Our measured check is 63ms p95, and the commit floor backs it.",
     },
 }
 
@@ -1680,16 +1680,39 @@ def cmd_plugin_emit(out_dir):
         "license": "MIT",
         "keywords": ["agent-coordination", "leases", "pretooluse"],
     }
+
+    # THE COMMAND SHAPE IS LOAD-BEARING, and it was got wrong first time.
+    # A live Copilot run denied EVERY tool call with "(hook errored)" and the hook script
+    # never executed at all -- no output, no side effect, nothing. The bundle then emitted
+    # `"C:\...\python.exe" "C:/...coord-core.py" hook`: a QUOTED EXECUTABLE.
+    # The one plugin known to work on this machine (wt-agent-hooks, 55,541 invocations)
+    # quotes its SCRIPT but never its interpreter:
+    #     powershell -NoProfile ... -File "${CLAUDE_PLUGIN_ROOT}/hooks/send-event.ps1" ...
+    # So: a bare interpreter resolved from PATH, a quoted script path, and the script
+    # shipped INSIDE the bundle and addressed via ${CLAUDE_PLUGIN_ROOT} -- which also
+    # means the bundle is relocatable rather than pinned to an absolute path.
+    launcher = ("#!/usr/bin/env python3\n"
+                '"""Launcher for the coord PreToolUse hook. Emitted by `coord plugin`.\n\n'
+                "Kept minimal on purpose: the harness runs THIS, and it delegates. It exists\n"
+                "because a hook command must name a bare interpreter and a quoted script\n"
+                "inside the bundle -- a quoted absolute interpreter path does not execute.\n"
+                '"""\n'
+                "import runpy, sys\n"
+                'COORD = r"{}"\n'
+                'sys.argv = [COORD, "hook"]\n'
+                'runpy.run_path(COORD, run_name="__main__")\n').format(me)
+
     hooks = {"hooks": {"PreToolUse": [{
         "matcher": ".*",
         "hooks": [{"type": "command",
-                   "command": '"{}" "{}" hook'.format(sys.executable, me),
+                   "command": 'python "${CLAUDE_PLUGIN_ROOT}/hooks/hook.py"',
                    "timeout": 10}]}]}}
 
     (out / ".claude-plugin").mkdir(parents=True, exist_ok=True)
     (out / "hooks").mkdir(parents=True, exist_ok=True)
     manifest_path.write_text(json.dumps(manifest, indent=2) + "\n",
                              encoding="utf-8", newline="\n")
+    (out / "hooks" / "hook.py").write_text(launcher, encoding="utf-8", newline="\n")
     (out / "hooks" / "hooks.json").write_text(json.dumps(hooks, indent=2) + "\n",
                                               encoding="utf-8", newline="\n")
 

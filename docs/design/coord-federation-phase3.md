@@ -269,7 +269,30 @@ coord plugin --emit <dir>                  # write the .claude-plugin bundle bot
 
 A **fixture-driven suite any harness adapter must pass**: feed the adapter each harness's recorded `PreToolUse` payload, assert the response matches that harness's documented decision envelope, and assert the fail-safe path. It runs today against the **Claude** payload (executed, S5) and against the **recorded Copilot invocation shape** (S14).
 
-It **cannot** assert that Copilot *honours* a deny — that needs a live Copilot session denying a real edit, which is not run here. The harness is written so that closing H13 is **running one test**, not writing one. Until it passes: **Copilot is advisory at the edit boundary and enforced at commit**, and `coord doctor` says so.
+It **cannot** assert that Copilot *honours* a deny — that needs a live Copilot session denying a real edit. The harness is written so that closing H13 is **running one test**, not writing one.
+
+> **H13 CLOSED — 2026-08-24, by a live Copilot CLI 1.0.80 session.**
+> A read of an unleased file **succeeded**; a write to a leased one was **refused**, with the
+> four-line reason rendered verbatim into Copilot's own transcript ("*held by opus - WI-142 -
+> expires in 277s*"); the file was **unmodified**; and Copilot **did not work around it** — it
+> reported the holder, the work item and the remedy and stopped. Both harnesses are now
+> `enforcing` at the edit boundary.
+>
+> **It took two runs, and the first one is the finding.** The first bundle emitted
+> `"C:\…\python.exe" "C:/…coord-core.py" hook` — a **quoted executable**. Copilot denied
+> *every* tool call with `(hook errored)`, and a probe proved the hook script **never
+> executed at all**. Comparing against the one plugin known to work on this machine
+> (`wt-agent-hooks`, 55,541 invocations) showed it quotes its *script* and never its
+> *interpreter*. The bundle now emits `python "${CLAUDE_PLUGIN_ROOT}/hooks/hook.py"` with the
+> launcher shipped inside it — bare interpreter, quoted script, relocatable.
+>
+> Two consequences worth keeping:
+> 1. **Copilot fails CLOSED on a hook error and OPEN on a hook timeout.** Both were observed.
+>    A broken hook denies everything; a hung one allows everything. The timeout residual
+>    (`H12`) is unchanged and is asserted by a test so it cannot vanish with the good news.
+> 2. **A hook that "denies" is not evidence it read your decision.** The first run looked like
+>    enforcement and was a malfunction. The oracle that separated them was *discrimination* —
+>    a read allowed and a write refused — not a refusal alone.
 
 ## UI design
 

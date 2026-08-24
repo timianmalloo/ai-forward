@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-08-24T13:00:15Z",
+  "generated": "2026-08-24T13:22:30Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1880,6 +1880,26 @@ window.AUDIT_DATA = {
       ],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-01M0SYZMNKF3N8MNGYDCVDJ0HE",
+      "shortname": "live-copilot-run-closes-h13",
+      "datetime": "2026-08-24T13:22:30Z",
+      "session": "6c74f4f4",
+      "prompt": "commit and psh then the live copilot run",
+      "summary": "H13 CLOSED by a live GitHub Copilot CLI 1.0.80 session. The architecture's condition 2 has been open since /define-architecture; it is now settled by execution rather than by reading.\n\nRESULT. With the emitted plugin loaded via copilot --plugin-dir, in a throwaway repo where session `opus` held a lease on src/Ingest/**, Copilot was asked to read README.md and then edit the leased file. The read SUCCEEDED and returned the contents. The write was REFUSED, with our four-line reason rendered verbatim into Copilot's own transcript -- \"held by opus - WI-142 - expires in 277s ... remedy wait, claim a disjoint subset, or record a block on WI-142\". The file was unmodified, and Copilot did not attempt a workaround: it named the holder, the work item and the remedy, and stopped.\n\nIT TOOK TWO RUNS, AND THE FIRST ONE IS THE FINDING. The first bundle emitted a QUOTED EXECUTABLE: \"C:\\...\\python.exe\" \"C:/...coord-core.py\" hook. Copilot denied EVERY tool call -- glob, view, powershell -- with \"(hook errored)\". That looked like enforcement and was not. A silent probe hook proved the script never executed at all; its log file was never created. Comparing against the one plugin known to work on this machine (wt-agent-hooks, 55,541 invocations) showed the shape: it quotes its SCRIPT and never its INTERPRETER. The bundle now emits python \"${CLAUDE_PLUGIN_ROOT}/hooks/hook.py\" with the launcher shipped inside it -- bare interpreter, quoted script, and relocatable rather than pinned to an absolute path.\n\nTHE SHARPEST LESSON. A hook that denies is not evidence it read your decision. The failed run blocked every write and left the file untouched -- indistinguishable from working enforcement if a refusal is all you check. The oracle that separated malfunction from enforcement was DISCRIMINATION: a read allowed AND a write refused. Any harness is now marked enforcing only on evidence of discrimination, asserted by a test that refuses the status to any harness whose stated reason does not cite an executed session.\n\nALSO ESTABLISHED. Copilot fails CLOSED on a hook error and OPEN on a hook timeout -- two opposite behaviours for two kinds of failure, both observed. A broken hook denies everything; a hung one allows everything. The timeout residual (H12) is unchanged: 63ms p95 measured against a 30s budget, with the commit floor behind it, and a test keeps the residual stated so it cannot vanish along with the good news.\n\nRecorded as the third instance of PACK-Q -- this one in the INVOCATION rather than the payload. Both live runs are the red and the green. Suite 320 green.\n\nCost: three billed Copilot sessions, ~51 AI credits total, all in throwaway repositories. The user's ~/.copilot configuration was never modified; --plugin-dir loads a bundle for one session only.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "pack/scripts/coord-core.py",
+        "tests/docs_explorer/test_harness_conformance.py",
+        "docs/design/coord-federation-phase3.md",
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [
@@ -2552,6 +2572,29 @@ window.AUDIT_DATA = {
         "commits": []
       },
       "audit_ref": "al-01M0SXP5CTNHVMSB94DDFNR8NV"
+    },
+    {
+      "id": "cl-01M0SYZMSJVYYVXHA1NMF5WP0W",
+      "datetime": "2026-08-24T13:22:30Z",
+      "session": "6c74f4f4",
+      "kind": "design",
+      "skill": "implement",
+      "title": "H13 closed by execution: Copilot honours a deny, and a hook that denies everything is not enforcement",
+      "prompt": null,
+      "summary": "H13 CLOSED by a live GitHub Copilot CLI 1.0.80 session. The architecture's condition 2 has been open since /define-architecture; it is now settled by execution rather than by reading.\n\nRESULT. With the emitted plugin loaded via copilot --plugin-dir, in a throwaway repo where session `opus` held a lease on src/Ingest/**, Copilot was asked to read README.md and then edit the leased file. The read SUCCEEDED and returned the contents. The write was REFUSED, with our four-line reason rendered verbatim into Copilot's own transcript -- \"held by opus - WI-142 - expires in 277s ... remedy wait, claim a disjoint subset, or record a block on WI-142\". The file was unmodified, and Copilot did not attempt a workaround: it named the holder, the work item and the remedy, and stopped.\n\nIT TOOK TWO RUNS, AND THE FIRST ONE IS THE FINDING. The first bundle emitted a QUOTED EXECUTABLE: \"C:\\...\\python.exe\" \"C:/...coord-core.py\" hook. Copilot denied EVERY tool call -- glob, view, powershell -- with \"(hook errored)\". That looked like enforcement and was not. A silent probe hook proved the script never executed at all; its log file was never created. Comparing against the one plugin known to work on this machine (wt-agent-hooks, 55,541 invocations) showed the shape: it quotes its SCRIPT and never its INTERPRETER. The bundle now emits python \"${CLAUDE_PLUGIN_ROOT}/hooks/hook.py\" with the launcher shipped inside it -- bare interpreter, quoted script, and relocatable rather than pinned to an absolute path.\n\nTHE SHARPEST LESSON. A hook that denies is not evidence it read your decision. The failed run blocked every write and left the file untouched -- indistinguishable from working enforcement if a refusal is all you check. The oracle that separated malfunction from enforcement was DISCRIMINATION: a read allowed AND a write refused. Any harness is now marked enforcing only on evidence of discrimination, asserted by a test that refuses the status to any harness whose stated reason does not cite an executed session.\n\nALSO ESTABLISHED. Copilot fails CLOSED on a hook error and OPEN on a hook timeout -- two opposite behaviours for two kinds of failure, both observed. A broken hook denies everything; a hung one allows everything. The timeout residual (H12) is unchanged: 63ms p95 measured against a 30s budget, with the commit floor behind it, and a test keeps the residual stated so it cannot vanish along with the good news.\n\nRecorded as the third instance of PACK-Q -- this one in the INVOCATION rather than the payload. Both live runs are the red and the green. Suite 320 green.\n\nCost: three billed Copilot sessions, ~51 AI credits total, all in throwaway repositories. The user's ~/.copilot configuration was never modified; --plugin-dir loads a bundle for one session only.",
+      "rationale": null,
+      "artifacts": [
+        "pack/scripts/coord-core.py",
+        "docs/design/coord-federation-phase3.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "44e8fef585fd4c0b4b88619c31c79d4f6d612e86",
+        "after": "44e8fef585fd4c0b4b88619c31c79d4f6d612e86",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
     }
   ]
 };

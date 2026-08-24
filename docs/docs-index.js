@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-Forward",
-  "generated": "2026-08-24T12:57:52Z",
+  "generated": "2026-08-24T13:20:42Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1143,7 +1143,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "cfd6d521e9f92b95d7516f198f7c2110f6c2ee607a8f80e41588337af77c60ba"
+      "sourceSha256": "76ad748c0d2ff7d6cb0563822e36aee8aac21d5f9a4c3136733517ad20f51fb3"
     },
     {
       "id": "design-docs-explorer-grounding-spatial-navigation",
@@ -1450,7 +1450,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ba45606d62b24499d0367d3507a3923b746e9850d30f494d01627df331019b0b"
+      "sourceSha256": "98b675dab639f7e4cdd61a0efa48bc34a86e749fc902d825e36949031e5e5f5d"
     },
     {
       "id": "docs-index",
@@ -3639,5 +3639,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "0e9f11cd7d2e517d5ec48642c637573a0ff7df1611c3bac0e55d4aa972e3c414"
+  "graphSha256": "2978c44d03da28e2afa24759c4907484b08a1be547de2a974bb100c23a6ab544"
 };

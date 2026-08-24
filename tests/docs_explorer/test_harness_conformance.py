@@ -223,6 +223,46 @@ class PluginEmitTests(HarnessCase):
         self.assertEqual(entry["hooks"][0]["type"], "command")
         self.assertIn("command", entry["hooks"][0])
 
+    def test_Q15b_the_command_names_a_bare_interpreter_and_a_bundled_script(self):
+        """Proven RED by a live Copilot run, not by reading a schema.
+
+        The first bundle emitted `"C:\\...\\python.exe" "C:/...coord-core.py" hook` -- a
+        QUOTED EXECUTABLE. Copilot denied every tool call with "(hook errored)" and the hook
+        script never executed at all. The one plugin known to work on this machine quotes its
+        script and never its interpreter. So: bare interpreter, quoted ${CLAUDE_PLUGIN_ROOT}
+        script, script shipped inside the bundle.
+        """
+        out = self.repo / "bundle"
+        self.assertEqual(self.run_cli("plugin", "--emit", str(out)).returncode, 0)
+        command = json.loads((out / "hooks" / "hooks.json").read_text(encoding="utf-8")
+                             )["hooks"]["PreToolUse"][0]["hooks"][0]["command"]
+        self.assertFalse(command.startswith('"'),
+                         "the executable is quoted; Copilot cannot execute that: " + command)
+        self.assertIn("${CLAUDE_PLUGIN_ROOT}", command,
+                      "the bundle is pinned to an absolute path instead of relocatable")
+        self.assertTrue((out / "hooks" / "hook.py").is_file(),
+                        "the command names a bundled script that was not shipped")
+
+    def test_Q15c_the_bundled_launcher_actually_runs_and_answers(self):
+        """The launcher is what the harness executes. Run it the way the harness does."""
+        import time
+        out = self.repo / "bundle"
+        self.assertEqual(self.run_cli("plugin", "--emit", str(out)).returncode, 0)
+        self.m.append_event(self.root, self.m.make_event(
+            kind="claim", session="opus", agent="opus", wi="WI-1",
+            path="src/Ingest/**", ttl=300, at=time.time()))
+
+        env = dict(os.environ)
+        env["AGENT_SESSION"] = "copilot"; env["AGENT_NAME"] = "copilot"
+        env.pop("COORD_ROOT", None)
+        result = subprocess.run([sys.executable, str(out / "hooks" / "hook.py")],
+                                cwd=str(self.repo), env=env,
+                                input=json.dumps(fixture("claude-pretooluse.json")),
+                                capture_output=True, text=True, timeout=30)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertEqual(self.m.hook_decision_of(json.loads(result.stdout)), "deny",
+                         "the bundled launcher did not reach the real decision")
+
     def test_Q16_emit_does_not_install_or_edit_harness_config(self):
         """A1 / STRIDE B9. A layer that grants itself tool permissions is the elevation it
         exists to prevent. Same rule as `install`, which prints the settings entry rather
@@ -259,15 +299,28 @@ class PluginEmitTests(HarnessCase):
 
 
 class OpenConditionTests(unittest.TestCase):
-    def test_H13_is_recorded_as_open_not_quietly_assumed(self):
-        """The architecture's condition 2. `coord doctor` must SAY Copilot is advisory at
-        the edit boundary until a live session proves a deny is honoured -- the layer never
-        claims enforcement it has not established."""
+    def test_H13_status_is_backed_by_an_executed_session_not_an_assumption(self):
+        """The architecture's condition 2, now CLOSED by a live run (2026-08-24).
+
+        Copilot CLI 1.0.80 honoured a deny: a read of an unleased file succeeded, a write to
+        a leased one was refused with our four-line reason rendered verbatim into its
+        transcript, and the file was unmodified.
+
+        The rule this test really guards is that a harness is only marked `enforcing` when a
+        session was actually run -- every status must carry the evidence that earned it, so
+        nobody can promote a harness by editing a dict.
+        """
         module = load_module()
-        self.assertIn("copilot", module.HARNESS_STATUS)
-        self.assertEqual(module.HARNESS_STATUS["copilot"]["edit_boundary"], "advisory")
+        for name, status in module.HARNESS_STATUS.items():
+            self.assertIn(status["edit_boundary"], ("enforcing", "advisory"), name)
+            if status["edit_boundary"] == "enforcing":
+                self.assertRegex(
+                    status["why"].lower(), r"live|execut|spike|session",
+                    "{}: marked enforcing with no executed evidence cited".format(name))
         self.assertEqual(module.HARNESS_STATUS["claude"]["edit_boundary"], "enforcing")
-        self.assertIn("deny", module.HARNESS_STATUS["copilot"]["why"].lower())
+        self.assertEqual(module.HARNESS_STATUS["copilot"]["edit_boundary"], "enforcing")
+        self.assertIn("fails open", module.HARNESS_STATUS["copilot"]["why"].lower(),
+                      "the timeout residual must stay stated, not disappear with the fix")
 
 
 if __name__ == "__main__":
