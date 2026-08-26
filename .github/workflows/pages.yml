@@ -38,7 +38,33 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # FR-062. Publication was previously independent of the quality gate: `pages` and
+  # `pack-consistency` both trigger on push to main and neither depends on the other, so on
+  # 2026-08-26 commit c27f83d published to the public site (run 32987223694, success) while its
+  # consistency gate was RED (run 32987223699, failure). A green result from one workflow is
+  # evidence about that workflow, not about the tree (end-to-end-integrity E13).
+  #
+  # This gate runs the SAME check on the SAME commit that is about to be published, and `deploy`
+  # depends on it - so a tree with mismatched documented counts, a stale portal, a stale web
+  # index, or an unpinned action cannot reach the site.
+  #
+  # Deliberately an in-workflow job rather than an `on: workflow_run` trigger: workflow_run sets
+  # GITHUB_SHA to the default-branch head rather than the triggering commit, requiring explicit
+  # ref plumbing, and it discards the `paths:` filter above. `needs:` is race-free by
+  # construction - same run, same commit, no cross-workflow event to reason about.
+  gate:
+    name: Quality gate (publication is conditional on this)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.x"
+      - name: Counts, parity, derived-artifact drift, action pinning
+        run: python3 tools/check-consistency.py
+
   deploy:
+    needs: gate
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

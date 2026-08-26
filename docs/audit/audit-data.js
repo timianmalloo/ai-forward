@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-forward-fix-fr063-pin-actions",
-  "generated": "2026-08-26T21:03:18Z",
+  "project": "ai-forward-fix-fr062-gate-publication",
+  "generated": "2026-08-26T21:26:54Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2203,6 +2203,36 @@ window.AUDIT_DATA = {
         "sha": "d97dfe7dd29a348490ef7844d9470114443c22b6",
         "short": "d97dfe7dd",
         "branch": "fix/fr063-pin-actions",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M0ZZG1AX98PF148STV0R7G44",
+      "shortname": "implement-fr062-gate-publication",
+      "datetime": "2026-08-26T21:26:54Z",
+      "session": "275331bb-f120-4d45-b1e6-0e0f07061c3c",
+      "prompt": "do FR-062 now",
+      "summary": "FR-062 resolved. pages.yml gains a gate job running check-consistency.py on the commit about to publish; deploy declares needs: gate. Chose the in-workflow gate over on: workflow_run because workflow_run sets GITHUB_SHA to the default-branch head rather than the triggering commit (confirmed in GitHub's events reference) and discards the paths filter. RED OBSERVED END-TO-END ON REAL CI: throwaway branch with a deliberately broken count produced pages run 33015196508 with gate=failure, deploy=SKIPPED, and the latest deployment stayed on the previous main commit - nothing published. Safe because the github-pages environment admits only main. NOT DONE, deliberately: making pack-consistency a required status check - the protection API shows no required_status_checks at all, but enabling it with enforce_admins:true would block direct pushes to main and force a PR workflow; that is the owner's call, not mine. Side benefit: FR-066's missing oracle obtained - required_linear_history is enabled - so its confidence rises Flagged -> Verified.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        ".github/workflows/pages.yml",
+        "docs/backlog/forensic-review-rev48.md"
+      ],
+      "tags": [
+        "fr-062",
+        "release",
+        "ci"
+      ],
+      "outcome": "success",
+      "goal": "Make publication conditional on the quality gate so a red commit cannot publish",
+      "done_when": "A red commit cannot produce a successful pages deploy, proven red-first on real CI; all 9 gates pass; pushed with CI green",
+      "git": {
+        "sha": "5e696c57a3374d4c70113a81f511ac3153f3f0b4",
+        "short": "5e696c57a",
+        "branch": "fix/fr062-gate-publication",
         "pushed": null
       }
     }
