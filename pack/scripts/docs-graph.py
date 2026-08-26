@@ -1069,7 +1069,15 @@ def cmd_derive(args):
     project = project_identity(args.root, args.project)
     surfaces = discover_html_surfaces(args.root, entries)
     out = {"schemaVersion":"docs-index/v2", "project": project,
-           "generated": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+           # FR-068. No build timestamp. A wall-clock stamp made this file differ on every run,
+           # so docs-index.js could never be byte-stable and therefore could never sit inside a
+           # drift gate - which in turn blocked FR-060's fix (having sync regenerate the index
+           # BEFORE the portal and web index that read it, since every skill runs `derive` as
+           # its last action). The field was read by nothing: no consumer in docs/index.html,
+           # docs-explorer-core.js, docs/portal, build-docs-portal.py, or any test.
+           # This is the same call the sibling generator already made and documented for
+           # web/pack-index.js (PACK-I / the FR-048 timestamp class); docs-graph.py had simply
+           # never learned it. Git already records when the file changed, and far more reliably.
            "generator": args.generator, "rootId":project_root_id(entries),
            "artifactTypes":TYPES, "relationRegistry":REL_REGISTRY,
            "policyVersion":POLICY_VERSION, "policySha256":policy_hash(),

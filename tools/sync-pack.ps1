@@ -192,20 +192,25 @@ function Update-ManagedBlock([string]$file, [string]$blockFile) {
 Update-ManagedBlock (Join-Path $repo "CLAUDE.md")  (Join-Path $pack "adapters\managed-blocks\CLAUDE.block.md")
 Update-ManagedBlock (Join-Path $repo "AGENTS.md")  (Join-Path $pack "adapters\managed-blocks\AGENTS.block.md")
 
-# FR-060 (class). The ordering hazard is real: both generators below read docs/docs-index.js,
+# FR-060 (class, closed at source by FR-068). Both generators below read docs/docs-index.js,
 # which docs-graph.py derive produces - and every skill runs derive as its LAST action (V10),
-# so sync-then-derive leaves this pair one node behind on any run that adds an artifact.
+# so sync-then-derive left this pair one node behind on any run that added an artifact, with
+# nothing local saying so.
 #
-# Running derive HERE was tried and REVERTED: docs-index.js carries a wall-clock "generated"
-# field, so pulling it into this script pulls it into gate 2's diff scope, where it can never
-# be byte-stable - the same timestamp class that build-web-index.py documents removing from
-# its own payload (PACK-I / FR-048). It made CI permanently red, which is strictly worse than
-# the hazard it fixed. Caught by running the gate, not by reading the change.
-#
-# The fix that shipped is DETECTION instead: check-consistency.py now drift-gates BOTH
-# artifacts (previously only the portal), so a stale pair fails gate 1 and names the command
-# to fix it. Removing the ordering trap at source needs docs-index.js to be stable first -
-# tracked as FR-068.
+# Deriving FIRST removes the trap at its source. This was attempted in Phase 2 and had to be
+# reverted: docs-index.js carried a wall-clock "generated" field, so pulling it into this
+# script pulled it into gate 2's diff scope where it could never be byte-stable, making CI
+# permanently red. FR-068 removed that field (the same call the sibling generator had already
+# made for web/pack-index.js), so the ordering fix is now safe and gate 2 stays green.
+# Detection remains too: check-consistency.py drift-gates BOTH dependents, so a hand-run that
+# skips sync still cannot ship a stale pair.
+$deriveGraph = Join-Path $repo "docs\ai-forward-pack\scripts\docs-graph.py"
+if (Test-Path $deriveGraph) {
+    $pyCmd0 = Get-Command python -ErrorAction SilentlyContinue
+    if (-not $pyCmd0) { $pyCmd0 = Get-Command python3 -ErrorAction SilentlyContinue }
+    if ($pyCmd0) { & $pyCmd0.Source $deriveGraph derive | ForEach-Object { Write-Host "  $_" } }
+    else { Write-Host "  docs/docs-index.js skipped (python not found)" -ForegroundColor Yellow }
+}
 
 # Regenerate the whole-pack navigable/searchable index that web/index.html renders (freshness contract).
 $buildWebIndex = Join-Path $repo "tools\build-web-index.py"

@@ -2,7 +2,6 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-Forward",
-  "generated": "2026-08-26T21:03:18Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -992,6 +991,37 @@ window.DOCS_INDEX = {
       "sourceSha256": "a03a4d07731e5e681d1662fb8a683c96ce491c39c711844cbf4d4e104095b6de"
     },
     {
+      "id": "note-required-status-checks",
+      "path": "docs/notes/required-status-checks.md",
+      "title": "Decision — do not make pack-consistency a required status check on main",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Decision not to enable required status checks on main, taken while closing FR-062. The control would have prevented the original incident outright, but with enforce_admins already true it also blocks direct pushes and forces a PR workflow on a solo-maintainer repo that pushes directly by design. FR-062 already closed the actual harm. Recorded as an accepted risk with explicit re-open triggers rather than left unstated.",
+      "tags": [
+        "decision",
+        "branch-protection",
+        "ci",
+        "release",
+        "accepted-risk"
+      ],
+      "links": [
+        {
+          "to": "forensic-review-rev48-backlog",
+          "rel": "relates-to"
+        },
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "0aafd71674a56549465f3ff88b7145f7c2dd9d16dafdbe7517046f411c5dc8f3"
+    },
+    {
       "id": "design-aiforward-cli",
       "path": "docs/design/aiforward-cli.md",
       "title": "Design — aiforward CLI (suggestion 1)",
@@ -1895,7 +1925,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d5526a32b662f37158f011bd3302e25c87da041eb7148ab028c15272d45e7451"
+      "sourceSha256": "fa511b4438103ed3d5736de0b04864199a4a470aae2d94c76a5b52c5f2493f63"
     },
     {
       "id": "lens-code-doc-join",
@@ -4010,7 +4040,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-forward-fix-fr063-pin-actions — Audit & Change Log",
+      "title": "ai-forward-fix-fr068-stable-index — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -4142,5 +4172,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "d7cfeac31ca6f397f5f885b9246b1fadccc32e6c2933be058256f20a0a6959ed"
+  "graphSha256": "87f39ea6ed983479c0292caa0a95e4a7af077f00fa51928db82c5e993e0019f2"
 };

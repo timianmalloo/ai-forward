@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 117
+"count": 118
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 261,
+"total": 262,
 "items": [
 {
 "cat": "knowledge",
@@ -1458,6 +1458,15 @@ window.PACK_INDEX = {
 "path": "docs/notes/autopilot-open-questions-decisions.md",
 "kind": "decision-note",
 "text": "decisions on pack-o open questions (logging, class granularity, autopilot caps) the user's answers to the three open questions from the task-discipline / front-matter proposal (revision 3), which gate the next change: making pack-o controllable. pack-o front-matter decisions autopilot relates-to defect-classes relates-to kb-agent-autopilot-controls"
+},
+{
+"cat": "graph",
+"id": "note-required-status-checks",
+"title": "Decision — do not make pack-consistency a required status check on main",
+"summary": "Decision not to enable required status checks on main, taken while closing FR-062. The control would have prevented the original incident outright, but with enforce_admins already true it also blocks direct pushes and forces a PR workflow…",
+"path": "docs/notes/required-status-checks.md",
+"kind": "decision-note",
+"text": "decision — do not make pack-consistency a required status check on main decision not to enable required status checks on main, taken while closing fr-062. the control would have prevented the original incident outright, but with enforce_admins already true it also blocks direct pushes and forces a pr workflow on a solo-maintainer repo that pushes directly by design. fr-062 already closed the actual harm. recorded as an accepted risk with explicit re-open triggers rather than left unstated. decision branch-protection ci release accepted-risk relates-to forensic-review-rev48-backlog relates-to architecture"
 },
 {
 "cat": "graph",

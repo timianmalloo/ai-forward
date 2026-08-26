@@ -1391,6 +1391,12 @@ window.PORTAL_DATA = {
         "summary": "The user's answers to the three open questions from the task-discipline / front-matter proposal (revision 3), which gate the next change: making PACK-O..."
       },
       {
+        "id": "note-required-status-checks",
+        "type": "decision-note",
+        "title": "Decision — do not make pack-consistency a required status check on main",
+        "summary": "Decision not to enable required status checks on main, taken while closing FR-062. The control would have prevented the original incident outright, but with..."
+      },
+      {
         "id": "plan-optimize-graph-live-01",
         "type": "doc",
         "title": "optimize-graph live run 01 — commit the rev-40 change set",
@@ -2465,6 +2471,16 @@ window.PORTAL_DATA = {
       {
         "from": "note-autopilot-open-questions-decisions",
         "to": "kb-agent-autopilot-controls",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-required-status-checks",
+        "to": "architecture",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-required-status-checks",
+        "to": "forensic-review-rev48-backlog",
         "rel": "relates-to"
       },
       {

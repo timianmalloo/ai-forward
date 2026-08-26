@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-forward-fix-fr062-gate-publication",
-  "generated": "2026-08-26T21:26:54Z",
+  "project": "ai-forward-fix-fr068-stable-index",
+  "generated": "2026-08-26T23:15:52Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2235,6 +2235,40 @@ window.AUDIT_DATA = {
         "branch": "fix/fr062-gate-publication",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M105QJ0GTXKRMDET1F2X4QFD",
+      "shortname": "implement-fr068-stable-index",
+      "datetime": "2026-08-26T23:15:51Z",
+      "session": "275331bb-f120-4d45-b1e6-0e0f07061c3c",
+      "prompt": "1: you decide  2: do FR-068",
+      "summary": "FR-068 resolved and FR-060 fully closed. Removed the wall-clock 'generated' field from the docs-index.js payload (docs-graph.py, deployed; pack revision 48->49). Chose removal over content-derived because the field is read by NOTHING - verified across docs/index.html, docs-explorer-core.js, docs/portal, build-docs-portal.py and the test suite - and the sibling build-web-index.py had already made and documented the same call (PACK-I / FR-048). Red: two derives 3s apart differed. Green: two derives 4s apart byte-identical. That unblocked FR-060's source fix: sync-pack.ps1 derives before building the dependents again, and gate 2 exits 0 on two consecutive syncs - the exact scenario that forced the Phase 2 revert. DECISION 1 (delegated to me): do NOT make pack-consistency a required status check. The protection API shows none configured, and GitHub's reference confirms required checks gate pushes, so with enforce_admins:true it would block direct pushes and force PRs on a solo-maintainer repo. FR-062 already closed the damaging half. Recorded as an accepted risk with four re-open triggers in docs/notes/required-status-checks.md.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "pack/scripts/docs-graph.py",
+        "tools/sync-pack.ps1",
+        "pack/adapters/INSTALL.md",
+        "docs/notes/required-status-checks.md",
+        "docs/backlog/forensic-review-rev48.md"
+      ],
+      "tags": [
+        "fr-068",
+        "fr-060",
+        "determinism",
+        "branch-protection"
+      ],
+      "outcome": "success",
+      "goal": "Make docs-index.js byte-stable, close FR-060 at source, and decide the required-status-check question",
+      "done_when": "Two derives are byte-identical, sync-derives-first with gate 2 exit 0, all 9 gates pass, decision recorded, pushed CI green",
+      "git": {
+        "sha": "a9a3a1c2a315e2707a90839d34434950341e65ca",
+        "short": "a9a3a1c2a",
+        "branch": "fix/fr068-stable-index",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -3040,6 +3074,29 @@ window.AUDIT_DATA = {
         "before": "16f36c3df6119f71bfacb8ffed8c1fb470ae148a",
         "after": "16f36c3df6119f71bfacb8ffed8c1fb470ae148a",
         "branch": "rename/design-slice",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M105QJ77XJ2A60SSMS9GW20E",
+      "datetime": "2026-08-26T23:15:52Z",
+      "session": "275331bb-f120-4d45-b1e6-0e0f07061c3c",
+      "kind": "decision",
+      "skill": "implement",
+      "title": "Do not require status checks on main; remove the docs-index timestamp instead",
+      "prompt": "1: you decide  2: do FR-068",
+      "summary": "Required status checks on main declined and recorded as an accepted risk with re-open triggers; docs-index.js made byte-stable by removing an unconsumed wall-clock field, which closed FR-060's ordering trap at source.",
+      "rationale": "FR-062 already blocks the damaging half (publication from a red tree); required checks would block direct pushes on a solo-maintainer repo and the enforce_admins toggle is all-or-nothing. The timestamp removal follows the sibling generator's documented precedent and was safe because the field had no readers.",
+      "artifacts": [
+        "docs/notes/required-status-checks.md",
+        "pack/scripts/docs-graph.py"
+      ],
+      "tags": [],
+      "git": {
+        "before": "a9a3a1c2a315e2707a90839d34434950341e65ca",
+        "after": "a9a3a1c2a315e2707a90839d34434950341e65ca",
+        "branch": "fix/fr068-stable-index",
         "pushed": null,
         "commits": []
       }
