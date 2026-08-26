@@ -843,24 +843,58 @@ def check_html_inline_scripts(findings):
                     pass
 
 
-def check_docs_portal(findings):
-    """The Documentation Portal (docs/portal/portal-data.js) is a DERIVED artifact; assert it is
-    current by re-running its generator in --check mode. A stale portal is a failing build, not a
-    matter of discipline (spec-documentation-portal US-4)."""
+def check_front_door_names_verifier(findings):
+    """FR-061 / defect class CTRL-D. The aggregate verifier already existed, already mirrored
+    CI, and already worked - and the two files an agent loads EVERY session named only the
+    GENERATOR (sync-pack.ps1) and never the VERIFIER. So an agent that followed the documented
+    workflow to the letter pushed a branch with two failing gates and was told nothing.
+
+    Naming it anywhere in the file is deliberately NOT enough: that is satisfiable by a
+    changelog line, a code fence, or a sentence saying not to run it. It must appear in the
+    same paragraph as the sync instruction - the sentence an agent actually acts on."""
+    for rel in ("CLAUDE.md", "AGENTS.md"):
+        text = _read(os.path.join(ROOT, rel))
+        if text is None:
+            findings.append(f"{rel}: not found (front-door verifier check)")
+            continue
+        sync_paras = [p for p in re.split(r"\n\s*\n", text) if "sync-pack.ps1" in p]
+        if not sync_paras:
+            findings.append(f"{rel}: no paragraph names tools/sync-pack.ps1")
+        elif not any("verify-bundle.ps1" in p for p in sync_paras):
+            findings.append(
+                f"{rel}: names sync-pack.ps1 but not verify-bundle.ps1 in the same paragraph "
+                "- the front door teaches how to generate, never how to verify (CTRL-D)")
+
+
+def _check_derived_artifact(findings, label, generator, artifact):
+    """Assert a DERIVED artifact is current by re-running its generator in --check mode.
+    A stale derived artifact is a failing build, not a matter of discipline
+    (spec-documentation-portal US-4)."""
     import subprocess
-    gen = os.path.join(ROOT, "tools", "build-docs-portal.py")
+    gen = os.path.join(ROOT, "tools", generator)
     if not os.path.isfile(gen):
         return
     try:
         r = subprocess.run([sys.executable, gen, "--check"], cwd=ROOT,
                            capture_output=True, text=True, timeout=60)
     except (OSError, subprocess.SubprocessError) as e:
-        findings.append(f"docs portal: could not run drift check ({e})")
+        findings.append(f"{label}: could not run drift check ({e})")
         return
     if r.returncode != 0:
-        msg = (r.stderr or r.stdout or "portal-data.js is stale").strip().splitlines()
-        findings.append("docs portal: " + (msg[0] if msg else "stale") +
-                        " (run: python tools/build-docs-portal.py)")
+        msg = (r.stderr or r.stdout or f"{artifact} is stale").strip().splitlines()
+        findings.append(f"{label}: " + (msg[0] if msg else "stale") +
+                        f" (run: python tools/{generator})")
+
+
+def check_docs_portal(findings):
+    """FR-060 (class). Both derived front-door artifacts are gated here, not just the portal.
+    web/pack-index.js previously had no --check mode, so it was invisible to this gate and
+    only ever caught by the source<->install drift gate - which does not run until this one
+    is green. A pair where only one half is observable is how the other half hides."""
+    _check_derived_artifact(findings, "docs portal",
+                            "build-docs-portal.py", "docs/portal/portal-data.js")
+    _check_derived_artifact(findings, "web index",
+                            "build-web-index.py", "web/pack-index.js")
 
 
 def main():
@@ -877,6 +911,7 @@ def main():
     check_promised_paths(findings)
     check_managed_blocks(truth, findings)
     check_prose(truth, findings)
+    check_front_door_names_verifier(findings)
     check_docs_portal(findings)
     check_html_inline_scripts(findings)
 

@@ -26,7 +26,7 @@ summary: >-
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled `7` · partially-controlled `8` · uncontrolled `20`
+**Status counts:** controlled `8` · partially-controlled `8` · uncontrolled `20`
 **Recurrence since last review:** `0` — *a second occurrence of a known class means the control was wrong, not that someone was careless (CI4).*
 
 ---
@@ -50,6 +50,17 @@ summary: >-
 ## Project classes
 
 *Classes discovered in this repository. Newest first.*
+
+### CTRL-D — The gate runs an aggregate the author never ran, so "everything I ran was green" and the branch is red
+*Adopted from the pack's seed register (`ci-and-test-efficiency.md` CE21) on first confirmed occurrence here, rather than re-derived.*
+- **Signature:** an author (human or agent) validates with the checks they happen to know — the test suite, the graph validator, the audit verifier — reports green in good faith, and pushes. CI then fails on a control that was never in their list. The tell is a summary that enumerates *specific* commands rather than naming the aggregate one: *"341 tests passed, graph validated, audit verified"* with no mention of the gate runner.
+- **Why it survives:** every check the author ran genuinely passed, so there is no error anywhere in their evidence and nothing to be suspicious of. The missing control is invisible **by construction** — you cannot notice the absence of a check you do not know exists. It also survives review, because a reviewer reads the checks that *were* run and finds them all green. And it is worst precisely where the tooling is *good*: the better the aggregate verifier, the less anyone remembers it exists, because the individual checks feel sufficient.
+- **Instances:**
+  - `2026-08-26` **FR-058/059/060/065** (revision-48 forensic review) — the `/design-slice` rename was validated with `unittest discover` (341 pass), `docs-graph.py validate` (0 defects) and `audit-log.py verify` (clean), then pushed to protected `main`. CI run `32987223699` failed immediately on gate 1 with five findings, and gate 2 was independently red behind it. `tools/verify-bundle.ps1` — which existed, mirrored CI, and was correct — reported `BUNDLE INCONSISTENT - 2 of 9 gate(s) failed` on that exact commit. **It was never run**, because neither `CLAUDE.md` nor `AGENTS.md` named it while both named `sync-pack.ps1` twice.
+- **The asymmetry that matters:** the repository had *already solved* this. The control was written, complete, CI-mirroring, and even documented its own npm-PATH workaround. The failure was **discoverability**, not tooling — which is why the fix is a sentence in the front door and a check that the sentence stays there, not a new script. A control nobody is told to run is indistinguishable from a control that does not exist.
+- **Control:** `check-consistency.py :: check_front_door_names_verifier()` — fails when `CLAUDE.md` or `AGENTS.md` names `sync-pack.ps1` **without** naming `verify-bundle.ps1 ` *in the same paragraph*. Paragraph scope is deliberate: a bare file-wide grep is satisfiable by a changelog line, a code fence, or a sentence saying not to run it, which is Coverage Theater. **Observed failing** `2026-08-26` on both files before the front-door fix, then green. Wired into `pack-consistency.yml` gate 1, so it reports its own status.
+- **Sweep:** the other aggregate in this repo is `pack/evals/run-evals.py --cases` (the eval suite). It *is* named in `.github/copilot-instructions.md`'s build section. **Outstanding:** nothing asserts that `verify-bundle.ps1`'s gate list still equals `pack-consistency.yml`'s step list — a drifted proxy would re-open this class with the front door pointing at it. Tracked as **FR-067**, controlled by `tests/docs_explorer/test_gate_parity.py`.
+- **Status:** `controlled`
 
 ### SHELL-A — Content routed through a shell construct that performs substitution on it
 *Adopted from Meridian's register on first occurrence here, rather than re-derived.*

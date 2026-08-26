@@ -18,11 +18,16 @@ All tooling is PowerShell scripts in `tools/`:
 # After editing anything under pack/ — regenerates .claude/ and docs/
 pwsh tools/sync-pack.ps1
 
+# THEN verify before committing — runs the same nine gates CI does.
+# A green test suite is not a green gate: gates 1 and 2 (counts, source↔install drift)
+# fail on trees where every test passes. Skipping this is defect class CTRL-D.
+pwsh tools/verify-bundle.ps1
+
 # Build the distributable zip for sharing
 pwsh tools/package-pack.ps1   # writes dist/ai-forward-pack.zip
 ```
 
-**Commit discipline:** when changing `pack/`, always commit `pack/`, `.claude/`, and `docs/` together in the same commit so source and install never drift.
+**Commit discipline:** when changing `pack/`, always commit `pack/`, `.claude/`, and `docs/` together in the same commit so source and install never drift. Run `pwsh tools/verify-bundle.ps1` first — it is the same gate set CI runs, so a clean run here is the only local evidence that CI will be green.
 
 ### Evals (regression tests for the pack itself)
 

@@ -5,8 +5,11 @@ The pack source is in `pack/`; the GitHub Copilot install (`.github/instructions
 `.github/prompts/`, `.github/agents/`) and the shared `docs/` are generated from `pack/` by
 `tools/sync-pack.ps1`. See `README.md` for the full layout.
 
-When you change anything under `pack/`, re-run `tools/sync-pack.ps1` and commit `pack/`,
-`.claude/`, `.github/`, and `docs/` together so source and install stay in lockstep.
+When you change anything under `pack/`, re-run `tools/sync-pack.ps1`, then run
+**`pwsh tools/verify-bundle.ps1`** *before committing* — it runs the same nine gates CI does,
+and a green test suite is not the same as a green gate (the tests pass while the counts and
+drift gates fail). Commit `pack/`, `.claude/`, `.github/`, and `docs/` together so source and
+install stay in lockstep.
 
 <!-- AI-FORWARD-PACK:BEGIN (managed block — keep this block intact when reconciling; replace it wholesale on pack updates) -->
 ## AI-Forward Pack + Agent Knowledge Pack

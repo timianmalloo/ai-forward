@@ -192,6 +192,20 @@ function Update-ManagedBlock([string]$file, [string]$blockFile) {
 Update-ManagedBlock (Join-Path $repo "CLAUDE.md")  (Join-Path $pack "adapters\managed-blocks\CLAUDE.block.md")
 Update-ManagedBlock (Join-Path $repo "AGENTS.md")  (Join-Path $pack "adapters\managed-blocks\AGENTS.block.md")
 
+# FR-060 (class). Both generators below read docs/docs-index.js, which is produced by
+# docs-graph.py derive - and every skill runs derive as its LAST action (V10). So the old
+# order (sync -> ... -> derive) left the portal and the web index one node behind on every
+# run that added an artifact, and nothing local said so. Deriving FIRST removes the trap at
+# its source; check-consistency.py then gates BOTH artifacts so a hand-run that skips sync
+# still cannot ship a stale pair.
+$deriveGraph = Join-Path $repo "docs\ai-forward-pack\scripts\docs-graph.py"
+if (Test-Path $deriveGraph) {
+    $pyCmd0 = Get-Command python -ErrorAction SilentlyContinue
+    if (-not $pyCmd0) { $pyCmd0 = Get-Command python3 -ErrorAction SilentlyContinue }
+    if ($pyCmd0) { & $pyCmd0.Source $deriveGraph derive | ForEach-Object { Write-Host "  $_" } }
+    else { Write-Host "  docs/docs-index.js skipped (python not found)" -ForegroundColor Yellow }
+}
+
 # Regenerate the whole-pack navigable/searchable index that web/index.html renders (freshness contract).
 $buildWebIndex = Join-Path $repo "tools\build-web-index.py"
 if (Test-Path $buildWebIndex) {
