@@ -34,13 +34,15 @@ summary: >-
 **Carried forward:** nothing. All nine revision-42 items were triaged and dispositioned at revision 43.
 **State at time of writing:** `pwsh tools/verify-bundle.ps1` → `BUNDLE INCONSISTENT - 2 of 9 gate(s) failed`. CI run `32987223699` failed on `main`.
 
-> ## Phase 1 — SHIPPED at `7bc0cf2` (2026-08-26)
+> ## Phases 1 & 2 — SHIPPED (2026-08-26)
 >
-> **FR-058, FR-059, FR-065 (both halves) and FR-060's instance half are RESOLVED.** Verified on the committed tree: `python tools/check-consistency.py` → `clean - all documented counts and skill/prompt parity match the filesystem` (exit 0); `pwsh tools/verify-bundle.ps1` → **`BUNDLE CONSISTENT - all 9 gates passed (the same set CI runs)`** (exit 0), up from `2 of 9 failed`.
+> **Phase 1 at `7bc0cf2`:** FR-058, FR-059, FR-065 (both halves) and FR-060's instance half RESOLVED. Gate 1 green.
 >
-> **Red observed before green**, as the acceptance criteria required: FR-065's new prose rules were added *first* and took the finding count from 5 to 6, catching `.github/copilot-instructions.md:48: '24 knowledge docs' implies knowledge_docs=24, filesystem has 38` — a defect no gate could see before. The `N scripts` rule caught nothing, which is the correct result and leaves the control in place for the future.
+> **Phase 2:** FR-061 and FR-067 RESOLVED; FR-060's class half shipped as **detection** (both derived artifacts now drift-gated at gate 1, previously only the portal). Every control was **observed red before green** — FR-065's rules took findings 5→6; FR-061's control failed on both front-door files; FR-067 failed on a renamed local gate *and* on a removed CI step; FR-060's detection named both dependents after a derive-only run.
 >
-> **Still open from Phase 1's parent items:** FR-060's **class** half (the ordering fix) is Phase 2 and was *not* done — the hazard that produced the staleness is still live, so the next skill run that adds an artifact will reproduce it. FR-061, FR-062, FR-063, FR-064, FR-066 and FR-067 are untouched.
+> **One change was reverted rather than shipped.** FR-060's *source-removal* half — having `sync-pack.ps1` derive before building the dependents — put `docs/docs-index.js` inside gate 2's diff scope, where its wall-clock `generated` field made CI **permanently red**. That is the PACK-I / FR-048 timestamp class, already solved in the sibling generator. Reverted and raised as **FR-068**; the trap is mitigated by detection, not closed at source.
+>
+> **Still open:** FR-062, FR-063 (Phase 3), FR-064, FR-066 (Phase 4), FR-068.
 
 ## Phases
 
@@ -85,7 +87,18 @@ summary: >-
   1. *Instance:* run `python docs/ai-forward-pack/scripts/docs-graph.py derive`, **then** `python tools/build-docs-portal.py` and `python tools/build-web-index.py`, and commit the result. Order matters — both readers consume `docs/docs-index.js`.
   2. *Class:* remove the ordering hazard rather than re-running it by hand. Preferred option — have `docs-graph.py derive` refresh the two dependent artifacts (or emit a non-zero "dependents stale" signal) so the skills' documented last action cannot leave them behind. Alternative — make `sync-pack.ps1` run `derive` **before** it builds the portal and the web index. Choose one; do not do both silently.
 - **Dependencies:** none, but the **instance half must ship with FR-058/FR-059/FR-065** or gate 1 stays red
-- **Owner:** @timianmalloo · **Next skill:** `/design-slice` for the class fix (it changes a contract between three tools), then `/implement` · **Status:** **PARTIALLY RESOLVED at `7bc0cf2`** — the **instance** half is done (`derive` → `sync`; both files rebuilt from the current index; gate 2 exit 0 on the committed tree). The **class** half is **still open**: the ordering hazard is untouched, so the next skill run that adds an artifact reproduces the staleness. Carries forward to Phase 2.
+- **Owner:** @timianmalloo · **Next skill:** `/design-slice` for the class fix (it changes a contract between three tools), then `/implement` · **Status:** **RESOLVED (detection) at `48e0601` / `<phase2>`; ordering deferred to FR-068.** The **instance** half shipped at `7bc0cf2`. The **class** half shipped as **detection**: `build-web-index.py` gained the `--check` drift mode the portal always had, and `check-consistency.py` now gates **both** artifacts — so a stale pair fails **gate 1** and names the command to fix it. Observed red: with only `derive` run, gate 1 reports both `docs portal: DRIFT` and `web index: DRIFT` (previously only the portal). **The source-removal half was attempted and reverted** — see FR-068.
+
+### FR-068 · issue · P2 — `docs/docs-index.js` carries a wall-clock timestamp, so it can never be drift-gated
+- **Affected scope:** `docs/ai-forward-pack/scripts/docs-graph.py` (deployed), `docs/docs-index.js`
+- **Evidence:** attempting FR-060's source-removal fix — having `sync-pack.ps1` run `derive` before building the two dependents — put `docs-index.js` inside gate 2's diff scope, where it failed immediately on a **one-line** diff: `"generated": "2026-08-26T20:44:14Z"` → `"...T20:46:23Z"`. Every `derive` rewrites that field, so the file can never be byte-stable across two runs on two machines. Discovered by **running the gate after the change**, not by reading it.
+- **Consequence:** the ordering trap that produced FR-060 cannot be closed at source until the index is stable, because closing it makes **CI permanently red** — strictly worse than the hazard. Detection is therefore the shipped mitigation, and the trap itself is still live.
+- **Prior art — this exact class is already solved next door:** `build-web-index.py` carries a comment explaining it **removed** its build timestamp for precisely this reason (*"a wall-clock/mtime stamp made this file differ between the author's machine and a CI checkout … it could never pass the source-install drift gate cross-platform"*) — PACK-I / the FR-048 timestamp class. The sibling generator learned this; `docs-graph.py` did not.
+- **Recommended remediation:** remove `generated` from the payload, or make it content-derived (rewrite it only when the rest of the document changes). **Not a drive-by:** `docs-graph.py` is a **deployed** script and `docs-index.js` is an *accumulated* artifact (V10 — never seed or overwrite by hand), so changing its payload shape affects every consuming repo and needs a design pass.
+- **Acceptance criteria:** two consecutive `derive` runs minutes apart produce **byte-identical** `docs-index.js` (red-first: today they differ by exactly the timestamp line); and with that true, `sync-pack.ps1` can run `derive` before the dependents with gate 2 still exiting 0.
+- **Validation:** `python docs/ai-forward-pack/scripts/docs-graph.py derive`, wait >1s, run again, compare hashes
+- **Dependencies:** blocks FR-060's source-removal half · **Owner:** @timianmalloo · **Next skill:** `/design-slice` (deployed-script contract change) · **Status:** proposed
+- **Provenance:** found by this Phase 2 implementation attempting the ordering fix and running the gate afterwards — the change was reverted rather than shipped red.
 
 ### FR-065 · issue · P1 — Correct the 24→38 knowledge-doc count and close the regex blind spot
 - **Affected scope:** `.github/copilot-instructions.md:48` (instance); `tools/check-consistency.py:474-477` (class)
@@ -110,7 +123,7 @@ summary: >-
 - **Recommended remediation:** add a test asserting **set equality** between the gates `verify-bundle.ps1` runs and the steps `pack-consistency.yml` runs (by a shared, declared gate-id list rather than by string-scraping two files, which would just move the drift).
 - **Acceptance criteria:** deleting or renaming a gate in either file makes the test **fail** — observed red before it is made green; the test runs in CI and reports its own status.
 - **Validation:** the red-first deletion above; then `python -m pytest tests -q`
-- **Dependencies:** should ship **with or immediately after** FR-061 · **Owner:** @timianmalloo · **Next skill:** `/implement` · **Status:** proposed
+- **Dependencies:** should ship **with or immediately after** FR-061 · **Owner:** @timianmalloo · **Next skill:** `/implement` · **Status:** **RESOLVED at `<phase2>`** — `tests/docs_explorer/test_gate_parity.py` declares the canonical nine gates and checks both files against that declaration. **Observed red in both directions:** renaming a local gate in `verify-bundle.ps1` failed the test, and removing a step name from `pack-consistency.yml` failed it. Runs in CI via the existing pytest gate, so it reports its own status.
 - **Provenance:** raised by the adversarial gate.
 
 ---
@@ -129,6 +142,7 @@ summary: >-
   3. The check in (1) is wired into `pack-consistency.yml`, so it reports its own status rather than being advisory (CE21/E13).
 - **Explicitly NOT sufficient:** a bare `Select-String CLAUDE.md -Pattern 'verify-bundle'`. It is satisfied by the literal string appearing anywhere — in a code fence, in a changelog line, or in a sentence saying *not* to run it. That is Coverage Theater, and it would be a particularly poor way to close the item the review calls the one that matters.
 - **Validation:** run the new check on `c27f83d` (expect a finding), apply the front-door edit, re-run (expect clean); `pwsh tools/sync-pack.ps1` + drift check to confirm the managed-block change propagated
+- **Status:** **RESOLVED at `<phase2>`.** Control `check-consistency.py :: check_front_door_names_verifier()` **observed red on both `CLAUDE.md` and `AGENTS.md`** before the fix, then green. `CLAUDE.md` and `AGENTS.md` now name `verify-bundle.ps1` in the same paragraph as `sync-pack.ps1`; `.github/copilot-instructions.md` names it in **Build / maintenance commands**. **CTRL-D registered as `controlled`** in `docs/lessons/defect-classes.md`. **Design note:** the sentence went in the repo **preamble**, not the managed block — `verify-bundle.ps1` is repo-only tooling and would not exist in a consuming repo, so shipping it in the block would have deployed a broken instruction to every install.
 - **Rung note (CI6):** this lands at **rung 3** (always-loaded instruction). A rung-2 belt worth considering separately: a `pre-push` hook, or a CI step that fails when the front-door files stop naming the verifier — because a rung-3 control degrades silently the moment someone rewrites the block.
 - **Dependencies:** none · **Owner:** @timianmalloo · **Next skill:** `/implement` · **Status:** proposed
 
@@ -199,6 +213,6 @@ Recording what was rejected is part of an honest backlog (the Simplifier's pass)
 
 | | |
 |---|---|
-| **Completed** | **Phase 1 shipped at `7bc0cf2`** — FR-058, FR-059 and FR-065 (both halves) RESOLVED, FR-060 instance half RESOLVED, with FR-065's control observed **red before green**. `verify-bundle.ps1` → **`BUNDLE CONSISTENT - all 9 gates passed`** (was 2 of 9 failing). Ten items remain specified with falsifiable ACs, validation commands, dependencies, owner and next skill |
-| **Remaining** | **Six open:** FR-060 **class** half (the ordering hazard — still live), FR-061, FR-062, FR-063, FR-064, FR-066, FR-067. Nothing in Phases 2–4 was touched |
-| **Best next action** | **FR-061** — the root-cause control. Phase 1 fixed the symptoms; until the front door names `verify-bundle.ps1`, the next session reproduces exactly this |
+| **Completed** | **Phases 1 and 2 shipped.** FR-058, FR-059, FR-061, FR-065, FR-067 RESOLVED; FR-060 resolved as instance + detection. Every control observed **red before green**. CTRL-D registered `controlled`. `verify-bundle.ps1` → `BUNDLE CONSISTENT - all 9 gates passed` |
+| **Remaining** | **Five open:** FR-062, FR-063 (Phase 3 — release + supply chain), FR-064, FR-066 (Phase 4 — record hygiene), and **FR-068** (the `docs-index.js` timestamp that blocks closing FR-060's trap at source) |
+| **Best next action** | Phase 3 — **FR-063** (SHA-pin the highest-privilege workflow) is the one with real security value and is a contained change |

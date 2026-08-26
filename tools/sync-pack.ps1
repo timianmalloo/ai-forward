@@ -192,19 +192,20 @@ function Update-ManagedBlock([string]$file, [string]$blockFile) {
 Update-ManagedBlock (Join-Path $repo "CLAUDE.md")  (Join-Path $pack "adapters\managed-blocks\CLAUDE.block.md")
 Update-ManagedBlock (Join-Path $repo "AGENTS.md")  (Join-Path $pack "adapters\managed-blocks\AGENTS.block.md")
 
-# FR-060 (class). Both generators below read docs/docs-index.js, which is produced by
-# docs-graph.py derive - and every skill runs derive as its LAST action (V10). So the old
-# order (sync -> ... -> derive) left the portal and the web index one node behind on every
-# run that added an artifact, and nothing local said so. Deriving FIRST removes the trap at
-# its source; check-consistency.py then gates BOTH artifacts so a hand-run that skips sync
-# still cannot ship a stale pair.
-$deriveGraph = Join-Path $repo "docs\ai-forward-pack\scripts\docs-graph.py"
-if (Test-Path $deriveGraph) {
-    $pyCmd0 = Get-Command python -ErrorAction SilentlyContinue
-    if (-not $pyCmd0) { $pyCmd0 = Get-Command python3 -ErrorAction SilentlyContinue }
-    if ($pyCmd0) { & $pyCmd0.Source $deriveGraph derive | ForEach-Object { Write-Host "  $_" } }
-    else { Write-Host "  docs/docs-index.js skipped (python not found)" -ForegroundColor Yellow }
-}
+# FR-060 (class). The ordering hazard is real: both generators below read docs/docs-index.js,
+# which docs-graph.py derive produces - and every skill runs derive as its LAST action (V10),
+# so sync-then-derive leaves this pair one node behind on any run that adds an artifact.
+#
+# Running derive HERE was tried and REVERTED: docs-index.js carries a wall-clock "generated"
+# field, so pulling it into this script pulls it into gate 2's diff scope, where it can never
+# be byte-stable - the same timestamp class that build-web-index.py documents removing from
+# its own payload (PACK-I / FR-048). It made CI permanently red, which is strictly worse than
+# the hazard it fixed. Caught by running the gate, not by reading the change.
+#
+# The fix that shipped is DETECTION instead: check-consistency.py now drift-gates BOTH
+# artifacts (previously only the portal), so a stale pair fails gate 1 and names the command
+# to fix it. Removing the ordering trap at source needs docs-index.js to be stable first -
+# tracked as FR-068.
 
 # Regenerate the whole-pack navigable/searchable index that web/index.html renders (freshness contract).
 $buildWebIndex = Join-Path $repo "tools\build-web-index.py"

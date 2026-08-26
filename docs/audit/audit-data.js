@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward-forensicreview-pack-audit",
-  "generated": "2026-08-26T20:34:40Z",
+  "generated": "2026-08-26T20:51:01Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2136,6 +2136,41 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "7bc0cf217ed24aa816089d95f97278c5bfe30abd",
         "short": "7bc0cf217",
+        "branch": "forensicreview/pack-audit",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M0ZXEAYKXPMEV8E0MGR5T323",
+      "shortname": "implement-fr48-phase2",
+      "datetime": "2026-08-26T20:51:01Z",
+      "session": "275331bb-f120-4d45-b1e6-0e0f07061c3c",
+      "prompt": "yes do phase 2 lets get this consistent and then push",
+      "summary": "Phase 2 shipped. FR-061: CLAUDE.md/AGENTS.md now name verify-bundle.ps1 beside sync-pack.ps1 (repo preamble, NOT the managed block - the verifier is repo-only and would break consuming repos); new check_front_door_names_verifier gate observed RED on both files first; CTRL-D registered as controlled. FR-067: test_gate_parity.py declares the canonical nine gates, observed RED both directions (renamed local gate; removed CI step). FR-060 class: shipped as DETECTION - build-web-index.py gained --check and check-consistency now gates BOTH derived artifacts, observed RED naming both after a derive-only run. The source-removal half (sync derives first) was ATTEMPTED AND REVERTED: docs-index.js carries a wall-clock 'generated' field so it can never be byte-stable, which made gate 2 permanently red - the PACK-I/FR-048 timestamp class, already solved in the sibling generator. Raised as FR-068.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "tools/check-consistency.py",
+        "tools/build-web-index.py",
+        "tools/sync-pack.ps1",
+        "tests/docs_explorer/test_gate_parity.py",
+        "CLAUDE.md",
+        "AGENTS.md",
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [
+        "phase-2",
+        "ctrl-d",
+        "gates"
+      ],
+      "outcome": "success",
+      "goal": "Ship Phase 2 (FR-060 class, FR-061, FR-067) with red-first controls, then push main green",
+      "done_when": "All 9 gates pass on the committed tree and origin/main is fast-forwarded",
+      "git": {
+        "sha": "48e06012f8a67552293cf06a21c4d55d3f16399d",
+        "short": "48e06012f",
         "branch": "forensicreview/pack-audit",
         "pushed": null
       }
