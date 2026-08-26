@@ -475,6 +475,11 @@ def _prose_rules(truth):
         (re.compile(nb + _NUM + r"[\s-]+(lenses|lens|personas|persona)\b", re.I), "lenses"),
         (re.compile(nb + _NUM + r"\s+(?:artifact\s+)?templates\b", re.I), "templates"),
         (re.compile(r"(\d+)\s+docs\s*\(\+FOUNDATION", re.I), "knowledge_docs"),
+        # FR-065. The prose form "N knowledge docs" was unchecked, which is how a 14-off
+        # count survived at .github/copilot-instructions.md:48 across at least two forensic
+        # reviews while every gate stayed green. "N scripts" had the same blind spot.
+        (re.compile(nb + _NUM + r"\s+knowledge\s+docs\b", re.I), "knowledge_docs"),
+        (re.compile(nb + _NUM + r"\s+scripts\b", re.I), "scripts"),
     ]
 
 

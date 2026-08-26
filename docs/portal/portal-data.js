@@ -3,7 +3,7 @@ window.PORTAL_DATA = {
     "counts": {
       "skills": 22,
       "personas": 23,
-      "knowledge": 39,
+      "knowledge": 38,
       "templates": 27,
       "scripts": 18
     },
@@ -1007,6 +1007,24 @@ window.PORTAL_DATA = {
         "summary": "Backlog from the revision-42 forensic review at commit e4eae82, ALL NINE ITEMS TRIAGED AND DISPOSITIONED at revision 43. Seven resolved with a control observed..."
       },
       {
+        "id": "forensic-review-rev48",
+        "type": "doc",
+        "title": "Forensic Review — AI-Forward repository (revision 48)",
+        "summary": "Forensic assessment at commit c27f83d (revision 48), clean tree. The headline is not a latent risk but a present one: main is red. Two of the nine gates the..."
+      },
+      {
+        "id": "forensic-review-rev48-backlog",
+        "type": "doc",
+        "title": "Forensic Review Backlog — revision 48",
+        "summary": "Ten proposed items (FR-058..FR-067) from the revision-48 forensic review at commit c27f83d, ordered into four phases. Phase 1 is four edits that turn gate 1..."
+      },
+      {
+        "id": "forensic-review-rev48-proof",
+        "type": "proof-pack",
+        "title": "Proof Pack — Forensic Review, revision 48",
+        "summary": "Evidence record for the revision-48 forensic review. One row per correctness claim, each with the exact command, its observed exit code, the oracle that..."
+      },
+      {
         "id": "investigation-blank-explainer-live",
         "type": "investigation",
         "title": "Investigation: the hosted explainer renders blank even after the 'fix'",
@@ -1419,6 +1437,12 @@ window.PORTAL_DATA = {
         "type": "spec",
         "title": "Agent coordination — shared context and explicit coordination across worktrees and agents",
         "summary": "Specification for a repo-local, model-agnostic coordination layer that lets several agents and worktrees work one repository at once without losing work or..."
+      },
+      {
+        "id": "spec-design-slice-rename",
+        "type": "spec",
+        "title": "Rename /design to /design-slice — Specification",
+        "summary": "Specification for renaming AI-Forward's detailed component-design workflow from /design to /design-slice. The rename avoids a generic skill-name collision..."
       },
       {
         "id": "spec-documentation-portal",
@@ -1981,6 +2005,66 @@ window.PORTAL_DATA = {
       {
         "from": "forensic-review-rev42-backlog",
         "to": "forensic-review-rev42",
+        "rel": "relates-to"
+      },
+      {
+        "from": "forensic-review-rev48",
+        "to": "architecture",
+        "rel": "documents"
+      },
+      {
+        "from": "forensic-review-rev48",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "forensic-review-rev48",
+        "to": "forensic-review-rev42",
+        "rel": "supersedes"
+      },
+      {
+        "from": "forensic-review-rev48",
+        "to": "forensic-review-rev48-backlog",
+        "rel": "relates-to"
+      },
+      {
+        "from": "forensic-review-rev48",
+        "to": "forensic-review-rev48-proof",
+        "rel": "tested-by"
+      },
+      {
+        "from": "forensic-review-rev48-backlog",
+        "to": "architecture",
+        "rel": "relates-to"
+      },
+      {
+        "from": "forensic-review-rev48-backlog",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "forensic-review-rev48-backlog",
+        "to": "forensic-review-rev42-backlog",
+        "rel": "supersedes"
+      },
+      {
+        "from": "forensic-review-rev48-backlog",
+        "to": "forensic-review-rev48",
+        "rel": "refines"
+      },
+      {
+        "from": "forensic-review-rev48-backlog",
+        "to": "forensic-review-rev48-proof",
+        "rel": "tested-by"
+      },
+      {
+        "from": "forensic-review-rev48-proof",
+        "to": "forensic-review-rev48",
+        "rel": "tested-by"
+      },
+      {
+        "from": "forensic-review-rev48-proof",
+        "to": "forensic-review-rev48-backlog",
         "rel": "relates-to"
       },
       {
@@ -2556,6 +2640,16 @@ window.PORTAL_DATA = {
       {
         "from": "spec-agent-coordination",
         "to": "spec-dreaming",
+        "rel": "relates-to"
+      },
+      {
+        "from": "spec-design-slice-rename",
+        "to": "architecture",
+        "rel": "relates-to"
+      },
+      {
+        "from": "spec-design-slice-rename",
+        "to": "design-native-app-ui-skill-extension",
         "rel": "relates-to"
       },
       {

@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 113
+"count": 117
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 257,
+"total": 261,
 "items": [
 {
 "cat": "knowledge",
@@ -1686,6 +1686,24 @@ window.PACK_INDEX = {
 },
 {
 "cat": "graph",
+"id": "forensic-review-rev48",
+"title": "Forensic Review — AI-Forward repository (revision 48)",
+"summary": "Forensic assessment at commit c27f83d (revision 48), clean tree. The headline is not a latent risk but a present one: main is red. Two of the nine gates the repository runs on itself fail on the pushed commit — the counts/parity gate with…",
+"path": "docs/reviews/forensic-review-rev48.md",
+"kind": "doc",
+"text": "forensic review — ai-forward repository (revision 48) forensic assessment at commit c27f83d (revision 48), clean tree. the headline is not a latent risk but a present one: main is red. two of the nine gates the repository runs on itself fail on the pushed commit — the counts/parity gate with five findings and the source-install drift gate on two stale derived artifacts — and the public site published from that same commit because the pages workflow does not depend on the quality gate. the three defects are unrelated in symptom and identical in cause: the always-loaded front door (claude.md, agents.md) names the generator, sync-pack.ps1, and never names the verifier, verify-bundle.ps1, so an agent that follows the documented workflow to the letter pushes a red branch and is told nothing. that is seed defect class ctrl-d, live here, unregistered in this repository's own register and carrying no control. ten findings, fr-058 to fr-067. an external test architect pass blocked the first submission and its six clearing conditions are recorded in §5a; it also caught fr-065, a 14-off documented count that gate 1 is structurally blind to and that has survived at least two prior reviews. forensic-review ci derived-artifacts supply-chain verification adoption-readiness documents architecture relates-to forensic-review-rev48-backlog tested-by forensic-review-rev48-proof supersedes forensic-review-rev42 relates-to defect-classes"
+},
+{
+"cat": "graph",
+"id": "forensic-review-rev48-backlog",
+"title": "Forensic Review Backlog — revision 48",
+"summary": "Ten proposed items (FR-058..FR-067) from the revision-48 forensic review at commit c27f83d, ordered into four phases. Phase 1 is four edits that turn gate 1 green; Phase 2 is the control that stops the class recurring — naming the existing…",
+"path": "docs/backlog/forensic-review-rev48.md",
+"kind": "doc",
+"text": "forensic review backlog — revision 48 ten proposed items (fr-058..fr-067) from the revision-48 forensic review at commit c27f83d, ordered into four phases. phase 1 is four edits that turn gate 1 green; phase 2 is the control that stops the class recurring — naming the existing verifier in the files agents actually load — plus the check that keeps that verifier honest. phase 3 closes the release and supply-chain gaps; phase 4 is record hygiene. an external test architect pass blocked the first draft because two acceptance criteria could not fail; those are rewritten, and two of its own findings became fr-065 and fr-067. nothing here is implemented — this backlog stops at proposal. backlog forensic-review triage ci derived-artifacts supply-chain refines forensic-review-rev48 tested-by forensic-review-rev48-proof relates-to architecture relates-to defect-classes supersedes forensic-review-rev42-backlog"
+},
+{
+"cat": "graph",
 "id": "lens-code-doc-join",
 "title": "Lens - code/doc join",
 "summary": "Derived join between the documentation graph (intent) and the Graphify code graph (reality): documentation referencing code that does not exist, and the most connected code symbols no artifact governs. A prompt, never a gate.",
@@ -2217,6 +2235,15 @@ window.PACK_INDEX = {
 },
 {
 "cat": "graph",
+"id": "forensic-review-rev48-proof",
+"title": "Proof Pack — Forensic Review, revision 48",
+"summary": "Evidence record for the revision-48 forensic review. One row per correctness claim, each with the exact command, its observed exit code, the oracle that distinguishes pass from fail, and whether a red state was observed. Added after an…",
+"path": "docs/proof/forensic-review-rev48.md",
+"kind": "proof-pack",
+"text": "proof pack — forensic review, revision 48 evidence record for the revision-48 forensic review. one row per correctness claim, each with the exact command, its observed exit code, the oracle that distinguishes pass from fail, and whether a red state was observed. added after an external test architect pass blocked the review for recording a self-cleared pass with no proof pack behind it. proof-pack forensic-review evidence ci tested-by forensic-review-rev48 relates-to forensic-review-rev48-backlog"
+},
+{
+"cat": "graph",
 "id": "proof-docs-explorer-redesign",
 "title": "Docs Explorer Redesign - Proof Pack",
 "summary": "Accepted implementation evidence for the deterministic, local-first Docs Explorer, native Spatial 3D knowledge portal, and bounded grounding packet implementation. The P0/P1 contract is covered by Python, Node, and three-engine browser…",
@@ -2241,6 +2268,15 @@ window.PACK_INDEX = {
 "path": "docs/specs/agent-coordination.md",
 "kind": "spec",
 "text": "agent coordination — shared context and explicit coordination across worktrees and agents specification for a repo-local, model-agnostic coordination layer that lets several agents and worktrees work one repository at once without losing work or time. grounded in measured evidence from theterrace, healthwatch and meridian, it targets four distinct failure modes — structural conflict on derived artifacts, allocation collision on client-minted ids, silent semantic divergence, and outright work loss in a shared tree — and requires each rule to ship as a mechanism that fails rather than a paragraph that is read. coordination worktrees multi-agent merge-conflicts leases allocation continuous-improvement relates-to defect-classes relates-to audit-log relates-to architecture relates-to spec-dreaming"
+},
+{
+"cat": "graph",
+"id": "spec-design-slice-rename",
+"title": "Rename /design to /design-slice — Specification",
+"summary": "Specification for renaming AI-Forward's detailed component-design workflow from /design to /design-slice. The rename avoids a generic skill-name collision while preserving the workflow's meaning and updating generated Claude/Copilot pack…",
+"path": "docs/specs/design-slice-rename.md",
+"kind": "spec",
+"text": "rename /design to /design-slice — specification specification for renaming ai-forward's detailed component-design workflow from /design to /design-slice. the rename avoids a generic skill-name collision while preserving the workflow's meaning and updating generated claude/copilot pack surfaces. skills naming design-slice claude-code copilot relates-to architecture relates-to design-native-app-ui-skill-extension"
 },
 {
 "cat": "graph",
