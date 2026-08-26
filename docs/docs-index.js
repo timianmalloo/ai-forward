@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-Forward",
-  "generated": "2026-08-26T14:02:26Z",
+  "generated": "2026-08-26T16:44:28Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1810,6 +1810,94 @@ window.DOCS_INDEX = {
       "sourceSha256": "e509f32db3c5fd2e4daeb66ed2bc9db4eec6d1710923b0570a4845aaee00e745"
     },
     {
+      "id": "forensic-review-rev48",
+      "path": "docs/reviews/forensic-review-rev48.md",
+      "title": "Forensic Review — AI-Forward repository (revision 48)",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2026-11-24",
+      "reviewSuggested": [],
+      "summary": "Forensic assessment at commit c27f83d (revision 48), clean tree. The headline is not a latent risk but a present one: main is red. Two of the nine gates the repository runs on itself fail on the pushed commit — the counts/parity gate with five findings and the source-install drift gate on two stale derived artifacts — and the public site published from that same commit because the Pages workflow does not depend on the quality gate. The three defects are unrelated in symptom and identical in cause: the always-loaded front door (CLAUDE.md, AGENTS.md) names the generator, sync-pack.ps1, and never names the verifier, verify-bundle.ps1, so an agent that follows the documented workflow to the letter pushes a red branch and is told nothing. That is seed defect class CTRL-D, live here, unregistered in this repository's own register and carrying no control. Ten findings, FR-058 to FR-067. An external Test Architect pass BLOCKED the first submission and its six clearing conditions are recorded in §5a; it also caught FR-065, a 14-off documented count that gate 1 is structurally blind to and that has survived at least two prior reviews.",
+      "tags": [
+        "forensic-review",
+        "ci",
+        "derived-artifacts",
+        "supply-chain",
+        "verification",
+        "adoption-readiness"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        },
+        {
+          "to": "forensic-review-rev48-backlog",
+          "rel": "relates-to"
+        },
+        {
+          "to": "forensic-review-rev48-proof",
+          "rel": "tested-by"
+        },
+        {
+          "to": "forensic-review-rev42",
+          "rel": "supersedes"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "3bcf764188af6b52f3a6a85a37126d6377c94e3064b079f5e1e19a7f1a579e38"
+    },
+    {
+      "id": "forensic-review-rev48-backlog",
+      "path": "docs/backlog/forensic-review-rev48.md",
+      "title": "Forensic Review Backlog — revision 48",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2026-11-24",
+      "reviewSuggested": [],
+      "summary": "Ten proposed items (FR-058..FR-067) from the revision-48 forensic review at commit c27f83d, ordered into four phases. Phase 1 is four edits that turn gate 1 green; Phase 2 is the control that stops the class recurring — naming the existing verifier in the files agents actually load — plus the check that keeps that verifier honest. Phase 3 closes the release and supply-chain gaps; Phase 4 is record hygiene. An external Test Architect pass blocked the first draft because two acceptance criteria could not fail; those are rewritten, and two of its own findings became FR-065 and FR-067. Nothing here is implemented — this backlog stops at proposal.",
+      "tags": [
+        "backlog",
+        "forensic-review",
+        "triage",
+        "ci",
+        "derived-artifacts",
+        "supply-chain"
+      ],
+      "links": [
+        {
+          "to": "forensic-review-rev48",
+          "rel": "refines"
+        },
+        {
+          "to": "forensic-review-rev48-proof",
+          "rel": "tested-by"
+        },
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        },
+        {
+          "to": "forensic-review-rev42-backlog",
+          "rel": "supersedes"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "bb48f9b3b1a60b77a4d3ab68fae9b2e1e7b8cebdffa666e85f4a90a435f5bf07"
+    },
+    {
       "id": "lens-code-doc-join",
       "path": "docs/lenses/code-doc-join.md",
       "title": "Lens - code/doc join",
@@ -3530,6 +3618,36 @@ window.DOCS_INDEX = {
       "sourceSha256": "08f8b520fda36c55c20b234d7b861f3e94ab6a52ed7857651ffda7533f6e8e5f"
     },
     {
+      "id": "forensic-review-rev48-proof",
+      "path": "docs/proof/forensic-review-rev48.md",
+      "title": "Proof Pack — Forensic Review, revision 48",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2026-11-24",
+      "reviewSuggested": [],
+      "summary": "Evidence record for the revision-48 forensic review. One row per correctness claim, each with the exact command, its observed exit code, the oracle that distinguishes pass from fail, and whether a red state was observed. Added after an external Test Architect pass blocked the review for recording a self-cleared PASS with no Proof Pack behind it.",
+      "tags": [
+        "proof-pack",
+        "forensic-review",
+        "evidence",
+        "ci"
+      ],
+      "links": [
+        {
+          "to": "forensic-review-rev48",
+          "rel": "tested-by"
+        },
+        {
+          "to": "forensic-review-rev48-backlog",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "1570819fee3135f643367cb328ebf7f93b53b077f09c347dec2a930748348ddb"
+    },
+    {
       "id": "proof-docs-explorer-redesign",
       "path": "docs/proof/docs-explorer-redesign.md",
       "title": "Docs Explorer Redesign - Proof Pack",
@@ -3892,7 +4010,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-forward-implement-native-app-ui-skills — Audit & Change Log",
+      "title": "ai-forward-rename-design-slice — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -4024,5 +4142,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "dfe3c96b1d6dfadeead39e2891e7f4dbf8124d6db5e83dac5f1d7321253545c0"
+  "graphSha256": "70b6d12d7633f9c85b5a0064e6fe06f939b3bc2900f1242a0b138e0e00ca5f01"
 };

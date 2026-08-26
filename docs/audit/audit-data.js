@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-forward-rename-design-slice",
-  "generated": "2026-08-26T14:02:57Z",
+  "project": "ai-forward-forensicreview-pack-audit",
+  "generated": "2026-08-26T16:44:45Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2074,6 +2074,36 @@ window.AUDIT_DATA = {
         "sha": "16f36c3df6119f71bfacb8ffed8c1fb470ae148a",
         "short": "16f36c3df",
         "branch": "rename/design-slice",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M0ZFBD7T2ARP83MWJ7SSC86J",
+      "shortname": "forensicreview-ai-forward-rev48",
+      "datetime": "2026-08-26T16:44:45Z",
+      "session": "275331bb-f120-4d45-b1e6-0e0f07061c3c",
+      "prompt": "/forensicreview",
+      "summary": "Forensic review at c27f83d. Rebuilt the system map and ran all nine of the repo's own gates: two are RED on main (check-consistency 5 findings; source-install drift on portal-data.js + pack-index.js), confirmed against CI run 32987223699 and attributed to c27f83d by probe worktree against a clean e1ec9d0. Ten findings FR-058..FR-067; root cause FR-061 = CLAUDE.md/AGENTS.md name sync-pack.ps1 but never verify-bundle.ps1 (seed class CTRL-D, live and unregistered). External Test Architect gate BLOCKED the first draft (two ACs could not fail, no Proof Pack, self-cleared PASS); all six clearing conditions addressed, and its findings became FR-065 and FR-067. Verdict: NOT READY. Nothing implemented; stopped for human triage.",
+      "kind": "skill",
+      "skill": "forensicreview",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/reviews/forensic-review-rev48.md",
+        "docs/backlog/forensic-review-rev48.md",
+        "docs/proof/forensic-review-rev48.md"
+      ],
+      "tags": [
+        "forensic-review",
+        "ci",
+        "derived-artifacts",
+        "supply-chain"
+      ],
+      "outcome": "success",
+      "git": {
+        "sha": "c27f83d5f4db8a296ced04345e46a543ef1490d4",
+        "short": "c27f83d5f",
+        "branch": "forensicreview/pack-audit",
         "pushed": null
       }
     }
