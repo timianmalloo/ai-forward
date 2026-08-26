@@ -12,7 +12,7 @@ The proof is uncomfortable and therefore worth stating first: run against **this
 
 ## 0. When this applies
 
-Any work that **produces or changes a rendered user interface** — HTML/CSS/JSX/TSX/Vue/Svelte source, a template, a mockup, or a deployed URL. It is triggered by `/ui-design` (Stage 3 measure, Stage 4 gate), `/implement` (build-time control), `/design` (naming the gate in the test plan), and any CI pipeline that ships a UI. It is **not** triggered by backend work, and it is not a substitute for the human and adversarial critique it feeds.
+Any work that **produces or changes a rendered user interface** — HTML/CSS/JSX/TSX/Vue/Svelte source, a template, a mockup, or a deployed URL. It is triggered by `/ui-design` (Stage 3 measure, Stage 4 gate), `/implement` (build-time control), `/design-slice` (naming the gate in the test plan), and any CI pipeline that ships a UI. It is **not** triggered by backend work, and it is not a substitute for the human and adversarial critique it feeds.
 
 **Owner:** the **UX & Accessibility** lens (which holds the U16 hard veto and consumes the contrast/legibility findings) with the **Test Architect** (who owns whether the control is real, red-first, and actually runs — `end-to-end-integrity.md` E13: *a gate's green result is evidence the gate passed, not that its contents passed*).
 

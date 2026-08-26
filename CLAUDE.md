@@ -29,7 +29,7 @@ the Road) and the **AI-Forward Pack** on top of it. Honor them on every non-triv
   rush to a plausible answer: map, interrogate, ground in evidence, disconfirm, then converge,
   with a confidence label on every claim.
 - **The standing method (unconditional):** the absence of the words *"use the Rigor Protocol"*,
-  *"convene the personas"* or *"run /design first"* is **not permission to skip them** — an
+  *"convene the personas"* or *"run /design-slice first"* is **not permission to skip them** — an
   interactive prompt carries the same standard as a skill run; only the ceremony scales with the
   tier, never the rigor. Never decide in a silo: ground in the **whole intent, end to end**, name
   what the decision constrains, and write down the **surface list** a change must reach before you
@@ -136,7 +136,7 @@ the Road) and the **AI-Forward Pack** on top of it. Honor them on every non-triv
   clears its own hard veto. Roster + the operating standard (severity, veto-clears-when,
   conflict rule): `.claude/knowledge/persona-cards.md` and `.claude/knowledge/persona-audit.md`.
 - **Skills (22):** nineteen reasoning workflows — `/collectknowledge`, `/adddomainexperts`,
-  `/specify`, `/define-architecture`, `/design`, `/ui-design`, `/visualize`, `/implement`,
+  `/specify`, `/define-architecture`, `/design-slice`, `/ui-design`, `/visualize`, `/implement`,
   `/investigate`, `/document`, `/adopt`, `/forensicreview`, `/migrate`, `/updatepack`,
   `/addpacktorepo`, `/extendaibundle`, `/optimize-graph`, `/dream`, `/apply-learnings` — plus the `/auditlog`
   lens over the durable audit & change log, and two prompt-log utilities, `/prompts` and
@@ -220,7 +220,7 @@ the Road) and the **AI-Forward Pack** on top of it. Honor them on every non-triv
 - **Audit & change log:** the project keeps a durable, committed history so work compounds across
   sessions — every meaningful prompt/skill/script in `docs/audit/audit-log.jsonl` (the Audit
   Mandate: every skill appends an entry as its last action) and every design decision in
-  `docs/audit/change-log.jsonl` (collectknowledge/define-architecture/design/migrate capture the
+  `docs/audit/change-log.jsonl` (collectknowledge/define-architecture/design-slice/migrate capture the
   prompt, result, and git before/after). Browse the searchable timeline at `docs/audit/index.html`
   or via `/auditlog` (last-N, search, recall-and-redo a prompt, full-history↔changes toggle); all
   writes go through `docs/ai-forward-pack/scripts/audit-log.py`; the standard is

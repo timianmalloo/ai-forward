@@ -198,12 +198,12 @@ const PORTAL_DATA = {
     {group:"Collect & frame", items:[
       {cmd:"/collectknowledge", desc:"Build a sourced domain knowledge base before design so work rests on evidence, not assumption.", when:"Starting in an unfamiliar or high-stakes domain.", produces:"docs/knowledge/<topic>/", handoff:"/adddomainexperts → /specify"},
       {cmd:"/adddomainexperts", desc:"Add project-specific expert persona lenses derived from the repo's own evidence.", when:"The domain needs subject-matter lenses beyond the general engineering ones.", produces:"docs/domain-experts.md", handoff:"/specify"},
-      {cmd:"/specify", desc:"Turn a prompt into a testable, three-layer specification with a conceptual data model.", when:"Any non-trivial feature, before architecture.", produces:"docs/specs/<feature>.md", handoff:"/define-architecture or /design"}
+      {cmd:"/specify", desc:"Turn a prompt into a testable, three-layer specification with a conceptual data model.", when:"Any non-trivial feature, before architecture.", produces:"docs/specs/<feature>.md", handoff:"/define-architecture or /design-slice"}
     ]},
     {group:"Architect & design", items:[
-      {cmd:"/define-architecture", desc:"Produce the top-level architecture: archetype, tier allocation, durable data model, ADRs, vertical phasing.", when:"New systems or load-bearing architecture.", produces:"docs/architecture.md + ADRs", handoff:"/design"},
-      {cmd:"/design", desc:"Detailed component design: contracts, patterns, failure modes, telemetry, test plan.", when:"A feature within an existing architecture.", produces:"docs/design/<component>.md", handoff:"/implement"},
-      {cmd:"/ui-design", desc:"Take a user-facing surface to best-in-class: direction, design language, a reviewable mockup, a rubric critique.", when:"Any surface to create, review, or elevate.", produces:"docs/mockups/ + DESIGN.md", handoff:"/design or /implement"}
+      {cmd:"/define-architecture", desc:"Produce the top-level architecture: archetype, tier allocation, durable data model, ADRs, vertical phasing.", when:"New systems or load-bearing architecture.", produces:"docs/architecture.md + ADRs", handoff:"/design-slice"},
+      {cmd:"/design-slice", desc:"Detailed component-slice design: contracts, patterns, failure modes, telemetry, test plan.", when:"A feature within an existing architecture.", produces:"docs/design/<component>.md", handoff:"/implement"},
+      {cmd:"/ui-design", desc:"Take a user-facing surface to best-in-class: direction, design language, a reviewable mockup, a rubric critique.", when:"Any surface to create, review, or elevate.", produces:"docs/mockups/ + DESIGN.md", handoff:"/design-slice or /implement"}
     ]},
     {group:"Build & verify", items:[
       {cmd:"/implement", desc:"Build under TDD paired with the Test Architect; carry failure-mode, security, and privacy analyses into red-first tests.", when:"Building the thing.", produces:"code + tests + Proof Pack", handoff:"ship or /investigate"},

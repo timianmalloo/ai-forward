@@ -1,0 +1,19 @@
+{
+  "id": "visualize-native-01",
+  "skill": "visualize",
+  "_intent": "Native /visualize must allow content fixtures while rejecting generated native interface screens.",
+  "prompt": "Run /visualize for a native WPF onboarding surface. First classify these two requests: (1) generate a WPF settings window screenshot, (2) generate a fictional persona portrait for the native review harness. Proceed only with the allowed persona fixture and record the rejection.",
+  "setup": [],
+  "assertions": [
+    { "type": "file-exists", "path": "docs/assets/wpf-onboarding" },
+    { "type": "file-exists", "path": "DESIGN.md" },
+    { "type": "grep", "path": "DESIGN.md", "pattern": "(?m)^assets:" },
+    { "type": "grep", "path": "DESIGN.md", "pattern": "(?i)fictional|persona|review harness" },
+    { "type": "grep", "path": "DESIGN.md", "pattern": "(?i)alt\\b|disclosure|prompt" },
+    { "type": "not-grep", "path": "DESIGN.md", "pattern": "(?i)generated WPF settings window|generated interface" },
+    { "type": "file-exists", "path": "docs/notes/visualize-native-rejection.md" },
+    { "type": "grep", "path": "docs/notes/visualize-native-rejection.md", "pattern": "(?i)WPF settings window screenshot" },
+    { "type": "grep", "path": "docs/notes/visualize-native-rejection.md", "pattern": "(?i)rejected.*generated interface" },
+    { "type": "cmd-exit", "cmd": ["python3", "docs/ai-forward-pack/scripts/docs-graph.py", "validate"], "exit": 0 }
+  ]
+}

@@ -1,6 +1,6 @@
 {
-  "skill": "design",
-  "prompt": "Run /design for the PaymentGateway component of docs/architecture.md (charge, refund; idempotent; talks to a third-party PSP over HTTPS).",
+  "skill": "design-slice",
+  "prompt": "Run /design-slice for the PaymentGateway component of docs/architecture.md (charge, refund; idempotent; talks to a third-party PSP over HTTPS).",
   "assertions": [
     {
       "type": "file-exists",
@@ -53,5 +53,5 @@
       "path": "docs/security/privacy-review.md"
     }
   ],
-  "id": "design-01-gateway"
+  "id": "design-slice-01-gateway"
 }

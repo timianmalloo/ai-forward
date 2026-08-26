@@ -8,7 +8,7 @@
     },
     {
       "path": "CLAUDE.md",
-      "content": "# Target\n\n<!-- AI-FORWARD-PACK:BEGIN -->\n## AI-Forward Pack\n- **Skills (10):** `/collectknowledge`, `/specify`, `/define-architecture`, `/design`, `/implement`, `/investigate`, `/document`, `/adddomainexperts`, `/adopt`, `/migrate`.\n<!-- AI-FORWARD-PACK:END -->\n"
+      "content": "# Target\n\n<!-- AI-FORWARD-PACK:BEGIN -->\n## AI-Forward Pack\n- **Skills (10):** `/collectknowledge`, `/specify`, `/define-architecture`, `/design-slice`, `/implement`, `/investigate`, `/document`, `/adddomainexperts`, `/adopt`, `/migrate`.\n<!-- AI-FORWARD-PACK:END -->\n"
     }
   ],
   "assertions": [

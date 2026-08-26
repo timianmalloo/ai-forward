@@ -42,7 +42,7 @@ Six stages: **0 Rush Interdiction** (no conclusion without a confidence label) �
 |---|---|---|---|---|
 | **/specify** | a prompt or idea | a testable spec with acceptance criteria | Product Strategist, Domain Researcher (+ Privacy if data) | Simplifier, Test Architect, Security (+ Privacy / AI Systems if data or model) |
 | **/define-architecture** | a spec | the top-level architecture + ADRs | Enterprise + Distributed + Security architects, Tech Lead, Domain Researcher, AI Systems, Data & Persistence | full architect council, Patterns Expert, SRE, Privacy, Release |
-| **/design** | a spec/component | a detailed component design | Patterns Expert, Simplifier, language Dev, Domain Researcher, AI Systems (prompt/eval), Data (schema) | + Security, Distributed, Test Architect |
+| **/design-slice** | a spec/component | a detailed component design | Patterns Expert, Simplifier, language Dev, Domain Researcher, AI Systems (prompt/eval), Data (schema) | + Security, Distributed, Test Architect |
 | **/implement** | a design | tested code + a Proof Pack | language Developer ⇄ Test Architect (pair), AI Systems (eval), Data (migration) | Test Architect, SRE, architects, Release Engineer |
 | **/investigate** | a defect | a verified root cause, the failure class generalized + a phased repair plan (stops for your review) | SRE + Distributed Systems, Domain Researcher, Data | + Security, Test Architect, AI Systems, Release |
 
@@ -53,9 +53,9 @@ Each skill is the Rigor Protocol specialized to its phase — the same six stage
 - **`/collectknowledge`** runs *before* design: from a domain and problem you state, it does deep, **sourced** research — industry state of the art, comparable solutions and problem framings, reference standards and data, a glossary — and saves a confidence-labeled knowledge base to `docs/knowledge/` that the team and the personas reason from. It bootstraps domain expertise instead of assuming it.
 - **`/adddomainexperts`** tailors the *roster itself* to your project: it derives the domain from the repo's own evidence, proposes the subject-matter lenses that domain needs in peer and adversary modes (finance → accounting/controls; CFD → a fluid dynamicist; clinical → a clinical-safety lens), wires in any existing Claude domain skills that supply the capability, and — once you confirm the set — adds each as a §8-conformant persona and updates every roster artifact locally.
 - **`/document`** produces and maintains the **documentation bundle**: a JavaDoc-style API reference plus sequence, class, layered-architecture, and component diagrams, in both committed markdown and a self-contained browsable HTML view — and installs an after-commit freshness check (owned by the **Documentation Steward**) so the docs never drift from the code.
-- **`/forensicreview`** reconstructs an existing repo's architecture and full documentation from code, runs the complete architecture/design/implementation council against it, and emits a separate evidence-linked review plus a prioritized backlog of risks, verified issues, and todos. It changes documentation, never production code, and stops for human triage.
+- **`/forensicreview`** reconstructs an existing repo's architecture and full documentation from code, runs the complete architecture/design-slice/implementation council against it, and emits a separate evidence-linked review plus a prioritized backlog of risks, verified issues, and todos. It changes documentation, never production code, and stops for human triage.
 
-The natural order: `/collectknowledge` → `/adddomainexperts` → `/specify` → `/define-architecture` → `/design` → `/implement` → `/document`, with `/investigate` whenever a defect appears. See `commands/`.
+The natural order: `/collectknowledge` → `/adddomainexperts` → `/specify` → `/define-architecture` → `/design-slice` → `/implement` → `/document`, with `/investigate` whenever a defect appears. See `commands/`.
 
 ---
 

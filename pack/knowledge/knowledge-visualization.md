@@ -129,7 +129,7 @@ Skipping the index update is the documentation equivalent of skipping a triggere
 | `supersedes` | source replaces target (target → status `superseded`) | adr→adr, spec→spec | "is superseded by" |
 | `tested-by` | source's claims are proven by target | design→proof-pack, spec→proof-pack | "proves" |
 | `documents` | source describes target | api/doc→source, doc→design | "is documented by" |
-| `uses-term` | source relies on target's definition | spec/design/investigation→glossary | "defines a term used by" |
+| `uses-term` | source relies on target's definition | spec/design-slice/investigation→glossary | "defines a term used by" |
 | `relates-to` | weak association (use sparingly — prefer a stronger rel) | any→any | symmetric |
 
 **V15 — Graph-aware grounding.** Grounding (Rigor Protocol Stage 0) traverses the graph, it does not re-discover files: starting from the artifact(s) under work, load the **subgraph 1–2 hops out along typed edges** — upstream via `implements`/`refines`/`depends-on` (the spec, the architecture, the ADRs it answers to), downstream via `tested-by`/`documents` (the proofs and docs that constrain change), and `uses-term` (the definitions in play). The traversal path **is the provenance** of the grounding — cite it. A missing expected edge, a stale (`review-by`-past) node, or an orphan discovered during grounding is a **finding to surface**, not something to silently route around.

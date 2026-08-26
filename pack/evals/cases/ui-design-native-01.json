@@ -1,0 +1,18 @@
+{
+  "id": "ui-design-native-01",
+  "skill": "ui-design",
+  "_intent": "Native UI-T4 must not be satisfied by a web-style mockup or screenshot-only review. The run must produce a native proof pack tied to WPF/WinUI/Avalonia evidence.",
+  "prompt": "Run /ui-design in review mode for a WPF settings window. The existing surface has a screenshot but no platform declaration, no UI Automation evidence, and no keyboard traversal proof. Review it as a native Windows desktop surface.",
+  "setup": [],
+  "assertions": [
+    { "type": "file-exists", "path": "docs/proof/native-ui-settings.md" },
+    { "type": "frontmatter-valid", "path": "docs/proof/native-ui-settings.md" },
+    { "type": "grep", "path": "docs/proof/native-ui-settings.md", "pattern": "(?i)medium declaration|platform|framework" },
+    { "type": "grep", "path": "docs/proof/native-ui-settings.md", "pattern": "(?i)WPF|WinUI|Avalonia|Blazor Hybrid" },
+    { "type": "grep", "path": "docs/proof/native-ui-settings.md", "pattern": "(?i)keyboard traversal" },
+    { "type": "grep", "path": "docs/proof/native-ui-settings.md", "pattern": "(?i)accessibility tree|UI Automation|Accessibility Insights" },
+    { "type": "grep", "path": "docs/proof/native-ui-settings.md", "pattern": "(?i)DPI|windowing|HighContrast|SmartScreen|signing" },
+    { "type": "grep", "path": "docs/proof/native-ui-settings.md", "pattern": "(?i)screenshot.*not.*proof|HTML mockup.*not.*native PASS" },
+    { "type": "cmd-exit", "cmd": ["python3", "docs/ai-forward-pack/scripts/docs-graph.py", "validate"], "exit": 0 }
+  ]
+}

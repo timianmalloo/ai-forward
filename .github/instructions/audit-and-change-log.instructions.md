@@ -37,10 +37,10 @@ Each audit entry records one meaningful action. The five **required** fields are
   "shortname": "design-gateway",         // REQUIRED — a short human label
   "datetime": "2026-06-27T14:28:09Z",    // REQUIRED — ISO-8601 UTC (auto if omitted)
   "session": "2dbe541d-…",               // REQUIRED — the session id (links to session history)
-  "prompt": "Run /design on the payment gateway…",  // REQUIRED — the prompt / command, verbatim
+  "prompt": "Run /design-slice on the payment gateway…",  // REQUIRED — the prompt / command, verbatim
   "summary": "Produced docs/design/payment-gateway.md; 3 failure modes dispositioned.", // REQUIRED — what the result was
   "kind": "skill",                       // skill|command|script|prompt|commit|manual|session-import
-  "skill": "design",                     // the skill that ran, if any
+  "skill": "design-slice",                     // the skill that ran, if any
   "tool": "Copilot CLI",                 // the agent/tool that ran it
   "actor": "@handle",                    // who initiated it (optional)
   "artifacts": ["docs/design/payment-gateway.md"], // files created/changed — graph links (§4)
@@ -132,7 +132,7 @@ The change log is the **curated** subset: not every action, but every action tha
 }
 ```
 
-**CL1 — The four design-shaping skills capture a change by default.** `/collectknowledge`, `/define-architecture`, `/design`, and `/migrate` **MUST**, when they produce or alter a load-bearing decision, append a change-log entry capturing the **prompt** that drove it and a **summary** of the result, via:
+**CL1 — The four design-shaping skills capture a change by default.** `/collectknowledge`, `/define-architecture`, `/design-slice`, and `/migrate` **MUST**, when they produce or alter a load-bearing decision, append a change-log entry capturing the **prompt** that drove it and a **summary** of the result, via:
 
 ```bash
 python3 docs/ai-forward-pack/scripts/audit-log.py change \

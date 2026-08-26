@@ -55,7 +55,7 @@ This is *subject-matter* finance, not "an app that happens to store money" — t
 - **Plug-to-Tie** (a reconciliation forced with an unexplained plug) → Reconciliation Expert.
 
 ## Casting (folded into `collaborative-personas.md` §5, local copy)
-- `/specify`, `/design`, `/implement` of any accounting logic now convene the **Financial-Reporting Expert** (peer + adversary; hard veto).
+- `/specify`, `/design-slice`, `/implement` of any accounting logic now convene the **Financial-Reporting Expert** (peer + adversary; hard veto).
 - `/implement` and `/investigate` touching controls or close convene the **Controls & Audit Expert**.
 - Any reconciliation logic convenes the **Reconciliation Expert**.
 

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-forward",
-  "generated": "2026-08-24T13:22:30Z",
+  "project": "ai-forward-rename-design-slice",
+  "generated": "2026-08-26T14:02:57Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1900,6 +1900,182 @@ window.AUDIT_DATA = {
       ],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-01M0XY4AS4MKJJCWX39VAXMMBD",
+      "shortname": "collectknowledge-native-client-ui",
+      "datetime": "2026-08-26T02:24:33Z",
+      "session": "275331bb-f120-4d45-b1e6-0e0f07061c3c",
+      "prompt": "ground yourself in the repo then specifically dig into the UI skills and capbabilities, they are focused on web properties but we also need to apply the same reasoning and review for wpf and other native client applications ---- /collectknowledge on existing public repos with ameanable licenses (e.g MIT) that allow us to review, refine and elevate native application UX/UI ... also collect knowledge in public domain for best practices, standards and style guides that would expand our core knowledge as we look to improve our native app design capabilities",
+      "summary": "Established native-client UI evidence base for WPF, WinUI, Avalonia, macOS, GNOME/KDE and permissive public exemplars; indexed it in the Docs Explorer.",
+      "kind": "skill",
+      "skill": "collectknowledge",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/knowledge/native-client-ui-design/index.md",
+        "docs/knowledge/native-client-ui-design/state-of-the-art.md",
+        "docs/knowledge/native-client-ui-design/comparables.md",
+        "docs/knowledge/native-client-ui-design/references.md",
+        "docs/knowledge/native-client-ui-design/data-and-constants.md",
+        "docs/knowledge/native-client-ui-design/glossary.md",
+        "docs/knowledge/native-client-ui-design/open-questions.md",
+        "docs/knowledge/native-client-ui-design/sources.md"
+      ],
+      "tags": [
+        "native-ui",
+        "wpf",
+        "winui",
+        "avalonia",
+        "accessibility"
+      ],
+      "outcome": "success",
+      "goal": "Create a sourced native-client UI knowledge base grounded in existing AI-Forward UI standards.",
+      "done_when": "docs/knowledge/native-client-ui-design exists, graph derivation validates, and audit/change logs record the run.",
+      "started_at": "2026-08-26T02:11:04Z",
+      "duration_seconds": 809.0,
+      "git": {
+        "sha": "e1ec9d096ac77361b1e13b98d0ef768ffe8d58b0",
+        "short": "e1ec9d096",
+        "branch": "collectknowledge/native-app-ux",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M0Y0TS4DED7ZM7Z8590HNF1X",
+      "shortname": "specify-native-ui-skills",
+      "datetime": "2026-08-26T03:11:45Z",
+      "session": "275331bb-f120-4d45-b1e6-0e0f07061c3c",
+      "prompt": "ground yourself in the new knowledge then examine the existing ui-design and visualize skills, /specify how to extend the skills to cover native apps",
+      "summary": "Produced native app UI skill extension spec covering medium declaration, native proof packs, XAML/resource token mapping, generated asset constraints, and flagged design/tooling decisions.",
+      "kind": "skill",
+      "skill": "specify",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/specs/native-app-ui-skill-extension.md"
+      ],
+      "tags": [
+        "specify",
+        "native-ui",
+        "ui-design",
+        "visualize"
+      ],
+      "outcome": "success",
+      "goal": "Specify how to extend ui-design and visualize so native apps are first-class targets.",
+      "done_when": "docs/specs/native-app-ui-skill-extension.md exists, cites the native knowledge base, passes adversarial review, validates in the docs graph, and audit/change logs record the run.",
+      "started_at": "2026-08-26T03:00:34Z",
+      "duration_seconds": 671.0,
+      "git": {
+        "sha": "714f1848f67e6bb92c0db452db179bb9cfbb0c45",
+        "short": "714f1848f",
+        "branch": "specify/native-app-ui-skills",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M0Z2BVD2ECWK5VD70G95WQM0",
+      "shortname": "design-native-ui-skills",
+      "datetime": "2026-08-26T12:57:48Z",
+      "session": "275331bb-f120-4d45-b1e6-0e0f07061c3c",
+      "prompt": "tool choices: - it can be wpf, winui, blazor, it can be XAML Token linting and we should have native archetype rows native proof pack: - should be both skill text AND a reusable template/checklist Exemplar policy - add the small exemplar table to UI docs with license-appropriate restrictions ----------------- then /design the modifications to the skills",
+      "summary": "Produced design for extending ui-design and visualize with native medium declarations, native proof pack template, XAML token linter, native archetype rows, and exemplar license policy.",
+      "kind": "skill",
+      "skill": "design",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/design/native-app-ui-skill-extension.md"
+      ],
+      "tags": [
+        "design",
+        "native-ui",
+        "ui-design",
+        "visualize"
+      ],
+      "outcome": "success",
+      "goal": "Design the exact pack edits for native-app support in ui-design and visualize.",
+      "done_when": "docs/design/native-app-ui-skill-extension.md exists, passes adversarial review, validates in the docs graph, and audit/change logs record the design.",
+      "started_at": "2026-08-26T12:43:37Z",
+      "duration_seconds": 851.0,
+      "git": {
+        "sha": "5a27650c1cc3350530fdb3756e67e81453a44587",
+        "short": "5a27650c1",
+        "branch": "design/native-app-ui-skills",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M0Z4YNADNJVG11YHV73YYVNC",
+      "shortname": "implement-native-ui-skills",
+      "datetime": "2026-08-26T13:43:01Z",
+      "session": "275331bb-f120-4d45-b1e6-0e0f07061c3c",
+      "prompt": "the design to update the skills now",
+      "summary": "Implemented native client UI support across ui-design, visualize, UI craft/assets/catalog docs, native proof-pack template, xaml-token-lint.py, tests and eval cases.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "pack\\commands\\ui-design\\SKILL.md",
+        "pack\\commands\\visualize\\SKILL.md",
+        "pack\\knowledge\\ui-design-craft.md",
+        "pack\\knowledge\\ui-visual-assets.md",
+        "pack\\knowledge\\ui-archetype-catalog.md",
+        "pack\\templates\\native-ui-proof-pack.template.md",
+        "pack\\scripts\\xaml-token-lint.py",
+        "tests\\docs_explorer\\test_native_ui_extension.py",
+        "docs\\proof\\native-app-ui-skill-extension.md"
+      ],
+      "tags": [
+        "implement",
+        "native-ui",
+        "ui-design",
+        "visualize"
+      ],
+      "outcome": "success",
+      "goal": "Implement the native app UI skill extension from docs/design/native-app-ui-skill-extension.md.",
+      "done_when": "Pack source edits, generated surfaces, native tests/evals, proof pack, graph/audit validation, and commit are complete.",
+      "started_at": "2026-08-26T13:14:17Z",
+      "duration_seconds": 1724.0,
+      "git": {
+        "sha": "f935964be1c2ebeff7fef7cd29846a8e11ef3ae5",
+        "short": "f935964be",
+        "branch": "implement/native-app-ui-skills",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M0Z62XJAAKQ958QVK6JXAM7S",
+      "shortname": "implement-design-slice-rename",
+      "datetime": "2026-08-26T14:02:49Z",
+      "session": "275331bb-f120-4d45-b1e6-0e0f07061c3c",
+      "prompt": "/specify then /implement the rename of my \"design\" skill to \"design-slice\"",
+      "summary": "Renamed the detailed component design workflow command to /design-slice across pack source, Claude and Copilot generated surfaces, eval cases, portal metadata and root instructions; focused regression and docs/explorer suite passed.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/specs/design-slice-rename.md",
+        "pack/commands/design-slice/SKILL.md",
+        "pack/adapters/copilot/prompts/design-slice.prompt.md",
+        "tests/docs_explorer/test_design_slice_rename.py",
+        "pack/adapters/INSTALL.md"
+      ],
+      "tags": [
+        "design-slice",
+        "skill-rename"
+      ],
+      "outcome": "success",
+      "started_at": "2026-08-26T13:52:53Z",
+      "duration_seconds": 596.0,
+      "git": {
+        "sha": "16f36c3df6119f71bfacb8ffed8c1fb470ae148a",
+        "short": "16f36c3df",
+        "branch": "rename/design-slice",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -2593,6 +2769,119 @@ window.AUDIT_DATA = {
         "after": "44e8fef585fd4c0b4b88619c31c79d4f6d612e86",
         "branch": "main",
         "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M0XY4AYS5ZQNZYM0AZ6K09TX",
+      "datetime": "2026-08-26T02:24:33Z",
+      "session": "275331bb-f120-4d45-b1e6-0e0f07061c3c",
+      "kind": "knowledge",
+      "skill": "collectknowledge",
+      "title": "Establish native-client UI design evidence base",
+      "prompt": "ground yourself in the repo then specifically dig into the UI skills and capbabilities, they are focused on web properties but we also need to apply the same reasoning and review for wpf and other native client applications ---- /collectknowledge on existing public repos with ameanable licenses (e.g MIT) that allow us to review, refine and elevate native application UX/UI ... also collect knowledge in public domain for best practices, standards and style guides that would expand our core knowledge as we look to improve our native app design capabilities",
+      "summary": "Native app UI review must extend web craft with platform HIG, UI Automation/accessibility tree, keyboard traversal, XAML/native resource tokens, high-DPI/multi-monitor, windowing and signing/notarization proof rows.",
+      "rationale": "The existing UI skills and personas name native desktop, but WPF/WinUI/Avalonia/native app design needs sourced platform contracts and permissive exemplar repos before pack changes are designed.",
+      "artifacts": [
+        "docs/knowledge/native-client-ui-design/index.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "e1ec9d096ac77361b1e13b98d0ef768ffe8d58b0",
+        "after": "e1ec9d096ac77361b1e13b98d0ef768ffe8d58b0",
+        "branch": "collectknowledge/native-app-ux",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M0Y0TSA3V3F8WCKV4VF6GJ8D",
+      "datetime": "2026-08-26T03:11:45Z",
+      "session": "275331bb-f120-4d45-b1e6-0e0f07061c3c",
+      "kind": "spec",
+      "skill": "specify",
+      "title": "Specify native app UI skill extension",
+      "prompt": "ground yourself in the new knowledge then examine the existing ui-design and visualize skills, /specify how to extend the skills to cover native apps",
+      "summary": "Spec requires ui-design/visualize native runs to declare medium/platform/framework, use native proof rows, keep generated assets as content only, and defer exact tooling to design.",
+      "rationale": "Native UI evidence shows web mockups cannot prove accessibility tree, keyboard, DPI/windowing, resource themes, OS integration, or signing/notarization behavior.",
+      "artifacts": [
+        "docs/specs/native-app-ui-skill-extension.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "714f1848f67e6bb92c0db452db179bb9cfbb0c45",
+        "after": "714f1848f67e6bb92c0db452db179bb9cfbb0c45",
+        "branch": "specify/native-app-ui-skills",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M0Z2BVMVFJSKT2CMP726GG56",
+      "datetime": "2026-08-26T12:57:48Z",
+      "session": "275331bb-f120-4d45-b1e6-0e0f07061c3c",
+      "kind": "design",
+      "skill": "design",
+      "title": "Design native app UI skill extension",
+      "prompt": "tool choices: - it can be wpf, winui, blazor, it can be XAML Token linting and we should have native archetype rows native proof pack: - should be both skill text AND a reusable template/checklist Exemplar policy - add the small exemplar table to UI docs with license-appropriate restrictions ----------------- then /design the modifications to the skills",
+      "summary": "Design selects extension-over-new-skill, native proof-pack template, bounded XAML token linter, three native archetype rows, and /visualize native asset guardrails.",
+      "rationale": "The accepted spec and native UI evidence require platform proof for native clients while preserving the existing UI workflow and generated-interface prohibition.",
+      "artifacts": [
+        "docs/design/native-app-ui-skill-extension.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "5a27650c1cc3350530fdb3756e67e81453a44587",
+        "after": "5a27650c1cc3350530fdb3756e67e81453a44587",
+        "branch": "design/native-app-ui-skills",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M0Z4YNGE3RY8YBB78Q0DT422",
+      "datetime": "2026-08-26T13:43:01Z",
+      "session": "275331bb-f120-4d45-b1e6-0e0f07061c3c",
+      "kind": "design",
+      "skill": "implement",
+      "title": "Implement native app UI skill extension",
+      "prompt": "the design to update the skills now",
+      "summary": "Pack now treats WPF/WinUI/Avalonia/Blazor Hybrid as native UI first-slice surfaces with native proof pack, XAML token linting, generated-interface rejection, native archetypes and license-aware exemplars.",
+      "rationale": "Native app UI cannot be verified by web mockups/static craft scans; it needs platform proof for accessibility tree, keyboard, DPI/windowing, resource themes, OS integration and signing.",
+      "artifacts": [
+        "pack\\commands\\ui-design\\SKILL.md",
+        "pack\\scripts\\xaml-token-lint.py"
+      ],
+      "tags": [],
+      "git": {
+        "before": "f935964be1c2ebeff7fef7cd29846a8e11ef3ae5",
+        "after": "f935964be1c2ebeff7fef7cd29846a8e11ef3ae5",
+        "branch": "implement/native-app-ui-skills",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M0Z6352KCJ0XTZFF088SYHZ6",
+      "datetime": "2026-08-26T14:02:57Z",
+      "session": "275331bb-f120-4d45-b1e6-0e0f07061c3c",
+      "kind": "decision",
+      "skill": "implement",
+      "title": "Rename design workflow to design-slice",
+      "prompt": "/specify then /implement the rename of my \"design\" skill to \"design-slice\"",
+      "summary": "The pack's generic /design workflow is now exposed as /design-slice while preserving docs/design/ artifacts, templates/design.template.md, DESIGN.md, design-lint.py and design-language terminology.",
+      "rationale": "Avoids collision with generic agent or Claude skill namespaces while keeping the detailed component design artifact model unchanged.",
+      "artifacts": [
+        "docs/specs/design-slice-rename.md",
+        "pack/commands/design-slice/SKILL.md",
+        "pack/adapters/INSTALL.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "16f36c3df6119f71bfacb8ffed8c1fb470ae148a",
+        "after": "16f36c3df6119f71bfacb8ffed8c1fb470ae148a",
+        "branch": "rename/design-slice",
+        "pushed": null,
         "commits": []
       }
     }

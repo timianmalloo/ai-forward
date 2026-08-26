@@ -49,13 +49,13 @@ A repository or path (default: the whole current repo), optionally narrowed to a
 
 **Stage 6 — PRIORITIZE AND CONVERGE.**
 - Assign priority without false precision: **P0** exploitable/active data-loss/safety/irreversible blocker; **P1** high-likelihood correctness, security, reliability, or migration risk; **P2** material maintainability, operability, performance, testing, or design debt; **P3** localized hygiene, documentation, or low-impact improvement.
-- Deduplicate findings by root cause. Convert each accepted finding into a backlog item with: id, kind, priority, title, evidence link, affected scope, consequence, recommended remediation, falsifiable acceptance criteria, validation method, dependencies, suggested owner, recommended next skill (`/investigate`, `/define-architecture`, `/design`, `/migrate`, `/implement`, or `/document`), and status `proposed`.
-- Order the backlog into independently deliverable phases: contain P0/P1 exposure first; restore missing proof/observability next; repair architecture/design debt in vertical slices; finish with maintainability/docs hygiene.
+- Deduplicate findings by root cause. Convert each accepted finding into a backlog item with: id, kind, priority, title, evidence link, affected scope, consequence, recommended remediation, falsifiable acceptance criteria, validation method, dependencies, suggested owner, recommended next skill (`/investigate`, `/define-architecture`, `/design-slice`, `/migrate`, `/implement`, or `/document`), and status `proposed`.
+- Order the backlog into independently deliverable phases: contain P0/P1 exposure first; restore missing proof/observability next; repair architecture/design-slice debt in vertical slices; finish with maintainability/docs hygiene.
 - End with an overall readiness verdict and a status table: Completed | Remaining | Best next action. Then **STOP for human triage**. Do not implement backlog items or create remote issues unless the user explicitly requested that separate action.
 
 ## Output artifact
 - Recreated truth-to-code documentation under `docs/`, including `docs/architecture.md`, the documentation bundle, diagrams, graph index, and Explorer.
-- `docs/reviews/forensic-review.md` (`type: doc`) — scope and baseline, recovered system map, architecture/design/implementation assessments, persona verdicts, deduplicated findings, readiness verdict, confidence ledger, and residual risk.
+- `docs/reviews/forensic-review.md` (`type: doc`) — scope and baseline, recovered system map, architecture/design-slice/implementation assessments, persona verdicts, deduplicated findings, readiness verdict, confidence ledger, and residual risk.
 - `docs/backlog/forensic-review.md` (`type: doc`) — the canonical proposed backlog of risks, open issues, and todos using `FR-###` ids and the schema above.
 
 ## Definition of done (exit gate)

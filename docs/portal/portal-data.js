@@ -3,9 +3,9 @@ window.PORTAL_DATA = {
     "counts": {
       "skills": 22,
       "personas": 23,
-      "knowledge": 38,
-      "templates": 26,
-      "scripts": 17
+      "knowledge": 39,
+      "templates": 27,
+      "scripts": 18
     },
     "whatIs": "AI-Forward is a committed Markdown methodology pack that installs into a repo so Claude Code and GitHub Copilot direct work with a shared reasoning spine, adversarial persona review, and a library of workflow skills - nothing runs as a service; everything is versioned files and stdlib scripts.",
     "skillCount": 22,
@@ -138,7 +138,7 @@ window.PORTAL_DATA = {
           "desc": "Turn a prompt or idea into a crisp, testable product specification with acceptance criteria.",
           "when": "Any non-trivial feature, before architecture.",
           "produces": "docs/specs/<feature>.md",
-          "handoff": "/define-architecture or /design"
+          "handoff": "/define-architecture or /design-slice"
         }
       ]
     },
@@ -150,10 +150,10 @@ window.PORTAL_DATA = {
           "desc": "Turn a spec into a top-level architecture with ADRs, grounded in established contracts.",
           "when": "New systems or load-bearing architecture.",
           "produces": "docs/architecture.md + ADRs",
-          "handoff": "/design"
+          "handoff": "/design-slice"
         },
         {
-          "cmd": "/design",
+          "cmd": "/design-slice",
           "desc": "Turn a spec/component into a detailed component design with a test plan.",
           "when": "A feature within an existing architecture.",
           "produces": "docs/design/<component>.md",
@@ -164,7 +164,7 @@ window.PORTAL_DATA = {
           "desc": "Create, review or elevate a user interface to a professional standard — direction brief, design language, reviewable mockup, rubric critique.",
           "when": "Any user-facing surface to create, review, or elevate.",
           "produces": "docs/mockups/ + DESIGN.md",
-          "handoff": "/design or /implement"
+          "handoff": "/design-slice or /implement"
         }
       ]
     },
@@ -672,6 +672,11 @@ window.PORTAL_DATA = {
             "path": "../../docs/specs/agent-coordination.md"
           },
           {
+            "title": "Rename /design to /design-slice — Specification",
+            "summary": "Specification for renaming AI-Forward's detailed component-design workflow from /design to /design-slice. The rename avoids a generic skill-name collision while preserving the workflow's meaning and updating generated Claude/Copilot pack surfaces.",
+            "path": "../../docs/specs/design-slice-rename.md"
+          },
+          {
             "title": "Documentation Portal — a derived, self-maintaining interactive front door",
             "summary": "Specification for a single, polished, interactive HTML documentation portal that is the front door to the AI-Forward repo — a capabilities overview, concrete reference for all 21 skills, an in-depth UI-capabilities section, and an explicit getting-started...",
             "path": "../../docs/specs/documentation-portal.md"
@@ -680,6 +685,11 @@ window.PORTAL_DATA = {
             "title": "Dreaming — continuous-improvement consolidation, review, and cross-repo federation",
             "summary": "Specification for AI-Forward's dreaming capability: a /dream consolidation skill that mines the committed corpus (audit/change logs, defect-class register, captured mitigations, triggered markers) and emits an HTML review view of proposed learnings; a...",
             "path": "../../docs/specs/dreaming-continuous-improvement.md"
+          },
+          {
+            "title": "Native app UI skill extension — Specification",
+            "summary": "Specification for extending the AI-Forward UI skills so WPF, WinUI, Avalonia and other native client applications receive the same rigorous UX/UI reasoning as web surfaces. The spec defines the required native medium declaration, native proof pack,...",
+            "path": "../../docs/specs/native-app-ui-skill-extension.md"
           }
         ]
       },
@@ -710,6 +720,11 @@ window.PORTAL_DATA = {
             "title": "Docs Explorer — Grounding and Spatial Navigation Design",
             "summary": "Detailed design for making the repository knowledge graph a deterministic grounding interface for coding agents and a clearer human exploration surface. It separates selected-node neighborhood context from mind-map rooting, adds provenance-bounded context...",
             "path": "../../docs/design/docs-explorer-grounding-and-spatial-navigation.md"
+          },
+          {
+            "title": "Native app UI skill extension — Design",
+            "summary": "Detailed design for making native client applications first-class in the AI-Forward UI skills. The design updates /ui-design and /visualize, adds a reusable native UI proof-pack template, adds native desktop archetype rows, and introduces a deterministic XAML...",
+            "path": "../../docs/design/native-app-ui-skill-extension.md"
           },
           {
             "title": "Design — installed-repo doctor (suggestion 2)",
@@ -906,6 +921,12 @@ window.PORTAL_DATA = {
         "type": "design-language",
         "title": "Docs Explorer — Design Language",
         "summary": "Token and interaction language for the Docs Explorer knowledge portal: browse, graph, mind-map, deterministic Spatial 3D, and derived HTML knowledge surfaces...."
+      },
+      {
+        "id": "design-native-app-ui-skill-extension",
+        "type": "design",
+        "title": "Native app UI skill extension — Design",
+        "summary": "Detailed design for making native client applications first-class in the AI-Forward UI skills. The design updates /ui-design and /visualize, adds a reusable..."
       },
       {
         "id": "design-pack-doctor",
@@ -1184,6 +1205,54 @@ window.PORTAL_DATA = {
         "summary": "Full source list with access dates and confidence labels — primary papers (LLMCompiler, MAST), framework documentation (LangGraph), vendor engineering writeups..."
       },
       {
+        "id": "kb-native-client-ui-design",
+        "type": "knowledge",
+        "title": "Native client UI design — WPF, WinUI, Avalonia and desktop apps",
+        "summary": "Sourced evidence base for extending the pack's UI reasoning and review from web properties to native client applications. Establishes the native-specific..."
+      },
+      {
+        "id": "kb-native-client-ui-design-comparables",
+        "type": "knowledge",
+        "title": "Native client UI design — Comparable repositories",
+        "summary": "Permissively licensed public repositories and reference apps suitable for native-client UI review and pattern extraction, plus flagged reference-only repos..."
+      },
+      {
+        "id": "kb-native-client-ui-design-data",
+        "type": "knowledge",
+        "title": "Native client UI design — Data, constants and proof rows",
+        "summary": "Checkable native UI invariants and proof rows: accessibility tree, keyboard traversal, theme/high-contrast behavior, DPI/windowing, native resource tokens, OS..."
+      },
+      {
+        "id": "kb-native-client-ui-design-glossary",
+        "type": "glossary",
+        "title": "Native client UI design — Glossary",
+        "summary": "Ubiquitous language for native desktop UI work: platform HIG, Fluent, WinUI, WPF, XAML resources, UI Automation, automation peers, keyboard focus, high DPI,..."
+      },
+      {
+        "id": "kb-native-client-ui-design-open-questions",
+        "type": "knowledge",
+        "title": "Native client UI design — Open questions and disconfirmation",
+        "summary": "Unresolved native UI research questions, disconfirming evidence, and domain failure modes that the next design pass must settle before changing pack skills or..."
+      },
+      {
+        "id": "kb-native-client-ui-design-references",
+        "type": "knowledge",
+        "title": "Native client UI design — References",
+        "summary": "Standards, HIGs, platform documentation and tools that define the native-client UI contract for Windows, macOS, GNOME/KDE and cross-platform XAML applications."
+      },
+      {
+        "id": "kb-native-client-ui-design-sota",
+        "type": "knowledge",
+        "title": "Native client UI design — State of the Art",
+        "summary": "Current best practice for native client UX/UI: use the target OS design system as the primary contract, keep the pack's UX/UI layering and token discipline,..."
+      },
+      {
+        "id": "kb-native-client-ui-design-sources",
+        "type": "knowledge",
+        "title": "Native client UI design — Sources",
+        "summary": "Full source list for native client UI design research: official Windows/Fluent/Avalonia/GNOME/KDE documentation, Apple pages that need direct recheck,..."
+      },
+      {
         "id": "kb-pack-evolution",
         "type": "knowledge",
         "title": "Pack Evolution — CLI, Doctor, Project Memory, RAI (domain knowledge)",
@@ -1328,6 +1397,12 @@ window.PORTAL_DATA = {
         "summary": "Accepted implementation evidence for the deterministic, local-first Docs Explorer, native Spatial 3D knowledge portal, and bounded grounding packet..."
       },
       {
+        "id": "proof-native-app-ui-skill-extension",
+        "type": "proof-pack",
+        "title": "Proof Pack — Native app UI skill extension",
+        "summary": "Proof pack for implementing the native app UI skill extension: native UI triggers and guardrails, the reusable native UI proof-pack template, XAML token..."
+      },
+      {
         "id": "proposal-hosting-and-dream-manifest",
         "type": "doc",
         "title": "Proposal / dialog: GitHub Pages hosting + the Dream Manifest",
@@ -1356,6 +1431,12 @@ window.PORTAL_DATA = {
         "type": "spec",
         "title": "Dreaming — continuous-improvement consolidation, review, and cross-repo federation",
         "summary": "Specification for AI-Forward's dreaming capability: a /dream consolidation skill that mines the committed corpus (audit/change logs, defect-class register,..."
+      },
+      {
+        "id": "spec-native-app-ui-skill-extension",
+        "type": "spec",
+        "title": "Native app UI skill extension — Specification",
+        "summary": "Specification for extending the AI-Forward UI skills so WPF, WinUI, Avalonia and other native client applications receive the same rigorous UX/UI reasoning as..."
       },
       {
         "id": "threat-model",
@@ -1753,6 +1834,26 @@ window.PORTAL_DATA = {
         "rel": "documents"
       },
       {
+        "from": "design-native-app-ui-skill-extension",
+        "to": "kb-native-client-ui-design",
+        "rel": "depends-on"
+      },
+      {
+        "from": "design-native-app-ui-skill-extension",
+        "to": "kb-native-client-ui-design-comparables",
+        "rel": "depends-on"
+      },
+      {
+        "from": "design-native-app-ui-skill-extension",
+        "to": "kb-native-client-ui-design-data",
+        "rel": "depends-on"
+      },
+      {
+        "from": "design-native-app-ui-skill-extension",
+        "to": "spec-native-app-ui-skill-extension",
+        "rel": "implements"
+      },
+      {
         "from": "design-pack-doctor",
         "to": "kb-pack-evolution",
         "rel": "implements"
@@ -2088,6 +2189,51 @@ window.PORTAL_DATA = {
         "rel": "refines"
       },
       {
+        "from": "kb-native-client-ui-design",
+        "to": "architecture",
+        "rel": "relates-to"
+      },
+      {
+        "from": "kb-native-client-ui-design",
+        "to": "kb-domain-and-data-modelling",
+        "rel": "relates-to"
+      },
+      {
+        "from": "kb-native-client-ui-design-comparables",
+        "to": "kb-native-client-ui-design",
+        "rel": "refines"
+      },
+      {
+        "from": "kb-native-client-ui-design-data",
+        "to": "kb-native-client-ui-design",
+        "rel": "refines"
+      },
+      {
+        "from": "kb-native-client-ui-design-glossary",
+        "to": "kb-native-client-ui-design",
+        "rel": "refines"
+      },
+      {
+        "from": "kb-native-client-ui-design-open-questions",
+        "to": "kb-native-client-ui-design",
+        "rel": "refines"
+      },
+      {
+        "from": "kb-native-client-ui-design-references",
+        "to": "kb-native-client-ui-design",
+        "rel": "refines"
+      },
+      {
+        "from": "kb-native-client-ui-design-sota",
+        "to": "kb-native-client-ui-design",
+        "rel": "refines"
+      },
+      {
+        "from": "kb-native-client-ui-design-sources",
+        "to": "kb-native-client-ui-design",
+        "rel": "refines"
+      },
+      {
         "from": "kb-pack-evolution",
         "to": "architecture",
         "rel": "relates-to"
@@ -2338,6 +2484,16 @@ window.PORTAL_DATA = {
         "rel": "relates-to"
       },
       {
+        "from": "proof-native-app-ui-skill-extension",
+        "to": "design-native-app-ui-skill-extension",
+        "rel": "tested-by"
+      },
+      {
+        "from": "proof-native-app-ui-skill-extension",
+        "to": "spec-native-app-ui-skill-extension",
+        "rel": "tested-by"
+      },
+      {
         "from": "proposal-hosting-and-dream-manifest",
         "to": "adr-0002-fleet-learnings-store",
         "rel": "relates-to"
@@ -2431,6 +2587,16 @@ window.PORTAL_DATA = {
         "from": "spec-dreaming",
         "to": "kb-continuous-improvement-and-dreaming",
         "rel": "implements"
+      },
+      {
+        "from": "spec-native-app-ui-skill-extension",
+        "to": "architecture",
+        "rel": "relates-to"
+      },
+      {
+        "from": "spec-native-app-ui-skill-extension",
+        "to": "kb-native-client-ui-design",
+        "rel": "depends-on"
       },
       {
         "from": "threat-model",

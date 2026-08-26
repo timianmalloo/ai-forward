@@ -16,7 +16,7 @@ Two logs, one bundle:
 
 Subcommands
   append      Add an audit entry.            (Audit Mandate — every skill's last action)
-  change      Add a change-log entry.        (Change Mandate — collectknowledge/define-architecture/design/migrate)
+  change      Add a change-log entry.        (Change Mandate — collectknowledge/define-architecture/design-slice/migrate)
   list        Show the last N entries (audit|change). For the CLI skill.
   search      Filter by --session / --since / --until / --keyword. For the CLI skill.
   get         Print one entry by --id (use --field prompt to extract the prompt to re-run).

@@ -64,7 +64,7 @@ The pack is already installed, so in Claude Code here you can just run the skill
 automatically by description, or call one explicitly:
 
 ```
-/collectknowledge → /adddomainexperts → /specify → /define-architecture → /design → /implement → /document
+/collectknowledge → /adddomainexperts → /specify → /define-architecture → /design-slice → /implement → /document
                                                                               ↑
                                                             /investigate  (whenever a defect appears)
 ```

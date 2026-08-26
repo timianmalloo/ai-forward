@@ -396,7 +396,7 @@ window.addEventListener("DOMContentLoaded",function(){
     ["/adddomainexperts","Discover the project's domain from repo evidence and add tailored domain-expert personas (peer + adversary), wiring in backing Claude skills.","Product Strategist","support"],
     ["/specify","Turn a prompt into one spec with three layers (Functional / UX / UI) and testable acceptance criteria.","Product Strategist","core"],
     ["/define-architecture","Produce the top-level shape — LOA archetype, tier allocation, boundaries — spike unfamiliar SDKs, record decisions as ADRs.","Enterprise Architect","core"],
-    ["/design","Detailed design — named patterns and contracts, failure-mode / adversarial / privacy analyses, telemetry, test plan.","Patterns Expert","core"],
+    ["/design-slice","Detailed component-slice design — named patterns and contracts, failure-mode / adversarial / privacy analyses, telemetry, test plan.","Patterns Expert","core"],
     ["/ui-design","Create, review or elevate a user-facing surface — direction brief, design language, a self-contained reviewable mockup with a state/persona/viewport harness, and a rubric critique.","UX &amp; Accessibility","core"],
     ["/implement","Build the feature under TDD — decompose into verifiable tasks, red→green→refactor paired with the Test Architect; apply the Testing Strategy; ship a Proof Pack.","Test Architect","core"],
     ["/document","Maintain truth-to-code docs — API reference, four diagram families — and regenerate the full Docs Explorer graph.","Documentation Steward","core"],
@@ -809,7 +809,7 @@ window.addEventListener("DOMContentLoaded",function(){
         <div class="chain">
           <span class="step"><b>/collectknowledge</b></span><span class="step"><b>/adddomainexperts</b></span>
           <span class="step"><b>/specify</b></span><span class="step"><b>/define-architecture</b></span>
-          <span class="step"><b>/design</b></span><span class="step"><b>/implement</b></span><span class="step"><b>/document</b></span>
+          <span class="step"><b>/design-slice</b></span><span class="step"><b>/implement</b></span><span class="step"><b>/document</b></span>
         </div>
         <div class="grid g2">${SKILLS.map((s,k)=>html`<div class="card" key=${k}>
           <div style=${{display:"flex",justifyContent:"space-between",alignItems:"center"}}>

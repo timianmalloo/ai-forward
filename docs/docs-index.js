@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-Forward",
-  "generated": "2026-08-24T13:20:42Z",
+  "generated": "2026-08-26T14:02:26Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1190,6 +1190,49 @@ window.DOCS_INDEX = {
       "sourceSha256": "38a09a51a44004a2939929a9c81f95d19b2c074492484fa31a1f097578b76f1f"
     },
     {
+      "id": "design-native-app-ui-skill-extension",
+      "path": "docs/design/native-app-ui-skill-extension.md",
+      "title": "Native app UI skill extension — Design",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "native-client-ui",
+      "reviewBy": "2027-02-21",
+      "reviewSuggested": [],
+      "summary": "Detailed design for making native client applications first-class in the AI-Forward UI skills. The design updates /ui-design and /visualize, adds a reusable native UI proof-pack template, adds native desktop archetype rows, and introduces a deterministic XAML token linter while keeping web UI and generated-asset guardrails intact.",
+      "tags": [
+        "ui-design",
+        "visualize",
+        "native-ui",
+        "wpf",
+        "winui",
+        "avalonia",
+        "blazor-hybrid",
+        "xaml-token-lint",
+        "templates"
+      ],
+      "links": [
+        {
+          "to": "spec-native-app-ui-skill-extension",
+          "rel": "implements"
+        },
+        {
+          "to": "kb-native-client-ui-design",
+          "rel": "depends-on"
+        },
+        {
+          "to": "kb-native-client-ui-design-data",
+          "rel": "depends-on"
+        },
+        {
+          "to": "kb-native-client-ui-design-comparables",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "2cb8b5b8647d8755342d669c7347fa49cd3be3c1ca1241cfcd0368ca8152323b"
+    },
+    {
       "id": "design-pack-doctor",
       "path": "docs/design/pack-doctor.md",
       "title": "Design — installed-repo doctor (suggestion 2)",
@@ -1390,7 +1433,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f7da2d40e289e43fb0beb300b45e28b63305ffc1534b7dfe79c114f0006e5cc9"
+      "sourceSha256": "c0f651f39d848e9b3919782a0f5701b7d6b40a38426d5219d3ae3a8524344f79"
     },
     {
       "id": "backtest-optimize-graph",
@@ -2080,6 +2123,34 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "0be650029252586167fcea2b6fc15e2a4363c628d410e708a1533f0dbaec9dbe"
+    },
+    {
+      "id": "kb-native-client-ui-design-glossary",
+      "path": "docs/knowledge/native-client-ui-design/glossary.md",
+      "title": "Native client UI design — Glossary",
+      "type": "glossary",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "native-client-ui",
+      "reviewBy": "2026-11-24",
+      "reviewSuggested": [],
+      "summary": "Ubiquitous language for native desktop UI work: platform HIG, Fluent, WinUI, WPF, XAML resources, UI Automation, automation peers, keyboard focus, high DPI, AppWindow, MSIX, SmartScreen and notarization.",
+      "tags": [
+        "native-ui",
+        "glossary",
+        "wpf",
+        "winui",
+        "avalonia",
+        "accessibility"
+      ],
+      "links": [
+        {
+          "to": "kb-native-client-ui-design",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "ee684722a4329ee54af5d5f35042b61fd7b912ee93f9665ef37d00ee546c1cc2"
     },
     {
       "id": "kb-pack-evolution-glossary",
@@ -3031,6 +3102,212 @@ window.DOCS_INDEX = {
       "sourceSha256": "6bd3d8db6ff31d5f4e4590b25368a077b0f2f357c00c709e893a6bef405f02d3"
     },
     {
+      "id": "kb-native-client-ui-design",
+      "path": "docs/knowledge/native-client-ui-design/index.md",
+      "title": "Native client UI design — WPF, WinUI, Avalonia and desktop apps",
+      "type": "knowledge",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "native-client-ui",
+      "reviewBy": "2026-11-24",
+      "reviewSuggested": [],
+      "summary": "Sourced evidence base for extending the pack's UI reasoning and review from web properties to native client applications. Establishes the native-specific design contract: platform HIG conformance, OS window/input integration, design tokens through XAML/resource systems, UI Automation accessibility, high-DPI/multi-monitor behavior, and packaging/signing trust gates.",
+      "tags": [
+        "native-ui",
+        "desktop",
+        "wpf",
+        "winui",
+        "avalonia",
+        "fluent",
+        "macos",
+        "accessibility",
+        "high-dpi",
+        "ui-automation"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-domain-and-data-modelling",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "7919d166a220278c10a10fd67ac8420e21c7fad2323b66cc0d29b519b4a6b531"
+    },
+    {
+      "id": "kb-native-client-ui-design-comparables",
+      "path": "docs/knowledge/native-client-ui-design/comparables.md",
+      "title": "Native client UI design — Comparable repositories",
+      "type": "knowledge",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "native-client-ui",
+      "reviewBy": "2026-11-24",
+      "reviewSuggested": [],
+      "summary": "Permissively licensed public repositories and reference apps suitable for native-client UI review and pattern extraction, plus flagged reference-only repos whose licenses are non-standard or copyleft.",
+      "tags": [
+        "native-ui",
+        "exemplars",
+        "repositories",
+        "mit",
+        "wpf",
+        "winui",
+        "avalonia"
+      ],
+      "links": [
+        {
+          "to": "kb-native-client-ui-design",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "c0646d4c9c486d83cf1ab2d308fa7e59e7afd1b05252f27ef294627b03b07a3d"
+    },
+    {
+      "id": "kb-native-client-ui-design-data",
+      "path": "docs/knowledge/native-client-ui-design/data-and-constants.md",
+      "title": "Native client UI design — Data, constants and proof rows",
+      "type": "knowledge",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "native-client-ui",
+      "reviewBy": "2026-11-24",
+      "reviewSuggested": [],
+      "summary": "Checkable native UI invariants and proof rows: accessibility tree, keyboard traversal, theme/high-contrast behavior, DPI/windowing, native resource tokens, OS integration and installer/signing trust.",
+      "tags": [
+        "native-ui",
+        "checklist",
+        "proof-pack",
+        "accessibility",
+        "dpi",
+        "signing",
+        "keyboard"
+      ],
+      "links": [
+        {
+          "to": "kb-native-client-ui-design",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "34fe8f42fa5e806a399f5df8d9ffb81703a5e2888d25b48d45ba97de7b7ea052"
+    },
+    {
+      "id": "kb-native-client-ui-design-open-questions",
+      "path": "docs/knowledge/native-client-ui-design/open-questions.md",
+      "title": "Native client UI design — Open questions and disconfirmation",
+      "type": "knowledge",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "native-client-ui",
+      "reviewBy": "2026-11-24",
+      "reviewSuggested": [],
+      "summary": "Unresolved native UI research questions, disconfirming evidence, and domain failure modes that the next design pass must settle before changing pack skills or shipping native app guidance.",
+      "tags": [
+        "native-ui",
+        "open-questions",
+        "risks",
+        "disconfirmation"
+      ],
+      "links": [
+        {
+          "to": "kb-native-client-ui-design",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "791e0f7182ba5a0ea26986f286f365ff19800d88a3a2a95e28cbc8bda8bbb6f3"
+    },
+    {
+      "id": "kb-native-client-ui-design-references",
+      "path": "docs/knowledge/native-client-ui-design/references.md",
+      "title": "Native client UI design — References",
+      "type": "knowledge",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "native-client-ui",
+      "reviewBy": "2026-11-24",
+      "reviewSuggested": [],
+      "summary": "Standards, HIGs, platform documentation and tools that define the native-client UI contract for Windows, macOS, GNOME/KDE and cross-platform XAML applications.",
+      "tags": [
+        "native-ui",
+        "standards",
+        "references",
+        "fluent",
+        "hig",
+        "accessibility",
+        "packaging"
+      ],
+      "links": [
+        {
+          "to": "kb-native-client-ui-design",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "9a9db0aaf5cd2c8a4ddc3ca405db58a0750694d8f47c009b4cd42819a0f2affd"
+    },
+    {
+      "id": "kb-native-client-ui-design-sota",
+      "path": "docs/knowledge/native-client-ui-design/state-of-the-art.md",
+      "title": "Native client UI design — State of the Art",
+      "type": "knowledge",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "native-client-ui",
+      "reviewBy": "2026-11-24",
+      "reviewSuggested": [],
+      "summary": "Current best practice for native client UX/UI: use the target OS design system as the primary contract, keep the pack's UX/UI layering and token discipline, translate tokens into native resource systems, and verify native runtime behavior through accessibility, keyboard, DPI, windowing and distribution gates.",
+      "tags": [
+        "native-ui",
+        "fluent",
+        "wpf",
+        "winui",
+        "avalonia",
+        "accessibility",
+        "keyboard",
+        "high-dpi",
+        "windowing"
+      ],
+      "links": [
+        {
+          "to": "kb-native-client-ui-design",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "1004e89ceeedf023525a93188f3e49cbae3d14bfc97af51c9793a8933b5d74d2"
+    },
+    {
+      "id": "kb-native-client-ui-design-sources",
+      "path": "docs/knowledge/native-client-ui-design/sources.md",
+      "title": "Native client UI design — Sources",
+      "type": "knowledge",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "native-client-ui",
+      "reviewBy": "2026-11-24",
+      "reviewSuggested": [],
+      "summary": "Full source list for native client UI design research: official Windows/Fluent/Avalonia/GNOME/KDE documentation, Apple pages that need direct recheck, Accessibility Insights, and GitHub license evidence for public native app exemplars.",
+      "tags": [
+        "native-ui",
+        "sources",
+        "citations",
+        "licenses"
+      ],
+      "links": [
+        {
+          "to": "kb-native-client-ui-design",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "f2ee47acf1a584c7046b5f884bf3541272e898d523b66abdf94e5aed5c2b4b83"
+    },
+    {
       "id": "kb-pack-evolution",
       "path": "docs/knowledge/pack-evolution/index.md",
       "title": "Pack Evolution — CLI, Doctor, Project Memory, RAI (domain knowledge)",
@@ -3296,6 +3573,37 @@ window.DOCS_INDEX = {
       "sourceSha256": "8596cd2175507a7b8da9f922cf7db6bee84be7eec6622235bc51964b5f370675"
     },
     {
+      "id": "proof-native-app-ui-skill-extension",
+      "path": "docs/proof/native-app-ui-skill-extension.md",
+      "title": "Proof Pack — Native app UI skill extension",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "native-client-ui",
+      "reviewBy": "2027-02-21",
+      "reviewSuggested": [],
+      "summary": "Proof pack for implementing the native app UI skill extension: native UI triggers and guardrails, the reusable native UI proof-pack template, XAML token linter, native archetype rows, generated-interface rejection, and license-aware exemplars.",
+      "tags": [
+        "native-ui",
+        "proof-pack",
+        "ui-design",
+        "visualize",
+        "xaml-token-lint"
+      ],
+      "links": [
+        {
+          "to": "design-native-app-ui-skill-extension",
+          "rel": "tested-by"
+        },
+        {
+          "to": "spec-native-app-ui-skill-extension",
+          "rel": "tested-by"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "c4f506f4e1410983eb799ea1d9559bcc2fbf670e5a4c276d3d3e2ebbba8bbc9e"
+    },
+    {
       "id": "spec-agent-coordination",
       "path": "docs/specs/agent-coordination.md",
       "title": "Agent coordination — shared context and explicit coordination across worktrees and agents",
@@ -3361,6 +3669,43 @@ window.DOCS_INDEX = {
         }
       ],
       "sourceSha256": "6d92efaafdbf157502c92422c2cab588ba17c1630d806b480cb7e21fa12742dd"
+    },
+    {
+      "id": "spec-design-slice-rename",
+      "path": "docs/specs/design-slice-rename.md",
+      "title": "Rename /design to /design-slice — Specification",
+      "type": "spec",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "pack-namespace",
+      "reviewBy": "2027-02-22",
+      "reviewSuggested": [],
+      "summary": "Specification for renaming AI-Forward's detailed component-design workflow from /design to /design-slice. The rename avoids a generic skill-name collision while preserving the workflow's meaning and updating generated Claude/Copilot pack surfaces.",
+      "tags": [
+        "skills",
+        "naming",
+        "design-slice",
+        "claude-code",
+        "copilot"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        },
+        {
+          "to": "design-native-app-ui-skill-extension",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "User flow",
+          "mermaid": "flowchart LR\n  architecture[/define-architecture or existing architecture] --> designSlice[/design-slice]\n  specify[/specify] --> designSlice\n  designSlice --> artifact[docs/design/<component>.md]\n  artifact --> implement[/implement]"
+        }
+      ],
+      "sourceSha256": "407fb3659ded898d42aa7ded59b401d96ab872236232ab8c407a1d981920f2b9"
     },
     {
       "id": "spec-documentation-portal",
@@ -3447,6 +3792,46 @@ window.DOCS_INDEX = {
       "sourceSha256": "3a1b4242dc83c313fbc9b3e14877e875e9e44eb3b5eeb59025efd5abd1b0a13d"
     },
     {
+      "id": "spec-native-app-ui-skill-extension",
+      "path": "docs/specs/native-app-ui-skill-extension.md",
+      "title": "Native app UI skill extension — Specification",
+      "type": "spec",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "native-client-ui",
+      "reviewBy": "2027-02-21",
+      "reviewSuggested": [],
+      "summary": "Specification for extending the AI-Forward UI skills so WPF, WinUI, Avalonia and other native client applications receive the same rigorous UX/UI reasoning as web surfaces. The spec defines the required native medium declaration, native proof pack, XAML/resource token mapping, native review artifacts, and the constraints for generated visual assets.",
+      "tags": [
+        "ui-design",
+        "visualize",
+        "native-ui",
+        "wpf",
+        "winui",
+        "avalonia",
+        "desktop",
+        "specification"
+      ],
+      "links": [
+        {
+          "to": "kb-native-client-ui-design",
+          "rel": "depends-on"
+        },
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "User flows",
+          "mermaid": "flowchart TD\n  start([User invokes /ui-design or /visualize]) --> ground[Ground in spec, DESIGN.md, native knowledge, implementation]\n  ground --> declare{Medium/platform declared?}\n  declare -->|no| missing[Block preflight: establish medium, platform, framework, distribution channel, accessibility API]\n  declare -->|yes| trigger[Map triggers: UI-T4 native + any AI/technical/generated triggers]\n  missing --> probe[Run cheapest probe or ask for target platform]\n  probe --> declare\n  trigger --> ux{UX layer settled?}\n  ux -->|no| blockUX[Block: run /specify for UX layer first]\n  ux -->|yes| mode{Skill}\n  mode -->|ui-design| nativeReview[Run native review/proof-pack workflow]\n  mode -->|visualize| assetClassify{Request is asset/persona/motion, not interface?}\n  assetClassify -->|no| blockAsset[Reject generated interface; route to /ui-design or implementation]\n  assetClassify -->|yes| assetGuard[Run VA guardrails and native context manifest]\n  assetGuard --> privacy{Real likeness/customer data or API entitlement missing?}\n  privacy -->|yes| blockPrivacy[Block: privacy/entitlement failure; remove data or establish backend]\n  privacy -->|no| gate\n  nativeReview --> proof{Native proof complete?}\n  proof -->|tool unavailable| proofProbe[Flag residual risk and name next platform probe]\n  proof -->|target missing| proofTarget[Block: declared target lacks per-platform proof]\n  proof -->|failed proof| proofFix[Rank fix and re-run proof]\n  proof -->|yes| gate[Adversarial gate: UX, Accessibility, Native Desktop, Test, Simplifier]\n  proofProbe --> gate\n  proofTarget --> blocked\n  proofFix --> nativeReview\n  gate -->|veto unresolved| blocked([Blocked with residual risk])\n  gate -->|pass| done([Accepted native UI review/spec artifacts])"
+        }
+      ],
+      "sourceSha256": "2984ab64343317f5204e12b066d46f95f3ac0e2839209d25eeef307eb8e29fb6"
+    },
+    {
       "id": "threat-model",
       "path": "docs/security/threat-model.md",
       "title": "Threat Model",
@@ -3507,7 +3892,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-forward — Audit & Change Log",
+      "title": "ai-forward-implement-native-app-ui-skills — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -3639,5 +4024,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "2978c44d03da28e2afa24759c4907484b08a1be547de2a974bb100c23a6ab544"
+  "graphSha256": "dfe3c96b1d6dfadeead39e2891e7f4dbf8124d6db5e83dac5f1d7321253545c0"
 };

@@ -36,7 +36,7 @@ standard governing it is `audit-and-change-log.md` (`.github/instructions/` / `.
 
 ## How it's written and read
 
-- **Written** only through `docs/ai-forward-pack/scripts/audit-log.py` (`append` / `change` / `import`), never by hand-appending JSON. Every skill appends an audit entry as its last action (the **Audit Mandate**); `/collectknowledge`, `/define-architecture`, `/design`, and `/migrate` additionally append a change entry (the **Change Mandate**).
+- **Written** only through `docs/ai-forward-pack/scripts/audit-log.py` (`append` / `change` / `import`), never by hand-appending JSON. Every skill appends an audit entry as its last action (the **Audit Mandate**); `/collectknowledge`, `/define-architecture`, `/design-slice`, and `/migrate` additionally append a change entry (the **Change Mandate**).
 - **Read** via the [`/auditlog`](../ai-forward-pack/templates/audit-explorer.template.html) skill (last-N, search, recall-and-redo a prompt, open the viewer) or the viewer above. A skill's grounding step glances at the recent history for the artifacts in scope, so prior decisions inform new work.
 
 ## Why it exists

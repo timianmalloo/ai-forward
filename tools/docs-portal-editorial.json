@@ -139,15 +139,15 @@
       "group": "Collect & frame",
       "when": "Any non-trivial feature, before architecture.",
       "produces": "docs/specs/<feature>.md",
-      "handoff": "/define-architecture or /design"
+      "handoff": "/define-architecture or /design-slice"
     },
     "define-architecture": {
       "group": "Architect & design",
       "when": "New systems or load-bearing architecture.",
       "produces": "docs/architecture.md + ADRs",
-      "handoff": "/design"
+      "handoff": "/design-slice"
     },
-    "design": {
+    "design-slice": {
       "group": "Architect & design",
       "when": "A feature within an existing architecture.",
       "produces": "docs/design/<component>.md",
@@ -157,7 +157,7 @@
       "group": "Architect & design",
       "when": "Any user-facing surface to create, review, or elevate.",
       "produces": "docs/mockups/ + DESIGN.md",
-      "handoff": "/design or /implement"
+      "handoff": "/design-slice or /implement"
     },
     "implement": {
       "group": "Build & verify",

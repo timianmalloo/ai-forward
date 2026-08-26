@@ -28,10 +28,10 @@ pwsh tools/package-pack.ps1   # writes dist/ai-forward-pack.zip
 
 ```bash
 # Seed workspace and print the golden prompt
-python3 pack/evals/run-evals.py --case pack/evals/cases/design-01-gateway.json --workspace /tmp/eval-ws --setup
+python3 pack/evals/run-evals.py --case pack/evals/cases/design-slice-01-gateway.json --workspace /tmp/eval-ws --setup
 
 # Assert after running the skill
-python3 pack/evals/run-evals.py --case pack/evals/cases/design-01-gateway.json --workspace /tmp/eval-ws --check
+python3 pack/evals/run-evals.py --case pack/evals/cases/design-slice-01-gateway.json --workspace /tmp/eval-ws --check
 
 # Assert all cases (CI-able, exits nonzero on failure)
 python3 pack/evals/run-evals.py --cases pack/evals/cases --workspace /tmp/eval-ws --check
@@ -92,13 +92,13 @@ Each `pack/knowledge/<name>.md` installs as `.github/instructions/<name>.instruc
 - Material changes flag inbound neighbors `review-suggested`; sub-ADR decisions become linked decision notes in `docs/notes/`.
 
 ### Audit & change log
-- Every skill, as its last action, appends an **audit-log** entry (`docs/audit/audit-log.jsonl`) recording the run — shortname, datetime, session, prompt, summary (+ kind/skill/tool/artifacts). `/collectknowledge`, `/define-architecture`, `/design`, `/migrate` additionally append a **change-log** entry (`docs/audit/change-log.jsonl`) capturing the decision + git before/after.
+- Every skill, as its last action, appends an **audit-log** entry (`docs/audit/audit-log.jsonl`) recording the run — shortname, datetime, session, prompt, summary (+ kind/skill/tool/artifacts). `/collectknowledge`, `/define-architecture`, `/design-slice`, `/migrate` additionally append a **change-log** entry (`docs/audit/change-log.jsonl`) capturing the decision + git before/after.
 - All writes go through `docs/ai-forward-pack/scripts/audit-log.py` (never hand-append JSONL); it regenerates `audit-data.js` + the viewer. The standard is `pack/knowledge/audit-and-change-log.md`.
 - The history is the committed counterpart to a session's ephemeral store — read it at grounding (`audit-log.py list`/`search`) so work compounds across sessions. Browse via `/auditlog` or `docs/audit/index.html`. Prompt **reuse** (`/prompts` + `/searchprompts`, engine `prompt-log.py`) is a second lens over the *same* audit log — `prompt-log.py add` writes a `kind:prompt` entry via `audit-log.py`; there is no separate prompt store.
 
 ### The 22 skills and their natural order
 ```
-/collectknowledge → /adddomainexperts → /specify → /define-architecture → /design → /implement → /document
+/collectknowledge → /adddomainexperts → /specify → /define-architecture → /design-slice → /implement → /document
                                                                                 ↑
                                                             /investigate  (whenever a defect appears)
 ```

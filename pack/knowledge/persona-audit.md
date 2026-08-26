@@ -127,7 +127,7 @@ Where the four new personas join the workflow casting sheet (`collaborative-pers
 |---|---|---|
 | `/specify` | Privacy & Data Governance (if personal/work data) | Privacy (hard veto if data), AI Systems Engineer (if an AI capability) |
 | `/define-architecture` | AI Systems Engineer, Data & Persistence Architect | AI Systems Engineer, Data & Persistence, Privacy, Release Engineer |
-| `/design` | AI Systems Engineer (prompt/eval/tier), Data & Persistence (schema) | AI Systems Engineer, Data & Persistence |
+| `/design-slice` | AI Systems Engineer (prompt/eval/tier), Data & Persistence (schema) | AI Systems Engineer, Data & Persistence |
 | `/implement` | AI Systems Engineer (eval/prompt-gate), Data (migration) | AI Systems Engineer, Release Engineer (rollout/flag) |
 | `/investigate` | Data & Persistence (if a data/integrity defect) | Data & Persistence, AI Systems Engineer (if a model/eval defect), Release Engineer (if a deploy-correlated defect) |
 
@@ -279,7 +279,7 @@ A later request asked to reason over three personas: **the iPhone/Android app de
 ### 9.2 Skills added, and their roster impact
 
 - **`/document`** introduces the **Documentation Steward** (ADD, advisory) — owns the documentation bundle's truth and freshness and the after-commit automation. It catches doc-specific failure classes no current lens owns.
-- **`/collectknowledge`** mints **no new persona** — it is led by the existing **Domain Researcher (P3)**, whose charter is exactly evidence-grounded research. (The Simplifier's discipline applied to ourselves: we already have a research lens; do not add a second.) It runs **before design**, feeding `/adddomainexperts` and the design skills: `/collectknowledge` → `/adddomainexperts` → `/specify` → `/define-architecture` → `/design` → `/implement` → `/document`.
+- **`/collectknowledge`** mints **no new persona** — it is led by the existing **Domain Researcher (P3)**, whose charter is exactly evidence-grounded research. (The Simplifier's discipline applied to ourselves: we already have a research lens; do not add a second.) It runs **before design**, feeding `/adddomainexperts` and the design skills: `/collectknowledge` → `/adddomainexperts` → `/specify` → `/define-architecture` → `/design-slice` → `/implement` → `/document`.
 
 **Roster total: 22** — the eighteen, plus Mobile App Developer, Native Desktop Developer, UX & Accessibility, and the Documentation Steward.
 

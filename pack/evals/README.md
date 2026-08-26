@@ -24,11 +24,11 @@ done** — the DoD checklists are the rubrics; they already exist.
 
 ```bash
 # 1. seed a fresh workspace (copies setup files, prints the golden prompt)
-python3 evals/run-evals.py --case evals/cases/design-01-gateway.json --workspace /tmp/eval-ws --setup
+python3 evals/run-evals.py --case evals/cases/design-slice-01-gateway.json --workspace /tmp/eval-ws --setup
 # 2. run the skill against the workspace (Claude Code / Copilot — paste the printed prompt;
 #    or wire a headless CLI in your own harness)
 # 3. assert
-python3 evals/run-evals.py --case evals/cases/design-01-gateway.json --workspace /tmp/eval-ws --check
+python3 evals/run-evals.py --case evals/cases/design-slice-01-gateway.json --workspace /tmp/eval-ws --check
 ```
 
 `--check` over all cases (`--cases evals/cases`) exits nonzero on any failure — CI-able once

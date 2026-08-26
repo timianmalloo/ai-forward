@@ -2,7 +2,7 @@
 """run-evals.py — golden-task assertion runner for the AI-Forward Pack (pack maintenance).
 
 A skill is prompt-code; this is its regression suite. Each case is a JSON file:
-  { "id": "...", "skill": "design", "prompt": "<the golden task to give the agent>",
+  { "id": "...", "skill": "design-slice", "prompt": "<the golden task to give the agent>",
     "setup": [{"path": "...", "content": "..."}],          // optional workspace seed
     "assertions": [ ... ] }                                 // objective post-conditions
 
