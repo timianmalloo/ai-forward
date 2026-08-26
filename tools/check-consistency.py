@@ -843,6 +843,37 @@ def check_html_inline_scripts(findings):
                     pass
 
 
+def check_workflow_action_pinning(findings):
+    """FR-063. A mutable tag (`@v4`) is a supply-chain WRITE PRIMITIVE: whoever can move the
+    tag runs code in the workflow. This repo already chose SHA-pinning as its standard - but
+    the posture was inverted exactly where it mattered, with the read-only gate workflow fully
+    pinned and `pages.yml` (the only one holding `pages: write` + `id-token: write`, i.e. the
+    only one that can mint an OIDC token) using five bare tags.
+
+    Asserts the POSITIVE form. An earlier draft proposed matching the absence of a negative
+    (`uses:.*@(?![0-9a-f]{40})`), which false-positives on a trailing `# v4` comment and
+    silently PASSES `uses: ./local` and `docker://` forms that carry no `@` at all - so it
+    would have reported clean on exactly the shapes it needed to catch."""
+    wf_dir = os.path.join(ROOT, ".github", "workflows")
+    if not os.path.isdir(wf_dir):
+        return
+    pinned = re.compile(r"^[\w.-]+/[\w.-]+(?:/[\w.-]+)*@[0-9a-f]{40}$")
+    for name in sorted(f for f in os.listdir(wf_dir) if f.endswith((".yml", ".yaml"))):
+        text = _read(os.path.join(wf_dir, name))
+        if text is None:
+            continue
+        for i, line in enumerate(text.splitlines(), 1):
+            m = re.match(r"\s*(?:-\s*)?uses:\s*(\S+)", line)
+            if not m:
+                continue
+            ref = m.group(1).strip("'\"")
+            if not pinned.match(ref):
+                findings.append(
+                    f".github/workflows/{name}:{i}: uses '{ref}' is not pinned to a full "
+                    "40-character commit SHA (a tag is mutable, so it is a supply-chain "
+                    "write primitive)")
+
+
 def check_front_door_names_verifier(findings):
     """FR-061 / defect class CTRL-D. The aggregate verifier already existed, already mirrored
     CI, and already worked - and the two files an agent loads EVERY session named only the
@@ -912,6 +943,7 @@ def main():
     check_managed_blocks(truth, findings)
     check_prose(truth, findings)
     check_front_door_names_verifier(findings)
+    check_workflow_action_pinning(findings)
     check_docs_portal(findings)
     check_html_inline_scripts(findings)
 

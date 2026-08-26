@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-forward-forensicreview-pack-audit",
-  "generated": "2026-08-26T20:51:01Z",
+  "project": "ai-forward-fix-fr063-pin-actions",
+  "generated": "2026-08-26T21:03:18Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2172,6 +2172,37 @@ window.AUDIT_DATA = {
         "sha": "48e06012f8a67552293cf06a21c4d55d3f16399d",
         "short": "48e06012f",
         "branch": "forensicreview/pack-audit",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M0ZY4TJ1481EC9YXYAQTT6SF",
+      "shortname": "implement-fr063-pin-actions",
+      "datetime": "2026-08-26T21:03:18Z",
+      "session": "275331bb-f120-4d45-b1e6-0e0f07061c3c",
+      "prompt": "do the next item (FR-063)",
+      "summary": "FR-063 resolved. All five actions in pages.yml pinned to full commit SHAs, each resolved from its tag ref at pin time via the GitHub API and verified to be a real commit - none from memory. New control check_workflow_action_pinning asserts the POSITIVE 40-hex form (an earlier draft matched the absence of a negative, which silently passes ./local and docker:// forms); observed RED on all five bare tags first, then green, then re-proven red by reintroducing one tag. All 13 uses: across three workflows now pinned. Recorded divergence: checkout is pinned to current v4 (11d5960) in pages.yml while pack-consistency retains 34e1148; unifying is a version bump on the required gate and was kept out of a security fix.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        ".github/workflows/pages.yml",
+        "tools/check-consistency.py",
+        "docs/backlog/forensic-review-rev48.md"
+      ],
+      "tags": [
+        "fr-063",
+        "supply-chain",
+        "security"
+      ],
+      "outcome": "success",
+      "goal": "SHA-pin the highest-privilege workflow and add a control that fails when a bare tag returns",
+      "done_when": "Every uses: is a 40-hex SHA, control observed red then green, all 9 gates pass, CI green on main",
+      "git": {
+        "sha": "d97dfe7dd29a348490ef7844d9470114443c22b6",
+        "short": "d97dfe7dd",
+        "branch": "fix/fr063-pin-actions",
         "pushed": null
       }
     }

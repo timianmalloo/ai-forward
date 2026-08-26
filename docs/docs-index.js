@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-Forward",
-  "generated": "2026-08-26T20:51:12Z",
+  "generated": "2026-08-26T21:03:18Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1895,7 +1895,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "648ab2bdf2b0ef111fc5505e19ccf74bbd9bc5dae7c9d8ba10d1bedc3e4d3ff6"
+      "sourceSha256": "d5526a32b662f37158f011bd3302e25c87da041eb7148ab028c15272d45e7451"
     },
     {
       "id": "lens-code-doc-join",
@@ -4010,7 +4010,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-forward-forensicreview-pack-audit — Audit & Change Log",
+      "title": "ai-forward-fix-fr063-pin-actions — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -4142,5 +4142,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "58688d492c4c50062afae1d2cbf8e5a464839b8de57c31c8e97c0708319f406f"
+  "graphSha256": "d7cfeac31ca6f397f5f885b9246b1fadccc32e6c2933be058256f20a0a6959ed"
 };

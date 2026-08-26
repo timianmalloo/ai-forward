@@ -168,6 +168,8 @@ summary: >-
 - **Acceptance criteria:** every `uses:` line in `.github/workflows/*.yml` **positively matches** `uses:\s*[\w.-]+/[\w.-]+(/[\w.-]+)*@[0-9a-f]{40}\b`; and a CI step asserting that predicate **fails** when a bare tag is reintroduced — observed red on the current `pages.yml` before the fix. *(An earlier draft asserted the absence of a negative, `uses:.*@(?![0-9a-f]{40})`, which false-positives on trailing-comment `@` and silently passes `uses: ./local-action` and `docker://` forms that have no `@` at all. Assert the positive.)*
 - **Validation:** run the new CI step on `c27f83d` (expect red), pin, re-run (expect green); confirm the next `pages` run succeeds on the pinned SHAs
 - **Note:** the CI assertion is **part of this item**, not optional hardening. Filing it as "worth considering" — as an earlier draft did — would reproduce CTRL-D one section after the review names CTRL-D as its headline.
+- **Status:** **RESOLVED at `<fr063>`.** All five actions in `pages.yml` pinned to full commit SHAs, each **resolved from its tag ref at pin time and verified to be a real commit** via the GitHub API — none copied from memory or from another file. Control `check-consistency.py :: check_workflow_action_pinning()` asserts the **positive** form and was **observed red on all five bare tags first** (lines 37, 38, 46, 47, 51), then green; re-proven red by reintroducing a single bare tag. All **13** `uses:` across all three workflows are now SHA-pinned.
+- **Recorded divergence (deliberate, not an oversight):** `actions/checkout` is pinned in `pages.yml` to the **current** v4 (`11d5960`, 2026-07, carries backported fixes) while `pack-consistency.yml` retains the older `34e1148` (2025-11). Both are valid immutable pins. Unifying them is a **version bump on the required gate** — different work, different risk — and was kept out of a security fix. Worth a follow-up if one-SHA-per-action is wanted as a standard.
 - **Dependencies:** none · **Owner:** @timianmalloo · **Next skill:** `/implement` · **Status:** proposed
 
 ---
@@ -213,6 +215,6 @@ Recording what was rejected is part of an honest backlog (the Simplifier's pass)
 
 | | |
 |---|---|
-| **Completed** | **Phases 1 and 2 shipped.** FR-058, FR-059, FR-061, FR-065, FR-067 RESOLVED; FR-060 resolved as instance + detection. Every control observed **red before green**. CTRL-D registered `controlled`. `verify-bundle.ps1` → `BUNDLE CONSISTENT - all 9 gates passed` |
-| **Remaining** | **Five open:** FR-062, FR-063 (Phase 3 — release + supply chain), FR-064, FR-066 (Phase 4 — record hygiene), and **FR-068** (the `docs-index.js` timestamp that blocks closing FR-060's trap at source) |
-| **Best next action** | Phase 3 — **FR-063** (SHA-pin the highest-privilege workflow) is the one with real security value and is a contained change |
+| **Completed** | **Phases 1, 2 and FR-063 shipped.** FR-058, FR-059, FR-061, FR-063, FR-065, FR-067 RESOLVED; FR-060 resolved as instance + detection. Every control observed **red before green**. CTRL-D registered `controlled`. `verify-bundle.ps1` → `BUNDLE CONSISTENT - all 9 gates passed` |
+| **Remaining** | **Four open:** FR-062 (gate publication on the quality gate), FR-064, FR-066 (record hygiene), and **FR-068** (the `docs-index.js` timestamp that blocks closing FR-060's trap at source) |
+| **Best next action** | **FR-062** — it is the last Phase 3 item and the one that stops a red commit publishing to the public site |
