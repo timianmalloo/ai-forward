@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-Forward",
-  "generated": "2026-08-26T20:28:37Z",
+  "generated": "2026-08-26T20:34:40Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1863,7 +1863,7 @@ window.DOCS_INDEX = {
       "phase": "pack-evolution",
       "reviewBy": "2026-11-24",
       "reviewSuggested": [],
-      "summary": "Ten proposed items (FR-058..FR-067) from the revision-48 forensic review at commit c27f83d, ordered into four phases. Phase 1 is four edits that turn gate 1 green; Phase 2 is the control that stops the class recurring — naming the existing verifier in the files agents actually load — plus the check that keeps that verifier honest. Phase 3 closes the release and supply-chain gaps; Phase 4 is record hygiene. An external Test Architect pass blocked the first draft because two acceptance criteria could not fail; those are rewritten, and two of its own findings became FR-065 and FR-067. Nothing here is implemented — this backlog stops at proposal.",
+      "summary": "Ten proposed items (FR-058..FR-067) from the revision-48 forensic review at commit c27f83d, ordered into four phases. PHASE 1 IS SHIPPED at 7bc0cf2 — FR-058, FR-059 and FR-065 resolved, FR-060's instance half resolved, and verify-bundle.ps1 now reports BUNDLE CONSISTENT, all 9 gates passing, up from 2 of 9 failing. FR-065's control was observed red before green and caught a 14-off count no gate could previously see. Six items remain open, led by FR-060's class half (the ordering hazard is still live) and FR-061, the root-cause control. An external Test Architect pass blocked the first draft because two acceptance criteria could not fail; those were rewritten, and two of its findings became FR-065 and FR-067.",
       "tags": [
         "backlog",
         "forensic-review",
@@ -1895,7 +1895,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "bb48f9b3b1a60b77a4d3ab68fae9b2e1e7b8cebdffa666e85f4a90a435f5bf07"
+      "sourceSha256": "fc180c38725eb41b9005601eb5ab0749d8fe0dde2877156125f589a3de964254"
     },
     {
       "id": "lens-code-doc-join",
@@ -4142,5 +4142,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "70b6d12d7633f9c85b5a0064e6fe06f939b3bc2900f1242a0b138e0e00ca5f01"
+  "graphSha256": "7de7199c3981f0ad7934e5418847dac8ebbb7d054257355d56377219f5505322"
 };

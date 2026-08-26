@@ -1016,7 +1016,7 @@ window.PORTAL_DATA = {
         "id": "forensic-review-rev48-backlog",
         "type": "doc",
         "title": "Forensic Review Backlog — revision 48",
-        "summary": "Ten proposed items (FR-058..FR-067) from the revision-48 forensic review at commit c27f83d, ordered into four phases. Phase 1 is four edits that turn gate 1..."
+        "summary": "Ten proposed items (FR-058..FR-067) from the revision-48 forensic review at commit c27f83d, ordered into four phases. PHASE 1 IS SHIPPED at 7bc0cf2 — FR-058,..."
       },
       {
         "id": "forensic-review-rev48-proof",

@@ -16,13 +16,14 @@ review-by: "2026-11-24"
 review-suggested: []
 summary: >-
   Ten proposed items (FR-058..FR-067) from the revision-48 forensic review at commit
-  c27f83d, ordered into four phases. Phase 1 is four edits that turn gate 1 green; Phase 2
-  is the control that stops the class recurring — naming the existing verifier in the files
-  agents actually load — plus the check that keeps that verifier honest. Phase 3 closes the
-  release and supply-chain gaps; Phase 4 is record hygiene. An external Test Architect pass
-  blocked the first draft because two acceptance criteria could not fail; those are
-  rewritten, and two of its own findings became FR-065 and FR-067. Nothing here is
-  implemented — this backlog stops at proposal.
+  c27f83d, ordered into four phases. PHASE 1 IS SHIPPED at 7bc0cf2 — FR-058, FR-059 and
+  FR-065 resolved, FR-060's instance half resolved, and verify-bundle.ps1 now reports
+  BUNDLE CONSISTENT, all 9 gates passing, up from 2 of 9 failing. FR-065's control was
+  observed red before green and caught a 14-off count no gate could previously see.
+  Six items remain open, led by FR-060's class half (the ordering hazard is still live)
+  and FR-061, the root-cause control. An external Test Architect pass blocked the first
+  draft because two acceptance criteria could not fail; those were rewritten, and two of
+  its findings became FR-065 and FR-067.
 ---
 
 # Forensic Review Backlog — revision 48
@@ -32,6 +33,14 @@ summary: >-
 **Source review:** `docs/reviews/forensic-review-rev48.md` — commit `c27f83d`, branch `main`, clean tree.
 **Carried forward:** nothing. All nine revision-42 items were triaged and dispositioned at revision 43.
 **State at time of writing:** `pwsh tools/verify-bundle.ps1` → `BUNDLE INCONSISTENT - 2 of 9 gate(s) failed`. CI run `32987223699` failed on `main`.
+
+> ## Phase 1 — SHIPPED at `7bc0cf2` (2026-08-26)
+>
+> **FR-058, FR-059, FR-065 (both halves) and FR-060's instance half are RESOLVED.** Verified on the committed tree: `python tools/check-consistency.py` → `clean - all documented counts and skill/prompt parity match the filesystem` (exit 0); `pwsh tools/verify-bundle.ps1` → **`BUNDLE CONSISTENT - all 9 gates passed (the same set CI runs)`** (exit 0), up from `2 of 9 failed`.
+>
+> **Red observed before green**, as the acceptance criteria required: FR-065's new prose rules were added *first* and took the finding count from 5 to 6, catching `.github/copilot-instructions.md:48: '24 knowledge docs' implies knowledge_docs=24, filesystem has 38` — a defect no gate could see before. The `N scripts` rule caught nothing, which is the correct result and leaves the control in place for the future.
+>
+> **Still open from Phase 1's parent items:** FR-060's **class** half (the ordering fix) is Phase 2 and was *not* done — the hazard that produced the staleness is still live, so the next skill run that adds an artifact will reproduce it. FR-061, FR-062, FR-063, FR-064, FR-066 and FR-067 are untouched.
 
 ## Phases
 
@@ -55,7 +64,7 @@ summary: >-
 - **Recommended remediation:** set `knowledge_docs: 38`. Do **not** add a knowledge doc to justify 39 — the native-UI change extended three existing docs and correctly added none. Leave `templates: 27` and `scripts: 18`; both are right.
 - **Acceptance criteria (falsifiable):** `python tools/check-consistency.py` emits no finding containing `INSTALL counts.knowledge_docs`; the value equals `len([f for f in pack/knowledge/*.md if f != "FOUNDATION.md"])`.
 - **Validation:** `python tools/check-consistency.py`
-- **Dependencies:** none · **Owner:** @timianmalloo · **Next skill:** `/implement` · **Status:** proposed
+- **Dependencies:** none · **Owner:** @timianmalloo · **Next skill:** `/implement` · **Status:** **RESOLVED at `7bc0cf2`** — set to 38; gate 1 emits no `INSTALL counts.knowledge_docs` finding
 
 ### FR-059 · issue · P1 — Update the three `26 templates` strings to 27
 - **Affected scope:** `pack/OVERVIEW.md:52`, `pack/OVERVIEW.md:61`, `.github/copilot-instructions.md:50`
@@ -64,7 +73,7 @@ summary: >-
 - **Recommended remediation:** change `26` → `27` at all three sites. **Note the asymmetry:** the two `pack/OVERVIEW.md` sites are pack source and propagate via `sync-pack.ps1`; `.github/copilot-instructions.md` is hand-maintained and outside sync, so it must be edited directly and will drift again independently.
 - **Acceptance criteria:** `python tools/check-consistency.py` emits no `implies templates=` finding; and `Select-String -Path pack/**,.github/copilot-instructions.md -Pattern '(?<![\w-])26\s+(artifact\s+)?templates'` returns **zero** hits. The grep is scoped to `pack/**` and `.github/copilot-instructions.md` explicitly — an earlier draft said "zero hits outside archived review history" without defining the exclusion set, which made it satisfiable by relabelling a file, and which the review artifacts themselves violate by quoting the string.
 - **Validation:** `python tools/check-consistency.py`
-- **Dependencies:** none · **Owner:** @timianmalloo · **Next skill:** `/implement` · **Status:** proposed
+- **Dependencies:** none · **Owner:** @timianmalloo · **Next skill:** `/implement` · **Status:** **RESOLVED at `7bc0cf2`** — all three sites now read 27; gate 1 emits no `implies templates=` finding
 
 ### FR-060 · issue · P1 — Regenerate the two stale derived artifacts and fix the regeneration order
 - **Affected scope:** `docs/portal/portal-data.js`, `web/pack-index.js`; ordering in `tools/sync-pack.ps1` and the skills' last-action contract
@@ -76,7 +85,7 @@ summary: >-
   1. *Instance:* run `python docs/ai-forward-pack/scripts/docs-graph.py derive`, **then** `python tools/build-docs-portal.py` and `python tools/build-web-index.py`, and commit the result. Order matters — both readers consume `docs/docs-index.js`.
   2. *Class:* remove the ordering hazard rather than re-running it by hand. Preferred option — have `docs-graph.py derive` refresh the two dependent artifacts (or emit a non-zero "dependents stale" signal) so the skills' documented last action cannot leave them behind. Alternative — make `sync-pack.ps1` run `derive` **before** it builds the portal and the web index. Choose one; do not do both silently.
 - **Dependencies:** none, but the **instance half must ship with FR-058/FR-059/FR-065** or gate 1 stays red
-- **Owner:** @timianmalloo · **Next skill:** `/design-slice` for the class fix (it changes a contract between three tools), then `/implement` · **Status:** proposed
+- **Owner:** @timianmalloo · **Next skill:** `/design-slice` for the class fix (it changes a contract between three tools), then `/implement` · **Status:** **PARTIALLY RESOLVED at `7bc0cf2`** — the **instance** half is done (`derive` → `sync`; both files rebuilt from the current index; gate 2 exit 0 on the committed tree). The **class** half is **still open**: the ordering hazard is untouched, so the next skill run that adds an artifact reproduces the staleness. Carries forward to Phase 2.
 
 ### FR-065 · issue · P1 — Correct the 24→38 knowledge-doc count and close the regex blind spot
 - **Affected scope:** `.github/copilot-instructions.md:48` (instance); `tools/check-consistency.py:474-477` (class)
@@ -85,7 +94,7 @@ summary: >-
 - **Recommended remediation:** (1) *instance* — change `24` → `38`; (2) *class* — extend `_prose_rules` with `(\d+)\s+knowledge\s+docs` → `knowledge_docs` and `(\d+)\s+scripts` → `scripts`, then fix whatever the widened net catches.
 - **Acceptance criteria:** the new rules, run on the **un-fixed** `copilot-instructions.md`, report a finding (red observed); after the fix `python tools/check-consistency.py` is clean; and a deliberate edit of any `N knowledge docs` or `N scripts` string to a wrong number makes it red again.
 - **Validation:** `python tools/check-consistency.py` before and after each half
-- **Dependencies:** none · **Owner:** @timianmalloo · **Next skill:** `/implement` · **Status:** proposed
+- **Dependencies:** none · **Owner:** @timianmalloo · **Next skill:** `/implement` · **Status:** **RESOLVED at `7bc0cf2`** — both halves. Class rules added **first** and observed red (5 findings → 6, catching line 48); instance then corrected to 38; gate 1 clean. The `N scripts` rule caught nothing, which is the correct result.
 - **Provenance:** raised by the **adversarial gate**, not by the author — this review cited two other lines of this same file and walked past line 48.
 
 ---
@@ -190,6 +199,6 @@ Recording what was rejected is part of an honest backlog (the Simplifier's pass)
 
 | | |
 |---|---|
-| **Completed** | Ten items specified (FR-058..FR-067) with kind, priority, evidence link, consequence, remediation, **falsifiable** acceptance criteria, named validation command, dependencies, owner, next skill and `proposed` status; ordered into four phases; rejected candidates recorded. An external Test Architect gate **blocked** the first draft: FR-061's and FR-062's criteria could not fail and have been rewritten, FR-063's control was promoted out of "optional", FR-066 was split from FR-062, and FR-065 + FR-067 were added from its findings |
-| **Remaining** | All ten await human triage. Nothing implemented — no count, string, workflow, front-door doc, register entry or derived artifact was changed |
-| **Best next action** | Approve **Phase 1** — **four** items (FR-058, FR-059, FR-060 instance half, FR-065), not three — and ship as one commit; confirm with `pwsh tools/verify-bundle.ps1` **before** pushing, which is itself the habit FR-061 exists to install |
+| **Completed** | **Phase 1 shipped at `7bc0cf2`** — FR-058, FR-059 and FR-065 (both halves) RESOLVED, FR-060 instance half RESOLVED, with FR-065's control observed **red before green**. `verify-bundle.ps1` → **`BUNDLE CONSISTENT - all 9 gates passed`** (was 2 of 9 failing). Ten items remain specified with falsifiable ACs, validation commands, dependencies, owner and next skill |
+| **Remaining** | **Six open:** FR-060 **class** half (the ordering hazard — still live), FR-061, FR-062, FR-063, FR-064, FR-066, FR-067. Nothing in Phases 2–4 was touched |
+| **Best next action** | **FR-061** — the root-cause control. Phase 1 fixed the symptoms; until the front door names `verify-bundle.ps1`, the next session reproduces exactly this |
