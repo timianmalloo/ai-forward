@@ -2,7 +2,7 @@
 id: forensic-review-rev48-backlog
 title: "Forensic Review Backlog — revision 48"
 type: doc
-status: accepted
+status: resolved
 owner: "@timianmalloo"
 phase: "pack-evolution"
 tags: [backlog, forensic-review, triage, ci, derived-artifacts, supply-chain]
@@ -189,7 +189,8 @@ summary: >-
 - **Recommended remediation:** pick one convention and make the contract and the tree agree. Either (a) keep rev-numbered files and update the skill contract to say "`docs/reviews/forensic-review-rev<N>.md`, superseding the previous", or (b) keep `forensic-review.md` as a always-newest pointer and archive prior reviews on write. Option (a) matches what the repository actually does and preserves the intact `supersedes` chain.
 - **Acceptance criteria:** the path named in `pack/commands/forensicreview/SKILL.md` resolves to the review with the **highest `rev<N>`** present under `docs/reviews/`; every other forensic review carries `status: superseded`; `docs-graph.py validate` stays at 0 defects. *("Newest" is defined mechanically as highest `rev<N>` so a script can fail it — an earlier draft said "the newest review" with no oracle for newness.)*
 - **Validation:** `python docs/ai-forward-pack/scripts/docs-graph.py validate`; open the contract-named path and confirm it is the newest
-- **Dependencies:** none · **Owner:** @timianmalloo · **Next skill:** `/document` · **Status:** proposed
+- **Status:** **RESOLVED at `<fr064>`.** Option (a) taken — rev-numbered files kept, the contract updated to match. `pack/commands/forensicreview/SKILL.md` now prescribes `docs/reviews/forensic-review-rev<N>.md`, a `supersedes` edge, ids `forensic-review-rev<N>`, and setting the previous review's `status` to `superseded`; it also records that `FR-###` ids continue across reviews. `forensic-review-rev42.md` moved `resolved` → `superseded` (V14: a `supersedes` edge implies the target is superseded; its items' disposition is recorded in its own backlog and its in-document banner, so nothing is lost). New control `check_forensic_review_currency()` defines "newest" mechanically as the highest `rev<N>` and fails when any other review is non-superseded, when the newest *is* superseded, or when the skill names the bare generic path. **Observed red on both halves first** (rev42's status and the SKILL.md path), then green.
+- **Dependencies:** none · **Owner:** @timianmalloo · **Next skill:** `/document`
 
 ### FR-066 · todo · P3 — Document the linear-history branch protection, after getting a durable oracle
 - **Affected scope:** `pack/adapters/managed-blocks/CLAUDE.block.md` + `AGENTS.block.md` (→ `CLAUDE.md`, `AGENTS.md`), `README.md`
@@ -199,7 +200,8 @@ summary: >-
 - **Recommended remediation, in order:** (1) obtain the durable oracle — `gh api repos/:owner/:repo/branches/main/protection` — and record the actual rule set; **only then** (2) document it beside the worktree flow, with the recovery step (rebuild the change as a linear commit off `origin/main`).
 - **Acceptance criteria:** the protection API response is quoted in the docs (so the claim has a re-runnable source); and `CLAUDE.md`/`AGENTS.md` state the linear-history requirement in the same section as the worktree-per-session flow.
 - **Validation:** `gh api repos/:owner/:repo/branches/main/protection`; grep the two front-door files
-- **Dependencies:** none · **Owner:** @timianmalloo · **Next skill:** `/document` · **Status:** proposed
+- **Status:** **RESOLVED at `<fr066>`.** Oracle obtained during FR-062 and re-fetched at write time; the response is **quoted verbatim** in both `CLAUDE.md` and `AGENTS.md` (`enforce_admins: true`, `required_linear_history: true`, `allow_force_pushes: false`, `allow_deletions: false`, `required_conversation_resolution: true`, `required_status_checks: absent`), together with the failure it causes (`GH006 … must not contain merge commits`), **why the documented worktree flow triggers it** (WT1 integrates by merging, which is what the rule forbids), and the recovery (rebuild as a linear commit off `origin/main`). Confidence **Flagged → Verified**. Placed in the repo **preamble**, not the managed block: this is *this repository's* protection state and would be false in a consuming repo. Cross-links the required-status-checks decision note so the absent block reads as a decision, not an omission.
+- **Dependencies:** none · **Owner:** @timianmalloo · **Next skill:** `/document`
 - **Provenance:** split out of FR-062 at the adversarial gate's insistence — it is a documentation defect, not a publication-gating one, and its confidence is lower than FR-062's.
 
 ---
@@ -222,6 +224,6 @@ Recording what was rejected is part of an honest backlog (the Simplifier's pass)
 
 | | |
 |---|---|
-| **Completed** | **Phases 1–3 shipped, plus FR-068.** FR-058, FR-059, FR-060 (all halves), FR-061, FR-062, FR-063, FR-065, FR-067, FR-068 RESOLVED. Every control observed **red before green**; FR-062's proven end-to-end on real CI. CTRL-D registered `controlled`. Pack revision 48 → 49 |
-| **Remaining** | **Two open, both P3 record hygiene:** FR-064 (canonical review filename) and FR-066 (document the linear-history rule — oracle obtained). The required-status-check question is **decided and recorded** as an accepted risk in `docs/notes/required-status-checks.md` |
-| **Best next action** | **FR-064 + FR-066 together** — one small commit; FR-066 now has its oracle, so both are pure documentation |
+| **Completed** | **The entire revision-48 backlog is closed.** All eleven items RESOLVED — FR-058 … FR-068 — plus the required-status-check question decided and recorded. Every control was observed **red before green**; FR-062's proven end-to-end on real CI. CTRL-D registered `controlled`. Pack revision 48 → 49 |
+| **Remaining** | Nothing in this backlog. Two things are carried as **recorded, deliberate positions** rather than open work: the accepted risk in `docs/notes/required-status-checks.md` (with four re-open triggers), and the `actions/checkout` pin divergence noted in `pages.yml` |
+| **Best next action** | Nothing here. The next forensic review should open at **FR-069** — `FR-###` ids continue across reviews and the skill contract now says so |

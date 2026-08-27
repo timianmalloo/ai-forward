@@ -843,6 +843,52 @@ def check_html_inline_scripts(findings):
                     pass
 
 
+def check_forensic_review_currency(findings):
+    """FR-064. The `/forensicreview` contract named `docs/reviews/forensic-review.md` as its
+    output while the repo's live convention is rev-numbered files - so the contractually-named
+    path pointed at a two-revision-old document carrying `status: superseded`. A reader
+    following the contract got stale truth, in the artifact class whose entire purpose is truth
+    of the record.
+
+    "Newest" is defined MECHANICALLY as the highest `rev<N>` so a script can fail it: exactly
+    one forensic review (that one) may be non-superseded, and the contract must not name the
+    bare generic path as its output."""
+    reviews_dir = os.path.join(ROOT, "docs", "reviews")
+    if not os.path.isdir(reviews_dir):
+        return
+    found = {}
+    for name in sorted(os.listdir(reviews_dir)):
+        if not (name.startswith("forensic-review") and name.endswith(".md")):
+            continue
+        text = _read(os.path.join(reviews_dir, name)) or ""
+        m = re.search(r"(?m)^status:\s*(\S+)", text)
+        rev = re.search(r"rev(\d+)", name)
+        found[name] = (int(rev.group(1)) if rev else None, m.group(1) if m else "<none>")
+    if not found:
+        return
+    numbered = {n: v for n, v in found.items() if v[0] is not None}
+    if not numbered:
+        findings.append("docs/reviews: no rev-numbered forensic review found; the "
+                        "highest-rev rule (FR-064) has nothing to anchor on")
+        return
+    newest = max(numbered, key=lambda n: numbered[n][0])
+    newest_rev = numbered[newest][0]
+    if found[newest][1] == "superseded":
+        findings.append(f"docs/reviews/{newest}: is the highest rev ({newest_rev}) but is "
+                        "marked superseded - nothing is current")
+    for name, (_, status) in found.items():
+        if name != newest and status != "superseded":
+            findings.append(
+                f"docs/reviews/{name}: status '{status}' - only the newest forensic review "
+                f"(rev{newest_rev}) may be non-superseded (FR-064)")
+    skill = _read(os.path.join(PACK, "commands", "forensicreview", "SKILL.md"))
+    if skill and re.search(r"`docs/reviews/forensic-review\.md`", skill):
+        findings.append(
+            "pack/commands/forensicreview/SKILL.md names `docs/reviews/forensic-review.md` as "
+            "its output, but that path holds a superseded review; name the rev-numbered "
+            "convention instead (FR-064)")
+
+
 def check_workflow_action_pinning(findings):
     """FR-063. A mutable tag (`@v4`) is a supply-chain WRITE PRIMITIVE: whoever can move the
     tag runs code in the workflow. This repo already chose SHA-pinning as its standard - but
@@ -944,6 +990,7 @@ def main():
     check_prose(truth, findings)
     check_front_door_names_verifier(findings)
     check_workflow_action_pinning(findings)
+    check_forensic_review_currency(findings)
     check_docs_portal(findings)
     check_html_inline_scripts(findings)
 

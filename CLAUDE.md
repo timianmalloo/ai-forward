@@ -10,6 +10,24 @@ and a green test suite is not the same as a green gate (the tests pass while the
 drift gates fail). Commit `pack/`, `.claude/`, and `docs/` together so source and install stay
 in lockstep.
 
+**Pushing to `main` — it is protected, and the rule bites the documented workflow.** `main`
+requires **linear history**, so it rejects merge commits. The pack's own worktree-per-session
+discipline (WT1) integrates by *merging* a branch back, which produces exactly what the rule
+forbids — so a first integration fails with
+`remote: error: GH006 … This branch must not contain merge commits`. **Recovery:** rebuild the
+change as a linear commit off `origin/main` (rebase, or re-apply the tree onto a fresh branch)
+and push that. Verified via `gh api repos/timianmalloo/ai-forward/branches/main/protection`:
+
+```json
+{ "enforce_admins": true, "required_linear_history": true, "allow_force_pushes": false,
+  "allow_deletions": false, "required_conversation_resolution": true,
+  "required_status_checks": "absent" }
+```
+
+`required_status_checks` is deliberately absent — see `docs/notes/required-status-checks.md`
+for that decision and its re-open triggers. Because nothing blocks a red push, **running
+`verify-bundle.ps1` before you push is the only thing standing between you and a red `main`.**
+
 <!-- AI-FORWARD-PACK:BEGIN (managed block — keep this block intact when reconciling; replace it wholesale on pack updates) -->
 ## AI-Forward Pack + Agent Knowledge Pack
 

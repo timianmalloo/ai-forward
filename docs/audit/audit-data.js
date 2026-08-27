@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-forward-fix-fr068-stable-index",
-  "generated": "2026-08-26T23:15:52Z",
+  "project": "ai-forward-fix-fr064-fr066-records",
+  "generated": "2026-08-27T00:23:45Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2267,6 +2267,40 @@ window.AUDIT_DATA = {
         "sha": "a9a3a1c2a315e2707a90839d34434950341e65ca",
         "short": "a9a3a1c2a",
         "branch": "fix/fr068-stable-index",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M109KVPB6HKVMYCN34AYMWZ8",
+      "shortname": "implement-fr064-fr066-records",
+      "datetime": "2026-08-27T00:23:45Z",
+      "session": "275331bb-f120-4d45-b1e6-0e0f07061c3c",
+      "prompt": "do FR-064 then FR-066",
+      "summary": "FR-064 and FR-066 resolved; the entire rev-48 backlog is now closed. FR-064: kept rev-numbered review files and updated the contract to match - forensicreview/SKILL.md now prescribes docs/reviews/forensic-review-rev<N>.md, ids forensic-review-rev<N>, a supersedes edge, setting the prior review superseded, and that FR-### ids continue across reviews; rev42 moved resolved->superseded per V14. New control check_forensic_review_currency defines newest mechanically as the highest rev<N> and fails when any other review is non-superseded, when the newest IS superseded, or when the skill names the bare generic path - observed red on both halves first, then green, then re-proven red. FR-066: the protection response is now quoted verbatim in CLAUDE.md and AGENTS.md (enforce_admins true, required_linear_history true, no force pushes, no deletions, conversation resolution, required_status_checks absent) with the GH006 failure, WHY the WT1 worktree flow triggers it, and the linear-commit recovery; confidence Flagged->Verified. Placed in the repo preamble, not the managed block, because it is this repo's protection state and would be false in a consuming repo.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "pack/commands/forensicreview/SKILL.md",
+        "tools/check-consistency.py",
+        "CLAUDE.md",
+        "AGENTS.md",
+        "docs/reviews/forensic-review-rev42.md",
+        "docs/backlog/forensic-review-rev48.md"
+      ],
+      "tags": [
+        "fr-064",
+        "fr-066",
+        "record-hygiene"
+      ],
+      "outcome": "success",
+      "goal": "Close FR-064 and FR-066, completing the rev-48 backlog",
+      "done_when": "Contract names the rev-numbered convention with a control observed red-first; protection rule documented with quoted API evidence; all 9 gates pass; pushed CI green",
+      "git": {
+        "sha": "9eed8448ab855f84a8571f201e84d1ce251fb413",
+        "short": "9eed8448a",
+        "branch": "fix/fr064-fr066-records",
         "pushed": null
       }
     }

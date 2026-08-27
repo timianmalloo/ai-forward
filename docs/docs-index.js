@@ -1772,7 +1772,7 @@ window.DOCS_INDEX = {
       "path": "docs/reviews/forensic-review-rev42.md",
       "title": "Forensic Review — AI-Forward repository (revision 42)",
       "type": "doc",
-      "status": "resolved",
+      "status": "superseded",
       "owner": "@timianmalloo",
       "phase": "pack-evolution",
       "reviewBy": "2026-11-20",
@@ -1801,7 +1801,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "3a862faa10dc303b47f30e8d0dc130307ca089f35de24a041fc0dee039518449"
+      "sourceSha256": "cfd878297089cf03a81055d6e43eee8e0cb620e9a6dff7d63da1b3f90a0fce50"
     },
     {
       "id": "forensic-review-rev42-backlog",
@@ -1888,7 +1888,7 @@ window.DOCS_INDEX = {
       "path": "docs/backlog/forensic-review-rev48.md",
       "title": "Forensic Review Backlog — revision 48",
       "type": "doc",
-      "status": "accepted",
+      "status": "resolved",
       "owner": "@timianmalloo",
       "phase": "pack-evolution",
       "reviewBy": "2026-11-24",
@@ -1925,7 +1925,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "fa511b4438103ed3d5736de0b04864199a4a470aae2d94c76a5b52c5f2493f63"
+      "sourceSha256": "540db00aca6ce693103ff8c86e26aae0083cc292aaadbd418cb34fd74bceb5d5"
     },
     {
       "id": "lens-code-doc-join",
@@ -4040,7 +4040,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-forward-fix-fr068-stable-index — Audit & Change Log",
+      "title": "ai-forward-fix-fr064-fr066-records — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -4172,5 +4172,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "87f39ea6ed983479c0292caa0a95e4a7af077f00fa51928db82c5e993e0019f2"
+  "graphSha256": "a0ad9666f91568ea087f05f3b3d9247701eaa0424c8120c9565d9662446306e5"
 };
