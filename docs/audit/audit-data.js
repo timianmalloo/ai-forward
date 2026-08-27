@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-forward-fix-fr064-fr066-records",
-  "generated": "2026-08-27T00:23:45Z",
+  "project": "ai-forward-fix-backlog-record-accuracy",
+  "generated": "2026-08-27T00:29:20Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2301,6 +2301,35 @@ window.AUDIT_DATA = {
         "sha": "9eed8448ab855f84a8571f201e84d1ce251fb413",
         "short": "9eed8448a",
         "branch": "fix/fr064-fr066-records",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M109Y2ZSM2SBJ019MMQA7BHH",
+      "shortname": "correct-rev48-backlog-record",
+      "datetime": "2026-08-27T00:29:20Z",
+      "session": "275331bb-f120-4d45-b1e6-0e0f07061c3c",
+      "prompt": "do FR-064 then FR-066",
+      "summary": "Record correction (E17/CI11). Verifying my own 'entire backlog closed' claim rather than trusting it exposed two defects in the record: three items carried a stale trailing 'Status: proposed' line beneath their RESOLVED line, and six statuses still held unsubstituted placeholders (<phase2>, <fr062>, <fr063>, <fr064>, <fr066>, <fr068>) instead of real commit SHAs - making the record unverifiable in exactly the artifact class FR-064 exists to keep true. Substituted the real SHAs, stripped the stale trailers, and marked the rev-48 review resolved with a per-item outcome banner.",
+      "kind": "manual",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/backlog/forensic-review-rev48.md",
+        "docs/reviews/forensic-review-rev48.md"
+      ],
+      "tags": [
+        "record-hygiene",
+        "correction"
+      ],
+      "outcome": "success",
+      "goal": "Make the rev-48 record accurate and verifiable",
+      "done_when": "No placeholders, no stale statuses, review marked resolved, gates green",
+      "git": {
+        "sha": "7b844e030c8fa796a79fb634ecad1837ded62ee0",
+        "short": "7b844e030",
+        "branch": "fix/backlog-record-accuracy",
         "pushed": null
       }
     }

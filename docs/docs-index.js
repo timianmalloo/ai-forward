@@ -1844,7 +1844,7 @@ window.DOCS_INDEX = {
       "path": "docs/reviews/forensic-review-rev48.md",
       "title": "Forensic Review — AI-Forward repository (revision 48)",
       "type": "doc",
-      "status": "accepted",
+      "status": "resolved",
       "owner": "@timianmalloo",
       "phase": "pack-evolution",
       "reviewBy": "2026-11-24",
@@ -1881,7 +1881,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "3bcf764188af6b52f3a6a85a37126d6377c94e3064b079f5e1e19a7f1a579e38"
+      "sourceSha256": "7a85b9c51b449ed9aadd5444ba6206d343998191a8bf20ff7d43d6eb3c96cb46"
     },
     {
       "id": "forensic-review-rev48-backlog",
@@ -1925,7 +1925,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "540db00aca6ce693103ff8c86e26aae0083cc292aaadbd418cb34fd74bceb5d5"
+      "sourceSha256": "1b0f24aa4a2ba484cd2266cb01e3c62e5ef127f40ad6af5f8682481627052c2c"
     },
     {
       "id": "lens-code-doc-join",
@@ -4040,7 +4040,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-forward-fix-fr064-fr066-records — Audit & Change Log",
+      "title": "ai-forward-fix-backlog-record-accuracy — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -4172,5 +4172,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "a0ad9666f91568ea087f05f3b3d9247701eaa0424c8120c9565d9662446306e5"
+  "graphSha256": "ac607db90b92ff6bb0114a9258e07527c89e02894ca58ce1827bd86211d8351b"
 };

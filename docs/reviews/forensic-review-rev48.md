@@ -2,7 +2,7 @@
 id: forensic-review-rev48
 title: "Forensic Review — AI-Forward repository (revision 48)"
 type: doc
-status: accepted
+status: resolved
 owner: "@timianmalloo"
 phase: "pack-evolution"
 tags: [forensic-review, ci, derived-artifacts, supply-chain, verification, adoption-readiness]
@@ -31,6 +31,8 @@ summary: >-
 ---
 
 # Forensic Review — AI-Forward repository, revision 48
+
+> **RESOLVED at revision 49 (2026-08-27, commit `7b844e0`).** All ten findings plus FR-068 — discovered while fixing FR-060 — were triaged and dispositioned; see `docs/backlog/forensic-review-rev48.md` for the per-item record with commit SHAs. Every control was **observed failing before the fix**. Two positions are carried deliberately rather than as open work: the accepted risk in `docs/notes/required-status-checks.md` (required status checks declined, with four re-open triggers) and the `actions/checkout` pin divergence recorded in `pages.yml`. Readiness verdict below is superseded by this outcome: `main` now passes all nine gates and CI is green.
 
 **Target:** commit `c27f83d5f4db8a296ced04345e46a543ef1490d4` (`c27f83d`), branch `main`, **clean worktree** at review time.
 **Scope:** whole repository (654 tracked files; 449 `.md`, 62 `.py`, 59 `.json`, 36 `.html`, 24 `.js`).
