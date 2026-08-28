@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-forward-fix-backlog-record-accuracy",
-  "generated": "2026-08-27T00:29:20Z",
+  "project": "ai-forward",
+  "generated": "2026-08-28T16:30:53Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2332,6 +2332,36 @@ window.AUDIT_DATA = {
         "branch": "fix/backlog-record-accuracy",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M14KBFEZXVMZ88PZQZKWYQ0H",
+      "shortname": "recover-post-restart-baseline",
+      "datetime": "2026-08-28T16:30:53Z",
+      "session": "4ab14c44-838a-4bb4-b3a7-f6e4d42c17fd",
+      "prompt": "my sessions terminated after my machine restarted overnight\nground yourself in the repo, directives, guidance, skills and knowledge\nreview the session history and audit log\nbaseline on all tasks done and what tasks are still needed to be done\nalso clean up any work trees not in use anymore",
+      "summary": "Reconciled the interrupted session with Git and the durable audit history; verified and corrected the revision-48 records, refreshed architecture and project memory, regenerated derived docs projections, triaged follow-up suggestions, and confirmed no unused worktrees.",
+      "kind": "manual",
+      "skill": null,
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/architecture.md",
+        "docs/backlog/forensic-review-rev48.md",
+        "docs/project-memory.md",
+        "docs/docs-index.js",
+        "docs/portal/portal-data.js",
+        "web/pack-index.js",
+        "docs/audit/audit-log.jsonl"
+      ],
+      "tags": [
+        "recovery",
+        "baseline",
+        "record-hygiene",
+        "worktree"
+      ],
+      "outcome": "success",
+      "goal": "Recover the post-restart repository and session baseline, reconcile completed and remaining work, and clean unused worktrees.",
+      "done_when": "Git, audit, session, graph, local-gate, remote-CI, and worktree state are reconciled; record corrections are committed; no unused worktree remains."
     }
   ],
   "changes": [
