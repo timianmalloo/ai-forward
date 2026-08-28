@@ -13,7 +13,7 @@ summary: >-
   The architecture of record for this repository: a dual-purpose repo that is both the
   canonical SOURCE of the AI-Forward Pack (pack/) and a live INSTALL of it (.claude/, docs/),
   kept in lockstep by tools/sync-pack.ps1. Includes the four diagram families and the
-  tool/CLI reference, verified against the repo as of the documented commit.
+  tool/CLI reference, verified against pack revision 49 on 2026-08-28.
 ---
 
 <!--
@@ -44,7 +44,7 @@ The load-bearing constraint that shapes the whole structure:
 
 > **`.claude/` and `docs/` are GENERATED from `pack/`** by `tools/sync-pack.ps1` and committed so a fresh clone has a working install with no setup. `pack/` is the single source of truth — never edit the generated copies directly; they are overwritten on the next sync. `[Verified: CLAUDE.md, tools/sync-pack.ps1]`
 
-Generated knowledge documents under `.claude/knowledge/` and `docs/ai-forward-pack/` carry **no YAML frontmatter** (they are vendored prose, not graph nodes). Project documentation under `docs/` is the graph authority; it contains **42 valid artifacts with no stale, flagged, orphan, dangling, or index-drift findings**. `[Verified: docs-graph.py validate, revision 32]`
+Generated knowledge documents under `.claude/knowledge/` and `docs/ai-forward-pack/` carry **no YAML frontmatter** (they are vendored prose, not graph nodes). Project documentation under `docs/` is the graph authority; it contains **118 valid artifacts with no stale, flagged, orphan, dangling, or index-drift findings**. `[Verified: docs-graph.py inventory/validate, pack revision 49, 2026-08-28]`
 
 ## Archetype & rationale
 
@@ -58,10 +58,10 @@ The major components and the real dependency edges between them (read from `tool
 flowchart TB
   subgraph SRC["pack/ — canonical source (edit here)"]
     K["knowledge/*.md<br/>(reasoning spine + roster + foundation)"]
-    C["commands/&lt;name&gt;/SKILL.md<br/>(the 17 skills)"]
+    C["commands/&lt;name&gt;/SKILL.md<br/>(the 22 skills)"]
     T["templates/*<br/>(artifacts each skill emits)"]
     A["adapters/<br/>(Claude Code + Copilot agents, INSTALL.md)"]
-    SC["scripts/ (9) · evals/ · ci/ · examples/"]
+    SC["scripts/ (18) · evals/ · ci/ · examples/"]
     PD["README · OVERVIEW · research-synthesis"]
   end
 
@@ -235,9 +235,9 @@ This repo has no traditional doc-commented API. Its public, invocable surface is
 |---|---|---|
 | `pwsh tools/sync-pack.ps1` | Regenerate `.claude/` + `docs/` from `pack/`. | Run after every `pack/` edit. Does not touch `docs/docs-index.js`. |
 | `pwsh tools/package-pack.ps1` | Build `dist/ai-forward-pack.zip` for sharing. | Carries full Claude Code + Copilot wiring. |
-| `pwsh tools/verify-bundle.ps1` | Run sync, consistency, foundation, and eval-shape checks. | Currently reports a dirty post-sync tree but does not fail on it; see forensic finding FR-007. |
+| `pwsh tools/verify-bundle.ps1` | Run the complete nine-gate local proof, matching CI's gate set. | Gate 2 synchronizes and compares generated surfaces; CRLF-only working-copy noise may need normalization on Windows. |
 | `python tools/new-capability.py ...` | Scaffold a skill or knowledge extension across source surfaces. | Used by `/extendaibundle`. |
-| `python tools/check-consistency.py` | Check headline counts, skill/prompt parity, and prose drift. | Does not yet validate promised peer-agent deployment parity. |
+| `python tools/check-consistency.py` | Check counts, skill/prompt parity, prose drift, deployed-agent parity, proof coverage, workflow pinning, review currency, and derived-artifact drift. | Reads `pack/` as the source of truth and fails closed on mismatches. |
 | `python docs/ai-forward-pack/scripts/docs-graph.py <cmd>` | The knowledge-graph mechanics (V18). | Stdlib-only Python 3.8+. |
 
 `docs-graph.py` subcommands (`[Verified: --help]`): `inventory` (scan the graph → JSON), `derive` (frontmatter → `docs/docs-index.js`), `validate` (inventory + nonzero exit on findings, CI-able), `freshness` (stale + flagged + orphans gate), `flag` / `clear-flag` (V16 review propagation), `stub` (scaffold a schema-correct artifact), `snapshot` (append a graph-health record), `rollup` (aggregate per-design STRIDE / privacy tables into a register).
@@ -260,8 +260,8 @@ This repo has no traditional doc-commented API. Its public, invocable surface is
 | | |
 |---|---|
 | **Completed** | Architecture overview + 4 diagram families; tool/CLI reference; interactive explainer; MoC index; `_meta.json`; `docs-index.js` regenerated; findings recorded. **2026-06-22 audit:** design-doc status tables refreshed (rev-8 Doc Drift), `project-memory` ledger instantiated, explainer headless-verified, knowledge-docs-in-graph decision recorded. |
-| **Remaining** | No active model-orchestration work. The Copilot deployment-map mismatch (revision-18 FR-010/FR-020, re-raised as FR-032) was **closed at revision 32**: both surfaces now deploy all 23 personas and `check-consistency.py` gates the deployed count. The open backlog is `docs/backlog/forensic-review.md`. |
-| **Best next action** | Triage FR-008 / residual FR-010 only if they are worth addressing; any future model-routing proposal starts as a new spec/ADR. |
+| **Remaining** | No active model-orchestration work. The revision-48 forensic backlog is closed through FR-068. The accepted branch-protection risk and the differing immutable `actions/checkout` pins remain deliberate positions, not open defects. |
+| **Best next action** | Keep `docs/architecture.md`, `docs/project-memory.md`, and the forensic records current after material pack changes; start the next forensic review at FR-069 when triggered. |
 
 ## Gate record
 

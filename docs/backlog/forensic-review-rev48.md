@@ -15,15 +15,11 @@ links:
 review-by: "2026-11-24"
 review-suggested: []
 summary: >-
-  Ten proposed items (FR-058..FR-067) from the revision-48 forensic review at commit
-  c27f83d, ordered into four phases. PHASE 1 IS SHIPPED at 7bc0cf2 — FR-058, FR-059 and
-  FR-065 resolved, FR-060's instance half resolved, and verify-bundle.ps1 now reports
-  BUNDLE CONSISTENT, all 9 gates passing, up from 2 of 9 failing. FR-065's control was
-  observed red before green and caught a 14-off count no gate could previously see.
-  Six items remain open, led by FR-060's class half (the ordering hazard is still live)
-  and FR-061, the root-cause control. An external Test Architect pass blocked the first
-  draft because two acceptance criteria could not fail; those were rewritten, and two of
-  its findings became FR-065 and FR-067.
+  Resolved record of eleven items (FR-058..FR-068) from the revision-48 forensic review at
+  commit c27f83d, ordered into four phases. All phases shipped through pack revision 49:
+  the count and gate controls, derived-artifact prevention, publication gate, action pinning,
+  review-record correction, and the stable docs index. The required-status-check decision is
+  recorded separately as an accepted risk with explicit re-open triggers.
 ---
 
 # Forensic Review Backlog — revision 48

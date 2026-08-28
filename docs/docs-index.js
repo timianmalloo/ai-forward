@@ -634,7 +634,7 @@ window.DOCS_INDEX = {
       "phase": "documentation",
       "reviewBy": "2026-12-14",
       "reviewSuggested": [],
-      "summary": "The architecture of record for this repository: a dual-purpose repo that is both the canonical SOURCE of the AI-Forward Pack (pack/) and a live INSTALL of it (.claude/, docs/), kept in lockstep by tools/sync-pack.ps1. Includes the four diagram families and the tool/CLI reference, verified against the repo as of the documented commit.",
+      "summary": "The architecture of record for this repository: a dual-purpose repo that is both the canonical SOURCE of the AI-Forward Pack (pack/) and a live INSTALL of it (.claude/, docs/), kept in lockstep by tools/sync-pack.ps1. Includes the four diagram families and the tool/CLI reference, verified against pack revision 49 on 2026-08-28.",
       "tags": [
         "pack",
         "knowledge-graph",
@@ -651,7 +651,7 @@ window.DOCS_INDEX = {
         {
           "kind": "flowchart",
           "title": "Component map & boundaries",
-          "mermaid": "flowchart TB\n  subgraph SRC[\"pack/ — canonical source (edit here)\"]\n    K[\"knowledge/*.md<br/>(reasoning spine + roster + foundation)\"]\n    C[\"commands/&lt;name&gt;/SKILL.md<br/>(the 17 skills)\"]\n    T[\"templates/*<br/>(artifacts each skill emits)\"]\n    A[\"adapters/<br/>(Claude Code + Copilot agents, INSTALL.md)\"]\n    SC[\"scripts/ (9) · evals/ · ci/ · examples/\"]\n    PD[\"README · OVERVIEW · research-synthesis\"]\n  end\n\n  subgraph TOOLS[\"tools/ — build\"]\n    SYNC[\"sync-pack.ps1\"]\n    PKG[\"package-pack.ps1\"]\n  end\n\n  subgraph INSTALL[\".claude/ + docs/ — generated install (do not hand-edit)\"]\n    CK[\".claude/knowledge/*.md\"]\n    CS[\".claude/skills/*\"]\n    CA[\".claude/agents/*.md\"]\n    DP[\"docs/ai-forward-pack/<br/>templates + scripts + pack docs\"]\n    EXP[\"docs/index.html<br/>(Docs Explorer)\"]\n    IDX[\"docs/docs-index.js<br/>(accumulated graph index)\"]\n    ARCH[\"docs/architecture.md · index.md · _meta.json<br/>(this bundle)\"]\n  end\n\n  subgraph CONSUMERS[\"consumers\"]\n    CC[\"Claude Code / Copilot<br/>(read .claude/)\"]\n    WEBE[\"web/ai-forward-pack-explainer.html<br/>(interactive explainer)\"]\n    ZIP[\"dist/ai-forward-pack.zip\"]\n  end\n\n  K --> SYNC\n  C --> SYNC\n  T --> SYNC\n  A --> SYNC\n  SYNC --> CK & CS & CA & DP & EXP\n  C -. \"skills reference\" .-> CK\n  CA -. \"agents reference\" .-> CK\n  DP --> GRAPH[\"docs-graph.py<br/>(in docs/ai-forward-pack/scripts)\"]\n  GRAPH --> IDX\n  ARCH --> GRAPH\n  IDX --> EXP\n  CK --> CC\n  CS --> CC\n  CA --> CC\n  SRC --> PKG --> ZIP\n  CK -. \"derived content\" .-> WEBE"
+          "mermaid": "flowchart TB\n  subgraph SRC[\"pack/ — canonical source (edit here)\"]\n    K[\"knowledge/*.md<br/>(reasoning spine + roster + foundation)\"]\n    C[\"commands/&lt;name&gt;/SKILL.md<br/>(the 22 skills)\"]\n    T[\"templates/*<br/>(artifacts each skill emits)\"]\n    A[\"adapters/<br/>(Claude Code + Copilot agents, INSTALL.md)\"]\n    SC[\"scripts/ (18) · evals/ · ci/ · examples/\"]\n    PD[\"README · OVERVIEW · research-synthesis\"]\n  end\n\n  subgraph TOOLS[\"tools/ — build\"]\n    SYNC[\"sync-pack.ps1\"]\n    PKG[\"package-pack.ps1\"]\n  end\n\n  subgraph INSTALL[\".claude/ + docs/ — generated install (do not hand-edit)\"]\n    CK[\".claude/knowledge/*.md\"]\n    CS[\".claude/skills/*\"]\n    CA[\".claude/agents/*.md\"]\n    DP[\"docs/ai-forward-pack/<br/>templates + scripts + pack docs\"]\n    EXP[\"docs/index.html<br/>(Docs Explorer)\"]\n    IDX[\"docs/docs-index.js<br/>(accumulated graph index)\"]\n    ARCH[\"docs/architecture.md · index.md · _meta.json<br/>(this bundle)\"]\n  end\n\n  subgraph CONSUMERS[\"consumers\"]\n    CC[\"Claude Code / Copilot<br/>(read .claude/)\"]\n    WEBE[\"web/ai-forward-pack-explainer.html<br/>(interactive explainer)\"]\n    ZIP[\"dist/ai-forward-pack.zip\"]\n  end\n\n  K --> SYNC\n  C --> SYNC\n  T --> SYNC\n  A --> SYNC\n  SYNC --> CK & CS & CA & DP & EXP\n  C -. \"skills reference\" .-> CK\n  CA -. \"agents reference\" .-> CK\n  DP --> GRAPH[\"docs-graph.py<br/>(in docs/ai-forward-pack/scripts)\"]\n  GRAPH --> IDX\n  ARCH --> GRAPH\n  IDX --> EXP\n  CK --> CC\n  CS --> CC\n  CA --> CC\n  SRC --> PKG --> ZIP\n  CK -. \"derived content\" .-> WEBE"
         },
         {
           "kind": "sequence",
@@ -669,7 +669,7 @@ window.DOCS_INDEX = {
           "mermaid": "classDiagram\n  class Signature {\n    +Name name\n    +FacetList facets\n    +StyleHints? hints\n    +validate() conflicts\n    +roundTrip() bool  %% G10: identify AND generate\n  }\n  class Facet {\n    <<abstract>>\n    +String key\n  }\n  class SingleValuedFacet {\n    +Value value  %% Type, Arch, Layout, Density, Pacing, ...\n  }\n  class MultiValuedFacet {\n    +Value[] values  %% Nav, Input, Feedback, Motion, A11y (joined with +)\n  }\n  class StyleHints {\n    +String[] hints  %% bounded NL decoration, applied last\n  }\n  class Archetype {\n    +String id          %% A1..F2\n    +String name\n    +Exemplar[] exemplars\n    +Signature canonical\n    +String codegenDescriptor\n  }\n  Signature \"1\" o-- \"4..*\" Facet : composes\n  Facet <|-- SingleValuedFacet\n  Facet <|-- MultiValuedFacet\n  Signature \"0..1\" *-- \"1\" StyleHints : decorated by\n  Archetype \"1\" *-- \"1\" Signature : canonical\n  Archetype \"1\" o-- \"1..*\" Exemplar\n  note for Signature \"G4: MUST carry Type, Arch, Layout, Pacing.\\nG1: always composed with a concrete U1–U20 / S1–S10 spec.\""
         }
       ],
-      "sourceSha256": "278a15e60eeb168b89ffb59cb751f1835ba038a6c68f684407d57c3ee96bb40c"
+      "sourceSha256": "858a83593af777fce04eac0adc354d92ac510dc3fe872dc37ab6684fad70d857"
     },
     {
       "id": "architecture-agent-coordination",
@@ -1893,7 +1893,7 @@ window.DOCS_INDEX = {
       "phase": "pack-evolution",
       "reviewBy": "2026-11-24",
       "reviewSuggested": [],
-      "summary": "Ten proposed items (FR-058..FR-067) from the revision-48 forensic review at commit c27f83d, ordered into four phases. PHASE 1 IS SHIPPED at 7bc0cf2 — FR-058, FR-059 and FR-065 resolved, FR-060's instance half resolved, and verify-bundle.ps1 now reports BUNDLE CONSISTENT, all 9 gates passing, up from 2 of 9 failing. FR-065's control was observed red before green and caught a 14-off count no gate could previously see. Six items remain open, led by FR-060's class half (the ordering hazard is still live) and FR-061, the root-cause control. An external Test Architect pass blocked the first draft because two acceptance criteria could not fail; those were rewritten, and two of its findings became FR-065 and FR-067.",
+      "summary": "Resolved record of eleven items (FR-058..FR-068) from the revision-48 forensic review at commit c27f83d, ordered into four phases. All phases shipped through pack revision 49: the count and gate controls, derived-artifact prevention, publication gate, action pinning, review-record correction, and the stable docs index. The required-status-check decision is recorded separately as an accepted risk with explicit re-open triggers.",
       "tags": [
         "backlog",
         "forensic-review",
@@ -1925,7 +1925,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "1b0f24aa4a2ba484cd2266cb01e3c62e5ef127f40ad6af5f8682481627052c2c"
+      "sourceSha256": "d89057ae57c81c98ec9524dc7f8425ac0339d6b2092741424f9898a18ca08db1"
     },
     {
       "id": "lens-code-doc-join",
@@ -2091,7 +2091,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ef39aa2634caaccd815ed64e487a2987ff5ef19fd5b3851362cda4f764114c40"
+      "sourceSha256": "f01822ddf3158a68349ab584ebea4bc7c2d2f28abcea7995f267ca9e32bf9ae5"
     },
     {
       "id": "proposal-hosting-and-dream-manifest",
@@ -4172,5 +4172,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "ac607db90b92ff6bb0114a9258e07527c89e02894ca58ce1827bd86211d8351b"
+  "graphSha256": "571aee7a0113065b2191639d2f1ae8e27d61ae6364bf21baa09e928279c5176e"
 };

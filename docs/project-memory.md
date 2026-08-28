@@ -47,6 +47,18 @@ HOW IT WORKS (the convention that makes it load-bearing):
 ## Log (newest first)
 *Append an entry at each skill's convergence. Format: `### <ISO date> — <headline>` + 1–3 sentences + a confidence label + back-links to touched artifacts.*
 
+### 2026-08-28 — Reconciled the post-restart repository baseline
+The interrupted session ended before implementation, but the durable audit log and Git history record the work that followed through pack revision 49. The current tree is clean, local verification passes all nine gates, remote `pack-consistency` and Pages runs pass for `6e9b1fb`, the docs graph has 118 healthy artifacts, and no unused worktree remains. *(Verified — live repository, audit log, GitHub Actions, graph inventory, and coordination cleanup.)*
+Touches: [[architecture]], [[audit-log]], [[forensic-review-rev48-backlog]], [[defect-classes]]
+
+### 2026-08-27 — Closed the revision-48 forensic backlog
+FR-058 through FR-068 are resolved across the count, gate, derived-artifact, publication, supply-chain, review-currency, branch-protection, and record-correction changes. Required status checks remain an accepted branch-protection risk with explicit re-open triggers rather than an enabled rule. *(Verified — `docs/backlog/forensic-review-rev48.md`, audit entries, local gates, and successful remote runs.)*
+Touches: [[forensic-review-rev48]], [[forensic-review-rev48-backlog]], [[forensic-review-rev48-proof]], [[note-required-status-checks]]
+
+### 2026-08-26 — Extended UI skills to native clients and renamed component design
+The pack now treats WPF, WinUI, Avalonia, and Blazor Hybrid as native-client surfaces with platform proof, native archetypes, a native proof-pack template, and XAML token linting. The detailed component design workflow is exposed as `/design-slice`, with source and installed surfaces synchronized. *(Verified — native UI spec/design/implementation records, pack revision 49, tests, and eval cases.)*
+Touches: [[spec-native-app-ui-skill-extension]], [[design-native-app-ui-skill-extension]], [[spec-design-slice-rename]], [[architecture]]
+
 ### 2026-07-11 — Made the Docs Explorer repair set commit-ready while preserving the release block
 The one-stop knowledge portal now includes deterministic Spatial 3D, dependency-free Docs and Audit Explorer runtimes, executed audit interactions and failure states, generation-guarded rapid search, computed dark-mode accessibility floors, safe local HTML discovery, and immutable read-only workflow dependencies. The complete repair matrix is 108 Python tests, 32 Node/core tests, and 216 browser passes with 12 intentional engine-specific skips; Pack Doctor, graph health, and strict design lint are clean. This is **commit-ready**, but revision 17 remains intentionally **not release-ready** because the local CLI/browser performance evidence misses accepted thresholds and is not from the pinned reference environment. *(Verified — complete executable evidence matrix green; release metadata remains blank.)*
 Touches: [[proof-docs-explorer-redesign]], [[design-docs-explorer-grounding-spatial-navigation]], [[design-language-docs-explorer]], [[threat-model]], [[audit-log]]

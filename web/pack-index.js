@@ -1376,7 +1376,7 @@ window.PACK_INDEX = {
 "summary": "The architecture of record for this repository: a dual-purpose repo that is both the canonical SOURCE of the AI-Forward Pack (pack/) and a live INSTALL of it (.claude/, docs/), kept in lockstep by tools/sync-pack.ps1. Includes the four…",
 "path": "docs/architecture.md",
 "kind": "architecture",
-"text": "ai-forward — architecture overview the architecture of record for this repository: a dual-purpose repo that is both the canonical source of the ai-forward pack (pack/) and a live install of it (.claude/, docs/), kept in lockstep by tools/sync-pack.ps1. includes the four diagram families and the tool/cli reference, verified against the repo as of the documented commit. pack knowledge-graph tooling source-and-install relates-to docs-index"
+"text": "ai-forward — architecture overview the architecture of record for this repository: a dual-purpose repo that is both the canonical source of the ai-forward pack (pack/) and a live install of it (.claude/, docs/), kept in lockstep by tools/sync-pack.ps1. includes the four diagram families and the tool/cli reference, verified against pack revision 49 on 2026-08-28. pack knowledge-graph tooling source-and-install relates-to docs-index"
 },
 {
 "cat": "graph",
@@ -1706,10 +1706,10 @@ window.PACK_INDEX = {
 "cat": "graph",
 "id": "forensic-review-rev48-backlog",
 "title": "Forensic Review Backlog — revision 48",
-"summary": "Ten proposed items (FR-058..FR-067) from the revision-48 forensic review at commit c27f83d, ordered into four phases. PHASE 1 IS SHIPPED at 7bc0cf2 — FR-058, FR-059 and FR-065 resolved, FR-060's instance half resolved, and…",
+"summary": "Resolved record of eleven items (FR-058..FR-068) from the revision-48 forensic review at commit c27f83d, ordered into four phases. All phases shipped through pack revision 49: the count and gate controls, derived-artifact prevention,…",
 "path": "docs/backlog/forensic-review-rev48.md",
 "kind": "doc",
-"text": "forensic review backlog — revision 48 ten proposed items (fr-058..fr-067) from the revision-48 forensic review at commit c27f83d, ordered into four phases. phase 1 is shipped at 7bc0cf2 — fr-058, fr-059 and fr-065 resolved, fr-060's instance half resolved, and verify-bundle.ps1 now reports bundle consistent, all 9 gates passing, up from 2 of 9 failing. fr-065's control was observed red before green and caught a 14-off count no gate could previously see. six items remain open, led by fr-060's class half (the ordering hazard is still live) and fr-061, the root-cause control. an external test architect pass blocked the first draft because two acceptance criteria could not fail; those were rewritten, and two of its findings became fr-065 and fr-067. backlog forensic-review triage ci derived-artifacts supply-chain refines forensic-review-rev48 tested-by forensic-review-rev48-proof relates-to architecture relates-to defect-classes supersedes forensic-review-rev42-backlog"
+"text": "forensic review backlog — revision 48 resolved record of eleven items (fr-058..fr-068) from the revision-48 forensic review at commit c27f83d, ordered into four phases. all phases shipped through pack revision 49: the count and gate controls, derived-artifact prevention, publication gate, action pinning, review-record correction, and the stable docs index. the required-status-check decision is recorded separately as an accepted risk with explicit re-open triggers. backlog forensic-review triage ci derived-artifacts supply-chain refines forensic-review-rev48 tested-by forensic-review-rev48-proof relates-to architecture relates-to defect-classes supersedes forensic-review-rev42-backlog"
 },
 {
 "cat": "graph",
