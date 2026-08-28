@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-08-28T16:37:54Z",
+  "generated": "2026-08-28T17:00:50Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2362,6 +2362,39 @@ window.AUDIT_DATA = {
       "outcome": "success",
       "goal": "Recover the post-restart repository and session baseline, reconcile completed and remaining work, and clean unused worktrees.",
       "done_when": "Git, audit, session, graph, local-gate, remote-CI, and worktree state are reconciled; record corrections are committed; no unused worktree remains."
+    },
+    {
+      "id": "al-01M14N29RYXQWHYT5X64CG9NAQ",
+      "shortname": "forensicreview-ai-forward-rev49",
+      "datetime": "2026-08-28T17:00:50Z",
+      "session": "4ab14c44-838a-4bb4-b3a7-f6e4d42c17fd",
+      "prompt": "/forensicreview",
+      "summary": "Forensic review at 33f651d / pack revision 49. Baseline graph/audit clean; full local gate passes after npm dependency restore. Three findings FR-069..FR-071 proposed: clean-worktree npm restore gap in verify-bundle.ps1, CRLF-only dirty generated agents after sync-pack.ps1 on Windows, and audit-log suggest closeout self-reference. Verdict: READY WITH TOOLING BACKLOG; stopped for human triage.",
+      "kind": "skill",
+      "skill": "forensicreview",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/reviews/forensic-review-rev49.md",
+        "docs/backlog/forensic-review-rev49.md",
+        "docs/proof/forensic-review-rev49.md"
+      ],
+      "tags": [
+        "forensic-review",
+        "rev49",
+        "ci",
+        "worktree",
+        "audit"
+      ],
+      "outcome": "success",
+      "goal": "Run /forensicreview on the current AI-Forward repository state without fixing findings.",
+      "done_when": "Rev-numbered review, backlog and proof pack exist; findings have evidence and acceptance criteria; docs graph validates; audit entry appended; stop for human triage.",
+      "git": {
+        "sha": "5e524e1d188fa0b54cb5e99d85fe33b0af39537c",
+        "short": "5e524e1d1",
+        "branch": "forensicreview/rev49-post-restart",
+        "pushed": null
+      }
     }
   ],
   "changes": [
