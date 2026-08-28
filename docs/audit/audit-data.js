@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-08-28T16:30:53Z",
+  "generated": "2026-08-28T16:37:54Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3193,6 +3193,85 @@ window.AUDIT_DATA = {
         "pushed": null,
         "commits": []
       }
+    },
+    {
+      "id": "cl-01M14KQPMKN4Y6ZJX4EA9SD4JF",
+      "datetime": "2026-08-28T16:37:34Z",
+      "session": "4ab14c44-838a-4bb4-b3a7-f6e4d42c17fd",
+      "kind": "decision",
+      "skill": "manual",
+      "title": "Close the post-restart baseline and record-hygiene work",
+      "prompt": "my sessions terminated after my machine restarted overnight\nground yourself in the repo, directives, guidance, skills and knowledge\nreview the session history and audit log\nbaseline on all tasks done and what tasks are still needed to be done\nalso clean up any work trees not in use anymore",
+      "summary": "Recorded the realization and correction commits after revision 48, refreshed the architecture and project-memory records, and verified the resulting repository state.",
+      "rationale": "The audit suggestions were caused by change entries stopping before the completed revision-49 closeout; this entry supplies the missing commit-range provenance without duplicating the underlying decisions.",
+      "artifacts": [
+        "docs/architecture.md",
+        "docs/backlog/forensic-review-rev48.md",
+        "docs/project-memory.md",
+        "docs/docs-index.js",
+        "docs/portal/portal-data.js",
+        "web/pack-index.js",
+        "docs/audit/audit-log.jsonl"
+      ],
+      "tags": [
+        "recovery",
+        "baseline",
+        "record-hygiene",
+        "revision-49"
+      ],
+      "git": {
+        "before": "a9a3a1c2a315e2707a90839d34434950341e65ca",
+        "after": "5062aacfc77e9a5e8cbe714f0c3625699c411a4d",
+        "branch": "main",
+        "pushed": false,
+        "commits": [
+          "5062aac docs(graph): refresh audit viewer index",
+          "d984ed9 docs(audit): record post-restart baseline recovery",
+          "6232b36 docs(records): refresh post-restart baseline",
+          "6e9b1fb docs(records): correct the rev-48 backlog - real SHAs, no stale statuses",
+          "7b844e0 docs(records): FR-064 + FR-066 - close the rev-48 forensic backlog",
+          "9eed844 fix(determinism): FR-068 - make docs-index.js byte-stable, closing FR-060 at source"
+        ]
+      },
+      "audit_ref": "al-01M14KBFEZXVMZ88PZQZKWYQ0H"
+    },
+    {
+      "id": "cl-01M14KRAG0F1F04HHCQTGGEYK7",
+      "datetime": "2026-08-28T16:37:54Z",
+      "session": "4ab14c44-838a-4bb4-b3a7-f6e4d42c17fd",
+      "kind": "decision",
+      "skill": "manual",
+      "title": "Triage unlinked ADR and decision-note suggestions",
+      "prompt": "Review the audit-log suggestions and decide which commits and artifacts require change-log promotion.",
+      "summary": "Referenced the four accepted foundational ADRs and seven standalone decision notes in the curated change log. The notes remain their own source records; this entry records the triage without duplicating their content.",
+      "rationale": "The change log is a curated decision ledger, while ADRs and decision notes remain authoritative artifacts; linking them makes the relationship explicit without creating parallel decisions.",
+      "artifacts": [
+        "docs/adr/0001-grounding-source-corpus-registry.md",
+        "docs/adr/0002-fleet-learnings-store.md",
+        "docs/adr/0003-promotion-oracle.md",
+        "docs/adr/0004-instance-to-class-abstraction.md",
+        "docs/notes/autopilot-open-questions-decisions.md",
+        "docs/notes/hosting-and-dream-manifest.md",
+        "docs/notes/note-20260712-model-orchestration-policy.md",
+        "docs/notes/note-20260818-dream-rerun-unchanged-corpus.md",
+        "docs/notes/note-20260820-spike-corpus-assertion.md",
+        "docs/notes/note-20260822-backlog-triage-and-worktree-discipline.md",
+        "docs/notes/turn-goal-state-and-stopping.md"
+      ],
+      "tags": [
+        "audit",
+        "change-log",
+        "triage",
+        "record-hygiene"
+      ],
+      "git": {
+        "before": "5062aacfc77e9a5e8cbe714f0c3625699c411a4d",
+        "after": "5062aacfc77e9a5e8cbe714f0c3625699c411a4d",
+        "branch": "main",
+        "pushed": false,
+        "commits": []
+      },
+      "audit_ref": "al-01M14KBFEZXVMZ88PZQZKWYQ0H"
     }
   ]
 };
