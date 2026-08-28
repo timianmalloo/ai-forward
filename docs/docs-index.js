@@ -1844,7 +1844,7 @@ window.DOCS_INDEX = {
       "path": "docs/reviews/forensic-review-rev48.md",
       "title": "Forensic Review — AI-Forward repository (revision 48)",
       "type": "doc",
-      "status": "resolved",
+      "status": "superseded",
       "owner": "@timianmalloo",
       "phase": "pack-evolution",
       "reviewBy": "2026-11-24",
@@ -1881,7 +1881,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7a85b9c51b449ed9aadd5444ba6206d343998191a8bf20ff7d43d6eb3c96cb46"
+      "sourceSha256": "42ee63cba581a9a4946a2ae57478c560fc701025755edbae21205ae13019a165"
     },
     {
       "id": "forensic-review-rev48-backlog",
@@ -1926,6 +1926,94 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "d89057ae57c81c98ec9524dc7f8425ac0339d6b2092741424f9898a18ca08db1"
+    },
+    {
+      "id": "forensic-review-rev49",
+      "path": "docs/reviews/forensic-review-rev49.md",
+      "title": "Forensic Review - AI-Forward repository (revision 49)",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2026-11-26",
+      "reviewSuggested": [],
+      "summary": "Forensic assessment at commit 33f651d (pack revision 49). The repository's source, graph, audit log, and full gates are healthy after dependency restore, but the review found three tooling/record-hygiene gaps: verify-bundle is not self-contained in a clean worktree because it omits npm dependency restore; sync-pack leaves CRLF-only dirty Copilot agent files on Windows; and audit-log suggest can self-report the commit that records its own closeout.",
+      "tags": [
+        "forensic-review",
+        "ci",
+        "worktree",
+        "audit",
+        "verification",
+        "adoption-readiness"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        },
+        {
+          "to": "forensic-review-rev49-backlog",
+          "rel": "relates-to"
+        },
+        {
+          "to": "forensic-review-rev49-proof",
+          "rel": "tested-by"
+        },
+        {
+          "to": "forensic-review-rev48",
+          "rel": "supersedes"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "eb722c2c7a9bd082ef4be9af79e84ba997695be138c4bafa328e999368522a20"
+    },
+    {
+      "id": "forensic-review-rev49-backlog",
+      "path": "docs/backlog/forensic-review-rev49.md",
+      "title": "Forensic Review Backlog - revision 49",
+      "type": "doc",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2026-11-26",
+      "reviewSuggested": [],
+      "summary": "Three proposed items from the revision-49 forensic review at commit 33f651d: make the local bundle verifier restore declared npm dependencies in clean worktrees; stop sync-pack from leaving CRLF-only dirty Copilot agent files on Windows; and make audit-log suggest distinguish its unavoidable append-only self-reference from untriaged meaningful changes.",
+      "tags": [
+        "backlog",
+        "forensic-review",
+        "ci",
+        "worktree",
+        "audit",
+        "windows"
+      ],
+      "links": [
+        {
+          "to": "forensic-review-rev49",
+          "rel": "refines"
+        },
+        {
+          "to": "forensic-review-rev49-proof",
+          "rel": "tested-by"
+        },
+        {
+          "to": "forensic-review-rev48-backlog",
+          "rel": "supersedes"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        },
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "67e2e404ae6868523b8e5d99bef1e81220067cd721cfbe959a4512bc7572a015"
     },
     {
       "id": "lens-code-doc-join",
@@ -3678,6 +3766,41 @@ window.DOCS_INDEX = {
       "sourceSha256": "1570819fee3135f643367cb328ebf7f93b53b077f09c347dec2a930748348ddb"
     },
     {
+      "id": "forensic-review-rev49-proof",
+      "path": "docs/proof/forensic-review-rev49.md",
+      "title": "Proof Pack - Forensic Review, revision 49",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2026-11-26",
+      "reviewSuggested": [],
+      "summary": "Evidence record for the revision-49 forensic review at commit 33f651d. It records the baseline gates and the three proposed findings: a clean-worktree npm dependency restore gap, a Windows CRLF dirty-state after sync, and audit-log suggest's append-only self-reference.",
+      "tags": [
+        "proof-pack",
+        "forensic-review",
+        "evidence",
+        "ci",
+        "worktree"
+      ],
+      "links": [
+        {
+          "to": "forensic-review-rev49",
+          "rel": "tested-by"
+        },
+        {
+          "to": "forensic-review-rev49-backlog",
+          "rel": "relates-to"
+        },
+        {
+          "to": "forensic-review-rev48-proof",
+          "rel": "supersedes"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "dadeb381475d946281ce32a02a45478dd7e84def81757af402db9136b028c66b"
+    },
+    {
       "id": "proof-docs-explorer-redesign",
       "path": "docs/proof/docs-explorer-redesign.md",
       "title": "Docs Explorer Redesign - Proof Pack",
@@ -4172,5 +4295,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "571aee7a0113065b2191639d2f1ae8e27d61ae6364bf21baa09e928279c5176e"
+  "graphSha256": "c60e6bd0a538da38eb561e2dab7f3095a7b5bcf3df8ca0074c38454c9ba62c88"
 };

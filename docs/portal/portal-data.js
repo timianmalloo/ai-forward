@@ -1025,6 +1025,24 @@ window.PORTAL_DATA = {
         "summary": "Evidence record for the revision-48 forensic review. One row per correctness claim, each with the exact command, its observed exit code, the oracle that..."
       },
       {
+        "id": "forensic-review-rev49",
+        "type": "doc",
+        "title": "Forensic Review - AI-Forward repository (revision 49)",
+        "summary": "Forensic assessment at commit 33f651d (pack revision 49). The repository's source, graph, audit log, and full gates are healthy after dependency restore, but..."
+      },
+      {
+        "id": "forensic-review-rev49-backlog",
+        "type": "doc",
+        "title": "Forensic Review Backlog - revision 49",
+        "summary": "Three proposed items from the revision-49 forensic review at commit 33f651d: make the local bundle verifier restore declared npm dependencies in clean..."
+      },
+      {
+        "id": "forensic-review-rev49-proof",
+        "type": "proof-pack",
+        "title": "Proof Pack - Forensic Review, revision 49",
+        "summary": "Evidence record for the revision-49 forensic review at commit 33f651d. It records the baseline gates and the three proposed findings: a clean-worktree npm..."
+      },
+      {
         "id": "investigation-blank-explainer-live",
         "type": "investigation",
         "title": "Investigation: the hosted explainer renders blank even after the 'fix'",
@@ -2071,6 +2089,71 @@ window.PORTAL_DATA = {
       {
         "from": "forensic-review-rev48-proof",
         "to": "forensic-review-rev48-backlog",
+        "rel": "relates-to"
+      },
+      {
+        "from": "forensic-review-rev49",
+        "to": "architecture",
+        "rel": "documents"
+      },
+      {
+        "from": "forensic-review-rev49",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "forensic-review-rev49",
+        "to": "forensic-review-rev48",
+        "rel": "supersedes"
+      },
+      {
+        "from": "forensic-review-rev49",
+        "to": "forensic-review-rev49-backlog",
+        "rel": "relates-to"
+      },
+      {
+        "from": "forensic-review-rev49",
+        "to": "forensic-review-rev49-proof",
+        "rel": "tested-by"
+      },
+      {
+        "from": "forensic-review-rev49-backlog",
+        "to": "architecture",
+        "rel": "relates-to"
+      },
+      {
+        "from": "forensic-review-rev49-backlog",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "forensic-review-rev49-backlog",
+        "to": "forensic-review-rev48-backlog",
+        "rel": "supersedes"
+      },
+      {
+        "from": "forensic-review-rev49-backlog",
+        "to": "forensic-review-rev49",
+        "rel": "refines"
+      },
+      {
+        "from": "forensic-review-rev49-backlog",
+        "to": "forensic-review-rev49-proof",
+        "rel": "tested-by"
+      },
+      {
+        "from": "forensic-review-rev49-proof",
+        "to": "forensic-review-rev48-proof",
+        "rel": "supersedes"
+      },
+      {
+        "from": "forensic-review-rev49-proof",
+        "to": "forensic-review-rev49",
+        "rel": "tested-by"
+      },
+      {
+        "from": "forensic-review-rev49-proof",
+        "to": "forensic-review-rev49-backlog",
         "rel": "relates-to"
       },
       {

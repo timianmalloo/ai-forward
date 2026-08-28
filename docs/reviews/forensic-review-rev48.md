@@ -2,7 +2,7 @@
 id: forensic-review-rev48
 title: "Forensic Review — AI-Forward repository (revision 48)"
 type: doc
-status: resolved
+status: superseded
 owner: "@timianmalloo"
 phase: "pack-evolution"
 tags: [forensic-review, ci, derived-artifacts, supply-chain, verification, adoption-readiness]

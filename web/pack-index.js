@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 118
+"count": 121
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 262,
+"total": 265,
 "items": [
 {
 "cat": "knowledge",
@@ -1713,6 +1713,24 @@ window.PACK_INDEX = {
 },
 {
 "cat": "graph",
+"id": "forensic-review-rev49",
+"title": "Forensic Review - AI-Forward repository (revision 49)",
+"summary": "Forensic assessment at commit 33f651d (pack revision 49). The repository's source, graph, audit log, and full gates are healthy after dependency restore, but the review found three tooling/record-hygiene gaps: verify-bundle is not…",
+"path": "docs/reviews/forensic-review-rev49.md",
+"kind": "doc",
+"text": "forensic review - ai-forward repository (revision 49) forensic assessment at commit 33f651d (pack revision 49). the repository's source, graph, audit log, and full gates are healthy after dependency restore, but the review found three tooling/record-hygiene gaps: verify-bundle is not self-contained in a clean worktree because it omits npm dependency restore; sync-pack leaves crlf-only dirty copilot agent files on windows; and audit-log suggest can self-report the commit that records its own closeout. forensic-review ci worktree audit verification adoption-readiness documents architecture relates-to forensic-review-rev49-backlog tested-by forensic-review-rev49-proof supersedes forensic-review-rev48 relates-to defect-classes"
+},
+{
+"cat": "graph",
+"id": "forensic-review-rev49-backlog",
+"title": "Forensic Review Backlog - revision 49",
+"summary": "Three proposed items from the revision-49 forensic review at commit 33f651d: make the local bundle verifier restore declared npm dependencies in clean worktrees; stop sync-pack from leaving CRLF-only dirty Copilot agent files on Windows;…",
+"path": "docs/backlog/forensic-review-rev49.md",
+"kind": "doc",
+"text": "forensic review backlog - revision 49 three proposed items from the revision-49 forensic review at commit 33f651d: make the local bundle verifier restore declared npm dependencies in clean worktrees; stop sync-pack from leaving crlf-only dirty copilot agent files on windows; and make audit-log suggest distinguish its unavoidable append-only self-reference from untriaged meaningful changes. backlog forensic-review ci worktree audit windows refines forensic-review-rev49 tested-by forensic-review-rev49-proof supersedes forensic-review-rev48-backlog relates-to defect-classes relates-to architecture"
+},
+{
+"cat": "graph",
 "id": "lens-code-doc-join",
 "title": "Lens - code/doc join",
 "summary": "Derived join between the documentation graph (intent) and the Graphify code graph (reality): documentation referencing code that does not exist, and the most connected code symbols no artifact governs. A prompt, never a gate.",
@@ -2250,6 +2268,15 @@ window.PACK_INDEX = {
 "path": "docs/proof/forensic-review-rev48.md",
 "kind": "proof-pack",
 "text": "proof pack — forensic review, revision 48 evidence record for the revision-48 forensic review. one row per correctness claim, each with the exact command, its observed exit code, the oracle that distinguishes pass from fail, and whether a red state was observed. added after an external test architect pass blocked the review for recording a self-cleared pass with no proof pack behind it. proof-pack forensic-review evidence ci tested-by forensic-review-rev48 relates-to forensic-review-rev48-backlog"
+},
+{
+"cat": "graph",
+"id": "forensic-review-rev49-proof",
+"title": "Proof Pack - Forensic Review, revision 49",
+"summary": "Evidence record for the revision-49 forensic review at commit 33f651d. It records the baseline gates and the three proposed findings: a clean-worktree npm dependency restore gap, a Windows CRLF dirty-state after sync, and audit-log…",
+"path": "docs/proof/forensic-review-rev49.md",
+"kind": "proof-pack",
+"text": "proof pack - forensic review, revision 49 evidence record for the revision-49 forensic review at commit 33f651d. it records the baseline gates and the three proposed findings: a clean-worktree npm dependency restore gap, a windows crlf dirty-state after sync, and audit-log suggest's append-only self-reference. proof-pack forensic-review evidence ci worktree tested-by forensic-review-rev49 relates-to forensic-review-rev49-backlog supersedes forensic-review-rev48-proof"
 },
 {
 "cat": "graph",
