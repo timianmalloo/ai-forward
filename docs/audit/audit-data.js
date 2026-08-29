@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-08-28T17:00:50Z",
+  "generated": "2026-08-29T18:40:41Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2395,6 +2395,87 @@ window.AUDIT_DATA = {
         "branch": "forensicreview/rev49-post-restart",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M17A77JHDPNP5X23WE5N1PJF",
+      "shortname": "dream-run",
+      "datetime": "2026-08-29T17:49:00Z",
+      "session": "42bfc457-d056-4ec1-8f60-0d43e5185e7c",
+      "prompt": "dream.py dream-run",
+      "summary": "Dream drm-0007: 11 proposals over last 7 days · 29 audit · 16 change · 0 mitigations · 5 markers",
+      "kind": "script",
+      "skill": "dream",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/dreams/drm-0007/index.html"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M17A9WSRP6FKWV951MRQSZR6",
+      "shortname": "dream-ai-de-rem-enrichment",
+      "datetime": "2026-08-29T17:50:28Z",
+      "session": "42bfc457-d056-4ec1-8f60-0d43e5185e7c",
+      "prompt": "/dream with AI-DE cross-agent collaboration focus",
+      "summary": "REM-enriched drm-0007 with a review-only cross-agent collaboration proposal grounded in AI-DE session-contracts and defect classes DC-013/DC-024.",
+      "kind": "skill",
+      "skill": "dream",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/dreams/drm-0007/dream.json",
+        "docs/dreams/drm-0007/index.html"
+      ],
+      "tags": [
+        "dreaming",
+        "ai-de",
+        "cross-agent"
+      ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M17AKRZK71WJG3CEJQYY0K3H",
+      "shortname": "apply-decisions",
+      "datetime": "2026-08-29T17:55:51Z",
+      "session": "42bfc457-d056-4ec1-8f60-0d43e5185e7c",
+      "prompt": "dream.py apply-decisions",
+      "summary": "Applied 9 general + 2 repo-local (skipped 0, rejected 0) from drm-0007",
+      "kind": "script",
+      "skill": "dream",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "learnings/fleet-classes.jsonl"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M17D5V14DCP34733XBVBCQWV",
+      "shortname": "implement-coord-collaboration-phase4",
+      "datetime": "2026-08-29T18:40:40Z",
+      "session": "42bfc457-d056-4ec1-8f60-0d43e5185e7c",
+      "prompt": "/design-slice then /implement the accepted cross-session collaboration recommendation",
+      "summary": "Designed and implemented coord collaboration mode: active session listing, collaborate check, session-contract template, proof pack, and tests.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/design/coord-collaboration-phase4.md",
+        "docs/proof/coord-collaboration-phase4.md",
+        "pack/scripts/coord-core.py",
+        "pack/templates/session-contract.template.md",
+        "tests/docs_explorer/test_coord_core.py"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Design and implement the accepted ai-forward cross-session collaboration slice",
+      "done_when": "coord exposes session list and collaborate check, session-contract template is shipped, tests and docs are updated",
+      "started_at": "2026-08-29T18:04:47Z",
+      "duration_seconds": 2153.0
     }
   ],
   "changes": [
@@ -3305,6 +3386,29 @@ window.AUDIT_DATA = {
         "commits": []
       },
       "audit_ref": "al-01M14KBFEZXVMZ88PZQZKWYQ0H"
+    },
+    {
+      "id": "cl-01M17D5V4T6V7KX2ERAG3G13HJ",
+      "datetime": "2026-08-29T18:40:41Z",
+      "session": "42bfc457-d056-4ec1-8f60-0d43e5185e7c",
+      "kind": "design",
+      "skill": "design-slice",
+      "title": "Coord collaboration mode first slice",
+      "prompt": "/design-slice then /implement the accepted cross-session collaboration recommendation",
+      "summary": "Added Phase-4 collaboration design and implemented coord session list, coord collaborate check, and the session-contract template.",
+      "rationale": "AI-DE cross-agent work showed registration, file claims, seam contracts, and append-only/derived merge policy must be written and checkable before concurrent implementation.",
+      "artifacts": [
+        "docs/design/coord-collaboration-phase4.md",
+        "docs/proof/coord-collaboration-phase4.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "81e5eedea10992e093c30ba53089baefac0dba84",
+        "after": "81e5eedea10992e093c30ba53089baefac0dba84",
+        "branch": "main",
+        "pushed": false,
+        "commits": []
+      }
     }
   ]
 };

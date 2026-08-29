@@ -1047,6 +1047,53 @@ window.DOCS_INDEX = {
       "sourceSha256": "4c52b72da4a80dc78ea30213c6eefc577fb8af212764b95e8d85b603b7354fde"
     },
     {
+      "id": "design-coord-collaboration-phase4",
+      "path": "docs/design/coord-collaboration-phase4.md",
+      "title": "Design - coord collaboration mode, Phase 4",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Phase-4 collaboration mode for coord: a live session list, a collaboration health check, and a reusable session-contract template so multi-agent work records roles, seams, ownership, claims, and merge policy before concurrent implementation begins.",
+      "tags": [
+        "coordination",
+        "collaboration",
+        "worktrees",
+        "contracts",
+        "claims"
+      ],
+      "links": [
+        {
+          "to": "architecture-agent-coordination",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-agent-coordination",
+          "rel": "implements"
+        },
+        {
+          "to": "design-coord-core-phase1",
+          "rel": "refines"
+        },
+        {
+          "to": "design-coord-enforcement-phase2",
+          "rel": "refines"
+        },
+        {
+          "to": "design-coord-federation-phase3",
+          "rel": "refines"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "f763d013321b4b69bad534868000e5a4641cea293de3d44038981a7d453e73d5"
+    },
+    {
       "id": "design-coord-core-phase1",
       "path": "docs/design/coord-core-phase1.md",
       "title": "Design — coord core, Phase 1 walking skeleton (record · fold · claim/check/release/tail)",
@@ -1573,7 +1620,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "56a385c26e3b2855c15c03ebd4b9d25422cfb98bbe76389b306c9014b4a8e889"
+      "sourceSha256": "ee63674d76b5e2f44618e36f650be652caf5228c4a2b19520867e60fc9294946"
     },
     {
       "id": "forensic-review",
@@ -3801,6 +3848,35 @@ window.DOCS_INDEX = {
       "sourceSha256": "dadeb381475d946281ce32a02a45478dd7e84def81757af402db9136b028c66b"
     },
     {
+      "id": "proof-coord-collaboration-phase4",
+      "path": "docs/proof/coord-collaboration-phase4.md",
+      "title": "Proof Pack - coord collaboration mode, Phase 4",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Proof pack for coord collaboration mode: active-session projection, collaboration health checks, and the session-contract template. Records the red-first evidence, test oracles, commands, and residual risks for the first shippable cross-session collaboration slice.",
+      "tags": [
+        "coordination",
+        "collaboration",
+        "proof"
+      ],
+      "links": [
+        {
+          "to": "design-coord-collaboration-phase4",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-agent-coordination",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "7102539d3bb87db53a65af1821cd53f4518173b9dc8b3991888908c71aec69ee"
+    },
+    {
       "id": "proof-docs-explorer-redesign",
       "path": "docs/proof/docs-explorer-redesign.md",
       "title": "Docs Explorer Redesign - Proof Pack",
@@ -4264,6 +4340,13 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     },
     {
+      "id": "surface-dreams-drm-0007-index",
+      "path": "docs/dreams/drm-0007/index.html",
+      "title": "Dream Review",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact."
+    },
+    {
       "id": "surface-mockups-dream-review",
       "path": "docs/mockups/dream-review.html",
       "title": "Dream Review — mockup",
@@ -4295,5 +4378,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "c60e6bd0a538da38eb561e2dab7f3095a7b5bcf3df8ca0074c38454c9ba62c88"
+  "graphSha256": "1f207328288b92139e4ab06d7f0cbb743bb2ba32f908247c01fe5f6754c578fe"
 };

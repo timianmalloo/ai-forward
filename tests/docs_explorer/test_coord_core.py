@@ -557,5 +557,162 @@ class WorktreeLifecycleTests(unittest.TestCase):
         self.assertIn("registered", starts[0]["worktree"])
 
 
+class CollaborationTests(CoordTestCase):
+    """Cross-session collaboration mode.
+
+    These tests encode the AI-DE evidence: two sessions were successful only after
+    they registered, published a session contract, and claimed files before editing.
+    """
+
+    def start_session(self, session, worktree, at=None, agent=None):
+        return self.m.append_event(
+            self.root,
+            {
+                "kind": "session-start",
+                "session": session,
+                "agent": agent or session,
+                "wi": "WI-0",
+                "path": "-",
+                "at": at if at is not None else time.time(),
+                "worktree": worktree,
+            },
+        )
+
+    def test_session_list_reports_active_sessions_and_claims(self):
+        now = time.time()
+        self.start_session("core", "C:/repo-core", now - 20, agent="claude-code")
+        self.start_session("design", "C:/repo-design", now - 10, agent="copilot")
+        self.claim("design", "docs/mockups/**", wi="design-surfaces", at=now - 5,
+                   agent="copilot")
+
+        sessions, errors, files = self.m.active_sessions(self.root, now)
+
+        self.assertEqual([], errors)
+        self.assertEqual(2, len(sessions))
+        self.assertEqual(2, files)
+        design = next(s for s in sessions if s["session"] == "design")
+        self.assertEqual("copilot", design["agent"])
+        self.assertEqual("C:/repo-design", design["worktree"])
+        self.assertEqual(["docs/mockups/*"], [c["path"] for c in design["claims"]])
+
+    def test_session_end_removes_the_active_session(self):
+        now = time.time()
+        self.start_session("design", "C:/repo-design", now - 10, agent="copilot")
+        self.m.append_event(
+            self.root,
+            {
+                "kind": "session-end",
+                "session": "design",
+                "agent": "copilot",
+                "wi": "WI-0",
+                "path": "-",
+                "at": now - 5,
+                "worktree": "C:/repo-design",
+            },
+        )
+
+        sessions, errors, _ = self.m.active_sessions(self.root, now)
+
+        self.assertEqual([], errors)
+        self.assertEqual([], sessions)
+
+    def test_stale_session_is_not_active(self):
+        now = time.time()
+        self.start_session("old", "C:/repo-old", now - 120, agent="claude-code")
+        self.start_session("fresh", "C:/repo-fresh", now - 10, agent="copilot")
+
+        sessions, _, _ = self.m.active_sessions(self.root, now, stale_seconds=60)
+
+        self.assertEqual(["fresh"], [s["session"] for s in sessions])
+
+    def test_collaboration_check_requires_contract_for_multiple_live_sessions(self):
+        now = time.time()
+        self.start_session("core", "C:/repo-core", now - 20, agent="claude-code")
+        self.start_session("design", "C:/repo-design", now - 10, agent="copilot")
+
+        findings = self.m.collaboration_findings(self.root, self.repo, now)
+
+        self.assertTrue(any(f["code"] == "COORD-COLLAB-NO-CONTRACT" for f in findings))
+
+    def test_collaboration_check_passes_with_contract_for_multiple_live_sessions(self):
+        now = time.time()
+        self.start_session("core", "C:/repo-core", now - 20, agent="claude-code")
+        self.start_session("design", "C:/repo-design", now - 10, agent="copilot")
+        contract = self.repo / "docs" / "collaboration" / "session-contracts.md"
+        contract.parent.mkdir(parents=True)
+        contract.write_text("# Session contract\n", encoding="utf-8")
+
+        findings = self.m.collaboration_findings(self.root, self.repo, now)
+
+        self.assertFalse(
+            any(f["code"] == "COORD-COLLAB-NO-CONTRACT" for f in findings),
+            findings,
+        )
+
+    def run_cli(self, *args, root=None):
+        env = dict(os.environ)
+        env["COORD_ROOT"] = str(root or self.root)
+        env.pop("AGENT_SESSION", None)
+        return subprocess.run(
+            [sys.executable, str(SCRIPT), *args],
+            cwd=str(self.repo), env=env, capture_output=True, text=True,
+        )
+
+    def test_cli_session_list_json_reports_active_sessions(self):
+        now = time.time()
+        self.start_session("design", "C:/repo-design", now - 10, agent="copilot")
+        self.claim("design", "docs/mockups/*", wi="design-surfaces", at=now - 5,
+                   agent="copilot")
+
+        result = self.run_cli("session", "list", "--json")
+
+        self.assertEqual(0, result.returncode, result.stderr)
+        payload = json.loads(result.stdout)
+        self.assertEqual("design", payload["sessions"][0]["session"])
+        self.assertEqual("copilot", payload["sessions"][0]["agent"])
+        self.assertEqual("design-surfaces", payload["sessions"][0]["claims"][0]["wi"])
+        self.assertEqual("docs/mockups/*", payload["sessions"][0]["claims"][0]["path"])
+
+    def test_cli_collaborate_check_fails_when_contract_is_missing(self):
+        now = time.time()
+        self.start_session("core", "C:/repo-core", now - 20, agent="claude-code")
+        self.start_session("design", "C:/repo-design", now - 10, agent="copilot")
+
+        result = self.run_cli("collaborate", "check", "--json")
+
+        self.assertEqual(3, result.returncode, result.stdout + result.stderr)
+        payload = json.loads(result.stdout)
+        self.assertEqual("COORD-COLLAB-NO-CONTRACT", payload["findings"][0]["code"])
+
+    def test_cli_collaborate_check_fails_when_coordination_corpus_is_empty(self):
+        empty_root = self.repo / "empty-coord"
+
+        result = self.run_cli("collaborate", "check", "--json", root=empty_root)
+
+        self.assertEqual(3, result.returncode, result.stdout + result.stderr)
+        payload = json.loads(result.stdout)
+        self.assertEqual("COORD-COLLAB-NOT-CHECKED-EMPTY", payload["findings"][0]["code"])
+        self.assertEqual("blocker", payload["findings"][0]["severity"])
+        self.assertEqual(0, payload["files_scanned"])
+        self.assertFalse(empty_root.exists(), "the check should not create a fake corpus")
+
+    def test_cli_collaborate_check_passes_when_contract_and_claims_exist(self):
+        now = time.time()
+        self.start_session("core", "C:/repo-core", now - 20, agent="claude-code")
+        self.start_session("design", "C:/repo-design", now - 10, agent="copilot")
+        self.claim("core", "src/core/*", wi="core-work", at=now - 5, agent="claude-code")
+        self.claim("design", "docs/mockups/*", wi="design-work", at=now - 4, agent="copilot")
+        contract = self.repo / "docs" / "collaboration" / "session-contracts.md"
+        contract.parent.mkdir(parents=True)
+        contract.write_text("# Session contract\n", encoding="utf-8")
+
+        result = self.run_cli("collaborate", "check", "--json")
+
+        self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+        payload = json.loads(result.stdout)
+        self.assertTrue(payload["contract_exists"])
+        self.assertEqual([], payload["findings"])
+
+
 if __name__ == "__main__":
     unittest.main()

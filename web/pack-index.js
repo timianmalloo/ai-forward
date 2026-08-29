@@ -16,7 +16,7 @@ window.PACK_INDEX = {
 {
 "id": "templates",
 "label": "Templates",
-"count": 27
+"count": 28
 },
 {
 "id": "scripts",
@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 121
+"count": 123
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 265,
+"total": 268,
 "items": [
 {
 "cat": "knowledge",
@@ -795,6 +795,15 @@ window.PACK_INDEX = {
 },
 {
 "cat": "templates",
+"id": "session-contract.template.md",
+"title": "Session contract - <workstream>",
+"summary": "Two or more sessions are working this repository at once, in separate worktrees.",
+"path": "pack/templates/session-contract.template.md",
+"kind": "template",
+"text": "session-contract.template.md session contract - <workstream> two or more sessions are working this repository at once, in separate worktrees."
+},
+{
+"cat": "templates",
 "id": "spec.template.md",
 "title": "<Title>",
 "summary": "<!--",
@@ -872,7 +881,7 @@ window.PACK_INDEX = {
 "summary": "coord-core.py - agent coordination, Phase 1 walking skeleton.",
 "path": "pack/scripts/coord-core.py",
 "kind": "script",
-"text": "coord-core.py coord-core.py - agent coordination, phase 1 walking skeleton. holds the record of intent and answers \"may this session touch this artifact?\" from it. append-only jsonl, one file per session; every piece of state is a fold over it. no daemon, no database, no dependency beyond the standard library (adr-0007). four controls here were observed failing on the un-fixed shape before they were trusted: log-a an append onto a file not ending in a newline fuses two records and loses both r4 a check that scanned nothing must not report \"free\" ctrl-port os.open without o_binary translates newlines on windows -- which also masked the log-a control, because a stray cr still terminates a line f8 a claim over the coordination record itself would lock the substrate design: docs/design/coord-core-phase1.md __init__ repo_root resolve_root _norm _literal_segments overlaps make_event _next_seq append_event read_events fold check _safe render append_decision read_decisions _git unique_commits staged_paths _identity _build_parser entry_fingerprint conservation_lost merge_register _read_jsonl cmd_merge_register load_registry classify regen_command record_regen_owed regen_owed clear_regen_owed _reject_path _relativise parse_hook_request detect_harness hook_decision_of hook_response_is_valid hook_response _not_checked cmd_hook cmd_precommit cmd_guard _worktree_key _slug worktree_inventory worktree_is_clean worktree_safety cmd_worktree cmd_session cmd_metrics cmd_install _install_merge_driver _write_conflict read cmd_merge_derived cmd_regen driver_status cmd_doctor cmd_plugin_emit _print_settings_entry main"
+"text": "coord-core.py coord-core.py - agent coordination, phase 1 walking skeleton. holds the record of intent and answers \"may this session touch this artifact?\" from it. append-only jsonl, one file per session; every piece of state is a fold over it. no daemon, no database, no dependency beyond the standard library (adr-0007). four controls here were observed failing on the un-fixed shape before they were trusted: log-a an append onto a file not ending in a newline fuses two records and loses both r4 a check that scanned nothing must not report \"free\" ctrl-port os.open without o_binary translates newlines on windows -- which also masked the log-a control, because a stray cr still terminates a line f8 a claim over the coordination record itself would lock the substrate design: docs/design/coord-core-phase1.md __init__ repo_root resolve_root _norm _literal_segments overlaps make_event _next_seq append_event read_events fold check _safe render append_decision read_decisions _git unique_commits staged_paths _identity _build_parser entry_fingerprint conservation_lost merge_register _read_jsonl cmd_merge_register load_registry classify regen_command record_regen_owed regen_owed clear_regen_owed _reject_path _relativise parse_hook_request detect_harness hook_decision_of hook_response_is_valid hook_response _not_checked cmd_hook cmd_precommit cmd_guard _worktree_key active_sessions session_contract_path collaboration_findings cmd_session_list cmd_collaborate _slug worktree_inventory worktree_is_clean worktree_safety cmd_worktree cmd_session cmd_metrics cmd_install _install_merge_driver _write_conflict read cmd_merge_derived cmd_regen driver_status cmd_doctor cmd_plugin_emit _print_settings_entry main"
 },
 {
 "cat": "scripts",
@@ -1476,6 +1485,15 @@ window.PACK_INDEX = {
 "path": "docs/design/aiforward-cli.md",
 "kind": "design",
 "text": "design — aiforward cli (suggestion 1) a single stdlib-only python developer cli (tools/aiforward.py) that is a thin façade dispatcher over the pack's existing scripts (sync, verify, check, new, doctor, graph, scrub) — one memorable entry point with --help, no new runtime dependency. cli tooling dx implements kb-pack-evolution"
+},
+{
+"cat": "graph",
+"id": "design-coord-collaboration-phase4",
+"title": "Design - coord collaboration mode, Phase 4",
+"summary": "Phase-4 collaboration mode for coord: a live session list, a collaboration health check, and a reusable session-contract template so multi-agent work records roles, seams, ownership, claims, and merge policy before concurrent…",
+"path": "docs/design/coord-collaboration-phase4.md",
+"kind": "design",
+"text": "design - coord collaboration mode, phase 4 phase-4 collaboration mode for coord: a live session list, a collaboration health check, and a reusable session-contract template so multi-agent work records roles, seams, ownership, claims, and merge policy before concurrent implementation begins. coordination collaboration worktrees contracts claims implements architecture-agent-coordination implements spec-agent-coordination refines design-coord-core-phase1 refines design-coord-enforcement-phase2 refines design-coord-federation-phase3 relates-to defect-classes"
 },
 {
 "cat": "graph",
@@ -2277,6 +2295,15 @@ window.PACK_INDEX = {
 "path": "docs/proof/forensic-review-rev49.md",
 "kind": "proof-pack",
 "text": "proof pack - forensic review, revision 49 evidence record for the revision-49 forensic review at commit 33f651d. it records the baseline gates and the three proposed findings: a clean-worktree npm dependency restore gap, a windows crlf dirty-state after sync, and audit-log suggest's append-only self-reference. proof-pack forensic-review evidence ci worktree tested-by forensic-review-rev49 relates-to forensic-review-rev49-backlog supersedes forensic-review-rev48-proof"
+},
+{
+"cat": "graph",
+"id": "proof-coord-collaboration-phase4",
+"title": "Proof Pack - coord collaboration mode, Phase 4",
+"summary": "Proof pack for coord collaboration mode: active-session projection, collaboration health checks, and the session-contract template. Records the red-first evidence, test oracles, commands, and residual risks for the first shippable…",
+"path": "docs/proof/coord-collaboration-phase4.md",
+"kind": "proof-pack",
+"text": "proof pack - coord collaboration mode, phase 4 proof pack for coord collaboration mode: active-session projection, collaboration health checks, and the session-contract template. records the red-first evidence, test oracles, commands, and residual risks for the first shippable cross-session collaboration slice. coordination collaboration proof implements design-coord-collaboration-phase4 implements spec-agent-coordination"
 },
 {
 "cat": "graph",

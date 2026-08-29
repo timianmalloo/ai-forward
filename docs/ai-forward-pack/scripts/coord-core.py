@@ -25,7 +25,9 @@ import time
 from pathlib import Path
 
 TTL_DEFAULT = 300
+SESSION_STALE_SECONDS = 8 * 3600
 COORD_DIRNAME = ".agents"
+SESSION_CONTRACT = "docs/collaboration/session-contracts.md"
 
 
 class CoordError(Exception):
@@ -473,7 +475,11 @@ def _build_parser():
     guard = sub.add_parser("guard", help="refuse to move HEAD over work held in one place")
     guard.add_argument("--fix", action="store_true", help="push, the cheapest second copy")
     ses = sub.add_parser("session", help="one session per working tree")
-    ses.add_argument("action", choices=["start", "end"])
+    ses.add_argument("action", choices=["start", "end", "list"])
+    ses.add_argument("--json", action="store_true")
+    collab = sub.add_parser("collaborate", help="cross-session collaboration checks")
+    collab.add_argument("action", choices=["check"])
+    collab.add_argument("--json", action="store_true")
     # WT1-WT12: a new session starts in a new worktree, and nothing is left behind.
     wt = sub.add_parser("worktree", help="session worktree lifecycle: new | list | cleanup")
     wt.add_argument("action", choices=["new", "list", "cleanup"])
@@ -1100,6 +1106,148 @@ def cmd_guard(repo, fix):
 
 def _worktree_key(cwd):
     return str(Path(cwd).resolve()).replace("\\", "/")
+
+
+def active_sessions(root, now, stale_seconds=SESSION_STALE_SECONDS):
+    """Fold the append-only record into active collaboration sessions.
+
+    The session ledger is evidence that someone announced themselves, not proof that nobody
+    else exists (DC-024). This fold therefore reports only positive liveness; callers that
+    need absence-of-use proof must also inspect the filesystem/worktree state.
+    """
+    events, errors, files = read_events(root)
+    leases = fold(events, now)
+    claims_by_session = {}
+    for lease in leases.values():
+        claims_by_session.setdefault(lease["session"], []).append({
+            "path": lease["path"],
+            "wi": lease.get("wi", ""),
+            "agent": lease.get("agent", lease["session"]),
+            "expires": lease.get("expires"),
+        })
+
+    live = {}
+    for event in events:
+        session = event.get("session")
+        if not session:
+            continue
+        if event.get("kind") == "session-start":
+            live[session] = {
+                "session": session,
+                "agent": event.get("agent", session),
+                "worktree": event.get("worktree", ""),
+                "started_at": event.get("at", 0.0),
+                "last_at": event.get("at", 0.0),
+                "claims": [],
+            }
+            continue
+        if event.get("kind") == "session-end":
+            live.pop(session, None)
+            continue
+        if session in live:
+            live[session]["last_at"] = max(live[session]["last_at"], event.get("at", 0.0))
+
+    sessions = []
+    for session, state in live.items():
+        if now - state.get("last_at", 0.0) >= stale_seconds:
+            continue
+        state = dict(state)
+        state["claims"] = sorted(claims_by_session.get(session, []), key=lambda c: c["path"])
+        sessions.append(state)
+    sessions.sort(key=lambda s: (s.get("worktree", ""), s.get("session", "")))
+    return sessions, errors, files
+
+
+def session_contract_path(repo):
+    return Path(repo) / SESSION_CONTRACT
+
+
+def collaboration_findings(root, repo, now, snapshot=None):
+    """Return collaboration health findings.
+
+    This is a small operator gate over the live session fold. It is deliberately advisory:
+    it catches the AI-DE class where two sessions had to publish a contract and claim files
+    to avoid merge/rebase damage, but it does not pretend a claim is a distributed lock.
+    """
+    sessions, errors, files = snapshot or active_sessions(root, now)
+    findings = []
+    if errors:
+        findings.append({
+            "code": "COORD-COLLAB-NOT-CHECKED-RECORD",
+            "severity": "blocker",
+            "reason": "coordination record is unreadable: {}".format(_safe("; ".join(errors[:2]), 200)),
+        })
+        return findings
+    if files == 0:
+        findings.append({
+            "code": "COORD-COLLAB-NOT-CHECKED-EMPTY",
+            "severity": "blocker",
+            "reason": "0 coordination files scanned; no collaboration state established",
+        })
+        return findings
+    if len(sessions) > 1 and not session_contract_path(repo).is_file():
+        findings.append({
+            "code": "COORD-COLLAB-NO-CONTRACT",
+            "severity": "blocker",
+            "reason": "{} active sessions but {} is missing".format(
+                len(sessions), SESSION_CONTRACT),
+        })
+    if len(sessions) > 1:
+        no_claims = [s["session"] for s in sessions if not s.get("claims")]
+        if no_claims:
+            findings.append({
+                "code": "COORD-COLLAB-NO-CLAIMS",
+                "severity": "warning",
+                "reason": "active session(s) with no claims: {}".format(", ".join(sorted(no_claims))),
+            })
+    return findings
+
+
+def cmd_session_list(root, now, as_json=False):
+    sessions, errors, files = active_sessions(root, now)
+    payload = {"files_scanned": files, "sessions": sessions, "errors": errors}
+    if as_json:
+        print(json.dumps(payload, indent=2, sort_keys=True))
+        return 0 if not errors else 4
+    if errors:
+        print("COORD-NOT-CHECKED-RECORD: {}".format(_safe("; ".join(errors[:2]), 200)))
+        return 4
+    print("{} active session(s); {} file(s) scanned".format(len(sessions), files))
+    for item in sessions:
+        print("  {:<24} {:<18} {}  {} claim(s)".format(
+            _safe(item["session"], 24),
+            _safe(item.get("agent", ""), 18),
+            _safe(item.get("worktree", ""), 90),
+            len(item.get("claims", []))))
+        for claim in item.get("claims", []):
+            print("    - {:<30} {}".format(_safe(claim.get("wi", ""), 30),
+                                           _safe(claim.get("path", ""), 120)))
+    return 0
+
+
+def cmd_collaborate(root, repo, action, now, as_json=False):
+    if action != "check":
+        return 2
+    sessions, errors, files = active_sessions(root, now)
+    findings = collaboration_findings(root, repo, now, snapshot=(sessions, errors, files))
+    payload = {"files_scanned": files, "active_sessions": sessions, "findings": findings,
+               "contract": SESSION_CONTRACT, "contract_exists": session_contract_path(repo).is_file()}
+    if as_json:
+        print(json.dumps(payload, indent=2, sort_keys=True))
+        return 3 if any(f.get("severity") == "blocker" for f in findings) else 0
+    print("collaboration: {} active session(s); contract {}".format(
+        len(sessions), "present" if payload["contract_exists"] else "missing"))
+    for item in sessions:
+        print("  session {:<24} agent {:<18} claims {}".format(
+            _safe(item["session"], 24), _safe(item.get("agent", ""), 18),
+            len(item.get("claims", []))))
+    if not findings:
+        print("collaboration check: OK")
+        return 0
+    for finding in findings:
+        print("{}  {}  {}".format(finding["severity"].upper(), finding["code"],
+                                  finding["reason"]))
+    return 3 if any(f.get("severity") == "blocker" for f in findings) else 0
 
 
 # --- worktree lifecycle (session-worktree-discipline.md WT1-WT12) ------------
@@ -1853,6 +2001,12 @@ def main(argv=None):
         return cmd_worktree(root, repo, args.action, os.getcwd(), now,
                             session=chosen, agent=agent or chosen, branch=args.branch,
                             base=args.base, remove=args.remove)
+
+    if args.cmd == "session" and args.action == "list":
+        return cmd_session_list(root, now, args.json)
+
+    if args.cmd == "collaborate":
+        return cmd_collaborate(root, repo, args.action, now, args.json)
 
     if args.cmd == "check":
         decision = check(root, args.path, session, now)

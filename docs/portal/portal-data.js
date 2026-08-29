@@ -4,7 +4,7 @@ window.PORTAL_DATA = {
       "skills": 22,
       "personas": 23,
       "knowledge": 38,
-      "templates": 27,
+      "templates": 28,
       "scripts": 18
     },
     "whatIs": "AI-Forward is a committed Markdown methodology pack that installs into a repo so Claude Code and GitHub Copilot direct work with a shared reasoning spine, adversarial persona review, and a library of workflow skills - nothing runs as a service; everything is versioned files and stdlib scripts.",
@@ -702,6 +702,11 @@ window.PORTAL_DATA = {
             "path": "../../docs/design/aiforward-cli.md"
           },
           {
+            "title": "Design - coord collaboration mode, Phase 4",
+            "summary": "Phase-4 collaboration mode for coord: a live session list, a collaboration health check, and a reusable session-contract template so multi-agent work records roles, seams, ownership, claims, and merge policy before concurrent implementation begins.",
+            "path": "../../docs/design/coord-collaboration-phase4.md"
+          },
+          {
             "title": "Design — coord core, Phase 1 walking skeleton (record · fold · claim/check/release/tail)",
             "summary": "The Phase-1 walking skeleton: an append-only per-session record, a pure fold over it, and four verbs (claim, check, release, tail) that let two sessions in two worktrees see each other's leases. Stdlib only, no daemon, no dependency. The LOG-A seam — an...",
             "path": "../../docs/design/coord-core-phase1.md"
@@ -891,6 +896,12 @@ window.PORTAL_DATA = {
         "type": "design",
         "title": "Design — aiforward CLI (suggestion 1)",
         "summary": "A single stdlib-only Python developer CLI (tools/aiforward.py) that is a thin Façade dispatcher over the pack's existing scripts (sync, verify, check, new,..."
+      },
+      {
+        "id": "design-coord-collaboration-phase4",
+        "type": "design",
+        "title": "Design - coord collaboration mode, Phase 4",
+        "summary": "Phase-4 collaboration mode for coord: a live session list, a collaboration health check, and a reusable session-contract template so multi-agent work records..."
       },
       {
         "id": "design-coord-core-phase1",
@@ -1433,6 +1444,12 @@ window.PORTAL_DATA = {
         "summary": "The durable, append-only record of what this project has learned and decided — read at every skill's grounding and appended to at every skill's convergence...."
       },
       {
+        "id": "proof-coord-collaboration-phase4",
+        "type": "proof-pack",
+        "title": "Proof Pack - coord collaboration mode, Phase 4",
+        "summary": "Proof pack for coord collaboration mode: active-session projection, collaboration health checks, and the session-contract template. Records the red-first..."
+      },
+      {
         "id": "proof-docs-explorer-redesign",
         "type": "proof-pack",
         "title": "Docs Explorer Redesign - Proof Pack",
@@ -1779,6 +1796,36 @@ window.PORTAL_DATA = {
       {
         "from": "design-aiforward-cli",
         "to": "kb-pack-evolution",
+        "rel": "implements"
+      },
+      {
+        "from": "design-coord-collaboration-phase4",
+        "to": "architecture-agent-coordination",
+        "rel": "implements"
+      },
+      {
+        "from": "design-coord-collaboration-phase4",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "design-coord-collaboration-phase4",
+        "to": "design-coord-core-phase1",
+        "rel": "refines"
+      },
+      {
+        "from": "design-coord-collaboration-phase4",
+        "to": "design-coord-enforcement-phase2",
+        "rel": "refines"
+      },
+      {
+        "from": "design-coord-collaboration-phase4",
+        "to": "design-coord-federation-phase3",
+        "rel": "refines"
+      },
+      {
+        "from": "design-coord-collaboration-phase4",
+        "to": "spec-agent-coordination",
         "rel": "implements"
       },
       {
@@ -2639,6 +2686,16 @@ window.PORTAL_DATA = {
       {
         "from": "project-memory",
         "to": "design-project-memory",
+        "rel": "implements"
+      },
+      {
+        "from": "proof-coord-collaboration-phase4",
+        "to": "design-coord-collaboration-phase4",
+        "rel": "implements"
+      },
+      {
+        "from": "proof-coord-collaboration-phase4",
+        "to": "spec-agent-coordination",
         "rel": "implements"
       },
       {

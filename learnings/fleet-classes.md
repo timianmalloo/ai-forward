@@ -35,3 +35,66 @@
 - **Boundary:** Applies wherever the class's signature recurs; a control is not a control until observed failing.
 - **Confidence:** i
 - **From:** drm-0003 / p2
+
+### PACK-N · Staleness inferred from a timestamp rather than from content truth
+- **Signature:** PACK-N · Staleness inferred from a timestamp rather than from content truth
+- **Control:** Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled. (automated control)
+- **Boundary:** Applies wherever the class's signature recurs; a control is not a control until observed failing.
+- **Confidence:** i
+- **From:** drm-0007 / p4
+
+### PACK-Q · An adapter written to a contract's *documented* shape, never to a *recorded* one
+- **Signature:** PACK-Q · An adapter written to a contract's *documented* shape, never to a *recorded* one
+- **Control:** Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled. (automated control)
+- **Boundary:** Applies wherever the class's signature recurs; a control is not a control until observed failing.
+- **Confidence:** i
+- **From:** drm-0007 / p2
+
+### PACK-C · An assertion encodes a transient magnitude assumption
+- **Signature:** PACK-C · An assertion encodes a transient magnitude assumption
+- **Control:** Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled. (automated control)
+- **Boundary:** Applies wherever the class's signature recurs; a control is not a control until observed failing.
+- **Confidence:** i
+- **From:** drm-0007 / p8
+
+### PACK-O front-matter presence + scope-drift review
+- **Signature:** PACK-O front-matter presence + scope-drift review
+- **Control:** Presence (mechanical): every substantive turn records done_when (CT19); a missing one skipped the front matter. Satisfaction: review each done_when->summary pair where the summary exceeds the goal (scope drift, PACK-O). The audit done_when field + this miner ARE the rung-2 control (CI6). (automated control)
+- **Boundary:** Presence is mechanical; 'summary exceeds goal' is surfaced for human review, not auto-judged. Trivial/conversational turns are exempt from logging (AL5b).
+- **Confidence:** v
+- **From:** drm-0007 / p11
+
+### PACK-P · A check reports its verdict over a corpus it never established was non-empty
+- **Signature:** PACK-P · A check reports its verdict over a corpus it never established was non-empty
+- **Control:** Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled. (automated control)
+- **Boundary:** Applies wherever the class's signature recurs; a control is not a control until observed failing.
+- **Confidence:** i
+- **From:** drm-0007 / p3
+
+### PACK-D · An array parameter arrives as one comma-joined string when the script is invoked as an exec
+- **Signature:** PACK-D · An array parameter arrives as one comma-joined string when the script is invoked as an executable
+- **Control:** Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled. (automated control)
+- **Boundary:** Applies wherever the class's signature recurs; a control is not a control until observed failing.
+- **Confidence:** i
+- **From:** drm-0007 / p7
+
+### SHELL-A · Content routed through a shell construct that performs substitution on it
+- **Signature:** SHELL-A · Content routed through a shell construct that performs substitution on it
+- **Control:** Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled. (automated control)
+- **Boundary:** Applies wherever the class's signature recurs; a control is not a control until observed failing.
+- **Confidence:** i
+- **From:** drm-0007 / p1
+
+### PACK-H · A fix to a hosted surface reported "done" from the working tree, not verified on the live s
+- **Signature:** PACK-H · A fix to a hosted surface reported "done" from the working tree, not verified on the live surface
+- **Control:** Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled. (automated control)
+- **Boundary:** Applies wherever the class's signature recurs; a control is not a control until observed failing.
+- **Confidence:** i
+- **From:** drm-0007 / p5
+
+### PACK-E · An ambiguous proper noun resolved inside my own frame
+- **Signature:** PACK-E · An ambiguous proper noun resolved inside my own frame
+- **Control:** Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled. (automated control)
+- **Boundary:** Applies wherever the class's signature recurs; a control is not a control until observed failing.
+- **Confidence:** i
+- **From:** drm-0007 / p6
