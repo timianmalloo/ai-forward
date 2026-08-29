@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 123
+"count": 124
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 268,
+"total": 269,
 "items": [
 {
 "cat": "knowledge",
@@ -881,7 +881,7 @@ window.PACK_INDEX = {
 "summary": "coord-core.py - agent coordination, Phase 1 walking skeleton.",
 "path": "pack/scripts/coord-core.py",
 "kind": "script",
-"text": "coord-core.py coord-core.py - agent coordination, phase 1 walking skeleton. holds the record of intent and answers \"may this session touch this artifact?\" from it. append-only jsonl, one file per session; every piece of state is a fold over it. no daemon, no database, no dependency beyond the standard library (adr-0007). four controls here were observed failing on the un-fixed shape before they were trusted: log-a an append onto a file not ending in a newline fuses two records and loses both r4 a check that scanned nothing must not report \"free\" ctrl-port os.open without o_binary translates newlines on windows -- which also masked the log-a control, because a stray cr still terminates a line f8 a claim over the coordination record itself would lock the substrate design: docs/design/coord-core-phase1.md __init__ repo_root resolve_root _norm _literal_segments overlaps make_event _next_seq append_event read_events fold check _safe render append_decision read_decisions _git unique_commits staged_paths _identity _build_parser entry_fingerprint conservation_lost merge_register _read_jsonl cmd_merge_register load_registry classify regen_command record_regen_owed regen_owed clear_regen_owed _reject_path _relativise parse_hook_request detect_harness hook_decision_of hook_response_is_valid hook_response _not_checked cmd_hook cmd_precommit cmd_guard _worktree_key active_sessions session_contract_path collaboration_findings cmd_session_list cmd_collaborate _slug worktree_inventory worktree_is_clean worktree_safety cmd_worktree cmd_session cmd_metrics cmd_install _install_merge_driver _write_conflict read cmd_merge_derived cmd_regen driver_status cmd_doctor cmd_plugin_emit _print_settings_entry main"
+"text": "coord-core.py coord-core.py - agent coordination, phase 1 walking skeleton. holds the record of intent and answers \"may this session touch this artifact?\" from it. append-only jsonl, one file per session; every piece of state is a fold over it. no daemon, no database, no dependency beyond the standard library (adr-0007). four controls here were observed failing on the un-fixed shape before they were trusted: log-a an append onto a file not ending in a newline fuses two records and loses both r4 a check that scanned nothing must not report \"free\" ctrl-port os.open without o_binary translates newlines on windows -- which also masked the log-a control, because a stray cr still terminates a line f8 a claim over the coordination record itself would lock the substrate design: docs/design/coord-core-phase1.md __init__ repo_root resolve_root _norm _literal_segments overlaps make_event _next_seq append_event read_events fold check _safe render append_decision read_decisions append_record request_log_path read_request_events fold_requests _git unique_commits staged_paths _identity _build_parser entry_fingerprint conservation_lost merge_register _read_jsonl cmd_merge_register load_registry classify regen_command record_regen_owed regen_owed clear_regen_owed _reject_path _relativise parse_hook_request detect_harness hook_decision_of hook_response_is_valid hook_response _not_checked cmd_hook cmd_precommit cmd_guard _worktree_key active_sessions session_contract_path _role_token _strip_cell contract_ownership infer_session_roles owner_rows_for_path collaboration_findings cmd_session_list cmd_collaborate cmd_request _slug worktree_inventory worktree_is_clean worktree_safety cmd_worktree cmd_session cmd_metrics cmd_install _install_merge_driver _write_conflict read cmd_merge_derived cmd_regen driver_status cmd_doctor cmd_plugin_emit _print_settings_entry main"
 },
 {
 "cat": "scripts",
@@ -1490,10 +1490,10 @@ window.PACK_INDEX = {
 "cat": "graph",
 "id": "design-coord-collaboration-phase4",
 "title": "Design - coord collaboration mode, Phase 4",
-"summary": "Phase-4 collaboration mode for coord: a live session list, a collaboration health check, and a reusable session-contract template so multi-agent work records roles, seams, ownership, claims, and merge policy before concurrent…",
+"summary": "Phase-4 collaboration mode for coord: live session listing, collaboration health checks, owner-aware claim warnings, seam-request workflow, collaboration summaries, and a reusable session-contract template so multi-agent work records…",
 "path": "docs/design/coord-collaboration-phase4.md",
 "kind": "design",
-"text": "design - coord collaboration mode, phase 4 phase-4 collaboration mode for coord: a live session list, a collaboration health check, and a reusable session-contract template so multi-agent work records roles, seams, ownership, claims, and merge policy before concurrent implementation begins. coordination collaboration worktrees contracts claims implements architecture-agent-coordination implements spec-agent-coordination refines design-coord-core-phase1 refines design-coord-enforcement-phase2 refines design-coord-federation-phase3 relates-to defect-classes"
+"text": "design - coord collaboration mode, phase 4 phase-4 collaboration mode for coord: live session listing, collaboration health checks, owner-aware claim warnings, seam-request workflow, collaboration summaries, and a reusable session-contract template so multi-agent work records roles, seams, ownership, claims, requests, and merge policy before concurrent implementation begins. coordination collaboration worktrees contracts claims implements architecture-agent-coordination implements spec-agent-coordination refines design-coord-core-phase1 refines design-coord-enforcement-phase2 refines design-coord-federation-phase3 relates-to defect-classes"
 },
 {
 "cat": "graph",
@@ -2300,10 +2300,10 @@ window.PACK_INDEX = {
 "cat": "graph",
 "id": "proof-coord-collaboration-phase4",
 "title": "Proof Pack - coord collaboration mode, Phase 4",
-"summary": "Proof pack for coord collaboration mode: active-session projection, collaboration health checks, and the session-contract template. Records the red-first evidence, test oracles, commands, and residual risks for the first shippable…",
+"summary": "Proof pack for coord collaboration mode: active-session projection, collaboration health checks, owner-aware claim warnings, seam-request workflow, collaboration summary, and the session-contract template. Records the red-first evidence,…",
 "path": "docs/proof/coord-collaboration-phase4.md",
 "kind": "proof-pack",
-"text": "proof pack - coord collaboration mode, phase 4 proof pack for coord collaboration mode: active-session projection, collaboration health checks, and the session-contract template. records the red-first evidence, test oracles, commands, and residual risks for the first shippable cross-session collaboration slice. coordination collaboration proof implements design-coord-collaboration-phase4 implements spec-agent-coordination"
+"text": "proof pack - coord collaboration mode, phase 4 proof pack for coord collaboration mode: active-session projection, collaboration health checks, owner-aware claim warnings, seam-request workflow, collaboration summary, and the session-contract template. records the red-first evidence, test oracles, commands, and residual risks for the shippable cross-session collaboration slice. coordination collaboration proof implements design-coord-collaboration-phase4 implements spec-agent-coordination"
 },
 {
 "cat": "graph",
@@ -2331,6 +2331,15 @@ window.PACK_INDEX = {
 "path": "docs/specs/agent-coordination.md",
 "kind": "spec",
 "text": "agent coordination — shared context and explicit coordination across worktrees and agents specification for a repo-local, model-agnostic coordination layer that lets several agents and worktrees work one repository at once without losing work or time. grounded in measured evidence from theterrace, healthwatch and meridian, it targets four distinct failure modes — structural conflict on derived artifacts, allocation collision on client-minted ids, silent semantic divergence, and outright work loss in a shared tree — and requires each rule to ship as a mechanism that fails rather than a paragraph that is read. coordination worktrees multi-agent merge-conflicts leases allocation continuous-improvement relates-to defect-classes relates-to audit-log relates-to architecture relates-to spec-dreaming"
+},
+{
+"cat": "graph",
+"id": "spec-collaborate-skill",
+"title": "Spec - /collaborate skill proposal",
+"summary": "Proposal for a future /collaborate skill that starts a cross-agent collaboration session by creating or entering a worktree, registering the session, scaffolding or updating the session contract, claiming the first files, and printing the…",
+"path": "docs/specs/collaborate-skill.md",
+"kind": "spec",
+"text": "spec - /collaborate skill proposal proposal for a future /collaborate skill that starts a cross-agent collaboration session by creating or entering a worktree, registering the session, scaffolding or updating the session contract, claiming the first files, and printing the collaboration checks before coding begins. coordination collaborate skill worktrees refines design-coord-collaboration-phase4 implements spec-agent-coordination"
 },
 {
 "cat": "graph",

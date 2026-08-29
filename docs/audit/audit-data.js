@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-forward",
-  "generated": "2026-08-29T18:40:41Z",
+  "project": "ai-forward-feature-coord-collaboration-next",
+  "generated": "2026-08-29T20:21:58Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2476,6 +2476,46 @@ window.AUDIT_DATA = {
       "done_when": "coord exposes session list and collaborate check, session-contract template is shipped, tests and docs are updated",
       "started_at": "2026-08-29T18:04:47Z",
       "duration_seconds": 2153.0
+    },
+    {
+      "id": "al-01M17JS83RZNV8K930T2N5RYAB",
+      "shortname": "apply-decisions",
+      "datetime": "2026-08-29T20:18:39Z",
+      "session": "42bfc457-d056-4ec1-8f60-0d43e5185e7c",
+      "prompt": "dream.py apply-decisions",
+      "summary": "Applied 1 general + 0 repo-local (skipped 0, rejected 0) from drm-0007",
+      "kind": "script",
+      "skill": "dream",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "learnings/fleet-classes.jsonl"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M17JZA12TZA25TJHYB1W22S0",
+      "shortname": "implement-coord-collaboration-phase4b",
+      "datetime": "2026-08-29T20:21:58Z",
+      "session": "42bfc457-d056-4ec1-8f60-0d43e5185e7c",
+      "prompt": "do owner-aware claim checks; do seam-request workflow; do collaboration summary view; promote P12; specify /collaborate proposal",
+      "summary": "Extended coord collaboration mode with owner-aware claim warnings, append-only seam requests, collaboration summary, P12 promotion, and a /collaborate skill proposal.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/design/coord-collaboration-phase4.md",
+        "docs/proof/coord-collaboration-phase4.md",
+        "docs/specs/collaborate-skill.md",
+        "pack/scripts/coord-core.py",
+        "tests/docs_explorer/test_coord_core.py"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Implement the accepted next cross-session collaboration controls",
+      "done_when": "owner-aware checks, seam requests, summary, P12 promotion, and /collaborate proposal are in source with tests and graph/audit validation"
     }
   ],
   "changes": [
@@ -3407,6 +3447,29 @@ window.AUDIT_DATA = {
         "after": "81e5eedea10992e093c30ba53089baefac0dba84",
         "branch": "main",
         "pushed": false,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M17JZA4RRBV15M4DZQWBZKQB",
+      "datetime": "2026-08-29T20:21:58Z",
+      "session": "42bfc457-d056-4ec1-8f60-0d43e5185e7c",
+      "kind": "design",
+      "skill": "implement",
+      "title": "Coord collaboration mode second slice",
+      "prompt": "do owner-aware claim checks; do seam-request workflow; do collaboration summary view; promote P12; specify /collaborate proposal",
+      "summary": "Coord collaboration now warns on cross-owned claims, records seam requests, summarizes active collaboration, and documents the proposed /collaborate starter skill.",
+      "rationale": "AI-DE collaboration showed that claims, ownership seams, open requests, and operator summaries must be structured and visible, not trapped in chat.",
+      "artifacts": [
+        "docs/design/coord-collaboration-phase4.md",
+        "docs/specs/collaborate-skill.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "cc1f4ec",
+        "after": "cc1f4ec9d43a197664826f97f4b8286304dec562",
+        "branch": "feature/coord-collaboration-next",
+        "pushed": null,
         "commits": []
       }
     }

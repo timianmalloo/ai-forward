@@ -28,6 +28,7 @@ TTL_DEFAULT = 300
 SESSION_STALE_SECONDS = 8 * 3600
 COORD_DIRNAME = ".agents"
 SESSION_CONTRACT = "docs/collaboration/session-contracts.md"
+REQUESTS_FILE = "requests.jsonl"
 
 
 class CoordError(Exception):
@@ -380,6 +381,63 @@ def read_decisions(root):
     return out
 
 
+def append_record(path, record):
+    """Append one JSONL row to a small operator ledger."""
+    Path(path).parent.mkdir(parents=True, exist_ok=True)
+    payload = json.dumps(record, sort_keys=True) + "\n"
+    if Path(path).exists() and Path(path).stat().st_size:
+        with open(path, "rb") as fh:
+            fh.seek(-1, os.SEEK_END)
+            if fh.read(1) not in (b"\n", b"\r"):
+                payload = "\n" + payload
+    flags = os.O_WRONLY | os.O_APPEND | os.O_CREAT | getattr(os, "O_BINARY", 0)
+    fd = os.open(str(path), flags, 0o644)
+    try:
+        os.write(fd, payload.encode("utf-8"))
+    finally:
+        os.close(fd)
+
+
+def request_log_path(root):
+    return Path(root) / REQUESTS_FILE
+
+
+def read_request_events(root):
+    path = request_log_path(root)
+    if not path.is_file():
+        return [], []
+    events, errors = [], []
+    with open(path, "r", encoding="utf-8") as fh:
+        for lineno, line in enumerate(fh, 1):
+            if not line.strip():
+                continue
+            try:
+                events.append(json.loads(line))
+            except json.JSONDecodeError as exc:
+                errors.append("{}:{}: {}".format(path.name, lineno, exc.msg))
+    events.sort(key=lambda e: e.get("at", 0.0))
+    return events, errors
+
+
+def fold_requests(events):
+    requests = {}
+    for event in events:
+        rid = event.get("id")
+        if not rid:
+            continue
+        if event.get("kind") == "request-add":
+            row = dict(event)
+            row["status"] = "open"
+            requests[rid] = row
+        elif event.get("kind") == "request-resolve" and rid in requests:
+            requests[rid] = dict(requests[rid])
+            requests[rid]["status"] = "resolved"
+            requests[rid]["resolution"] = event.get("resolution", "")
+            requests[rid]["resolved_at"] = event.get("at")
+            requests[rid]["resolved_by"] = event.get("session", "")
+    return sorted(requests.values(), key=lambda r: r.get("at", 0.0))
+
+
 # --- git plumbing -----------------------------------------------------------
 
 def _git(repo, *args):
@@ -478,8 +536,22 @@ def _build_parser():
     ses.add_argument("action", choices=["start", "end", "list"])
     ses.add_argument("--json", action="store_true")
     collab = sub.add_parser("collaborate", help="cross-session collaboration checks")
-    collab.add_argument("action", choices=["check"])
+    collab.add_argument("action", choices=["check", "summary"])
     collab.add_argument("--json", action="store_true")
+    req = sub.add_parser("request", help="record or resolve a seam request")
+    req_sub = req.add_subparsers(dest="request_action", required=True)
+    req_add = req_sub.add_parser("add", help="append an open seam request")
+    req_add.add_argument("--to", required=True)
+    req_add.add_argument("--contract", required=True)
+    req_add.add_argument("--reason", required=True)
+    req_add.add_argument("--from-role", default="")
+    req_add.add_argument("--path", default="")
+    req_list = req_sub.add_parser("list", help="list seam requests")
+    req_list.add_argument("--json", action="store_true")
+    req_list.add_argument("--status", choices=["open", "resolved", "all"], default="open")
+    req_resolve = req_sub.add_parser("resolve", help="resolve a seam request")
+    req_resolve.add_argument("id")
+    req_resolve.add_argument("--resolution", required=True)
     # WT1-WT12: a new session starts in a new worktree, and nothing is left behind.
     wt = sub.add_parser("worktree", help="session worktree lifecycle: new | list | cleanup")
     wt.add_argument("action", choices=["new", "list", "cleanup"])
@@ -1162,6 +1234,70 @@ def session_contract_path(repo):
     return Path(repo) / SESSION_CONTRACT
 
 
+def _role_token(value):
+    return re.sub(r"[^a-z0-9]+", "", (value or "").lower())
+
+
+def _strip_cell(value):
+    value = value.strip()
+    if value.startswith("`") and value.endswith("`") and len(value) >= 2:
+        value = value[1:-1]
+    return value.strip()
+
+
+def contract_ownership(repo):
+    """Parse the simple ownership tables from the session contract template.
+
+    This is intentionally Markdown-shaped rather than a general Markdown parser: the pack
+    owns the template and the rows are `| Path | Why |` under `### <Role> owns`.
+    Unknown shapes simply yield no ownership facts; the contract remains human-readable.
+    """
+    path = session_contract_path(repo)
+    if not path.is_file():
+        return {}
+    ownership, current = {}, None
+    for raw in path.read_text(encoding="utf-8", errors="replace").splitlines():
+        heading = re.match(r"^###\s+(.+?)\s+owns\s*$", raw.strip(), flags=re.IGNORECASE)
+        if heading:
+            current = heading.group(1).strip()
+            ownership.setdefault(current, [])
+            continue
+        if raw.startswith("### "):
+            current = None
+            continue
+        if not current or not raw.strip().startswith("|"):
+            continue
+        cells = [_strip_cell(c) for c in raw.strip().strip("|").split("|")]
+        if len(cells) < 2 or cells[0].lower() in ("path", "---") or set(cells[0]) <= {"-"}:
+            continue
+        ownership.setdefault(current, []).append({"path": _norm(cells[0]), "why": cells[1]})
+    return {role: rows for role, rows in ownership.items() if rows}
+
+
+def infer_session_roles(session, agent, ownership):
+    """Infer contract role membership from session/agent labels.
+
+    This stays advisory. A false warning costs a message; a false grant is what creates
+    cross-owned edits. A later slice can replace this with explicit `COORD_ROLE`.
+    """
+    tokens = {t for t in re.split(r"[^a-z0-9]+", "{} {}".format(session, agent).lower()) if t}
+    roles = []
+    for role in ownership:
+        role_tokens = [t for t in re.split(r"[^a-z0-9]+", role.lower()) if t]
+        if role_tokens and all(token in tokens for token in role_tokens):
+            roles.append(role)
+    return roles
+
+
+def owner_rows_for_path(ownership, path):
+    owners = []
+    for role, rows in ownership.items():
+        for row in rows:
+            if overlaps(row["path"], path):
+                owners.append({"role": role, "path": row["path"], "why": row.get("why", "")})
+    return owners
+
+
 def collaboration_findings(root, repo, now, snapshot=None):
     """Return collaboration health findings.
 
@@ -1192,6 +1328,20 @@ def collaboration_findings(root, repo, now, snapshot=None):
             "reason": "{} active sessions but {} is missing".format(
                 len(sessions), SESSION_CONTRACT),
         })
+    ownership = contract_ownership(repo)
+    if ownership:
+        for item in sessions:
+            roles = infer_session_roles(item.get("session", ""), item.get("agent", ""), ownership)
+            for claim in item.get("claims", []):
+                owners = owner_rows_for_path(ownership, claim.get("path", ""))
+                if owners and not any(o["role"] in roles for o in owners):
+                    findings.append({
+                        "code": "COORD-COLLAB-CROSS-OWNED-CLAIM",
+                        "severity": "warning",
+                        "reason": "session {} claims {} owned by {}".format(
+                            item["session"], claim.get("path", ""),
+                            ", ".join(sorted({o["role"] for o in owners}))),
+                    })
     if len(sessions) > 1:
         no_claims = [s["session"] for s in sessions if not s.get("claims")]
         if no_claims:
@@ -1226,14 +1376,22 @@ def cmd_session_list(root, now, as_json=False):
 
 
 def cmd_collaborate(root, repo, action, now, as_json=False):
-    if action != "check":
+    if action not in ("check", "summary"):
         return 2
     sessions, errors, files = active_sessions(root, now)
     findings = collaboration_findings(root, repo, now, snapshot=(sessions, errors, files))
+    request_events, request_errors = read_request_events(root)
+    requests = fold_requests(request_events)
+    open_requests = [r for r in requests if r.get("status") == "open"]
     payload = {"files_scanned": files, "active_sessions": sessions, "findings": findings,
                "contract": SESSION_CONTRACT, "contract_exists": session_contract_path(repo).is_file()}
+    if action == "summary":
+        payload["requests"] = open_requests
+        payload["request_errors"] = request_errors
     if as_json:
         print(json.dumps(payload, indent=2, sort_keys=True))
+        if action == "summary":
+            return 0
         return 3 if any(f.get("severity") == "blocker" for f in findings) else 0
     print("collaboration: {} active session(s); contract {}".format(
         len(sessions), "present" if payload["contract_exists"] else "missing"))
@@ -1241,13 +1399,68 @@ def cmd_collaborate(root, repo, action, now, as_json=False):
         print("  session {:<24} agent {:<18} claims {}".format(
             _safe(item["session"], 24), _safe(item.get("agent", ""), 18),
             len(item.get("claims", []))))
+    if action == "summary":
+        print("requests: {} open".format(len(open_requests)))
+        for request in open_requests:
+            print("  {:<22} -> {:<12} {}".format(
+                _safe(request.get("id", ""), 22),
+                _safe(request.get("to", ""), 12),
+                _safe(request.get("contract", ""), 90)))
     if not findings:
         print("collaboration check: OK")
         return 0
     for finding in findings:
         print("{}  {}  {}".format(finding["severity"].upper(), finding["code"],
                                   finding["reason"]))
+    if action == "summary":
+        return 0
     return 3 if any(f.get("severity") == "blocker" for f in findings) else 0
+
+
+def cmd_request(root, action, now, session, agent, args):
+    events, errors = read_request_events(root)
+    if errors:
+        print("COORD-REQUEST-NOT-CHECKED  {}".format(_safe("; ".join(errors[:2]), 200)),
+              file=sys.stderr)
+        return 4
+    if action == "add":
+        rid = new_id("req")
+        record = {"kind": "request-add", "id": rid, "at": now,
+                  "session": session or "anon", "agent": agent or "anon",
+                  "from": args.from_role or agent or session or "unknown",
+                  "to": args.to, "contract": args.contract,
+                  "reason": args.reason, "path": _norm(args.path or "")}
+        append_record(request_log_path(root), record)
+        print(json.dumps({"id": rid, "status": "open"}))
+        return 0
+    if action == "resolve":
+        folded = {r["id"]: r for r in fold_requests(events)}
+        if args.id not in folded:
+            print("COORD-REQUEST-NOT-FOUND  {}".format(_safe(args.id, 80)))
+            return 4
+        append_record(request_log_path(root), {"kind": "request-resolve", "id": args.id,
+                                               "at": now, "session": session or "anon",
+                                               "agent": agent or "anon",
+                                               "resolution": args.resolution})
+        print(json.dumps({"id": args.id, "status": "resolved",
+                          "resolution": args.resolution}))
+        return 0
+    # list
+    folded = fold_requests(events)
+    if args.status != "all":
+        folded = [r for r in folded if r.get("status") == args.status]
+    payload = {"requests": folded, "events_scanned": len(events), "errors": []}
+    if args.json:
+        print(json.dumps(payload, indent=2, sort_keys=True))
+    else:
+        print("{} request(s)".format(len(folded)))
+        for request in folded:
+            print("  {:<22} {:<8} -> {:<12} {}".format(
+                _safe(request.get("id", ""), 22),
+                _safe(request.get("status", ""), 8),
+                _safe(request.get("to", ""), 12),
+                _safe(request.get("contract", ""), 100)))
+    return 0
 
 
 # --- worktree lifecycle (session-worktree-discipline.md WT1-WT12) ------------
@@ -2007,6 +2220,9 @@ def main(argv=None):
 
     if args.cmd == "collaborate":
         return cmd_collaborate(root, repo, args.action, now, args.json)
+
+    if args.cmd == "request":
+        return cmd_request(root, args.request_action, now, session, agent, args)
 
     if args.cmd == "check":
         decision = check(root, args.path, session, now)

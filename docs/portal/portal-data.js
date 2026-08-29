@@ -672,6 +672,11 @@ window.PORTAL_DATA = {
             "path": "../../docs/specs/agent-coordination.md"
           },
           {
+            "title": "Spec - /collaborate skill proposal",
+            "summary": "Proposal for a future /collaborate skill that starts a cross-agent collaboration session by creating or entering a worktree, registering the session, scaffolding or updating the session contract, claiming the first files, and printing the collaboration checks...",
+            "path": "../../docs/specs/collaborate-skill.md"
+          },
+          {
             "title": "Rename /design to /design-slice — Specification",
             "summary": "Specification for renaming AI-Forward's detailed component-design workflow from /design to /design-slice. The rename avoids a generic skill-name collision while preserving the workflow's meaning and updating generated Claude/Copilot pack surfaces.",
             "path": "../../docs/specs/design-slice-rename.md"
@@ -703,7 +708,7 @@ window.PORTAL_DATA = {
           },
           {
             "title": "Design - coord collaboration mode, Phase 4",
-            "summary": "Phase-4 collaboration mode for coord: a live session list, a collaboration health check, and a reusable session-contract template so multi-agent work records roles, seams, ownership, claims, and merge policy before concurrent implementation begins.",
+            "summary": "Phase-4 collaboration mode for coord: live session listing, collaboration health checks, owner-aware claim warnings, seam-request workflow, collaboration summaries, and a reusable session-contract template so multi-agent work records roles, seams, ownership,...",
             "path": "../../docs/design/coord-collaboration-phase4.md"
           },
           {
@@ -901,7 +906,7 @@ window.PORTAL_DATA = {
         "id": "design-coord-collaboration-phase4",
         "type": "design",
         "title": "Design - coord collaboration mode, Phase 4",
-        "summary": "Phase-4 collaboration mode for coord: a live session list, a collaboration health check, and a reusable session-contract template so multi-agent work records..."
+        "summary": "Phase-4 collaboration mode for coord: live session listing, collaboration health checks, owner-aware claim warnings, seam-request workflow, collaboration..."
       },
       {
         "id": "design-coord-core-phase1",
@@ -1447,7 +1452,7 @@ window.PORTAL_DATA = {
         "id": "proof-coord-collaboration-phase4",
         "type": "proof-pack",
         "title": "Proof Pack - coord collaboration mode, Phase 4",
-        "summary": "Proof pack for coord collaboration mode: active-session projection, collaboration health checks, and the session-contract template. Records the red-first..."
+        "summary": "Proof pack for coord collaboration mode: active-session projection, collaboration health checks, owner-aware claim warnings, seam-request workflow,..."
       },
       {
         "id": "proof-docs-explorer-redesign",
@@ -1478,6 +1483,12 @@ window.PORTAL_DATA = {
         "type": "spec",
         "title": "Agent coordination — shared context and explicit coordination across worktrees and agents",
         "summary": "Specification for a repo-local, model-agnostic coordination layer that lets several agents and worktrees work one repository at once without losing work or..."
+      },
+      {
+        "id": "spec-collaborate-skill",
+        "type": "spec",
+        "title": "Spec - /collaborate skill proposal",
+        "summary": "Proposal for a future /collaborate skill that starts a cross-agent collaboration session by creating or entering a worktree, registering the session,..."
       },
       {
         "id": "spec-design-slice-rename",
@@ -2797,6 +2808,16 @@ window.PORTAL_DATA = {
         "from": "spec-agent-coordination",
         "to": "spec-dreaming",
         "rel": "relates-to"
+      },
+      {
+        "from": "spec-collaborate-skill",
+        "to": "design-coord-collaboration-phase4",
+        "rel": "refines"
+      },
+      {
+        "from": "spec-collaborate-skill",
+        "to": "spec-agent-coordination",
+        "rel": "implements"
       },
       {
         "from": "spec-design-slice-rename",

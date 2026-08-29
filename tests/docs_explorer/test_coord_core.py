@@ -713,6 +713,138 @@ class CollaborationTests(CoordTestCase):
         self.assertTrue(payload["contract_exists"])
         self.assertEqual([], payload["findings"])
 
+    def test_collaboration_check_warns_on_claim_outside_contract_owner(self):
+        now = time.time()
+        self.start_session("copilot-design", "C:/repo-design", now - 10, agent="copilot-design")
+        self.claim("copilot-design", "src/AiDe.Core/Projections/*", wi="design-work",
+                   at=now - 5, agent="copilot-design")
+        contract = self.repo / "docs" / "collaboration" / "session-contracts.md"
+        contract.parent.mkdir(parents=True)
+        contract.write_text(
+            "# Session contract\n\n"
+            "### Core owns\n\n"
+            "| Path | Why |\n"
+            "|---|---|\n"
+            "| `src/AiDe.Core/**` | Core projections |\n\n"
+            "### Design owns\n\n"
+            "| Path | Why |\n"
+            "|---|---|\n"
+            "| `docs/mockups/**` | Design surfaces |\n",
+            encoding="utf-8",
+        )
+
+        findings = self.m.collaboration_findings(self.root, self.repo, now)
+
+        self.assertTrue(any(
+            f["code"] == "COORD-COLLAB-CROSS-OWNED-CLAIM" and "Core" in f["reason"]
+            for f in findings
+        ), findings)
+
+    def test_owner_role_inference_requires_token_boundary(self):
+        roles = self.m.infer_session_roles(
+            "scoreboard-session",
+            "copilot",
+            {"Core": [{"path": "src/**"}]},
+        )
+
+        self.assertEqual([], roles)
+
+    def test_cli_owner_warning_is_warning_only_and_same_owner_is_clean(self):
+        now = time.time()
+        self.start_session("core", "C:/repo-core", now - 20, agent="claude-code-core")
+        self.claim("core", "src/AiDe.Core/*", wi="core-work", at=now - 10,
+                   agent="claude-code-core")
+        self.start_session("copilot-design", "C:/repo-design", now - 9, agent="copilot-design")
+        self.claim("copilot-design", "src/AiDe.Core/Projections/*", wi="design-work",
+                   at=now - 5, agent="copilot-design")
+        contract = self.repo / "docs" / "collaboration" / "session-contracts.md"
+        contract.parent.mkdir(parents=True)
+        contract.write_text(
+            "# Session contract\n\n"
+            "### Core owns\n\n"
+            "| Path | Why |\n"
+            "|---|---|\n"
+            "| `src/AiDe.Core/**` | Core projections |\n\n"
+            "### Design owns\n\n"
+            "| Path | Why |\n"
+            "|---|---|\n"
+            "| `docs/mockups/**` | Design surfaces |\n",
+            encoding="utf-8",
+        )
+
+        result = self.run_cli("collaborate", "check", "--json")
+
+        self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+        findings = json.loads(result.stdout)["findings"]
+        cross_owned = [f for f in findings if f["code"] == "COORD-COLLAB-CROSS-OWNED-CLAIM"]
+        self.assertEqual(1, len(cross_owned), findings)
+        self.assertIn("copilot-design", cross_owned[0]["reason"])
+
+    def test_request_workflow_add_list_resolve_is_append_only(self):
+        add = self.run_cli(
+            "request", "add",
+            "--to", "Core",
+            "--contract", "ContextMapView.Shortfall",
+            "--reason", "Design needs the bounded-read shortfall rendered",
+            "--path", "src/AiDe.Core/Projections/ContextMapView.cs",
+        )
+        self.assertEqual(0, add.returncode, add.stderr)
+        request_id = json.loads(add.stdout)["id"]
+
+        listed = self.run_cli("request", "list", "--json")
+
+        self.assertEqual(0, listed.returncode, listed.stderr)
+        requests = json.loads(listed.stdout)["requests"]
+        self.assertEqual([request_id], [r["id"] for r in requests])
+        self.assertEqual("open", requests[0]["status"])
+
+        resolved = self.run_cli("request", "resolve", request_id, "--resolution", "accepted")
+        self.assertEqual(0, resolved.returncode, resolved.stderr)
+        rows = [
+            json.loads(line)
+            for line in (self.root / "requests.jsonl").read_text(encoding="utf-8").splitlines()
+            if line.strip()
+        ]
+        self.assertEqual(["request-add", "request-resolve"], [row["kind"] for row in rows])
+        self.assertEqual(request_id, rows[0]["id"])
+        self.assertEqual(request_id, rows[1]["id"])
+        self.assertEqual("resolved", self.m.fold_requests(rows)[0]["status"])
+
+        open_after = self.run_cli("request", "list", "--json")
+        self.assertEqual([], json.loads(open_after.stdout)["requests"])
+
+        all_after = self.run_cli("request", "list", "--json", "--status", "all")
+        folded = json.loads(all_after.stdout)["requests"]
+        self.assertEqual("resolved", folded[0]["status"])
+        self.assertEqual("accepted", folded[0]["resolution"])
+
+    def test_collaboration_summary_includes_sessions_findings_and_requests(self):
+        now = time.time()
+        self.start_session("core", "C:/repo-core", now - 20, agent="claude-code")
+        self.start_session("design", "C:/repo-design", now - 10, agent="copilot")
+        self.run_cli(
+            "request", "add",
+            "--to", "Design",
+            "--contract", "ContextMapView.IsDeclared",
+            "--reason", "Core needs the first-run state rendered",
+        )
+        resolved = self.run_cli(
+            "request", "add",
+            "--to", "Core",
+            "--contract", "ContextMapView.Shortfall",
+            "--reason", "Design needs shortfall available",
+        )
+        resolved_id = json.loads(resolved.stdout)["id"]
+        self.run_cli("request", "resolve", resolved_id, "--resolution", "landed")
+
+        result = self.run_cli("collaborate", "summary", "--json")
+
+        self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+        payload = json.loads(result.stdout)
+        self.assertEqual(2, len(payload["active_sessions"]))
+        self.assertTrue(payload["findings"])
+        self.assertEqual(["ContextMapView.IsDeclared"], [r["contract"] for r in payload["requests"]])
+
 
 if __name__ == "__main__":
     unittest.main()

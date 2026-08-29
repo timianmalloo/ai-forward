@@ -1056,7 +1056,7 @@ window.DOCS_INDEX = {
       "phase": "coordination",
       "reviewBy": "2027-02-28",
       "reviewSuggested": [],
-      "summary": "Phase-4 collaboration mode for coord: a live session list, a collaboration health check, and a reusable session-contract template so multi-agent work records roles, seams, ownership, claims, and merge policy before concurrent implementation begins.",
+      "summary": "Phase-4 collaboration mode for coord: live session listing, collaboration health checks, owner-aware claim warnings, seam-request workflow, collaboration summaries, and a reusable session-contract template so multi-agent work records roles, seams, ownership, claims, requests, and merge policy before concurrent implementation begins.",
       "tags": [
         "coordination",
         "collaboration",
@@ -1091,7 +1091,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f763d013321b4b69bad534868000e5a4641cea293de3d44038981a7d453e73d5"
+      "sourceSha256": "46f3e34ebf8fbd6ef9ca8d84b5748b173195936ef4a61f13efca1a35cd2d854f"
     },
     {
       "id": "design-coord-core-phase1",
@@ -3857,7 +3857,7 @@ window.DOCS_INDEX = {
       "phase": "coordination",
       "reviewBy": "2027-02-28",
       "reviewSuggested": [],
-      "summary": "Proof pack for coord collaboration mode: active-session projection, collaboration health checks, and the session-contract template. Records the red-first evidence, test oracles, commands, and residual risks for the first shippable cross-session collaboration slice.",
+      "summary": "Proof pack for coord collaboration mode: active-session projection, collaboration health checks, owner-aware claim warnings, seam-request workflow, collaboration summary, and the session-contract template. Records the red-first evidence, test oracles, commands, and residual risks for the shippable cross-session collaboration slice.",
       "tags": [
         "coordination",
         "collaboration",
@@ -3874,7 +3874,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7102539d3bb87db53a65af1821cd53f4518173b9dc8b3991888908c71aec69ee"
+      "sourceSha256": "5c7ef8f2963868ec2053fded934ab8e42cd80d6ca0af1eb13a405aeab1229eae"
     },
     {
       "id": "proof-docs-explorer-redesign",
@@ -4016,6 +4016,36 @@ window.DOCS_INDEX = {
         }
       ],
       "sourceSha256": "6d92efaafdbf157502c92422c2cab588ba17c1630d806b480cb7e21fa12742dd"
+    },
+    {
+      "id": "spec-collaborate-skill",
+      "path": "docs/specs/collaborate-skill.md",
+      "title": "Spec - /collaborate skill proposal",
+      "type": "spec",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Proposal for a future /collaborate skill that starts a cross-agent collaboration session by creating or entering a worktree, registering the session, scaffolding or updating the session contract, claiming the first files, and printing the collaboration checks before coding begins.",
+      "tags": [
+        "coordination",
+        "collaborate",
+        "skill",
+        "worktrees"
+      ],
+      "links": [
+        {
+          "to": "design-coord-collaboration-phase4",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-agent-coordination",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "257dfd864b0345eb0d404c938075f439dcf095a4cc9a3bc994571f0d77e3cd61"
     },
     {
       "id": "spec-design-slice-rename",
@@ -4239,7 +4269,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-forward — Audit & Change Log",
+      "title": "ai-forward-feature-coord-collaboration-next — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -4378,5 +4408,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "1f207328288b92139e4ab06d7f0cbb743bb2ba32f908247c01fe5f6754c578fe"
+  "graphSha256": "9a198d35fbfb00346d4979befa051561b3396a9ce873e9b550caaf727902518c"
 };

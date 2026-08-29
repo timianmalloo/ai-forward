@@ -12,8 +12,9 @@ links:
 review-by: "2027-02-28"
 summary: >-
   Proof pack for coord collaboration mode: active-session projection, collaboration health checks,
-  and the session-contract template. Records the red-first evidence, test oracles, commands, and
-  residual risks for the first shippable cross-session collaboration slice.
+  owner-aware claim warnings, seam-request workflow, collaboration summary, and the session-contract
+  template. Records the red-first evidence, test oracles, commands, and residual risks for the
+  shippable cross-session collaboration slice.
 ---
 
 # Proof Pack: coord collaboration mode - Phase 4
@@ -26,7 +27,7 @@ summary: >-
 ## Claims & evidence
 
 ### Claim 1: `coord session list` exposes active sessions and live claims
-- **Evidence:** `python -m unittest tests.docs_explorer.test_coord_core.CollaborationTests -v` -> 9 tests OK.
+- **Evidence:** `python -m unittest tests.docs_explorer.test_coord_core.CollaborationTests -v` -> 14 tests OK.
 - **Oracle:** `test_session_list_reports_active_sessions_and_claims` fails if `active_sessions()` drops worktree, agent, or claim paths; `test_cli_session_list_json_reports_active_sessions` fails if the public JSON omits claim `wi` or path.
 - **Red observed before green:** yes. Initial run failed with `AttributeError: module 'coord_core' has no attribute 'active_sessions'`.
 - **Confidence:** Verified.
@@ -67,6 +68,34 @@ summary: >-
 - **Confidence:** Verified.
 - **Residual risk:** The check still cannot prove that an unregistered but externally active worktree is idle; worktree cleanup owns that liveness evidence.
 
+### Claim 7: contract ownership tables produce cross-owned-claim warnings
+- **Evidence:** `test_collaboration_check_warns_on_claim_outside_contract_owner` passes.
+- **Oracle:** The test fails unless a Design-labelled session claiming a Core-owned path from `docs/collaboration/session-contracts.md` produces `COORD-COLLAB-CROSS-OWNED-CLAIM`.
+- **Red observed before green:** yes. The red run produced no owner-aware finding.
+- **Confidence:** Verified.
+- **Residual risk:** Role inference is advisory and label-based. `test_owner_role_inference_requires_token_boundary` prevents substring false grants, but a later slice should add explicit role metadata.
+
+### Claim 8: seam requests are append-only and fold to current state
+- **Evidence:** `test_request_workflow_add_list_resolve_is_append_only` passes.
+- **Oracle:** The test fails unless `coord request add` emits an id, `request list --json` shows it open, `request resolve` appends a resolution, open-list becomes empty, and all-list shows the same request as resolved.
+- **Red observed before green:** yes. The red run failed because `request` was not a valid command.
+- **Confidence:** Verified.
+- **Residual risk:** Request IDs are opaque; no UI yet groups them by contract or target role beyond the JSON/text listing.
+
+### Claim 9: collaboration summary is a view over sessions, findings, and open requests
+- **Evidence:** `test_collaboration_summary_includes_sessions_findings_and_requests` passes.
+- **Oracle:** The test fails unless `coord collaborate summary --json` returns active sessions, findings, and open seam requests while excluding resolved requests and exiting 0 as a view.
+- **Red observed before green:** yes. The red run failed because `summary` was not a valid action; an intermediate run also forced the exit semantics to differ from `check`.
+- **Confidence:** Verified.
+- **Residual risk:** Summary does not yet include git branch divergence or derived/register merge obligations.
+
+### Claim 10: P12 is promoted as a general fleet learning
+- **Evidence:** `dream.py apply-decisions` for `p12` reported `applied: 1 general, 0 repo-local; skipped 0; rejected 0`; audit verification passed. Store rows exist in `learnings/fleet-classes.jsonl` and `learnings/promoted.jsonl` for `dream=drm-0007`, `proposal=p12`.
+- **Oracle:** The promotion is idempotent: `learnings/promoted.jsonl` is the skip ledger, and `apply-decisions` rejects tainted/no-control items. The row would be absent if the decision was not applied.
+- **Red observed before green:** n/a - this is a promotion operation over an approved human decision.
+- **Confidence:** Verified.
+- **Residual risk:** Fleet learning text remains the p12 proposal's first-slice control; downstream repos still need `/apply-learnings` or `/updatepack` to receive it.
+
 ## Test coverage of the boundary set
 
 | Boundary | Test |
@@ -78,6 +107,11 @@ summary: >-
 | Ended session | `test_session_end_removes_the_active_session` |
 | Stale session | `test_stale_session_is_not_active` |
 | CLI JSON surface | `test_cli_session_list_json_reports_active_sessions`; `test_cli_collaborate_check_fails_when_contract_is_missing`; `test_cli_collaborate_check_passes_when_contract_and_claims_exist` |
+| Cross-owned claims | `test_collaboration_check_warns_on_claim_outside_contract_owner` |
+| Role substring false grant | `test_owner_role_inference_requires_token_boundary` |
+| Seam requests | `test_request_workflow_add_list_resolve_is_append_only` |
+| Summary view | `test_collaboration_summary_includes_sessions_findings_and_requests` |
+| P12 promotion | `dream.py apply-decisions` output + fleet/promoted JSONL rows |
 
 ## Failure modes addressed
 
@@ -87,6 +121,10 @@ summary: >-
 | Warning-level no-claims finding blocks collaboration | `cmd_collaborate()` returns non-zero only for blocker severity | `test_cli_collaborate_check_passes_when_contract_and_claims_exist` |
 | Session-end ignored | `active_sessions()` removes ended sessions | `test_session_end_removes_the_active_session` |
 | Stale session treated as active forever | stale filter on `last_at` | `test_stale_session_is_not_active` |
+| Cross-owned claim hidden | `contract_ownership()` + `owner_rows_for_path()` emit advisory finding | `test_collaboration_check_warns_on_claim_outside_contract_owner` |
+| Role inferred from substring | role inference uses normalized word tokens, not substring containment | `test_owner_role_inference_requires_token_boundary` |
+| Seam request rewritten in place | `request-add` / `request-resolve` append-only events | `test_request_workflow_add_list_resolve_is_append_only` |
+| Summary behaves like a gate | `cmd_collaborate(summary)` returns 0 while reporting findings | `test_collaboration_summary_includes_sessions_findings_and_requests` |
 
 ## Threats addressed (STRIDE-lite)
 
@@ -127,10 +165,10 @@ pwsh tools\verify-bundle.ps1
 
 | | |
 |---|---|
-| **Completed** | Active-session projection, collaboration health check, session-contract template, and tests. |
-| **Remaining** | Owner-aware claim suggestions and seam-request workflow. |
-| **Best next action** | Implement owner mapping from the session contract or a small machine-readable sidecar, then make `coord claim` warn on cross-owned paths. |
+| **Completed** | Active-session projection, collaboration health check, owner-aware warnings, seam-request workflow, collaboration summary, P12 promotion, session-contract template, and tests. |
+| **Remaining** | Hard owner enforcement, branch-divergence/merge-obligation summary, and the `/collaborate` skill wrapper. |
+| **Best next action** | Decide whether to implement `/collaborate` from `docs/specs/collaborate-skill.md`, then add owner-role metadata so warnings can become enforceable checks. |
 
 ## Gate record
 
-`GATE implement · 2026-08-29 · Python Developer, Test Architect · criteria met: focused coord suite green, docs/audit valid, proof pack attached · verdict: PASS-WITH-CONDITIONS · vetoes: Test Architect initial BLOCK resolved by adding CLI positive path, claims in JSON, session-end and stale-session tests, empty-corpus CLI failure, and this Proof Pack.`
+`GATE implement · 2026-08-29 · Python Developer, Test Architect · criteria met: focused coord suite green, docs/audit valid, proof pack attached · verdict: PASS-WITH-CONDITIONS · vetoes: Test Architect blocks resolved by adding CLI positive path, claims in JSON, session-end and stale-session tests, empty-corpus CLI failure, owner-aware warning, token-boundary role inference, seam-request append-only proof, summary view, P12 proof, and this Proof Pack.`
