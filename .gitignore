@@ -21,6 +21,9 @@ playwright-report/
 # Spike Protocol scratch probes (kept locally unless a probe is worth keeping as evidence)
 spikes/
 
+# Local coordination state written by coord-core.py; not project history
+.agents/
+
 # Editor / OS
 .DS_Store
 Thumbs.db
