@@ -1,14 +1,14 @@
 window.PORTAL_DATA = {
   "meta": {
     "counts": {
-      "skills": 22,
+      "skills": 24,
       "personas": 23,
       "knowledge": 38,
       "templates": 28,
       "scripts": 18
     },
     "whatIs": "AI-Forward is a committed Markdown methodology pack that installs into a repo so Claude Code and GitHub Copilot direct work with a shared reasoning spine, adversarial persona review, and a library of workflow skills - nothing runs as a service; everything is versioned files and stdlib scripts.",
-    "skillCount": 22,
+    "skillCount": 24,
     "precisionNote": "This portal is the high-level, user-facing front door. It is a LENS over the repo's core knowledge, not a copy of it: the Foundations, UI, and Architecture sections list and link the structured artifacts (knowledge docs, ADRs, specs, designs) with derived summaries, while the artifacts themselves stay exactly where they are - as structured, individually-owned Markdown. Nothing here is hand-typed content that must be kept in sync; it is generated from those sources, so it cannot drift."
   },
   "sections": [
@@ -25,7 +25,7 @@ window.PORTAL_DATA = {
     {
       "id": "skills",
       "n": "3",
-      "title": "The 22 Skills"
+      "title": "The 24 Skills"
     },
     {
       "id": "foundations",
@@ -264,9 +264,23 @@ window.PORTAL_DATA = {
       "group": "Utilities & lenses",
       "items": [
         {
+          "cmd": "/also",
+          "desc": "Append a late addition to the prior prompt without derailing the work in flight; captured now, considered after the current reasoning and work complete, as refined context or an appended task.",
+          "when": "-",
+          "produces": "-",
+          "handoff": "-"
+        },
+        {
           "cmd": "/auditlog",
           "desc": "The CLI lens over the project's durable audit & change log — list the last N actions, search by session/date/keyword, copy or re-run a past prompt, toggle to the meaningful-change timeline, or open the interactive viewer.",
           "when": "Recalling what was done or decided across sessions.",
+          "produces": "-",
+          "handoff": "-"
+        },
+        {
+          "cmd": "/code-hygiene",
+          "desc": "Find and quantify violations of the coding guidelines (dead code, commented-out code, anti-patterns) as a measured backlog with lines-of-code and percent-of-codebase per class; `review` yields the analysis, `fix` builds a TDD-guarded, git-labelled remediation strategy that introduces no regressions.",
+          "when": "-",
           "produces": "-",
           "handoff": "-"
         },

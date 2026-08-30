@@ -1,0 +1,12 @@
+{
+  "skill": "code-hygiene",
+  "prompt": "Run /code-hygiene review on this repository: detect dead code, commented-out code, and anti-patterns, classify each against the coding guidelines, and produce docs/hygiene/backlog.md with an aggregate table of violating lines-of-code and percent-of-codebase per class. (Run in an AI-Forward clone workspace.)",
+  "setup": [],
+  "assertions": [
+    { "type": "file-exists", "path": "docs/hygiene/backlog.md" },
+    { "type": "frontmatter-valid", "path": "docs/hygiene/backlog.md" },
+    { "type": "grep", "path": "docs/hygiene/backlog.md", "pattern": "(?i)%|percent|lines" },
+    { "type": "cmd-exit", "cmd": ["python3", "docs/ai-forward-pack/scripts/docs-graph.py", "validate"], "exit": 0 }
+  ],
+  "id": "code-hygiene-01"
+}

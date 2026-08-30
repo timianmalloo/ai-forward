@@ -11,7 +11,7 @@ window.PACK_INDEX = {
 {
 "id": "skills",
 "label": "Skills",
-"count": 22
+"count": 24
 },
 {
 "id": "templates",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 269,
+"total": 271,
 "items": [
 {
 "cat": "knowledge",
@@ -426,6 +426,15 @@ window.PACK_INDEX = {
 },
 {
 "cat": "skills",
+"id": "also",
+"title": "/also",
+"summary": "Append a late addition to the prior prompt without derailing the work already in flight. Use when — mid-turn or just after — you think of something you meant to include — `/also <addition>` captures it now, lets the current reasoning and…",
+"path": "pack/commands/also/SKILL.md",
+"kind": "skill",
+"text": "/also append a late addition to the prior prompt without derailing the work already in flight. use when — mid-turn or just after — you think of something you meant to include — `/also <addition>` captures it now, lets the current reasoning and work finish undisturbed, and folds the addition in afterwards, either as refined context for the remaining work or as a task appended to the end of the current turn. skill: /also grounding (first action) input flow output definition of done (exit gate) documentation & discoverability"
+},
+{
+"cat": "skills",
 "id": "apply-learnings",
 "title": "/apply-learnings",
 "summary": "Push approved, generalised fleet learnings (promoted from /dream into the ai-forward learnings/ store) into one or more target repos, reconciling each against that repo's existing register so nothing is duplicated or contradicted. Produces…",
@@ -441,6 +450,15 @@ window.PACK_INDEX = {
 "path": "pack/commands/auditlog/SKILL.md",
 "kind": "skill",
 "text": "/auditlog the command-line lens over the project's audit & change log — see the last n actions, search the history by session, date, or keyword, copy or re-run a past prompt, toggle to the meaningful-change timeline, and surface decisions not yet captured. use to recall what was done or decided in this repo (across sessions), to redo a prior prompt, or to open the interactive timeline viewer. reads the durable, committed history every skill writes to. skill: /auditlog grounding (first action) input flow (map the request → the script) output definition of done (exit gate) documentation & discoverability"
+},
+{
+"cat": "skills",
+"id": "code-hygiene",
+"title": "/code-hygiene",
+"summary": "Find and quantify violations of the coding guidelines — dead code, commented-out code, and the anti-pattern classes — as a measured backlog (lines of code and % of codebase per class) for review, then build a TDD-guarded, git-labelled…",
+"path": "pack/commands/code-hygiene/SKILL.md",
+"kind": "skill",
+"text": "/code-hygiene find and quantify violations of the coding guidelines — dead code, commented-out code, and the anti-pattern classes — as a measured backlog (lines of code and % of codebase per class) for review, then build a tdd-guarded, git-labelled remediation strategy that removes them without introducing regressions. `review` yields the analysis; `fix` yields (and, once approved, executes) the plan. use to hold a codebase to the pack's coding standards and keep it clean. skill: /code-hygiene `review` | `fix` the two modes grounding (first action) input cast flow (rigor protocol, specialized to code hygiene) output artifacts definition of done (exit gate) documentation & discoverability (last action)"
 },
 {
 "cat": "skills",

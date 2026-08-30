@@ -14,7 +14,7 @@
     a CDN outage or serve altered content on a compromise — on the one surface that has
     already rendered blank once (classes PACK-G, PACK-H), in a pack that preaches
     dependency-aversion. An offline banner still shows if a library somehow fails to load.
-  - It explains the KNOWLEDGE (the constitution), the SKILLS (the 22 workflows), the
+  - It explains the KNOWLEDGE (the constitution), the SKILLS (the 24 workflows), the
     RIGOR PROTOCOL (the reasoning spine), the PERSONAS (the dual-mode council), and the
     UI TEMPLATE APPROACH (the archetype grammar) — with a TABLE of every template type and
     LINKABLE, rendered MOCKUPS of each one so a reader can see-then-choose.
@@ -213,7 +213,7 @@
     <h1 style="font-size:clamp(26px,4vw,40px);letter-spacing:-.02em;margin:.2em 0 .3em">The interactive explainer couldn't start</h1>
     <p class="lead" style="color:var(--muted);font-size:17px">This page renders with React loaded from <code>web/vendor/</code>. If a script failed or the render threw, the interactive view can't mount — but everything it describes is available on self-contained pages:</p>
     <div class="grid g2" style="margin-top:26px">
-      <a class="card" href="../docs/portal/index.html"><h3>Documentation Portal →</h3><p>The front door: getting started, the 22 skills, foundations, UI &amp; design, architecture, and the knowledge graph.</p></a>
+      <a class="card" href="../docs/portal/index.html"><h3>Documentation Portal →</h3><p>The front door: getting started, the 24 skills, foundations, UI &amp; design, architecture, and the knowledge graph.</p></a>
       <a class="card" href="index.html"><h3>Whole-pack index &amp; search →</h3><p>Every artifact — knowledge, skills, templates, scripts, personas — searchable.</p></a>
       <a class="card" href="../docs/index.html"><h3>Docs Explorer →</h3><p>Browse / graph / mind-map the knowledge graph of artifacts.</p></a>
       <a class="card" href="https://github.com/timianmalloo/ai-forward"><h3>Repository →</h3><p>The source of the pack on GitHub.</p></a>
@@ -390,7 +390,7 @@ window.addEventListener("DOMContentLoaded",function(){
     ]}
   ];
 
-  // The 22 skills — .claude/skills/* (fifteen reasoning workflows + /auditlog + two prompt-log utilities)
+  // The 24 skills — .claude/skills/* (twenty reasoning workflows + /auditlog + /also + two prompt-log utilities)
   const SKILLS = [
     ["/collectknowledge","Build a sourced domain knowledge base before design — state of the art, comparables, references, glossary — every claim confidence-labeled.","Domain Researcher","support"],
     ["/adddomainexperts","Discover the project's domain from repo evidence and add tailored domain-expert personas (peer + adversary), wiring in backing Claude skills.","Product Strategist","support"],
@@ -404,12 +404,14 @@ window.addEventListener("DOMContentLoaded",function(){
     ["/migrate","Characterization-first migrations — pin behavior in golden tests, compute blast radius, migrate in vertical increments, prove equivalence.","language Developer","support"],
     ["/adopt","Bootstrap the pack's knowledge graph in a brownfield repo — recover architecture from code, mine a glossary, produce a phased adoption plan.","Documentation Steward","support"],
     ["/forensicreview","Reconstruct an existing repo's architecture and documentation, review architecture/design/implementation deeply, and produce an evidence-linked P0–P3 risk/issue/todo backlog.","Enterprise Architect","support"],
+    ["/code-hygiene","Hold a codebase to the coding guidelines — find and quantify dead code, commented-out code and anti-patterns as a measured backlog (lines and % of codebase per class); review yields the analysis, fix builds a TDD-guarded, git-labelled remediation that introduces no regressions.","The Simplifier","support"],
     ["/addpacktorepo","Install the pack into another local repo (run from an AI-Forward clone) — recce the target, apply the full deployment map, summarise what was added, offer to commit.","Release Engineer","lifecycle"],
     ["/updatepack","Refresh a repo that already has the pack to the latest revision — apply only the changelog delta, re-paste managed blocks, summarise actions, offer to commit.","Release Engineer","lifecycle"],
     ["/extendaibundle","Extend the pack itself from a prose prompt (collect→specify→design→implement, compressed for pack work) — scaffold via new-capability.py, prove via verify-bundle.ps1, zero drift across both tools.","Tech Lead","lifecycle"],
     ["/auditlog","The CLI lens over the project's durable audit & change log — see the last N actions, search by session/date/keyword, recall a past prompt to re-run, toggle the meaningful-change timeline, open the viewer.","—","utility"],
     ["/prompts","Browse your logged prompts as a stack (newest on top) and reuse one — arrow keys move, right-arrow expands a prompt, left-arrow collapses, Enter copies it to the clipboard to paste-and-edit. Engine: prompt-log.py (stdlib).","—","utility"],
-    ["/searchprompts","Search your logged prompts by freeform text and reuse a match — the same arrow-navigable expand/collapse stack as /prompts, pre-filtered to prompts containing all your terms.","—","utility"]
+    ["/searchprompts","Search your logged prompts by freeform text and reuse a match — the same arrow-navigable expand/collapse stack as /prompts, pre-filtered to prompts containing all your terms.","—","utility"],
+    ["/also","Append a late addition to the prior prompt without derailing the work in flight — captured now, considered after the current reasoning and work complete, as refined context or an appended task.","—","utility"]
   ];
 
   /* =================================================================
@@ -800,7 +802,7 @@ window.addEventListener("DOMContentLoaded",function(){
       <!-- SKILLS -->
       <section class="block" id="skills" aria-label="Skills"><div class="wrap">
         <div class="sechead"><div class="seclabel">The workflows</div>
-          <h2>Twenty-two skills, one loop</h2>
+          <h2>Twenty-four skills, one loop</h2>
           <p>Each skill is the Rigor Protocol specialized to one kind of work. The core five carry a piece
           from idea to shipped code; supporting skills prepare the ground or keep it honest;
           <code>/investigate</code> breaks the loop whenever a defect appears. Three <b>pack-lifecycle</b>
