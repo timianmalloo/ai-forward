@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-forward-feature-coord-collaboration-next",
-  "generated": "2026-08-29T20:21:58Z",
+  "project": "ai-forward",
+  "generated": "2026-08-30T23:22:00Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2516,6 +2516,26 @@ window.AUDIT_DATA = {
       "outcome": "success",
       "goal": "Implement the accepted next cross-session collaboration controls",
       "done_when": "owner-aware checks, seam requests, summary, P12 promotion, and /collaborate proposal are in source with tests and graph/audit validation"
+    },
+    {
+      "id": "al-01M1AFNNVWSS0EYY1SH6HYQ4Z1",
+      "shortname": "code-hygiene-review",
+      "datetime": "2026-08-30T23:22:00Z",
+      "session": "2f63f380-70dd-4e60-94c2-1e2de821f3c2",
+      "prompt": "/code-hygiene review",
+      "summary": "Reviewed 24,183 LOC source (Py 16,900 / JS 6,251 / PS 1,032). Clear violations: 103 instances ~152 LOC ~0.63%. HYG-A dead/unused: 8 (3 unused imports, 3 unused vars, 2 candidate unref fns); resource-lifecycle SIM115 x26 (Medium); no real commented-out code (3 ERA001 false positives excluded); no swallowed-exception (bare except=0). Gaps: PS/JS no analyzer -> not recorded.",
+      "kind": "skill",
+      "skill": "code-hygiene",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/hygiene/backlog.md"
+      ],
+      "tags": [
+        "hygiene",
+        "HYG-A"
+      ],
+      "outcome": "success"
     }
   ],
   "changes": [

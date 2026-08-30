@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 124
+"count": 125
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 271,
+"total": 272,
 "items": [
 {
 "cat": "knowledge",
@@ -1764,6 +1764,15 @@ window.PACK_INDEX = {
 "path": "docs/backlog/forensic-review-rev49.md",
 "kind": "doc",
 "text": "forensic review backlog - revision 49 three proposed items from the revision-49 forensic review at commit 33f651d: make the local bundle verifier restore declared npm dependencies in clean worktrees; stop sync-pack from leaving crlf-only dirty copilot agent files on windows; and make audit-log suggest distinguish its unavoidable append-only self-reference from untriaged meaningful changes. backlog forensic-review ci worktree audit windows refines forensic-review-rev49 tested-by forensic-review-rev49-proof supersedes forensic-review-rev48-backlog relates-to defect-classes relates-to architecture"
+},
+{
+"cat": "graph",
+"id": "hygiene-backlog",
+"title": "Code-hygiene backlog",
+"summary": "Measured code-hygiene review of this repository's hand-authored source (Python, JS, PowerShell). Detects dead/commented-out code (HYG-A) and anti-pattern classes against the pack's coding guidelines, with LOC and % of source per class. The…",
+"path": "docs/hygiene/backlog.md",
+"kind": "doc",
+"text": "code-hygiene backlog measured code-hygiene review of this repository's hand-authored source (python, js, powershell). detects dead/commented-out code (hyg-a) and anti-pattern classes against the pack's coding guidelines, with loc and % of source per class. the source is clean: no real commented-out code, no swallowed-exception anti-pattern; the largest actionable class is resource-lifecycle (26 open() calls without a context manager). read-only analysis; `fix` mode not yet run. hygiene code-quality dead-code anti-patterns hyg-a relates-to defect-classes relates-to architecture"
 },
 {
 "cat": "graph",

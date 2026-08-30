@@ -2063,6 +2063,37 @@ window.DOCS_INDEX = {
       "sourceSha256": "67e2e404ae6868523b8e5d99bef1e81220067cd721cfbe959a4512bc7572a015"
     },
     {
+      "id": "hygiene-backlog",
+      "path": "docs/hygiene/backlog.md",
+      "title": "Code-hygiene backlog",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-30",
+      "reviewSuggested": [],
+      "summary": "Measured code-hygiene review of this repository's hand-authored source (Python, JS, PowerShell). Detects dead/commented-out code (HYG-A) and anti-pattern classes against the pack's coding guidelines, with LOC and % of source per class. The source is clean: no real commented-out code, no swallowed-exception anti-pattern; the largest actionable class is resource-lifecycle (26 open() calls without a context manager). Read-only analysis; `fix` mode not yet run.",
+      "tags": [
+        "hygiene",
+        "code-quality",
+        "dead-code",
+        "anti-patterns",
+        "HYG-A"
+      ],
+      "links": [
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        },
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "774d4069784312e2fbe75abfc3002fbb4db17b92449dfc2a25eaf944c49cfef3"
+    },
+    {
       "id": "lens-code-doc-join",
       "path": "docs/lenses/code-doc-join.md",
       "title": "Lens - code/doc join",
@@ -4269,7 +4300,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-forward-feature-coord-collaboration-next — Audit & Change Log",
+      "title": "ai-forward — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -4408,5 +4439,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "245daefcc399c136172c4b6385ce8c7ac9d6e920b7bf15193be93220232002ee"
+  "graphSha256": "49255d5c8349146a4f5ae94619577c0047d55200123b513843fd8d4ca876e343"
 };

@@ -1073,6 +1073,12 @@ window.PORTAL_DATA = {
         "summary": "Evidence record for the revision-49 forensic review at commit 33f651d. It records the baseline gates and the three proposed findings: a clean-worktree npm..."
       },
       {
+        "id": "hygiene-backlog",
+        "type": "doc",
+        "title": "Code-hygiene backlog",
+        "summary": "Measured code-hygiene review of this repository's hand-authored source (Python, JS, PowerShell). Detects dead/commented-out code (HYG-A) and anti-pattern..."
+      },
+      {
         "id": "investigation-blank-explainer-live",
         "type": "investigation",
         "title": "Investigation: the hosted explainer renders blank even after the 'fix'",
@@ -2226,6 +2232,16 @@ window.PORTAL_DATA = {
       {
         "from": "forensic-review-rev49-proof",
         "to": "forensic-review-rev49-backlog",
+        "rel": "relates-to"
+      },
+      {
+        "from": "hygiene-backlog",
+        "to": "architecture",
+        "rel": "relates-to"
+      },
+      {
+        "from": "hygiene-backlog",
+        "to": "defect-classes",
         "rel": "relates-to"
       },
       {
