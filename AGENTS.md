@@ -95,7 +95,11 @@ every non-trivial task.
   validation, security, accessibility, or the failure-mode/test floors; mark bounded shortcuts with an
   inline `simplify:` comment (ceiling + upgrade trigger); ceremony scales with the tier (T0 code-first,
   T1/T2 full artifacts). `.github/instructions/solution-selection-ladder.instructions.md`; the
-  Simplifier is its adversarial mirror.
+  Simplifier is its adversarial mirror. **No dead code survives the turn:** commenting code out while
+  you work is a transient scratch, but a turn never closes with commented-out or dead code in the tree
+  — delete it (version control is the archive, not the working tree), and sweep the class, not only the
+  line you noticed. `.github/instructions/communication-and-task-discipline.instructions.md` (CT18a);
+  defect class **HYG-A**.
 - **Start with the goal, then plan the turn — the two-step front matter (universal):** every
   non-trivial turn opens, **before the first substantive tool call**, by writing the **goal state**
   — **Goal · Done when · Not in scope** — the preventive mirror of the *Completed / Remaining /

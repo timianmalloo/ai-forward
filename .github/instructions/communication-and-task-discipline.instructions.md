@@ -82,6 +82,8 @@ Delete on sight. The one exception is a **genuinely new** orientation sentence a
 
 **CT18 — Proportionality never reaches the floors.** CT14–CT17 govern **discretionary** work. They **MUST NOT** be used to skip anything mandatory for the tier and the change shape: a triggered **hard veto** (security, privacy, data-migration, test-architect, AI-systems), the **Testing Strategy** trigger-table union, the **end-to-end surface list** (E7) and reader trace (E8), **red-first** observation of any claimed control (CI6), the **audit/change** entries (AL5/CL1), or the **no-guessing** moves (NG1). *"The user only asked for X"* is not a clearing condition for a hard veto that X triggered. When a mandatory gate fires, say so in one line, satisfy it, and continue — do not debate it, and do not silently drop it.
 
+**CT18a — The turn does not close with dead or commented-out code in it.** Commenting code out **while you work** is a transient scratch and is allowed; **leaving it there when the turn ends is not.** Dead code — commented-out blocks, an unreferenced function, an unreachable branch, a field nobody reads, an unused import — is clutter that goes stale silently, misleads the next reader, and defeats the tools that reason about the tree (a code-graph builder, a linter, a `grep`). It is **never acceptable in the committed tree**: version control is the archive, so *delete* it rather than parking it in a comment "in case." Cleaning it up is part of **finishing** (the E18 close), not a follow-up captured under CT14 — a turn that ends with dead code left behind is **not done**. Sweep it as a class, not only the line you noticed (CI2); the standing shape is defect class **HYG-A** (`continuous-improvement.md` §6), and the Simplifier's `delete:` sweep (`solution-selection-ladder.md` L9) is its adversarial mirror.
+
 ---
 
 ## 5. The opening contract — the two-step front matter (start before you act)
@@ -135,6 +137,7 @@ Read downward. **Rigor first, then size, then wording.** Compressing the third n
 - [ ] Every unrequested test/review/control/abstraction names the failure it prevents, or was dropped (CT15).
 - [ ] Reviewer findings triaged: blocking / unsafe / caused-by-this-change fixed; the rest recorded (CT16).
 - [ ] Stopped at proof, not at exhaustion (CT17).
+- [ ] **No dead or commented-out code** was left in the tree at turn close; any commented-out scratch was cleaned up (CT18a).
 - [ ] **No mandatory floor was skipped in the name of proportionality** (CT18).
 
 ---

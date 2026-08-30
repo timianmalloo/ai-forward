@@ -18,7 +18,7 @@ content (CRLF→LF, trailing whitespace stripped) so line endings never masquera
 | `layered-optimized-architecture.md` | LOA — AI-integrated architecture | `05fbe0cf47f89c78` |
 | `engineering-governance.md` | SDLC lenses around the code | `513c4a28581dc94f` |
 | `testing-strategy.md` | The proof discipline | `c6351b2f55ee543d` |
-| `csharp-style-guide.md` | C# house style | `17e7d5f02faf740e` |
+| `csharp-style-guide.md` | C# house style | `25c4399234434a89` |
 
 ## Known intentional divergences (vendored ≠ base, by design)
 
@@ -27,6 +27,7 @@ content (CRLF→LF, trailing whitespace stripped) so line endings never masquera
 | `agent-body-of-knowledge.md` | Latest-stable-SDK default policy (currently .NET 10 LTS / C# 14; previews excluded; repo pin wins) | **pending back-port** |
 | `testing-strategy.md` | Stale version/example references removed; tracks the latest-SDK policy | **pending back-port** |
 | `csharp-style-guide.md` | §2.6 constant-on-the-left comparisons added; §2.2 example fixed to match | **pending back-port** |
+| `csharp-style-guide.md` | §1.6 "No commented-out or dead code" added (delete-don't-park; unused-code diagnostics IDE0051/IDE0052/CS0219/IDE0059 as build errors), plus a Defaults row and an Enforcement bullet. Pairs with the language-agnostic CT18a / defect class HYG-A. | **pack-local (dead-code policy)** |
 | `agent-rules-of-the-road.md`, `agent-body-of-knowledge.md`, `csharp-style-guide.md` | **Deployment-path correction (FR-045).** The base docs' deployment map named `.github/instructions/{knowledge,csharp,loa,tests}.instructions.md` and a `.github/knowledge/` directory. This pack deploys one `<docname>.instructions.md` per knowledge doc and has no `.github/knowledge/`, so six of those paths did not exist - in documents the managed block loads every session. Corrected to the real paths. | Base is unchanged; the base's map reflects a different install layout. |
 
 Everything else matches the base at vendoring time (engineering-governance differs only in line
