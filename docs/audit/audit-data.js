@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-08-30T23:22:00Z",
+  "generated": "2026-08-30T23:51:52Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2534,6 +2534,26 @@ window.AUDIT_DATA = {
       "tags": [
         "hygiene",
         "HYG-A"
+      ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M1AHCBGTARYFQET599GJF5GV",
+      "shortname": "code-hygiene-fix",
+      "datetime": "2026-08-30T23:51:52Z",
+      "session": "2f63f380-70dd-4e60-94c2-1e2de821f3c2",
+      "prompt": "tighten the code-hygiene skill, then /code-hygiene fix SIM115",
+      "summary": "Tightened skill (source-of-truth map, false-positive-family checklist, edit-source-then-regenerate rule) on both adapter surfaces. Fixed SIM115 (resource-lifecycle): 25 'with open' refactors + 1 accept-with-rationale (NamedTemporaryFile consumed by subprocess). ruff SIM115 26->0; 360-test suite green-to-green; 9/9 gates pass.",
+      "kind": "skill",
+      "skill": "code-hygiene",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/hygiene/remediation-plan.md"
+      ],
+      "tags": [
+        "hygiene",
+        "SIM115"
       ],
       "outcome": "success"
     }

@@ -816,7 +816,8 @@ def check_html_inline_scripts(findings):
             continue
         seen.add(path)
         try:
-            html = open(path, "r", encoding="utf-8", errors="ignore").read()
+            with open(path, "r", encoding="utf-8", errors="ignore") as f:
+                html = f.read()
         except OSError:
             continue
         # inline scripts only: those WITHOUT a src= attribute
@@ -824,7 +825,9 @@ def check_html_inline_scripts(findings):
             body = m.group(1).strip()
             if not body or ("application/json" in (m.group(0)[:120].lower())):
                 continue  # skip empty and JSON data blocks (not executable JS)
-            tf = tempfile.NamedTemporaryFile("w", suffix=".js", delete=False, encoding="utf-8")
+            # delete=False so a separate `node --check` process can open the temp file by path
+            # (required on Windows); closed below, then os.unlink'd in the finally.
+            tf = tempfile.NamedTemporaryFile("w", suffix=".js", delete=False, encoding="utf-8")  # noqa: SIM115
             try:
                 tf.write(body); tf.close()
                 r = subprocess.run([node, "--check", tf.name], capture_output=True, text=True, timeout=30)

@@ -150,8 +150,9 @@ def write_json(path: str, obj, dry: bool) -> str:
 def write_text(path: str, text: str, dry: bool) -> str:
     if os.path.exists(path):
         try:
-            if open(path, encoding="utf-8").read() == text:
-                return "unchanged"
+            with open(path, encoding="utf-8") as f:
+                if f.read() == text:
+                    return "unchanged"
         except OSError:
             pass
         action = "would update" if dry else "updated"
@@ -170,7 +171,8 @@ def load_index(root: str):
     path = os.path.join(root, "docs", "docs-index.js")
     if not os.path.exists(path):
         return None, f"docs/docs-index.js not found - run docs-graph.py derive first ({path})"
-    raw = open(path, encoding="utf-8").read()
+    with open(path, encoding="utf-8") as f:
+        raw = f.read()
     try:
         start = raw.index("{")
         end = raw.rindex("}") + 1
@@ -599,7 +601,10 @@ plugin (local metrics; AI features are opt-in and require your own API key).
 
 def update_gitignore(root, vault, dry):
     path = os.path.join(root, ".gitignore")
-    existing = open(path, encoding="utf-8").read() if os.path.exists(path) else ""
+    existing = ""
+    if os.path.exists(path):
+        with open(path, encoding="utf-8") as f:
+            existing = f.read()
     rules = [r.format(vault=vault) for r in GITIGNORE_RULES]
     missing = [r for r in rules if r not in existing and not r.startswith("#")]
     if not missing:

@@ -65,7 +65,7 @@ detector or no hard guideline threshold.
 | 1 | **HYG-A** — unused import | BoK VII.3; HYG-A | 3 | 3 | 0.01% | Low | ruff `F401` · Verified |
 | 2 | **HYG-A** — unused local / loop var | BoK VII; HYG-A | 3 | 3 | 0.01% | Low | ruff `B007` + vulture 100% · Verified |
 | 3 | **HYG-A** — unreferenced function (candidate) | HYG-A | 2 | ~15 | 0.06% | Low | vulture 60% · **Inferred** (reserved-API risk) |
-| 4 | **Resource lifecycle** — `open()` w/o context manager | BoK VII.3 (context managers for resources) | 26 | ~26 | 0.11% | **Medium** | ruff `SIM115` · Verified |
+| 4 | **Resource lifecycle** — `open()` w/o context manager | BoK VII.3 (context managers for resources) | ~~26~~ **0** ✅ | ~~26~~ 0 | 0.00% | ~~Medium~~ **fixed** | ruff `SIM115` · Verified — *remediated 2026-08-30 (25 `with` refactors + 1 accept-with-rationale), see `remediation-plan.md`* |
 | 5 | **Robustness** — `subprocess.run` w/o `check=` | BoK VII (correctness) | 38 (~23 in source) | ~38 | 0.16% | Low–Med | ruff `PLW1510` · Verified |
 | 6 | **Idiom** — suppressible `try/except/pass` | style (VII.3) | 18 | ~54 | 0.22% | Low (idiom) | ruff `SIM105` · Verified |
 | 7 | **Exception chaining** — `raise` w/o `from` | BoK VII.3 | 2 | 2 | 0.01% | Low | ruff `B904` · Verified |
@@ -76,8 +76,7 @@ detector or no hard guideline threshold.
 ¹ *Not recorded*: complexity/magic-value flags attach to whole methods/expressions, not a clean LOC
 span; reporting a per-line figure would be a plausible wrong number, so it is left unrecorded (IO8).
 
-**Totals (clear, actionable violations — classes 1–8):** **103 instances**, **~152 violating LOC** ≈
-**0.63% of source**. Medium-or-higher severity (class 4 only): **26 instances ≈ 0.11%**.
+**Totals (clear, actionable violations — classes 1–8):** ~~**103 instances**, **~152 violating LOC** ≈ **0.63% of source**~~ → **77 instances**, **~126 LOC** ≈ **0.52%** after the SIM115 remediation (2026-08-30). Medium-or-higher severity: **0** (the sole Medium class, resource-lifecycle, is now fixed).
 
 **Headline:** the hand-authored source is **clean**. There is **no real commented-out code** and **no
 swallowed-exception anti-pattern** (bare `except:` = 0). The single largest actionable clean-up is the

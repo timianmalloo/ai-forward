@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 125
+"count": 126
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 272,
+"total": 273,
 "items": [
 {
 "cat": "knowledge",
@@ -1773,6 +1773,15 @@ window.PACK_INDEX = {
 "path": "docs/hygiene/backlog.md",
 "kind": "doc",
 "text": "code-hygiene backlog measured code-hygiene review of this repository's hand-authored source (python, js, powershell). detects dead/commented-out code (hyg-a) and anti-pattern classes against the pack's coding guidelines, with loc and % of source per class. the source is clean: no real commented-out code, no swallowed-exception anti-pattern; the largest actionable class is resource-lifecycle (26 open() calls without a context manager). read-only analysis; `fix` mode not yet run. hygiene code-quality dead-code anti-patterns hyg-a relates-to defect-classes relates-to architecture"
+},
+{
+"cat": "graph",
+"id": "hygiene-remediation-plan",
+"title": "Code-hygiene remediation plan — SIM115 (resource lifecycle)",
+"summary": "TDD-guarded, git-labelled remediation of the 26 SIM115 (open()-without-context-manager) findings from the hygiene backlog. 25 are behaviour-preserving `with open(...)` refactors; 1 (check-consistency.py:827, a…",
+"path": "docs/hygiene/remediation-plan.md",
+"kind": "doc",
+"text": "code-hygiene remediation plan — sim115 (resource lifecycle) tdd-guarded, git-labelled remediation of the 26 sim115 (open()-without-context-manager) findings from the hygiene backlog. 25 are behaviour-preserving `with open(...)` refactors; 1 (check-consistency.py:827, a namedtemporaryfile(delete=false) consumed by a subprocess by path) is accept-with-rationale. proven green-to-green against the 360-test suite + verify-bundle gate; fixes land in pack/ source and are regenerated + gated. hygiene remediation resource-lifecycle sim115 relates-to hygiene-backlog relates-to defect-classes"
 },
 {
 "cat": "graph",

@@ -1079,6 +1079,12 @@ window.PORTAL_DATA = {
         "summary": "Measured code-hygiene review of this repository's hand-authored source (Python, JS, PowerShell). Detects dead/commented-out code (HYG-A) and anti-pattern..."
       },
       {
+        "id": "hygiene-remediation-plan",
+        "type": "doc",
+        "title": "Code-hygiene remediation plan — SIM115 (resource lifecycle)",
+        "summary": "TDD-guarded, git-labelled remediation of the 26 SIM115 (open()-without-context-manager) findings from the hygiene backlog. 25 are behaviour-preserving `with..."
+      },
+      {
         "id": "investigation-blank-explainer-live",
         "type": "investigation",
         "title": "Investigation: the hosted explainer renders blank even after the 'fix'",
@@ -2242,6 +2248,16 @@ window.PORTAL_DATA = {
       {
         "from": "hygiene-backlog",
         "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "hygiene-remediation-plan",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "hygiene-remediation-plan",
+        "to": "hygiene-backlog",
         "rel": "relates-to"
       },
       {

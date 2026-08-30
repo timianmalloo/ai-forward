@@ -2091,7 +2091,37 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "774d4069784312e2fbe75abfc3002fbb4db17b92449dfc2a25eaf944c49cfef3"
+      "sourceSha256": "e8cf789114609cea7eac1ae1048272cc37d13a67e3e2a494f61656926efe0de5"
+    },
+    {
+      "id": "hygiene-remediation-plan",
+      "path": "docs/hygiene/remediation-plan.md",
+      "title": "Code-hygiene remediation plan — SIM115 (resource lifecycle)",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-30",
+      "reviewSuggested": [],
+      "summary": "TDD-guarded, git-labelled remediation of the 26 SIM115 (open()-without-context-manager) findings from the hygiene backlog. 25 are behaviour-preserving `with open(...)` refactors; 1 (check-consistency.py:827, a NamedTemporaryFile(delete=False) consumed by a subprocess by path) is accept-with-rationale. Proven green-to-green against the 360-test suite + verify-bundle gate; fixes land in pack/ source and are regenerated + gated.",
+      "tags": [
+        "hygiene",
+        "remediation",
+        "resource-lifecycle",
+        "SIM115"
+      ],
+      "links": [
+        {
+          "to": "hygiene-backlog",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "33d6658a43a3ecae5976e0a31b135922eb02d6ee7457564163ba1db0a8fa15e9"
     },
     {
       "id": "lens-code-doc-join",
@@ -4439,5 +4469,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "49255d5c8349146a4f5ae94619577c0047d55200123b513843fd8d4ca876e343"
+  "graphSha256": "4170e2bbc5b77b37d99fd25eda668cc8143912b5523ecdd496a1602efc13a9f6"
 };

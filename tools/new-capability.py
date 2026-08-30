@@ -41,14 +41,16 @@ def write(path, text, dry, force):
         print(f"  would write: {os.path.relpath(path, ROOT)}")
         return True
     os.makedirs(os.path.dirname(path), exist_ok=True)
-    open(path, "w", encoding="utf-8", newline="\n").write(text)
+    with open(path, "w", encoding="utf-8", newline="\n") as f:
+        f.write(text)
     print(f"  wrote: {os.path.relpath(path, ROOT)}")
     return True
 
 
 def set_count(path, pattern, value, dry):
     """Replace the first capture-group number in `pattern` with value (regex with one group around the int)."""
-    text = open(path, encoding="utf-8").read()
+    with open(path, encoding="utf-8") as f:
+        text = f.read()
     m = re.search(pattern, text)
     if not m:
         print(f"  WARN: count pattern not found in {os.path.relpath(path, ROOT)}: {pattern}")
@@ -60,7 +62,8 @@ def set_count(path, pattern, value, dry):
     if dry:
         print(f"  would set count {old} -> {value} in {os.path.relpath(path, ROOT)}")
         return
-    open(path, "w", encoding="utf-8", newline="\n").write(new)
+    with open(path, "w", encoding="utf-8", newline="\n") as f:
+        f.write(new)
     print(f"  count {old} -> {value} in {os.path.relpath(path, ROOT)}")
 
 
