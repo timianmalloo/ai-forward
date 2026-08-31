@@ -276,6 +276,26 @@ def commits_between(before, after, root):
     return [ln for ln in (out or "").split("\n") if ln.strip()]
 
 
+# FR-071 (class SELF-REPORT). `suggest` must not re-surface its own bookkeeping. Two filters,
+# per audit-and-change-log.md CL3: keep only commits whose subject signals a decision, and drop
+# commits that ARE the logging action (they wrote an audit .jsonl -> already logged by definition).
+DECISION_SIGNAL = re.compile(r"\b(feat|BREAKING|migrate|arch|decision|adr)\b", re.I)
+
+
+def _suggests_decision(subject):
+    """CL3: a commit is a suggest candidate only if its subject signals a decision."""
+    return bool(DECISION_SIGNAL.search(subject or ""))
+
+
+def _is_logging_commit(sha, root):
+    """A commit that wrote the CHANGE log is already a change-log closeout, not an unlogged
+    change (FR-071 self-report). Scoped to change-log.jsonl - `suggest` is about the change log,
+    so an audit-only commit (every skill writes one, AL5) can still be a genuine unlogged decision."""
+    files = git(["show", "--name-only", "--pretty=format:", sha], root) or ""
+    return any(f.strip().endswith("audit/change-log.jsonl")
+               for f in files.splitlines() if f.strip())
+
+
 # ---------- graph hub node (AL7: the bundle must BE a graph node) ----------
 HUB = """---
 id: audit-log
@@ -601,13 +621,26 @@ def cmd_suggest(args):
             last_after = a
     head = git(["rev-parse", "HEAD"], args.root)
     findings = []
+
+    def _candidate(ln):
+        # CL3 + FR-071: surface a commit only if its subject signals a decision AND it is not
+        # itself a logging closeout (a commit that wrote an audit .jsonl is already logged).
+        ln = ln.strip()
+        if not ln:
+            return
+        sha, _, subject = ln.partition(" ")
+        if not _suggests_decision(subject):
+            return
+        if _is_logging_commit(sha, args.root):
+            return
+        findings.append(("commit", ln))
+
     if last_after and head:
         for ln in commits_between(last_after, head, args.root):
-            findings.append(("commit", ln))
+            _candidate(ln)
     elif head:
         for ln in (git(["log", "-n", str(args.n), "--pretty=%h %s"], args.root) or "").split("\n"):
-            if ln.strip():
-                findings.append(("commit", ln))
+            _candidate(ln)
     # New decision artifacts (ADRs / decision notes) not referenced by any change entry.
     referenced = " ".join(json.dumps(e) for e in changes)
     for sub in ("adr", "notes"):

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-08-31T03:49:29Z",
+  "generated": "2026-08-31T04:30:15Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2596,6 +2596,23 @@ window.AUDIT_DATA = {
         "forensic-review",
         "remediation"
       ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M1B1A3PVEJQXHGFTQQGBRANQ",
+      "shortname": "investigate-fr-071",
+      "datetime": "2026-08-31T04:30:15Z",
+      "session": "2f63f380-70dd-4e60-94c2-1e2de821f3c2",
+      "prompt": "/investigate FR-071 then implement the repair items",
+      "summary": "Root cause: audit-log.py suggest lists commits in last_change.after..HEAD unfiltered, contrary to CL3 (surface only decision-signal messages), and never excludes change-log closeouts -> self-report + flood. Verified by reproduction + failing-first regression test. Fix: _suggests_decision (CL3 filter) + _is_logging_commit (change-log-closeout exclusion). Class SELF-REPORT registered (controlled). No siblings (unique shape). Suite 364 green.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/investigations/fr-071-audit-suggest-self-report.md"
+      ],
+      "tags": [],
       "outcome": "success"
     }
   ],

@@ -39,7 +39,7 @@ proven non-breaking, committed atomically.
 | **FR-073** | **RESOLVED** | `ca5dc34` | Added `skillMeta` entries for `also`+`code-hygiene`; `build-docs-portal` emits no editorial-metadata warning; check-consistency clean. |
 | **FR-074** | **RESOLVED** | `c90bf26` | Added `tests/docs_explorer/test_new_capability.py` (4 smoke/characterization tests: --help, --dry-run-writes-nothing, plan-names-paths, invalid-name-rejected); suite green (363). |
 | **FR-075** | **RESOLVED** (documented deviation) | `78f4f4d` | `command` is repo-local trusted registry config (not injection surface); `shell=True` retained deliberately with a recorded deviation (Rules of the Road §4) — the arg-list refactor is cross-platform-risky and the exposure is low. Comment-only; gate green. |
-| **FR-071** | **DEFERRED** | — | Cosmetic P3 advisory false-positive; no clear static reproduction — needs `/investigate` before touching the audit tool. Left tracked; not worth a risky change for one advisory line. |
+| **FR-071** | **RESOLVED** | (this commit) | `/investigate` found the root cause (suggest lists commits unfiltered, contrary to CL3) and fixed it: `cmd_suggest` now filters to CL3 decision-signal messages and excludes change-log closeouts. Regression test `test_audit_suggest.py` observed failing on unfixed code, green after. Class **SELF-REPORT** registered. |
 
 Net: 5 of 6 open items resolved; FR-071 deferred with rationale. No P0/P1 remained.
 

@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 128
+"count": 129
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 275,
+"total": 276,
 "items": [
 {
 "cat": "knowledge",
@@ -881,7 +881,7 @@ window.PACK_INDEX = {
 "summary": "audit-log.py — the AI-Forward Pack audit & change log bundle (audit-and-change-log.md).",
 "path": "pack/scripts/audit-log.py",
 "kind": "script",
-"text": "audit-log.py audit-log.py — the ai-forward pack audit & change log bundle (audit-and-change-log.md). durable, committed, history-as-knowledge for a repo: an append-only record of every meaningful prompt / skill / script / decision, so any future copilot or claude code session reads the project's own history instead of starting blind. the canonical logs are append-only jsonl (clean git diffs, like docs/health-history.jsonl); the viewer reads a derived window.audit_data js (loadable over file://, like docs/docs-index.js). python 3.8+, stdlib only — no dependencies. two logs, one bundle: docs/audit/audit-log.jsonl every action (shortname, datetime, session, prompt, summary, …) docs/audit/change-log.jsonl the meaningful design changes / decisions (+ git before/after) docs/audit/audit-data.js derived window.audit_data = {audit:[…], changes:[…]} (the viewer's data) docs/audit/index.html the interactive viewer (self-bootstrapped from the template) subcommands append add an audit entry. (audit mandate — every skill's last action) change add a change-log entry. (change mandate — collectknowledge/define-architecture/design-slice/migrate) list show the last n entries (audit|change). for the cli skill. search filter by --session / --since / --until / --keyword. for the cli skill. get print one entry by --id (use --field prompt to extract the prompt to re-run). render regenerate audit-data.js from the jsonl and ensure the viewer exists (repair). git-context print the current git {sha, short, branch, pushed} as json (a helper). verify fail when any log line is unreadable — the system of record must never lose an entry silently (fr-052). ci-able. suggest discern unlogged meaningful changes (recent commits + new adrs/notes not in the change log). import ingest a session-export json array of turns into the audit log (build on session history). conventions --root defaults to docs/. the audit dir is <root>/audit. the viewer template is resolved relative to this script (pack/templates or docs/ai-forward-pack/templates). git is optional — every git call degrades gracefully when git or a repo is absent. this tool never invents a prompt or a summary; required fields must be supplied (flags, --*-file, or --from-json -). now_iso parse_iso duration_fields _starts_path _read_starts _write_starts _prune_starts record_start consume_start audit_dir log_path read_log append_log _load_allocator next_id git git_context commits_between ensure_hub find_template project_name render _read_field _from_json cmd_start cmd_append cmd_change _fmt_row cmd_list _matches cmd_search cmd_get cmd_render cmd_git_context cmd_verify cmd_suggest cmd_import main"
+"text": "audit-log.py audit-log.py — the ai-forward pack audit & change log bundle (audit-and-change-log.md). durable, committed, history-as-knowledge for a repo: an append-only record of every meaningful prompt / skill / script / decision, so any future copilot or claude code session reads the project's own history instead of starting blind. the canonical logs are append-only jsonl (clean git diffs, like docs/health-history.jsonl); the viewer reads a derived window.audit_data js (loadable over file://, like docs/docs-index.js). python 3.8+, stdlib only — no dependencies. two logs, one bundle: docs/audit/audit-log.jsonl every action (shortname, datetime, session, prompt, summary, …) docs/audit/change-log.jsonl the meaningful design changes / decisions (+ git before/after) docs/audit/audit-data.js derived window.audit_data = {audit:[…], changes:[…]} (the viewer's data) docs/audit/index.html the interactive viewer (self-bootstrapped from the template) subcommands append add an audit entry. (audit mandate — every skill's last action) change add a change-log entry. (change mandate — collectknowledge/define-architecture/design-slice/migrate) list show the last n entries (audit|change). for the cli skill. search filter by --session / --since / --until / --keyword. for the cli skill. get print one entry by --id (use --field prompt to extract the prompt to re-run). render regenerate audit-data.js from the jsonl and ensure the viewer exists (repair). git-context print the current git {sha, short, branch, pushed} as json (a helper). verify fail when any log line is unreadable — the system of record must never lose an entry silently (fr-052). ci-able. suggest discern unlogged meaningful changes (recent commits + new adrs/notes not in the change log). import ingest a session-export json array of turns into the audit log (build on session history). conventions --root defaults to docs/. the audit dir is <root>/audit. the viewer template is resolved relative to this script (pack/templates or docs/ai-forward-pack/templates). git is optional — every git call degrades gracefully when git or a repo is absent. this tool never invents a prompt or a summary; required fields must be supplied (flags, --*-file, or --from-json -). now_iso parse_iso duration_fields _starts_path _read_starts _write_starts _prune_starts record_start consume_start audit_dir log_path read_log append_log _load_allocator next_id git git_context commits_between _suggests_decision _is_logging_commit ensure_hub find_template project_name render _read_field _from_json cmd_start cmd_append cmd_change _fmt_row cmd_list _matches cmd_search cmd_get cmd_render cmd_git_context cmd_verify cmd_suggest _candidate cmd_import main"
 },
 {
 "cat": "scripts",
@@ -1800,6 +1800,15 @@ window.PACK_INDEX = {
 "path": "docs/hygiene/remediation-plan.md",
 "kind": "doc",
 "text": "code-hygiene remediation plan — sim115 (resource lifecycle) tdd-guarded, git-labelled remediation of the 26 sim115 (open()-without-context-manager) findings from the hygiene backlog. 25 are behaviour-preserving `with open(...)` refactors; 1 (check-consistency.py:827, a namedtemporaryfile(delete=false) consumed by a subprocess by path) is accept-with-rationale. proven green-to-green against the 360-test suite + verify-bundle gate; fixes land in pack/ source and are regenerated + gated. hygiene remediation resource-lifecycle sim115 relates-to hygiene-backlog relates-to defect-classes"
+},
+{
+"cat": "graph",
+"id": "investigation-fr-071",
+"title": "Investigation - FR-071: audit-log suggest self-reports its own closeout",
+"summary": "audit-log.py `suggest` lists every commit since the last change-log entry with no filter, so it surfaces bookkeeping/closeout commits (including the very commit that recorded a change entry) and floods with routine commits - contrary to…",
+"path": "docs/investigations/fr-071-audit-suggest-self-report.md",
+"kind": "doc",
+"text": "investigation - fr-071: audit-log suggest self-reports its own closeout audit-log.py `suggest` lists every commit since the last change-log entry with no filter, so it surfaces bookkeeping/closeout commits (including the very commit that recorded a change entry) and floods with routine commits - contrary to its spec (audit-and-change-log.md cl3), which specifies surfacing only commits whose message signals a decision. verified root cause: a missing message filter and a missing exclusion of logging commits. fix: filter to cl3 decision signals and exclude commits that wrote an audit .jsonl. class self-report registered. investigation audit-log suggest false-positive fr-071 relates-to forensic-review-rev53-backlog relates-to defect-classes documents audit-log"
 },
 {
 "cat": "graph",

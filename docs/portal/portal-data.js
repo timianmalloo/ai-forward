@@ -1103,6 +1103,12 @@ window.PORTAL_DATA = {
         "summary": "The hosted explainer stayed blank after a fix was declared, because the fix lived only in the working tree — it was never deployed, so the live URL still..."
       },
       {
+        "id": "investigation-fr-071",
+        "type": "doc",
+        "title": "Investigation - FR-071: audit-log suggest self-reports its own closeout",
+        "summary": "audit-log.py `suggest` lists every commit since the last change-log entry with no filter, so it surfaces bookkeeping/closeout commits (including the very..."
+      },
+      {
         "id": "kb-agent-autopilot-controls",
         "type": "knowledge",
         "title": "Agent autopilot & autonomous-continuation controls (Copilot CLI ↔ Claude Code)",
@@ -2320,6 +2326,21 @@ window.PORTAL_DATA = {
       {
         "from": "investigation-blank-explainer-live",
         "to": "proposal-hosting-and-dream-manifest",
+        "rel": "relates-to"
+      },
+      {
+        "from": "investigation-fr-071",
+        "to": "audit-log",
+        "rel": "documents"
+      },
+      {
+        "from": "investigation-fr-071",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "investigation-fr-071",
+        "to": "forensic-review-rev53-backlog",
         "rel": "relates-to"
       },
       {

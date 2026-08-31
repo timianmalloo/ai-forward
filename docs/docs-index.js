@@ -1570,7 +1570,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "dc14cdcd87dc3ef033d7aa218c1a1cdb4a99a98ff81fd310d168d80a571976c3"
+      "sourceSha256": "52430a97121e691658fb3cc14b9987e1b687741da15f09fc571a2afbbfcede3c"
     },
     {
       "id": "docs-index",
@@ -2140,7 +2140,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b39d578297bfab09919d8dc2fb7d30c56f8b5b8343f0ae617ea87f20ae6c1d05"
+      "sourceSha256": "bf50f5bdb58176e3ecaf6a943977a30e89f374771e773a912615112e332f1ccf"
     },
     {
       "id": "hygiene-backlog",
@@ -2202,6 +2202,41 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "33d6658a43a3ecae5976e0a31b135922eb02d6ee7457564163ba1db0a8fa15e9"
+    },
+    {
+      "id": "investigation-fr-071",
+      "path": "docs/investigations/fr-071-audit-suggest-self-report.md",
+      "title": "Investigation - FR-071: audit-log suggest self-reports its own closeout",
+      "type": "doc",
+      "status": "resolved",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "audit-log.py `suggest` lists every commit since the last change-log entry with no filter, so it surfaces bookkeeping/closeout commits (including the very commit that recorded a change entry) and floods with routine commits - contrary to its spec (audit-and-change-log.md CL3), which specifies surfacing only commits whose message signals a decision. Verified root cause: a missing message filter and a missing exclusion of logging commits. Fix: filter to CL3 decision signals and exclude commits that wrote an audit .jsonl. Class SELF-REPORT registered.",
+      "tags": [
+        "investigation",
+        "audit-log",
+        "suggest",
+        "false-positive",
+        "FR-071"
+      ],
+      "links": [
+        {
+          "to": "forensic-review-rev53-backlog",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        },
+        {
+          "to": "audit-log",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "63fcb57885b0f16559cde363bfa4c587c351afec3685450f628c47101610eaf1"
     },
     {
       "id": "lens-code-doc-join",
@@ -4549,5 +4584,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "6d3df1a3dc8e8b9de453634cfc268a5346407d9e1ea4ca0c86c2f7797bed84d8"
+  "graphSha256": "7e09dcd9315cadc8fd3a2889af8e2c62ee71409689f42570c04771d9eb4542e8"
 };

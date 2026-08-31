@@ -26,7 +26,7 @@ summary: >-
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled `8` · partially-controlled `8` · uncontrolled `21`
+**Status counts:** controlled `9` · partially-controlled `8` · uncontrolled `21`
 **Recurrence since last review:** `0` — *a second occurrence of a known class means the control was wrong, not that someone was careless (CI4).*
 
 ---
@@ -50,6 +50,14 @@ summary: >-
 ## Project classes
 
 *Classes discovered in this repository. Newest first.*
+
+### SELF-REPORT — a discern/reminder tool includes its own bookkeeping in the set of not-yet-done work
+- **Signature:** a "what have I not recorded yet?" tool computes `pending = items since the last log mark` but neither filters to the spec's signal nor excludes the actions that *are* the recording — so it re-surfaces already-logged or non-meaningful work, including the very commit that recorded the last entry. The tell: a suggest/discern command that lists commits since a log marker with no filter, and a reminder that never goes away because acting on it creates a new item it then re-lists.
+- **Why it survives:** the tool is **advisory** (it never writes), so a wrong suggestion has no functional consequence — it just erodes trust, and nothing tests advisory output. It is invisible until the log has fallen behind (normal in a session that used `append` not `change`), and the closeout it re-lists looks like a plausible unlogged change.
+- **Instances:**
+  - `2026-08-30` **FR-071** — `audit-log.py suggest` listed every commit in `last_change.git.after..HEAD` unfiltered, contrary to `audit-and-change-log.md` CL3 (surface only commits whose subject signals a decision), so it self-reported the commit that wrote the change-log entry (a change-log closeout) and flooded with routine commits. Verified by reproduction + a failing-first regression test.
+- **Control:** `tests/docs_explorer/test_audit_suggest.py::SuggestSelfReportTests` — asserts `suggest` excludes a change-log closeout (even a `feat`-worded one), excludes a routine non-decision commit, and surfaces a genuine unlogged decision. **Observed failing on the un-fixed code** on `2026-08-30` (the pre-fix `suggest` listed the closeout `docs(audit): record decision cl-0001` and the routine `docs: fix a typo`). Fix: `_suggests_decision` (CL3 message filter) + `_is_logging_commit` (change-log-closeout exclusion) in `cmd_suggest`.
+- **Status:** `controlled`
 
 ### CTRL-D — The gate runs an aggregate the author never ran, so "everything I ran was green" and the branch is red
 *Adopted from the pack's seed register (`ci-and-test-efficiency.md` CE21) on first confirmed occurrence here, rather than re-derived.*
