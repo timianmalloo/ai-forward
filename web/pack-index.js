@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 135
+"count": 137
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 282,
+"total": 284,
 "items": [
 {
 "cat": "knowledge",
@@ -881,7 +881,7 @@ window.PACK_INDEX = {
 "summary": "audit-log.py — the AI-Forward Pack audit & change log bundle (audit-and-change-log.md).",
 "path": "pack/scripts/audit-log.py",
 "kind": "script",
-"text": "audit-log.py audit-log.py — the ai-forward pack audit & change log bundle (audit-and-change-log.md). durable, committed, history-as-knowledge for a repo: an append-only record of every meaningful prompt / skill / script / decision, so any future copilot or claude code session reads the project's own history instead of starting blind. the canonical logs are append-only jsonl (clean git diffs, like docs/health-history.jsonl); the viewer reads a derived window.audit_data js (loadable over file://, like docs/docs-index.js). python 3.8+, stdlib only — no dependencies. two logs, one bundle: docs/audit/audit-log.jsonl every action (shortname, datetime, session, prompt, summary, …) docs/audit/change-log.jsonl the meaningful design changes / decisions (+ git before/after) docs/audit/audit-data.js derived window.audit_data = {audit:[…], changes:[…]} (the viewer's data) docs/audit/index.html the interactive viewer (self-bootstrapped from the template) subcommands append add an audit entry. (audit mandate — every skill's last action) change add a change-log entry. (change mandate — collectknowledge/define-architecture/design-slice/migrate) list show the last n entries (audit|change). for the cli skill. search filter by --session / --since / --until / --keyword. for the cli skill. get print one entry by --id (use --field prompt to extract the prompt to re-run). render regenerate audit-data.js from the jsonl and ensure the viewer exists (repair). git-context print the current git {sha, short, branch, pushed} as json (a helper). verify fail when any log line is unreadable — the system of record must never lose an entry silently (fr-052). ci-able. suggest discern unlogged meaningful changes (recent commits + new adrs/notes not in the change log). import ingest a session-export json array of turns into the audit log (build on session history). conventions --root defaults to docs/. the audit dir is <root>/audit. the viewer template is resolved relative to this script (pack/templates or docs/ai-forward-pack/templates). git is optional — every git call degrades gracefully when git or a repo is absent. this tool never invents a prompt or a summary; required fields must be supplied (flags, --*-file, or --from-json -). now_iso parse_iso duration_fields _starts_path _read_starts _write_starts _prune_starts record_start consume_start audit_dir log_path read_log append_log _load_allocator next_id git git_context commits_between _suggests_decision _is_logging_commit ensure_hub find_template project_name render _read_field _from_json cmd_start cmd_append cmd_change _fmt_row cmd_list _matches cmd_search cmd_get cmd_render cmd_git_context cmd_verify cmd_suggest _candidate cmd_import main"
+"text": "audit-log.py audit-log.py — the ai-forward pack audit & change log bundle (audit-and-change-log.md). durable, committed, history-as-knowledge for a repo: an append-only record of every meaningful prompt / skill / script / decision, so any future copilot or claude code session reads the project's own history instead of starting blind. the canonical logs are append-only jsonl (clean git diffs, like docs/health-history.jsonl); the viewer reads a derived window.audit_data js (loadable over file://, like docs/docs-index.js). python 3.8+, stdlib only — no dependencies. two logs, one bundle: docs/audit/audit-log.jsonl every action (shortname, datetime, session, prompt, summary, …) docs/audit/change-log.jsonl the meaningful design changes / decisions (+ git before/after) docs/audit/audit-data.js derived window.audit_data = {audit:[…], changes:[…]} (the viewer's data) docs/audit/index.html the interactive viewer (self-bootstrapped from the template) subcommands append add an audit entry. (audit mandate — every skill's last action) change add a change-log entry. (change mandate — collectknowledge/define-architecture/design-slice/migrate) list show the last n entries (audit|change). for the cli skill. search filter by --session / --since / --until / --keyword. for the cli skill. get print one entry by --id (use --field prompt to extract the prompt to re-run). render regenerate audit-data.js from the jsonl and ensure the viewer exists (repair). git-context print the current git {sha, short, branch, pushed} as json (a helper). verify fail when any log line is unreadable — the system of record must never lose an entry silently (fr-052). ci-able. suggest discern unlogged meaningful changes (recent commits + new adrs/notes not in the change log). import ingest a session-export json array of turns into the audit log (build on session history). conventions --root defaults to docs/. the audit dir is <root>/audit. the viewer template is resolved relative to this script (pack/templates or docs/ai-forward-pack/templates). git is optional — every git call degrades gracefully when git or a repo is absent. this tool never invents a prompt or a summary; required fields must be supplied (flags, --*-file, or --from-json -). now_iso parse_iso duration_fields _starts_path _read_starts _write_starts _prune_starts record_start consume_start audit_dir log_path read_log append_log _load_allocator next_id git git_context commits_between _suggests_decision _is_logging_commit ensure_hub find_template project_name render _read_field _from_json cmd_start cmd_append cmd_change _fmt_row cmd_list _matches cmd_search cmd_get cmd_render cmd_git_context cmd_verify cmd_suggest _candidate cmd_selfcheck cmd_import main"
 },
 {
 "cat": "scripts",
@@ -1494,6 +1494,15 @@ window.PACK_INDEX = {
 "path": "docs/notes/required-status-checks.md",
 "kind": "decision-note",
 "text": "decision — do not make pack-consistency a required status check on main decision not to enable required status checks on main, taken while closing fr-062. the control would have prevented the original incident outright, but with enforce_admins already true it also blocks direct pushes and forces a pr workflow on a solo-maintainer repo that pushes directly by design. fr-062 already closed the actual harm. recorded as an accepted risk with explicit re-open triggers rather than left unstated. decision branch-protection ci release accepted-risk relates-to forensic-review-rev48-backlog relates-to architecture"
+},
+{
+"cat": "graph",
+"id": "design-agent-focus-controls",
+"title": "Design — Agent focus & scope controls",
+"summary": "Design for the three agent-focus controls. FC-1: a stdlib `audit-log.py selfcheck --session` subcommand (bounded, deterministic, reuses read_log + the PACKO_SUBSTANTIVE set) plus a CT25 closing-self-assessment directive. FC-2: sharpen CT19…",
+"path": "docs/design/agent-focus-controls.md",
+"kind": "design",
+"text": "design — agent focus & scope controls design for the three agent-focus controls. fc-1: a stdlib `audit-log.py selfcheck --session` subcommand (bounded, deterministic, reuses read_log + the packo_substantive set) plus a ct25 closing-self-assessment directive. fc-2: sharpen ct19 to a fixed three-field goal-state block mapped to the audit goal/done_when fields. fc-3: extend the persona convene table for a scope-diff trigger. one new command + one test; three directive edits. no new store, no new persona. design agent-focus selfcheck goal-state convene-trigger implements spec-agent-focus-controls relates-to kb-agent-focus-and-scope-control"
 },
 {
 "cat": "graph",
@@ -2448,6 +2457,15 @@ window.PACK_INDEX = {
 "path": "docs/specs/agent-coordination.md",
 "kind": "spec",
 "text": "agent coordination — shared context and explicit coordination across worktrees and agents specification for a repo-local, model-agnostic coordination layer that lets several agents and worktrees work one repository at once without losing work or time. grounded in measured evidence from theterrace, healthwatch and meridian, it targets four distinct failure modes — structural conflict on derived artifacts, allocation collision on client-minted ids, silent semantic divergence, and outright work loss in a shared tree — and requires each rule to ship as a mechanism that fails rather than a paragraph that is read. coordination worktrees multi-agent merge-conflicts leases allocation continuous-improvement relates-to defect-classes relates-to audit-log relates-to architecture relates-to spec-dreaming"
+},
+{
+"cat": "graph",
+"id": "spec-agent-focus-controls",
+"title": "Spec — Agent focus & scope controls (goal-state structure, bounded self-assessment, convene trigger)",
+"summary": "Specifies the three approved controls from the agent-focus proposal for tightening extended-reasoning models to the task: (FC-2) promote the goal-state turn opening from prose to a structured, mechanically-detectable block; (FC-1) a…",
+"path": "docs/specs/agent-focus-controls.md",
+"kind": "spec",
+"text": "spec — agent focus & scope controls (goal-state structure, bounded self-assessment, convene trigger) specifies the three approved controls from the agent-focus proposal for tightening extended-reasoning models to the task: (fc-2) promote the goal-state turn opening from prose to a structured, mechanically-detectable block; (fc-1) a bounded, inline, self-applied session self-assessment that reads the audit goal-state/summary data; and (fc-3) a sharpened simplifier/tech-lead convene trigger on scope inflation. part a functional only; no user-facing ui. spec agent-focus scope-drift pack-o self-assessment goal-state implements kb-agent-focus-and-scope-control relates-to defect-classes relates-to architecture"
 },
 {
 "cat": "graph",

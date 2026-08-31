@@ -686,6 +686,11 @@ window.PORTAL_DATA = {
             "path": "../../docs/specs/agent-coordination.md"
           },
           {
+            "title": "Spec — Agent focus & scope controls (goal-state structure, bounded self-assessment, convene trigger)",
+            "summary": "Specifies the three approved controls from the agent-focus proposal for tightening extended-reasoning models to the task: (FC-2) promote the goal-state turn opening from prose to a structured, mechanically-detectable block; (FC-1) a bounded, inline,...",
+            "path": "../../docs/specs/agent-focus-controls.md"
+          },
+          {
             "title": "Spec - /collaborate skill proposal",
             "summary": "Proposal for a future /collaborate skill that starts a cross-agent collaboration session by creating or entering a worktree, registering the session, scaffolding or updating the session contract, claiming the first files, and printing the collaboration checks...",
             "path": "../../docs/specs/collaborate-skill.md"
@@ -715,6 +720,11 @@ window.PORTAL_DATA = {
       {
         "group": "Component designs",
         "items": [
+          {
+            "title": "Design — Agent focus & scope controls",
+            "summary": "Design for the three agent-focus controls. FC-1: a stdlib `audit-log.py selfcheck --session` subcommand (bounded, deterministic, reuses read_log + the PACKO_SUBSTANTIVE set) plus a CT25 closing-self-assessment directive. FC-2: sharpen CT19 to a fixed...",
+            "path": "../../docs/design/agent-focus-controls.md"
+          },
           {
             "title": "Design — aiforward CLI (suggestion 1)",
             "summary": "A single stdlib-only Python developer CLI (tools/aiforward.py) that is a thin Façade dispatcher over the pack's existing scripts (sync, verify, check, new, doctor, graph, scrub) — one memorable entry point with --help, no new runtime dependency.",
@@ -909,6 +919,12 @@ window.PORTAL_DATA = {
         "type": "doc",
         "title": "Defect-class register",
         "summary": "This repository's register of defect classes — the recurring shapes of things that go wrong here, what each one survives, and the control that now fails when..."
+      },
+      {
+        "id": "design-agent-focus-controls",
+        "type": "design",
+        "title": "Design — Agent focus & scope controls",
+        "summary": "Design for the three agent-focus controls. FC-1: a stdlib `audit-log.py selfcheck --session` subcommand (bounded, deterministic, reuses read_log + the..."
       },
       {
         "id": "design-aiforward-cli",
@@ -1565,6 +1581,12 @@ window.PORTAL_DATA = {
         "summary": "Specification for a repo-local, model-agnostic coordination layer that lets several agents and worktrees work one repository at once without losing work or..."
       },
       {
+        "id": "spec-agent-focus-controls",
+        "type": "spec",
+        "title": "Spec — Agent focus & scope controls (goal-state structure, bounded self-assessment, convene trigger)",
+        "summary": "Specifies the three approved controls from the agent-focus proposal for tightening extended-reasoning models to the task: (FC-2) promote the goal-state turn..."
+      },
+      {
         "id": "spec-collaborate-skill",
         "type": "spec",
         "title": "Spec - /collaborate skill proposal",
@@ -1883,6 +1905,16 @@ window.PORTAL_DATA = {
         "from": "defect-classes",
         "to": "kb-domain-and-data-modelling",
         "rel": "relates-to"
+      },
+      {
+        "from": "design-agent-focus-controls",
+        "to": "kb-agent-focus-and-scope-control",
+        "rel": "relates-to"
+      },
+      {
+        "from": "design-agent-focus-controls",
+        "to": "spec-agent-focus-controls",
+        "rel": "implements"
       },
       {
         "from": "design-aiforward-cli",
@@ -2998,6 +3030,21 @@ window.PORTAL_DATA = {
         "from": "spec-agent-coordination",
         "to": "spec-dreaming",
         "rel": "relates-to"
+      },
+      {
+        "from": "spec-agent-focus-controls",
+        "to": "architecture",
+        "rel": "relates-to"
+      },
+      {
+        "from": "spec-agent-focus-controls",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "spec-agent-focus-controls",
+        "to": "kb-agent-focus-and-scope-control",
+        "rel": "implements"
       },
       {
         "from": "spec-collaborate-skill",

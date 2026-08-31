@@ -659,6 +659,52 @@ def cmd_suggest(args):
     return 0
 
 
+# PACK-O substantive turns: the kinds that carry a goal-state. Must match dream.py's PACKO_SUBSTANTIVE
+# (the same presence check, run offline over the fleet corpus) - kept as one small stable definition
+# per script because both are standalone stdlib scripts that cannot import each other cleanly.
+PACKO_SUBSTANTIVE = {"skill", "manual", "prompt", "command"}
+
+
+def cmd_selfcheck(args):
+    """Bounded inline session self-assessment (FC-1, spec-agent-focus-controls). One deterministic
+    pass over a session's substantive turns -> goal-state presence gaps + done_when->summary review
+    pairs. Advisory and never a scope verdict (the agent/human judges drift); no network, no model,
+    no second pass. This is the rung-2 mechanical aid to the CT25 closing self-assessment."""
+    entries = read_log(args.root, "audit")
+    if args.session:
+        entries = [e for e in entries if e.get("session") == args.session]
+    subst = [e for e in entries if e.get("kind") in PACKO_SUBSTANTIVE]
+    gaps = [e for e in subst if not e.get("done_when")]
+    have = [e for e in subst if e.get("done_when")]
+    review = [{"shortname": e.get("shortname", "?"),
+               "done_when": e.get("done_when", ""),
+               "summary": e.get("summary", "")} for e in have]
+    if args.json:
+        print(json.dumps({
+            "session": args.session, "substantive": len(subst),
+            "gaps": [{"shortname": e.get("shortname", "?"), "id": e.get("id")} for e in gaps],
+            "review": review,
+        }, ensure_ascii=False, indent=2))
+        return 0
+    scope = f"session {args.session}" if args.session else "all sessions"
+    if not subst:
+        print(f"no substantive turns for {scope}")
+        return 0
+    print(f"self-assessment ({scope}): {len(subst)} substantive turn(s), "
+          f"{len(gaps)} without a goal-state")
+    if gaps:
+        print("  goal-state GAPS (substantive turns that recorded no done_when - the PACK-O signal):")
+        for e in gaps:
+            print(f"    [gap] {e.get('shortname', '?')}")
+    else:
+        print(f"  all {len(subst)} substantive turns recorded a goal-state.")
+    if review:
+        print("  scope review (done_when -> summary; judge drift yourself, this is not a verdict):")
+        for r in review:
+            print(f"    {r['shortname']}: '{r['done_when'][:60]}' -> '{r['summary'][:80]}'")
+    return 0
+
+
 def cmd_import(args):
     """Ingest a session-export JSON array of turns into the audit log (build on session history)."""
     if args.file == "-":
@@ -759,6 +805,11 @@ def main():
     ap_sug = sub.add_parser("suggest", help="surface meaningful changes not yet in the change log")
     ap_sug.add_argument("--n", type=int, default=15)
 
+    ap_sc = sub.add_parser("selfcheck", help="bounded inline session self-assessment (FC-1): "
+                                             "goal-state presence gaps + scope review for a session")
+    ap_sc.add_argument("--session", help="the session to self-assess (recommended)")
+    ap_sc.add_argument("--json", action="store_true")
+
     ap_imp = sub.add_parser("import", help="ingest a session-export JSON array into the audit log")
     ap_imp.add_argument("--file", default="-", help="JSON file (or - for stdin)")
     ap_imp.add_argument("--session"); ap_imp.add_argument("--tool")
@@ -772,7 +823,7 @@ def main():
         "append": cmd_append, "change": cmd_change, "list": cmd_list, "search": cmd_search,
         "get": cmd_get, "render": cmd_render, "git-context": cmd_git_context,
         "suggest": cmd_suggest, "import": cmd_import, "start": cmd_start,
-        "verify": cmd_verify,
+        "verify": cmd_verify, "selfcheck": cmd_selfcheck,
     }
     sys.exit(dispatch[args.cmd](args))
 

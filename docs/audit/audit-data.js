@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-08-31T13:23:59Z",
+  "generated": "2026-08-31T13:49:59Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2651,6 +2651,29 @@ window.AUDIT_DATA = {
         "scope-drift"
       ],
       "outcome": "success"
+    },
+    {
+      "id": "al-01M1C1B0C8Y0ZMQARA63JJA1S8",
+      "shortname": "implement-agent-focus-controls",
+      "datetime": "2026-08-31T13:49:59Z",
+      "session": "2f63f380-70dd-4e60-94c2-1e2de821f3c2",
+      "prompt": "/specify then /design and /implement the 3 agent-focus controls, then commit and push",
+      "summary": "Built 3 controls (spec+design docs/specs+design/agent-focus-controls.md). FC-1: audit-log.py selfcheck --session (bounded, deterministic, stdlib) + CT25 directive + test_audit_selfcheck.py (4 tests, red-first). FC-2: CT19 promoted prose->structure (fixed 3-field block mapped to audit fields). FC-3: Simplifier convene trigger sharpened for scope inflation. Managed blocks + INSTALL rev 54->55. Suite green; dogfood shows 6/6 this-session turns had no goal-state.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "pack/scripts/audit-log.py",
+        "pack/knowledge/communication-and-task-discipline.md"
+      ],
+      "tags": [
+        "agent-focus",
+        "PACK-O"
+      ],
+      "outcome": "success",
+      "goal": "Implement the 3 approved agent-focus controls (spec->design->implement) for this repo",
+      "done_when": "3 controls built, tested green, gates pass, committed"
     }
   ],
   "changes": [
@@ -3625,6 +3648,28 @@ window.AUDIT_DATA = {
       "git": {
         "before": "6d4edd53d2dd807465cf24f09bbcdbc8e80d9d5c",
         "after": "6d4edd53d2dd807465cf24f09bbcdbc8e80d9d5c",
+        "branch": "main",
+        "pushed": false,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M1C1B0GFF403VZRTZEJTCM77",
+      "datetime": "2026-08-31T13:49:59Z",
+      "session": "2f63f380-70dd-4e60-94c2-1e2de821f3c2",
+      "kind": "knowledge",
+      "skill": "implement",
+      "title": "Agent focus controls: goal-state prose->structure, bounded self-assessment, sharpened convene trigger",
+      "prompt": "specify design and implement the 3 controls",
+      "summary": "CT19 structural block + CT25 self-assessment + audit-log selfcheck + Simplifier scope-inflation trigger; INSTALL rev 55",
+      "rationale": "Enforcement gap not directive gap: the pack had the right controls as prose, skipped 78% of turns; promote to structure + a bounded mechanical check",
+      "artifacts": [
+        "pack/knowledge/communication-and-task-discipline.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "dd38010d078af90e1f0a1eced27c6bbad1cb35ca",
+        "after": "dd38010d078af90e1f0a1eced27c6bbad1cb35ca",
         "branch": "main",
         "pushed": false,
         "commits": []

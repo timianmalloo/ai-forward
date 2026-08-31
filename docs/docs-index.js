@@ -1022,6 +1022,37 @@ window.DOCS_INDEX = {
       "sourceSha256": "0aafd71674a56549465f3ff88b7145f7c2dd9d16dafdbe7517046f411c5dc8f3"
     },
     {
+      "id": "design-agent-focus-controls",
+      "path": "docs/design/agent-focus-controls.md",
+      "title": "Design — Agent focus & scope controls",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Design for the three agent-focus controls. FC-1: a stdlib `audit-log.py selfcheck --session` subcommand (bounded, deterministic, reuses read_log + the PACKO_SUBSTANTIVE set) plus a CT25 closing-self-assessment directive. FC-2: sharpen CT19 to a fixed three-field goal-state block mapped to the audit goal/done_when fields. FC-3: extend the persona convene table for a scope-diff trigger. One new command + one test; three directive edits. No new store, no new persona.",
+      "tags": [
+        "design",
+        "agent-focus",
+        "selfcheck",
+        "goal-state",
+        "convene-trigger"
+      ],
+      "links": [
+        {
+          "to": "spec-agent-focus-controls",
+          "rel": "implements"
+        },
+        {
+          "to": "kb-agent-focus-and-scope-control",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "586707d7def73f1914ecc38c67a8d492b685bf659605a3a3ee089fb16a7f642f"
+    },
+    {
       "id": "design-aiforward-cli",
       "path": "docs/design/aiforward-cli.md",
       "title": "Design — aiforward CLI (suggestion 1)",
@@ -4359,6 +4390,42 @@ window.DOCS_INDEX = {
       "sourceSha256": "6d92efaafdbf157502c92422c2cab588ba17c1630d806b480cb7e21fa12742dd"
     },
     {
+      "id": "spec-agent-focus-controls",
+      "path": "docs/specs/agent-focus-controls.md",
+      "title": "Spec — Agent focus & scope controls (goal-state structure, bounded self-assessment, convene trigger)",
+      "type": "spec",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Specifies the three approved controls from the agent-focus proposal for tightening extended-reasoning models to the task: (FC-2) promote the goal-state turn opening from prose to a structured, mechanically-detectable block; (FC-1) a bounded, inline, self-applied session self-assessment that reads the audit goal-state/summary data; and (FC-3) a sharpened Simplifier/Tech-Lead convene trigger on scope inflation. Part A functional only; no user-facing UI.",
+      "tags": [
+        "spec",
+        "agent-focus",
+        "scope-drift",
+        "PACK-O",
+        "self-assessment",
+        "goal-state"
+      ],
+      "links": [
+        {
+          "to": "kb-agent-focus-and-scope-control",
+          "rel": "implements"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        },
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "0bab610129bf747d1805d1319d76df463ec17ee3dd8b30ca505209b6ac612afa"
+    },
+    {
       "id": "spec-collaborate-skill",
       "path": "docs/specs/collaborate-skill.md",
       "title": "Spec - /collaborate skill proposal",
@@ -4763,5 +4830,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "1c9e478b4ed5be7725a8274b293209acd088c1f8ab97eee381be668aade55e12"
+  "graphSha256": "860eb29d941c2a2a9c32270d834c13e90c3968439e719c777e97e48174a76774"
 };

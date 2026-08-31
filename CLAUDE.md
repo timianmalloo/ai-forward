@@ -112,7 +112,7 @@ the Road) and the **AI-Forward Pack** on top of it. Honor them on every non-triv
   turn continues · resuming after a stop because a reminder arrived · being unable to say in one line
   what would end this turn.* A **substantive** turn (one that changed the repo or the plan) records
   its goal-state in the audit log — full prompt, `goal`, `done_when` (AL5b) — the presence signal
-  `/dream`'s PACK-O miner reads. `.claude/knowledge/communication-and-task-discipline.md` (CT19–CT24);
+  `/dream`'s PACK-O miner reads. `.claude/knowledge/communication-and-task-discipline.md` (CT19–CT25);
   defect class PACK-O.
 - **How you write, and how much you take on:** **compress the expression, never the obligation.**
   Simplified technical English — short sentences, common words, active voice, one idea per sentence,

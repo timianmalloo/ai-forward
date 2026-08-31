@@ -237,7 +237,7 @@ The catalog's change-class→panel table stays; this adds the per-persona predic
 | SRE & Diagnostician | adds a runtime side effect, external dependency, async/background work, a deploy/migration, **a stated perf budget, or a hot path**. |
 | Distributed Systems | is async, uses messaging/queues, retries, multi-writes, depends on ordering, or crosses a consistency boundary. |
 | Language Developer | contains code in that language. |
-| Simplifier | adds an abstraction, layer, config option, dependency, pattern, or speculative generality. |
+| Simplifier | adds an abstraction, layer, config option, dependency, pattern, or speculative generality — **or a turn (especially an autopilot turn) touched anything in its declared Not-in-scope, or its realised work exceeded its stated Goal (scope inflation, CT19/CT25)**. |
 | Patterns Expert | hand-rolls a recurring problem, uses a named pattern, adds integration plumbing, or selects an AI archetype. |
 | **AI Systems Engineer** | uses a model/LLM capability, a prompt/tool-description/skill-instruction, an eval, a tier allocation, lets non-deterministic output reach a deterministic path, fires a side effect from model output, or carries material inference cost. |
 | **Data & Persistence** | changes a schema/persisted format, runs a migration/backfill, adds a hot-path query/index, defines a data-integrity invariant, or makes a retention/lifecycle decision. |
