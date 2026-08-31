@@ -779,6 +779,11 @@ window.PORTAL_DATA = {
             "title": "Design — RAI policy + PII/secret scrub (suggestion 4)",
             "summary": "A committed Responsible-AI policy knowledge doc mapping Microsoft RAI principles + NIST AI RMF functions to the pack's EXISTING personas/templates, plus a stdlib regex scrub.py first-pass that redacts obvious PII/secrets from Markdown — explicitly labeled...",
             "path": "../../docs/design/rai-and-scrub.md"
+          },
+          {
+            "title": "Tier-2 prose→structure: opt-in Proof-Pack sections (E7/E8, IO2) — Design",
+            "summary": "Tier-2 of the prose→structure review: give E7/E8 (change-surface list + reader trace) and IO2 (operator questions) a structured home as opt-in tables in the Proof-Pack template, referenced from the directives — piloted, deliberately not a mandatory block or a...",
+            "path": "../../docs/design/tier2-proof-pack-sections.md"
           }
         ]
       }
@@ -1002,6 +1007,12 @@ window.PORTAL_DATA = {
         "type": "design",
         "title": "Design — RAI policy + PII/secret scrub (suggestion 4)",
         "summary": "A committed Responsible-AI policy knowledge doc mapping Microsoft RAI principles + NIST AI RMF functions to the pack's EXISTING personas/templates, plus a..."
+      },
+      {
+        "id": "design-tier2-proof-pack-sections",
+        "type": "design",
+        "title": "Tier-2 prose→structure: opt-in Proof-Pack sections (E7/E8, IO2) — Design",
+        "summary": "Tier-2 of the prose→structure review: give E7/E8 (change-surface list + reader trace) and IO2 (operator questions) a structured home as opt-in tables in the..."
       },
       {
         "id": "docs-index",
@@ -2101,6 +2112,11 @@ window.PORTAL_DATA = {
         "from": "design-rai-and-scrub",
         "to": "kb-pack-evolution",
         "rel": "implements"
+      },
+      {
+        "from": "design-tier2-proof-pack-sections",
+        "to": "design-marker-completeness-lint",
+        "rel": "relates-to"
       },
       {
         "from": "docs-index",

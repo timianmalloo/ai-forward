@@ -1447,6 +1447,33 @@ window.DOCS_INDEX = {
       "sourceSha256": "56b1c7e87d28bcfdac3906cb30b403c4a586fe6901d74c5b86960805a5bdc698"
     },
     {
+      "id": "design-tier2-proof-pack-sections",
+      "path": "docs/design/tier2-proof-pack-sections.md",
+      "title": "Tier-2 prose→structure: opt-in Proof-Pack sections (E7/E8, IO2) — Design",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2026-11-30",
+      "reviewSuggested": [],
+      "summary": "Tier-2 of the prose→structure review: give E7/E8 (change-surface list + reader trace) and IO2 (operator questions) a structured home as opt-in tables in the Proof-Pack template, referenced from the directives — piloted, deliberately not a mandatory block or a failing gate, because the surface list differs per architecture.",
+      "tags": [
+        "prose-to-structure",
+        "proof-pack",
+        "end-to-end-integrity",
+        "instrumentation",
+        "opt-in"
+      ],
+      "links": [
+        {
+          "to": "design-marker-completeness-lint",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "28068e1639907e23f54fb31b877d4d6f8b351178daa851fdb960a5d447693c8c"
+    },
+    {
       "id": "mockup-documentation-portal",
       "path": "docs/mockups/documentation-portal.md",
       "title": "Documentation Portal — mockup",
@@ -4864,5 +4891,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "1c20ae23bccf16fba101bf8b139ada3b657d9d90d53362d322ef0a6a1d35aa9a"
+  "graphSha256": "be27634066947ed8d027a85071212b35e3098654a6323edf3a808d26682d8bde"
 };

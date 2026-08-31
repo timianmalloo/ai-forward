@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-08-31T14:50:43Z",
+  "generated": "2026-08-31T16:12:12Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2720,6 +2720,30 @@ window.AUDIT_DATA = {
       "outcome": "success",
       "goal": "Implement Tier-1: enforce assume:/simplify: marker field-completeness with a lint",
       "done_when": "NG4/L5 updated, marker-lint.py + red-first tests, gate green, committed+pushed"
+    },
+    {
+      "id": "al-01M1C9FCYEZMX9B26RCA42GTZA",
+      "shortname": "implement-tier2-proof-pack-sections",
+      "datetime": "2026-08-31T16:12:12Z",
+      "session": "2f63f380-70dd-4e60-94c2-1e2de821f3c2",
+      "prompt": "do tier-2 now",
+      "summary": "Tier-2 prose->structure: opt-in Proof-Pack sections for E7/E8 (change-surface completeness + writer/compute-reader trace) and IO2 (operator questions). proof-pack.template.md gains one opt-in H2 with two delete-if-N/A tables; E7 + IO2 point at it. Deliberately NOT a gate/lint (E7 surface list differs per architecture; the committed Proof Pack a reviewer reads IS the checkable surface). Design docs/design/tier2-proof-pack-sections.md. INSTALL 56->57, no count change. Gate 8/9 (drift pre-commit).",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "pack/templates/proof-pack.template.md",
+        "pack/knowledge/end-to-end-integrity.md",
+        "pack/knowledge/instrumentation-over-inference.md"
+      ],
+      "tags": [
+        "prose-to-structure",
+        "proof-pack"
+      ],
+      "outcome": "success",
+      "goal": "Implement Tier-2: give E7/E8 + IO2 a structured opt-in home in the Proof-Pack template",
+      "done_when": "template sections added, E7/IO2 reference them, gate green, committed+pushed"
     }
   ],
   "changes": [
@@ -3738,6 +3762,28 @@ window.AUDIT_DATA = {
       "git": {
         "before": "d257d9a125a9e99af86335c08bfaa1c558541ba9",
         "after": "d257d9a125a9e99af86335c08bfaa1c558541ba9",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M1C9FD23MFD8F2YWBVGQ0QF0",
+      "datetime": "2026-08-31T16:12:12Z",
+      "session": "2f63f380-70dd-4e60-94c2-1e2de821f3c2",
+      "kind": "knowledge",
+      "skill": "implement",
+      "title": "Tier-2 prose->structure: opt-in Proof-Pack sections (E7/E8, IO2)",
+      "prompt": "do tier-2 now",
+      "summary": "proof-pack.template.md opt-in change-reach section; E7/IO2 pointers; INSTALL rev 57",
+      "rationale": "E7's surface list differs per architecture, so the checkable surface is the committed Proof Pack a reviewer reads - not a false-positive-prone gate; opt-in and piloted per the proposal",
+      "artifacts": [
+        "pack/templates/proof-pack.template.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "b18696b22da1c3e971eb9e8c5e63c77c11c8682b",
+        "after": "b18696b22da1c3e971eb9e8c5e63c77c11c8682b",
         "branch": "main",
         "pushed": true,
         "commits": []
