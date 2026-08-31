@@ -89,10 +89,21 @@ try {
         if ($node) {
             Gate "4. docs explorer core contracts" {
                 # Invoked directly, not through `npm run` - see the gate-4 note above.
-                node --test `
-                    "tests/docs_explorer/docs_explorer_core.test.js" `
-                    "tests/docs_explorer/browser_benchmark.test.js" `
+                # browser_benchmark.test.js requires ./benchmark_docs_explorer -> playwright,
+                # a node_modules package. To keep this local proof SELF-CONTAINED in a clean
+                # worktree (FR-069), include that test only when node_modules/playwright is
+                # present; otherwise SKIP it loudly (never a spurious FAIL). The node-builtin
+                # tests always run. CI runs `npm ci` first, so CI runs all three.
+                $coreTests = @(
+                    "tests/docs_explorer/docs_explorer_core.test.js",
                     "tests/docs_explorer/knowledge_surfaces.test.js"
+                )
+                if (Test-Path (Join-Path $repo "node_modules\playwright")) {
+                    $coreTests += "tests/docs_explorer/browser_benchmark.test.js"
+                } else {
+                    Write-Host "  (skipping browser_benchmark.test.js: node_modules/playwright absent - run 'npm ci'; CI runs it)" -ForegroundColor Yellow
+                }
+                node --test $coreTests
             }
             Gate "4b. explainer render + accessibility proof" {
                 node "tools/verify-explainer-render.js"
