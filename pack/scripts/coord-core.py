@@ -1899,6 +1899,13 @@ def cmd_regen(root, repo, timeout=120):
             results.append({"path": path, "status": "no-command"})
             continue
         try:
+            # DEVIATION (Rules of the Road §4, FR-075): shell=True is deliberate. `command` is a
+            # regeneration command resolved from the repo-local coordination registry
+            # (regen_command -> load_registry) - a trusted config source editable only by someone
+            # with repo write access, never untrusted or network input, so this is not an injection
+            # surface. It is retained rather than tokenized because registry regen commands may use
+            # shell operators (&&, |, >) and must run identically on POSIX and Windows; a shlex
+            # arg-list split mishandles Windows path separators and would break the regen path.
             proc = subprocess.run(command, cwd=str(repo), shell=True, capture_output=True,
                                   text=True, timeout=timeout)
             ok = proc.returncode == 0
