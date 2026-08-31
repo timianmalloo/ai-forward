@@ -205,6 +205,13 @@ window.PORTAL_DATA = {
           "handoff": "review + apply"
         },
         {
+          "cmd": "/code-hygiene",
+          "desc": "Find and quantify violations of the coding guidelines (dead code, commented-out code, anti-patterns) as a measured backlog with lines-of-code and percent-of-codebase per class; `review` yields the analysis, `fix` builds a TDD-guarded, git-labelled remediation strategy that introduces no regressions.",
+          "when": "Holding a codebase to the coding guidelines - finding and removing dead code, commented-out code, and anti-patterns.",
+          "produces": "docs/hygiene/backlog.md (+ remediation-plan.md on fix)",
+          "handoff": "/implement"
+        },
+        {
           "cmd": "/dream",
           "desc": "Run an offline, reviewable consolidation pass over this repo's committed corpus (audit & change logs, defect-class register, captured mitigations, triggered simplify/assume markers) and produce a dream — proposed learnings with controls, rendered as an HTML review view you approve/edit/reject/defer, then promote. The \"asleep half\" of continuous improvement.",
           "when": "Periodically, to compound learnings across sessions.",
@@ -266,7 +273,7 @@ window.PORTAL_DATA = {
         {
           "cmd": "/also",
           "desc": "Append a late addition to the prior prompt without derailing the work in flight; captured now, considered after the current reasoning and work complete, as refined context or an appended task.",
-          "when": "-",
+          "when": "Adding a late addition to the prior prompt without derailing work in flight.",
           "produces": "-",
           "handoff": "-"
         },
@@ -274,13 +281,6 @@ window.PORTAL_DATA = {
           "cmd": "/auditlog",
           "desc": "The CLI lens over the project's durable audit & change log — list the last N actions, search by session/date/keyword, copy or re-run a past prompt, toggle to the meaningful-change timeline, or open the interactive viewer.",
           "when": "Recalling what was done or decided across sessions.",
-          "produces": "-",
-          "handoff": "-"
-        },
-        {
-          "cmd": "/code-hygiene",
-          "desc": "Find and quantify violations of the coding guidelines (dead code, commented-out code, anti-patterns) as a measured backlog with lines-of-code and percent-of-codebase per class; `review` yields the analysis, `fix` builds a TDD-guarded, git-labelled remediation strategy that introduces no regressions.",
-          "when": "-",
           "produces": "-",
           "handoff": "-"
         },

@@ -123,6 +123,18 @@
     }
   ],
   "skillMeta": {
+    "code-hygiene": {
+      "group": "Continuous improvement",
+      "when": "Holding a codebase to the coding guidelines - finding and removing dead code, commented-out code, and anti-patterns.",
+      "produces": "docs/hygiene/backlog.md (+ remediation-plan.md on fix)",
+      "handoff": "/implement"
+    },
+    "also": {
+      "group": "Utilities & lenses",
+      "when": "Adding a late addition to the prior prompt without derailing work in flight.",
+      "produces": "-",
+      "handoff": "-"
+    },
     "collectknowledge": {
       "group": "Collect & frame",
       "when": "Starting in an unfamiliar or high-stakes domain.",
