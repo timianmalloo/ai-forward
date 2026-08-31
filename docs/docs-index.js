@@ -2140,7 +2140,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "fd150002b6bb06f25a06a67d9d721adc9eef50b6fd83947f3028d11b1eea677c"
+      "sourceSha256": "b39d578297bfab09919d8dc2fb7d30c56f8b5b8343f0ae617ea87f20ae6c1d05"
     },
     {
       "id": "hygiene-backlog",
@@ -4549,5 +4549,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "f62f779696b592b1d8deb7ddbcaf3ace05bc2c95771776eadb3211a67bfada12"
+  "graphSha256": "6d3df1a3dc8e8b9de453634cfc268a5346407d9e1ea4ca0c86c2f7797bed84d8"
 };

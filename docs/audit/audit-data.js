@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-08-31T00:25:48Z",
+  "generated": "2026-08-31T03:49:29Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2575,6 +2575,26 @@ window.AUDIT_DATA = {
       "tags": [
         "forensic-review",
         "adoption-readiness"
+      ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M1AYZEP42JVWPGX3SMXTHFAG",
+      "shortname": "forensic-rev53-remediation",
+      "datetime": "2026-08-31T03:49:29Z",
+      "session": "2f63f380-70dd-4e60-94c2-1e2de821f3c2",
+      "prompt": "do the next steps",
+      "summary": "Post-triage remediation of the rev53 forensic backlog. RESOLVED 5/6: FR-069 (verify-bundle gate 4 self-contained in clean worktree - proven by hiding node_modules; 3ee8133), FR-073 (portal editorial metadata for also/code-hygiene; ca5dc34), FR-074 (new-capability smoke tests; c90bf26), FR-075 (shell=True recorded deviation - trusted registry config; 78f4f4d), FR-072 (already fixed in review). DEFERRED FR-071 (cosmetic P3, needs /investigate). All gates green; each fix committed atomically.",
+      "kind": "skill",
+      "skill": "forensicreview",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/backlog/forensic-review-rev53.md"
+      ],
+      "tags": [
+        "forensic-review",
+        "remediation"
       ],
       "outcome": "success"
     }
