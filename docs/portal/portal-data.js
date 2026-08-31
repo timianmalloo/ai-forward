@@ -1157,6 +1157,42 @@ window.PORTAL_DATA = {
         "summary": "Full source list with access dates and the claims each supports. Primary vendor docs first."
       },
       {
+        "id": "kb-agent-focus-and-scope-control",
+        "type": "knowledge",
+        "title": "Agent Focus & Scope Control — keeping extended-reasoning models on task",
+        "summary": "Sourced evidence base on why extended-reasoning models (GPT-5.x family and peers) keep adding unrequested tasks and ceremony even when reasoning level is..."
+      },
+      {
+        "id": "kb-agent-focus-and-scope-control-glossary",
+        "type": "glossary",
+        "title": "Agent Focus & Scope Control — Glossary",
+        "summary": "The ubiquitous language of agent focus and scope control - overthinking, goal drift, Latent Goal Crystallization, instruction-following degradation, stopping..."
+      },
+      {
+        "id": "kb-agent-focus-and-scope-control-open-questions",
+        "type": "knowledge",
+        "title": "Agent Focus & Scope Control — Open Questions",
+        "summary": "What the research could not settle: no fully satisfactory long-horizon solution yet; the enforcement-vs-autonomy tension; whether a session self-assessment..."
+      },
+      {
+        "id": "kb-agent-focus-and-scope-control-references",
+        "type": "knowledge",
+        "title": "Agent Focus & Scope Control — References & Patterns",
+        "summary": "Copy-usable techniques mapped to the pack's existing controls: reasoning-depth controls, the GPT-5 structured scope-lock block, enforced done predicates,..."
+      },
+      {
+        "id": "kb-agent-focus-and-scope-control-sota",
+        "type": "knowledge",
+        "title": "Agent Focus & Scope Control — State of the Art",
+        "summary": "The two failure modes (overthinking vs goal drift) and the four evidence-backed levers for scope and task adherence: enforced done predicates, adaptive..."
+      },
+      {
+        "id": "kb-agent-focus-and-scope-control-sources",
+        "type": "knowledge",
+        "title": "Agent Focus & Scope Control — Sources",
+        "summary": "The full source list with access dates and confidence labels: primary arXiv research (overthinking, goal drift, agent drift, self-reflection, reasoning path..."
+      },
+      {
         "id": "kb-continuous-improvement-and-dreaming",
         "type": "knowledge",
         "title": "Continuous Improvement & Dreaming — harvesting learnings across repos (domain knowledge)",
@@ -2392,6 +2428,41 @@ window.PORTAL_DATA = {
         "from": "kb-agent-autopilot-controls-sources",
         "to": "kb-agent-autopilot-controls",
         "rel": "relates-to"
+      },
+      {
+        "from": "kb-agent-focus-and-scope-control",
+        "to": "architecture",
+        "rel": "relates-to"
+      },
+      {
+        "from": "kb-agent-focus-and-scope-control",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "kb-agent-focus-and-scope-control-glossary",
+        "to": "kb-agent-focus-and-scope-control",
+        "rel": "refines"
+      },
+      {
+        "from": "kb-agent-focus-and-scope-control-open-questions",
+        "to": "kb-agent-focus-and-scope-control",
+        "rel": "refines"
+      },
+      {
+        "from": "kb-agent-focus-and-scope-control-references",
+        "to": "kb-agent-focus-and-scope-control",
+        "rel": "refines"
+      },
+      {
+        "from": "kb-agent-focus-and-scope-control-sota",
+        "to": "kb-agent-focus-and-scope-control",
+        "rel": "refines"
+      },
+      {
+        "from": "kb-agent-focus-and-scope-control-sources",
+        "to": "kb-agent-focus-and-scope-control",
+        "rel": "refines"
       },
       {
         "from": "kb-continuous-improvement-and-dreaming",

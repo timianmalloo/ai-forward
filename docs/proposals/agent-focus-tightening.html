@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Proposal — Tightening focus for extended-reasoning models</title>
+<style>
+  :root{
+    --bg:#0f1216; --surface:#171b21; --surface-2:#1e232b; --line:#2b323c;
+    --ink:#e8ecf1; --ink-dim:#a7b0bd; --ink-faint:#7c8798;
+    --accent:#5aa9ff; --good:#3ecf8e; --warn:#f2b955; --bad:#f27a7a;
+    --hi:#c9a2ff;
+    --r:10px; --sp:clamp(16px,2.2vw,28px);
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  @media (prefers-color-scheme: light){
+    :root{ --bg:#f6f8fa; --surface:#fff; --surface-2:#eef1f5; --line:#dde3ea;
+      --ink:#1a2029; --ink-dim:#4a5563; --ink-faint:#6b7686; --accent:#1f6feb; }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);
+    line-height:1.6;font-size:16px;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:920px;margin:0 auto;padding:var(--sp)}
+  header.hero{padding:calc(var(--sp)*1.4) var(--sp);border-bottom:1px solid var(--line)}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--accent);margin:0 0 10px}
+  h1{font-size:clamp(26px,4.2vw,40px);line-height:1.15;margin:.1em 0 .35em;letter-spacing:-.01em}
+  .lede{font-size:clamp(16px,1.9vw,19px);color:var(--ink-dim);max-width:66ch;margin:0}
+  h2{font-size:clamp(20px,2.6vw,26px);margin:2.2em 0 .5em;letter-spacing:-.01em;
+    padding-top:.4em;border-top:1px solid var(--line)}
+  h3{font-size:18px;margin:1.4em 0 .4em}
+  p{margin:.6em 0}
+  a{color:var(--accent)}
+  .muted{color:var(--ink-faint)}
+  strong{color:var(--ink)}
+  code{font-family:var(--mono);font-size:.86em;background:var(--surface-2);
+    padding:.12em .4em;border-radius:5px;border:1px solid var(--line)}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
+    padding:calc(var(--sp)*.9);margin:16px 0}
+  .callout{background:var(--surface);border-left:3px solid var(--accent);border-radius:6px;
+    padding:14px 18px;margin:18px 0}
+  .callout.warn{border-left-color:var(--warn)}
+  .callout.finding{border-left-color:var(--good)}
+  table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14.5px}
+  th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-faint);font-weight:600}
+  tbody tr:last-child td{border-bottom:none}
+  .tag{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:600;
+    padding:3px 9px;border-radius:999px;letter-spacing:.03em;white-space:nowrap}
+  .tag.hi{background:rgba(62,207,142,.14);color:var(--good);border:1px solid rgba(62,207,142,.35)}
+  .tag.med{background:rgba(242,185,85,.14);color:var(--warn);border:1px solid rgba(242,185,85,.35)}
+  .tag.lo{background:rgba(242,122,122,.13);color:var(--bad);border:1px solid rgba(242,122,122,.32)}
+  .tag.v{background:rgba(90,169,255,.12);color:var(--accent);border:1px solid rgba(90,169,255,.3)}
+  .qhead{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:.2em}
+  .qhead h3{margin:0}
+  .qnum{font-family:var(--mono);color:var(--ink-faint);font-size:14px}
+  .rec{font-weight:650}
+  .rec.yes{color:var(--good)} .rec.no{color:var(--bad)} .rec.maybe{color:var(--warn)}
+  ul{margin:.5em 0;padding-left:1.2em} li{margin:.28em 0}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:640px){.grid{grid-template-columns:1fr}}
+  pre{background:var(--surface-2);border:1px solid var(--line);border-radius:8px;
+    padding:14px 16px;overflow:auto;font-family:var(--mono);font-size:13px;line-height:1.5;margin:12px 0}
+  footer{margin:3em 0 2em;padding-top:1.4em;border-top:1px solid var(--line);color:var(--ink-faint);font-size:13.5px}
+  .kicker{font-family:var(--mono);font-size:12px;color:var(--ink-faint)}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap" style="padding-top:0;padding-bottom:0">
+    <p class="eyebrow">AI-Forward · Proposal · 2026-08-31</p>
+    <h1>Keeping extended-reasoning models on the task</h1>
+    <p class="lede">A recommendation on how to tighten focus when models with extended reasoning
+      (GPT-5.6 family and peers) keep adding <em>unrequested tasks and ceremony</em> — even after the
+      reasoning level is reduced. Grounded in this repo's own <code>/dream</code> corpus and current
+      (2025–26) industry research.</p>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <div class="callout finding">
+    <p style="margin:.2em 0"><strong>The one thing to take away.</strong> You are pulling the wrong
+    lever. <strong>Reasoning effort</strong> controls <em>how deeply</em> the model thinks
+    (overthinking); it does <strong>not</strong> control <em>whether the model expands the task</em>
+    (scope creep). Those are two different failure modes on two different axes — which is exactly why
+    turning the reasoning dial down does not stop the drift.</p>
+  </div>
+
+  <h2>The problem, precisely named</h2>
+  <p>The research literature separates two failure modes that feel similar and are routinely
+    conflated:</p>
+  <table>
+    <thead><tr><th style="width:16%"></th><th>Overthinking</th><th>Goal drift / scope creep</th></tr></thead>
+    <tbody>
+      <tr><td><strong>What</strong></td><td>Excessive reasoning <em>depth</em> — extra steps, worst on easy tasks; can lower accuracy.</td><td>The <em>task boundary itself</em> grows — sub-goals mutate and new work appears that was never requested.</td></tr>
+      <tr><td><strong>Where</strong></td><td>Inside the chain-of-thought, before the answer.</td><td>At the planning / action level, across turns.</td></tr>
+      <tr><td><strong>Lever</strong></td><td><code>reasoning_effort</code>, verbosity caps, path-length control.</td><td><strong>Not</strong> <code>reasoning_effort</code> — needs a stopping condition + task-adherence controls.</td></tr>
+      <tr><td><strong>Your symptom</strong></td><td class="muted">secondary</td><td><strong>this one</strong> — "additional tasks and ceremony"</td></tr>
+    </tbody>
+  </table>
+  <p>The mechanism behind your symptom has a name: <strong>Latent Goal Crystallization</strong> — an
+    agent's operative sub-goals mutate and the task expands <em>without any explicit re-prompting</em>
+    (arXiv&nbsp;2505.02709; 2601.04170). It is a task-adherence failure, not a reasoning-depth one.</p>
+
+  <div class="callout">
+    <p style="margin:.2em 0"><span class="tag v">Verified · this repo</span> &nbsp;The
+    <code>/dream</code> pass over our own corpus (<code>drm-0008</code>) measured that
+    <strong>61 of 78 substantive turns (78%) recorded no goal-state / <code>done_when</code></strong>.
+    We already have the right control — the CT19 "goal · done-when · not-in-scope" opening — and it is
+    skipped in the large majority of turns. <strong>The gap is enforcement, not missing directives.</strong>
+    The literature predicts this exactly: standing prose instructions degrade under long context
+    ("instruction-following degradation").</p>
+  </div>
+
+  <h2>What the evidence says works</h2>
+  <p>The 2025–26 literature converges on four levers for scope/task adherence — none of which is
+    "reason less":</p>
+  <div class="grid">
+    <div class="card"><h3>1 · Enforced "done" predicate</h3><p class="muted" style="margin:0">A
+      pre-stated, checkable completion condition. Its absence is the single biggest cause of agents
+      that stall <em>or</em> over-run.</p></div>
+    <div class="card"><h3>2 · Adaptive anchoring</h3><p class="muted" style="margin:0">Periodically
+      re-validate the work against the <em>original</em> goal, so accumulated context cannot silently
+      redefine the task.</p></div>
+    <div class="card"><h3>3 · Structured scope locks</h3><p class="muted" style="margin:0">System-prompt
+      blocks, not prose: "implement exactly what's asked; surface improvements as optional text, never
+      implement without approval; cap tool calls." (OpenAI GPT-5/5.1 guides.)</p></div>
+    <div class="card"><h3>4 · <em>Bounded</em> self-critique</h3><p class="muted" style="margin:0">One
+      targeted pass against the acceptance criteria, then stop. <strong>Unbounded, it becomes
+      "degenerating reasoning" — non-terminating self-correction, i.e. MORE ceremony.</strong></p></div>
+  </div>
+
+  <div class="callout warn">
+    <p style="margin:.2em 0"><strong>The meta-warning that governs every recommendation below.</strong>
+    The failure mode is "too much unrequested work". Any fix that adds an <em>unbounded</em> self-review,
+    a new heavyweight ceremony, or a persona that always convenes would <em>increase</em> the very thing
+    you are trying to remove. Scope control must be cheap, structural, and self-terminating.</p>
+  </div>
+
+  <h2>Your three questions</h2>
+
+  <!-- Q1 -->
+  <div class="qhead"><span class="qnum">Q1</span><h3>Should we extend the persona definitions?</h3>
+    <span class="tag lo">Low leverage</span></div>
+  <p class="rec no">Recommendation: No new persona. A small convene-trigger tweak, optionally.</p>
+  <p>Scope discipline is <em>already</em> owned — by <strong>the Simplifier</strong> (soft veto on
+    unjustified complexity) and <strong>the Tech Lead</strong> (smallest correct change; reviewer
+    findings are advice, not scope). A new "scope sentinel" persona would duplicate them. More
+    importantly, <strong>personas convene at gates, not per turn</strong> — so they cannot catch
+    per-turn scope creep <em>as it happens</em>; they fire too late to stop a runaway turn. The only
+    cheap increment worth considering: sharpen the Simplifier/Tech-Lead <em>convene trigger</em> so it
+    fires on any autopilot turn that touched more files than its stated scope — but that is a trigger
+    tweak, not a persona extension.</p>
+
+  <!-- Q2 -->
+  <div class="qhead"><span class="qnum">Q2</span><h3>Should we add more directives?</h3>
+    <span class="tag med">Low–medium leverage</span></div>
+  <p class="rec no">Recommendation: No <em>more prose</em>. Instead, <strong>promote the one directive
+    we have from prose to structure</strong>.</p>
+  <p>We are not short of directives. CT14–CT18 (capture ideas, don't chase them; smallest change;
+    reviewer findings are advice), CT19–CT24 (the two-step goal-state front matter), GO1–GO18
+    (execution-graph planning with termination variants), and the registered <strong>PACK-O</strong>
+    class already say everything the research recommends. Adding another paragraph to an always-loaded
+    file that is <em>already skipped 78% of the time</em> is, in the pack's own words, "a memoir".</p>
+  <p>The high-value move hiding inside this question: take the <strong>goal-state opening</strong> and
+    move it <em>up the CI6 control ladder</em> — from "always-loaded instruction" (rung 3, skipped) to
+    a <strong>structural, mechanically-detectable opening</strong> (rung 2). We already log the
+    <code>done_when</code> field and mine its absence (the PACK-O miner); the change is to make the
+    opening a required <em>shape</em> rather than a requested habit.</p>
+  <pre>Every non-trivial turn opens with, before the first substantive tool call:
+  Goal:        &lt;one line — the outcome the user asked for&gt;
+  Done when:   &lt;a terminal condition you can point at and check&gt;
+  Not in scope: &lt;what this turn will NOT touch&gt;
+A gap found en route is a finding (captured), never a new goal.</pre>
+
+  <!-- Q3 -->
+  <div class="qhead"><span class="qnum">Q3</span><h3>Should we create a session self-assessment?</h3>
+    <span class="tag hi">Highest leverage — if bounded</span></div>
+  <p class="rec yes">Recommendation: Yes — a <strong>lightweight, bounded, self-terminating</strong>
+    session self-assessment. This is the strongest of the three options.</p>
+  <p>The evidence is specific: self-critique <em>reliably improves</em> definition-of-done adherence
+    <strong>when</strong> it is bounded (max one pass by default, prioritise floor/correctness failures
+    over polish) and <em>hurts</em> (adds ceremony) when it is open-ended. So the self-assessment must
+    itself obey the rule it enforces. Concretely, a single closing pass:</p>
+  <div class="card">
+    <ul style="margin:0">
+      <li><strong>Restate the goal state</strong> written at the open (Q2). If none was written on a
+        substantive turn → that is the finding (this is the PACK-O presence check we already log).</li>
+      <li><strong>Map each output to the "Done when"</strong> — is each change traceable to the stated
+        outcome? List anything that is <em>not</em>.</li>
+      <li><strong>Scope diff</strong> — did the turn touch anything outside "Not in scope"? If so, was
+        it required by the goal, or is it drift to revert / capture as a next step?</li>
+      <li><strong>Stop.</strong> One pass. Do not re-plan, do not "improve" — name gaps and end with
+        the existing Completed / Remaining / Next close (E18).</li>
+    </ul>
+  </div>
+  <p>Crucially, most of the machinery already exists: the audit <code>done_when</code> field, the
+    PACK-O miner, and the E18 close. A self-assessment mostly <em>wires these into a single required
+    closing step</em> — and, because it maps to pre-stated criteria, it is bounded by construction.</p>
+
+  <h2>Priority-ordered recommendation</h2>
+  <table>
+    <thead><tr><th style="width:8%">#</th><th>Move</th><th style="width:20%">Leverage</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td><strong>Bounded session self-assessment</strong> (Q3) — one closing pass: goal-state present? outputs trace to "done when"? scope diff? stop.</td><td><span class="tag hi">Highest</span></td><td>Directly enforces the "done" predicate + scope check the research says works; reuses existing <code>done_when</code>/PACK-O/E18 machinery; bounded by design.</td></tr>
+      <tr><td>2</td><td><strong>Promote the goal-state opening from prose → structure</strong> (Q2), and lean on the mechanical absence-detection we already have.</td><td><span class="tag med">Medium</span></td><td>Fixes the measured 78% skip; the lever is right, only the enforcement is missing.</td></tr>
+      <tr><td>3</td><td><strong>Sharpen the Simplifier/Tech-Lead convene trigger</strong> on autopilot turns that exceed stated scope (Q1) — <em>not</em> a new persona.</td><td><span class="tag lo">Low</span></td><td>Cheap increment; but gate-time, so it catches drift after the fact, not during.</td></tr>
+      <tr><td>—</td><td><em>Do not</em> add more prose directives, and <em>do not</em> add an unbounded reflection loop.</td><td class="muted">negative</td><td>Both would <em>increase</em> ceremony — the exact failure being targeted.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout finding">
+    <p style="margin:.2em 0"><strong>And a note on the reasoning dial.</strong> Keep it as a
+    <em>separate</em> control for overthinking (routine work → lower effort). It is genuinely useful —
+    just for a different problem. It will not fix scope drift no matter how low you set it.</p>
+  </div>
+
+  <p class="kicker" style="margin-top:2em">This proposal is analysis for your decision. Nothing here
+    has been implemented — no persona was changed, no directive added, no self-assessment built. That
+    is deliberate: implementing changes off a "what should we consider?" question would be the exact
+    scope creep this document is about.</p>
+
+  <footer>
+    <p><strong>Evidence base:</strong> <code>docs/knowledge/agent-focus-and-scope-control/</code>
+      (sourced, confidence-labelled) · <strong>Corpus finding:</strong>
+      <code>docs/dreams/drm-0008/</code> (p12, Verified) · <strong>Pack controls referenced:</strong>
+      CT14–CT24, GO1–GO18, PACK-O, the CI6 control ladder.</p>
+    <p><strong>Key sources:</strong> arXiv 2505.00127 (overthinking) · 2505.02709 (goal drift) ·
+      2601.04170 (agent drift) · 2405.06682 (self-reflection) · 2506.07240 (reasoning path control) ·
+      OpenAI GPT-5 / GPT-5.1 prompting guides. Full list in
+      <code>docs/knowledge/agent-focus-and-scope-control/sources.md</code>.</p>
+  </footer>
+</main>
+</body>
+</html>

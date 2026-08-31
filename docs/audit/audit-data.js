@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-08-31T13:09:26Z",
+  "generated": "2026-08-31T13:23:59Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2631,6 +2631,26 @@ window.AUDIT_DATA = {
       ],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-01M1BZVD44JJ9PGMW8WP32KTQF",
+      "shortname": "collectknowledge-agent-focus",
+      "datetime": "2026-08-31T13:23:59Z",
+      "session": "2f63f380-70dd-4e60-94c2-1e2de821f3c2",
+      "prompt": "/dream on runaway/ceremony + /collectknowledge on model focus SotA, then HTML proposal on personas/directives/self-assessment",
+      "summary": "Built docs/knowledge/agent-focus-and-scope-control/ (6 sourced files). Headline: reasoning_effort and scope-adherence are different levers; overthinking (depth) vs Latent Goal Crystallization (scope). Reducing reasoning does not reach scope drift. Four working levers: enforced done predicate, adaptive anchoring, structured scope locks, bounded self-critique. Gap is enforcement not directives (drm-0008: 78% turns skip goal-state).",
+      "kind": "skill",
+      "skill": "collectknowledge",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/knowledge/agent-focus-and-scope-control/index.md"
+      ],
+      "tags": [
+        "agent-focus",
+        "scope-drift"
+      ],
+      "outcome": "success"
     }
   ],
   "changes": [
@@ -3585,6 +3605,28 @@ window.AUDIT_DATA = {
         "after": "cc1f4ec9d43a197664826f97f4b8286304dec562",
         "branch": "feature/coord-collaboration-next",
         "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M1BZVD7XACXKZDA07H70E0RH",
+      "datetime": "2026-08-31T13:23:59Z",
+      "session": "2f63f380-70dd-4e60-94c2-1e2de821f3c2",
+      "kind": "knowledge",
+      "skill": "collectknowledge",
+      "title": "Established agent-focus/scope-control evidence base + tightening proposal",
+      "prompt": "tighten and focus the model on the task",
+      "summary": "Sourced knowledge base + HTML proposal recommending (priority order): a BOUNDED session self-assessment; promote the goal-state opening from prose to structure; sharpen Simplifier/Tech-Lead convene trigger - NOT more prose directives, NOT a new persona, NOT an unbounded reflection loop.",
+      "rationale": "Reasoning-effort cannot fix scope drift; the pack has the right directives but skips the goal-state control 78% of turns - the gap is enforcement.",
+      "artifacts": [
+        "docs/proposals/agent-focus-tightening.html"
+      ],
+      "tags": [],
+      "git": {
+        "before": "6d4edd53d2dd807465cf24f09bbcdbc8e80d9d5c",
+        "after": "6d4edd53d2dd807465cf24f09bbcdbc8e80d9d5c",
+        "branch": "main",
+        "pushed": false,
         "commits": []
       }
     }

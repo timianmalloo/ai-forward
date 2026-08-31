@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 129
+"count": 135
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 276,
+"total": 282,
 "items": [
 {
 "cat": "knowledge",
@@ -1902,6 +1902,15 @@ window.PACK_INDEX = {
 },
 {
 "cat": "graph",
+"id": "kb-agent-focus-and-scope-control-glossary",
+"title": "Agent Focus & Scope Control — Glossary",
+"summary": "The ubiquitous language of agent focus and scope control - overthinking, goal drift, Latent Goal Crystallization, instruction-following degradation, stopping conditions, adaptive anchoring, degenerating reasoning, and the pack's PACK-O /…",
+"path": "docs/knowledge/agent-focus-and-scope-control/glossary.md",
+"kind": "glossary",
+"text": "agent focus & scope control — glossary the ubiquitous language of agent focus and scope control - overthinking, goal drift, latent goal crystallization, instruction-following degradation, stopping conditions, adaptive anchoring, degenerating reasoning, and the pack's pack-o / two-step front matter. glossary overthinking latent-goal-crystallization adaptive-anchoring refines kb-agent-focus-and-scope-control"
+},
+{
+"cat": "graph",
 "id": "kb-native-client-ui-design-glossary",
 "title": "Native client UI design — Glossary",
 "summary": "Ubiquitous language for native desktop UI work: platform HIG, Fluent, WinUI, WPF, XAML resources, UI Automation, automation peers, keyboard focus, high DPI, AppWindow, MSIX, SmartScreen and notarization.",
@@ -1998,6 +2007,51 @@ window.PACK_INDEX = {
 "path": "docs/knowledge/agent-autopilot-controls/sources.md",
 "kind": "knowledge",
 "text": "agent autopilot controls — sources full source list with access dates and the claims each supports. primary vendor docs first. sources relates-to kb-agent-autopilot-controls"
+},
+{
+"cat": "graph",
+"id": "kb-agent-focus-and-scope-control",
+"title": "Agent Focus & Scope Control — keeping extended-reasoning models on task",
+"summary": "Sourced evidence base on why extended-reasoning models (GPT-5.x family and peers) keep adding unrequested tasks and ceremony even when reasoning level is reduced. Headline: reasoning_effort and scope-adherence are DIFFERENT levers -…",
+"path": "docs/knowledge/agent-focus-and-scope-control/index.md",
+"kind": "knowledge",
+"text": "agent focus & scope control — keeping extended-reasoning models on task sourced evidence base on why extended-reasoning models (gpt-5.x family and peers) keep adding unrequested tasks and ceremony even when reasoning level is reduced. headline: reasoning_effort and scope-adherence are different levers - overthinking (reasoning depth) is what reasoning_effort controls, while latent goal crystallization / goal drift (task scope expanding without re-prompting) is a task-adherence and stopping-condition problem that reasoning level does not touch. the evidence-backed fixes are enforced \"done\" predicates, adaptive anchoring, structured scope locks, and bounded self-critique - most of which the pack already has as directives but, per the drm-0008 dream, skips in 78% of substantive turns. the gap is enforcement, not directives. knowledge agent-focus scope-drift overthinking reasoning-effort stopping-conditions pack-o relates-to defect-classes relates-to architecture"
+},
+{
+"cat": "graph",
+"id": "kb-agent-focus-and-scope-control-open-questions",
+"title": "Agent Focus & Scope Control — Open Questions",
+"summary": "What the research could not settle: no fully satisfactory long-horizon solution yet; the enforcement-vs-autonomy tension; whether a session self-assessment helps or adds ceremony here; how mechanical a structural opening can be; and…",
+"path": "docs/knowledge/agent-focus-and-scope-control/open-questions.md",
+"kind": "knowledge",
+"text": "agent focus & scope control — open questions what the research could not settle: no fully satisfactory long-horizon solution yet; the enforcement-vs-autonomy tension; whether a session self-assessment helps or adds ceremony here; how mechanical a structural opening can be; and model-family variance in drift rate. open-questions unsettled enforcement-vs-autonomy model-family-variance refines kb-agent-focus-and-scope-control"
+},
+{
+"cat": "graph",
+"id": "kb-agent-focus-and-scope-control-references",
+"title": "Agent Focus & Scope Control — References & Patterns",
+"summary": "Copy-usable techniques mapped to the pack's existing controls: reasoning-depth controls, the GPT-5 structured scope-lock block, enforced done predicates, adaptive anchoring, and bounded self-critique - with the enforcement principle…",
+"path": "docs/knowledge/agent-focus-and-scope-control/references.md",
+"kind": "knowledge",
+"text": "agent focus & scope control — references & patterns copy-usable techniques mapped to the pack's existing controls: reasoning-depth controls, the gpt-5 structured scope-lock block, enforced done predicates, adaptive anchoring, and bounded self-critique - with the enforcement principle (structural beats prose under long context). scope-lock done-predicate adaptive-anchoring bounded-self-critique gpt-5-prompting refines kb-agent-focus-and-scope-control"
+},
+{
+"cat": "graph",
+"id": "kb-agent-focus-and-scope-control-sota",
+"title": "Agent Focus & Scope Control — State of the Art",
+"summary": "The two failure modes (overthinking vs goal drift) and the four evidence-backed levers for scope and task adherence: enforced done predicates, adaptive anchoring, structured scope locks, and bounded self-critique. Why reducing reasoning…",
+"path": "docs/knowledge/agent-focus-and-scope-control/state-of-the-art.md",
+"kind": "knowledge",
+"text": "agent focus & scope control — state of the art the two failure modes (overthinking vs goal drift) and the four evidence-backed levers for scope and task adherence: enforced done predicates, adaptive anchoring, structured scope locks, and bounded self-critique. why reducing reasoning effort does not reach scope drift. overthinking goal-drift scope-creep stopping-conditions reasoning-effort refines kb-agent-focus-and-scope-control"
+},
+{
+"cat": "graph",
+"id": "kb-agent-focus-and-scope-control-sources",
+"title": "Agent Focus & Scope Control — Sources",
+"summary": "The full source list with access dates and confidence labels: primary arXiv research (overthinking, goal drift, agent drift, self-reflection, reasoning path control), the OpenAI GPT-5/5.1 prompting guides, industry framing, and this repo's…",
+"path": "docs/knowledge/agent-focus-and-scope-control/sources.md",
+"kind": "knowledge",
+"text": "agent focus & scope control — sources the full source list with access dates and confidence labels: primary arxiv research (overthinking, goal drift, agent drift, self-reflection, reasoning path control), the openai gpt-5/5.1 prompting guides, industry framing, and this repo's own drm-0008 corpus finding. sources citations arxiv openai-prompting-guides refines kb-agent-focus-and-scope-control"
 },
 {
 "cat": "graph",

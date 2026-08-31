@@ -2554,6 +2554,32 @@ window.DOCS_INDEX = {
       "sourceSha256": "0be650029252586167fcea2b6fc15e2a4363c628d410e708a1533f0dbaec9dbe"
     },
     {
+      "id": "kb-agent-focus-and-scope-control-glossary",
+      "path": "docs/knowledge/agent-focus-and-scope-control/glossary.md",
+      "title": "Agent Focus & Scope Control — Glossary",
+      "type": "glossary",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "The ubiquitous language of agent focus and scope control - overthinking, goal drift, Latent Goal Crystallization, instruction-following degradation, stopping conditions, adaptive anchoring, degenerating reasoning, and the pack's PACK-O / two-step front matter.",
+      "tags": [
+        "glossary",
+        "overthinking",
+        "latent-goal-crystallization",
+        "adaptive-anchoring"
+      ],
+      "links": [
+        {
+          "to": "kb-agent-focus-and-scope-control",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "1f31029097ae2c5aa2c16b9d52070acfe03f7291e85660cdf5c2a6f629199071"
+    },
+    {
       "id": "kb-native-client-ui-design-glossary",
       "path": "docs/knowledge/native-client-ui-design/glossary.md",
       "title": "Native client UI design — Glossary",
@@ -2853,6 +2879,145 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "df18745528c70a4182046e6fbddd37c201ee7f8c94e1ab90f32fa60b714ea0ca"
+    },
+    {
+      "id": "kb-agent-focus-and-scope-control",
+      "path": "docs/knowledge/agent-focus-and-scope-control/index.md",
+      "title": "Agent Focus & Scope Control — keeping extended-reasoning models on task",
+      "type": "knowledge",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Sourced evidence base on why extended-reasoning models (GPT-5.x family and peers) keep adding unrequested tasks and ceremony even when reasoning level is reduced. Headline: reasoning_effort and scope-adherence are DIFFERENT levers - overthinking (reasoning depth) is what reasoning_effort controls, while Latent Goal Crystallization / goal drift (task scope expanding without re-prompting) is a task-adherence and stopping-condition problem that reasoning level does not touch. The evidence-backed fixes are enforced \"done\" predicates, adaptive anchoring, structured scope locks, and BOUNDED self-critique - most of which the pack already has as directives but, per the drm-0008 dream, skips in 78% of substantive turns. The gap is enforcement, not directives.",
+      "tags": [
+        "knowledge",
+        "agent-focus",
+        "scope-drift",
+        "overthinking",
+        "reasoning-effort",
+        "stopping-conditions",
+        "PACK-O"
+      ],
+      "links": [
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        },
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "308f7cfa04d7f93901c6500a5dc4893c06f31567983d3f09d3a979be6256c2bf"
+    },
+    {
+      "id": "kb-agent-focus-and-scope-control-open-questions",
+      "path": "docs/knowledge/agent-focus-and-scope-control/open-questions.md",
+      "title": "Agent Focus & Scope Control — Open Questions",
+      "type": "knowledge",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "What the research could not settle: no fully satisfactory long-horizon solution yet; the enforcement-vs-autonomy tension; whether a session self-assessment helps or adds ceremony here; how mechanical a structural opening can be; and model-family variance in drift rate.",
+      "tags": [
+        "open-questions",
+        "unsettled",
+        "enforcement-vs-autonomy",
+        "model-family-variance"
+      ],
+      "links": [
+        {
+          "to": "kb-agent-focus-and-scope-control",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "ecbf216cbba6d26bbd1cee425a2d1fadbb3cd5f8dc8b5fe3cb6ee96911269eaa"
+    },
+    {
+      "id": "kb-agent-focus-and-scope-control-references",
+      "path": "docs/knowledge/agent-focus-and-scope-control/references.md",
+      "title": "Agent Focus & Scope Control — References & Patterns",
+      "type": "knowledge",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Copy-usable techniques mapped to the pack's existing controls: reasoning-depth controls, the GPT-5 structured scope-lock block, enforced done predicates, adaptive anchoring, and bounded self-critique - with the enforcement principle (structural beats prose under long context).",
+      "tags": [
+        "scope-lock",
+        "done-predicate",
+        "adaptive-anchoring",
+        "bounded-self-critique",
+        "gpt-5-prompting"
+      ],
+      "links": [
+        {
+          "to": "kb-agent-focus-and-scope-control",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "2337223f39673f273425a1193b01d5e7351309b6c6eba12e42030c613e3161fe"
+    },
+    {
+      "id": "kb-agent-focus-and-scope-control-sota",
+      "path": "docs/knowledge/agent-focus-and-scope-control/state-of-the-art.md",
+      "title": "Agent Focus & Scope Control — State of the Art",
+      "type": "knowledge",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "The two failure modes (overthinking vs goal drift) and the four evidence-backed levers for scope and task adherence: enforced done predicates, adaptive anchoring, structured scope locks, and bounded self-critique. Why reducing reasoning effort does not reach scope drift.",
+      "tags": [
+        "overthinking",
+        "goal-drift",
+        "scope-creep",
+        "stopping-conditions",
+        "reasoning-effort"
+      ],
+      "links": [
+        {
+          "to": "kb-agent-focus-and-scope-control",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "029994c9a5325b4f33e813be1d109bb30096cee077d214a33e52c77cb3fb67c1"
+    },
+    {
+      "id": "kb-agent-focus-and-scope-control-sources",
+      "path": "docs/knowledge/agent-focus-and-scope-control/sources.md",
+      "title": "Agent Focus & Scope Control — Sources",
+      "type": "knowledge",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "The full source list with access dates and confidence labels: primary arXiv research (overthinking, goal drift, agent drift, self-reflection, reasoning path control), the OpenAI GPT-5/5.1 prompting guides, industry framing, and this repo's own drm-0008 corpus finding.",
+      "tags": [
+        "sources",
+        "citations",
+        "arxiv",
+        "openai-prompting-guides"
+      ],
+      "links": [
+        {
+          "to": "kb-agent-focus-and-scope-control",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "c7cbe7f3edb7258ab6b96bee98bb49634b9b41640efe3e0be03fc7aa854c614c"
     },
     {
       "id": "kb-continuous-improvement-and-dreaming",
@@ -4589,7 +4754,14 @@ window.DOCS_INDEX = {
       "title": "Proposal — Goal state before action: bounding the agent turn",
       "kind": "knowledge-tool",
       "description": "Open an interactive knowledge artifact."
+    },
+    {
+      "id": "surface-proposals-agent-focus-tightening",
+      "path": "docs/proposals/agent-focus-tightening.html",
+      "title": "Proposal — Tightening focus for extended-reasoning models",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "fedd3b33f7f52349b31990734b949e5241f54fbb9455a4587ba26c9463b3a315"
+  "graphSha256": "1c9e478b4ed5be7725a8274b293209acd088c1f8ab97eee381be668aade55e12"
 };
