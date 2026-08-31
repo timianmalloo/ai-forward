@@ -5,7 +5,7 @@ window.PORTAL_DATA = {
       "personas": 23,
       "knowledge": 38,
       "templates": 28,
-      "scripts": 18
+      "scripts": 19
     },
     "whatIs": "AI-Forward is a committed Markdown methodology pack that installs into a repo so Claude Code and GitHub Copilot direct work with a shared reasoning spine, adversarial persona review, and a library of workflow skills - nothing runs as a service; everything is versioned files and stdlib scripts.",
     "skillCount": 24,
@@ -756,6 +756,11 @@ window.PORTAL_DATA = {
             "path": "../../docs/design/docs-explorer-grounding-and-spatial-navigation.md"
           },
           {
+            "title": "Marker completeness lint (Tier-1 prose→structure) — Design",
+            "summary": "Tier-1 of the prose→structure review: give the assume: (NG4) and simplify: (L5) inline markers an enforced field-completeness check via a new marker-lint.py, using backward-compatible semantic-cue detection (trigger / confirm / consequence) that warns on...",
+            "path": "../../docs/design/marker-completeness-lint.md"
+          },
+          {
             "title": "Native app UI skill extension — Design",
             "summary": "Detailed design for making native client applications first-class in the AI-Forward UI skills. The design updates /ui-design and /visualize, adds a reusable native UI proof-pack template, adds native desktop archetype rows, and introduces a deterministic XAML...",
             "path": "../../docs/design/native-app-ui-skill-extension.md"
@@ -967,6 +972,12 @@ window.PORTAL_DATA = {
         "type": "design-language",
         "title": "Docs Explorer — Design Language",
         "summary": "Token and interaction language for the Docs Explorer knowledge portal: browse, graph, mind-map, deterministic Spatial 3D, and derived HTML knowledge surfaces...."
+      },
+      {
+        "id": "design-marker-completeness-lint",
+        "type": "design",
+        "title": "Marker completeness lint (Tier-1 prose→structure) — Design",
+        "summary": "Tier-1 of the prose→structure review: give the assume: (NG4) and simplify: (L5) inline markers an enforced field-completeness check via a new marker-lint.py,..."
       },
       {
         "id": "design-native-app-ui-skill-extension",
@@ -2050,6 +2061,11 @@ window.PORTAL_DATA = {
         "from": "design-language-docs-explorer",
         "to": "docs-index",
         "rel": "documents"
+      },
+      {
+        "from": "design-marker-completeness-lint",
+        "to": "design-agent-focus-controls",
+        "rel": "relates-to"
       },
       {
         "from": "design-native-app-ui-skill-extension",

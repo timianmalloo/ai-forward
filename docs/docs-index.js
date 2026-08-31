@@ -1298,6 +1298,33 @@ window.DOCS_INDEX = {
       "sourceSha256": "38a09a51a44004a2939929a9c81f95d19b2c074492484fa31a1f097578b76f1f"
     },
     {
+      "id": "design-marker-completeness-lint",
+      "path": "docs/design/marker-completeness-lint.md",
+      "title": "Marker completeness lint (Tier-1 prose→structure) — Design",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2026-11-30",
+      "reviewSuggested": [],
+      "summary": "Tier-1 of the prose→structure review: give the assume: (NG4) and simplify: (L5) inline markers an enforced field-completeness check via a new marker-lint.py, using backward-compatible semantic-cue detection (trigger / confirm / consequence) that warns on legacy free-form rather than mandating a new label syntax.",
+      "tags": [
+        "prose-to-structure",
+        "markers",
+        "no-guessing",
+        "solution-selection-ladder",
+        "lint"
+      ],
+      "links": [
+        {
+          "to": "design-agent-focus-controls",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "ea314d0fcf650f5815fee5f7da2d777e2da1e7ed195d643ce09480505a5e3558"
+    },
+    {
       "id": "design-native-app-ui-skill-extension",
       "path": "docs/design/native-app-ui-skill-extension.md",
       "title": "Native app UI skill extension — Design",
@@ -4828,7 +4855,14 @@ window.DOCS_INDEX = {
       "title": "Proposal — Tightening focus for extended-reasoning models",
       "kind": "knowledge-tool",
       "description": "Open an interactive knowledge artifact."
+    },
+    {
+      "id": "surface-proposals-prose-to-structure-review",
+      "path": "docs/proposals/prose-to-structure-review.html",
+      "title": "Proposal — Where else to promote directives from prose to structure",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "860eb29d941c2a2a9c32270d834c13e90c3968439e719c777e97e48174a76774"
+  "graphSha256": "1c20ae23bccf16fba101bf8b139ada3b657d9d90d53362d322ef0a6a1d35aa9a"
 };

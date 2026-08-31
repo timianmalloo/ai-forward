@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-08-31T14:00:32Z",
+  "generated": "2026-08-31T14:50:43Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2696,6 +2696,30 @@ window.AUDIT_DATA = {
       "outcome": "success",
       "goal": "Review repo directives for further prose->structure promotion candidates; deliver an HTML proposal",
       "done_when": "self-contained HTML proposal committed + pushed; stays analysis, not implementation"
+    },
+    {
+      "id": "al-01M1C4T6TA8RH7CR0K9TR47SZH",
+      "shortname": "implement-marker-completeness-lint",
+      "datetime": "2026-08-31T14:50:43Z",
+      "session": "2f63f380-70dd-4e60-94c2-1e2de821f3c2",
+      "prompt": "yes do the next action, approved Tier-1",
+      "summary": "Tier-1 prose->structure: new scripts/marker-lint.py enforces field-completeness on assume:/simplify: markers via backward-compatible semantic-cue detection (simplify-no-trigger, assume-no-confirm, assume-no-consequence). Warn-on-legacy (exit 0), --gate to fail, --json. 12 tests red-first + green; smoke over pack/ = 0 false positives. NG4/L5/L6 name the command. Design pivoted from proposal's label-syntax sketch after E15 grounding (harvest regex is single-line, canonical assume: is 3 lines). INSTALL 55->56, scripts 18->19. Gate 8/9 (drift pre-commit).",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "pack/scripts/marker-lint.py",
+        "pack/knowledge/no-guessing-protocol.md",
+        "pack/knowledge/solution-selection-ladder.md"
+      ],
+      "tags": [
+        "prose-to-structure",
+        "markers"
+      ],
+      "outcome": "success",
+      "goal": "Implement Tier-1: enforce assume:/simplify: marker field-completeness with a lint",
+      "done_when": "NG4/L5 updated, marker-lint.py + red-first tests, gate green, committed+pushed"
     }
   ],
   "changes": [
@@ -3694,6 +3718,28 @@ window.AUDIT_DATA = {
         "after": "dd38010d078af90e1f0a1eced27c6bbad1cb35ca",
         "branch": "main",
         "pushed": false,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M1C4T6Y7J4Q5ZJKPCYFXTQAX",
+      "datetime": "2026-08-31T14:50:43Z",
+      "session": "2f63f380-70dd-4e60-94c2-1e2de821f3c2",
+      "kind": "knowledge",
+      "skill": "implement",
+      "title": "Marker completeness lint: assume:/simplify: field enforcement (Tier-1 prose->structure)",
+      "prompt": "approved Tier-1",
+      "summary": "New marker-lint.py (semantic-cue, warn-on-legacy) + NG4/L5/L6 reference it; INSTALL rev 56",
+      "rationale": "Field-completeness was prose-only and unenforced; enforce it without a new syntax so existing markers + the harvest regex keep working (E15 grounding changed the design)",
+      "artifacts": [
+        "pack/scripts/marker-lint.py"
+      ],
+      "tags": [],
+      "git": {
+        "before": "d257d9a125a9e99af86335c08bfaa1c558541ba9",
+        "after": "d257d9a125a9e99af86335c08bfaa1c558541ba9",
+        "branch": "main",
+        "pushed": true,
         "commits": []
       }
     }

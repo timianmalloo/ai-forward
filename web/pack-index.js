@@ -21,7 +21,7 @@ window.PACK_INDEX = {
 {
 "id": "scripts",
 "label": "Scripts",
-"count": 18
+"count": 19
 },
 {
 "id": "personas",
@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 137
+"count": 138
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 284,
+"total": 286,
 "items": [
 {
 "cat": "knowledge",
@@ -966,6 +966,15 @@ window.PACK_INDEX = {
 },
 {
 "cat": "scripts",
+"id": "marker-lint.py",
+"title": "marker-lint.py",
+"summary": "marker-lint.py - completeness check for the pack's inline decision markers.",
+"path": "pack/scripts/marker-lint.py",
+"kind": "script",
+"text": "marker-lint.py marker-lint.py - completeness check for the pack's inline decision markers. tier-1 of the prose->structure review (docs/proposals/prose-to-structure-review.html). the `simplify:` (l5) and `assume:` (ng4) markers each carry required fields that were, until now, specified only in prose and therefore unenforced: simplify: <shortcut> ... <trigger> (the \"revisit when\" condition; l5/l6) assume: <belief> ... <consequence> ... <confirm> (what breaks + how to verify; ng4) this lints for the *semantic components* the directives already require, using the existing free-prose marker style (a trigger keyword / an em-dash clause / a \"confirm:\" cue) rather than mandating a new label syntax - so every existing marker and the dream.py harvest regex keep working. it is the first-class harvest command l6 names as the natural follow-up. posture (v16a / the docs-graph.py --gate pattern): default reports and exits 0 (warn, grandfathers legacy free-form); --gate exits 1 on any finding. --json for machine use. a clean scan of a non-empty corpus says so, so an empty run is distinguishable from a clean one (e14). stdlib only; python 3.8+. _iter_files _block _classify scan main"
+},
+{
+"cat": "scripts",
 "id": "obsidian-setup.py",
 "title": "obsidian-setup.py",
 "summary": "obsidian-setup.py - stand up (and analyze) the Obsidian lens over an AI-Forward docs graph.",
@@ -1557,6 +1566,15 @@ window.PACK_INDEX = {
 "path": "docs/design/docs-explorer-grounding-and-spatial-navigation.md",
 "kind": "design",
 "text": "docs explorer — grounding and spatial navigation design detailed design for making the repository knowledge graph a deterministic grounding interface for coding agents and a clearer human exploration surface. it separates selected-node neighborhood context from mind-map rooting, adds provenance-bounded context packets, adds a derived directory of standalone html knowledge surfaces, and makes deterministic spatial 3d a first-class progressive projection over an accessible 2d baseline. docs-explorer knowledge-graph grounding project-memory accessibility 3d refines architecture refines project-memory documents docs-index depends-on design-language-docs-explorer tested-by proof-docs-explorer-redesign"
+},
+{
+"cat": "graph",
+"id": "design-marker-completeness-lint",
+"title": "Marker completeness lint (Tier-1 prose→structure) — Design",
+"summary": "Tier-1 of the prose→structure review: give the assume: (NG4) and simplify: (L5) inline markers an enforced field-completeness check via a new marker-lint.py, using backward-compatible semantic-cue detection (trigger / confirm /…",
+"path": "docs/design/marker-completeness-lint.md",
+"kind": "design",
+"text": "marker completeness lint (tier-1 prose→structure) — design tier-1 of the prose→structure review: give the assume: (ng4) and simplify: (l5) inline markers an enforced field-completeness check via a new marker-lint.py, using backward-compatible semantic-cue detection (trigger / confirm / consequence) that warns on legacy free-form rather than mandating a new label syntax. prose-to-structure markers no-guessing solution-selection-ladder lint relates-to design-agent-focus-controls"
 },
 {
 "cat": "graph",
