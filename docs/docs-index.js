@@ -1620,7 +1620,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ee63674d76b5e2f44618e36f650be652caf5228c4a2b19520867e60fc9294946"
+      "sourceSha256": "114eec71bc0f3b0e56a39a87eec3f642daccd7eec0c46d9fef448b60e6965fdc"
     },
     {
       "id": "forensic-review",
@@ -4553,6 +4553,13 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     },
     {
+      "id": "surface-dreams-drm-0008-index",
+      "path": "docs/dreams/drm-0008/index.html",
+      "title": "Dream Review",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact."
+    },
+    {
       "id": "surface-mockups-dream-review",
       "path": "docs/mockups/dream-review.html",
       "title": "Dream Review — mockup",
@@ -4584,5 +4591,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "7e09dcd9315cadc8fd3a2889af8e2c62ee71409689f42570c04771d9eb4542e8"
+  "graphSha256": "fedd3b33f7f52349b31990734b949e5241f54fbb9455a4587ba26c9463b3a315"
 };

@@ -52,3 +52,8 @@ summary: >-
 - window: last 7 days · 29 audit · 16 change · 0 mitigations · 5 markers
 - proposals: 12 (added 1 - merged 0 - superseded 0 - excluded/tainted 0)
 - highest-leverage: Cross-agent collaboration contract is spoken, not recorded and claimed
+## drm-0008 - 2026-08-31
+- window: last 30 days · 99 audit · 31 change · 1 mitigations · 5 markers
+- proposals: 12 (added 1 - merged 0 - superseded 0 - excluded/tainted 0)
+- highest-leverage: Build a control for PACK-N (uncontrolled)
+

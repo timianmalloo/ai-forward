@@ -39,6 +39,19 @@ Any repository running the AI-Forward pack whose maintainers want richer navigat
 | `docs/.obsidian/cache/` | **ignore** | Derived |
 | `docs/.obsidian/plugins/*/main.js`, `styles.css` | **ignore** | **Third-party code** — see OB9 |
 | `docs/.obsidian/plugins/*/data.json` | **ignore** | Per-user plugin state, and a place API keys land |
+| `docs/.smart-env/` | **ignore** | Smart Connections' vector store. **Outside `.obsidian/`** — see below |
+
+**Not every plugin writes inside `.obsidian/`.** Each row above but the last is scoped to
+`.obsidian/`, because that is where Obsidian itself keeps state — and that made "per-user state" and
+"under `.obsidian/`" feel like the same statement. They are not. Smart Connections writes its vector
+store to `docs/.smart-env/`, a *sibling* of `.obsidian/`, so every ignore rule missed it and one
+consuming repository committed **268 files and 8.17 MB** of embeddings without a single rule firing.
+The embeddings carry a `last_embed` timestamp and are rewritten on every re-embed, so they also
+conflict by construction between branches — derived files regenerate, they do not merge.
+
+So the question when adding a plugin is **not** *"is its state under `.obsidian/`"* but *"does this
+plugin write derived state anywhere in the vault at all"* — answered by running
+`git status --untracked-files=all <vault>` after a real session, never inferred from the layout.
 
 Verify the split rather than assume it — `git status --untracked-files=all docs/.obsidian` should list the config and the manifests and **nothing else**, and `git check-ignore` should return true for every `main.js`, `styles.css`, `data.json` and `workspace.json`.
 

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-08-31T04:30:15Z",
+  "generated": "2026-08-31T13:09:26Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2611,6 +2611,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "docs/investigations/fr-071-audit-suggest-self-report.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M1BZ0R43F6PXRBK5BAXDWBEB",
+      "shortname": "dream-run",
+      "datetime": "2026-08-31T13:09:26Z",
+      "session": "2f63f380-70dd-4e60-94c2-1e2de821f3c2",
+      "prompt": "dream.py dream-run",
+      "summary": "Dream drm-0008: 12 proposals over last 30 days · 99 audit · 31 change · 1 mitigations · 5 markers",
+      "kind": "script",
+      "skill": "dream",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/dreams/drm-0008/index.html"
       ],
       "tags": [],
       "outcome": "success"

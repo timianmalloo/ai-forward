@@ -1,0 +1,453 @@
+window.DREAM_DATA = {
+  "id": "drm-0008",
+  "date": "2026-08-31",
+  "generated": "2026-08-31T13:09:26Z",
+  "window": "last 30 days · 99 audit · 31 change · 1 mitigations · 5 markers",
+  "counts": {
+    "audit": 99,
+    "change": 31,
+    "mitigations": 1,
+    "classes": 19,
+    "markers": 5
+  },
+  "proposals": [
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "Build a control for PACK-N (uncontrolled)",
+      "sig": "PACK-N · Staleness inferred from a timestamp rather than from content truth",
+      "scope": "general",
+      "confidence": "i",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "defect-classes#PACK-N",
+          "note": "status: uncontrolled"
+        },
+        {
+          "eid": "al-0074",
+          "note": "recent reference"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled.",
+        "loc": "docs/lessons/defect-classes.md#PACK-N"
+      },
+      "boundary": "Applies wherever the class's signature recurs; a control is not a control until observed failing.",
+      "id": "p5",
+      "score": 0.69
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "Build a control for PACK-Q (partially-controlled)",
+      "sig": "PACK-Q · An adapter written to a contract's *documented* shape, never to a *recorded* one",
+      "scope": "general",
+      "confidence": "i",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "defect-classes#PACK-Q",
+          "note": "status: partially-controlled"
+        },
+        {
+          "eid": "al-01M0SXP5CTNHVMSB94DDFNR8NV",
+          "note": "recent reference"
+        },
+        {
+          "eid": "al-01M0SYZMNKF3N8MNGYDCVDJ0HE",
+          "note": "recent reference"
+        },
+        {
+          "eid": "cl-01M0SXPXKHE6M8CS75GBXRJM7B",
+          "note": "recent reference"
+        },
+        {
+          "eid": "cl-01M0SYZMSJVYYVXHA1NMF5WP0W",
+          "note": "recent reference"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled.",
+        "loc": "docs/lessons/defect-classes.md#PACK-Q"
+      },
+      "boundary": "Applies wherever the class's signature recurs; a control is not a control until observed failing.",
+      "id": "p3",
+      "score": 0.68
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "Build a control for PACK-E (partially-controlled)",
+      "sig": "PACK-E · An ambiguous proper noun resolved inside my own frame",
+      "scope": "general",
+      "confidence": "i",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "defect-classes#PACK-E",
+          "note": "status: partially-controlled"
+        },
+        {
+          "eid": "al-0023",
+          "note": "recent reference"
+        },
+        {
+          "eid": "al-0029",
+          "note": "recent reference"
+        },
+        {
+          "eid": "al-0055",
+          "note": "recent reference"
+        },
+        {
+          "eid": "al-0056",
+          "note": "recent reference"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled.",
+        "loc": "docs/lessons/defect-classes.md#PACK-E"
+      },
+      "boundary": "Applies wherever the class's signature recurs; a control is not a control until observed failing.",
+      "id": "p7",
+      "score": 0.68
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "Build a control for PACK-D (partially-controlled)",
+      "sig": "PACK-D · An array parameter arrives as one comma-joined string when the script is invoked as an executable",
+      "scope": "general",
+      "confidence": "i",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "defect-classes#PACK-D",
+          "note": "status: partially-controlled"
+        },
+        {
+          "eid": "al-0015",
+          "note": "recent reference"
+        },
+        {
+          "eid": "al-0016",
+          "note": "recent reference"
+        },
+        {
+          "eid": "al-0027",
+          "note": "recent reference"
+        },
+        {
+          "eid": "al-0074",
+          "note": "recent reference"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled.",
+        "loc": "docs/lessons/defect-classes.md#PACK-D"
+      },
+      "boundary": "Applies wherever the class's signature recurs; a control is not a control until observed failing.",
+      "id": "p8",
+      "score": 0.68
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "Build a control for PACK-C (partially-controlled)",
+      "sig": "PACK-C · An assertion encodes a transient magnitude assumption",
+      "scope": "general",
+      "confidence": "i",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "defect-classes#PACK-C",
+          "note": "status: partially-controlled"
+        },
+        {
+          "eid": "al-0027",
+          "note": "recent reference"
+        },
+        {
+          "eid": "al-0055",
+          "note": "recent reference"
+        },
+        {
+          "eid": "al-0072",
+          "note": "recent reference"
+        },
+        {
+          "eid": "al-01M0ZY4TJ1481EC9YXYAQTT6SF",
+          "note": "recent reference"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled.",
+        "loc": "docs/lessons/defect-classes.md#PACK-C"
+      },
+      "boundary": "Applies wherever the class's signature recurs; a control is not a control until observed failing.",
+      "id": "p9",
+      "score": 0.68
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "PACK-O: 61/78 substantive turns (78%) recorded no goal-state (done_when)",
+      "sig": "PACK-O front-matter presence + scope-drift review",
+      "scope": "general",
+      "confidence": "v",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "al-0013",
+          "note": "collectknowledge-domain-and-data-modelling - no done_when recorded (front matter skipped)"
+        },
+        {
+          "eid": "al-0014",
+          "note": "extendaibundle-revision-18 - no done_when recorded (front matter skipped)"
+        },
+        {
+          "eid": "al-0015",
+          "note": "forensicreview-ai-forward-rev18 - no done_when recorded (front matter skipped)"
+        },
+        {
+          "eid": "al-0016",
+          "note": "extendaibundle-obsidian-lens-rev19 - no done_when recorded (front matter skipped)"
+        },
+        {
+          "eid": "al-0017",
+          "note": "extendaibundle-no-guessing-rev21 - no done_when recorded (front matter skipped)"
+        },
+        {
+          "eid": "al-0018",
+          "note": "pack-r22-graph-health-link - no done_when recorded (front matter skipped)"
+        },
+        {
+          "eid": "al-0019",
+          "note": "pack-r24-join-lens-and-freshness - no done_when recorded (front matter skipped)"
+        },
+        {
+          "eid": "al-0020",
+          "note": "extendaibundle-ui-detection-and-assets - no done_when recorded (front matter skipped)"
+        },
+        {
+          "eid": "al-0077",
+          "note": "done_when='audit-log records goal/done_when; /dream flags PACK-O presen' -> summary='Added --goal/--done-when + AL5b logging clause; dream PACK-O miner (build_propos'"
+        },
+        {
+          "eid": "al-0079",
+          "note": "done_when='graph clean (0 defects), portal groups+highlights the 5 new ' -> summary='Full graph sweep clean (0 defects/orphans/stale); added portal 'Discipline & opt'"
+        },
+        {
+          "eid": "al-01M0XY4AS4MKJJCWX39VAXMMBD",
+          "note": "done_when='docs/knowledge/native-client-ui-design exists, graph derivat' -> summary='Established native-client UI evidence base for WPF, WinUI, Avalonia, macOS, GNOM'"
+        },
+        {
+          "eid": "al-01M0Y0TS4DED7ZM7Z8590HNF1X",
+          "note": "done_when='docs/specs/native-app-ui-skill-extension.md exists, cites th' -> summary='Produced native app UI skill extension spec covering medium declaration, native '"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Presence (mechanical): every substantive turn records done_when (CT19); a missing one skipped the front matter. Satisfaction: review each done_when->summary pair where the summary exceeds the goal (scope drift, PACK-O). The audit done_when field + this miner ARE the rung-2 control (CI6).",
+        "loc": "docs/lessons/defect-classes.md#PACK-O"
+      },
+      "boundary": "Presence is mechanical; 'summary exceeds goal' is surfaced for human review, not auto-judged. Trivial/conversational turns are exempt from logging (AL5b).",
+      "id": "p12",
+      "score": 0.68
+    },
+    {
+      "kind": "Doc update",
+      "group": "Doc / knowledge update",
+      "title": "Harvest 4 simplify: marker(s) - each is a bounded shortcut with an upgrade trigger",
+      "sig": "simplify marker harvest",
+      "scope": "repo-local",
+      "confidence": "v",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "pack/knowledge/solution-selection-ladder.md#L44",
+          "note": "global lock, ok at current write volume — go per-account if throughput becomes the bottleneck"
+        },
+        {
+          "eid": "pack/knowledge/solution-selection-ladder.md#L45",
+          "note": "O(n²) match, fine for n<1k batches — index it when batch size grows"
+        },
+        {
+          "eid": "pack/scripts/coord-core.py#L1667",
+          "note": "occupancy is the newest session-start with no matching session-end,"
+        },
+        {
+          "eid": "web/pack-index.js#L308",
+          "note": "global lock, ok at current write volume — go per-account if throughput becomes the bottleneck # simplify: o(n²) match, fine for n<1k batches — index it when batch size grows ``` the token is **`simpli"
+        }
+      ],
+      "control": {
+        "rung": "knowledge doc",
+        "text": "Review each simplify: marker against its upgrade trigger; a triggered one is debt due (L6).",
+        "loc": "solution-selection-ladder.md L6 / no-guessing NG9"
+      },
+      "boundary": "Markers in this repo only; harvested at consolidation time.",
+      "id": "p11",
+      "score": 0.65
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "Build a control for PACK-H (partially-controlled)",
+      "sig": "PACK-H · A fix to a hosted surface reported \"done\" from the working tree, not verified on the live surface",
+      "scope": "general",
+      "confidence": "i",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "defect-classes#PACK-H",
+          "note": "status: partially-controlled"
+        },
+        {
+          "eid": "al-0056",
+          "note": "recent reference"
+        },
+        {
+          "eid": "al-0057",
+          "note": "recent reference"
+        },
+        {
+          "eid": "al-0063",
+          "note": "recent reference"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled.",
+        "loc": "docs/lessons/defect-classes.md#PACK-H"
+      },
+      "boundary": "Applies wherever the class's signature recurs; a control is not a control until observed failing.",
+      "id": "p6",
+      "score": 0.62
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "Build a control for SHELL-A (partially-controlled)",
+      "sig": "SHELL-A · Content routed through a shell construct that performs substitution on it",
+      "scope": "general",
+      "confidence": "i",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "defect-classes#SHELL-A",
+          "note": "status: partially-controlled"
+        },
+        {
+          "eid": "cl-0017",
+          "note": "recent reference"
+        },
+        {
+          "eid": "cl-0026",
+          "note": "recent reference"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled.",
+        "loc": "docs/lessons/defect-classes.md#SHELL-A"
+      },
+      "boundary": "Applies wherever the class's signature recurs; a control is not a control until observed failing.",
+      "id": "p2",
+      "score": 0.56
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "Build a control for PACK-P (partially-controlled)",
+      "sig": "PACK-P · A check reports its verdict over a corpus it never established was non-empty",
+      "scope": "general",
+      "confidence": "i",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "defect-classes#PACK-P",
+          "note": "status: partially-controlled"
+        },
+        {
+          "eid": "al-0081",
+          "note": "recent reference"
+        },
+        {
+          "eid": "al-0082",
+          "note": "recent reference"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled.",
+        "loc": "docs/lessons/defect-classes.md#PACK-P"
+      },
+      "boundary": "Applies wherever the class's signature recurs; a control is not a control until observed failing.",
+      "id": "p4",
+      "score": 0.56
+    },
+    {
+      "kind": "Doc update",
+      "group": "Doc / knowledge update",
+      "title": "Harvest 1 assume: marker(s) - each is an unverified belief with a stated trigger",
+      "sig": "assume marker harvest",
+      "scope": "repo-local",
+      "confidence": "v",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "pack/knowledge/no-guessing-protocol.md#L53",
+          "note": "the provider returns ISO-8601 in UTC. Seen in one sample payload, NOT stated in"
+        }
+      ],
+      "control": {
+        "rung": "knowledge doc",
+        "text": "Review each assume: marker; a triggered one is a bug already written down (NG9). Verify or convert to a control.",
+        "loc": "solution-selection-ladder.md L6 / no-guessing NG9"
+      },
+      "boundary": "Markers in this repo only; harvested at consolidation time.",
+      "id": "p10",
+      "score": 0.45
+    },
+    {
+      "kind": "Confirmed mitigation",
+      "group": "Confirmed mitigation → learning",
+      "title": "Successful mitigation: docs-graph validate flagged 'unknown type: mockup'; changed the mockup hub frontmatter type to 'design'; validate then p",
+      "sig": "unknown-artifact-type-in-frontmatter",
+      "scope": "general",
+      "confidence": "v",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "mit-0001",
+          "note": "oracle=red-green; red-observed then green"
+        },
+        {
+          "eid": "docs-graph.py validate",
+          "note": "verification test"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "docs-graph.py validate rejects any frontmatter 'type' not in the TYPES enum; run it after adding a graph node.",
+        "loc": "docs-graph.py validate"
+      },
+      "boundary": "Applies to any new .md graph node; type must be one of the known TYPES.",
+      "id": "p1",
+      "score": 0.34
+    }
+  ],
+  "diary": {
+    "added": 1,
+    "merged": 0,
+    "superseded": 0,
+    "excluded": 0
+  }
+};
