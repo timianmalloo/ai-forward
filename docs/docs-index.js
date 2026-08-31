@@ -634,7 +634,7 @@ window.DOCS_INDEX = {
       "phase": "documentation",
       "reviewBy": "2026-12-14",
       "reviewSuggested": [],
-      "summary": "The architecture of record for this repository: a dual-purpose repo that is both the canonical SOURCE of the AI-Forward Pack (pack/) and a live INSTALL of it (.claude/, docs/), kept in lockstep by tools/sync-pack.ps1. Includes the four diagram families and the tool/CLI reference, verified against pack revision 49 on 2026-08-28.",
+      "summary": "The architecture of record for this repository: a dual-purpose repo that is both the canonical SOURCE of the AI-Forward Pack (pack/) and a live INSTALL of it (.claude/, docs/), kept in lockstep by tools/sync-pack.ps1. Includes the four diagram families and the tool/CLI reference, verified against pack revision 53 on 2026-08-30.",
       "tags": [
         "pack",
         "knowledge-graph",
@@ -651,7 +651,7 @@ window.DOCS_INDEX = {
         {
           "kind": "flowchart",
           "title": "Component map & boundaries",
-          "mermaid": "flowchart TB\n  subgraph SRC[\"pack/ — canonical source (edit here)\"]\n    K[\"knowledge/*.md<br/>(reasoning spine + roster + foundation)\"]\n    C[\"commands/&lt;name&gt;/SKILL.md<br/>(the 22 skills)\"]\n    T[\"templates/*<br/>(artifacts each skill emits)\"]\n    A[\"adapters/<br/>(Claude Code + Copilot agents, INSTALL.md)\"]\n    SC[\"scripts/ (18) · evals/ · ci/ · examples/\"]\n    PD[\"README · OVERVIEW · research-synthesis\"]\n  end\n\n  subgraph TOOLS[\"tools/ — build\"]\n    SYNC[\"sync-pack.ps1\"]\n    PKG[\"package-pack.ps1\"]\n  end\n\n  subgraph INSTALL[\".claude/ + docs/ — generated install (do not hand-edit)\"]\n    CK[\".claude/knowledge/*.md\"]\n    CS[\".claude/skills/*\"]\n    CA[\".claude/agents/*.md\"]\n    DP[\"docs/ai-forward-pack/<br/>templates + scripts + pack docs\"]\n    EXP[\"docs/index.html<br/>(Docs Explorer)\"]\n    IDX[\"docs/docs-index.js<br/>(accumulated graph index)\"]\n    ARCH[\"docs/architecture.md · index.md · _meta.json<br/>(this bundle)\"]\n  end\n\n  subgraph CONSUMERS[\"consumers\"]\n    CC[\"Claude Code / Copilot<br/>(read .claude/)\"]\n    WEBE[\"web/ai-forward-pack-explainer.html<br/>(interactive explainer)\"]\n    ZIP[\"dist/ai-forward-pack.zip\"]\n  end\n\n  K --> SYNC\n  C --> SYNC\n  T --> SYNC\n  A --> SYNC\n  SYNC --> CK & CS & CA & DP & EXP\n  C -. \"skills reference\" .-> CK\n  CA -. \"agents reference\" .-> CK\n  DP --> GRAPH[\"docs-graph.py<br/>(in docs/ai-forward-pack/scripts)\"]\n  GRAPH --> IDX\n  ARCH --> GRAPH\n  IDX --> EXP\n  CK --> CC\n  CS --> CC\n  CA --> CC\n  SRC --> PKG --> ZIP\n  CK -. \"derived content\" .-> WEBE"
+          "mermaid": "flowchart TB\n  subgraph SRC[\"pack/ — canonical source (edit here)\"]\n    K[\"knowledge/*.md<br/>(reasoning spine + roster + foundation)\"]\n    C[\"commands/&lt;name&gt;/SKILL.md<br/>(the 24 skills)\"]\n    T[\"templates/*<br/>(artifacts each skill emits)\"]\n    A[\"adapters/<br/>(Claude Code + Copilot agents, INSTALL.md)\"]\n    SC[\"scripts/ (18) · evals/ · ci/ · examples/\"]\n    PD[\"README · OVERVIEW · research-synthesis\"]\n  end\n\n  subgraph TOOLS[\"tools/ — build\"]\n    SYNC[\"sync-pack.ps1\"]\n    PKG[\"package-pack.ps1\"]\n  end\n\n  subgraph INSTALL[\".claude/ + docs/ — generated install (do not hand-edit)\"]\n    CK[\".claude/knowledge/*.md\"]\n    CS[\".claude/skills/*\"]\n    CA[\".claude/agents/*.md\"]\n    DP[\"docs/ai-forward-pack/<br/>templates + scripts + pack docs\"]\n    EXP[\"docs/index.html<br/>(Docs Explorer)\"]\n    IDX[\"docs/docs-index.js<br/>(accumulated graph index)\"]\n    ARCH[\"docs/architecture.md · index.md · _meta.json<br/>(this bundle)\"]\n  end\n\n  subgraph CONSUMERS[\"consumers\"]\n    CC[\"Claude Code / Copilot<br/>(read .claude/)\"]\n    WEBE[\"web/ai-forward-pack-explainer.html<br/>(interactive explainer)\"]\n    ZIP[\"dist/ai-forward-pack.zip\"]\n  end\n\n  K --> SYNC\n  C --> SYNC\n  T --> SYNC\n  A --> SYNC\n  SYNC --> CK & CS & CA & DP & EXP\n  C -. \"skills reference\" .-> CK\n  CA -. \"agents reference\" .-> CK\n  DP --> GRAPH[\"docs-graph.py<br/>(in docs/ai-forward-pack/scripts)\"]\n  GRAPH --> IDX\n  ARCH --> GRAPH\n  IDX --> EXP\n  CK --> CC\n  CS --> CC\n  CA --> CC\n  SRC --> PKG --> ZIP\n  CK -. \"derived content\" .-> WEBE"
         },
         {
           "kind": "sequence",
@@ -669,7 +669,7 @@ window.DOCS_INDEX = {
           "mermaid": "classDiagram\n  class Signature {\n    +Name name\n    +FacetList facets\n    +StyleHints? hints\n    +validate() conflicts\n    +roundTrip() bool  %% G10: identify AND generate\n  }\n  class Facet {\n    <<abstract>>\n    +String key\n  }\n  class SingleValuedFacet {\n    +Value value  %% Type, Arch, Layout, Density, Pacing, ...\n  }\n  class MultiValuedFacet {\n    +Value[] values  %% Nav, Input, Feedback, Motion, A11y (joined with +)\n  }\n  class StyleHints {\n    +String[] hints  %% bounded NL decoration, applied last\n  }\n  class Archetype {\n    +String id          %% A1..F2\n    +String name\n    +Exemplar[] exemplars\n    +Signature canonical\n    +String codegenDescriptor\n  }\n  Signature \"1\" o-- \"4..*\" Facet : composes\n  Facet <|-- SingleValuedFacet\n  Facet <|-- MultiValuedFacet\n  Signature \"0..1\" *-- \"1\" StyleHints : decorated by\n  Archetype \"1\" *-- \"1\" Signature : canonical\n  Archetype \"1\" o-- \"1..*\" Exemplar\n  note for Signature \"G4: MUST carry Type, Arch, Layout, Pacing.\\nG1: always composed with a concrete U1–U20 / S1–S10 spec.\""
         }
       ],
-      "sourceSha256": "858a83593af777fce04eac0adc354d92ac510dc3fe872dc37ab6684fad70d857"
+      "sourceSha256": "584a8d3ebb963d5271ee660daecf23e83d11eac6b4092487f7d134ce9ac22d6a"
     },
     {
       "id": "architecture-agent-coordination",
@@ -1979,7 +1979,7 @@ window.DOCS_INDEX = {
       "path": "docs/reviews/forensic-review-rev49.md",
       "title": "Forensic Review - AI-Forward repository (revision 49)",
       "type": "doc",
-      "status": "accepted",
+      "status": "superseded",
       "owner": "@timianmalloo",
       "phase": "pack-evolution",
       "reviewBy": "2026-11-26",
@@ -2016,14 +2016,14 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "eb722c2c7a9bd082ef4be9af79e84ba997695be138c4bafa328e999368522a20"
+      "sourceSha256": "d32855e3323d13a01b2de3eff9d655d4d334e568f22e4a173be07c2b9b1636d3"
     },
     {
       "id": "forensic-review-rev49-backlog",
       "path": "docs/backlog/forensic-review-rev49.md",
       "title": "Forensic Review Backlog - revision 49",
       "type": "doc",
-      "status": "proposed",
+      "status": "superseded",
       "owner": "@timianmalloo",
       "phase": "pack-evolution",
       "reviewBy": "2026-11-26",
@@ -2060,7 +2060,87 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "67e2e404ae6868523b8e5d99bef1e81220067cd721cfbe959a4512bc7572a015"
+      "sourceSha256": "f18c3c2a1e3d9bc163344f98b8d4b0c528c81f9fe8507fcfc9b5d4c2f0d53922"
+    },
+    {
+      "id": "forensic-review-rev53",
+      "path": "docs/reviews/forensic-review-rev53.md",
+      "title": "Forensic Review - AI-Forward repository (revision 53)",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2026-11-30",
+      "reviewSuggested": [],
+      "summary": "Forensic assessment at commit 43bd9f6 (pack revision 53). The repository is healthy and adoption-ready: source is clean after the SIM115 remediation, all 9 verify-bundle gates pass, 360 Python tests + node/graph/audit gates are green, and the knowledge graph has 0 stale, flagged, orphan, or defect findings. No P0/P1 issues. The review re-verified rev49's carry-forward items (FR-069 still open and empirically reproduced; FR-070 resolved; FR-071 still open) and opened four low-severity items: stale architecture.md currency (fixed in this review), two new skills missing portal editorial metadata, five untested tools/ build scripts, and a shell=True regen path in coord-core. The dominant standing debt is the 21 uncontrolled defect classes in the register, already tracked there.",
+      "tags": [
+        "forensic-review",
+        "hygiene",
+        "documentation-currency",
+        "verification",
+        "ci",
+        "adoption-readiness"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        },
+        {
+          "to": "forensic-review-rev53-backlog",
+          "rel": "relates-to"
+        },
+        {
+          "to": "forensic-review-rev49",
+          "rel": "supersedes"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "053b650e025685cb63748f9f7ff895070282a2b346a83042ee8fac2081d94076"
+    },
+    {
+      "id": "forensic-review-rev53-backlog",
+      "path": "docs/backlog/forensic-review-rev53.md",
+      "title": "Forensic Review Backlog - AI-Forward revision 53",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2026-11-30",
+      "reviewSuggested": [],
+      "summary": "Proposed, prioritized backlog from the revision-53 forensic review. One carry-forward P2 (FR-069, re-verified open), one carry-forward P3 (FR-071), and four new P3 items (FR-072..FR-075). FR-070 is resolved. No P0/P1. FR-### ids continue from the prior maximum (71). All items are `proposed` and await human triage; nothing here has been implemented.",
+      "tags": [
+        "forensic-review",
+        "backlog",
+        "verification",
+        "documentation",
+        "testing",
+        "security"
+      ],
+      "links": [
+        {
+          "to": "forensic-review-rev53",
+          "rel": "relates-to"
+        },
+        {
+          "to": "forensic-review-rev49-backlog",
+          "rel": "supersedes"
+        },
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "fd150002b6bb06f25a06a67d9d721adc9eef50b6fd83947f3028d11b1eea677c"
     },
     {
       "id": "hygiene-backlog",
@@ -4469,5 +4549,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "4170e2bbc5b77b37d99fd25eda668cc8143912b5523ecdd496a1602efc13a9f6"
+  "graphSha256": "f62f779696b592b1d8deb7ddbcaf3ace05bc2c95771776eadb3211a67bfada12"
 };

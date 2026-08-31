@@ -2,7 +2,7 @@
 id: forensic-review-rev49
 title: "Forensic Review - AI-Forward repository (revision 49)"
 type: doc
-status: accepted
+status: superseded
 owner: "@timianmalloo"
 phase: "pack-evolution"
 tags: [forensic-review, ci, worktree, audit, verification, adoption-readiness]

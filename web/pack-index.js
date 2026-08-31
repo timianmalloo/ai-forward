@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 126
+"count": 128
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 273,
+"total": 275,
 "items": [
 {
 "cat": "knowledge",
@@ -1403,7 +1403,7 @@ window.PACK_INDEX = {
 "summary": "The architecture of record for this repository: a dual-purpose repo that is both the canonical SOURCE of the AI-Forward Pack (pack/) and a live INSTALL of it (.claude/, docs/), kept in lockstep by tools/sync-pack.ps1. Includes the four…",
 "path": "docs/architecture.md",
 "kind": "architecture",
-"text": "ai-forward — architecture overview the architecture of record for this repository: a dual-purpose repo that is both the canonical source of the ai-forward pack (pack/) and a live install of it (.claude/, docs/), kept in lockstep by tools/sync-pack.ps1. includes the four diagram families and the tool/cli reference, verified against pack revision 49 on 2026-08-28. pack knowledge-graph tooling source-and-install relates-to docs-index"
+"text": "ai-forward — architecture overview the architecture of record for this repository: a dual-purpose repo that is both the canonical source of the ai-forward pack (pack/) and a live install of it (.claude/, docs/), kept in lockstep by tools/sync-pack.ps1. includes the four diagram families and the tool/cli reference, verified against pack revision 53 on 2026-08-30. pack knowledge-graph tooling source-and-install relates-to docs-index"
 },
 {
 "cat": "graph",
@@ -1764,6 +1764,24 @@ window.PACK_INDEX = {
 "path": "docs/backlog/forensic-review-rev49.md",
 "kind": "doc",
 "text": "forensic review backlog - revision 49 three proposed items from the revision-49 forensic review at commit 33f651d: make the local bundle verifier restore declared npm dependencies in clean worktrees; stop sync-pack from leaving crlf-only dirty copilot agent files on windows; and make audit-log suggest distinguish its unavoidable append-only self-reference from untriaged meaningful changes. backlog forensic-review ci worktree audit windows refines forensic-review-rev49 tested-by forensic-review-rev49-proof supersedes forensic-review-rev48-backlog relates-to defect-classes relates-to architecture"
+},
+{
+"cat": "graph",
+"id": "forensic-review-rev53",
+"title": "Forensic Review - AI-Forward repository (revision 53)",
+"summary": "Forensic assessment at commit 43bd9f6 (pack revision 53). The repository is healthy and adoption-ready: source is clean after the SIM115 remediation, all 9 verify-bundle gates pass, 360 Python tests + node/graph/audit gates are green, and…",
+"path": "docs/reviews/forensic-review-rev53.md",
+"kind": "doc",
+"text": "forensic review - ai-forward repository (revision 53) forensic assessment at commit 43bd9f6 (pack revision 53). the repository is healthy and adoption-ready: source is clean after the sim115 remediation, all 9 verify-bundle gates pass, 360 python tests + node/graph/audit gates are green, and the knowledge graph has 0 stale, flagged, orphan, or defect findings. no p0/p1 issues. the review re-verified rev49's carry-forward items (fr-069 still open and empirically reproduced; fr-070 resolved; fr-071 still open) and opened four low-severity items: stale architecture.md currency (fixed in this review), two new skills missing portal editorial metadata, five untested tools/ build scripts, and a shell=true regen path in coord-core. the dominant standing debt is the 21 uncontrolled defect classes in the register, already tracked there. forensic-review hygiene documentation-currency verification ci adoption-readiness documents architecture relates-to forensic-review-rev53-backlog supersedes forensic-review-rev49 relates-to defect-classes"
+},
+{
+"cat": "graph",
+"id": "forensic-review-rev53-backlog",
+"title": "Forensic Review Backlog - AI-Forward revision 53",
+"summary": "Proposed, prioritized backlog from the revision-53 forensic review. One carry-forward P2 (FR-069, re-verified open), one carry-forward P3 (FR-071), and four new P3 items (FR-072..FR-075). FR-070 is resolved. No P0/P1. FR-### ids continue…",
+"path": "docs/backlog/forensic-review-rev53.md",
+"kind": "doc",
+"text": "forensic review backlog - ai-forward revision 53 proposed, prioritized backlog from the revision-53 forensic review. one carry-forward p2 (fr-069, re-verified open), one carry-forward p3 (fr-071), and four new p3 items (fr-072..fr-075). fr-070 is resolved. no p0/p1. fr-### ids continue from the prior maximum (71). all items are `proposed` and await human triage; nothing here has been implemented. forensic-review backlog verification documentation testing security relates-to forensic-review-rev53 supersedes forensic-review-rev49-backlog relates-to architecture relates-to defect-classes"
 },
 {
 "cat": "graph",

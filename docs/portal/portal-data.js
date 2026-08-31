@@ -1073,6 +1073,18 @@ window.PORTAL_DATA = {
         "summary": "Evidence record for the revision-49 forensic review at commit 33f651d. It records the baseline gates and the three proposed findings: a clean-worktree npm..."
       },
       {
+        "id": "forensic-review-rev53",
+        "type": "doc",
+        "title": "Forensic Review - AI-Forward repository (revision 53)",
+        "summary": "Forensic assessment at commit 43bd9f6 (pack revision 53). The repository is healthy and adoption-ready: source is clean after the SIM115 remediation, all 9..."
+      },
+      {
+        "id": "forensic-review-rev53-backlog",
+        "type": "doc",
+        "title": "Forensic Review Backlog - AI-Forward revision 53",
+        "summary": "Proposed, prioritized backlog from the revision-53 forensic review. One carry-forward P2 (FR-069, re-verified open), one carry-forward P3 (FR-071), and four..."
+      },
+      {
         "id": "hygiene-backlog",
         "type": "doc",
         "title": "Code-hygiene backlog",
@@ -2238,6 +2250,46 @@ window.PORTAL_DATA = {
       {
         "from": "forensic-review-rev49-proof",
         "to": "forensic-review-rev49-backlog",
+        "rel": "relates-to"
+      },
+      {
+        "from": "forensic-review-rev53",
+        "to": "architecture",
+        "rel": "documents"
+      },
+      {
+        "from": "forensic-review-rev53",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "forensic-review-rev53",
+        "to": "forensic-review-rev49",
+        "rel": "supersedes"
+      },
+      {
+        "from": "forensic-review-rev53",
+        "to": "forensic-review-rev53-backlog",
+        "rel": "relates-to"
+      },
+      {
+        "from": "forensic-review-rev53-backlog",
+        "to": "architecture",
+        "rel": "relates-to"
+      },
+      {
+        "from": "forensic-review-rev53-backlog",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "forensic-review-rev53-backlog",
+        "to": "forensic-review-rev49-backlog",
+        "rel": "supersedes"
+      },
+      {
+        "from": "forensic-review-rev53-backlog",
+        "to": "forensic-review-rev53",
         "rel": "relates-to"
       },
       {

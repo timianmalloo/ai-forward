@@ -2,7 +2,7 @@
 id: forensic-review-rev49-backlog
 title: "Forensic Review Backlog - revision 49"
 type: doc
-status: proposed
+status: superseded
 owner: "@timianmalloo"
 phase: "pack-evolution"
 tags: [backlog, forensic-review, ci, worktree, audit, windows]
