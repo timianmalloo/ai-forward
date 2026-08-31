@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-08-31T13:49:59Z",
+  "generated": "2026-08-31T14:00:32Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2674,6 +2674,28 @@ window.AUDIT_DATA = {
       "outcome": "success",
       "goal": "Implement the 3 approved agent-focus controls (spec->design->implement) for this repo",
       "done_when": "3 controls built, tested green, gates pass, committed"
+    },
+    {
+      "id": "al-01M1C1YADZ7CXEW8QTZJTQRRRH",
+      "shortname": "prose-to-structure-review",
+      "datetime": "2026-08-31T14:00:32Z",
+      "session": "2f63f380-70dd-4e60-94c2-1e2de821f3c2",
+      "prompt": "/also — do a full review of the repo directives and propose (in html) where else we should be promoting from prose to structure",
+      "summary": "Directive-wide sweep of pack/knowledge for the CT19 prose->structure pattern. 3-part promotion test (recurring+skip-prone, nameable fields, checkable surface). Tier 1 recommend now: NG4 assume: + L5 simplify: marker fields + lint (existing harvest surface). Tier 2 pilot: E7/E8 + IO2 as opt-in Proof-Pack section. Named the negative space (tells/reasoning stay prose). Delivered docs/proposals/prose-to-structure-review.html. Analysis only, no implementation.",
+      "kind": "manual",
+      "skill": null,
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/proposals/prose-to-structure-review.html"
+      ],
+      "tags": [
+        "prose-to-structure",
+        "proposal"
+      ],
+      "outcome": "success",
+      "goal": "Review repo directives for further prose->structure promotion candidates; deliver an HTML proposal",
+      "done_when": "self-contained HTML proposal committed + pushed; stays analysis, not implementation"
     }
   ],
   "changes": [
