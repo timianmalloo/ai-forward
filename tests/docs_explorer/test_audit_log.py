@@ -142,5 +142,54 @@ class AuditLogGoalStateTests(unittest.TestCase):
             self.assertNotIn("done_when", self._entries(root)[-1])
 
 
+class AuditLogSignalsTests(unittest.TestCase):
+    """AL2a / watcher telemetry: an OPTIONAL `signals` object carries the deterministic signals a
+    turn actually observed at close, read by the watcher's DeterministicSignalsDeriver to lift an
+    imported episode above its conservative default. Honest by construction — only supplied fields
+    are emitted, so an un-instrumented turn omits the object and the reader falls back to a
+    conservative default rather than a fabricated value (spec L127 / NG1). The absent-when-unsupplied
+    test is the fabrication oracle: it reds any change that emits an empty or defaulted object."""
+
+    def _append(self, root, *extra, stdin=None):
+        return subprocess.run(
+            [sys.executable, str(SCRIPT), "--root", str(root), "append",
+             "--shortname", "t", "--session", "s", "--prompt", "p", "--summary", "did the thing",
+             *extra],
+            cwd=ROOT, capture_output=True, text=True, timeout=30, input=stdin)
+
+    def _entries(self, root):
+        text = (pathlib.Path(root) / "audit" / "audit-log.jsonl").read_text(encoding="utf-8")
+        return [json.loads(line) for line in text.splitlines() if line.strip()]
+
+    def test_signals_recorded_from_flags(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = pathlib.Path(directory) / "docs"
+            result = self._append(root, "--signal-acceptance-met", "true",
+                                  "--signal-verification-path", "true",
+                                  "--signal-regression", "false")
+            self.assertEqual(0, result.returncode, result.stderr)
+            self.assertEqual(
+                {"acceptance_met": True, "verification_path": True, "regression": False},
+                self._entries(root)[-1].get("signals"))
+
+    def test_signals_absent_when_no_flags(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = pathlib.Path(directory) / "docs"
+            result = self._append(root)
+            self.assertEqual(0, result.returncode, result.stderr)
+            self.assertNotIn("signals", self._entries(root)[-1])
+
+    def test_from_json_supplies_signals_and_a_flag_overrides(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = pathlib.Path(directory) / "docs"
+            payload = json.dumps({"signals": {"guidance_required": 3, "acceptance_met": False}})
+            result = self._append(root, "--from-json", "-", "--signal-acceptance-met", "true",
+                                  stdin=payload)
+            self.assertEqual(0, result.returncode, result.stderr)
+            signals = self._entries(root)[-1].get("signals")
+            self.assertEqual(3, signals.get("guidance_required"))
+            self.assertEqual(True, signals.get("acceptance_met"))
+
+
 if __name__ == "__main__":
     unittest.main()

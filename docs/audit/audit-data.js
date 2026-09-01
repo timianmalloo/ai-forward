@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-08-31T16:12:12Z",
+  "generated": "2026-09-01T03:44:48Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2744,6 +2744,33 @@ window.AUDIT_DATA = {
       "outcome": "success",
       "goal": "Implement Tier-2: give E7/E8 + IO2 a structured opt-in home in the Proof-Pack template",
       "done_when": "template sections added, E7/IO2 reference them, gate green, committed+pushed"
+    },
+    {
+      "id": "al-01M1DGX551TXJRQ0PBJ84E4RW5",
+      "shortname": "audit-signals-writer",
+      "datetime": "2026-09-01T03:41:17Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "start an ai-forward work tree and do the best next action",
+      "summary": "Wrote the watcher-telemetry writer half: audit-log.py append now emits an optional honest signals object via --signal-verification-path/-executed/-acceptance-met/-regression flags (judgement-laden counts flag-less, --from-json only); AL2a documents the convention. 3 tests + mutation-verified honesty oracle; full suite 383 passed.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "pack/scripts/audit-log.py",
+        "pack/knowledge/audit-and-change-log.md",
+        "tests/docs_explorer/test_audit_log.py"
+      ],
+      "tags": [
+        "watcher",
+        "telemetry"
+      ],
+      "outcome": "success",
+      "signals": {
+        "verification_path": true,
+        "acceptance_met": true,
+        "regression": false
+      }
     }
   ],
   "changes": [
@@ -3786,6 +3813,29 @@ window.AUDIT_DATA = {
         "after": "b18696b22da1c3e971eb9e8c5e63c77c11c8682b",
         "branch": "main",
         "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M1DGXQCGBRHS8N9QDXFDZTRV",
+      "datetime": "2026-09-01T03:41:36Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "kind": "knowledge",
+      "skill": "implement",
+      "title": "audit-log signals object: the watcher-telemetry writer half",
+      "prompt": "start an ai-forward work tree and do the best next action",
+      "summary": "append emits an optional honest signals object (AL2a); safe booleans by flag, judgement-laden counts flag-less to prevent fabrication (L127/NG1).",
+      "rationale": "Closes the writer half the ai-de watcher reader was already waiting for; honest by construction so an un-instrumented turn scores conservatively, never fabricated.",
+      "artifacts": [
+        "pack/scripts/audit-log.py",
+        "pack/knowledge/audit-and-change-log.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "811c685e84590a3f01d862fc100a431394faf3c9",
+        "after": "811c685e84590a3f01d862fc100a431394faf3c9",
+        "branch": "feature/audit-signals-writer",
+        "pushed": null,
         "commits": []
       }
     }
