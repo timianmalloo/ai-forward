@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-01T03:44:48Z",
+  "generated": "2026-09-01T04:19:16Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2770,6 +2770,31 @@ window.AUDIT_DATA = {
         "verification_path": true,
         "acceptance_met": true,
         "regression": false
+      }
+    },
+    {
+      "id": "al-01M1DK2QADMX44GWGHFKS5J4RF",
+      "shortname": "implement-emits-signals",
+      "datetime": "2026-09-01T04:19:16Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do these next steps",
+      "summary": "Wired the /implement skill's Audit step (both the Claude SKILL.md and the Copilot prompt adapter) to emit the honest watcher signals at close: --signal-acceptance-met + --signal-verification-path (+ verification-executed when red-first), only when genuinely true. Consumers inherit it on next pack update.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "pack/commands/implement/SKILL.md",
+        "pack/adapters/copilot/prompts/implement.prompt.md"
+      ],
+      "tags": [
+        "watcher",
+        "telemetry"
+      ],
+      "outcome": "success",
+      "signals": {
+        "verification_path": true,
+        "acceptance_met": true
       }
     }
   ],
