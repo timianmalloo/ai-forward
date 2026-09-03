@@ -146,20 +146,23 @@ sys.exit(1 if bad else 0)
 "@
     }
 
-    # FR-072 / P2. The always-on knowledge set IS the static prefix of every call: re-read
-    # every turn, billed every turn, subtracted from the window before the user speaks. Left
-    # ungated it re-grows, because each new doc looks free at the moment it is written and
-    # nothing reports what it costs. This makes the number fail closed.
+    # FR-072 / P2, reshaped by FR-073. The always-on knowledge set IS the static prefix of
+    # every call: re-read every turn, billed every turn, subtracted from the window before the
+    # user speaks. Left ungated it re-grows, because each new doc looks free at the moment it
+    # is written and nothing reports what it costs.
     #
-    # The ceiling is 45,000 estimated tokens - ~5% headroom over the current 42,606. Raising
-    # it is a deliberate act with a diff, which is the point; the failure mode being prevented
-    # is raising it silently, one doc at a time.
+    # This is a RATCHET, not a ceiling. The first cut used a fixed 45,000-token ceiling and was
+    # the wrong shape: two ordinary paragraphs took the set to 97% of budget, so the next
+    # routine edit would have red-lighted the build - training the "just raise the ceiling"
+    # reflex that the gate exists to break. Growth is fine; UNACKNOWLEDGED growth fails, and
+    # the fix is one recorded line in pack/context-budget.json that a reviewer can see.
+    #
     # Both halves always run and EITHER fails the gate: a budget that holds only because a
     # persona quietly inherits the whole set is not a budget. Short-circuiting on the first
     # would hide the second until the first was fixed.
     Gate "8. always-on context budget" {
         $budget = Join-Path $repo "pack\scripts\context-budget.py"
-        python $budget gate --ceiling 45000
+        python $budget gate
         $ceilingOk = ($LASTEXITCODE -eq 0)
         python $budget agents | Select-Object -Last 4
         $lensOk = ($LASTEXITCODE -eq 0)

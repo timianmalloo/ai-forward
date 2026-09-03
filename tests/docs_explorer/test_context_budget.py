@@ -1,4 +1,4 @@
-"""P1/P2/P3/P5 — the always-on context budget is declared, measured, and gated.
+"""P1/P2/P3/P5 — the always-on context budget is declared, measured, and ratcheted.
 
 An instruction set attached to every request IS the static prefix of every model call. In
 the session that motivated this, 37 of 39 knowledge docs shipped with `applyTo: "**"`,
@@ -6,11 +6,12 @@ making a 184K-token corpus the prefix of all 484 calls — 63% of every input to
 re-reading the same text, and a ceiling that failed 27 of 39 delegated runs outright.
 
 The failure mode is not that the docs are wrong. It is that nothing reported what they
-cost, so each new one looked free. These tests pin the three properties that keep it from
-re-growing: every doc DECLARES its scope, the always-on total is GATED, and every agent
-declares the lens it actually needs instead of inheriting the world.
+cost, so each new one looked free. These tests pin the properties that keep it from
+re-growing: every doc DECLARES its scope, growth is RATCHETED, and every agent declares
+the lens it actually needs instead of inheriting the world.
 """
 import importlib.util
+import json
 import os
 import shutil
 import tempfile
@@ -20,6 +21,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
 SCRIPT = os.path.join(ROOT, "pack", "scripts", "context-budget.py")
 KNOWLEDGE = os.path.join(ROOT, "pack", "knowledge")
+CONFIG = os.path.join(ROOT, "pack", "context-budget.json")
 CC_AGENTS = os.path.join(ROOT, "pack", "adapters", "claude-code", "agents")
 COP_AGENTS = os.path.join(ROOT, "pack", "adapters", "copilot", "agents")
 
@@ -27,9 +29,14 @@ spec = importlib.util.spec_from_file_location("context_budget", SCRIPT)
 cb = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(cb)
 
-# The ceiling verify-bundle.ps1 and pack-consistency.yml enforce. Kept here so a change to
-# one without the other fails a test rather than drifting silently.
-CEILING = 45000
+def set_scope(kdir, name, scope):
+    """Rewrite a doc's load scope, or strip its frontmatter entirely when scope is None."""
+    path = os.path.join(kdir, name)
+    with open(path, encoding="utf-8") as fh:
+        body = fh.read().split("---\n", 2)[-1]
+    header = "---\nload: " + scope + "\n---\n" if scope else ""
+    with open(path, "w", encoding="utf-8") as fh:
+        fh.write(header + body)
 
 
 class DeclarationTests(unittest.TestCase):
@@ -68,54 +75,135 @@ class DeclarationTests(unittest.TestCase):
         self.assertEqual(manifest[0]["load"], "always")
 
 
-class BudgetGateTests(unittest.TestCase):
-    """P2 — the always-on total fails closed."""
+class BudgetRatchetTests(unittest.TestCase):
+    """P2 — the gate fails on unacknowledged GROWTH, not on an absolute number.
 
-    def test_always_on_set_is_under_the_ceiling(self):
-        total = sum(d["tokens"] for d in cb.always_on(cb.scan(KNOWLEDGE)))
-        self.assertLessEqual(total, CEILING,
-                             "always-on knowledge is over the declared ceiling; scope a doc "
-                             "out of Tier A or raise the ceiling deliberately")
+    The first cut of this gate was a fixed 45,000-token ceiling. It was the wrong shape:
+    two ordinary paragraphs (IO13 and GO19) took the set to 97% of budget, so the next
+    routine edit would have red-lighted the build — training exactly the reflex ("just
+    raise the ceiling") that PACK-R exists to break. A ceiling stays silent through the
+    whole accumulation and then fires on something innocent. A ratchet fires on the
+    accumulation itself, and the fix is one acknowledged line in a diff.
+    """
 
-    def test_gate_fails_when_a_doc_loses_its_declaration(self):
-        """The control, observed failing on the shape it exists to catch.
+    def _sandbox(self, mutate=None, extra=()):
+        """A throwaway copy of the shipped tree, optionally mutated. Returns the gate's exit."""
+        tmp = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, tmp, True)
+        kdir = os.path.join(tmp, "knowledge")
+        shutil.copytree(KNOWLEDGE, kdir)
+        cfg = os.path.join(tmp, "context-budget.json")
+        shutil.copy(CONFIG, cfg)
+        if mutate:
+            mutate(kdir, cfg)
+        return cb.main(["--knowledge-dir", kdir, "--config", cfg, "gate", *extra])
 
-        This is the regression that matters: a doc added or edited without a `load:` line
-        silently rejoins the always-on set in some readers and vanishes in others.
+    def test_passes_on_the_shipped_tree(self):
+        self.assertEqual(self._sandbox(), 0)
+
+    def test_fails_when_the_set_grows_without_the_baseline_moving(self):
+        """The control, observed failing on the shape it exists to catch."""
+        self.assertEqual(
+            self._sandbox(lambda k, c: set_scope(k, "layered-optimized-architecture.md",
+                                                 "always")), 1,
+            "a doc promoted back to always-on must fail until the baseline records it")
+
+    def test_an_ordinary_edit_does_not_trip_the_gate(self):
+        """The regression the ceiling design caused. Editing prose is not a budget event."""
+        def grow(kdir, _cfg):
+            with open(os.path.join(kdir, "rigor-protocol.md"), "a", encoding="utf-8") as fh:
+                fh.write("\n" + ("x" * 1900) + "\n")   # ~400 estimated tokens
+        self.assertEqual(self._sandbox(grow), 0,
+                         "a routine edit inside tolerance must not fail the build")
+
+    def test_fails_when_a_doc_loses_its_declaration(self):
+        self.assertEqual(
+            self._sandbox(lambda k, c: set_scope(k, "rigor-protocol.md", None)), 1)
+
+    def test_acknowledging_the_growth_clears_it(self):
+        """Growth is allowed; SILENT growth is not. Recording it must actually resolve."""
+        tmp = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, tmp, True)
+        kdir = os.path.join(tmp, "knowledge")
+        shutil.copytree(KNOWLEDGE, kdir)
+        cfg = os.path.join(tmp, "context-budget.json")
+        shutil.copy(CONFIG, cfg)
+        set_scope(kdir, "ui-archetype-catalog.md", "always")
+        args = ["--knowledge-dir", kdir, "--config", cfg, "gate"]
+        self.assertEqual(cb.main(args), 1, "growth should fail before it is recorded")
+        self.assertEqual(cb.main(args + ["--update-baseline"]), 0)
+        self.assertEqual(cb.main(args), 0, "recording the growth should clear the gate")
+
+    def test_the_backstop_bites_even_when_the_growth_is_acknowledged(self):
+        """A ratchet alone would let the set grow forever, one acknowledged step at a time.
+
+        The backstop is where the always-on set stops fitting the smallest model tier the
+        roster delegates to, so passing it is a decision about which models can still be
+        used — not something --update-baseline should be able to wave through.
         """
-        tmp = tempfile.mkdtemp()
-        try:
-            copy = os.path.join(tmp, "knowledge")
-            shutil.copytree(KNOWLEDGE, copy)
-            victim = os.path.join(copy, "rigor-protocol.md")
-            with open(victim, encoding="utf-8") as fh:
-                body = fh.read().split("---\n", 2)[-1]
-            with open(victim, "w", encoding="utf-8") as fh:
-                fh.write(body)
-            args = cb.main(["--knowledge-dir", copy, "gate", "--ceiling", str(CEILING)])
-            self.assertEqual(args, 1, "gate passed a doc with no declared load scope")
-        finally:
-            shutil.rmtree(tmp, ignore_errors=True)
+        def blow_past(kdir, cfgpath):
+            for name in ("layered-optimized-architecture.md", "ui-archetype-catalog.md",
+                         "agent-body-of-knowledge.md", "persona-audit.md"):
+                set_scope(kdir, name, "always")
+            with open(cfgpath, encoding="utf-8") as fh:
+                raw = fh.read()
+            with open(cfgpath, "w", encoding="utf-8") as fh:
+                fh.write(raw.replace('"always_on_tokens": 43708',
+                                     '"always_on_tokens": 999999'))
+        self.assertEqual(self._sandbox(blow_past), 1)
 
-    def test_gate_fails_when_the_always_on_set_grows_past_the_ceiling(self):
-        tmp = tempfile.mkdtemp()
-        try:
-            copy = os.path.join(tmp, "knowledge")
-            shutil.copytree(KNOWLEDGE, copy)
-            # Promote the largest reference doc back to always-on — the exact regression
-            # that produced the 184K prefix, one doc at a time.
-            victim = os.path.join(copy, "layered-optimized-architecture.md")
-            with open(victim, encoding="utf-8") as fh:
-                body = fh.read().split("---\n", 2)[-1]
-            with open(victim, "w", encoding="utf-8") as fh:
-                fh.write("---\nload: always\n---\n" + body)
-            self.assertEqual(cb.main(["--knowledge-dir", copy, "gate",
-                                      "--ceiling", str(CEILING)]), 1)
-        finally:
-            shutil.rmtree(tmp, ignore_errors=True)
+    def test_the_backstop_is_traceable_to_its_stated_derivation(self):
+        # A number nobody can derive is a number nobody can argue with, which is how the
+        # first ceiling ended up arbitrary. This keeps the two in step.
+        with open(CONFIG, encoding="utf-8") as fh:
+            cfg = json.load(fh)
+        d = cfg["ceiling_derivation"]
+        derived = (d["smallest_supported_window"] - d["tool_definition_tokens"]
+                   - d["required_working_headroom"])
+        self.assertLessEqual(cfg["ceiling_tokens"], derived + 100,
+                             "ceiling_tokens has drifted from its stated derivation")
+        self.assertLess(cfg["always_on_tokens"], cfg["ceiling_tokens"])
 
-    def test_gate_passes_on_the_shipped_tree(self):
-        self.assertEqual(cb.main(["gate", "--ceiling", str(CEILING)]), 0)
+    def test_the_recorded_baseline_matches_the_shipped_tree(self):
+        with open(CONFIG, encoding="utf-8") as fh:
+            baseline = json.load(fh)["always_on_tokens"]
+        total = sum(d["tokens"] for d in cb.always_on(cb.scan(KNOWLEDGE)))
+        tolerance = baseline * 0.02
+        self.assertLessEqual(abs(total - baseline), tolerance,
+                             "the committed baseline no longer reflects the shipped set")
+
+
+class CorpusResolutionTests(unittest.TestCase):
+    """PACK-P — a check must never report a verdict over a corpus it did not establish.
+
+    Found live: run from its deployed location, the script walked up and matched
+    `docs/knowledge/` (the research evidence dirs) as a knowledge directory, scanned zero
+    docs, and printed a clean gate. A green result over nothing is worse than no gate.
+    """
+
+    def test_an_empty_directory_fails_loudly(self):
+        tmp = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, tmp, True)
+        self.assertEqual(cb.main(["--knowledge-dir", tmp, "gate"]), 1,
+                         "an empty corpus must fail, never report clean")
+
+    def test_a_directory_without_the_manifest_is_not_a_knowledge_dir(self):
+        # The discriminator that stops docs/knowledge/ from matching.
+        tmp = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, tmp, True)
+        os.makedirs(os.path.join(tmp, "some-topic"))
+        self.assertFalse(cb._is_knowledge_dir(tmp))
+        self.assertTrue(cb._is_knowledge_dir(KNOWLEDGE))
+
+    def test_the_deployed_copy_resolves_the_same_corpus_as_the_source(self):
+        """The bug was invisible from the source tree and only appeared once installed."""
+        deployed = os.path.join(ROOT, "docs", "ai-forward-pack", "scripts", "context-budget.py")
+        if not os.path.isfile(deployed):
+            self.skipTest("pack not synced to docs/ai-forward-pack/")
+        dspec = importlib.util.spec_from_file_location("context_budget_deployed", deployed)
+        dcb = importlib.util.module_from_spec(dspec)
+        dspec.loader.exec_module(dcb)
+        self.assertEqual(len(dcb.scan(dcb.knowledge_dir())), len(cb.scan(cb.knowledge_dir())))
 
 
 class AgentLensTests(unittest.TestCase):

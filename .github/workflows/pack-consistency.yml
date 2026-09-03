@@ -112,13 +112,17 @@ jobs:
           sys.exit(1 if bad else 0)
           PY
 
-      # FR-072 / P2. The always-on knowledge set is the static prefix of every model call:
-      # re-read every turn, billed every turn, and subtracted from the window before the
-      # user has said anything. Ungated it re-grows one "surely one more doc is free" at a
-      # time - which is how a profiled session reached a 184K always-on prefix that failed
-      # 27 of 39 delegated runs outright. Raising the ceiling must be a deliberate diff.
+      # FR-072 / P2, reshaped by FR-073. The always-on knowledge set is the static prefix of
+      # every model call: re-read every turn, billed every turn, and subtracted from the
+      # window before the user has said anything. Ungated it re-grows one "surely one more
+      # doc is free" at a time - which is how a profiled session reached a 184K always-on
+      # prefix that failed 27 of 39 delegated runs outright.
+      #
+      # A ratchet, not a ceiling: growth is allowed, growth that leaves the recorded baseline
+      # untouched is not. The baseline lives in pack/context-budget.json so the growth shows
+      # up in a diff a reviewer can question.
       - name: Always-on context budget
-        run: python3 pack/scripts/context-budget.py gate --ceiling 45000
+        run: python3 pack/scripts/context-budget.py gate
 
       # Every persona declares the knowledge lens it actually needs (P3). An agent with no
       # declared lens inherits the whole set, which is what put a main-thread-sized prefix

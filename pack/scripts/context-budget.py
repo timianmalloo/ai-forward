@@ -9,8 +9,9 @@ what it costs.
 
 This makes that cost a NUMBER, emitted on the normal path (instrumentation-over-inference
 IO2/IO4: a feature is not done until its behaviour is measurable by default), and gates it
-so the set cannot re-grow past a declared ceiling (continuous-improvement CI6: a lesson
-recorded as prose is a memoir).
+so the set cannot re-grow UNNOTICED (continuous-improvement CI6: a lesson recorded as
+prose is a memoir). The control is a ratchet, not a ceiling: growing the set is fine,
+growing it without recording that you did is what fails.
 
 Every knowledge doc declares its own load scope in frontmatter:
 
@@ -26,7 +27,8 @@ verbatim, and carries no frontmatter of its own.
 
 Subcommands
   report      Tier table + the always-on total.
-  gate        Fail when the always-on total exceeds --ceiling. CI-able.
+  gate        Fail on unacknowledged growth past the recorded baseline (ratchet),
+              and on a derived backstop. CI-able. See pack/context-budget.json.
   agents      Per-agent declared knowledge prefix (the sub-agent lens, P3).
   preflight   Fail when an assembled prefix would not fit a model's window (P5).
 
@@ -38,6 +40,8 @@ where an exact count matters, count with the target model's tokenizer.
 Python 3.8+, stdlib only.
 """
 import argparse
+import datetime
+import json
 import os
 import re
 import sys
@@ -75,13 +79,19 @@ def est_tokens(chars):
     return int(round(chars / CHARS_PER_TOKEN))
 
 
-def find_dir(*candidates):
-    """Resolve a pack directory from either the pack layout or an installed repo."""
+def find_dir(*candidates, predicate=None):
+    """Resolve a pack directory from either the pack layout or an installed repo.
+
+    `predicate` guards against a same-named directory that is not the one meant: walking up
+    from docs/ai-forward-pack/scripts, a bare "knowledge" candidate matches docs/knowledge/
+    (the evidence dirs), which contains no knowledge docs at all. Matching it produced an
+    empty scan that the gate then reported as clean -- defect class PACK-P.
+    """
     start = HERE
     for _ in range(6):
         for rel in candidates:
             path = os.path.join(start, rel)
-            if os.path.isdir(path):
+            if os.path.isdir(path) and (predicate is None or predicate(path)):
                 return path
         parent = os.path.dirname(start)
         if parent == start:
@@ -90,11 +100,70 @@ def find_dir(*candidates):
     return None
 
 
+def _is_knowledge_dir(path):
+    """A pack knowledge directory always carries the vendored provenance manifest."""
+    return os.path.isfile(os.path.join(path, MANIFEST))
+
+
 def knowledge_dir(explicit=None):
     if explicit:
         return explicit
     return find_dir(os.path.join("pack", "knowledge"), os.path.join(".claude", "knowledge"),
-                    "knowledge")
+                    "knowledge", predicate=_is_knowledge_dir)
+
+
+CONFIG_NAME = "context-budget.json"
+CONFIG_DEFAULTS = {
+    "always_on_tokens": None, "growth_tolerance_pct": 2, "shrink_report_pct": 5,
+    "ceiling_tokens": 60000,
+}
+
+
+def config_path(explicit=None):
+    """Locate the committed budget config (pack/ in the source repo, docs/ai-forward-pack/ once
+    installed). Returns None when absent -- the gate then runs ceiling-only and says so."""
+    if explicit:
+        return explicit
+    start = HERE
+    for _ in range(6):
+        for rel in (os.path.join("pack", CONFIG_NAME),
+                    os.path.join("docs", "ai-forward-pack", CONFIG_NAME),
+                    CONFIG_NAME):
+            path = os.path.join(start, rel)
+            if os.path.isfile(path):
+                return path
+        parent = os.path.dirname(start)
+        if parent == start:
+            break
+        start = parent
+    return None
+
+
+def load_config(explicit=None):
+    path = config_path(explicit)
+    cfg = dict(CONFIG_DEFAULTS)
+    if not path:
+        return cfg, None
+    try:
+        with open(path, encoding="utf-8") as fh:
+            raw = json.load(fh)
+    except (OSError, ValueError) as exc:
+        # A malformed config must not silently disable the gate: fail loudly at the caller.
+        raise SystemExit(f"context-budget: cannot read {path}: {exc}")
+    cfg.update({k: v for k, v in raw.items() if not k.startswith("_")})
+    return cfg, path
+
+
+def write_baseline(path, total):
+    """Rewrite only always_on_tokens + the stamp, preserving comments, key order and formatting."""
+    with open(path, encoding="utf-8", newline="") as fh:
+        text = fh.read()
+    text = re.sub(r'("always_on_tokens":\s*)\d+', lambda m: m.group(1) + str(total), text, count=1)
+    text = re.sub(r'("baseline_set_on":\s*)"[^"]*"',
+                  lambda m: m.group(1) + '"' + datetime.date.today().isoformat() + '"',
+                  text, count=1)
+    with open(path, "w", encoding="utf-8", newline="") as fh:
+        fh.write(text)
 
 
 def agents_dirs(explicit=None):
@@ -132,6 +201,16 @@ def read_frontmatter(path):
     return meta, raw[match.end():]
 
 
+class EmptyCorpus(Exception):
+    """The scanned directory held no knowledge docs.
+
+    PACK-P: a check that reports a verdict over a corpus it never established was non-empty
+    is worse than no check, because it reports success. An empty scan is always a resolution
+    bug -- there is no legitimate pack with zero knowledge docs -- so it is raised, never
+    quietly counted as zero.
+    """
+
+
 def scan(kdir):
     """Every knowledge doc with its declared scope and estimated size. Sorted, deterministic."""
     docs = []
@@ -150,6 +229,8 @@ def scan(kdir):
             "tokens": est_tokens(chars), "load": load,
             "applyTo": meta.get("applyTo", ""), "skills": meta.get("skills", []),
         })
+    if not docs:
+        raise EmptyCorpus(f"no knowledge docs found in {kdir}")
     return docs
 
 
@@ -201,34 +282,93 @@ def cmd_report(args):
 # ----------------------------------------------------------------------------- gate
 
 def cmd_gate(args):
+    """Fail on UNACKNOWLEDGED GROWTH first, and on the derived backstop second.
+
+    The ratchet is the real control. PACK-R is silent accumulation, so the question that
+    matters is "did this change grow the always-on set without saying so?", not "is the
+    number above X". An absolute ceiling answers the second question, stays quiet through
+    the whole accumulation, and then red-lights an ordinary paragraph -- which trains people
+    to raise the ceiling reflexively, the exact habit the gate exists to break.
+    """
     kdir = knowledge_dir(args.knowledge_dir)
     if not kdir:
         print("context-budget: no knowledge directory found", file=sys.stderr)
         return 1
+    cfg, cfgpath = load_config(args.config)
     docs = scan(kdir)
     undeclared = [d for d in docs if d["load"] not in TIERS]
-    total = sum(d["tokens"] for d in always_on(docs))
-    print(f"always-on knowledge: ~{total:,} est. tokens across {len(always_on(docs))} docs"
-          f"   (ceiling {args.ceiling:,})")
+    always = always_on(docs)
+    total = sum(d["tokens"] for d in always)
+
+    baseline = cfg.get("always_on_tokens")
+    ceiling = args.ceiling if args.ceiling is not None else cfg.get("ceiling_tokens")
+    tol_pct = cfg.get("growth_tolerance_pct") or 0
+    allowed = int(baseline * (1 + tol_pct / 100.0)) if baseline else None
+
+    print(f"always-on knowledge: ~{total:,} est. tokens across {len(always)} docs")
+    if baseline:
+        delta = total - baseline
+        sign = "+" if delta >= 0 else ""
+        print(f"  baseline           ~{baseline:,}  ({sign}{delta:,}, tolerance {tol_pct}% "
+              f"= {allowed:,})")
+    else:
+        print("  baseline            not recorded — ratchet inactive, backstop only")
+    print(f"  backstop            {ceiling:,}")
+
+    if args.update_baseline:
+        if not cfgpath:
+            print("FAIL: --update-baseline needs a config file; none found.")
+            return 1
+        write_baseline(cfgpath, total)
+        print(f"\nbaseline updated to ~{total:,} in {cfgpath}")
+        print("Commit it with the change that caused the growth — that diff IS the control.")
+        return 0
 
     failed = False
     if undeclared:
-        print(f"FAIL: {len(undeclared)} doc(s) declare no `load:` scope — "
+        print(f"\nFAIL: {len(undeclared)} doc(s) declare no `load:` scope — "
               + ", ".join(d["name"] for d in undeclared))
         print("      An undeclared doc is an unbudgeted doc. Add `load:` frontmatter.")
         failed = True
-    if total > args.ceiling:
-        over = total - args.ceiling
-        print(f"FAIL: over the always-on ceiling by ~{over:,} tokens.")
-        print("      Every always-on doc is re-read on EVERY call. Move a doc to")
-        print("      `load: glob` / `load: skill` / `load: reference`, or raise the")
-        print("      ceiling deliberately — but not silently.")
-        for doc in sorted(always_on(docs), key=lambda d: -d["tokens"])[:5]:
+
+    if allowed is not None and total > allowed:
+        print(f"\nFAIL: the always-on set grew ~{total - baseline:,} tokens past the recorded "
+              f"baseline.")
+        print("      Growing it is allowed. Growing it SILENTLY is not — every always-on doc")
+        print("      is re-read on every call, and this is the only place that shows up.")
+        print("      If the growth is intended, record it in the same commit:")
+        print("        python context-budget.py gate --update-baseline")
+        print("      If it is not, move a doc to `load: glob` / `skill` / `reference`.")
+        for doc in sorted(always, key=lambda d: -d["tokens"])[:5]:
             print(f"        ~{doc['tokens']:>6,d}  {doc['name']}")
         failed = True
+
+    if ceiling and total > ceiling:
+        print(f"\nFAIL: past the derived backstop by ~{total - ceiling:,} tokens.")
+        deriv = cfg.get("ceiling_derivation") or {}
+        if deriv:
+            print(f"      The backstop is where the always-on set stops fitting the smallest")
+            print(f"      model tier the roster delegates to: window "
+                  f"{deriv.get('smallest_supported_window', 0):,} - tools "
+                  f"{deriv.get('tool_definition_tokens', 0):,} - headroom "
+                  f"{deriv.get('required_working_headroom', 0):,}.")
+            print("      Raising this is a decision about which models can still be used,")
+            print("      not a formatting preference. Change the derivation inputs.")
+        failed = True
+
     if failed:
         return 1
-    print(f"clean - ~{args.ceiling - total:,} est. tokens of headroom")
+
+    # A ratchet that only travels one way is a ceiling in disguise. Say so when the set has
+    # shrunk enough that the baseline is now recording history rather than intent.
+    if baseline:
+        shrink_pct = cfg.get("shrink_report_pct") or 0
+        if shrink_pct and total < baseline * (1 - shrink_pct / 100.0):
+            print(f"\nNOTE: the set has shrunk ~{baseline - total:,} tokens below the baseline.")
+            print("      Ratchet it down (`gate --update-baseline`) so the budget keeps")
+            print("      measuring intent rather than a high-water mark.")
+    print(f"\nclean - no unacknowledged growth"
+          + (f"; ~{ceiling - total:,} to the backstop" if ceiling else ""))
     return 0
 
 
@@ -352,15 +492,19 @@ def main(argv=None):
         description="Measure, gate and preflight the always-on context budget.")
     parser.add_argument("--knowledge-dir", help="override knowledge doc discovery")
     parser.add_argument("--agents-dir", help="override agent definition discovery")
+    parser.add_argument("--config", help="override context-budget.json discovery")
     sub = parser.add_subparsers(dest="cmd")
 
     p_rep = sub.add_parser("report", help="tier table + always-on total")
     p_rep.add_argument("-v", "--verbose", action="store_true", help="list every doc")
     p_rep.set_defaults(func=cmd_report)
 
-    p_gate = sub.add_parser("gate", help="fail over the always-on ceiling (CI-able)")
-    p_gate.add_argument("--ceiling", type=int, default=45000,
-                        help="max estimated always-on tokens (default 45000)")
+    p_gate = sub.add_parser("gate", help="fail on unacknowledged always-on growth (CI-able)")
+    p_gate.add_argument("--ceiling", type=int, default=None,
+                        help="override the derived backstop from context-budget.json")
+    p_gate.add_argument("--update-baseline", action="store_true",
+                        help="record the current total as the new baseline; commit the diff "
+                             "alongside the change that caused the growth")
     p_gate.set_defaults(func=cmd_gate)
 
     p_ag = sub.add_parser("agents", help="per-agent declared knowledge prefix")
@@ -381,7 +525,15 @@ def main(argv=None):
     if not getattr(args, "func", None):
         parser.print_help()
         return 0
-    return args.func(args)
+    try:
+        return args.func(args)
+    except EmptyCorpus as exc:
+        # Never degrade to a clean report: an empty corpus means discovery failed, and a
+        # green gate over nothing is the failure this guard exists to prevent (PACK-P).
+        print(f"FAIL: {exc}", file=sys.stderr)
+        print("      Pass --knowledge-dir explicitly, or run from a repo that has one.",
+              file=sys.stderr)
+        return 1
 
 
 if __name__ == "__main__":

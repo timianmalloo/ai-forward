@@ -205,6 +205,10 @@ Copy-Item (Join-Path $pack "README.md")              $docPack -Force
 Copy-Item (Join-Path $pack "OVERVIEW.md")            $docPack -Force
 Copy-Item (Join-Path $pack "research-synthesis.md")  $docPack -Force
 Copy-Item (Join-Path $pack "adapters\INSTALL.md")    $docPack -Force
+# The always-on budget baseline travels with the scripts: context-budget.py resolves it from
+# pack/ here and from docs/ai-forward-pack/ in an installed repo. Without it a consuming repo
+# finds no baseline and the ratchet silently degrades to backstop-only.
+Copy-Item (Join-Path $pack "context-budget.json")    $docPack -Force
 Write-Host "  docs/ai-forward-pack: templates + scripts + pack docs"
 
 # --- docs/index.html (Docs Explorer; regenerated from template) ----------------
