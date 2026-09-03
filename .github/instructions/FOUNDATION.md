@@ -12,13 +12,13 @@ content (CRLF→LF, trailing whitespace stripped) so line endings never masquera
 
 | Vendored doc | Role | Vendored hash (normalized) |
 |---|---|---|
-| `agent-body-of-knowledge.md` | The reasoning constitution | `a9ea4361904db488` |
-| `agent-rules-of-the-road.md` | Tiers, gates, the loop | `ac648e2dade4bdce` |
-| `agent-persona-catalog.md` | The persona roster's source | `eaed01f23beb50a4` |
-| `layered-optimized-architecture.md` | LOA — AI-integrated architecture | `05fbe0cf47f89c78` |
-| `engineering-governance.md` | SDLC lenses around the code | `513c4a28581dc94f` |
-| `testing-strategy.md` | The proof discipline | `c6351b2f55ee543d` |
-| `csharp-style-guide.md` | C# house style | `25c4399234434a89` |
+| `agent-body-of-knowledge.md` | The reasoning constitution | `17c26b6ffecc0b1a` |
+| `agent-rules-of-the-road.md` | Tiers, gates, the loop | `844eaa73e497f5c5` |
+| `agent-persona-catalog.md` | The persona roster's source | `89329ed8ccd71d5f` |
+| `layered-optimized-architecture.md` | LOA — AI-integrated architecture | `9c4a2f1b423336a2` |
+| `engineering-governance.md` | SDLC lenses around the code | `92f10a1c79015e1e` |
+| `testing-strategy.md` | The proof discipline | `c9c968f077be8152` |
+| `csharp-style-guide.md` | C# house style | `c08b9cdf29db065a` |
 
 ## Known intentional divergences (vendored ≠ base, by design)
 
@@ -28,7 +28,9 @@ content (CRLF→LF, trailing whitespace stripped) so line endings never masquera
 | `testing-strategy.md` | Stale version/example references removed; tracks the latest-SDK policy | **pending back-port** |
 | `csharp-style-guide.md` | §2.6 constant-on-the-left comparisons added; §2.2 example fixed to match | **pending back-port** |
 | `csharp-style-guide.md` | §1.6 "No commented-out or dead code" added (delete-don't-park; unused-code diagnostics IDE0051/IDE0052/CS0219/IDE0059 as build errors), plus a Defaults row and an Enforcement bullet. Pairs with the language-agnostic CT18a / defect class HYG-A. | **pack-local (dead-code policy)** |
-| `agent-rules-of-the-road.md`, `agent-body-of-knowledge.md`, `csharp-style-guide.md` | **Deployment-path correction (FR-045).** The base docs' deployment map named `.github/instructions/{knowledge,csharp,loa,tests}.instructions.md` and a `.github/knowledge/` directory. This pack deploys one `<docname>.instructions.md` per knowledge doc and has no `.github/knowledge/`, so six of those paths did not exist - in documents the managed block loads every session. Corrected to the real paths. | Base is unchanged; the base's map reflects a different install layout. |
+| `agent-rules-of-the-road.md`, `agent-body-of-knowledge.md`, `csharp-style-guide.md` | **Deployment-path correction (FR-045).** The base docs' deployment map named `.github/instructions/{knowledge,csharp,loa,tests}.instructions.md` and a `.github/knowledge/` directory. This pack deploys one `<docname>.instructions.md` per knowledge doc, so four of those instruction filenames were wrong. Corrected to the real paths. *(FR-072 note: `.github/knowledge/` now exists again, as the on-demand half of the load-scope tiering — `load: skill` and `load: reference` docs deploy there instead of being attached to every request.)* | Base is unchanged; the base's map reflects a different install layout. |
+| all seven vendored docs | **Load-scope frontmatter (FR-072).** Each vendored doc gained a `load:` declaration (`always` / `glob` / `skill` / `reference`) so the deploy step can scope it instead of attaching every doc to every request. Content is otherwise untouched; only frontmatter was added. | **pack-local (context budgeting).** The base pack has no load-scope concept. |
+| `layered-optimized-architecture.md` | **Part IV extracted (FR-072).** The 63,831-character Pattern Catalog moved verbatim to `docs/knowledge/layered-optimized-architecture/pattern-catalog.md`, replaced by a pointer. Part IV is a *lookup* surface while the rest of the document is read linearly, so holding both in one file charged every reader of the principles for the whole catalog. No pattern text was changed, added or removed. | **pack-local (context budgeting).** |
 
 Everything else matches the base at vendoring time (engineering-governance differs only in line
 endings, which normalization ignores). When the base pack absorbs a back-port, re-vendor the doc

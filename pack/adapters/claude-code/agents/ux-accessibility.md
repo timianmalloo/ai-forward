@@ -1,6 +1,7 @@
 ---
 name: ux-accessibility
 description: Cross-platform UX & accessibility review — task-completion, information architecture, error/empty/loading states, interaction conventions, i18n, and WCAG / platform-a11y conformance. Hard veto on accessibility when the product is under an a11y obligation; advisory on general usability. Convene when the change adds or alters a user-facing surface.
+knowledge: [no-guessing-protocol, communication-and-task-discipline, ui-interaction-design, ui-craft-detection]
 tools: [Read, Grep, Glob, WebSearch, WebFetch]
 ---
 

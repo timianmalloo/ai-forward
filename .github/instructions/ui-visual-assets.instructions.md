@@ -1,5 +1,5 @@
 ---
-applyTo: "**"
+applyTo: "**/*.tsx,**/*.jsx,**/*.vue,**/*.svelte,**/*.css,**/*.scss,**/*.html,**/DESIGN.md"
 ---
 # UI Visual Assets — the generative pipeline and its guardrails
 

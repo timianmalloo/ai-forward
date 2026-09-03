@@ -26,7 +26,7 @@ summary: >-
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled `9` · partially-controlled `8` · uncontrolled `21`
+**Status counts:** controlled `12` · partially-controlled `8` · uncontrolled `21`
 **Recurrence since last review:** `0` — *a second occurrence of a known class means the control was wrong, not that someone was careless (CI4).*
 
 ---
@@ -50,6 +50,30 @@ summary: >-
 ## Project classes
 
 *Classes discovered in this repository. Newest first.*
+
+### PACK-R — A fixed prefix attached to every call, sized by what fits rather than by what each call needs
+- **Signature:** an instruction set, tool schema or preamble deployed with an unconditional scope (`applyTo: "**"`, "load everything", a global system prompt) because that is the simplest thing that works when the set is small. It stays correct and grows silently: each addition looks free at the moment it is written, since nothing reports the cost, and the cost is paid on *every* call rather than at the moment of use. The tell: **a scope that is the same for all members of a set whose members are obviously not all relevant at once**, and a corpus whose size nobody can state without measuring it.
+- **Why it survives:** every functional test passes — the content is right, the deployment works, and the sessions that use the biggest models never fail. It is invisible to cost review because prefix caching absorbs the bill (98% cache reads in the profiled session), and invisible to correctness review because nothing is wrong. It surfaces only as a *context ceiling* on the cheapest model tier, which is exactly the tier nobody profiles. Cost telemetry cannot see it; only a window measurement can.
+- **Instances:**
+  - `2026-09-03` **FR-072** — 37 of 39 pack knowledge docs shipped `applyTo: "**"` from `sync-pack.ps1:103`, making a ~184,000-token corpus the static prefix of all 484 calls in a profiled consuming-repo session: 63.3% of every main-thread input token was the same text re-read, and the prefix exceeded a flash-class window outright, failing **27 of 39** delegated runs — the cheapest model tier producing 100% of failures on 0.1% of spend. Found by measuring the deployed set, not by any gate.
+- **Control:** `pack/scripts/context-budget.py gate --ceiling 45000` — every doc must declare a `load:` scope and the always-on total must stay under a declared ceiling. Wired as gate 8 of `tools/verify-bundle.ps1` and a required step in `.github/workflows/pack-consistency.yml`. **Observed failing on the un-fixed shape** on `2026-09-03` via `tests/docs_explorer/test_context_budget.py::BudgetGateTests` — one test strips a doc's declaration (gate returns 1) and another promotes the largest reference doc back to `load: always`, reproducing the original regression one doc at a time (gate returns 1). Paired control: `context-budget.py agents` fails when any persona declares no lens.
+- **Status:** `controlled`
+
+### PACK-S — A fan-out discovers per-run what was knowable once, before the wave
+- **Signature:** N sibling runs dispatched against the same precondition — the same prefix, the same credential, the same schema, the same quota — where a failure in one is *structurally* a failure in all, but the check happens inside each run. The cost of learning scales with N instead of being paid once. The tell: **a failure count that is a large fraction of the fan-out width**, and a retry loop around something that cannot succeed on retry.
+- **Why it survives:** it looks like resilience. Per-run error handling is the correct pattern for *transient* faults, and nothing in the code distinguishes "this one call failed" from "this call could never have succeeded". The wasted work is charged to the runs, so it shows up as agent time rather than as a defect, and a partially-successful wave still returns usable output — which reads as degradation, not as a bug.
+- **Instances:**
+  - `2026-09-03` **FR-072** — 27 of 39 `execution-subagent` runs failed against a context ceiling that the assembled prefix exceeded *before the first run started*. 23.6 minutes (15.5% of all agent time) spent rediscovering one fact 27 times. One probe would have cost under a second.
+- **Control:** `pack/scripts/context-budget.py preflight --window <N> [--agent <name>]` — compares the assembled prefix against the target model's window plus required working headroom and exits non-zero *before* dispatch. Pinned by `tests/docs_explorer/test_context_budget.py::PreflightTests`, including that an unknown agent is an error rather than a pass (failing open would restore the silence the gate removes).
+- **Status:** `controlled`
+
+### PACK-T — A generator prepends metadata to a source that may already carry it
+- **Signature:** a deploy or wrap step writes a header (frontmatter, a license banner, an import block) onto content it did not inspect. When the source already has one, the output carries **two**, and every reader parses only the first — so the source's own metadata silently stops applying. The tell: an unconditional string concatenation at a generation boundary, and an output file whose first lines contain the same delimiter twice.
+- **Why it survives:** the generated file is valid, non-empty, and looks right in a diff stat. Readers that take the first block behave plausibly, so nothing errors; the source's metadata simply has no effect, which is indistinguishable from it not being there. No count changes, so a counts gate cannot see it.
+- **Instances:**
+  - `2026-09-03` **FR-072** — `.github/instructions/session-worktree-discipline.instructions.md` shipped with two stacked `---` blocks: the wrap's `applyTo` plus the source doc's own identical frontmatter. Found incidentally while adding load-scope declarations, not by any gate. Latent for as long as that source doc had carried frontmatter.
+- **Control:** `tools/sync-pack.ps1` now **strips** the source frontmatter at the wrap boundary rather than prepending over it (`Get-LoadScope` returns the body separately), so a second block cannot be produced. The generator also throws on a missing or unknown `load:` scope instead of defaulting, so an unparsed source fails loudly. Structural — the shape is no longer expressible.
+- **Status:** `controlled`
 
 ### SELF-REPORT — a discern/reminder tool includes its own bookkeeping in the set of not-yet-done work
 - **Signature:** a "what have I not recorded yet?" tool computes `pending = items since the last log mark` but neither filters to the spec's signal nor excludes the actions that *are* the recording — so it re-surfaces already-logged or non-meaningful work, including the very commit that recorded the last entry. The tell: a suggest/discern command that lists commits since a log marker with no filter, and a reminder that never goes away because acting on it creates a new item it then re-lists.

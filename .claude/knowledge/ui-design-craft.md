@@ -1,3 +1,7 @@
+---
+load: glob
+applyTo: "**/*.tsx,**/*.jsx,**/*.vue,**/*.svelte,**/*.css,**/*.scss,**/*.html,**/DESIGN.md"
+---
 # UI Design Craft — direction, prototyping & critique
 
 *Normative guidance for **producing** and **judging** user-interface work at a professional standard. The UI & Interaction Design Standard (`ui-interaction-design.md`, U1–U20) defines the floor a UI must meet; the UI Archetype Grammar (`ui-archetype-grammar.md`) fixes the *kind*; the Specification Standards (`specification-standards.md`) fix the layers. **This document is the craft between them** — how creative direction is established before pixels, how a mockup is built to be reviewable, what separates "meets the floor" from "obviously designed by someone who cares", and how an existing interface is critiqued with a rubric instead of an opinion. It is the knowledge the `/ui-design` skill runs on.*

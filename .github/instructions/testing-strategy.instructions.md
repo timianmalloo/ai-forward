@@ -1,5 +1,5 @@
 ---
-applyTo: "**"
+applyTo: "**/tests/**,**/test/**,**/*.test.*,**/*.spec.*,**/test_*.py,**/*_test.go"
 ---
 # Testing Strategy for AI Coding Agents
 

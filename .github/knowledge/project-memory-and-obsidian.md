@@ -1,5 +1,6 @@
 ---
-applyTo: "**"
+load: skill
+skills: [document, adopt]
 ---
 # Project Memory & Continuity (with the Obsidian lens)
 

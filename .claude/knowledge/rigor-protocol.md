@@ -1,3 +1,6 @@
+---
+load: always
+---
 # The Rigor Protocol
 
 *A staged broad-to-narrow reasoning discipline for coding agents. Version 1.0 — composes on top of Body of Knowledge §II (Coning + Iterative Critical Thinking).*

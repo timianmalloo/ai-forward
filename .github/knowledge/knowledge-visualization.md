@@ -1,5 +1,6 @@
 ---
-applyTo: "**"
+load: skill
+skills: [document, visualize, adopt]
 ---
 # Knowledge Visualization & Docs Explorer Standard
 

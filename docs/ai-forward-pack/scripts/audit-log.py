@@ -85,6 +85,141 @@ def duration_fields(started, ended_iso):
     return {"started_at": s.strftime(ISO), "duration_seconds": round(secs, 1)}
 
 
+# --- per-run spans: make PARALLELISM measurable (P8, IO2) ----------------------------
+# Summed agent time cannot distinguish serial from parallel. A profiled session reported
+# 67 runs totalling 152.6 minutes and called that proof of fan-out, but 152.6 minutes sits
+# comfortably inside its ~240 minutes of wall clock -- fully serial execution fits the same
+# numbers. The claim was unfalsifiable because only DURATIONS were recorded.
+#
+# A start and an end per run fixes that: the union of the intervals is the wall clock the
+# work actually occupied, and speedup = summed / union. Idle gaps between waves are excluded
+# from the union, so a long quiet period cannot understate the parallelism that did happen.
+
+def parse_agent_run(spec):
+    """'<agent>|<start-iso>|<end-iso>' -> a span dict, or None when unusable.
+
+    Degrades to None on anything unparseable or time-reversed, never to a plausible wrong
+    span (IO8) -- a fabricated interval would corrupt the very measurement it exists for.
+    """
+    parts = [p.strip() for p in str(spec).split("|")]
+    if len(parts) != 3 or not parts[0]:
+        return None
+    agent, start, end = parts
+    s, e = parse_iso(start), parse_iso(end)
+    if s is None or e is None:
+        return None
+    secs = (e - s).total_seconds()
+    if secs < 0:
+        return None
+    return {"agent": agent, "started_at": s.strftime(ISO), "ended_at": e.strftime(ISO),
+            "duration_seconds": round(secs, 1), "_s": s, "_e": e}
+
+
+def parallelism_fields(runs):
+    """Union-of-intervals wall clock vs summed run time, from a list of parse_agent_run spans.
+
+    Returns {} when no usable span is present -- "not recorded" rather than a speedup of 1.0
+    that a reader would mistake for a measurement of serial execution.
+    """
+    spans = [r for r in (runs or []) if r]
+    if not spans:
+        return {}
+    total = round(sum(r["duration_seconds"] for r in spans), 1)
+
+    # Union of the intervals: sort by start, merge overlaps, sum the merged lengths.
+    ordered = sorted(spans, key=lambda r: r["_s"])
+    union, cur_s, cur_e = 0.0, ordered[0]["_s"], ordered[0]["_e"]
+    for r in ordered[1:]:
+        if r["_s"] > cur_e:
+            union += (cur_e - cur_s).total_seconds()
+            cur_s, cur_e = r["_s"], r["_e"]
+        elif r["_e"] > cur_e:
+            cur_e = r["_e"]
+    union += (cur_e - cur_s).total_seconds()
+    union = round(union, 1)
+
+    # Peak concurrency: sweep the endpoints. Ends are processed before starts at the same
+    # instant, so a run that ends exactly as another begins is handover, not overlap.
+    events = []
+    for r in spans:
+        events.append((r["_s"], 1))
+        events.append((r["_e"], 0))
+    events.sort(key=lambda ev: (ev[0], ev[1]))
+    live = peak = 0
+    for _, delta in events:
+        live += 1 if delta else -1
+        peak = max(peak, live)
+
+    return {"agent_seconds": total, "span_seconds": union,
+            "speedup": round(total / union, 2) if union else None,
+            "peak_concurrency": peak}
+
+
+# --- persona yield: measure what a convocation was WORTH (P6) -------------------------
+# Convening cost has always been visible; convening value was not. In the profiled session
+# the two advisory personas took 57% of all agent time and changed nothing that shipped,
+# while the four hard-veto personas took 24% and drove material change -- knowable only in
+# hindsight, and only by hand, because findings-accepted was never recorded against the
+# persona that raised them. Recording it makes the roster tunable on evidence.
+
+def parse_persona_yield(spec):
+    """'<persona>|<raised>|<accepted>' -> a yield record, or None when unusable.
+
+    Refuses accepted > raised and negative counts: a row that cannot be true would corrupt
+    every ratio derived from it, and a corrupt ratio is worse than a missing one (IO8).
+    """
+    parts = [p.strip() for p in str(spec).split("|")]
+    if len(parts) != 3 or not parts[0]:
+        return None
+    persona, raised, accepted = parts
+    try:
+        raised, accepted = int(raised), int(accepted)
+    except ValueError:
+        return None
+    if raised < 0 or accepted < 0 or accepted > raised:
+        return None
+    return {"persona": persona, "raised": raised, "accepted": accepted}
+
+
+def aggregate_persona_yield(entries):
+    """Roll persona_yield records up across audit entries.
+
+    `acceptance` is None when nothing was raised: 0/0 is an absence of evidence, not a
+    measured 0% -- reporting 0.0 would read as a verdict on a persona never actually asked.
+    """
+    out = {}
+    for entry in entries or []:
+        for row in (entry or {}).get("persona_yield") or []:
+            name = row.get("persona")
+            if not name:
+                continue
+            acc = out.setdefault(name, {"raised": 0, "accepted": 0, "sessions": 0})
+            acc["raised"] += int(row.get("raised") or 0)
+            acc["accepted"] += int(row.get("accepted") or 0)
+            acc["sessions"] += 1
+    for acc in out.values():
+        acc["acceptance"] = (round(acc["accepted"] / acc["raised"], 2)
+                             if acc["raised"] else None)
+    return out
+
+
+def should_reconvene(stats, advisory=True):
+    """Should this persona be convened AGAIN on the same work? (P6)
+
+    Advisory lenses re-convene on evidence: a repeat run has to be earned by a finding that
+    was actually accepted. Hard-veto lenses are never yield-gated -- a veto exists to be
+    able to say no, and gating it on past productivity would silence precisely the review
+    that has been quiet because the work was clean.
+
+    A persona with no history always gets its first run; the rule gates repeats, not entry.
+    """
+    if not advisory:
+        return True
+    if not stats or not stats.get("raised"):
+        return True
+    return bool(stats.get("accepted"))
+
+
 # --- run-start markers: make duration DEFAULT-ON (IO1) -------------------------------
 # A flag someone has to remember is not "measurable by default". The grounding step calls
 # `start --session <id>`, which persists the stamp; `append` then picks it up automatically,
@@ -470,6 +605,26 @@ def cmd_append(args):
     _started = (args.started or base.get("started_at")
                 or consume_start(args.root, session))
     entry.update(duration_fields(_started, entry["datetime"]))
+    # P8: per-run spans make fan-out measurable. Summed agent time cannot tell serial from
+    # parallel; the union of the intervals can. Unusable spans are dropped and COUNTED, so a
+    # partial record never masquerades as a complete one.
+    _specs = (getattr(args, "agent_run", None) or []) or base.get("agent_run") or []
+    if _specs:
+        _spans = [parse_agent_run(s) for s in _specs]
+        _usable = [s for s in _spans if s]
+        if _usable:
+            entry["agent_runs"] = [{k: v for k, v in s.items() if not k.startswith("_")}
+                                   for s in _usable]
+            entry["parallelism"] = parallelism_fields(_usable)
+        _dropped = len(_spans) - len(_usable)
+        if _dropped:
+            entry.setdefault("parallelism", {})["unparseable_runs"] = _dropped
+    # P6: what the convocation was worth, not just what it cost.
+    _yields = (getattr(args, "persona_yield", None) or []) or base.get("persona_yield") or []
+    if _yields:
+        _rows = [r for r in (parse_persona_yield(y) for y in _yields) if r]
+        if _rows:
+            entry["persona_yield"] = _rows
     if args.change or base.get("change"):
         entry["change"] = args.change or base.get("change")
     if args.git:
@@ -602,6 +757,34 @@ def cmd_render(args):
 
 def cmd_git_context(args):
     print(json.dumps(git_context(args.root), indent=2))
+    return 0
+
+
+def cmd_yield(args):
+    """Persona yield across the log: what each lens raised, and what actually landed (P6).
+
+    This is the report the roster is tuned from. It never issues a verdict on a persona --
+    it reports the ratio and marks the ones with no evidence either way, because "never
+    raised anything" and "raised things nobody took" are different facts with different
+    responses.
+    """
+    entries = read_log(args.root, "audit")
+    stats = aggregate_persona_yield(entries)
+    if not stats:
+        print("no persona_yield records in the log yet - "
+              "append with --persona-yield '<persona>|<raised>|<accepted>'")
+        return 0
+    rows = sorted(stats.items(), key=lambda kv: (kv[1]["acceptance"] is None,
+                                                 kv[1]["acceptance"] or 0,
+                                                 -kv[1]["raised"]))
+    print(f"{'persona':<34}{'runs':>6}{'raised':>8}{'accepted':>10}{'acceptance':>12}")
+    for name, acc in rows:
+        ratio = "no evidence" if acc["acceptance"] is None else f"{acc['acceptance']:.0%}"
+        print(f"{name:<34}{acc['sessions']:>6}{acc['raised']:>8}{acc['accepted']:>10}{ratio:>12}")
+    print()
+    print("An ADVISORY lens re-convenes on the same work only after a finding it raised was")
+    print("accepted. A HARD-VETO lens is never yield-gated: a veto exists to be able to say")
+    print("no, and a quiet one usually means the work was clean.")
     return 0
 
 
@@ -805,6 +988,17 @@ def main():
     ap_a.add_argument("--started", help="ISO-8601 UTC start stamp captured at grounding; records "
                                         "started_at + duration_seconds so elapsed time is MEASURED, "
                                         "not modeled (instrumentation over inference, IO1)")
+    ap_a.add_argument("--agent-run", dest="agent_run", action="append", metavar="AGENT|START|END",
+                      help="one sub-agent run as '<agent>|<start-iso>|<end-iso>'; repeatable. "
+                           "Records agent_runs + a parallelism block (agent_seconds, span_seconds, "
+                           "speedup, peak_concurrency) so fan-out is MEASURED, not asserted (P8). "
+                           "Summed duration cannot tell serial from parallel; the union of the "
+                           "intervals can.")
+    ap_a.add_argument("--persona-yield", dest="persona_yield", action="append",
+                      metavar="PERSONA|RAISED|ACCEPTED",
+                      help="one persona's findings raised vs accepted; repeatable. Makes the "
+                           "roster tunable on measured yield rather than belief (P6) — an "
+                           "advisory lens re-convenes only on an accepted finding.")
     ap_a.add_argument("--from-json", dest="from_json", help="read fields from a JSON object (path or - for stdin)")
 
     ap_c = sub.add_parser("change", help="add a change-log entry")
@@ -831,6 +1025,8 @@ def main():
 
     sub.add_parser("render", help="regenerate audit-data.js and ensure the viewer exists")
     sub.add_parser("git-context", help="print current git context as JSON")
+    ap_y = sub.add_parser("yield", help="persona yield: findings raised vs accepted (P6)")
+    ap_y.set_defaults(func=cmd_yield)
     sub.add_parser("verify", help="fail if any log line is unreadable (FR-052; CI-able)")
 
     ap_sug = sub.add_parser("suggest", help="surface meaningful changes not yet in the change log")
@@ -854,7 +1050,7 @@ def main():
         "append": cmd_append, "change": cmd_change, "list": cmd_list, "search": cmd_search,
         "get": cmd_get, "render": cmd_render, "git-context": cmd_git_context,
         "suggest": cmd_suggest, "import": cmd_import, "start": cmd_start,
-        "verify": cmd_verify, "selfcheck": cmd_selfcheck,
+        "verify": cmd_verify, "selfcheck": cmd_selfcheck, "yield": cmd_yield,
     }
     sys.exit(dispatch[args.cmd](args))
 

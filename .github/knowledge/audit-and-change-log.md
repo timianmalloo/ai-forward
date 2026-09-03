@@ -1,5 +1,6 @@
 ---
-applyTo: "**"
+load: skill
+skills: [auditlog, prompts, searchprompts]
 ---
 # Audit & Change Log Standard
 

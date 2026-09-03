@@ -1,7 +1,7 @@
 // Derived from artifact frontmatter by scripts/docs-graph.py — DO NOT hand-edit (frontmatter wins; see knowledge-visualization.md V2/V18).
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
-  "project": "AI-Forward",
+  "project": "ai-forward",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1655,7 +1655,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "872ee7c1e1db148d225c37ce5f729ec1d8d10466bd4fa506972da5175fe03d23"
+      "sourceSha256": "fef624e2eee7e1e6fe9aed87dfd40b0ae6f9d1156ee7a9ff49ea76b6a3de931f"
     },
     {
       "id": "docs-index",
@@ -3781,6 +3781,68 @@ window.DOCS_INDEX = {
       "sourceSha256": "6bd3d8db6ff31d5f4e4590b25368a077b0f2f357c00c709e893a6bef405f02d3"
     },
     {
+      "id": "kb-loa",
+      "path": "docs/knowledge/layered-optimized-architecture/index.md",
+      "title": "Layered Optimized Architecture — evidence & reference material",
+      "type": "knowledge",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "architecture",
+      "reviewBy": "2026-12-31",
+      "reviewSuggested": [],
+      "summary": "The reference half of the Layered Optimized Architecture. The directive half — principles, archetypes, conformance criteria and the decision framework — stays in the knowledge doc an agent reads; the bulky lookup material lives here so consulting it is a deliberate act rather than a cost paid on every load.",
+      "tags": [
+        "loa",
+        "architecture",
+        "patterns",
+        "reference",
+        "context-budget"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-loa-pattern-catalog",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "7b5487e4f430136c026e12ca8f8af629be9bef86bd955629b702e2add7134af0"
+    },
+    {
+      "id": "kb-loa-pattern-catalog",
+      "path": "docs/knowledge/layered-optimized-architecture/pattern-catalog.md",
+      "title": "LOA — Pattern Catalog",
+      "type": "knowledge",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "architecture",
+      "reviewBy": "2026-12-31",
+      "reviewSuggested": [],
+      "summary": "Part IV of the Layered Optimized Architecture, held separately because it is a lookup surface rather than a linear read. Every pattern with its intent, structure, applicability, trade-offs and cost impact — extracted verbatim so the LOA's principles can be loaded without paying for the whole catalog on every read.",
+      "tags": [
+        "loa",
+        "patterns",
+        "architecture",
+        "pattern-catalog",
+        "reference"
+      ],
+      "links": [
+        {
+          "to": "kb-loa",
+          "rel": "refines"
+        },
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "593b4f1934f7b583c5a39ae907941d2e22baa8179f5fea23d30524d27ac6d0c1"
+    },
+    {
       "id": "kb-native-client-ui-design",
       "path": "docs/knowledge/native-client-ui-design/index.md",
       "title": "Native client UI design — WPF, WinUI, Avalonia and desktop apps",
@@ -4862,6 +4924,13 @@ window.DOCS_INDEX = {
       "artifactId": "backtest-optimize-graph"
     },
     {
+      "id": "surface-proposals-context-prefix-budget",
+      "path": "docs/proposals/context-prefix-budget.html",
+      "title": "Proposal — Cutting the always-on context prefix",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact."
+    },
+    {
       "id": "surface-notes-turn-goal-state-and-stopping",
       "path": "docs/notes/turn-goal-state-and-stopping.html",
       "title": "Proposal — Goal state before action: bounding the agent turn",
@@ -4891,5 +4960,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "9d1b3a4fd8f6a4f1cee59ab118be75250221768d7985736203e07810e3696444"
+  "graphSha256": "2255a19eb8120196cdc93dce899e3e67f3bf8d27561d40e966b60453cf418c4b"
 };

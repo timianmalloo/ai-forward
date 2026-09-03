@@ -1,5 +1,6 @@
 ---
-applyTo: "**"
+load: skill
+skills: [specify, define-architecture, design-slice, implement, investigate, forensicreview]
 ---
 # Persona Audit & Operating Standard
 
@@ -243,6 +244,28 @@ The catalog's change-class→panel table stays; this adds the per-persona predic
 | **Data & Persistence** | changes a schema/persisted format, runs a migration/backfill, adds a hot-path query/index, defines a data-integrity invariant, or makes a retention/lifecycle decision. |
 | **Privacy & Data Governance** | collects/stores/processes personal or work data, sends it to a model or third party, or makes a retention/deletion/residency/consent decision. |
 | **Release Engineer** | carries a migration/backfill/irreversible step, changes CI/CD or rollout, makes a feature-flag decision, or is environment-parity-sensitive. |
+
+### 8.7a Re-convening is earned — the yield rule (normative)
+
+§8.7 says when to convene a persona. This says when to convene it **again on the same work**, which is a different question and the one that was never asked.
+
+**The evidence.** A profiled session convened 67 sub-agent runs across nine persona types. The two **advisory** lenses dominated it — the Simplifier at 6 runs / 53.1 min and the Patterns Expert at 4 runs / 33.2 min, together **57% of all agent time** — and produced findings that changed nothing that shipped. The four **hard-veto** lenses took **24%** and drove material change. The cost of convening was visible throughout; the *value* was not recorded anywhere, so the imbalance was only discoverable afterwards, by hand.
+
+**The rule.**
+
+1. **First convocation is never gated.** If §8.7's predicate is true, the persona runs. Gating entry would make the whole thing unfalsifiable — a lens that never runs never yields.
+2. **A repeat convocation on the same work must be earned.** Re-convene an **advisory** (soft-veto) persona only when a finding it raised in the prior pass was **accepted** — i.e. it changed the design, the plan, or the code. Repeated passes that keep producing advisory-only findings are the signature of a lens that has already said what it has to say.
+3. **Hard-veto personas are never yield-gated.** A veto exists to be able to say no. Gating it on past productivity would silence precisely the review that has been quiet *because the work was clean* — and would make the register of vetoes a popularity contest. Test Architect, Security & Identity, Data & Persistence, Privacy & Data Governance and the UX vetoes always re-convene when their predicate is true.
+4. **Run the panel as one wave, not as a sequence of convocations.** Adversarial lenses are independent by construction (each attacks the same artifact from its own angle), so they parallelise cleanly. Six sequential runs of one persona is a *re-planning* smell, not thoroughness (GO17).
+5. **Record the yield.** Every session that convened a panel records, per persona, findings **raised** and findings **accepted**:
+
+   ```
+   audit-log.py append … --persona-yield "the-simplifier|4|0" --persona-yield "test-architect|3|3"
+   ```
+
+   `audit-log.py yield` rolls this up across the log. A persona that raised nothing is reported as **no evidence**, never as 0% — "never raised anything" and "raised things nobody took" are different facts with different responses, and collapsing them would libel the first.
+
+**What this is not.** It is not a mandate to convene fewer personas, and it is not a budget. It is the removal of an asymmetry: the roster was tuned on the cost side, which was measured, and on the value side by belief, which was not. Proportionality (CT15) already argued for fewer repeat passes; this supplies the evidence to argue it *with*.
 
 ### 8.8 Anti-pattern ownership map (normative)
 

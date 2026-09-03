@@ -1,3 +1,7 @@
+---
+load: skill
+skills: [specify, define-architecture, design-slice, implement, investigate]
+---
 # Collaborating Peers & the Dual-Mode Operating Model
 
 *The authoring half of the swarm, and the rule for switching between collaboration and adversarial review. Version 1.0 — extends the Agent Persona Catalog.*

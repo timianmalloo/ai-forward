@@ -35,6 +35,7 @@ CANONICAL_GATES = [
     ("foundation",    "6. vendored-foundation drift",        "Vendored-foundation drift"),
     ("audit",         "6b. audit log is fully readable",     "Audit log is fully readable"),
     ("evals",         "7. eval cases well-formed",           "Eval cases well-formed"),
+    ("budget",        "8. always-on context budget",         "Always-on context budget"),
 ]
 
 

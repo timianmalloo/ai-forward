@@ -1,3 +1,7 @@
+---
+load: glob
+applyTo: "**/*.tsx,**/*.jsx,**/*.vue,**/*.svelte,**/*.css,**/*.scss,**/*.html,**/DESIGN.md"
+---
 # UI Archetype Grammar & Determinism Control
 
 *A formal grammar for **identifying** a UI/UX template and using it as a **determinism control** for code generation. It gives `/specify` and `/design-slice` a compact, unambiguous way to pin the *kind* of interface being built — its routing model, temporal behavior, data posture, and surface flavor — so an agentic coding tool (in Claude Code or GitHub Copilot) reaches for the right archetype every time instead of defaulting to a generic dashboard. It composes with, and never replaces, the **UI & Interaction Design Standard** (`ui-interaction-design.md`, U1–U20, the token/state/flow authority) and the **Specification Standards** (`specification-standards.md`, S1–S10, the three spec layers). Catalog of archetypes with exemplars and codegen descriptors: `ui-archetype-catalog.md`.*

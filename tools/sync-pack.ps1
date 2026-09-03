@@ -89,25 +89,70 @@ Copy-Item (Join-Path $pack "adapters\copilot\agents\*_agent.md") $aDst -Force
 $aCount = (Get-ChildItem $aDst -File).Count
 Write-Host "  agents: $aCount"
 
-# --- .github/instructions (Copilot knowledge wraps — dogfood) -----------------
-# Each knowledge doc is wrapped with applyTo frontmatter.
-# FOUNDATION.md is a provenance manifest — copy verbatim, not as an instruction.
-# csharp-style-guide is scoped to C# files only.
+# --- .github/{instructions,knowledge} (Copilot knowledge surfaces — dogfood) ---
+# FR-072 / P1. Every knowledge doc DECLARES its own load scope in frontmatter
+# (`load: always | glob | skill | reference`); this step routes on that declaration
+# instead of hardcoding `applyTo: "**"` for all of them.
+#
+# Why it matters: `applyTo: "**"` means "attach on every request". Shipping it on 37 of
+# 39 docs made the whole 184K-token knowledge set the STATIC PREFIX of every call —
+# 63% of all input tokens in a profiled session, and a context ceiling that failed 27 of
+# 39 delegated runs outright on a flash-class model. Scope is the fix; nothing is deleted.
+#
+#   load: always     -> .github/instructions/, applyTo "**"
+#   load: glob       -> .github/instructions/, applyTo the doc's declared pattern
+#   load: skill      -> .github/knowledge/, read on demand by the naming skill
+#   load: reference  -> .github/knowledge/, fetched only when consulted
+#
+# The source frontmatter is STRIPPED at this boundary and replaced by the applyTo wrap —
+# a doc that already carried frontmatter previously ended up with two stacked blocks
+# (session-worktree-discipline did), of which a reader parses only the first.
+# FOUNDATION.md is the vendored provenance manifest: always-loaded, copied verbatim,
+# and deliberately carries no frontmatter of its own.
+function Get-LoadScope([string]$path) {
+    $raw = Get-Content $path -Raw
+    $fm  = [regex]::Match($raw, '(?s)^---\r?\n(.*?)\r?\n---\r?\n')
+    if (-not $fm.Success) { return @{ load = ""; applyTo = ""; body = $raw } }
+    $meta = $fm.Groups[1].Value
+    return @{
+        load    = ([regex]::Match($meta, '(?m)^load:\s*(\S+)')).Groups[1].Value
+        applyTo = ([regex]::Match($meta, '(?m)^applyTo:\s*"([^"]*)"')).Groups[1].Value
+        body    = $raw.Substring($fm.Length)
+    }
+}
+
 $ghInst = Join-Path $repo ".github\instructions"
+$ghKnow = Join-Path $repo ".github\knowledge"
 Reset-Dir $ghInst
+Reset-Dir $ghKnow
 foreach ($kFile in Get-ChildItem (Join-Path $pack "knowledge") -Filter "*.md") {
     if ($kFile.Name -eq "FOUNDATION.md") {
         Copy-Item $kFile.FullName $ghInst -Force
         continue
     }
-    $applyTo = if ($kFile.BaseName -eq "csharp-style-guide") { '**/*.cs,**/*.csx' } else { '**' }
-    $header  = "---`napplyTo: `"$applyTo`"`n---`n"
-    $content = Get-Content $kFile.FullName -Raw
-    $dest    = Join-Path $ghInst ($kFile.BaseName + ".instructions.md")
-    Set-Content $dest -Value ($header + $content) -Encoding UTF8 -NoNewline
+    $scope = Get-LoadScope $kFile.FullName
+    switch ($scope.load) {
+        "always" {
+            $header = "---`napplyTo: `"**`"`n---`n"
+            Set-Content (Join-Path $ghInst ($kFile.BaseName + ".instructions.md")) `
+                -Value ($header + $scope.body) -Encoding UTF8 -NoNewline
+        }
+        "glob" {
+            if (-not $scope.applyTo) { throw "$($kFile.Name): load: glob with no applyTo pattern." }
+            $header = "---`napplyTo: `"$($scope.applyTo)`"`n---`n"
+            Set-Content (Join-Path $ghInst ($kFile.BaseName + ".instructions.md")) `
+                -Value ($header + $scope.body) -Encoding UTF8 -NoNewline
+        }
+        { $_ -in @("skill", "reference") } {
+            Copy-Item $kFile.FullName (Join-Path $ghKnow $kFile.Name) -Force
+        }
+        default { throw "$($kFile.Name): missing or unknown `load:` scope '$($scope.load)'. Expected always|glob|skill|reference." }
+    }
 }
 $ghInstCount = (Get-ChildItem $ghInst -File).Count
-Write-Host "  .github/instructions: $ghInstCount files"
+$ghKnowCount = (Get-ChildItem $ghKnow -File).Count
+Write-Host "  .github/instructions: $ghInstCount always/glob-scoped"
+Write-Host "  .github/knowledge:    $ghKnowCount on-demand (skill/reference)"
 
 # --- .github/prompts (Copilot skill prompts — dogfood) ------------------------
 $ghPrompts = Join-Path $repo ".github\prompts"

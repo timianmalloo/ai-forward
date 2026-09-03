@@ -14,6 +14,7 @@
         5.  Knowledge-graph validation         docs-graph.py validate
         6.  Vendored-foundation drift          foundation-check.py
         7.  Eval cases well-formed             JSON + compilable regex
+        8.  Always-on context budget           context-budget.py gate --ceiling 45000
 
     FR-057 — why gate 2 changed. This script used to run sync-pack.ps1 and then print
     `git status` as friendly advice. Regeneration WITHOUT COMPARISON cannot detect drift: it
@@ -70,8 +71,8 @@ try {
     # FR-057: sync AND compare. The comparison is the gate; the sync alone is only a repair.
     Gate "2. source<->install drift (pack/ is the only source of truth)" {
         pwsh (Join-Path $repo "tools\sync-pack.ps1") | Out-Null
-        $paths = @(".claude", ".github/instructions", ".github/prompts", ".github/agents",
-                   "docs", "web", "CLAUDE.md", "AGENTS.md")
+        $paths = @(".claude", ".github/instructions", ".github/knowledge", ".github/prompts",
+                   ".github/agents", "docs", "web", "CLAUDE.md", "AGENTS.md")
         git --no-pager diff --stat -- $paths
         git diff --exit-code -- $paths
         if ($LASTEXITCODE -ne 0) {
@@ -143,6 +144,26 @@ for f in files:
 print(len(files), 'eval cases checked')
 sys.exit(1 if bad else 0)
 "@
+    }
+
+    # FR-072 / P2. The always-on knowledge set IS the static prefix of every call: re-read
+    # every turn, billed every turn, subtracted from the window before the user speaks. Left
+    # ungated it re-grows, because each new doc looks free at the moment it is written and
+    # nothing reports what it costs. This makes the number fail closed.
+    #
+    # The ceiling is 45,000 estimated tokens - ~5% headroom over the current 42,606. Raising
+    # it is a deliberate act with a diff, which is the point; the failure mode being prevented
+    # is raising it silently, one doc at a time.
+    # Both halves always run and EITHER fails the gate: a budget that holds only because a
+    # persona quietly inherits the whole set is not a budget. Short-circuiting on the first
+    # would hide the second until the first was fixed.
+    Gate "8. always-on context budget" {
+        $budget = Join-Path $repo "pack\scripts\context-budget.py"
+        python $budget gate --ceiling 45000
+        $ceilingOk = ($LASTEXITCODE -eq 0)
+        python $budget agents | Select-Object -Last 4
+        $lensOk = ($LASTEXITCODE -eq 0)
+        if (-not ($ceilingOk -and $lensOk)) { $global:LASTEXITCODE = 1 } else { $global:LASTEXITCODE = 0 }
     }
 } finally {
     Pop-Location

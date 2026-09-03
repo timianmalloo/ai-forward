@@ -1,3 +1,7 @@
+---
+load: glob
+applyTo: "**/*.tsx,**/*.jsx,**/*.vue,**/*.svelte,**/*.css,**/*.scss,**/*.html,**/DESIGN.md"
+---
 # UI Archetype Catalog
 
 *The filled-out companion to the **UI Archetype Grammar** (`ui-archetype-grammar.md`, G1–G16). Each row is a UI/UX archetype: its **exemplars** (real, known-good references an agent can anchor to), its **canonical Archetype Signature** (the determinism selector), a plain description, and the **codegen descriptor** — the concrete, model-agnostic instructions a coding tool follows to build it. Use a row as the starting point: copy its signature, adjust facets with rationale (grammar G9), then compose with the concrete spec (tokens U3–U5, complete component states U9, real copy U11, flows S6, a11y/perf floors U16–U17). The signatures here are **hardened**: multi-valued facets are sets, `A11y` always carries `WCAG_2.2_AA`, and conflicts (grammar §4) are resolved.*

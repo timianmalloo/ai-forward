@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-01T04:19:16Z",
+  "generated": "2026-09-03T22:55:04Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2795,6 +2795,74 @@ window.AUDIT_DATA = {
       "signals": {
         "verification_path": true,
         "acceptance_met": true
+      }
+    },
+    {
+      "id": "al-01M1MNKXRB2GKP4VY7TSWBXF5J",
+      "shortname": "context-prefix-budget-proposal",
+      "datetime": "2026-09-03T22:18:18Z",
+      "session": "015BSvW6rL7SpuwziUbRHJTJ",
+      "prompt": "a colleage profiled execution of a repo that adopted the ai-forward pack; the results of that is here: 'C:\\Users\\malla\\Downloads\\ai-forward perf.pdf' -- analyze the profile and give me a proposal as to things we should be able to do to improve performance, efficiency and parallelism",
+      "summary": "Profile (161.9M input tokens / 484 calls, 27 of 39 delegated runs failed, 57% of agent time advisory-only) traced to one verified cause: sync-pack.ps1:103 hardcodes applyTo:'**' on 37 of 39 knowledge docs, making the 184,364-token instruction set the static prefix on every call (63.3% of all main-thread input, computed). Proposed 8 changes (P1 per-doc load-scope frontmatter + P2 CI context-budget gate carry the rest) and a 4-tier allocation of all 39 docs cutting the always-on set 77% (184,308 -> 42,747 tokens; prefix 208,434 -> 66,817) with nothing deleted. Also corrected two errors in the profile: its parallelism claim is unsupported (152.6 min agent time inside ~240 min wall clock fits fully serialised) and its AIU shares sum to 114.2%. Analysis only, nothing implemented.",
+      "kind": "manual",
+      "skill": null,
+      "tool": "analysis",
+      "actor": "claude-opus-5",
+      "artifacts": [
+        "docs/proposals/context-prefix-budget.html"
+      ],
+      "tags": [
+        "performance",
+        "context-budget",
+        "pack-evolution"
+      ],
+      "outcome": "success",
+      "goal": "Analyse a colleague's profile of a pack-adopting repo and propose changes to performance, efficiency and parallelism",
+      "done_when": "Root cause verified against the repo (not inferred), every proposal named with leverage/effort/location, and the proposal committed to docs/proposals/ and registered in the docs graph",
+      "git": {
+        "sha": "811c685e84590a3f01d862fc100a431394faf3c9",
+        "short": "811c685e8",
+        "branch": "main",
+        "pushed": true
+      }
+    },
+    {
+      "id": "al-01M1MQB43E3VVM9S9KK0JJE6YE",
+      "shortname": "fr-072-load-scope-tiering",
+      "datetime": "2026-09-03T22:48:27Z",
+      "session": "015BSvW6rL7SpuwziUbRHJTJ",
+      "prompt": "yes lets execute on the proposal - all 8 parts",
+      "summary": "FR-072 load-scope tiering, all 8 parts. P1 every knowledge doc declares load: always|glob|skill|reference and sync-pack.ps1 routes on it (always-on 39 docs/~184.3K est tokens -> 13 docs/~43.7K, -76%, nothing deleted; new .github/knowledge/ for on-demand docs). P2 new context-budget.py + gate 8 of verify-bundle.ps1 + required CI step, ceiling 45000, fails on an undeclared doc too. P3 all 23 personas declare a knowledge: lens (widest 29.5K = 68% of the main set; the-simplifier 10.1K vs a 208K prefix before). P4 LOA Part IV (63,831 chars) extracted verbatim to docs/knowledge/layered-optimized-architecture/; ui-archetype-catalog deliberately NOT split and scoped instead - it is irreducibly a catalog, so a split turns one load into two. P5 context-budget.py preflight refuses an unfittable fan-out before dispatch. P6 audit-log.py --persona-yield + yield lens + persona-audit 8.7a (advisory personas re-convene only on an accepted finding; hard-veto never gated). P7 GO19 allocates model tier per phase. P8 audit-log.py --agent-run records wall-clock spans and computes union-span/speedup/peak-concurrency. 34 new tests across 3 files, budget gate observed failing red on both regression shapes first. Fixed a latent defect found en route: session-worktree-discipline.instructions.md shipped two stacked frontmatter blocks. New defect classes PACK-R, PACK-S, PACK-T; new directive IO13. 10 gates green.",
+      "kind": "manual",
+      "skill": null,
+      "tool": "implement",
+      "actor": "claude-opus-5",
+      "artifacts": [
+        "pack/scripts/context-budget.py",
+        "docs/proposals/context-prefix-budget.html",
+        "docs/knowledge/layered-optimized-architecture/pattern-catalog.md"
+      ],
+      "tags": [
+        "performance",
+        "context-budget",
+        "FR-072",
+        "pack-evolution"
+      ],
+      "outcome": "success",
+      "goal": "Execute all eight parts of docs/proposals/context-prefix-budget.html",
+      "done_when": "Every proposal has a working mechanism plus a control that fails when it regresses; verify-bundle.ps1 green; pack revision advanced to 58",
+      "persona_yield": [
+        {
+          "persona": "the-simplifier",
+          "raised": 1,
+          "accepted": 1
+        }
+      ],
+      "git": {
+        "sha": "811c685e84590a3f01d862fc100a431394faf3c9",
+        "short": "811c685e8",
+        "branch": "main",
+        "pushed": true
       }
     }
   ],

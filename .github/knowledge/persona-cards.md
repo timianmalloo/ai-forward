@@ -1,5 +1,6 @@
 ---
-applyTo: "**"
+load: skill
+skills: [specify, define-architecture, design-slice, implement, investigate, forensicreview]
 ---
 # Persona Cards — the roster in one schema
 

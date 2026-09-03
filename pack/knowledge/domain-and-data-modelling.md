@@ -1,3 +1,6 @@
+---
+load: always
+---
 # Domain & Data Modelling Standard
 
 *Normative guidance for the decision that outranks every other technical decision in a project: **the model**. It governs how `/specify`, `/define-architecture`, `/design-slice` and `/implement` derive the **conceptual domain model** (Domain-Driven Design) and choose the **durable data representation** (dimensional: entities as dimensions, change-over-time as append-only facts). The Testing Strategy governs proof; the Observability Standard governs telemetry; the Specification Standards govern the spec's layers; **this document governs whether the model is right** — and a wrong model is the one mistake that compounds.*

@@ -1,5 +1,5 @@
 ---
-applyTo: "**"
+load: reference
 ---
 # Agent Body of Knowledge
 

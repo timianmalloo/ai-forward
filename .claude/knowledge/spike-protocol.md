@@ -1,3 +1,7 @@
+---
+load: skill
+skills: [define-architecture, design-slice, investigate]
+---
 # The Spike Protocol
 
 *Read the code and run a proof-of-concept before you design against an unfamiliar contract. Version 1.0 — operationalizes Body of Knowledge §III.1 (read the source) and §III.2 (verify by execution).*

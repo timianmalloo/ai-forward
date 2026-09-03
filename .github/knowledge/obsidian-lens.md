@@ -1,5 +1,6 @@
 ---
-applyTo: "**"
+load: skill
+skills: [document, adopt]
 ---
 # The Obsidian Lens — graph insight over the knowledge base
 

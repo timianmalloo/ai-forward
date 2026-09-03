@@ -1,3 +1,7 @@
+---
+load: glob
+applyTo: "**/*.tsx,**/*.jsx,**/*.vue,**/*.svelte,**/*.css,**/*.scss,**/*.html,**/DESIGN.md"
+---
 # Technical, Scientific & Quantitative UI Design
 
 *Base knowledge the UX lenses (UX & Accessibility, UX Researcher/IA) maintain for **expert, data-dense, computational** interfaces — CAD & engineering, scientific visualization (CFD, FEA), computational notebooks, financial/spreadsheet modeling, simulation (Monte Carlo for risk, sports, forecasting), and mathematical design systems. It sits beside the **UI & Interaction Design Standard** (`ui-interaction-design.md`, U1–U20, the token/state/excellence authority) and feeds the **UI Archetype Catalog** Section G (the technical/scientific/quantitative archetypes). The general standard governs whether *any* UI is excellent; this governs whether a UI for **experts working with quantities, models, and uncertainty** is correct and legible.*

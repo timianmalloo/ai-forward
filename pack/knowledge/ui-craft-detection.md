@@ -1,3 +1,7 @@
+---
+load: glob
+applyTo: "**/*.tsx,**/*.jsx,**/*.vue,**/*.svelte,**/*.css,**/*.scss,**/*.html,**/DESIGN.md"
+---
 # UI Craft Detection — the deterministic control beneath the craft
 
 *Normative guidance for the **mechanical enforcement** layer under the pack's UI doctrine. `ui-interaction-design.md` (U1–U20) sets the floor, `ui-design-craft.md` (DX1–DX25) sets the craft and the critique rubric, `ui-archetype-grammar.md` fixes the kind — and all three are **prose**. This document governs the tool that turns the mechanizable subset of them into a **runnable, LLM-free, CI-gateable control**: the **Impeccable** detector (`impeccable.style`, Apache-2.0). It is to the UI standards what a lint rule is to a style guide.*

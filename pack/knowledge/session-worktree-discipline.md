@@ -1,5 +1,5 @@
 ---
-applyTo: "**"
+load: always
 ---
 # Session Worktree Discipline
 

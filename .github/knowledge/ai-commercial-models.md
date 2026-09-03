@@ -1,5 +1,6 @@
 ---
-applyTo: "**"
+load: skill
+skills: [define-architecture, collectknowledge]
 ---
 # AI Commercial, Cost & Billing Models
 

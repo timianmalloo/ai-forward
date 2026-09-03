@@ -1,3 +1,6 @@
+---
+load: always
+---
 # End-to-End Integrity — the standing method
 
 *Normative guidance for **how a decision is taken and how a change is verified to reach everywhere it must**. It is the answer to two failure modes that no amount of unit testing catches: the decision made in a silo that is locally right and globally wrong, and the change that is correct in the file it touched and incomplete on the path it belongs to. The Rigor Protocol governs how you think; the Testing Strategy governs what counts as proof; **this document governs the scope you must think and prove across** — the whole intent, end to end.*

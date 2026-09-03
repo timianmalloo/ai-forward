@@ -1,5 +1,6 @@
 ---
-applyTo: "**"
+load: skill
+skills: [specify, define-architecture, design-slice, implement, investigate]
 ---
 # Collaborating Peers & the Dual-Mode Operating Model
 

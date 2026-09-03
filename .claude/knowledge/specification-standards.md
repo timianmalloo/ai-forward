@@ -1,3 +1,7 @@
+---
+load: skill
+skills: [specify]
+---
 # Specification Standards — functional, UX, and UI
 
 *Normative guidance for **how a specification is structured, deliberated, and codified** — across its three concerns: the **functional** specification (what the product must do and why), the **UX** specification (how it *works* — structure, flows, information architecture), and the **UI** specification (how it *looks* — the visual surface). It governs the `/specify` skill and the spec template, and hands off to the **UI & Interaction Design Standard** (`ui-interaction-design.md`, U1–U20) for UI-surface excellence. The Testing Strategy governs proof; this document governs whether the spec is **complete, well-formed, and correctly layered** before any design begins.*

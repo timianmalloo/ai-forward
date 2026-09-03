@@ -1,5 +1,5 @@
 ---
-applyTo: "**"
+applyTo: "**/*.py,**/*.ts,**/*.tsx,**/*.cs,**/*.go,**/*.rs,**/*.java,**/*.js"
 ---
 # Observability & Instrumentation Standard
 

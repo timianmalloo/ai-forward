@@ -1,5 +1,6 @@
 ---
-applyTo: "**"
+load: skill
+skills: [adddomainexperts, forensicreview]
 ---
 # Agent Persona Catalog
 

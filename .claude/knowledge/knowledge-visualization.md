@@ -1,3 +1,7 @@
+---
+load: skill
+skills: [document, visualize, adopt]
+---
 # Knowledge Visualization & Docs Explorer Standard
 
 *Normative guidance for how knowledge and engineering artifacts are constructed, connected, indexed, and visualized in this repository — and the standard local HTML/JavaScript toolkit (the **Docs Explorer**) that renders them. It governs any agent that creates knowledge or content (markdown, specs, architecture, designs, ADRs, investigations, proof packs, API docs, source modules). The Testing Strategy governs proof; the Observability Standard governs telemetry; this document governs **discoverability** — work that cannot be found, navigated, and understood by a human is unfinished.*

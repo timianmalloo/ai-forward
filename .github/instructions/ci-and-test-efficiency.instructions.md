@@ -1,5 +1,5 @@
 ---
-applyTo: "**"
+applyTo: ".github/workflows/**,**/*.yml,**/*.yaml,**/Dockerfile,**/Makefile"
 ---
 # CI & Test Execution Efficiency — best coverage at minimum time and cost
 

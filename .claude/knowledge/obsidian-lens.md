@@ -1,3 +1,7 @@
+---
+load: skill
+skills: [document, adopt]
+---
 # The Obsidian Lens — graph insight over the knowledge base
 
 *Normative guidance for using **Obsidian** and its graph-analysis plugins as a **lens** over the pack's knowledge graph. `knowledge-visualization.md` (V1–V18) defines the graph and the Docs Explorer; `project-memory-and-obsidian.md` (M1–M9) establishes that project memory is committed Markdown and that Obsidian is optional. **This document is how the optional lens is actually stood up** — what is committed, what is not, which plugins earn a seat, how the typed graph is surfaced, and how the insight stays available to people who never install Obsidian.*

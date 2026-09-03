@@ -150,7 +150,7 @@ every non-trivial task.
 - **Unfamiliar APIs/SDKs/MCP servers:** run the Spike Protocol before depending on a contract.
 - **Specification:** `/specify` produces **one spec with three layers** — Functional (what &
   why), UX (how it works: IA, user flows, structure), UI (how it looks) — written bottom-up,
-  UX before UI, each absent layer marked N/A — `.github/instructions/specification-standards.instructions.md`; the
+  UX before UI, each absent layer marked N/A — `.github/knowledge/specification-standards.md`; the
   UX Researcher/IA holds the UX-specification veto, UX & Accessibility the UI veto.
 - **UI:** whenever the work has a user-facing interface (any medium), the **UI & Interaction
   Design Standard** governs excellence — token systems, complete component states (incl.
@@ -224,7 +224,7 @@ every non-trivial task.
   prompt, result, and git before/after). Browse the searchable timeline at `docs/audit/index.html`
   or via the `auditlog` prompt (last-N, search, recall-and-redo, full-history↔changes toggle); all
   writes go through `docs/ai-forward-pack/scripts/audit-log.py`; the standard is
-  `.github/instructions/audit-and-change-log.instructions.md`. A new session reads it to learn what was done and why.
+  `.github/knowledge/audit-and-change-log.md`. A new session reads it to learn what was done and why.
 - **Obsidian lens (optional):** `docs/` is already a valid Obsidian vault — the same V2
   frontmatter drives Properties, Dataview and the graph view. Stand it up with
   `docs/ai-forward-pack/scripts/obsidian-setup.py` (`--check` · `--install-app` · `--init` ·
@@ -233,7 +233,7 @@ every non-trivial task.
   is the record, `docs-graph.py` the only writer, and no query is load-bearing in a canonical
   artifact (queries live only in `docs/lenses/`). `--analyze` computes hubs, exact betweenness
   bridges, components, orphans and structural gaps **dependency-free**, so the insight is never
-  locked behind a plugin. `.github/instructions/obsidian-lens.instructions.md` (OB1–OB14).
+  locked behind a plugin. `.github/knowledge/obsidian-lens.md` (OB1–OB14).
 - **Code knowledge graph (optional, composes with the above):** **Graphify** (graphify.com,
   Apache 2.0, PyPI `graphifyy`) builds an **on-device** graph of the *code* — symbols, calls,
   imports, schemas — that an assistant queries instead of grepping, answering with `file:line`
@@ -246,7 +246,7 @@ every non-trivial task.
   `--join`); `--init` writes a **repo-kind-aware** `.graphifyignore` (in a consuming repo
   `.claude/` and `docs/ai-forward-pack/` are the *only* copy and are kept). `--join` writes the
   code↔docs lens: documentation with no implementation, and risk with no governance.
-  `.github/instructions/code-knowledge-graph.instructions.md` (GK1–GK16).
+  `.github/knowledge/code-knowledge-graph.md` (GK1–GK16).
 - **Foundation:** the Body of Knowledge, Rules of the Road, Persona Catalog, LOA, and Engineering
   Governance are in `.github/instructions/` (always applied) — the constitution all of this rests on.
 <!-- AI-FORWARD-PACK:END -->

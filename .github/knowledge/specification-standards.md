@@ -1,5 +1,6 @@
 ---
-applyTo: "**"
+load: skill
+skills: [specify]
 ---
 # Specification Standards — functional, UX, and UI
 

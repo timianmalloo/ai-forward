@@ -68,6 +68,14 @@ An unmet item is a gap the reviewer catches, exactly like an unmet Testing-Strat
 
 ---
 
+**IO13 — What you attach to every call is a measured budget, not an accumulation.** Anything loaded unconditionally — an instruction set, a tool schema, a system preamble — is the **static prefix** of every model call: re-read on every turn, billed on every turn, and subtracted from the window before the user has said anything. It is the purest form of the failure this document is about, because *nothing reports it*: each addition looks free at the moment it is written, and the total is knowable only by measuring it.
+
+- **Declare the scope, per item.** Every knowledge doc carries a `load:` scope — `always` (attached to every request), `glob` (attached to matching files), `skill` (read on demand), `reference` (consulted, never attached). The test for `always` is sharp: **a doc is always-on only if an agent could violate it without knowing it exists.** You cannot look up the no-guessing protocol when it becomes relevant, because not knowing it is relevant *is* the failure. You can look up an archetype catalog — you know when you are building a UI.
+- **Gate the total.** `context-budget.py gate --ceiling <N>` fails when the always-on set grows past a declared ceiling or when any doc declares no scope. An undeclared doc is an unbudgeted doc. Raising the ceiling is legitimate; raising it *silently, one doc at a time,* is the defect (class **PACK-R**).
+- **A sub-agent inherits its lens, not the world.** Every persona declares the `knowledge:` it actually needs. An agent with no declared lens carries a main-thread-sized prefix into every delegated run, which is what turns cheap delegation into the *only* thing that fails — the smallest model has the smallest window, so it breaks first while costing least, and cost telemetry cannot see it.
+- **Preflight before a fan-out.** One failure at a context ceiling predicts every sibling in the wave: the prefix is identical for all of them. Check once (`context-budget.py preflight --window <N>`) rather than rediscovering it N times (class **PACK-S**).
+- **Report the estimate as an estimate.** Token figures derived from character counts are labelled Inferred wherever they appear, and the ratio used is stated. A budget you can gate on does not need to be exact; it needs to be honest about which it is (NG6, IO6).
+
 ## 4. How this composes
 
 | Standard | Its question | This document's question |

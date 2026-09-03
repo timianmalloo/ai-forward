@@ -1,3 +1,6 @@
+---
+load: always
+---
 # Responsible AI Policy
 
 *AI-Forward's committed Responsible-AI stance. This is a **crosswalk, not a new control set**: it states the principles the pack commits to and maps each one to the **existing** persona, template, gate, or standard that already enforces it. It anchors on the **Microsoft Responsible AI Standard** (principles) and the **NIST AI Risk Management Framework** (lifecycle functions), the two references the field pairs for a credible, auditable policy. Owner: the Privacy & Data Governance and Security & Identity lenses' human counterpart.*

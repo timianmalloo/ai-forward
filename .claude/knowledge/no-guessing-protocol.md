@@ -1,3 +1,6 @@
+---
+load: always
+---
 # The No-Guessing Protocol
 
 *Normative guidance for the single most persistent failure in agent work: **acting on a belief that was never checked**, and only naming it as "an assumption" after it causes a bug. The Body of Knowledge already forbids guessing at contracts (D2) and names the Confident Guess, the Plausible Hallucination and the Silent Assumption as anti-patterns (Part VIII); `end-to-end-integrity.md` E15 already forbids asserting the shape of our own code from memory. **Those rules are prohibitions. This document is the mechanism** — what to do at the moment of not-knowing, how to notice you are doing it, and why "I assumed" is not available afterwards.*

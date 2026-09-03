@@ -1,3 +1,6 @@
+---
+load: always
+---
 # Continuous Improvement — the defect-class discipline
 
 *Normative guidance for the agent's standing obligation to **get better**: every bug it creates, every assumption it gets wrong, and every correction it receives is captured, generalised to a **class**, and converted into a control that makes the class unable to recur. The Rigor Protocol governs how you reason on the way in; `end-to-end-integrity.md` governs the scope you reason across; **this document governs what happens after you are wrong** — which is the only part of the loop that compounds.*

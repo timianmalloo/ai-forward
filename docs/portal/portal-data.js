@@ -5,7 +5,7 @@ window.PORTAL_DATA = {
       "personas": 23,
       "knowledge": 38,
       "templates": 28,
-      "scripts": 19
+      "scripts": 20
     },
     "whatIs": "AI-Forward is a committed Markdown methodology pack that installs into a repo so Claude Code and GitHub Copilot direct work with a shared reasoning spine, adversarial persona review, and a library of workflow skills - nothing runs as a service; everything is versioned files and stdlib scripts.",
     "skillCount": 24,
@@ -1375,6 +1375,18 @@ window.PORTAL_DATA = {
         "summary": "Full source list with access dates and confidence labels — primary papers (LLMCompiler, MAST), framework documentation (LangGraph), vendor engineering writeups..."
       },
       {
+        "id": "kb-loa",
+        "type": "knowledge",
+        "title": "Layered Optimized Architecture — evidence & reference material",
+        "summary": "The reference half of the Layered Optimized Architecture. The directive half — principles, archetypes, conformance criteria and the decision framework — stays..."
+      },
+      {
+        "id": "kb-loa-pattern-catalog",
+        "type": "knowledge",
+        "title": "LOA — Pattern Catalog",
+        "summary": "Part IV of the Layered Optimized Architecture, held separately because it is a lookup surface rather than a linear read. Every pattern with its intent,..."
+      },
+      {
         "id": "kb-native-client-ui-design",
         "type": "knowledge",
         "title": "Native client UI design — WPF, WinUI, Avalonia and desktop apps",
@@ -2671,6 +2683,26 @@ window.PORTAL_DATA = {
       {
         "from": "kb-graph-and-loop-engineering-sources",
         "to": "kb-graph-and-loop-engineering",
+        "rel": "refines"
+      },
+      {
+        "from": "kb-loa",
+        "to": "architecture",
+        "rel": "relates-to"
+      },
+      {
+        "from": "kb-loa",
+        "to": "kb-loa-pattern-catalog",
+        "rel": "refines"
+      },
+      {
+        "from": "kb-loa-pattern-catalog",
+        "to": "architecture",
+        "rel": "relates-to"
+      },
+      {
+        "from": "kb-loa-pattern-catalog",
+        "to": "kb-loa",
         "rel": "refines"
       },
       {

@@ -1,5 +1,6 @@
 ---
-applyTo: "**"
+load: skill
+skills: [define-architecture, design-slice, investigate]
 ---
 # The Spike Protocol
 

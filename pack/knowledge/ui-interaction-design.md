@@ -1,3 +1,7 @@
+---
+load: glob
+applyTo: "**/*.tsx,**/*.jsx,**/*.vue,**/*.svelte,**/*.css,**/*.scss,**/*.html,**/DESIGN.md"
+---
 # UI & Interaction Design Standard
 
 *Normative guidance for producing **highly polished, industry-leading user interfaces** whenever a UI is part of the work — on any medium (web, native desktop, mobile, CLI, voice, embedded, XR). It governs how `/specify` frames UI requirements, how `/design-slice` specifies the interface, and how `/implement` builds it. The Testing Strategy governs proof; the Observability Standard governs telemetry; the Accessibility lens governs inclusion; **this document governs whether the interface is excellent.** A UI that merely functions is unfinished — the bar is *crafted*.*

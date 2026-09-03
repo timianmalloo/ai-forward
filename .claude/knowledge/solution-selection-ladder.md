@@ -1,3 +1,6 @@
+---
+load: always
+---
 # The Solution-Selection Ladder
 
 *The constructive procedure for "smallest correct" — an ordered, checkable ladder for picking the least solution that fully works, an inline marker for the deliberate simplifications it leaves behind, and a ledger that keeps "later" from becoming "never". Version 1.0.*

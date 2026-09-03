@@ -1,3 +1,6 @@
+---
+load: always
+---
 # Communication & Task Discipline
 
 *Normative guidance for **how the agent writes and how much work it takes on**. The Rigor Protocol governs how you think; `end-to-end-integrity.md` governs the scope you must think across; the Solution-Selection Ladder governs how big the solution may be; **this document governs the prose you emit and the boundary of the task you accept**. It is the answer to two costs that no correctness rule prices: the reader's time, and the drift from the thing that was actually asked.*

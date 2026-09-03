@@ -1,3 +1,7 @@
+---
+load: skill
+skills: [auditlog, prompts, searchprompts]
+---
 # Audit & Change Log Standard
 
 *Normative guidance for the project's **durable, committed, history-as-knowledge** record: an append-only **audit log** of every meaningful prompt, skill, and script, and a curated **change log** of every meaningful design decision. It governs how every skill records what it did, how the four design-shaping skills capture decisions, how both feed the knowledge graph, and how a human or a fresh agent session reads the project's own past. The Knowledge Visualization Standard (`knowledge-visualization.md`) governs the artifact graph; this document governs the **activity and decision history** that runs alongside it. The viewer and the `/auditlog` CLI render it; the script bundle (`scripts/audit-log.py`) is the only tool that writes it.*

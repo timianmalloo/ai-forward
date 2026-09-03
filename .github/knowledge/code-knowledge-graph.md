@@ -1,5 +1,6 @@
 ---
-applyTo: "**"
+load: skill
+skills: [adopt, investigate, migrate]
 ---
 # The Code Knowledge Graph — composing Graphify with the pack
 
