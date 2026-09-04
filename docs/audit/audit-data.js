@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-04T16:17:31Z",
+  "generated": "2026-09-04T16:28:44Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3145,6 +3145,33 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "e3b03bf1b66f2c71da594f79a8e1f817e06bc39d",
         "short": "e3b03bf1b",
+        "branch": "main",
+        "pushed": false
+      }
+    },
+    {
+      "id": "al-01M1PM0HSK9VFNHGFA8T2CHQHG",
+      "shortname": "apply-plans-into-targets-drm-0009",
+      "datetime": "2026-09-04T16:28:44Z",
+      "session": "015BSvW6rL7SpuwziUbRHJTJ",
+      "prompt": "apply them now",
+      "summary": "APPLIED as working-tree changes in 5 of 6 targets; NOT committed - the cross-repo commit was denied by the permission classifier and I did not work around it. State: BioHacker register CREATED from template (25 classes, untracked); HealthWatch 37->60; TheTerrace 143->166; ai-de 111->132 (+21 added, 2 MERGED); backlot register CREATED (25, untracked); meridian-finance-planner SKIPPED because its register already had uncommitted changes - appending to a file someone is mid-edit on risks entangling invisible work (GIT-A). Entries land in a separate 'Inherited from the fleet' section, never in the repo's own Project classes, because their evidence is elsewhere; the local Status-counts line is deliberately untouched since the plan blocks carry no Status and an inherited class has not earned one. ai-de got MERGES not ADDs for COORD-C/COORD-D: a sibling instance bullet on its existing DC-088 and DC-067, inserted after each class's own instance block so the two different field shapes (DC-088 uses singular 'Instance:', DC-067 an inline 'Instances:') were both preserved - an earlier version assumed one shape and silently merged only one of the two. Verified after applying: both bullets sit between the existing instances and the Control line, field order intact, and the section header names the two omissions. NEXT STEP is the user's: commit or discard the 5 working-tree changes.",
+      "kind": "manual",
+      "skill": "apply-learnings",
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [],
+      "tags": [
+        "federation",
+        "drm-0009",
+        "targets"
+      ],
+      "outcome": "partial",
+      "goal": "Apply the drm-0009 fleet plans into the six target repositories' defect-class registers",
+      "done_when": "Each target's register carries the inherited classes, duplicates merged rather than added, and the change is committed for review",
+      "git": {
+        "sha": "d7d9cdc0a6008ea6d6e40e1a0fcecf249e51d1f6",
+        "short": "d7d9cdc0a",
         "branch": "main",
         "pushed": false
       }
