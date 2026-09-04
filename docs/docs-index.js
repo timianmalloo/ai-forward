@@ -5036,7 +5036,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart TD\n  A([About to move HEAD: checkout / reset / rebase / branch -D]) --> B[Count commits reachable from HEAD and from no other ref]\n  B --> C{Count > 0?}\n  C -->|cannot determine| D[REFUSE and say it could not determine - never a silent SAFE]\n  C -->|yes, including exactly 1| E[REFUSE - list the commits, offer push as the remedy]\n  C -->|no| F([Safe to move])\n  E --> G[Push] --> B"
         }
       ],
-      "sourceSha256": "6d92efaafdbf157502c92422c2cab588ba17c1630d806b480cb7e21fa12742dd"
+      "sourceSha256": "7110f681c6dea5b21077cee305d30de2ff4f7067d114a6bb4d62e875f6d9c810"
     },
     {
       "id": "spec-agent-focus-controls",
@@ -5500,5 +5500,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "424b421d631d717d53bea0e5da210e67d111dbe3905d7d6b7cf4c18aba7d441c"
+  "graphSha256": "74406740c2a6b50c97c604fcb8f1eaf4808a53c52808eb704b46141909547e9f"
 };

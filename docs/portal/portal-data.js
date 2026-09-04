@@ -33,38 +33,43 @@ window.PORTAL_DATA = {
       "title": "Multi-Agent Collaboration"
     },
     {
-      "id": "loop",
+      "id": "coord",
       "n": "5",
+      "title": "Agent Coordination"
+    },
+    {
+      "id": "loop",
+      "n": "6",
       "title": "The Prompt Loop"
     },
     {
       "id": "foundations",
-      "n": "6",
+      "n": "7",
       "title": "Foundations"
     },
     {
       "id": "ui",
-      "n": "7",
+      "n": "8",
       "title": "UI & Design"
     },
     {
       "id": "architecture",
-      "n": "8",
+      "n": "9",
       "title": "Architecture"
     },
     {
       "id": "systems",
-      "n": "9",
+      "n": "10",
       "title": "Systems"
     },
     {
       "id": "graph",
-      "n": "10",
+      "n": "11",
       "title": "Graph"
     },
     {
       "id": "ref",
-      "n": "11",
+      "n": "12",
       "title": "Reference"
     }
   ],
@@ -801,7 +806,7 @@ window.PORTAL_DATA = {
   },
   "collaboration": {
     "intro": "Work is not reviewed by one general-purpose reader. It is convened as a panel of named lenses, each of which authors in one mode and attacks in the other — and the author never clears its own hard veto.",
-    "rosterNote": "The roster is derived from the agent definitions in pack/adapters/, so this count cannot drift from what actually ships.",
+    "rosterNote": "The roster is derived from the agent definitions, and the Runs-on column is read from the INSTALLED directories rather than the source tree. Every lens is deployed to both harnesses; the 12/11 split between the two source folders is an authoring detail — the claude-code definitions carry a tools: line that Copilot ignores, so it is stripped at deploy. Reading the installed state is deliberate: FR-032 is the recorded case where the Copilot surface carried 11 of 23 personas for twelve revisions while every source-reading check printed “23 lenses” and exited 0.",
     "modes": [
       {
         "h": "Peer Mode — authoring",
@@ -839,7 +844,7 @@ window.PORTAL_DATA = {
         "ref": "persona-audit.md §8.7a"
       }
     ],
-    "vetoNote": "Seven lenses hold a hard veto; two hold a soft veto. A hard veto blocks until its exit predicate is met. A soft veto is a strong objection that the Tech Lead can overrule on the record.",
+    "vetoNote": "Seven lenses hold a hard veto; two hold a soft veto. A hard veto blocks until its exit predicate is met. A soft veto is a strong objection the Tech Lead can overrule on the record. Veto strength is identical on both harnesses — it is a property of the lens, not of the tool driving it.",
     "measures": [
       {
         "h": "Each agent carries its own lens, not the whole library",
@@ -860,8 +865,12 @@ window.PORTAL_DATA = {
     "personas": [
       {
         "name": "ai-systems-engineer",
-        "surface": "Claude Code",
+        "authoredIn": "Claude Code",
         "veto": "hard",
+        "surfaces": [
+          "Claude Code",
+          "Copilot"
+        ],
         "desc": "Owns the AI surface — tier allocation, prompt/tool-description/skill as contract, eval design, grounding/hallucination, non-determinism containment, model drift, and inference cost. Hard veto on an AI capability with no eval harness or with non-determinism...",
         "lens": [
           "no-guessing-protocol",
@@ -873,8 +882,12 @@ window.PORTAL_DATA = {
       },
       {
         "name": "data-persistence-architect",
-        "surface": "Claude Code",
+        "authoredIn": "Claude Code",
         "veto": "hard",
+        "surfaces": [
+          "Claude Code",
+          "Copilot"
+        ],
         "desc": "Owns the data store — schema design and evolution, migration safety (expand-migrate-contract, tested rollback), data-integrity invariants, query/index performance, and data lifecycle. Hard veto on an irreversible/destructive migration with no...",
         "lens": [
           "no-guessing-protocol",
@@ -885,8 +898,12 @@ window.PORTAL_DATA = {
       },
       {
         "name": "distributed-systems-architect",
-        "surface": "Copilot",
+        "authoredIn": "Copilot",
         "veto": "hard",
+        "surfaces": [
+          "Claude Code",
+          "Copilot"
+        ],
         "desc": "Messaging & async expert — delivery semantics, idempotency, ordering, backpressure, consistency boundaries, async pitfalls. Hard veto on unsafe async/messaging designs. Convene when the change is async, uses messaging/queues, retries, multi-writes, depends on...",
         "lens": [
           "no-guessing-protocol",
@@ -897,8 +914,12 @@ window.PORTAL_DATA = {
       },
       {
         "name": "privacy-data-governance",
-        "surface": "Claude Code",
+        "authoredIn": "Claude Code",
         "veto": "hard",
+        "surfaces": [
+          "Claude Code",
+          "Copilot"
+        ],
         "desc": "Owns data governance — PII/work-data minimization, consent & purpose limitation, retention/deletion basis, residency, regulatory exposure, and model/third-party egress. Asks \"should we have this data at all?\" — distinct from security's \"is it protected?\"....",
         "lens": [
           "no-guessing-protocol",
@@ -909,8 +930,12 @@ window.PORTAL_DATA = {
       },
       {
         "name": "security-identity-architect",
-        "surface": "Copilot",
+        "authoredIn": "Copilot",
         "veto": "hard",
+        "surfaces": [
+          "Claude Code",
+          "Copilot"
+        ],
         "desc": "Adversarial security review — trust boundaries, authN/authZ, injection, secrets, delegated identity, least privilege, prompt injection, and supply chain & licensing. Hard veto on security-relevant designs. Convene when the change touches auth, secrets, PII, a...",
         "lens": [
           "no-guessing-protocol",
@@ -921,8 +946,12 @@ window.PORTAL_DATA = {
       },
       {
         "name": "test-architect",
-        "surface": "Copilot",
+        "authoredIn": "Copilot",
         "veto": "hard",
+        "surfaces": [
+          "Claude Code",
+          "Copilot"
+        ],
         "desc": "Demands verifiability; maps every spec promise to a test, attacks coverage gaps and tests that pass but prove nothing. Hard veto on any correctness claim with no verification path. Convene for any correctness claim — i.e. always, above T0.",
         "lens": [
           "no-guessing-protocol",
@@ -933,8 +962,12 @@ window.PORTAL_DATA = {
       },
       {
         "name": "ux-accessibility",
-        "surface": "Claude Code",
+        "authoredIn": "Claude Code",
         "veto": "hard",
+        "surfaces": [
+          "Claude Code",
+          "Copilot"
+        ],
         "desc": "Cross-platform UX & accessibility review — task-completion, information architecture, error/empty/loading states, interaction conventions, i18n, and WCAG / platform-a11y conformance. Hard veto on accessibility when the product is under an a11y obligation;...",
         "lens": [
           "no-guessing-protocol",
@@ -945,8 +978,12 @@ window.PORTAL_DATA = {
       },
       {
         "name": "release-engineer",
-        "surface": "Claude Code",
+        "authoredIn": "Claude Code",
         "veto": "soft",
+        "surfaces": [
+          "Claude Code",
+          "Copilot"
+        ],
         "desc": "Owns the path to production and back — CI/CD gates, progressive rollout, feature-flag discipline, migration sequencing/choreography, environment parity, and rollback triggers. Soft veto on a change with a migration or irreversible step that ships with no...",
         "lens": [
           "no-guessing-protocol",
@@ -957,8 +994,12 @@ window.PORTAL_DATA = {
       },
       {
         "name": "the-simplifier",
-        "surface": "Copilot",
+        "authoredIn": "Copilot",
         "veto": "soft",
+        "surfaces": [
+          "Claude Code",
+          "Copilot"
+        ],
         "desc": "Reduces every design to the simplest thing that is still correct; attacks speculative generality, needless abstraction, cargo-cult complexity. Soft veto on unjustified complexity. Convene when the change adds an abstraction, layer, config option, dependency,...",
         "lens": [
           "no-guessing-protocol",
@@ -968,8 +1009,12 @@ window.PORTAL_DATA = {
       },
       {
         "name": "csharp-developer",
-        "surface": "Copilot",
+        "authoredIn": "Copilot",
         "veto": "advisory",
+        "surfaces": [
+          "Claude Code",
+          "Copilot"
+        ],
         "desc": "Idiomatic modern C#/.NET 10 review against the C# Coding Style Guide and the LOA .NET idiom map. Convene for any C# code in the change.",
         "lens": [
           "no-guessing-protocol",
@@ -980,8 +1025,12 @@ window.PORTAL_DATA = {
       },
       {
         "name": "documentation-steward",
-        "surface": "Claude Code",
+        "authoredIn": "Claude Code",
         "veto": "advisory",
+        "surfaces": [
+          "Claude Code",
+          "Copilot"
+        ],
         "desc": "Owns the documentation bundle and the repo's knowledge graph — API reference (JavaDoc-style), the four diagram families (sequence, class, layered architecture, component), the Docs Explorer index (docs/docs-index.js + docs/index.html), and the markdown +...",
         "lens": [
           "no-guessing-protocol",
@@ -992,8 +1041,12 @@ window.PORTAL_DATA = {
       },
       {
         "name": "domain-researcher",
-        "surface": "Claude Code",
+        "authoredIn": "Claude Code",
         "veto": "advisory",
+        "surfaces": [
+          "Claude Code",
+          "Copilot"
+        ],
         "desc": "Establishes API/library/protocol/schema contracts and domain facts with cited sources and executed spikes; runs the Spike Protocol for unfamiliar SDKs/APIs/MCP servers. Owns Rigor Protocol Stage 3 evidence. Use before any architect or designer commits to a...",
         "lens": [
           "no-guessing-protocol",
@@ -1004,8 +1057,12 @@ window.PORTAL_DATA = {
       },
       {
         "name": "enterprise-architect",
-        "surface": "Copilot",
+        "authoredIn": "Copilot",
         "veto": "advisory",
+        "surfaces": [
+          "Claude Code",
+          "Copilot"
+        ],
         "desc": "Reviews designs for fit with the wider system, standards conformance, longevity/TCO, and LOA archetype & principle alignment. Convene for a new service, a cross-team contract, an architecture-level change, a build-vs-buy call, or an LOA archetype selection.",
         "lens": [
           "no-guessing-protocol",
@@ -1016,8 +1073,12 @@ window.PORTAL_DATA = {
       },
       {
         "name": "mobile-app-developer",
-        "surface": "Claude Code",
+        "authoredIn": "Claude Code",
         "veto": "advisory",
+        "surfaces": [
+          "Claude Code",
+          "Copilot"
+        ],
         "desc": "Idiomatic native/cross-platform mobile review — app lifecycle, power & data budgets, offline/sync, permissions, push, platform HIG, and app-store review gates (iOS & Android). Advisory; escalates store-policy and on-device-resource blockers. Convene when the...",
         "lens": [
           "no-guessing-protocol",
@@ -1028,8 +1089,12 @@ window.PORTAL_DATA = {
       },
       {
         "name": "native-desktop-developer",
-        "surface": "Claude Code",
+        "authoredIn": "Claude Code",
         "veto": "advisory",
+        "surfaces": [
+          "Claude Code",
+          "Copilot"
+        ],
         "desc": "Idiomatic native desktop review for macOS and Windows — platform HIG, windowing/menus/keyboard conventions, packaging/signing/notarization, OS integration, high-DPI/multi-monitor. Advisory; escalates signing/notarization and OS-gatekeeper blockers. Convene...",
         "lens": [
           "no-guessing-protocol",
@@ -1040,8 +1105,12 @@ window.PORTAL_DATA = {
       },
       {
         "name": "orchestrator",
-        "surface": "Claude Code",
+        "authoredIn": "Claude Code",
         "veto": "advisory",
+        "surfaces": [
+          "Claude Code",
+          "Copilot"
+        ],
         "desc": "Convenes and sequences the persona swarm, runs the Rigor Protocol, enforces phase gates and the peer/adversary mode-switch, and maintains the evidence trail. Use to drive any multi-phase task (specify, define-architecture, design, implement, investigate).",
         "lens": [
           "no-guessing-protocol",
@@ -1054,8 +1123,12 @@ window.PORTAL_DATA = {
       },
       {
         "name": "patterns-expert",
-        "surface": "Copilot",
+        "authoredIn": "Copilot",
         "veto": "advisory",
+        "surfaces": [
+          "Claude Code",
+          "Copilot"
+        ],
         "desc": "Maps problems to established patterns (GoF, integration/enterprise, language idioms, LOA catalog); pushes standard idioms over bespoke invention; requires patterns be named. Convene for a bespoke solution to a recurring problem, any named-pattern usage,...",
         "lens": [
           "no-guessing-protocol",
@@ -1066,8 +1139,12 @@ window.PORTAL_DATA = {
       },
       {
         "name": "product-strategist",
-        "surface": "Claude Code",
+        "authoredIn": "Claude Code",
         "veto": "advisory",
+        "surfaces": [
+          "Claude Code",
+          "Copilot"
+        ],
         "desc": "Defines the product/problem — core scenario, industry comparables, user evidence, explicit non-goals, and testable acceptance criteria. Owns /specify ideation as a collaborating peer. Use to turn a raw prompt into a crisp, falsifiable spec before any...",
         "lens": [
           "no-guessing-protocol",
@@ -1077,8 +1154,12 @@ window.PORTAL_DATA = {
       },
       {
         "name": "python-developer",
-        "surface": "Copilot",
+        "authoredIn": "Copilot",
         "veto": "advisory",
+        "surfaces": [
+          "Claude Code",
+          "Copilot"
+        ],
         "desc": "Typed, validated, idiomatic Python review — type hints, Pydantic boundaries, async hygiene, ruff/uv tooling. Convene for any Python code in the change.",
         "lens": [
           "no-guessing-protocol",
@@ -1088,8 +1169,12 @@ window.PORTAL_DATA = {
       },
       {
         "name": "rust-developer",
-        "surface": "Copilot",
+        "authoredIn": "Copilot",
         "veto": "advisory",
+        "surfaces": [
+          "Claude Code",
+          "Copilot"
+        ],
         "desc": "Idiomatic Rust review — error handling, ownership/borrowing, Send/Sync, async runtime, clippy-clean. Convene for any Rust code in the change.",
         "lens": [
           "no-guessing-protocol",
@@ -1099,8 +1184,12 @@ window.PORTAL_DATA = {
       },
       {
         "name": "sre-diagnostician",
-        "surface": "Copilot",
+        "authoredIn": "Copilot",
         "veto": "advisory",
+        "surfaces": [
+          "Claude Code",
+          "Copilot"
+        ],
         "desc": "Production-failure lens — observability, telemetry, failure modes, timeouts/retries/circuit-breakers, rollback, resource bounds, and design-time performance budgets & profiling. Convene when the change adds a runtime side effect, external dependency,...",
         "lens": [
           "no-guessing-protocol",
@@ -1111,8 +1200,12 @@ window.PORTAL_DATA = {
       },
       {
         "name": "tech-lead",
-        "surface": "Copilot",
+        "authoredIn": "Copilot",
         "veto": "advisory",
+        "surfaces": [
+          "Claude Code",
+          "Copilot"
+        ],
         "desc": "Pushes for the smallest correct shippable change — maintainability, YAGNI, honest tracked debt, can-the-team-hold-this. Holds the casting vote on Architect↔Simplifier tension. Convene for any non-trivial feature, or whenever that tension is present.",
         "lens": [
           "no-guessing-protocol",
@@ -1123,8 +1216,12 @@ window.PORTAL_DATA = {
       },
       {
         "name": "ux-researcher-ia",
-        "surface": "Claude Code",
+        "authoredIn": "Claude Code",
         "veto": "advisory",
+        "surfaces": [
+          "Claude Code",
+          "Copilot"
+        ],
         "desc": "User-experience research and information architecture — the \"how it works\" layer beneath the visual surface. Owns user/business needs, personas, jobs-to-be-done, information architecture (categorization, hierarchy, navigation, labeling), user flows and...",
         "lens": [
           "no-guessing-protocol",
@@ -1134,6 +1231,96 @@ window.PORTAL_DATA = {
         ]
       }
     ]
+  },
+  "coordination": {
+    "intro": "Several agents — Claude Code sessions, GitHub Copilot, any harness driving another model — work one repository at the same time, in separate worktrees or, worse, in the same one. They cannot see each other. The cost of that blindness is not one problem but four, and only the first is a merge conflict.",
+    "specLink": "../specs/agent-coordination.html",
+    "specStatus": "The specification is still marked draft, and this section describes what is built. Where the two disagree the code wins and the difference is named — see the harness note below.",
+    "problems": [
+      {
+        "h": "Two branches regenerate the same committed artifact",
+        "p": "Both sides are correct, both ran the generator, and git presents it as a text conflict in a file no human wrote. Resolving it by merging produces a file neither generator would emit."
+      },
+      {
+        "h": "A shared register mints its next id by reading the local file and adding one",
+        "p": "Two sessions that have not pushed both read the same last id. Both allocate it. Neither is wrong, and nothing detects it until the identifiers collide in a place that matters."
+      },
+      {
+        "h": "Two agents independently author the same rule, and git merges both cleanly",
+        "p": "No conflict, no warning, two competing statements of the same policy in one file. This is the expensive one: a clean merge is what makes it invisible."
+      },
+      {
+        "h": "In a shared tree, one session's checkout moves another's HEAD",
+        "p": "Not a merge problem at all. One agent's routine operation silently relocates work another agent is mid-way through, and the loss is discovered later, somewhere else."
+      }
+    ],
+    "harness": {
+      "intro": "The question that decides whether any of this works across tools: where can a rule actually be enforced, and does that place exist on every harness? There are two boundaries, and they have very different guarantees.",
+      "boundaries": [
+        {
+          "h": "The commit boundary — the universal floor",
+          "p": "A git pre-commit hook refuses unclaimed staged paths. It works on every harness, and on none of them is it optional, because it is git rather than a vendor's tool surface. Nothing reaches a commit without passing it. Installed per-clone by `coord install` — .git/config is never committed, so each clone arms its own.",
+          "state": "universal"
+        },
+        {
+          "h": "The edit boundary — harness-specific, and verified per harness",
+          "p": "Catching a bad edit before it happens needs a pre-tool hook, which is vendor territory. Claude Code exposes PreToolUse; its deny response was established by execution (spike S5, five cases including both fail-safe paths). Copilot's contract was the open question, and it was closed by a live session rather than assumed either way: a Copilot CLI 1.0.80 session honoured a deny — a read of an unleased file succeeded, a write to a leased one was refused with our reason rendered verbatim into the transcript, and the file was left unmodified.",
+          "state": "enforcing on both"
+        }
+      ],
+      "residual": "Residual, and unchanged: Copilot fails OPEN on a 30-second hook timeout, so a hung hook allows the edit. The measured check is 63ms at p95 and the commit floor backs it — but 'fast enough today' is a measurement, not a guarantee, and it is recorded as residual rather than treated as closed.",
+      "payload": "The two payloads are not the same shape, and the difference is a trap rather than an inconvenience. Copilot's preToolUse arrives as a JSON array rather than an object, its path field is `path` not `file_path`, and the path is absolute. A hook that reads tool_input.file_path finds nothing in a Copilot payload and returns allow for every edit — a silent no-op wearing the shape of enforcement. The conformance suite caught exactly that before any of it shipped.",
+      "measured": "Shape recorded from 55,541 real preToolUse invocations in Copilot session state, of which `powershell` is the commonest single tool at 26,210 — the shell-bypass path, measured rather than supposed.",
+      "rule": "No verb is reachable only through one vendor's tool surface. The compatibility requirement is three harness families, not two, because two is the number at which a portable design and an accidental one look identical."
+    },
+    "invariants": [
+      {
+        "agg": "Session record",
+        "root": "SessionId",
+        "inv": "A session's record has exactly one writer, for its whole life — so the coordination layer cannot become the shared mutable thing it exists to remove."
+      },
+      {
+        "agg": "Lease set",
+        "root": "ArtifactPattern",
+        "inv": "No two unexpired hard leases overlap. An ambiguous intersection resolves to refuse: a false refusal costs a message, a false grant costs a merge."
+      },
+      {
+        "agg": "Allocation scheme",
+        "root": "SchemeId",
+        "inv": "An issued identifier is never issued twice, and issuance requires no communication between issuers — a scheme that is only safe when issuers can see each other is the defect, not the fix."
+      },
+      {
+        "agg": "Work item",
+        "root": "WorkItemId",
+        "inv": "Owned by at most one session at a time, and its status is derived from the record — never written."
+      },
+      {
+        "agg": "Decision",
+        "root": "DecisionId",
+        "inv": "A decision is superseded, never edited. Editing one rewrites the past for every session that already read it."
+      }
+    ],
+    "recordNote": "The record is an append-only stream of facts. Leases, work-item status, blocked-on relationships and the operator view are folds over it, never a second stored source. Grain, declared before any column: one row is exactly one event emitted by one session at one instant.",
+    "surfaces": [
+      {
+        "h": "The claim path",
+        "p": "May I touch this, and what should I know first? A grant carries the decisions already in force; a refusal carries the holder, the reason, and the remedy."
+      },
+      {
+        "h": "The stream",
+        "p": "What has been happening? One merged chronological view across all sessions."
+      },
+      {
+        "h": "The status view",
+        "p": "Which tree is waiting on me, and is anything held in only one place?"
+      },
+      {
+        "h": "The projection",
+        "p": "What do I specifically need in context? Budget-capped, and regenerated rather than accumulated."
+      }
+    ],
+    "language": "One label is deliberately blunt: refused — never denied, blocked, or unavailable. The reader is a model that must not be able to read the outcome as a transient failure worth retrying. And in every surface the order is fixed: what must I not do, then what is waiting on me, then what happened. Never chronological-first.",
+    "verbs": "claim · check · release · tail · guard · session · collaborate · request · worktree · allocate · resolve · merge-register · merge-derived · regen · class · metrics · doctor · install · plugin · hook · precommit"
   },
   "promptLoop": {
     "intro": "Every non-trivial turn runs the same four beats. It exists to defeat two failure modes at once: starting work before the finish line is defined, and continuing work after it has been reached.",

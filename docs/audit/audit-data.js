@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-04T00:55:50Z",
+  "generated": "2026-09-04T01:28:48Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2928,6 +2928,45 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "8085c717237fa2086f106a0f4e9959f105bd4ed1",
         "short": "8085c7172",
+        "branch": "main",
+        "pushed": true
+      }
+    },
+    {
+      "id": "al-01M1N0GQ3KQC7GP3RMEZNTEFM7",
+      "shortname": "portal-roster-symmetry-and-coordination",
+      "datetime": "2026-09-04T01:28:47Z",
+      "session": "015BSvW6rL7SpuwziUbRHJTJ",
+      "prompt": "two things: - shouldnt the agents and surfaces shown in the agent collab (lens-veto-surface table) be symmetrical between copilot and claude? - we also should have an explination of the agent-coordination and how it works for agents between gh copilot and claude code (what was built off this: docs/specs/agent-coordination.html)",
+      "summary": "1) SYMMETRY DEFECT, user-found: the portal's persona table labelled each lens with its SOURCE FOLDER (12 claude-code / 11 copilot) in a column headed Surface, publishing a symmetric roster as asymmetric. All 23 personas deploy to BOTH .claude/agents and .github/agents - an invariant already gated by check_deployed_agent_parity, whose own docstring records FR-032: the Copilot surface shipped 11 of 23 for twelve revisions while every source-reading check printed '23 lenses' and exited 0. The deploy bug was fixed; I reintroduced the claim at the presentation layer. Fixed by deriving availability from the INSTALLED directories (E11) and reading frontmatter name rather than filename (the copilot files keep their _agent suffix in .claude/agents). Column is now 'Runs on' = both, with authoring folder as a secondary detail. Two new controls in test_portal_inventory.py, observed failing on the defect. 2) NEW portal section 5 Agent Coordination + an explainer section: the four problems (only the first a merge conflict), the two enforcement boundaries and why they differ across harnesses - the git pre-commit hook is the universal floor because it is not a vendor surface; the edit boundary is vendor territory, with Claude PreToolUse established by spike S5 and Copilot CLOSED by a live CLI 1.0.80 session honouring a deny - the residual (Copilot fails OPEN on a 30s timeout; 63ms p95 measured), the payload-shape trap (Copilot preToolUse is a JSON array, path not file_path, absolute - a hook reading tool_input.file_path allows every Copilot edit, a silent no-op wearing the shape of enforcement), the five aggregates and their single invariants, the four operator surfaces, and the deliberate 'refused' vocabulary. DOC-VS-CODE DISCREPANCY SURFACED AND FIXED: the spec still carried F1 as an open flag ('Copilot may be advisory-only') while coord-core.py HARNESS_STATUS records it closed on 2026-08-24; spec F1 row updated to record the closure, its residual and the payload trap.",
+      "kind": "skill",
+      "skill": "document",
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [
+        "docs/portal/index.html",
+        "web/ai-forward-pack-explainer.html",
+        "docs/specs/agent-coordination.md"
+      ],
+      "tags": [
+        "portal",
+        "personas",
+        "coordination",
+        "FR-032"
+      ],
+      "outcome": "success",
+      "goal": "Fix the persona table's false single-surface claim, and explain agent coordination across GitHub Copilot and Claude Code on the published surfaces",
+      "done_when": "The roster reports installed availability rather than the authoring split and a control holds it; an Agent Coordination section is live on the portal and the explainer; gates green",
+      "persona_yield": [
+        {
+          "persona": "documentation-steward",
+          "raised": 2,
+          "accepted": 2
+        }
+      ],
+      "git": {
+        "sha": "b1848691f31520800f36831a00736efa819dc72b",
+        "short": "b1848691f",
         "branch": "main",
         "pushed": true
       }

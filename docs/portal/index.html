@@ -87,6 +87,9 @@
   .vb.hard{color:var(--danger)}.vb.soft{color:var(--warning)}.vb.advisory{color:var(--ink-mute);font-weight:600}
   .reflink{font-family:var(--mono);font-size:11.5px;color:var(--ink-mute);display:block;margin-top:6px}
   .lensrow{font-family:var(--mono);font-size:11px;color:var(--ink-mute);margin-top:4px}
+  .callout-note{background:var(--surface);border-left:3px solid var(--primary);border-radius:0 var(--r-md) var(--r-md) 0;
+    padding:12px 16px;margin:14px 0;max-width:var(--measure)}
+  .callout-note p{margin:0;font-size:13.5px;color:var(--ink-mute)}
   .tells{max-width:var(--measure);margin:var(--sp-3) 0 0;padding-left:1.1em}
   .tells li{font-size:13.5px;color:var(--ink-mute);margin:.3em 0}
   ol.steps{counter-reset:s;list-style:none;padding:0;margin:0;max-width:var(--measure)}
@@ -157,7 +160,7 @@ function renderNav(){
 function render(){
   if(window.__PORTAL_ERR||!D){pane.innerHTML=errorBody();return;}
   renderNav();
-  pane.innerHTML=({start:secStart,caps:secCaps,skills:secSkills,agents:secAgents,loop:secLoop,foundations:secFoundations,ui:secUi,architecture:secArchitecture,systems:secSystems,graph:secGraph,ref:secRef}[state.section]||secStart)();
+  pane.innerHTML=({start:secStart,caps:secCaps,skills:secSkills,agents:secAgents,coord:secCoord,loop:secLoop,foundations:secFoundations,ui:secUi,architecture:secArchitecture,systems:secSystems,graph:secGraph,ref:secRef}[state.section]||secStart)();
   if(state.section==="graph"){drawGraph();}
   const c=document.getElementById("content");c.focus({preventScroll:true});c.scrollTop=0;
 }
@@ -212,13 +215,13 @@ function secSystems(){
 function secAgents(){
   const C=D.collaboration||{};const P=C.personas||[];
   const hard=P.filter(p=>p.veto==="hard"),soft=P.filter(p=>p.veto==="soft"),adv=P.filter(p=>p.veto==="advisory");
-  const cc=P.filter(p=>p.surface==="Claude Code").length,cp=P.length-cc;
+  const onBoth=P.filter(p=>(p.surfaces||[]).length>=2).length;
   return `<h1 class="lede-h">Multi-agent collaboration</h1><p class="lede">${esc(C.intro||"")}</p>
     <div class="counts">
       <div class="stat"><b>${P.length}</b><span>lenses</span></div>
-      <div class="stat"><b>${cc}</b><span>Claude Code agents</span></div>
-      <div class="stat"><b>${cp}</b><span>Copilot adversaries</span></div>
+      <div class="stat"><b>${onBoth}</b><span>on both harnesses</span></div>
       <div class="stat"><b>${hard.length}</b><span>hard vetoes</span></div>
+      <div class="stat"><b>${soft.length}</b><span>soft vetoes</span></div>
     </div>
     <div class="group-band"><span class="gt">Two modes, one lens</span><span class="gl"></span></div>
     <div class="grid">${(C.modes||[]).map(m=>`<div class="cap"><h4>${esc(m.h)}</h4><p>${esc(m.p)}</p></div>`).join("")}</div>
@@ -229,12 +232,43 @@ function secAgents(){
     <div class="group-band"><span class="gt">The roster</span><span class="gl"></span><span class="gc">${hard.length} hard · ${soft.length} soft · ${adv.length} advisory</span></div>
     <p>${esc(C.vetoNote||"")}</p>
     <p class="lensrow">${esc(C.rosterNote||"")}</p>
-    <table><thead><tr><th scope="col">Lens</th><th scope="col">Veto</th><th scope="col">Surface</th><th scope="col">What it owns</th></tr></thead>
-      <tbody>${P.map(p=>`<tr><td><span class="mono">${esc(p.name)}</span>${p.lens&&p.lens.length?`<div class="lensrow">lens: ${esc(p.lens.join(", "))}</div>`:""}</td>
-        <td><span class="vb ${esc(p.veto)}">${esc(p.veto)}</span></td><td>${esc(p.surface)}</td><td>${esc(p.desc)}</td></tr>`).join("")}</tbody></table>
+    <table><thead><tr><th scope="col">Lens</th><th scope="col">Veto</th><th scope="col">Runs on</th><th scope="col">What it owns</th></tr></thead>
+      <tbody>${P.map(p=>{const s=p.surfaces||[];const all=s.length>=2;
+        return `<tr><td><span class="mono">${esc(p.name)}</span>${p.lens&&p.lens.length?`<div class="lensrow">lens: ${esc(p.lens.join(", "))}</div>`:""}</td>
+        <td><span class="vb ${esc(p.veto)}">${esc(p.veto)}</span></td>
+        <td>${all?`<span class="vb advisory">both</span>`:`<span class="vb soft">${esc(s.join(", ")||"not deployed")}</span>`}<div class="lensrow">authored in ${esc(p.authoredIn||"")}</div></td>
+        <td>${esc(p.desc)}</td></tr>`;}).join("")}</tbody></table>
 
     <div class="group-band"><span class="gt">Keeping a panel affordable</span><span class="gl"></span></div>
     <div class="stack">${(C.measures||[]).map(m=>`<div class="std"><div class="sn">${esc(m.h)}</div><div><p class="sd">${esc(m.p)}</p>${m.cmd?`<code class="mono">${esc(m.cmd)}</code>`:""}</div></div>`).join("")}</div>`;
+}
+function secCoord(){
+  const K=D.coordination||{};const H=K.harness||{};
+  return `<h1 class="lede-h">Agent coordination</h1><p class="lede">${esc(K.intro||"")}</p>
+    <div class="callout-note"><p>${esc(K.specStatus||"")}${K.specLink?` <a href="${esc(K.specLink)}">Read the specification →</a>`:""}</p></div>
+
+    <div class="group-band"><span class="gt">Four problems, not one</span><span class="gl"></span><span class="gc">${(K.problems||[]).length}</span></div>
+    <div class="grid">${(K.problems||[]).map((p,i)=>`<div class="cap"><h4><span class="mono" style="color:var(--primary)">${i+1}</span> &nbsp;${esc(p.h)}</h4><p>${esc(p.p)}</p></div>`).join("")}</div>
+
+    <div class="group-band"><span class="gt">How it works across Copilot and Claude Code</span><span class="gl"></span></div>
+    <p>${esc(H.intro||"")}</p>
+    <div class="stack">${(H.boundaries||[]).map(b=>`<div class="std"><div class="sn">${esc(b.h)}<div style="margin-top:6px"><span class="vb ${b.state==="universal"?"advisory":"hard"}">${esc(b.state||"")}</span></div></div><div><p class="sd">${esc(b.p)}</p></div></div>`).join("")}</div>
+    <div class="callout-note" style="margin-top:14px"><p><strong>Residual risk.</strong> ${esc(H.residual||"")}</p></div>
+    <div class="callout-note"><p><strong>The payloads differ, and that is the trap.</strong> ${esc(H.payload||"")}</p></div>
+    <p class="lensrow">${esc(H.measured||"")}</p>
+    <p>${esc(H.rule||"")}</p>
+
+    <div class="group-band"><span class="gt">The model — one invariant per aggregate</span><span class="gl"></span><span class="gc">${(K.invariants||[]).length}</span></div>
+    <table><thead><tr><th scope="col">Aggregate</th><th scope="col">Root</th><th scope="col">The one invariant it protects</th></tr></thead>
+      <tbody>${(K.invariants||[]).map(i=>`<tr><td><strong>${esc(i.agg)}</strong></td><td><span class="mono">${esc(i.root)}</span></td><td>${esc(i.inv)}</td></tr>`).join("")}</tbody></table>
+    <p class="lensrow" style="margin-top:10px">${esc(K.recordNote||"")}</p>
+
+    <div class="group-band"><span class="gt">Four surfaces, each answering one question</span><span class="gl"></span></div>
+    <div class="grid">${(K.surfaces||[]).map(s=>`<div class="cap"><h4>${esc(s.h)}</h4><p>${esc(s.p)}</p></div>`).join("")}</div>
+
+    <div class="group-band"><span class="gt">Words chosen to be unambiguous to a model</span><span class="gl"></span></div>
+    <p>${esc(K.language||"")}</p>
+    <p class="lensrow" style="margin-top:14px"><strong>Verbs:</strong> ${esc(K.verbs||"")}</p>`;
 }
 function secLoop(){
   const L=D.promptLoop||{};

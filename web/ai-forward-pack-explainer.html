@@ -713,7 +713,7 @@ window.addEventListener("DOMContentLoaded",function(){
         <nav class="sections" aria-label="Sections">
           <a href="#overview">Overview</a><a href="#fit">How it fits</a>
           <a href="#rigor">Rigor Protocol</a><a href="#knowledge">Knowledge</a>
-          <a href="#personas">Personas</a><a href="#skills">Skills</a><a href="#loop">Prompt loop</a>
+          <a href="#personas">Personas</a><a href="#skills">Skills</a><a href="#coord">Coordination</a><a href="#loop">Prompt loop</a>
           <a href="#grammar">UI Grammar</a><a href="#catalog">Templates</a><a href="#mockups">Mockups</a>
         </nav>
         <button class="tbtn" id="themebtn" aria-label="Toggle colour theme"><span aria-hidden="true">◐</span> Theme</button>
@@ -850,6 +850,64 @@ window.addEventListener("DOMContentLoaded",function(){
             <span class="pill">${s[3]==="core"?"core loop":s[3]==="diagnose"?"diagnosis":s[3]==="lifecycle"?"pack lifecycle":s[3]==="utility"?"utility":"supporting"}</span></div>
           <p>${s[1]}</p>
           <div class="tag" style=${{marginTop:8}}>lead peer · ${s[2]}</div></div>`)}</div>
+      </div></section>
+
+      <!-- AGENT COORDINATION -->
+      <section class="block" id="coord" aria-label="Agent coordination"><div class="wrap">
+        <div class="sechead"><div class="seclabel">Across sessions and across harnesses</div>
+          <h2>Agent coordination</h2>
+          <p>Several agents — Claude Code sessions, GitHub Copilot, any harness driving another model —
+          work one repository at the same time, in separate worktrees or, worse, in the same one. They
+          cannot see each other. The cost of that blindness is <b>not one problem but four</b>, and only
+          the first is a merge conflict.</p></div>
+        <div class="grid g2">
+          <div class="card"><h3 style=${{fontSize:15}}>1 · Two branches regenerate the same committed artifact</h3>
+            <p>Both sides are correct, both ran the generator, and git presents it as a text conflict in
+            a file no human wrote. Merging it produces a file neither generator would emit.</p></div>
+          <div class="card"><h3 style=${{fontSize:15}}>2 · A shared register mints its next id locally</h3>
+            <p>Two sessions that have not pushed both read the same last id and both allocate it. Neither
+            is wrong, and nothing detects it until the identifiers collide somewhere that matters.</p></div>
+          <div class="card"><h3 style=${{fontSize:15}}>3 · Two agents author the same rule, and git merges both cleanly</h3>
+            <p>No conflict, no warning, two competing statements of one policy in one file. The expensive
+            one — a clean merge is exactly what makes it invisible.</p></div>
+          <div class="card"><h3 style=${{fontSize:15}}>4 · In a shared tree, one checkout moves another's HEAD</h3>
+            <p>Not a merge problem at all. A routine operation silently relocates work another session is
+            mid-way through, and the loss surfaces later, somewhere else.</p></div>
+        </div>
+
+        <h3 style=${{marginTop:26}}>How it works between Copilot and Claude Code</h3>
+        <p>The question that decides whether any of this is real across tools: where can a rule actually
+        be enforced, and does that place exist on every harness? There are two boundaries, with very
+        different guarantees.</p>
+        <div class="grid g2">
+          <div class="card"><h3 style=${{fontSize:15}}>The commit boundary — the universal floor</h3>
+            <p>A git <code>pre-commit</code> hook refuses unclaimed staged paths. It works on every
+            harness because it is <b>git, not a vendor tool surface</b>, and nothing reaches a commit
+            without passing it. Armed per clone by <code>coord install</code>, since
+            <code>.git/config</code> is never committed.</p>
+            <div class="tag" style=${{marginTop:8}}>universal</div></div>
+          <div class="card"><h3 style=${{fontSize:15}}>The edit boundary — verified per harness</h3>
+            <p>Catching a bad edit <i>before</i> it happens needs a pre-tool hook, which is vendor
+            territory. Claude Code's <code>PreToolUse</code> deny was established by execution (spike S5).
+            Copilot's was the open question, and it was <b>closed by a live session rather than assumed</b>:
+            a Copilot CLI 1.0.80 session honoured a deny — the write was refused with our reason rendered
+            verbatim into the transcript, and the file was unmodified.</p>
+            <div class="tag" style=${{marginTop:8}}>enforcing on both</div></div>
+        </div>
+        <div class="card" style=${{marginTop:14}}>
+          <h3 style=${{fontSize:15}}>Two things that stay true anyway</h3>
+          <p><b>Residual:</b> Copilot fails <i>open</i> on a 30-second hook timeout, so a hung hook allows
+          the edit. The measured check is 63ms at p95 and the commit floor backs it — but "fast enough
+          today" is a measurement, not a guarantee, and it is recorded as residual rather than closed.</p>
+          <p style=${{marginTop:10}}><b>The payloads differ, and that is a trap rather than an
+          inconvenience.</b> Copilot's <code>preToolUse</code> arrives as a JSON <i>array</i>, its path
+          field is <code>path</code> not <code>file_path</code>, and the path is absolute. A hook reading
+          <code>tool_input.file_path</code> finds nothing in a Copilot payload and returns allow for every
+          edit — a silent no-op wearing the shape of enforcement. The conformance suite caught exactly
+          that before any of it shipped.</p></div>
+        <p style=${{marginTop:14}}>The compatibility rule follows from it: <b>no verb is reachable only
+        through one vendor's tool surface</b>, and the requirement is three harness families rather than
+        two — because two is the number at which a portable design and an accidental one look identical.</p>
       </div></section>
 
       <!-- PROMPT LOOP -->

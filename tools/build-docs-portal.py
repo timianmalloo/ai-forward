@@ -190,6 +190,28 @@ def ui_examples():
 
 
 # ---------------------------------------------------------------- graph slice (from docs-index.js)
+def _deployed_persona_names():
+    """Which personas are actually INSTALLED on each harness surface.
+
+    Read from the deployed directories, not from pack/. The roster is symmetric by contract —
+    the deployment map promises every persona on both surfaces — but "promised" and "installed"
+    are different claims, and FR-032 is the recorded case where they diverged: the Copilot
+    surface carried 11 of 23 personas for twelve revisions while every source-reading check
+    printed "23 lenses" and exited 0. Reading the installed state is the point (E11).
+    """
+    out = {}
+    for label, rel, suffix in (("Claude Code", os.path.join(ROOT, ".claude", "agents"), ".md"),
+                               ("Copilot", os.path.join(ROOT, ".github", "agents"), ".agent.md")):
+        names = set()
+        if os.path.isdir(rel):
+            for fn in os.listdir(rel):
+                if fn.endswith(suffix):
+                    txt = read(os.path.join(rel, fn))
+                    names.add(frontmatter_field(txt, "name") or fn[:-len(suffix)])
+        out[label] = names
+    return out
+
+
 def personas():
     """The persona roster, DERIVED from the agent definitions rather than hand-listed.
 
@@ -197,7 +219,13 @@ def personas():
     veto the shipped agent does not hold, and a new persona appears here the moment it exists.
     The same property the skills section relies on: complete by construction (V12 — an honest
     projection over a silent omission).
+
+    `authoredIn` is where the definition LIVES; `surfaces` is where the persona actually RUNS.
+    Conflating the two is how a symmetric roster gets published as an asymmetric one: the
+    12/11 split is an authoring detail (the claude-code files carry a `tools:` line that
+    Copilot ignores, so it is stripped at deploy), never a statement about availability.
     """
+    deployed = _deployed_persona_names()
     rows = []
     for sub, kind in (("claude-code", "Claude Code"), ("copilot", "Copilot")):
         adir = os.path.join(PACK, "adapters", sub, "agents")
@@ -213,7 +241,9 @@ def personas():
             veto = "hard" if "hard veto" in low else ("soft" if "soft veto" in low else "advisory")
             lens = frontmatter_field(txt, "knowledge") or ""
             lens = [d.strip() for d in lens.strip("[]").split(",") if d.strip()]
-            rows.append({"name": name, "surface": kind, "veto": veto,
+            rows.append({"name": name, "authoredIn": kind, "veto": veto,
+                         "surfaces": [s for s in ("Claude Code", "Copilot")
+                                      if name in deployed.get(s, set())],
                          "desc": clip(desc), "lens": lens})
     rows.sort(key=lambda r: ({"hard": 0, "soft": 1, "advisory": 2}[r["veto"]], r["name"]))
     return rows
@@ -274,6 +304,7 @@ def build():
         ("caps", "Capabilities"),
         ("skills", "The %d Skills" % len(names)),
         ("agents", "Multi-Agent Collaboration"),
+        ("coord", "Agent Coordination"),
         ("loop", "The Prompt Loop"),
         ("foundations", "Foundations"),
         ("ui", "UI & Design"),
@@ -300,6 +331,7 @@ def build():
         "ui": ui,
         "architecture": {"intro": ed.get("architectureIntro", ""), "groups": architecture()},
         "collaboration": dict(ed.get("collaboration", {}), personas=personas()),
+        "coordination": ed.get("coordination", {}),
         "promptLoop": ed.get("promptLoop", {}),
         "systems": ed.get("systems", []),
         "graph": graph_slice(),

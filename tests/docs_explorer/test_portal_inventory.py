@@ -137,6 +137,49 @@ class PersonaRosterTests(unittest.TestCase):
             self.assertEqual(p["veto"], expected,
                              f"the portal claims a {p['veto']} veto for {p['name']}")
 
+    def test_the_published_roster_is_symmetric_across_harnesses(self):
+        """FR-032, recurring at the presentation layer.
+
+        Every persona deploys to BOTH `.claude/agents/` and `.github/agents/` — an invariant
+        already gated by check_deployed_agent_parity. The portal's first cut nonetheless
+        labelled each row with its *source folder*, publishing the 12/11 authoring split as
+        though Copilot had 11 lenses and Claude Code 12. The deploy bug was fixed twelve
+        revisions before; the claim about it came back on a new surface.
+        """
+        for p in portal_data()["collaboration"]["personas"]:
+            self.assertEqual(
+                sorted(p["surfaces"]), ["Claude Code", "Copilot"],
+                f"{p['name']} is published as single-surface, but every persona is deployed "
+                f"to both — the source folder is an authoring detail, not availability")
+
+    def test_availability_is_read_from_the_installed_tree_not_the_source(self):
+        """The whole point of E11: 'promised on both surfaces' and 'installed on both' are
+        different claims, and only the second one is checkable here."""
+        def installed(rel, suffix):
+            # Read the frontmatter `name:`, never the filename: the Copilot definitions are
+            # copied into .claude/agents/ verbatim and keep their `_agent` suffix, so a
+            # filename-derived roster silently disagrees with the persona's own identity.
+            out = set()
+            base = os.path.join(ROOT, *rel)
+            for fn in os.listdir(base):
+                if not fn.endswith(suffix):
+                    continue
+                with open(os.path.join(base, fn), encoding="utf-8") as fh:
+                    head = fh.read(2000)
+                m = re.search(r"(?m)^name:\s*(\S+)", head)
+                out.add(m.group(1) if m else fn[: -len(suffix)])
+            return out
+
+        deployed = {
+            "Claude Code": installed((".claude", "agents"), ".md"),
+            "Copilot": installed((".github", "agents"), ".agent.md"),
+        }
+        for p in portal_data()["collaboration"]["personas"]:
+            for surface in p["surfaces"]:
+                self.assertIn(p["name"], deployed[surface],
+                              f"the portal says {p['name']} runs on {surface}, but no such "
+                              f"file is installed there")
+
     def test_every_persona_publishes_its_knowledge_lens(self):
         # The lens is what makes delegation affordable; a persona showing none on the public
         # page would misrepresent how the panel is actually run.
