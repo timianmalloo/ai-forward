@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-04T16:49:22Z",
+  "generated": "2026-09-04T17:51:30Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3208,6 +3208,36 @@ window.AUDIT_DATA = {
         "short": "a87b187ee",
         "branch": "main",
         "pushed": false
+      }
+    },
+    {
+      "id": "al-01M1PRR37VC9MV71YYCT385ZCN",
+      "shortname": "forensicreview-ai-forward-rev59",
+      "datetime": "2026-09-04T17:51:30Z",
+      "session": "015BSvW6rL7SpuwziUbRHJTJ",
+      "prompt": "C:/Program Files/Git/forensicreview this repo",
+      "summary": "Forensic review of ai-forward at 566d9c5 (pack rev 59). Baseline BEFORE judging: 10/10 gates, 440 tests passing, docs-graph validate clean at 162 artifacts, no pre-existing failures. Verdict HEALTHY - no P0, no P1. Ten findings FR-076..FR-085, ids continued from the highest LOCAL id FR-075 (FR-371 in the tree is TheTerrace's numbering quoted in a changelog; continuing from it would have forked the sequence). Sharpest two: FR-076, the defect-class register's stated Status counts say 22 uncontrolled against an actual 2 and total 43 against 24 real classes, with nothing checking them - and I propagated that error three times during rev 58/59 without opening the file; FR-077, marker-lint reports 10 findings of which ALL 10 are inside its own test fixtures, zero real, and it runs warn-only, so a genuine violation would be the 11th line in a list of 10 known-false ones. Also FR-078 the repo ships and documents a coordination layer it does not run itself (coord doctor: no registry, no merge driver) - and AI-DE, which does run it, is where all 8 COORD classes were found, which is the evidence; FR-079 60% of the deployed bundle's 267 public functions undocumented; FR-080 FED-A abstraction defeats the deduper (0.17/0.14 vs 0.6); FR-081 fleet provenance does not survive application - zero 'Source:** fleet' markers in any target's committed register, though ai-de hand-applied results once at 71747f4; FR-082 no required status check on main (recorded decision, re-tested not reversed); FR-083 the budget gate rests on a fitted 4.83 chars/token constant - stress-tested across 4.0-5.2, backstop holds everywhere but sits at 88% rather than 72% at the low end; FR-084 actions target deprecated Node 20; FR-085 no code coverage measured. VERIFIED SOUND and recorded as such: publish boundary (executed, 483-file bundle, no dreams/audit/manifests/plans leaked), least-privilege workflow permissions, all actions SHA-pinned, zero runtime dependencies, durable-store write ordering (store before ledger is the correct order - a crash costs a de-duped duplicate, not a loss). Simplifier struck two candidate findings as preference. rev53 set to superseded in the same change; exactly one non-superseded review remains. No production code, dependency, schema, CI behaviour or runtime config changed. Stopped for human triage.",
+      "kind": "skill",
+      "skill": "forensicreview",
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [
+        "docs/reviews/forensic-review-rev59.md",
+        "docs/backlog/forensic-review-rev59.md"
+      ],
+      "tags": [
+        "forensic-review",
+        "rev59",
+        "governance"
+      ],
+      "outcome": "success",
+      "goal": "Forensic assessment of ai-forward at HEAD: recover/verify the architecture, review architecture, design and implementation, and produce an evidenced prioritized backlog",
+      "done_when": "Rev-numbered review + backlog written with FR-id continuity, prior review superseded, graph validates, no production code changed, stopped for human triage",
+      "git": {
+        "sha": "566d9c5c9aea3a99c743e51a8343e58bc8e30b5e",
+        "short": "566d9c5c9",
+        "branch": "main",
+        "pushed": true
       }
     }
   ],

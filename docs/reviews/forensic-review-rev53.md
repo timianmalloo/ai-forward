@@ -2,7 +2,7 @@
 id: forensic-review-rev53
 title: "Forensic Review - AI-Forward repository (revision 53)"
 type: doc
-status: accepted
+status: superseded
 owner: "@timianmalloo"
 phase: "pack-evolution"
 tags: [forensic-review, hygiene, documentation-currency, verification, ci, adoption-readiness]

@@ -2033,6 +2033,18 @@ window.PORTAL_DATA = {
         "summary": "Proposed, prioritized backlog from the revision-53 forensic review. One carry-forward P2 (FR-069, re-verified open), one carry-forward P3 (FR-071), and four..."
       },
       {
+        "id": "forensic-review-rev59",
+        "type": "doc",
+        "title": "Forensic review — ai-forward at revision 59",
+        "summary": "Forensic assessment of ai-forward at 566d9c5 (pack revision 59). All ten gates green, 440 tests passing, supply chain clean, publish boundary enforced,..."
+      },
+      {
+        "id": "forensic-review-rev59-backlog",
+        "type": "doc",
+        "title": "Forensic review backlog — ai-forward revision 59 (FR-076 … FR-085)",
+        "summary": "Ten proposed backlog items from the revision-59 forensic review, FR-076 to FR-085, each with evidence, falsifiable acceptance criteria and a recommended next..."
+      },
+      {
         "id": "hygiene-backlog",
         "type": "doc",
         "title": "Code-hygiene backlog",
@@ -3424,6 +3436,41 @@ window.PORTAL_DATA = {
       {
         "from": "forensic-review-rev53-backlog",
         "to": "forensic-review-rev53",
+        "rel": "relates-to"
+      },
+      {
+        "from": "forensic-review-rev59",
+        "to": "architecture",
+        "rel": "documents"
+      },
+      {
+        "from": "forensic-review-rev59",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "forensic-review-rev59",
+        "to": "forensic-review-rev53",
+        "rel": "supersedes"
+      },
+      {
+        "from": "forensic-review-rev59",
+        "to": "forensic-review-rev59-backlog",
+        "rel": "relates-to"
+      },
+      {
+        "from": "forensic-review-rev59-backlog",
+        "to": "architecture",
+        "rel": "relates-to"
+      },
+      {
+        "from": "forensic-review-rev59-backlog",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "forensic-review-rev59-backlog",
+        "to": "forensic-review-rev59",
         "rel": "relates-to"
       },
       {

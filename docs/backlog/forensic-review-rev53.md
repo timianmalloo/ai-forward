@@ -2,7 +2,7 @@
 id: forensic-review-rev53-backlog
 title: "Forensic Review Backlog - AI-Forward revision 53"
 type: doc
-status: accepted
+status: superseded
 owner: "@timianmalloo"
 phase: "pack-evolution"
 tags: [forensic-review, backlog, verification, documentation, testing, security]

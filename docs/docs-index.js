@@ -2685,7 +2685,7 @@ window.DOCS_INDEX = {
       "path": "docs/reviews/forensic-review-rev53.md",
       "title": "Forensic Review - AI-Forward repository (revision 53)",
       "type": "doc",
-      "status": "accepted",
+      "status": "superseded",
       "owner": "@timianmalloo",
       "phase": "pack-evolution",
       "reviewBy": "2026-11-30",
@@ -2718,14 +2718,14 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "053b650e025685cb63748f9f7ff895070282a2b346a83042ee8fac2081d94076"
+      "sourceSha256": "1eea2bab9cab361ef717b369e89a052d57c1c881200ee786cd7711997af0e93c"
     },
     {
       "id": "forensic-review-rev53-backlog",
       "path": "docs/backlog/forensic-review-rev53.md",
       "title": "Forensic Review Backlog - AI-Forward revision 53",
       "type": "doc",
-      "status": "accepted",
+      "status": "superseded",
       "owner": "@timianmalloo",
       "phase": "pack-evolution",
       "reviewBy": "2026-11-30",
@@ -2758,7 +2758,79 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "bf50f5bdb58176e3ecaf6a943977a30e89f374771e773a912615112e332f1ccf"
+      "sourceSha256": "712a08a9a70b24c60158203f07181f049508f7df0758ec162995b1750e22ff34"
+    },
+    {
+      "id": "forensic-review-rev59",
+      "path": "docs/reviews/forensic-review-rev59.md",
+      "title": "Forensic review — ai-forward at revision 59",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "assessment",
+      "reviewBy": "2027-03-04",
+      "reviewSuggested": [],
+      "summary": "Forensic assessment of ai-forward at 566d9c5 (pack revision 59). All ten gates green, 440 tests passing, supply chain clean, publish boundary enforced, workflows least-privilege. No P0 or P1. Ten findings (FR-076..FR-085), all governance, consistency or documentation debt rather than correctness or security defects — the sharpest being a defect-class register whose own stated counts are wrong by an order of magnitude, and a marker linter whose entire output is noise from its own test fixtures.",
+      "tags": [
+        "forensic-review",
+        "assessment",
+        "governance",
+        "rev59"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        },
+        {
+          "to": "forensic-review-rev59-backlog",
+          "rel": "relates-to"
+        },
+        {
+          "to": "forensic-review-rev53",
+          "rel": "supersedes"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "e338a7cb8319cebb90670e765b1e8db29c8fb7d1af4e320dd87c3419c96c84d1"
+    },
+    {
+      "id": "forensic-review-rev59-backlog",
+      "path": "docs/backlog/forensic-review-rev59.md",
+      "title": "Forensic review backlog — ai-forward revision 59 (FR-076 … FR-085)",
+      "type": "doc",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "assessment",
+      "reviewBy": "2027-03-04",
+      "reviewSuggested": [],
+      "summary": "Ten proposed backlog items from the revision-59 forensic review, FR-076 to FR-085, each with evidence, falsifiable acceptance criteria and a recommended next skill. No P0 or P1; the work is governance and documentation debt. Status proposed — nothing here is implemented, and the review stopped for human triage.",
+      "tags": [
+        "forensic-review",
+        "backlog",
+        "rev59",
+        "governance"
+      ],
+      "links": [
+        {
+          "to": "forensic-review-rev59",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        },
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "370b789e084c94e7fcae12efaec55012bd974e5bbfc5fef76871f1bc9dcbfe1a"
     },
     {
       "id": "hygiene-backlog",
@@ -5507,5 +5579,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "753abcc55cc3afcd3922c0a05d1899b3d5ac5806b0914b8c4637c4ee872ae13f"
+  "graphSha256": "16959fd26f6055bf237ea70fac5eee1c1f3b45598cb245e0e8e71a2c8a40a469"
 };

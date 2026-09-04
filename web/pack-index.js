@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 162
+"count": 164
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 311,
+"total": 313,
 "items": [
 {
 "cat": "knowledge",
@@ -2016,6 +2016,24 @@ window.PACK_INDEX = {
 "path": "docs/backlog/forensic-review-rev53.md",
 "kind": "doc",
 "text": "forensic review backlog - ai-forward revision 53 proposed, prioritized backlog from the revision-53 forensic review. one carry-forward p2 (fr-069, re-verified open), one carry-forward p3 (fr-071), and four new p3 items (fr-072..fr-075). fr-070 is resolved. no p0/p1. fr-### ids continue from the prior maximum (71). all items are `proposed` and await human triage; nothing here has been implemented. forensic-review backlog verification documentation testing security relates-to forensic-review-rev53 supersedes forensic-review-rev49-backlog relates-to architecture relates-to defect-classes"
+},
+{
+"cat": "graph",
+"id": "forensic-review-rev59",
+"title": "Forensic review — ai-forward at revision 59",
+"summary": "Forensic assessment of ai-forward at 566d9c5 (pack revision 59). All ten gates green, 440 tests passing, supply chain clean, publish boundary enforced, workflows least-privilege. No P0 or P1. Ten findings (FR-076..FR-085), all governance,…",
+"path": "docs/reviews/forensic-review-rev59.md",
+"kind": "doc",
+"text": "forensic review — ai-forward at revision 59 forensic assessment of ai-forward at 566d9c5 (pack revision 59). all ten gates green, 440 tests passing, supply chain clean, publish boundary enforced, workflows least-privilege. no p0 or p1. ten findings (fr-076..fr-085), all governance, consistency or documentation debt rather than correctness or security defects — the sharpest being a defect-class register whose own stated counts are wrong by an order of magnitude, and a marker linter whose entire output is noise from its own test fixtures. forensic-review assessment governance rev59 documents architecture relates-to forensic-review-rev59-backlog supersedes forensic-review-rev53 relates-to defect-classes"
+},
+{
+"cat": "graph",
+"id": "forensic-review-rev59-backlog",
+"title": "Forensic review backlog — ai-forward revision 59 (FR-076 … FR-085)",
+"summary": "Ten proposed backlog items from the revision-59 forensic review, FR-076 to FR-085, each with evidence, falsifiable acceptance criteria and a recommended next skill. No P0 or P1; the work is governance and documentation debt. Status…",
+"path": "docs/backlog/forensic-review-rev59.md",
+"kind": "doc",
+"text": "forensic review backlog — ai-forward revision 59 (fr-076 … fr-085) ten proposed backlog items from the revision-59 forensic review, fr-076 to fr-085, each with evidence, falsifiable acceptance criteria and a recommended next skill. no p0 or p1; the work is governance and documentation debt. status proposed — nothing here is implemented, and the review stopped for human triage. forensic-review backlog rev59 governance relates-to forensic-review-rev59 relates-to defect-classes relates-to architecture"
 },
 {
 "cat": "graph",
