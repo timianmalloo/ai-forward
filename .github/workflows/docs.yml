@@ -1,0 +1,80 @@
+# Documentation freshness — the TIME-BASED half of the contract.
+#
+# The push-triggered gates already catch CHANGE-based staleness: check-consistency.py
+# drift-gates every derived artifact (docs/api, docs/portal/portal-data.js, web/pack-index.js)
+# and docs-graph.py validate fails on invalid frontmatter, dangling links and index drift.
+#
+# What none of them can catch is DECAY. An artifact's `review-by` passes on a date, not on a
+# commit, so on a quiet week nothing runs and nothing notices. V13 staleness, V16 pending
+# review flags and orphan nodes are all time- or neglect-shaped: they need a clock, not a push.
+#
+# Hence a schedule. This is the "Option B — CI" arm of the freshness wiring in
+# templates/documentation-bundle.template.md; the git-hook arm is deliberately NOT used,
+# because .git/hooks is not versioned and so cannot be relied on across clones or in CI.
+#
+# Gate strength is deliberate and recorded in docs/_meta.json (`gate`):
+#   * pull_request / push  -> FAIL. Drift you introduced is yours to fix, now.
+#   * schedule             -> WARN. A review-by that lapsed overnight is not a reason to
+#                             redden main for everyone; it opens an issue-shaped signal in the
+#                             run log for the artifact's owner (V16 escalations are owned, not
+#                             cleared as noise).
+name: docs
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "docs/**"
+      - "pack/scripts/**"
+      - "tools/build-api-docs.py"
+      - ".github/workflows/docs.yml"
+  pull_request:
+    paths:
+      - "docs/**"
+      - "pack/scripts/**"
+      - "tools/build-api-docs.py"
+  schedule:
+    # Mondays 07:00 UTC — the review-by SLA is measured in weeks, so a weekly clock is the
+    # right resolution. A daily run would be noise against a monthly-to-quarterly review-by.
+    - cron: "0 7 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  freshness:
+    name: Documentation freshness
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.x"
+
+      # The API reference is extracted from pack/scripts/ docstrings + argparse. Editing a
+      # script's contract without regenerating leaves the published reference describing the
+      # previous one — a doc that is confidently wrong, which is worse than a missing doc.
+      - name: API reference is current
+        run: python3 tools/build-api-docs.py --check
+
+      # Frontmatter is the record: invalid frontmatter, a dangling typed link, an entry whose
+      # file is gone, or an index that disagrees with the source all fail here.
+      - name: Knowledge graph validates
+        run: python3 docs/ai-forward-pack/scripts/docs-graph.py validate
+
+      # The decay half. Fails on a push or PR; warns on the weekly clock.
+      - name: Freshness — stale review-by, pending flags, orphans
+        run: |
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            python3 docs/ai-forward-pack/scripts/docs-graph.py freshness --gate warn
+          else
+            python3 docs/ai-forward-pack/scripts/docs-graph.py freshness --gate fail
+          fi
+
+      # Governance trend. Falling decision-note volume or rising stale counts is the early
+      # signal that the discipline is decaying, and it is only visible over time — so the
+      # record is appended on the schedule and read as a series, never as a single reading.
+      - name: Report graph health
+        if: always()
+        run: python3 docs/ai-forward-pack/scripts/docs-graph.py inventory

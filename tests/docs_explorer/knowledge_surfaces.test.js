@@ -40,7 +40,10 @@ test("documentation hub identifies raw markdown destinations before navigation",
   const source = read("docs/_site/index.html");
   const markdownLinks = [...source.matchAll(/<a class="card" href="([^"]+\.md)">([\s\S]*?)<\/a>/g)];
 
-  assert.equal(markdownLinks.length, 8);
+  // 9 since the API reference card was added (2026-09-03). The count is asserted exactly so a
+  // card cannot be added without also carrying the contract checked below: every raw-markdown
+  // destination announces itself as one BEFORE navigation.
+  assert.equal(markdownLinks.length, 9);
   for (const [, , body] of markdownLinks) {
     assert.match(body, /source<\/strong>/);
     assert.match(body, /View source \(\.md\)/);

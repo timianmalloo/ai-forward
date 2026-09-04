@@ -625,6 +625,507 @@ window.DOCS_INDEX = {
       "sourceSha256": "1228eaa30ff8da634812cea2bf2745b008dfbf267c93034aafdc807509851e27"
     },
     {
+      "id": "api-apply-learnings",
+      "path": "docs/api/apply-learnings.md",
+      "title": "API — apply-learnings.py",
+      "type": "api",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-03-03",
+      "reviewSuggested": [],
+      "summary": "apply-learnings.py - the AI-Forward federation / push mechanism.",
+      "tags": [
+        "api",
+        "scripts",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "api-index",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "d17042500669f9cd5001fb600d80831b2c1f75c8328cbea1e2b3736263304df2"
+    },
+    {
+      "id": "api-audit-log",
+      "path": "docs/api/audit-log.md",
+      "title": "API — audit-log.py",
+      "type": "api",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-03-03",
+      "reviewSuggested": [],
+      "summary": "audit-log.py — the AI-Forward Pack audit & change log bundle (audit-and-change-log.md).",
+      "tags": [
+        "api",
+        "scripts",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "api-index",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "8bef4c794bc7ce3560ec08d4db47a035f4ac8fabe3b2a709a43435a3a354789a"
+    },
+    {
+      "id": "api-bounded_process",
+      "path": "docs/api/bounded_process.md",
+      "title": "API — bounded_process.py",
+      "type": "api",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-03-03",
+      "reviewSuggested": [],
+      "summary": "Bounded subprocess execution for pack-owned tool invocations.",
+      "tags": [
+        "api",
+        "scripts",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "api-index",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "b6e7b8152a3e6fccbaca2e5109140c762632ffd18b379de93a1da1f9ccb80041"
+    },
+    {
+      "id": "api-context-budget",
+      "path": "docs/api/context-budget.md",
+      "title": "API — context-budget.py",
+      "type": "api",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-03-03",
+      "reviewSuggested": [],
+      "summary": "context-budget.py — the always-on context budget, measured (AI-Forward Pack).",
+      "tags": [
+        "api",
+        "scripts",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "api-index",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "ccaf5718c007cd39327dda9a5fd451ca9df54daae5e3a9ad750522de25ebffc9"
+    },
+    {
+      "id": "api-coord-core",
+      "path": "docs/api/coord-core.md",
+      "title": "API — coord-core.py",
+      "type": "api",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-03-03",
+      "reviewSuggested": [],
+      "summary": "coord-core.py - agent coordination, Phase 1 walking skeleton.",
+      "tags": [
+        "api",
+        "scripts",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "api-index",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "7622e6a4921eb2d32d5dde37c825a4d1cc090500b70e6b3982f89a564e043bcd"
+    },
+    {
+      "id": "api-coord_ids",
+      "path": "docs/api/coord_ids.md",
+      "title": "API — coord_ids.py",
+      "type": "api",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-03-03",
+      "reviewSuggested": [],
+      "summary": "coord_ids.py - collision-proof identifiers, in ONE place.",
+      "tags": [
+        "api",
+        "scripts",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "api-index",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "f319b24eccefd6b23a2a59cdd2f30353999f1e3dc38e3699b651f874f51dc298"
+    },
+    {
+      "id": "api-design-lint",
+      "path": "docs/api/design-lint.md",
+      "title": "API — design-lint.py",
+      "type": "api",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-03-03",
+      "reviewSuggested": [],
+      "summary": "design-lint.py — token-reference linter for design-language docs (AI-Forward).",
+      "tags": [
+        "api",
+        "scripts",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "api-index",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "724d7f67639384ea5f8d9d2cbbe46b39c5444730ee0e47dc15d4101739127049"
+    },
+    {
+      "id": "api-docs-graph",
+      "path": "docs/api/docs-graph.md",
+      "title": "API — docs-graph.py",
+      "type": "api",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-03-03",
+      "reviewSuggested": [],
+      "summary": "docs-graph.py — the AI-Forward Pack docs script bundle (knowledge-visualization.md V18).",
+      "tags": [
+        "api",
+        "scripts",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "api-index",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "87ec08a190c8ffa59026820a1e0c4f38738529e3952c350af630ed516c563f79"
+    },
+    {
+      "id": "api-dream",
+      "path": "docs/api/dream.md",
+      "title": "API — dream.py",
+      "type": "api",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-03-03",
+      "reviewSuggested": [],
+      "summary": "dream.py - the AI-Forward dreaming / continuous-improvement consolidation harness.",
+      "tags": [
+        "api",
+        "scripts",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "api-index",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "4ffb33148f3f2e0e13e31f5d239347799a661232b5c7884aa45254fee982c589"
+    },
+    {
+      "id": "api-foundation-check",
+      "path": "docs/api/foundation-check.md",
+      "title": "API — foundation-check.py",
+      "type": "api",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-03-03",
+      "reviewSuggested": [],
+      "summary": "foundation-check.py — vendored-foundation drift detection (AI-Forward Pack).",
+      "tags": [
+        "api",
+        "scripts",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "api-index",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "a677459f296b1da76ac78aacda5b9af776a518c9c14a56304f92832c78249e88"
+    },
+    {
+      "id": "api-graphify-setup",
+      "path": "docs/api/graphify-setup.md",
+      "title": "API — graphify-setup.py",
+      "type": "api",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-03-03",
+      "reviewSuggested": [],
+      "summary": "graphify-setup.py - stand up the CODE knowledge graph and join it to the docs graph.",
+      "tags": [
+        "api",
+        "scripts",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "api-index",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "dcf024201c70d2ea571794a9ce6fb706ba897c8f55e1c5b2e5fb82e5e8ea046b"
+    },
+    {
+      "id": "api-index",
+      "path": "docs/api/index.md",
+      "title": "API reference — the deployed script bundle",
+      "type": "api",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-03-03",
+      "reviewSuggested": [],
+      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 267 public functions across 19 modules, 40% carrying a docstring.",
+      "tags": [
+        "api",
+        "scripts",
+        "generated",
+        "index"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "3e8d216cf1d0f429ff929fc5c76fa83e838feaf4f00fcacc6bbf89c4331330e7"
+    },
+    {
+      "id": "api-marker-lint",
+      "path": "docs/api/marker-lint.md",
+      "title": "API — marker-lint.py",
+      "type": "api",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-03-03",
+      "reviewSuggested": [],
+      "summary": "marker-lint.py - completeness check for the pack's inline decision markers.",
+      "tags": [
+        "api",
+        "scripts",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "api-index",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "99a62cdcf340b631a020ba5b67fa87a9943f9b8c21a35c5ed2b1121e69c0f9c2"
+    },
+    {
+      "id": "api-obsidian-setup",
+      "path": "docs/api/obsidian-setup.md",
+      "title": "API — obsidian-setup.py",
+      "type": "api",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-03-03",
+      "reviewSuggested": [],
+      "summary": "obsidian-setup.py - stand up (and analyze) the Obsidian lens over an AI-Forward docs graph.",
+      "tags": [
+        "api",
+        "scripts",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "api-index",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "cc325d20da799743c84f2811966f5dd6f1fa2a781108b18c980f915123cffcc9"
+    },
+    {
+      "id": "api-pack-doctor",
+      "path": "docs/api/pack-doctor.md",
+      "title": "API — pack-doctor.py",
+      "type": "api",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-03-03",
+      "reviewSuggested": [],
+      "summary": "pack-doctor.py — AI-Forward install-health check (deployable; runs in a TARGET repo).",
+      "tags": [
+        "api",
+        "scripts",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "api-index",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "ca5e58606d0a67a270743d9f7cfbdd3eba69613497b089ca2f1c0092971c8ba2"
+    },
+    {
+      "id": "api-prompt-log",
+      "path": "docs/api/prompt-log.md",
+      "title": "API — prompt-log.py",
+      "type": "api",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-03-03",
+      "reviewSuggested": [],
+      "summary": "prompt-log.py — the fast prompt-reuse lens over the project's audit log.",
+      "tags": [
+        "api",
+        "scripts",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "api-index",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "7a3945bec673080093ddb6f066747163011fb0470d013e924a8290b3137d9c49"
+    },
+    {
+      "id": "api-scrub",
+      "path": "docs/api/scrub.md",
+      "title": "API — scrub.py",
+      "type": "api",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-03-03",
+      "reviewSuggested": [],
+      "summary": "scrub.py — first-pass PII/secret redaction for Markdown (deployable).",
+      "tags": [
+        "api",
+        "scripts",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "api-index",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "f07e0b01340cda4d39c282309114c54d076c976754498379f57e66759775c931"
+    },
+    {
+      "id": "api-ui-craft-gate",
+      "path": "docs/api/ui-craft-gate.md",
+      "title": "API — ui-craft-gate.py",
+      "type": "api",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-03-03",
+      "reviewSuggested": [],
+      "summary": "ui-craft-gate.py - the UI craft gate for AI-Forward.",
+      "tags": [
+        "api",
+        "scripts",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "api-index",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "26d846711c00ed3319be55c59bccc6e294feaae43a30d68b297b40cf201c0326"
+    },
+    {
+      "id": "api-visual-assets-setup",
+      "path": "docs/api/visual-assets-setup.md",
+      "title": "API — visual-assets-setup.py",
+      "type": "api",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-03-03",
+      "reviewSuggested": [],
+      "summary": "visual-assets-setup.py - wire up a generation backend for UI visual assets (AI-Forward).",
+      "tags": [
+        "api",
+        "scripts",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "api-index",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "6c49cde082962150b6b5a456187ca86e6dd4a1d0a4f3b229dddb7900938d8374"
+    },
+    {
+      "id": "api-xaml-token-lint",
+      "path": "docs/api/xaml-token-lint.md",
+      "title": "API — xaml-token-lint.py",
+      "type": "api",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-03-03",
+      "reviewSuggested": [],
+      "summary": "xaml-token-lint.py — first-slice token linter for XAML/native UI markup.",
+      "tags": [
+        "api",
+        "scripts",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "api-index",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "aab84cae092404faf5e1b6e2806ece8561f2d88e82ff102d6073d99e1621f5a6"
+    },
+    {
       "id": "architecture",
       "path": "docs/architecture.md",
       "title": "AI-Forward — Architecture Overview",
@@ -651,17 +1152,17 @@ window.DOCS_INDEX = {
         {
           "kind": "flowchart",
           "title": "Component map & boundaries",
-          "mermaid": "flowchart TB\n  subgraph SRC[\"pack/ — canonical source (edit here)\"]\n    K[\"knowledge/*.md<br/>(reasoning spine + roster + foundation)\"]\n    C[\"commands/&lt;name&gt;/SKILL.md<br/>(the 24 skills)\"]\n    T[\"templates/*<br/>(artifacts each skill emits)\"]\n    A[\"adapters/<br/>(Claude Code + Copilot agents, INSTALL.md)\"]\n    SC[\"scripts/ (18) · evals/ · ci/ · examples/\"]\n    PD[\"README · OVERVIEW · research-synthesis\"]\n  end\n\n  subgraph TOOLS[\"tools/ — build\"]\n    SYNC[\"sync-pack.ps1\"]\n    PKG[\"package-pack.ps1\"]\n  end\n\n  subgraph INSTALL[\".claude/ + docs/ — generated install (do not hand-edit)\"]\n    CK[\".claude/knowledge/*.md\"]\n    CS[\".claude/skills/*\"]\n    CA[\".claude/agents/*.md\"]\n    DP[\"docs/ai-forward-pack/<br/>templates + scripts + pack docs\"]\n    EXP[\"docs/index.html<br/>(Docs Explorer)\"]\n    IDX[\"docs/docs-index.js<br/>(accumulated graph index)\"]\n    ARCH[\"docs/architecture.md · index.md · _meta.json<br/>(this bundle)\"]\n  end\n\n  subgraph CONSUMERS[\"consumers\"]\n    CC[\"Claude Code / Copilot<br/>(read .claude/)\"]\n    WEBE[\"web/ai-forward-pack-explainer.html<br/>(interactive explainer)\"]\n    ZIP[\"dist/ai-forward-pack.zip\"]\n  end\n\n  K --> SYNC\n  C --> SYNC\n  T --> SYNC\n  A --> SYNC\n  SYNC --> CK & CS & CA & DP & EXP\n  C -. \"skills reference\" .-> CK\n  CA -. \"agents reference\" .-> CK\n  DP --> GRAPH[\"docs-graph.py<br/>(in docs/ai-forward-pack/scripts)\"]\n  GRAPH --> IDX\n  ARCH --> GRAPH\n  IDX --> EXP\n  CK --> CC\n  CS --> CC\n  CA --> CC\n  SRC --> PKG --> ZIP\n  CK -. \"derived content\" .-> WEBE"
+          "mermaid": "flowchart TB\n  subgraph SRC[\"pack/ — canonical source (edit here)\"]\n    K[\"knowledge/*.md<br/>(reasoning spine + roster + foundation)\"]\n    C[\"commands/&lt;name&gt;/SKILL.md<br/>(the 24 skills)\"]\n    T[\"templates/*<br/>(artifacts each skill emits)\"]\n    A[\"adapters/<br/>(Claude Code + Copilot agents, INSTALL.md)\"]\n    SC[\"scripts/ (20) · evals/ · ci/ · examples/\"]\n    CB[\"context-budget.json<br/>(always-on budget baseline)\"]\n    PD[\"README · OVERVIEW · research-synthesis\"]\n  end\n\n  subgraph TOOLS[\"tools/ — build\"]\n    SYNC[\"sync-pack.ps1\"]\n    PKG[\"package-pack.ps1\"]\n    GEN[\"build-docs-portal.py<br/>build-web-index.py<br/>build-api-docs.py\"]\n  end\n\n  subgraph INSTALL[\"generated install (do not hand-edit)\"]\n    CK[\".claude/knowledge/*.md<br/>(all 39, verbatim)\"]\n    CS[\".claude/skills/*\"]\n    CA[\".claude/agents/*.md\"]\n    GI[\".github/instructions/<br/>always + glob-scoped\"]\n    GK[\".github/knowledge/<br/>skill + reference, on demand\"]\n    GP[\".github/prompts/ · .github/agents/\"]\n    DP[\"docs/ai-forward-pack/<br/>templates + scripts + pack docs\"]\n    EXP[\"docs/index.html<br/>(Docs Explorer)\"]\n    IDX[\"docs/docs-index.js<br/>(derived graph index)\"]\n    PORT[\"docs/portal/portal-data.js<br/>(Documentation Portal data)\"]\n    WIX[\"web/pack-index.js\"]\n    ARCH[\"docs/architecture.md · index.md · api/ · _meta.json<br/>(this bundle)\"]\n  end\n\n  subgraph CONSUMERS[\"consumers\"]\n    CC[\"Claude Code / Copilot<br/>(read .claude/ + .github/)\"]\n    WEBE[\"web/ai-forward-pack-explainer.html<br/>(interactive explainer)\"]\n    PAGES[\"GitHub Pages<br/>(portal is the front door)\"]\n    ZIP[\"dist/ai-forward-pack.zip\"]\n  end\n\n  K --> SYNC\n  C --> SYNC\n  T --> SYNC\n  A --> SYNC\n  CB --> SYNC\n  SYNC --> CK & CS & CA & DP & EXP\n  SYNC -- \"routes on each doc's load: scope\" --> GI & GK\n  SYNC --> GP\n  C -. \"skills reference\" .-> CK\n  CA -. \"agents reference\" .-> CK\n  ARCH --> GRAPH[\"docs-graph.py derive\"]\n  GRAPH --> IDX\n  SYNC --> GRAPH\n  SYNC --> GEN\n  GEN --> PORT & WIX\n  ARCH --> GEN\n  IDX --> EXP & PORT\n  CK --> CC\n  CS --> CC\n  CA --> CC\n  GI --> CC\n  PORT --> PAGES\n  WEBE --> PAGES\n  SRC --> PKG --> ZIP\n  CK -. \"derived content\" .-> WEBE"
         },
         {
           "kind": "sequence",
           "title": "Key flow — the sandbox / dogfood loop (sequence)",
-          "mermaid": "sequenceDiagram\n  actor Dev as Author\n  participant Pack as pack/ (source)\n  participant Sync as tools/sync-pack.ps1\n  participant Install as .claude/ + docs/\n  participant CC as Claude Code (this repo)\n  participant Graph as docs-graph.py\n  participant Explorer as docs/index.html\n\n  Dev->>Pack: edit a knowledge doc / SKILL.md / persona / template\n  Dev->>Sync: pwsh tools/sync-pack.ps1\n  Sync->>Install: mirror knowledge, skills, agents, templates, scripts\n  Sync->>Install: regenerate docs/index.html from template\n  Note over Sync,Install: docs-index.js is NOT touched (accumulated separately)\n  Dev->>CC: try the change (regenerated skills/agents are now live)\n  CC-->>Dev: run a skill; dogfood the edit\n  Dev->>Graph: /document → docs-graph.py derive\n  Graph->>Install: write docs/docs-index.js from frontmatter\n  Graph->>Explorer: index loaded; hierarchy · graph · mind map · health render\n  Dev->>Pack: commit pack/ + .claude/ + docs/ together (lockstep)"
+          "mermaid": "sequenceDiagram\n  actor Dev as Author\n  participant Pack as pack/ (source)\n  participant Sync as tools/sync-pack.ps1\n  participant Install as .claude/ + docs/\n  participant CC as Claude Code (this repo)\n  participant Graph as docs-graph.py\n  participant Verify as tools/verify-bundle.ps1\n  participant Explorer as docs/index.html\n\n  Dev->>Pack: edit a knowledge doc / SKILL.md / persona / template\n  Dev->>Sync: pwsh tools/sync-pack.ps1\n  Sync->>Install: mirror knowledge, skills, agents, templates, scripts\n  Sync->>Install: route each knowledge doc by its load: scope<br/>(instructions vs .github/knowledge)\n  Sync->>Install: re-paste the CLAUDE.md / AGENTS.md managed blocks\n  Sync->>Graph: docs-graph.py derive\n  Graph->>Install: write docs/docs-index.js from frontmatter\n  Sync->>Install: build-web-index.py, build-docs-portal.py\n  Note over Sync,Install: derivation runs INSIDE sync (FR-068), so the<br/>index can never lag a run that added an artifact\n  Dev->>CC: try the change (regenerated skills/agents are now live)\n  CC-->>Dev: run a skill; dogfood the edit\n  Dev->>Verify: pwsh tools/verify-bundle.ps1\n  Verify->>Verify: 10 gates — counts · drift · tests · explorer ·<br/>graph · foundation · audit · evals · context budget\n  Verify-->>Dev: CONSISTENT, or the first thing that is wrong\n  Graph->>Explorer: index loaded; hierarchy · graph · mind map · health render\n  Dev->>Pack: commit pack/ + .claude/ + .github/ + docs/ together (lockstep)"
         },
         {
           "kind": "flowchart",
           "title": "Layered view (source → consumer)",
-          "mermaid": "flowchart TB\n  subgraph L4[\"Consumer layer\"]\n    direction LR\n    cc[Claude Code / Copilot]:::c\n    ex[Docs Explorer + web explainer]:::c\n    z[dist/ zip for other repos]:::c\n  end\n  subgraph L3[\"Install layer (generated, committed)\"]\n    direction LR\n    claude[.claude/ knowledge·skills·agents]:::i\n    docs[docs/ pack-docs·scripts·templates·index]:::i\n  end\n  subgraph L2[\"Build layer\"]\n    direction LR\n    sync[sync-pack.ps1]:::b\n    pkg[package-pack.ps1]:::b\n  end\n  subgraph L1[\"Source layer (single source of truth)\"]\n    pack[pack/ knowledge·commands·templates·adapters·scripts]:::s\n  end\n  L1 --> L2 --> L3 --> L4\n  classDef s fill:#1d2b4d,stroke:#5a7cff,color:#dde6ff\n  classDef b fill:#13324a,stroke:#5ad1c7,color:#dffaf6\n  classDef i fill:#2a2440,stroke:#a98bff,color:#efeaff\n  classDef c fill:#163024,stroke:#56d364,color:#dcffe4"
+          "mermaid": "flowchart TB\n  subgraph L4[\"Consumer layer\"]\n    direction LR\n    cc[Claude Code / Copilot]:::c\n    ex[Docs Explorer + web explainer]:::c\n    z[dist/ zip for other repos]:::c\n  end\n  subgraph L3[\"Install layer (generated, committed)\"]\n    direction LR\n    claude[.claude/ knowledge·skills·agents]:::i\n    gh[.github/ instructions·knowledge·prompts·agents]:::i\n    docs[docs/ pack-docs·scripts·templates·index·api·portal]:::i\n  end\n  subgraph L2[\"Build layer\"]\n    direction LR\n    sync[sync-pack.ps1]:::b\n    pkg[package-pack.ps1]:::b\n    gen[derivation: docs-graph · portal · web-index · api-docs]:::b\n  end\n  subgraph L1[\"Source layer (single source of truth)\"]\n    pack[pack/ knowledge·commands·templates·adapters·scripts]:::s\n  end\n  L1 --> L2 --> L3 --> L4\n  classDef s fill:#1d2b4d,stroke:#5a7cff,color:#dde6ff\n  classDef b fill:#13324a,stroke:#5ad1c7,color:#dffaf6\n  classDef i fill:#2a2440,stroke:#a98bff,color:#efeaff\n  classDef c fill:#163024,stroke:#56d364,color:#dcffe4"
         },
         {
           "kind": "class",
@@ -669,7 +1170,7 @@ window.DOCS_INDEX = {
           "mermaid": "classDiagram\n  class Signature {\n    +Name name\n    +FacetList facets\n    +StyleHints? hints\n    +validate() conflicts\n    +roundTrip() bool  %% G10: identify AND generate\n  }\n  class Facet {\n    <<abstract>>\n    +String key\n  }\n  class SingleValuedFacet {\n    +Value value  %% Type, Arch, Layout, Density, Pacing, ...\n  }\n  class MultiValuedFacet {\n    +Value[] values  %% Nav, Input, Feedback, Motion, A11y (joined with +)\n  }\n  class StyleHints {\n    +String[] hints  %% bounded NL decoration, applied last\n  }\n  class Archetype {\n    +String id          %% A1..F2\n    +String name\n    +Exemplar[] exemplars\n    +Signature canonical\n    +String codegenDescriptor\n  }\n  Signature \"1\" o-- \"4..*\" Facet : composes\n  Facet <|-- SingleValuedFacet\n  Facet <|-- MultiValuedFacet\n  Signature \"0..1\" *-- \"1\" StyleHints : decorated by\n  Archetype \"1\" *-- \"1\" Signature : canonical\n  Archetype \"1\" o-- \"1..*\" Exemplar\n  note for Signature \"G4: MUST carry Type, Arch, Layout, Pacing.\\nG1: always composed with a concrete U1–U20 / S1–S10 spec.\""
         }
       ],
-      "sourceSha256": "584a8d3ebb963d5271ee660daecf23e83d11eac6b4092487f7d134ce9ac22d6a"
+      "sourceSha256": "24dccded4f140042ce508802f15529c2263e78f22b3681f33927092ae41827c7"
     },
     {
       "id": "architecture-agent-coordination",
@@ -1712,7 +2213,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "12bb237176e77568df0d5e1b3c00eaeace976e20055bc5dbee1686b6f3dd6b98"
+      "sourceSha256": "6e3137ed1939efcc09ae648c2c2076172b280362f5ef0b1c4cea56288221b8fd"
     },
     {
       "id": "dream-diary",
@@ -4300,7 +4801,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "08f8b520fda36c55c20b234d7b861f3e94ab6a52ed7857651ffda7533f6e8e5f"
+      "sourceSha256": "ab3b4a62cc46e22937455268263da61502b8608edc73744fc8b36605ee2426dc"
     },
     {
       "id": "forensic-review-rev48-proof",
@@ -4818,7 +5319,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0f3bc2af375b8bea18afdb1cb7f2451d03aee789f20b01aa0adc23e37b338d2e"
+      "sourceSha256": "6a111418338fdd1b4951a3d0759627a1783d12622e048998153f69d825d4ccc7"
     }
   ],
   "surfaces": [
@@ -4867,6 +5368,13 @@ window.DOCS_INDEX = {
       "kind": "knowledge-tool",
       "description": "Open an interactive knowledge artifact.",
       "artifactId": "spec-agent-coordination"
+    },
+    {
+      "id": "surface-site-bundle",
+      "path": "docs/_site/bundle.html",
+      "title": "AI-Forward — Documentation",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact."
     },
     {
       "id": "surface-portal-index",
@@ -4992,5 +5500,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "a3bfc8a7d48b1000a66ec13cf9bb81ce3a3305de6d926c550f4d40cead43b5cb"
+  "graphSha256": "424b421d631d717d53bea0e5da210e67d111dbe3905d7d6b7cf4c18aba7d441c"
 };

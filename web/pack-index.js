@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 142
+"count": 162
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 291,
+"total": 311,
 "items": [
 {
 "cat": "knowledge",
@@ -1413,6 +1413,186 @@ window.PACK_INDEX = {
 "path": "docs/adr/0012-reuse-existing-mechanisms.md",
 "kind": "adr",
 "text": "adr-0012: compose the mechanisms that already exist — the harness ships two of them, and the fleet ships three more the f8 reconciliation the spec made a condition of pass. two of the four failure modes are already partly addressed by mechanisms shipped in the harness itself, and three more by scripts in theterrace; each is adopted, superseded, or retired explicitly. also records the exact git expression for unique work, and why the obvious one silently reports safe. coordination reuse dup-a one-a worktree reachability git implements architecture-agent-coordination implements spec-agent-coordination relates-to defect-classes"
+},
+{
+"cat": "graph",
+"id": "api-apply-learnings",
+"title": "API — apply-learnings.py",
+"summary": "apply-learnings.py - the AI-Forward federation / push mechanism.",
+"path": "docs/api/apply-learnings.md",
+"kind": "api",
+"text": "api — apply-learnings.py apply-learnings.py - the ai-forward federation / push mechanism. api scripts generated refines api-index"
+},
+{
+"cat": "graph",
+"id": "api-audit-log",
+"title": "API — audit-log.py",
+"summary": "audit-log.py — the AI-Forward Pack audit & change log bundle (audit-and-change-log.md).",
+"path": "docs/api/audit-log.md",
+"kind": "api",
+"text": "api — audit-log.py audit-log.py — the ai-forward pack audit & change log bundle (audit-and-change-log.md). api scripts generated refines api-index"
+},
+{
+"cat": "graph",
+"id": "api-bounded_process",
+"title": "API — bounded_process.py",
+"summary": "Bounded subprocess execution for pack-owned tool invocations.",
+"path": "docs/api/bounded_process.md",
+"kind": "api",
+"text": "api — bounded_process.py bounded subprocess execution for pack-owned tool invocations. api scripts generated refines api-index"
+},
+{
+"cat": "graph",
+"id": "api-context-budget",
+"title": "API — context-budget.py",
+"summary": "context-budget.py — the always-on context budget, measured (AI-Forward Pack).",
+"path": "docs/api/context-budget.md",
+"kind": "api",
+"text": "api — context-budget.py context-budget.py — the always-on context budget, measured (ai-forward pack). api scripts generated refines api-index"
+},
+{
+"cat": "graph",
+"id": "api-coord-core",
+"title": "API — coord-core.py",
+"summary": "coord-core.py - agent coordination, Phase 1 walking skeleton.",
+"path": "docs/api/coord-core.md",
+"kind": "api",
+"text": "api — coord-core.py coord-core.py - agent coordination, phase 1 walking skeleton. api scripts generated refines api-index"
+},
+{
+"cat": "graph",
+"id": "api-coord_ids",
+"title": "API — coord_ids.py",
+"summary": "coord_ids.py - collision-proof identifiers, in ONE place.",
+"path": "docs/api/coord_ids.md",
+"kind": "api",
+"text": "api — coord_ids.py coord_ids.py - collision-proof identifiers, in one place. api scripts generated refines api-index"
+},
+{
+"cat": "graph",
+"id": "api-design-lint",
+"title": "API — design-lint.py",
+"summary": "design-lint.py — token-reference linter for design-language docs (AI-Forward).",
+"path": "docs/api/design-lint.md",
+"kind": "api",
+"text": "api — design-lint.py design-lint.py — token-reference linter for design-language docs (ai-forward). api scripts generated refines api-index"
+},
+{
+"cat": "graph",
+"id": "api-docs-graph",
+"title": "API — docs-graph.py",
+"summary": "docs-graph.py — the AI-Forward Pack docs script bundle (knowledge-visualization.md V18).",
+"path": "docs/api/docs-graph.md",
+"kind": "api",
+"text": "api — docs-graph.py docs-graph.py — the ai-forward pack docs script bundle (knowledge-visualization.md v18). api scripts generated refines api-index"
+},
+{
+"cat": "graph",
+"id": "api-dream",
+"title": "API — dream.py",
+"summary": "dream.py - the AI-Forward dreaming / continuous-improvement consolidation harness.",
+"path": "docs/api/dream.md",
+"kind": "api",
+"text": "api — dream.py dream.py - the ai-forward dreaming / continuous-improvement consolidation harness. api scripts generated refines api-index"
+},
+{
+"cat": "graph",
+"id": "api-foundation-check",
+"title": "API — foundation-check.py",
+"summary": "foundation-check.py — vendored-foundation drift detection (AI-Forward Pack).",
+"path": "docs/api/foundation-check.md",
+"kind": "api",
+"text": "api — foundation-check.py foundation-check.py — vendored-foundation drift detection (ai-forward pack). api scripts generated refines api-index"
+},
+{
+"cat": "graph",
+"id": "api-graphify-setup",
+"title": "API — graphify-setup.py",
+"summary": "graphify-setup.py - stand up the CODE knowledge graph and join it to the docs graph.",
+"path": "docs/api/graphify-setup.md",
+"kind": "api",
+"text": "api — graphify-setup.py graphify-setup.py - stand up the code knowledge graph and join it to the docs graph. api scripts generated refines api-index"
+},
+{
+"cat": "graph",
+"id": "api-index",
+"title": "API reference — the deployed script bundle",
+"summary": "Generated API reference for the pack's public surface — the deployed script bundle. 267 public functions across 19 modules, 40% carrying a docstring.",
+"path": "docs/api/index.md",
+"kind": "api",
+"text": "api reference — the deployed script bundle generated api reference for the pack's public surface — the deployed script bundle. 267 public functions across 19 modules, 40% carrying a docstring. api scripts generated index documents architecture"
+},
+{
+"cat": "graph",
+"id": "api-marker-lint",
+"title": "API — marker-lint.py",
+"summary": "marker-lint.py - completeness check for the pack's inline decision markers.",
+"path": "docs/api/marker-lint.md",
+"kind": "api",
+"text": "api — marker-lint.py marker-lint.py - completeness check for the pack's inline decision markers. api scripts generated refines api-index"
+},
+{
+"cat": "graph",
+"id": "api-obsidian-setup",
+"title": "API — obsidian-setup.py",
+"summary": "obsidian-setup.py - stand up (and analyze) the Obsidian lens over an AI-Forward docs graph.",
+"path": "docs/api/obsidian-setup.md",
+"kind": "api",
+"text": "api — obsidian-setup.py obsidian-setup.py - stand up (and analyze) the obsidian lens over an ai-forward docs graph. api scripts generated refines api-index"
+},
+{
+"cat": "graph",
+"id": "api-pack-doctor",
+"title": "API — pack-doctor.py",
+"summary": "pack-doctor.py — AI-Forward install-health check (deployable; runs in a TARGET repo).",
+"path": "docs/api/pack-doctor.md",
+"kind": "api",
+"text": "api — pack-doctor.py pack-doctor.py — ai-forward install-health check (deployable; runs in a target repo). api scripts generated refines api-index"
+},
+{
+"cat": "graph",
+"id": "api-prompt-log",
+"title": "API — prompt-log.py",
+"summary": "prompt-log.py — the fast prompt-reuse lens over the project's audit log.",
+"path": "docs/api/prompt-log.md",
+"kind": "api",
+"text": "api — prompt-log.py prompt-log.py — the fast prompt-reuse lens over the project's audit log. api scripts generated refines api-index"
+},
+{
+"cat": "graph",
+"id": "api-scrub",
+"title": "API — scrub.py",
+"summary": "scrub.py — first-pass PII/secret redaction for Markdown (deployable).",
+"path": "docs/api/scrub.md",
+"kind": "api",
+"text": "api — scrub.py scrub.py — first-pass pii/secret redaction for markdown (deployable). api scripts generated refines api-index"
+},
+{
+"cat": "graph",
+"id": "api-ui-craft-gate",
+"title": "API — ui-craft-gate.py",
+"summary": "ui-craft-gate.py - the UI craft gate for AI-Forward.",
+"path": "docs/api/ui-craft-gate.md",
+"kind": "api",
+"text": "api — ui-craft-gate.py ui-craft-gate.py - the ui craft gate for ai-forward. api scripts generated refines api-index"
+},
+{
+"cat": "graph",
+"id": "api-visual-assets-setup",
+"title": "API — visual-assets-setup.py",
+"summary": "visual-assets-setup.py - wire up a generation backend for UI visual assets (AI-Forward).",
+"path": "docs/api/visual-assets-setup.md",
+"kind": "api",
+"text": "api — visual-assets-setup.py visual-assets-setup.py - wire up a generation backend for ui visual assets (ai-forward). api scripts generated refines api-index"
+},
+{
+"cat": "graph",
+"id": "api-xaml-token-lint",
+"title": "API — xaml-token-lint.py",
+"summary": "xaml-token-lint.py — first-slice token linter for XAML/native UI markup.",
+"path": "docs/api/xaml-token-lint.md",
+"kind": "api",
+"text": "api — xaml-token-lint.py xaml-token-lint.py — first-slice token linter for xaml/native ui markup. api scripts generated refines api-index"
 },
 {
 "cat": "graph",

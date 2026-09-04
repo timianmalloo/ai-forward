@@ -61,28 +61,36 @@ flowchart TB
     C["commands/&lt;name&gt;/SKILL.md<br/>(the 24 skills)"]
     T["templates/*<br/>(artifacts each skill emits)"]
     A["adapters/<br/>(Claude Code + Copilot agents, INSTALL.md)"]
-    SC["scripts/ (18) · evals/ · ci/ · examples/"]
+    SC["scripts/ (20) · evals/ · ci/ · examples/"]
+    CB["context-budget.json<br/>(always-on budget baseline)"]
     PD["README · OVERVIEW · research-synthesis"]
   end
 
   subgraph TOOLS["tools/ — build"]
     SYNC["sync-pack.ps1"]
     PKG["package-pack.ps1"]
+    GEN["build-docs-portal.py<br/>build-web-index.py<br/>build-api-docs.py"]
   end
 
-  subgraph INSTALL[".claude/ + docs/ — generated install (do not hand-edit)"]
-    CK[".claude/knowledge/*.md"]
+  subgraph INSTALL["generated install (do not hand-edit)"]
+    CK[".claude/knowledge/*.md<br/>(all 39, verbatim)"]
     CS[".claude/skills/*"]
     CA[".claude/agents/*.md"]
+    GI[".github/instructions/<br/>always + glob-scoped"]
+    GK[".github/knowledge/<br/>skill + reference, on demand"]
+    GP[".github/prompts/ · .github/agents/"]
     DP["docs/ai-forward-pack/<br/>templates + scripts + pack docs"]
     EXP["docs/index.html<br/>(Docs Explorer)"]
-    IDX["docs/docs-index.js<br/>(accumulated graph index)"]
-    ARCH["docs/architecture.md · index.md · _meta.json<br/>(this bundle)"]
+    IDX["docs/docs-index.js<br/>(derived graph index)"]
+    PORT["docs/portal/portal-data.js<br/>(Documentation Portal data)"]
+    WIX["web/pack-index.js"]
+    ARCH["docs/architecture.md · index.md · api/ · _meta.json<br/>(this bundle)"]
   end
 
   subgraph CONSUMERS["consumers"]
-    CC["Claude Code / Copilot<br/>(read .claude/)"]
+    CC["Claude Code / Copilot<br/>(read .claude/ + .github/)"]
     WEBE["web/ai-forward-pack-explainer.html<br/>(interactive explainer)"]
+    PAGES["GitHub Pages<br/>(portal is the front door)"]
     ZIP["dist/ai-forward-pack.zip"]
   end
 
@@ -90,23 +98,35 @@ flowchart TB
   C --> SYNC
   T --> SYNC
   A --> SYNC
+  CB --> SYNC
   SYNC --> CK & CS & CA & DP & EXP
+  SYNC -- "routes on each doc's load: scope" --> GI & GK
+  SYNC --> GP
   C -. "skills reference" .-> CK
   CA -. "agents reference" .-> CK
-  DP --> GRAPH["docs-graph.py<br/>(in docs/ai-forward-pack/scripts)"]
+  ARCH --> GRAPH["docs-graph.py derive"]
   GRAPH --> IDX
-  ARCH --> GRAPH
-  IDX --> EXP
+  SYNC --> GRAPH
+  SYNC --> GEN
+  GEN --> PORT & WIX
+  ARCH --> GEN
+  IDX --> EXP & PORT
   CK --> CC
   CS --> CC
   CA --> CC
+  GI --> CC
+  PORT --> PAGES
+  WEBE --> PAGES
   SRC --> PKG --> ZIP
   CK -. "derived content" .-> WEBE
 ```
 
 Boundaries that matter:
 - **Source ↔ install boundary** — crossed *only* by `tools/sync-pack.ps1`. Editing the install side directly is a contract violation (the next sync overwrites it). `[Verified: CLAUDE.md, sync-pack.ps1]`
-- **`sync-pack.ps1` write scope** — it writes only `.claude/{knowledge,skills,agents}`, `docs/ai-forward-pack/**`, and `docs/index.html`; it **intentionally does not touch** `docs/docs-index.js` (skills accumulate it) or other `docs/` root files. This is why this bundle (`docs/architecture.md`, `docs/index.md`, `docs/_meta.json`) and `web/ai-forward-pack-explainer.html` have a stable home that sync will not clobber. `[Verified: tools/sync-pack.ps1 lines 22, 92–98]`
+- **`sync-pack.ps1` write scope** — `.claude/{knowledge,skills,agents}`, all four `.github/` surfaces, `docs/ai-forward-pack/**`, `docs/index.html`, and the CLAUDE.md / AGENTS.md managed blocks. It then **invokes the derivation tools**: `docs-graph.py derive`, `build-web-index.py`, `build-docs-portal.py`. `[Verified: tools/sync-pack.ps1]`
+- **It does not write** `.claude/settings.local.json`, `.github/copilot-instructions.md`, or this bundle's hand-authored files (`docs/architecture.md`, `docs/index.md`), so they have a stable home. `[Verified: tools/sync-pack.ps1 header + body]`
+- **Correction (2026-09-03).** This section previously stated that sync "intentionally does not touch `docs/docs-index.js`". That has been false since FR-060/FR-068 moved derivation *into* sync so the index could never lag a run that added an artifact. The index is still never hand-edited — it is derived from frontmatter — but sync is now one of the things that derives it.
+- **Load-scope routing** — a knowledge doc reaches `.github/instructions/` only if its frontmatter says `load: always` or `load: glob`; `skill` and `reference` docs go to `.github/knowledge/` and are read on demand. This is what keeps the always-on prefix at ~43.7K rather than ~184K estimated tokens. `[Verified: sync-pack.ps1 Get-LoadScope; pack/context-budget.json]`
 
 ## Key flow — the sandbox / dogfood loop (sequence)
 
@@ -120,22 +140,30 @@ sequenceDiagram
   participant Install as .claude/ + docs/
   participant CC as Claude Code (this repo)
   participant Graph as docs-graph.py
+  participant Verify as tools/verify-bundle.ps1
   participant Explorer as docs/index.html
 
   Dev->>Pack: edit a knowledge doc / SKILL.md / persona / template
   Dev->>Sync: pwsh tools/sync-pack.ps1
   Sync->>Install: mirror knowledge, skills, agents, templates, scripts
-  Sync->>Install: regenerate docs/index.html from template
-  Note over Sync,Install: docs-index.js is NOT touched (accumulated separately)
+  Sync->>Install: route each knowledge doc by its load: scope<br/>(instructions vs .github/knowledge)
+  Sync->>Install: re-paste the CLAUDE.md / AGENTS.md managed blocks
+  Sync->>Graph: docs-graph.py derive
+  Graph->>Install: write docs/docs-index.js from frontmatter
+  Sync->>Install: build-web-index.py, build-docs-portal.py
+  Note over Sync,Install: derivation runs INSIDE sync (FR-068), so the<br/>index can never lag a run that added an artifact
   Dev->>CC: try the change (regenerated skills/agents are now live)
   CC-->>Dev: run a skill; dogfood the edit
-  Dev->>Graph: /document → docs-graph.py derive
-  Graph->>Install: write docs/docs-index.js from frontmatter
+  Dev->>Verify: pwsh tools/verify-bundle.ps1
+  Verify->>Verify: 10 gates — counts · drift · tests · explorer ·<br/>graph · foundation · audit · evals · context budget
+  Verify-->>Dev: CONSISTENT, or the first thing that is wrong
   Graph->>Explorer: index loaded; hierarchy · graph · mind map · health render
-  Dev->>Pack: commit pack/ + .claude/ + docs/ together (lockstep)
+  Dev->>Pack: commit pack/ + .claude/ + .github/ + docs/ together (lockstep)
 ```
 
-`[Verified: README.md §"Expanding the pack (the sandbox loop)", sync-pack.ps1, docs-graph.py --help]`
+The gate is part of the loop, not an afterthought: `main` enforces linear history and has **no
+required status check**, so `verify-bundle.ps1` before the push is the only thing standing between
+an author and a red `main`. `[Verified: README.md §"Expanding the pack (the sandbox loop)", tools/sync-pack.ps1, tools/verify-bundle.ps1, docs/notes/required-status-checks.md]`
 
 ## Reverted model-orchestration experiment (historical)
 
@@ -164,12 +192,14 @@ flowchart TB
   subgraph L3["Install layer (generated, committed)"]
     direction LR
     claude[.claude/ knowledge·skills·agents]:::i
-    docs[docs/ pack-docs·scripts·templates·index]:::i
+    gh[.github/ instructions·knowledge·prompts·agents]:::i
+    docs[docs/ pack-docs·scripts·templates·index·api·portal]:::i
   end
   subgraph L2["Build layer"]
     direction LR
     sync[sync-pack.ps1]:::b
     pkg[package-pack.ps1]:::b
+    gen[derivation: docs-graph · portal · web-index · api-docs]:::b
   end
   subgraph L1["Source layer (single source of truth)"]
     pack[pack/ knowledge·commands·templates·adapters·scripts]:::s
@@ -229,13 +259,15 @@ classDiagram
 
 ## Tool & CLI reference (the repo's public surface)
 
-This repo has no traditional doc-commented API. Its public, invocable surface is the build/maintenance tools under `tools/` plus the deployed Python/JavaScript script bundle. `[Verified: tools/, pack/scripts/, docs/ai-forward-pack/scripts/]`
+The **public surface is the deployed script bundle** — `pack/scripts/*.py`, which lands in every consuming repo as `docs/ai-forward-pack/scripts/`. That surface now has a generated JavaDoc-style reference at **[`docs/api/`](api/index.md)**, extracted from the modules' own docstrings and argparse definitions. Everything under `tools/` is repo-local build tooling and is deliberately *not* deployed. `[Verified: tools/, pack/scripts/, docs/ai-forward-pack/scripts/, tools/build-api-docs.py]`
 
 | Command | Purpose | Notes |
 |---|---|---|
-| `pwsh tools/sync-pack.ps1` | Regenerate `.claude/` + `docs/` from `pack/`. | Run after every `pack/` edit. Does not touch `docs/docs-index.js`. |
+| `pwsh tools/sync-pack.ps1` | Regenerate `.claude/`, `.github/`, and `docs/` from `pack/`. | Run after every `pack/` edit. Also runs `docs-graph.py derive`, `build-web-index.py`, and `build-docs-portal.py`. |
 | `pwsh tools/package-pack.ps1` | Build `dist/ai-forward-pack.zip` for sharing. | Carries full Claude Code + Copilot wiring. |
-| `pwsh tools/verify-bundle.ps1` | Run the complete nine-gate local proof, matching CI's gate set. | Gate 2 synchronizes and compares generated surfaces; CRLF-only working-copy noise may need normalization on Windows. |
+| `pwsh tools/verify-bundle.ps1` | Run the complete **ten-gate** local proof, matching CI's gate set. | Gate 2 synchronizes and compares generated surfaces; gate 8 is the always-on context budget. CRLF-only working-copy noise may need normalization on Windows. |
+| `python tools/build-api-docs.py [--check]` | Generate `docs/api/` from `pack/scripts/`. | `--check` is the drift gate; prose comes only from source docstrings, gaps are recorded not invented. |
+| `python pack/scripts/context-budget.py <cmd>` | The always-on context budget: `report`, `gate`, `agents`, `preflight`. | Ratchets against the baseline in `pack/context-budget.json`. |
 | `python tools/new-capability.py ...` | Scaffold a skill or knowledge extension across source surfaces. | Used by `/extendaibundle`. |
 | `python tools/check-consistency.py` | Check counts, skill/prompt parity, prose drift, deployed-agent parity, proof coverage, workflow pinning, review currency, and derived-artifact drift. | Reads `pack/` as the source of truth and fails closed on mismatches. |
 | `python docs/ai-forward-pack/scripts/docs-graph.py <cmd>` | The knowledge-graph mechanics (V18). | Stdlib-only Python 3.8+. |

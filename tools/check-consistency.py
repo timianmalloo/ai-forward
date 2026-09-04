@@ -976,6 +976,15 @@ def check_docs_portal(findings):
                             "build-docs-portal.py", "docs/portal/portal-data.js")
     _check_derived_artifact(findings, "web index",
                             "build-web-index.py", "web/pack-index.js")
+    # The API reference is derived from pack/scripts/ docstrings and argparse definitions, so
+    # editing a script's docstring without regenerating leaves the published reference quietly
+    # describing the previous contract. Same class as the two above; same gate.
+    _check_derived_artifact(findings, "api reference",
+                            "build-api-docs.py", "docs/api/")
+    # The close-up view EMBEDS the bundle rather than linking it, so a bundle edit that skips
+    # the render leaves a page that is confidently showing the previous text.
+    _check_derived_artifact(findings, "doc site",
+                            "build-doc-site.py", "docs/_site/index.html")
 
 
 def main():

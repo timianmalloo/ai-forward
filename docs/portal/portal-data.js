@@ -1304,6 +1304,126 @@ window.PORTAL_DATA = {
         "summary": "The F8 reconciliation the spec made a condition of pass. Two of the four failure modes are already partly addressed by mechanisms shipped in the harness..."
       },
       {
+        "id": "api-apply-learnings",
+        "type": "api",
+        "title": "API — apply-learnings.py",
+        "summary": "apply-learnings.py - the AI-Forward federation / push mechanism."
+      },
+      {
+        "id": "api-audit-log",
+        "type": "api",
+        "title": "API — audit-log.py",
+        "summary": "audit-log.py — the AI-Forward Pack audit & change log bundle (audit-and-change-log.md)."
+      },
+      {
+        "id": "api-bounded_process",
+        "type": "api",
+        "title": "API — bounded_process.py",
+        "summary": "Bounded subprocess execution for pack-owned tool invocations."
+      },
+      {
+        "id": "api-context-budget",
+        "type": "api",
+        "title": "API — context-budget.py",
+        "summary": "context-budget.py — the always-on context budget, measured (AI-Forward Pack)."
+      },
+      {
+        "id": "api-coord-core",
+        "type": "api",
+        "title": "API — coord-core.py",
+        "summary": "coord-core.py - agent coordination, Phase 1 walking skeleton."
+      },
+      {
+        "id": "api-coord_ids",
+        "type": "api",
+        "title": "API — coord_ids.py",
+        "summary": "coord_ids.py - collision-proof identifiers, in ONE place."
+      },
+      {
+        "id": "api-design-lint",
+        "type": "api",
+        "title": "API — design-lint.py",
+        "summary": "design-lint.py — token-reference linter for design-language docs (AI-Forward)."
+      },
+      {
+        "id": "api-docs-graph",
+        "type": "api",
+        "title": "API — docs-graph.py",
+        "summary": "docs-graph.py — the AI-Forward Pack docs script bundle (knowledge-visualization.md V18)."
+      },
+      {
+        "id": "api-dream",
+        "type": "api",
+        "title": "API — dream.py",
+        "summary": "dream.py - the AI-Forward dreaming / continuous-improvement consolidation harness."
+      },
+      {
+        "id": "api-foundation-check",
+        "type": "api",
+        "title": "API — foundation-check.py",
+        "summary": "foundation-check.py — vendored-foundation drift detection (AI-Forward Pack)."
+      },
+      {
+        "id": "api-graphify-setup",
+        "type": "api",
+        "title": "API — graphify-setup.py",
+        "summary": "graphify-setup.py - stand up the CODE knowledge graph and join it to the docs graph."
+      },
+      {
+        "id": "api-index",
+        "type": "api",
+        "title": "API reference — the deployed script bundle",
+        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 267 public functions across 19 modules, 40% carrying a docstring."
+      },
+      {
+        "id": "api-marker-lint",
+        "type": "api",
+        "title": "API — marker-lint.py",
+        "summary": "marker-lint.py - completeness check for the pack's inline decision markers."
+      },
+      {
+        "id": "api-obsidian-setup",
+        "type": "api",
+        "title": "API — obsidian-setup.py",
+        "summary": "obsidian-setup.py - stand up (and analyze) the Obsidian lens over an AI-Forward docs graph."
+      },
+      {
+        "id": "api-pack-doctor",
+        "type": "api",
+        "title": "API — pack-doctor.py",
+        "summary": "pack-doctor.py — AI-Forward install-health check (deployable; runs in a TARGET repo)."
+      },
+      {
+        "id": "api-prompt-log",
+        "type": "api",
+        "title": "API — prompt-log.py",
+        "summary": "prompt-log.py — the fast prompt-reuse lens over the project's audit log."
+      },
+      {
+        "id": "api-scrub",
+        "type": "api",
+        "title": "API — scrub.py",
+        "summary": "scrub.py — first-pass PII/secret redaction for Markdown (deployable)."
+      },
+      {
+        "id": "api-ui-craft-gate",
+        "type": "api",
+        "title": "API — ui-craft-gate.py",
+        "summary": "ui-craft-gate.py - the UI craft gate for AI-Forward."
+      },
+      {
+        "id": "api-visual-assets-setup",
+        "type": "api",
+        "title": "API — visual-assets-setup.py",
+        "summary": "visual-assets-setup.py - wire up a generation backend for UI visual assets (AI-Forward)."
+      },
+      {
+        "id": "api-xaml-token-lint",
+        "type": "api",
+        "title": "API — xaml-token-lint.py",
+        "summary": "xaml-token-lint.py — first-slice token linter for XAML/native UI markup."
+      },
+      {
         "id": "architecture",
         "type": "architecture",
         "title": "AI-Forward — Architecture Overview",
@@ -2269,6 +2389,106 @@ window.PORTAL_DATA = {
         "from": "adr-0012-reuse-existing-mechanisms",
         "to": "spec-agent-coordination",
         "rel": "implements"
+      },
+      {
+        "from": "api-apply-learnings",
+        "to": "api-index",
+        "rel": "refines"
+      },
+      {
+        "from": "api-audit-log",
+        "to": "api-index",
+        "rel": "refines"
+      },
+      {
+        "from": "api-bounded_process",
+        "to": "api-index",
+        "rel": "refines"
+      },
+      {
+        "from": "api-context-budget",
+        "to": "api-index",
+        "rel": "refines"
+      },
+      {
+        "from": "api-coord-core",
+        "to": "api-index",
+        "rel": "refines"
+      },
+      {
+        "from": "api-coord_ids",
+        "to": "api-index",
+        "rel": "refines"
+      },
+      {
+        "from": "api-design-lint",
+        "to": "api-index",
+        "rel": "refines"
+      },
+      {
+        "from": "api-docs-graph",
+        "to": "api-index",
+        "rel": "refines"
+      },
+      {
+        "from": "api-dream",
+        "to": "api-index",
+        "rel": "refines"
+      },
+      {
+        "from": "api-foundation-check",
+        "to": "api-index",
+        "rel": "refines"
+      },
+      {
+        "from": "api-graphify-setup",
+        "to": "api-index",
+        "rel": "refines"
+      },
+      {
+        "from": "api-index",
+        "to": "architecture",
+        "rel": "documents"
+      },
+      {
+        "from": "api-marker-lint",
+        "to": "api-index",
+        "rel": "refines"
+      },
+      {
+        "from": "api-obsidian-setup",
+        "to": "api-index",
+        "rel": "refines"
+      },
+      {
+        "from": "api-pack-doctor",
+        "to": "api-index",
+        "rel": "refines"
+      },
+      {
+        "from": "api-prompt-log",
+        "to": "api-index",
+        "rel": "refines"
+      },
+      {
+        "from": "api-scrub",
+        "to": "api-index",
+        "rel": "refines"
+      },
+      {
+        "from": "api-ui-craft-gate",
+        "to": "api-index",
+        "rel": "refines"
+      },
+      {
+        "from": "api-visual-assets-setup",
+        "to": "api-index",
+        "rel": "refines"
+      },
+      {
+        "from": "api-xaml-token-lint",
+        "to": "api-index",
+        "rel": "refines"
       },
       {
         "from": "architecture",
@@ -3663,6 +3883,7 @@ window.PORTAL_DATA = {
     ],
     "types": [
       "adr",
+      "api",
       "architecture",
       "decision-note",
       "design",

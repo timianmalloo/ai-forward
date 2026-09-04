@@ -713,7 +713,7 @@ window.addEventListener("DOMContentLoaded",function(){
         <nav class="sections" aria-label="Sections">
           <a href="#overview">Overview</a><a href="#fit">How it fits</a>
           <a href="#rigor">Rigor Protocol</a><a href="#knowledge">Knowledge</a>
-          <a href="#personas">Personas</a><a href="#skills">Skills</a>
+          <a href="#personas">Personas</a><a href="#skills">Skills</a><a href="#loop">Prompt loop</a>
           <a href="#grammar">UI Grammar</a><a href="#catalog">Templates</a><a href="#mockups">Mockups</a>
         </nav>
         <button class="tbtn" id="themebtn" aria-label="Toggle colour theme"><span aria-hidden="true">◐</span> Theme</button>
@@ -797,6 +797,37 @@ window.addEventListener("DOMContentLoaded",function(){
             <div style=${{display:"flex",justifyContent:"space-between",alignItems:"start",gap:8}}>
               <h3 style=${{fontSize:15}}>${p[0]}</h3>${vetoPill(p[2])}</div>
             <p>${p[1]}</p></div>`)}</div></div>`)}
+
+        <div style=${{marginTop:28}}>
+          <h3 style=${{fontSize:14,color:"var(--muted)",textTransform:"uppercase",letterSpacing:".06em",marginBottom:10}}>How the panel is actually run</h3>
+          <div class="grid g2">
+            <div class="card"><h3 style=${{fontSize:15}}>Convene on a predicate, not on habit</h3>
+              <p>Each lens carries a trigger: the Security lens on a trust boundary or a new
+              dependency, the Data lens on a schema change, the Distributed Systems lens on anything
+              async or ordered. The panel is a function of the change class, not of enthusiasm.</p></div>
+            <div class="card"><h3 style=${{fontSize:15}}>A veto states how it clears</h3>
+              <p>A veto is not a mood. It names a falsifiable exit predicate — the specific,
+              checkable thing that resolves it — so the author knows exactly what unblocks the work.
+              Conflicts resolve by written precedence, never by whoever argued last.</p></div>
+            <div class="card"><h3 style=${{fontSize:15}}>Re-convening is earned</h3>
+              <p>The first convocation is never gated. A repeat pass by an <b>advisory</b> lens must be
+              earned by a finding that was actually accepted. Hard-veto lenses are never yield-gated:
+              a quiet veto usually means the work was clean. Measured, because findings raised versus
+              accepted is now recorded per persona.</p></div>
+            <div class="card"><h3 style=${{fontSize:15}}>Each agent carries its lens, not the library</h3>
+              <p>Every persona declares the knowledge it needs. An agent with no declared lens inherits
+              the whole instruction set — which is what makes delegation to a cheap model fail while
+              costing almost nothing, since the smallest context window breaks first.</p></div>
+            <div class="card"><h3 style=${{fontSize:15}}>A wave that cannot fit is refused first</h3>
+              <p>One failure at a context ceiling predicts every sibling in the wave: the prefix is
+              identical for all of them. The preflight check compares it against the target model's
+              window once, instead of rediscovering the same fact N times.</p></div>
+            <div class="card"><h3 style=${{fontSize:15}}>Parallelism is measured, never asserted</h3>
+              <p>Summed agent time cannot tell serial from parallel. Each run records a wall-clock
+              span, and the union of those intervals gives the real speedup and peak concurrency — so
+              a fan-out claim is falsifiable rather than flattering.</p></div>
+          </div>
+        </div>
       </div></section>
 
       <!-- SKILLS -->
@@ -819,6 +850,71 @@ window.addEventListener("DOMContentLoaded",function(){
             <span class="pill">${s[3]==="core"?"core loop":s[3]==="diagnose"?"diagnosis":s[3]==="lifecycle"?"pack lifecycle":s[3]==="utility"?"utility":"supporting"}</span></div>
           <p>${s[1]}</p>
           <div class="tag" style=${{marginTop:8}}>lead peer · ${s[2]}</div></div>`)}</div>
+      </div></section>
+
+      <!-- PROMPT LOOP -->
+      <section class="block" id="loop" aria-label="The prompt loop"><div class="wrap">
+        <div class="sechead"><div class="seclabel">Per turn, not per project</div>
+          <h2>The prompt loop</h2>
+          <p>The skills describe <i>what</i> gets built. This is how a single turn is run — four beats
+          that exist to defeat two failure modes at once: starting work before the finish line is
+          defined, and continuing work after it has been reached. If you cannot say in one line what
+          would end the turn, you are not ready to start it.</p></div>
+        <div class="chain">
+          <span class="step"><b>1 · Goal state</b></span><span class="step"><b>2 · /optimize-graph</b></span>
+          <span class="step"><b>3 · Execute the graph</b></span><span class="step"><b>4 · Close on planned vs actual</b></span>
+        </div>
+        <div class="grid g2" style=${{marginTop:18}}>
+          <div class="card"><h3 style=${{fontSize:15}}>1 · Write the goal state first</h3>
+            <p><b>Goal · Done when · Not in scope</b> — three lines, written <i>before</i> the first
+            substantive tool call. It is the preventive mirror of the Completed / Remaining / Next
+            close, and it is what makes "are we done?" answerable rather than negotiable.</p>
+            <div class="tag" style=${{marginTop:8}}>CT19</div></div>
+          <div class="card"><h3 style=${{fontSize:15}}>2 · Plan the whole turn once</h3>
+            <p>One planning pass across every task in the turn, not one per task. Stage 0 is triage:
+            a closed question skips planning entirely, gets answered, and stops. Planning cost is
+            real, and work smaller than its own plan does not get one.</p>
+            <div class="tag" style=${{marginTop:8}}>GO16 · /optimize-graph</div></div>
+          <div class="card"><h3 style=${{fontSize:15}}>3 · Execute the graph</h3>
+            <p>Real dependencies only — incidental ordering is deleted. Shorten the critical path
+            before widening the graph. Parallelise only what passes both the independence and
+            coupling tests, under a bounded fan-out contract. Every loop gets a termination variant.</p>
+            <div class="tag" style=${{marginTop:8}}>GO1–GO14</div></div>
+          <div class="card"><h3 style=${{fontSize:15}}>4 · Close, and record planned vs actual</h3>
+            <p>The turn's goal and stop condition land in the audit log, which is what makes the
+            discipline measurable across sessions rather than merely stated — and it is the signal
+            the <code>/dream</code> consolidation pass mines for turns that skipped the opening.</p>
+            <div class="tag" style=${{marginTop:8}}>GO18 · AL5b</div></div>
+        </div>
+        <div style=${{marginTop:24}}>
+          <h3 style=${{fontSize:14,color:"var(--muted)",textTransform:"uppercase",letterSpacing:".06em",marginBottom:10}}>The rules that hold it honest</h3>
+          <div class="grid g3">
+            <div class="card"><h3 style=${{fontSize:15}}>Speed is last</h3>
+              <p>The objective is lexicographic: completeness and rigor first, then token cost, then
+              speed. A slower plan is acceptable only when completeness rises <i>and</i> rigor rises
+              <i>and</i> tokens fall. Slower while unchanged is pure loss.</p></div>
+            <div class="card"><h3 style=${{fontSize:15}}>Floors do not move</h3>
+              <p>Optimisation may reorder the rigor floors. It may never remove them. No speed
+              argument reaches the testing union, the change-surface list, red-first, or the audit
+              entries.</p></div>
+            <div class="card"><h3 style=${{fontSize:15}}>Latitude in the how, never the what</h3>
+              <p>A question is not a licence to author a change, and a gap found along the way is a
+              finding, not a new goal. An explicit stop ends the track and voids any goal the agent
+              set for itself.</p></div>
+            <div class="card"><h3 style=${{fontSize:15}}>A cap firing is a defect signal</h3>
+              <p>When a circuit breaker trips — an iteration cap, or a nudge saying the work looks
+              unfinished — that is information about the plan, not permission to stop or to continue.
+              Re-read the goal state: if it is met, conclude.</p></div>
+            <div class="card"><h3 style=${{fontSize:15}}>Tier the model by phase</h3>
+              <p>Design and adversarial review are high-novelty and low-iteration: buy the expensive
+              tier. Deploy and debug loops are the inverse, and every turn there re-reads the whole
+              prefix. Re-allocate at the boundary, explicitly.</p></div>
+            <div class="card"><h3 style=${{fontSize:15}}>Tells that it has slipped</h3>
+              <p>"So I can wire it in." "Let me look at the structure." A closed question whose answer
+              is already in hand while the turn keeps going. Resuming a halted track because a
+              reminder arrived.</p></div>
+          </div>
+        </div>
       </div></section>
 
       <!-- UI GRAMMAR -->

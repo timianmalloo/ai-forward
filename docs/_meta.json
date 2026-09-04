@@ -1,57 +1,58 @@
 {
   "generator": "/document (AI-Forward Pack)",
-  "generated": "2026-07-12",
-  "documentedCommit": "5d7b95235e664b7779c7a653c000f6a199403070",
-  "documentedCommitShort": "5d7b952",
-  "subject": "AI-Forward — pack source (pack/) + live dogfood install (.claude/, docs/)",
+  "generated": "2026-09-03",
+  "documentedCommit": "8085c717237fa2086f106a0f4e9959f105bd4ed1",
+  "documentedCommitShort": "8085c71",
+  "subject": "AI-Forward — pack source (pack/) + live dogfood install (.claude/, .github/, docs/)",
   "surfaces": {
-    "markdownBundle": ["docs/architecture.md", "docs/index.md"],
+    "markdownBundle": [
+      "docs/index.md",
+      "docs/architecture.md",
+      "docs/api/"
+    ],
+    "apiReference": "docs/api/index.md",
     "graphIndex": "docs/docs-index.js",
     "docsExplorer": "docs/index.html",
+    "documentationPortal": "docs/portal/index.html",
+    "closeUpBundleView": "docs/_site/index.html",
     "interactiveExplainer": "web/ai-forward-pack-explainer.html"
   },
   "diagramFamilies": {
     "component": "docs/architecture.md#component-map--boundaries",
     "sequence": "docs/architecture.md#key-flow--the-sandbox--dogfood-loop-sequence",
     "layered": "docs/architecture.md#layered-view-source--consumer",
-    "class": "docs/architecture.md#domain-model-class--the-ui-archetype-grammar"
+    "class": "docs/architecture.md#domain-model-class--the-ui-archetype-grammar",
+    "note": "The four families live in architecture.md rather than a docs/diagrams/ split: they are part of that document's linear read, so splitting them would duplicate a source rather than separate a lookup surface (the LOA Part IV test)."
   },
   "coverage": {
-    "publicCodeSurface": "no traditional doc-commented API; public surface is tools/* plus the deployed script bundle",
-    "toolsDocumented": ["tools/sync-pack.ps1", "tools/package-pack.ps1", "tools/verify-bundle.ps1", "tools/new-capability.py", "tools/check-consistency.py", "docs/ai-forward-pack/scripts/docs-graph.py"],
-    "toolsCoveragePct": 78,
-    "knowledgeDocs": 24,
-    "skills": 17,
+    "publicSurface": "pack/scripts/*.py — the bundle deployed to consuming repos as docs/ai-forward-pack/scripts/. tools/* is repo-local build tooling and is deliberately out of surface.",
+    "apiModules": 19,
+    "publicFunctions": 267,
+    "publicFunctionsDocumented": 108,
+    "publicFunctionsCoveragePct": 40,
+    "coverageGapPolicy": "A public function with no docstring is emitted as a recorded gap in docs/api/, never as fabricated prose.",
+    "knowledgeDocs": 39,
+    "skills": 24,
     "agents": 23,
-    "uiArchetypesDocumented": 16,
-    "uiArchetypesWithMockups": 16
+    "graphArtifacts": 162,
+    "alwaysOnKnowledgeTokensEst": 43708
   },
   "confidence": {
-    "diagrams": "Verified — each node/edge traced to repo structure and tools/*.ps1",
-    "cliReference": "Verified — traced to docs-graph.py --help",
-    "explainerContent": "Verified — true to .claude/knowledge and .claude/skills",
-    "explainerRender": "Inferred — JS syntax checked; not opened in a live browser in this environment",
-    "mockups": "Inferred — illustrative renderings of each archetype's described behavior, not screenshots"
+    "apiReference": "Verified — extracted by tools/build-api-docs.py with ast from the modules' own docstrings and argparse definitions; drift-gated by check-consistency.py.",
+    "diagrams": "Verified — every node/edge re-traced to tools/sync-pack.ps1 and the directory layout on 2026-09-03; two stale claims corrected (see architecture.md).",
+    "cliReference": "Verified — traced to each script's argparse definition.",
+    "coverageNumbers": "Verified — computed from the source, not asserted.",
+    "explainerContent": "Verified — true to pack/knowledge and pack/commands."
   },
-  "findings": [
-    {
-      "id": "graph-empty",
-      "severity": "resolved",
-      "summary": "The dogfood graph is populated; vendored standards remain intentionally outside it as always-applied instructions.",
-      "evidence": "docs-graph.py inventory 2026-07-12 -> artifacts: 22, problems/stale/flagged/orphans/index_drift: []"
-    },
-    {
-      "id": "model-orchestration-control-plane",
-      "severity": "resolved-by-revert",
-      "summary": "The model-orchestration standard, lookup, tests, and active wiring were removed after forensic review; history remains in the review and decision notes.",
-      "evidence": "docs/reviews/forensic-review.md; docs/notes/note-20260712-revert-model-orchestration.md"
-    },
-    {
-      "id": "archetype-count",
-      "severity": "resolved",
-      "summary": "Previously CLAUDE.md, the managed blocks, pack/OVERVIEW.md, pack/README.md, and pack/adapters/INSTALL.md said '18-archetype catalog'; ui-archetype-catalog.md enumerates 16 (A1-A4,B1-B4,C1,D1-D3,E1-E2,F1-F2). All source occurrences corrected to 16 and install re-synced from pack/.",
-      "evidence": "ui-archetype-catalog.md count = 16; grep shows no remaining '18-archetype' in source"
-    }
-  ],
-  "freshnessTrigger": "pack/ci/docs-health.yml; docs-graph.py freshness --gate"
+  "gate": {
+    "mode": "fail-on-change, warn-on-schedule",
+    "changeBased": ".github/workflows/pack-consistency.yml (counts + derived-artifact drift) and tools/verify-bundle.ps1 gate 1",
+    "timeBased": ".github/workflows/docs.yml (weekly; V13 review-by decay, V16 flags, orphans)",
+    "hookOption": "Not used. .git/hooks is not versioned, so a hook cannot be relied on across clones or in CI."
+  },
+  "knownGaps": [
+    "60% of public functions in pack/scripts/ carry no docstring. Each is listed individually in its module's docs/api/ page under Coverage. This is the largest open documentation debt and is recorded rather than fabricated.",
+    "pack/scripts/docs-explorer-core.js has no generated API page: the extractor is Python-only (ast). Its behaviour is covered by tests/docs_explorer/docs_explorer_core.test.js.",
+    "tools/*.py and tools/*.ps1 have no generated reference by design — repo-local build tooling, not part of the deployed surface. They are documented in architecture.md's CLI table."
+  ]
 }

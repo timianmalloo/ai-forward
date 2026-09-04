@@ -65,7 +65,7 @@ downstream dispatch risk was retired by removing the capability, not by acceptin
 |---|---|---|---|---|---|
 | [design-docs-explorer-grounding-spatial-navigation](design/docs-explorer-grounding-and-spatial-navigation.md) | Committed project docs + local search/selection/context state | **L/D** stable artifact IDs and selected context are visible in the same-device URL/history; no new personal-data category is introduced | mitigate | Same-origin local operation only; no analytics, model egress, cross-user store, or remote state. Existing no-secrets/no-PII rules for committed docs still apply. | Navigation state lasts only in browser history/session and is cleared by leaving the page or removing the hash; document retention follows Git governance. |
 
-<!-- rolled up from 1 artifact(s) by docs-graph.py rollup on 2026-07-11 -->
+<!-- rolled up from 1 artifact(s) by docs-graph.py rollup on 2026-09-03 -->
 <!-- END GENERATED -->
 
 ## 4. Accepted-risk register (maintained by hand)
@@ -74,3 +74,15 @@ downstream dispatch risk was retired by removing the capability, not by acceptin
 |---|---|---|---|
 | Durable retention of handles/names in project memory | project-memory | Permanence is the point of a memory ledger; data is no more than commit metadata already exposes | Low; rights path is `git-filter-repo` if ever required |
 | Scrub false negatives leave some PII in history | rai-and-scrub | stdlib-only first-pass | Transferred to Presidio/gitleaks in CI; `git-filter-repo`/BFG for purge |
+
+
+## 5. Gaps — designs with no LINDDUN analysis
+
+These designs carry no LINDDUN section. Two of them plausibly touch no personal data at all, but *plausibly* is the problem: an unwritten analysis and a written finding of "no personal data" are indistinguishable from here, and only one of them was actually reasoned about. Recorded as upstream gate failures against each design.
+
+| Design | Gap | Why it matters |
+|---|---|---|
+| [`agent-focus-controls.md`](../design/agent-focus-controls.md) | no `Privacy analysis (LINDDUN-lite)` section | the design shipped without the analysis its gate requires |
+| [`coord-collaboration-phase4.md`](../design/coord-collaboration-phase4.md) | no `Privacy analysis (LINDDUN-lite)` section | the design shipped without the analysis its gate requires |
+| [`marker-completeness-lint.md`](../design/marker-completeness-lint.md) | no `Privacy analysis (LINDDUN-lite)` section | the design shipped without the analysis its gate requires |
+| [`tier2-proof-pack-sections.md`](../design/tier2-proof-pack-sections.md) | no `Privacy analysis (LINDDUN-lite)` section | the design shipped without the analysis its gate requires |
