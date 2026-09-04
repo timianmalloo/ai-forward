@@ -57,3 +57,18 @@ summary: >-
 - proposals: 12 (added 1 - merged 0 - superseded 0 - excluded/tainted 0)
 - highest-leverage: Build a control for PACK-N (uncontrolled)
 
+## drm-0009 - 2026-09-03
+- window: last 30 days · 105 audit · 35 change · 1 mitigations · 17 markers
+- proposals: 22 = 13 deterministic + 9 REM (added 10 - merged 0 - superseded 0 - excluded/tainted 0)
+- highest-leverage: DREAM-A - the consolidation loop's own exit path is the unreliable half
+  (8 dreams; 12 proposals have recurred; PACK-C/D/E proposed 8 times each and still uncontrolled;
+  drm-0007's own top proposal on cross-agent collaboration was never promoted)
+- REM focus: AI-DE agent-to-agent coordination - how the protocol evolved as Claude Code and Copilot
+  sessions worked one repository. Corpus read READ-ONLY at C:/Projects/ai-de (.agents/{log,decisions,
+  sessions}, docs/collaboration/session-contracts.md, its 111-class register). Nothing was written there.
+- measured: 273 log events over 5 days - 131 claims / 117 releases / 33 never released; 24 session-start
+  / 1 session-end; 55 decisions = 50 allowed / 3 not-checked / 2 refused; 6 distinct agent-identity
+  values; 11 distinct TTLs (300s..43200s).
+- correction made during the pass: an initial count of 11 cross-agent lease overlaps ignored TTL expiry.
+  Recomputed respecting expiry, true overlaps are 0 - the lease invariant was never violated. The
+  alarming number was withdrawn before any proposal rested on it.

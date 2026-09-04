@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-04T01:28:48Z",
+  "generated": "2026-09-04T01:45:53Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2967,6 +2967,55 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "b1848691f31520800f36831a00736efa819dc72b",
         "short": "b1848691f",
+        "branch": "main",
+        "pushed": true
+      }
+    },
+    {
+      "id": "al-01M1N1810VEXN85J26A8ZE70CP",
+      "shortname": "dream-run",
+      "datetime": "2026-09-04T01:41:31Z",
+      "session": "dream-job",
+      "prompt": "dream.py dream-run",
+      "summary": "Dream drm-0009: 13 proposals over last 30 days · 105 audit · 35 change · 1 mitigations · 17 markers",
+      "kind": "script",
+      "skill": "dream",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/dreams/drm-0009/index.html"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M1N1G09SWTTE0RPT6PNNAXJB",
+      "shortname": "dream-drm-0009-ai-de-coordination",
+      "datetime": "2026-09-04T01:45:53Z",
+      "session": "015BSvW6rL7SpuwziUbRHJTJ",
+      "prompt": "focus on the AI-DE repo and the agent-to-agent coordination there. what can we learn that we need to bring into the ai-forward pack. Not what we are building in the tool but how things evolved in the pack as we had claude code and copilot sessions collaborating",
+      "summary": "drm-0009: 22 proposals = 13 deterministic (local corpus) + 9 REM enrichment sourced READ-ONLY from C:/Projects/ai-de (.agents/{log,decisions,sessions}, docs/collaboration/session-contracts.md, its 111-class register). Nothing written to AI-DE; nothing promoted. Measured there: 273 log events over 5 days, 131 claims / 117 releases / 33 (25%) never released, 24 session-start vs 1 session-end, 55 guard decisions = 50 allowed / 3 not-checked / 2 refused, 6 distinct agent-identity values, 11 distinct TTLs (300s-43200s). A rigor correction was made mid-pass: an initial count of 11 cross-agent lease overlaps ignored TTL expiry; recomputed respecting expiry the true count is 0 and the alarming number was withdrawn before any proposal rested on it. Eight coordination proposals (all general/fleet scope): COORD-A two-registers (liveness vs ownership, one authority rule); COORD-B E15 extended from code to AGREEMENTS; COORD-C a missing identity degrading a guard to advisory instead of refusing; COORD-D the exit path as the unreliable half, now measured; COORD-E N same-shape cross-session requests are one class not a queue; COORD-F an identity field carrying three kinds of identity plus a 100%-constant work-item placeholder; COORD-G a refusal indicts the plan not the timing; COORD-H lease scope stated in minutes and practised in hours. Plus DREAM-A, the highest-leverage and self-referential: across 8 dreams, 12 proposals have recurred, PACK-C/D/E have been proposed in every dream since drm-0002 (8 times each) and remain uncontrolled, and drm-0007's own top proposal on cross-agent collaboration was never promoted - the consolidation loop's own exit path leaks exactly as COORD-D describes. All 22 carry control + boundary + evidence; 0 would fail the promotion guards.",
+      "kind": "skill",
+      "skill": "dream",
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [
+        "docs/dreams/drm-0009/index.html"
+      ],
+      "tags": [
+        "dream",
+        "coordination",
+        "ai-de",
+        "federation"
+      ],
+      "outcome": "success",
+      "goal": "Consolidation pass over the AI-DE corpus focused on how Claude Code and Copilot session collaboration evolved, producing learnings to bring into the ai-forward pack",
+      "done_when": "Evidence-backed proposals with falsifiable controls and federation scope, rendered for review; nothing promoted; AI-DE unmodified",
+      "started_at": "2026-09-04T01:37:47Z",
+      "duration_seconds": 486.0,
+      "git": {
+        "sha": "c02037a346f54d68f533317c98eaf11413e8ed3a",
+        "short": "c02037a34",
         "branch": "main",
         "pushed": true
       }

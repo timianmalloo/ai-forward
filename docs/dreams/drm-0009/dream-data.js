@@ -1,0 +1,832 @@
+window.DREAM_DATA = {
+  "id": "drm-0009",
+  "date": "2026-09-03",
+  "generated": "2026-09-04T01:41:31Z",
+  "window": "last 30 days · 105 audit · 35 change · 1 mitigations · 17 markers",
+  "counts": {
+    "audit": 105,
+    "change": 35,
+    "mitigations": 1,
+    "classes": 23,
+    "markers": 17
+  },
+  "proposals": [
+    {
+      "kind": "New class",
+      "group": "Coordination (AI-DE)",
+      "id": "p22",
+      "score": 0.96,
+      "title": "DREAM-A — The consolidation loop's own exit path is the unreliable half: proposals recur, promotions do not",
+      "sig": "A review artifact is produced every cycle, and nothing carries its output into the durable store, so the same proposals resurface indefinitely",
+      "scope": "general",
+      "confidence": "v",
+      "source": "rem:ai-de-coordination (self-referential)",
+      "control": {
+        "rung": "automated control",
+        "text": "The dream run reports its own promotion rate as a first-class number: for each proposal, how many prior dreams already raised it, and how many proposals from the previous dream were promoted. A proposal recurring for the Nth time is rendered as an ESCALATION at the top of the review view, not as a fresh idea in the middle of it. Optionally the run exits non-zero when the previous dream promoted nothing, on the same principle the pack applies to a cap firing: producing the artifact is not the same as the artifact being used.",
+        "loc": "docs/ai-forward-pack/scripts/dream.py (recurrence count + promotion-rate report) + the review view's ordering"
+      },
+      "boundary": "Applies to any produce-review-promote loop whose promote step is a separate manual command. It does not apply where the analysis writes directly, which is a different and worse design — the human gate is correct, it is the un-measured skip that is the defect.",
+      "evidence": [
+        {
+          "eid": "measured:dreams",
+          "note": "8 dreams on record. 12 distinct proposals have recurred across runs."
+        },
+        {
+          "eid": "measured:recurrence",
+          "note": "'Build a control for PACK-C / PACK-D / PACK-E' has been proposed in EVERY dream since drm-0002 — 8 times each — and all three classes are still partially-controlled."
+        },
+        {
+          "eid": "measured:drm-0007",
+          "note": "drm-0007's own highest-leverage proposal was 'Cross-agent collaboration contract is spoken, not recorded and claimed', with a control drafted. It appears in neither docs/lessons/defect-classes.md nor learnings/. It was raised, ranked first, and dropped — five days before this pass independently rediscovered the same territory from AI-DE's corpus."
+        },
+        {
+          "eid": "self",
+          "note": "This proposal is evidence of its own class: without a control, it will be re-proposed by the next dream."
+        }
+      ]
+    },
+    {
+      "kind": "New class",
+      "group": "Coordination (AI-DE)",
+      "title": "COORD-A — A session stands up its own register for a fact a tracked document already owns",
+      "sig": "Two registers of one quantity, created by a session that had not opened the first one",
+      "scope": "general",
+      "confidence": "v",
+      "source": "rem:ai-de-coordination",
+      "score": 0.94,
+      "control": {
+        "rung": "automated control",
+        "text": "Coordination state splits into exactly TWO stores with different lifetimes and one authority rule: a TRACKED ownership register that is the sole authority on who owns what, and an UNTRACKED liveness store that says only who is running right now, in which tree, on what, and what they are blocked on — and that states no path or ownership table at all. A lint fails the liveness store when it contains an ownership/path table, and the liveness store's own header must point at the tracked register and declare that the tracked one wins on any disagreement. Add as a WT-series directive in session-worktree-discipline.md with the lint in coord doctor.",
+        "loc": "pack/knowledge/session-worktree-discipline.md (new directive) + coord doctor lint"
+      },
+      "boundary": "Applies wherever more than one agent session writes to one repository. Does not apply to a single-session repo, where one register is correct and a second store is pure ceremony.",
+      "evidence": [
+        {
+          "eid": "ai-de:docs/collaboration/session-contracts.md#8.2",
+          "note": "Session 3 stood up a second ownership register at .agents/sessions/ before it had read session-contracts.md, then reported the two as contradicting. They did — because the second one was an hour old. 'There was never a competing authority; there was a new session writing one without looking.'"
+        },
+        {
+          "eid": "ai-de:.agents/sessions/README.md",
+          "note": "The resolution, now load-bearing: 'This directory is not a register of ownership. It never states a path table.' §2 of the tracked file is the sole authority; a liveness file that disagrees has drifted."
+        },
+        {
+          "eid": "ai-de:cost",
+          "note": "Cost recorded in the register: two sessions, one round trip each."
+        },
+        {
+          "eid": "ai-forward:gap",
+          "note": "ai-forward encodes WT1–WT12 for worktrees but nothing about coordination REGISTERS. The pack has no rule that would have prevented this."
+        }
+      ],
+      "id": "p14"
+    },
+    {
+      "kind": "New class",
+      "group": "Coordination (AI-DE)",
+      "title": "COORD-B — Asserting the shape of our own AGREEMENTS from memory (E15 pointed at coordination)",
+      "sig": "A session describes another session's ownership, contract or seam without opening the file that states it",
+      "scope": "general",
+      "confidence": "v",
+      "source": "rem:ai-de-coordination",
+      "score": 0.92,
+      "control": {
+        "rung": "always-loaded instruction",
+        "text": "Extend E15 in end-to-end-integrity.md from code to AGREEMENTS: never assert the shape of our own contracts, ownership, or seam from memory — open the register or label the claim Inferred. The tell is one session summarising another session's ownership without a citation, and the cheap check is that every cross-session claim about who owns what carries the register line it came from.",
+        "loc": "pack/knowledge/end-to-end-integrity.md (E15 scope extension)"
+      },
+      "boundary": "Applies to claims about shared, written agreements. It does not apply to a session describing its OWN in-flight work, which has no register to cite yet.",
+      "evidence": [
+        {
+          "eid": "ai-de:docs/collaboration/session-contracts.md#8.2",
+          "note": "Stated as a class by the repo itself: 'the failure was asserting the shape of our own agreements from memory instead of opening the file, which is E15 pointed at coordination rather than at code.'"
+        },
+        {
+          "eid": "ai-forward:pack/knowledge/end-to-end-integrity.md",
+          "note": "E15 currently reads 'never assert the shape of OUR OWN CODE from memory'. The coordination case is the same failure against a different artifact, and is not covered."
+        }
+      ],
+      "id": "p15"
+    },
+    {
+      "kind": "New class",
+      "group": "Coordination (AI-DE)",
+      "title": "COORD-C — A missing identity degrades a guard to advisory instead of refusing",
+      "sig": "The enforcement path logs `not_checked` and permits the edit, because the caller had no identity to check",
+      "scope": "general",
+      "confidence": "v",
+      "source": "rem:ai-de-coordination",
+      "score": 0.9,
+      "control": {
+        "rung": "make it impossible",
+        "text": "An unidentified session is REFUSED at the guard, never logged as not-checked and allowed. Identity is required to start a session, so there is no path that reaches the edit boundary without one. Where a transition period needs tolerance, the tolerated case is counted and surfaced by doctor as a defect number, not written to the log as a normal outcome.",
+        "loc": "coord guard/precommit identity requirement + a doctor count"
+      },
+      "boundary": "Applies to any guard whose decision depends on knowing WHO is asking. A guard that is identity-independent (a syntax lint, a schema check) has no such failure mode.",
+      "evidence": [
+        {
+          "eid": "ai-de:.agents/decisions/anon.jsonl",
+          "note": "3 events, all COORD-NOT-CHECKED-IDENTITY under agent 'anon', on CanvasGraphViewModel.cs, WorkbenchCommands.cs and WorkbenchShell.cs — real source files, edited with no coordination check at all."
+        },
+        {
+          "eid": "ai-de:DC-088",
+          "note": "Already recorded locally there: 'A launcher omits an identity, and a downstream guard degrades to advisory rather than refusing.' Repo-local in AI-DE; absent from the pack."
+        },
+        {
+          "eid": "measured:decision-mix",
+          "note": "Across all 55 decision events: 50 allowed, 3 not_checked, 2 refused. The not-checked path is 3x more common than the refusal it replaced."
+        }
+      ],
+      "id": "p16"
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Coordination (AI-DE)",
+      "title": "COORD-D — The exit path is the unreliable half, and now there is a number for it",
+      "sig": "Entry verbs are called reliably; the matching exit verb is skipped, and only a timeout reclaims the resource",
+      "scope": "general",
+      "confidence": "v",
+      "source": "rem:ai-de-coordination",
+      "score": 0.88,
+      "control": {
+        "rung": "automated control",
+        "text": "The coordination doctor reports the entry/exit asymmetry as a first-class number — sessions started vs ended, claims vs releases, and claims outstanding — and a session-end that would leave claims open is refused or reported rather than silently succeeding. This upgrades PACK-M and WT6/WT7 from a stated principle to a measured one, and generalises them from worktrees to ANY session-scoped resource.",
+        "loc": "docs/lessons/defect-classes.md#PACK-M + pack/knowledge/session-worktree-discipline.md WT6/WT7 + coord doctor"
+      },
+      "boundary": "Applies to any resource acquired per session and released by a separate call. It does not apply where acquisition is scoped by a construct that cannot be skipped (a context manager, a transaction).",
+      "evidence": [
+        {
+          "eid": "measured:ai-de/.agents/log",
+          "note": "273 events over 5 days: 24 session-start against 1 session-end — 96% of sessions never closed."
+        },
+        {
+          "eid": "measured:leases",
+          "note": "131 claims against 117 releases; 33 claims (25%) never released at all."
+        },
+        {
+          "eid": "measured:release-liveness",
+          "note": "The protocol WORKS when it is called: of 83 matched claim/release pairs, 71 (86%) were released while the lease was still live. The failure is not the verb, it is that the exit is skipped."
+        },
+        {
+          "eid": "measured:reclamation",
+          "note": "0 leases were still unexpired at the last recorded event, so every abandoned lease was reclaimed by TTL rather than by protocol. Safety came from the timeout, not from the design."
+        },
+        {
+          "eid": "ai-forward:WT6/WT7/PACK-M",
+          "note": "The pack already says a session ends by releasing its worktree and that cleanup is the half that rots. This is that principle measured in a second repo, through a different mechanism — which is what makes it general rather than local."
+        }
+      ],
+      "id": "p17"
+    },
+    {
+      "kind": "New class",
+      "group": "Coordination (AI-DE)",
+      "title": "COORD-E — N cross-session requests of one shape are one class, not a queue",
+      "sig": "A collaboration channel accumulates repeated same-shape requests against one seam, each handled individually",
+      "scope": "general",
+      "confidence": "i",
+      "source": "rem:ai-de-coordination",
+      "score": 0.8,
+      "control": {
+        "rung": "knowledge doc",
+        "text": "CI2 (class, not instance) applies to the collaboration channel, not only to defects. When a session opens the Nth request of the same shape against the same seam, it raises the CLASS — the missing capability behind all N — rather than the N+1th request. The channel's own review asks 'how many of these are one thing?' before it asks 'which is next?'.",
+        "loc": "pack/knowledge/continuous-improvement.md (CI2 scope) + the session-contract template"
+      },
+      "boundary": "Applies where one session repeatedly asks another for variations of one capability. It does not apply to genuinely distinct requests that merely arrive together.",
+      "evidence": [
+        {
+          "eid": "ai-de:docs/collaboration/session-contracts.md#8.3",
+          "note": "Stated by the repo as a heading in its own right: '§4a is not nine render requests. It is one defect class, nine times.'"
+        },
+        {
+          "eid": "ai-de:session-contracts structure",
+          "note": "The register's table of contents shows the shape: §4a, §4b, §4c … §4j — ten numbered cross-session request sections accumulated over roughly a week, several of them Design→Core asks for the same graph-query capability."
+        },
+        {
+          "eid": "confidence",
+          "note": "Inferred rather than Verified: the pattern is documented and visible in the register's structure, but no control has yet been observed failing on it."
+        }
+      ],
+      "id": "p18"
+    },
+    {
+      "kind": "New class",
+      "group": "Coordination (AI-DE)",
+      "title": "COORD-F — An identity field that is sometimes a session, sometimes a role, sometimes a machine",
+      "sig": "One field carries three different kinds of identity, so no query over it means one thing",
+      "scope": "general",
+      "confidence": "v",
+      "source": "rem:ai-de-coordination",
+      "score": 0.76,
+      "control": {
+        "rung": "automated control",
+        "text": "Declare the identity vocabulary once and validate the field against it: an AGENT is a stable logical actor, a SESSION is one run in one worktree, and they are separate fields. Reject a raw UUID in the agent field, and reject a work-item placeholder that is constant across every record — a field whose value never varies carries no information and should be removed rather than filled in.",
+        "loc": "coord identity validation + the ubiquitous-language table in the coordination spec"
+      },
+      "boundary": "Applies to any shared record keyed by actor. Not applicable where a single anonymous writer is intended by design.",
+      "evidence": [
+        {
+          "eid": "measured:agent-values",
+          "note": "Six distinct values observed in one field: two raw UUIDs (79f8657c…, 4e957874…), three role-shaped names (copilot-design-4d24d94a, copilot-watcher-design, claude-ui-experience) and 'anon'."
+        },
+        {
+          "eid": "measured:agent-reuse",
+          "note": "One identity (4e957874…) issued 16 session-starts across 16 DIFFERENT worktrees — used as a machine or user id, not as the per-session identity the record implies."
+        },
+        {
+          "eid": "measured:wi-placeholder",
+          "note": "All 24 session-start events carry wi='WI-0'. A field that is the same value in 100% of records is ceremony wearing the shape of data."
+        },
+        {
+          "eid": "ai-de:ubiquitous-language",
+          "note": "The coordination spec already defines Agent as 'a logical actor identity — opus, copilot, fable. Stable across sessions. NOT the model string.' The practice does not match the definition the spec already wrote down."
+        }
+      ],
+      "id": "p19"
+    },
+    {
+      "kind": "New class",
+      "group": "Coordination (AI-DE)",
+      "title": "COORD-G — A refusal indicts the plan, not the timing",
+      "sig": "Two sessions collide on a lease and the collision is treated as a scheduling problem to wait out",
+      "scope": "general",
+      "confidence": "v",
+      "source": "rem:ai-de-coordination",
+      "score": 0.74,
+      "control": {
+        "rung": "always-loaded instruction",
+        "text": "A coordination refusal is a DEFECT SIGNAL about the decomposition: if two sessions need the same file at the same time, the work was split along the wrong seam and the plan is wrong, not the timing. The response is to re-cut the work item or record a block naming what is needed — never to retry on a timer, and never to widen the lease. Repeated refusals on one path escalate to a plan review. This is GO9 (a cap firing is a defect signal) pointed at coordination.",
+        "loc": "pack/knowledge/session-worktree-discipline.md (new directive, pairs with WT11)"
+      },
+      "boundary": "Applies to refusals arising from CONTENTION. A refusal caused by a missing identity or a malformed request is a different class (COORD-C) and is not evidence about the plan.",
+      "evidence": [
+        {
+          "eid": "ai-de:.agents/sessions/README.md",
+          "note": "Stated there as a rule: 'A refusal is a defect signal: if two sessions collide on a lease, the plan is wrong, not the timing.'"
+        },
+        {
+          "eid": "measured:refusals",
+          "note": "2 COORD-REFUSED events, both on the same session (79f8657c…) against WorkbenchCommands.cs and WorkbenchController.cs, after which that session proceeded to allowed edits on test files — the intended behaviour: move to the unblocked part rather than wait."
+        },
+        {
+          "eid": "ai-forward:WT11",
+          "note": "The pack has WT11 ('never remove a worktree to resolve a conflict') and GO9 ('a cap firing is a defect signal') but nothing that reads a lease collision as evidence the decomposition is wrong."
+        }
+      ],
+      "id": "p20"
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "Build a control for PACK-N (uncontrolled)",
+      "sig": "PACK-N · Staleness inferred from a timestamp rather than from content truth",
+      "scope": "general",
+      "confidence": "i",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "defect-classes#PACK-N",
+          "note": "status: uncontrolled"
+        },
+        {
+          "eid": "al-0074",
+          "note": "recent reference"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled.",
+        "loc": "docs/lessons/defect-classes.md#PACK-N"
+      },
+      "boundary": "Applies wherever the class's signature recurs; a control is not a control until observed failing.",
+      "id": "p6",
+      "score": 0.69
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "Build a control for PACK-Q (partially-controlled)",
+      "sig": "PACK-Q · An adapter written to a contract's *documented* shape, never to a *recorded* one",
+      "scope": "general",
+      "confidence": "i",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "defect-classes#PACK-Q",
+          "note": "status: partially-controlled"
+        },
+        {
+          "eid": "al-01M0SXP5CTNHVMSB94DDFNR8NV",
+          "note": "recent reference"
+        },
+        {
+          "eid": "al-01M0SYZMNKF3N8MNGYDCVDJ0HE",
+          "note": "recent reference"
+        },
+        {
+          "eid": "cl-01M0SXPXKHE6M8CS75GBXRJM7B",
+          "note": "recent reference"
+        },
+        {
+          "eid": "cl-01M0SYZMSJVYYVXHA1NMF5WP0W",
+          "note": "recent reference"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled.",
+        "loc": "docs/lessons/defect-classes.md#PACK-Q"
+      },
+      "boundary": "Applies wherever the class's signature recurs; a control is not a control until observed failing.",
+      "id": "p4",
+      "score": 0.68
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "Build a control for PACK-E (partially-controlled)",
+      "sig": "PACK-E · An ambiguous proper noun resolved inside my own frame",
+      "scope": "general",
+      "confidence": "i",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "defect-classes#PACK-E",
+          "note": "status: partially-controlled"
+        },
+        {
+          "eid": "al-0023",
+          "note": "recent reference"
+        },
+        {
+          "eid": "al-0029",
+          "note": "recent reference"
+        },
+        {
+          "eid": "al-0055",
+          "note": "recent reference"
+        },
+        {
+          "eid": "al-0056",
+          "note": "recent reference"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled.",
+        "loc": "docs/lessons/defect-classes.md#PACK-E"
+      },
+      "boundary": "Applies wherever the class's signature recurs; a control is not a control until observed failing.",
+      "id": "p8",
+      "score": 0.68
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "Build a control for PACK-C (partially-controlled)",
+      "sig": "PACK-C · An assertion encodes a transient magnitude assumption",
+      "scope": "general",
+      "confidence": "i",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "defect-classes#PACK-C",
+          "note": "status: partially-controlled"
+        },
+        {
+          "eid": "al-0027",
+          "note": "recent reference"
+        },
+        {
+          "eid": "al-0055",
+          "note": "recent reference"
+        },
+        {
+          "eid": "al-0072",
+          "note": "recent reference"
+        },
+        {
+          "eid": "al-01M0ZY4TJ1481EC9YXYAQTT6SF",
+          "note": "recent reference"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled.",
+        "loc": "docs/lessons/defect-classes.md#PACK-C"
+      },
+      "boundary": "Applies wherever the class's signature recurs; a control is not a control until observed failing.",
+      "id": "p10",
+      "score": 0.68
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "PACK-O: 57/83 substantive turns (68%) recorded no goal-state (done_when)",
+      "sig": "PACK-O front-matter presence + scope-drift review",
+      "scope": "general",
+      "confidence": "v",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "al-0020",
+          "note": "extendaibundle-ui-detection-and-assets - no done_when recorded (front matter skipped)"
+        },
+        {
+          "eid": "al-0021",
+          "note": "ui-capability-guide - no done_when recorded (front matter skipped)"
+        },
+        {
+          "eid": "al-0022",
+          "note": "ui-design-trigger-table - no done_when recorded (front matter skipped)"
+        },
+        {
+          "eid": "al-0023",
+          "note": "ui-design-review-pack-explainer - no done_when recorded (front matter skipped)"
+        },
+        {
+          "eid": "al-0024",
+          "note": "visualize-skill-and-backends - no done_when recorded (front matter skipped)"
+        },
+        {
+          "eid": "al-0025",
+          "note": "configure-higgsfield-mcp - no done_when recorded (front matter skipped)"
+        },
+        {
+          "eid": "al-0026",
+          "note": "forensicreview-rev30 - no done_when recorded (front matter skipped)"
+        },
+        {
+          "eid": "al-0027",
+          "note": "triage-fr031-python3-portability - no done_when recorded (front matter skipped)"
+        },
+        {
+          "eid": "al-0077",
+          "note": "done_when='audit-log records goal/done_when; /dream flags PACK-O presen' -> summary='Added --goal/--done-when + AL5b logging clause; dream PACK-O miner (build_propos'"
+        },
+        {
+          "eid": "al-0079",
+          "note": "done_when='graph clean (0 defects), portal groups+highlights the 5 new ' -> summary='Full graph sweep clean (0 defects/orphans/stale); added portal 'Discipline & opt'"
+        },
+        {
+          "eid": "al-01M0XY4AS4MKJJCWX39VAXMMBD",
+          "note": "done_when='docs/knowledge/native-client-ui-design exists, graph derivat' -> summary='Established native-client UI evidence base for WPF, WinUI, Avalonia, macOS, GNOM'"
+        },
+        {
+          "eid": "al-01M0Y0TS4DED7ZM7Z8590HNF1X",
+          "note": "done_when='docs/specs/native-app-ui-skill-extension.md exists, cites th' -> summary='Produced native app UI skill extension spec covering medium declaration, native '"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Presence (mechanical): every substantive turn records done_when (CT19); a missing one skipped the front matter. Satisfaction: review each done_when->summary pair where the summary exceeds the goal (scope drift, PACK-O). The audit done_when field + this miner ARE the rung-2 control (CI6).",
+        "loc": "docs/lessons/defect-classes.md#PACK-O"
+      },
+      "boundary": "Presence is mechanical; 'summary exceeds goal' is surfaced for human review, not auto-judged. Trivial/conversational turns are exempt from logging (AL5b).",
+      "id": "p13",
+      "score": 0.68
+    },
+    {
+      "kind": "Doc update",
+      "group": "Coordination (AI-DE)",
+      "title": "COORD-H — Lease scope is stated as minutes and practised as hours",
+      "sig": "A documented default and the observed distribution differ by two orders of magnitude at the tail",
+      "scope": "general",
+      "confidence": "v",
+      "source": "rem:ai-de-coordination",
+      "score": 0.68,
+      "control": {
+        "rung": "automated control",
+        "text": "Bound the lease at the guard rather than in prose: cap the TTL, and require a recorded reason above a stated threshold. Report the TTL distribution in doctor so the drift is visible as a number. The rule that should hold — 'a lease covers the minutes you are editing a file, never an area you intend to own' — is only real if something refuses the twelve-hour lease.",
+        "loc": "coord claim TTL cap + doctor distribution report"
+      },
+      "boundary": "Applies where leases are advisory over shared files. A long lease is legitimate for a genuinely exclusive, long-running operation — which should be a different verb, not a longer default.",
+      "evidence": [
+        {
+          "eid": "ai-de:.agents/sessions/README.md",
+          "note": "The stated rule and default: 'a TTL'd lease (300 s default)' and 'Leases are for the minutes you are editing a file, never for expressing an area.'"
+        },
+        {
+          "eid": "measured:ttl-spread",
+          "note": "11 distinct TTLs observed across 131 claims, from 300 s to 43,200 s — a twelve-hour lease is 144x the stated default."
+        },
+        {
+          "eid": "measured:hold-time",
+          "note": "Median hold 9.2 minutes, max 2.0 hours — so the SHORT default matches real usage and the long TTLs protect nothing that the median needs."
+        }
+      ],
+      "id": "p21"
+    },
+    {
+      "kind": "Doc update",
+      "group": "Doc / knowledge update",
+      "title": "Harvest 6 assume: marker(s) - each is an unverified belief with a stated trigger",
+      "sig": "assume marker harvest",
+      "scope": "repo-local",
+      "confidence": "v",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "pack/knowledge/no-guessing-protocol.md#L56",
+          "note": "the provider returns ISO-8601 in UTC. Seen in one sample payload, NOT stated in"
+        },
+        {
+          "eid": "tests/docs_explorer/test_marker_lint.py#L50",
+          "note": "the provider returns ISO-8601 in UTC. Seen in one sample payload, NOT stated in\\n\""
+        },
+        {
+          "eid": "tests/docs_explorer/test_marker_lint.py#L68",
+          "note": "the id is unique. If not, rows collide and the merge breaks.\\n\")"
+        },
+        {
+          "eid": "tests/docs_explorer/test_marker_lint.py#L76",
+          "note": "the id is unique. Verify by querying the index.\\n\")"
+        },
+        {
+          "eid": "tests/docs_explorer/test_marker_lint.py#L84",
+          "note": "rates are per-second. Verify against the vendor docs.\\n\")"
+        },
+        {
+          "eid": "web/pack-index.js#L227",
+          "note": "the provider returns iso-8601 in utc. seen in one sample payload, not stated in # the spec. if it is local time, every daily rollup silently shifts by the offset. # confirm: request one record and ins"
+        }
+      ],
+      "control": {
+        "rung": "knowledge doc",
+        "text": "Review each assume: marker; a triggered one is a bug already written down (NG9). Verify or convert to a control.",
+        "loc": "solution-selection-ladder.md L6 / no-guessing NG9"
+      },
+      "boundary": "Markers in this repo only; harvested at consolidation time.",
+      "id": "p11",
+      "score": 0.65
+    },
+    {
+      "kind": "Doc update",
+      "group": "Doc / knowledge update",
+      "title": "Harvest 11 simplify: marker(s) - each is a bounded shortcut with an upgrade trigger",
+      "sig": "simplify marker harvest",
+      "scope": "repo-local",
+      "confidence": "v",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "pack/knowledge/solution-selection-ladder.md#L47",
+          "note": "global lock, ok at current write volume — go per-account if throughput becomes the bottleneck"
+        },
+        {
+          "eid": "pack/knowledge/solution-selection-ladder.md#L48",
+          "note": "O(n²) match, fine for n<1k batches — index it when batch size grows"
+        },
+        {
+          "eid": "pack/scripts/coord-core.py#L1667",
+          "note": "occupancy is the newest session-start with no matching session-end,"
+        },
+        {
+          "eid": "tests/docs_explorer/test_marker_lint.py#L41",
+          "note": "O(n2) match, fine for n<1k batches - index it when batch size grows\\n\")"
+        },
+        {
+          "eid": "tests/docs_explorer/test_marker_lint.py#L60",
+          "note": "just hardcode this for now\\n\")"
+        },
+        {
+          "eid": "tests/docs_explorer/test_marker_lint.py#L92",
+          "note": "naive scan\\n\""
+        },
+        {
+          "eid": "tests/docs_explorer/test_marker_lint.py#L100",
+          "note": "hardcoded\\n\")"
+        },
+        {
+          "eid": "tests/docs_explorer/test_marker_lint.py#L105",
+          "note": "hardcoded\\n\")"
+        }
+      ],
+      "control": {
+        "rung": "knowledge doc",
+        "text": "Review each simplify: marker against its upgrade trigger; a triggered one is debt due (L6).",
+        "loc": "solution-selection-ladder.md L6 / no-guessing NG9"
+      },
+      "boundary": "Markers in this repo only; harvested at consolidation time.",
+      "id": "p12",
+      "score": 0.65
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "Build a control for PACK-H (partially-controlled)",
+      "sig": "PACK-H · A fix to a hosted surface reported \"done\" from the working tree, not verified on the live surface",
+      "scope": "general",
+      "confidence": "i",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "defect-classes#PACK-H",
+          "note": "status: partially-controlled"
+        },
+        {
+          "eid": "al-0056",
+          "note": "recent reference"
+        },
+        {
+          "eid": "al-0057",
+          "note": "recent reference"
+        },
+        {
+          "eid": "al-0063",
+          "note": "recent reference"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled.",
+        "loc": "docs/lessons/defect-classes.md#PACK-H"
+      },
+      "boundary": "Applies wherever the class's signature recurs; a control is not a control until observed failing.",
+      "id": "p7",
+      "score": 0.62
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "Build a control for PACK-D (partially-controlled)",
+      "sig": "PACK-D · An array parameter arrives as one comma-joined string when the script is invoked as an executable",
+      "scope": "general",
+      "confidence": "i",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "defect-classes#PACK-D",
+          "note": "status: partially-controlled"
+        },
+        {
+          "eid": "al-0027",
+          "note": "recent reference"
+        },
+        {
+          "eid": "al-0074",
+          "note": "recent reference"
+        },
+        {
+          "eid": "al-01M0R8XN8AGFRB2ZYZ2TQN7DN0",
+          "note": "recent reference"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled.",
+        "loc": "docs/lessons/defect-classes.md#PACK-D"
+      },
+      "boundary": "Applies wherever the class's signature recurs; a control is not a control until observed failing.",
+      "id": "p9",
+      "score": 0.62
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "Build a control for SHELL-A (partially-controlled)",
+      "sig": "SHELL-A · Content routed through a shell construct that performs substitution on it",
+      "scope": "general",
+      "confidence": "i",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "defect-classes#SHELL-A",
+          "note": "status: partially-controlled"
+        },
+        {
+          "eid": "cl-0017",
+          "note": "recent reference"
+        },
+        {
+          "eid": "cl-0026",
+          "note": "recent reference"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled.",
+        "loc": "docs/lessons/defect-classes.md#SHELL-A"
+      },
+      "boundary": "Applies wherever the class's signature recurs; a control is not a control until observed failing.",
+      "id": "p3",
+      "score": 0.56
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "Build a control for PACK-P (partially-controlled)",
+      "sig": "PACK-P · A check reports its verdict over a corpus it never established was non-empty",
+      "scope": "general",
+      "confidence": "i",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "defect-classes#PACK-P",
+          "note": "status: partially-controlled"
+        },
+        {
+          "eid": "al-0081",
+          "note": "recent reference"
+        },
+        {
+          "eid": "al-0082",
+          "note": "recent reference"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled.",
+        "loc": "docs/lessons/defect-classes.md#PACK-P"
+      },
+      "boundary": "Applies wherever the class's signature recurs; a control is not a control until observed failing.",
+      "id": "p5",
+      "score": 0.56
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "Build a control for GIT-A (partially-controlled)",
+      "sig": "GIT-A · A revert used as an undo, on a file that also carries unrelated uncommitted work",
+      "scope": "general",
+      "confidence": "i",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "defect-classes#GIT-A",
+          "note": "status: partially-controlled"
+        },
+        {
+          "eid": "al-01M1MWZ36JB5DQPDEGYEJ5YM9G",
+          "note": "recent reference"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled.",
+        "loc": "docs/lessons/defect-classes.md#GIT-A"
+      },
+      "boundary": "Applies wherever the class's signature recurs; a control is not a control until observed failing.",
+      "id": "p2",
+      "score": 0.45
+    },
+    {
+      "kind": "Confirmed mitigation",
+      "group": "Confirmed mitigation → learning",
+      "title": "Successful mitigation: docs-graph validate flagged 'unknown type: mockup'; changed the mockup hub frontmatter type to 'design'; validate then p",
+      "sig": "unknown-artifact-type-in-frontmatter",
+      "scope": "general",
+      "confidence": "v",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "mit-0001",
+          "note": "oracle=red-green; red-observed then green"
+        },
+        {
+          "eid": "docs-graph.py validate",
+          "note": "verification test"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "docs-graph.py validate rejects any frontmatter 'type' not in the TYPES enum; run it after adding a graph node.",
+        "loc": "docs-graph.py validate"
+      },
+      "boundary": "Applies to any new .md graph node; type must be one of the known TYPES.",
+      "id": "p1",
+      "score": 0.34
+    }
+  ],
+  "diary": {
+    "added": 10,
+    "merged": 0,
+    "superseded": 0,
+    "excluded": 0
+  },
+  "rem": {
+    "ran": true,
+    "focus": "AI-DE agent-to-agent coordination: how the collaboration protocol evolved as Claude Code and Copilot sessions worked one repository",
+    "corpus": "C:/Projects/ai-de — .agents/{log,decisions,sessions}, docs/collaboration/session-contracts.md, docs/lessons/defect-classes.md (111 classes)",
+    "measured": {
+      "decision_events": 55,
+      "allowed": 50,
+      "not_checked": 3,
+      "refused": 2,
+      "log_events": 273,
+      "claims": 131,
+      "releases": 117,
+      "claims_never_released": 33,
+      "released_while_live_pct": 86,
+      "session_start": 24,
+      "session_end": 1,
+      "true_lease_overlaps_after_ttl": 0,
+      "distinct_agent_values": 6,
+      "distinct_ttls": 11,
+      "distinct_days": 5,
+      "prior_dreams": 8,
+      "proposals_recurring_across_dreams": 12
+    },
+    "note": "An earlier count of 11 'concurrent claims on one path by different agents' was WRONG: it ignored TTL expiry. Recomputed respecting expiry, true overlaps are 0 — the lease invariant was never violated. Corrected before any proposal was written."
+  }
+};
