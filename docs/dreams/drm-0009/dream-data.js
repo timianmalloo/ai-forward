@@ -16,33 +16,41 @@ window.DREAM_DATA = {
       "group": "Coordination (AI-DE)",
       "id": "p22",
       "score": 0.96,
-      "title": "DREAM-A — The consolidation loop's own exit path is the unreliable half: proposals recur, promotions do not",
-      "sig": "A review artifact is produced every cycle, and nothing carries its output into the durable store, so the same proposals resurface indefinitely",
+      "title": "DREAM-A — The loop's later stages never run: promotion succeeds, distribution ran once and was never applied, and no control gets built",
+      "sig": "A consolidation loop whose promote step succeeds and whose DOWNSTREAM steps — distribution and control-building — are never run, so the same proposals resurface",
       "scope": "general",
       "confidence": "v",
       "source": "rem:ai-de-coordination (self-referential)",
       "control": {
         "rung": "automated control",
-        "text": "The dream run reports its own promotion rate as a first-class number: for each proposal, how many prior dreams already raised it, and how many proposals from the previous dream were promoted. A proposal recurring for the Nth time is rendered as an ESCALATION at the top of the review view, not as a fresh idea in the middle of it. Optionally the run exits non-zero when the previous dream promoted nothing, on the same principle the pack applies to a cap firing: producing the artifact is not the same as the artifact being used.",
+        "text": "The dream run reports the state of the PIPELINE, not just of the corpus: for each proposal, how many prior dreams raised it; for the previous dream, how many proposals were promoted; and for the fleet store, how many classes have never been distributed (no plan in learnings/plans/) and how many name a class in this repo's register that is still not `controlled`. A proposal recurring for the Nth time renders as an ESCALATION at the top of the review view rather than as a fresh idea in the middle of it. The number that matters is not 'proposals promoted' but 'promoted learnings that reached a repo AND produced a control'.",
         "loc": "docs/ai-forward-pack/scripts/dream.py (recurrence count + promotion-rate report) + the review view's ordering"
       },
-      "boundary": "Applies to any produce-review-promote loop whose promote step is a separate manual command. It does not apply where the analysis writes directly, which is a different and worse design — the human gate is correct, it is the un-measured skip that is the defect.",
+      "boundary": "Applies to any multi-stage produce-review-promote-distribute loop where each stage is a separate manual command. It does not apply to the human gate itself, which is correct and deliberate — the defect is the UNMEASURED skip of a downstream stage, not the existence of the gate.",
       "evidence": [
         {
           "eid": "measured:dreams",
-          "note": "8 dreams on record. 12 distinct proposals have recurred across runs."
+          "note": "8 dreams on record; 12 distinct proposals have recurred across runs."
         },
         {
-          "eid": "measured:recurrence",
-          "note": "'Build a control for PACK-C / PACK-D / PACK-E' has been proposed in EVERY dream since drm-0002 — 8 times each — and all three classes are still partially-controlled."
+          "eid": "correction:promotion-works",
+          "note": "WITHDRAWN CLAIM. This proposal first asserted that drm-0007's top-ranked cross-agent proposal was 'raised, ranked first, and dropped'. FALSE: drm-0007 promoted all 12 of its proposals and all 10 general ones have fleet classes. The original check grepped the proposal TITLE while the store keys on SIG. A second draft then asserted that learnings/plans/ did not exist; also FALSE — 11 plans exist. Both were written without opening the file. The promote step is not the leak."
         },
         {
-          "eid": "measured:drm-0007",
-          "note": "drm-0007's own highest-leverage proposal was 'Cross-agent collaboration contract is spoken, not recorded and claimed', with a control drafted. It appears in neither docs/lessons/defect-classes.md nor learnings/. It was raised, ranked first, and dropped — five days before this pass independently rediscovered the same territory from AI-DE's corpus."
+          "eid": "verified:distribution-ran-once",
+          "note": "learnings/plans/ holds 11 plans, ALL generated 2026-08-17T12:49:40Z and never regenerated. They therefore cover only drm-0002 and drm-0003 (5 classes). drm-0007's 10 general classes, promoted 2026-08-29, were never distributed to any repo."
+        },
+        {
+          "eid": "verified:no-plan-was-ever-applied",
+          "note": "No target shows a fleet-sourced class. HealthWatch (37 register classes) and meridian-finance-planner (41) contain none of the three fleet markers checked; BioHacker and backlot have no defect-class register at all despite having plans written for them. The plans were produced and never acted on."
+        },
+        {
+          "eid": "verified:promotion-is-not-a-control",
+          "note": "PACK-C, PACK-D, PACK-E and PACK-N were promoted to the fleet store from drm-0007 on 2026-08-29 and remain partially-controlled / uncontrolled in this repo's own register — which is why drm-0008 and drm-0009 both re-proposed controls for them."
         },
         {
           "eid": "self",
-          "note": "This proposal is evidence of its own class: without a control, it will be re-proposed by the next dream."
+          "note": "This proposal is evidence of its own class: without a control it will be re-proposed by the next dream, as PACK-C/D/E have been eight times."
         }
       ]
     },

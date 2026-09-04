@@ -1,0 +1,20 @@
+{
+  "dream": "drm-0009",
+  "date": "2026-09-03",
+  "decisions": [
+    {"id":"p22","decision":"approve","scope":"general","sig":"A review artifact is produced every cycle, and nothing carries its output into the durable store, so the same proposals resurface indefinitely"},
+    {"id":"p1","decision":"approve","scope":"general","sig":"unknown-artifact-type-in-frontmatter"},
+    {"id":"p6","decision":"approve","scope":"general","sig":"PACK-N · Staleness inferred from a timestamp rather than from content truth"},
+    {"id":"p4","decision":"approve","scope":"general","sig":"PACK-Q · An adapter written to a contract's *documented* shape, never to a *recorded* one"},
+    {"id":"p8","decision":"approve","scope":"general","sig":"PACK-E · An ambiguous proper noun resolved inside my own frame"},
+    {"id":"p10","decision":"approve","scope":"general","sig":"PACK-C · An assertion encodes a transient magnitude assumption"},
+    {"id":"p13","decision":"approve","scope":"general","sig":"PACK-O front-matter presence + scope-drift review"},
+    {"id":"p7","decision":"approve","scope":"general","sig":"PACK-H · A fix to a hosted surface reported \"done\" from the working tree, not verified on the live surface"},
+    {"id":"p9","decision":"approve","scope":"general","sig":"PACK-D · An array parameter arrives as one comma-joined string when the script is invoked as an executable"},
+    {"id":"p3","decision":"approve","scope":"general","sig":"SHELL-A · Content routed through a shell construct that performs substitution on it"},
+    {"id":"p5","decision":"approve","scope":"general","sig":"PACK-P · A check reports its verdict over a corpus it never established was non-empty"},
+    {"id":"p2","decision":"approve","scope":"general","sig":"GIT-A · A revert used as an undo, on a file that also carries unrelated uncommitted work"},
+    {"id":"p11","decision":"approve","scope":"general","sig":"assume marker harvest"},
+    {"id":"p12","decision":"approve","scope":"general","sig":"simplify marker harvest"}
+  ]
+}

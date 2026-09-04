@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-04T01:45:53Z",
+  "generated": "2026-09-04T16:11:49Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3018,6 +3018,70 @@ window.AUDIT_DATA = {
         "short": "c02037a34",
         "branch": "main",
         "pushed": true
+      }
+    },
+    {
+      "id": "al-01M1PJS425H6J78QT24AD5295A",
+      "shortname": "apply-decisions",
+      "datetime": "2026-09-04T16:07:12Z",
+      "session": "dream-job",
+      "prompt": "dream.py apply-decisions",
+      "summary": "Applied 14 general + 0 repo-local (skipped 0, rejected 0) from drm-0009",
+      "kind": "script",
+      "skill": "dream",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "learnings/fleet-classes.jsonl"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M1PJZHWWTY1A4KMNQ1T3WHDH",
+      "shortname": "apply-learnings",
+      "datetime": "2026-09-04T16:10:42Z",
+      "session": "apply-learnings",
+      "prompt": "apply-learnings.py apply-learnings",
+      "summary": "Planned federation to 6 repo(s): BioHacker(+15~0!0); HealthWatch(+15~0!0); TheTerrace(+15~0!0); ai-de(+15~0!0); backlot(+15~0!0); meridian-finance-planner(+15~0!0)",
+      "kind": "script",
+      "skill": "apply-learnings",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "learnings/plans/"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M1PK1K6ZY1J92DBEQ6HBXN94",
+      "shortname": "apply-learnings-drm-0009",
+      "datetime": "2026-09-04T16:11:49Z",
+      "session": "015BSvW6rL7SpuwziUbRHJTJ",
+      "prompt": "/apply-learnings with the drm-0009 decisions file (14 approvals: p22 DREAM-A plus the 13 deterministic proposals)",
+      "summary": "Two-step. (1) dream.py apply-decisions promoted 14 general learnings, 0 rejected, 0 skipped - fleet store 15 -> 29 classes. The 8 COORD proposals (p14-p21) were NOT in the decisions file and remain unpromoted. (2) apply-learnings push to the 6 real sibling repos (BioHacker, HealthWatch, TheTerrace, ai-de, backlot, meridian-finance-planner); worktrees and ai-forward itself excluded. 29 fleet classes de-duped to 15 unique slugs; every repo: add 15, merge 0, conflict 0. The 0 merges were independently re-checked with a token-overlap test at the same 0.6 threshold and confirmed - these targets genuinely hold no equivalent class. No target register was modified (mtimes all predate today) and nothing was merged. TWO OF MY OWN CLAIMS WERE WITHDRAWN during this run, both written without opening the file: (a) that drm-0007's top proposal was 'raised, ranked first and dropped' - false, drm-0007 promoted all 12 and all 10 general ones have fleet classes; the original grep searched the TITLE while the store keys on SIG; (b) that learnings/plans/ did not exist - false, 11 plans exist. DREAM-A was rewritten with verified evidence only: distribution ran ONCE on 2026-08-17 covering 5 classes and was never regenerated, so drm-0007's 10 classes were never distributed; and NO target ever applied its plan (HealthWatch 37 classes and meridian 41 carry zero fleet markers; BioHacker and backlot have no register at all despite having had plans since August). Promotion works; the later stages do not run.",
+      "kind": "skill",
+      "skill": "apply-learnings",
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [
+        "learnings/plans/ai-de.plan.md",
+        "learnings/fleet-classes.jsonl"
+      ],
+      "tags": [
+        "federation",
+        "learnings",
+        "drm-0009"
+      ],
+      "outcome": "success",
+      "goal": "Promote the 14 approved drm-0009 learnings into the fleet store, then push the fleet as reviewable plans to the target repos",
+      "done_when": "14 approved items promoted; a plan per target repo reconciled against its actual register; nothing merged or executed in any target",
+      "git": {
+        "sha": "8e4e271e68bb2a78232ce5b98e7cec701db68737",
+        "short": "8e4e271e6",
+        "branch": "main",
+        "pushed": false
       }
     }
   ],
