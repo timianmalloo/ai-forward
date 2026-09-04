@@ -26,7 +26,7 @@ summary: >-
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled `12` · partially-controlled `9` · uncontrolled `21`
+**Status counts:** controlled `12` · partially-controlled `9` · uncontrolled `22`
 **Recurrence since last review:** `0` — *a second occurrence of a known class means the control was wrong, not that someone was careless (CI4).*
 
 ---
@@ -50,6 +50,14 @@ summary: >-
 ## Project classes
 
 *Classes discovered in this repository. Newest first.*
+
+### FED-A — The abstraction that makes a learning portable is what stops the deduper recognising it
+- **Signature:** a federation step generalises a class so it can cross repo boundaries (strip the paths, the names, the repo-specific nouns), and the reconciler on the far side matches by lexical overlap against the target's existing wording. The two descriptions of the same class now share almost no vocabulary, the overlap scores below threshold, and the class is filed as **add** into a repo that already has it. The tell: a push reporting `merge 0` into a target with a large, mature register — especially when the learning was *derived from* that target in the first place.
+- **Why it survives:** every individual step is correct. The abstraction is required (ADR-0004 G4) — an un-abstracted class leaks specifics across the boundary. The lexical matcher is deliberate: the Simplifier rejected a fuzzy index precisely because a fuzzy match that is wrong is worse than an add a human can see. And the output is a *plan*, never a merge, so the duplicate is only proposed. It survives because the human reviewing the plan has no signal that the ADD is a duplicate — the plan looks identical to a genuinely new class.
+- **Instances:**
+  - `2026-09-04` **drm-0009 federation** — COORD-C and COORD-D were abstracted from AI-DE's own **DC-088** and **DC-067**, then pushed back to AI-DE as **add**. Measured overlap against the target's class titles: **0.17** and **0.14**, against a 0.6 merge threshold. Both carry the provenance in their own evidence (`ai-de:DC-088`), which the reconciler never reads. Caught by inspection *because* the source repo was known; a push to a repo whose register nobody had just read would not have been caught.
+- **Control:** **NONE YET.** The candidate is to reconcile on **provenance before prose**: a fleet class whose `evidence` names a class id in the target (`ai-de:DC-088`) is a **merge** against that id regardless of lexical score — an exact, non-fuzzy signal the Simplifier's objection does not apply to, since it is a recorded identity rather than a guess. Until that exists, the mitigation is procedural and weak: a `merge 0` result into a mature register is treated as a finding to check by hand, not as a clean run. The interim warning written into `learnings/plans/ai-de.plan.md` is **not regeneration-safe** and will be lost on the next push — which is itself an instance of the class it documents.
+- **Status:** `uncontrolled`
 
 ### GIT-A — A revert used as an undo, on a file that also carries unrelated uncommitted work
 - **Signature:** a temporary mutation is made to a tracked file to test something, then undone with `git checkout -- <path>` / `git restore <path>`. That does not restore the *pre-mutation* state; it restores **HEAD**. Any uncommitted work in the same file is silently destroyed, and the command reports nothing. The tell: a revert command aimed at a path inside a working tree that has not been committed since the work began, and the phrase "restore it afterwards" in a plan that mutates a real file.

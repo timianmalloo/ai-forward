@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-04T16:11:49Z",
+  "generated": "2026-09-04T16:17:31Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3080,6 +3080,71 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "8e4e271e68bb2a78232ce5b98e7cec701db68737",
         "short": "8e4e271e6",
+        "branch": "main",
+        "pushed": false
+      }
+    },
+    {
+      "id": "al-01M1PK8X8QWTF4S3KBH2XHPENX",
+      "shortname": "apply-decisions",
+      "datetime": "2026-09-04T16:15:49Z",
+      "session": "dream-job",
+      "prompt": "dream.py apply-decisions",
+      "summary": "Applied 8 general + 0 repo-local (skipped 0, rejected 0) from drm-0009",
+      "kind": "script",
+      "skill": "dream",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "learnings/fleet-classes.jsonl"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M1PK93XXCJXRRNMYHQWP0YK7",
+      "shortname": "apply-learnings",
+      "datetime": "2026-09-04T16:15:56Z",
+      "session": "apply-learnings",
+      "prompt": "apply-learnings.py apply-learnings",
+      "summary": "Planned federation to 6 repo(s): BioHacker(+23~0!0); HealthWatch(+23~0!0); TheTerrace(+23~0!0); ai-de(+23~0!0); backlot(+23~0!0); meridian-finance-planner(+23~0!0)",
+      "kind": "script",
+      "skill": "apply-learnings",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "learnings/plans/"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M1PKC0PYEGGN7KR5J2FY3YKQ",
+      "shortname": "apply-learnings-drm-0009-coord",
+      "datetime": "2026-09-04T16:17:31Z",
+      "session": "015BSvW6rL7SpuwziUbRHJTJ",
+      "prompt": "approve them all and apply them",
+      "summary": "Promoted the 8 COORD classes (p14-p21) from drm-0009: 8 general, 0 rejected, 0 skipped. Fleet store 29 -> 37. Re-pushed to the same 6 real repos: each now add 23, merge 0, conflict 0 (37 classes de-duped to 23 slugs). No target register was modified. FINDING, and it is a real defect rather than a curiosity: COORD-C and COORD-D were ABSTRACTED FROM ai-de's own DC-088 and DC-067, and the reconciler filed them back into ai-de as ADD - scoring 0.17 and 0.14 against a 0.6 merge threshold, because it compares the abstracted fleet sig against the target's class TITLE. Abstraction is what makes a learning portable (ADR-0004 G4) and is also what makes it lexically unrecognisable to the deduper. Applying those two as ADDs would put one quantity in two homes. Recorded as new defect class FED-A (uncontrolled); the candidate control is to reconcile on PROVENANCE before prose - a fleet class whose evidence names a target class id (ai-de:DC-088) is a merge against that id regardless of lexical score, which is an exact signal rather than the fuzzy index the Simplifier rejected. The ai-de plan carries an interim hand-written warning naming both equivalences, and that warning is explicitly NOT regeneration-safe - the next push overwrites it, which is itself an instance of FED-A.",
+      "kind": "skill",
+      "skill": "apply-learnings",
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [
+        "learnings/plans/ai-de.plan.md",
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [
+        "federation",
+        "coordination",
+        "drm-0009",
+        "FED-A"
+      ],
+      "outcome": "success",
+      "goal": "Promote the 8 COORD coordination learnings and re-push the fleet to the target repos",
+      "done_when": "8 promoted; plans regenerated for 6 repos; duplicates against the source repo surfaced rather than silently added; nothing merged in any target",
+      "git": {
+        "sha": "e3b03bf1b66f2c71da594f79a8e1f817e06bc39d",
+        "short": "e3b03bf1b",
         "branch": "main",
         "pushed": false
       }

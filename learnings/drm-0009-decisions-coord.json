@@ -1,0 +1,54 @@
+{
+  "dream": "drm-0009",
+  "date": "2026-09-04",
+  "decisions": [
+    {
+      "id": "p14",
+      "decision": "approve",
+      "scope": "general",
+      "sig": "Two registers of one quantity, created by a session that had not opened the first one"
+    },
+    {
+      "id": "p15",
+      "decision": "approve",
+      "scope": "general",
+      "sig": "A session describes another session's ownership, contract or seam without opening the file that states it"
+    },
+    {
+      "id": "p16",
+      "decision": "approve",
+      "scope": "general",
+      "sig": "The enforcement path logs `not_checked` and permits the edit, because the caller had no identity to check"
+    },
+    {
+      "id": "p17",
+      "decision": "approve",
+      "scope": "general",
+      "sig": "Entry verbs are called reliably; the matching exit verb is skipped, and only a timeout reclaims the resource"
+    },
+    {
+      "id": "p18",
+      "decision": "approve",
+      "scope": "general",
+      "sig": "A collaboration channel accumulates repeated same-shape requests against one seam, each handled individually"
+    },
+    {
+      "id": "p19",
+      "decision": "approve",
+      "scope": "general",
+      "sig": "One field carries three different kinds of identity, so no query over it means one thing"
+    },
+    {
+      "id": "p20",
+      "decision": "approve",
+      "scope": "general",
+      "sig": "Two sessions collide on a lease and the collision is treated as a scheduling problem to wait out"
+    },
+    {
+      "id": "p21",
+      "decision": "approve",
+      "scope": "general",
+      "sig": "A documented default and the observed distribution differ by two orders of magnitude at the tail"
+    }
+  ]
+}

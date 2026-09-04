@@ -203,3 +203,59 @@
 - **Boundary:** Markers in this repo only; harvested at consolidation time.
 - **Confidence:** v
 - **From:** drm-0009 / p12
+
+### Two registers of one quantity, created by a session that had not opened the first one
+- **Signature:** Two registers of one quantity, created by a session that had not opened the first one
+- **Control:** Coordination state splits into exactly TWO stores with different lifetimes and one authority rule: a TRACKED ownership register that is the sole authority on who owns what, and an UNTRACKED liveness store that says only who is running right now, in which tree, on what, and what they are blocked on — and that states no path or ownership table at all. A lint fails the liveness store when it contains an ownership/path table, and the liveness store's own header must point at the tracked register and declare that the tracked one wins on any disagreement. Add as a WT-series directive in session-worktree-discipline.md with the lint in coord doctor. (automated control)
+- **Boundary:** Applies wherever more than one agent session writes to one repository. Does not apply to a single-session repo, where one register is correct and a second store is pure ceremony.
+- **Confidence:** v
+- **From:** drm-0009 / p14
+
+### A session describes another session's ownership, contract or seam without opening the file that stat
+- **Signature:** A session describes another session's ownership, contract or seam without opening the file that states it
+- **Control:** Extend E15 in end-to-end-integrity.md from code to AGREEMENTS: never assert the shape of our own contracts, ownership, or seam from memory — open the register or label the claim Inferred. The tell is one session summarising another session's ownership without a citation, and the cheap check is that every cross-session claim about who owns what carries the register line it came from. (always-loaded instruction)
+- **Boundary:** Applies to claims about shared, written agreements. It does not apply to a session describing its OWN in-flight work, which has no register to cite yet.
+- **Confidence:** v
+- **From:** drm-0009 / p15
+
+### The enforcement path logs `not_checked` and permits the edit, because the caller had no identity to 
+- **Signature:** The enforcement path logs `not_checked` and permits the edit, because the caller had no identity to check
+- **Control:** An unidentified session is REFUSED at the guard, never logged as not-checked and allowed. Identity is required to start a session, so there is no path that reaches the edit boundary without one. Where a transition period needs tolerance, the tolerated case is counted and surfaced by doctor as a defect number, not written to the log as a normal outcome. (make it impossible)
+- **Boundary:** Applies to any guard whose decision depends on knowing WHO is asking. A guard that is identity-independent (a syntax lint, a schema check) has no such failure mode.
+- **Confidence:** v
+- **From:** drm-0009 / p16
+
+### Entry verbs are called reliably; the matching exit verb is skipped, and only a timeout reclaims the 
+- **Signature:** Entry verbs are called reliably; the matching exit verb is skipped, and only a timeout reclaims the resource
+- **Control:** The coordination doctor reports the entry/exit asymmetry as a first-class number — sessions started vs ended, claims vs releases, and claims outstanding — and a session-end that would leave claims open is refused or reported rather than silently succeeding. This upgrades PACK-M and WT6/WT7 from a stated principle to a measured one, and generalises them from worktrees to ANY session-scoped resource. (automated control)
+- **Boundary:** Applies to any resource acquired per session and released by a separate call. It does not apply where acquisition is scoped by a construct that cannot be skipped (a context manager, a transaction).
+- **Confidence:** v
+- **From:** drm-0009 / p17
+
+### A collaboration channel accumulates repeated same-shape requests against one seam, each handled indi
+- **Signature:** A collaboration channel accumulates repeated same-shape requests against one seam, each handled individually
+- **Control:** CI2 (class, not instance) applies to the collaboration channel, not only to defects. When a session opens the Nth request of the same shape against the same seam, it raises the CLASS — the missing capability behind all N — rather than the N+1th request. The channel's own review asks 'how many of these are one thing?' before it asks 'which is next?'. (knowledge doc)
+- **Boundary:** Applies where one session repeatedly asks another for variations of one capability. It does not apply to genuinely distinct requests that merely arrive together.
+- **Confidence:** i
+- **From:** drm-0009 / p18
+
+### One field carries three different kinds of identity, so no query over it means one thing
+- **Signature:** One field carries three different kinds of identity, so no query over it means one thing
+- **Control:** Declare the identity vocabulary once and validate the field against it: an AGENT is a stable logical actor, a SESSION is one run in one worktree, and they are separate fields. Reject a raw UUID in the agent field, and reject a work-item placeholder that is constant across every record — a field whose value never varies carries no information and should be removed rather than filled in. (automated control)
+- **Boundary:** Applies to any shared record keyed by actor. Not applicable where a single anonymous writer is intended by design.
+- **Confidence:** v
+- **From:** drm-0009 / p19
+
+### Two sessions collide on a lease and the collision is treated as a scheduling problem to wait out
+- **Signature:** Two sessions collide on a lease and the collision is treated as a scheduling problem to wait out
+- **Control:** A coordination refusal is a DEFECT SIGNAL about the decomposition: if two sessions need the same file at the same time, the work was split along the wrong seam and the plan is wrong, not the timing. The response is to re-cut the work item or record a block naming what is needed — never to retry on a timer, and never to widen the lease. Repeated refusals on one path escalate to a plan review. This is GO9 (a cap firing is a defect signal) pointed at coordination. (always-loaded instruction)
+- **Boundary:** Applies to refusals arising from CONTENTION. A refusal caused by a missing identity or a malformed request is a different class (COORD-C) and is not evidence about the plan.
+- **Confidence:** v
+- **From:** drm-0009 / p20
+
+### A documented default and the observed distribution differ by two orders of magnitude at the tail
+- **Signature:** A documented default and the observed distribution differ by two orders of magnitude at the tail
+- **Control:** Bound the lease at the guard rather than in prose: cap the TTL, and require a recorded reason above a stated threshold. Report the TTL distribution in doctor so the drift is visible as a number. The rule that should hold — 'a lease covers the minutes you are editing a file, never an area you intend to own' — is only real if something refuses the twelve-hour lease. (automated control)
+- **Boundary:** Applies where leases are advisory over shared files. A long lease is legitimate for a genuinely exclusive, long-running operation — which should be a different verb, not a longer default.
+- **Confidence:** v
+- **From:** drm-0009 / p21
