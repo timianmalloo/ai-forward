@@ -80,6 +80,15 @@
   table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:var(--sp-3)}
   th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--hairline);vertical-align:top}
   th{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--ink-mute)}td .mono{color:var(--primary)}
+  /* Veto strength is the one thing in the persona table that must read at a glance, so it is
+     encoded in form as well as in the word — a hard veto blocks, the others advise. */
+  .vb{display:inline-block;font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.4px;
+      text-transform:uppercase;padding:2px 7px;border-radius:var(--r-pill);border:1px solid currentColor;white-space:nowrap}
+  .vb.hard{color:var(--danger)}.vb.soft{color:var(--warning)}.vb.advisory{color:var(--ink-mute);font-weight:600}
+  .reflink{font-family:var(--mono);font-size:11.5px;color:var(--ink-mute);display:block;margin-top:6px}
+  .lensrow{font-family:var(--mono);font-size:11px;color:var(--ink-mute);margin-top:4px}
+  .tells{max-width:var(--measure);margin:var(--sp-3) 0 0;padding-left:1.1em}
+  .tells li{font-size:13.5px;color:var(--ink-mute);margin:.3em 0}
   ol.steps{counter-reset:s;list-style:none;padding:0;margin:0;max-width:var(--measure)}
   ol.steps li{counter-increment:s;position:relative;padding:0 0 var(--sp-6) var(--sp-8);border-left:1px solid var(--hairline);margin-left:16px}
   ol.steps li:last-child{border-left-color:transparent}
@@ -148,7 +157,7 @@ function renderNav(){
 function render(){
   if(window.__PORTAL_ERR||!D){pane.innerHTML=errorBody();return;}
   renderNav();
-  pane.innerHTML=({start:secStart,caps:secCaps,skills:secSkills,foundations:secFoundations,ui:secUi,architecture:secArchitecture,systems:secSystems,graph:secGraph,ref:secRef}[state.section]||secStart)();
+  pane.innerHTML=({start:secStart,caps:secCaps,skills:secSkills,agents:secAgents,loop:secLoop,foundations:secFoundations,ui:secUi,architecture:secArchitecture,systems:secSystems,graph:secGraph,ref:secRef}[state.section]||secStart)();
   if(state.section==="graph"){drawGraph();}
   const c=document.getElementById("content");c.focus({preventScroll:true});c.scrollTop=0;
 }
@@ -199,6 +208,44 @@ function secArchitecture(){
 function secSystems(){
   return `<h1 class="lede-h">Systems that make work compound</h1><p class="lede">Beyond the skills, the pack maintains durable memory so every session builds on the last.</p>
     ${D.systems.map(s=>`<h3>${esc(s.h)}</h3><p>${esc(s.p)}</p>${s.link?`<p><a href="${esc(s.link.path)}">${esc(s.link.name)} →</a></p>`:""}`).join("")}`;
+}
+function secAgents(){
+  const C=D.collaboration||{};const P=C.personas||[];
+  const hard=P.filter(p=>p.veto==="hard"),soft=P.filter(p=>p.veto==="soft"),adv=P.filter(p=>p.veto==="advisory");
+  const cc=P.filter(p=>p.surface==="Claude Code").length,cp=P.length-cc;
+  return `<h1 class="lede-h">Multi-agent collaboration</h1><p class="lede">${esc(C.intro||"")}</p>
+    <div class="counts">
+      <div class="stat"><b>${P.length}</b><span>lenses</span></div>
+      <div class="stat"><b>${cc}</b><span>Claude Code agents</span></div>
+      <div class="stat"><b>${cp}</b><span>Copilot adversaries</span></div>
+      <div class="stat"><b>${hard.length}</b><span>hard vetoes</span></div>
+    </div>
+    <div class="group-band"><span class="gt">Two modes, one lens</span><span class="gl"></span></div>
+    <div class="grid">${(C.modes||[]).map(m=>`<div class="cap"><h4>${esc(m.h)}</h4><p>${esc(m.p)}</p></div>`).join("")}</div>
+
+    <div class="group-band"><span class="gt">How the panel operates</span><span class="gl"></span><span class="gc">${(C.mechanics||[]).length}</span></div>
+    <div class="stack">${(C.mechanics||[]).map(m=>`<div class="std"><div class="sn">${esc(m.h)}</div><div><p class="sd">${esc(m.p)}</p>${m.ref?`<span class="reflink">${esc(m.ref)}</span>`:""}</div></div>`).join("")}</div>
+
+    <div class="group-band"><span class="gt">The roster</span><span class="gl"></span><span class="gc">${hard.length} hard · ${soft.length} soft · ${adv.length} advisory</span></div>
+    <p>${esc(C.vetoNote||"")}</p>
+    <p class="lensrow">${esc(C.rosterNote||"")}</p>
+    <table><thead><tr><th scope="col">Lens</th><th scope="col">Veto</th><th scope="col">Surface</th><th scope="col">What it owns</th></tr></thead>
+      <tbody>${P.map(p=>`<tr><td><span class="mono">${esc(p.name)}</span>${p.lens&&p.lens.length?`<div class="lensrow">lens: ${esc(p.lens.join(", "))}</div>`:""}</td>
+        <td><span class="vb ${esc(p.veto)}">${esc(p.veto)}</span></td><td>${esc(p.surface)}</td><td>${esc(p.desc)}</td></tr>`).join("")}</tbody></table>
+
+    <div class="group-band"><span class="gt">Keeping a panel affordable</span><span class="gl"></span></div>
+    <div class="stack">${(C.measures||[]).map(m=>`<div class="std"><div class="sn">${esc(m.h)}</div><div><p class="sd">${esc(m.p)}</p>${m.cmd?`<code class="mono">${esc(m.cmd)}</code>`:""}</div></div>`).join("")}</div>`;
+}
+function secLoop(){
+  const L=D.promptLoop||{};
+  return `<h1 class="lede-h">The prompt loop</h1><p class="lede">${esc(L.intro||"")}</p>
+    <ol class="steps">${(L.steps||[]).map(s=>`<li><h4>${esc(s.h)}</h4><p>${esc(s.p)}</p>${s.ref?`<span class="reflink">${esc(s.ref)}</span>`:""}</li>`).join("")}</ol>
+
+    <div class="group-band"><span class="gt">The rules that hold the loop honest</span><span class="gl"></span><span class="gc">${(L.rules||[]).length}</span></div>
+    <div class="stack">${(L.rules||[]).map(r=>`<div class="std"><div class="sn">${esc(r.h)}</div><div><p class="sd">${esc(r.p)}</p>${r.ref?`<span class="reflink">${esc(r.ref)}</span>`:""}</div></div>`).join("")}</div>
+
+    <div class="group-band"><span class="gt">Tells that the loop has slipped</span><span class="gl"></span></div>
+    <ul class="tells">${(L.tells||[]).map(t=>`<li>${esc(t)}</li>`).join("")}</ul>`;
 }
 const GTYPE_COLORS={knowledge:"#7ee0c0",spec:"#6ea8fe",architecture:"#f0a65a",adr:"#fbbf24",design:"#c79bf2","design-language":"#d4a5c9",doc:"#9aa3b2",glossary:"#5ec5d4","decision-note":"#a8e06e","proof-pack":"#f2836b","threat-model":"#ff9191","privacy-review":"#ffb37a",index:"#b0b0b0"};
 function gcolor(t){return GTYPE_COLORS[t]||"#9aa3b2";}

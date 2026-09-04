@@ -961,6 +961,38 @@ window.DOCS_INDEX = {
       "sourceSha256": "c4fbb0fa3f8a9b08a474678af22be024a1aaa2deed40ad25829eb893036d799e"
     },
     {
+      "id": "note-20260903-portal-collaboration-and-loop-sections",
+      "path": "docs/notes/note-20260903-portal-collaboration-and-loop-sections.md",
+      "title": "Portal gains Multi-Agent Collaboration and The Prompt Loop; roster becomes derived",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-03-03",
+      "reviewSuggested": [],
+      "summary": "Four decisions taken while adding the two requested Pages sections: where they sit in the reading order, deriving the persona roster from the agent files rather than editorial, leaving the UI knowledge docs out of knowledgeGroups on purpose, and recording GIT-A after a revert destroyed uncommitted work.",
+      "tags": [
+        "portal",
+        "pages",
+        "personas",
+        "prompt-loop",
+        "inventory",
+        "derived-artifacts"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "b2a9372d2ace904e4b66bc66a5826e48dd348ec9511cb401d4617dfeff9d0d53"
+    },
+    {
       "id": "note-autopilot-open-questions-decisions",
       "path": "docs/notes/autopilot-open-questions-decisions.md",
       "title": "Decisions on PACK-O open questions (logging, class granularity, autopilot caps)",
@@ -1655,7 +1687,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7619af358abf544d3db03f64304cd72798250895dedd362ba83292ac3aa60b57"
+      "sourceSha256": "1c73d17c306f7edbb3264ba51dd36cbc37b09d2cadf1ac7df5401376d92a0c67"
     },
     {
       "id": "docs-index",
@@ -4960,5 +4992,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "7282d3d72e96549ac09de8b3598fca6c16b9f6be4e5d2f31ae4fc2fc6b599b2d"
+  "graphSha256": "a3bfc8a7d48b1000a66ec13cf9bb81ce3a3305de6d926c550f4d40cead43b5cb"
 };

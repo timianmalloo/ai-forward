@@ -190,6 +190,35 @@ def ui_examples():
 
 
 # ---------------------------------------------------------------- graph slice (from docs-index.js)
+def personas():
+    """The persona roster, DERIVED from the agent definitions rather than hand-listed.
+
+    Veto strength is read out of each agent's own `description`, so the portal cannot claim a
+    veto the shipped agent does not hold, and a new persona appears here the moment it exists.
+    The same property the skills section relies on: complete by construction (V12 — an honest
+    projection over a silent omission).
+    """
+    rows = []
+    for sub, kind in (("claude-code", "Claude Code"), ("copilot", "Copilot")):
+        adir = os.path.join(PACK, "adapters", sub, "agents")
+        if not os.path.isdir(adir):
+            continue
+        for fn in sorted(os.listdir(adir)):
+            if not fn.endswith(".md"):
+                continue
+            txt = read(os.path.join(adir, fn))
+            name = frontmatter_field(txt, "name") or fn[:-3]
+            desc = frontmatter_field(txt, "description") or ""
+            low = desc.lower()
+            veto = "hard" if "hard veto" in low else ("soft" if "soft veto" in low else "advisory")
+            lens = frontmatter_field(txt, "knowledge") or ""
+            lens = [d.strip() for d in lens.strip("[]").split(",") if d.strip()]
+            rows.append({"name": name, "surface": kind, "veto": veto,
+                         "desc": clip(desc), "lens": lens})
+    rows.sort(key=lambda r: ({"hard": 0, "soft": 1, "advisory": 2}[r["veto"]], r["name"]))
+    return rows
+
+
 def graph_slice():
     raw = read(os.path.join(ROOT, "docs", "docs-index.js"))
     m = re.search(r"window\.DOCS_INDEX\s*=\s*(\{.*\});?\s*$", raw, re.S)
@@ -237,17 +266,24 @@ def build():
     og = [g for g in order if g in by_group] + sorted(g for g in by_group if g not in order)
     skills = [{"group": g, "items": by_group[g]} for g in og]
 
-    sections = [
-        {"id": "start", "n": "1", "title": "Getting Started"},
-        {"id": "caps", "n": "2", "title": "Capabilities"},
-        {"id": "skills", "n": "3", "title": "The %d Skills" % len(names)},
-        {"id": "foundations", "n": "4", "title": "Foundations"},
-        {"id": "ui", "n": "5", "title": "UI & Design"},
-        {"id": "architecture", "n": "6", "title": "Architecture"},
-        {"id": "systems", "n": "7", "title": "Systems"},
-        {"id": "graph", "n": "8", "title": "Graph"},
-        {"id": "ref", "n": "9", "title": "Reference"},
+    # Section order is the reading order: what it is, what it does, the skills that do it,
+    # then HOW those skills are run — the persona panel and the per-turn loop — before the
+    # reference layers. Numbers are derived so inserting a section cannot leave a stale label.
+    titles = [
+        ("start", "Getting Started"),
+        ("caps", "Capabilities"),
+        ("skills", "The %d Skills" % len(names)),
+        ("agents", "Multi-Agent Collaboration"),
+        ("loop", "The Prompt Loop"),
+        ("foundations", "Foundations"),
+        ("ui", "UI & Design"),
+        ("architecture", "Architecture"),
+        ("systems", "Systems"),
+        ("graph", "Graph"),
+        ("ref", "Reference"),
     ]
+    sections = [{"id": sid, "n": str(i), "title": t}
+                for i, (sid, t) in enumerate(titles, start=1)]
 
     ui = dict(ed.get("ui", {}))
     ui["examplesIntro"] = ed.get("uiExamplesIntro", "")
@@ -263,6 +299,8 @@ def build():
         "foundations": {"intro": ed.get("foundationsIntro", ""), "groups": foundations(ed)},
         "ui": ui,
         "architecture": {"intro": ed.get("architectureIntro", ""), "groups": architecture()},
+        "collaboration": dict(ed.get("collaboration", {}), personas=personas()),
+        "promptLoop": ed.get("promptLoop", {}),
         "systems": ed.get("systems", []),
         "graph": graph_slice(),
         "surfaces": ed.get("surfaces", []),

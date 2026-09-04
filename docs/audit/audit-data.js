@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-03T22:55:04Z",
+  "generated": "2026-09-04T00:26:44Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2861,6 +2861,40 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "811c685e84590a3f01d862fc100a431394faf3c9",
         "short": "811c685e8",
+        "branch": "main",
+        "pushed": true
+      }
+    },
+    {
+      "id": "al-01M1MWZ36JB5DQPDEGYEJ5YM9G",
+      "shortname": "document-portal-collaboration-loop",
+      "datetime": "2026-09-04T00:26:44Z",
+      "session": "015BSvW6rL7SpuwziUbRHJTJ",
+      "prompt": "ground yourself in the repo, update the repos github pages, we should have explicit sections on the multi-agent collaboration,and the goal/exit criteria/optimize graph loop for prompts ... it should also ensure the skills inventories are up to date",
+      "summary": "Documentation Portal (the Pages front door) gains two sections: 4 Multi-Agent Collaboration and 5 The Prompt Loop; section numbers are now derived from list position so an insertion cannot leave a stale label. Collaboration covers peer/adversary modes, convene-on-predicate, severity+confidence, falsifiable veto-clears-when, deterministic conflict resolution, the new 8.7a yield rule, and the three affordability measures (per-agent lens, preflight, measured parallelism); its 23-persona roster with 7 hard / 2 soft vetoes is DERIVED from the agent frontmatter, so the page cannot claim a veto the shipped agent does not hold. Prompt Loop covers CT19 goal state, /optimize-graph Stage-0 triage (GO16), graph execution, the planned-vs-actual close (GO18/AL5b), plus five rules (lexicographic objective, immovable floors, autonomy in the how, GO9 cap-firing, GO19 per-phase tier) and five slip tells. Every directive identifier verified against source before use. Inventories: all 24 skills and all 38 knowledge docs verified to surface exactly once; new tests/docs_explorer/test_portal_inventory.py (14 tests) holds skills, knowledge routing, persona roster, veto accuracy and section-renderer wiring, observed failing on three drift shapes against file snapshots. Graph full-sweep re-derived to 142 artifacts, 0 orphans/stale/flagged/problems; health snapshot appended. New defect class GIT-A (partially-controlled) after git checkout -- destroyed uncommitted work during a control demonstration; decision note records all four calls. NOT done: API reference and the four diagram families were not regenerated (out of the requested scope), and the web explainer was left unchanged.",
+      "kind": "skill",
+      "skill": "document",
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [
+        "docs/portal/index.html",
+        "docs/notes/note-20260903-portal-collaboration-and-loop-sections.md"
+      ],
+      "tags": [
+        "portal",
+        "pages",
+        "personas",
+        "prompt-loop",
+        "inventory"
+      ],
+      "outcome": "success",
+      "goal": "Ground in the repo, add explicit Pages sections on multi-agent collaboration and the goal/exit-criteria/optimize-graph prompt loop, and ensure the skills inventories are current",
+      "done_when": "Both sections live on the published portal, every inventory verified against the filesystem and held by a control, graph re-derived, 10 gates green",
+      "started_at": "2026-09-04T00:16:11Z",
+      "duration_seconds": 633.0,
+      "git": {
+        "sha": "658ebbf0d7d938066d631667bd7ddc86d826865c",
+        "short": "658ebbf0d",
         "branch": "main",
         "pushed": true
       }

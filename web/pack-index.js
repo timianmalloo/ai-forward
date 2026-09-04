@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 141
+"count": 142
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 290,
+"total": 291,
 "items": [
 {
 "cat": "knowledge",
@@ -1494,6 +1494,15 @@ window.PACK_INDEX = {
 "path": "docs/notes/note-20260823-merge-driver-resolves-not-regenerates.md",
 "kind": "decision-note",
 "text": "a merge driver cannot regenerate a derived artifact — git runs drivers before the sources are merged the phase-3 design had the .gitattributes merge driver regenerating a derived artifact during the merge. git runs merge drivers per file in arbitrary order, so the artifact's own sources may still be unmerged when its driver runs. the corrected contract is resolve-then-regenerate: the driver takes ours and records a debt, and `coord regen` clears it once the tree is whole. decision-note coordination merge-driver git design-amendment relates-to design-coord-federation-phase3 relates-to adr-0009-artifact-class-and-derived-merge"
+},
+{
+"cat": "graph",
+"id": "note-20260903-portal-collaboration-and-loop-sections",
+"title": "Portal gains Multi-Agent Collaboration and The Prompt Loop; roster becomes derived",
+"summary": "Four decisions taken while adding the two requested Pages sections: where they sit in the reading order, deriving the persona roster from the agent files rather than editorial, leaving the UI knowledge docs out of knowledgeGroups on…",
+"path": "docs/notes/note-20260903-portal-collaboration-and-loop-sections.md",
+"kind": "decision-note",
+"text": "portal gains multi-agent collaboration and the prompt loop; roster becomes derived four decisions taken while adding the two requested pages sections: where they sit in the reading order, deriving the persona roster from the agent files rather than editorial, leaving the ui knowledge docs out of knowledgegroups on purpose, and recording git-a after a revert destroyed uncommitted work. portal pages personas prompt-loop inventory derived-artifacts relates-to architecture relates-to defect-classes"
 },
 {
 "cat": "graph",

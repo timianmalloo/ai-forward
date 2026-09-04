@@ -367,5 +367,127 @@
       "what": "Approve proposed learnings from a dream pass.",
       "localOnly": true
     }
-  ]
+  ],
+  "collaboration": {
+    "intro": "Work is not reviewed by one general-purpose reader. It is convened as a panel of named lenses, each of which authors in one mode and attacks in the other — and the author never clears its own hard veto.",
+    "rosterNote": "The roster is derived from the agent definitions in pack/adapters/, so this count cannot drift from what actually ships.",
+    "modes": [
+      {
+        "h": "Peer Mode — authoring",
+        "p": "The lens pairs with the implementer and helps produce the work: the rollout plan, the data model, the test strategy, the threat model. Collaborative, and its output is part of the artifact."
+      },
+      {
+        "h": "Adversary Mode — review",
+        "p": "The same lens attacks the same artifact from its own angle. Its job is to find the flaw, not to approve the work. A persona never reviews its own authoring: the mode switch is the whole point."
+      }
+    ],
+    "mechanics": [
+      {
+        "h": "Convene on a predicate, not on habit",
+        "p": "Each persona carries a trigger predicate — the Security lens on a trust boundary or a new dependency, the Data lens on a schema change or migration, the Distributed Systems lens on anything async or ordered. The panel is a function of the change class.",
+        "ref": "persona-audit.md §8.7"
+      },
+      {
+        "h": "Findings are severity-graded and confidence-labelled",
+        "p": "Every finding carries a severity and a Verified / Inferred / Flagged confidence label, so a hunch is never filed as a fact and a blocker is never filed as a nit.",
+        "ref": "persona-audit.md §8.2–8.3"
+      },
+      {
+        "h": "A veto states how it clears",
+        "p": "A veto is not a mood. It names a falsifiable exit predicate — the specific, checkable thing that would resolve it — so the author knows exactly what unblocks the work.",
+        "ref": "persona-audit.md §8.4"
+      },
+      {
+        "h": "Conflicts resolve deterministically",
+        "p": "Two lenses disagreeing is normal and is not settled by whoever argued last. Precedence is written down, and the Tech Lead holds the casting vote on the standing Architect-versus-Simplifier tension.",
+        "ref": "persona-audit.md §8.5"
+      },
+      {
+        "h": "Re-convening is earned",
+        "p": "The first convocation is never gated. A repeat pass by an advisory lens must be earned by a finding that was actually accepted — because a lens that keeps producing advisory-only findings has already said what it has to say. Hard-veto lenses are never yield-gated: a quiet veto usually means the work was clean.",
+        "ref": "persona-audit.md §8.7a"
+      }
+    ],
+    "vetoNote": "Seven lenses hold a hard veto; two hold a soft veto. A hard veto blocks until its exit predicate is met. A soft veto is a strong objection that the Tech Lead can overrule on the record.",
+    "measures": [
+      {
+        "h": "Each agent carries its own lens, not the whole library",
+        "p": "Every persona declares the knowledge docs its judgement actually needs. An agent with no declared lens inherits the entire instruction set, which is what makes delegation to a cheap model fail while costing almost nothing — the smallest window breaks first. The widest lens in the roster is now well under the main thread's always-on set.",
+        "cmd": "python context-budget.py agents"
+      },
+      {
+        "h": "A wave that cannot fit is refused before dispatch",
+        "p": "One failure at a context ceiling predicts every sibling in the wave: the prefix is identical for all of them. The preflight check compares the assembled prefix against the target model's window once, instead of rediscovering it N times.",
+        "cmd": "python context-budget.py preflight --window 128000 --agent the-simplifier"
+      },
+      {
+        "h": "Parallelism is measured, never asserted",
+        "p": "Summed agent time cannot tell serial from parallel. Each run records a wall-clock span, and the union of those intervals gives the real speedup and peak concurrency — so a fan-out claim is falsifiable rather than flattering.",
+        "cmd": "audit-log.py append --agent-run 'the-simplifier|<start>|<end>'"
+      }
+    ]
+  },
+  "promptLoop": {
+    "intro": "Every non-trivial turn runs the same four beats. It exists to defeat two failure modes at once: starting work before the finish line is defined, and continuing work after it has been reached.",
+    "steps": [
+      {
+        "n": "1",
+        "h": "Write the goal state — before the first substantive tool call",
+        "p": "Goal · Done when · Not in scope. Three lines, written before anything is touched. If you cannot say in one line what would end the turn, you are not ready to start it. This is the preventive mirror of the Completed / Remaining / Next close.",
+        "ref": "communication-and-task-discipline.md CT19"
+      },
+      {
+        "n": "2",
+        "h": "Plan the whole turn once — /optimize-graph",
+        "p": "One planning pass across all the tasks in the turn, not one per task. Stage 0 is triage: a closed question skips planning entirely, gets answered, and stops. Planning cost is real, and work smaller than its own plan does not get one.",
+        "ref": "execution-graph-optimization.md GO16 · /optimize-graph"
+      },
+      {
+        "n": "3",
+        "h": "Execute the graph",
+        "p": "Real dependencies only — incidental ordering is deleted. Shorten the critical path before widening the graph. Parallelise only what passes both the independence and coupling tests, under a bounded fan-out contract with a width cap and a join rule. Every loop gets a termination variant.",
+        "ref": "execution-graph-optimization.md GO1–GO14"
+      },
+      {
+        "n": "4",
+        "h": "Close, and record planned versus actual",
+        "p": "Completed / Remaining / Next. The turn's goal and stop condition land in the audit log, which is what makes the discipline measurable across sessions rather than merely stated — and it is the presence signal the /dream consolidation pass mines.",
+        "ref": "audit-and-change-log.md AL5b · GO18"
+      }
+    ],
+    "rules": [
+      {
+        "h": "The objective is lexicographic, and speed is last",
+        "p": "Completeness and rigor first, then token cost, then speed — each optimised only subject to the ones above it. A slower plan is acceptable only when completeness rises AND rigor rises AND tokens fall. Slower while unchanged is pure loss.",
+        "ref": "GO2"
+      },
+      {
+        "h": "Rigor floors are immovable nodes",
+        "p": "Optimisation may reorder the floors. It may never remove them. The Testing-Strategy union, the change-surface list, red-first, and the audit entries are not discretionary, and no speed argument reaches them.",
+        "ref": "GO2 · CT18"
+      },
+      {
+        "h": "Autonomy is latitude in the how, never the what",
+        "p": "A question is not a licence to author a change, and a gap found along the way is a finding, never a new goal. An explicit stop ends the current track and voids any goal the agent set for itself.",
+        "ref": "CT20–CT25"
+      },
+      {
+        "h": "A cap firing is a defect signal, not a termination argument",
+        "p": "When a circuit breaker trips — an iteration cap, or a harness nudge saying the work looks unfinished — that is information about the plan, not permission to stop or to keep going. Re-read the goal state: if it is met, conclude.",
+        "ref": "GO9"
+      },
+      {
+        "h": "Allocate the model tier per phase",
+        "p": "Design and adversarial review are high-novelty and low-iteration: buy the expensive tier. Deploy and debug loops are the inverse, and every turn there re-reads the whole prefix. Re-allocate at the boundary, explicitly.",
+        "ref": "GO19"
+      }
+    ],
+    "tells": [
+      "\"so I can wire it in\" — scope the turn did not authorise",
+      "\"let me look at the structure\" — exploring instead of answering",
+      "a closed question whose answer is in hand while the turn continues",
+      "resuming a halted track because a reminder arrived",
+      "being unable to say in one line what would end this turn"
+    ]
+  }
 }

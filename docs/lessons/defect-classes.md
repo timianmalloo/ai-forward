@@ -26,7 +26,7 @@ summary: >-
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled `12` · partially-controlled `8` · uncontrolled `21`
+**Status counts:** controlled `12` · partially-controlled `9` · uncontrolled `21`
 **Recurrence since last review:** `0` — *a second occurrence of a known class means the control was wrong, not that someone was careless (CI4).*
 
 ---
@@ -50,6 +50,14 @@ summary: >-
 ## Project classes
 
 *Classes discovered in this repository. Newest first.*
+
+### GIT-A — A revert used as an undo, on a file that also carries unrelated uncommitted work
+- **Signature:** a temporary mutation is made to a tracked file to test something, then undone with `git checkout -- <path>` / `git restore <path>`. That does not restore the *pre-mutation* state; it restores **HEAD**. Any uncommitted work in the same file is silently destroyed, and the command reports nothing. The tell: a revert command aimed at a path inside a working tree that has not been committed since the work began, and the phrase "restore it afterwards" in a plan that mutates a real file.
+- **Why it survives:** the command succeeds, prints nothing, and leaves a file that looks plausible — often *more* plausible, because it is the last known-good committed version. The loss surfaces only when a later step needs the missing work, by which point the mutation and the revert are several actions back. Nothing in the toolchain distinguishes "undo my scratch edit" from "throw away an hour of work"; both are the same verb.
+- **Instances:**
+  - `2026-09-03` **FR-074** — while demonstrating a new portal-inventory control failing, three files were mutated in place and restored with `git checkout --`. Two of them (`tools/docs-portal-editorial.json`, `docs/portal/index.html`) held the session's uncommitted work — the two new portal sections and their renderers — which was destroyed. Recovered because the editorial content still existed in a scratchpad file and the renderer source was still in the session transcript; neither is a recovery mechanism worth relying on. The third demonstration also silently became inconclusive, because the file it needed had already been reverted.
+- **Control:** **Never restore a real file from git to undo a scratch mutation.** Snapshot the file first (`cp <path> <tmp>.bak`) and restore from the snapshot, or — better — mutate a *copy* and point the tool at it (`--knowledge-dir`, `--config`, an argument the tool already accepts for exactly this). Where a real-tree mutation is unavoidable, `git diff --quiet -- <path>` before the revert and refuse when it reports changes. The `context-budget` controls demonstrate the good shape: every one of them takes an explicit directory argument so the demonstration never touches the tree. **Status is honest about strength:** this is a practice plus a register entry, not a gate — no CI check can see a destructive undo that happened in a working tree.
+- **Status:** `partially-controlled`
 
 ### PACK-R — A fixed prefix attached to every call, sized by what fits rather than by what each call needs
 - **Signature:** an instruction set, tool schema or preamble deployed with an unconditional scope (`applyTo: "**"`, "load everything", a global system prompt) because that is the simplest thing that works when the set is small. It stays correct and grows silently: each addition looks free at the moment it is written, since nothing reports the cost, and the cost is paid on *every* call rather than at the moment of use. The tell: **a scope that is the same for all members of a set whose members are obviously not all relevant at once**, and a corpus whose size nobody can state without measuring it.

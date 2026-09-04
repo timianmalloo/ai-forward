@@ -28,33 +28,43 @@ window.PORTAL_DATA = {
       "title": "The 24 Skills"
     },
     {
-      "id": "foundations",
+      "id": "agents",
       "n": "4",
+      "title": "Multi-Agent Collaboration"
+    },
+    {
+      "id": "loop",
+      "n": "5",
+      "title": "The Prompt Loop"
+    },
+    {
+      "id": "foundations",
+      "n": "6",
       "title": "Foundations"
     },
     {
       "id": "ui",
-      "n": "5",
+      "n": "7",
       "title": "UI & Design"
     },
     {
       "id": "architecture",
-      "n": "6",
+      "n": "8",
       "title": "Architecture"
     },
     {
       "id": "systems",
-      "n": "7",
+      "n": "9",
       "title": "Systems"
     },
     {
       "id": "graph",
-      "n": "8",
+      "n": "10",
       "title": "Graph"
     },
     {
       "id": "ref",
-      "n": "9",
+      "n": "11",
       "title": "Reference"
     }
   ],
@@ -787,6 +797,405 @@ window.PORTAL_DATA = {
           }
         ]
       }
+    ]
+  },
+  "collaboration": {
+    "intro": "Work is not reviewed by one general-purpose reader. It is convened as a panel of named lenses, each of which authors in one mode and attacks in the other — and the author never clears its own hard veto.",
+    "rosterNote": "The roster is derived from the agent definitions in pack/adapters/, so this count cannot drift from what actually ships.",
+    "modes": [
+      {
+        "h": "Peer Mode — authoring",
+        "p": "The lens pairs with the implementer and helps produce the work: the rollout plan, the data model, the test strategy, the threat model. Collaborative, and its output is part of the artifact."
+      },
+      {
+        "h": "Adversary Mode — review",
+        "p": "The same lens attacks the same artifact from its own angle. Its job is to find the flaw, not to approve the work. A persona never reviews its own authoring: the mode switch is the whole point."
+      }
+    ],
+    "mechanics": [
+      {
+        "h": "Convene on a predicate, not on habit",
+        "p": "Each persona carries a trigger predicate — the Security lens on a trust boundary or a new dependency, the Data lens on a schema change or migration, the Distributed Systems lens on anything async or ordered. The panel is a function of the change class.",
+        "ref": "persona-audit.md §8.7"
+      },
+      {
+        "h": "Findings are severity-graded and confidence-labelled",
+        "p": "Every finding carries a severity and a Verified / Inferred / Flagged confidence label, so a hunch is never filed as a fact and a blocker is never filed as a nit.",
+        "ref": "persona-audit.md §8.2–8.3"
+      },
+      {
+        "h": "A veto states how it clears",
+        "p": "A veto is not a mood. It names a falsifiable exit predicate — the specific, checkable thing that would resolve it — so the author knows exactly what unblocks the work.",
+        "ref": "persona-audit.md §8.4"
+      },
+      {
+        "h": "Conflicts resolve deterministically",
+        "p": "Two lenses disagreeing is normal and is not settled by whoever argued last. Precedence is written down, and the Tech Lead holds the casting vote on the standing Architect-versus-Simplifier tension.",
+        "ref": "persona-audit.md §8.5"
+      },
+      {
+        "h": "Re-convening is earned",
+        "p": "The first convocation is never gated. A repeat pass by an advisory lens must be earned by a finding that was actually accepted — because a lens that keeps producing advisory-only findings has already said what it has to say. Hard-veto lenses are never yield-gated: a quiet veto usually means the work was clean.",
+        "ref": "persona-audit.md §8.7a"
+      }
+    ],
+    "vetoNote": "Seven lenses hold a hard veto; two hold a soft veto. A hard veto blocks until its exit predicate is met. A soft veto is a strong objection that the Tech Lead can overrule on the record.",
+    "measures": [
+      {
+        "h": "Each agent carries its own lens, not the whole library",
+        "p": "Every persona declares the knowledge docs its judgement actually needs. An agent with no declared lens inherits the entire instruction set, which is what makes delegation to a cheap model fail while costing almost nothing — the smallest window breaks first. The widest lens in the roster is now well under the main thread's always-on set.",
+        "cmd": "python context-budget.py agents"
+      },
+      {
+        "h": "A wave that cannot fit is refused before dispatch",
+        "p": "One failure at a context ceiling predicts every sibling in the wave: the prefix is identical for all of them. The preflight check compares the assembled prefix against the target model's window once, instead of rediscovering it N times.",
+        "cmd": "python context-budget.py preflight --window 128000 --agent the-simplifier"
+      },
+      {
+        "h": "Parallelism is measured, never asserted",
+        "p": "Summed agent time cannot tell serial from parallel. Each run records a wall-clock span, and the union of those intervals gives the real speedup and peak concurrency — so a fan-out claim is falsifiable rather than flattering.",
+        "cmd": "audit-log.py append --agent-run 'the-simplifier|<start>|<end>'"
+      }
+    ],
+    "personas": [
+      {
+        "name": "ai-systems-engineer",
+        "surface": "Claude Code",
+        "veto": "hard",
+        "desc": "Owns the AI surface — tier allocation, prompt/tool-description/skill as contract, eval design, grounding/hallucination, non-determinism containment, model drift, and inference cost. Hard veto on an AI capability with no eval harness or with non-determinism...",
+        "lens": [
+          "no-guessing-protocol",
+          "communication-and-task-discipline",
+          "ai-commercial-models",
+          "instrumentation-over-inference",
+          "testing-strategy"
+        ]
+      },
+      {
+        "name": "data-persistence-architect",
+        "surface": "Claude Code",
+        "veto": "hard",
+        "desc": "Owns the data store — schema design and evolution, migration safety (expand-migrate-contract, tested rollback), data-integrity invariants, query/index performance, and data lifecycle. Hard veto on an irreversible/destructive migration with no...",
+        "lens": [
+          "no-guessing-protocol",
+          "communication-and-task-discipline",
+          "domain-and-data-modelling",
+          "end-to-end-integrity"
+        ]
+      },
+      {
+        "name": "distributed-systems-architect",
+        "surface": "Copilot",
+        "veto": "hard",
+        "desc": "Messaging & async expert — delivery semantics, idempotency, ordering, backpressure, consistency boundaries, async pitfalls. Hard veto on unsafe async/messaging designs. Convene when the change is async, uses messaging/queues, retries, multi-writes, depends on...",
+        "lens": [
+          "no-guessing-protocol",
+          "communication-and-task-discipline",
+          "end-to-end-integrity",
+          "observability-and-instrumentation"
+        ]
+      },
+      {
+        "name": "privacy-data-governance",
+        "surface": "Claude Code",
+        "veto": "hard",
+        "desc": "Owns data governance — PII/work-data minimization, consent & purpose limitation, retention/deletion basis, residency, regulatory exposure, and model/third-party egress. Asks \"should we have this data at all?\" — distinct from security's \"is it protected?\"....",
+        "lens": [
+          "no-guessing-protocol",
+          "communication-and-task-discipline",
+          "responsible-ai-policy",
+          "domain-and-data-modelling"
+        ]
+      },
+      {
+        "name": "security-identity-architect",
+        "surface": "Copilot",
+        "veto": "hard",
+        "desc": "Adversarial security review — trust boundaries, authN/authZ, injection, secrets, delegated identity, least privilege, prompt injection, and supply chain & licensing. Hard veto on security-relevant designs. Convene when the change touches auth, secrets, PII, a...",
+        "lens": [
+          "no-guessing-protocol",
+          "communication-and-task-discipline",
+          "responsible-ai-policy",
+          "end-to-end-integrity"
+        ]
+      },
+      {
+        "name": "test-architect",
+        "surface": "Copilot",
+        "veto": "hard",
+        "desc": "Demands verifiability; maps every spec promise to a test, attacks coverage gaps and tests that pass but prove nothing. Hard veto on any correctness claim with no verification path. Convene for any correctness claim — i.e. always, above T0.",
+        "lens": [
+          "no-guessing-protocol",
+          "communication-and-task-discipline",
+          "testing-strategy",
+          "ci-and-test-efficiency"
+        ]
+      },
+      {
+        "name": "ux-accessibility",
+        "surface": "Claude Code",
+        "veto": "hard",
+        "desc": "Cross-platform UX & accessibility review — task-completion, information architecture, error/empty/loading states, interaction conventions, i18n, and WCAG / platform-a11y conformance. Hard veto on accessibility when the product is under an a11y obligation;...",
+        "lens": [
+          "no-guessing-protocol",
+          "communication-and-task-discipline",
+          "ui-interaction-design",
+          "ui-craft-detection"
+        ]
+      },
+      {
+        "name": "release-engineer",
+        "surface": "Claude Code",
+        "veto": "soft",
+        "desc": "Owns the path to production and back — CI/CD gates, progressive rollout, feature-flag discipline, migration sequencing/choreography, environment parity, and rollback triggers. Soft veto on a change with a migration or irreversible step that ships with no...",
+        "lens": [
+          "no-guessing-protocol",
+          "communication-and-task-discipline",
+          "ci-and-test-efficiency",
+          "session-worktree-discipline"
+        ]
+      },
+      {
+        "name": "the-simplifier",
+        "surface": "Copilot",
+        "veto": "soft",
+        "desc": "Reduces every design to the simplest thing that is still correct; attacks speculative generality, needless abstraction, cargo-cult complexity. Soft veto on unjustified complexity. Convene when the change adds an abstraction, layer, config option, dependency,...",
+        "lens": [
+          "no-guessing-protocol",
+          "communication-and-task-discipline",
+          "solution-selection-ladder"
+        ]
+      },
+      {
+        "name": "csharp-developer",
+        "surface": "Copilot",
+        "veto": "advisory",
+        "desc": "Idiomatic modern C#/.NET 10 review against the C# Coding Style Guide and the LOA .NET idiom map. Convene for any C# code in the change.",
+        "lens": [
+          "no-guessing-protocol",
+          "communication-and-task-discipline",
+          "csharp-style-guide",
+          "testing-strategy"
+        ]
+      },
+      {
+        "name": "documentation-steward",
+        "surface": "Claude Code",
+        "veto": "advisory",
+        "desc": "Owns the documentation bundle and the repo's knowledge graph — API reference (JavaDoc-style), the four diagram families (sequence, class, layered architecture, component), the Docs Explorer index (docs/docs-index.js + docs/index.html), and the markdown +...",
+        "lens": [
+          "no-guessing-protocol",
+          "communication-and-task-discipline",
+          "knowledge-visualization",
+          "audit-and-change-log"
+        ]
+      },
+      {
+        "name": "domain-researcher",
+        "surface": "Claude Code",
+        "veto": "advisory",
+        "desc": "Establishes API/library/protocol/schema contracts and domain facts with cited sources and executed spikes; runs the Spike Protocol for unfamiliar SDKs/APIs/MCP servers. Owns Rigor Protocol Stage 3 evidence. Use before any architect or designer commits to a...",
+        "lens": [
+          "no-guessing-protocol",
+          "communication-and-task-discipline",
+          "spike-protocol",
+          "rigor-protocol"
+        ]
+      },
+      {
+        "name": "enterprise-architect",
+        "surface": "Copilot",
+        "veto": "advisory",
+        "desc": "Reviews designs for fit with the wider system, standards conformance, longevity/TCO, and LOA archetype & principle alignment. Convene for a new service, a cross-team contract, an architecture-level change, a build-vs-buy call, or an LOA archetype selection.",
+        "lens": [
+          "no-guessing-protocol",
+          "communication-and-task-discipline",
+          "layered-optimized-architecture",
+          "engineering-governance"
+        ]
+      },
+      {
+        "name": "mobile-app-developer",
+        "surface": "Claude Code",
+        "veto": "advisory",
+        "desc": "Idiomatic native/cross-platform mobile review — app lifecycle, power & data budgets, offline/sync, permissions, push, platform HIG, and app-store review gates (iOS & Android). Advisory; escalates store-policy and on-device-resource blockers. Convene when the...",
+        "lens": [
+          "no-guessing-protocol",
+          "communication-and-task-discipline",
+          "ui-interaction-design",
+          "technical-ui-design"
+        ]
+      },
+      {
+        "name": "native-desktop-developer",
+        "surface": "Claude Code",
+        "veto": "advisory",
+        "desc": "Idiomatic native desktop review for macOS and Windows — platform HIG, windowing/menus/keyboard conventions, packaging/signing/notarization, OS integration, high-DPI/multi-monitor. Advisory; escalates signing/notarization and OS-gatekeeper blockers. Convene...",
+        "lens": [
+          "no-guessing-protocol",
+          "communication-and-task-discipline",
+          "ui-interaction-design",
+          "technical-ui-design"
+        ]
+      },
+      {
+        "name": "orchestrator",
+        "surface": "Claude Code",
+        "veto": "advisory",
+        "desc": "Convenes and sequences the persona swarm, runs the Rigor Protocol, enforces phase gates and the peer/adversary mode-switch, and maintains the evidence trail. Use to drive any multi-phase task (specify, define-architecture, design, implement, investigate).",
+        "lens": [
+          "no-guessing-protocol",
+          "communication-and-task-discipline",
+          "rigor-protocol",
+          "execution-graph-optimization",
+          "persona-audit",
+          "collaborative-personas"
+        ]
+      },
+      {
+        "name": "patterns-expert",
+        "surface": "Copilot",
+        "veto": "advisory",
+        "desc": "Maps problems to established patterns (GoF, integration/enterprise, language idioms, LOA catalog); pushes standard idioms over bespoke invention; requires patterns be named. Convene for a bespoke solution to a recurring problem, any named-pattern usage,...",
+        "lens": [
+          "no-guessing-protocol",
+          "communication-and-task-discipline",
+          "layered-optimized-architecture",
+          "solution-selection-ladder"
+        ]
+      },
+      {
+        "name": "product-strategist",
+        "surface": "Claude Code",
+        "veto": "advisory",
+        "desc": "Defines the product/problem — core scenario, industry comparables, user evidence, explicit non-goals, and testable acceptance criteria. Owns /specify ideation as a collaborating peer. Use to turn a raw prompt into a crisp, falsifiable spec before any...",
+        "lens": [
+          "no-guessing-protocol",
+          "communication-and-task-discipline",
+          "specification-standards"
+        ]
+      },
+      {
+        "name": "python-developer",
+        "surface": "Copilot",
+        "veto": "advisory",
+        "desc": "Typed, validated, idiomatic Python review — type hints, Pydantic boundaries, async hygiene, ruff/uv tooling. Convene for any Python code in the change.",
+        "lens": [
+          "no-guessing-protocol",
+          "communication-and-task-discipline",
+          "testing-strategy"
+        ]
+      },
+      {
+        "name": "rust-developer",
+        "surface": "Copilot",
+        "veto": "advisory",
+        "desc": "Idiomatic Rust review — error handling, ownership/borrowing, Send/Sync, async runtime, clippy-clean. Convene for any Rust code in the change.",
+        "lens": [
+          "no-guessing-protocol",
+          "communication-and-task-discipline",
+          "testing-strategy"
+        ]
+      },
+      {
+        "name": "sre-diagnostician",
+        "surface": "Copilot",
+        "veto": "advisory",
+        "desc": "Production-failure lens — observability, telemetry, failure modes, timeouts/retries/circuit-breakers, rollback, resource bounds, and design-time performance budgets & profiling. Convene when the change adds a runtime side effect, external dependency,...",
+        "lens": [
+          "no-guessing-protocol",
+          "communication-and-task-discipline",
+          "observability-and-instrumentation",
+          "instrumentation-over-inference"
+        ]
+      },
+      {
+        "name": "tech-lead",
+        "surface": "Copilot",
+        "veto": "advisory",
+        "desc": "Pushes for the smallest correct shippable change — maintainability, YAGNI, honest tracked debt, can-the-team-hold-this. Holds the casting vote on Architect↔Simplifier tension. Convene for any non-trivial feature, or whenever that tension is present.",
+        "lens": [
+          "no-guessing-protocol",
+          "communication-and-task-discipline",
+          "solution-selection-ladder",
+          "end-to-end-integrity"
+        ]
+      },
+      {
+        "name": "ux-researcher-ia",
+        "surface": "Claude Code",
+        "veto": "advisory",
+        "desc": "User-experience research and information architecture — the \"how it works\" layer beneath the visual surface. Owns user/business needs, personas, jobs-to-be-done, information architecture (categorization, hierarchy, navigation, labeling), user flows and...",
+        "lens": [
+          "no-guessing-protocol",
+          "communication-and-task-discipline",
+          "specification-standards",
+          "ui-archetype-grammar"
+        ]
+      }
+    ]
+  },
+  "promptLoop": {
+    "intro": "Every non-trivial turn runs the same four beats. It exists to defeat two failure modes at once: starting work before the finish line is defined, and continuing work after it has been reached.",
+    "steps": [
+      {
+        "n": "1",
+        "h": "Write the goal state — before the first substantive tool call",
+        "p": "Goal · Done when · Not in scope. Three lines, written before anything is touched. If you cannot say in one line what would end the turn, you are not ready to start it. This is the preventive mirror of the Completed / Remaining / Next close.",
+        "ref": "communication-and-task-discipline.md CT19"
+      },
+      {
+        "n": "2",
+        "h": "Plan the whole turn once — /optimize-graph",
+        "p": "One planning pass across all the tasks in the turn, not one per task. Stage 0 is triage: a closed question skips planning entirely, gets answered, and stops. Planning cost is real, and work smaller than its own plan does not get one.",
+        "ref": "execution-graph-optimization.md GO16 · /optimize-graph"
+      },
+      {
+        "n": "3",
+        "h": "Execute the graph",
+        "p": "Real dependencies only — incidental ordering is deleted. Shorten the critical path before widening the graph. Parallelise only what passes both the independence and coupling tests, under a bounded fan-out contract with a width cap and a join rule. Every loop gets a termination variant.",
+        "ref": "execution-graph-optimization.md GO1–GO14"
+      },
+      {
+        "n": "4",
+        "h": "Close, and record planned versus actual",
+        "p": "Completed / Remaining / Next. The turn's goal and stop condition land in the audit log, which is what makes the discipline measurable across sessions rather than merely stated — and it is the presence signal the /dream consolidation pass mines.",
+        "ref": "audit-and-change-log.md AL5b · GO18"
+      }
+    ],
+    "rules": [
+      {
+        "h": "The objective is lexicographic, and speed is last",
+        "p": "Completeness and rigor first, then token cost, then speed — each optimised only subject to the ones above it. A slower plan is acceptable only when completeness rises AND rigor rises AND tokens fall. Slower while unchanged is pure loss.",
+        "ref": "GO2"
+      },
+      {
+        "h": "Rigor floors are immovable nodes",
+        "p": "Optimisation may reorder the floors. It may never remove them. The Testing-Strategy union, the change-surface list, red-first, and the audit entries are not discretionary, and no speed argument reaches them.",
+        "ref": "GO2 · CT18"
+      },
+      {
+        "h": "Autonomy is latitude in the how, never the what",
+        "p": "A question is not a licence to author a change, and a gap found along the way is a finding, never a new goal. An explicit stop ends the current track and voids any goal the agent set for itself.",
+        "ref": "CT20–CT25"
+      },
+      {
+        "h": "A cap firing is a defect signal, not a termination argument",
+        "p": "When a circuit breaker trips — an iteration cap, or a harness nudge saying the work looks unfinished — that is information about the plan, not permission to stop or to keep going. Re-read the goal state: if it is met, conclude.",
+        "ref": "GO9"
+      },
+      {
+        "h": "Allocate the model tier per phase",
+        "p": "Design and adversarial review are high-novelty and low-iteration: buy the expensive tier. Deploy and debug loops are the inverse, and every turn there re-reads the whole prefix. Re-allocate at the boundary, explicitly.",
+        "ref": "GO19"
+      }
+    ],
+    "tells": [
+      "\"so I can wire it in\" — scope the turn did not authorise",
+      "\"let me look at the structure\" — exploring instead of answering",
+      "a closed question whose answer is in hand while the turn continues",
+      "resuming a halted track because a reminder arrived",
+      "being unable to say in one line what would end this turn"
     ]
   },
   "systems": [
@@ -1547,6 +1956,12 @@ window.PORTAL_DATA = {
         "type": "decision-note",
         "title": "A merge driver cannot regenerate a derived artifact — git runs drivers before the sources are merged",
         "summary": "The Phase-3 design had the .gitattributes merge driver regenerating a derived artifact during the merge. Git runs merge drivers per file in arbitrary order, so..."
+      },
+      {
+        "id": "note-20260903-portal-collaboration-and-loop-sections",
+        "type": "decision-note",
+        "title": "Portal gains Multi-Agent Collaboration and The Prompt Loop; roster becomes derived",
+        "summary": "Four decisions taken while adding the two requested Pages sections: where they sit in the reading order, deriving the persona roster from the agent files..."
       },
       {
         "id": "note-autopilot-open-questions-decisions",
@@ -2888,6 +3303,16 @@ window.PORTAL_DATA = {
       {
         "from": "note-20260823-merge-driver-resolves-not-regenerates",
         "to": "design-coord-federation-phase3",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260903-portal-collaboration-and-loop-sections",
+        "to": "architecture",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260903-portal-collaboration-and-loop-sections",
+        "to": "defect-classes",
         "rel": "relates-to"
       },
       {
