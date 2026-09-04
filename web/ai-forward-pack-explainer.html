@@ -713,7 +713,7 @@ window.addEventListener("DOMContentLoaded",function(){
         <nav class="sections" aria-label="Sections">
           <a href="#overview">Overview</a><a href="#fit">How it fits</a>
           <a href="#rigor">Rigor Protocol</a><a href="#knowledge">Knowledge</a>
-          <a href="#personas">Personas</a><a href="#skills">Skills</a><a href="#coord">Coordination</a><a href="#loop">Prompt loop</a>
+          <a href="#personas">Personas</a><a href="#skills">Skills</a><a href="#coord">Coordination</a><a href="#loop">Prompt loop</a><a href="#budget">Context budget</a>
           <a href="#grammar">UI Grammar</a><a href="#catalog">Templates</a><a href="#mockups">Mockups</a>
         </nav>
         <button class="tbtn" id="themebtn" aria-label="Toggle colour theme"><span aria-hidden="true">◐</span> Theme</button>
@@ -973,6 +973,56 @@ window.addEventListener("DOMContentLoaded",function(){
               reminder arrived.</p></div>
           </div>
         </div>
+      </div></section>
+
+      <!-- CONTEXT BUDGET -->
+      <section class="block" id="budget" aria-label="Context budget"><div class="wrap">
+        <div class="sechead"><div class="seclabel">What every call pays for</div>
+          <h2>The context budget</h2>
+          <p>Anything loaded unconditionally is the <b>static prefix of every model call</b> — re-read
+          every turn, billed every turn, and subtracted from the window before the user has said
+          anything. It is the purest form of a cost nothing reports, because each new document looks
+          free at the moment it is written.</p></div>
+        <div class="card">
+          <h3 style=${{fontSize:15}}>How it was found</h3>
+          <p>A profiled session in a repo that had adopted the pack made it visible. 37 of the 39
+          knowledge documents shipped with <code>applyTo: "**"</code> — attach on every request — so a
+          ~184,000-token corpus became the prefix of all 484 calls. <b>63% of every main-thread input
+          token was the same text, re-read.</b> Worse, the prefix exceeded a flash-class context
+          window outright: the cheapest model tier produced <b>100% of the failures on 0.1% of the
+          spend</b>, with 27 of 39 delegated runs failing before doing any work. Cost telemetry could
+          not see it. Only a window measurement could.</p></div>
+        <div class="grid g2" style=${{marginTop:14}}>
+          <div class="card"><h3 style=${{fontSize:15}}>Four tiers, nothing deleted</h3>
+            <p>Every document declares in its own frontmatter <i>when</i> it loads, and the deploy step
+            routes on that. The test for always-on is sharp: a document is Tier A only if an agent could
+            violate it <b>without knowing it exists</b>. You cannot look up the no-guessing protocol when
+            it becomes relevant — not knowing it is relevant <i>is</i> the failure. You can absolutely
+            look up a UI archetype catalog.</p>
+            <div class="tag" style=${{marginTop:8}}>184K → 43.7K always-on, a 76% cut</div></div>
+          <div class="card"><h3 style=${{fontSize:15}}>A ratchet, not a ceiling</h3>
+            <p>The first control was a fixed ceiling and it was the wrong instrument: two ordinary
+            paragraphs took the set to 97% of budget, so the next routine edit would have failed the
+            build for a reason unrelated to the defect. A ceiling is silent through the whole
+            accumulation, then red-lights something innocent — teaching the reflex it exists to break.
+            Now a recorded baseline is ratcheted: growing the set is fine, growing it <b>silently</b>
+            is not, and the fix is one acknowledged line in a diff.</p>
+            <div class="tag" style=${{marginTop:8}}>derived backstop: 128K window − 24K tools − 44K headroom</div></div>
+          <div class="card"><h3 style=${{fontSize:15}}>Every agent carries its own lens</h3>
+            <p>The same prefix reached every delegated run, which is why the cheapest model failed first
+            and cost almost nothing doing it. Each persona now declares the knowledge its judgement
+            needs — the Simplifier carries ~10,100 tokens against the 208,434 it would have inherited —
+            and an agent with no declared lens fails the gate.</p></div>
+          <div class="card"><h3 style=${{fontSize:15}}>Preflight before the fan-out</h3>
+            <p>One failure at a context ceiling predicts every sibling in the wave, because the prefix
+            is identical for all of them. The check compares the assembled prefix against the target
+            model's window <b>once</b>, rather than rediscovering the same fact N times.</p></div>
+        </div>
+        <p style=${{marginTop:14}}>Three defect classes came out of it, each with a control: a fixed
+        prefix sized by what fits rather than what each call needs; a fan-out rediscovering per-run what
+        was knowable once; and a generator prepending metadata over a source that already had it — which
+        had been shipping two stacked frontmatter blocks in one instruction file, of which any reader
+        parses only the first.</p>
       </div></section>
 
       <!-- UI GRAMMAR -->

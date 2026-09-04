@@ -249,6 +249,48 @@ def personas():
     return rows
 
 
+def budget_live():
+    """The always-on budget, read from the same config the CI gate reads.
+
+    Publishing a hand-typed token count next to a section about un-measured accumulation would
+    be the joke telling itself. The baseline, tolerance and backstop come from
+    pack/context-budget.json; the tier totals are computed from the docs' own `load:` frontmatter
+    exactly as context-budget.py computes them, so the page and the gate cannot disagree.
+    """
+    out = {}
+    cfg = os.path.join(PACK, "context-budget.json")
+    if os.path.isfile(cfg):
+        try:
+            with open(cfg, encoding="utf-8") as fh:
+                raw = json.load(fh)
+        except (OSError, ValueError):
+            return out
+        out["baseline"] = raw.get("always_on_tokens")
+        out["tolerancePct"] = raw.get("growth_tolerance_pct")
+        out["backstop"] = raw.get("ceiling_tokens")
+        out["derivation"] = raw.get("ceiling_derivation", {})
+
+    base = os.path.join(PACK, "knowledge")
+    tiers, total = {}, 0
+    if os.path.isdir(base):
+        for fn in sorted(os.listdir(base)):
+            if not fn.endswith(".md"):
+                continue
+            path = os.path.join(base, fn)
+            # FOUNDATION.md is the vendored manifest: always-on by rule, no frontmatter.
+            load = "always" if fn == "FOUNDATION.md" else frontmatter_field(read(path), "load")
+            size = int(round(os.path.getsize(path) / 4.83))   # the tool's calibrated ratio
+            tiers[load] = tiers.get(load, {"docs": 0, "tokens": 0})
+            tiers[load]["docs"] += 1
+            tiers[load]["tokens"] += size
+            total += size
+    out["tiers"] = tiers
+    out["corpusTokens"] = total
+    if total and tiers.get("always"):
+        out["alwaysPct"] = int(round(100.0 * tiers["always"]["tokens"] / total))
+    return out
+
+
 def graph_slice():
     raw = read(os.path.join(ROOT, "docs", "docs-index.js"))
     m = re.search(r"window\.DOCS_INDEX\s*=\s*(\{.*\});?\s*$", raw, re.S)
@@ -306,6 +348,7 @@ def build():
         ("agents", "Multi-Agent Collaboration"),
         ("coord", "Agent Coordination"),
         ("loop", "The Prompt Loop"),
+        ("budget", "Context Budget"),
         ("foundations", "Foundations"),
         ("ui", "UI & Design"),
         ("architecture", "Architecture"),
@@ -333,6 +376,9 @@ def build():
         "collaboration": dict(ed.get("collaboration", {}), personas=personas()),
         "coordination": ed.get("coordination", {}),
         "promptLoop": ed.get("promptLoop", {}),
+        # The always-on total is READ FROM THE TOOL, never copied into editorial: a hand-kept
+        # number describing a gated measurement is the drift this section exists to describe.
+        "contextBudget": dict(ed.get("contextBudget", {}), live=budget_live()),
         "systems": ed.get("systems", []),
         "graph": graph_slice(),
         "surfaces": ed.get("surfaces", []),

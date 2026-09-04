@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-04T16:28:44Z",
+  "generated": "2026-09-04T16:49:22Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3172,6 +3172,40 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "d7d9cdc0a6008ea6d6e40e1a0fcecf249e51d1f6",
         "short": "d7d9cdc0a",
+        "branch": "main",
+        "pushed": false
+      }
+    },
+    {
+      "id": "al-01M1PN6AYDMJF31YS82Y86MQ4Q",
+      "shortname": "document-context-budget-and-coordination-refinements",
+      "datetime": "2026-09-04T16:49:22Z",
+      "session": "015BSvW6rL7SpuwziUbRHJTJ",
+      "prompt": "update the docs again since we have made a few updates over night, also make sure the github pages are up to date and reflect the refinements in coordination AND add a section on the work we did yesterday to tighten up the context-prefix-budget",
+      "summary": "NEW portal section 7 'Context Budget' covering the whole FR-072/FR-073 arc: how the cost was found (37 of 39 docs at applyTo '**', a 184K prefix on all 484 calls, 63% of main-thread input re-read, the cheapest tier producing 100% of failures on 0.1% of spend), the four load-scope tiers, the ratchet that replaced the fixed ceiling and WHY the ceiling was wrong, the derived backstop, per-agent lenses, preflight, the five commands, and defect classes PACK-R/S/T. Its numbers are READ FROM THE TOOL at build time: new budget_live() in build-docs-portal.py reads pack/context-budget.json and recomputes the tier totals from the docs' own load: frontmatter using the same 4.83 ratio context-budget.py uses, so the published figures cannot drift from the gate that enforces them (verified: page shows baseline 43,708, corpus 173,273, always-on 25% - identical to context-budget.py report). Agent Coordination section extended with 'What a month of two harnesses actually taught': the 8 COORD classes now in the fleet store, the measured record (273 events, 131 claims/117 releases/33 never released, 24 session-start vs 1 session-end, 55 decisions), the WITHDRAWN overlap count (11 -> 0 once TTL expiry was respected), and FED-A found while distributing them. Explainer gains a matching Context Budget section plus nav entry; gate 4b a11y assertions still pass. _meta.json was 4 commits stale (8085c71) and is refreshed to a87b187 with computed coverage, 25 defect classes and 37 fleet classes. Graph re-derived to 162 artifacts, 0 problems/stale/orphans/drift; health snapshot appended. api reference and _site verified current.",
+      "kind": "skill",
+      "skill": "document",
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [
+        "docs/portal/index.html",
+        "web/ai-forward-pack-explainer.html",
+        "docs/_meta.json"
+      ],
+      "tags": [
+        "documentation",
+        "portal",
+        "context-budget",
+        "coordination"
+      ],
+      "outcome": "success",
+      "goal": "Refresh the bundle for the overnight changes, get Pages current on the coordination refinements, and add a Context Budget section",
+      "done_when": "Bundle regenerated and true to code; both Pages surfaces carry the coordination learnings and the context budget; 10 gates green; pushed",
+      "started_at": "2026-09-04T16:43:19Z",
+      "duration_seconds": 363.0,
+      "git": {
+        "sha": "a87b187ee071d9466928a586dc55eb87a09b8b68",
+        "short": "a87b187ee",
         "branch": "main",
         "pushed": false
       }

@@ -1,8 +1,8 @@
 {
   "generator": "/document (AI-Forward Pack)",
-  "generated": "2026-09-03",
-  "documentedCommit": "8085c717237fa2086f106a0f4e9959f105bd4ed1",
-  "documentedCommitShort": "8085c71",
+  "generated": "2026-09-04",
+  "documentedCommit": "a87b187ee071d9466928a586dc55eb87a09b8b68",
+  "documentedCommitShort": "a87b187",
   "subject": "AI-Forward — pack source (pack/) + live dogfood install (.claude/, .github/, docs/)",
   "surfaces": {
     "markdownBundle": [
@@ -15,7 +15,8 @@
     "docsExplorer": "docs/index.html",
     "documentationPortal": "docs/portal/index.html",
     "closeUpBundleView": "docs/_site/index.html",
-    "interactiveExplainer": "web/ai-forward-pack-explainer.html"
+    "interactiveExplainer": "web/ai-forward-pack-explainer.html",
+    "documentationPortalSections": "12 — Getting Started, Capabilities, Skills, Multi-Agent Collaboration, Agent Coordination, The Prompt Loop, Context Budget, Foundations, UI & Design, Architecture, Systems, Graph, Reference"
   },
   "diagramFamilies": {
     "component": "docs/architecture.md#component-map--boundaries",
@@ -35,14 +36,17 @@
     "skills": 24,
     "agents": 23,
     "graphArtifacts": 162,
-    "alwaysOnKnowledgeTokensEst": 43708
+    "alwaysOnKnowledgeTokensEst": 43708,
+    "defectClasses": 25,
+    "fleetClasses": 37
   },
   "confidence": {
     "apiReference": "Verified — extracted by tools/build-api-docs.py with ast from the modules' own docstrings and argparse definitions; drift-gated by check-consistency.py.",
     "diagrams": "Verified — every node/edge re-traced to tools/sync-pack.ps1 and the directory layout on 2026-09-03; two stale claims corrected (see architecture.md).",
     "cliReference": "Verified — traced to each script's argparse definition.",
     "coverageNumbers": "Verified — computed from the source, not asserted.",
-    "explainerContent": "Verified — true to pack/knowledge and pack/commands."
+    "explainerContent": "Verified — true to pack/knowledge and pack/commands.",
+    "contextBudgetFigures": "Verified — the portal's Context Budget section reads its baseline, tolerance, backstop and tier totals from pack/context-budget.json and the docs' own load: frontmatter at build time, so the published numbers cannot drift from the CI gate that enforces them."
   },
   "gate": {
     "mode": "fail-on-change, warn-on-schedule",

@@ -160,7 +160,7 @@ function renderNav(){
 function render(){
   if(window.__PORTAL_ERR||!D){pane.innerHTML=errorBody();return;}
   renderNav();
-  pane.innerHTML=({start:secStart,caps:secCaps,skills:secSkills,agents:secAgents,coord:secCoord,loop:secLoop,foundations:secFoundations,ui:secUi,architecture:secArchitecture,systems:secSystems,graph:secGraph,ref:secRef}[state.section]||secStart)();
+  pane.innerHTML=({start:secStart,caps:secCaps,skills:secSkills,agents:secAgents,coord:secCoord,loop:secLoop,budget:secBudget,foundations:secFoundations,ui:secUi,architecture:secArchitecture,systems:secSystems,graph:secGraph,ref:secRef}[state.section]||secStart)();
   if(state.section==="graph"){drawGraph();}
   const c=document.getElementById("content");c.focus({preventScroll:true});c.scrollTop=0;
 }
@@ -268,7 +268,55 @@ function secCoord(){
 
     <div class="group-band"><span class="gt">Words chosen to be unambiguous to a model</span><span class="gl"></span></div>
     <p>${esc(K.language||"")}</p>
-    <p class="lensrow" style="margin-top:14px"><strong>Verbs:</strong> ${esc(K.verbs||"")}</p>`;
+    <p class="lensrow" style="margin-top:14px"><strong>Verbs:</strong> ${esc(K.verbs||"")}</p>
+    ${(function(){const N=K.learnings;if(!N)return "";return `
+    <div class="group-band"><span class="gt">What a month of two harnesses actually taught</span><span class="gl"></span><span class="gc">${(N.rows||[]).length}</span></div>
+    <p>${esc(N.intro||"")}</p>
+    <p class="lensrow">${esc(N.measured||"")}</p>
+    <div class="callout-note"><p><strong>One number was withdrawn.</strong> ${esc(N.correction||"")}</p></div>
+    <table><thead><tr><th scope="col">Class</th><th scope="col">The shape</th><th scope="col">What was observed</th></tr></thead>
+      <tbody>${(N.rows||[]).map(r=>`<tr><td><span class="mono">${esc(r.id)}</span></td><td><strong>${esc(r.h)}</strong></td><td>${esc(r.p)}</td></tr>`).join("")}</tbody></table>
+    <div class="callout-note"><p><strong>Distributing them found one more.</strong> ${esc(N.federation||"")}</p></div>`;})()}`;
+}
+function secBudget(){
+  const B=D.contextBudget||{};const L=B.live||{};const T=B.tiers||{};const R=B.ratchet||{};const A=B.agents||{};
+  const TN={always:"A",glob:"B",skill:"C",reference:"D"};
+  const live=L.tiers||{};
+  return `<h1 class="lede-h">Context budget</h1><p class="lede">${esc(B.intro||"")}</p>
+    <div class="counts">${(B.stats||[]).map(s=>`<div class="stat"><b>${esc(s.v)}</b><span>${esc(s.l)}</span></div>`).join("")}</div>
+
+    <div class="group-band"><span class="gt">What made it visible</span><span class="gl"></span></div>
+    <p>${esc(B.origin||"")}</p>
+
+    <div class="group-band"><span class="gt">Four tiers — nothing deleted, everything scoped</span><span class="gl"></span></div>
+    <p>${esc((T.intro||""))}</p>
+    <table><thead><tr><th scope="col">Tier</th><th scope="col">Declares</th><th class="n" scope="col">Docs</th><th class="n" scope="col">Est. tokens</th><th scope="col">What lives here</th></tr></thead>
+      <tbody>${(T.rows||[]).map(r=>{const k=(r.scope||"").replace("load: ","");const l=live[k];
+        return `<tr><td><span class="vb ${k==="always"?"hard":"advisory"}">${esc(r.tier)}</span></td>
+        <td><span class="mono">${esc(r.scope)}</span><div class="lensrow">${esc(r.where||"")}</div></td>
+        <td class="n">${l?l.docs:esc(String(r.docs))}</td>
+        <td class="n">${l?l.tokens.toLocaleString():esc(r.tokens)}</td>
+        <td>${esc(r.what)}</td></tr>`;}).join("")}</tbody></table>
+    <p class="lensrow">${esc(T.note||"")}${L.corpusTokens?` Live: corpus ~${L.corpusTokens.toLocaleString()} est. tokens, ${L.alwaysPct}% attached to any given request.`:""}</p>
+
+    <div class="group-band"><span class="gt">A ratchet, not a ceiling</span><span class="gl"></span></div>
+    <p>${esc(R.intro||"")}</p>
+    <div class="grid">
+      <div class="cap"><h4>Why the ceiling was wrong</h4><p>${esc(R.wrong||"")}</p></div>
+      <div class="cap"><h4>What replaced it</h4><p>${esc(R.right||"")}</p></div>
+      <div class="cap"><h4>The backstop is derived</h4><p>${esc(R.backstop||"")}</p></div>
+    </div>
+    ${L.baseline?`<p class="lensrow">Live: baseline <b>${L.baseline.toLocaleString()}</b> · tolerance ${esc(String(L.tolerancePct))}% · backstop <b>${L.backstop.toLocaleString()}</b>${L.derivation&&L.derivation.smallest_supported_window?` (derived: ${L.derivation.smallest_supported_window.toLocaleString()} window − ${L.derivation.tool_definition_tokens.toLocaleString()} tools − ${L.derivation.required_working_headroom.toLocaleString()} headroom)`:""}. Read from the same config the CI gate reads.</p>`:""}
+    <div class="callout-note"><p>${esc(R.generalisation||"")}</p></div>
+
+    <div class="group-band"><span class="gt">Every agent carries its own lens</span><span class="gl"></span></div>
+    <p>${esc(A.intro||"")}</p>
+    <div class="stack">${(A.rows||[]).map(r=>`<div class="std"><div class="sn">${esc(r.k)}</div><div><p class="sd">${esc(r.v)}</p></div></div>`).join("")}</div>
+
+    <div class="group-band"><span class="gt">The commands</span><span class="gl"></span></div>
+    <table><thead><tr><th scope="col">Command</th><th scope="col">What it does</th></tr></thead>
+      <tbody>${(B.commands||[]).map(c=>`<tr><td><span class="mono">${esc(c.c)}</span></td><td>${esc(c.p)}</td></tr>`).join("")}</tbody></table>
+    <p class="lensrow" style="margin-top:12px">${esc(B.classes||"")}</p>`;
 }
 function secLoop(){
   const L=D.promptLoop||{};

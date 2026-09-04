@@ -43,33 +43,38 @@ window.PORTAL_DATA = {
       "title": "The Prompt Loop"
     },
     {
-      "id": "foundations",
+      "id": "budget",
       "n": "7",
+      "title": "Context Budget"
+    },
+    {
+      "id": "foundations",
+      "n": "8",
       "title": "Foundations"
     },
     {
       "id": "ui",
-      "n": "8",
+      "n": "9",
       "title": "UI & Design"
     },
     {
       "id": "architecture",
-      "n": "9",
+      "n": "10",
       "title": "Architecture"
     },
     {
       "id": "systems",
-      "n": "10",
+      "n": "11",
       "title": "Systems"
     },
     {
       "id": "graph",
-      "n": "11",
+      "n": "12",
       "title": "Graph"
     },
     {
       "id": "ref",
-      "n": "12",
+      "n": "13",
       "title": "Reference"
     }
   ],
@@ -1320,7 +1325,55 @@ window.PORTAL_DATA = {
       }
     ],
     "language": "One label is deliberately blunt: refused — never denied, blocked, or unavailable. The reader is a model that must not be able to read the outcome as a transient failure worth retrying. And in every surface the order is fixed: what must I not do, then what is waiting on me, then what happened. Never chronological-first.",
-    "verbs": "claim · check · release · tail · guard · session · collaborate · request · worktree · allocate · resolve · merge-register · merge-derived · regen · class · metrics · doctor · install · plugin · hook · precommit"
+    "verbs": "claim · check · release · tail · guard · session · collaborate · request · worktree · allocate · resolve · merge-register · merge-derived · regen · class · metrics · doctor · install · plugin · hook · precommit",
+    "learnings": {
+      "intro": "The specification describes the design. These are what a month of Claude Code and Copilot sessions working one repository actually taught — consolidated from AI-DE's coordination record and promoted to the shared fleet store, so every repo inherits them.",
+      "measured": "273 coordination events over five days, two harnesses, 22 worktrees: 131 claims against 117 releases with 33 (25%) never released; 24 session-start events against 1 session-end; 55 guard decisions of which 50 allowed, 3 not-checked and 2 refused.",
+      "correction": "One number was withdrawn during the analysis. An initial count of 11 cross-agent lease overlaps ignored TTL expiry; recomputed respecting it, true overlaps are ZERO — the lease invariant was never violated. The alarming figure was dropped before any conclusion rested on it, and the corrected picture is the more useful one: the protocol works when it is called, and 86% of releases land while the lease is still live. What fails is the exit.",
+      "rows": [
+        {
+          "id": "COORD-A",
+          "h": "Two registers, one authority rule",
+          "p": "A session stood up its own ownership register before reading the existing one, then reported the two as contradicting. They did — because the second was an hour old. The resolution: coordination state splits into a TRACKED ownership register that is the sole authority, and an UNTRACKED liveness store that says only who is running right now and states no path table at all."
+        },
+        {
+          "id": "COORD-B",
+          "h": "Never assert the shape of our own agreements from memory",
+          "p": "The repo named the class itself: this is the pack's end-to-end-integrity rule pointed at coordination rather than at code. It cost two sessions a round trip each. Open the register, or label the claim Inferred."
+        },
+        {
+          "id": "COORD-C",
+          "h": "A missing identity degrades a guard to advisory",
+          "p": "Three edits proceeded under agent `anon` with no coordination check at all, logged as not-checked rather than refused. An unidentified session should be refused at the guard, not tolerated and recorded as a normal outcome."
+        },
+        {
+          "id": "COORD-D",
+          "h": "The exit path is the unreliable half",
+          "p": "96% of sessions never closed and a quarter of leases were abandoned, yet 86% of the releases that did happen landed while still live. The verb works; the exit is skipped, and only a timeout reclaims the resource."
+        },
+        {
+          "id": "COORD-E",
+          "h": "N requests of one shape are one class, not a queue",
+          "p": "The register says it plainly: nine render requests against one seam were one defect class, nine times. Raise the missing capability, not the tenth request."
+        },
+        {
+          "id": "COORD-F",
+          "h": "One identity field, three kinds of identity",
+          "p": "Six distinct values in one field — two raw UUIDs, three role names and `anon` — with one identity issued across 16 different worktrees. And a work-item field carrying the same placeholder in 100% of records: a value that never varies is ceremony wearing the shape of data."
+        },
+        {
+          "id": "COORD-G",
+          "h": "A refusal indicts the plan, not the timing",
+          "p": "If two sessions need the same file at the same time, the work was split along the wrong seam. Re-cut the work item or record a block; never retry on a timer and never widen the lease."
+        },
+        {
+          "id": "COORD-H",
+          "h": "Lease scope stated in minutes, practised in hours",
+          "p": "The documented default is 300 seconds and the rule is that a lease covers the minutes you are editing a file. Observed: 11 distinct TTLs up to 43,200 seconds, against a median hold of 9.2 minutes. A rule is only real if something refuses the twelve-hour lease."
+        }
+      ],
+      "federation": "Distributing them surfaced a further class, FED-A: the abstraction that makes a learning portable is what stops the deduplicator recognising it. COORD-C and COORD-D were generalised FROM AI-DE's own classes and then filed straight back into that repo as additions, scoring 0.17 and 0.14 against a 0.6 merge threshold, because the matcher compares an abstracted signature against a title. Caught only because the source repo happened to be known."
+    }
   },
   "promptLoop": {
     "intro": "Every non-trivial turn runs the same four beats. It exists to defeat two failure modes at once: starting work before the finish line is defined, and continuing work after it has been reached.",
@@ -1384,6 +1437,147 @@ window.PORTAL_DATA = {
       "resuming a halted track because a reminder arrived",
       "being unable to say in one line what would end this turn"
     ]
+  },
+  "contextBudget": {
+    "intro": "Anything loaded unconditionally is the static prefix of every model call — re-read on every turn, billed on every turn, and subtracted from the window before the user has said anything. It is the purest form of a cost nothing reports, because each new document looks free at the moment it is written.",
+    "origin": "A profiled session in a repo that had adopted the pack made the cost visible. 37 of the 39 knowledge documents shipped with `applyTo: \"**\"` — attach on every request — so a ~184,000-token corpus became the prefix of all 484 calls. 63% of every main-thread input token was the same text, re-read. And the prefix exceeded a flash-class context window outright, so the cheapest model tier produced 100% of the failures on 0.1% of the spend: 27 of 39 delegated runs failed before doing any work. Cost telemetry could not see it. Only a window measurement could.",
+    "stats": [
+      {
+        "v": "184K",
+        "l": "always-on before"
+      },
+      {
+        "v": "43.7K",
+        "l": "always-on now"
+      },
+      {
+        "v": "76%",
+        "l": "cut, nothing deleted"
+      },
+      {
+        "v": "25%",
+        "l": "of the corpus is attached"
+      }
+    ],
+    "tiers": {
+      "intro": "Nothing was removed. Every document declares, in its own frontmatter, when it loads — and the deploy step routes on that declaration instead of attaching everything. The test for the always-on tier is sharp: a document is Tier A only if an agent could violate it without knowing it exists. You cannot look up the no-guessing protocol when it becomes relevant, because not knowing it is relevant IS the failure. You can absolutely look up a UI archetype catalog — you know when you are building a UI.",
+      "rows": [
+        {
+          "tier": "A",
+          "scope": "load: always",
+          "docs": 13,
+          "tokens": "43,761",
+          "what": "The reasoning constitution — no-guessing, rigor, task discipline, end-to-end integrity, continuous improvement. Attached to every request.",
+          "where": ".github/instructions/, applyTo \"**\""
+        },
+        {
+          "tier": "B",
+          "scope": "load: glob",
+          "docs": 11,
+          "tokens": "54,323",
+          "what": "Applies only where its subject is: the seven UI documents on UI files, the C# style guide on C# files, the testing strategy on tests.",
+          "where": ".github/instructions/, applyTo the doc's own pattern"
+        },
+        {
+          "tier": "C",
+          "scope": "load: skill",
+          "docs": 13,
+          "tokens": "50,976",
+          "what": "Read on demand by the skill that needs it — the persona cards when a panel is convened, the audit standard when the log is read.",
+          "where": ".github/knowledge/, fetched"
+        },
+        {
+          "tier": "D",
+          "scope": "load: reference",
+          "docs": 2,
+          "tokens": "24,213",
+          "what": "Consulted, never attached. The LOA pattern catalog is a lookup surface, not a linear read.",
+          "where": ".github/knowledge/, fetched"
+        }
+      ],
+      "note": "24 documents now deploy as instructions and 15 as on-demand knowledge. The whole corpus is ~173,000 estimated tokens; 25% of it is attached to any given request."
+    },
+    "ratchet": {
+      "intro": "The first control was a fixed 45,000-token ceiling, and it was the wrong instrument — a fact worth keeping because the correction is the more useful lesson.",
+      "wrong": "Two ordinary paragraphs took the set to 97% of that budget. The next routine edit would have failed the build for a reason unrelated to the defect being gated. A ceiling stays silent through an entire accumulation and then red-lights something innocent, which teaches exactly the reflex it exists to break: just raise the ceiling.",
+      "right": "It is now a RATCHET. A recorded baseline lives in `context-budget.json`, and the gate fails only when the always-on set grows past it without that baseline moving. Growing the set is fine. Growing it silently is not — the fix is one acknowledged line in a diff, so a reviewer sees `always_on_tokens: 43708 -> 46200` and can ask why. It also ratchets DOWN, reporting when the set has shrunk enough to lower the baseline, so it cannot quietly become a high-water mark.",
+      "backstop": "An absolute backstop survives behind it at 60,000 tokens, and it is DERIVED rather than chosen: the smallest model window the roster still delegates to (128,000) minus tool definitions (24,070) minus the working headroom a task actually needs (44,000). Passing it is a decision about which models can still be used, not a formatting preference — and acknowledging the growth cannot wave it through.",
+      "generalisation": "The lesson generalises past this repo: for any ACCUMULATION defect, gate the delta against a recorded baseline, not the absolute against a guessed limit."
+    },
+    "agents": {
+      "intro": "The same prefix reaches every delegated run, which is why the cheapest model failed first and cost almost nothing doing it. Each persona now declares the knowledge its judgement actually needs.",
+      "rows": [
+        {
+          "k": "Widest lens",
+          "v": "orchestrator — ~29,538 tokens (67% of the main thread's always-on set)"
+        },
+        {
+          "k": "Narrowest",
+          "v": "the-simplifier — ~10,088 tokens, against the 208,434-token prefix it would have carried before"
+        },
+        {
+          "k": "Enforced",
+          "v": "an agent with no declared lens fails the gate; it would otherwise inherit the whole set"
+        },
+        {
+          "k": "Before dispatch",
+          "v": "preflight compares the assembled prefix against the target model's window once — one ceiling failure predicts every sibling in the wave"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "c": "context-budget.py report",
+        "p": "the tier table and the always-on total"
+      },
+      {
+        "c": "context-budget.py gate",
+        "p": "the ratchet — CI-able, fails on unacknowledged growth or an undeclared document"
+      },
+      {
+        "c": "context-budget.py gate --update-baseline",
+        "p": "acknowledge growth; commit the one-line diff alongside the change that caused it"
+      },
+      {
+        "c": "context-budget.py agents",
+        "p": "per-persona prefix; fails when a persona declares no lens"
+      },
+      {
+        "c": "context-budget.py preflight --window N",
+        "p": "refuse a fan-out that cannot fit, before dispatch"
+      }
+    ],
+    "classes": "Three defect classes came out of it and are recorded with controls: PACK-R, a fixed prefix sized by what fits rather than by what each call needs; PACK-S, a fan-out rediscovering per-run what was knowable once; and PACK-T, a generator prepending metadata over a source that already had it — which had been shipping two stacked frontmatter blocks in one instruction file, of which any reader parses only the first.",
+    "live": {
+      "baseline": 43708,
+      "tolerancePct": 2,
+      "backstop": 60000,
+      "derivation": {
+        "smallest_supported_window": 128000,
+        "tool_definition_tokens": 24070,
+        "required_working_headroom": 44000
+      },
+      "tiers": {
+        "always": {
+          "docs": 13,
+          "tokens": 43761
+        },
+        "reference": {
+          "docs": 2,
+          "tokens": 24213
+        },
+        "skill": {
+          "docs": 13,
+          "tokens": 50976
+        },
+        "glob": {
+          "docs": 11,
+          "tokens": 54323
+        }
+      },
+      "corpusTokens": 173273,
+      "alwaysPct": 25
+    }
   },
   "systems": [
     {
