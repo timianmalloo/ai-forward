@@ -75,7 +75,10 @@ foreach ($cmd in Get-ChildItem (Join-Path $pack "commands") -Directory) {
     if (Test-Path $skill) {
         $target = Join-Path $sDst $cmd.Name
         New-Item -ItemType Directory -Force -Path $target | Out-Null
-        Copy-Item $skill $target -Force
+        # The whole skill directory: SKILL.md is the contract and reference/*.md is the stage
+        # detail it reads on demand (progressive disclosure, CTX-E). Copying only SKILL.md
+        # would ship a contract whose stages point at files that are not there.
+        Copy-Item (Join-Path $cmd.FullName "*") $target -Recurse -Force
         $skillCount++
     }
 }
@@ -209,6 +212,19 @@ Copy-Item (Join-Path $pack "adapters\INSTALL.md")    $docPack -Force
 # pack/ here and from docs/ai-forward-pack/ in an installed repo. Without it a consuming repo
 # finds no baseline and the ratchet silently degrades to backstop-only.
 Copy-Item (Join-Path $pack "context-budget.json")    $docPack -Force
+# --- hooks: the re-read guard (CTX-D) runs at the tool seam on both hosts -------------
+# adapters/hooks/reread-guard.py -> docs/ai-forward-pack/hooks/ (the script both configs call);
+# the Copilot config -> .github/hooks/ai-forward.json (loaded from the repo automatically);
+# the Claude Code hooks object is NOT merged into .claude/settings.json by this script (a
+# JSON merge is a judgement call in a file that carries permissions) - INSTALL 1.5 says how.
+$hooksDst = Join-Path $docPack "hooks"
+New-Item -ItemType Directory -Force -Path $hooksDst | Out-Null
+Copy-Item (Join-Path $pack "adapters\hooks\reread-guard.py") $hooksDst -Force
+Copy-Item (Join-Path $pack "adapters\hooks\README.md")       $hooksDst -Force
+$ghHooks = Join-Path $repo ".github\hooks"
+New-Item -ItemType Directory -Force -Path $ghHooks | Out-Null
+Copy-Item (Join-Path $pack "adapters\hooks\copilot.ai-forward-hooks.json") (Join-Path $ghHooks "ai-forward.json") -Force
+Write-Host "  hooks: reread-guard.py -> docs/ai-forward-pack/hooks/, .github/hooks/ai-forward.json"
 Write-Host "  docs/ai-forward-pack: templates + scripts + pack docs"
 
 # --- docs/index.html (Docs Explorer; regenerated from template) ----------------

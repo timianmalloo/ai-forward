@@ -51,6 +51,11 @@ Subcommands
               and on a derived backstop. CI-able. See pack/context-budget.json.
   agents      Per-agent declared knowledge prefix (the sub-agent lens, P3).
   preflight   Fail when an assembled prefix would not fit a model's window (P5).
+  prefix      The WHOLE static prefix as the host assembles it - managed blocks (AGENTS.md /
+              CLAUDE.md, counted twice where the host loads both), the always-on docs, plus
+              stated tool/host allowances - with its own ratchet (CTX-B).
+  skills      Per-skill SKILL.md size with a per-skill ratchet and a ceiling: a skill is
+              re-injected whole on every invocation, so its size is a per-invocation tax (CTX-E).
 
 Token figures are ESTIMATES (chars / 4.83) and are labelled as such everywhere. The ratio
 is calibrated against a measured system prompt of 184,364 tokens over 890,204 characters of
@@ -66,8 +71,10 @@ Python 3.8+, stdlib only.
 |---|---|
 | `agents` | per-agent declared knowledge prefix |
 | `gate` | fail on unacknowledged always-on growth (CI-able) |
+| `prefix` | the whole static prefix per host, with its ratchet |
 | `preflight` | fail before a fan-out that cannot fit |
 | `report` | tier table + always-on total |
+| `skills` | per-skill SKILL.md size with a per-skill ratchet |
 
 ## CLI — options
 
@@ -77,9 +84,13 @@ Python 3.8+, stdlib only.
 | `--agents-dir` | override agent definition discovery |
 | `--ceiling` | override the derived backstop from context-budget.json |
 | `--config` | override context-budget.json discovery |
+| `--gate` | fail on unacknowledged prefix growth or a double-loaded CLAUDE.md |
+| `--host` | _(no help text — coverage gap)_ |
 | `--knowledge-dir` | override knowledge doc discovery |
 | `--min-headroom` | working headroom the task itself needs (default 32000) |
 | `--overhead` | any further fixed prefix |
+| `--root` | override repo-root discovery (AGENTS.md / CLAUDE.md) |
+| `--skills-dir` | override skills discovery (pack/commands or .claude/skills) |
 | `--tools` | tool-definition tokens (default 24070, the profiled figure) |
 | `--update-baseline` | record the current total as the new baseline; commit the diff alongside the change that caused the growth |
 | `--window` | target model context window |
@@ -110,6 +121,11 @@ empty scan that the gate then reported as clean -- defect class PACK-P.
 
 **Coverage gap** — no docstring in the source.
 
+### `repo_root(explicit=…)`
+
+The repo root the managed blocks live in: the nearest ancestor holding AGENTS.md,
+CLAUDE.md or .git.
+
 ### `config_path(explicit=…)`
 
 Locate the committed budget config (pack/ in the source repo, docs/ai-forward-pack/ once
@@ -119,9 +135,14 @@ installed). Returns None when absent -- the gate then runs ceiling-only and says
 
 **Coverage gap** — no docstring in the source.
 
-### `write_baseline(path, total)`
+### `write_baseline(path, total, key=…, stamp=…)`
 
-Rewrite only always_on_tokens + the stamp, preserving comments, key order and formatting.
+Rewrite only the named baseline + its stamp, preserving comments, key order and formatting.
+
+### `write_json_key(path, key, value)`
+
+Rewrite one JSON object-valued key (the per-skill baseline map). Comments and the other
+keys are preserved; the map is re-serialised one entry per line.
 
 ### `agents_dirs(explicit=…)`
 
@@ -165,8 +186,29 @@ One failure at the context ceiling predicts every sibling in the wave: the prefi
 the same for all of them. Probing it once costs a subsecond; discovering it per-run
 cost 27 of 39 delegated runs in the profiled session.
 
+### `prefix_components(root, kdir, cfg, host)`
+
+Every component of the static prefix this tool can see, per host, with a label each.
+'measured' = a file on disk; 'allowance' = a stated figure from config (Inferred).
+
+### `cmd_prefix(args)`
+
+**Coverage gap** — no docstring in the source.
+
+### `skills_dir(explicit=…)`
+
+**Coverage gap** — no docstring in the source.
+
+### `scan_skills(sdir)`
+
+**Coverage gap** — no docstring in the source.
+
+### `cmd_skills(args)`
+
+**Coverage gap** — no docstring in the source.
+
 ## Coverage
 
-- Public functions: **14** · documented: **9** (**64%**)
-- Undocumented (recorded, not invented): `knowledge_dir`, `load_config`, `agents_dirs`, `always_on`, `cmd_report`
+- Public functions: **21** · documented: **12** (**57%**)
+- Undocumented (recorded, not invented): `knowledge_dir`, `load_config`, `agents_dirs`, `always_on`, `cmd_report`, `cmd_prefix`, `skills_dir`, `scan_skills`, `cmd_skills`
 

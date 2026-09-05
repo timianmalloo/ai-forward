@@ -26,7 +26,7 @@ summary: >-
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled `12` · partially-controlled `9` · uncontrolled `22`
+**Status counts:** controlled `12` · partially-controlled `16` · uncontrolled `22`
 **Recurrence since last review:** `0` — *a second occurrence of a known class means the control was wrong, not that someone was careless (CI4).*
 
 ---
@@ -50,6 +50,62 @@ summary: >-
 ## Project classes
 
 *Classes discovered in this repository. Newest first.*
+
+### CTX-A — A session that carries several tasks re-reads all of them on every request
+- **Signature:** one conversation spans unrelated tasks (a pack refresh, a PR merge, then a product proposal); the main context grows monotonically (159k → 564k tokens over 23 hours) and no compaction ever fires because a long-context tier never forces one. Every later step re-reads every earlier task.
+- **Why it survives:** nothing errors; the harness setting that allows it (`contextTier: long_context`, a 1M window) looks like generosity; the cost is spread across hundreds of cached reads that each look cheap; the worktree discipline isolates the *tree* and says nothing about the *context*.
+- **Instances:**
+  - `2026-09-05` **TheTerrace Copilot session fd3ccb67** — 3 tasks, 0 compactions, 460k–629k-token context on the last turn; 70–85% of the turn's cost was cache reads of that context.
+- **Control:** `session-worktree-discipline.md` **WT1a** (a new task starts a new session; compact before a turn) + `pack-doctor.py` `copilot settings` (WARN on `long_context`/`high` as global defaults) + `session-profile.py` **SP-01** (context accretion) re-flags it. Observed on the profiled session via the profiler; not yet seen red on a fresh session.
+- **Status:** `partially-controlled`
+
+### CTX-B — The budget gate measured the part it owned and reported the whole as green
+- **Signature:** `context-budget.py` counted the knowledge docs (~44k est. tokens) while the assembled prefix was ~105k–113k (both managed blocks — Copilot CLI loads `AGENTS.md` *and* `CLAUDE.md` — plus the host prompt, tool definitions and skill roster). Run with default discovery from an installed repo it found the *vendored* knowledge copy, which declares no scope, and reported **461 tokens, exit 0**.
+- **Why it survives:** the gate is honest about what it scans and nobody asks what fraction of the prefix that is (the E2E-H shape); the vendored directory carries the manifest the resolver keys on; a repo's own copy of the pack is a plausible thing to find.
+- **Instances:**
+  - `2026-09-05` **TheTerrace** — 400,222-char captured prefix with two 58 KB `<custom_instruction>` blocks (AGENTS.md and CLAUDE.md) vs a 43,708-token knowledge-only baseline; default discovery reported 461.
+- **Control:** `context-budget.py prefix --gate` (whole-prefix ratchet, per host, flags the double-load) + discovery that prefers a corpus that *declares* scope (`_declares_scope`) and never settles on a scope-less copy + `pack-doctor.py` `claude-md import` + INSTALL 1.1 (`CLAUDE.md` = `@AGENTS.md`). Tests: `test_context_budget.py` (prefix, discovery). `session-profile.py` **SP-02/SP-03** re-flag it.
+- **Status:** `partially-controlled`
+
+### CTX-C — A council convened on a turn that never declared a tier
+- **Signature:** the goal state names Goal / Done when / Not in scope but no **tier** or **fan-out cap**, and the turn then convenes five persona sub-agents, a research agent and a verification run on a task whose prompt said *"iterating on the proposal, not the spec"*. Ceremony without a budget; every persona is individually defensible.
+- **Why it survives:** the proportionality rule exists as prose ("default to T0, no broad council") and the goal-state block made *goal* presence checkable but not *tier* presence; the harness rewards continuing; a review-only mockup and production code look the same to a convene-when predicate.
+- **Instances:**
+  - `2026-09-05` **TheTerrace fd3ccb67, turns 5–9 and 12** — 9 and 5 sub-agents on proposal-iteration turns; 4 turns with a goal state, 0 with a tier.
+- **Control:** CT19 now requires `Tier:` and `Fan-out cap:` in the goal state (0 at T0, 2 at T1, GO7 cap at T2); `audit-log.py append --tier --fan-out` records them and `selfcheck` reports tier gaps and over-cap fan-outs; `/dream`'s PACK-O miner proposes the upgrade; `session-profile.py` **SP-06** re-flags it. Tests: `test_audit_log.py`, `test_dream_pack_o.py`.
+- **Status:** `partially-controlled`
+
+### CTX-D — The same file read again while its contents were still in context
+- **Signature:** `public.html` viewed 4× in three minutes (140 KB), a 43 KB paged tool output viewed whole twice, one sub-agent reading `studio.html` 6×. Each read is individually reasonable; together they are the cheapest tokens to remove and the ones nothing reports.
+- **Why it survives:** a read never fails; "check whether you already have it" is prose; the harness pages a large output to a temp file and the natural next move is to view the file.
+- **Instances:**
+  - `2026-09-05` **TheTerrace fd3ccb67** — turn 11: `public.html` ×4; turn 8: paged outputs ×2 whole; sub-agent: `studio.html` ×6.
+- **Control:** `adapters/hooks/reread-guard.py` at the pre-tool-use seam on both hosts (warns on the third identical read in a turn and on a paged output viewed whole; resets at the prompt boundary; fail-open) + `session-profile.py` **SP-04**. Tests: `test_reread_guard.py` (observed warning on the third read, none on the second).
+- **Status:** `partially-controlled`
+
+### CTX-E — Knowledge at hand re-fetched whole: skills re-injected and always-on docs re-read
+- **Signature:** the same 30 KB `SKILL.md` invoked six times in a session (each invocation re-injects it whole); four UI craft instruction files (~200 KB) read by hand to author one mockup; an instruction file that was already in the static prefix viewed again.
+- **Why it survives:** a skill invocation and a `view` both succeed; a SKILL.md has no size budget; glob-scoped docs attach late (the mockup did not exist yet) so the agent fetched them; no index existed to read instead of the whole doc.
+- **Instances:**
+  - `2026-09-05` **TheTerrace fd3ccb67** — ui-design ×6, graphify ×4 (41 KB), optimize-graph ×3, collectknowledge ×3; four UI docs read whole at turn 5; `ui-craft-detection.instructions.md` viewed while already in the prefix.
+- **Control:** progressive-disclosure skills (`SKILL.md` = contract + outline, `reference/*.md` read at the stage that needs it) + `context-budget.py skills --gate` (per-skill ratchet + 5,000-token ceiling for new skills) + the CT23 tell + the UI craft docs re-scoped to `load: skill` with a rule index each + `session-profile.py` **SP-05/SP-16**. Tests: `test_context_budget.py` (skills ratchet).
+- **Status:** `partially-controlled`
+
+### CTX-F — A research delegation with no budget and no convergence predicate
+- **Signature:** a domain-researcher sub-agent ran 123 tool calls and 3.0M tokens on a proposal iteration and stopped only when the parent sent *"converge now — stop further investigation"* twice; a second one ran 36 minutes. The parent's prompts were full of BOUNDED / NOT / ONLY caveats, which shows it knew, and that prose was not holding.
+- **Why it survives:** GO7's fan-out contract bounded *width* and retries but not *depth per branch*; a research agent's natural exit is "enough evidence", which nobody defined; every extra source is defensible.
+- **Instances:**
+  - `2026-09-05` **TheTerrace fd3ccb67** — domain-researcher (turns 5–8): 123 calls / 3.0M tokens / 2 converge nudges; ai-systems-engineer (turn 12): 50 calls / 1.55M tokens / 36 min.
+- **Control:** GO7 gains **per-branch budget** and **convergence condition** rows; every persona card carries "stay inside the budget in your task — the budget firing is a finding"; `audit-log.py --agent-run` records calls per run for the audit entry; `session-profile.py` **SP-07** re-flags it (tool calls > 40, tokens > 1M, or any converge nudge).
+- **Status:** `partially-controlled`
+
+### CTX-G — A persona reads the roster to find out what it is
+- **Signature:** every persona sub-agent opened `AGENTS.md` (58 KB) plus `agent-persona-catalog.md`, `persona-cards.md`, `persona-audit.md` and `agent-body-of-knowledge.md` (20–37 KB each) before its first finding — ~170 KB per spawn — because its card sent it there ("read your full interrogation set in the Catalog §N").
+- **Why it survives:** the card is correct and the reads succeed; sub-agents receive only their card (not the managed block), so the pointer is the only orientation they have; the cost is paid inside the sub-agent where the main conversation never sees it.
+- **Instances:**
+  - `2026-09-05` **TheTerrace fd3ccb67** — security, test-architect, privacy and domain-researcher agents each read the four roster docs and `AGENTS.md` (7 orientation reads on turn 6 alone).
+- **Control:** every card now carries the inline operating standard (severity scale, confidence labels, veto semantics, conflict rule) and an explicit do-not-read list for the roster docs; `session-profile.py` **SP-08** re-flags an orientation read.
+- **Status:** `partially-controlled`
 
 ### FED-A — The abstraction that makes a learning portable is what stops the deduper recognising it
 - **Signature:** a federation step generalises a class so it can cross repo boundaries (strip the paths, the names, the repo-specific nouns), and the reconciler on the far side matches by lexical overlap against the target's existing wording. The two descriptions of the same class now share almost no vocabulary, the overlap scores below threshold, and the class is filed as **add** into a repo that already has it. The tell: a push reporting `merge 0` into a target with a large, mature register — especially when the learning was *derived from* that target in the first place.

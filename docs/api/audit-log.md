@@ -83,6 +83,7 @@ Conventions
 | `--change` | link to a change-log id (cl-NNNN) |
 | `--datetime` | _(no help text — coverage gap)_ |
 | `--done-when` | the terminal condition (front matter CT19); the PACK-O presence signal /dream mines (AL5b) |
+| `--fan-out` | the declared fan-out cap: most sub-agents the turn may convene (CT19; 0 at T0, 2 at T1) |
 | `--field` | print just this field (e.g. prompt) |
 | `--file` | JSON file (or - for stdin) |
 | `--from-json` | read fields from a JSON object (path or - for stdin) |
@@ -114,6 +115,7 @@ Conventions
 | `--summary` | _(no help text — coverage gap)_ |
 | `--supersedes` | _(no help text — coverage gap)_ |
 | `--tag` | _(no help text — coverage gap)_ |
+| `--tier` | the turn's declared ceremony tier (front matter CT19) |
 | `--title` | _(no help text — coverage gap)_ |
 | `--tool` | _(no help text — coverage gap)_ |
 | `--until` | _(no help text — coverage gap)_ |

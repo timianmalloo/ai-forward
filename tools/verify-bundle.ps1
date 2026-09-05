@@ -166,7 +166,14 @@ sys.exit(1 if bad else 0)
         $ceilingOk = ($LASTEXITCODE -eq 0)
         python $budget agents | Select-Object -Last 4
         $lensOk = ($LASTEXITCODE -eq 0)
-        if (-not ($ceilingOk -and $lensOk)) { $global:LASTEXITCODE = 1 } else { $global:LASTEXITCODE = 0 }
+        # CTX-B / CTX-E: the WHOLE prefix (blocks + always-on + allowances) and every SKILL.md
+        # carry their own ratchets. A knowledge-only budget that stayed green while the real
+        # prefix was 2.5x larger is the shape this closes.
+        python $budget prefix --gate | Select-Object -Last 3
+        $prefixOk = ($LASTEXITCODE -eq 0)
+        python $budget skills --gate | Select-Object -Last 2
+        $skillsOk = ($LASTEXITCODE -eq 0)
+        if (-not ($ceilingOk -and $lensOk -and $prefixOk -and $skillsOk)) { $global:LASTEXITCODE = 1 } else { $global:LASTEXITCODE = 0 }
     }
 } finally {
     Pop-Location

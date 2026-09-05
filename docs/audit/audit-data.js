@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-04T17:51:30Z",
+  "generated": "2026-09-05T17:34:01Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3239,6 +3239,78 @@ window.AUDIT_DATA = {
         "branch": "main",
         "pushed": true
       }
+    },
+    {
+      "id": "al-01M1S719501FAD1F6XAFQQXP8A",
+      "shortname": "session-profiler + 11 pack fixes",
+      "datetime": "2026-09-05T16:39:39Z",
+      "session": "5ba1afa5",
+      "prompt": "do all of these suggestions in the ai-forward repo\nalso expand on #10...\n- beyond just doing what is in #10\n- provide a session-profiler skill that allows us to repeat this task regularly with python scripts where needed and producing a table of findings and a table of fixes\n- we point at one or more repos that have the ai-forward pack applied\n- we will use this similar to dreaming in terms of continuous improvement but specifically focused on\n  - improving performance and efficiency\n  - reduces repeat mistakes and silly guesses when knowledge is at hand\n  - tuning parallelism across sub-agents or even multi-session/multi-harness coordination e.g. the work we have done to allow GHCP and Claude Code sessions to coordinate\n  - improving task adherance and reducing drift and extra ceremony\n  - maximizing goal-seeking and completion with best possible rigor and minimal tangents (builds on prior bullet)\n  - ensuring we can get max performance, efficiency and task-adherence across all models and harnesses (seems like currently claude code and anthropic models are MUCH better with the ai-forward pack)\n  - one key thing i see is the more advanced reasoning models drift more (especially in the gpt family) this should help us tune the repo guidance, controls, gates to help benefit from the power of the newer models while minimizing the drift and ceremony we dont want\n(Context: the prior two turns profiled the active GitHub Copilot CLI session in TheTerrace and produced an 11-row fix table for the ai-forward pack.)",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [
+        "session-profiler",
+        "efficiency"
+      ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M1S9F6EXFKBK1CKSJC6DJGZR",
+      "shortname": "session-profile-sp-0001",
+      "datetime": "2026-09-05T17:22:13Z",
+      "session": "5ba1afa5",
+      "prompt": "session-profile.py profile",
+      "summary": "Profile sp-0001: 20 session(s), 65 finding(s)",
+      "kind": "script",
+      "skill": "session-profiler",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/profiles/sp-0001/profile.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "started_at": "2026-09-05T16:57:22Z",
+      "duration_seconds": 1491.0
+    },
+    {
+      "id": "al-01M1SA4T6KSP6CDGRTGTZWTKG9",
+      "shortname": "rev60-session-profiler-and-ctx-fixes",
+      "datetime": "2026-09-05T17:34:01Z",
+      "session": "5ba1afa5",
+      "prompt": "do all of these suggestions in the ai-forward repo\nalso expand on #10...\n- beyond just doing what is in #10\n- provide a session-profiler skill that allows us to repeat this task regularly with python scripts where needed and producing a table of findings and a table of fixes\n- we point at one or more repos that have the ai-forward pack applied\n- we will use this similar to dreaming in terms of continuous improvement but specifically focused on\n  - improving performance and efficiency\n  - reduces repeat mistakes and silly guesses when knowledge is at hand\n  - tuning parallelism across sub-agents or even multi-session/multi-harness coordination e.g. the work we have done to allow GHCP and Claude Code sessions to coordinate\n  - improving task adherance and reducing drift and extra ceremony\n  - maximizing goal-seeking and completion with best possible rigor and minimal tangents (builds on prior bullet)\n  - ensuring we can get max performance, efficiency and task-adherence across all models and harnesses (seems like currently claude code and anthropic models are MUCH better with the ai-forward pack)\n  - one key thing i see is the more advanced reasoning models drift more (especially in the gpt family) this should help us tune the repo guidance, controls, gates to help benefit from the power of the newer models while minimizing the drift and ceremony we dont want\n(Context: the prior two turns profiled the active GitHub Copilot CLI session in TheTerrace and produced an 11-row fix table for the ai-forward pack.)",
+      "summary": "Revision 60: /session-profiler skill + session-profile.py (findings SP-01..16, fixes F-01..11, model-family x harness compare, dogfood profile sp-0001 over 20 sessions in TheTerrace + ai-forward); the 11 pack fixes from the profiling pass - CLAUDE.md = @AGENTS.md import, context-budget prefix/skills ratchets + scope-declaring discovery, CT19 tier + fan-out cap (audit --tier/--fan-out, selfcheck, dream miner), GO7 per-branch budget + convergence, self-sufficient persona cards (23), progressive-disclosure skills (ui-design/design-slice/implement + reference/), re-read guard hook for both hosts, five UI craft docs re-scoped to load: skill with rule indexes, WT1a session hygiene + pack-doctor checks, seven CTX-* defect classes. verify-bundle: gates 1,3-8 green on the working tree; gate 2 (drift) passes only on the committed tree.",
+      "kind": "skill",
+      "skill": "extendaibundle",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "pack/scripts/session-profile.py",
+        "pack/commands/session-profiler/SKILL.md",
+        "docs/profiles/sp-0001/profile.md",
+        "docs/design/session-profiler.md",
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [
+        "session-profiler",
+        "efficiency",
+        "ctx"
+      ],
+      "outcome": "success",
+      "goal": "Apply all 11 profiling fixes to the pack source and add a repeatable /session-profiler skill with a stdlib profiler that emits findings and fixes tables across repos, harnesses and model families",
+      "done_when": "every fix is in pack/, sync-pack has run, verify-bundle is green on the committed tree, the audit entry is written, and the work is committed on its own worktree branch",
+      "tier": "T2",
+      "fan_out": 0,
+      "git": {
+        "sha": "e3b4a564166383906758676567378527d8e753fa",
+        "short": "e3b4a5641",
+        "branch": "session-profiler",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -4303,6 +4375,29 @@ window.AUDIT_DATA = {
         "before": "811c685e84590a3f01d862fc100a431394faf3c9",
         "after": "811c685e84590a3f01d862fc100a431394faf3c9",
         "branch": "feature/audit-signals-writer",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M1SA4T3CR8XJ7BTJTEVN0Q34",
+      "datetime": "2026-09-05T17:34:01Z",
+      "session": null,
+      "kind": "design",
+      "skill": "extendaibundle",
+      "title": "CLAUDE.md is an @AGENTS.md import; the pack block lives once, in AGENTS.md (CTX-B)",
+      "prompt": "do all of these suggestions in the ai-forward repo\nalso expand on #10...\n- beyond just doing what is in #10\n- provide a session-profiler skill that allows us to repeat this task regularly with python scripts where needed and producing a table of findings and a table of fixes\n- we point at one or more repos that have the ai-forward pack applied\n- we will use this similar to dreaming in terms of continuous improvement but specifically focused on\n  - improving performance and efficiency\n  - reduces repeat mistakes and silly guesses when knowledge is at hand\n  - tuning parallelism across sub-agents or even multi-session/multi-harness coordination e.g. the work we have done to allow GHCP and Claude Code sessions to coordinate\n  - improving task adherance and reducing drift and extra ceremony\n  - maximizing goal-seeking and completion with best possible rigor and minimal tangents (builds on prior bullet)\n  - ensuring we can get max performance, efficiency and task-adherence across all models and harnesses (seems like currently claude code and anthropic models are MUCH better with the ai-forward pack)\n  - one key thing i see is the more advanced reasoning models drift more (especially in the gpt family) this should help us tune the repo guidance, controls, gates to help benefit from the power of the newer models while minimizing the drift and ceremony we dont want\n(Context: the prior two turns profiled the active GitHub Copilot CLI session in TheTerrace and produced an 11-row fix table for the ai-forward pack.)",
+      "summary": "Measured on a captured Copilot CLI prefix: two ~58 KB custom-instruction blocks (AGENTS.md and CLAUDE.md), i.e. the managed block paid twice per request; Claude Code reads only CLAUDE.md and expands @AGENTS.md (documented). Decision: CLAUDE.block.md becomes a four-bullet Claude Code addendum; AGENTS.block.md is the single full block with a path legend; pack-doctor, context-budget prefix and check-consistency enforce it.",
+      "rationale": "Structural, not prose: the double-load cannot recur when there is only one copy to load. The addendum carries only what differs for Claude Code (the .github/instructions -> .claude/knowledge path map, skills + reference/, hooks, WT1a).",
+      "artifacts": [
+        "pack/adapters/managed-blocks/CLAUDE.block.md",
+        "pack/adapters/INSTALL.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "e3b4a56",
+        "after": "e3b4a564166383906758676567378527d8e753fa",
+        "branch": "session-profiler",
         "pushed": null,
         "commits": []
       }

@@ -672,7 +672,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "8bef4c794bc7ce3560ec08d4db47a035f4ac8fabe3b2a709a43435a3a354789a"
+      "sourceSha256": "b1a241f6e77bb2d1b0a0bc0936d56d65b92980b213c401d5cd48c4e16f6ff6d6"
     },
     {
       "id": "api-bounded_process",
@@ -722,7 +722,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ccaf5718c007cd39327dda9a5fd451ca9df54daae5e3a9ad750522de25ebffc9"
+      "sourceSha256": "df1daf4fe3ffc191577bb5434c53e1b6997d73b002d30cd1446b2779021e1e30"
     },
     {
       "id": "api-coord-core",
@@ -847,7 +847,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4ffb33148f3f2e0e13e31f5d239347799a661232b5c7884aa45254fee982c589"
+      "sourceSha256": "18a5d3ff3929c3731429c1dba8b79539a303b083fc2d8bf1e051f395c569237e"
     },
     {
       "id": "api-foundation-check",
@@ -909,7 +909,7 @@ window.DOCS_INDEX = {
       "phase": "",
       "reviewBy": "2027-03-03",
       "reviewSuggested": [],
-      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 267 public functions across 19 modules, 40% carrying a docstring.",
+      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 305 public functions across 20 modules, 40% carrying a docstring.",
       "tags": [
         "api",
         "scripts",
@@ -923,7 +923,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "3e8d216cf1d0f429ff929fc5c76fa83e838feaf4f00fcacc6bbf89c4331330e7"
+      "sourceSha256": "e8b3a97358cb4e0eb76eaf3b0eec2bf226f49457076904b026427f21295c2a02"
     },
     {
       "id": "api-marker-lint",
@@ -998,7 +998,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ca5e58606d0a67a270743d9f7cfbdd3eba69613497b089ca2f1c0092971c8ba2"
+      "sourceSha256": "76fba655e9f6d99bf92a8b5a65cee739ee3f859fb3b1c1409094509203678a08"
     },
     {
       "id": "api-prompt-log",
@@ -1049,6 +1049,31 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "f07e0b01340cda4d39c282309114c54d076c976754498379f57e66759775c931"
+    },
+    {
+      "id": "api-session-profile",
+      "path": "docs/api/session-profile.md",
+      "title": "API — session-profile.py",
+      "type": "api",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-03-03",
+      "reviewSuggested": [],
+      "summary": "session-profile.py — measure how agent sessions actually ran, across harnesses and models.",
+      "tags": [
+        "api",
+        "scripts",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "api-index",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "c382c30ece67a00eece22d55a0bd7fe2908484b32bcf79abeb55e138537fc0bb"
     },
     {
       "id": "api-ui-craft-gate",
@@ -1980,6 +2005,42 @@ window.DOCS_INDEX = {
       "sourceSha256": "56b1c7e87d28bcfdac3906cb30b403c4a586fe6901d74c5b86960805a5bdc698"
     },
     {
+      "id": "design-session-profiler",
+      "path": "docs/design/session-profiler.md",
+      "title": "Design — session profiler (the measured half of tuning)",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2027-03-05",
+      "reviewSuggested": [],
+      "summary": "A deployable, stdlib-only session-profile.py that reads the telemetry Claude Code and GitHub Copilot CLI already write to disk for one or more pack-consuming repos and emits a findings table (SP-01..SP-16, with per-turn evidence), a fixes table (F-01..F-11, each naming the pack surface and its control) and a model-family x harness comparison — the input to /dream for performance, efficiency, task adherence, fan-out and cross-harness tuning.",
+      "tags": [
+        "profiling",
+        "instrumentation",
+        "efficiency",
+        "adherence",
+        "coordination",
+        "tooling"
+      ],
+      "links": [
+        {
+          "to": "kb-pack-evolution",
+          "rel": "implements"
+        },
+        {
+          "to": "design-pack-doctor",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "eef4e4c8b9bf1ed5a4c6a48e190c199b61c6c4a9cefc7a54fac559edff5d87cb"
+    },
+    {
       "id": "design-tier2-proof-pack-sections",
       "path": "docs/design/tier2-proof-pack-sections.md",
       "title": "Tier-2 prose→structure: opt-in Proof-Pack sections (E7/E8, IO2) — Design",
@@ -2188,7 +2249,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "bdb78c37357d2f826508e38a53dedb6cfb50df002784bf64a8bacd3b4bc95170"
+      "sourceSha256": "50bb58e74746bf6744af9f4940f6d6aebad11b093fbe004f1ebcf49e4f3fb6b7"
     },
     {
       "id": "docs-index",
@@ -3067,6 +3128,32 @@ window.DOCS_INDEX = {
       "sourceSha256": "fb30d636f0c68014b333a7182f767e54d66af70659c3c027f266805d9a4539bb"
     },
     {
+      "id": "profile-sp-0001",
+      "path": "docs/profiles/sp-0001/profile.md",
+      "title": "Session profile sp-0001 - theterrace, ai-forward",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-04",
+      "reviewSuggested": [],
+      "summary": "Measured pass over 20 session(s) in theterrace, ai-forward (last 7 days); 65 finding(s), top: SP-01, SP-09, SP-01.",
+      "tags": [
+        "profile",
+        "session-profiler",
+        "efficiency",
+        "adherence"
+      ],
+      "links": [
+        {
+          "to": "design-session-profiler",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "246b77a2bd5f131397c44adffdfc8e9b5abb005082acce94da58f4ef891e3f98"
+    },
+    {
       "id": "project-memory",
       "path": "docs/project-memory.md",
       "title": "Project Memory",
@@ -3179,6 +3266,31 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "8797e7ae3db7665bfeb5789d1e1cbb761fffc3de9563c5eae1c0557eacbba0df"
+    },
+    {
+      "id": "session-profiles",
+      "path": "docs/profiles/PROFILES.md",
+      "title": "Session profiles",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-03-05",
+      "reviewSuggested": [],
+      "summary": "Index of /session-profiler runs - each row is one measured pass over the harness telemetry, mined by /dream as findings.",
+      "tags": [
+        "profile",
+        "session-profiler",
+        "index"
+      ],
+      "links": [
+        {
+          "to": "design-session-profiler",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "0ef043a2582d1b5e9a3903b10f42f26c99a3d205db3e792b7a6e801028bb5191"
     },
     {
       "id": "ui-capability-guide",
@@ -5579,5 +5691,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "16959fd26f6055bf237ea70fac5eee1c1f3b45598cb245e0e8e71a2c8a40a469"
+  "graphSha256": "27c815339bbdf80b09ec5c232715c50ca25a3da7c7eb76c49ccd189287a3c248"
 };

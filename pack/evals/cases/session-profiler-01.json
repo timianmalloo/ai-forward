@@ -1,0 +1,13 @@
+{
+  "skill": "session-profiler",
+  "prompt": "Run /session-profiler over this repo's sessions from the last 30 days and produce the findings and fixes tables. (Run in an AI-Forward clone workspace; the deterministic half must work with no harness store present - it reports nothing found, never a fabricated number.)",
+  "setup": [
+    { "path": "tmp-profeval/nohome/.keep", "content": "" }
+  ],
+  "assertions": [
+    { "type": "cmd-exit", "cmd": ["python3", "pack/scripts/session-profile.py", "fixes"], "exit": 0 },
+    { "type": "cmd-exit", "cmd": ["python3", "pack/scripts/session-profile.py", "--repo", ".", "--days", "1", "--copilot-home", "tmp-profeval/nohome", "--claude-home", "tmp-profeval/nohome", "discover"], "exit": 1 },
+    { "type": "file-absent", "path": "docs/profiles/sp-9999/profile.json" }
+  ],
+  "id": "session-profiler-01"
+}

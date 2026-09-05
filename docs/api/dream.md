@@ -110,6 +110,10 @@ Harvest simplify:/assume: markers (bounded; skip generated/vendored trees).
 
 **Coverage gap** — no docstring in the source.
 
+### `load_profiles(root, cutoff)`
+
+docs/profiles/<sp-id>/profile.json in the window - session-profile.py output (data, not graph).
+
 ### `score(freq, distinct_days, has_control, recency=…)`
 
 **Coverage gap** — no docstring in the source.
@@ -152,6 +156,6 @@ Harvest simplify:/assume: markers (bounded; skip generated/vendored trees).
 
 ## Coverage
 
-- Public functions: **20** · documented: **3** (**15%**)
+- Public functions: **21** · documented: **4** (**19%**)
 - Undocumented (recorded, not invented): `find_root`, `now_iso`, `read_jsonl`, `append_jsonl`, `scrub`, `is_tainted`, `load_corpus`, `score`, `build_proposals`, `dream_id`, `render_data_js`, `render_html`, `append_diary`, `cmd_run`, `cmd_capture_mitigation`, `cmd_apply_decisions`, `cmd_list`
 

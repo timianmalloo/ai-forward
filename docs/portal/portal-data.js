@@ -1,14 +1,14 @@
 window.PORTAL_DATA = {
   "meta": {
     "counts": {
-      "skills": 24,
+      "skills": 25,
       "personas": 23,
       "knowledge": 38,
       "templates": 28,
-      "scripts": 20
+      "scripts": 21
     },
     "whatIs": "AI-Forward is a committed Markdown methodology pack that installs into a repo so Claude Code and GitHub Copilot direct work with a shared reasoning spine, adversarial persona review, and a library of workflow skills - nothing runs as a service; everything is versioned files and stdlib scripts.",
-    "skillCount": 24,
+    "skillCount": 25,
     "precisionNote": "This portal is the high-level, user-facing front door. It is a LENS over the repo's core knowledge, not a copy of it: the Foundations, UI, and Architecture sections list and link the structured artifacts (knowledge docs, ADRs, specs, designs) with derived summaries, while the artifacts themselves stay exactly where they are - as structured, individually-owned Markdown. Nothing here is hand-typed content that must be kept in sync; it is generated from those sources, so it cannot drift."
   },
   "sections": [
@@ -25,7 +25,7 @@ window.PORTAL_DATA = {
     {
       "id": "skills",
       "n": "3",
-      "title": "The 24 Skills"
+      "title": "The 25 Skills"
     },
     {
       "id": "agents",
@@ -237,6 +237,13 @@ window.PORTAL_DATA = {
           "when": "Periodically, to compound learnings across sessions.",
           "produces": "docs/dreams/ + HTML review",
           "handoff": "/apply-learnings"
+        },
+        {
+          "cmd": "/session-profiler",
+          "desc": "Profile one or more pack-consuming repos' Claude Code and Copilot CLI sessions from their local telemetry and produce a findings table and a fixes table for performance, efficiency, task adherence, parallelism and cross-harness coordination — the continuous-improvement loop for how the pack performs on every model and harness.",
+          "when": "Weekly, after any session that felt slow or drifty, and before/after a model or harness change - pointed at one or more pack-consuming repos.",
+          "produces": "docs/profiles/<sp-id>/ - a findings table (SP-01..SP-16, per-turn evidence), a fixes table (F-01..F-11, pack surface + control), and a model-family x harness comparison",
+          "handoff": "/dream (mines the profiles), then /apply-learnings or /extendaibundle"
         }
       ]
     },
@@ -799,6 +806,11 @@ window.PORTAL_DATA = {
             "title": "Design — RAI policy + PII/secret scrub (suggestion 4)",
             "summary": "A committed Responsible-AI policy knowledge doc mapping Microsoft RAI principles + NIST AI RMF functions to the pack's EXISTING personas/templates, plus a stdlib regex scrub.py first-pass that redacts obvious PII/secrets from Markdown — explicitly labeled...",
             "path": "../../docs/design/rai-and-scrub.md"
+          },
+          {
+            "title": "Design — session profiler (the measured half of tuning)",
+            "summary": "A deployable, stdlib-only session-profile.py that reads the telemetry Claude Code and GitHub Copilot CLI already write to disk for one or more pack-consuming repos and emits a findings table (SP-01..SP-16, with per-turn evidence), a fixes table (F-01..F-11,...",
+            "path": "../../docs/design/session-profiler.md"
           },
           {
             "title": "Tier-2 prose→structure: opt-in Proof-Pack sections (E7/E8, IO2) — Design",
@@ -1549,7 +1561,7 @@ window.PORTAL_DATA = {
     ],
     "classes": "Three defect classes came out of it and are recorded with controls: PACK-R, a fixed prefix sized by what fits rather than by what each call needs; PACK-S, a fan-out rediscovering per-run what was knowable once; and PACK-T, a generator prepending metadata over a source that already had it — which had been shipping two stacked frontmatter blocks in one instruction file, of which any reader parses only the first.",
     "live": {
-      "baseline": 43708,
+      "baseline": 45122,
       "tolerancePct": 2,
       "backstop": 60000,
       "derivation": {
@@ -1560,23 +1572,23 @@ window.PORTAL_DATA = {
       "tiers": {
         "always": {
           "docs": 13,
-          "tokens": 43761
+          "tokens": 45122
         },
         "reference": {
           "docs": 2,
           "tokens": 24213
         },
         "skill": {
-          "docs": 13,
-          "tokens": 50976
+          "docs": 18,
+          "tokens": 81327
         },
         "glob": {
-          "docs": 11,
-          "tokens": 54323
+          "docs": 6,
+          "tokens": 25898
         }
       },
-      "corpusTokens": 173273,
-      "alwaysPct": 25
+      "corpusTokens": 176560,
+      "alwaysPct": 26
     }
   },
   "systems": [
@@ -1754,7 +1766,7 @@ window.PORTAL_DATA = {
         "id": "api-index",
         "type": "api",
         "title": "API reference — the deployed script bundle",
-        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 267 public functions across 19 modules, 40% carrying a docstring."
+        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 305 public functions across 20 modules, 40% carrying a docstring."
       },
       {
         "id": "api-marker-lint",
@@ -1785,6 +1797,12 @@ window.PORTAL_DATA = {
         "type": "api",
         "title": "API — scrub.py",
         "summary": "scrub.py — first-pass PII/secret redaction for Markdown (deployable)."
+      },
+      {
+        "id": "api-session-profile",
+        "type": "api",
+        "title": "API — session-profile.py",
+        "summary": "session-profile.py — measure how agent sessions actually ran, across harnesses and models."
       },
       {
         "id": "api-ui-craft-gate",
@@ -1917,6 +1935,12 @@ window.PORTAL_DATA = {
         "type": "design",
         "title": "Design — RAI policy + PII/secret scrub (suggestion 4)",
         "summary": "A committed Responsible-AI policy knowledge doc mapping Microsoft RAI principles + NIST AI RMF functions to the pack's EXISTING personas/templates, plus a..."
+      },
+      {
+        "id": "design-session-profiler",
+        "type": "design",
+        "title": "Design — session profiler (the measured half of tuning)",
+        "summary": "A deployable, stdlib-only session-profile.py that reads the telemetry Claude Code and GitHub Copilot CLI already write to disk for one or more pack-consuming..."
       },
       {
         "id": "design-tier2-proof-pack-sections",
@@ -2501,6 +2525,12 @@ window.PORTAL_DATA = {
         "summary": "Repo-level privacy posture for the pack-evolution tooling: the CLI and doctor touch no personal data; project memory may incidentally record handles/names (no..."
       },
       {
+        "id": "profile-sp-0001",
+        "type": "doc",
+        "title": "Session profile sp-0001 - theterrace, ai-forward",
+        "summary": "Measured pass over 20 session(s) in theterrace, ai-forward (last 7 days); 65 finding(s), top: SP-01, SP-09, SP-01."
+      },
+      {
         "id": "project-memory",
         "type": "doc",
         "title": "Project Memory",
@@ -2535,6 +2565,12 @@ window.PORTAL_DATA = {
         "type": "doc",
         "title": "Proposal: define the goal state before acting — bounding the agent turn",
         "summary": "An incident analysis and proposal. A closed question (\"is /optimize-graph wired into the skills?\") was answered on the first tool call and then became an..."
+      },
+      {
+        "id": "session-profiles",
+        "type": "doc",
+        "title": "Session profiles",
+        "summary": "Index of /session-profiler runs - each row is one measured pass over the harness telemetry, mined by /dream as findings."
       },
       {
         "id": "spec-agent-coordination",
@@ -2869,6 +2905,11 @@ window.PORTAL_DATA = {
         "rel": "refines"
       },
       {
+        "from": "api-session-profile",
+        "to": "api-index",
+        "rel": "refines"
+      },
+      {
         "from": "api-ui-craft-gate",
         "to": "api-index",
         "rel": "refines"
@@ -3150,6 +3191,21 @@ window.PORTAL_DATA = {
       },
       {
         "from": "design-rai-and-scrub",
+        "to": "kb-pack-evolution",
+        "rel": "implements"
+      },
+      {
+        "from": "design-session-profiler",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "design-session-profiler",
+        "to": "design-pack-doctor",
+        "rel": "relates-to"
+      },
+      {
+        "from": "design-session-profiler",
         "to": "kb-pack-evolution",
         "rel": "implements"
       },
@@ -4049,6 +4105,11 @@ window.PORTAL_DATA = {
         "rel": "documents"
       },
       {
+        "from": "profile-sp-0001",
+        "to": "design-session-profiler",
+        "rel": "relates-to"
+      },
+      {
         "from": "project-memory",
         "to": "architecture",
         "rel": "relates-to"
@@ -4146,6 +4207,11 @@ window.PORTAL_DATA = {
       {
         "from": "proposal-turn-goal-state-and-stopping",
         "to": "project-memory",
+        "rel": "relates-to"
+      },
+      {
+        "from": "session-profiles",
+        "to": "design-session-profiler",
         "rel": "relates-to"
       },
       {

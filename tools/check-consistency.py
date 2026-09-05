@@ -451,7 +451,20 @@ def check_frontmatter_yaml(truth, findings):
 
 def check_managed_blocks(truth, findings):
     n = truth["counts"]["skills"]
-    for name in ("CLAUDE.block.md", "AGENTS.block.md"):
+    # CTX-B / INSTALL 1.1: the full block lives once, in AGENTS.block.md. CLAUDE.block.md is the
+    # Claude Code ADDENDUM: it must name the `@AGENTS.md` import and must NOT carry a skill list
+    # (a second list is the double-load this change removed).
+    addendum = _read(os.path.join(PACK, "adapters", "managed-blocks", "CLAUDE.block.md"))
+    if addendum is None:
+        findings.append("managed block CLAUDE.block.md not found")
+    else:
+        if "@AGENTS.md" not in addendum:
+            findings.append("CLAUDE.block.md: the Claude Code addendum must reference the `@AGENTS.md` import")
+        if re.search(r"Skills\s*\(\d+\)", addendum):
+            findings.append("CLAUDE.block.md: carries a 'Skills (N)' list - the block must live only in AGENTS.block.md (CTX-B)")
+        if len(addendum) > 4000:
+            findings.append(f"CLAUDE.block.md: {len(addendum)} bytes - the addendum is meant to stay short (< 4000)")
+    for name in ("AGENTS.block.md",):
         text = _read(os.path.join(PACK, "adapters", "managed-blocks", name))
         if text is None:
             findings.append(f"managed block {name} not found")
@@ -937,6 +950,10 @@ def check_front_door_names_verifier(findings):
         text = _read(os.path.join(ROOT, rel))
         if text is None:
             findings.append(f"{rel}: not found (front-door verifier check)")
+            continue
+        if rel == "CLAUDE.md" and re.search(r"^\s*@AGENTS\.md\s*$", text, re.M):
+            # INSTALL 1.1 / CTX-B: CLAUDE.md is the import stub; the paragraph lives once, in
+            # AGENTS.md, which Claude Code expands in place - so it is checked there.
             continue
         sync_paras = [p for p in re.split(r"\n\s*\n", text) if "sync-pack.ps1" in p]
         if not sync_paras:

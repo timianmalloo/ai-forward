@@ -201,6 +201,7 @@
       "produces": "docs/dreams/ + HTML review",
       "handoff": "/apply-learnings"
     },
+    "session-profiler": {"group": "Continuous improvement", "when": "Weekly, after any session that felt slow or drifty, and before/after a model or harness change - pointed at one or more pack-consuming repos.", "produces": "docs/profiles/<sp-id>/ - a findings table (SP-01..SP-16, per-turn evidence), a fixes table (F-01..F-11, pack surface + control), and a model-family x harness comparison", "handoff": "/dream (mines the profiles), then /apply-learnings or /extendaibundle"},
     "apply-learnings": {
       "group": "Continuous improvement",
       "when": "Sharing a learning across the fleet.",

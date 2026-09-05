@@ -12,6 +12,18 @@ REPO = Path(__file__).resolve().parents[2]
 SCRIPTS = REPO / "pack" / "scripts"
 XAML_LINT = SCRIPTS / "xaml-token-lint.py"
 UI_DESIGN = REPO / "pack" / "commands" / "ui-design" / "SKILL.md"
+
+
+def _skill_text(skill_md):
+    """A skill contract is SKILL.md plus the reference/*.md stage files it reads on demand
+    (progressive disclosure, revision 60 / CTX-E): the behavioural text is unchanged, it is
+    split across files."""
+    text = skill_md.read_text(encoding="utf-8")
+    ref = skill_md.parent / "reference"
+    if ref.is_dir():
+        for part in sorted(ref.glob("*.md")):
+            text += chr(10) + part.read_text(encoding="utf-8")
+    return text
 VISUALIZE = REPO / "pack" / "commands" / "visualize" / "SKILL.md"
 UI_CRAFT = REPO / "pack" / "knowledge" / "ui-design-craft.md"
 UI_VISUAL_ASSETS = REPO / "pack" / "knowledge" / "ui-visual-assets.md"
@@ -216,7 +228,7 @@ class NativeUiContractTextTests(unittest.TestCase):
             self.assertIn(claim, text)
 
     def test_ui_design_native_trigger_contract_is_behavioral_not_visual_only(self):
-        text = UI_DESIGN.read_text(encoding="utf-8")
+        text = _skill_text(UI_DESIGN)
         for required in [
             "native-ui-proof-pack.template.md",
             "medium declaration",

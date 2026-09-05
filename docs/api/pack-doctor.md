@@ -53,6 +53,25 @@ Exit: 0 all PASS/WARN (or all PASS under --strict) · 1 any FAIL/strict WARN.
 
 **Coverage gap** — no docstring in the source.
 
+### `check_claude_md_import(root)`
+
+CTX-B / F-01. Copilot CLI loads BOTH AGENTS.md and CLAUDE.md as custom instructions
+(measured: two ~58 KB <custom_instruction> blocks in one captured prefix), while Claude
+Code reads only CLAUDE.md and expands an `@AGENTS.md` import in place. The pack's
+byte-identical parity therefore pays the managed block twice on every Copilot request.
+The fix is structural, so the check is too: CLAUDE.md must be the import stub.
+
+### `check_copilot_settings()`
+
+F-09 / WT1a. `contextTier: long_context` and `effortLevel: high` as GLOBAL defaults let a
+session grow without a compaction and pay maximum reasoning on every T0 turn - the profiled
+23-hour session went 159k -> 564k tokens with zero compactions. Both are per-phase
+choices (GO19), so a global setting is reported, not assumed.
+
+### `check_hooks(root)`
+
+F-07 / CTX-D. The re-read guard is a control only when a host runs it.
+
 ### `check_block(root, fname)`
 
 **Coverage gap** — no docstring in the source.
@@ -101,6 +120,6 @@ lesson into a control that fires at the moment of the mistake).
 
 ## Coverage
 
-- Public functions: **7** · documented: **2** (**29%**)
+- Public functions: **10** · documented: **5** (**50%**)
 - Undocumented (recorded, not invented): `check_installed`, `check_surface`, `check_block`, `check_graph`, `run`
 
