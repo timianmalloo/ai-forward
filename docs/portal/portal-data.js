@@ -1766,7 +1766,7 @@ window.PORTAL_DATA = {
         "id": "api-index",
         "type": "api",
         "title": "API reference — the deployed script bundle",
-        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 305 public functions across 20 modules, 40% carrying a docstring."
+        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 306 public functions across 20 modules, 40% carrying a docstring."
       },
       {
         "id": "api-marker-lint",

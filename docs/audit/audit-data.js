@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-forward-session-profiler",
-  "generated": "2026-09-05T20:09:26Z",
+  "project": "ai-forward",
+  "generated": "2026-09-05T20:13:14Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3347,6 +3347,38 @@ window.AUDIT_DATA = {
       ],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-01M1SK8AWN832QYRAKBFE5138M",
+      "shortname": "rev60-reasoning-visibility",
+      "datetime": "2026-09-05T20:13:14Z",
+      "session": "5ba1afa5",
+      "prompt": "do the next increment you suggest AND incorporate your what-we-can-do 1, 2 and 3 (SP-17 reasoning visibility, SP-18 intent-trace coverage, reasoning column in compare; richest summary per host + re-profile; externalize reasoning by construction; effort signals as proxies)",
+      "summary": "SP-17/SP-18 + reasoning-share, effort and intent-trace compare columns; CT26 intent line; IO14 proxies; managed-block clause; pack-doctor claude settings; showThinkingSummaries in the settings snippet; two spikes recorded in INSTALL 1.6 (Claude Code setting changes nothing on disk on Fable 5.1; Copilot already requests reasoning.summary=auto, OTel carries counts not text); sp-0001 regenerated; all 10 gates green on the committed tree.",
+      "kind": "skill",
+      "skill": "extendaibundle",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "pack/scripts/session-profile.py",
+        "pack/knowledge/communication-and-task-discipline.md",
+        "pack/adapters/INSTALL.md"
+      ],
+      "tags": [
+        "session-profiler",
+        "reasoning"
+      ],
+      "outcome": "success",
+      "goal": "Add SP-17/SP-18 and effort/intent columns; encode richest-summary-per-host, intent-per-tool-call and effort-as-proxy into the pack; spike both hosts",
+      "done_when": "profiler emits the new signals on real data with tests, both spikes recorded with results, INSTALL entry present, gates green, committed on the branch",
+      "tier": "T1",
+      "fan_out": 0,
+      "git": {
+        "sha": "4f34a5d1bcfe7bbaa78386b0aabaa0eeafa082fc",
+        "short": "4f34a5d1b",
+        "branch": "session-profiler",
+        "pushed": null
+      }
     }
   ],
   "changes": [
