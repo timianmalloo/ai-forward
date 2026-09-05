@@ -15,7 +15,7 @@ REPO = Path(__file__).resolve().parents[2]
 SCRIPTS = REPO / "pack" / "scripts"
 
 DEPLOYED = ["audit-log", "design-lint", "docs-graph", "foundation-check",
-            "pack-doctor", "prompt-log", "scrub", "session-profile", "context-budget",
+            "pack-doctor", "prompt-log", "scrub", "session-profile", "context-budget", "pack-apply",
             # FR-049: the setup helpers were unreferenced by any test for four revisions.
             "graphify-setup", "obsidian-setup", "visual-assets-setup",
             "xaml-token-lint"]

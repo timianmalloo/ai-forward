@@ -5,7 +5,7 @@ window.PORTAL_DATA = {
       "personas": 23,
       "knowledge": 38,
       "templates": 28,
-      "scripts": 21
+      "scripts": 22
     },
     "whatIs": "AI-Forward is a committed Markdown methodology pack that installs into a repo so Claude Code and GitHub Copilot direct work with a shared reasoning spine, adversarial persona review, and a library of workflow skills - nothing runs as a service; everything is versioned files and stdlib scripts.",
     "skillCount": 25,
@@ -287,7 +287,7 @@ window.PORTAL_DATA = {
         },
         {
           "cmd": "/updatepack",
-          "desc": "Update an installed AI-Forward Pack to the latest revision from a local ai-forward clone — diff revisions in INSTALL.md, apply only the changed artifacts per the changelog, and summarise every action in a table before offering to commit and push.",
+          "desc": "Update an installed AI-Forward Pack to the latest revision from a local ai-forward clone — read the changelog, run pack-apply.py plan then apply (managed blocks re-pasted, stale copies removed, CLAUDE.md converted to the @AGENTS.md import, parity controls rewritten, repo-local deviations three-way merged), reconcile what the program reports, and summarise every action in a table before offering to commit and push.",
           "when": "Pulling pack updates (the federation pull path).",
           "produces": "updated install",
           "handoff": "-"

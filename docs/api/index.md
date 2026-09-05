@@ -9,7 +9,7 @@ links:
   - { to: architecture, rel: documents }
 review-by: "2027-03-03"
 summary: >-
-  Generated API reference for the pack's public surface — the deployed script bundle. 306 public functions across 20 modules, 40% carrying a docstring.
+  Generated API reference for the pack's public surface — the deployed script bundle. 318 public functions across 21 modules, 40% carrying a docstring.
 ---
 
 # API reference — the deployed script bundle
@@ -36,6 +36,7 @@ with no docstring is listed as a **coverage gap** rather than described from gue
 | [`graphify-setup.py`](graphify-setup.md) | 11 | 4 | — | graphify-setup.py - stand up the CODE knowledge graph and join it to the docs graph. |
 | [`marker-lint.py`](marker-lint.md) | 1 | 0 | — | marker-lint.py - completeness check for the pack's inline decision markers. |
 | [`obsidian-setup.py`](obsidian-setup.md) | 17 | 7 | — | obsidian-setup.py - stand up (and analyze) the Obsidian lens over an AI-Forward docs graph. |
+| [`pack-apply.py`](pack-apply.md) | 12 | 5 | — | pack-apply.py — apply the AI-Forward deployment map to a repo, mechanically and reversibly. |
 | [`pack-doctor.py`](pack-doctor.md) | 11 | 6 | — | pack-doctor.py — AI-Forward install-health check (deployable; runs in a TARGET repo). |
 | [`prompt-log.py`](prompt-log.md) | 16 | 5 | 8 | prompt-log.py — the fast prompt-reuse lens over the project's audit log. |
 | [`scrub.py`](scrub.md) | 2 | 2 | — | scrub.py — first-pass PII/secret redaction for Markdown (deployable). |
@@ -44,5 +45,5 @@ with no docstring is listed as a **coverage gap** rather than described from gue
 | [`visual-assets-setup.py`](visual-assets-setup.md) | 12 | 5 | — | visual-assets-setup.py - wire up a generation backend for UI visual assets (AI-Forward). |
 | [`xaml-token-lint.py`](xaml-token-lint.md) | 9 | 0 | — | xaml-token-lint.py — first-slice token linter for XAML/native UI markup. |
 
-**Total** — 306 public functions across 20 modules, **123 documented (40%)**.
+**Total** — 318 public functions across 21 modules, **128 documented (40%)**.
 

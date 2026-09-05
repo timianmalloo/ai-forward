@@ -21,7 +21,7 @@ window.PACK_INDEX = {
 {
 "id": "scripts",
 "label": "Scripts",
-"count": 21
+"count": 22
 },
 {
 "id": "personas",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 319,
+"total": 320,
 "items": [
 {
 "cat": "knowledge",
@@ -608,10 +608,10 @@ window.PACK_INDEX = {
 "cat": "skills",
 "id": "updatepack",
 "title": "/updatepack",
-"summary": "Update an installed AI-Forward Pack to the latest revision — reads the pack source INSTALL.md from a local ai-forward clone, diffs the installed vs source revision, applies exactly the changed artifacts listed in the changelog (never…",
+"summary": "Update an installed AI-Forward Pack to the latest revision — reads the pack source INSTALL.md from a local ai-forward clone, diffs the installed vs source revision, applies the deployment map mechanically with pack-apply.py (managed-block…",
 "path": "pack/commands/updatepack/SKILL.md",
 "kind": "skill",
-"text": "/updatepack update an installed ai-forward pack to the latest revision — reads the pack source install.md from a local ai-forward clone, diffs the installed vs source revision, applies exactly the changed artifacts listed in the changelog (never guesses by diffing the tree), and produces a tabular action summary before offering to commit and push. run this from the repo that already has the pack installed. /updatepack — pull the latest ai-forward pack into an installed repo grounding (first action) input modes — dry-run & idempotency stages documentation & discoverability (note) definition of done"
+"text": "/updatepack update an installed ai-forward pack to the latest revision — reads the pack source install.md from a local ai-forward clone, diffs the installed vs source revision, applies the deployment map mechanically with pack-apply.py (managed-block re-paste, stale-copy removal, the claude.md import conversion, parity-control retirement, three-way merges over repo-local deviations), and produces a tabular action summary before offering to commit and push. run this from the repo that already has the pack installed. /updatepack — pull the latest ai-forward pack into an installed repo grounding (first action) input modes — dry-run & idempotency stages documentation & discoverability (note) definition of done"
 },
 {
 "cat": "skills",
@@ -999,6 +999,15 @@ window.PACK_INDEX = {
 "path": "pack/scripts/obsidian-setup.py",
 "kind": "script",
 "text": "obsidian-setup.py obsidian-setup.py - stand up (and analyze) the obsidian lens over an ai-forward docs graph. what this is the pack's knowledge graph lives in per-artifact yaml frontmatter under docs/ (v2), which makes docs/ *already* a valid obsidian vault. this script makes that lens real and shared: it writes a committed .obsidian/ configuration (graph colour groups keyed to the pack's own artifact types, the enabled plugin list, sensible defaults), seeds non-canonical dashboard \"lenses\", and keeps per-user workspace/cache files out of git. it also ships a dependency-free graph analyzer (--analyze) that computes the same class of structural insight the obsidian graph-analysis plugins provide - degree, betweenness centrality (brandes), components, orphans, structural gaps - directly from docs-index.js. that matters: the insight must not be locked behind a gui plugin, because the pack promises tool-neutrality (project-memory-and-obsidian.md m8: obsidian is a reader, never the writer of record). design rules this honors * frontmatter stays the record; docs-graph.py stays the only writer of the graph. this script never edits an artifact's frontmatter and never writes docs-index.js. * obsidian is never required. every mode works, and --analyze is useful, with obsidian absent. * third-party plugin code is not downloaded by default. `--init` writes only the *enabled list*, so obsidian's own ui performs the install with the user's consent. `--fetch-plugins` is an explicit, pinned opt-in. usage obsidian-setup.py --check # report state, write nothing (default) obsidian-setup.py --init # write .obsidian/ config + lenses + .gitignore obsidian-setup.py --analyze # structural insight report to stdout obsidian-setup.py --analyze --write # ...and save it to docs/lenses/graph-insight.md obsidian-setup.py --fetch-plugins # opt-in: download pinned plugin releases obsidian-setup.py --install-app # print the os install command (--yes to run it) ... --root <repo> --vault docs --dry-run --json stdlib only. python 3.8+. exit 0 on success, 1 on error, 2 on --check findings. out write_json write_text load_index build_graph betweenness components analyze rank render_report type_colors init_vault lens_notes update_gitignore fetch_registry fetch_plugins app_install_command app_installed main"
+},
+{
+"cat": "scripts",
+"id": "pack-apply.py",
+"title": "pack-apply.py",
+"summary": "pack-apply.py — apply the AI-Forward deployment map to a repo, mechanically and reversibly.",
+"path": "pack/scripts/pack-apply.py",
+"kind": "script",
+"text": "pack-apply.py pack-apply.py — apply the ai-forward deployment map to a repo, mechanically and reversibly. `/updatepack` and `/addpacktorepo` used to hand-apply install.md's deployment map, so every step a person could forget - re-pasting a managed block, deleting the wrapped copy of a doc whose load scope moved, converting claude.md to the `@agents.md` import, retiring a parity control that encoded the old invariant - was remembered or it was not. this script is the deployment map (install.md 1), run from the pack source against a target repo: pack-apply.py plan --source <ai-forward clone> --target <repo> # every action, no writes pack-apply.py apply --source <ai-forward clone> --target <repo> # do it, idempotently what it does, per artifact family (pack-owned names only - repo-local files are never touched): knowledge -> .claude/knowledge/<name>.md verbatim; .github/instructions/<name>.instructions.md (applyto-wrapped) for load: always|glob; .github/knowledge/<name>.md for load: skill|reference; the stale copy in the other copilot location is removed (ctx-e: a doc re-scoped to on-demand must stop attaching). skills -> .claude/skills/<name>/ (the whole directory: skill.md + reference/*.md); .github/prompts/<name>.prompt.md agents -> .claude/agents/ (both sets); .github/agents/<name>.agent.md (renamed, `tools:` stripped) bundle -> docs/ai-forward-pack/{templates,scripts,hooks,readme,overview,research-synthesis, install,context-budget.json}; .github/hooks/ai-forward.json; .claude/settings.json (hooks merged, showthinkingsummaries set); .gitignore lines; docs/index.html only if absent; docs/docs-index.js never (v10) front doors -> agents.md: the managed block replaced wholesale between markers (appended if absent). claude.md: converted to `@agents.md` + the addendum block (ctx-b); the old file is backed up under docs/ai-forward-pack/retired/, and every paragraph that is not in agents.md (after toolchain-path normalisation) is kept above the addendum. controls -> a repo-local parity test that asserts claude.md carries the standing-method block (the old invariant) is rewritten into a shim asserting the new invariant through pack-doctor, its other assertions carried over where they can be read; the original is backed up beside the claude.md backup. repo-local deviations are honoured, not reverted: a destination that differs from the version the repo received at its installed revision is three-way merged (`git merge-file`) against the pack's old and new text; a clean merge lands as merge, a conflicting one is left untouched with the new pack text written under docs/ai-forward-pack/conflicts/ and reported as conflict for the skill to reconcile. the installed revision advances only in `apply`. re-running is a no-op. python 3.8+, stdlib only. exit 0 = applied/clean, 1 = conflicts or errors reported, 2 = usage. read norm_nl same frontmatter git __init__ row rel _source_revision _target_revision _old_pack_text _write _remove place _transform_like _merge knowledge skills agents bundle _settings _gitignore front_doors _retire_parity_controls advance run_baselines run strip_tools replace_block normalise _outside_block unique_paragraphs parity_shim render_table summarize main"
 },
 {
 "cat": "scripts",

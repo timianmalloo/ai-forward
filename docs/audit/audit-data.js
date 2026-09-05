@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-forward",
-  "generated": "2026-09-05T20:13:14Z",
+  "project": "ai-forward-pack-apply",
+  "generated": "2026-09-05T20:53:43Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3379,6 +3379,25 @@ window.AUDIT_DATA = {
         "branch": "session-profiler",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M1SNJFW6TQJ7EBNE1PAF1ZZK",
+      "shortname": "updatepack applies the map mechanically",
+      "datetime": "2026-09-05T20:53:43Z",
+      "session": "5ba1afa5",
+      "prompt": "hmm - on 1 and 2 you listed above - those should be fixes as part of the update pack skill so i dont have to remember to do that for repos, fix that now even if it requires adding a python or powershell script that the skill leverages",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [
+        "updatepack"
+      ],
+      "outcome": "success",
+      "started_at": "2026-09-05T20:53:43Z",
+      "duration_seconds": 0.0
     }
   ],
   "changes": [
