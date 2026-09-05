@@ -131,6 +131,24 @@ def check_copilot_settings():
     return _result("copilot settings", PASS, "contextTier={0}, effortLevel={1}".format(tier or "default", effort or "default"))
 
 
+def check_claude_settings(root):
+    """F-12 / IO14. `showThinkingSummaries` is the richest thinking display Claude Code offers; a
+    project that profiles its sessions wants it on. Project scope (.claude/settings.json) so it
+    travels with the repo; the user file is reported but never edited."""
+    text = _read(os.path.join(root, ".claude", "settings.json"))
+    if text is None:
+        return _result("claude settings", WARN, ".claude/settings.json absent",
+                       "create it from adapters/hooks/claude-code.settings.hooks.json (hooks + showThinkingSummaries)")
+    try:
+        cfg = json.loads(text)
+    except ValueError as exc:
+        return _result("claude settings", WARN, "cannot parse .claude/settings.json: {0}".format(exc), "fix the JSON")
+    if cfg.get("showThinkingSummaries") is True:
+        return _result("claude settings", PASS, "showThinkingSummaries=true (the richest thinking display the host offers)")
+    return _result("claude settings", WARN, "showThinkingSummaries not set - thinking is shown as a collapsed stub",
+                   "set \"showThinkingSummaries\": true in .claude/settings.json (INSTALL 1.6); it changes the display, not the billed tokens")
+
+
 def check_hooks(root):
     """F-07 / CTX-D. The re-read guard is a control only when a host runs it."""
     cop = os.path.join(root, ".github", "hooks", "ai-forward.json")
@@ -345,6 +363,7 @@ def run(root):
         check_block(root, "AGENTS.md"),
         check_claude_md_import(root),
         check_hooks(root),
+        check_claude_settings(root),
         check_copilot_settings(),
         check_graph(root),
     ]

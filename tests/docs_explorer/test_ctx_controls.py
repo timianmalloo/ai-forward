@@ -88,6 +88,15 @@ class PackDoctorCtxTests(unittest.TestCase):
         self._write("docs/ai-forward-pack/hooks/reread-guard.py", "# guard")
         self.assertEqual(self.doc.PASS, self.doc.check_hooks(self.tmp)["status"])
 
+    def test_claude_settings_check_wants_thinking_summaries(self):
+        self.assertEqual(self.doc.WARN, self.doc.check_claude_settings(self.tmp)["status"], "absent file -> WARN with the fix")
+        self._write(".claude/settings.json", json.dumps({"hooks": {}}))
+        r = self.doc.check_claude_settings(self.tmp)
+        self.assertEqual(self.doc.WARN, r["status"])
+        self.assertIn("showThinkingSummaries", r["fix"])
+        self._write(".claude/settings.json", json.dumps({"showThinkingSummaries": True}))
+        self.assertEqual(self.doc.PASS, self.doc.check_claude_settings(self.tmp)["status"])
+
     def test_source_repo_reports_the_import_form(self):
         r = self.doc.check_claude_md_import(str(ROOT))
         self.assertEqual(self.doc.PASS, r["status"], r)

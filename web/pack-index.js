@@ -1007,7 +1007,7 @@ window.PACK_INDEX = {
 "summary": "pack-doctor.py — AI-Forward install-health check (deployable; runs in a TARGET repo).",
 "path": "pack/scripts/pack-doctor.py",
 "kind": "script",
-"text": "pack-doctor.py pack-doctor.py — ai-forward install-health check (deployable; runs in a target repo). reports whether this repo has the pack installed and healthy: the installed revision, both tool surfaces present, the managed blocks intact, and the knowledge graph valid + fresh. one pass/warn/fail line per check with a suggested fix; exit 1 if any fail, or if any warn is present under --strict. distinct from tools/check-consistency.py (which validates the pack source — pack/ == docs). a target repo has no pack/, so this checks install health, not source consistency. design: docs/design/pack-doctor.md. stdlib only; composes docs-graph.py for the graph half. usage pack-doctor.py [--root <repo>] [--json] [--strict] exit: 0 all pass/warn (or all pass under --strict) · 1 any fail/strict warn. _result check_installed check_surface _read check_claude_md_import check_copilot_settings check_hooks check_block check_graph check_node_runner _works check_interpreter run main"
+"text": "pack-doctor.py pack-doctor.py — ai-forward install-health check (deployable; runs in a target repo). reports whether this repo has the pack installed and healthy: the installed revision, both tool surfaces present, the managed blocks intact, and the knowledge graph valid + fresh. one pass/warn/fail line per check with a suggested fix; exit 1 if any fail, or if any warn is present under --strict. distinct from tools/check-consistency.py (which validates the pack source — pack/ == docs). a target repo has no pack/, so this checks install health, not source consistency. design: docs/design/pack-doctor.md. stdlib only; composes docs-graph.py for the graph half. usage pack-doctor.py [--root <repo>] [--json] [--strict] exit: 0 all pass/warn (or all pass under --strict) · 1 any fail/strict warn. _result check_installed check_surface _read check_claude_md_import check_copilot_settings check_claude_settings check_hooks check_block check_graph check_node_runner _works check_interpreter run main"
 },
 {
 "cat": "scripts",
@@ -2147,10 +2147,10 @@ window.PACK_INDEX = {
 "cat": "graph",
 "id": "profile-sp-0001",
 "title": "Session profile sp-0001 - theterrace, ai-forward",
-"summary": "Measured pass over 20 session(s) in theterrace, ai-forward (last 7 days); 65 finding(s), top: SP-01, SP-09, SP-01.",
+"summary": "Measured pass over 23 session(s) in theterrace, ai-forward (last 7 days); 84 finding(s), top: SP-01, SP-09, SP-02.",
 "path": "docs/profiles/sp-0001/profile.md",
 "kind": "doc",
-"text": "session profile sp-0001 - theterrace, ai-forward measured pass over 20 session(s) in theterrace, ai-forward (last 7 days); 65 finding(s), top: sp-01, sp-09, sp-01. profile session-profiler efficiency adherence relates-to design-session-profiler"
+"text": "session profile sp-0001 - theterrace, ai-forward measured pass over 23 session(s) in theterrace, ai-forward (last 7 days); 84 finding(s), top: sp-01, sp-09, sp-02. profile session-profiler efficiency adherence relates-to design-session-profiler"
 },
 {
 "cat": "graph",

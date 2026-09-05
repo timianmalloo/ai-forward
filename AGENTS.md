@@ -126,7 +126,8 @@ every non-trivial task.
   class PACK-O.
 - **How you write, and how much you take on:** **compress the expression, never the obligation.**
   Simplified technical English — short sentences, common words, active voice, one idea per sentence,
-  **result first**. No monologue, no self-encouragement, no rhetorical transitions, and never announce
+  **result first**. Every shell call carries a one-line intent — the only reasoning trace a profiler can read
+  (CT26). No monologue, no self-encouragement, no rhetorical transitions, and never announce
   a step and then take it; an interim update earns its place only by carrying a verified result, a real
   blocker, a decision, or the next action. But **concision never drops a confidence label, a citation,
   an assumption, a residual risk, or a correction** — and the response channel is compressed while a

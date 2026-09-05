@@ -34,13 +34,13 @@ def make_copilot_home(home, repo, rereads=True, runaway=True, double_block=True)
     con.execute("""create table assistant_usage_events (id integer primary key autoincrement, session_id text, turn_index integer,
         agent_id text, model text, input_tokens integer, output_tokens integer, cache_read_tokens integer, cache_write_tokens integer,
         reasoning_tokens integer, total_nano_aiu integer, duration_ms integer, time_to_first_token_ms real, initiator text,
-        finish_reason text, created_at text)""")
+        finish_reason text, created_at text, reasoning_effort text)""")
     con.execute("insert into sessions values (?,?,?,?,?,?)", (SID, repo, None, "Fixture session", _ts(0), _ts(600)))
     rows = []
     for k in range(4):
-        rows.append((SID, 0, None, "gpt-6-astra", 200000 + k * 50000, 500, 199000 + k * 50000, 500, 100, 100000000000, 20000, 25000.0, "agent", "tool_calls", _ts(10 + k)))
-    rows.append((SID, 0, "sub-1", "gpt-6-astra", 20000, 300, 19000, 500, 50, 1000000000, 5000, 2000.0, "sub-agent", "stop", _ts(12)))
-    con.executemany("insert into assistant_usage_events (session_id, turn_index, agent_id, model, input_tokens, output_tokens, cache_read_tokens, cache_write_tokens, reasoning_tokens, total_nano_aiu, duration_ms, time_to_first_token_ms, initiator, finish_reason, created_at) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", rows)
+        rows.append((SID, 0, None, "gpt-6-astra", 200000 + k * 50000, 500, 199000 + k * 50000, 500, 1000, 100000000000, 20000, 25000.0, "agent", "tool_calls", _ts(10 + k), "high"))
+    rows.append((SID, 0, "sub-1", "gpt-6-astra", 20000, 300, 19000, 500, 50, 1000000000, 5000, 2000.0, "sub-agent", "stop", _ts(12), "high"))
+    con.executemany("insert into assistant_usage_events (session_id, turn_index, agent_id, model, input_tokens, output_tokens, cache_read_tokens, cache_write_tokens, reasoning_tokens, total_nano_aiu, duration_ms, time_to_first_token_ms, initiator, finish_reason, created_at, reasoning_effort) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", rows)
     con.commit()
     con.close()
     sdir = os.path.join(home, "session-state", SID)
@@ -58,7 +58,12 @@ def make_copilot_home(home, repo, rereads=True, runaway=True, double_block=True)
     add("session.start", {"sessionId": SID}, _ts(0))
     add("system.message", {"content": system, "interactionId": "i-main", "role": "system"}, _ts(1))
     add("user.message", {"content": "build the thing", "delivery": "idle", "interactionId": "i-main"}, _ts(2))
-    add("assistant.message", {"content": "Goal: build it. Done when: tests pass. Tier: T1", "interactionId": "i-main", "toolRequests": []}, _ts(3))
+    add("assistant.message", {"content": "Goal: build it. Done when: tests pass. Tier: T1", "interactionId": "i-main", "toolRequests": [],
+                              "reasoningText": "**Planning** I will read the file, then build." + ("x" * 700)}, _ts(3))
+    add("tool.execution_start", {"toolCallId": "sh1", "toolName": "powershell", "arguments": {"command": "git status", "description": "Check the tree before building"}}, _ts(3))
+    add("tool.execution_complete", {"toolCallId": "sh1", "interactionId": "i-main", "result": "clean"}, _ts(3))
+    add("tool.execution_start", {"toolCallId": "sh2", "toolName": "powershell", "arguments": {"command": "git log -1"}}, _ts(3))
+    add("tool.execution_complete", {"toolCallId": "sh2", "interactionId": "i-main", "result": "abc"}, _ts(3))
     path = "C:\\repo\\public.html"
     for k in range(3 if rereads else 1):
         add("tool.execution_start", {"toolCallId": "v{0}".format(k), "toolName": "view", "arguments": {"path": path}}, _ts(4 + k))
@@ -94,9 +99,12 @@ def make_claude_home(home, repo):
         {"type": "ai-title", "aiTitle": "fixture claude session", "sessionId": "c1"},
         {"type": "user", "message": {"role": "user", "content": "do the task"}, "origin": {"kind": "human"}, "timestamp": _ts(0), "cwd": repo, "sessionId": "c1"},
         {"type": "assistant", "message": {"id": "m1", "model": "claude-opus-5", "role": "assistant", "content": [
+            {"type": "thinking", "thinking": "The user wants the task done; read first.", "signature": "sig"},
             {"type": "text", "text": "**Goal:** do it. **Done when:** done. **Tier:** T0"},
-            {"type": "tool_use", "name": "Read", "input": {"file_path": "/r/a.md"}}],
-            "usage": {"input_tokens": 10, "cache_read_input_tokens": 50000, "cache_creation_input_tokens": 1000, "output_tokens": 200}},
+            {"type": "tool_use", "name": "Read", "input": {"file_path": "/r/a.md"}},
+            {"type": "tool_use", "name": "Bash", "input": {"command": "ls", "description": "List the tree"}}],
+            "usage": {"input_tokens": 10, "cache_read_input_tokens": 50000, "cache_creation_input_tokens": 1000, "output_tokens": 200,
+                      "output_tokens_details": {"thinking_tokens": 400}}},
          "timestamp": _ts(1), "cwd": repo, "sessionId": "c1"},
         {"type": "user", "message": {"role": "user", "content": [{"type": "tool_result", "tool_use_id": "x", "content": "..."}]}, "timestamp": _ts(2), "cwd": repo, "sessionId": "c1"},
         {"type": "assistant", "message": {"id": "m2", "model": "claude-opus-5", "role": "assistant", "content": [{"type": "text", "text": "done"}],
@@ -155,6 +163,14 @@ class CopilotDetectorTests(unittest.TestCase):
         self.assertIn("SP-11", ids, "harness nudge")
         self.assertEqual(["F-07"], ids["SP-04"]["fixes"])
         self.assertEqual("Verified", ids["SP-04"]["confidence"])
+        # SP-17: 4,000 reasoning tokens billed on the main line, ~750 chars of text on disk
+        self.assertIn("SP-17", ids)
+        self.assertEqual(4000, ids["SP-17"]["metric"]["reasoning_tokens"])
+        self.assertLess(ids["SP-17"]["metric"]["visible_share"], 0.1)
+        # SP-18: one of two shell calls carried an intent -> 50% coverage, below the 90% floor
+        self.assertIn("SP-18", ids)
+        self.assertEqual(0.5, ids["SP-18"]["metric"]["coverage"])
+        self.assertEqual("high", turns[0]["effort"])
 
     def test_clean_session_does_not_fabricate(self):
         _, ids, _ = self._profile(rereads=False, runaway=False, double_block=False)
@@ -197,6 +213,13 @@ class ClaudeTranscriptTests(unittest.TestCase):
         self.assertIsNone(turns[0]["ttft_p90"])
         self.assertEqual(["anthropic"], turns[0]["families"])
         self.assertEqual("anthropic", comparison[0]["family"])
+        self.assertEqual(400, turns[0]["reasoning_main"])
+        self.assertEqual(len("The user wants the task done; read first."), turns[0]["reasoning_chars"])
+        self.assertEqual((1, 1), (turns[0]["intent_eligible"], turns[0]["intent_with"]))
+        self.assertIsNone(turns[0]["effort"])
+        self.assertEqual(sp.NOT_RECORDED, comparison[0]["effort"])
+        self.assertEqual(100.0, comparison[0]["intent_trace_pct"])
+        self.assertNotIn("SP-18", {f["id"] for f in findings}, "full coverage is not a finding")
 
     def test_missing_stores_report_nothing_found(self):
         empty = os.path.join(self.tmp, "empty")
@@ -211,6 +234,12 @@ class CatalogTests(unittest.TestCase):
             self.assertIn(sev, sp.SEVERITY_RANK, fid)
             for fx in fixes:
                 self.assertIn(fx, sp.FIXES, "{0} -> {1}".format(fid, fx))
+
+    def test_compare_columns_carry_the_effort_proxies(self):
+        for fid in ("SP-17", "SP-18"):
+            self.assertIn(fid, sp.FINDINGS)
+        self.assertIn("F-12", sp.FIXES)
+        self.assertIn("F-13", sp.FIXES)
 
     def test_markdown_render_has_the_three_tables(self):
         profile = {"id": "sp-0001", "generated": "2026-09-05T00:00:00Z", "repos": ["r"], "window": "last 1 days",

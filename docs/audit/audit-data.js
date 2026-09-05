@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-forward",
-  "generated": "2026-09-05T17:34:01Z",
+  "project": "ai-forward-session-profiler",
+  "generated": "2026-09-05T20:09:26Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3311,6 +3311,42 @@ window.AUDIT_DATA = {
         "branch": "session-profiler",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M1SJSS2N185577AFWXCS4H67",
+      "shortname": "reasoning visibility increment",
+      "datetime": "2026-09-05T20:05:17Z",
+      "session": "5ba1afa5",
+      "prompt": "do the next incremebt you suggest AND incorporate your \"what we can do\" 1,2 and 3 (context: SP-17 reasoning visibility, SP-18 intent-trace coverage, reasoning column in compare; 1 richest summary per host + re-profile; 2 externalize reasoning by construction; 3 effort signals as proxies)",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [
+        "session-profiler"
+      ],
+      "outcome": "success",
+      "started_at": "2026-09-05T20:05:16Z",
+      "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M1SK1CCKH13WFHVSDZ1PZCNB",
+      "shortname": "session-profile-sp-0001",
+      "datetime": "2026-09-05T20:09:26Z",
+      "session": "5ba1afa5",
+      "prompt": "session-profile.py profile",
+      "summary": "Profile sp-0001: 23 session(s), 84 finding(s)",
+      "kind": "script",
+      "skill": "session-profiler",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/profiles/sp-0001/profile.md"
+      ],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [

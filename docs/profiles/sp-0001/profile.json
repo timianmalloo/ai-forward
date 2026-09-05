@@ -1,7 +1,11 @@
 {
   "id": "sp-0001",
-  "generated": "2026-09-05T17:22:13Z",
+  "generated": "2026-09-05T20:09:26Z",
   "repos": [
+    "C:\\projects\\TheTerrace",
+    "C:\\Projects\\ai-forward-session-profiler"
+  ],
+  "repo_labels": [
     "theterrace",
     "ai-forward"
   ],
@@ -15,15 +19,15 @@
         "title": "TheTerrace copilot session profiling",
         "cwd": "C:\\projects\\ai-forward",
         "started": "2026-09-05T16:06:39Z",
-        "updated": "2026-09-05T17:22:10Z",
+        "updated": "2026-09-05T20:09:05Z",
         "settings": {},
         "prefix_chars": null,
         "prefix_tokens_est": null,
         "prefix_blocks": [],
         "prefix_note": "not recorded (Claude Code transcripts do not store the system prompt; use `context-budget.py prefix`)",
         "compactions": 0,
-        "events": 871,
-        "usage_rows": 44,
+        "events": 1235,
+        "usage_rows": 71,
         "cost_usd": null
       },
       "turns": [
@@ -69,7 +73,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 0,
+          "reasoning_chars": 0,
+          "intent_eligible": 0,
+          "intent_with": 0,
+          "effort": null
         },
         {
           "turn": 1,
@@ -115,7 +124,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 0,
+          "reasoning_chars": 0,
+          "intent_eligible": 0,
+          "intent_with": 0,
+          "effort": null
         },
         {
           "turn": 2,
@@ -159,7 +173,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 0,
+          "reasoning_chars": 0,
+          "intent_eligible": 0,
+          "intent_with": 0,
+          "effort": null
         },
         {
           "turn": 3,
@@ -203,7 +222,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 0,
+          "reasoning_chars": 0,
+          "intent_eligible": 0,
+          "intent_with": 0,
+          "effort": null
         },
         {
           "turn": 4,
@@ -249,7 +273,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 0,
+          "reasoning_chars": 0,
+          "intent_eligible": 0,
+          "intent_with": 0,
+          "effort": null
         },
         {
           "turn": 5,
@@ -293,7 +322,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 0,
+          "reasoning_chars": 0,
+          "intent_eligible": 0,
+          "intent_with": 0,
+          "effort": null
         },
         {
           "turn": 6,
@@ -343,7 +377,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 32539,
+          "reasoning_chars": 0,
+          "intent_eligible": 36,
+          "intent_with": 36,
+          "effort": null
         },
         {
           "turn": 7,
@@ -393,7 +432,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 5541,
+          "reasoning_chars": 0,
+          "intent_eligible": 2,
+          "intent_with": 2,
+          "effort": null
         },
         {
           "turn": 8,
@@ -406,17 +450,17 @@
           "families": [
             "anthropic"
           ],
-          "wall_s": 2831,
-          "main_requests": 23,
+          "wall_s": 3785,
+          "main_requests": 41,
           "sub_requests": 0,
           "ctx_start": 246435,
-          "ctx_end": 698271,
-          "ctx_max": 698271,
-          "cache_read": 11534952,
-          "uncached_in": 706,
-          "cache_write": 452280,
-          "output": 254410,
-          "reasoning": 72225,
+          "ctx_end": 774890,
+          "ctx_max": 774890,
+          "cache_read": 24728126,
+          "uncached_in": 1282,
+          "cache_write": 528899,
+          "output": 295951,
+          "reasoning": 88620,
           "cost_aiu": null,
           "main_api_s": null,
           "all_api_s": null,
@@ -424,11 +468,11 @@
           "ttft_p90": null,
           "ttft_max": null,
           "tools": {
-            "Bash": 93,
+            "Bash": 123,
             "ToolSearch": 2,
             "WebFetch": 6,
             "WebSearch": 1,
-            "Write": 23
+            "Write": 29
           },
           "view_bytes": null,
           "rereads": {},
@@ -436,8 +480,8 @@
           "image_views": 0,
           "instruction_views": [],
           "skills": {},
-          "asst_msgs": 3,
-          "asst_text_chars": 830,
+          "asst_msgs": 7,
+          "asst_text_chars": 4803,
           "goal_state": true,
           "tier": false,
           "nudges": 0,
@@ -447,7 +491,356 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 88620,
+          "reasoning_chars": 5805,
+          "intent_eligible": 123,
+          "intent_with": 123,
+          "effort": null
+        },
+        {
+          "turn": 9,
+          "prompt": "<command-message>also</command-message> <command-name>/also</command-name> <command-args>curious how much of the reasoning from the model we \"See\" in profiling?",
+          "started": "2026-09-05T17:38:01Z",
+          "delivery": "idle",
+          "models": [
+            "claude-fable-5-1"
+          ],
+          "families": [
+            "anthropic"
+          ],
+          "wall_s": 182,
+          "main_requests": 6,
+          "sub_requests": 0,
+          "ctx_start": 779142,
+          "ctx_end": 805289,
+          "ctx_max": 805289,
+          "cache_read": 4738899,
+          "uncached_in": 164,
+          "cache_write": 30399,
+          "output": 12325,
+          "reasoning": 5652,
+          "cost_aiu": null,
+          "main_api_s": null,
+          "all_api_s": null,
+          "ttft_p50": null,
+          "ttft_p90": null,
+          "ttft_max": null,
+          "tools": {
+            "Bash": 6,
+            "WebFetch": 6
+          },
+          "view_bytes": null,
+          "rereads": {},
+          "paged_full_views": 0,
+          "image_views": 0,
+          "instruction_views": [],
+          "skills": {
+            "also": 1
+          },
+          "asst_msgs": 2,
+          "asst_text_chars": 3047,
+          "goal_state": false,
+          "tier": false,
+          "nudges": 0,
+          "aborts": 0,
+          "errors": 0,
+          "hook_s": null,
+          "sub_agents": [],
+          "sub_tool_calls": 0,
+          "converge_nudges": 0,
+          "sub_orientation_reads": [],
+          "reasoning_main": 5652,
+          "reasoning_chars": 0,
+          "intent_eligible": 6,
+          "intent_with": 6,
+          "effort": null
+        },
+        {
+          "turn": 10,
+          "prompt": "do the next incremebt you suggest AND incorporate your \"what we can do\" 1,2 and 3",
+          "started": "2026-09-05T20:03:50Z",
+          "delivery": "idle",
+          "models": [
+            "claude-fable-5-1"
+          ],
+          "families": [
+            "anthropic"
+          ],
+          "wall_s": 306,
+          "main_requests": 3,
+          "sub_requests": 0,
+          "ctx_start": 807709,
+          "ctx_end": 834351,
+          "ctx_max": 834351,
+          "cache_read": 1654988,
+          "uncached_in": 66,
+          "cache_write": 802829,
+          "output": 25495,
+          "reasoning": 6654,
+          "cost_aiu": null,
+          "main_api_s": null,
+          "all_api_s": null,
+          "ttft_p50": null,
+          "ttft_p90": null,
+          "ttft_max": null,
+          "tools": {
+            "Bash": 6,
+            "Write": 3
+          },
+          "view_bytes": null,
+          "rereads": {},
+          "paged_full_views": 0,
+          "image_views": 0,
+          "instruction_views": [],
+          "skills": {},
+          "asst_msgs": 1,
+          "asst_text_chars": 654,
+          "goal_state": true,
+          "tier": true,
+          "nudges": 0,
+          "aborts": 0,
+          "errors": 0,
+          "hook_s": null,
+          "sub_agents": [],
+          "sub_tool_calls": 0,
+          "converge_nudges": 0,
+          "sub_orientation_reads": [],
+          "reasoning_main": 6654,
+          "reasoning_chars": 615,
+          "intent_eligible": 6,
+          "intent_with": 6,
+          "effort": null
+        }
+      ]
+    },
+    {
+      "facts": {
+        "harness": "claude",
+        "id": "99163d6b-e54e-4ab2-ad65-96c80113b557",
+        "title": "Prime check and digit sum",
+        "cwd": "C:\\Projects\\ai-forward-session-profiler",
+        "started": "2026-09-05T20:06:18Z",
+        "updated": "2026-09-05T20:06:21Z",
+        "settings": {},
+        "prefix_chars": null,
+        "prefix_tokens_est": null,
+        "prefix_blocks": [],
+        "prefix_note": "not recorded (Claude Code transcripts do not store the system prompt; use `context-budget.py prefix`)",
+        "compactions": 0,
+        "events": 14,
+        "usage_rows": 1,
+        "cost_usd": null
+      },
+      "turns": [
+        {
+          "turn": 0,
+          "prompt": "Think carefully, step by step, about whether 19 is prime and about the sum of its digits; then reply with only the single word ok.",
+          "started": "2026-09-05T20:06:18Z",
+          "delivery": "idle",
+          "models": [
+            "claude-fable-5-1"
+          ],
+          "families": [
+            "anthropic"
+          ],
+          "wall_s": 4,
+          "main_requests": 1,
+          "sub_requests": 0,
+          "ctx_start": 39652,
+          "ctx_end": 39652,
+          "ctx_max": 39652,
+          "cache_read": 19534,
+          "uncached_in": 2,
+          "cache_write": 20116,
+          "output": 133,
+          "reasoning": 129,
+          "cost_aiu": null,
+          "main_api_s": null,
+          "all_api_s": null,
+          "ttft_p50": null,
+          "ttft_p90": null,
+          "ttft_max": null,
+          "tools": {},
+          "view_bytes": null,
+          "rereads": {},
+          "paged_full_views": 0,
+          "image_views": 0,
+          "instruction_views": [],
+          "skills": {},
+          "asst_msgs": 1,
+          "asst_text_chars": 2,
+          "goal_state": false,
+          "tier": false,
+          "nudges": 0,
+          "aborts": 0,
+          "errors": 0,
+          "hook_s": null,
+          "sub_agents": [],
+          "sub_tool_calls": 0,
+          "converge_nudges": 0,
+          "sub_orientation_reads": [],
+          "reasoning_main": 129,
+          "reasoning_chars": 0,
+          "intent_eligible": 0,
+          "intent_with": 0,
+          "effort": null
+        }
+      ]
+    },
+    {
+      "facts": {
+        "harness": "copilot",
+        "id": "447dff76-93b9-433f-8280-28cdffa11588",
+        "title": "Think carefully about whether 17 is prime and about the sum of its digits; then reply with only the...",
+        "cwd": "C:\\Projects\\ai-forward-session-profiler",
+        "started": "2026-09-05T20:05:29Z",
+        "updated": "2026-09-05T20:05:34Z",
+        "settings": {
+          "model": "claude-opus-4.8",
+          "contextTier": "long_context",
+          "effortLevel": "high"
+        },
+        "prefix_chars": 324247,
+        "prefix_tokens_est": 91595,
+        "prefix_first_chars": 324247,
+        "prefix_blocks": [
+          9001,
+          25128,
+          26752
+        ],
+        "prefix_note": "measured chars of the latest main prefix; tokens are an estimate at 3.54 chars/token",
+        "compactions": 0,
+        "events": 16,
+        "usage_rows": 1
+      },
+      "turns": [
+        {
+          "turn": 0,
+          "prompt": "Think carefully about whether 17 is prime and about the sum of its digits; then reply with only the single word ok.",
+          "started": "2026-09-05T20:05:34Z",
+          "delivery": "idle",
+          "models": [
+            "gpt-6-astra"
+          ],
+          "families": [
+            "openai"
+          ],
+          "wall_s": 4,
+          "main_requests": 1,
+          "sub_requests": 0,
+          "ctx_start": 89349,
+          "ctx_end": 89349,
+          "ctx_max": 89349,
+          "cache_read": 0,
+          "uncached_in": 3,
+          "cache_write": 89346,
+          "output": 23,
+          "reasoning": 16,
+          "cost_aiu": 111.8,
+          "main_api_s": 4,
+          "all_api_s": 4,
+          "ttft_p50": 3.0,
+          "ttft_p90": 3.0,
+          "ttft_max": 3.0,
+          "tools": {},
+          "view_bytes": 0,
+          "rereads": {},
+          "paged_full_views": 0,
+          "image_views": 0,
+          "instruction_views": [],
+          "skills": {},
+          "asst_msgs": 1,
+          "asst_text_chars": 2,
+          "goal_state": false,
+          "tier": false,
+          "nudges": 0,
+          "aborts": 0,
+          "errors": 0,
+          "hook_s": 2,
+          "sub_agents": [],
+          "sub_tool_calls": 0,
+          "converge_nudges": 0,
+          "sub_orientation_reads": [],
+          "reasoning_main": 16,
+          "reasoning_chars": 0,
+          "intent_eligible": 0,
+          "intent_with": 0,
+          "effort": "low"
+        }
+      ]
+    },
+    {
+      "facts": {
+        "harness": "claude",
+        "id": "675a273c-eab7-49c9-91a9-a5c9804bdff6",
+        "title": "Prime and digit sum verification",
+        "cwd": "C:\\Projects\\ai-forward-session-profiler",
+        "started": "2026-09-05T20:05:20Z",
+        "updated": "2026-09-05T20:05:25Z",
+        "settings": {},
+        "prefix_chars": null,
+        "prefix_tokens_est": null,
+        "prefix_blocks": [],
+        "prefix_note": "not recorded (Claude Code transcripts do not store the system prompt; use `context-budget.py prefix`)",
+        "compactions": 0,
+        "events": 14,
+        "usage_rows": 1,
+        "cost_usd": null
+      },
+      "turns": [
+        {
+          "turn": 0,
+          "prompt": "Think carefully, step by step, about whether 17 is prime and about the sum of its digits; then reply with only the single word ok.",
+          "started": "2026-09-05T20:05:20Z",
+          "delivery": "idle",
+          "models": [
+            "claude-fable-5-1"
+          ],
+          "families": [
+            "anthropic"
+          ],
+          "wall_s": 5,
+          "main_requests": 1,
+          "sub_requests": 0,
+          "ctx_start": 39652,
+          "ctx_end": 39652,
+          "ctx_max": 39652,
+          "cache_read": 15177,
+          "uncached_in": 2,
+          "cache_write": 24473,
+          "output": 106,
+          "reasoning": 102,
+          "cost_aiu": null,
+          "main_api_s": null,
+          "all_api_s": null,
+          "ttft_p50": null,
+          "ttft_p90": null,
+          "ttft_max": null,
+          "tools": {},
+          "view_bytes": null,
+          "rereads": {},
+          "paged_full_views": 0,
+          "image_views": 0,
+          "instruction_views": [],
+          "skills": {},
+          "asst_msgs": 1,
+          "asst_text_chars": 2,
+          "goal_state": false,
+          "tier": false,
+          "nudges": 0,
+          "aborts": 0,
+          "errors": 0,
+          "hook_s": null,
+          "sub_agents": [],
+          "sub_tool_calls": 0,
+          "converge_nudges": 0,
+          "sub_orientation_reads": [],
+          "reasoning_main": 102,
+          "reasoning_chars": 0,
+          "intent_eligible": 0,
+          "intent_with": 0,
+          "effort": null
         }
       ]
     },
@@ -528,7 +921,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 45899,
+          "reasoning_chars": 54071,
+          "intent_eligible": 29,
+          "intent_with": 29,
+          "effort": "high"
         },
         {
           "turn": 1,
@@ -578,7 +976,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 0,
+          "reasoning_chars": 0,
+          "intent_eligible": 0,
+          "intent_with": 0,
+          "effort": "high"
         },
         {
           "turn": 2,
@@ -629,7 +1032,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 7106,
+          "reasoning_chars": 7846,
+          "intent_eligible": 9,
+          "intent_with": 9,
+          "effort": "high"
         },
         {
           "turn": 3,
@@ -679,7 +1087,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 8089,
+          "reasoning_chars": 8422,
+          "intent_eligible": 9,
+          "intent_with": 9,
+          "effort": "high"
         },
         {
           "turn": 4,
@@ -729,7 +1142,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 0,
+          "reasoning_chars": 0,
+          "intent_eligible": 0,
+          "intent_with": 0,
+          "effort": "high"
         },
         {
           "turn": 5,
@@ -856,7 +1274,12 @@
             "security-identity-architect: persona-cards.md",
             "domain-researcher: AGENTS.md",
             "ux-researcher-ia: AGENTS.md"
-          ]
+          ],
+          "reasoning_main": 5824,
+          "reasoning_chars": 6504,
+          "intent_eligible": 13,
+          "intent_with": 13,
+          "effort": "high"
         },
         {
           "turn": 6,
@@ -940,7 +1363,12 @@
           ],
           "sub_tool_calls": 136,
           "converge_nudges": 1,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 11689,
+          "reasoning_chars": 4396,
+          "intent_eligible": 19,
+          "intent_with": 19,
+          "effort": "high"
         },
         {
           "turn": 7,
@@ -984,7 +1412,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 0,
+          "reasoning_chars": 0,
+          "intent_eligible": 0,
+          "intent_with": 0,
+          "effort": null
         },
         {
           "turn": 8,
@@ -1043,7 +1476,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 1032,
+          "reasoning_chars": 0,
+          "intent_eligible": 3,
+          "intent_with": 3,
+          "effort": "high"
         },
         {
           "turn": 9,
@@ -1103,7 +1541,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 3896,
+          "reasoning_chars": 0,
+          "intent_eligible": 5,
+          "intent_with": 5,
+          "effort": "high"
         },
         {
           "turn": 10,
@@ -1215,7 +1658,12 @@
             "security-identity-architect: persona-audit.md",
             "security-identity-architect: agent-body-of-knowledge.md",
             "security-identity-architect: persona-cards.md"
-          ]
+          ],
+          "reasoning_main": 65162,
+          "reasoning_chars": 424,
+          "intent_eligible": 23,
+          "intent_with": 23,
+          "effort": "high"
         }
       ]
     },
@@ -1312,7 +1760,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 1354,
+          "reasoning_chars": 0,
+          "intent_eligible": 3,
+          "intent_with": 3,
+          "effort": null
         },
         {
           "turn": 1,
@@ -1363,7 +1816,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 598,
+          "reasoning_chars": 0,
+          "intent_eligible": 9,
+          "intent_with": 9,
+          "effort": null
         },
         {
           "turn": 2,
@@ -1413,7 +1871,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 13,
+          "reasoning_chars": 0,
+          "intent_eligible": 0,
+          "intent_with": 0,
+          "effort": null
         },
         {
           "turn": 3,
@@ -1463,7 +1926,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 0,
+          "reasoning_chars": 0,
+          "intent_eligible": 0,
+          "intent_with": 0,
+          "effort": null
         },
         {
           "turn": 4,
@@ -1518,7 +1986,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 14996,
+          "reasoning_chars": 0,
+          "intent_eligible": 4,
+          "intent_with": 4,
+          "effort": null
         },
         {
           "turn": 5,
@@ -1570,7 +2043,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 3550,
+          "reasoning_chars": 0,
+          "intent_eligible": 13,
+          "intent_with": 13,
+          "effort": null
         },
         {
           "turn": 6,
@@ -1623,7 +2101,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 23632,
+          "reasoning_chars": 0,
+          "intent_eligible": 71,
+          "intent_with": 71,
+          "effort": null
         },
         {
           "turn": 7,
@@ -1674,7 +2157,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 2024,
+          "reasoning_chars": 0,
+          "intent_eligible": 12,
+          "intent_with": 12,
+          "effort": null
         },
         {
           "turn": 8,
@@ -1727,7 +2215,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 10099,
+          "reasoning_chars": 0,
+          "intent_eligible": 28,
+          "intent_with": 28,
+          "effort": null
         },
         {
           "turn": 9,
@@ -1782,7 +2275,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 10950,
+          "reasoning_chars": 0,
+          "intent_eligible": 39,
+          "intent_with": 39,
+          "effort": null
         },
         {
           "turn": 10,
@@ -1835,7 +2333,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 11928,
+          "reasoning_chars": 0,
+          "intent_eligible": 59,
+          "intent_with": 59,
+          "effort": null
         },
         {
           "turn": 11,
@@ -1888,7 +2391,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 7002,
+          "reasoning_chars": 0,
+          "intent_eligible": 31,
+          "intent_with": 31,
+          "effort": null
         },
         {
           "turn": 12,
@@ -1942,7 +2450,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 12988,
+          "reasoning_chars": 0,
+          "intent_eligible": 34,
+          "intent_with": 34,
+          "effort": null
         },
         {
           "turn": 13,
@@ -1995,7 +2508,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 7881,
+          "reasoning_chars": 0,
+          "intent_eligible": 22,
+          "intent_with": 22,
+          "effort": null
         },
         {
           "turn": 14,
@@ -2046,7 +2564,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 1535,
+          "reasoning_chars": 0,
+          "intent_eligible": 10,
+          "intent_with": 10,
+          "effort": null
         },
         {
           "turn": 15,
@@ -2097,7 +2620,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 7300,
+          "reasoning_chars": 0,
+          "intent_eligible": 16,
+          "intent_with": 16,
+          "effort": null
         },
         {
           "turn": 16,
@@ -2149,7 +2677,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 1689,
+          "reasoning_chars": 0,
+          "intent_eligible": 3,
+          "intent_with": 3,
+          "effort": null
         },
         {
           "turn": 17,
@@ -2204,7 +2737,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 2602,
+          "reasoning_chars": 0,
+          "intent_eligible": 15,
+          "intent_with": 15,
+          "effort": null
         },
         {
           "turn": 18,
@@ -2258,7 +2796,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 7515,
+          "reasoning_chars": 0,
+          "intent_eligible": 17,
+          "intent_with": 17,
+          "effort": null
         }
       ]
     },
@@ -2354,7 +2897,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 573,
+          "reasoning_chars": 0,
+          "intent_eligible": 5,
+          "intent_with": 5,
+          "effort": null
         },
         {
           "turn": 1,
@@ -2406,7 +2954,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 774,
+          "reasoning_chars": 0,
+          "intent_eligible": 3,
+          "intent_with": 3,
+          "effort": null
         }
       ]
     },
@@ -2487,7 +3040,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 608,
+          "reasoning_chars": 1129,
+          "intent_eligible": 0,
+          "intent_with": 0,
+          "effort": "high"
         },
         {
           "turn": 1,
@@ -2535,7 +3093,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 355,
+          "reasoning_chars": 323,
+          "intent_eligible": 0,
+          "intent_with": 0,
+          "effort": "high"
         }
       ]
     },
@@ -2609,7 +3172,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 24963,
+          "reasoning_chars": 0,
+          "intent_eligible": 95,
+          "intent_with": 95,
+          "effort": null
         },
         {
           "turn": 1,
@@ -2661,7 +3229,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 3158,
+          "reasoning_chars": 0,
+          "intent_eligible": 6,
+          "intent_with": 6,
+          "effort": null
         },
         {
           "turn": 2,
@@ -2713,7 +3286,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 3126,
+          "reasoning_chars": 0,
+          "intent_eligible": 6,
+          "intent_with": 6,
+          "effort": null
         },
         {
           "turn": 3,
@@ -2764,7 +3342,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 810,
+          "reasoning_chars": 0,
+          "intent_eligible": 0,
+          "intent_with": 0,
+          "effort": null
         },
         {
           "turn": 4,
@@ -2815,7 +3398,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 2168,
+          "reasoning_chars": 0,
+          "intent_eligible": 3,
+          "intent_with": 3,
+          "effort": null
         },
         {
           "turn": 5,
@@ -2863,7 +3451,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 602,
+          "reasoning_chars": 0,
+          "intent_eligible": 0,
+          "intent_with": 0,
+          "effort": null
         },
         {
           "turn": 6,
@@ -2914,7 +3507,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 1246,
+          "reasoning_chars": 0,
+          "intent_eligible": 3,
+          "intent_with": 3,
+          "effort": null
         }
       ]
     },
@@ -2987,7 +3585,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 11909,
+          "reasoning_chars": 0,
+          "intent_eligible": 35,
+          "intent_with": 35,
+          "effort": null
         },
         {
           "turn": 1,
@@ -3037,7 +3640,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 3279,
+          "reasoning_chars": 0,
+          "intent_eligible": 7,
+          "intent_with": 7,
+          "effort": null
         },
         {
           "turn": 2,
@@ -3090,7 +3698,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 22737,
+          "reasoning_chars": 0,
+          "intent_eligible": 42,
+          "intent_with": 42,
+          "effort": null
         },
         {
           "turn": 3,
@@ -3141,7 +3754,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 3046,
+          "reasoning_chars": 0,
+          "intent_eligible": 10,
+          "intent_with": 10,
+          "effort": null
         },
         {
           "turn": 4,
@@ -3192,7 +3810,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 295,
+          "reasoning_chars": 0,
+          "intent_eligible": 1,
+          "intent_with": 1,
+          "effort": null
         }
       ]
     },
@@ -3275,7 +3898,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 14676,
+          "reasoning_chars": 22360,
+          "intent_eligible": 24,
+          "intent_with": 24,
+          "effort": "high"
         },
         {
           "turn": 1,
@@ -3325,7 +3953,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 0,
+          "reasoning_chars": 0,
+          "intent_eligible": 0,
+          "intent_with": 0,
+          "effort": "high"
         }
       ]
     },
@@ -3431,7 +4064,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 403,
+          "reasoning_chars": 851,
+          "intent_eligible": 1,
+          "intent_with": 1,
+          "effort": "high"
         }
       ]
     },
@@ -3592,7 +4230,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 0,
+          "reasoning_chars": 0,
+          "intent_eligible": 0,
+          "intent_with": 0,
+          "effort": null
         },
         {
           "turn": 1,
@@ -3638,7 +4281,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 0,
+          "reasoning_chars": 0,
+          "intent_eligible": 0,
+          "intent_with": 0,
+          "effort": null
         },
         {
           "turn": 2,
@@ -3682,7 +4330,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 0,
+          "reasoning_chars": 0,
+          "intent_eligible": 0,
+          "intent_with": 0,
+          "effort": null
         },
         {
           "turn": 3,
@@ -3732,7 +4385,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 4352,
+          "reasoning_chars": 0,
+          "intent_eligible": 37,
+          "intent_with": 37,
+          "effort": null
         },
         {
           "turn": 4,
@@ -3782,7 +4440,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 0,
+          "reasoning_chars": 0,
+          "intent_eligible": 3,
+          "intent_with": 3,
+          "effort": null
         },
         {
           "turn": 5,
@@ -3834,7 +4497,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 12880,
+          "reasoning_chars": 0,
+          "intent_eligible": 65,
+          "intent_with": 65,
+          "effort": null
         },
         {
           "turn": 6,
@@ -3886,7 +4554,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 13806,
+          "reasoning_chars": 0,
+          "intent_eligible": 69,
+          "intent_with": 69,
+          "effort": null
         },
         {
           "turn": 7,
@@ -3938,7 +4611,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 9315,
+          "reasoning_chars": 0,
+          "intent_eligible": 57,
+          "intent_with": 57,
+          "effort": null
         },
         {
           "turn": 8,
@@ -3989,7 +4667,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 3160,
+          "reasoning_chars": 0,
+          "intent_eligible": 21,
+          "intent_with": 21,
+          "effort": null
         },
         {
           "turn": 9,
@@ -4040,7 +4723,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 10881,
+          "reasoning_chars": 0,
+          "intent_eligible": 41,
+          "intent_with": 41,
+          "effort": null
         },
         {
           "turn": 10,
@@ -4091,7 +4779,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 11436,
+          "reasoning_chars": 0,
+          "intent_eligible": 48,
+          "intent_with": 48,
+          "effort": null
         },
         {
           "turn": 11,
@@ -4142,7 +4835,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 6144,
+          "reasoning_chars": 0,
+          "intent_eligible": 52,
+          "intent_with": 52,
+          "effort": null
         },
         {
           "turn": 12,
@@ -4192,7 +4890,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 1050,
+          "reasoning_chars": 0,
+          "intent_eligible": 15,
+          "intent_with": 15,
+          "effort": null
         },
         {
           "turn": 13,
@@ -4243,7 +4946,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 3041,
+          "reasoning_chars": 0,
+          "intent_eligible": 34,
+          "intent_with": 34,
+          "effort": null
         },
         {
           "turn": 14,
@@ -4294,7 +5002,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 3845,
+          "reasoning_chars": 0,
+          "intent_eligible": 24,
+          "intent_with": 24,
+          "effort": null
         },
         {
           "turn": 15,
@@ -4345,7 +5058,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 4330,
+          "reasoning_chars": 0,
+          "intent_eligible": 33,
+          "intent_with": 33,
+          "effort": null
         },
         {
           "turn": 16,
@@ -4395,7 +5113,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 2961,
+          "reasoning_chars": 0,
+          "intent_eligible": 30,
+          "intent_with": 30,
+          "effort": null
         },
         {
           "turn": 17,
@@ -4445,7 +5168,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 2622,
+          "reasoning_chars": 0,
+          "intent_eligible": 33,
+          "intent_with": 33,
+          "effort": null
         },
         {
           "turn": 18,
@@ -4495,7 +5223,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 4643,
+          "reasoning_chars": 0,
+          "intent_eligible": 32,
+          "intent_with": 32,
+          "effort": null
         },
         {
           "turn": 19,
@@ -4546,7 +5279,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 3487,
+          "reasoning_chars": 0,
+          "intent_eligible": 29,
+          "intent_with": 29,
+          "effort": null
         },
         {
           "turn": 20,
@@ -4596,7 +5334,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 2143,
+          "reasoning_chars": 0,
+          "intent_eligible": 15,
+          "intent_with": 15,
+          "effort": null
         },
         {
           "turn": 21,
@@ -4647,7 +5390,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 1185,
+          "reasoning_chars": 0,
+          "intent_eligible": 32,
+          "intent_with": 32,
+          "effort": null
         },
         {
           "turn": 22,
@@ -4697,7 +5445,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 2592,
+          "reasoning_chars": 0,
+          "intent_eligible": 26,
+          "intent_with": 26,
+          "effort": null
         },
         {
           "turn": 23,
@@ -4751,7 +5504,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 8572,
+          "reasoning_chars": 0,
+          "intent_eligible": 41,
+          "intent_with": 41,
+          "effort": null
         },
         {
           "turn": 24,
@@ -4801,7 +5559,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 4230,
+          "reasoning_chars": 0,
+          "intent_eligible": 28,
+          "intent_with": 28,
+          "effort": null
         },
         {
           "turn": 25,
@@ -4852,7 +5615,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 3304,
+          "reasoning_chars": 0,
+          "intent_eligible": 13,
+          "intent_with": 13,
+          "effort": null
         },
         {
           "turn": 26,
@@ -4902,7 +5670,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 19443,
+          "reasoning_chars": 0,
+          "intent_eligible": 262,
+          "intent_with": 262,
+          "effort": null
         },
         {
           "turn": 27,
@@ -4952,7 +5725,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 8099,
+          "reasoning_chars": 0,
+          "intent_eligible": 54,
+          "intent_with": 54,
+          "effort": null
         },
         {
           "turn": 28,
@@ -5002,7 +5780,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 6992,
+          "reasoning_chars": 0,
+          "intent_eligible": 73,
+          "intent_with": 73,
+          "effort": null
         },
         {
           "turn": 29,
@@ -5052,7 +5835,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 0,
+          "reasoning_chars": 0,
+          "intent_eligible": 1,
+          "intent_with": 1,
+          "effort": null
         },
         {
           "turn": 30,
@@ -5104,7 +5892,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 17550,
+          "reasoning_chars": 0,
+          "intent_eligible": 119,
+          "intent_with": 119,
+          "effort": null
         },
         {
           "turn": 31,
@@ -5156,7 +5949,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 4043,
+          "reasoning_chars": 0,
+          "intent_eligible": 30,
+          "intent_with": 30,
+          "effort": null
         },
         {
           "turn": 32,
@@ -5206,7 +6004,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 5248,
+          "reasoning_chars": 0,
+          "intent_eligible": 34,
+          "intent_with": 34,
+          "effort": null
         },
         {
           "turn": 33,
@@ -5260,7 +6063,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 6016,
+          "reasoning_chars": 0,
+          "intent_eligible": 36,
+          "intent_with": 36,
+          "effort": null
         },
         {
           "turn": 34,
@@ -5314,7 +6122,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 4753,
+          "reasoning_chars": 0,
+          "intent_eligible": 23,
+          "intent_with": 23,
+          "effort": null
         },
         {
           "turn": 35,
@@ -5365,7 +6178,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 1646,
+          "reasoning_chars": 0,
+          "intent_eligible": 9,
+          "intent_with": 9,
+          "effort": null
         },
         {
           "turn": 36,
@@ -5416,7 +6234,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 10015,
+          "reasoning_chars": 0,
+          "intent_eligible": 55,
+          "intent_with": 55,
+          "effort": null
         },
         {
           "turn": 37,
@@ -5466,7 +6289,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 1631,
+          "reasoning_chars": 0,
+          "intent_eligible": 6,
+          "intent_with": 6,
+          "effort": null
         },
         {
           "turn": 38,
@@ -5517,7 +6345,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 5103,
+          "reasoning_chars": 0,
+          "intent_eligible": 13,
+          "intent_with": 13,
+          "effort": null
         },
         {
           "turn": 39,
@@ -5567,7 +6400,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 468,
+          "reasoning_chars": 0,
+          "intent_eligible": 1,
+          "intent_with": 1,
+          "effort": null
         }
       ]
     },
@@ -5649,7 +6487,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 13600,
+          "reasoning_chars": 21023,
+          "intent_eligible": 19,
+          "intent_with": 19,
+          "effort": "high"
         },
         {
           "turn": 1,
@@ -5709,7 +6552,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 50496,
+          "reasoning_chars": 49363,
+          "intent_eligible": 24,
+          "intent_with": 24,
+          "effort": "high"
         },
         {
           "turn": 2,
@@ -5774,7 +6622,12 @@
           ],
           "sub_tool_calls": 37,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 20501,
+          "reasoning_chars": 30787,
+          "intent_eligible": 20,
+          "intent_with": 20,
+          "effort": "high"
         },
         {
           "turn": 3,
@@ -5828,7 +6681,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 19463,
+          "reasoning_chars": 20912,
+          "intent_eligible": 23,
+          "intent_with": 23,
+          "effort": "high"
         },
         {
           "turn": 4,
@@ -5878,7 +6736,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 217,
+          "reasoning_chars": 443,
+          "intent_eligible": 0,
+          "intent_with": 0,
+          "effort": "high"
         },
         {
           "turn": 5,
@@ -5932,7 +6795,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 33413,
+          "reasoning_chars": 37389,
+          "intent_eligible": 19,
+          "intent_with": 19,
+          "effort": "high"
         },
         {
           "turn": 6,
@@ -5982,7 +6850,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 509,
+          "reasoning_chars": 757,
+          "intent_eligible": 3,
+          "intent_with": 3,
+          "effort": "high"
         },
         {
           "turn": 7,
@@ -6032,7 +6905,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 0,
+          "reasoning_chars": 0,
+          "intent_eligible": 0,
+          "intent_with": 0,
+          "effort": "high"
         },
         {
           "turn": 8,
@@ -6087,7 +6965,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 15419,
+          "reasoning_chars": 20746,
+          "intent_eligible": 16,
+          "intent_with": 16,
+          "effort": "high"
         },
         {
           "turn": 9,
@@ -6137,7 +7020,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 4669,
+          "reasoning_chars": 7278,
+          "intent_eligible": 0,
+          "intent_with": 0,
+          "effort": "high"
         },
         {
           "turn": 10,
@@ -6192,7 +7080,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 24185,
+          "reasoning_chars": 29817,
+          "intent_eligible": 27,
+          "intent_with": 27,
+          "effort": "high"
         },
         {
           "turn": 11,
@@ -6242,7 +7135,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 1889,
+          "reasoning_chars": 2487,
+          "intent_eligible": 1,
+          "intent_with": 1,
+          "effort": "high"
         },
         {
           "turn": 12,
@@ -6296,7 +7194,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 16104,
+          "reasoning_chars": 19327,
+          "intent_eligible": 12,
+          "intent_with": 12,
+          "effort": "high"
         },
         {
           "turn": 13,
@@ -6346,7 +7249,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 0,
+          "reasoning_chars": 0,
+          "intent_eligible": 0,
+          "intent_with": 0,
+          "effort": "high"
         },
         {
           "turn": 14,
@@ -6400,7 +7308,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 6348,
+          "reasoning_chars": 8528,
+          "intent_eligible": 6,
+          "intent_with": 6,
+          "effort": "high"
         }
       ]
     },
@@ -6487,7 +7400,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 21248,
+          "reasoning_chars": 23607,
+          "intent_eligible": 10,
+          "intent_with": 10,
+          "effort": "high"
         },
         {
           "turn": 1,
@@ -6538,7 +7456,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 778,
+          "reasoning_chars": 1082,
+          "intent_eligible": 4,
+          "intent_with": 4,
+          "effort": "high"
         },
         {
           "turn": 2,
@@ -6597,7 +7520,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 41550,
+          "reasoning_chars": 45702,
+          "intent_eligible": 12,
+          "intent_with": 12,
+          "effort": "high"
         },
         {
           "turn": 3,
@@ -6647,7 +7575,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 0,
+          "reasoning_chars": 0,
+          "intent_eligible": 0,
+          "intent_with": 0,
+          "effort": "high"
         }
       ]
     },
@@ -6734,7 +7667,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 4365,
+          "reasoning_chars": 3258,
+          "intent_eligible": 7,
+          "intent_with": 7,
+          "effort": "high"
         },
         {
           "turn": 1,
@@ -6784,7 +7722,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 72,
+          "reasoning_chars": 432,
+          "intent_eligible": 0,
+          "intent_with": 0,
+          "effort": "high"
         },
         {
           "turn": 2,
@@ -6835,7 +7778,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 824,
+          "reasoning_chars": 2409,
+          "intent_eligible": 2,
+          "intent_with": 2,
+          "effort": "high"
         },
         {
           "turn": 3,
@@ -6891,7 +7839,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 1751,
+          "reasoning_chars": 847,
+          "intent_eligible": 9,
+          "intent_with": 9,
+          "effort": "high"
         },
         {
           "turn": 4,
@@ -6941,7 +7894,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 58,
+          "reasoning_chars": 0,
+          "intent_eligible": 0,
+          "intent_with": 0,
+          "effort": "high"
         },
         {
           "turn": 5,
@@ -7047,7 +8005,12 @@
           ],
           "sub_tool_calls": 179,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 8858,
+          "reasoning_chars": 19320,
+          "intent_eligible": 28,
+          "intent_with": 28,
+          "effort": "high"
         },
         {
           "turn": 6,
@@ -7098,7 +8061,12 @@
           "sub_agents": [],
           "sub_tool_calls": 0,
           "converge_nudges": 0,
-          "sub_orientation_reads": []
+          "sub_orientation_reads": [],
+          "reasoning_main": 123,
+          "reasoning_chars": 443,
+          "intent_eligible": 1,
+          "intent_with": 1,
+          "effort": "high"
         },
         {
           "turn": 7,
@@ -7177,7 +8145,12 @@
             "test-architect: persona-cards.md",
             "test-architect: agent-persona-catalog.md",
             "test-architect: agent-body-of-knowledge.md"
-          ]
+          ],
+          "reasoning_main": 9704,
+          "reasoning_chars": 13985,
+          "intent_eligible": 29,
+          "intent_with": 29,
+          "effort": "high"
         }
       ]
     }
@@ -7197,11 +8170,19 @@
         },
         {
           "turn": 8,
-          "note": "context 246,435 -> 698,271 tokens over 23 main requests"
+          "note": "context 246,435 -> 774,890 tokens over 41 main requests"
+        },
+        {
+          "turn": 9,
+          "note": "context 779,142 -> 805,289 tokens over 6 main requests"
+        },
+        {
+          "turn": 10,
+          "note": "context 807,709 -> 834,351 tokens over 3 main requests"
         }
       ],
       "metric": {
-        "max_ctx": 698271,
+        "max_ctx": 834351,
         "compactions": 0
       },
       "fixes": [
@@ -7220,14 +8201,62 @@
         {
           "turn": 7,
           "note": "'give me a table with each \"fix\" you would add to the ai-forw' - first reply has no Goal / Done when"
+        },
+        {
+          "turn": 9,
+          "note": "'<command-message>also</command-message> <command-name>/also<' - first reply has no Goal / Done when"
         }
       ],
       "metric": {
-        "missing": 1,
-        "substantive": 3
+        "missing": 2,
+        "substantive": 5
       },
       "fixes": [
         "F-03"
+      ]
+    },
+    {
+      "id": "SP-02",
+      "title": "Instruction double-load: two near-identical custom-instruction blocks in the static prefix",
+      "severity": "Major",
+      "confidence": "Verified",
+      "session": "447dff76-93b9-433f-8280-28cdffa11588",
+      "harness": "copilot",
+      "evidence": [
+        {
+          "turn": null,
+          "note": "custom-instruction blocks of 26,752 and 25,128 chars in the static prefix"
+        }
+      ],
+      "metric": {
+        "blocks": [
+          26752,
+          25128
+        ],
+        "duplicate_tokens_est": 7098
+      },
+      "fixes": [
+        "F-01"
+      ]
+    },
+    {
+      "id": "SP-03",
+      "title": "Static prefix larger than the budget models",
+      "severity": "Major",
+      "confidence": "Inferred",
+      "session": "447dff76-93b9-433f-8280-28cdffa11588",
+      "harness": "copilot",
+      "evidence": [
+        {
+          "turn": null,
+          "note": "static prefix ~91,595 est. tokens (324,247 chars; measured chars of the latest main prefix; tokens are an estimate at 3.54 chars/token)"
+        }
+      ],
+      "metric": {
+        "prefix_tokens_est": 91595
+      },
+      "fixes": [
+        "F-02"
       ]
     },
     {
@@ -8381,16 +9410,16 @@
       "evidence": [
         {
           "turn": null,
-          "note": "openai/copilot: 4.0 drift indicators per turn vs anthropic/claude: 0.88"
+          "note": "openai/copilot: 3.71 drift indicators per turn vs anthropic/claude: 0.84"
         },
         {
           "turn": null,
-          "note": "caveat: the turn mix differs (13 vs 73 turns); confirm on like-for-like tasks before tuning"
+          "note": "caveat: the turn mix differs (14 vs 77 turns); confirm on like-for-like tasks before tuning"
         }
       ],
       "metric": {
-        "hi": 4.0,
-        "lo": 0.88
+        "hi": 3.71,
+        "lo": 0.84
       },
       "fixes": [
         "F-10"
@@ -8945,6 +9974,112 @@
       ]
     },
     {
+      "id": "SP-17",
+      "title": "Reasoning visibility: the share of billed reasoning that came back as readable text",
+      "severity": "Nit",
+      "confidence": "Verified",
+      "session": "5ba1afa5-cb64-4763-81a9-78ee02f73710",
+      "harness": "claude",
+      "evidence": [
+        {
+          "turn": null,
+          "note": "139,006 reasoning tokens billed on the main line; 6,420 chars of reasoning text on disk (~1% visible at 3.54 chars/token)"
+        }
+      ],
+      "metric": {
+        "visible_share": 0.013,
+        "reasoning_tokens": 139006,
+        "reasoning_chars": 6420
+      },
+      "fixes": [
+        "F-12"
+      ]
+    },
+    {
+      "id": "SP-17",
+      "title": "Reasoning visibility: the share of billed reasoning that came back as readable text",
+      "severity": "Nit",
+      "confidence": "Verified",
+      "session": "99163d6b-e54e-4ab2-ad65-96c80113b557",
+      "harness": "claude",
+      "evidence": [
+        {
+          "turn": null,
+          "note": "129 reasoning tokens billed on the main line; 0 chars of reasoning text on disk (~0% visible at 3.54 chars/token)"
+        }
+      ],
+      "metric": {
+        "visible_share": 0.0,
+        "reasoning_tokens": 129,
+        "reasoning_chars": 0
+      },
+      "fixes": [
+        "F-12"
+      ]
+    },
+    {
+      "id": "SP-13",
+      "title": "Hook overhead above 5% of wall clock",
+      "severity": "Nit",
+      "confidence": "Verified",
+      "session": "447dff76-93b9-433f-8280-28cdffa11588",
+      "harness": "copilot",
+      "evidence": [
+        {
+          "turn": null,
+          "note": "hooks 2s of 4s wall (50%)"
+        }
+      ],
+      "metric": {
+        "share": 0.5
+      },
+      "fixes": []
+    },
+    {
+      "id": "SP-17",
+      "title": "Reasoning visibility: the share of billed reasoning that came back as readable text",
+      "severity": "Nit",
+      "confidence": "Verified",
+      "session": "447dff76-93b9-433f-8280-28cdffa11588",
+      "harness": "copilot",
+      "evidence": [
+        {
+          "turn": null,
+          "note": "16 reasoning tokens billed on the main line; 0 chars of reasoning text on disk (~0% visible at 3.54 chars/token)"
+        }
+      ],
+      "metric": {
+        "visible_share": 0.0,
+        "reasoning_tokens": 16,
+        "reasoning_chars": 0
+      },
+      "fixes": [
+        "F-12"
+      ]
+    },
+    {
+      "id": "SP-17",
+      "title": "Reasoning visibility: the share of billed reasoning that came back as readable text",
+      "severity": "Nit",
+      "confidence": "Verified",
+      "session": "675a273c-eab7-49c9-91a9-a5c9804bdff6",
+      "harness": "claude",
+      "evidence": [
+        {
+          "turn": null,
+          "note": "102 reasoning tokens billed on the main line; 0 chars of reasoning text on disk (~0% visible at 3.54 chars/token)"
+        }
+      ],
+      "metric": {
+        "visible_share": 0.0,
+        "reasoning_tokens": 102,
+        "reasoning_chars": 0
+      },
+      "fixes": [
+        "F-12"
+      ]
+    },
+    {
       "id": "SP-13",
       "title": "Hook overhead above 5% of wall clock",
       "severity": "Nit",
@@ -8961,6 +10096,72 @@
         "share": 0.077
       },
       "fixes": []
+    },
+    {
+      "id": "SP-17",
+      "title": "Reasoning visibility: the share of billed reasoning that came back as readable text",
+      "severity": "Nit",
+      "confidence": "Verified",
+      "session": "fd3ccb67-3445-4092-abb4-4d316a7eb46e",
+      "harness": "copilot",
+      "evidence": [
+        {
+          "turn": null,
+          "note": "148,697 reasoning tokens billed on the main line; 81,663 chars of reasoning text on disk (~16% visible at 3.54 chars/token)"
+        }
+      ],
+      "metric": {
+        "visible_share": 0.155,
+        "reasoning_tokens": 148697,
+        "reasoning_chars": 81663
+      },
+      "fixes": [
+        "F-12"
+      ]
+    },
+    {
+      "id": "SP-17",
+      "title": "Reasoning visibility: the share of billed reasoning that came back as readable text",
+      "severity": "Nit",
+      "confidence": "Verified",
+      "session": "d392ce02-2a92-48ae-bb8b-1e028e2a5ac1",
+      "harness": "claude",
+      "evidence": [
+        {
+          "turn": null,
+          "note": "127,656 reasoning tokens billed on the main line; 0 chars of reasoning text on disk (~0% visible at 3.54 chars/token)"
+        }
+      ],
+      "metric": {
+        "visible_share": 0.0,
+        "reasoning_tokens": 127656,
+        "reasoning_chars": 0
+      },
+      "fixes": [
+        "F-12"
+      ]
+    },
+    {
+      "id": "SP-17",
+      "title": "Reasoning visibility: the share of billed reasoning that came back as readable text",
+      "severity": "Nit",
+      "confidence": "Verified",
+      "session": "6a3922e7-14bc-44e5-9c68-f8b45a8ebc81",
+      "harness": "claude",
+      "evidence": [
+        {
+          "turn": null,
+          "note": "1,347 reasoning tokens billed on the main line; 0 chars of reasoning text on disk (~0% visible at 3.54 chars/token)"
+        }
+      ],
+      "metric": {
+        "visible_share": 0.0,
+        "reasoning_tokens": 1347,
+        "reasoning_chars": 0
+      },
+      "fixes": [
+        "F-12"
+      ]
     },
     {
       "id": "SP-13",
@@ -8981,6 +10182,94 @@
       "fixes": []
     },
     {
+      "id": "SP-17",
+      "title": "Reasoning visibility: the share of billed reasoning that came back as readable text",
+      "severity": "Nit",
+      "confidence": "Verified",
+      "session": "68051e5e-4af9-4aef-beeb-9dade176c983",
+      "harness": "copilot",
+      "evidence": [
+        {
+          "turn": null,
+          "note": "963 reasoning tokens billed on the main line; 1,452 chars of reasoning text on disk (~43% visible at 3.54 chars/token)"
+        }
+      ],
+      "metric": {
+        "visible_share": 0.426,
+        "reasoning_tokens": 963,
+        "reasoning_chars": 1452
+      },
+      "fixes": [
+        "F-12"
+      ]
+    },
+    {
+      "id": "SP-17",
+      "title": "Reasoning visibility: the share of billed reasoning that came back as readable text",
+      "severity": "Nit",
+      "confidence": "Verified",
+      "session": "c7ed5016-6e49-40a2-9a17-b91ba29a0537",
+      "harness": "claude",
+      "evidence": [
+        {
+          "turn": null,
+          "note": "36,073 reasoning tokens billed on the main line; 0 chars of reasoning text on disk (~0% visible at 3.54 chars/token)"
+        }
+      ],
+      "metric": {
+        "visible_share": 0.0,
+        "reasoning_tokens": 36073,
+        "reasoning_chars": 0
+      },
+      "fixes": [
+        "F-12"
+      ]
+    },
+    {
+      "id": "SP-17",
+      "title": "Reasoning visibility: the share of billed reasoning that came back as readable text",
+      "severity": "Nit",
+      "confidence": "Verified",
+      "session": "3750befc-3e3d-4ba0-a022-346eae11f875",
+      "harness": "claude",
+      "evidence": [
+        {
+          "turn": null,
+          "note": "41,266 reasoning tokens billed on the main line; 0 chars of reasoning text on disk (~0% visible at 3.54 chars/token)"
+        }
+      ],
+      "metric": {
+        "visible_share": 0.0,
+        "reasoning_tokens": 41266,
+        "reasoning_chars": 0
+      },
+      "fixes": [
+        "F-12"
+      ]
+    },
+    {
+      "id": "SP-17",
+      "title": "Reasoning visibility: the share of billed reasoning that came back as readable text",
+      "severity": "Nit",
+      "confidence": "Verified",
+      "session": "cac6e573-3b63-479a-8c71-2d215bc2e2ea",
+      "harness": "copilot",
+      "evidence": [
+        {
+          "turn": null,
+          "note": "14,676 reasoning tokens billed on the main line; 22,360 chars of reasoning text on disk (~43% visible at 3.54 chars/token)"
+        }
+      ],
+      "metric": {
+        "visible_share": 0.43,
+        "reasoning_tokens": 14676,
+        "reasoning_chars": 22360
+      },
+      "fixes": [
+        "F-12"
+      ]
+    },
+    {
       "id": "SP-13",
       "title": "Hook overhead above 5% of wall clock",
       "severity": "Nit",
@@ -8997,6 +10286,72 @@
         "share": 0.098
       },
       "fixes": []
+    },
+    {
+      "id": "SP-17",
+      "title": "Reasoning visibility: the share of billed reasoning that came back as readable text",
+      "severity": "Nit",
+      "confidence": "Verified",
+      "session": "2e3bba2d-962d-462b-80cc-144c262fa072",
+      "harness": "copilot",
+      "evidence": [
+        {
+          "turn": null,
+          "note": "403 reasoning tokens billed on the main line; 851 chars of reasoning text on disk (~60% visible at 3.54 chars/token)"
+        }
+      ],
+      "metric": {
+        "visible_share": 0.596,
+        "reasoning_tokens": 403,
+        "reasoning_chars": 851
+      },
+      "fixes": [
+        "F-12"
+      ]
+    },
+    {
+      "id": "SP-17",
+      "title": "Reasoning visibility: the share of billed reasoning that came back as readable text",
+      "severity": "Nit",
+      "confidence": "Verified",
+      "session": "85289eb6-fc3c-4058-85e8-e0d4de899359",
+      "harness": "claude",
+      "evidence": [
+        {
+          "turn": null,
+          "note": "210,986 reasoning tokens billed on the main line; 0 chars of reasoning text on disk (~0% visible at 3.54 chars/token)"
+        }
+      ],
+      "metric": {
+        "visible_share": 0.0,
+        "reasoning_tokens": 210986,
+        "reasoning_chars": 0
+      },
+      "fixes": [
+        "F-12"
+      ]
+    },
+    {
+      "id": "SP-17",
+      "title": "Reasoning visibility: the share of billed reasoning that came back as readable text",
+      "severity": "Nit",
+      "confidence": "Verified",
+      "session": "2f63f380-70dd-4e60-94c2-1e2de821f3c2",
+      "harness": "copilot",
+      "evidence": [
+        {
+          "turn": null,
+          "note": "206,813 reasoning tokens billed on the main line; 248,857 chars of reasoning text on disk (~34% visible at 3.54 chars/token)"
+        }
+      ],
+      "metric": {
+        "visible_share": 0.34,
+        "reasoning_tokens": 206813,
+        "reasoning_chars": 248857
+      },
+      "fixes": [
+        "F-12"
+      ]
     },
     {
       "id": "SP-13",
@@ -9017,6 +10372,28 @@
       "fixes": []
     },
     {
+      "id": "SP-17",
+      "title": "Reasoning visibility: the share of billed reasoning that came back as readable text",
+      "severity": "Nit",
+      "confidence": "Verified",
+      "session": "6be4e83f-6fc3-4e37-8090-b41dccb86aa4",
+      "harness": "copilot",
+      "evidence": [
+        {
+          "turn": null,
+          "note": "63,576 reasoning tokens billed on the main line; 70,391 chars of reasoning text on disk (~31% visible at 3.54 chars/token)"
+        }
+      ],
+      "metric": {
+        "visible_share": 0.313,
+        "reasoning_tokens": 63576,
+        "reasoning_chars": 70391
+      },
+      "fixes": [
+        "F-12"
+      ]
+    },
+    {
       "id": "SP-13",
       "title": "Hook overhead above 5% of wall clock",
       "severity": "Nit",
@@ -9033,27 +10410,53 @@
         "share": 0.094
       },
       "fixes": []
+    },
+    {
+      "id": "SP-17",
+      "title": "Reasoning visibility: the share of billed reasoning that came back as readable text",
+      "severity": "Nit",
+      "confidence": "Verified",
+      "session": "42bfc457-d056-4ec1-8f60-0d43e5185e7c",
+      "harness": "copilot",
+      "evidence": [
+        {
+          "turn": null,
+          "note": "25,755 reasoning tokens billed on the main line; 40,694 chars of reasoning text on disk (~45% visible at 3.54 chars/token)"
+        }
+      ],
+      "metric": {
+        "visible_share": 0.446,
+        "reasoning_tokens": 25755,
+        "reasoning_chars": 40694
+      },
+      "fixes": [
+        "F-12"
+      ]
     }
   ],
   "comparison": [
     {
       "family": "anthropic",
       "harness": "claude",
-      "turns": 73,
-      "requests_per_turn": 31.5,
-      "cache_read_per_turn": 14034183,
-      "output_per_turn": 27967,
-      "reasoning_per_turn": 7227,
+      "turns": 77,
+      "requests_per_turn": 30.2,
+      "cache_read_per_turn": 13559962,
+      "output_per_turn": 27548,
+      "reasoning_per_turn": 7228,
       "cost_aiu_per_turn": null,
       "ttft_p90_median": null,
       "ctx_end_median": 442290,
-      "wall_s_per_turn": 1079,
-      "drift_per_turn": 0.88,
+      "wall_s_per_turn": 1042,
+      "reasoning_share_of_output": 0.26,
+      "visible_reasoning_pct": 0.3,
+      "intent_trace_pct": 100.0,
+      "effort": "not recorded",
+      "drift_per_turn": 0.84,
       "drift_breakdown": {
         "sub_agents": 0,
         "rereads": 0,
         "skill_repeats": 0,
-        "no_goal": 64,
+        "no_goal": 65,
         "no_tier_with_fanout": 0,
         "converge_nudges": 0,
         "nudges": 0
@@ -9071,6 +10474,10 @@
       "ttft_p90_median": 6.2,
       "ctx_end_median": 506487,
       "wall_s_per_turn": 555,
+      "reasoning_share_of_output": 0.52,
+      "visible_reasoning_pct": 33.1,
+      "intent_trace_pct": 100.0,
+      "effort": "high",
       "drift_per_turn": 2.25,
       "drift_breakdown": {
         "sub_agents": 0,
@@ -9094,6 +10501,10 @@
       "ttft_p90_median": 6.4,
       "ctx_end_median": 599584,
       "wall_s_per_turn": 1272,
+      "reasoning_share_of_output": 0.4,
+      "visible_reasoning_pct": 42.4,
+      "intent_trace_pct": 100.0,
+      "effort": "high",
       "drift_per_turn": 2.0,
       "drift_breakdown": {
         "sub_agents": 1,
@@ -9108,16 +10519,20 @@
     {
       "family": "openai",
       "harness": "copilot",
-      "turns": 13,
-      "requests_per_turn": 24.2,
-      "cache_read_per_turn": 12606586,
-      "output_per_turn": 44673,
-      "reasoning_per_turn": 17151,
-      "cost_aiu_per_turn": 2472.4,
-      "ttft_p90_median": 14.3,
-      "ctx_end_median": 398400,
-      "wall_s_per_turn": 989,
-      "drift_per_turn": 4.0,
+      "turns": 14,
+      "requests_per_turn": 22.5,
+      "cache_read_per_turn": 11706116,
+      "output_per_turn": 41484,
+      "reasoning_per_turn": 15927,
+      "cost_aiu_per_turn": 2303.8,
+      "ttft_p90_median": 12.2,
+      "ctx_end_median": 380679,
+      "wall_s_per_turn": 918,
+      "reasoning_share_of_output": 0.2,
+      "visible_reasoning_pct": 13.0,
+      "intent_trace_pct": 100.0,
+      "effort": "high",
+      "drift_per_turn": 3.71,
       "drift_breakdown": {
         "sub_agents": 23,
         "rereads": 19,
@@ -9184,10 +10599,16 @@
       "title": "Register the class, not the instance",
       "where": "docs/lessons/defect-classes.md (CTX-*); knowledge/continuous-improvement.md 6",
       "control": "each class row links to the control above; /dream re-surfaces an uncontrolled recurrence"
+    },
+    "F-12": {
+      "title": "Ask each host for its richest reasoning summary, and treat summary-derived judgements as Inferred",
+      "where": "INSTALL.md 1.6; adapters/hooks/claude-code.settings.hooks.json (showThinkingSummaries); pack-doctor `claude settings`",
+      "control": "SP-17 reports visible-reasoning share per family; a family under 10% marks every text-derived drift finding Inferred"
+    },
+    "F-13": {
+      "title": "Externalize reasoning by construction: a one-line intent on every shell call",
+      "where": "knowledge/communication-and-task-discipline.md CT26; the managed block; agent cards",
+      "control": "SP-18 intent-trace coverage per family; below 90% is a finding; the hook and the profiler read the same field"
     }
-  },
-  "repo_labels": [
-    "theterrace",
-    "ai-forward"
-  ]
+  }
 }

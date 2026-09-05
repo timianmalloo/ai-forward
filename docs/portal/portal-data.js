@@ -1561,7 +1561,7 @@ window.PORTAL_DATA = {
     ],
     "classes": "Three defect classes came out of it and are recorded with controls: PACK-R, a fixed prefix sized by what fits rather than by what each call needs; PACK-S, a fan-out rediscovering per-run what was knowable once; and PACK-T, a generator prepending metadata over a source that already had it — which had been shipping two stacked frontmatter blocks in one instruction file, of which any reader parses only the first.",
     "live": {
-      "baseline": 45122,
+      "baseline": 45678,
       "tolerancePct": 2,
       "backstop": 60000,
       "derivation": {
@@ -1572,7 +1572,7 @@ window.PORTAL_DATA = {
       "tiers": {
         "always": {
           "docs": 13,
-          "tokens": 45122
+          "tokens": 45678
         },
         "reference": {
           "docs": 2,
@@ -1587,7 +1587,7 @@ window.PORTAL_DATA = {
           "tokens": 25898
         }
       },
-      "corpusTokens": 176560,
+      "corpusTokens": 177116,
       "alwaysPct": 26
     }
   },
@@ -2528,7 +2528,7 @@ window.PORTAL_DATA = {
         "id": "profile-sp-0001",
         "type": "doc",
         "title": "Session profile sp-0001 - theterrace, ai-forward",
-        "summary": "Measured pass over 20 session(s) in theterrace, ai-forward (last 7 days); 65 finding(s), top: SP-01, SP-09, SP-01."
+        "summary": "Measured pass over 23 session(s) in theterrace, ai-forward (last 7 days); 84 finding(s), top: SP-01, SP-09, SP-02."
       },
       {
         "id": "project-memory",

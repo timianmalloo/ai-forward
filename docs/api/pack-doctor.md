@@ -68,6 +68,12 @@ session grow without a compaction and pay maximum reasoning on every T0 turn - t
 23-hour session went 159k -> 564k tokens with zero compactions. Both are per-phase
 choices (GO19), so a global setting is reported, not assumed.
 
+### `check_claude_settings(root)`
+
+F-12 / IO14. `showThinkingSummaries` is the richest thinking display Claude Code offers; a
+project that profiles its sessions wants it on. Project scope (.claude/settings.json) so it
+travels with the repo; the user file is reported but never edited.
+
 ### `check_hooks(root)`
 
 F-07 / CTX-D. The re-read guard is a control only when a host runs it.
@@ -120,6 +126,6 @@ lesson into a control that fires at the moment of the mistake).
 
 ## Coverage
 
-- Public functions: **10** · documented: **5** (**50%**)
+- Public functions: **11** · documented: **6** (**55%**)
 - Undocumented (recorded, not invented): `check_installed`, `check_surface`, `check_block`, `check_graph`, `run`
 

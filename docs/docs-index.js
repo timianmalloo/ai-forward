@@ -909,7 +909,7 @@ window.DOCS_INDEX = {
       "phase": "",
       "reviewBy": "2027-03-03",
       "reviewSuggested": [],
-      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 305 public functions across 20 modules, 40% carrying a docstring.",
+      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 306 public functions across 20 modules, 40% carrying a docstring.",
       "tags": [
         "api",
         "scripts",
@@ -923,7 +923,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e8b3a97358cb4e0eb76eaf3b0eec2bf226f49457076904b026427f21295c2a02"
+      "sourceSha256": "80a5e533a09a4635d6b0e41bc6b76a61de034c2d214b1e795b6b0639f7660e8a"
     },
     {
       "id": "api-marker-lint",
@@ -998,7 +998,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "76fba655e9f6d99bf92a8b5a65cee739ee3f859fb3b1c1409094509203678a08"
+      "sourceSha256": "92b2e62eb9497e8a78e1510d7cdc9930e6bae622cafba307abe1e200f0901732"
     },
     {
       "id": "api-prompt-log",
@@ -3137,7 +3137,7 @@ window.DOCS_INDEX = {
       "phase": "",
       "reviewBy": "2026-12-04",
       "reviewSuggested": [],
-      "summary": "Measured pass over 20 session(s) in theterrace, ai-forward (last 7 days); 65 finding(s), top: SP-01, SP-09, SP-01.",
+      "summary": "Measured pass over 23 session(s) in theterrace, ai-forward (last 7 days); 84 finding(s), top: SP-01, SP-09, SP-02.",
       "tags": [
         "profile",
         "session-profiler",
@@ -3151,7 +3151,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "246b77a2bd5f131397c44adffdfc8e9b5abb005082acce94da58f4ef891e3f98"
+      "sourceSha256": "7e3bb2fc0ba11c243fc1ca5ca5fd564187028815d5d5890f1eb3ef2f163d843f"
     },
     {
       "id": "project-memory",
@@ -3290,7 +3290,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0ef043a2582d1b5e9a3903b10f42f26c99a3d205db3e792b7a6e801028bb5191"
+      "sourceSha256": "778adaa7e8134c61a121d8c449c3541e7273b5ff8def686684682b0989eda751"
     },
     {
       "id": "ui-capability-guide",
@@ -5510,7 +5510,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-forward — Audit & Change Log",
+      "title": "ai-forward-session-profiler — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -5691,5 +5691,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "27c815339bbdf80b09ec5c232715c50ca25a3da7c7eb76c49ccd189287a3c248"
+  "graphSha256": "a7ba5faa41f524a7893c8eff9abed25cf5dab114807b6f3e58911aa0cd3cdc98"
 };

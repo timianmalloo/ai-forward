@@ -107,6 +107,8 @@ The pack has always mandated the **close** (CT10 / E18: every response ends with
 
 ---
 
+**CT26 — Every shell call carries a one-line intent, because it is the only reasoning trace a profiler can read.** Neither provider returns raw reasoning: OpenAI returns summaries at most and encrypts the rest; Anthropic returns summaries or nothing (`display: omitted` is the default on the newest models) and bills the full count either way. Measured on the pack's own sessions, readable reasoning text was 3% of billed reasoning on one GPT session, a third on one Claude session through Copilot, and 0–4% in Claude Code transcripts (`session-profile.py` SP-17). What every host *does* record is the `description` argument on a shell call. So: **every `Bash` / `powershell` call states, in one line, what the call is for and what it would establish** — the plan, externalized at the moment it is acted on. It costs a few output tokens and it is what SP-18 (intent-trace coverage) and the re-read guard read; a shell call without one is a step with no stated reason. The goal-state block (CT19), `assume:` / `simplify:` markers and decision notes are the same principle at larger grain: reasoning we need later is written down where a tool can find it, not left inside the model.
+
 ## 6. The reconciliation (why these do not conflict)
 
 The three disciplines answer three different questions and are applied in this order:
@@ -124,6 +126,7 @@ Read downward. **Rigor first, then size, then wording.** Compressing the third n
 ## 7. Self-verification checklist
 
 - [ ] **Opened with the goal state** — Goal / Done when / Not in scope / **Tier / Fan-out cap**, written before the first substantive tool call (CT19); no fan-out exceeded the cap without a named hard gate.
+- [ ] **Every shell call carried a one-line intent** (CT26) — the reasoning trace the profiler reads (SP-18).
 - [ ] The turn's shape was **planned once with `/optimize-graph`** across all its tasks; a 1–2 node turn triaged to skip-execute-stop (CT24).
 - [ ] **Closed with a bounded self-assessment** — one pass mapping the work to Done-when and diffing Not-in-scope, then stop; no second reflection round (CT25).
 - [ ] Autonomy stayed **latitude in the *how***; no question was converted into an authored goal (CT20); an explicit stop was honoured as a track-end, not re-entered (CT21); a completion nudge was read as a cap firing, not new scope (CT22).

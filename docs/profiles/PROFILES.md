@@ -18,4 +18,4 @@ summary: >-
 
 | id | generated | repos | sessions | findings | top |
 |---|---|---|---|---|---|
-| [sp-0001](sp-0001/profile.md) | 2026-09-05T17:22:13Z | theterrace, ai-forward | 20 | 65 | SP-01, SP-09, SP-01 |
+| [sp-0001](sp-0001/profile.md) | 2026-09-05T20:09:26Z | theterrace, ai-forward | 23 | 84 | SP-01, SP-09, SP-02 |

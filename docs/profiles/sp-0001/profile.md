@@ -9,22 +9,24 @@ links:
   - { to: design-session-profiler, rel: relates-to }
 review-by: "2026-12-04"
 summary: >-
-  Measured pass over 20 session(s) in theterrace, ai-forward (last 7 days); 65 finding(s), top: SP-01, SP-09, SP-01.
+  Measured pass over 23 session(s) in theterrace, ai-forward (last 7 days); 84 finding(s), top: SP-01, SP-09, SP-02.
 ---
 # Session profile sp-0001
 
-*Generated 2026-09-05T17:22:13Z by `session-profile.py`. Every number is read from the harness's own store unless marked est. (chars/token = 3.54). A missing measurement reads `not recorded`, never a guess (IO8).*
+*Generated 2026-09-05T20:09:26Z by `session-profile.py`. Every number is read from the harness's own store unless marked est. (chars/token = 3.54). A missing measurement reads `not recorded`, never a guess (IO8).*
 
 **Repos:** theterrace, ai-forward  
 **Window:** last 7 days  
-**Sessions:** 20 (claude, copilot)
+**Sessions:** 23 (claude, copilot)
 
 ## Findings
 
 | id | severity | confidence | finding | session | evidence | fix |
 |---|---|---|---|---|---|---|
-| SP-01 | Major | Verified | Context accretion: the main conversation grew past the point where every step re-reads a book | claude:5ba1afa5 | t6: context 56,985 -> 231,013 tokens over 18 main requests; t8: context 246,435 -> 698,271 tokens over 23 main requests | F-09, F-01 |
-| SP-09 | Major | Inferred | No goal state: a substantive turn whose first reply carries no Goal / Done when | claude:5ba1afa5 | t7: 'give me a table with each "fix" you would add to the ai-forw' - first reply has no Goal / Done when | F-03 |
+| SP-01 | Major | Verified | Context accretion: the main conversation grew past the point where every step re-reads a book | claude:5ba1afa5 | t6: context 56,985 -> 231,013 tokens over 18 main requests; t8: context 246,435 -> 774,890 tokens over 41 main requests; t9: context 779,142 -> 805,289 tokens over 6 main requests | F-09, F-01 |
+| SP-09 | Major | Inferred | No goal state: a substantive turn whose first reply carries no Goal / Done when | claude:5ba1afa5 | t7: 'give me a table with each "fix" you would add to the ai-forw' - first reply has no Goal / Done when; t9: '<command-message>also</command-message> <command-name>/also<' - first reply has no Goal / Done when | F-03 |
+| SP-02 | Major | Verified | Instruction double-load: two near-identical custom-instruction blocks in the static prefix | copilot:447dff76 | custom-instruction blocks of 26,752 and 25,128 chars in the static prefix | F-01 |
+| SP-03 | Major | Inferred | Static prefix larger than the budget models | copilot:447dff76 | static prefix ~91,595 est. tokens (324,247 chars; measured chars of the latest main prefix; tokens are an estimate at 3.54 chars/token) | F-02 |
 | SP-01 | Major | Verified | Context accretion: the main conversation grew past the point where every step re-reads a book | copilot:fd3ccb67 | t0: context 403,550 -> 504,626 tokens over 31 main requests; t1: context 508,349 -> 508,349 tokens over 1 main requests; t2: context 510,246 -> 528,394 tokens over 10 main requests | F-09, F-01 |
 | SP-02 | Major | Verified | Instruction double-load: two near-identical custom-instruction blocks in the static prefix | copilot:fd3ccb67 | custom-instruction blocks of 58,511 and 57,648 chars in the static prefix | F-01 |
 | SP-03 | Major | Inferred | Static prefix larger than the budget models | copilot:fd3ccb67 | static prefix ~113,057 est. tokens (400,222 chars; measured chars of the latest main prefix; tokens are an estimate at 3.54 chars/token) | F-02 |
@@ -63,7 +65,7 @@ summary: >-
 | SP-03 | Major | Inferred | Static prefix larger than the budget models | copilot:42bfc457 | static prefix ~271,101 est. tokens (959,699 chars; measured chars of the latest main prefix; tokens are an estimate at 3.54 chars/token) | F-02 |
 | SP-06 | Major | Inferred | Council above tier: a fan-out on a turn that declared no tier | copilot:42bfc457 | t5: 6 sub-agent(s), no tier declared: python-developer, test-architect, test-architect, python-developer, python-developer, test-architect | F-03 |
 | SP-07 | Major | Verified | Sub-agent runaway: a delegation past a sane tool-call/token budget, or one the parent had to tell to converge | copilot:42bfc457 | t5: python-developer: 36 tool calls, 1,051,496 tokens, 250s; t5: test-architect: 42 tool calls, 1,586,037 tokens, 485s; t7: test-architect: 49 tool calls, 2,122,114 tokens, 590s | F-04 |
-| SP-14 | Major | Verified | Model-family gap: one family carries 2x the cost or drift indicators of another on comparable turns | *:* | openai/copilot: 4.0 drift indicators per turn vs anthropic/claude: 0.88; caveat: the turn mix differs (13 vs 73 turns); confirm on like-for-like tasks before tuning | F-10 |
+| SP-14 | Major | Verified | Model-family gap: one family carries 2x the cost or drift indicators of another on comparable turns | *:* | openai/copilot: 3.71 drift indicators per turn vs anthropic/claude: 0.84; caveat: the turn mix differs (14 vs 77 turns); confirm on like-for-like tasks before tuning | F-10 |
 | SP-15 | Major | Verified | Concurrent sessions in one checkout: overlapping sessions with the same cwd | *:* | copilot:fd3ccb67 and copilot:61c83fa4 overlapped in c:\projects\theterrace; claude:6a3922e7 and copilot:68051e5e overlapped in c:\projects\theterrace; claude:c7ed5016 and claude:3750befc overlapped in c:\projects\theterrace | F-09 |
 | SP-04 | Minor | Verified | Re-reads: the same file viewed three or more times in one turn, or a paged tool output viewed whole | copilot:fd3ccb67 | t6: chelsea-pivot-scouting-dossier.html viewed 3x; t6: chelsea-barco-dossier.html viewed 3x; t9: public.html viewed 4x | F-07 |
 | SP-05 | Minor | Verified | Skill re-injection: the same skill invoked more than once in a session | copilot:fd3ccb67 | ui-design invoked 2x; optimize-graph invoked 2x | F-06 |
@@ -83,11 +85,28 @@ summary: >-
 | SP-04 | Minor | Verified | Re-reads: the same file viewed three or more times in one turn, or a paged tool output viewed whole | copilot:42bfc457 | t5: coord-core.py viewed 5x; t5: test_coord_core.py viewed 4x | F-07 |
 | SP-08 | Minor | Verified | Persona orientation reads: a sub-agent reading the roster docs or AGENTS.md to find out what it is | copilot:42bfc457 | t7: test-architect: persona-audit.md; t7: test-architect: persona-cards.md; t7: test-architect: agent-persona-catalog.md | F-05 |
 | SP-11 | Minor | Verified | Cap firings: harness completion nudges or user aborts inside a turn | copilot:42bfc457 | t1: 1 nudge(s), 0 abort(s); t4: 1 nudge(s), 0 abort(s) | F-03 |
+| SP-17 | Nit | Verified | Reasoning visibility: the share of billed reasoning that came back as readable text | claude:5ba1afa5 | 139,006 reasoning tokens billed on the main line; 6,420 chars of reasoning text on disk (~1% visible at 3.54 chars/token) | F-12 |
+| SP-17 | Nit | Verified | Reasoning visibility: the share of billed reasoning that came back as readable text | claude:99163d6b | 129 reasoning tokens billed on the main line; 0 chars of reasoning text on disk (~0% visible at 3.54 chars/token) | F-12 |
+| SP-13 | Nit | Verified | Hook overhead above 5% of wall clock | copilot:447dff76 | hooks 2s of 4s wall (50%) |  |
+| SP-17 | Nit | Verified | Reasoning visibility: the share of billed reasoning that came back as readable text | copilot:447dff76 | 16 reasoning tokens billed on the main line; 0 chars of reasoning text on disk (~0% visible at 3.54 chars/token) | F-12 |
+| SP-17 | Nit | Verified | Reasoning visibility: the share of billed reasoning that came back as readable text | claude:675a273c | 102 reasoning tokens billed on the main line; 0 chars of reasoning text on disk (~0% visible at 3.54 chars/token) | F-12 |
 | SP-13 | Nit | Verified | Hook overhead above 5% of wall clock | copilot:fd3ccb67 | hooks 793s of 10243s wall (8%) |  |
+| SP-17 | Nit | Verified | Reasoning visibility: the share of billed reasoning that came back as readable text | copilot:fd3ccb67 | 148,697 reasoning tokens billed on the main line; 81,663 chars of reasoning text on disk (~16% visible at 3.54 chars/token) | F-12 |
+| SP-17 | Nit | Verified | Reasoning visibility: the share of billed reasoning that came back as readable text | claude:d392ce02 | 127,656 reasoning tokens billed on the main line; 0 chars of reasoning text on disk (~0% visible at 3.54 chars/token) | F-12 |
+| SP-17 | Nit | Verified | Reasoning visibility: the share of billed reasoning that came back as readable text | claude:6a3922e7 | 1,347 reasoning tokens billed on the main line; 0 chars of reasoning text on disk (~0% visible at 3.54 chars/token) | F-12 |
 | SP-13 | Nit | Verified | Hook overhead above 5% of wall clock | copilot:68051e5e | hooks 5s of 59s wall (8%) |  |
+| SP-17 | Nit | Verified | Reasoning visibility: the share of billed reasoning that came back as readable text | copilot:68051e5e | 963 reasoning tokens billed on the main line; 1,452 chars of reasoning text on disk (~43% visible at 3.54 chars/token) | F-12 |
+| SP-17 | Nit | Verified | Reasoning visibility: the share of billed reasoning that came back as readable text | claude:c7ed5016 | 36,073 reasoning tokens billed on the main line; 0 chars of reasoning text on disk (~0% visible at 3.54 chars/token) | F-12 |
+| SP-17 | Nit | Verified | Reasoning visibility: the share of billed reasoning that came back as readable text | claude:3750befc | 41,266 reasoning tokens billed on the main line; 0 chars of reasoning text on disk (~0% visible at 3.54 chars/token) | F-12 |
+| SP-17 | Nit | Verified | Reasoning visibility: the share of billed reasoning that came back as readable text | copilot:cac6e573 | 14,676 reasoning tokens billed on the main line; 22,360 chars of reasoning text on disk (~43% visible at 3.54 chars/token) | F-12 |
 | SP-13 | Nit | Verified | Hook overhead above 5% of wall clock | copilot:2e3bba2d | hooks 5s of 51s wall (10%) |  |
+| SP-17 | Nit | Verified | Reasoning visibility: the share of billed reasoning that came back as readable text | copilot:2e3bba2d | 403 reasoning tokens billed on the main line; 851 chars of reasoning text on disk (~60% visible at 3.54 chars/token) | F-12 |
+| SP-17 | Nit | Verified | Reasoning visibility: the share of billed reasoning that came back as readable text | claude:85289eb6 | 210,986 reasoning tokens billed on the main line; 0 chars of reasoning text on disk (~0% visible at 3.54 chars/token) | F-12 |
+| SP-17 | Nit | Verified | Reasoning visibility: the share of billed reasoning that came back as readable text | copilot:2f63f380 | 206,813 reasoning tokens billed on the main line; 248,857 chars of reasoning text on disk (~34% visible at 3.54 chars/token) | F-12 |
 | SP-13 | Nit | Verified | Hook overhead above 5% of wall clock | copilot:6be4e83f | hooks 137s of 2594s wall (5%) |  |
+| SP-17 | Nit | Verified | Reasoning visibility: the share of billed reasoning that came back as readable text | copilot:6be4e83f | 63,576 reasoning tokens billed on the main line; 70,391 chars of reasoning text on disk (~31% visible at 3.54 chars/token) | F-12 |
 | SP-13 | Nit | Verified | Hook overhead above 5% of wall clock | copilot:42bfc457 | hooks 476s of 5075s wall (9%) |  |
+| SP-17 | Nit | Verified | Reasoning visibility: the share of billed reasoning that came back as readable text | copilot:42bfc457 | 25,755 reasoning tokens billed on the main line; 40,694 chars of reasoning text on disk (~45% visible at 3.54 chars/token) | F-12 |
 
 ## Fixes (the pack surfaces that own the controls)
 
@@ -103,21 +122,22 @@ summary: >-
 | F-06 | Progressive-disclosure skills; never re-invoke an active skill | commands/*/SKILL.md + reference/; context-budget.py skills (ratchet) | `context-budget.py skills --gate` fails unacknowledged SKILL.md growth; /dream flags a skill invoked twice in one turn | SP-05 |
 | F-05 | Persona cards are self-sufficient; no orientation reads | adapters/*/agents/*.md (inline operating standard + do-not-read list) | eval: a persona transcript contains no view of AGENTS.md / persona-* / agent-body-of-knowledge | SP-08 |
 | F-08 | UI craft docs load on demand with a rule index; screenshots stay out of the main context | knowledge/ui-*.md (load: skill + rule index); commands/ui-design | Tier B/C totals in context-budget; /ui-design Stage 3 reads the craft JSON | SP-12, SP-16 |
+| F-12 | Ask each host for its richest reasoning summary, and treat summary-derived judgements as Inferred | INSTALL.md 1.6; adapters/hooks/claude-code.settings.hooks.json (showThinkingSummaries); pack-doctor `claude settings` | SP-17 reports visible-reasoning share per family; a family under 10% marks every text-derived drift finding Inferred | SP-17 |
 
 ## Model family x harness (the tuning view)
 
-| family | harness | turns | req/turn | cache-read/turn | out/turn | reasoning/turn | cost/turn (AIU) | ttft p90 (median) | ctx end (median) | wall s/turn | drift/turn |
-|---|---|---|---|---|---|---|---|---|---|---|---|
-| anthropic | claude | 73 | 31.5 | 14,034,183 | 27,967 | 7,227 | not recorded | not recorded | 442,290 | 1079 | 0.88 |
-| anthropic | copilot | 28 | 15.1 | 7,768,282 | 22,346 | 11,679 | 691.5 | 6.2 | 506,487 | 555 | 2.25 |
-| anthropic+openai | copilot | 1 | 26.0 | 14,685,744 | 50,933 | 23,220 | 1,214.8 | 6.4 | 599,584 | 1272 | 2.0 |
-| openai | copilot | 13 | 24.2 | 12,606,586 | 44,673 | 17,151 | 2,472.4 | 14.3 | 398,400 | 989 | 4.0 |
+| family | harness | turns | req/turn | cache-read/turn | out/turn | reasoning/turn | reasoning visible | effort | intent trace | cost/turn (AIU) | ttft p90 (median) | ctx end (median) | wall s/turn | drift/turn |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| anthropic | claude | 77 | 30.2 | 13,559,962 | 27,548 | 7,228 | 0.3% | not recorded | 100.0% | not recorded | not recorded | 442,290 | 1042 | 0.84 |
+| anthropic | copilot | 28 | 15.1 | 7,768,282 | 22,346 | 11,679 | 33.1% | high | 100.0% | 691.5 | 6.2 | 506,487 | 555 | 2.25 |
+| anthropic+openai | copilot | 1 | 26.0 | 14,685,744 | 50,933 | 23,220 | 42.4% | high | 100.0% | 1,214.8 | 6.4 | 599,584 | 1272 | 2.0 |
+| openai | copilot | 14 | 22.5 | 11,706,116 | 41,484 | 15,927 | 13.0% | high | 100.0% | 2,303.8 | 12.2 | 380,679 | 918 | 3.71 |
 
-*drift/turn = sub-agents + re-reads + skill repeats + missing goal state + fan-out without tier + converge nudges + cap firings, per turn.*
+*drift/turn = sub-agents + re-reads + skill repeats + missing goal state + fan-out without tier + converge nudges + cap firings, per turn. reasoning visible = reasoning text on disk as a share of billed reasoning tokens (est.); below 10% every text-derived drift judgement is Inferred. effort = the host's recorded reasoning effort (Copilot) or not recorded (Claude Code). intent trace = shell calls carrying a one-line description.*
 
 ## claude session `5ba1afa5` — TheTerrace copilot session profiling
 
-started 2026-09-05T16:06:39Z · updated 2026-09-05T17:22:10Z · cwd `C:\projects\ai-forward` · prefix not recorded · compactions 0
+started 2026-09-05T16:06:39Z · updated 2026-09-05T20:09:05Z · cwd `C:\projects\ai-forward` · prefix not recorded · compactions 0
 
 | turn | prompt | family | main req | ctx start | ctx end | cache read | output | cost AIU | ttft p90 | wall s | subs | re-reads | goal | tier |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
@@ -129,7 +149,33 @@ started 2026-09-05T16:06:39Z · updated 2026-09-05T17:22:10Z · cwd `C:\projects
 | 5 | <local-command-stdout>Set effort level to xhigh  | — | 0 | not recorded | not recorded | 0 | 0 | not recorded | not recorded | — | 0 | 0 | no | no |
 | 6 | can you profile the last few turns in the curren | anthropic | 18 | 56,985 | 231,013 | 2,686,561 | 59,862 | not recorded | not recorded | 783 | 0 | 0 | yes | no |
 | 7 | give me a table with each "fix" you would add to | anthropic | 3 | 235,781 | 241,846 | 712,533 | 8,645 | not recorded | not recorded | 100 | 0 | 0 | no | no |
-| 8 | do all of these suggestions in the ai-forward re | anthropic | 23 | 246,435 | 698,271 | 11,534,952 | 254,410 | not recorded | not recorded | 2831 | 0 | 0 | yes | no |
+| 8 | do all of these suggestions in the ai-forward re | anthropic | 41 | 246,435 | 774,890 | 24,728,126 | 295,951 | not recorded | not recorded | 3785 | 0 | 0 | yes | no |
+| 9 | <command-message>also</command-message> <command | anthropic | 6 | 779,142 | 805,289 | 4,738,899 | 12,325 | not recorded | not recorded | 182 | 0 | 0 | no | no |
+| 10 | do the next incremebt you suggest AND incorporat | anthropic | 3 | 807,709 | 834,351 | 1,654,988 | 25,495 | not recorded | not recorded | 306 | 0 | 0 | yes | yes |
+
+## claude session `99163d6b` — Prime check and digit sum
+
+started 2026-09-05T20:06:18Z · updated 2026-09-05T20:06:21Z · cwd `C:\Projects\ai-forward-session-profiler` · prefix not recorded · compactions 0
+
+| turn | prompt | family | main req | ctx start | ctx end | cache read | output | cost AIU | ttft p90 | wall s | subs | re-reads | goal | tier |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 0 | Think carefully, step by step, about whether 19  | anthropic | 1 | 39,652 | 39,652 | 19,534 | 133 | not recorded | not recorded | 4 | 0 | 0 | no | no |
+
+## copilot session `447dff76` — Think carefully about whether 17 is prime and about the sum of its digits; then reply with only the...
+
+started 2026-09-05T20:05:29Z · updated 2026-09-05T20:05:34Z · cwd `C:\Projects\ai-forward-session-profiler` · prefix ~91,595 est. tokens / 324,247 chars · compactions 0 · settings {'model': 'claude-opus-4.8', 'contextTier': 'long_context', 'effortLevel': 'high'}
+
+| turn | prompt | family | main req | ctx start | ctx end | cache read | output | cost AIU | ttft p90 | wall s | subs | re-reads | goal | tier |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 0 | Think carefully about whether 17 is prime and ab | openai | 1 | 89,349 | 89,349 | 0 | 23 | 111.8 | 3.0 | 4 | 0 | 0 | no | no |
+
+## claude session `675a273c` — Prime and digit sum verification
+
+started 2026-09-05T20:05:20Z · updated 2026-09-05T20:05:25Z · cwd `C:\Projects\ai-forward-session-profiler` · prefix not recorded · compactions 0
+
+| turn | prompt | family | main req | ctx start | ctx end | cache read | output | cost AIU | ttft p90 | wall s | subs | re-reads | goal | tier |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 0 | Think carefully, step by step, about whether 17  | anthropic | 1 | 39,652 | 39,652 | 15,177 | 106 | not recorded | not recorded | 5 | 0 | 0 | no | no |
 
 ## copilot session `fd3ccb67` — Update Package Management
 

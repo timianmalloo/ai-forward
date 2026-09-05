@@ -94,6 +94,12 @@ FIXES = collections.OrderedDict([
     ("F-11", {"title": "Register the class, not the instance",
               "where": "docs/lessons/defect-classes.md (CTX-*); knowledge/continuous-improvement.md 6",
               "control": "each class row links to the control above; /dream re-surfaces an uncontrolled recurrence"}),
+    ("F-12", {"title": "Ask each host for its richest reasoning summary, and treat summary-derived judgements as Inferred",
+              "where": "INSTALL.md 1.6; adapters/hooks/claude-code.settings.hooks.json (showThinkingSummaries); pack-doctor `claude settings`",
+              "control": "SP-17 reports visible-reasoning share per family; a family under 10% marks every text-derived drift finding Inferred"}),
+    ("F-13", {"title": "Externalize reasoning by construction: a one-line intent on every shell call",
+              "where": "knowledge/communication-and-task-discipline.md CT26; the managed block; agent cards",
+              "control": "SP-18 intent-trace coverage per family; below 90% is a finding; the hook and the profiler read the same field"}),
 ])
 
 # Finding catalog: id -> (title, default severity, fix ids). Severity uses the pack scale.
@@ -114,7 +120,11 @@ FINDINGS = collections.OrderedDict([
     ("SP-14", ("Model-family gap: one family carries 2x the cost or drift indicators of another on comparable turns", "Major", ["F-10"])),
     ("SP-15", ("Concurrent sessions in one checkout: overlapping sessions with the same cwd", "Major", ["F-09"])),
     ("SP-16", ("Knowledge at hand re-fetched: the main agent viewed an instruction file that is already in its prefix", "Minor", ["F-08", "F-02"])),
+    ("SP-17", ("Reasoning visibility: the share of billed reasoning that came back as readable text", "Nit", ["F-12"])),
+    ("SP-18", ("Intent-trace coverage: shell calls that carry a one-line description (the reasoning trace a profiler can read)", "Minor", ["F-13"])),
 ])
+
+INTENT_TOOLS = {"copilot": {"powershell", "bash", "shell"}, "claude": {"Bash", "PowerShell"}}
 
 ORIENTATION_DOCS = ("agents.md", "claude.md", "agent-persona-catalog", "persona-cards", "persona-audit",
                     "agent-body-of-knowledge")
@@ -301,7 +311,8 @@ def _new_turn():
             "views": collections.Counter(), "paged_full_views": 0, "image_views": 0, "instruction_views": [],
             "skills": collections.Counter(), "asst_msgs": 0, "asst_text_chars": 0, "goal_state": False, "tier": False,
             "first_asst_seen": False, "nudges": 0, "aborts": 0, "errors": 0, "hook_s": 0.0, "sub": {},
-            "converge_nudges": 0, "sub_orientation_reads": [], "sub_tools": 0}
+            "converge_nudges": 0, "sub_orientation_reads": [], "sub_tools": 0,
+            "reasoning_chars": 0, "intent_eligible": 0, "intent_with": 0}
 
 
 def profile_copilot(sess, settings):
@@ -309,8 +320,8 @@ def profile_copilot(sess, settings):
     con = _ro(sess["db"])
     usage = con.execute(
         "select turn_index, agent_id, model, input_tokens, output_tokens, cache_read_tokens, cache_write_tokens, "
-        "reasoning_tokens, total_nano_aiu, duration_ms, time_to_first_token_ms, initiator, finish_reason, created_at "
-        "from assistant_usage_events where session_id=? order by id", (sess["id"],)).fetchall()
+        "reasoning_tokens, total_nano_aiu, duration_ms, time_to_first_token_ms, initiator, finish_reason, created_at, "
+        "reasoning_effort from assistant_usage_events where session_id=? order by id", (sess["id"],)).fetchall()
     con.close()
     events = _load_events(sess["events"])
     byid = {e.get("id"): e for e in events}
@@ -413,6 +424,10 @@ def profile_copilot(sess, settings):
                     msg = str(a.get("message") or a.get("prompt") or a.get("content") or "")
                     if CONVERGE_RX.search(msg):
                         t["converge_nudges"] += 1
+                if tn in INTENT_TOOLS["copilot"]:
+                    t["intent_eligible"] += 1
+                    if str(a.get("description") or "").strip():
+                        t["intent_with"] += 1
             else:
                 t["sub_tools"] += 1
                 name = sub_names.get(e.get("agentId") or se.get("agentId"), "sub-agent")
@@ -422,6 +437,7 @@ def profile_copilot(sess, settings):
             t["asst_msgs"] += 1
             c = d.get("content") or ""
             t["asst_text_chars"] += len(c)
+            t["reasoning_chars"] += len(d.get("reasoningText") or "")
             if not t["first_asst_seen"] and c.strip():
                 t["first_asst_seen"] = True
                 t["goal_state"] = bool(GOAL_RX.search(c) and DONE_RX.search(c))
@@ -445,14 +461,14 @@ def profile_copilot(sess, settings):
     # token metrics per turn from the store: align usage rows to event windows by time
     U = collections.defaultdict(list)
     for row in usage:
-        (turn_index, agent_id, model, inp, out, cr, cw, rsn, aiu, dur, ttft, initiator, finish, created) = row
+        (turn_index, agent_id, model, inp, out, cr, cw, rsn, aiu, dur, ttft, initiator, finish, created, effort) = row
         w = window(parse_ts(created))
         if w is None:
             continue
         U[w].append({"main": agent_id is None, "model": model, "in": inp or 0, "out": out or 0,
                      "cr": cr or 0, "cw": cw or 0, "rsn": rsn or 0, "aiu": (aiu or 0) / 1e9,
                      "dur": (dur or 0) / 1000.0, "ttft": (ttft / 1000.0) if ttft else None,
-                     "created": parse_ts(created), "finish": finish})
+                     "created": parse_ts(created), "finish": finish, "effort": effort})
     turns = []
     for i in sorted(T):
         t = T[i]
@@ -487,6 +503,9 @@ def profile_copilot(sess, settings):
             "errors": t["errors"], "hook_s": round(t["hook_s"]),
             "sub_agents": list(t["sub"].values()), "sub_tool_calls": t["sub_tools"],
             "converge_nudges": t["converge_nudges"], "sub_orientation_reads": t["sub_orientation_reads"],
+            "reasoning_main": sum(r["rsn"] for r in main), "reasoning_chars": t["reasoning_chars"],
+            "intent_eligible": t["intent_eligible"], "intent_with": t["intent_with"],
+            "effort": collections.Counter(r["effort"] for r in main if r["effort"]).most_common(1)[0][0] if any(r["effort"] for r in main) else None,
         })
     facts = {"harness": "copilot", "id": sess["id"], "title": sess["title"], "cwd": sess["cwd"],
              "started": sess["started"], "updated": sess["updated"],
@@ -580,7 +599,7 @@ def profile_claude(sess):
                           "asst_text_chars": 0, "asst_msgs": 0, "goal_state": False, "tier": False,
                           "first_asst_seen": False, "nudges": 0, "sub_agents": collections.OrderedDict(),
                           "sub_tools": 0, "sub_orientation_reads": [], "converge_nudges": 0, "models": set(),
-                          "ended": None})
+                          "ended": None, "reasoning_chars": 0, "intent_eligible": 0, "intent_with": 0})
                 m = re.search(r"<command-name>/([\w-]+)</command-name>", text)
                 if m:
                     T[-1]["skills"][m.group(1)] += 1
@@ -615,6 +634,8 @@ def profile_claude(sess):
             for b in msg.get("content") or []:
                 if not isinstance(b, dict):
                     continue
+                if b.get("type") == "thinking" and not side:
+                    t["reasoning_chars"] += len(b.get("thinking") or "")
                 if b.get("type") == "text" and not side:
                     c = b.get("text") or ""
                     t["asst_text_chars"] += len(c)
@@ -636,6 +657,10 @@ def profile_claude(sess):
                             t["sub_orientation_reads"].append(os.path.basename(path))
                         continue
                     t["tools"][name] += 1
+                    if name in INTENT_TOOLS["claude"]:
+                        t["intent_eligible"] += 1
+                        if str(inp.get("description") or "").strip():
+                            t["intent_with"] += 1
                     if name in ("Agent", "Task"):
                         desc = str(inp.get("description") or inp.get("subagent_type") or "agent")
                         t["sub_agents"].setdefault("task-" + str(len(t["sub_agents"])), {"name": desc, "tool_calls": 0, "tokens": 0})
@@ -672,6 +697,8 @@ def profile_claude(sess):
             "goal_state": t["goal_state"], "tier": t["tier"], "nudges": t["nudges"], "aborts": 0, "errors": 0,
             "hook_s": None, "sub_agents": list(t["sub_agents"].values()), "sub_tool_calls": t["sub_tools"],
             "converge_nudges": t["converge_nudges"], "sub_orientation_reads": t["sub_orientation_reads"],
+            "reasoning_main": sum(r["rsn"] for r in main), "reasoning_chars": t["reasoning_chars"],
+            "intent_eligible": t["intent_eligible"], "intent_with": t["intent_with"], "effort": None,
         })
     facts = {"harness": "claude", "id": sess["id"], "title": title, "cwd": cwd,
              "started": T[0]["started"] if T else None, "updated": sess["updated"],
@@ -770,6 +797,24 @@ def detect(session):
     ev = [_ev(t["turn"], os.path.basename(p)) for t in turns for p in t["instruction_views"]]
     if ev:
         add("SP-16", ev[:8], {"reads": len(ev)})
+    # SP-17: how much of the billed reasoning came back as text. Informational: it decides how much
+    # weight any text-derived judgement can carry (below 10% visible, drift read from text is Inferred).
+    rsn = sum(t["reasoning_main"] for t in turns)
+    chars = sum(t["reasoning_chars"] for t in turns)
+    if rsn:
+        share = min(1.0, est_tokens(chars) / float(rsn))
+        add("SP-17", [_ev(None, "{0:,} reasoning tokens billed on the main line; {1:,} chars of reasoning text on disk (~{2:.0f}% visible at {3} chars/token)".format(
+            rsn, chars, 100 * share, CHARS_PER_TOKEN))], {"visible_share": round(share, 3), "reasoning_tokens": rsn, "reasoning_chars": chars},
+            confidence="Verified", severity="Nit")
+    # SP-18: intent-trace coverage - the one reasoning trace every host records (the description on a shell call).
+    elig = sum(t["intent_eligible"] for t in turns)
+    with_ = sum(t["intent_with"] for t in turns)
+    if elig:
+        cov = with_ / float(elig)
+        if cov < 0.9:
+            add("SP-18", [_ev(t["turn"], "{0}/{1} shell calls carried an intent".format(t["intent_with"], t["intent_eligible"]))
+                          for t in turns if t["intent_eligible"] and t["intent_with"] < t["intent_eligible"]][:8],
+                {"coverage": round(cov, 3), "eligible": elig})
     out.sort(key=lambda f: SEVERITY_RANK.get(f["severity"], 9))
     return out
 
@@ -801,7 +846,9 @@ def family_comparison(sessions):
     agg = collections.defaultdict(lambda: {"turns": 0, "main_requests": 0, "cache_read": 0, "output": 0, "reasoning": 0,
                                            "cost_aiu": 0.0, "ttft_p90": [], "ctx_end": [], "sub_agents": 0,
                                            "rereads": 0, "skill_repeats": 0, "no_goal": 0, "no_tier_with_fanout": 0,
-                                           "converge_nudges": 0, "nudges": 0, "wall_s": 0})
+                                           "converge_nudges": 0, "nudges": 0, "wall_s": 0,
+                                           "reasoning_main": 0, "reasoning_chars": 0, "intent_eligible": 0, "intent_with": 0,
+                                           "effort": collections.Counter()})
     for s in sessions:
         for t in s["turns"]:
             if not t["models"]:
@@ -826,6 +873,12 @@ def family_comparison(sessions):
             a["converge_nudges"] += t["converge_nudges"]
             a["nudges"] += t["nudges"] + t["aborts"]
             a["wall_s"] += t["wall_s"] or 0
+            a["reasoning_main"] += t.get("reasoning_main") or 0
+            a["reasoning_chars"] += t.get("reasoning_chars") or 0
+            a["intent_eligible"] += t.get("intent_eligible") or 0
+            a["intent_with"] += t.get("intent_with") or 0
+            if t.get("effort"):
+                a["effort"][t["effort"]] += 1
     rows = []
     for (fam, harness), a in sorted(agg.items()):
         n = max(a["turns"], 1)
@@ -838,6 +891,10 @@ def family_comparison(sessions):
                      "ttft_p90_median": round(statistics.median(a["ttft_p90"]), 1) if a["ttft_p90"] else None,
                      "ctx_end_median": int(statistics.median(a["ctx_end"])) if a["ctx_end"] else None,
                      "wall_s_per_turn": int(a["wall_s"] / n),
+                     "reasoning_share_of_output": round(a["reasoning_main"] / float(a["output"]), 2) if a["output"] else None,
+                     "visible_reasoning_pct": (round(100.0 * min(1.0, est_tokens(a["reasoning_chars"]) / float(a["reasoning_main"])), 1) if a["reasoning_main"] else None),
+                     "intent_trace_pct": (round(100.0 * a["intent_with"] / a["intent_eligible"], 1) if a["intent_eligible"] else None),
+                     "effort": (a["effort"].most_common(1)[0][0] if a["effort"] else NOT_RECORDED),
                      "drift_per_turn": round(drift / n, 2),
                      "drift_breakdown": {k: a[k] for k in ("sub_agents", "rereads", "skill_repeats", "no_goal", "no_tier_with_fanout", "converge_nudges", "nudges")}})
     findings = []
@@ -918,10 +975,14 @@ def render_markdown(profile):
     rows = [[fx, FIXES[fx]["title"], FIXES[fx]["where"], FIXES[fx]["control"], ", ".join(sorted(set(ids)))] for fx, ids in used.items()]
     lines.append(_md_table(["fix", "what", "where in the pack", "control that fails on recurrence", "findings"], rows) if rows else "*none*")
     lines += ["", "## Model family x harness (the tuning view)", ""]
-    lines.append(_md_table(["family", "harness", "turns", "req/turn", "cache-read/turn", "out/turn", "reasoning/turn", "cost/turn (AIU)", "ttft p90 (median)", "ctx end (median)", "wall s/turn", "drift/turn"],
+    lines.append(_md_table(["family", "harness", "turns", "req/turn", "cache-read/turn", "out/turn", "reasoning/turn", "reasoning visible", "effort", "intent trace", "cost/turn (AIU)", "ttft p90 (median)", "ctx end (median)", "wall s/turn", "drift/turn"],
                            [[r["family"], r["harness"], r["turns"], r["requests_per_turn"], _fmt(r["cache_read_per_turn"]), _fmt(r["output_per_turn"]), _fmt(r["reasoning_per_turn"]),
+                             (str(r["visible_reasoning_pct"]) + "%") if r["visible_reasoning_pct"] is not None else NOT_RECORDED, r["effort"],
+                             (str(r["intent_trace_pct"]) + "%") if r["intent_trace_pct"] is not None else NOT_RECORDED,
                              _fmt(r["cost_aiu_per_turn"]), _fmt(r["ttft_p90_median"]), _fmt(r["ctx_end_median"]), r["wall_s_per_turn"], r["drift_per_turn"]] for r in profile["comparison"]]))
-    lines += ["", "*drift/turn = sub-agents + re-reads + skill repeats + missing goal state + fan-out without tier + converge nudges + cap firings, per turn.*", ""]
+    lines += ["", "*drift/turn = sub-agents + re-reads + skill repeats + missing goal state + fan-out without tier + converge nudges + cap firings, per turn. "
+              "reasoning visible = reasoning text on disk as a share of billed reasoning tokens (est.); below 10% every text-derived drift judgement is Inferred. "
+              "effort = the host's recorded reasoning effort (Copilot) or not recorded (Claude Code). intent trace = shell calls carrying a one-line description.*", ""]
     for s in profile["sessions"]:
         f = s["facts"]
         lines += ["## {0} session `{1}` \u2014 {2}".format(f["harness"], f["id"][:8], f.get("title") or ""), "",
@@ -1084,8 +1145,10 @@ def cmd_compare(args):
     if args.json_only:
         print(json.dumps({"comparison": comparison, "findings": [f for f in findings if f["id"] == "SP-14"]}, indent=2, default=str))
         return 0
-    print(_md_table(["family", "harness", "turns", "req/turn", "cache-read/turn", "out/turn", "reasoning/turn", "cost/turn", "ttft p90 med", "ctx end med", "wall s/turn", "drift/turn"],
+    print(_md_table(["family", "harness", "turns", "req/turn", "cache-read/turn", "out/turn", "reasoning/turn", "reasoning visible", "effort", "intent trace", "cost/turn", "ttft p90 med", "ctx end med", "wall s/turn", "drift/turn"],
                     [[r["family"], r["harness"], r["turns"], r["requests_per_turn"], _fmt(r["cache_read_per_turn"]), _fmt(r["output_per_turn"]), _fmt(r["reasoning_per_turn"]),
+                      (str(r["visible_reasoning_pct"]) + "%") if r["visible_reasoning_pct"] is not None else NOT_RECORDED, r["effort"],
+                      (str(r["intent_trace_pct"]) + "%") if r["intent_trace_pct"] is not None else NOT_RECORDED,
                       _fmt(r["cost_aiu_per_turn"]), _fmt(r["ttft_p90_median"]), _fmt(r["ctx_end_median"]), r["wall_s_per_turn"], r["drift_per_turn"]] for r in comparison]))
     for r in comparison:
         print("  {0}/{1} drift breakdown: {2}".format(r["family"], r["harness"], r["drift_breakdown"]))
