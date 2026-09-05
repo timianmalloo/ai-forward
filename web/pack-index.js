@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 168
+"count": 169
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 320,
+"total": 321,
 "items": [
 {
 "cat": "knowledge",
@@ -1544,10 +1544,10 @@ window.PACK_INDEX = {
 "cat": "graph",
 "id": "api-index",
 "title": "API reference — the deployed script bundle",
-"summary": "Generated API reference for the pack's public surface — the deployed script bundle. 306 public functions across 20 modules, 40% carrying a docstring.",
+"summary": "Generated API reference for the pack's public surface — the deployed script bundle. 318 public functions across 21 modules, 40% carrying a docstring.",
 "path": "docs/api/index.md",
 "kind": "api",
-"text": "api reference — the deployed script bundle generated api reference for the pack's public surface — the deployed script bundle. 306 public functions across 20 modules, 40% carrying a docstring. api scripts generated index documents architecture"
+"text": "api reference — the deployed script bundle generated api reference for the pack's public surface — the deployed script bundle. 318 public functions across 21 modules, 40% carrying a docstring. api scripts generated index documents architecture"
 },
 {
 "cat": "graph",
@@ -1566,6 +1566,15 @@ window.PACK_INDEX = {
 "path": "docs/api/obsidian-setup.md",
 "kind": "api",
 "text": "api — obsidian-setup.py obsidian-setup.py - stand up (and analyze) the obsidian lens over an ai-forward docs graph. api scripts generated refines api-index"
+},
+{
+"cat": "graph",
+"id": "api-pack-apply",
+"title": "API — pack-apply.py",
+"summary": "pack-apply.py — apply the AI-Forward deployment map to a repo, mechanically and reversibly.",
+"path": "docs/api/pack-apply.md",
+"kind": "api",
+"text": "api — pack-apply.py pack-apply.py — apply the ai-forward deployment map to a repo, mechanically and reversibly. api scripts generated refines api-index"
 },
 {
 "cat": "graph",

@@ -909,7 +909,7 @@ window.DOCS_INDEX = {
       "phase": "",
       "reviewBy": "2027-03-03",
       "reviewSuggested": [],
-      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 306 public functions across 20 modules, 40% carrying a docstring.",
+      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 318 public functions across 21 modules, 40% carrying a docstring.",
       "tags": [
         "api",
         "scripts",
@@ -923,7 +923,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "80a5e533a09a4635d6b0e41bc6b76a61de034c2d214b1e795b6b0639f7660e8a"
+      "sourceSha256": "d6534abd459236c5ef0c0061cd218b697a0a8c71159ff4460f0ee25a61e66110"
     },
     {
       "id": "api-marker-lint",
@@ -974,6 +974,31 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "cc325d20da799743c84f2811966f5dd6f1fa2a781108b18c980f915123cffcc9"
+    },
+    {
+      "id": "api-pack-apply",
+      "path": "docs/api/pack-apply.md",
+      "title": "API — pack-apply.py",
+      "type": "api",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-03-03",
+      "reviewSuggested": [],
+      "summary": "pack-apply.py — apply the AI-Forward deployment map to a repo, mechanically and reversibly.",
+      "tags": [
+        "api",
+        "scripts",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "api-index",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "1ff5863b44b7d127514181a96b270cb412913d3de92527009f6132e03f623ff5"
     },
     {
       "id": "api-pack-doctor",
@@ -5691,5 +5716,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "a7ba5faa41f524a7893c8eff9abed25cf5dab114807b6f3e58911aa0cd3cdc98"
+  "graphSha256": "8ed2cc9c516d326a94303ce98f11e1a7df49998684c36a579bfaae95302158d5"
 };

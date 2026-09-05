@@ -30,7 +30,7 @@
   ],
   "skills_baseline": {
       "adddomainexperts": 3538,
-      "addpacktorepo": 3312,
+      "addpacktorepo": 3472,
       "adopt": 1595,
       "also": 1200,
       "apply-learnings": 1443,
@@ -49,10 +49,10 @@
       "optimize-graph": 3061,
       "prompts": 805,
       "searchprompts": 611,
-      "session-profiler": 2334,
+      "session-profiler": 2367,
       "specify": 3601,
       "ui-design": 2245,
-      "updatepack": 2170,
+      "updatepack": 2237,
       "visualize": 3165
   },
   "prefix_tokens": 87316,

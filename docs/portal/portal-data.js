@@ -1766,7 +1766,7 @@ window.PORTAL_DATA = {
         "id": "api-index",
         "type": "api",
         "title": "API reference — the deployed script bundle",
-        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 306 public functions across 20 modules, 40% carrying a docstring."
+        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 318 public functions across 21 modules, 40% carrying a docstring."
       },
       {
         "id": "api-marker-lint",
@@ -1779,6 +1779,12 @@ window.PORTAL_DATA = {
         "type": "api",
         "title": "API — obsidian-setup.py",
         "summary": "obsidian-setup.py - stand up (and analyze) the Obsidian lens over an AI-Forward docs graph."
+      },
+      {
+        "id": "api-pack-apply",
+        "type": "api",
+        "title": "API — pack-apply.py",
+        "summary": "pack-apply.py — apply the AI-Forward deployment map to a repo, mechanically and reversibly."
       },
       {
         "id": "api-pack-doctor",
@@ -2886,6 +2892,11 @@ window.PORTAL_DATA = {
       },
       {
         "from": "api-obsidian-setup",
+        "to": "api-index",
+        "rel": "refines"
+      },
+      {
+        "from": "api-pack-apply",
         "to": "api-index",
         "rel": "refines"
       },
