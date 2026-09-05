@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-forward-pack-apply",
-  "generated": "2026-09-05T20:53:43Z",
+  "project": "ai-forward",
+  "generated": "2026-09-05T21:10:27Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3398,6 +3398,36 @@ window.AUDIT_DATA = {
       "outcome": "success",
       "started_at": "2026-09-05T20:53:43Z",
       "duration_seconds": 0.0
+    },
+    {
+      "id": "al-01M1SPH3EG7Y4NW0Q25D03ZJ0Z",
+      "shortname": "rev61-pack-apply",
+      "datetime": "2026-09-05T21:10:27Z",
+      "session": "5ba1afa5",
+      "prompt": "hmm - on 1 and 2 you listed above - those should be fixes as part of the update pack skill so i dont have to remember to do that for repos, fix that now even if it requires adding a python or powershell script that the skill leverages",
+      "summary": "Revision 61: pack-apply.py plan|apply is the deployment map as a program (stale copies removed, CLAUDE.md converted with backup and unique paragraphs kept, parity controls rewritten into shims keeping their other assertions, three-way merges over repo-local deviations, conflicts parked and reported, managed blocks re-pasted, settings merged, baselines recorded). /updatepack and /addpacktorepo drive it. Dry-run against TheTerrace rev 59: 65 UPDATE, 31 ADD, 7 MERGE, 5 REMOVE, 1 CONVERT, 1 REWRITE, 2 CONFLICT. 11 tests. All 10 gates green on the committed tree.",
+      "kind": "skill",
+      "skill": "extendaibundle",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "pack/scripts/pack-apply.py",
+        "pack/commands/updatepack/SKILL.md"
+      ],
+      "tags": [
+        "updatepack"
+      ],
+      "outcome": "success",
+      "goal": "Make /updatepack apply the deployment map mechanically so the CLAUDE.md conversion, stale-copy removal and parity retirement never depend on memory",
+      "done_when": "pack-apply.py exists with tests, both skills call it, a read-only plan against TheTerrace shows those actions, gates green, committed and on main",
+      "tier": "T1",
+      "fan_out": 0,
+      "git": {
+        "sha": "6d468bac3ad6ad9dd6df625d49b9d075deafc7f4",
+        "short": "6d468bac3",
+        "branch": "pack-apply",
+        "pushed": null
+      }
     }
   ],
   "changes": [
