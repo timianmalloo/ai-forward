@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-06T21:34:51Z",
+  "generated": "2026-09-06T21:44:46Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3571,6 +3571,27 @@ window.AUDIT_DATA = {
       "outcome": "success",
       "goal": "P5 - make the WT4 exception countable, then land everything on main linearly and prove it green there",
       "done_when": "coord session start records primary-or-tree; coord metrics reports the rate; control observed red; main fast-forwarded or rebased with no merge commits, 11/11 gates on main, pushed",
+      "tier": "T0",
+      "fan_out": 0
+    },
+    {
+      "id": "al-01M1WAWNB35NDZFM7TJS6JD0E5",
+      "shortname": "posix-path-assumptions",
+      "datetime": "2026-09-06T21:44:46Z",
+      "session": "sp-2026-09-06-tri",
+      "prompt": "do p5 then push make sure main is clean",
+      "summary": "main's CI had been red since 2026-09-05. The drift half was already fixed by this branch; two Linux-only test failures remained, both green on Windows throughout. session-profile.py called os.path.basename on paths read out of a harness store, but --copilot-home exists so a store recorded on one machine can be profiled from another, and on POSIX a backslash is an ordinary character - so C:\\repo\\AGENTS.md came back whole and the orientation-read detector compared against a basename that could never match; fixed with a _basename splitting on both separators, pinned on both path shapes. test_reread_guard asserted a.md and A.MD are one file unconditionally - true on Windows, false on POSIX where they are different files; the guard was right and the test was wrong, so the folding assertion is now skipUnless the platform folds. Both observed red in CI run 34061643244, the only place they can be. PACK-C widened from 'documented command assumed portable' to 'platform assumption invisible on the author's platform' - the shape just appeared twice in code rather than docs. 539 tests, 11/11 gates.",
+      "kind": "commit",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Make main clean: land P5 linearly and get CI green",
+      "done_when": "main linear with no merge commits, pushed, and the pack-consistency workflow green on the pushed head",
       "tier": "T0",
       "fan_out": 0
     }
