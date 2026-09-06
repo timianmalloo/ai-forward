@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-06T21:02:20Z",
+  "generated": "2026-09-06T21:06:55Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3529,6 +3529,27 @@ window.AUDIT_DATA = {
       "outcome": "success",
       "goal": "Stop coord doctor presenting a spike constant as this repo's measured state - the last open piece of CTX-H",
       "done_when": "capability prints under its own heading with the spike date and harness version; the unreachable branch is gone and the floor sentence is unconditional; plugin emit renders from HARNESS_STATUS; a control fails on recurrence, observed red first; 11/11 gates",
+      "tier": "T0",
+      "fan_out": 0
+    },
+    {
+      "id": "al-01M1W8QC07QC1WNT4SRKSX0FTH",
+      "shortname": "registry-managed-block-ctx-l",
+      "datetime": "2026-09-06T21:06:55Z",
+      "session": "sp-2026-09-06-tri",
+      "prompt": "do next",
+      "summary": "Extended this repo's registry to its four uncovered derived artifacts (portal-data.js, pack-index.js, _site/bundle.html, docs/api/*.md), each verified by running its command; .gitattributes now declares ten patterns. Doing so surfaced CTX-L first: the registry holds pack-derivable entries AND repo-specific ones, and classify init --force rewrote the file wholesale - so the step right after adding them is the --force the file's own header recommends, which would have deleted them silently. Fixed with the pack's existing managed-block idiom: MANAGED_BEGIN/MANAGED_END, --force rewrites only between them, and a marker-less registry is refused rather than guessed at (the stance coord install already takes on a foreign hook). ForcePreservesRepoLocalTests red on four of five; a pre-existing test asserting the old wholesale behaviour was amended because passing was the defect. Also: a generator may own a glob - the stray check used exact set membership while classify uses fnmatch, so every directory-emitting generator was refused. 529 tests, 11/11 gates.",
+      "kind": "commit",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        ".agents/artifacts.yml"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Extend this repo's registry to its uncovered derived artifacts, after making --force safe to run",
+      "done_when": "classify init --force preserves repo-local entries with a control observed red; the four artifacts classified with each command verified by execution; 11/11 gates",
       "tier": "T0",
       "fan_out": 0
     }
