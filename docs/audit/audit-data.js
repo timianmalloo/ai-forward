@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-06T20:15:27Z",
+  "generated": "2026-09-06T20:42:29Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3488,6 +3488,27 @@ window.AUDIT_DATA = {
       "goal": "Land items 1-2: remove the class with no mechanism, fix the detector blind to its own standard, each with the control that fails on recurrence",
       "done_when": "both controls exist and were seen failing before the fix; pack/ edited as source with sync-pack run; verify-bundle green; audit entry appended",
       "tier": "T0",
+      "fan_out": 0
+    },
+    {
+      "id": "al-01M1W7AKYR7PZK9KPTSW9J1XTQ",
+      "shortname": "coordination-layer-on-rev62",
+      "datetime": "2026-09-06T20:42:29Z",
+      "session": "sp-2026-09-06-tri",
+      "prompt": "create a new skill prepare-for-coordination; create execute-with-coordination; finally do the P1 and P2 together",
+      "summary": "Revision 62. P1: coord classify init writes .agents/artifacts.yml from what the repo has, running every regenerate command before writing it. P2: INSTALL 1.4a deployment step, pack-doctor coordination check (FAIL no registry / WARN unregistered driver), verify-bundle gate 8b + CI step asserting THIS repo's layer is on. Three finds along the way: a generator owns a SET (audit-log.py render also writes index.html - the refusal was right and the model was wrong); OPS-B inverted (a bare .agents/ made the registry untrackable, and check-ignore -v inverts the answer on a negation - use --quiet); CTX-K new class (coord install returned early when the hook was unchanged, skipping the driver declaration - and .git/hooks is shared by every worktree, so that is every worktree after the first, exactly where the WARN sends people). Two skills: prepare-for-coordination emits docs/coordination/<id>.{md,html} on a fixed machine-readable schema and is required to say one session when that is honest; execute-with-coordination coordinates it with one worktree per track, a contract per delegation including a convergence condition, seam requests, a termination variant and an integrated merge. 25 tests red before the code. verify-bundle 11/11. Commit dcfe525.",
+      "kind": "commit",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/coordination"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Land P1+P2 then author the two coordination skills against the commands P1 creates",
+      "done_when": "coord classify init exists with red-first tests; deployment map, pack-doctor and a verify-bundle gate all fail an uninstalled layer; both skills deployed to both harnesses; 11/11 gates green; audit entry appended",
+      "tier": "T1",
       "fan_out": 0
     }
   ],
