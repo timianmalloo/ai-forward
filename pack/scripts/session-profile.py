@@ -129,7 +129,20 @@ INTENT_TOOLS = {"copilot": {"powershell", "bash", "shell"}, "claude": {"Bash", "
 ORIENTATION_DOCS = ("agents.md", "claude.md", "agent-persona-catalog", "persona-cards", "persona-audit",
                     "agent-body-of-knowledge")
 CONVERGE_RX = re.compile(r"\b(converge now|stop (further )?investigat|stop investigating|wrap up now)\b", re.I)
-GOAL_RX = re.compile(r"\bGoal\s*[:\uff1a]", re.I)
+# CTX-J: the detector must see every spelling the standard prescribes. This required a colon
+# for two revisions while CT19 and every worked example write `**Goal** —` or `**Goal** ·`,
+# so it was blind to its own mandated form -- and it degraded AS COMPLIANCE IMPROVED, because
+# every newly conformant turn was written in the shape it could not see. Measured 2026-09-06:
+# 10 of 346 substantive Claude-Code turns detected, 15 present.
+#
+# The delimiter requirement stays: it is the guard that keeps prose ("the goal of this change
+# is ... we are done when ...") from being credited as a declared goal state. Pinned by
+# GoalStateSpellingTests, which is the control -- the pattern is only the fix.
+GOAL_RX = re.compile(
+    r"(?:\*\*\s*Goal\s*\*\*\s*[:\uff1a\u2014\u2013\u00b7\-]"      # **Goal** — / · / - / :
+    r"|^\s*#{1,6}\s*Goal\b\s*[:\uff1a\u2014\u2013\u00b7\-]"        # ## Goal —
+    r"|\bGoal\s*[:\uff1a])",                    # Goal: / **Goal:**
+    re.I | re.M)
 DONE_RX = re.compile(r"\bDone[\s-]*when\b", re.I)
 TIER_RX = re.compile(r"\bTier\s*[:\uff1a]?\s*\**\s*T[0-3]\b", re.I)
 NUDGE_RX = re.compile(r"not yet marked the task as complete|you have not finished|haven't finished|Keep working autonomously", re.I)

@@ -19,3 +19,6 @@ summary: >-
 | id | generated | repos | sessions | findings | top |
 |---|---|---|---|---|---|
 | [sp-0001](sp-0001/profile.md) | 2026-09-05T20:09:26Z | theterrace, ai-forward | 23 | 84 | SP-01, SP-09, SP-02 |
+| [sp-0002](sp-0002/profile.md) | 2026-09-06T19:08:41Z | ai-de, cfd-bench, theterrace | 48 | 274 | SP-01, SP-09, SP-01 |
+
+*sp-0002's SP-09 counts were measured with the CTX-J detector defect present and are corrected in place at the top of its findings table; not re-measured.*

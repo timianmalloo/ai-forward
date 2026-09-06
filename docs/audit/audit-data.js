@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-05T21:10:27Z",
+  "generated": "2026-09-06T19:18:06Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3428,6 +3428,46 @@ window.AUDIT_DATA = {
         "branch": "pack-apply",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M1W1YWFT2N9ZCGCR7QXCNPZP",
+      "shortname": "session-profile-sp-0002",
+      "datetime": "2026-09-06T19:08:41Z",
+      "session": "sp-2026-09-06-tri",
+      "prompt": "session-profile.py profile",
+      "summary": "Profile sp-0002: 48 session(s), 274 finding(s)",
+      "kind": "script",
+      "skill": "session-profiler",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/profiles/sp-0002/profile.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "started_at": "2026-09-06T19:07:47Z",
+      "duration_seconds": 54.0
+    },
+    {
+      "id": "al-01M1W2G3KM2F0PGBMXGBT9JVN3",
+      "shortname": "session-profiler-sp-0002",
+      "datetime": "2026-09-06T19:18:06Z",
+      "session": "sp-2026-09-06-tri",
+      "prompt": "examine the current and recent sessions in the AI-DE and the CFD-Bench repos and what improvements we can continue to make in terms of efficiency, performance, adherence to task and minimization of drift/tangents/ceremony, optimized model selection for sub-tasks, optimized parallelism; study what we are doing in TheTerrace repo to prepare for applying its impl and learnings to AI-Forward; look at the observations in the CFD-Bench repo re multi-agent coordination (docs/proposals/session-coordination-plan.html) and if there are things to tighten up in the coordination framework, create an html proposal in docs/proposals (do not publish to claude.ai)",
+      "summary": "48 sessions / 274 findings across ai-de, cfd-bench, theterrace. Verified 7 gaps in the coordination framework by reading coord-core.py, pack-apply.py, pack-doctor.py, verify-bundle.ps1: registry never written, no deployment-map step, no gate/doctor check, HARNESS_STATUS constant printed as per-repo measurement, unreachable honest-caveat branch contradicted by plugin emit, hotspot class with no mechanism, 16 worktrees with zero sessions running in one. Registered CTX-H/CTX-I/CTX-J. Confirmed SP-09 (goal state present on 15 of 346 substantive turns) and found the detector itself blind to the pack's own **Goal** form. Six proposals ranked by ratio in docs/proposals/coordination-framework-tightening.html.",
+      "kind": "skill",
+      "skill": "session-profiler",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proposals/coordination-framework-tightening.html"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Measure recent sessions across ai-de, cfd-bench and TheTerrace; turn the measurement into findings + fixes + a coordination-framework proposal",
+      "done_when": "profile artifact written and indexed; findings/fixes/family-x-harness tables emitted with struck findings listed; CFD-Bench coordination plan read and answered with an HTML proposal in docs/proposals; new classes registered; audit entry carries goal/done_when/tier/fan_out",
+      "tier": "T0",
+      "fan_out": 0
     }
   ],
   "changes": [

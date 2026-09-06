@@ -378,5 +378,40 @@ class DoctorTests(DerivedCase):
                       "the fallback must leave markers, not a silently-resolved file")
 
 
+class ClassMechanismTests(unittest.TestCase):
+    """CTX-H: every declared class must resolve to a distinct merge mechanism.
+
+    `hotspot` sat in CLASSES for two revisions with no mechanism anywhere in the file. The
+    parser accepted `x: hotspot`, `classify()` returned it, and the file then merged exactly
+    like `authored` -- a success-shaped classification, which is the failure this pack refuses
+    everywhere else. `authored` is the one legitimate mechanism-free class: it is the Null
+    Object, the safe default, and its mechanism IS conventional conflict markers.
+
+    Observed red on 2026-09-06 with `hotspot` still in CLASSES.
+    """
+
+    def test_every_class_has_a_mechanism(self):
+        mod = load_module()
+        for klass in mod.CLASSES:
+            if klass == "authored":
+                continue
+            self.assertIn(
+                klass, mod.MERGE_MECHANISMS,
+                "class {0!r} is declared in CLASSES with no merge mechanism: a registry "
+                "entry using it would validate, classify, and then merge as `authored` "
+                "while the tool reports it is handled".format(klass))
+
+    def test_the_installer_reads_the_same_map(self):
+        """One source of truth. A test that passes while the installer disagrees is prose."""
+        mod = load_module()
+        src = SCRIPT.read_text(encoding="utf-8")
+        body = src.split("def _install_merge_driver", 1)[1].split(chr(10) + "def ", 1)[0]
+        self.assertTrue(
+            "MERGE_MECHANISMS" in body,
+            "_install_merge_driver must build its drivers from MERGE_MECHANISMS, not from "
+            "a second literal that can drift from CLASSES")
+        self.assertEqual(set(mod.MERGE_MECHANISMS), {"derived", "register"})
+
+
 if __name__ == "__main__":
     unittest.main()

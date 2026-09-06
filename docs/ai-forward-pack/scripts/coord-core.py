@@ -733,7 +733,20 @@ def cmd_merge_register(result_path, base_path, theirs_path, real_path):
 # The class decides the MECHANISM entirely (ADR-0009). Measured: the six busiest files in
 # the reference repo are all generated, so a uniform lease aims at 13/60 and misses 58/60.
 
-CLASSES = ("authored", "derived", "register", "hotspot")
+# Pattern: Strategy, keyed by artifact class. The class decides the MECHANISM entirely
+# (ADR-0009) -- derived artifacts are resolved and regenerated afterwards; registers are
+# unioned under a conservation assertion. ONE SOURCE OF TRUTH: `_install_merge_driver`
+# builds its driver table from this map, so a class cannot be declared without one.
+#
+# CTX-H: `hotspot` was declared here for two revisions with no mechanism anywhere in the
+# file. The parser accepted `x: hotspot`, `classify()` returned it, and the file then merged
+# exactly like `authored` while the tool reported it was handled -- a success-shaped
+# classification. It is removed until the commit that implements its merge behaviour puts it
+# back, in MERGE_MECHANISMS, where the control can see it.
+MERGE_MECHANISMS = {"derived": MERGE_DRIVER_NAME, "register": REGISTER_DRIVER_NAME}
+# `authored` is the one legitimate mechanism-free class: the Null Object, the safe default,
+# whose mechanism IS conventional conflict markers resolved by a human.
+CLASSES = ("authored",) + tuple(sorted(MERGE_MECHANISMS))
 REGISTRY_NAME = "artifacts.yml"
 REGEN_OWED = "regen-owed.txt"
 
@@ -1788,16 +1801,16 @@ def _install_merge_driver(repo, root):
     if not entries:
         return
     me = str(Path(__file__).resolve()).replace("\\", "/")
-    # Pattern: Strategy, keyed by artifact class. The class decides the MECHANISM entirely
-    # (ADR-0009) -- derived artifacts are resolved and regenerated afterwards; registers are
-    # unioned under a conservation assertion. One driver each, selected by .gitattributes.
+    # Built from MERGE_MECHANISMS, never from a second literal -- a driver table that can
+    # drift from CLASSES is how a class comes to exist with no mechanism (CTX-H).
+    labels = {
+        "derived": "coord: resolve derived artifacts, regenerate after the merge",
+        "register": "coord: union append-only registers, conserving every entry",
+    }
     drivers = {
-        MERGE_DRIVER_NAME: ("derived",
-                            "coord: resolve derived artifacts, regenerate after the merge",
-                            '"{}" "{}" merge-derived %A %O %B %P'.format(sys.executable, me)),
-        REGISTER_DRIVER_NAME: ("register",
-                               "coord: union append-only registers, conserving every entry",
-                               '"{}" "{}" merge-register %A %O %B %P'.format(sys.executable, me)),
+        name: (klass, labels[klass],
+               '"{}" "{}" merge-{} %A %O %B %P'.format(sys.executable, me, klass))
+        for klass, name in MERGE_MECHANISMS.items()
     }
     declared = {}
     for name, (klass, label, command) in drivers.items():

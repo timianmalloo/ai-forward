@@ -249,5 +249,57 @@ class CatalogTests(unittest.TestCase):
             self.assertIn(h, md)
 
 
+
+class GoalStateSpellingTests(unittest.TestCase):
+    """CTX-J: the detector must see every spelling its own standard prescribes.
+
+    `GOAL_RX` required a colon after `Goal`. CT19 and every worked example in the pack write
+    the goal state as `**Goal** —` or `**Goal** ·`, so the detector could not see the form it
+    mandates -- and it got WORSE as compliance improved, because every newly conformant turn
+    was written in exactly the shape it was blind to. Measured on 2026-09-06: 10 of 346
+    substantive Claude-Code turns detected, 15 present.
+
+    The fixture is the control; the regex is only the fix. Observed red on the old pattern for
+    every bolded spelling below.
+    """
+
+    SPELLINGS = [
+        ("bold em dash", "**Goal** — ship the thing." + chr(10) + "**Done when** — tests are green."),
+        ("bold middot", "**Goal** · ship the thing. **Done when** · tests are green."),
+        ("bold en dash", "**Goal** – ship it. **Done when** – green."),
+        ("bold hyphen", "**Goal** - ship it. **Done when** - green."),
+        ("bold colon inside", "**Goal:** ship it. **Done when:** green."),
+        ("bold colon outside", "**Goal**: ship it. **Done when**: green."),
+        ("plain colon", "Goal: ship it. Done when: green."),
+        ("heading", "## Goal — ship it" + chr(10) * 2 + "Done when: green."),
+    ]
+
+    def _detected(self, text):
+        return bool(sp.GOAL_RX.search(text) and sp.DONE_RX.search(text))
+
+    def test_every_documented_spelling_is_detected(self):
+        for label, text in self.SPELLINGS:
+            with self.subTest(spelling=label):
+                self.assertTrue(self._detected(text),
+                                "{0!r} carries a goal state and was not detected".format(label))
+
+    def test_prose_about_goals_is_not_credited(self):
+        """The colon/delimiter requirement is the guard against prose. Keep it."""
+        for text in [
+            "The goal of this change is smaller diffs, and we are done when the suite passes.",
+            "Our goal here is clarity.",
+            "Done when the tests pass.",
+        ]:
+            with self.subTest(text=text[:40]):
+                self.assertFalse(self._detected(text),
+                                 "prose must not be credited as a goal state")
+
+    def test_tier_is_detected_in_the_documented_form(self):
+        """TIER_RX already handles the bold form; pin it so the pair cannot drift apart."""
+        for text in ["**Tier** T0", "Tier: T2", "**Tier:** T1", "Tier T3"]:
+            with self.subTest(text=text):
+                self.assertTrue(sp.TIER_RX.search(text), "{0!r} declares a tier".format(text))
+
+
 if __name__ == "__main__":
     unittest.main()

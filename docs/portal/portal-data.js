@@ -2537,6 +2537,12 @@ window.PORTAL_DATA = {
         "summary": "Measured pass over 23 session(s) in theterrace, ai-forward (last 7 days); 84 finding(s), top: SP-01, SP-09, SP-02."
       },
       {
+        "id": "profile-sp-0002",
+        "type": "doc",
+        "title": "Session profile sp-0002 - ai-de, cfd-bench, theterrace",
+        "summary": "Measured pass over 48 session(s) in ai-de, cfd-bench, theterrace (last 30 days); 274 finding(s), top: SP-01, SP-09, SP-01."
+      },
+      {
         "id": "project-memory",
         "type": "doc",
         "title": "Project Memory",
@@ -4117,6 +4123,11 @@ window.PORTAL_DATA = {
       },
       {
         "from": "profile-sp-0001",
+        "to": "design-session-profiler",
+        "rel": "relates-to"
+      },
+      {
+        "from": "profile-sp-0002",
         "to": "design-session-profiler",
         "rel": "relates-to"
       },

@@ -1834,7 +1834,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "76ad748c0d2ff7d6cb0563822e36aee8aac21d5f9a4c3136733517ad20f51fb3"
+      "sourceSha256": "3d142e7b197b63da277a714b02619b95280aae86d9e0430b6fcd74039b02a86b"
     },
     {
       "id": "design-docs-explorer-grounding-spatial-navigation",
@@ -2274,7 +2274,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "50bb58e74746bf6744af9f4940f6d6aebad11b093fbe004f1ebcf49e4f3fb6b7"
+      "sourceSha256": "3f21d3573d91dc7f59e212b7c949abe2f02e2e8e55025cf2da8d77fe50e66674"
     },
     {
       "id": "docs-index",
@@ -3179,6 +3179,32 @@ window.DOCS_INDEX = {
       "sourceSha256": "7e3bb2fc0ba11c243fc1ca5ca5fd564187028815d5d5890f1eb3ef2f163d843f"
     },
     {
+      "id": "profile-sp-0002",
+      "path": "docs/profiles/sp-0002/profile.md",
+      "title": "Session profile sp-0002 - ai-de, cfd-bench, theterrace",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-05",
+      "reviewSuggested": [],
+      "summary": "Measured pass over 48 session(s) in ai-de, cfd-bench, theterrace (last 30 days); 274 finding(s), top: SP-01, SP-09, SP-01.",
+      "tags": [
+        "profile",
+        "session-profiler",
+        "efficiency",
+        "adherence"
+      ],
+      "links": [
+        {
+          "to": "design-session-profiler",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "ee7767e9c804f06825049fcf4575a83c4a65a3f7c2d5c6221233e69d6ef653c3"
+    },
+    {
       "id": "project-memory",
       "path": "docs/project-memory.md",
       "title": "Project Memory",
@@ -3315,7 +3341,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "778adaa7e8134c61a121d8c449c3541e7273b5ff8def686684682b0989eda751"
+      "sourceSha256": "c1006238d53007df8e2208affa6ef2ae96c7cba6ea0b67a00e49793ea8a3bf4a"
     },
     {
       "id": "ui-capability-guide",
@@ -5535,7 +5561,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-forward-pack-apply — Audit & Change Log",
+      "title": "ai-forward — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -5604,6 +5630,13 @@ window.DOCS_INDEX = {
       "id": "surface-knowledge-continuous-improvement-and-dreaming-overview",
       "path": "docs/knowledge/continuous-improvement-and-dreaming/overview.html",
       "title": "Continuous Improvement & Dreaming — techniques overview",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact."
+    },
+    {
+      "id": "surface-proposals-coordination-framework-tightening",
+      "path": "docs/proposals/coordination-framework-tightening.html",
+      "title": "Coordination Framework Tightening",
       "kind": "knowledge-tool",
       "description": "Open an interactive knowledge artifact."
     },
@@ -5716,5 +5749,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "8ed2cc9c516d326a94303ce98f11e1a7df49998684c36a579bfaae95302158d5"
+  "graphSha256": "65bdc5405d8edc879ba82b3de399543c36aa5614432267770b9c4b22c61181a6"
 };

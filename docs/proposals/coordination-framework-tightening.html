@@ -1,0 +1,595 @@
+<title>Coordination Framework Tightening</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --ground:#F6F8F7; --surface:#FFFFFF; --sunk:#EDF1F0;
+    --ink:#0C1B21; --body:#22343A; --muted:#5A6E75; --muted2:#8A9AA0;
+    --rule:#D6DFDE; --rule-strong:#B7C6C4;
+    --accent:#C8500F;
+    --go:#1F6F5C; --warn:#8A6100; --stop:#A32C1E;
+    --go-bg:#E3F0EB; --warn-bg:#F6EED9; --stop-bg:#F6E2DE;
+    --s1:#1F6F5C; --s2:#2E6F8E; --s3:#7A5AA6; --s4:#C8500F;
+    --shadow:0 1px 2px rgba(12,27,33,.05), 0 8px 24px -12px rgba(12,27,33,.18);
+    --measure:66ch;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ground:#081317; --surface:#0E1F25; --sunk:#0A1A1F;
+      --ink:#E6EFEE; --body:#C3D3D3; --muted:#8CA3A6; --muted2:#7A9195;
+      --rule:#1E333A; --rule-strong:#2C464E;
+      --accent:#F0793C;
+      --go:#5FC0A3; --warn:#D8A93A; --stop:#E4796A;
+      --go-bg:#102C26; --warn-bg:#2C2412; --stop-bg:#2E1815;
+      --s1:#5FC0A3; --s2:#6FB3D6; --s3:#B79BE0; --s4:#F0793C;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.7);
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#081317; --surface:#0E1F25; --sunk:#0A1A1F;
+    --ink:#E6EFEE; --body:#C3D3D3; --muted:#8CA3A6; --muted2:#7A9195;
+    --rule:#1E333A; --rule-strong:#2C464E;
+    --accent:#F0793C;
+    --go:#5FC0A3; --warn:#D8A93A; --stop:#E4796A;
+    --go-bg:#102C26; --warn-bg:#2C2412; --stop-bg:#2E1815;
+    --s1:#5FC0A3; --s2:#6FB3D6; --s3:#B79BE0; --s4:#F0793C;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.7);
+  }
+  *{box-sizing:border-box}
+  body{background:var(--ground); color:var(--body);
+    font-family:"Source Serif 4","Iowan Old Style",Georgia,serif;
+    font-size:17px; line-height:1.62; margin:0; -webkit-font-smoothing:antialiased}
+  .wrap{max-width:1080px; margin:0 auto; padding:0 28px 96px}
+  .col{max-width:var(--measure)}
+  h1,h2,h3,h4{font-family:Archivo,"Helvetica Neue",Arial,sans-serif}
+  h1{font-size:clamp(2.1rem,4.4vw,3.1rem); line-height:1.06; font-weight:700;
+     letter-spacing:-.022em; color:var(--ink); margin:0 0 .5rem; text-wrap:balance}
+  h2{font-size:1.55rem; font-weight:700; letter-spacing:-.015em; color:var(--ink);
+     margin:0 0 .2rem; text-wrap:balance}
+  h3{font-size:1.08rem; font-weight:600; letter-spacing:-.008em; color:var(--ink);
+     margin:0 0 .35rem; text-wrap:balance}
+  h4{font-size:.95rem; font-weight:600; color:var(--ink); margin:1.3rem 0 .3rem}
+  p{margin:0 0 1.05rem}
+  strong{color:var(--ink); font-weight:600}
+  a{color:var(--accent)}
+  code,.num{font-family:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+    font-size:.87em; font-variant-numeric:tabular-nums}
+  code{background:var(--sunk); padding:.1em .38em; border-radius:3px; color:var(--ink)}
+  pre{background:var(--sunk); border:1px solid var(--rule); padding:16px 18px;
+    overflow-x:auto; margin:0 0 1.3rem; border-radius:2px}
+  pre code{background:none; padding:0; font-size:.8rem; line-height:1.62; color:var(--body)}
+  .cm{color:var(--muted2)} .kw{color:var(--accent); font-weight:500}
+  .eyebrow{font-family:Archivo,sans-serif; font-size:.7rem; font-weight:600;
+    letter-spacing:.14em; text-transform:uppercase; color:var(--muted); margin:0 0 .55rem}
+  header.top{border-bottom:2px solid var(--ink); padding:56px 0 22px}
+  .kicker{display:flex; gap:10px; align-items:baseline; flex-wrap:wrap;
+    font-family:Archivo,sans-serif; font-size:.72rem; font-weight:600;
+    letter-spacing:.13em; text-transform:uppercase; color:var(--muted); margin-bottom:18px}
+  .kicker .dot{color:var(--rule-strong)} .kicker .hl{color:var(--accent)}
+  .standfirst{font-size:1.16rem; line-height:1.55; color:var(--body); max-width:60ch; margin:0}
+  .rig{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:0;
+    border-bottom:1px solid var(--rule); margin:0 0 52px}
+  .rig div{padding:16px 18px 18px; border-right:1px solid var(--rule)}
+  .rig div:last-child{border-right:0}
+  .rig dt{font-family:Archivo,sans-serif; font-size:.66rem; font-weight:600;
+    letter-spacing:.11em; text-transform:uppercase; color:var(--muted); margin-bottom:5px}
+  .rig dd{margin:0; font-family:"IBM Plex Mono",monospace; font-size:.95rem; font-weight:500;
+    color:var(--ink); font-variant-numeric:tabular-nums}
+  .rig dd.bad{color:var(--stop)} .rig dd.good{color:var(--go)}
+  section{padding:44px 0; border-top:1px solid var(--rule)}
+  .sec-head{display:flex; gap:14px; align-items:baseline; margin-bottom:1.4rem}
+  .sec-num{font-family:"IBM Plex Mono",monospace; font-size:.8rem; color:var(--accent);
+    font-weight:500; padding-top:.28rem; flex:none}
+  .callout{background:var(--surface); border:1px solid var(--rule);
+    border-left:3px solid var(--accent); padding:20px 24px; margin:0 0 1.4rem; box-shadow:var(--shadow)}
+  .callout p:last-child{margin-bottom:0}
+  .callout.quiet{border-left-color:var(--rule-strong); box-shadow:none; background:var(--sunk)}
+  .callout.cut{border-left-color:var(--stop); box-shadow:none; background:var(--stop-bg)}
+  .tscroll{overflow-x:auto; margin:0 0 1.3rem; border:1px solid var(--rule); background:var(--surface)}
+  table{border-collapse:collapse; width:100%; font-size:.88rem}
+  th,td{text-align:left; padding:10px 14px; border-bottom:1px solid var(--rule); vertical-align:top}
+  thead th{font-family:Archivo,sans-serif; font-size:.64rem; font-weight:600; letter-spacing:.1em;
+    text-transform:uppercase; color:var(--muted); background:var(--sunk);
+    border-bottom:1px solid var(--rule-strong); white-space:nowrap}
+  tbody tr:last-child td{border-bottom:0}
+  td.n{font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums; white-space:nowrap}
+  .conf{font-family:Archivo,sans-serif; font-size:.58rem; font-weight:600; letter-spacing:.08em;
+    text-transform:uppercase; padding:2px 6px; border-radius:2px; white-space:nowrap}
+  .conf.v{background:var(--go-bg); color:var(--go)}
+  .conf.i{background:var(--warn-bg); color:var(--warn)}
+  .conf.f{background:var(--stop-bg); color:var(--stop)}
+  .tag{font-family:Archivo,sans-serif; font-size:.62rem; font-weight:600; letter-spacing:.1em;
+    text-transform:uppercase; padding:3px 7px; border-radius:2px; white-space:nowrap}
+  .tag.a{background:var(--go-bg); color:var(--go)}
+  .tag.b{background:var(--warn-bg); color:var(--warn)}
+  .tag.c{background:var(--stop-bg); color:var(--stop)}
+  figure{margin:0 0 1.4rem; border:1px solid var(--rule); background:var(--surface); padding:22px 24px 18px}
+  figcaption{font-size:.83rem; color:var(--muted); margin-top:12px; line-height:1.5}
+  svg{display:block; width:100%; height:auto}
+  .legend{display:flex; gap:18px; flex-wrap:wrap; margin-top:10px;
+    font-family:Archivo,sans-serif; font-size:.72rem; font-weight:600; color:var(--muted)}
+  .legend span{display:flex; align-items:center; gap:6px}
+  .legend i{width:14px; height:3px; border-radius:2px; display:block}
+  ul.body-list{margin:0 0 1.1rem; padding-left:1.15em}
+  ul.body-list li{margin-bottom:.5rem}
+  ul.body-list li::marker{color:var(--muted2)}
+  ol.body-list{margin:0 0 1.1rem; padding-left:1.3em}
+  ol.body-list li{margin-bottom:.55rem}
+  .prop{border:1px solid var(--rule); background:var(--surface); box-shadow:var(--shadow);
+    margin:0 0 1.5rem}
+  .prop > header{display:flex; gap:14px; align-items:baseline; flex-wrap:wrap;
+    padding:16px 22px 12px; border-bottom:1px solid var(--rule); background:var(--sunk)}
+  .prop > header .pid{font-family:"IBM Plex Mono",monospace; font-size:.82rem;
+    font-weight:600; color:var(--accent); flex:none}
+  .prop > header h3{margin:0; flex:1 1 260px}
+  .prop .bd{padding:18px 22px 6px}
+  .prop .bd p:last-child{margin-bottom:1.05rem}
+  .grid2{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:0;
+    border-top:1px solid var(--rule)}
+  .grid2 > div{padding:14px 22px 16px; border-right:1px solid var(--rule)}
+  .grid2 > div:last-child{border-right:0}
+  .grid2 dt{font-family:Archivo,sans-serif; font-size:.64rem; font-weight:600;
+    letter-spacing:.11em; text-transform:uppercase; color:var(--muted); margin-bottom:5px}
+  .grid2 dd{margin:0; font-size:.9rem; line-height:1.5}
+  footer.end{border-top:2px solid var(--ink); padding:28px 0 0; margin-top:44px;
+    font-size:.87rem; color:var(--muted)}
+  @media (max-width:640px){
+    body{font-size:16px}
+    .wrap{padding:0 18px 72px}
+    .rig div{border-right:0; border-bottom:1px solid var(--rule)}
+    .grid2 > div{border-right:0; border-bottom:1px solid var(--rule)}
+  }
+</style>
+
+<div class="wrap">
+
+<header class="top">
+  <div class="kicker">
+    <span>AI-Forward</span><span class="dot">/</span>
+    <span>Coordination framework</span><span class="dot">/</span>
+    <span class="hl">Response to the CFD-Bench plan</span><span class="dot">/</span>
+    <span>6 September 2026</span>
+  </div>
+  <h1>The layer is built, tested, and switched off</h1>
+  <p class="standfirst">CFD-Bench asked why its coordination layer was inert. The answer is not a
+  setup gap in that repo — it is the same gap in every repo the pack has ever been installed into,
+  including this one. Seven verified findings, six proposals, ranked by ratio.</p>
+</header>
+
+<dl class="rig">
+  <div><dt>Sessions profiled</dt><dd>48</dd></div>
+  <div><dt>Findings</dt><dd>274</dd></div>
+  <div><dt>Registry writers</dt><dd class="bad">0</dd></div>
+  <div><dt>Deployment-map coord steps</dt><dd class="bad">0</dd></div>
+  <div><dt>Gates covering coord</dt><dd class="bad">0 of 10</dd></div>
+  <div><dt>Worktrees / sessions in one</dt><dd class="bad">16 / 0</dd></div>
+</dl>
+
+<section>
+  <div class="sec-head"><span class="sec-num">01</span><div class="col">
+    <h2>What the CFD-Bench plan actually found</h2>
+  </div></div>
+  <div class="col">
+    <p>The plan is correct about CFD-Bench, and its own framing undersells it. It concludes
+    <em>&ldquo;the layer ships inert by design; someone has to turn it on&rdquo;</em> and treats
+    that as a repo-level setup task. I profiled 48 sessions across <code>ai-de</code>,
+    <code>cfd-bench</code> and <code>TheTerrace</code>, then read <code>coord-core.py</code>,
+    <code>pack-apply.py</code>, <code>pack-doctor.py</code> and <code>verify-bundle.ps1</code>
+    rather than recalling them. The setup task is not the finding. The finding is that
+    <strong>no repo has ever been told to do it, and nothing anywhere notices that it was not
+    done</strong>.</p>
+
+    <div class="callout">
+      <p>A control that ships uninstalled, with no step that installs it and no gate that
+      detects its absence, is not a control. It is a library with good tests. The
+      49-test suite proves <code>coord-core.py</code> works; nothing proves it is
+      <em>running</em>, and no test has a subject for that question.</p>
+    </div>
+
+    <p>This is the shape the pack already names for other people's code. It is now registered
+    against the pack's own: <strong>CTX-H</strong> in
+    <code>docs/lessons/defect-classes.md</code>.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">02</span><div class="col">
+    <h2>Seven verified gaps</h2>
+    <p class="eyebrow" style="margin-top:.4rem">Every row read from the file, not recalled</p>
+  </div></div>
+
+  <div class="tscroll">
+  <table>
+    <thead><tr><th>#</th><th>Gap</th><th>Evidence</th><th>Confidence</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="n">G1</td>
+        <td><strong>Nothing writes the artifact registry.</strong> <code>.agents/artifacts.yml</code>
+        is parsed and never generated, so every repo must hand-author the one file the whole
+        mechanism keys on.</td>
+        <td><code>coord-core.py:741</code> <code>load_registry()</code>; the string
+        <code>artifacts.yml</code> occurs at lines <span class="num">737</span> and
+        <span class="num">742</span> only, both read-side.</td>
+        <td><span class="conf v">Verified</span></td>
+      </tr>
+      <tr>
+        <td class="n">G2</td>
+        <td><strong>The deployment map has no coordination step.</strong> <code>pack-apply.py</code>
+        deploys the script and stops. No <code>coord install</code>, no registry, no
+        <code>.gitattributes</code>.</td>
+        <td><code>pack-apply.py:392</code> is the only mention of coord — it appends a
+        <code>.gitignore</code> line for local state.</td>
+        <td><span class="conf v">Verified</span></td>
+      </tr>
+      <tr>
+        <td class="n">G3</td>
+        <td><strong>No gate and no doctor check covers it.</strong> A repo carrying
+        <code>coord-core.py</code> with no registry, no driver and no hook is indistinguishable
+        from a healthy one.</td>
+        <td><code>pack-doctor.py</code> — ten <code>check_*</code> functions, none coord.
+        <code>verify-bundle.ps1</code> — ten gates, none coord.</td>
+        <td><span class="conf v">Verified</span></td>
+      </tr>
+      <tr>
+        <td class="n">G4</td>
+        <td><strong><code>coord doctor</code> prints a constant under a per-repo heading.</strong>
+        <code>HARNESS_STATUS</code> is a static dict of August spike results. A reader takes
+        <code>harness copilot edit boundary: enforcing</code> as this repo's measured state.</td>
+        <td><code>coord-core.py:911</code> — literal dict, <code>why</code> fields cite spikes S5
+        and a 2026-08-24 live session; printed at <code>:2004</code>.</td>
+        <td><span class="conf v">Verified</span></td>
+      </tr>
+      <tr>
+        <td class="n">G5</td>
+        <td><strong>The honest-caveat branch is dead, and the file contradicts itself.</strong> The
+        <code>!= "enforcing"</code> branch can never run now that both entries say enforcing — so
+        the line <em>&ldquo;the commit floor is the real enforcement&rdquo;</em> never prints. Yet
+        <code>plugin emit</code> still prints the opposite claim unconditionally.</td>
+        <td><code>:2006</code> unreachable branch (HYG-A). <code>:2097</code> prints
+        <em>&ldquo;Copilot is advisory at the edit boundary until a live session proves a deny is
+        honoured&rdquo;</em> — beside the constant saying one did.</td>
+        <td><span class="conf v">Verified</span></td>
+      </tr>
+      <tr>
+        <td class="n">G6</td>
+        <td><strong><code>hotspot</code> is a name with no mechanism.</strong> The parser accepts
+        <code>x: hotspot</code>; <code>classify()</code> returns it; nothing downstream branches on
+        it, so the file merges as <code>authored</code> while the tool reports it is handled.</td>
+        <td><code>coord-core.py:736</code> is the <em>only</em> occurrence of the string in 2,308
+        lines. <code>classify()</code> at <code>:799</code>; <code>regen_command()</code> at
+        <code>:819</code> matches <code>derived</code> only.</td>
+        <td><span class="conf v">Verified</span></td>
+      </tr>
+      <tr>
+        <td class="n">G7</td>
+        <td><strong>Worktrees exist; sessions do not run in them.</strong> 16 worktrees across the
+        two active repos, and every profiled session's <code>cwd</code> is a primary checkout —
+        including three pairs that overlapped in time.</td>
+        <td>SP-15: <code>copilot:fd3ccb67</code>&times;<code>8c5a4abc</code> and
+        &times;<code>61c83fa4</code> in <code>theterrace</code>;
+        <code>claude:b7374405</code>&times;<code>79f8657c</code> in <code>ai-de</code>.
+        <code>git worktree list</code>: 12 and 4.</td>
+        <td><span class="conf v">Verified</span></td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="col">
+    <p><strong>G1–G3 are one gap seen from three sides</strong> — nothing produces the
+    configuration, nothing installs it, nothing misses it. <strong>G4–G6 are a second</strong>:
+    the layer's self-report is more confident than its state. <strong>G7 is a third</strong>, and
+    it is the one that is purely behavioural: the isolation mechanism is being used to name
+    branches rather than to isolate sessions.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">03</span><div class="col">
+    <h2>The proposals</h2>
+    <p class="eyebrow" style="margin-top:.4rem">Ranked by benefit &divide; cost, not by section order</p>
+  </div></div>
+
+  <div class="prop">
+    <header><span class="pid">P1</span><h3>The registry is derivable, not authored</h3>
+      <span class="tag a">best ratio</span></header>
+    <div class="bd">
+      <p>The CFD plan hand-wrote a registry and, in doing so, made the argument against
+      hand-writing it: five of its six entries — <code>docs/docs-index.js</code>,
+      <code>docs/audit/audit-data.js</code>, <code>docs/audit/audit-log.jsonl</code>,
+      <code>docs/audit/change-log.jsonl</code>, <code>docs/health-history.jsonl</code> — are
+      <em>pack</em> artifacts. They are byte-for-byte the same obligation in every repo the pack
+      has ever been installed into. Asking each repo to rediscover them is asking each repo to
+      repeat the same near-miss.</p>
+      <p>And the plan <em>had</em> the near-miss: it first wrote
+      <code>audit-log.py regen</code> from inference. There is no such subcommand — it is
+      <code>render</code>. A wrong regenerate command is worse than a missing entry, because the
+      merge resolves silently and the artifact goes permanently stale while reporting as handled.
+      The parser already refuses a <code>derived</code> entry with no command
+      (<code>coord-core.py:783</code>); it cannot refuse one with the <em>wrong</em> command.</p>
+      <p><strong>Add <code>coord classify init</code></strong>: writes the pack's own
+      <code>derived</code>/<code>register</code> defaults, <em>executes each regenerate command
+      once</em> before writing it, and refuses to emit an entry whose command exited non-zero or
+      left the tree dirty in an unexpected place. Repo-specific entries are appended by hand
+      afterwards, under the same rule.</p>
+    </div>
+    <div class="grid2">
+      <div><dt>Pack surface</dt><dd><code>scripts/coord-core.py</code> (new subcommand);
+        <code>INSTALL.md</code> deployment map</dd></div>
+      <div><dt>Control that fails on recurrence</dt><dd><code>coord doctor</code> exits non-zero
+        when a <code>derived</code> entry's command is unresolvable or non-zero — the near-miss
+        becomes a red gate rather than a caught mistake</dd></div>
+      <div><dt>Closes</dt><dd>G1, and the residual risk the CFD plan named for
+        <code>health-history.jsonl</code></dd></div>
+    </div>
+  </div>
+
+  <div class="prop">
+    <header><span class="pid">P2</span><h3>Put the layer in the deployment map, and in the doctor</h3>
+      <span class="tag a">high</span></header>
+    <div class="bd">
+      <p>P1 is inert on its own for exactly the reason the whole layer is: something has to run it.
+      Two additions, both mechanical.</p>
+      <p><strong>Deployment map:</strong> a coordination step that runs
+      <code>coord classify init</code> and <code>coord install</code>, and prints what it wrote.
+      It must print rather than silently configure — <code>coord install</code> already follows
+      that rule for the settings entry, and the same reasoning applies here.</p>
+      <p><strong><code>pack-doctor</code>:</strong> a <code>coordination</code> check.
+      <span class="tag b">FAIL</span> a repo that carries <code>coord-core.py</code> and no
+      registry. <span class="tag b">WARN</span> a clone whose <code>.git/config</code> lacks the
+      merge driver — which is <em>every fresh clone and every worktree</em>, because
+      <code>.git/config</code> is per-clone and never committed
+      (<code>coord-core.py:1779</code> says so in a comment, and <code>coord doctor</code> exists
+      because of it; nothing routes a human to <code>coord doctor</code> at the moment a tree is
+      created).</p>
+    </div>
+    <div class="grid2">
+      <div><dt>Pack surface</dt><dd><code>INSTALL.md</code>; <code>scripts/pack-apply.py</code>;
+        <code>scripts/pack-doctor.py</code>; <code>tools/verify-bundle.ps1</code> gate 11</dd></div>
+      <div><dt>Control that fails on recurrence</dt><dd><code>pack-doctor</code> FAILs the
+        uninstalled state; the new gate FAILs a pack revision that ships a coordination change
+        with no deployment step</dd></div>
+      <div><dt>Closes</dt><dd>G2, G3</dd></div>
+    </div>
+  </div>
+
+  <div class="prop">
+    <header><span class="pid">P3</span><h3>Stop printing a capability as a measurement</h3>
+      <span class="tag a">high</span></header>
+    <div class="bd">
+      <p>This is the pack's own <code>instrumentation-over-inference</code> rule pointed inward,
+      and it currently fails it. <code>coord doctor</code> reads as a per-repo report; six of its
+      lines are, and the harness lines are not — they are August spike results, identical in every
+      repo forever. Worse, the <em>honest</em> half is now unreachable: the
+      <code>!= "enforcing"</code> branch that prints <em>&ldquo;the commit floor is the real
+      enforcement for this harness&rdquo;</em> cannot fire, and
+      <code>plugin emit</code> still prints the contradicting claim.</p>
+      <p>Three edits, none of them clever:</p>
+      <ul class="body-list">
+        <li>Move the harness lines under their own heading — <code>capability (from spike
+        S5 / 2026-08-24, not measured here)</code> — with the date and the harness version they
+        were established against, so a reader can see when they went stale.</li>
+        <li>Delete the unreachable branch and print the commit-floor sentence
+        <em>unconditionally</em>: it is true in both states, and it is the sentence that matters.</li>
+        <li>Fix <code>plugin emit</code> to read from <code>HARNESS_STATUS</code> rather than
+        restating a superseded conclusion in a string literal.</li>
+      </ul>
+      <p>The version fields are the point. Copilot's deny contract was proven against CLI
+      <span class="num">1.0.80</span>; TheTerrace's own probes have since exercised runtime
+      <span class="num">1.0.84-1</span>. A capability claim with no version is a claim with no
+      expiry.</p>
+    </div>
+    <div class="grid2">
+      <div><dt>Pack surface</dt><dd><code>scripts/coord-core.py</code> — <code>HARNESS_STATUS</code>,
+        <code>cmd_doctor</code>, <code>cmd_plugin_emit</code></dd></div>
+      <div><dt>Control that fails on recurrence</dt><dd>a test asserting no doctor line mixes
+        measured and constant state under one heading, and that the two surfaces render the same
+        status string from the same source</dd></div>
+      <div><dt>Closes</dt><dd>G4, G5 — and one instance of HYG-A in the pack's own tree</dd></div>
+    </div>
+  </div>
+
+  <div class="prop">
+    <header><span class="pid">P4</span><h3>Retire <code>hotspot</code> until it has a mechanism</h3>
+      <span class="tag b">cheap</span></header>
+    <div class="bd">
+      <p>The CFD plan recorded <code>hotspot</code> as &ldquo;not usable yet&rdquo; so nobody
+      plans around it. That is the right read and the wrong resting place: the parser
+      <em>accepts</em> the class today. A repo that writes <code>src/hot.cs: hotspot</code> gets a
+      registry that validates, a <code>classify</code> that returns <code>hotspot</code>, and merge
+      behaviour identical to <code>authored</code> — with no warning anywhere. That is a
+      success-shaped classification, the exact failure the pack refuses elsewhere.</p>
+      <p>Remove it from <code>CLASSES</code>. The parser then rejects it by the path that already
+      exists, with the message that already exists. Reinstate it in the same commit that
+      implements its merge behaviour.</p>
+    </div>
+    <div class="grid2">
+      <div><dt>Pack surface</dt><dd><code>coord-core.py:736</code></dd></div>
+      <div><dt>Control that fails on recurrence</dt><dd>a test asserting every member of
+        <code>CLASSES</code> resolves to a distinct merge mechanism — so the next declared-but-unbuilt
+        class fails at the point it is declared</dd></div>
+      <div><dt>Closes</dt><dd>G6</dd></div>
+    </div>
+  </div>
+
+  <div class="prop">
+    <header><span class="pid">P5</span><h3>Bind the session to its tree, or record the exception where it can be counted</h3>
+      <span class="tag b">behavioural</span></header>
+    <div class="bd">
+      <p>Sixteen worktrees; not one profiled session ran inside one. WT4 permits the primary as a
+      <em>recorded</em> exception — and an exception with no counter becomes the default, which is
+      what the measurement shows has happened. The three overlapping pairs are the cost: two
+      sessions sharing an index, a HEAD and one set of generated artifacts, which is the precise
+      condition WT1 exists to prevent.</p>
+      <p>The cheap version, and the one I would build first: <code>coord session start</code>
+      resolves whether the cwd is the primary or a registered tree and <strong>appends the answer
+      to the coordination record</strong>. No refusal, no prompt, no friction — just a fact that a
+      later pass can count. SP-15 already detects overlaps retrospectively; what is missing is the
+      per-session datum that makes &ldquo;how often do we take the WT4 exception?&rdquo; a number
+      instead of an impression.</p>
+      <p>Only once that number exists is it worth arguing about enforcement. Building a refusal
+      first would be tuning from a feeling, which is the thing this whole exercise is against.</p>
+    </div>
+    <div class="grid2">
+      <div><dt>Pack surface</dt><dd><code>scripts/coord-core.py</code> (session record);
+        <code>knowledge/session-worktree-discipline.md</code> WT4</dd></div>
+      <div><dt>Control that fails on recurrence</dt><dd><code>coord metrics</code> reports the
+        WT4-exception rate; <code>session-profile.py</code> SP-15 reconciles it against the
+        worktree list — a rate that does not fall after this lands is itself the finding</dd></div>
+      <div><dt>Closes</dt><dd>G7 (CTX-I)</dd></div>
+    </div>
+  </div>
+
+  <div class="prop">
+    <header><span class="pid">P6</span><h3>The same gap exists inside a single turn</h3>
+      <span class="tag b">reframe</span></header>
+    <div class="bd">
+      <p>The CFD plan scopes coordination to sessions and worktrees. The measurement says the
+      larger uncoordinated surface is <em>inside</em> one turn, and it fails in opposite directions
+      on the two harnesses:</p>
+      <div class="tscroll">
+      <table>
+        <thead><tr><th>Family &times; harness</th><th class="n">turns</th><th class="n">sub-agents</th>
+          <th class="n">drift / turn</th><th>Shape</th></tr></thead>
+        <tbody>
+          <tr><td><code>anthropic / claude</code></td><td class="n">515</td><td class="n">20</td>
+            <td class="n">1.06</td><td>Delegates almost never — no fan-out to coordinate, and no
+            parallelism where it would pay</td></tr>
+          <tr><td><code>anthropic / copilot</code></td><td class="n">477</td><td class="n">15</td>
+            <td class="n">2.31</td><td>577 re-reads and 149 cap firings dominate</td></tr>
+          <tr><td><code>openai / copilot</code></td><td class="n">131</td><td class="n">206</td>
+            <td class="n">3.74</td><td>16 fan-outs with no declared tier</td></tr>
+          <tr><td><code>anthropic+openai / copilot</code></td><td class="n">10</td><td class="n">139</td>
+            <td class="n">34.6</td><td>Up to <span class="num">57</span> sub-agents on one turn;
+            single delegates at <span class="num">134</span> tool calls and 2.3M tokens</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p>Neither extreme is coordinated. One repo held 12 worktrees and ran everything in the
+      primary while a single Copilot turn convened 57 agents under no tier; the same turn's
+      delegates ran to 4.1M tokens each. GO7 caps fan-out <em>width</em>; CTX-F already records
+      that it does not cap depth. <strong>The registry insight generalises</strong>: contention —
+      and cost — are properties of the <em>artifact</em> and the <em>delegation</em>, not of the
+      session boundary. A pack that classifies its files and leaves its delegations unclassified
+      has solved the cheaper half.</p>
+      <p>Concretely: extend the delegation contract with a per-branch tool-call and token budget
+      that the child reports against, exactly as P1 extends the artifact registry — and treat the
+      budget firing as a finding, never as a stopping argument.</p>
+    </div>
+    <div class="grid2">
+      <div><dt>Pack surface</dt><dd><code>knowledge/execution-graph-optimization.md</code> GO7;
+        the persona cards; <code>audit-log.py --agent-run</code></dd></div>
+      <div><dt>Control that fails on recurrence</dt><dd><code>session-profile.py</code> SP-07
+        already re-flags it; what is new is the child <em>reporting</em> calls-against-budget so
+        the audit entry carries it without a profiling pass</dd></div>
+      <div><dt>Closes</dt><dd>the CTX-F residual, measured across three repos rather than one
+        session</dd></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">04</span><div class="col">
+    <h2>What I am not proposing</h2>
+  </div></div>
+  <div class="col">
+    <p>The Simplifier's pass. Each of these was considered and struck, with the reason, because a
+    proposal that only adds is not a proposal.</p>
+    <ul class="body-list">
+      <li><strong>A session-contract document per repo.</strong> The template exists
+      (<code>templates/session-contract.template.md</code>) and <code>coord collaborate check</code>
+      already requires one when multiple sessions are active. Nothing is missing; it has simply
+      never been reached, because the layer is off. P2 fixes the cause. Adding a second document
+      would be ceremony added to remove ceremony.</li>
+      <li><strong>A lease on every authored file.</strong> The engine's own measured comment is the
+      counter-argument: the six busiest files in the reference repo are all generated, so a uniform
+      lease aims at 13/60 and misses 58/60. Classification is the leverage; leases stay for the
+      genuinely contended minority.</li>
+      <li><strong>Enforcement of worktree-per-session.</strong> Struck in favour of P5's counter.
+      There is no measured baseline for how often the WT4 exception is correct, and a refusal built
+      on no baseline is exactly the tuning-from-a-feeling this exercise exists to prevent.</li>
+      <li><strong>A parallelism push.</strong> The CFD plan's section 07 is right and it is worth
+      repeating here rather than quietly dropping: parallelism is a cost multiplier, roughly
+      15&times; for orchestrator-worker exploration. The <code>anthropic+openai/copilot</code> row
+      above is that multiplier being paid without the decision being made. The fix is a budget,
+      not more agents.</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">05</span><div class="col">
+    <h2>One thing about how this was measured</h2>
+  </div></div>
+  <div class="col">
+    <p>Any coordination framework is going to be judged by a compliance number, so the instrument
+    has to be trustworthy first. This one is not, yet.</p>
+    <div class="callout cut">
+      <p><code>session-profile.py:132</code> matches <code>Goal:</code> with a required colon.
+      CT19 and every worked example in the pack write <code>**Goal** &middot;</code> or
+      <code>**Goal** &mdash;</code>. Across 346 substantive Claude-Code turns the detector finds
+      <strong>10</strong> goal states; widened to the prescribed form it finds <strong>15</strong>.
+      <code>no_goal</code> is 471 of the 515-turn drift total — the largest single term in the
+      metric used to tune per-family guidance.</p>
+    </div>
+    <p>The finding survives the correction — 15 of 346 is still a real adherence gap, and SP-09
+    stands. But the detector <em>degrades as compliance improves</em>, because every newly
+    conformant turn is written in exactly the form it cannot see. Registered as
+    <strong>CTX-J</strong>; the fix is one regex and the control is a fixture asserting each
+    documented spelling is detected.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">06</span><div class="col">
+    <h2>Order of operations</h2>
+  </div></div>
+  <div class="tscroll">
+  <table>
+    <thead><tr><th class="n">#</th><th>Action</th><th>Cost</th><th>Why in this position</th></tr></thead>
+    <tbody>
+      <tr><td class="n">1</td><td>P4 — remove <code>hotspot</code> from <code>CLASSES</code></td>
+        <td>minutes</td><td>One line and a test. Removes a success-shaped classification before
+        anyone writes a registry that uses it</td></tr>
+      <tr><td class="n">2</td><td>CTX-J — widen the goal-state pattern, add the spelling fixture</td>
+        <td>minutes</td><td>Fix the instrument before any number from it is used to argue for a
+        control</td></tr>
+      <tr><td class="n">3</td><td>P1 — <code>coord classify init</code>, commands verified by
+        execution</td><td>~half a day</td><td>Produces the artifact everything else consumes;
+        turns the CFD plan's near-miss into a gate</td></tr>
+      <tr><td class="n">4</td><td>P2 — deployment-map step, <code>pack-doctor</code> check,
+        gate 11</td><td>~half a day</td><td>Makes P1 reach every repo, and makes its absence
+        visible in the ones already installed</td></tr>
+      <tr><td class="n">5</td><td>P3 — capability under its own heading; delete the dead branch;
+        one status source</td><td>~1 hour</td><td>Independent of 3 and 4; do it before anyone
+        relies on a doctor line to decide whether a boundary holds</td></tr>
+      <tr><td class="n">6</td><td>P5 — record the primary-vs-tree fact per session</td>
+        <td>~2 hours</td><td>Starts the counter. Revisit enforcement only once there is a rate to
+        argue about</td></tr>
+      <tr><td class="n">7</td><td>P6 — per-branch delegation budget reported by the child</td>
+        <td>~1 day</td><td>Largest measured surface, and the one whose shape the artifact registry
+        already suggests</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="col">
+    <p>Items 1, 2 and 5 are small enough to land in one commit each. Items 3 and 4 are the pair
+    that actually turns the layer on and should ship together — shipping 3 alone reproduces the
+    defect it fixes, one level up.</p>
+  </div>
+</section>
+
+<footer class="end">
+  <p>Grounded in <code>docs/profiles/sp-0002/profile.md</code> (48 sessions, 274 findings, 30-day
+  window over <code>ai-de</code>, <code>cfd-bench</code>, <code>TheTerrace</code>), and in
+  <code>coord-core.py</code>, <code>pack-apply.py</code>, <code>pack-doctor.py</code> and
+  <code>verify-bundle.ps1</code> — read and, where cited, run. Responds to
+  <code>cfd-bench/docs/proposals/session-coordination-plan.html</code>. New classes CTX-H, CTX-I
+  and CTX-J are registered in <code>docs/lessons/defect-classes.md</code>.</p>
+  <p><strong>Status:</strong> proposal. Nothing here is implemented. Every &ldquo;control that
+  fails on recurrence&rdquo; row is a control to be built and observed failing, not one that
+  exists.</p>
+</footer>
+
+</div>

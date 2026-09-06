@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 169
+"count": 170
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 321,
+"total": 322,
 "items": [
 {
 "cat": "knowledge",
@@ -2169,6 +2169,15 @@ window.PACK_INDEX = {
 "path": "docs/profiles/sp-0001/profile.md",
 "kind": "doc",
 "text": "session profile sp-0001 - theterrace, ai-forward measured pass over 23 session(s) in theterrace, ai-forward (last 7 days); 84 finding(s), top: sp-01, sp-09, sp-02. profile session-profiler efficiency adherence relates-to design-session-profiler"
+},
+{
+"cat": "graph",
+"id": "profile-sp-0002",
+"title": "Session profile sp-0002 - ai-de, cfd-bench, theterrace",
+"summary": "Measured pass over 48 session(s) in ai-de, cfd-bench, theterrace (last 30 days); 274 finding(s), top: SP-01, SP-09, SP-01.",
+"path": "docs/profiles/sp-0002/profile.md",
+"kind": "doc",
+"text": "session profile sp-0002 - ai-de, cfd-bench, theterrace measured pass over 48 session(s) in ai-de, cfd-bench, theterrace (last 30 days); 274 finding(s), top: sp-01, sp-09, sp-01. profile session-profiler efficiency adherence relates-to design-session-profiler"
 },
 {
 "cat": "graph",

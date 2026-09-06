@@ -107,12 +107,18 @@ store (`artifacts.yml`, `.gitattributes`) → model (`ArtifactClass`, `Allocatio
 ```
 coord allocate --scheme al                 # one collision-proof id on stdout
 coord resolve  --scheme al <prefix>        # 0 unique · 3 ambiguous (lists) · 4 no match
-coord class    <path> [--json]             # authored | derived | register | hotspot
+coord class    <path> [--json]             # authored | derived | register
 coord merge-derived %A %O %B %P            # the driver. ALWAYS exits 0. Resolves; never regenerates.
 coord regen                                # run the regenerations the driver deferred
 coord doctor                               # is the driver effective? is the registry sane? what is owed?
 coord plugin --emit <dir>                  # write the .claude-plugin bundle both harnesses read
 ```
+
+> **Amended 2026-09-06 (CTX-H).** `hotspot` was listed here and declared in `CLASSES`
+> with no merge mechanism anywhere in the file: the parser accepted it, `classify()`
+> returned it, and the artifact then merged exactly like `authored` while the tool
+> reported it was handled. It is removed until the commit that implements its
+> behaviour, and `ClassMechanismTests` now fails on any class declared without one.
 
 **Consumed — each established by execution above:** the merge-driver placeholder set (S11b), `git check-attr` (S13), `git config merge.<name>.driver` (S13), `audit-log.py:next_id` (read), the Claude/Copilot plugin manifest shape (S14).
 
