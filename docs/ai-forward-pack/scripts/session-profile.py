@@ -97,6 +97,11 @@ FIXES = collections.OrderedDict([
     ("F-12", {"title": "Ask each host for its richest reasoning summary, and treat summary-derived judgements as Inferred",
               "where": "INSTALL.md 1.6; adapters/hooks/claude-code.settings.hooks.json (showThinkingSummaries); pack-doctor `claude settings`",
               "control": "SP-17 reports visible-reasoning share per family; a family under 10% marks every text-derived drift finding Inferred"}),
+    ("F-14", {"title": "A budget on the MAIN line, not only on the delegates",
+              "where": "knowledge/communication-and-task-discipline.md CT19 (`Main-line budget:`); "
+                       "scripts/audit-log.py --main-budget; selfcheck",
+              "control": "selfcheck reports a substantive turn with no main-line budget as a gap "
+                         "and an over-run as a finding; SP-19 measures the real split from the store"}),
     ("F-13", {"title": "Externalize reasoning by construction: a one-line intent on every shell call",
               "where": "knowledge/communication-and-task-discipline.md CT26; the managed block; agent cards",
               "control": "SP-18 intent-trace coverage per family; below 90% is a finding; the hook and the profiler read the same field"}),
@@ -122,6 +127,7 @@ FINDINGS = collections.OrderedDict([
     ("SP-16", ("Knowledge at hand re-fetched: the main agent viewed an instruction file that is already in its prefix", "Minor", ["F-08", "F-02"])),
     ("SP-17", ("Reasoning visibility: the share of billed reasoning that came back as readable text", "Nit", ["F-12"])),
     ("SP-18", ("Intent-trace coverage: shell calls that carry a one-line description (the reasoning trace a profiler can read)", "Minor", ["F-13"])),
+    ("SP-19", ("Main-line dominance: the turn's own loop, not its delegates, is where the cost is", "Major", ["F-14"])),
 ])
 
 INTENT_TOOLS = {"copilot": {"powershell", "bash", "shell"}, "claude": {"Bash", "PowerShell"}}
@@ -153,6 +159,39 @@ SEVERITY_RANK = {"Blocker": 0, "Major": 1, "Minor": 2, "Nit": 3}
 
 
 # --------------------------------------------------------------------------- helpers
+
+
+def main_line_share(buckets):
+    """Split a session's requests and cost between the main line and its delegates.
+
+    `buckets` is {initiator: {"requests": n, "cost": aiu}}. The main line is `agent`, `user`
+    and `compaction` - a compaction request and the request that opens a user turn are both
+    paid on the main conversation, and both were substantial: in sp-0003 the 24 bare
+    user-initiated requests alone cost 12,853 AIU, MORE THAN THE ENTIRE DELEGATE FLEET.
+
+    This is the measured half of CT19's `Main-line budget:`, which is only a declaration - an
+    agent cannot count its own model requests, and this can. Reconciled, never conflated.
+
+    Returns None for a share or a ratio it cannot establish: a percentage over an empty
+    corpus is not a measurement (R4), and no delegates means there is no ratio to report
+    rather than a ratio of infinity.
+    """
+    MAIN = ("agent", "user", "compaction")
+    m_req = sum(v.get("requests", 0) for k, v in (buckets or {}).items() if k in MAIN)
+    m_cost = sum(v.get("cost", 0.0) for k, v in (buckets or {}).items() if k in MAIN)
+    s_req = sum(v.get("requests", 0) for k, v in (buckets or {}).items() if k not in MAIN)
+    s_cost = sum(v.get("cost", 0.0) for k, v in (buckets or {}).items() if k not in MAIN)
+    total = m_cost + s_cost
+    per_main = (m_cost / m_req) if m_req else None
+    per_sub = (s_cost / s_req) if s_req else None
+    return {"main_requests": m_req, "sub_requests": s_req,
+            "main_cost": round(m_cost, 1), "sub_cost": round(s_cost, 1),
+            "main_pct": round(100.0 * m_cost / total, 1) if total else None,
+            "cost_per_main_request": round(per_main, 1) if per_main is not None else None,
+            "cost_per_sub_request": round(per_sub, 1) if per_sub is not None else None,
+            "cost_ratio": round(per_main / per_sub, 1)
+                          if (per_main is not None and per_sub) else None}
+
 
 def _basename(path):
     """Last path segment, splitting on BOTH separators regardless of this platform.
@@ -498,10 +537,20 @@ def profile_copilot(sess, settings):
         w = window(parse_ts(created))
         if w is None:
             continue
-        U[w].append({"main": agent_id is None, "model": model, "in": inp or 0, "out": out or 0,
+        U[w].append({"main": agent_id is None, "initiator": initiator, "model": model,
+                     "in": inp or 0, "out": out or 0,
                      "cr": cr or 0, "cw": cw or 0, "rsn": rsn or 0, "aiu": (aiu or 0) / 1e9,
                      "dur": (dur or 0) / 1000.0, "ttft": (ttft / 1000.0) if ttft else None,
                      "created": parse_ts(created), "finish": finish, "effort": effort})
+    # F-14 / SP-19: the main-line vs delegate split, by initiator. Claude Code's transcript
+    # carries no initiator, so for that reader this stays absent rather than fabricated (IO8).
+    initiators = collections.defaultdict(lambda: {"requests": 0, "cost": 0.0})
+    for w_rows in U.values():
+        for r in w_rows:
+            b = initiators[r.get("initiator") or ("agent" if r["main"] else "sub-agent")]
+            b["requests"] += 1
+            b["cost"] += r["aiu"]
+
     turns = []
     for i in sorted(T):
         t = T[i]
@@ -545,6 +594,7 @@ def profile_copilot(sess, settings):
              "settings": {k: settings.get(k) for k in ("model", "contextTier", "effortLevel")},
              "prefix_chars": prefix["chars"], "prefix_tokens_est": est_tokens(prefix["chars"]) if prefix["chars"] else None,
              "prefix_first_chars": prefix["first_chars"], "prefix_blocks": prefix["blocks"], "prefix_note": prefix["note"],
+             "main_line": main_line_share(dict(initiators)),
              "compactions": sum(1 for e in events if str(e.get("type", "")).startswith("session.compact")),
              "events": len(events), "usage_rows": len(usage)}
     return facts, turns
@@ -830,6 +880,14 @@ def detect(session):
     ev = [_ev(t["turn"], _basename(p)) for t in turns for p in t["instruction_views"]]
     if ev:
         add("SP-16", ev[:8], {"reads": len(ev)})
+    # SP-19: where the money actually is. Fires when the main line both dominates the spend and
+    # costs materially more per request than the delegates it convened - the shape every budget
+    # the pack carries was pointed away from (class CTX-M).
+    ml = facts.get("main_line") or {}
+    if ml.get("main_pct") is not None and ml.get("cost_ratio") is not None             and ml["main_pct"] >= 80 and ml["cost_ratio"] >= 3:
+        add("SP-19", [_ev(None, "main line {0:,} requests / {1:,.0f} AIU ({2}% of the session) vs delegates {3:,} / {4:,.0f}; {5}x the cost per request".format(
+            ml["main_requests"], ml["main_cost"], ml["main_pct"], ml["sub_requests"], ml["sub_cost"], ml["cost_ratio"]))],
+            {k: ml[k] for k in ("main_pct", "cost_ratio", "main_requests", "sub_requests")})
     # SP-17: how much of the billed reasoning came back as text. Informational: it decides how much
     # weight any text-derived judgement can carry (below 10% visible, drift read from text is Inferred).
     rsn = sum(t["reasoning_main"] for t in turns)

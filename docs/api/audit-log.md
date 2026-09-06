@@ -94,6 +94,7 @@ Conventions
 | `--json` | _(no help text — coverage gap)_ |
 | `--keyword` | _(no help text — coverage gap)_ |
 | `--kind` | _(no help text — coverage gap)_ |
+| `--main-budget` | the MAIN line's own tool calls against the budget declared in the goal state (CT19), same spelling as --agent-run's. Measured: the main line was 91%% of a session's cost at 10x the per-request cost of its own delegates (CTX-M), and every other budget bounds delegates. A declaration, not an enforcement - the agent cannot count its own model requests; `session-profile.py` SP-19 measures the real split from the store. |
 | `--n` | _(no help text — coverage gap)_ |
 | `--outcome` | _(no help text — coverage gap)_ |
 | `--persona-yield` | one persona's findings raised vs accepted; repeatable. Makes the roster tunable on measured yield rather than belief (P6) — an advisory lens re-convenes only on an accepted finding. |
@@ -329,6 +330,25 @@ therefore gateable: exit 1 while any line is unreadable, naming file and line nu
 
 Advisory: surface meaningful changes that may not be in the change log yet.
 
+### `main_line_findings(entries)`
+
+Main-line budget gaps and over-runs across audit entries (F-14, class CTX-M).
+
+Measured in sp-0003: the main line ran 714 requests for 89,429 AIU while its delegates ran
+701 for 8,491 - near-identical counts, TEN TIMES the cost per request, 91% of the session.
+Every budget the pack had bounded delegates, because a fan-out is a visible countable
+event and a main line is one more reasonable step, repeated several hundred times.
+
+THE HONEST LIMIT: a branch can count its own tool calls; the main agent cannot count its
+own model REQUESTS - only the harness store knows those. So `main_calls` is what the agent
+can actually observe about itself (its own tool calls) against the budget it committed to
+in the goal state, and the authoritative cost split is the profiler's SP-19, read from the
+store. Declaration and measurement are reconciled, never conflated, and neither is
+enforcement.
+
+Only substantive turns are asked for a budget: a commit or a script run declares no
+ceremony budget because it has none to declare.
+
 ### `cmd_selfcheck(args)`
 
 Bounded inline session self-assessment (FC-1, spec-agent-focus-controls). One deterministic
@@ -342,6 +362,6 @@ Ingest a session-export JSON array of turns into the audit log (build on session
 
 ## Coverage
 
-- Public functions: **36** · documented: **18** (**50%**)
+- Public functions: **37** · documented: **19** (**51%**)
 - Undocumented (recorded, not invented): `now_iso`, `record_start`, `audit_dir`, `log_path`, `read_log`, `append_log`, `git`, `git_context`, `commits_between`, `find_template`, `project_name`, `cmd_append`, `cmd_change`, `cmd_list`, `cmd_search`, `cmd_get`, `cmd_render`, `cmd_git_context`
 

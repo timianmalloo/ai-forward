@@ -1,0 +1,4130 @@
+{
+  "id": "sp-0004",
+  "generated": "2026-09-06T22:23:12Z",
+  "repos": [
+    "C:\\Projects\\TheTerrace"
+  ],
+  "repo_labels": [
+    "theterrace"
+  ],
+  "window": "last 10 days",
+  "chars_per_token": 3.54,
+  "sessions": [
+    {
+      "facts": {
+        "harness": "copilot",
+        "id": "fd3ccb67-3445-4092-abb4-4d316a7eb46e",
+        "title": "Update Package Management",
+        "cwd": "C:\\projects\\theterrace",
+        "started": "2026-09-04T16:39:22Z",
+        "updated": "2026-09-05T23:32:54Z",
+        "settings": {
+          "model": "claude-opus-4.8",
+          "contextTier": "long_context",
+          "effortLevel": "high"
+        },
+        "prefix_chars": 413465,
+        "prefix_tokens_est": 116798,
+        "prefix_first_chars": 1035981,
+        "prefix_blocks": [
+          59085,
+          60680
+        ],
+        "prefix_note": "measured chars of the latest main prefix; tokens are an estimate at 3.54 chars/token",
+        "main_line": {
+          "main_requests": 727,
+          "sub_requests": 703,
+          "main_cost": 91734.3,
+          "sub_cost": 8497.2,
+          "main_pct": 91.5,
+          "cost_per_main_request": 126.2,
+          "cost_per_sub_request": 12.1,
+          "cost_ratio": 10.4
+        },
+        "compactions": 4,
+        "events": 17781,
+        "usage_rows": 1430
+      },
+      "turns": [
+        {
+          "turn": 0,
+          "prompt": "/updatepack",
+          "started": "2026-09-04T16:39:33Z",
+          "delivery": "idle",
+          "models": [
+            "claude-opus-4.8"
+          ],
+          "families": [
+            "anthropic"
+          ],
+          "wall_s": 1104,
+          "main_requests": 31,
+          "sub_requests": 0,
+          "ctx_start": 403550,
+          "ctx_end": 504626,
+          "ctx_max": 504626,
+          "cache_read": 13922378,
+          "uncached_in": 62,
+          "cache_write": 504624,
+          "output": 66909,
+          "reasoning": 45899,
+          "cost_aiu": 1178.8,
+          "main_api_s": 938,
+          "all_api_s": 938,
+          "ttft_p50": 5.4,
+          "ttft_p90": 6.0,
+          "ttft_max": 9.8,
+          "tools": {
+            "view": 4,
+            "powershell": 29,
+            "create": 1,
+            "ask_user": 1
+          },
+          "view_bytes": 102589,
+          "rereads": {},
+          "paged_full_views": 0,
+          "image_views": 0,
+          "instruction_views": [],
+          "skills": {},
+          "asst_msgs": 31,
+          "asst_text_chars": 14542,
+          "goal_state": false,
+          "tier": false,
+          "nudges": 0,
+          "aborts": 0,
+          "errors": 0,
+          "hook_s": 38,
+          "sub_agents": [],
+          "sub_tool_calls": 0,
+          "converge_nudges": 0,
+          "sub_orientation_reads": [],
+          "reasoning_main": 45899,
+          "reasoning_chars": 54071,
+          "intent_eligible": 29,
+          "intent_with": 29,
+          "effort": "high"
+        },
+        {
+          "turn": 1,
+          "prompt": "(harness completion nudge)",
+          "started": "2026-09-04T16:57:46Z",
+          "delivery": "idle",
+          "models": [
+            "claude-opus-4.8"
+          ],
+          "families": [
+            "anthropic"
+          ],
+          "wall_s": 22,
+          "main_requests": 1,
+          "sub_requests": 0,
+          "ctx_start": 508349,
+          "ctx_end": 508349,
+          "ctx_max": 508349,
+          "cache_read": 0,
+          "uncached_in": 2,
+          "cache_write": 508347,
+          "output": 1022,
+          "reasoning": 0,
+          "cost_aiu": 320.3,
+          "main_api_s": 22,
+          "all_api_s": 22,
+          "ttft_p50": 8.4,
+          "ttft_p90": 8.4,
+          "ttft_max": 8.4,
+          "tools": {
+            "task_complete": 1
+          },
+          "view_bytes": 0,
+          "rereads": {},
+          "paged_full_views": 0,
+          "image_views": 0,
+          "instruction_views": [],
+          "skills": {},
+          "asst_msgs": 1,
+          "asst_text_chars": 434,
+          "goal_state": false,
+          "tier": false,
+          "nudges": 1,
+          "aborts": 0,
+          "errors": 0,
+          "hook_s": 2,
+          "sub_agents": [],
+          "sub_tool_calls": 0,
+          "converge_nudges": 0,
+          "sub_orientation_reads": [],
+          "reasoning_main": 0,
+          "reasoning_chars": 0,
+          "intent_eligible": 0,
+          "intent_with": 0,
+          "effort": "high"
+        },
+        {
+          "turn": 2,
+          "prompt": "merge PR 749 yourself",
+          "started": "2026-09-04T17:40:40Z",
+          "delivery": "idle",
+          "models": [
+            "claude-opus-4.8"
+          ],
+          "families": [
+            "anthropic"
+          ],
+          "wall_s": 706,
+          "main_requests": 10,
+          "sub_requests": 0,
+          "ctx_start": 510246,
+          "ctx_end": 528394,
+          "ctx_max": 528394,
+          "cache_read": 4160178,
+          "uncached_in": 20,
+          "cache_write": 1052516,
+          "output": 11852,
+          "reasoning": 7106,
+          "cost_aiu": 895.5,
+          "main_api_s": 198,
+          "all_api_s": 198,
+          "ttft_p50": 5.9,
+          "ttft_p90": 12.3,
+          "ttft_max": 14.2,
+          "tools": {
+            "powershell": 9,
+            "task_complete": 1
+          },
+          "view_bytes": 0,
+          "rereads": {},
+          "paged_full_views": 0,
+          "image_views": 0,
+          "instruction_views": [],
+          "skills": {},
+          "asst_msgs": 10,
+          "asst_text_chars": 3959,
+          "goal_state": false,
+          "tier": false,
+          "nudges": 0,
+          "aborts": 0,
+          "errors": 0,
+          "hook_s": 11,
+          "sub_agents": [],
+          "sub_tool_calls": 0,
+          "converge_nudges": 0,
+          "sub_orientation_reads": [],
+          "reasoning_main": 7106,
+          "reasoning_chars": 7846,
+          "intent_eligible": 9,
+          "intent_with": 9,
+          "effort": "high"
+        },
+        {
+          "turn": 3,
+          "prompt": "ensure the working tree is rebased then commit, push, merge so the tree and main are in sync",
+          "started": "2026-09-04T17:55:21Z",
+          "delivery": "idle",
+          "models": [
+            "claude-opus-4.8"
+          ],
+          "families": [
+            "anthropic"
+          ],
+          "wall_s": 621,
+          "main_requests": 10,
+          "sub_requests": 0,
+          "ctx_start": 531170,
+          "ctx_end": 546662,
+          "ctx_max": 546662,
+          "cache_read": 4845679,
+          "uncached_in": 20,
+          "cache_write": 563496,
+          "output": 13129,
+          "reasoning": 8089,
+          "cost_aiu": 627.3,
+          "main_api_s": 201,
+          "all_api_s": 201,
+          "ttft_p50": 5.6,
+          "ttft_p90": 6.2,
+          "ttft_max": 10.6,
+          "tools": {
+            "powershell": 9
+          },
+          "view_bytes": 0,
+          "rereads": {},
+          "paged_full_views": 0,
+          "image_views": 0,
+          "instruction_views": [],
+          "skills": {},
+          "asst_msgs": 10,
+          "asst_text_chars": 4071,
+          "goal_state": false,
+          "tier": false,
+          "nudges": 0,
+          "aborts": 0,
+          "errors": 0,
+          "hook_s": 10,
+          "sub_agents": [],
+          "sub_tool_calls": 0,
+          "converge_nudges": 0,
+          "sub_orientation_reads": [],
+          "reasoning_main": 8089,
+          "reasoning_chars": 8422,
+          "intent_eligible": 9,
+          "intent_with": 9,
+          "effort": "high"
+        },
+        {
+          "turn": 4,
+          "prompt": "(harness completion nudge)",
+          "started": "2026-09-04T18:05:51Z",
+          "delivery": "idle",
+          "models": [
+            "claude-opus-4.8"
+          ],
+          "families": [
+            "anthropic"
+          ],
+          "wall_s": 8,
+          "main_requests": 1,
+          "sub_requests": 0,
+          "ctx_start": 548105,
+          "ctx_end": 548105,
+          "ctx_max": 548105,
+          "cache_read": 546660,
+          "uncached_in": 2,
+          "cache_write": 1443,
+          "output": 494,
+          "reasoning": 0,
+          "cost_aiu": 29.5,
+          "main_api_s": 8,
+          "all_api_s": 8,
+          "ttft_p50": 2.4,
+          "ttft_p90": 2.4,
+          "ttft_max": 2.4,
+          "tools": {
+            "task_complete": 1
+          },
+          "view_bytes": 0,
+          "rereads": {},
+          "paged_full_views": 0,
+          "image_views": 0,
+          "instruction_views": [],
+          "skills": {},
+          "asst_msgs": 1,
+          "asst_text_chars": 128,
+          "goal_state": false,
+          "tier": false,
+          "nudges": 1,
+          "aborts": 0,
+          "errors": 0,
+          "hook_s": 3,
+          "sub_agents": [],
+          "sub_tool_calls": 0,
+          "converge_nudges": 0,
+          "sub_orientation_reads": [],
+          "reasoning_main": 0,
+          "reasoning_chars": 0,
+          "intent_eligible": 0,
+          "intent_with": 0,
+          "effort": "high"
+        },
+        {
+          "turn": 5,
+          "prompt": "ground yourseld in the repo knowledge, the specs and what has been built so far then:  the website is functional but the applicability and stickiness is low com",
+          "started": "2026-09-04T23:46:19Z",
+          "delivery": "idle",
+          "models": [
+            "gpt-6-astra"
+          ],
+          "families": [
+            "openai"
+          ],
+          "wall_s": 1153,
+          "main_requests": 34,
+          "sub_requests": 40,
+          "ctx_start": 159129,
+          "ctx_end": 314455,
+          "ctx_max": 314455,
+          "cache_read": 10605678,
+          "uncached_in": 222,
+          "cache_write": 724232,
+          "output": 59392,
+          "reasoning": 14877,
+          "cost_aiu": 3092.7,
+          "main_api_s": 580,
+          "all_api_s": 1203,
+          "ttft_p50": 6.2,
+          "ttft_p90": 14.3,
+          "ttft_max": 17.7,
+          "tools": {
+            "skill": 3,
+            "view": 28,
+            "glob": 2,
+            "powershell": 13,
+            "task": 6,
+            "sql": 2,
+            "rg": 2,
+            "web_fetch": 6,
+            "apply_patch": 4,
+            "write_agent": 3,
+            "session_store_sql": 1,
+            "read_agent": 1
+          },
+          "view_bytes": 666313,
+          "rereads": {},
+          "paged_full_views": 0,
+          "image_views": 2,
+          "instruction_views": [
+            "C:\\projects\\theterrace\\.github\\instructions\\ui-craft-detection.instructions.md",
+            "C:\\projects\\theterrace\\.github\\instructions\\ui-design-craft.instructions.md",
+            "C:\\projects\\theterrace\\.github\\instructions\\ui-interaction-design.instructions.md",
+            "C:\\Projects\\TheTerrace-proposal-editorial-pivot\\.github\\instructions\\ui-archetype-grammar.instructions.md",
+            "C:\\Projects\\TheTerrace-proposal-editorial-pivot\\.github\\instructions\\technical-ui-design.instructions.md",
+            "C:\\Projects\\TheTerrace-proposal-editorial-pivot\\.github\\instructions\\ui-archetype-catalog.instructions.md",
+            "C:\\Projects\\TheTerrace-proposal-editorial-pivot\\.github\\instructions\\ui-visual-assets.instructions.md",
+            "C:\\Projects\\TheTerrace-proposal-editorial-pivot\\.github\\instructions\\observability-and-instrumentation.instructions.md"
+          ],
+          "skills": {
+            "ui-design": 1,
+            "optimize-graph": 1,
+            "graphify": 1
+          },
+          "asst_msgs": 34,
+          "asst_text_chars": 880,
+          "goal_state": true,
+          "tier": false,
+          "nudges": 0,
+          "aborts": 0,
+          "errors": 0,
+          "hook_s": 168,
+          "sub_agents": [
+            {
+              "name": "product-strategist",
+              "model": "gpt-6-astra",
+              "tokens": 19680,
+              "tool_calls": 0,
+              "duration_s": 57
+            },
+            {
+              "name": "test-architect",
+              "model": "gpt-6-astra",
+              "tokens": 18782,
+              "tool_calls": 0,
+              "duration_s": 49
+            },
+            {
+              "name": "privacy-data-governance",
+              "model": "gpt-6-astra",
+              "tokens": 17549,
+              "tool_calls": 0,
+              "duration_s": 18
+            },
+            {
+              "name": "security-identity-architect",
+              "model": "gpt-6-astra",
+              "tokens": 252061,
+              "tool_calls": 15,
+              "duration_s": 112
+            },
+            {
+              "name": "ai-systems-engineer",
+              "model": "gpt-6-astra",
+              "tokens": 58320,
+              "tool_calls": 1,
+              "duration_s": 126
+            },
+            {
+              "name": "ux-researcher-ia",
+              "model": "gpt-6-astra",
+              "tokens": 721303,
+              "tool_calls": 24,
+              "duration_s": 1016
+            }
+          ],
+          "sub_tool_calls": 87,
+          "converge_nudges": 0,
+          "sub_orientation_reads": [
+            "security-identity-architect: AGENTS.md",
+            "security-identity-architect: agent-body-of-knowledge.md",
+            "security-identity-architect: persona-audit.md",
+            "security-identity-architect: agent-persona-catalog.md",
+            "security-identity-architect: persona-cards.md",
+            "security-identity-architect: agent-body-of-knowledge.md",
+            "security-identity-architect: persona-cards.md",
+            "domain-researcher: AGENTS.md",
+            "ux-researcher-ia: AGENTS.md"
+          ],
+          "reasoning_main": 5824,
+          "reasoning_chars": 6504,
+          "intent_eligible": 13,
+          "intent_with": 13,
+          "effort": "high"
+        },
+        {
+          "turn": 6,
+          "prompt": "do next steps",
+          "started": "2026-09-05T00:05:37Z",
+          "delivery": "idle",
+          "models": [
+            "gpt-6-astra"
+          ],
+          "families": [
+            "openai"
+          ],
+          "wall_s": 1285,
+          "main_requests": 46,
+          "sub_requests": 57,
+          "ctx_start": 314865,
+          "ctx_end": 398400,
+          "ctx_max": 398400,
+          "cache_read": 22991431,
+          "uncached_in": 309,
+          "cache_write": 383661,
+          "output": 112162,
+          "reasoning": 27472,
+          "cost_aiu": 5189.7,
+          "main_api_s": 624,
+          "all_api_s": 2180,
+          "ttft_p50": 10.0,
+          "ttft_p90": 17.0,
+          "ttft_max": 19.8,
+          "tools": {
+            "read_agent": 9,
+            "sql": 8,
+            "view": 31,
+            "powershell": 19,
+            "apply_patch": 5,
+            "write_agent": 5,
+            "rg": 1,
+            "task": 1,
+            "glob": 1,
+            "task_complete": 1
+          },
+          "view_bytes": 285517,
+          "rereads": {
+            "C:\\Users\\malla\\Downloads\\chelsea-pivot-scouting-dossier.html": 3,
+            "C:\\Users\\malla\\Downloads\\chelsea-barco-dossier.html": 3
+          },
+          "paged_full_views": 0,
+          "image_views": 7,
+          "instruction_views": [],
+          "skills": {},
+          "asst_msgs": 46,
+          "asst_text_chars": 346,
+          "goal_state": true,
+          "tier": false,
+          "nudges": 0,
+          "aborts": 0,
+          "errors": 0,
+          "hook_s": 227,
+          "sub_agents": [
+            {
+              "name": "studio-prototype",
+              "model": "gpt-6-astra",
+              "tokens": 1713862,
+              "tool_calls": 18,
+              "duration_s": 846
+            },
+            {
+              "name": "domain-researcher",
+              "model": "gpt-6-astra",
+              "tokens": 3018239,
+              "tool_calls": 123,
+              "duration_s": 1476
+            },
+            {
+              "name": "ux-accessibility",
+              "model": "gpt-6-astra",
+              "tokens": 313973,
+              "tool_calls": 13,
+              "duration_s": 433
+            }
+          ],
+          "sub_tool_calls": 136,
+          "converge_nudges": 1,
+          "sub_orientation_reads": [],
+          "reasoning_main": 11689,
+          "reasoning_chars": 4396,
+          "intent_eligible": 19,
+          "intent_with": 19,
+          "effort": "high"
+        },
+        {
+          "turn": 7,
+          "prompt": "Some thoughts: ---------------------- 1instead of a drop down for the \"my club\" should just be an icon (the club badge) for each of the clubs in scope: the idea",
+          "started": "2026-09-05T15:08:26Z",
+          "delivery": "idle",
+          "models": [],
+          "families": [],
+          "wall_s": null,
+          "main_requests": 0,
+          "sub_requests": 0,
+          "ctx_start": null,
+          "ctx_end": null,
+          "ctx_max": null,
+          "cache_read": 0,
+          "uncached_in": 0,
+          "cache_write": 0,
+          "output": 0,
+          "reasoning": 0,
+          "cost_aiu": 0,
+          "main_api_s": 0,
+          "all_api_s": 0,
+          "ttft_p50": null,
+          "ttft_p90": null,
+          "ttft_max": null,
+          "tools": {},
+          "view_bytes": 0,
+          "rereads": {},
+          "paged_full_views": 0,
+          "image_views": 0,
+          "instruction_views": [],
+          "skills": {},
+          "asst_msgs": 0,
+          "asst_text_chars": 0,
+          "goal_state": false,
+          "tier": false,
+          "nudges": 0,
+          "aborts": 1,
+          "errors": 0,
+          "hook_s": 1,
+          "sub_agents": [],
+          "sub_tool_calls": 0,
+          "converge_nudges": 0,
+          "sub_orientation_reads": [],
+          "reasoning_main": 0,
+          "reasoning_chars": 0,
+          "intent_eligible": 0,
+          "intent_with": 0,
+          "effort": null
+        },
+        {
+          "turn": 8,
+          "prompt": "Some thoughts: still for iterating on the proposal and not the spec work through these both using the collect knowledge skill and ideating ---------------------",
+          "started": "2026-09-05T15:24:53Z",
+          "delivery": "idle",
+          "models": [
+            "gpt-6-astra"
+          ],
+          "families": [
+            "openai"
+          ],
+          "wall_s": 112,
+          "main_requests": 5,
+          "sub_requests": 0,
+          "ctx_start": 399473,
+          "ctx_end": 418451,
+          "ctx_max": 418451,
+          "cache_read": 2019493,
+          "uncached_in": 15,
+          "cache_write": 19666,
+          "output": 2761,
+          "reasoning": 1032,
+          "cost_aiu": 473.8,
+          "main_api_s": 77,
+          "all_api_s": 77,
+          "ttft_p50": 12.1,
+          "ttft_p90": 34.9,
+          "ttft_max": 34.9,
+          "tools": {
+            "skill": 3,
+            "view": 1,
+            "glob": 1,
+            "powershell": 3,
+            "task": 1,
+            "sql": 1
+          },
+          "view_bytes": 18301,
+          "rereads": {},
+          "paged_full_views": 0,
+          "image_views": 0,
+          "instruction_views": [],
+          "skills": {
+            "collectknowledge": 1,
+            "optimize-graph": 1,
+            "ui-design": 1
+          },
+          "asst_msgs": 5,
+          "asst_text_chars": 318,
+          "goal_state": true,
+          "tier": false,
+          "nudges": 0,
+          "aborts": 0,
+          "errors": 0,
+          "hook_s": 10,
+          "sub_agents": [],
+          "sub_tool_calls": 0,
+          "converge_nudges": 0,
+          "sub_orientation_reads": [],
+          "reasoning_main": 1032,
+          "reasoning_chars": 0,
+          "intent_eligible": 3,
+          "intent_with": 3,
+          "effort": "high"
+        },
+        {
+          "turn": 9,
+          "prompt": "/also i wonder if we should have an \"external library\" section which points at key content sites with analysis like sofascore, caughtoffside etc and maybe speci",
+          "started": "2026-09-05T15:26:27Z",
+          "delivery": "steering",
+          "models": [
+            "gpt-6-astra"
+          ],
+          "families": [
+            "openai"
+          ],
+          "wall_s": 237,
+          "main_requests": 9,
+          "sub_requests": 0,
+          "ctx_start": 422091,
+          "ctx_end": 452739,
+          "ctx_max": 452739,
+          "cache_read": 3901793,
+          "uncached_in": 27,
+          "cache_write": 34288,
+          "output": 7406,
+          "reasoning": 3896,
+          "cost_aiu": 921.7,
+          "main_api_s": 176,
+          "all_api_s": 176,
+          "ttft_p50": 16.5,
+          "ttft_p90": 20.0,
+          "ttft_max": 42.5,
+          "tools": {
+            "skill": 1,
+            "sql": 1,
+            "task": 1,
+            "view": 6,
+            "web_fetch": 2,
+            "powershell": 5,
+            "apply_patch": 1
+          },
+          "view_bytes": 165259,
+          "rereads": {
+            "C:\\Projects\\TheTerrace-proposal-editorial-pivot-v2\\docs\\mockups\\editorial-pivot\\public.html": 4
+          },
+          "paged_full_views": 0,
+          "image_views": 0,
+          "instruction_views": [],
+          "skills": {
+            "also": 1
+          },
+          "asst_msgs": 11,
+          "asst_text_chars": 143,
+          "goal_state": false,
+          "tier": false,
+          "nudges": 0,
+          "aborts": 0,
+          "errors": 0,
+          "hook_s": 17,
+          "sub_agents": [],
+          "sub_tool_calls": 0,
+          "converge_nudges": 0,
+          "sub_orientation_reads": [],
+          "reasoning_main": 3896,
+          "reasoning_chars": 0,
+          "intent_eligible": 5,
+          "intent_with": 5,
+          "effort": "high"
+        },
+        {
+          "turn": 10,
+          "prompt": "/also in the content creator side, it may be useful to be able to upload an html file i curate elsewhere (for example in claude) as a starting file",
+          "started": "2026-09-05T15:29:48Z",
+          "delivery": "steering",
+          "models": [
+            "gpt-6-astra"
+          ],
+          "families": [
+            "openai"
+          ],
+          "wall_s": 4995,
+          "main_requests": 81,
+          "sub_requests": 111,
+          "ctx_start": 456180,
+          "ctx_end": 629139,
+          "ctx_max": 629139,
+          "cache_read": 51698047,
+          "uncached_in": 576,
+          "cache_write": 1199303,
+          "output": 255261,
+          "reasoning": 108231,
+          "cost_aiu": 13410.9,
+          "main_api_s": 2860,
+          "all_api_s": 5400,
+          "ttft_p50": 17.5,
+          "ttft_p90": 68.8,
+          "ttft_max": 109.5,
+          "tools": {
+            "sql": 9,
+            "view": 9,
+            "powershell": 23,
+            "apply_patch": 23,
+            "read_powershell": 1,
+            "rg": 3,
+            "read_agent": 10,
+            "write_agent": 5,
+            "web_fetch": 19,
+            "task": 3,
+            "vote_memory": 1,
+            "task_complete": 1
+          },
+          "view_bytes": 210607,
+          "rereads": {},
+          "paged_full_views": 0,
+          "image_views": 2,
+          "instruction_views": [],
+          "skills": {},
+          "asst_msgs": 160,
+          "asst_text_chars": 741,
+          "goal_state": false,
+          "tier": false,
+          "nudges": 0,
+          "aborts": 0,
+          "errors": 1,
+          "hook_s": 307,
+          "sub_agents": [
+            {
+              "name": "domain-researcher",
+              "model": "gpt-6-astra",
+              "tokens": 1272271,
+              "tool_calls": 54,
+              "duration_s": 1514
+            },
+            {
+              "name": "test-architect",
+              "model": "gpt-6-astra",
+              "tokens": 316541,
+              "tool_calls": 9,
+              "duration_s": 386
+            },
+            {
+              "name": "security-identity-architect",
+              "model": "gpt-6-astra",
+              "tokens": 90146,
+              "tool_calls": 7,
+              "duration_s": 140
+            },
+            {
+              "name": "ai-systems-engineer",
+              "model": "gpt-6-astra",
+              "tokens": 1548757,
+              "tool_calls": 50,
+              "duration_s": 2160
+            },
+            {
+              "name": "ux-accessibility",
+              "model": "gpt-6-astra",
+              "tokens": 452845,
+              "tool_calls": 17,
+              "duration_s": 554
+            },
+            {
+              "name": "security-identity-architect",
+              "model": "gpt-6-astra",
+              "tokens": 393156,
+              "tool_calls": 10,
+              "duration_s": 107
+            }
+          ],
+          "sub_tool_calls": 188,
+          "converge_nudges": 0,
+          "sub_orientation_reads": [
+            "domain-researcher: AGENTS.md",
+            "domain-researcher: AGENTS.md",
+            "security-identity-architect: agent-persona-catalog.md",
+            "security-identity-architect: persona-audit.md",
+            "security-identity-architect: persona-audit.md",
+            "security-identity-architect: agent-body-of-knowledge.md",
+            "security-identity-architect: persona-cards.md"
+          ],
+          "reasoning_main": 65162,
+          "reasoning_chars": 424,
+          "intent_eligible": 23,
+          "intent_with": 23,
+          "effort": "high"
+        },
+        {
+          "turn": 11,
+          "prompt": "/updatepack",
+          "started": "2026-09-05T21:13:01Z",
+          "delivery": "idle",
+          "models": [
+            "gpt-6-astra"
+          ],
+          "families": [
+            "openai"
+          ],
+          "wall_s": 2496,
+          "main_requests": 44,
+          "sub_requests": 18,
+          "ctx_start": 632588,
+          "ctx_end": 773527,
+          "ctx_max": 773527,
+          "cache_read": 31109672,
+          "uncached_in": 186,
+          "cache_write": 870541,
+          "output": 91509,
+          "reasoning": 67585,
+          "cost_aiu": 8890.4,
+          "main_api_s": 2103,
+          "all_api_s": 2330,
+          "ttft_p50": 35.2,
+          "ttft_p90": 78.8,
+          "ttft_max": 93.9,
+          "tools": {
+            "skill": 2,
+            "view": 27,
+            "powershell": 24,
+            "rg": 3,
+            "sql": 3,
+            "task": 3,
+            "glob": 1,
+            "apply_patch": 9,
+            "ask_user": 1,
+            "task_complete": 1
+          },
+          "view_bytes": 347520,
+          "rereads": {
+            "C:\\Projects\\ai-forward\\pack\\scripts\\pack-apply.py": 6
+          },
+          "paged_full_views": 0,
+          "image_views": 0,
+          "instruction_views": [
+            "C:\\Projects\\TheTerrace-chore-pack-refresh-r61\\.github\\instructions\\testing-strategy.instructions.md",
+            "C:\\Projects\\TheTerrace-chore-pack-refresh-r61\\AGENTS.md",
+            "C:\\Projects\\TheTerrace-chore-pack-refresh-r61\\.github\\instructions\\ci-and-test-efficiency.instructions.md"
+          ],
+          "skills": {
+            "updatepack": 1,
+            "optimize-graph": 1
+          },
+          "asst_msgs": 137,
+          "asst_text_chars": 1754,
+          "goal_state": true,
+          "tier": false,
+          "nudges": 0,
+          "aborts": 0,
+          "errors": 0,
+          "hook_s": 95,
+          "sub_agents": [
+            {
+              "name": "security-identity-architect",
+              "model": "gpt-6-astra",
+              "tokens": 212752,
+              "tool_calls": 6,
+              "duration_s": 101
+            },
+            {
+              "name": "security-identity-architect",
+              "model": "gpt-6-astra",
+              "tokens": 143736,
+              "tool_calls": 4,
+              "duration_s": 72
+            },
+            {
+              "name": "python-developer",
+              "model": "gpt-6-astra",
+              "tokens": 187578,
+              "tool_calls": 5,
+              "duration_s": 80
+            }
+          ],
+          "sub_tool_calls": 15,
+          "converge_nudges": 0,
+          "sub_orientation_reads": [],
+          "reasoning_main": 61279,
+          "reasoning_chars": 2784,
+          "intent_eligible": 24,
+          "intent_with": 24,
+          "effort": "high"
+        },
+        {
+          "turn": 12,
+          "prompt": "yes commit and push/merge all",
+          "started": "2026-09-05T22:21:08Z",
+          "delivery": "idle",
+          "models": [
+            "gpt-6-astra"
+          ],
+          "families": [
+            "openai"
+          ],
+          "wall_s": 974,
+          "main_requests": 21,
+          "sub_requests": 0,
+          "ctx_start": 774972,
+          "ctx_end": 820740,
+          "ctx_max": 820740,
+          "cache_read": 16068588,
+          "uncached_in": 63,
+          "cache_write": 716381,
+          "output": 22471,
+          "reasoning": 16255,
+          "cost_aiu": 5173.3,
+          "main_api_s": 576,
+          "all_api_s": 576,
+          "ttft_p50": 16.5,
+          "ttft_p90": 39.9,
+          "ttft_max": 60.6,
+          "tools": {
+            "skill": 1,
+            "sql": 4,
+            "view": 7,
+            "powershell": 17,
+            "apply_patch": 3,
+            "glob": 2,
+            "rg": 3,
+            "vote_memory": 1,
+            "store_memory": 1,
+            "task_complete": 1
+          },
+          "view_bytes": 59932,
+          "rereads": {},
+          "paged_full_views": 0,
+          "image_views": 0,
+          "instruction_views": [],
+          "skills": {
+            "optimize-graph": 1
+          },
+          "asst_msgs": 39,
+          "asst_text_chars": 1020,
+          "goal_state": true,
+          "tier": true,
+          "nudges": 0,
+          "aborts": 2,
+          "errors": 0,
+          "hook_s": 43,
+          "sub_agents": [],
+          "sub_tool_calls": 0,
+          "converge_nudges": 0,
+          "sub_orientation_reads": [],
+          "reasoning_main": 16255,
+          "reasoning_chars": 991,
+          "intent_eligible": 17,
+          "intent_with": 17,
+          "effort": "high"
+        },
+        {
+          "turn": 13,
+          "prompt": "the proposal looks good now /specify the refactoring of the site based on the proposal, also ensure we retain our secrets and users through the refactor",
+          "started": "2026-09-05T23:49:28Z",
+          "delivery": "idle",
+          "models": [
+            "gpt-6-astra"
+          ],
+          "families": [
+            "openai"
+          ],
+          "wall_s": 1727,
+          "main_requests": 52,
+          "sub_requests": 88,
+          "ctx_start": 617917,
+          "ctx_end": 191946,
+          "ctx_max": 695933,
+          "cache_read": 21682195,
+          "uncached_in": 492,
+          "cache_write": 1193994,
+          "output": 94234,
+          "reasoning": 31574,
+          "cost_aiu": 6515.1,
+          "main_api_s": 1194,
+          "all_api_s": 1987,
+          "ttft_p50": 12.3,
+          "ttft_p90": 17.1,
+          "ttft_max": 24.4,
+          "tools": {
+            "skill": 3,
+            "view": 29,
+            "glob": 6,
+            "powershell": 23,
+            "task": 9,
+            "sql": 4,
+            "rg": 7,
+            "apply_patch": 13,
+            "read_agent": 12,
+            "write_agent": 3,
+            "vote_memory": 1,
+            "task_complete": 1
+          },
+          "view_bytes": 352512,
+          "rereads": {
+            "C:\\Projects\\TheTerrace-spec-editorial-refactor\\docs\\specs\\editorial-refactor.md": 5
+          },
+          "paged_full_views": 0,
+          "image_views": 0,
+          "instruction_views": [
+            "C:\\Projects\\TheTerrace-spec-editorial-refactor\\.github\\instructions\\ui-interaction-design.instructions.md",
+            "C:\\Projects\\TheTerrace-spec-editorial-refactor\\.github\\instructions\\technical-ui-design.instructions.md"
+          ],
+          "skills": {
+            "specify": 1,
+            "optimize-graph": 1,
+            "graphify": 1
+          },
+          "asst_msgs": 55,
+          "asst_text_chars": 741,
+          "goal_state": true,
+          "tier": true,
+          "nudges": 0,
+          "aborts": 0,
+          "errors": 0,
+          "hook_s": 228,
+          "sub_agents": [
+            {
+              "name": "data-persistence-architect",
+              "model": "gpt-6-astra",
+              "tokens": 340778,
+              "tool_calls": 8,
+              "duration_s": 453
+            },
+            {
+              "name": "security-identity-architect",
+              "model": "gpt-6-astra",
+              "tokens": 512108,
+              "tool_calls": 13,
+              "duration_s": 531
+            },
+            {
+              "name": "product-strategist",
+              "model": "gpt-6-astra",
+              "tokens": 189971,
+              "tool_calls": 5,
+              "duration_s": 66
+            },
+            {
+              "name": "ux-researcher-ia",
+              "model": "gpt-6-astra",
+              "tokens": 278415,
+              "tool_calls": 7,
+              "duration_s": 200
+            },
+            {
+              "name": "test-architect",
+              "model": "gpt-6-astra",
+              "tokens": 310379,
+              "tool_calls": 8,
+              "duration_s": 183
+            },
+            {
+              "name": "data-persistence-architect",
+              "model": "gpt-6-astra",
+              "tokens": 242676,
+              "tool_calls": 6,
+              "duration_s": 136
+            },
+            {
+              "name": "security-identity-architect",
+              "model": "gpt-6-astra",
+              "tokens": 256154,
+              "tool_calls": 7,
+              "duration_s": 139
+            },
+            {
+              "name": "ai-systems-engineer",
+              "model": "gpt-6-astra",
+              "tokens": 288068,
+              "tool_calls": 8,
+              "duration_s": 153
+            },
+            {
+              "name": "ux-accessibility",
+              "model": "gpt-6-astra",
+              "tokens": 350138,
+              "tool_calls": 8,
+              "duration_s": 157
+            }
+          ],
+          "sub_tool_calls": 76,
+          "converge_nudges": 0,
+          "sub_orientation_reads": [],
+          "reasoning_main": 15178,
+          "reasoning_chars": 1898,
+          "intent_eligible": 23,
+          "intent_with": 23,
+          "effort": "high"
+        },
+        {
+          "turn": 14,
+          "prompt": "spec approved BUT add Arsenal, Manchester City and Newcastle to the list of clubs (so 7 now) address the delivery limit /define-architecture based on the spec, ",
+          "started": "2026-09-06T02:40:10Z",
+          "delivery": "idle",
+          "models": [
+            "claude-sonnet-5",
+            "gpt-5.4-mini",
+            "gpt-6-astra"
+          ],
+          "families": [
+            "anthropic",
+            "openai"
+          ],
+          "wall_s": 6834,
+          "main_requests": 113,
+          "sub_requests": 118,
+          "ctx_start": 196256,
+          "ctx_end": 496843,
+          "ctx_max": 496843,
+          "cache_read": 44416984,
+          "uncached_in": 21014,
+          "cache_write": 1876271,
+          "output": 307829,
+          "reasoning": 186014,
+          "cost_aiu": 11731.4,
+          "main_api_s": 5207,
+          "all_api_s": 6989,
+          "ttft_p50": 23.1,
+          "ttft_p90": 77.3,
+          "ttft_max": 145.7,
+          "tools": {
+            "skill": 5,
+            "sql": 4,
+            "view": 23,
+            "powershell": 29,
+            "session_store_sql": 1,
+            "task": 14,
+            "glob": 4,
+            "rg": 10,
+            "read_agent": 19,
+            "web_fetch": 4,
+            "apply_patch": 41,
+            "write_agent": 5,
+            "stop_powershell": 1,
+            "task_complete": 1
+          },
+          "view_bytes": 418292,
+          "rereads": {
+            "C:\\Projects\\TheTerrace-architecture-editorial-seven-clubs\\docs\\architecture.md": 4
+          },
+          "paged_full_views": 0,
+          "image_views": 0,
+          "instruction_views": [
+            "C:\\Projects\\TheTerrace-architecture-editorial-seven-clubs\\.github\\instructions\\testing-strategy.instructions.md",
+            "C:\\Projects\\TheTerrace-architecture-editorial-seven-clubs\\.github\\instructions\\observability-and-instrumentation.instructions.md"
+          ],
+          "skills": {
+            "define-architecture": 1,
+            "optimize-graph": 1,
+            "graphify": 1,
+            "design-slice": 1,
+            "implement": 1
+          },
+          "asst_msgs": 302,
+          "asst_text_chars": 490,
+          "goal_state": true,
+          "tier": true,
+          "nudges": 0,
+          "aborts": 0,
+          "errors": 0,
+          "hook_s": 332,
+          "sub_agents": [
+            {
+              "name": "data-persistence-architect",
+              "model": "gpt-6-astra",
+              "tokens": 398742,
+              "tool_calls": 10,
+              "duration_s": 401
+            },
+            {
+              "name": "sre-diagnostician",
+              "model": "gpt-6-astra",
+              "tokens": 943139,
+              "tool_calls": 18,
+              "duration_s": 1031
+            },
+            {
+              "name": "test-architect",
+              "model": "gpt-5.4-mini",
+              "tokens": 40148,
+              "tool_calls": 2,
+              "duration_s": 24
+            },
+            {
+              "name": "test-architect",
+              "model": "claude-sonnet-5",
+              "tokens": 71677,
+              "tool_calls": 2,
+              "duration_s": 34
+            },
+            {
+              "name": "security-identity-architect",
+              "model": "gpt-6-astra",
+              "tokens": 558741,
+              "tool_calls": 14,
+              "duration_s": 865
+            },
+            {
+              "name": "python-developer",
+              "model": "claude-sonnet-5",
+              "tokens": 168493,
+              "tool_calls": 5,
+              "duration_s": 355
+            },
+            {
+              "name": "data-persistence-architect",
+              "model": "claude-sonnet-5",
+              "tokens": 284323,
+              "tool_calls": 7,
+              "duration_s": 155
+            },
+            {
+              "name": "distributed-systems-architect",
+              "model": "claude-sonnet-5",
+              "tokens": 154591,
+              "tool_calls": 10,
+              "duration_s": 310
+            },
+            {
+              "name": "enterprise-architect",
+              "model": "claude-sonnet-5",
+              "tokens": 258056,
+              "tool_calls": 7,
+              "duration_s": 397
+            },
+            {
+              "name": "security-identity-architect",
+              "model": "claude-sonnet-5",
+              "tokens": 123435,
+              "tool_calls": 4,
+              "duration_s": 423
+            },
+            {
+              "name": "ai-systems-engineer",
+              "model": "claude-sonnet-5",
+              "tokens": 71404,
+              "tool_calls": 1,
+              "duration_s": 143
+            },
+            {
+              "name": "test-architect",
+              "model": "claude-sonnet-5",
+              "tokens": 155707,
+              "tool_calls": 4,
+              "duration_s": 163
+            },
+            {
+              "name": "release-engineer",
+              "model": "claude-sonnet-5",
+              "tokens": 357068,
+              "tool_calls": 8,
+              "duration_s": 98
+            },
+            {
+              "name": "documentation-steward",
+              "model": "claude-sonnet-5",
+              "tokens": 1246891,
+              "tool_calls": 23,
+              "duration_s": 522
+            }
+          ],
+          "sub_tool_calls": 122,
+          "converge_nudges": 0,
+          "sub_orientation_reads": [],
+          "reasoning_main": 128637,
+          "reasoning_chars": 901,
+          "intent_eligible": 29,
+          "intent_with": 29,
+          "effort": "high"
+        },
+        {
+          "turn": 15,
+          "prompt": "/session-profiler that task took almost 2 hours, that seems quite excessive. - analyze the tasks and sub tasks and where the bottlenecks were - inventory improv",
+          "started": "2026-09-06T04:42:22Z",
+          "delivery": "idle",
+          "models": [
+            "gpt-6-astra"
+          ],
+          "families": [
+            "openai"
+          ],
+          "wall_s": 1603,
+          "main_requests": 26,
+          "sub_requests": 0,
+          "ctx_start": 500495,
+          "ctx_end": 588161,
+          "ctx_max": 588161,
+          "cache_read": 14224296,
+          "uncached_in": 78,
+          "cache_write": 91318,
+          "output": 52284,
+          "reasoning": 36034,
+          "cost_aiu": 3465.4,
+          "main_api_s": 1416,
+          "all_api_s": 1416,
+          "ttft_p50": 24.7,
+          "ttft_p90": 77.0,
+          "ttft_max": 217.6,
+          "tools": {
+            "skill": 2,
+            "fetch_copilot_cli_documentation": 1,
+            "sql": 2,
+            "powershell": 12,
+            "session_store_sql": 1,
+            "rg": 3,
+            "view": 5,
+            "apply_patch": 9,
+            "task_complete": 1
+          },
+          "view_bytes": 90670,
+          "rereads": {},
+          "paged_full_views": 0,
+          "image_views": 0,
+          "instruction_views": [],
+          "skills": {
+            "session-profiler": 1,
+            "optimize-graph": 1
+          },
+          "asst_msgs": 83,
+          "asst_text_chars": 284,
+          "goal_state": true,
+          "tier": true,
+          "nudges": 0,
+          "aborts": 0,
+          "errors": 0,
+          "hook_s": 41,
+          "sub_agents": [],
+          "sub_tool_calls": 0,
+          "converge_nudges": 0,
+          "sub_orientation_reads": [],
+          "reasoning_main": 36034,
+          "reasoning_chars": 0,
+          "intent_eligible": 12,
+          "intent_with": 12,
+          "effort": "high"
+        },
+        {
+          "turn": 16,
+          "prompt": "/specify systemic changes based on all of the proposals above P1 to P6    - for mechanical closing choose an appropriate model that improves cost and is fit-for",
+          "started": "2026-09-06T14:37:45Z",
+          "delivery": "idle",
+          "models": [
+            "gpt-5.4",
+            "gpt-6-astra"
+          ],
+          "families": [
+            "openai"
+          ],
+          "wall_s": 1012,
+          "main_requests": 18,
+          "sub_requests": 10,
+          "ctx_start": 598209,
+          "ctx_end": 648436,
+          "ctx_max": 648436,
+          "cache_read": 10818972,
+          "uncached_in": 81401,
+          "cache_write": 648433,
+          "output": 35155,
+          "reasoning": 22051,
+          "cost_aiu": 4012.2,
+          "main_api_s": 894,
+          "all_api_s": 950,
+          "ttft_p50": 18.5,
+          "ttft_p90": 74.1,
+          "ttft_max": 76.8,
+          "tools": {
+            "skill": 2,
+            "fetch_copilot_cli_documentation": 1,
+            "sql": 2,
+            "powershell": 3,
+            "view": 2,
+            "web_fetch": 2,
+            "apply_patch": 6,
+            "task": 3,
+            "list_agents": 1,
+            "write_agent": 1,
+            "task_complete": 1
+          },
+          "view_bytes": 24999,
+          "rereads": {},
+          "paged_full_views": 0,
+          "image_views": 0,
+          "instruction_views": [],
+          "skills": {
+            "specify": 1,
+            "optimize-graph": 1
+          },
+          "asst_msgs": 46,
+          "asst_text_chars": 381,
+          "goal_state": true,
+          "tier": true,
+          "nudges": 0,
+          "aborts": 0,
+          "errors": 0,
+          "hook_s": 41,
+          "sub_agents": [
+            {
+              "name": "ai-systems-engineer",
+              "model": "gpt-5.4",
+              "tokens": 110443,
+              "tool_calls": 5,
+              "duration_s": 33
+            },
+            {
+              "name": "security-identity-architect",
+              "model": "gpt-5.4",
+              "tokens": 83146,
+              "tool_calls": 3,
+              "duration_s": 30
+            },
+            {
+              "name": "security-identity-architect",
+              "model": "gpt-5.4",
+              "tokens": 40369,
+              "tool_calls": 1,
+              "duration_s": 9
+            }
+          ],
+          "sub_tool_calls": 9,
+          "converge_nudges": 0,
+          "sub_orientation_reads": [],
+          "reasoning_main": 18620,
+          "reasoning_chars": 0,
+          "intent_eligible": 3,
+          "intent_with": 3,
+          "effort": "high"
+        },
+        {
+          "turn": 17,
+          "prompt": "should budgets be static os thould they be tied to the results of the optimize-graph? or some combination therein? the mechanical closing - is this control, pro",
+          "started": "2026-09-06T14:59:15Z",
+          "delivery": "idle",
+          "models": [
+            "gpt-6-astra"
+          ],
+          "families": [
+            "openai"
+          ],
+          "wall_s": 229,
+          "main_requests": 6,
+          "sub_requests": 0,
+          "ctx_start": 649925,
+          "ctx_end": 671795,
+          "ctx_max": 671795,
+          "cache_read": 3961526,
+          "uncached_in": 18,
+          "cache_write": 23359,
+          "output": 4673,
+          "reasoning": 3285,
+          "cost_aiu": 885.8,
+          "main_api_s": 153,
+          "all_api_s": 153,
+          "ttft_p50": 16.0,
+          "ttft_p90": 35.9,
+          "ttft_max": 47.6,
+          "tools": {
+            "skill": 2,
+            "view": 5,
+            "fetch_copilot_cli_documentation": 1,
+            "rg": 2,
+            "powershell": 1,
+            "glob": 1,
+            "task_complete": 1
+          },
+          "view_bytes": 21984,
+          "rereads": {},
+          "paged_full_views": 0,
+          "image_views": 0,
+          "instruction_views": [],
+          "skills": {
+            "graphify": 1,
+            "optimize-graph": 1
+          },
+          "asst_msgs": 10,
+          "asst_text_chars": 201,
+          "goal_state": true,
+          "tier": true,
+          "nudges": 0,
+          "aborts": 0,
+          "errors": 0,
+          "hook_s": 16,
+          "sub_agents": [],
+          "sub_tool_calls": 0,
+          "converge_nudges": 0,
+          "sub_orientation_reads": [],
+          "reasoning_main": 3285,
+          "reasoning_chars": 0,
+          "intent_eligible": 1,
+          "intent_with": 1,
+          "effort": "high"
+        },
+        {
+          "turn": 18,
+          "prompt": "great /specify update the spec with the contract linkage, ensure we are tightening the controls, linkage and composition between review-discipline, contrext and",
+          "started": "2026-09-06T15:05:28Z",
+          "delivery": "idle",
+          "models": [
+            "gpt-5.4",
+            "gpt-6-astra"
+          ],
+          "families": [
+            "openai"
+          ],
+          "wall_s": 622,
+          "main_requests": 13,
+          "sub_requests": 2,
+          "ctx_start": 678960,
+          "ctx_end": 713132,
+          "ctx_max": 713132,
+          "cache_read": 9068591,
+          "uncached_in": 10176,
+          "cache_write": 41337,
+          "output": 20832,
+          "reasoning": 13539,
+          "cost_aiu": 2055.8,
+          "main_api_s": 540,
+          "all_api_s": 561,
+          "ttft_p50": 20.0,
+          "ttft_p90": 41.7,
+          "ttft_max": 50.8,
+          "tools": {
+            "skill": 3,
+            "sql": 2,
+            "powershell": 2,
+            "view": 3,
+            "apply_patch": 4,
+            "task": 1,
+            "task_complete": 1
+          },
+          "view_bytes": 37677,
+          "rereads": {},
+          "paged_full_views": 0,
+          "image_views": 0,
+          "instruction_views": [],
+          "skills": {
+            "specify": 2,
+            "optimize-graph": 1
+          },
+          "asst_msgs": 28,
+          "asst_text_chars": 418,
+          "goal_state": true,
+          "tier": true,
+          "nudges": 0,
+          "aborts": 0,
+          "errors": 0,
+          "hook_s": 25,
+          "sub_agents": [
+            {
+              "name": "security-identity-architect",
+              "model": "gpt-5.4",
+              "tokens": 46302,
+              "tool_calls": 4,
+              "duration_s": 29
+            }
+          ],
+          "sub_tool_calls": 4,
+          "converge_nudges": 0,
+          "sub_orientation_reads": [],
+          "reasoning_main": 11718,
+          "reasoning_chars": 0,
+          "intent_eligible": 2,
+          "intent_with": 2,
+          "effort": "high"
+        },
+        {
+          "turn": 19,
+          "prompt": "yes do the enforcement architecture now",
+          "started": "2026-09-06T15:54:35Z",
+          "delivery": "idle",
+          "models": [
+            "gpt-5.4",
+            "gpt-6-astra"
+          ],
+          "families": [
+            "openai"
+          ],
+          "wall_s": 2808,
+          "main_requests": 46,
+          "sub_requests": 19,
+          "ctx_start": 714585,
+          "ctx_end": 841458,
+          "ctx_max": 841458,
+          "cache_read": 35761152,
+          "uncached_in": 60290,
+          "cache_write": 841455,
+          "output": 80603,
+          "reasoning": 53208,
+          "cost_aiu": 9758.5,
+          "main_api_s": 2464,
+          "all_api_s": 2542,
+          "ttft_p50": 19.4,
+          "ttft_p90": 108.7,
+          "ttft_max": 143.7,
+          "tools": {
+            "skill": 2,
+            "fetch_copilot_cli_documentation": 1,
+            "sql": 2,
+            "powershell": 20,
+            "view": 5,
+            "rg": 1,
+            "web_fetch": 15,
+            "apply_patch": 14,
+            "task": 3,
+            "task_complete": 1
+          },
+          "view_bytes": 101486,
+          "rereads": {
+            "C:\\Users\\malla\\AppData\\Local\\Temp\\1788710284899-copilot-tool-output-3328-db4c2ff9-dcaa-47d1-9603-4161468ac590.txt": 3
+          },
+          "paged_full_views": 0,
+          "image_views": 0,
+          "instruction_views": [],
+          "skills": {
+            "define-architecture": 1,
+            "optimize-graph": 1
+          },
+          "asst_msgs": 119,
+          "asst_text_chars": 1491,
+          "goal_state": true,
+          "tier": true,
+          "nudges": 0,
+          "aborts": 0,
+          "errors": 0,
+          "hook_s": 109,
+          "sub_agents": [
+            {
+              "name": "security-identity-architect",
+              "model": "gpt-5.4",
+              "tokens": 194192,
+              "tool_calls": 19,
+              "duration_s": 53
+            },
+            {
+              "name": "security-identity-architect",
+              "model": "gpt-5.4",
+              "tokens": 235257,
+              "tool_calls": 11,
+              "duration_s": 59
+            },
+            {
+              "name": "security-identity-architect",
+              "model": "gpt-5.4",
+              "tokens": 40934,
+              "tool_calls": 2,
+              "duration_s": 11
+            }
+          ],
+          "sub_tool_calls": 32,
+          "converge_nudges": 0,
+          "sub_orientation_reads": [],
+          "reasoning_main": 48733,
+          "reasoning_chars": 0,
+          "intent_eligible": 20,
+          "intent_with": 20,
+          "effort": "high"
+        },
+        {
+          "turn": 20,
+          "prompt": "do the next steps",
+          "started": "2026-09-06T19:02:42Z",
+          "delivery": "idle",
+          "models": [
+            "gpt-5.4",
+            "gpt-6-astra"
+          ],
+          "families": [
+            "openai"
+          ],
+          "wall_s": 2474,
+          "main_requests": 44,
+          "sub_requests": 12,
+          "ctx_start": 843020,
+          "ctx_end": 163901,
+          "ctx_max": 919577,
+          "cache_read": 26634270,
+          "uncached_in": 64450,
+          "cache_write": 1694368,
+          "output": 76715,
+          "reasoning": 41233,
+          "cost_aiu": 9763.6,
+          "main_api_s": 2236,
+          "all_api_s": 2291,
+          "ttft_p50": 11.4,
+          "ttft_p90": 35.9,
+          "ttft_max": 346.1,
+          "tools": {
+            "skill": 2,
+            "sql": 4,
+            "view": 20,
+            "powershell": 18,
+            "web_fetch": 8,
+            "apply_patch": 16,
+            "task": 2,
+            "rg": 7,
+            "vote_memory": 1,
+            "task_complete": 1
+          },
+          "view_bytes": 206258,
+          "rereads": {
+            "C:\\Projects\\TheTerrace-design-agent-enforcement-a1\\docs\\security\\threat-model.md": 3,
+            "C:\\Projects\\TheTerrace-design-agent-enforcement-a1\\docs\\security\\privacy-review.md": 3
+          },
+          "paged_full_views": 0,
+          "image_views": 0,
+          "instruction_views": [],
+          "skills": {
+            "design-slice": 1,
+            "optimize-graph": 1
+          },
+          "asst_msgs": 99,
+          "asst_text_chars": 410,
+          "goal_state": true,
+          "tier": true,
+          "nudges": 0,
+          "aborts": 0,
+          "errors": 0,
+          "hook_s": 108,
+          "sub_agents": [
+            {
+              "name": "security-identity-architect",
+              "model": "gpt-5.4",
+              "tokens": 179363,
+              "tool_calls": 9,
+              "duration_s": 48
+            },
+            {
+              "name": "security-identity-architect",
+              "model": "gpt-5.4",
+              "tokens": 119041,
+              "tool_calls": 5,
+              "duration_s": 28
+            }
+          ],
+          "sub_tool_calls": 14,
+          "converge_nudges": 0,
+          "sub_orientation_reads": [],
+          "reasoning_main": 38223,
+          "reasoning_chars": 3434,
+          "intent_eligible": 18,
+          "intent_with": 18,
+          "effort": "high"
+        },
+        {
+          "turn": 21,
+          "prompt": "yes do next step",
+          "started": "2026-09-06T19:58:33Z",
+          "delivery": "idle",
+          "models": [
+            "gpt-5.4",
+            "gpt-5.4-mini",
+            "gpt-5.6-sol",
+            "gpt-6-astra"
+          ],
+          "families": [
+            "openai"
+          ],
+          "wall_s": 587,
+          "main_requests": 12,
+          "sub_requests": 25,
+          "ctx_start": 164749,
+          "ctx_end": 226783,
+          "ctx_max": 226783,
+          "cache_read": 3011112,
+          "uncached_in": 104735,
+          "cache_write": 147621,
+          "output": 34567,
+          "reasoning": 19326,
+          "cost_aiu": 490.5,
+          "main_api_s": 286,
+          "all_api_s": 511,
+          "ttft_p50": 9.0,
+          "ttft_p90": 30.6,
+          "ttft_max": 31.1,
+          "tools": {
+            "skill": 2,
+            "view": 14,
+            "glob": 5,
+            "sql": 2,
+            "powershell": 4,
+            "task": 3,
+            "apply_patch": 2,
+            "rg": 2,
+            "session_store_sql": 1,
+            "write_agent": 1
+          },
+          "view_bytes": 339826,
+          "rereads": {},
+          "paged_full_views": 0,
+          "image_views": 0,
+          "instruction_views": [
+            "C:\\Projects\\TheTerrace-design-agent-enforcement-a1\\.github\\instructions\\testing-strategy.instructions.md",
+            "C:\\Projects\\TheTerrace-design-agent-enforcement-a1\\.github\\instructions\\observability-and-instrumentation.instructions.md",
+            "C:\\Projects\\TheTerrace-feature-agent-enforcement-a1\\.github\\instructions\\ci-and-test-efficiency.instructions.md"
+          ],
+          "skills": {
+            "implement": 1,
+            "optimize-graph": 1
+          },
+          "asst_msgs": 16,
+          "asst_text_chars": 1257,
+          "goal_state": true,
+          "tier": true,
+          "nudges": 0,
+          "aborts": 0,
+          "errors": 0,
+          "hook_s": 107,
+          "sub_agents": [
+            {
+              "name": "security-identity-architect",
+              "model": "gpt-5.4",
+              "tokens": 151098,
+              "tool_calls": 8,
+              "duration_s": 49
+            },
+            {
+              "name": "data-persistence-architect",
+              "model": "gpt-5.4",
+              "tokens": 311744,
+              "tool_calls": 17,
+              "duration_s": 74
+            },
+            {
+              "name": "test-architect",
+              "model": "gpt-5.4-mini",
+              "tokens": 66639,
+              "tool_calls": 2,
+              "duration_s": 21
+            }
+          ],
+          "sub_tool_calls": 51,
+          "converge_nudges": 0,
+          "sub_orientation_reads": [],
+          "reasoning_main": 5121,
+          "reasoning_chars": 2234,
+          "intent_eligible": 4,
+          "intent_with": 4,
+          "effort": "high"
+        },
+        {
+          "turn": 22,
+          "prompt": "finish A1 continue autonomously until A1 is complete then give me the standard tables with completed and next steps",
+          "started": "2026-09-06T20:08:54Z",
+          "delivery": "idle",
+          "models": [
+            "gpt-5.6-sol",
+            "gpt-6-astra"
+          ],
+          "families": [
+            "openai"
+          ],
+          "wall_s": 2157,
+          "main_requests": 15,
+          "sub_requests": 117,
+          "ctx_start": 227348,
+          "ctx_end": 258580,
+          "ctx_max": 258580,
+          "cache_read": 23903463,
+          "uncached_in": 396,
+          "cache_write": 198705,
+          "output": 105146,
+          "reasoning": 29584,
+          "cost_aiu": 1533.7,
+          "main_api_s": 228,
+          "all_api_s": 1683,
+          "ttft_p50": 10.1,
+          "ttft_p90": 32.9,
+          "ttft_max": 40.4,
+          "tools": {
+            "read_agent": 2,
+            "sql": 1,
+            "view": 9,
+            "glob": 3,
+            "powershell": 6,
+            "write_agent": 1,
+            "task": 2,
+            "apply_patch": 5,
+            "rg": 1
+          },
+          "view_bytes": 106378,
+          "rereads": {},
+          "paged_full_views": 0,
+          "image_views": 0,
+          "instruction_views": [],
+          "skills": {},
+          "asst_msgs": 19,
+          "asst_text_chars": 0,
+          "goal_state": false,
+          "tier": false,
+          "nudges": 0,
+          "aborts": 0,
+          "errors": 0,
+          "hook_s": 189,
+          "sub_agents": [
+            {
+              "name": "python-developer",
+              "model": "gpt-5.6-sol",
+              "tokens": 19749597,
+              "tool_calls": 172,
+              "duration_s": 2208
+            }
+          ],
+          "sub_tool_calls": 154,
+          "converge_nudges": 0,
+          "sub_orientation_reads": [],
+          "reasoning_main": 4595,
+          "reasoning_chars": 1487,
+          "intent_eligible": 6,
+          "intent_with": 6,
+          "effort": "high"
+        },
+        {
+          "turn": 23,
+          "prompt": "i did not ask for something within two hours i was pointing out the task this is all in response to was excessively long AS IS THIS ONE when i do the same work ",
+          "started": "2026-09-06T20:44:36Z",
+          "delivery": "steering",
+          "models": [
+            "gpt-5.4",
+            "gpt-5.4-mini",
+            "gpt-5.6-sol",
+            "gpt-6-astra"
+          ],
+          "families": [
+            "openai"
+          ],
+          "wall_s": 1356,
+          "main_requests": 29,
+          "sub_requests": 62,
+          "ctx_start": 260052,
+          "ctx_end": 317886,
+          "ctx_max": 317886,
+          "cache_read": 15739424,
+          "uncached_in": 156609,
+          "cache_write": 317898,
+          "output": 72060,
+          "reasoning": 40984,
+          "cost_aiu": 2389.8,
+          "main_api_s": 755,
+          "all_api_s": 1233,
+          "ttft_p50": 18.2,
+          "ttft_p90": 36.4,
+          "ttft_max": 38.6,
+          "tools": {
+            "write_agent": 5,
+            "apply_patch": 6,
+            "read_agent": 6,
+            "view": 10,
+            "rg": 6,
+            "task": 1,
+            "powershell": 9,
+            "sql": 2,
+            "task_complete": 1
+          },
+          "view_bytes": 112750,
+          "rereads": {
+            "C:\\Projects\\TheTerrace-feature-agent-enforcement-a1\\tools\\agent_control\\supervisor.py": 3
+          },
+          "paged_full_views": 0,
+          "image_views": 0,
+          "instruction_views": [],
+          "skills": {},
+          "asst_msgs": 40,
+          "asst_text_chars": 286,
+          "goal_state": false,
+          "tier": false,
+          "nudges": 0,
+          "aborts": 0,
+          "errors": 0,
+          "hook_s": 178,
+          "sub_agents": [
+            {
+              "name": "security-identity-architect",
+              "model": "gpt-5.4",
+              "tokens": 290070,
+              "tool_calls": 22,
+              "duration_s": 335
+            },
+            {
+              "name": "test-architect",
+              "model": "gpt-5.4",
+              "tokens": 473624,
+              "tool_calls": 30,
+              "duration_s": 511
+            },
+            {
+              "name": "release-engineer",
+              "model": "gpt-5.4-mini",
+              "tokens": 91103,
+              "tool_calls": 4,
+              "duration_s": 18
+            }
+          ],
+          "sub_tool_calls": 100,
+          "converge_nudges": 0,
+          "sub_orientation_reads": [],
+          "reasoning_main": 15860,
+          "reasoning_chars": 882,
+          "intent_eligible": 9,
+          "intent_with": 9,
+          "effort": "high"
+        },
+        {
+          "turn": 24,
+          "prompt": "stay on task and land A1 and A2 adapters but really... stay on task",
+          "started": "2026-09-06T21:27:15Z",
+          "delivery": "idle",
+          "models": [
+            "claude-sonnet-5",
+            "gpt-5.4",
+            "gpt-6-astra"
+          ],
+          "families": [
+            "anthropic",
+            "openai"
+          ],
+          "wall_s": 1910,
+          "main_requests": 31,
+          "sub_requests": 20,
+          "ctx_start": 319191,
+          "ctx_end": 423101,
+          "ctx_max": 423101,
+          "cache_read": 11901825,
+          "uncached_in": 24075,
+          "cache_write": 405998,
+          "output": 61204,
+          "reasoning": 40626,
+          "cost_aiu": 3454.6,
+          "main_api_s": 1532,
+          "all_api_s": 1645,
+          "ttft_p50": 22.5,
+          "ttft_p90": 104.3,
+          "ttft_max": 307.4,
+          "tools": {
+            "skill": 3,
+            "sql": 1,
+            "view": 13,
+            "powershell": 20,
+            "task": 2,
+            "rg": 3,
+            "apply_patch": 7,
+            "read_agent": 1,
+            "web_fetch": 9,
+            "read_powershell": 1,
+            "glob": 1
+          },
+          "view_bytes": 185590,
+          "rereads": {},
+          "paged_full_views": 0,
+          "image_views": 0,
+          "instruction_views": [],
+          "skills": {
+            "design-slice": 1,
+            "optimize-graph": 1,
+            "implement": 1
+          },
+          "asst_msgs": 85,
+          "asst_text_chars": 281,
+          "goal_state": true,
+          "tier": true,
+          "nudges": 0,
+          "aborts": 0,
+          "errors": 0,
+          "hook_s": 101,
+          "sub_agents": [
+            {
+              "name": "domain-researcher",
+              "model": "claude-sonnet-5",
+              "tokens": 834948,
+              "tool_calls": 26,
+              "duration_s": 532
+            },
+            {
+              "name": "security-identity-architect",
+              "model": "gpt-5.4",
+              "tokens": 62300,
+              "tool_calls": 4,
+              "duration_s": 23
+            }
+          ],
+          "sub_tool_calls": 30,
+          "converge_nudges": 0,
+          "sub_orientation_reads": [],
+          "reasoning_main": 38123,
+          "reasoning_chars": 0,
+          "intent_eligible": 20,
+          "intent_with": 20,
+          "effort": "high"
+        },
+        {
+          "turn": 25,
+          "prompt": "sounds like maybe you are on more tagents? check - are you focused and on task?",
+          "started": "2026-09-06T21:58:34Z",
+          "delivery": "steering",
+          "models": [
+            "gpt-6-astra"
+          ],
+          "families": [
+            "openai"
+          ],
+          "wall_s": 234,
+          "main_requests": 5,
+          "sub_requests": 0,
+          "ctx_start": 424559,
+          "ctx_end": 434584,
+          "ctx_max": 434584,
+          "cache_read": 2138414,
+          "uncached_in": 15,
+          "cache_write": 11483,
+          "output": 7407,
+          "reasoning": 6361,
+          "cost_aiu": 512.0,
+          "main_api_s": 227,
+          "all_api_s": 227,
+          "ttft_p50": 32.2,
+          "ttft_p90": 100.6,
+          "ttft_max": 100.6,
+          "tools": {
+            "powershell": 3,
+            "view": 2
+          },
+          "view_bytes": 25502,
+          "rereads": {},
+          "paged_full_views": 0,
+          "image_views": 0,
+          "instruction_views": [],
+          "skills": {},
+          "asst_msgs": 14,
+          "asst_text_chars": 374,
+          "goal_state": false,
+          "tier": false,
+          "nudges": 0,
+          "aborts": 0,
+          "errors": 0,
+          "hook_s": 6,
+          "sub_agents": [],
+          "sub_tool_calls": 0,
+          "converge_nudges": 0,
+          "sub_orientation_reads": [],
+          "reasoning_main": 6361,
+          "reasoning_chars": 893,
+          "intent_eligible": 3,
+          "intent_with": 3,
+          "effort": "high"
+        },
+        {
+          "turn": 26,
+          "prompt": "are you getting off task again?",
+          "started": "2026-09-06T22:02:45Z",
+          "delivery": "steering",
+          "models": [
+            "gpt-5.4",
+            "gpt-6-astra"
+          ],
+          "families": [
+            "openai"
+          ],
+          "wall_s": 1119,
+          "main_requests": 24,
+          "sub_requests": 4,
+          "ctx_start": 436472,
+          "ctx_end": 484425,
+          "ctx_max": 484425,
+          "cache_read": 10806887,
+          "uncached_in": 16284,
+          "cache_write": 423384,
+          "output": 37104,
+          "reasoning": 27033,
+          "cost_aiu": 3459.3,
+          "main_api_s": 1081,
+          "all_api_s": 1105,
+          "ttft_p50": 34.9,
+          "ttft_p90": 62.0,
+          "ttft_max": 187.1,
+          "tools": {
+            "task": 1,
+            "rg": 1,
+            "apply_patch": 7,
+            "powershell": 10,
+            "write_agent": 2,
+            "read_agent": 2,
+            "sql": 1,
+            "view": 1,
+            "web_fetch": 3
+          },
+          "view_bytes": 4712,
+          "rereads": {},
+          "paged_full_views": 0,
+          "image_views": 0,
+          "instruction_views": [],
+          "skills": {},
+          "asst_msgs": 64,
+          "asst_text_chars": 275,
+          "goal_state": false,
+          "tier": false,
+          "nudges": 0,
+          "aborts": 0,
+          "errors": 0,
+          "hook_s": 34,
+          "sub_agents": [],
+          "sub_tool_calls": 4,
+          "converge_nudges": 0,
+          "sub_orientation_reads": [],
+          "reasoning_main": 26153,
+          "reasoning_chars": 456,
+          "intent_eligible": 10,
+          "intent_with": 10,
+          "effort": "high"
+        }
+      ]
+    },
+    {
+      "facts": {
+        "harness": "copilot",
+        "id": "8c5a4abc-6849-49dd-912a-cd3a79d698cd",
+        "title": "",
+        "cwd": "C:\\projects\\theterrace",
+        "started": "2026-09-05T23:32:51Z",
+        "updated": "2026-09-05T23:32:51Z",
+        "settings": {
+          "model": "claude-opus-4.8",
+          "contextTier": "long_context",
+          "effortLevel": "high"
+        },
+        "prefix_chars": null,
+        "prefix_tokens_est": null,
+        "prefix_first_chars": null,
+        "prefix_blocks": [],
+        "prefix_note": "not recorded",
+        "main_line": {
+          "main_requests": 0,
+          "sub_requests": 0,
+          "main_cost": 0,
+          "sub_cost": 0,
+          "main_pct": null,
+          "cost_per_main_request": null,
+          "cost_per_sub_request": null,
+          "cost_ratio": null
+        },
+        "compactions": 0,
+        "events": 0,
+        "usage_rows": 0
+      },
+      "turns": []
+    },
+    {
+      "facts": {
+        "harness": "copilot",
+        "id": "61c83fa4-6442-4703-820c-02cbb02d0b6b",
+        "title": "",
+        "cwd": "C:\\projects\\theterrace",
+        "started": "2026-09-04T23:38:14Z",
+        "updated": "2026-09-04T23:38:14Z",
+        "settings": {
+          "model": "claude-opus-4.8",
+          "contextTier": "long_context",
+          "effortLevel": "high"
+        },
+        "prefix_chars": null,
+        "prefix_tokens_est": null,
+        "prefix_first_chars": null,
+        "prefix_blocks": [],
+        "prefix_note": "not recorded",
+        "main_line": {
+          "main_requests": 0,
+          "sub_requests": 0,
+          "main_cost": 0,
+          "sub_cost": 0,
+          "main_pct": null,
+          "cost_per_main_request": null,
+          "cost_per_sub_request": null,
+          "cost_ratio": null
+        },
+        "compactions": 0,
+        "events": 0,
+        "usage_rows": 0
+      },
+      "turns": []
+    },
+    {
+      "facts": {
+        "harness": "copilot",
+        "id": "c61859bd-0e63-4947-b5b6-134d9df87ac4",
+        "title": "",
+        "cwd": "C:\\Projects\\TheTerrace",
+        "started": "2026-09-03T22:37:03Z",
+        "updated": "2026-09-03T22:37:03Z",
+        "settings": {
+          "model": "claude-opus-4.8",
+          "contextTier": "long_context",
+          "effortLevel": "high"
+        },
+        "prefix_chars": null,
+        "prefix_tokens_est": null,
+        "prefix_first_chars": null,
+        "prefix_blocks": [],
+        "prefix_note": "not recorded",
+        "main_line": {
+          "main_requests": 0,
+          "sub_requests": 0,
+          "main_cost": 0,
+          "sub_cost": 0,
+          "main_pct": null,
+          "cost_per_main_request": null,
+          "cost_per_sub_request": null,
+          "cost_ratio": null
+        },
+        "compactions": 0,
+        "events": 0,
+        "usage_rows": 0
+      },
+      "turns": []
+    },
+    {
+      "facts": {
+        "harness": "copilot",
+        "id": "68051e5e-4af9-4aef-beeb-9dade176c983",
+        "title": "Post Hello World to Loomkeeper",
+        "cwd": "C:\\Projects\\TheTerrace",
+        "started": "2026-09-03T19:22:16Z",
+        "updated": "2026-09-03T19:26:31Z",
+        "settings": {
+          "model": "claude-opus-4.8",
+          "contextTier": "long_context",
+          "effortLevel": "high"
+        },
+        "prefix_chars": 1027295,
+        "prefix_tokens_est": 290196,
+        "prefix_first_chars": 1027295,
+        "prefix_blocks": [
+          57712,
+          58511
+        ],
+        "prefix_note": "measured chars of the latest main prefix; tokens are an estimate at 3.54 chars/token",
+        "main_line": {
+          "main_requests": 7,
+          "sub_requests": 0,
+          "main_cost": 375.0,
+          "sub_cost": 0,
+          "main_pct": 100.0,
+          "cost_per_main_request": 53.6,
+          "cost_per_sub_request": null,
+          "cost_ratio": null
+        },
+        "compactions": 0,
+        "events": 86,
+        "usage_rows": 7
+      },
+      "turns": [
+        {
+          "turn": 0,
+          "prompt": "post \"hello world\" to the loomkeeper board",
+          "started": "2026-09-03T19:26:30Z",
+          "delivery": "idle",
+          "models": [
+            "claude-opus-4.8"
+          ],
+          "families": [
+            "anthropic"
+          ],
+          "wall_s": 59,
+          "main_requests": 6,
+          "sub_requests": 0,
+          "ctx_start": 396398,
+          "ctx_end": 399028,
+          "ctx_max": 399028,
+          "cache_read": 1987141,
+          "uncached_in": 12,
+          "cache_write": 399026,
+          "output": 1686,
+          "reasoning": 608,
+          "cost_aiu": 353.0,
+          "main_api_s": 38,
+          "all_api_s": 38,
+          "ttft_p50": 3.9,
+          "ttft_p90": 5.0,
+          "ttft_max": 9.1,
+          "tools": {
+            "tool_search_tool": 2,
+            "extensions_manage": 1,
+            "grep": 1,
+            "ask_user": 1
+          },
+          "view_bytes": 0,
+          "rereads": {},
+          "paged_full_views": 0,
+          "image_views": 0,
+          "instruction_views": [],
+          "skills": {},
+          "asst_msgs": 6,
+          "asst_text_chars": 1110,
+          "goal_state": false,
+          "tier": false,
+          "nudges": 0,
+          "aborts": 0,
+          "errors": 0,
+          "hook_s": 5,
+          "sub_agents": [],
+          "sub_tool_calls": 0,
+          "converge_nudges": 0,
+          "sub_orientation_reads": [],
+          "reasoning_main": 608,
+          "reasoning_chars": 1129,
+          "intent_eligible": 0,
+          "intent_with": 0,
+          "effort": "high"
+        },
+        {
+          "turn": 1,
+          "prompt": "are you aware of being registered with loomkeeper for cross agent collaboration in the current tool?",
+          "started": "2026-09-03T19:29:52Z",
+          "delivery": "idle",
+          "models": [
+            "claude-opus-4.8"
+          ],
+          "families": [
+            "anthropic"
+          ],
+          "wall_s": 15,
+          "main_requests": 1,
+          "sub_requests": 0,
+          "ctx_start": 399358,
+          "ctx_end": 399358,
+          "ctx_max": 399358,
+          "cache_read": 399026,
+          "uncached_in": 2,
+          "cache_write": 330,
+          "output": 744,
+          "reasoning": 355,
+          "cost_aiu": 22.0,
+          "main_api_s": 15,
+          "all_api_s": 15,
+          "ttft_p50": 5.8,
+          "ttft_p90": 5.8,
+          "ttft_max": 5.8,
+          "tools": {},
+          "view_bytes": 0,
+          "rereads": {},
+          "paged_full_views": 0,
+          "image_views": 0,
+          "instruction_views": [],
+          "skills": {},
+          "asst_msgs": 1,
+          "asst_text_chars": 1126,
+          "goal_state": false,
+          "tier": false,
+          "nudges": 0,
+          "aborts": 0,
+          "errors": 0,
+          "hook_s": 0,
+          "sub_agents": [],
+          "sub_tool_calls": 0,
+          "converge_nudges": 0,
+          "sub_orientation_reads": [],
+          "reasoning_main": 355,
+          "reasoning_chars": 323,
+          "intent_eligible": 0,
+          "intent_with": 0,
+          "effort": "high"
+        }
+      ]
+    },
+    {
+      "facts": {
+        "harness": "copilot",
+        "id": "cac6e573-3b63-479a-8c71-2d215bc2e2ea",
+        "title": "Conduct Forensic Review",
+        "cwd": "C:\\Projects\\TheTerrace",
+        "started": "2026-09-02T22:25:08Z",
+        "updated": "2026-09-02T22:25:56Z",
+        "settings": {
+          "model": "claude-opus-4.8",
+          "contextTier": "long_context",
+          "effortLevel": "high"
+        },
+        "prefix_chars": 1030133,
+        "prefix_tokens_est": 290998,
+        "prefix_first_chars": 1026431,
+        "prefix_blocks": [
+          57712,
+          58511
+        ],
+        "prefix_note": "measured chars of the latest main prefix; tokens are an estimate at 3.54 chars/token",
+        "main_line": {
+          "main_requests": 30,
+          "sub_requests": 0,
+          "main_cost": 1500.5,
+          "sub_cost": 0,
+          "main_pct": 100.0,
+          "cost_per_main_request": 50.0,
+          "cost_per_sub_request": null,
+          "cost_ratio": null
+        },
+        "compactions": 0,
+        "events": 343,
+        "usage_rows": 30
+      },
+      "turns": [
+        {
+          "turn": 0,
+          "prompt": "/forensicreview",
+          "started": "2026-09-02T22:25:55Z",
+          "delivery": "idle",
+          "models": [
+            "claude-opus-4.8"
+          ],
+          "families": [
+            "anthropic"
+          ],
+          "wall_s": 1339,
+          "main_requests": 29,
+          "sub_requests": 0,
+          "ctx_start": 400443,
+          "ctx_end": 460669,
+          "ctx_max": 460669,
+          "cache_read": 11742797,
+          "uncached_in": 58,
+          "cache_write": 861108,
+          "output": 33229,
+          "reasoning": 14676,
+          "cost_aiu": 1208.4,
+          "main_api_s": 524,
+          "all_api_s": 524,
+          "ttft_p50": 5.8,
+          "ttft_p90": 6.7,
+          "ttft_max": 9.6,
+          "tools": {
+            "view": 8,
+            "powershell": 24,
+            "sql": 3,
+            "read_powershell": 2,
+            "create": 1,
+            "edit": 1
+          },
+          "view_bytes": 46034,
+          "rereads": {},
+          "paged_full_views": 0,
+          "image_views": 0,
+          "instruction_views": [],
+          "skills": {},
+          "asst_msgs": 29,
+          "asst_text_chars": 7029,
+          "goal_state": false,
+          "tier": false,
+          "nudges": 0,
+          "aborts": 0,
+          "errors": 0,
+          "hook_s": 24,
+          "sub_agents": [],
+          "sub_tool_calls": 0,
+          "converge_nudges": 0,
+          "sub_orientation_reads": [],
+          "reasoning_main": 14676,
+          "reasoning_chars": 22360,
+          "intent_eligible": 24,
+          "intent_with": 24,
+          "effort": "high"
+        },
+        {
+          "turn": 1,
+          "prompt": "(harness completion nudge)",
+          "started": "2026-09-02T22:48:10Z",
+          "delivery": "idle",
+          "models": [
+            "claude-opus-4.8"
+          ],
+          "families": [
+            "anthropic"
+          ],
+          "wall_s": 20,
+          "main_requests": 1,
+          "sub_requests": 0,
+          "ctx_start": 463726,
+          "ctx_end": 463726,
+          "ctx_max": 463726,
+          "cache_read": 0,
+          "uncached_in": 2,
+          "cache_write": 463724,
+          "output": 913,
+          "reasoning": 0,
+          "cost_aiu": 292.1,
+          "main_api_s": 20,
+          "all_api_s": 20,
+          "ttft_p50": 7.2,
+          "ttft_p90": 7.2,
+          "ttft_max": 7.2,
+          "tools": {
+            "task_complete": 1
+          },
+          "view_bytes": 0,
+          "rereads": {},
+          "paged_full_views": 0,
+          "image_views": 0,
+          "instruction_views": [],
+          "skills": {},
+          "asst_msgs": 1,
+          "asst_text_chars": 178,
+          "goal_state": false,
+          "tier": false,
+          "nudges": 1,
+          "aborts": 0,
+          "errors": 0,
+          "hook_s": 1,
+          "sub_agents": [],
+          "sub_tool_calls": 0,
+          "converge_nudges": 0,
+          "sub_orientation_reads": [],
+          "reasoning_main": 0,
+          "reasoning_chars": 0,
+          "intent_eligible": 0,
+          "intent_with": 0,
+          "effort": "high"
+        }
+      ]
+    },
+    {
+      "facts": {
+        "harness": "copilot",
+        "id": "4df84d26-392c-498b-9397-d927e6354534",
+        "title": "",
+        "cwd": "C:\\Projects\\TheTerrace",
+        "started": "2026-09-02T22:24:21Z",
+        "updated": "2026-09-02T22:24:21Z",
+        "settings": {
+          "model": "claude-opus-4.8",
+          "contextTier": "long_context",
+          "effortLevel": "high"
+        },
+        "prefix_chars": null,
+        "prefix_tokens_est": null,
+        "prefix_first_chars": null,
+        "prefix_blocks": [],
+        "prefix_note": "not recorded",
+        "main_line": {
+          "main_requests": 0,
+          "sub_requests": 0,
+          "main_cost": 0,
+          "sub_cost": 0,
+          "main_pct": null,
+          "cost_per_main_request": null,
+          "cost_per_sub_request": null,
+          "cost_ratio": null
+        },
+        "compactions": 0,
+        "events": 0,
+        "usage_rows": 0
+      },
+      "turns": []
+    },
+    {
+      "facts": {
+        "harness": "copilot",
+        "id": "2e3bba2d-962d-462b-80cc-144c262fa072",
+        "title": "Notify Loomkeeper Board",
+        "cwd": "C:\\Projects\\TheTerrace",
+        "started": "2026-09-02T21:53:37Z",
+        "updated": "2026-09-02T21:54:25Z",
+        "settings": {
+          "model": "claude-opus-4.8",
+          "contextTier": "long_context",
+          "effortLevel": "high"
+        },
+        "prefix_chars": 1026431,
+        "prefix_tokens_est": 289952,
+        "prefix_first_chars": 1026431,
+        "prefix_blocks": [
+          57712,
+          58511
+        ],
+        "prefix_note": "measured chars of the latest main prefix; tokens are an estimate at 3.54 chars/token",
+        "main_line": {
+          "main_requests": 5,
+          "sub_requests": 0,
+          "main_cost": 340.1,
+          "sub_cost": 0,
+          "main_pct": 100.0,
+          "cost_per_main_request": 68.0,
+          "cost_per_sub_request": null,
+          "cost_ratio": null
+        },
+        "compactions": 0,
+        "events": 79,
+        "usage_rows": 5
+      },
+      "turns": [
+        {
+          "turn": 0,
+          "prompt": "send a message to the loomkeeper board to let the other agents know you are here",
+          "started": "2026-09-02T21:54:25Z",
+          "delivery": "idle",
+          "models": [
+            "claude-opus-4.8"
+          ],
+          "families": [
+            "anthropic"
+          ],
+          "wall_s": 51,
+          "main_requests": 5,
+          "sub_requests": 0,
+          "ctx_start": 395876,
+          "ctx_end": 410662,
+          "ctx_max": 410662,
+          "cache_read": 1609684,
+          "uncached_in": 10,
+          "cache_write": 410660,
+          "output": 1176,
+          "reasoning": 403,
+          "cost_aiu": 340.1,
+          "main_api_s": 27,
+          "all_api_s": 27,
+          "ttft_p50": 4.7,
+          "ttft_p90": 7.7,
+          "ttft_max": 7.7,
+          "tools": {
+            "grep": 3,
+            "glob": 1,
+            "powershell": 1,
+            "tool_search_tool": 1,
+            "extensions_manage": 1
+          },
+          "view_bytes": 0,
+          "rereads": {},
+          "paged_full_views": 0,
+          "image_views": 0,
+          "instruction_views": [],
+          "skills": {},
+          "asst_msgs": 5,
+          "asst_text_chars": 0,
+          "goal_state": false,
+          "tier": false,
+          "nudges": 0,
+          "aborts": 1,
+          "errors": 0,
+          "hook_s": 5,
+          "sub_agents": [],
+          "sub_tool_calls": 0,
+          "converge_nudges": 0,
+          "sub_orientation_reads": [],
+          "reasoning_main": 403,
+          "reasoning_chars": 851,
+          "intent_eligible": 1,
+          "intent_with": 1,
+          "effort": "high"
+        }
+      ]
+    },
+    {
+      "facts": {
+        "harness": "copilot",
+        "id": "db437c5a-4513-4e1d-aee7-6c9ba99ac549",
+        "title": "",
+        "cwd": "C:\\Projects\\TheTerrace",
+        "started": "2026-09-02T21:50:36Z",
+        "updated": "2026-09-02T21:50:36Z",
+        "settings": {
+          "model": "claude-opus-4.8",
+          "contextTier": "long_context",
+          "effortLevel": "high"
+        },
+        "prefix_chars": null,
+        "prefix_tokens_est": null,
+        "prefix_first_chars": null,
+        "prefix_blocks": [],
+        "prefix_note": "not recorded",
+        "main_line": {
+          "main_requests": 0,
+          "sub_requests": 0,
+          "main_cost": 0,
+          "sub_cost": 0,
+          "main_pct": null,
+          "cost_per_main_request": null,
+          "cost_per_sub_request": null,
+          "cost_ratio": null
+        },
+        "compactions": 0,
+        "events": 0,
+        "usage_rows": 0
+      },
+      "turns": []
+    },
+    {
+      "facts": {
+        "harness": "copilot",
+        "id": "5e3c03d2-c27d-4fef-b684-4e8b7642c511",
+        "title": "",
+        "cwd": "C:\\Projects\\TheTerrace",
+        "started": "2026-09-02T21:11:08Z",
+        "updated": "2026-09-02T21:11:08Z",
+        "settings": {
+          "model": "claude-opus-4.8",
+          "contextTier": "long_context",
+          "effortLevel": "high"
+        },
+        "prefix_chars": null,
+        "prefix_tokens_est": null,
+        "prefix_first_chars": null,
+        "prefix_blocks": [],
+        "prefix_note": "not recorded",
+        "main_line": {
+          "main_requests": 0,
+          "sub_requests": 0,
+          "main_cost": 0,
+          "sub_cost": 0,
+          "main_pct": null,
+          "cost_per_main_request": null,
+          "cost_per_sub_request": null,
+          "cost_ratio": null
+        },
+        "compactions": 0,
+        "events": 0,
+        "usage_rows": 0
+      },
+      "turns": []
+    },
+    {
+      "facts": {
+        "harness": "copilot",
+        "id": "f387107c-1d1c-48c5-98b3-72446b9e85e6",
+        "title": "",
+        "cwd": "C:\\Projects\\TheTerrace",
+        "started": "2026-09-02T21:09:56Z",
+        "updated": "2026-09-02T21:09:56Z",
+        "settings": {
+          "model": "claude-opus-4.8",
+          "contextTier": "long_context",
+          "effortLevel": "high"
+        },
+        "prefix_chars": null,
+        "prefix_tokens_est": null,
+        "prefix_first_chars": null,
+        "prefix_blocks": [],
+        "prefix_note": "not recorded",
+        "main_line": {
+          "main_requests": 0,
+          "sub_requests": 0,
+          "main_cost": 0,
+          "sub_cost": 0,
+          "main_pct": null,
+          "cost_per_main_request": null,
+          "cost_per_sub_request": null,
+          "cost_ratio": null
+        },
+        "compactions": 0,
+        "events": 0,
+        "usage_rows": 0
+      },
+      "turns": []
+    },
+    {
+      "facts": {
+        "harness": "copilot",
+        "id": "d459b876-a841-40f6-aedd-b2e8c2d55454",
+        "title": "",
+        "cwd": "C:\\Projects\\TheTerrace",
+        "started": "2026-09-02T20:30:05Z",
+        "updated": "2026-09-02T20:30:05Z",
+        "settings": {
+          "model": "claude-opus-4.8",
+          "contextTier": "long_context",
+          "effortLevel": "high"
+        },
+        "prefix_chars": null,
+        "prefix_tokens_est": null,
+        "prefix_first_chars": null,
+        "prefix_blocks": [],
+        "prefix_note": "not recorded",
+        "main_line": {
+          "main_requests": 0,
+          "sub_requests": 0,
+          "main_cost": 0,
+          "sub_cost": 0,
+          "main_pct": null,
+          "cost_per_main_request": null,
+          "cost_per_sub_request": null,
+          "cost_ratio": null
+        },
+        "compactions": 0,
+        "events": 0,
+        "usage_rows": 0
+      },
+      "turns": []
+    }
+  ],
+  "findings": [
+    {
+      "id": "SP-01",
+      "title": "Context accretion: the main conversation grew past the point where every step re-reads a book",
+      "severity": "Major",
+      "confidence": "Verified",
+      "session": "fd3ccb67-3445-4092-abb4-4d316a7eb46e",
+      "harness": "copilot",
+      "evidence": [
+        {
+          "turn": 0,
+          "note": "context 403,550 -> 504,626 tokens over 31 main requests"
+        },
+        {
+          "turn": 1,
+          "note": "context 508,349 -> 508,349 tokens over 1 main requests"
+        },
+        {
+          "turn": 2,
+          "note": "context 510,246 -> 528,394 tokens over 10 main requests"
+        },
+        {
+          "turn": 3,
+          "note": "context 531,170 -> 546,662 tokens over 10 main requests"
+        },
+        {
+          "turn": 4,
+          "note": "context 548,105 -> 548,105 tokens over 1 main requests"
+        },
+        {
+          "turn": 5,
+          "note": "context 159,129 -> 314,455 tokens over 34 main requests"
+        },
+        {
+          "turn": 6,
+          "note": "context 314,865 -> 398,400 tokens over 46 main requests"
+        },
+        {
+          "turn": 8,
+          "note": "context 399,473 -> 418,451 tokens over 5 main requests"
+        }
+      ],
+      "metric": {
+        "max_ctx": 919577,
+        "compactions": 4
+      },
+      "fixes": [
+        "F-09",
+        "F-01"
+      ]
+    },
+    {
+      "id": "SP-02",
+      "title": "Instruction double-load: two near-identical custom-instruction blocks in the static prefix",
+      "severity": "Major",
+      "confidence": "Verified",
+      "session": "fd3ccb67-3445-4092-abb4-4d316a7eb46e",
+      "harness": "copilot",
+      "evidence": [
+        {
+          "turn": null,
+          "note": "custom-instruction blocks of 60,680 and 59,085 chars in the static prefix"
+        }
+      ],
+      "metric": {
+        "blocks": [
+          60680,
+          59085
+        ],
+        "duplicate_tokens_est": 16691
+      },
+      "fixes": [
+        "F-01"
+      ]
+    },
+    {
+      "id": "SP-03",
+      "title": "Static prefix larger than the budget models",
+      "severity": "Major",
+      "confidence": "Inferred",
+      "session": "fd3ccb67-3445-4092-abb4-4d316a7eb46e",
+      "harness": "copilot",
+      "evidence": [
+        {
+          "turn": null,
+          "note": "static prefix ~116,798 est. tokens (413,465 chars; measured chars of the latest main prefix; tokens are an estimate at 3.54 chars/token)"
+        }
+      ],
+      "metric": {
+        "prefix_tokens_est": 116798
+      },
+      "fixes": [
+        "F-02"
+      ]
+    },
+    {
+      "id": "SP-06",
+      "title": "Council above tier: a fan-out on a turn that declared no tier",
+      "severity": "Major",
+      "confidence": "Inferred",
+      "session": "fd3ccb67-3445-4092-abb4-4d316a7eb46e",
+      "harness": "copilot",
+      "evidence": [
+        {
+          "turn": 5,
+          "note": "6 sub-agent(s), no tier declared: product-strategist, test-architect, privacy-data-governance, security-identity-architect, ai-systems-engineer, ux-researcher-ia"
+        },
+        {
+          "turn": 6,
+          "note": "3 sub-agent(s), no tier declared: studio-prototype, domain-researcher, ux-accessibility"
+        },
+        {
+          "turn": 10,
+          "note": "6 sub-agent(s), no tier declared: domain-researcher, test-architect, security-identity-architect, ai-systems-engineer, ux-accessibility, security-identity-architect"
+        },
+        {
+          "turn": 11,
+          "note": "3 sub-agent(s), no tier declared: security-identity-architect, security-identity-architect, python-developer"
+        },
+        {
+          "turn": 23,
+          "note": "3 sub-agent(s), no tier declared: security-identity-architect, test-architect, release-engineer"
+        }
+      ],
+      "metric": {
+        "turns": 5
+      },
+      "fixes": [
+        "F-03"
+      ]
+    },
+    {
+      "id": "SP-07",
+      "title": "Sub-agent runaway: a delegation past a sane tool-call/token budget, or one the parent had to tell to converge",
+      "severity": "Major",
+      "confidence": "Verified",
+      "session": "fd3ccb67-3445-4092-abb4-4d316a7eb46e",
+      "harness": "copilot",
+      "evidence": [
+        {
+          "turn": 6,
+          "note": "studio-prototype: 18 tool calls, 1,713,862 tokens, 846s"
+        },
+        {
+          "turn": 6,
+          "note": "domain-researcher: 123 tool calls, 3,018,239 tokens, 1476s"
+        },
+        {
+          "turn": 6,
+          "note": "parent sent 1 converge/stop message(s)"
+        },
+        {
+          "turn": 10,
+          "note": "domain-researcher: 54 tool calls, 1,272,271 tokens, 1514s"
+        },
+        {
+          "turn": 10,
+          "note": "ai-systems-engineer: 50 tool calls, 1,548,757 tokens, 2160s"
+        },
+        {
+          "turn": 14,
+          "note": "documentation-steward: 23 tool calls, 1,246,891 tokens, 522s"
+        },
+        {
+          "turn": 22,
+          "note": "python-developer: 172 tool calls, 19,749,597 tokens, 2208s"
+        }
+      ],
+      "metric": {
+        "count": 7
+      },
+      "fixes": [
+        "F-04"
+      ]
+    },
+    {
+      "id": "SP-09",
+      "title": "No goal state: a substantive turn whose first reply carries no Goal / Done when",
+      "severity": "Major",
+      "confidence": "Inferred",
+      "session": "fd3ccb67-3445-4092-abb4-4d316a7eb46e",
+      "harness": "copilot",
+      "evidence": [
+        {
+          "turn": 0,
+          "note": "'/updatepack' - first reply has no Goal / Done when"
+        },
+        {
+          "turn": 2,
+          "note": "'merge PR 749 yourself' - first reply has no Goal / Done when"
+        },
+        {
+          "turn": 3,
+          "note": "'ensure the working tree is rebased then commit, push, merge ' - first reply has no Goal / Done when"
+        },
+        {
+          "turn": 22,
+          "note": "'finish A1 continue autonomously until A1 is complete then gi' - first reply has no Goal / Done when"
+        }
+      ],
+      "metric": {
+        "missing": 4,
+        "substantive": 19
+      },
+      "fixes": [
+        "F-03"
+      ]
+    },
+    {
+      "id": "SP-19",
+      "title": "Main-line dominance: the turn's own loop, not its delegates, is where the cost is",
+      "severity": "Major",
+      "confidence": "Verified",
+      "session": "fd3ccb67-3445-4092-abb4-4d316a7eb46e",
+      "harness": "copilot",
+      "evidence": [
+        {
+          "turn": null,
+          "note": "main line 727 requests / 91,734 AIU (91.5% of the session) vs delegates 703 / 8,497; 10.4x the cost per request"
+        }
+      ],
+      "metric": {
+        "main_pct": 91.5,
+        "cost_ratio": 10.4,
+        "main_requests": 727,
+        "sub_requests": 703
+      },
+      "fixes": [
+        "F-14"
+      ]
+    },
+    {
+      "id": "SP-01",
+      "title": "Context accretion: the main conversation grew past the point where every step re-reads a book",
+      "severity": "Major",
+      "confidence": "Verified",
+      "session": "68051e5e-4af9-4aef-beeb-9dade176c983",
+      "harness": "copilot",
+      "evidence": [
+        {
+          "turn": 0,
+          "note": "context 396,398 -> 399,028 tokens over 6 main requests"
+        },
+        {
+          "turn": 1,
+          "note": "context 399,358 -> 399,358 tokens over 1 main requests"
+        }
+      ],
+      "metric": {
+        "max_ctx": 399358,
+        "compactions": 0
+      },
+      "fixes": [
+        "F-09",
+        "F-01"
+      ]
+    },
+    {
+      "id": "SP-02",
+      "title": "Instruction double-load: two near-identical custom-instruction blocks in the static prefix",
+      "severity": "Major",
+      "confidence": "Verified",
+      "session": "68051e5e-4af9-4aef-beeb-9dade176c983",
+      "harness": "copilot",
+      "evidence": [
+        {
+          "turn": null,
+          "note": "custom-instruction blocks of 58,511 and 57,712 chars in the static prefix"
+        }
+      ],
+      "metric": {
+        "blocks": [
+          58511,
+          57712
+        ],
+        "duplicate_tokens_est": 16303
+      },
+      "fixes": [
+        "F-01"
+      ]
+    },
+    {
+      "id": "SP-03",
+      "title": "Static prefix larger than the budget models",
+      "severity": "Major",
+      "confidence": "Inferred",
+      "session": "68051e5e-4af9-4aef-beeb-9dade176c983",
+      "harness": "copilot",
+      "evidence": [
+        {
+          "turn": null,
+          "note": "static prefix ~290,196 est. tokens (1,027,295 chars; measured chars of the latest main prefix; tokens are an estimate at 3.54 chars/token)"
+        }
+      ],
+      "metric": {
+        "prefix_tokens_est": 290196
+      },
+      "fixes": [
+        "F-02"
+      ]
+    },
+    {
+      "id": "SP-09",
+      "title": "No goal state: a substantive turn whose first reply carries no Goal / Done when",
+      "severity": "Major",
+      "confidence": "Inferred",
+      "session": "68051e5e-4af9-4aef-beeb-9dade176c983",
+      "harness": "copilot",
+      "evidence": [
+        {
+          "turn": 0,
+          "note": "'post \"hello world\" to the loomkeeper board' - first reply has no Goal / Done when"
+        }
+      ],
+      "metric": {
+        "missing": 1,
+        "substantive": 1
+      },
+      "fixes": [
+        "F-03"
+      ]
+    },
+    {
+      "id": "SP-01",
+      "title": "Context accretion: the main conversation grew past the point where every step re-reads a book",
+      "severity": "Major",
+      "confidence": "Verified",
+      "session": "cac6e573-3b63-479a-8c71-2d215bc2e2ea",
+      "harness": "copilot",
+      "evidence": [
+        {
+          "turn": 0,
+          "note": "context 400,443 -> 460,669 tokens over 29 main requests"
+        },
+        {
+          "turn": 1,
+          "note": "context 463,726 -> 463,726 tokens over 1 main requests"
+        }
+      ],
+      "metric": {
+        "max_ctx": 463726,
+        "compactions": 0
+      },
+      "fixes": [
+        "F-09",
+        "F-01"
+      ]
+    },
+    {
+      "id": "SP-02",
+      "title": "Instruction double-load: two near-identical custom-instruction blocks in the static prefix",
+      "severity": "Major",
+      "confidence": "Verified",
+      "session": "cac6e573-3b63-479a-8c71-2d215bc2e2ea",
+      "harness": "copilot",
+      "evidence": [
+        {
+          "turn": null,
+          "note": "custom-instruction blocks of 58,511 and 57,712 chars in the static prefix"
+        }
+      ],
+      "metric": {
+        "blocks": [
+          58511,
+          57712
+        ],
+        "duplicate_tokens_est": 16303
+      },
+      "fixes": [
+        "F-01"
+      ]
+    },
+    {
+      "id": "SP-03",
+      "title": "Static prefix larger than the budget models",
+      "severity": "Major",
+      "confidence": "Inferred",
+      "session": "cac6e573-3b63-479a-8c71-2d215bc2e2ea",
+      "harness": "copilot",
+      "evidence": [
+        {
+          "turn": null,
+          "note": "static prefix ~290,998 est. tokens (1,030,133 chars; measured chars of the latest main prefix; tokens are an estimate at 3.54 chars/token)"
+        }
+      ],
+      "metric": {
+        "prefix_tokens_est": 290998
+      },
+      "fixes": [
+        "F-02"
+      ]
+    },
+    {
+      "id": "SP-09",
+      "title": "No goal state: a substantive turn whose first reply carries no Goal / Done when",
+      "severity": "Major",
+      "confidence": "Inferred",
+      "session": "cac6e573-3b63-479a-8c71-2d215bc2e2ea",
+      "harness": "copilot",
+      "evidence": [
+        {
+          "turn": 0,
+          "note": "'/forensicreview' - first reply has no Goal / Done when"
+        }
+      ],
+      "metric": {
+        "missing": 1,
+        "substantive": 1
+      },
+      "fixes": [
+        "F-03"
+      ]
+    },
+    {
+      "id": "SP-01",
+      "title": "Context accretion: the main conversation grew past the point where every step re-reads a book",
+      "severity": "Major",
+      "confidence": "Verified",
+      "session": "2e3bba2d-962d-462b-80cc-144c262fa072",
+      "harness": "copilot",
+      "evidence": [
+        {
+          "turn": 0,
+          "note": "context 395,876 -> 410,662 tokens over 5 main requests"
+        }
+      ],
+      "metric": {
+        "max_ctx": 410662,
+        "compactions": 0
+      },
+      "fixes": [
+        "F-09",
+        "F-01"
+      ]
+    },
+    {
+      "id": "SP-02",
+      "title": "Instruction double-load: two near-identical custom-instruction blocks in the static prefix",
+      "severity": "Major",
+      "confidence": "Verified",
+      "session": "2e3bba2d-962d-462b-80cc-144c262fa072",
+      "harness": "copilot",
+      "evidence": [
+        {
+          "turn": null,
+          "note": "custom-instruction blocks of 58,511 and 57,712 chars in the static prefix"
+        }
+      ],
+      "metric": {
+        "blocks": [
+          58511,
+          57712
+        ],
+        "duplicate_tokens_est": 16303
+      },
+      "fixes": [
+        "F-01"
+      ]
+    },
+    {
+      "id": "SP-03",
+      "title": "Static prefix larger than the budget models",
+      "severity": "Major",
+      "confidence": "Inferred",
+      "session": "2e3bba2d-962d-462b-80cc-144c262fa072",
+      "harness": "copilot",
+      "evidence": [
+        {
+          "turn": null,
+          "note": "static prefix ~289,952 est. tokens (1,026,431 chars; measured chars of the latest main prefix; tokens are an estimate at 3.54 chars/token)"
+        }
+      ],
+      "metric": {
+        "prefix_tokens_est": 289952
+      },
+      "fixes": [
+        "F-02"
+      ]
+    },
+    {
+      "id": "SP-09",
+      "title": "No goal state: a substantive turn whose first reply carries no Goal / Done when",
+      "severity": "Major",
+      "confidence": "Inferred",
+      "session": "2e3bba2d-962d-462b-80cc-144c262fa072",
+      "harness": "copilot",
+      "evidence": [
+        {
+          "turn": 0,
+          "note": "'send a message to the loomkeeper board to let the other agen' - first reply has no Goal / Done when"
+        }
+      ],
+      "metric": {
+        "missing": 1,
+        "substantive": 1
+      },
+      "fixes": [
+        "F-03"
+      ]
+    },
+    {
+      "id": "SP-14",
+      "title": "Model-family gap: one family carries 2x the cost or drift indicators of another on comparable turns",
+      "severity": "Major",
+      "confidence": "Verified",
+      "session": "*",
+      "harness": "*",
+      "evidence": [
+        {
+          "turn": null,
+          "note": "openai/copilot: 4.79 drift indicators per turn vs anthropic/copilot: 1.0"
+        },
+        {
+          "turn": null,
+          "note": "caveat: the turn mix differs (19 vs 10 turns); confirm on like-for-like tasks before tuning"
+        }
+      ],
+      "metric": {
+        "hi": 4.79,
+        "lo": 1.0
+      },
+      "fixes": [
+        "F-10"
+      ]
+    },
+    {
+      "id": "SP-15",
+      "title": "Concurrent sessions in one checkout: overlapping sessions with the same cwd",
+      "severity": "Major",
+      "confidence": "Verified",
+      "session": "*",
+      "harness": "*",
+      "evidence": [
+        {
+          "turn": null,
+          "note": "copilot:fd3ccb67 and copilot:8c5a4abc overlapped in c:\\projects\\theterrace"
+        },
+        {
+          "turn": null,
+          "note": "copilot:fd3ccb67 and copilot:61c83fa4 overlapped in c:\\projects\\theterrace"
+        }
+      ],
+      "metric": {
+        "pairs": 2
+      },
+      "fixes": [
+        "F-09"
+      ]
+    },
+    {
+      "id": "SP-04",
+      "title": "Re-reads: the same file viewed three or more times in one turn, or a paged tool output viewed whole",
+      "severity": "Minor",
+      "confidence": "Verified",
+      "session": "fd3ccb67-3445-4092-abb4-4d316a7eb46e",
+      "harness": "copilot",
+      "evidence": [
+        {
+          "turn": 6,
+          "note": "chelsea-pivot-scouting-dossier.html viewed 3x"
+        },
+        {
+          "turn": 6,
+          "note": "chelsea-barco-dossier.html viewed 3x"
+        },
+        {
+          "turn": 9,
+          "note": "public.html viewed 4x"
+        },
+        {
+          "turn": 11,
+          "note": "pack-apply.py viewed 6x"
+        },
+        {
+          "turn": 13,
+          "note": "editorial-refactor.md viewed 5x"
+        },
+        {
+          "turn": 14,
+          "note": "architecture.md viewed 4x"
+        },
+        {
+          "turn": 19,
+          "note": "1788710284899-copilot-tool-output-3328-db4c2ff9-dcaa-47d1-9603-4161468ac590.txt viewed 3x"
+        },
+        {
+          "turn": 20,
+          "note": "threat-model.md viewed 3x"
+        },
+        {
+          "turn": 20,
+          "note": "privacy-review.md viewed 3x"
+        },
+        {
+          "turn": 23,
+          "note": "supervisor.py viewed 3x"
+        }
+      ],
+      "metric": {
+        "turns_with_rereads": 8
+      },
+      "fixes": [
+        "F-07"
+      ]
+    },
+    {
+      "id": "SP-05",
+      "title": "Skill re-injection: the same skill invoked more than once in a session",
+      "severity": "Minor",
+      "confidence": "Verified",
+      "session": "fd3ccb67-3445-4092-abb4-4d316a7eb46e",
+      "harness": "copilot",
+      "evidence": [
+        {
+          "turn": null,
+          "note": "optimize-graph invoked 14x"
+        },
+        {
+          "turn": null,
+          "note": "graphify invoked 4x"
+        },
+        {
+          "turn": null,
+          "note": "specify invoked 4x"
+        },
+        {
+          "turn": null,
+          "note": "design-slice invoked 3x"
+        },
+        {
+          "turn": null,
+          "note": "implement invoked 3x"
+        },
+        {
+          "turn": null,
+          "note": "ui-design invoked 2x"
+        },
+        {
+          "turn": null,
+          "note": "define-architecture invoked 2x"
+        }
+      ],
+      "metric": {
+        "repeat_invocations": 25
+      },
+      "fixes": [
+        "F-06"
+      ]
+    },
+    {
+      "id": "SP-08",
+      "title": "Persona orientation reads: a sub-agent reading the roster docs or AGENTS.md to find out what it is",
+      "severity": "Minor",
+      "confidence": "Verified",
+      "session": "fd3ccb67-3445-4092-abb4-4d316a7eb46e",
+      "harness": "copilot",
+      "evidence": [
+        {
+          "turn": 5,
+          "note": "security-identity-architect: AGENTS.md"
+        },
+        {
+          "turn": 5,
+          "note": "security-identity-architect: agent-body-of-knowledge.md"
+        },
+        {
+          "turn": 5,
+          "note": "security-identity-architect: persona-audit.md"
+        },
+        {
+          "turn": 5,
+          "note": "security-identity-architect: agent-persona-catalog.md"
+        },
+        {
+          "turn": 5,
+          "note": "security-identity-architect: persona-cards.md"
+        },
+        {
+          "turn": 5,
+          "note": "security-identity-architect: agent-body-of-knowledge.md"
+        },
+        {
+          "turn": 5,
+          "note": "security-identity-architect: persona-cards.md"
+        },
+        {
+          "turn": 5,
+          "note": "domain-researcher: AGENTS.md"
+        },
+        {
+          "turn": 5,
+          "note": "ux-researcher-ia: AGENTS.md"
+        },
+        {
+          "turn": 10,
+          "note": "domain-researcher: AGENTS.md"
+        }
+      ],
+      "metric": {
+        "reads": 16
+      },
+      "fixes": [
+        "F-05"
+      ]
+    },
+    {
+      "id": "SP-10",
+      "title": "Tail latency: main-agent time-to-first-token p90 above 20 s",
+      "severity": "Minor",
+      "confidence": "Verified",
+      "session": "fd3ccb67-3445-4092-abb4-4d316a7eb46e",
+      "harness": "copilot",
+      "evidence": [
+        {
+          "turn": 8,
+          "note": "ttft p50 12.1s / p90 34.9s / max 34.9s over 5 main requests"
+        },
+        {
+          "turn": 10,
+          "note": "ttft p50 17.5s / p90 68.8s / max 109.5s over 81 main requests"
+        },
+        {
+          "turn": 11,
+          "note": "ttft p50 35.2s / p90 78.8s / max 93.9s over 44 main requests"
+        },
+        {
+          "turn": 12,
+          "note": "ttft p50 16.5s / p90 39.9s / max 60.6s over 21 main requests"
+        },
+        {
+          "turn": 14,
+          "note": "ttft p50 23.1s / p90 77.3s / max 145.7s over 113 main requests"
+        },
+        {
+          "turn": 15,
+          "note": "ttft p50 24.7s / p90 77.0s / max 217.6s over 26 main requests"
+        }
+      ],
+      "metric": {
+        "worst_p90": 108.7
+      },
+      "fixes": [
+        "F-09",
+        "F-02"
+      ]
+    },
+    {
+      "id": "SP-11",
+      "title": "Cap firings: harness completion nudges or user aborts inside a turn",
+      "severity": "Minor",
+      "confidence": "Verified",
+      "session": "fd3ccb67-3445-4092-abb4-4d316a7eb46e",
+      "harness": "copilot",
+      "evidence": [
+        {
+          "turn": 1,
+          "note": "1 nudge(s), 0 abort(s)"
+        },
+        {
+          "turn": 4,
+          "note": "1 nudge(s), 0 abort(s)"
+        },
+        {
+          "turn": 7,
+          "note": "0 nudge(s), 1 abort(s)"
+        },
+        {
+          "turn": 12,
+          "note": "0 nudge(s), 2 abort(s)"
+        }
+      ],
+      "metric": {
+        "count": 5
+      },
+      "fixes": [
+        "F-03"
+      ]
+    },
+    {
+      "id": "SP-12",
+      "title": "Images and failed requests in the main context",
+      "severity": "Minor",
+      "confidence": "Verified",
+      "session": "fd3ccb67-3445-4092-abb4-4d316a7eb46e",
+      "harness": "copilot",
+      "evidence": [
+        {
+          "turn": 5,
+          "note": "2 image view(s), 0 failed request(s)"
+        },
+        {
+          "turn": 6,
+          "note": "7 image view(s), 0 failed request(s)"
+        },
+        {
+          "turn": 10,
+          "note": "2 image view(s), 1 failed request(s)"
+        }
+      ],
+      "metric": {
+        "image_views": 11,
+        "errors": 1
+      },
+      "fixes": [
+        "F-08"
+      ]
+    },
+    {
+      "id": "SP-16",
+      "title": "Knowledge at hand re-fetched: the main agent viewed an instruction file that is already in its prefix",
+      "severity": "Minor",
+      "confidence": "Verified",
+      "session": "fd3ccb67-3445-4092-abb4-4d316a7eb46e",
+      "harness": "copilot",
+      "evidence": [
+        {
+          "turn": 5,
+          "note": "ui-craft-detection.instructions.md"
+        },
+        {
+          "turn": 5,
+          "note": "ui-design-craft.instructions.md"
+        },
+        {
+          "turn": 5,
+          "note": "ui-interaction-design.instructions.md"
+        },
+        {
+          "turn": 5,
+          "note": "ui-archetype-grammar.instructions.md"
+        },
+        {
+          "turn": 5,
+          "note": "technical-ui-design.instructions.md"
+        },
+        {
+          "turn": 5,
+          "note": "ui-archetype-catalog.instructions.md"
+        },
+        {
+          "turn": 5,
+          "note": "ui-visual-assets.instructions.md"
+        },
+        {
+          "turn": 5,
+          "note": "observability-and-instrumentation.instructions.md"
+        }
+      ],
+      "metric": {
+        "reads": 18
+      },
+      "fixes": [
+        "F-08",
+        "F-02"
+      ]
+    },
+    {
+      "id": "SP-11",
+      "title": "Cap firings: harness completion nudges or user aborts inside a turn",
+      "severity": "Minor",
+      "confidence": "Verified",
+      "session": "cac6e573-3b63-479a-8c71-2d215bc2e2ea",
+      "harness": "copilot",
+      "evidence": [
+        {
+          "turn": 1,
+          "note": "1 nudge(s), 0 abort(s)"
+        }
+      ],
+      "metric": {
+        "count": 1
+      },
+      "fixes": [
+        "F-03"
+      ]
+    },
+    {
+      "id": "SP-11",
+      "title": "Cap firings: harness completion nudges or user aborts inside a turn",
+      "severity": "Minor",
+      "confidence": "Verified",
+      "session": "2e3bba2d-962d-462b-80cc-144c262fa072",
+      "harness": "copilot",
+      "evidence": [
+        {
+          "turn": 0,
+          "note": "0 nudge(s), 1 abort(s)"
+        }
+      ],
+      "metric": {
+        "count": 1
+      },
+      "fixes": [
+        "F-03"
+      ]
+    },
+    {
+      "id": "SP-13",
+      "title": "Hook overhead above 5% of wall clock",
+      "severity": "Nit",
+      "confidence": "Verified",
+      "session": "fd3ccb67-3445-4092-abb4-4d316a7eb46e",
+      "harness": "copilot",
+      "evidence": [
+        {
+          "turn": null,
+          "note": "hooks 2446s of 38385s wall (6%)"
+        }
+      ],
+      "metric": {
+        "share": 0.064
+      },
+      "fixes": []
+    },
+    {
+      "id": "SP-17",
+      "title": "Reasoning visibility: the share of billed reasoning that came back as readable text",
+      "severity": "Nit",
+      "confidence": "Verified",
+      "session": "fd3ccb67-3445-4092-abb4-4d316a7eb46e",
+      "harness": "copilot",
+      "evidence": [
+        {
+          "turn": null,
+          "note": "622,872 reasoning tokens billed on the main line; 97,623 chars of reasoning text on disk (~4% visible at 3.54 chars/token)"
+        }
+      ],
+      "metric": {
+        "visible_share": 0.044,
+        "reasoning_tokens": 622872,
+        "reasoning_chars": 97623
+      },
+      "fixes": [
+        "F-12"
+      ]
+    },
+    {
+      "id": "SP-13",
+      "title": "Hook overhead above 5% of wall clock",
+      "severity": "Nit",
+      "confidence": "Verified",
+      "session": "68051e5e-4af9-4aef-beeb-9dade176c983",
+      "harness": "copilot",
+      "evidence": [
+        {
+          "turn": null,
+          "note": "hooks 5s of 59s wall (8%)"
+        }
+      ],
+      "metric": {
+        "share": 0.085
+      },
+      "fixes": []
+    },
+    {
+      "id": "SP-17",
+      "title": "Reasoning visibility: the share of billed reasoning that came back as readable text",
+      "severity": "Nit",
+      "confidence": "Verified",
+      "session": "68051e5e-4af9-4aef-beeb-9dade176c983",
+      "harness": "copilot",
+      "evidence": [
+        {
+          "turn": null,
+          "note": "963 reasoning tokens billed on the main line; 1,452 chars of reasoning text on disk (~43% visible at 3.54 chars/token)"
+        }
+      ],
+      "metric": {
+        "visible_share": 0.426,
+        "reasoning_tokens": 963,
+        "reasoning_chars": 1452
+      },
+      "fixes": [
+        "F-12"
+      ]
+    },
+    {
+      "id": "SP-17",
+      "title": "Reasoning visibility: the share of billed reasoning that came back as readable text",
+      "severity": "Nit",
+      "confidence": "Verified",
+      "session": "cac6e573-3b63-479a-8c71-2d215bc2e2ea",
+      "harness": "copilot",
+      "evidence": [
+        {
+          "turn": null,
+          "note": "14,676 reasoning tokens billed on the main line; 22,360 chars of reasoning text on disk (~43% visible at 3.54 chars/token)"
+        }
+      ],
+      "metric": {
+        "visible_share": 0.43,
+        "reasoning_tokens": 14676,
+        "reasoning_chars": 22360
+      },
+      "fixes": [
+        "F-12"
+      ]
+    },
+    {
+      "id": "SP-13",
+      "title": "Hook overhead above 5% of wall clock",
+      "severity": "Nit",
+      "confidence": "Verified",
+      "session": "2e3bba2d-962d-462b-80cc-144c262fa072",
+      "harness": "copilot",
+      "evidence": [
+        {
+          "turn": null,
+          "note": "hooks 5s of 51s wall (10%)"
+        }
+      ],
+      "metric": {
+        "share": 0.098
+      },
+      "fixes": []
+    },
+    {
+      "id": "SP-17",
+      "title": "Reasoning visibility: the share of billed reasoning that came back as readable text",
+      "severity": "Nit",
+      "confidence": "Verified",
+      "session": "2e3bba2d-962d-462b-80cc-144c262fa072",
+      "harness": "copilot",
+      "evidence": [
+        {
+          "turn": null,
+          "note": "403 reasoning tokens billed on the main line; 851 chars of reasoning text on disk (~60% visible at 3.54 chars/token)"
+        }
+      ],
+      "metric": {
+        "visible_share": 0.596,
+        "reasoning_tokens": 403,
+        "reasoning_chars": 851
+      },
+      "fixes": [
+        "F-12"
+      ]
+    }
+  ],
+  "comparison": [
+    {
+      "family": "anthropic",
+      "harness": "copilot",
+      "turns": 10,
+      "requests_per_turn": 9.5,
+      "cache_read_per_turn": 3921354,
+      "output_per_turn": 13115,
+      "reasoning_per_turn": 7713,
+      "cost_aiu_per_turn": 526.7,
+      "ttft_p90_median": 6.5,
+      "ctx_end_median": 484176,
+      "wall_s_per_turn": 394,
+      "reasoning_share_of_output": 0.59,
+      "visible_reasoning_pct": 34.8,
+      "intent_trace_pct": 100.0,
+      "effort": "high",
+      "drift_per_turn": 1.0,
+      "drift_breakdown": {
+        "sub_agents": 0,
+        "rereads": 0,
+        "skill_repeats": 0,
+        "no_goal": 6,
+        "no_tier_with_fanout": 0,
+        "converge_nudges": 0,
+        "nudges": 4
+      }
+    },
+    {
+      "family": "anthropic+openai",
+      "harness": "copilot",
+      "turns": 2,
+      "requests_per_turn": 72.0,
+      "cache_read_per_turn": 28159404,
+      "output_per_turn": 184516,
+      "reasoning_per_turn": 113320,
+      "cost_aiu_per_turn": 7593.0,
+      "ttft_p90_median": 90.8,
+      "ctx_end_median": 459972,
+      "wall_s_per_turn": 4372,
+      "reasoning_share_of_output": 0.45,
+      "visible_reasoning_pct": 0.2,
+      "intent_trace_pct": 100.0,
+      "effort": "high",
+      "drift_per_turn": 10.0,
+      "drift_breakdown": {
+        "sub_agents": 16,
+        "rereads": 4,
+        "skill_repeats": 0,
+        "no_goal": 0,
+        "no_tier_with_fanout": 0,
+        "converge_nudges": 0,
+        "nudges": 0
+      }
+    },
+    {
+      "family": "openai",
+      "harness": "copilot",
+      "turns": 19,
+      "requests_per_turn": 27.9,
+      "cache_read_per_turn": 16639210,
+      "output_per_turn": 61670,
+      "reasoning_per_turn": 29661,
+      "cost_aiu_per_turn": 4315.5,
+      "ttft_p90_median": 36.4,
+      "ctx_end_median": 452739,
+      "wall_s_per_turn": 1430,
+      "reasoning_share_of_output": 0.34,
+      "visible_reasoning_pct": 1.9,
+      "intent_trace_pct": 100.0,
+      "effort": "high",
+      "drift_per_turn": 4.79,
+      "drift_breakdown": {
+        "sub_agents": 43,
+        "rereads": 33,
+        "skill_repeats": 1,
+        "no_goal": 6,
+        "no_tier_with_fanout": 5,
+        "converge_nudges": 1,
+        "nudges": 2
+      }
+    }
+  ],
+  "fixes": {
+    "F-01": {
+      "title": "CLAUDE.md is an `@AGENTS.md` import, not a copy",
+      "where": "adapters/managed-blocks/CLAUDE.block.md; INSTALL.md 1.1; pack-doctor `claude-md import`",
+      "control": "pack-doctor FAILs a repo whose CLAUDE.md carries the managed block beside an AGENTS.md that carries it too"
+    },
+    "F-02": {
+      "title": "Measure the real static prefix, not the knowledge docs alone",
+      "where": "scripts/context-budget.py prefix; context-budget.json",
+      "control": "`context-budget.py prefix --gate` ratchets the whole prefix (blocks + always-on + tool/host allowance)"
+    },
+    "F-03": {
+      "title": "Declare tier and fan-out cap in the goal state; record them in the audit entry",
+      "where": "knowledge/communication-and-task-discipline.md CT19; scripts/audit-log.py --tier/--fan-out; /dream PACK-O miner",
+      "control": "audit selfcheck + /dream flag a substantive turn with no tier, or a fan-out above the tier cap with no named hard gate"
+    },
+    "F-04": {
+      "title": "Every delegation carries a tool-call budget and a convergence condition",
+      "where": "knowledge/execution-graph-optimization.md GO7; agent cards; audit `agent_runs`",
+      "control": "a sub-agent past its budget stops and reports; the audit entry records calls vs budget"
+    },
+    "F-05": {
+      "title": "Persona cards are self-sufficient; no orientation reads",
+      "where": "adapters/*/agents/*.md (inline operating standard + do-not-read list)",
+      "control": "eval: a persona transcript contains no view of AGENTS.md / persona-* / agent-body-of-knowledge"
+    },
+    "F-06": {
+      "title": "Progressive-disclosure skills; never re-invoke an active skill",
+      "where": "commands/*/SKILL.md + reference/; context-budget.py skills (ratchet)",
+      "control": "`context-budget.py skills --gate` fails unacknowledged SKILL.md growth; /dream flags a skill invoked twice in one turn"
+    },
+    "F-07": {
+      "title": "Re-read guard hook",
+      "where": "adapters/hooks/reread-guard.py (+ .github/hooks/ai-forward.json, .claude/settings.json)",
+      "control": "the hook warns on the third identical view in a turn and on a paged tool output viewed whole"
+    },
+    "F-08": {
+      "title": "UI craft docs load on demand with a rule index; screenshots stay out of the main context",
+      "where": "knowledge/ui-*.md (load: skill + rule index); commands/ui-design",
+      "control": "Tier B/C totals in context-budget; /ui-design Stage 3 reads the craft JSON"
+    },
+    "F-09": {
+      "title": "Session hygiene: a new task starts a new session; tier and effort are per phase",
+      "where": "knowledge/session-worktree-discipline.md WT1a; INSTALL.md (Copilot); pack-doctor `copilot settings`",
+      "control": "pack-doctor WARNs on long_context + high effort as global defaults; this profiler flags context accretion"
+    },
+    "F-10": {
+      "title": "Tune guidance per model family from measured drift, not priors",
+      "where": "docs/profiles/ (this tool's compare view); knowledge/execution-graph-optimization.md GO19",
+      "control": "`session-profile.py compare` - a family with 2x the drift indicators of another is a tuning finding"
+    },
+    "F-11": {
+      "title": "Register the class, not the instance",
+      "where": "docs/lessons/defect-classes.md (CTX-*); knowledge/continuous-improvement.md 6",
+      "control": "each class row links to the control above; /dream re-surfaces an uncontrolled recurrence"
+    },
+    "F-12": {
+      "title": "Ask each host for its richest reasoning summary, and treat summary-derived judgements as Inferred",
+      "where": "INSTALL.md 1.6; adapters/hooks/claude-code.settings.hooks.json (showThinkingSummaries); pack-doctor `claude settings`",
+      "control": "SP-17 reports visible-reasoning share per family; a family under 10% marks every text-derived drift finding Inferred"
+    },
+    "F-14": {
+      "title": "A budget on the MAIN line, not only on the delegates",
+      "where": "knowledge/communication-and-task-discipline.md CT19 (`Main-line budget:`); scripts/audit-log.py --main-budget; selfcheck",
+      "control": "selfcheck reports a substantive turn with no main-line budget as a gap and an over-run as a finding; SP-19 measures the real split from the store"
+    },
+    "F-13": {
+      "title": "Externalize reasoning by construction: a one-line intent on every shell call",
+      "where": "knowledge/communication-and-task-discipline.md CT26; the managed block; agent cards",
+      "control": "SP-18 intent-trace coverage per family; below 90% is a finding; the hook and the profiler read the same field"
+    }
+  }
+}

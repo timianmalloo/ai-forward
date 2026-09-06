@@ -205,5 +205,75 @@ def audit_run(agent, start, end, budget):
         agent, start, end, budget))
 
 
+class MainLineBudgetTests(unittest.TestCase):
+    """F-14 / class CTX-M: the budget the pack did not have, on the 91%.
+
+    Measured in sp-0003: the main line ran 714 requests for 89,429 AIU while its delegates ran
+    701 for 8,491 - near-identical counts, TEN TIMES the cost per request, 91% of the session
+    on the main line. Bare user-initiated requests alone cost 12,853 AIU, more than the whole
+    delegate fleet. Every budget the pack has - GO7's fan-out contract, the tier cap, the
+    per-branch tool-call budget - bounds delegates. Nothing bounded the main agent's own loop,
+    because delegation is visible and a main line is just one more reasonable step, repeated.
+
+    THE HONEST LIMIT, and why this is shaped the way it is: a branch can count its own tool
+    calls, but the main agent CANNOT count its own model requests - only the harness store
+    knows those. So the DECLARATION is the agent's (tool calls it made against the budget it
+    committed to in the goal state) and the TRUTH is the profiler's (SP-19, read from the
+    store). The two are reconciled, never conflated, and neither is called enforcement.
+    """
+
+    def _entry(self, **kw):
+        e = {"kind": "skill", "shortname": "s", "session": "sess", "done_when": "d", "tier": "T1"}
+        e.update(kw)
+        return e
+
+    def test_a_substantive_turn_with_no_main_budget_is_a_gap(self):
+        out = audit_log.main_line_findings([self._entry()])
+        self.assertEqual(len(out["no_budget"]), 1)
+
+    def test_a_turn_over_its_main_budget_is_a_finding(self):
+        out = audit_log.main_line_findings(
+            [self._entry(main_calls=81, main_budget=20, main_over_budget=True)])
+        self.assertEqual(len(out["over_budget"]), 1)
+        self.assertEqual(out["over_budget"][0]["calls"], 81)
+        self.assertEqual(out["no_budget"], [])
+
+    def test_a_turn_inside_its_main_budget_is_neither(self):
+        out = audit_log.main_line_findings(
+            [self._entry(main_calls=6, main_budget=20, main_over_budget=False)])
+        self.assertEqual(out["over_budget"], [])
+        self.assertEqual(out["no_budget"], [])
+
+    def test_a_non_substantive_entry_is_not_asked_for_a_budget(self):
+        """A commit or a script run has no ceremony budget to declare."""
+        out = audit_log.main_line_findings([{"kind": "commit", "shortname": "c"}])
+        self.assertEqual(out["no_budget"], [])
+
+    def test_the_parser_matches_the_branch_form(self):
+        """One spelling for both budgets. Two would be a second thing to remember."""
+        self.assertEqual(audit_log._parse_budget("81/20"), (81, 20))
+        self.assertEqual(audit_log._parse_budget("6/20"), (6, 20))
+
+    def test_selfcheck_surfaces_the_main_line(self):
+        src = io.open(SCRIPT, encoding="utf-8").read()
+        body = src.split("def cmd_selfcheck", 1)[1].split(chr(10) + "def ", 1)[0]
+        self.assertIn("main_line_findings", body,
+                      "the 91% has to surface where the 9% already does, or the asymmetry "
+                      "that CTX-M is about survives the fix")
+
+    def test_the_cli_accepts_it(self):
+        src = io.open(SCRIPT, encoding="utf-8").read()
+        self.assertIn("--main-budget", src)
+
+    def test_ct19_names_the_field(self):
+        """A field the standard does not ask for is a field nobody fills in."""
+        ct19 = io.open(os.path.join(ROOT, "pack", "knowledge",
+                                    "communication-and-task-discipline.md"),
+                       encoding="utf-8").read()
+        self.assertIn("Main-line budget", ct19,
+                      "CT19's goal-state block is where a turn declares its budgets; the "
+                      "main line is 91% of the cost and was not among them")
+
+
 if __name__ == "__main__":
     unittest.main()

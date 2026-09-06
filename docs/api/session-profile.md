@@ -78,6 +78,22 @@ Python 3.8+, stdlib only. Windows-safe (utf-8 stdout, read-only SQLite URI).
 
 ## Functions
 
+### `main_line_share(buckets)`
+
+Split a session's requests and cost between the main line and its delegates.
+
+`buckets` is {initiator: {"requests": n, "cost": aiu}}. The main line is `agent`, `user`
+and `compaction` - a compaction request and the request that opens a user turn are both
+paid on the main conversation, and both were substantial: in sp-0003 the 24 bare
+user-initiated requests alone cost 12,853 AIU, MORE THAN THE ENTIRE DELEGATE FLEET.
+
+This is the measured half of CT19's `Main-line budget:`, which is only a declaration - an
+agent cannot count its own model requests, and this can. Reconciled, never conflated.
+
+Returns None for a share or a ratio it cannot establish: a percentage over an empty
+corpus is not a measurement (R4), and no delegates means there is no ratio to report
+rather than a ratio of infinity.
+
 ### `parse_ts(s)`
 
 **Coverage gap** — no docstring in the source.
@@ -193,6 +209,6 @@ Aggregate per (family, harness): the tuning view. Drift indicators are counts pe
 
 ## Coverage
 
-- Public functions: **27** · documented: **7** (**26%**)
+- Public functions: **28** · documented: **8** (**29%**)
 - Undocumented (recorded, not invented): `parse_ts`, `iso`, `pct`, `est_tokens`, `model_family`, `norm_path`, `git`, `in_repo`, `copilot_home`, `copilot_settings`, `copilot_sessions`, `claude_home`, `claude_sessions`, `profile_claude`, `render_markdown`, `cmd_discover`, `profile_id`, `cmd_profile`, `cmd_compare`, `cmd_fixes`
 

@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 171
+"count": 172
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 325,
+"total": 326,
 "items": [
 {
 "cat": "knowledge",
@@ -908,7 +908,7 @@ window.PACK_INDEX = {
 "summary": "audit-log.py — the AI-Forward Pack audit & change log bundle (audit-and-change-log.md).",
 "path": "pack/scripts/audit-log.py",
 "kind": "script",
-"text": "audit-log.py audit-log.py — the ai-forward pack audit & change log bundle (audit-and-change-log.md). durable, committed, history-as-knowledge for a repo: an append-only record of every meaningful prompt / skill / script / decision, so any future copilot or claude code session reads the project's own history instead of starting blind. the canonical logs are append-only jsonl (clean git diffs, like docs/health-history.jsonl); the viewer reads a derived window.audit_data js (loadable over file://, like docs/docs-index.js). python 3.8+, stdlib only — no dependencies. two logs, one bundle: docs/audit/audit-log.jsonl every action (shortname, datetime, session, prompt, summary, …) docs/audit/change-log.jsonl the meaningful design changes / decisions (+ git before/after) docs/audit/audit-data.js derived window.audit_data = {audit:[…], changes:[…]} (the viewer's data) docs/audit/index.html the interactive viewer (self-bootstrapped from the template) subcommands append add an audit entry. (audit mandate — every skill's last action) change add a change-log entry. (change mandate — collectknowledge/define-architecture/design-slice/migrate) list show the last n entries (audit|change). for the cli skill. search filter by --session / --since / --until / --keyword. for the cli skill. get print one entry by --id (use --field prompt to extract the prompt to re-run). render regenerate audit-data.js from the jsonl and ensure the viewer exists (repair). git-context print the current git {sha, short, branch, pushed} as json (a helper). verify fail when any log line is unreadable — the system of record must never lose an entry silently (fr-052). ci-able. suggest discern unlogged meaningful changes (recent commits + new adrs/notes not in the change log). import ingest a session-export json array of turns into the audit log (build on session history). conventions --root defaults to docs/. the audit dir is <root>/audit. the viewer template is resolved relative to this script (pack/templates or docs/ai-forward-pack/templates). git is optional — every git call degrades gracefully when git or a repo is absent. this tool never invents a prompt or a summary; required fields must be supplied (flags, --*-file, or --from-json -). now_iso parse_iso duration_fields _parse_budget parse_agent_run budget_findings parallelism_fields parse_persona_yield aggregate_persona_yield should_reconvene _starts_path _read_starts _write_starts _prune_starts record_start consume_start audit_dir log_path read_log append_log _load_allocator next_id git git_context commits_between _suggests_decision _is_logging_commit ensure_hub find_template project_name render _read_field _from_json cmd_start cmd_append cmd_change _fmt_row cmd_list _matches cmd_search cmd_get cmd_render cmd_git_context cmd_yield cmd_verify cmd_suggest _candidate cmd_selfcheck cmd_import main"
+"text": "audit-log.py audit-log.py — the ai-forward pack audit & change log bundle (audit-and-change-log.md). durable, committed, history-as-knowledge for a repo: an append-only record of every meaningful prompt / skill / script / decision, so any future copilot or claude code session reads the project's own history instead of starting blind. the canonical logs are append-only jsonl (clean git diffs, like docs/health-history.jsonl); the viewer reads a derived window.audit_data js (loadable over file://, like docs/docs-index.js). python 3.8+, stdlib only — no dependencies. two logs, one bundle: docs/audit/audit-log.jsonl every action (shortname, datetime, session, prompt, summary, …) docs/audit/change-log.jsonl the meaningful design changes / decisions (+ git before/after) docs/audit/audit-data.js derived window.audit_data = {audit:[…], changes:[…]} (the viewer's data) docs/audit/index.html the interactive viewer (self-bootstrapped from the template) subcommands append add an audit entry. (audit mandate — every skill's last action) change add a change-log entry. (change mandate — collectknowledge/define-architecture/design-slice/migrate) list show the last n entries (audit|change). for the cli skill. search filter by --session / --since / --until / --keyword. for the cli skill. get print one entry by --id (use --field prompt to extract the prompt to re-run). render regenerate audit-data.js from the jsonl and ensure the viewer exists (repair). git-context print the current git {sha, short, branch, pushed} as json (a helper). verify fail when any log line is unreadable — the system of record must never lose an entry silently (fr-052). ci-able. suggest discern unlogged meaningful changes (recent commits + new adrs/notes not in the change log). import ingest a session-export json array of turns into the audit log (build on session history). conventions --root defaults to docs/. the audit dir is <root>/audit. the viewer template is resolved relative to this script (pack/templates or docs/ai-forward-pack/templates). git is optional — every git call degrades gracefully when git or a repo is absent. this tool never invents a prompt or a summary; required fields must be supplied (flags, --*-file, or --from-json -). now_iso parse_iso duration_fields _parse_budget parse_agent_run budget_findings parallelism_fields parse_persona_yield aggregate_persona_yield should_reconvene _starts_path _read_starts _write_starts _prune_starts record_start consume_start audit_dir log_path read_log append_log _load_allocator next_id git git_context commits_between _suggests_decision _is_logging_commit ensure_hub find_template project_name render _read_field _from_json cmd_start cmd_append cmd_change _fmt_row cmd_list _matches cmd_search cmd_get cmd_render cmd_git_context cmd_yield cmd_verify cmd_suggest _candidate main_line_findings cmd_selfcheck cmd_import main"
 },
 {
 "cat": "scripts",
@@ -1061,7 +1061,7 @@ window.PACK_INDEX = {
 "summary": "session-profile.py — measure how agent sessions actually ran, across harnesses and models.",
 "path": "pack/scripts/session-profile.py",
 "kind": "script",
-"text": "session-profile.py session-profile.py — measure how agent sessions actually ran, across harnesses and models. instrumentation over inference (io1) pointed at the agent's own work: instead of reasoning about why a session felt slow, expensive or drifty, read the telemetry every harness already writes to disk and turn it into a findings table (what happened, with evidence) and a fixes table (which pack surface owns the control). this is the \"asleep half\" of continuous improvement (`/dream`) specialised to performance, efficiency, task adherence, fan-out and cross-harness coordination — the /session-profiler skill drives it. sources (all local, all read-only): github copilot cli ~/.copilot/session-store.db sessions, turns, assistant_usage_events ~/.copilot/session-state/<id>/events.jsonl the full event stream ~/.copilot/settings.json model / contexttier / effortlevel claude code ~/.claude/projects/<slug>/<session>.jsonl the transcript a repo is selected by path (`--repo <path>`, repeatable). copilot sessions match on cwd or the `owner/name` remote; claude code sessions match on the project slug of the repo path and of each of its git worktrees. every number is either read from the store or labelled as an estimate; a measurement path that does not exist reports \"not recorded\", never a plausible number (io8). subcommands discover list the sessions found for the repo(s) in the window profile per-turn metrics + findings + fixes for the selected sessions; writes docs/profiles/<sp-id>/{profile.json,profile.md} in the first --repo (or --out-root) compare aggregate the same metrics by model family x harness (the tuning view) fixes print the fix catalog (finding id -> pack surface -> control) python 3.8+, stdlib only. windows-safe (utf-8 stdout, read-only sqlite uri). _basename parse_ts iso pct est_tokens model_family norm_path git repo_identity repo_label claude_slug in_repo copilot_home copilot_settings _ro copilot_sessions _load_events _args_of _new_turn profile_copilot window claude_home claude_sessions _text_of profile_claude _ev detect add cross_session_findings family_comparison _md_table _fmt _frontmatter render_markdown _select cmd_discover _profile_all profile_id cmd_profile _index _audit cmd_compare cmd_fixes main"
+"text": "session-profile.py session-profile.py — measure how agent sessions actually ran, across harnesses and models. instrumentation over inference (io1) pointed at the agent's own work: instead of reasoning about why a session felt slow, expensive or drifty, read the telemetry every harness already writes to disk and turn it into a findings table (what happened, with evidence) and a fixes table (which pack surface owns the control). this is the \"asleep half\" of continuous improvement (`/dream`) specialised to performance, efficiency, task adherence, fan-out and cross-harness coordination — the /session-profiler skill drives it. sources (all local, all read-only): github copilot cli ~/.copilot/session-store.db sessions, turns, assistant_usage_events ~/.copilot/session-state/<id>/events.jsonl the full event stream ~/.copilot/settings.json model / contexttier / effortlevel claude code ~/.claude/projects/<slug>/<session>.jsonl the transcript a repo is selected by path (`--repo <path>`, repeatable). copilot sessions match on cwd or the `owner/name` remote; claude code sessions match on the project slug of the repo path and of each of its git worktrees. every number is either read from the store or labelled as an estimate; a measurement path that does not exist reports \"not recorded\", never a plausible number (io8). subcommands discover list the sessions found for the repo(s) in the window profile per-turn metrics + findings + fixes for the selected sessions; writes docs/profiles/<sp-id>/{profile.json,profile.md} in the first --repo (or --out-root) compare aggregate the same metrics by model family x harness (the tuning view) fixes print the fix catalog (finding id -> pack surface -> control) python 3.8+, stdlib only. windows-safe (utf-8 stdout, read-only sqlite uri). main_line_share _basename parse_ts iso pct est_tokens model_family norm_path git repo_identity repo_label claude_slug in_repo copilot_home copilot_settings _ro copilot_sessions _load_events _args_of _new_turn profile_copilot window claude_home claude_sessions _text_of profile_claude _ev detect add cross_session_findings family_comparison _md_table _fmt _frontmatter render_markdown _select cmd_discover _profile_all profile_id cmd_profile _index _audit cmd_compare cmd_fixes main"
 },
 {
 "cat": "scripts",
@@ -1562,10 +1562,10 @@ window.PACK_INDEX = {
 "cat": "graph",
 "id": "api-index",
 "title": "API reference — the deployed script bundle",
-"summary": "Generated API reference for the pack's public surface — the deployed script bundle. 326 public functions across 21 modules, 42% carrying a docstring.",
+"summary": "Generated API reference for the pack's public surface — the deployed script bundle. 328 public functions across 21 modules, 42% carrying a docstring.",
 "path": "docs/api/index.md",
 "kind": "api",
-"text": "api reference — the deployed script bundle generated api reference for the pack's public surface — the deployed script bundle. 326 public functions across 21 modules, 42% carrying a docstring. api scripts generated index documents architecture"
+"text": "api reference — the deployed script bundle generated api reference for the pack's public surface — the deployed script bundle. 328 public functions across 21 modules, 42% carrying a docstring. api scripts generated index documents architecture"
 },
 {
 "cat": "graph",
@@ -2205,6 +2205,15 @@ window.PACK_INDEX = {
 "path": "docs/profiles/sp-0003/profile.md",
 "kind": "doc",
 "text": "session profile sp-0003 - theterrace measured pass over 12 session(s) in theterrace (last 10 days); 36 finding(s), top: sp-01, sp-02, sp-03. profile session-profiler efficiency adherence relates-to design-session-profiler"
+},
+{
+"cat": "graph",
+"id": "profile-sp-0004",
+"title": "Session profile sp-0004 - theterrace",
+"summary": "Measured pass over 12 session(s) in theterrace (last 10 days); 37 finding(s), top: SP-01, SP-02, SP-03.",
+"path": "docs/profiles/sp-0004/profile.md",
+"kind": "doc",
+"text": "session profile sp-0004 - theterrace measured pass over 12 session(s) in theterrace (last 10 days); 37 finding(s), top: sp-01, sp-02, sp-03. profile session-profiler efficiency adherence relates-to design-session-profiler"
 },
 {
 "cat": "graph",

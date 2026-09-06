@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-06T22:14:46Z",
+  "generated": "2026-09-06T22:23:12Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3655,6 +3655,23 @@ window.AUDIT_DATA = {
       "done_when": "discover then profile run; Inferred findings confirmed or struck against the store; findings/fixes/family tables emitted; new shapes registered as CTX-* classes; the in-flight implementation read and its absorbable surface named",
       "tier": "T0",
       "fan_out": 0
+    },
+    {
+      "id": "al-01M1WD31FXP7VNVG143Y76AMSD",
+      "shortname": "session-profile-sp-0004",
+      "datetime": "2026-09-06T22:23:12Z",
+      "session": "sp-terrace-gpt6",
+      "prompt": "session-profile.py profile",
+      "summary": "Profile sp-0004: 12 session(s), 37 finding(s)",
+      "kind": "script",
+      "skill": "session-profiler",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/profiles/sp-0004/profile.md"
+      ],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [

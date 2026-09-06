@@ -324,5 +324,45 @@ class PlatformIndependentPathTests(unittest.TestCase):
         self.assertIsNone(sp._basename(None))
 
 
+
+class MainLineShareTests(unittest.TestCase):
+    """SP-19 (F-14, class CTX-M): the measured half of the main-line budget.
+
+    CT19's `Main-line budget:` is a DECLARATION - an agent cannot count its own model
+    requests. This is the measurement it is reconciled against, read from the store by
+    `initiator`: `agent`, `user` and `compaction` are the main line; `sub-agent` is not.
+
+    The shape it exists to surface, from sp-0003: 714 main-line requests for 89,429 AIU
+    against 701 delegate requests for 8,491 - 91% of the session at 10x the cost per request,
+    while every budget the pack carried bounded the delegates.
+    """
+
+    def test_the_split_names_the_main_line_and_the_delegates(self):
+        share = sp.main_line_share({"agent": {"requests": 688, "cost": 74445.0},
+                                    "user": {"requests": 24, "cost": 12853.0},
+                                    "compaction": {"requests": 2, "cost": 2132.0},
+                                    "sub-agent": {"requests": 701, "cost": 8491.0}})
+        self.assertEqual(share["main_requests"], 714)
+        self.assertEqual(share["sub_requests"], 701)
+        self.assertAlmostEqual(share["main_pct"], 91.3, places=0)
+        self.assertGreater(share["cost_ratio"], 9)
+
+    def test_no_delegates_is_a_hundred_percent_not_a_division_by_zero(self):
+        share = sp.main_line_share({"agent": {"requests": 10, "cost": 100.0}})
+        self.assertEqual(share["main_pct"], 100.0)
+        self.assertIsNone(share["cost_ratio"], "no delegates means no ratio to report")
+
+    def test_an_empty_corpus_reports_not_recorded_rather_than_zero(self):
+        """R4/IO8: a share over nothing is not a measurement."""
+        share = sp.main_line_share({})
+        self.assertIsNone(share["main_pct"])
+        self.assertIsNone(share["cost_ratio"])
+
+    def test_sp19_is_in_the_finding_catalog_and_maps_to_a_fix(self):
+        ids = dict(sp.FINDINGS)
+        self.assertIn("SP-19", ids)
+        self.assertTrue(ids["SP-19"][2], "SP-19 must name the fix it belongs to")
+
+
 if __name__ == "__main__":
     unittest.main()

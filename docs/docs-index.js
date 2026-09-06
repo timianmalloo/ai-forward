@@ -672,7 +672,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "81cfdf44cd493f7b5d9b8126471ecfcb568c2f23d48076dc8f4fcefdde3a60de"
+      "sourceSha256": "03d9b89b59da238f3abe62af22c1b1d3e28033e1fdac02024ba56eda3bb2c660"
     },
     {
       "id": "api-bounded_process",
@@ -909,7 +909,7 @@ window.DOCS_INDEX = {
       "phase": "",
       "reviewBy": "2027-03-03",
       "reviewSuggested": [],
-      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 326 public functions across 21 modules, 42% carrying a docstring.",
+      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 328 public functions across 21 modules, 42% carrying a docstring.",
       "tags": [
         "api",
         "scripts",
@@ -923,7 +923,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d99c411b5ae93792460815fd2aa5d5ed54a1d30d53fc36cd0396c2054a8a3cc0"
+      "sourceSha256": "8d0c902f6f1f0bb5ac59f8ea8a3b78e5da400c2685d978297f539603409b50c8"
     },
     {
       "id": "api-marker-lint",
@@ -1098,7 +1098,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c382c30ece67a00eece22d55a0bd7fe2908484b32bcf79abeb55e138537fc0bb"
+      "sourceSha256": "b8705e36ca85a96649e047a8549f19606cdc714421615a9917a8ae04fe45a753"
     },
     {
       "id": "api-ui-craft-gate",
@@ -2274,7 +2274,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7dfa0806d0466f2fff3d52773245f014a5b3df3f8e1ea89fd45accb51ff09e1a"
+      "sourceSha256": "83e17e0782b5d48ce0a4fd2245e23e04509e0a95831e093130688925340178f8"
     },
     {
       "id": "docs-index",
@@ -3231,6 +3231,32 @@ window.DOCS_INDEX = {
       "sourceSha256": "c06ee7784ec2a86d06fa1562af20370898543885cd3a5b0a3981bae93cf5f57e"
     },
     {
+      "id": "profile-sp-0004",
+      "path": "docs/profiles/sp-0004/profile.md",
+      "title": "Session profile sp-0004 - theterrace",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-05",
+      "reviewSuggested": [],
+      "summary": "Measured pass over 12 session(s) in theterrace (last 10 days); 37 finding(s), top: SP-01, SP-02, SP-03.",
+      "tags": [
+        "profile",
+        "session-profiler",
+        "efficiency",
+        "adherence"
+      ],
+      "links": [
+        {
+          "to": "design-session-profiler",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "478af0f61ca5e0e20128718abce44d4689f53bc6f648f1d528f2118be6404a85"
+    },
+    {
       "id": "project-memory",
       "path": "docs/project-memory.md",
       "title": "Project Memory",
@@ -3367,7 +3393,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "fe448e565ecf93992a81fc3f78b5f613c24023fe14b9855b155b57675bf5e102"
+      "sourceSha256": "56d83d5034b99484387c3506e0c29d618ae9cb0b2fbbd040dbcd75bbf9684c0f"
     },
     {
       "id": "ui-capability-guide",
@@ -5775,5 +5801,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "049f5a6654126118dcc1e95f9b672c9a8d52acb2ad5f1bac900c9845ac225fc5"
+  "graphSha256": "bd5f533b99aee271e241d563651849e6c50d10be5e5593cef8ec128ce5e0e419"
 };
