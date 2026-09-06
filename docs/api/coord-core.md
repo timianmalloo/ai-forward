@@ -322,6 +322,23 @@ Write `.agents/artifacts.yml` from what this repo actually has. Verified, not gu
 
 **Coverage gap** — no docstring in the source.
 
+### `render_harness_capability()`
+
+The harness capability block, as lines. ONE renderer, both surfaces.
+
+The two surfaces disagreed for two revisions because each carried its own literal:
+`plugin emit` called Copilot's edit boundary advisory-pending-proof, beside the constant
+recording that the proof had arrived, and the comment above the doctor loop said the same
+superseded thing a third time. Prose restating a verdict is REC-A; a single renderer makes
+the disagreement structurally impossible. The superseded sentences are deliberately not
+reproduced here -- a file that still contains them cannot be grepped clean, and the next
+reader could copy one back out.
+
+The commit-floor sentence is UNCONDITIONAL. It used to sit behind `if edit_boundary !=
+"enforcing"`, which became unreachable the moment both entries said enforcing -- so the
+one sentence that is true in every state printed in none of them. It is not a consolation
+for a weak harness; it is the floor that holds regardless of what the hook does.
+
 ### `parse_hook_request(event, repo)`
 
 Normalise any harness's PreToolUse envelope to [(tool_name, repo_relative_path)].
@@ -507,6 +524,6 @@ follows by printing the settings entry rather than writing it.
 
 ## Coverage
 
-- Public functions: **59** · documented: **36** (**61%**)
+- Public functions: **60** · documented: **37** (**62%**)
 - Undocumented (recorded, not invented): `make_event`, `check`, `read_decisions`, `request_log_path`, `read_request_events`, `fold_requests`, `regen_command`, `record_regen_owed`, `regen_owed`, `clear_regen_owed`, `detect_harness`, `cmd_precommit`, `cmd_guard`, `session_contract_path`, `owner_rows_for_path`, `cmd_session_list`, `cmd_collaborate`, `cmd_request`, `cmd_worktree`, `cmd_session`, `cmd_metrics`, `cmd_install`, `cmd_doctor`
 

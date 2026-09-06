@@ -587,9 +587,22 @@
   <code>verify-bundle.ps1</code> — read and, where cited, run. Responds to
   <code>cfd-bench/docs/proposals/session-coordination-plan.html</code>. New classes CTX-H, CTX-I
   and CTX-J are registered in <code>docs/lessons/defect-classes.md</code>.</p>
-  <p><strong>Status:</strong> proposal. Nothing here is implemented. Every &ldquo;control that
-  fails on recurrence&rdquo; row is a control to be built and observed failing, not one that
-  exists.</p>
+  <p><strong>Status update, 6 September 2026 &mdash; P1, P2, P3 and P4 are implemented</strong>
+  (revision 62). <code>coord classify init</code> writes the registry and runs every regenerate
+  command before writing it; INSTALL &sect;1.4a is the deployment step; <code>pack-doctor</code>
+  gained a <code>coordination</code> check and <code>verify-bundle</code> gate 8b asserts this
+  repo&rsquo;s own layer is on; <code>hotspot</code> is gone; and
+  <code>render_harness_capability()</code> is now the single renderer both surfaces call, under a
+  heading that separates spike results from measured state. Each is covered by a control that was
+  observed failing first. <strong>P5 and P6 remain proposals</strong> &mdash; nothing in them is
+  built.</p>
+  <p>Three defects surfaced <em>while</em> implementing, none of them the thing being built: a
+  generator owns a <em>set</em> of artifacts rather than one path (caught by the new check refusing
+  a real entry); a bare <code>.agents/</code> made the registry untrackable, and
+  <code>git check-ignore -v</code> inverts the answer on a negation; and <code>coord install</code>
+  returned early when the hook was unchanged, skipping the driver declaration in every worktree
+  after the first &mdash; class <strong>CTX-K</strong>, which is exactly the case
+  <code>pack-doctor</code>&rsquo;s WARN sends people to fix.</p>
 </footer>
 
 </div>

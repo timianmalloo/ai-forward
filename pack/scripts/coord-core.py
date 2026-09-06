@@ -1130,23 +1130,65 @@ _WRITE_TOOLS = {"edit", "create", "write", "apply_patch", "str_replace", "multie
                 "notebookedit"}
 _PATH_KEYS = ("file_path", "path", "filePath", "notebook_path")
 
+# CAPABILITY, NOT MEASUREMENT (class CTX-H, proposal P3).
+#
+# These are spike results about what a HARNESS can do. They are identical in every repo, for
+# ever, and they are not a statement about the repo `coord doctor` is running in. Printed
+# under the same heading as the six measured lines, a reader takes them as measured state --
+# IO5 pointed at the pack's own instrument. `render_harness_capability` gives them their own
+# heading, and is the ONLY place either surface formats them.
+#
+# `established` and `harness_version` are load-bearing: a capability claim with no version has
+# no expiry. Copilot's deny was proven against CLI 1.0.80 and the runtime has moved since.
+# Where a spike did not pin a version the field says so -- "not recorded" is the honest
+# degradation, never a plausible number (IO8). Both dates recovered from git history
+# (50b849a, e1ec9d0), not recalled.
 HARNESS_STATUS = {
     "claude": {
         "edit_boundary": "enforcing",
+        "established": "2026-08-24",
+        "harness_version": "not recorded (spike S5 pinned no version)",
         "why": "PreToolUse contract established by execution and the deny response is "
                "honoured (spike S5, five cases incl. both fail-safe paths).",
     },
     "copilot": {
-        # The architecture's condition 2, CLOSED by a live session on 2026-08-24 rather
-        # than assumed either way.
+        # The architecture's condition 2, CLOSED by a live session rather than assumed
+        # either way.
         "edit_boundary": "enforcing",
-        "why": "A live Copilot CLI 1.0.80 session honoured a deny: a read of an unleased "
-               "file succeeded, a write to a leased one was refused with our reason "
-               "rendered verbatim into the transcript, and the file was unmodified. "
-               "RESIDUAL, unchanged: Copilot fails OPEN on a 30s hook timeout, so a hung "
-               "hook allows. Our measured check is 63ms p95, and the commit floor backs it.",
+        "established": "2026-08-24",
+        "harness_version": "Copilot CLI 1.0.80",
+        "why": "A live session honoured a deny: a read of an unleased file succeeded, a "
+               "write to a leased one was refused with our reason rendered verbatim into "
+               "the transcript, and the file was unmodified. RESIDUAL, unchanged: Copilot "
+               "fails OPEN on a 30s hook timeout, so a hung hook allows. Our measured check "
+               "is 63ms p95, and the commit floor backs it.",
     },
 }
+
+
+def render_harness_capability():
+    """The harness capability block, as lines. ONE renderer, both surfaces.
+
+    The two surfaces disagreed for two revisions because each carried its own literal:
+    `plugin emit` called Copilot's edit boundary advisory-pending-proof, beside the constant
+    recording that the proof had arrived, and the comment above the doctor loop said the same
+    superseded thing a third time. Prose restating a verdict is REC-A; a single renderer makes
+    the disagreement structurally impossible. The superseded sentences are deliberately not
+    reproduced here -- a file that still contains them cannot be grepped clean, and the next
+    reader could copy one back out.
+
+    The commit-floor sentence is UNCONDITIONAL. It used to sit behind `if edit_boundary !=
+    "enforcing"`, which became unreachable the moment both entries said enforcing -- so the
+    one sentence that is true in every state printed in none of them. It is not a consolation
+    for a weak harness; it is the floor that holds regardless of what the hook does.
+    """
+    lines = ["harness capability (from spikes - NOT measured here; re-qualify per version)"]
+    for name, status in sorted(HARNESS_STATUS.items()):
+        lines.append("  {0:<8} edit boundary: {1}   established {2}, against {3}".format(
+            name, status["edit_boundary"], status["established"], status["harness_version"]))
+        lines.append("    because   {0}".format(_safe(status["why"], 400)))
+        lines.append("    floor     the commit floor enforces regardless of the hook")
+    return lines
 
 
 def _relativise(path, repo, cwd=None):
@@ -2228,13 +2270,13 @@ def cmd_doctor(root, repo):
         print("regeneration     {} artifact(s) OWED - run `coord regen`".format(len(owed)))
         problems += 1
 
-    # NFR-S2: state the limit of our own control rather than implying enforcement we have
-    # not established. Copilot's deny contract is unverified, so it is reported advisory.
-    for name, status in sorted(HARNESS_STATUS.items()):
-        print("harness {:<8} edit boundary: {}".format(name, status["edit_boundary"]))
-        if status["edit_boundary"] != "enforcing":
-            print("  because     {}".format(_safe(status["why"], 400)))
-            print("  effect      the commit floor is the real enforcement for this harness")
+    # NFR-S2: state the limit of our own control rather than implying enforcement we have not
+    # established. Everything above this point is MEASURED in this repo; everything below it
+    # is a spike result about a harness and is the same in every repo (CTX-H / P3). The blank
+    # line and the heading are the separation.
+    print("")
+    for line in render_harness_capability():
+        print(line)
 
     return 1 if problems else 0
 
@@ -2321,10 +2363,8 @@ def cmd_plugin_emit(out_dir):
     print("  Copilot CLI   copilot --plugin-dir \"{}\"".format(out))
     print("  Claude Code   add the entry `coord install` prints, or install as a plugin")
     print("")
-    for name, status in sorted(HARNESS_STATUS.items()):
-        print("  {:<8} edit boundary: {}".format(name, status["edit_boundary"]))
-    print("  Copilot is advisory at the edit boundary until a live session proves a deny is")
-    print("  honoured. The commit floor enforces there regardless.")
+    for line in render_harness_capability():
+        print(line)
     return 0
 
 

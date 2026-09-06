@@ -20,6 +20,14 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[2]
 SCRIPTS = REPO / "pack" / "scripts"
 DOCTOR = SCRIPTS / "pack-doctor.py"
+SCRIPT_COORD = SCRIPTS / "coord-core.py"
+
+
+def load_coord():
+    spec = importlib.util.spec_from_file_location("coord_core_p3", SCRIPT_COORD)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
 
 
 def load_doctor():
@@ -233,6 +241,99 @@ class InstallIsIdempotentTests(unittest.TestCase):
         self._install()
         lines = self._declared()
         self.assertEqual(len(lines), len(set(lines)), "declarations must not accumulate")
+
+
+class CapabilityIsNotAMeasurementTests(unittest.TestCase):
+    """CTX-H, the reporting half (proposal P3): `coord doctor` printed a constant as state.
+
+    Six of `coord doctor`'s lines are measured in the repo it runs in. The harness lines are
+    not: `HARNESS_STATUS` is a static dict of spike results, identical in every repo forever.
+    Printed under the same heading, a reader takes `harness copilot edit boundary: enforcing`
+    as this repo's measured state -- which is IO5 (instrumentation over inference) pointed at
+    the pack's own instrument.
+
+    Three specific rots this pins, all found by reading the file rather than running it:
+      * the honest branch was UNREACHABLE -- `if edit_boundary != "enforcing"` cannot fire now
+        that both entries say enforcing, so "the commit floor is the real enforcement" never
+        printed, in either harness, ever;
+      * `plugin emit` restated a SUPERSEDED conclusion in a string literal ("Copilot is
+        advisory ... until a live session proves a deny is honoured") beside the constant
+        recording that a live session did;
+      * the comment above the doctor loop said the same superseded thing a third time.
+
+    A capability claim with no version has no expiry, so every entry must carry the date and
+    the harness version it was established against.
+    """
+
+    def setUp(self):
+        self.m = load_coord()
+
+    def test_every_entry_carries_its_provenance(self):
+        for name, status in self.m.HARNESS_STATUS.items():
+            with self.subTest(harness=name):
+                self.assertTrue(status.get("established"),
+                                "when was this established? a claim with no date never goes stale")
+                self.assertTrue(status.get("harness_version"),
+                                "against WHICH harness version? Copilot's deny was proven on "
+                                "1.0.80 and the runtime has moved since")
+
+    def test_one_renderer_serves_both_surfaces(self):
+        """The two surfaces disagreed because each carried its own literal. One function."""
+        self.assertTrue(hasattr(self.m, "render_harness_capability"),
+                        "both surfaces must render from one source")
+        src = SCRIPT_COORD.read_text(encoding="utf-8")
+        for func in ("def cmd_doctor", "def cmd_plugin_emit"):
+            body = src.split(func, 1)[1].split(chr(10) + "def ", 1)[0]
+            self.assertIn("render_harness_capability", body,
+                          func + " must render capability through the shared function")
+            self.assertNotIn("edit boundary: {}", body,
+                             func + " still formats a harness verdict itself")
+
+    def test_the_heading_says_it_is_not_measured_here(self):
+        lines = self.m.render_harness_capability()
+        head = lines[0].lower()
+        self.assertIn("capability", head)
+        self.assertTrue("not measured here" in head or "not measured in this repo" in head,
+                        "the heading must separate the constant from the measured lines: " + head)
+
+    def test_the_rendered_lines_carry_the_date_and_version(self):
+        text = chr(10).join(self.m.render_harness_capability())
+        for name, status in self.m.HARNESS_STATUS.items():
+            self.assertIn(status["established"], text, name + ": establishment date not shown")
+            self.assertIn(status["harness_version"], text, name + ": harness version not shown")
+
+    def test_the_commit_floor_sentence_prints_for_every_harness(self):
+        """It is true in BOTH states and it is the sentence that matters, so it is not
+        conditional on a status that can never take the other value."""
+        lines = self.m.render_harness_capability()
+        floors = [l for l in lines if l.strip().startswith("floor")]
+        self.assertEqual(len(floors), len(self.m.HARNESS_STATUS),
+                         "every harness needs its own floor line - counting the substring "
+                         "would also match the prose inside a `why`, which is not the point")
+        for line in floors:
+            self.assertIn("commit floor", line.lower())
+
+    def test_no_literal_anywhere_restates_a_harness_verdict(self):
+        """REC-A: the superseded claim survived in two places because both were prose."""
+        src = SCRIPT_COORD.read_text(encoding="utf-8")
+        for stale in ("Copilot is advisory at the edit boundary",
+                      "Copilot's deny contract is unverified"):
+            self.assertNotIn(stale, src,
+                             "a superseded verdict is restated in prose: " + stale)
+
+    def test_a_non_enforcing_entry_still_renders_its_reason(self):
+        """The honest path must be REACHABLE. It was dead code for two revisions."""
+        original = self.m.HARNESS_STATUS
+        try:
+            self.m.HARNESS_STATUS = {"probe": {"edit_boundary": "observed-only",
+                                               "why": "the deny was not honoured",
+                                               "established": "2026-01-01",
+                                               "harness_version": "0.0.1"}}
+            text = chr(10).join(self.m.render_harness_capability())
+            self.assertIn("the deny was not honoured", text)
+            self.assertIn("observed-only", text)
+        finally:
+            self.m.HARNESS_STATUS = original
 
 
 if __name__ == "__main__":
