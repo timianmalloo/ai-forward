@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-06T22:23:12Z",
+  "generated": "2026-09-06T22:27:43Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3672,6 +3672,30 @@ window.AUDIT_DATA = {
       ],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-01M1WDB9TKYH4FZX001ENTQBH1",
+      "shortname": "main-line-budget-f14",
+      "datetime": "2026-09-06T22:27:43Z",
+      "session": "sp-terrace-gpt6",
+      "prompt": "do next",
+      "summary": "F-14, closing the closable half of CTX-M. SP-19 measures it: main line 727 requests / 91,734 AIU (91.5% of the session) vs delegates 703 / 8,497 - 10.4x the cost per request; the 24 bare user-initiated requests alone cost more than the entire delegate fleet. Every budget the pack carried bounded delegates because delegation is visible and a main line is one more reasonable step several hundred times. CT19 gains Main-line budget:, recorded by audit-log.py --main-budget in the same spelling as a branch's; selfcheck reports a substantive turn with no main-line budget as a gap and an over-run as a finding. SP-19 splits by initiator (agent/user/compaction are the main line) and fires at >=80% share and >=3x per-request cost. Declaration and measurement reconciled, never conflated: an agent cannot count its own model requests, so it declares its own tool calls and the store is the truth. Not enforcement - no harness mediates its own main loop, so CTX-M stays partially-controlled. 12 tests red first, then SP-19 fired on the real session. The hand-rolled figures first written into CTX-M (714/89,429) are superseded in place by the tool's. 563 tests, 11/11 gates.",
+      "kind": "commit",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/profiles/sp-0004/profile.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "F-14 - a main-line budget: declared in the goal state, recorded in the audit entry, gap and over-run reported, and the measured share added to the profiler so the two can be reconciled",
+      "done_when": "audit-log --main-budget records it; selfcheck flags a gap and an over-run; session-profile reports SP-19; CT19 carries the field; controls observed red; 11/11 gates",
+      "tier": "T1",
+      "main_calls": 34,
+      "main_budget": 40,
+      "main_over_budget": false,
+      "fan_out": 0
     }
   ],
   "changes": [
