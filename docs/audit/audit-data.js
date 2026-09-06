@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-06T21:59:01Z",
+  "generated": "2026-09-06T22:05:20Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3593,6 +3593,27 @@ window.AUDIT_DATA = {
       "goal": "Make main clean: land P5 linearly and get CI green",
       "done_when": "main linear with no merge commits, pushed, and the pack-consistency workflow green on the pushed head",
       "tier": "T0",
+      "fan_out": 0
+    },
+    {
+      "id": "al-01M1WC1Z4PKE6NQC7RQ5RYGRGP",
+      "shortname": "p6-budget-on-the-record",
+      "datetime": "2026-09-06T22:05:08Z",
+      "session": "sp-2026-09-06-tri",
+      "prompt": "do p6",
+      "summary": "P6, closing CTX-F and the last of the six proposals. The doctrine half was already in place for two revisions: GO7 carries the per-branch-budget and convergence-condition rows and all 23 persona cards say the budget firing is a finding - and GO7 instructed recording calls against budget in the audit entry, which could not be done, because the span was three fields. PACK-A, and CI6's memoir. The span now takes an optional fourth field <calls>/<budget>; audit-log.py selfcheck reports a delegation with NO budget as a gap (the one that rots - an unbounded branch looks identical to a well-behaved one) and an over-run as a finding (GO9: investigate the estimate, never raise the number). Three-field form still parses; a malformed budget leaves the span usable and records nothing (IO8); a budget of zero is refused rather than read as unlimited. A record, not an enforcement - no harness mediates a sub-agent's tool count. 12 tests observed red, then proven against the real CLI; the probe entry was removed before commit. 551 tests, 11/11 gates.",
+      "kind": "commit",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "P6 - make a delegation's budget part of the record it reports against, so an over-run is a finding without a profiling pass",
+      "done_when": "an agent run carries its budget and actuals; selfcheck flags a run with no budget and one that exceeded it; GO7 names the concrete form; control observed red; 11/11 gates and CI green on main",
+      "tier": "T1",
       "fan_out": 0
     }
   ],
