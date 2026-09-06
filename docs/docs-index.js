@@ -2274,7 +2274,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "1154638ae0655c3063db7be4dc2f78da6ed1e7cfa4dc579ccf7c703e1329ba0e"
+      "sourceSha256": "7dfa0806d0466f2fff3d52773245f014a5b3df3f8e1ea89fd45accb51ff09e1a"
     },
     {
       "id": "docs-index",
@@ -3205,6 +3205,32 @@ window.DOCS_INDEX = {
       "sourceSha256": "ee7767e9c804f06825049fcf4575a83c4a65a3f7c2d5c6221233e69d6ef653c3"
     },
     {
+      "id": "profile-sp-0003",
+      "path": "docs/profiles/sp-0003/profile.md",
+      "title": "Session profile sp-0003 - theterrace",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-05",
+      "reviewSuggested": [],
+      "summary": "Measured pass over 12 session(s) in theterrace (last 10 days); 36 finding(s), top: SP-01, SP-02, SP-03.",
+      "tags": [
+        "profile",
+        "session-profiler",
+        "efficiency",
+        "adherence"
+      ],
+      "links": [
+        {
+          "to": "design-session-profiler",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "c06ee7784ec2a86d06fa1562af20370898543885cd3a5b0a3981bae93cf5f57e"
+    },
+    {
       "id": "project-memory",
       "path": "docs/project-memory.md",
       "title": "Project Memory",
@@ -3341,7 +3367,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c1006238d53007df8e2208affa6ef2ae96c7cba6ea0b67a00e49793ea8a3bf4a"
+      "sourceSha256": "fe448e565ecf93992a81fc3f78b5f613c24023fe14b9855b155b57675bf5e102"
     },
     {
       "id": "ui-capability-guide",
@@ -5749,5 +5775,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "a9bf670f446f0f8b937e0cb1bcc1c2997a2b76ac28f38fe2f77a4288b1c2c92a"
+  "graphSha256": "049f5a6654126118dcc1e95f9b672c9a8d52acb2ad5f1bac900c9845ac225fc5"
 };
