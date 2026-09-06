@@ -301,5 +301,28 @@ class GoalStateSpellingTests(unittest.TestCase):
                 self.assertTrue(sp.TIER_RX.search(text), "{0!r} declares a tier".format(text))
 
 
+
+class PlatformIndependentPathTests(unittest.TestCase):
+    """A store recorded on Windows must read the same from Linux.
+
+    `--copilot-home` exists so a store can be profiled from anywhere, and `os.path.basename`
+    is per-platform: on POSIX it treats a backslash as an ordinary character, so
+    "C:\\repo\\AGENTS.md" came back whole and the orientation-read detector compared it
+    against a basename that could never match. Green on Windows, red on ubuntu-latest - which
+    is exactly why it survived. Observed red in CI run 34061643244.
+    """
+
+    def test_basename_splits_on_both_separators(self):
+        self.assertEqual(sp._basename("C:" + chr(92) + "repo" + chr(92) + "AGENTS.md"),
+                         "AGENTS.md")
+        self.assertEqual(sp._basename("/repo/AGENTS.md"), "AGENTS.md")
+        self.assertEqual(sp._basename("C:/repo/AGENTS.md"), "AGENTS.md")
+        self.assertEqual(sp._basename("AGENTS.md"), "AGENTS.md")
+
+    def test_it_tolerates_the_empty_and_missing_cases(self):
+        self.assertEqual(sp._basename(""), "")
+        self.assertIsNone(sp._basename(None))
+
+
 if __name__ == "__main__":
     unittest.main()

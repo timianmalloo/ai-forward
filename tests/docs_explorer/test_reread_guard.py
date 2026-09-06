@@ -34,9 +34,25 @@ class EvaluateTests(unittest.TestCase):
         self.assertIsNone(w)
         state, w = self._copilot_view("C:/x/a.md", state)
         self.assertIsNone(w)
-        state, w = self._copilot_view("C:/x/A.MD", state)  # same file, different case on Windows-style paths
+        state, w = self._copilot_view("C:/x/a.md", state)
         self.assertIsNotNone(w)
         self.assertIn("3 times", w)
+
+    @unittest.skipUnless(os.path.normcase("A") == "a",
+                         "case-folding paths is correct on Windows and WRONG on POSIX, where "
+                         "a.md and A.MD are genuinely different files")
+    def test_case_differing_paths_are_the_same_file_on_a_case_folding_platform(self):
+        """AMENDED 2026-09-06 (CI run 34061643244). This assertion used to be unconditional,
+        so it asserted Windows semantics everywhere and failed on ubuntu-latest. The guard is
+        right - `os.path.normcase` folds case only where the filesystem does - and the test
+        was wrong to demand folding on a platform that does not fold.
+        """
+        state, w = self._copilot_view("C:/x/b.md", {})
+        self.assertIsNone(w)
+        state, w = self._copilot_view("C:/x/b.md", state)
+        self.assertIsNone(w)
+        state, w = self._copilot_view("C:/x/B.MD", state)
+        self.assertIsNotNone(w, "same file, different case")
 
     def test_paged_output_viewed_whole_warns_on_first_read(self):
         _, w = self._copilot_view("C:/t/copilot-tool-output-0abc.txt", {})

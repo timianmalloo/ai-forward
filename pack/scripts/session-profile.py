@@ -153,6 +153,26 @@ SEVERITY_RANK = {"Blocker": 0, "Major": 1, "Minor": 2, "Nit": 3}
 
 
 # --------------------------------------------------------------------------- helpers
+
+def _basename(path):
+    """Last path segment, splitting on BOTH separators regardless of this platform.
+
+    `os.path.basename` is per-platform, and the paths here are not: they come out of a
+    harness store that was recorded on whatever machine ran the session. Profiling a
+    Windows-captured Copilot store from Linux or WSL - which `--copilot-home` exists to
+    allow - made `os.path.basename("C:\\repo\\AGENTS.md")` return the whole string, so
+    every evidence line printed a full path and the orientation-read detector compared
+    against a basename that was never going to match.
+
+    Observed red in CI run 34061643244 (ubuntu-latest); green on Windows, which is exactly
+    why it survived. Class PACK-C's sibling: a platform assumption that is invisible on the
+    author's platform.
+    """
+    if not path:
+        return path
+    return re.split(r"[\\/]", str(path))[-1]
+
+
 def parse_ts(s):
     if not s:
         return None
@@ -445,7 +465,7 @@ def profile_copilot(sess, settings):
                 t["sub_tools"] += 1
                 name = sub_names.get(e.get("agentId") or se.get("agentId"), "sub-agent")
                 if tn == "view" and path and any(k in path.lower() for k in ORIENTATION_DOCS):
-                    t["sub_orientation_reads"].append("{0}: {1}".format(name or "sub-agent", os.path.basename(path)))
+                    t["sub_orientation_reads"].append("{0}: {1}".format(name or "sub-agent", _basename(path)))
         elif et == "assistant.message" and not e.get("agentId") and d.get("interactionId") in main_iids:
             t["asst_msgs"] += 1
             c = d.get("content") or ""
@@ -545,7 +565,7 @@ def claude_sessions(identity, since, home):
         if name.lower() not in wanted:
             continue
         for path in sorted(glob.glob(os.path.join(projects, name, "*.jsonl"))):
-            sid = os.path.splitext(os.path.basename(path))[0]
+            sid = os.path.splitext(_basename(path))[0]
             mtime = _dt.datetime.fromtimestamp(os.path.getmtime(path), _dt.timezone.utc)
             if since and mtime < since:
                 continue
@@ -667,7 +687,7 @@ def profile_claude(sess):
                         t["sub_agents"].setdefault(aid, {"name": "sub-agent", "tool_calls": 0, "tokens": 0})
                         t["sub_agents"][aid]["tool_calls"] += 1
                         if name == "Read" and path and any(k in path.lower() for k in ORIENTATION_DOCS):
-                            t["sub_orientation_reads"].append(os.path.basename(path))
+                            t["sub_orientation_reads"].append(_basename(path))
                         continue
                     t["tools"][name] += 1
                     if name in INTENT_TOOLS["claude"]:
@@ -757,7 +777,7 @@ def detect(session):
     ev = []
     for t in turns:
         for p, n in sorted(t["rereads"].items(), key=lambda kv: -kv[1])[:4]:
-            ev.append(_ev(t["turn"], "{0} viewed {1}x".format(os.path.basename(p), n)))
+            ev.append(_ev(t["turn"], "{0} viewed {1}x".format(_basename(p), n)))
         if t["paged_full_views"]:
             ev.append(_ev(t["turn"], "{0} paged tool output(s) viewed whole".format(t["paged_full_views"])))
     if ev:
@@ -807,7 +827,7 @@ def detect(session):
         share = sum(h for h, _ in hw) / max(1, sum(w for _, w in hw))
         if share > 0.05:
             add("SP-13", [_ev(None, "hooks {0:.0f}s of {1:.0f}s wall ({2:.0f}%)".format(sum(h for h, _ in hw), sum(w for _, w in hw), 100 * share))], {"share": round(share, 3)})
-    ev = [_ev(t["turn"], os.path.basename(p)) for t in turns for p in t["instruction_views"]]
+    ev = [_ev(t["turn"], _basename(p)) for t in turns for p in t["instruction_views"]]
     if ev:
         add("SP-16", ev[:8], {"reads": len(ev)})
     # SP-17: how much of the billed reasoning came back as text. Informational: it decides how much
