@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-06T22:56:36Z",
+  "generated": "2026-09-06T23:05:27Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3713,6 +3713,30 @@ window.AUDIT_DATA = {
       ],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-01M1WFGDJ09YEF1RTX3MRAKE8D",
+      "shortname": "also-acquires-a-bound-f15",
+      "datetime": "2026-09-06T23:05:27Z",
+      "session": "sp-terrace-gpt6",
+      "prompt": "do next",
+      "summary": "F-15, closing CTX-N. /also guarded direction (extension vs reversal) and had no guard on size: measured, both /also turns were the only substantive turns on that model with neither a goal state nor a tier, and one became 81 requests / 6 sub-agents / 83 min / 13,411 AIU. The skill had two grounding cases and the measured failure was a third - work in flight that never declared a goal state, so the addition had nothing to inherit; that case now writes the CT19 block for the combined remaining work before integrating. New step 5 guards magnitude: size the addition against Tier, Fan-out cap and Main-line budget and raise the tier explicitly rather than absorbing silently. SP-20 is the recurrence signal, narrower than SP-09 on purpose because the mechanism is inheritance rather than omission. 9 tests red first; SP-20 then fired at exactly t9 and t10, the turns found by hand. The context-budget ratchet then fired on the growth - trimmed a duplicated measurement, recorded the rest, and the same update pinned prepare-for-coordination and execute-with-coordination which had never been baselined. 572 tests, 11/11 gates.",
+      "kind": "commit",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/profiles/sp-0005/profile.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "F-15 - /also must establish a goal state when none is in flight, and raise the tier when the addition exceeds it, plus the measurement that makes recurrence visible",
+      "done_when": "the skill and its Copilot prompt carry both rules; session-profile reports SP-20; the also eval asserts it; controls observed red; 11/11 gates and CI green",
+      "tier": "T1",
+      "main_calls": 31,
+      "main_budget": 35,
+      "main_over_budget": false,
+      "fan_out": 0
     }
   ],
   "changes": [
