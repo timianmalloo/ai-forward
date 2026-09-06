@@ -11,6 +11,7 @@ These tests pin that: speedup is sum/span, and a set of runs that never overlap 
 report a speedup of 1.0 no matter how many runs there are.
 """
 import importlib.util
+import io
 import os
 import unittest
 
@@ -92,6 +93,116 @@ class ParallelismTests(unittest.TestCase):
         got = audit_log.parallelism_fields(runs)
         self.assertEqual(got["speedup"], 1.0,
                          "non-overlapping runs must never report a speedup above 1.0")
+
+
+class BudgetOnTheSpanTests(unittest.TestCase):
+    """P6 / class CTX-F: GO7 says record each branch's calls AGAINST ITS BUDGET, and the
+    record could not express a budget.
+
+    The doctrine half was already in place: GO7 carries the per-branch-budget and
+    convergence-condition rows, and all 23 persona cards say "the budget firing is a finding
+    for the parent, not a reason to continue". The span was `<agent>|<start>|<end>` -- three
+    fields, no budget, no actuals -- so nothing could check any of it. That is PACK-A: a
+    directive wired as prose, with no mechanism at the point it applies, and CI6's memoir.
+
+    The measured shape it exists for: a domain-researcher ran 123 tool calls and 3.0M tokens
+    on a proposal iteration and stopped only when the parent said "converge now" twice
+    (SP-07). The parent knew - its prompts were full of BOUNDED and ONLY - and the prose was
+    not holding.
+
+    Deliberately a RECORD, not an enforcement: no harness mediates a sub-agent's tool count,
+    and a control that cannot actually stop the call must not be labelled as though it can.
+    """
+
+    def test_the_three_field_form_still_parses(self):
+        """Every existing caller and every logged entry uses it. Breaking them is not a fix."""
+        run = audit_log.parse_agent_run("researcher|2026-09-06T10:00:00Z|2026-09-06T10:10:00Z")
+        self.assertIsNotNone(run)
+        self.assertEqual(run["agent"], "researcher")
+        self.assertNotIn("budget_calls", run)
+
+    def test_a_fourth_field_records_calls_against_budget(self):
+        run = audit_run("researcher", "10:00:00", "10:10:00", "123/12")
+        self.assertEqual(run["calls"], 123)
+        self.assertEqual(run["budget_calls"], 12)
+        self.assertTrue(run["over_budget"])
+
+    def test_a_run_inside_its_budget_is_not_flagged(self):
+        run = audit_run("tester", "10:00:00", "10:05:00", "8/12")
+        self.assertEqual(run["calls"], 8)
+        self.assertFalse(run["over_budget"])
+
+    def test_exactly_at_the_budget_is_not_over(self):
+        """The budget is a ceiling reached, not a ceiling crossed - GO9's circuit breaker
+        fires AT the cap, and reaching it is the branch doing what it was told."""
+        self.assertFalse(audit_run("t", "10:00:00", "10:01:00", "12/12")["over_budget"])
+
+    def test_a_malformed_budget_leaves_the_span_usable_and_records_nothing(self):
+        """IO8. The interval is still good evidence; a fabricated budget would not be.
+        Dropping the whole span would lose the parallelism measurement over a typo."""
+        run = audit_run("t", "10:00:00", "10:01:00", "twelve")
+        self.assertIsNotNone(run)
+        self.assertEqual(run["duration_seconds"], 60.0)
+        self.assertNotIn("budget_calls", run)
+        self.assertNotIn("over_budget", run)
+
+    def test_a_zero_or_negative_budget_is_refused_not_treated_as_unlimited(self):
+        for spec in ("5/0", "5/-1"):
+            with self.subTest(spec=spec):
+                run = audit_run("t", "10:00:00", "10:01:00", spec)
+                self.assertNotIn("budget_calls", run,
+                                 "a budget of zero is a typo, and treating it as unlimited "
+                                 "is the success-shaped reading")
+
+    def test_the_time_fields_are_unaffected_by_the_budget(self):
+        run = audit_run("t", "10:00:00", "10:10:00", "3/9")
+        self.assertEqual(run["duration_seconds"], 600.0)
+
+
+class SelfcheckReadsTheBudgetTests(unittest.TestCase):
+    """A field nothing reads is a field nobody fills in."""
+
+    def _entry(self, runs, **kw):
+        e = {"kind": "skill", "shortname": "s", "session": "sess", "done_when": "d",
+             "tier": "T1", "agent_runs": runs}
+        e.update(kw)
+        return e
+
+    def test_a_run_with_no_budget_is_reported_as_a_gap(self):
+        out = audit_log.budget_findings([self._entry([{"agent": "a", "duration_seconds": 1.0}])])
+        self.assertEqual(len(out["no_budget"]), 1)
+        self.assertEqual(out["no_budget"][0]["agent"], "a")
+
+    def test_a_run_over_its_budget_is_reported_as_a_finding(self):
+        out = audit_log.budget_findings([self._entry(
+            [{"agent": "researcher", "calls": 123, "budget_calls": 12, "over_budget": True}])])
+        self.assertEqual(len(out["over_budget"]), 1)
+        self.assertEqual(out["over_budget"][0]["calls"], 123)
+        self.assertEqual(out["no_budget"], [])
+
+    def test_a_run_inside_its_budget_is_reported_as_neither(self):
+        out = audit_log.budget_findings([self._entry(
+            [{"agent": "a", "calls": 4, "budget_calls": 12, "over_budget": False}])])
+        self.assertEqual(out["over_budget"], [])
+        self.assertEqual(out["no_budget"], [])
+
+    def test_an_entry_with_no_runs_contributes_nothing(self):
+        """A turn that delegated nothing has no budget to miss."""
+        out = audit_log.budget_findings([self._entry([]), {"kind": "skill"}])
+        self.assertEqual(out["over_budget"], [])
+        self.assertEqual(out["no_budget"], [])
+
+    def test_selfcheck_surfaces_both(self):
+        src = io.open(SCRIPT, encoding="utf-8").read()
+        body = src.split("def cmd_selfcheck", 1)[1].split(chr(10) + "def ", 1)[0]
+        self.assertIn("budget_findings", body,
+                      "selfcheck is where a turn's own record is read back; a finding it "
+                      "does not surface is one nobody sees without a profiling pass")
+
+
+def audit_run(agent, start, end, budget):
+    return audit_log.parse_agent_run("{0}|2026-09-06T{1}Z|2026-09-06T{2}Z|{3}".format(
+        agent, start, end, budget))
 
 
 if __name__ == "__main__":

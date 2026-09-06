@@ -597,7 +597,11 @@
   <code>tree: primary | worktree</code> on every session-start and reports the rate in
   <code>coord metrics</code> &mdash; counted, not prevented, because there is still no baseline
   to justify a refusal. Each is covered by a control that was observed failing first.
-  <strong>P6 remains a proposal</strong> &mdash; nothing in it is built.</p>
+<strong>P6</strong> closes the loop it opened: GO7's per-branch
+  budget was doctrine the audit record could not express, so the span now takes
+  <code>|&lt;calls&gt;/&lt;budget&gt;</code> and <code>selfcheck</code> reports a delegation
+  with no budget as a gap and an over-run as a finding. <strong>All six are built</strong>,
+  each behind a control observed failing first.</p>
   <p>Three defects surfaced <em>while</em> implementing, none of them the thing being built: a
   generator owns a <em>set</em> of artifacts rather than one path (caught by the new check refusing
   a real entry); a bare <code>.agents/</code> made the registry untrackable, and

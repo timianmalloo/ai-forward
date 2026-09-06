@@ -77,7 +77,7 @@ Conventions
 | Option | Help |
 |---|---|
 | `--actor` | _(no help text — coverage gap)_ |
-| `--agent-run` | one sub-agent run as '<agent>|<start-iso>|<end-iso>'; repeatable. Records agent_runs + a parallelism block (agent_seconds, span_seconds, speedup, peak_concurrency) so fan-out is MEASURED, not asserted (P8). Summed duration cannot tell serial from parallel; the union of the intervals can. |
+| `--agent-run` | one sub-agent run as '<agent>|<start-iso>|<end-iso>', optionally '|<calls>/<budget>' - the branch's tool calls against the budget it was dispatched with (GO7). `selfcheck` reports a run with no budget as a gap and an over-run as a finding; the firing is a DEFECT SIGNAL, never a reason to raise the number (GO9). Repeatable. Records agent_runs + a parallelism block (agent_seconds, span_seconds, speedup, peak_concurrency) so fan-out is MEASURED, not asserted (P8). Summed duration cannot tell serial from parallel; the union of the intervals can. |
 | `--artifact` | _(no help text — coverage gap)_ |
 | `--audit-ref` | _(no help text — coverage gap)_ |
 | `--change` | link to a change-log id (cl-NNNN) |
@@ -140,10 +140,32 @@ emitting a number that is precise and wrong.
 
 ### `parse_agent_run(spec)`
 
-'<agent>|<start-iso>|<end-iso>' -> a span dict, or None when unusable.
+'<agent>|<start-iso>|<end-iso>[|<calls>/<budget>]' -> a span dict, or None.
 
 Degrades to None on anything unparseable or time-reversed, never to a plausible wrong
 span (IO8) -- a fabricated interval would corrupt the very measurement it exists for.
+
+P6 / class CTX-F: the fourth field is the branch's tool calls against the budget it was
+dispatched with. GO7 has required recording "each branch's actual calls against its
+budget" since the shape was measured -- a domain-researcher at 123 calls and 3.0M tokens
+that stopped only when the parent said "converge now" twice -- and the span could not
+express it, so nothing could check it. That is PACK-A, and CI6's memoir.
+
+It is optional, and the three-field form still parses: every entry already in the log
+uses it, and breaking those to add a field is not a fix. A malformed budget leaves the
+SPAN usable and records no budget -- the interval is still good evidence, and losing the
+parallelism measurement over a typo would cost more than it saves.
+
+This is a RECORD, not an enforcement. No harness mediates a sub-agent's tool count, and
+a control that cannot stop the call must not be labelled as though it can.
+
+### `budget_findings(entries)`
+
+Per-branch budget gaps and over-runs across audit entries.
+
+Two separate signals, and the first is the one that rots: a delegation recorded with no
+budget is a fan-out nobody bounded, and it looks identical to a well-behaved one. An
+over-run is the louder finding but the rarer one.
 
 ### `parallelism_fields(runs)`
 
@@ -320,6 +342,6 @@ Ingest a session-export JSON array of turns into the audit log (build on session
 
 ## Coverage
 
-- Public functions: **35** · documented: **17** (**49%**)
+- Public functions: **36** · documented: **18** (**50%**)
 - Undocumented (recorded, not invented): `now_iso`, `record_start`, `audit_dir`, `log_path`, `read_log`, `append_log`, `git`, `git_context`, `commits_between`, `find_template`, `project_name`, `cmd_append`, `cmd_change`, `cmd_list`, `cmd_search`, `cmd_get`, `cmd_render`, `cmd_git_context`
 

@@ -89,6 +89,6 @@ A budget with no convergence condition is a timer, not a contract. **A budget fi
 ## Documentation & discoverability (last action)
 Append the planned-vs-actual section to the plan and run `python3 docs/ai-forward-pack/scripts/docs-graph.py derive`. A boundary correction that will outlive this run is a decision note (V17).
 
-**Audit (last action).** `python3 docs/ai-forward-pack/scripts/audit-log.py append --shortname "coordinate-<plan-slug>" --session "<id>" --skill execute-with-coordination --kind skill --prompt "<verbatim>" --summary "<tracks run, seams resolved, planned vs actual>" --artifact docs/coordination/<plan-id>.md --goal "<goal>" --done-when "<done when>" --tier T2 --fan-out <the plan's cap>`.
+**Audit (last action).** `python3 docs/ai-forward-pack/scripts/audit-log.py append --shortname "coordinate-<plan-slug>" --session "<id>" --skill execute-with-coordination --kind skill --prompt "<verbatim>" --summary "<tracks run, seams resolved, planned vs actual>" --artifact docs/coordination/<plan-id>.md --goal "<goal>" --done-when "<done when>" --tier T2 --fan-out <the plan's cap> --agent-run "<track>|<start-iso>|<end-iso>|<calls>/<budget>"` (one per track - the budget half is what makes an over-run a finding without a profiling pass; `audit-log.py selfcheck` reads both).
 
 **Handoff:** → `/session-profiler` (did the division pay?) · → `/dream` (a recurring boundary correction is a class) · → `/prepare-for-coordination` (re-plan when the variant stopped decreasing).

@@ -95,24 +95,85 @@ def duration_fields(started, ended_iso):
 # work actually occupied, and speedup = summed / union. Idle gaps between waves are excluded
 # from the union, so a long quiet period cannot understate the parallelism that did happen.
 
+def _parse_budget(field):
+    """'<calls>/<budget>' -> (calls, budget), or (None, None) when unusable.
+
+    A budget of zero or below is a typo, and reading it as "unlimited" is the
+    success-shaped reading -- refuse it rather than record a branch as forever in budget.
+    """
+    if not field or "/" not in field:
+        return None, None
+    calls_s, _, budget_s = field.partition("/")
+    try:
+        calls, budget = int(calls_s.strip()), int(budget_s.strip())
+    except (TypeError, ValueError):
+        return None, None
+    if budget <= 0 or calls < 0:
+        return None, None
+    return calls, budget
+
+
 def parse_agent_run(spec):
-    """'<agent>|<start-iso>|<end-iso>' -> a span dict, or None when unusable.
+    """'<agent>|<start-iso>|<end-iso>[|<calls>/<budget>]' -> a span dict, or None.
 
     Degrades to None on anything unparseable or time-reversed, never to a plausible wrong
     span (IO8) -- a fabricated interval would corrupt the very measurement it exists for.
+
+    P6 / class CTX-F: the fourth field is the branch's tool calls against the budget it was
+    dispatched with. GO7 has required recording "each branch's actual calls against its
+    budget" since the shape was measured -- a domain-researcher at 123 calls and 3.0M tokens
+    that stopped only when the parent said "converge now" twice -- and the span could not
+    express it, so nothing could check it. That is PACK-A, and CI6's memoir.
+
+    It is optional, and the three-field form still parses: every entry already in the log
+    uses it, and breaking those to add a field is not a fix. A malformed budget leaves the
+    SPAN usable and records no budget -- the interval is still good evidence, and losing the
+    parallelism measurement over a typo would cost more than it saves.
+
+    This is a RECORD, not an enforcement. No harness mediates a sub-agent's tool count, and
+    a control that cannot stop the call must not be labelled as though it can.
     """
     parts = [p.strip() for p in str(spec).split("|")]
-    if len(parts) != 3 or not parts[0]:
+    if len(parts) not in (3, 4) or not parts[0]:
         return None
-    agent, start, end = parts
+    agent, start, end = parts[0], parts[1], parts[2]
     s, e = parse_iso(start), parse_iso(end)
     if s is None or e is None:
         return None
     secs = (e - s).total_seconds()
     if secs < 0:
         return None
-    return {"agent": agent, "started_at": s.strftime(ISO), "ended_at": e.strftime(ISO),
-            "duration_seconds": round(secs, 1), "_s": s, "_e": e}
+    run = {"agent": agent, "started_at": s.strftime(ISO), "ended_at": e.strftime(ISO),
+           "duration_seconds": round(secs, 1), "_s": s, "_e": e}
+    if len(parts) == 4:
+        calls, budget = _parse_budget(parts[3])
+        if calls is not None:
+            run["calls"] = calls
+            run["budget_calls"] = budget
+            # GO9: the cap is a circuit breaker whose firing is a DEFECT SIGNAL. Reaching it
+            # is the branch doing what it was told, so `over` means crossed, not reached.
+            run["over_budget"] = calls > budget
+    return run
+
+
+def budget_findings(entries):
+    """Per-branch budget gaps and over-runs across audit entries.
+
+    Two separate signals, and the first is the one that rots: a delegation recorded with no
+    budget is a fan-out nobody bounded, and it looks identical to a well-behaved one. An
+    over-run is the louder finding but the rarer one.
+    """
+    no_budget, over = [], []
+    for entry in entries or []:
+        for run in entry.get("agent_runs") or []:
+            row = {"shortname": entry.get("shortname", "?"), "id": entry.get("id"),
+                   "agent": run.get("agent", "?")}
+            if run.get("budget_calls") is None:
+                no_budget.append(row)
+            elif run.get("over_budget"):
+                row.update({"calls": run.get("calls"), "budget_calls": run.get("budget_calls")})
+                over.append(row)
+    return {"no_budget": no_budget, "over_budget": over}
 
 
 def parallelism_fields(runs):
@@ -885,6 +946,7 @@ def cmd_selfcheck(args):
     have = [e for e in subst if e.get("done_when")]
     tier_gaps = [e for e in have if not e.get("tier")]
     over_cap = [e for e in subst if e.get("fan_out") is not None and len(e.get("agent_runs") or []) > int(e.get("fan_out") or 0)]
+    budgets = budget_findings(subst)
     review = [{"shortname": e.get("shortname", "?"),
                "done_when": e.get("done_when", ""),
                "summary": e.get("summary", "")} for e in have]
@@ -895,6 +957,8 @@ def cmd_selfcheck(args):
             "tier_gaps": [{"shortname": e.get("shortname", "?"), "id": e.get("id")} for e in tier_gaps],
             "over_cap": [{"shortname": e.get("shortname", "?"), "id": e.get("id"), "fan_out": e.get("fan_out"),
                           "agent_runs": len(e.get("agent_runs") or [])} for e in over_cap],
+            "budget_gaps": budgets["no_budget"],
+            "over_budget": budgets["over_budget"],
             "review": review,
         }, ensure_ascii=False, indent=2))
         return 0
@@ -910,6 +974,16 @@ def cmd_selfcheck(args):
             print(f"    [gap] {e.get('shortname', '?')}")
     else:
         print(f"  all {len(subst)} substantive turns recorded a goal-state.")
+    if budgets["no_budget"]:
+        print("  budget GAPS (a delegation with no per-branch budget - GO7 requires one, and an")
+        print("               unbounded branch looks exactly like a well-behaved one, CTX-F):")
+        for row in budgets["no_budget"]:
+            print(f"    [gap] {row['shortname']}: {row['agent']}")
+    if budgets["over_budget"]:
+        print("  budget OVER-RUNS (the firing is a DEFECT SIGNAL - investigate the estimate,")
+        print("                    never raise the number, GO9):")
+        for row in budgets["over_budget"]:
+            print(f"    [over] {row['shortname']}: {row['agent']} used {row['calls']} of {row['budget_calls']}")
     if tier_gaps:
         print("  tier GAPS (goal-state without a tier - the ceremony budget was never declared, CT19 / CTX-C):")
         for e in tier_gaps:
@@ -1010,8 +1084,13 @@ def main():
     ap_a.add_argument("--started", help="ISO-8601 UTC start stamp captured at grounding; records "
                                         "started_at + duration_seconds so elapsed time is MEASURED, "
                                         "not modeled (instrumentation over inference, IO1)")
-    ap_a.add_argument("--agent-run", dest="agent_run", action="append", metavar="AGENT|START|END",
-                      help="one sub-agent run as '<agent>|<start-iso>|<end-iso>'; repeatable. "
+    ap_a.add_argument("--agent-run", dest="agent_run", action="append",
+                      metavar="AGENT|START|END[|CALLS/BUDGET]",
+                      help="one sub-agent run as '<agent>|<start-iso>|<end-iso>', optionally "
+                           "'|<calls>/<budget>' - the branch's tool calls against the budget it "
+                           "was dispatched with (GO7). `selfcheck` reports a run with no budget "
+                           "as a gap and an over-run as a finding; the firing is a DEFECT SIGNAL, "
+                           "never a reason to raise the number (GO9). Repeatable. "
                            "Records agent_runs + a parallelism block (agent_seconds, span_seconds, "
                            "speedup, peak_concurrency) so fan-out is MEASURED, not asserted (P8). "
                            "Summed duration cannot tell serial from parallel; the union of the "
