@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-06T20:42:29Z",
+  "generated": "2026-09-06T20:58:33Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3509,6 +3509,27 @@ window.AUDIT_DATA = {
       "goal": "Land P1+P2 then author the two coordination skills against the commands P1 creates",
       "done_when": "coord classify init exists with red-first tests; deployment map, pack-doctor and a verify-bundle gate all fail an uninstalled layer; both skills deployed to both harnesses; 11/11 gates green; audit entry appended",
       "tier": "T1",
+      "fan_out": 0
+    },
+    {
+      "id": "al-01M1W88182NHMJFHSHJSWVQGPW",
+      "shortname": "p3-capability-not-measurement",
+      "datetime": "2026-09-06T20:58:33Z",
+      "session": "sp-2026-09-06-tri",
+      "prompt": "do p3",
+      "summary": "P3, closing CTX-H. coord doctor printed six repo-measured lines then two HARNESS_STATUS lines - a static spike constant identical in every repo - under one heading, so a reader took a capability claim as this repo's measured state (IO5 aimed at the pack's own instrument). Three rots found by reading rather than running: the honest branch was unreachable once both entries said enforcing, so the commit-floor sentence never printed in either harness; plugin emit restated a superseded verdict in a string literal and the doctor's own comment said it a third time; no entry carried a version, though Copilot's deny was proven against CLI 1.0.80. Fix: render_harness_capability() is the single renderer both surfaces call, under a heading saying the claim is from spikes and NOT measured here; every entry carries established + harness_version, both dates recovered from git (50b849a, e1ec9d0) not recalled, with 'not recorded' where the spike pinned none; the floor line is unconditional. CapabilityIsNotAMeasurementTests (8 cases) observed red, and one of them caught the fix's own docstring reproducing the removed sentence verbatim. Proposal footer corrected from 'nothing here is implemented' to P1-P4 built with controls, P5/P6 still proposals. 523 tests, 11/11 gates. Commits 22e0a34, plus the derived regeneration.",
+      "kind": "commit",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Stop coord doctor presenting a spike constant as this repo's measured state - the last open piece of CTX-H",
+      "done_when": "capability prints under its own heading with the spike date and harness version; the unreachable branch is gone and the floor sentence is unconditional; plugin emit renders from HARNESS_STATUS; a control fails on recurrence, observed red first; 11/11 gates",
+      "tier": "T0",
       "fan_out": 0
     }
   ],
