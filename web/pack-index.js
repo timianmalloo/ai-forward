@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 173
+"count": 174
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 327,
+"total": 328,
 "items": [
 {
 "cat": "knowledge",
@@ -1061,7 +1061,7 @@ window.PACK_INDEX = {
 "summary": "session-profile.py — measure how agent sessions actually ran, across harnesses and models.",
 "path": "pack/scripts/session-profile.py",
 "kind": "script",
-"text": "session-profile.py session-profile.py — measure how agent sessions actually ran, across harnesses and models. instrumentation over inference (io1) pointed at the agent's own work: instead of reasoning about why a session felt slow, expensive or drifty, read the telemetry every harness already writes to disk and turn it into a findings table (what happened, with evidence) and a fixes table (which pack surface owns the control). this is the \"asleep half\" of continuous improvement (`/dream`) specialised to performance, efficiency, task adherence, fan-out and cross-harness coordination — the /session-profiler skill drives it. sources (all local, all read-only): github copilot cli ~/.copilot/session-store.db sessions, turns, assistant_usage_events ~/.copilot/session-state/<id>/events.jsonl the full event stream ~/.copilot/settings.json model / contexttier / effortlevel claude code ~/.claude/projects/<slug>/<session>.jsonl the transcript a repo is selected by path (`--repo <path>`, repeatable). copilot sessions match on cwd or the `owner/name` remote; claude code sessions match on the project slug of the repo path and of each of its git worktrees. every number is either read from the store or labelled as an estimate; a measurement path that does not exist reports \"not recorded\", never a plausible number (io8). subcommands discover list the sessions found for the repo(s) in the window profile per-turn metrics + findings + fixes for the selected sessions; writes docs/profiles/<sp-id>/{profile.json,profile.md} in the first --repo (or --out-root) compare aggregate the same metrics by model family x harness (the tuning view) fixes print the fix catalog (finding id -> pack surface -> control) python 3.8+, stdlib only. windows-safe (utf-8 stdout, read-only sqlite uri). late_addition_findings main_line_share _basename parse_ts iso pct est_tokens model_family norm_path git repo_identity repo_label claude_slug in_repo copilot_home copilot_settings _ro copilot_sessions _load_events _args_of _new_turn profile_copilot window claude_home claude_sessions _text_of profile_claude _ev detect add cross_session_findings family_comparison _md_table _fmt _frontmatter render_markdown _select cmd_discover _profile_all profile_id cmd_profile _index _audit cmd_compare cmd_fixes main"
+"text": "session-profile.py session-profile.py — measure how agent sessions actually ran, across harnesses and models. instrumentation over inference (io1) pointed at the agent's own work: instead of reasoning about why a session felt slow, expensive or drifty, read the telemetry every harness already writes to disk and turn it into a findings table (what happened, with evidence) and a fixes table (which pack surface owns the control). this is the \"asleep half\" of continuous improvement (`/dream`) specialised to performance, efficiency, task adherence, fan-out and cross-harness coordination — the /session-profiler skill drives it. sources (all local, all read-only): github copilot cli ~/.copilot/session-store.db sessions, turns, assistant_usage_events ~/.copilot/session-state/<id>/events.jsonl the full event stream ~/.copilot/settings.json model / contexttier / effortlevel claude code ~/.claude/projects/<slug>/<session>.jsonl the transcript a repo is selected by path (`--repo <path>`, repeatable). copilot sessions match on cwd or the `owner/name` remote; claude code sessions match on the project slug of the repo path and of each of its git worktrees. every number is either read from the store or labelled as an estimate; a measurement path that does not exist reports \"not recorded\", never a plausible number (io8). subcommands discover list the sessions found for the repo(s) in the window profile per-turn metrics + findings + fixes for the selected sessions; writes docs/profiles/<sp-id>/{profile.json,profile.md} in the first --repo (or --out-root) compare aggregate the same metrics by model family x harness (the tuning view) fixes print the fix catalog (finding id -> pack surface -> control) python 3.8+, stdlib only. windows-safe (utf-8 stdout, read-only sqlite uri). late_addition_findings _settings_note effective_model model_attribution main_line_share _basename parse_ts iso pct est_tokens model_family norm_path git repo_identity repo_label claude_slug in_repo copilot_home copilot_settings _ro copilot_sessions _load_events _args_of _new_turn profile_copilot window claude_home claude_sessions _text_of profile_claude _ev detect add cross_session_findings family_comparison _md_table _fmt _frontmatter render_markdown _select cmd_discover _profile_all profile_id cmd_profile _index _audit cmd_compare cmd_fixes main"
 },
 {
 "cat": "scripts",
@@ -1562,10 +1562,10 @@ window.PACK_INDEX = {
 "cat": "graph",
 "id": "api-index",
 "title": "API reference — the deployed script bundle",
-"summary": "Generated API reference for the pack's public surface — the deployed script bundle. 329 public functions across 21 modules, 42% carrying a docstring.",
+"summary": "Generated API reference for the pack's public surface — the deployed script bundle. 331 public functions across 21 modules, 43% carrying a docstring.",
 "path": "docs/api/index.md",
 "kind": "api",
-"text": "api reference — the deployed script bundle generated api reference for the pack's public surface — the deployed script bundle. 329 public functions across 21 modules, 42% carrying a docstring. api scripts generated index documents architecture"
+"text": "api reference — the deployed script bundle generated api reference for the pack's public surface — the deployed script bundle. 331 public functions across 21 modules, 43% carrying a docstring. api scripts generated index documents architecture"
 },
 {
 "cat": "graph",
@@ -2223,6 +2223,15 @@ window.PACK_INDEX = {
 "path": "docs/profiles/sp-0005/profile.md",
 "kind": "doc",
 "text": "session profile sp-0005 - theterrace measured pass over 12 session(s) in theterrace (last 10 days); 38 finding(s), top: sp-01, sp-02, sp-03. profile session-profiler efficiency adherence relates-to design-session-profiler"
+},
+{
+"cat": "graph",
+"id": "profile-sp-0006",
+"title": "Session profile sp-0006 - theterrace",
+"summary": "Measured pass over 12 session(s) in theterrace (last 10 days); 39 finding(s), top: SP-01, SP-02, SP-03.",
+"path": "docs/profiles/sp-0006/profile.md",
+"kind": "doc",
+"text": "session profile sp-0006 - theterrace measured pass over 12 session(s) in theterrace (last 10 days); 39 finding(s), top: sp-01, sp-02, sp-03. profile session-profiler efficiency adherence relates-to design-session-profiler"
 },
 {
 "cat": "graph",

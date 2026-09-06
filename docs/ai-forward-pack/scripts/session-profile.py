@@ -97,6 +97,11 @@ FIXES = collections.OrderedDict([
     ("F-12", {"title": "Ask each host for its richest reasoning summary, and treat summary-derived judgements as Inferred",
               "where": "INSTALL.md 1.6; adapters/hooks/claude-code.settings.hooks.json (showThinkingSummaries); pack-doctor `claude settings`",
               "control": "SP-17 reports visible-reasoning share per family; a family under 10% marks every text-derived drift finding Inferred"}),
+    ("F-16", {"title": "Resolve the model from usage events, never from the recorded setting",
+              "where": "scripts/session-profile.py (effective_model / model_attribution); any pack "
+                       "guidance keyed to a model",
+              "control": "SP-21 flags a session whose recorded setting is not its effective model; "
+                         "a test pins that family attribution is built from the per-request model"}),
     ("F-15", {"title": "`/also` establishes a bound rather than inheriting one that is absent",
               "where": "commands/also/SKILL.md + adapters/copilot/prompts/also.prompt.md",
               "control": "SP-20 flags an `/also` turn with no goal state, or a fan-out on one "
@@ -133,6 +138,7 @@ FINDINGS = collections.OrderedDict([
     ("SP-18", ("Intent-trace coverage: shell calls that carry a one-line description (the reasoning trace a profiler can read)", "Minor", ["F-13"])),
     ("SP-19", ("Main-line dominance: the turn's own loop, not its delegates, is where the cost is", "Major", ["F-14"])),
     ("SP-20", ("Late addition on an unbounded turn: an `/also` that inherited no goal state or fanned out above no tier", "Major", ["F-15"])),
+    ("SP-21", ("Model attribution: the recorded setting is not the model that ran", "Major", ["F-16"])),
 ])
 
 INTENT_TOOLS = {"copilot": {"powershell", "bash", "shell"}, "claude": {"Bash", "PowerShell"}}
@@ -195,6 +201,63 @@ def late_addition_findings(turns):
             rows.append({"turn": t.get("turn"),
                          "reason": "{0} sub-agent(s) on a turn that declared no tier".format(subs)})
     return rows
+
+
+
+
+def _settings_note(facts):
+    """The settings line, with the EFFECTIVE model beside it when they disagree (SP-21).
+
+    A reader scanning the header takes `settings {'model': ...}` as what ran. On the measured
+    session it was not, and the difference decided 95% of the cost.
+    """
+    if not facts.get("settings"):
+        return ""
+    note = " \u00b7 settings {0}".format(facts["settings"])
+    ma = facts.get("model_attribution") or {}
+    if ma.get("mismatch"):
+        note += " \u00b7 EFFECTIVE model {0} ({1}% of main-line cost, {2} distinct)".format(
+            ma["effective"], ma.get("share"), ma.get("distinct"))
+    return note
+
+
+def effective_model(models):
+    """The model a session actually WAS, by cost. `models` is {model: {requests, cost}}.
+
+    By cost rather than request count on purpose: in the measured session `gpt-6-astra` and
+    the delegate models had comparable request counts and wildly different prices, and it is
+    the expensive one that determines what the session cost and how it behaved.
+
+    Returns None for a corpus it cannot read - an unknown model is not a guess (IO8).
+    """
+    if not models:
+        return {"model": None, "share": None, "distinct": 0, "cost": 0.0}
+    total = sum(v.get("cost", 0.0) for v in models.values())
+    top = max(models.items(), key=lambda kv: kv[1].get("cost", 0.0))
+    return {"model": top[0], "cost": round(top[1].get("cost", 0.0), 1),
+            "distinct": len(models),
+            "share": round(100.0 * top[1].get("cost", 0.0) / total, 1) if total else None}
+
+
+def model_attribution(settings, models):
+    """Reconcile the RECORDED model against the EFFECTIVE one (class CTX-O).
+
+    The setting is a true statement about what was configured and is simply not a statement
+    about what executed: measured, one session recorded `claude-opus-4.8` while `gpt-6-astra`
+    ran 1,022 requests for 95% of the spend, across eleven model/effort combinations. Both
+    values are plausible, which is why the error is invisible.
+
+    Note what counts as a mismatch: the recorded model having RUN is not enough. In that
+    session it ran - on 5% of the requests. Presence is not attribution.
+
+    An absent setting is not a mismatch. Claude Code records no model setting, and absent
+    must not read as wrong.
+    """
+    recorded = (settings or {}).get("model")
+    eff = effective_model(models)
+    return {"recorded": recorded, "effective": eff["model"], "share": eff["share"],
+            "distinct": eff["distinct"],
+            "mismatch": bool(recorded and eff["model"] and recorded != eff["model"])}
 
 
 def main_line_share(buckets):
@@ -581,11 +644,18 @@ def profile_copilot(sess, settings):
     # F-14 / SP-19: the main-line vs delegate split, by initiator. Claude Code's transcript
     # carries no initiator, so for that reader this stays absent rather than fabricated (IO8).
     initiators = collections.defaultdict(lambda: {"requests": 0, "cost": 0.0})
+    # F-16 / SP-21: per-model totals on the MAIN line, so the session's effective model is
+    # resolved from what executed rather than from what was configured (class CTX-O).
+    main_models = collections.defaultdict(lambda: {"requests": 0, "cost": 0.0})
     for w_rows in U.values():
         for r in w_rows:
             b = initiators[r.get("initiator") or ("agent" if r["main"] else "sub-agent")]
             b["requests"] += 1
             b["cost"] += r["aiu"]
+            if r["main"] and r.get("model"):
+                m = main_models[r["model"]]
+                m["requests"] += 1
+                m["cost"] += r["aiu"]
 
     turns = []
     for i in sorted(T):
@@ -631,6 +701,10 @@ def profile_copilot(sess, settings):
              "prefix_chars": prefix["chars"], "prefix_tokens_est": est_tokens(prefix["chars"]) if prefix["chars"] else None,
              "prefix_first_chars": prefix["first_chars"], "prefix_blocks": prefix["blocks"], "prefix_note": prefix["note"],
              "main_line": main_line_share(dict(initiators)),
+             "main_models": {k: {"requests": v["requests"], "cost": round(v["cost"], 1)}
+                             for k, v in main_models.items()},
+             "model_attribution": model_attribution(
+                 {k: settings.get(k) for k in ("model",)}, dict(main_models)),
              "compactions": sum(1 for e in events if str(e.get("type", "")).startswith("session.compact")),
              "events": len(events), "usage_rows": len(usage)}
     return facts, turns
@@ -922,6 +996,11 @@ def detect(session):
     la = late_addition_findings(turns)
     if la:
         add("SP-20", [_ev(r["turn"], r["reason"]) for r in la][:6], {"count": len(la)})
+    ma = facts.get("model_attribution") or {}
+    if ma.get("mismatch"):
+        add("SP-21", [_ev(None, "recorded setting {0!r}; effective model {1!r} at {2}% of main-line cost across {3} distinct model(s)".format(
+            ma["recorded"], ma["effective"], ma.get("share"), ma.get("distinct")))],
+            {k: ma.get(k) for k in ("recorded", "effective", "share", "distinct")})
     ml = facts.get("main_line") or {}
     if ml.get("main_pct") is not None and ml.get("cost_ratio") is not None             and ml["main_pct"] >= 80 and ml["cost_ratio"] >= 3:
         add("SP-19", [_ev(None, "main line {0:,} requests / {1:,.0f} AIU ({2}% of the session) vs delegates {3:,} / {4:,.0f}; {5}x the cost per request".format(
@@ -1119,7 +1198,7 @@ def render_markdown(profile):
                   "started {0} \u00b7 updated {1} \u00b7 cwd `{2}` \u00b7 prefix {3} \u00b7 compactions {4}{5}".format(
                       f.get("started"), f.get("updated"), f.get("cwd"),
                       ("~{0:,} est. tokens / {1:,} chars".format(f["prefix_tokens_est"], f["prefix_chars"]) if f.get("prefix_chars") else NOT_RECORDED),
-                      f.get("compactions"), (" \u00b7 settings {0}".format(f["settings"]) if f.get("settings") else "")), ""]
+                      f.get("compactions"), _settings_note(f)), ""]
         rows = []
         for t in s["turns"]:
             rows.append([t["turn"], t["prompt"][:48].replace("|", "/"), "+".join(t["families"]) or "\u2014", t["main_requests"], _fmt(t["ctx_start"]), _fmt(t["ctx_end"]),

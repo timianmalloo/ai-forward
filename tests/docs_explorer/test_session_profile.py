@@ -443,5 +443,93 @@ class AlsoSkillContractTests(unittest.TestCase):
         self.assertIn("no goal state", text)
 
 
+
+class EffectiveModelTests(unittest.TestCase):
+    """SP-21 (F-16, class CTX-O): the recorded model is not the model that ran.
+
+    Measured in sp-0005: the session's stored settings read `model: claude-opus-4.8` while
+    the usage events record 1,022 requests to `gpt-6-astra` - 95% of the spend - plus
+    gpt-5.6-sol, gpt-5.4, gpt-5.4-mini and claude-sonnet-5 across sub-agents. The main line
+    switched family at turn 3 and never switched back. ELEVEN distinct model/effort
+    combinations ran under one recorded setting.
+
+    The setting is a true statement about what was CONFIGURED and is simply not a statement
+    about what EXECUTED. Anything keyed to it - guidance selected per model, a cost
+    expectation, this profiler's own family attribution - is keyed to the wrong field, and
+    the error is invisible because both values are plausible.
+
+    The profiler already reads the per-request model, which is the only reason the
+    discrepancy was visible at all. That was a happy accident of implementation, not a
+    contract. These tests make it one.
+    """
+
+    def _facts(self, setting, models):
+        return {"settings": {"model": setting}, "main_models": models}
+
+    def test_the_effective_model_is_the_costliest_main_line_model(self):
+        eff = sp.effective_model({"gpt-6-astra": {"requests": 1022, "cost": 90398.0},
+                                  "claude-opus-4.8": {"requests": 53, "cost": 3051.0}})
+        self.assertEqual(eff["model"], "gpt-6-astra")
+        self.assertEqual(eff["distinct"], 2)
+        self.assertAlmostEqual(eff["share"], 96.7, places=0)
+
+    def test_an_empty_corpus_reports_nothing_rather_than_a_guess(self):
+        eff = sp.effective_model({})
+        self.assertIsNone(eff["model"])
+        self.assertIsNone(eff["share"])
+
+    def test_a_mismatch_between_setting_and_effective_model_is_flagged(self):
+        rows = sp.model_attribution({"model": "claude-opus-4.8"},
+                                    {"gpt-6-astra": {"requests": 1022, "cost": 90398.0}})
+        self.assertTrue(rows["mismatch"])
+        self.assertEqual(rows["recorded"], "claude-opus-4.8")
+        self.assertEqual(rows["effective"], "gpt-6-astra")
+
+    def test_a_matching_setting_is_not_flagged(self):
+        rows = sp.model_attribution({"model": "gpt-6-astra"},
+                                    {"gpt-6-astra": {"requests": 10, "cost": 100.0}})
+        self.assertFalse(rows["mismatch"])
+
+    def test_an_absent_setting_is_not_a_mismatch(self):
+        """Claude Code records no model setting. Absent is not wrong (IO8)."""
+        rows = sp.model_attribution({}, {"claude-opus-5": {"requests": 3, "cost": 9.0}})
+        self.assertFalse(rows["mismatch"])
+        self.assertIsNone(rows["recorded"])
+
+    def test_the_setting_running_as_a_minority_still_counts_as_a_mismatch(self):
+        """The recorded model DID run - on 5% of requests. Presence is not attribution."""
+        rows = sp.model_attribution({"model": "claude-opus-4.8"},
+                                    {"gpt-6-astra": {"requests": 1022, "cost": 90398.0},
+                                     "claude-opus-4.8": {"requests": 53, "cost": 3051.0}})
+        self.assertTrue(rows["mismatch"],
+                        "the setting ran, but it is not what the session was")
+
+    def test_sp21_is_in_the_catalog_and_maps_to_a_fix(self):
+        ids = dict(sp.FINDINGS)
+        self.assertIn("SP-21", ids)
+        self.assertTrue(ids["SP-21"][2])
+
+    def test_attribution_reads_usage_events_not_settings(self):
+        """The contract, pinned: the family column must be built from the per-request model.
+
+        If this ever regresses to reading `settings.model`, every family comparison in every
+        profile silently becomes a statement about configuration instead of execution.
+        """
+        src = io.open(os.path.join(ROOT, "pack", "scripts", "session-profile.py"),
+                      encoding="utf-8").read()
+        # Two ends, because the contract spans them: the turn's families are built from the
+        # per-request model, and the comparison keys on those - never on the setting.
+        self.assertIn('"families": sorted({model_family(m) for m in models})', src,
+                      "a turn's families must come from the per-request models")
+        body = src.split("def family_comparison(", 1)[1].split(chr(10) + "def ", 1)[0]
+        self.assertIn('t["families"]', body,
+                      "the comparison must key on the turn's measured families")
+        for keyed_to_config in ('settings"]["model"', 'settings.get("model")', 'settings["model"]'):
+            self.assertNotIn(keyed_to_config, body,
+                             "family attribution read the recorded SETTING: every comparison in "
+                             "every profile would silently become a statement about "
+                             "configuration instead of execution")
+
+
 if __name__ == "__main__":
     unittest.main()

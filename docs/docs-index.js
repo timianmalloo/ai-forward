@@ -909,7 +909,7 @@ window.DOCS_INDEX = {
       "phase": "",
       "reviewBy": "2027-03-03",
       "reviewSuggested": [],
-      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 329 public functions across 21 modules, 42% carrying a docstring.",
+      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 331 public functions across 21 modules, 43% carrying a docstring.",
       "tags": [
         "api",
         "scripts",
@@ -923,7 +923,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9a4fe249e33051a6a0eae37ac56ffc26e32506829e757d60666c85562365ecf3"
+      "sourceSha256": "3515f9381aacef540ece5d34cd4c8555ab9f5fcdddd8469f32f1748a8ff1f2b3"
     },
     {
       "id": "api-marker-lint",
@@ -1098,7 +1098,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4fdc4f6f1d58211e8f16674275f2ab38b2a6c572bcb6e75e9e0abdb6672fd951"
+      "sourceSha256": "9664980a3e876785d7f236d751e4fd1298fe83b8388a088064b3c910c97a2f9f"
     },
     {
       "id": "api-ui-craft-gate",
@@ -2274,7 +2274,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "eb3837aff01a0de0ff7a041b326140d6781a7d81229b9ca155e19c3939510a6d"
+      "sourceSha256": "f30613545076d684d44f8bf04573107c009b29775f2e9f423669655f39ba8bba"
     },
     {
       "id": "docs-index",
@@ -3283,6 +3283,32 @@ window.DOCS_INDEX = {
       "sourceSha256": "4c78587e672d96a1a94dba440dff70d72ea739db11d94e23399f1d9d3361bbbd"
     },
     {
+      "id": "profile-sp-0006",
+      "path": "docs/profiles/sp-0006/profile.md",
+      "title": "Session profile sp-0006 - theterrace",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-05",
+      "reviewSuggested": [],
+      "summary": "Measured pass over 12 session(s) in theterrace (last 10 days); 39 finding(s), top: SP-01, SP-02, SP-03.",
+      "tags": [
+        "profile",
+        "session-profiler",
+        "efficiency",
+        "adherence"
+      ],
+      "links": [
+        {
+          "to": "design-session-profiler",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "4d19762aaf07635aedfeb1755f7cd30250c486c321ea2a453269d4fa6fbc4dc4"
+    },
+    {
       "id": "project-memory",
       "path": "docs/project-memory.md",
       "title": "Project Memory",
@@ -3419,7 +3445,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "6a6bb3b5fd44be3882cb118248cdd1b66a31fe35aa3564dbdde26c91928cc66b"
+      "sourceSha256": "f2f3048a9a7025c2a18dd73ee3d02670d4e93a5bbb0ad219a1a061e0bd4758c1"
     },
     {
       "id": "ui-capability-guide",
@@ -5827,5 +5853,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "1beae1927dd70adfd35f698e152c357482a1aded0f7fc8ecc38b4344afce45e3"
+  "graphSha256": "1a27ebbf33163689ffe244c99e3f78a3386d7ff8159f0cb26f06d163ab16819b"
 };

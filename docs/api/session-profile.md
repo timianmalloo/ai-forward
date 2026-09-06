@@ -92,6 +92,31 @@ This one is about the *late addition* specifically, because the mechanism is dif
 addition to an unbounded turn INHERITS unboundedness rather than acquiring a bound, and
 the skill's own flow assumed a goal state was there to re-read.
 
+### `effective_model(models)`
+
+The model a session actually WAS, by cost. `models` is {model: {requests, cost}}.
+
+By cost rather than request count on purpose: in the measured session `gpt-6-astra` and
+the delegate models had comparable request counts and wildly different prices, and it is
+the expensive one that determines what the session cost and how it behaved.
+
+Returns None for a corpus it cannot read - an unknown model is not a guess (IO8).
+
+### `model_attribution(settings, models)`
+
+Reconcile the RECORDED model against the EFFECTIVE one (class CTX-O).
+
+The setting is a true statement about what was configured and is simply not a statement
+about what executed: measured, one session recorded `claude-opus-4.8` while `gpt-6-astra`
+ran 1,022 requests for 95% of the spend, across eleven model/effort combinations. Both
+values are plausible, which is why the error is invisible.
+
+Note what counts as a mismatch: the recorded model having RUN is not enough. In that
+session it ran - on 5% of the requests. Presence is not attribution.
+
+An absent setting is not a mismatch. Claude Code records no model setting, and absent
+must not read as wrong.
+
 ### `main_line_share(buckets)`
 
 Split a session's requests and cost between the main line and its delegates.
@@ -223,6 +248,6 @@ Aggregate per (family, harness): the tuning view. Drift indicators are counts pe
 
 ## Coverage
 
-- Public functions: **29** · documented: **9** (**31%**)
+- Public functions: **31** · documented: **11** (**35%**)
 - Undocumented (recorded, not invented): `parse_ts`, `iso`, `pct`, `est_tokens`, `model_family`, `norm_path`, `git`, `in_repo`, `copilot_home`, `copilot_settings`, `copilot_sessions`, `claude_home`, `claude_sessions`, `profile_claude`, `render_markdown`, `cmd_discover`, `profile_id`, `cmd_profile`, `cmd_compare`, `cmd_fixes`
 
