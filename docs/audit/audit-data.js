@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-06T19:18:06Z",
+  "generated": "2026-09-06T19:33:41Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3466,6 +3466,27 @@ window.AUDIT_DATA = {
       "outcome": "success",
       "goal": "Measure recent sessions across ai-de, cfd-bench and TheTerrace; turn the measurement into findings + fixes + a coordination-framework proposal",
       "done_when": "profile artifact written and indexed; findings/fixes/family-x-harness tables emitted with struck findings listed; CFD-Bench coordination plan read and answered with an HTML proposal in docs/proposals; new classes registered; audit entry carries goal/done_when/tier/fan_out",
+      "tier": "T0",
+      "fan_out": 0
+    },
+    {
+      "id": "al-01M1W3CNDZH21HK9AB1J5HXHF0",
+      "shortname": "ctx-h-ctx-j-controls",
+      "datetime": "2026-09-06T19:33:41Z",
+      "session": "sp-2026-09-06-tri",
+      "prompt": "do the next steps",
+      "summary": "Items 1-2 of the coordination proposal's order of operations, both observed red first. CTX-H: removed hotspot from coord-core CLASSES (its only occurrence in 2,308 lines; the parser accepted it, classify returned it, and the file then merged as authored while the tool reported it handled); hoisted MERGE_MECHANISMS as the single class-to-driver map that _install_merge_driver now builds from; ClassMechanismTests fails on any class with no mechanism and on an installer that stops reading the map. CTX-J: widened GOAL_RX to the forms CT19 prescribes (bold plus em dash / en dash / hyphen / middot / colon, and the heading form), keeping the delimiter guard against prose; GoalStateSpellingTests pins all eight spellings plus the negatives plus the paired TIER_RX. sp-0002 annotated in place, not re-measured (REC-A). Register: CTX-H partially-controlled, CTX-J controlled. All 10 verify-bundle gates green. Commits 8512889, a72a9b1 on fix/ctx-h-ctx-j-controls.",
+      "kind": "commit",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Land items 1-2: remove the class with no mechanism, fix the detector blind to its own standard, each with the control that fails on recurrence",
+      "done_when": "both controls exist and were seen failing before the fix; pack/ edited as source with sync-pack run; verify-bundle green; audit entry appended",
       "tier": "T0",
       "fan_out": 0
     }
