@@ -127,6 +127,23 @@ try {
         python (Join-Path $repo "pack\scripts\audit-log.py") verify
     }
 
+    # Gate 11 (numbered 8b so the always-on budget keeps its place in CI's order).
+    # CTX-H: the pack repo is itself a pack install, so its own coordination layer being ON
+    # is the only end-to-end proof the install path works. A gate that only ran in a fixture
+    # would have passed throughout the two revisions the layer shipped switched off.
+    Gate "8b. coordination layer installed (pack-doctor)" {
+        $doctor = Join-Path $repo "docs/ai-forward-pack/scripts/pack-doctor.py"
+        $raw = python $doctor --root $repo --json
+        if ($LASTEXITCODE -ne 0 -and -not $raw) { throw "pack-doctor produced no output" }
+        $coord = ($raw | ConvertFrom-Json).checks | Where-Object { $_.name -eq "coordination" }
+        if (-not $coord) { throw "pack-doctor has no `coordination` check" }
+        Write-Host ("  {0}  {1}" -f $coord.status, $coord.detail)
+        if ($coord.status -eq "FAIL") {
+            Write-Host ("  fix: {0}" -f $coord.fix) -ForegroundColor Red
+            throw "the coordination layer is not installed in this repo"
+        }
+    }
+
     Gate "7. eval cases well-formed" {
         python -c @"
 import glob, json, re, sys, os

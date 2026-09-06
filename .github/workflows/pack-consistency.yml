@@ -124,6 +124,17 @@ jobs:
       - name: Always-on context budget
         run: python3 pack/scripts/context-budget.py gate
 
+      # CTX-H: coord-core.py shipped for two revisions switched off, and nothing noticed --
+      # an uninstalled layer reports "0 decisions, nothing claimed", which is indistinguishable
+      # from a working layer that saw no traffic. This repo is itself a pack install, so its
+      # own layer being ON is the only end-to-end proof the install path works. A WARN is
+      # expected here: .git/config is per-clone, so a fresh CI checkout never has the driver
+      # registered. Only a missing or unparseable registry FAILs.
+      - name: Coordination layer installed
+        run: |
+          python3 pack/scripts/pack-doctor.py --root . --json > pack-doctor.json || true
+          python3 -c "import json,sys; c=[x for x in json.load(open('pack-doctor.json'))['checks'] if x['name']=='coordination']; sys.exit('pack-doctor has no coordination check') if not c else None; print(c[0]['status'], '-', c[0]['detail']); sys.exit('coordination layer not installed - fix: ' + c[0]['fix']) if c[0]['status']=='FAIL' else None"
+
       # Every persona declares the knowledge lens it actually needs (P3). An agent with no
       # declared lens inherits the whole set, which is what put a main-thread-sized prefix
       # on every sub-agent run.

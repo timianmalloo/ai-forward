@@ -747,7 +747,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7622e6a4921eb2d32d5dde37c825a4d1cc090500b70e6b3982f89a564e043bcd"
+      "sourceSha256": "13b3bbdf7787b5feec3d53821d9ea10ff4eb936722afc220b0206058f8d6d8f5"
     },
     {
       "id": "api-coord_ids",
@@ -909,7 +909,7 @@ window.DOCS_INDEX = {
       "phase": "",
       "reviewBy": "2027-03-03",
       "reviewSuggested": [],
-      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 318 public functions across 21 modules, 40% carrying a docstring.",
+      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 322 public functions across 21 modules, 41% carrying a docstring.",
       "tags": [
         "api",
         "scripts",
@@ -923,7 +923,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d6534abd459236c5ef0c0061cd218b697a0a8c71159ff4460f0ee25a61e66110"
+      "sourceSha256": "c9d2d8e067a5bd6aaf93a08414a11d20de3723dd45cd59994f541c218f75d3af"
     },
     {
       "id": "api-marker-lint",
@@ -1023,7 +1023,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "92b2e62eb9497e8a78e1510d7cdc9930e6bae622cafba307abe1e200f0901732"
+      "sourceSha256": "39cfde54388512a39a23f4605074ddbedd897a50ab92d6dd0d03f81f5a7a9191"
     },
     {
       "id": "api-prompt-log",
@@ -2274,7 +2274,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "6a92d3ec8ca17d02c65222907605fa60a24f62adc88c1fdc787fbe0a8abf7e74"
+      "sourceSha256": "fc72a6b3f5cb9d5386861f751d6be2daeb4aea478beb308b65112ea8e961267a"
     },
     {
       "id": "docs-index",
@@ -5749,5 +5749,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "45b71282a21f02d830d00665a9c0e7c975f14406b676fe844b53ef1ac33d3483"
+  "graphSha256": "f1c1fd7f5394782370aec55dc5f60eb388f7b6561d0e02f83d5a1ac5287d815e"
 };

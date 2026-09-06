@@ -1,14 +1,14 @@
 window.PORTAL_DATA = {
   "meta": {
     "counts": {
-      "skills": 25,
+      "skills": 27,
       "personas": 23,
       "knowledge": 38,
       "templates": 28,
       "scripts": 22
     },
     "whatIs": "AI-Forward is a committed Markdown methodology pack that installs into a repo so Claude Code and GitHub Copilot direct work with a shared reasoning spine, adversarial persona review, and a library of workflow skills - nothing runs as a service; everything is versioned files and stdlib scripts.",
-    "skillCount": 25,
+    "skillCount": 27,
     "precisionNote": "This portal is the high-level, user-facing front door. It is a LENS over the repo's core knowledge, not a copy of it: the Foundations, UI, and Architecture sections list and link the structured artifacts (knowledge docs, ADRs, specs, designs) with derived summaries, while the artifacts themselves stay exactly where they are - as structured, individually-owned Markdown. Nothing here is hand-typed content that must be kept in sync; it is generated from those sources, so it cannot drift."
   },
   "sections": [
@@ -25,7 +25,7 @@ window.PORTAL_DATA = {
     {
       "id": "skills",
       "n": "3",
-      "title": "The 25 Skills"
+      "title": "The 27 Skills"
     },
     {
       "id": "agents",
@@ -338,11 +338,25 @@ window.PORTAL_DATA = {
       "group": "Delivery",
       "items": [
         {
+          "cmd": "/execute-with-coordination",
+          "desc": "Take the coordinator role: spin up one worktree per agent or session from a coordination plan, assign explicit ownership, arbitrate seam requests and scope changes, and converge the tracks back to one branch.",
+          "when": "To run a coordination plan as the coordinator - one worktree per agent or session, explicit ownership per track. With no plan it calls /prepare-for-coordination first.",
+          "produces": "one worktree and one dispatched contract per track, resolved seam requests, a merge in dependency order with the integrated gate set green, and planned-vs-actual appended to the plan",
+          "handoff": "/session-profiler (measure the division), then /dream (a recurring boundary correction is a class)"
+        },
+        {
           "cmd": "/optimize-graph",
           "desc": "Analyse a prompt BEFORE executing it and produce an optimized execution graph — dependencies made explicit, incidental ordering removed, the critical path shortened, independent work parallelised under a bounded fan-out contract, nodes collapsed or promoted to the right granularity, every loop given a termination variant, and cost recorded against delivery. It may only increase completeness, rigor and determinism, never trade them.",
           "when": "Before executing any prompt beyond two steps, or one with a loop, a fan-out, or a triggered gate.",
           "produces": "docs/plans/ + a cost-vs-delivery ledger",
           "handoff": "the workflow skill it wraps, then /dream"
+        },
+        {
+          "cmd": "/prepare-for-coordination",
+          "desc": "Turn the coordination layer on, then derive from the repo's own specs, architecture and artifact classes the optimal division of work across sessions or sub-agents - maximising parallelism while minimising contention - and emit the plan as a committed md + html pair.",
+          "when": "Before dividing work across sessions, worktrees or sub-agents - and first of all, to switch the coordination layer on, which is the highest-ratio move in the skill.",
+          "produces": "docs/coordination/<plan-id>.md (canonical, machine-readable: artifact classes, tracks with owned paths and exit evidence, the serial spine, seams, struck tracks) plus the matching .html for the human assigning sessions",
+          "handoff": "/execute-with-coordination (runs the plan), then /session-profiler (did the division pay?)"
         }
       ]
     }
@@ -1766,7 +1780,7 @@ window.PORTAL_DATA = {
         "id": "api-index",
         "type": "api",
         "title": "API reference — the deployed script bundle",
-        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 318 public functions across 21 modules, 40% carrying a docstring."
+        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 322 public functions across 21 modules, 41% carrying a docstring."
       },
       {
         "id": "api-marker-lint",

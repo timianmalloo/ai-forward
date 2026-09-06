@@ -22,3 +22,9 @@
 *.gif  binary
 *.zip  binary
 *.ico  binary
+docs/docs-index.js merge=coord-regen
+docs/audit/audit-data.js merge=coord-regen
+docs/audit/index.html merge=coord-regen
+docs/audit/audit-log.jsonl merge=coord-register
+docs/audit/change-log.jsonl merge=coord-register
+docs/health-history.jsonl merge=coord-register

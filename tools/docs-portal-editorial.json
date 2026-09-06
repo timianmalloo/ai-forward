@@ -201,7 +201,12 @@
       "produces": "docs/dreams/ + HTML review",
       "handoff": "/apply-learnings"
     },
-    "session-profiler": {"group": "Continuous improvement", "when": "Weekly, after any session that felt slow or drifty, and before/after a model or harness change - pointed at one or more pack-consuming repos.", "produces": "docs/profiles/<sp-id>/ - a findings table (SP-01..SP-16, per-turn evidence), a fixes table (F-01..F-11, pack surface + control), and a model-family x harness comparison", "handoff": "/dream (mines the profiles), then /apply-learnings or /extendaibundle"},
+    "session-profiler": {
+      "group": "Continuous improvement",
+      "when": "Weekly, after any session that felt slow or drifty, and before/after a model or harness change - pointed at one or more pack-consuming repos.",
+      "produces": "docs/profiles/<sp-id>/ - a findings table (SP-01..SP-16, per-turn evidence), a fixes table (F-01..F-11, pack surface + control), and a model-family x harness comparison",
+      "handoff": "/dream (mines the profiles), then /apply-learnings or /extendaibundle"
+    },
     "apply-learnings": {
       "group": "Continuous improvement",
       "when": "Sharing a learning across the fleet.",
@@ -267,6 +272,18 @@
       "when": "Finding a specific prior prompt.",
       "produces": "-",
       "handoff": "-"
+    },
+    "prepare-for-coordination": {
+      "group": "Delivery",
+      "when": "Before dividing work across sessions, worktrees or sub-agents - and first of all, to switch the coordination layer on, which is the highest-ratio move in the skill.",
+      "produces": "docs/coordination/<plan-id>.md (canonical, machine-readable: artifact classes, tracks with owned paths and exit evidence, the serial spine, seams, struck tracks) plus the matching .html for the human assigning sessions",
+      "handoff": "/execute-with-coordination (runs the plan), then /session-profiler (did the division pay?)"
+    },
+    "execute-with-coordination": {
+      "group": "Delivery",
+      "when": "To run a coordination plan as the coordinator - one worktree per agent or session, explicit ownership per track. With no plan it calls /prepare-for-coordination first.",
+      "produces": "one worktree and one dispatched contract per track, resolved seam requests, a merge in dependency order with the integrated gate set green, and planned-vs-actual appended to the plan",
+      "handoff": "/session-profiler (measure the division), then /dream (a recurring boundary correction is a class)"
     }
   },
   "ui": {

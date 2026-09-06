@@ -44,6 +44,7 @@ Design: docs/design/coord-core-phase1.md
 | `check` | may this session touch this path? |
 | `claim` | declare intent over an artifact set |
 | `class` | what class is this artifact? |
+| `classify` | write the artifact registry from what this repo has |
 | `collaborate` | cross-session collaboration checks |
 | `doctor` | is the driver effective? is the registry sane? |
 | `guard` | refuse to move HEAD over work held in one place |
@@ -72,6 +73,7 @@ Design: docs/design/coord-core-phase1.md
 | `--contract` | _(no help text — coverage gap)_ |
 | `--emit` | _(no help text — coverage gap)_ |
 | `--fix` | push, the cheapest second copy |
+| `--force` | replace an existing registry (it is repo configuration) |
 | `--from-role` | _(no help text — coverage gap)_ |
 | `--json` | _(no help text — coverage gap)_ |
 | `--path` | _(no help text — coverage gap)_ |
@@ -283,6 +285,31 @@ needs a branch for "unknown".
 
 **Coverage gap** — no docstring in the source.
 
+### `pack_defaults(repo)`
+
+The pack's own artifacts, as classify-init candidates.
+
+`requires` keeps the registry honest about THIS repo: a pattern naming a path that does
+not exist is a claim nothing checks, and it would start matching the day someone creates
+the file. Everything not listed stays `authored` -- the safe default. Do not enumerate it.
+
+### `verify_regen_command(repo, patterns, command, timeout=…)`
+
+Run it. Return (ok, reason). The near-miss control.
+
+`patterns` is the set the generator OWNS, not one path: `audit-log.py render` rebuilds
+the data projection and ensures the viewer exists, and both are derived. Declaring half
+a generator's output leaves the other half conflicting by hand forever.
+
+Two ways to fail, and the second is the subtle one: a command that exits 0 while
+rewriting something outside that set is not a regenerate command, it is a side effect,
+and classifying its target `derived` would licence the driver to resolve a file that
+command will then clobber.
+
+### `cmd_classify_init(root, repo, candidates=…, force=…, timeout=…)`
+
+Write `.agents/artifacts.yml` from what this repo actually has. Verified, not guessed.
+
 ### `record_regen_owed(root, path)`
 
 **Coverage gap** — no docstring in the source.
@@ -480,6 +507,6 @@ follows by printing the settings entry rather than writing it.
 
 ## Coverage
 
-- Public functions: **56** · documented: **33** (**59%**)
+- Public functions: **59** · documented: **36** (**61%**)
 - Undocumented (recorded, not invented): `make_event`, `check`, `read_decisions`, `request_log_path`, `read_request_events`, `fold_requests`, `regen_command`, `record_regen_owed`, `regen_owed`, `clear_regen_owed`, `detect_harness`, `cmd_precommit`, `cmd_guard`, `session_contract_path`, `owner_rows_for_path`, `cmd_session_list`, `cmd_collaborate`, `cmd_request`, `cmd_worktree`, `cmd_session`, `cmd_metrics`, `cmd_install`, `cmd_doctor`
 

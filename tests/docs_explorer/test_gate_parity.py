@@ -36,6 +36,7 @@ CANONICAL_GATES = [
     ("audit",         "6b. audit log is fully readable",     "Audit log is fully readable"),
     ("evals",         "7. eval cases well-formed",           "Eval cases well-formed"),
     ("budget",        "8. always-on context budget",         "Always-on context budget"),
+    ("coordination",  "8b. coordination layer installed",    "Coordination layer installed"),
 ]
 
 

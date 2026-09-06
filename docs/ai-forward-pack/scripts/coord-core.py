@@ -571,6 +571,11 @@ def _build_parser():
     # --- Phase 3 ---
     cls = sub.add_parser("class", help="what class is this artifact?")
     cls.add_argument("path"); cls.add_argument("--json", action="store_true")
+    ci = sub.add_parser("classify", help="write the artifact registry from what this repo has")
+    ci.add_argument("action", choices=["init"])
+    ci.add_argument("--force", action="store_true",
+                    help="replace an existing registry (it is repo configuration)")
+    ci.add_argument("--timeout", type=float, default=180)
     md = sub.add_parser("merge-derived", help="the .gitattributes merge driver (always 0)")
     md.add_argument("result"); md.add_argument("base")
     md.add_argument("theirs"); md.add_argument("realpath")
@@ -841,6 +846,210 @@ def regen_command(root, path):
             if best is None or len(pattern) > len(best[0]):
                 best = (pattern, cmd)
     return best[1] if best else None
+
+
+
+# --- the registry is derivable, not authored (CTX-H, proposal P1) -------------------
+#
+# These artifacts are the SAME obligation in every repo the pack is installed into: the
+# pack generates them, so the pack knows how they merge. Asking each repo to hand-author
+# them is asking each repo to repeat the same near-miss -- the cfd-bench coordination plan
+# first wrote `audit-log.py regen` from inference, and there is no such subcommand.
+#
+# A WRONG regenerate command is worse than a missing entry. `load_registry` already refuses
+# a `derived` entry with NO command; it cannot refuse one with the wrong command, and the
+# failure is silent: the driver resolves the merge, records a regeneration owed, and the
+# artifact is permanently stale while every tool reports it handled. So `classify init`
+# RUNS each command before it writes it, and refuses the entry if the command fails or
+# touches anything but its own target.
+
+def _canonical_project(repo):
+    """The project name, derived from git -- never `basename(cwd)` (PACK-P).
+
+    Run from a worktree, `basename` stamps the WORKTREE folder into a committed generated
+    file. The remote is the canonical answer; the primary worktree is the fallback.
+    """
+    url, _err = _git(repo, "config", "--get", "remote.origin.url")
+    name = (url or "").strip().rstrip("/")
+    if name:
+        name = name.rsplit("/", 1)[-1]
+        if name.endswith(".git"):
+            name = name[:-4]
+        if name:
+            return name
+    out, _err = _git(repo, "worktree", "list", "--porcelain")
+    for line in (out or "").splitlines():
+        if line.startswith("worktree "):
+            tail = line[len("worktree "):].strip().replace("\\", "/").rstrip("/")
+            base = tail.rsplit("/", 1)[-1]
+            if base:
+                return base
+    base = str(repo).replace("\\", "/").rstrip("/").rsplit("/", 1)[-1]
+    return base or "repo"
+
+
+def pack_defaults(repo):
+    """The pack's own artifacts, as classify-init candidates.
+
+    `requires` keeps the registry honest about THIS repo: a pattern naming a path that does
+    not exist is a claim nothing checks, and it would start matching the day someone creates
+    the file. Everything not listed stays `authored` -- the safe default. Do not enumerate it.
+    """
+    scripts = "docs/ai-forward-pack/scripts"
+    py = '"{0}"'.format(sys.executable)
+    project = _canonical_project(repo)
+    return [
+        {"patterns": ["docs/docs-index.js"], "class": "derived",
+         "command": "{0} {1}/docs-graph.py derive".format(py, scripts),
+         "requires": ["docs/docs-index.js", scripts + "/docs-graph.py"]},
+        {"patterns": ["docs/audit/audit-data.js", "docs/audit/index.html"],
+         "class": "derived",
+         # ONE generator, TWO artifacts: `render` rebuilds the data projection AND ensures
+         # the viewer exists. Found by verify_regen_command refusing the single-path form,
+         # which is the check doing its job -- a generator owns a SET, and classifying only
+         # half of it leaves the other half to conflict by hand forever.
+         #
+         # --root and --project are NOT optional: the default project name is the repo
+         # DIRECTORY name, which stamps a worktree folder into a committed file (PACK-P).
+         "command": "{0} {1}/audit-log.py --root docs --project {2} render".format(
+             py, scripts, project),
+         "requires": ["docs/audit/audit-data.js", scripts + "/audit-log.py"]},
+        {"patterns": ["docs/audit/audit-log.jsonl"], "class": "register",
+         "command": "", "requires": ["docs/audit/audit-log.jsonl"]},
+        {"patterns": ["docs/audit/change-log.jsonl"], "class": "register",
+         "command": "", "requires": ["docs/audit/change-log.jsonl"]},
+        {"patterns": ["docs/health-history.jsonl"], "class": "register",
+         "command": "", "requires": ["docs/health-history.jsonl"]},
+    ]
+
+
+def _dirty_paths(repo):
+    """The set of paths git currently reports as changed. Compared as a DELTA.
+
+    Absolute state would never pass: the tree is usually already dirty when someone runs
+    this. What must be empty is what the command ADDED.
+    """
+    out, err = _git(repo, "status", "--porcelain", "--untracked-files=all")
+    if err and not out:
+        return None                       # R4: unreadable is not the same as clean
+    paths = set()
+    for line in (out or "").splitlines():
+        raw = line[3:].strip() if len(line) > 3 else ""
+        if " -> " in raw:                 # a rename reports both sides
+            raw = raw.split(" -> ", 1)[1]
+        if raw:
+            paths.add(_norm(raw.strip('"')))
+    return paths
+
+
+def verify_regen_command(repo, patterns, command, timeout=180):
+    """Run it. Return (ok, reason). The near-miss control.
+
+    `patterns` is the set the generator OWNS, not one path: `audit-log.py render` rebuilds
+    the data projection and ensures the viewer exists, and both are derived. Declaring half
+    a generator's output leaves the other half conflicting by hand forever.
+
+    Two ways to fail, and the second is the subtle one: a command that exits 0 while
+    rewriting something outside that set is not a regenerate command, it is a side effect,
+    and classifying its target `derived` would licence the driver to resolve a file that
+    command will then clobber.
+    """
+    before = _dirty_paths(repo)
+    if before is None:
+        return False, "git status is unreadable, so nothing was established"
+    try:
+        # DEVIATION (Rules of the Road 4): shell=True mirrors cmd_regen, and for the same
+        # reason -- a regenerate command may use shell operators and must run identically on
+        # POSIX and Windows. The string is pack-derived or repo-local config, never input.
+        proc = subprocess.run(command, cwd=str(repo), shell=True, capture_output=True,
+                              text=True, timeout=timeout)
+    except subprocess.TimeoutExpired:
+        return False, "exceeded {0}s".format(timeout)
+    except OSError as exc:
+        return False, "{0}: {1}".format(exc.__class__.__name__, exc)
+    if proc.returncode != 0:
+        detail = _safe(((proc.stderr or "") + (proc.stdout or "")).strip(), 160)
+        return False, "exited {0}{1}".format(
+            proc.returncode, " - " + detail if detail else "")
+    after = _dirty_paths(repo)
+    if after is None:
+        return False, "git status is unreadable after the run"
+    owned = {_norm(p) for p in patterns}
+    stray = sorted((after - before) - owned)
+    if stray:
+        return False, "it also changed {0}".format(", ".join(stray[:4]))
+    return True, ""
+
+
+REGISTRY_HEADER = """# .agents/{name} - what each artifact IS decides how it merges.
+# Written by `coord classify init`. Format: pattern: class [regenerate command]
+# Longest matching pattern wins. Everything not listed stays `authored` - the safe
+# default, resolved by a human through conventional conflict markers. Do not enumerate it.
+#
+# Every `derived` command below was RUN before it was written here: a wrong command
+# resolves the merge silently and leaves the artifact permanently stale while reporting
+# as handled. Re-verify with `coord classify init --force` after changing a generator.
+"""
+
+
+def cmd_classify_init(root, repo, candidates=None, force=False, timeout=180):
+    """Write `.agents/artifacts.yml` from what this repo actually has. Verified, not guessed."""
+    target = Path(root) / REGISTRY_NAME
+    if target.exists() and not force:
+        print("COORD-REGISTRY-EXISTS  {0} already exists - not overwritten.".format(target))
+        print("  because     a hand-tuned registry is repo configuration, like .gitignore")
+        print("  remedy      re-run with --force to regenerate, or edit it by hand")
+        return 2
+
+    candidates = pack_defaults(repo) if candidates is None else candidates
+    lines, skipped, absent = [], [], []
+    for cand in candidates:
+        missing = [r for r in cand.get("requires", []) if not (Path(repo) / r).exists()]
+        if missing:
+            absent.append((", ".join(cand.get("patterns") or [cand["pattern"]]), missing[0]))
+            continue
+        patterns = cand.get("patterns") or [cand["pattern"]]
+        if cand["class"] == "derived":
+            ok, reason = verify_regen_command(repo, patterns, cand["command"], timeout)
+            if not ok:
+                skipped.append((", ".join(patterns), reason))
+                continue
+            for pattern in patterns:
+                lines.append("{0}: derived {1}".format(pattern, cand["command"]))
+        else:
+            for pattern in patterns:
+                lines.append("{0}: {1}".format(pattern, cand["class"]))
+
+    Path(root).mkdir(parents=True, exist_ok=True)
+    body = REGISTRY_HEADER.format(name=REGISTRY_NAME) + "\n" + "\n".join(lines) + "\n"
+    target.write_text(body, encoding="utf-8", newline="\n")
+
+    try:
+        entries = load_registry(root)
+    except CoordError as exc:
+        # A registry this tool writes that its own parser rejects is the worst outcome.
+        print("COORD-REGISTRY-UNPARSEABLE  wrote {0} and could not read it back: {1}".format(
+            target, exc.code))
+        return 2
+
+    print("Wrote {0} - {1} pattern(s) verified.".format(target, len(entries or [])))
+    for line in lines:
+        print("  {0}".format(line if len(line) <= 110 else line[:107] + "..."))
+    for pattern, why in absent:
+        print("  not present   {0}  ({1} does not exist here)".format(pattern, why))
+    for pattern, why in skipped:
+        print("  REFUSED       {0}  its regenerate command {1}".format(pattern, why))
+    if skipped:
+        print("")
+        print("A refused entry is NOT a missing feature - it is the control working. A wrong")
+        print("regenerate command resolves every merge and leaves the artifact permanently")
+        print("stale while reporting as handled. Fix the command, then re-run with --force.")
+        return 3
+    print("")
+    print("Next: `coord install` declares the drivers in .gitattributes and writes the")
+    print("pre-commit floor. .git/config is per-clone, so every fresh clone and every new")
+    print("worktree needs `coord install` again - `coord doctor` is how you find out.")
+    return 0
 
 
 # --- the deferred-regeneration debt -----------------------------------------
@@ -1764,7 +1973,14 @@ def cmd_install(repo, root):
                   .format(target))
             return 2
         if existing == body:
+            # The hook is only ONE of install's two jobs. `.git/hooks` is shared by every
+            # worktree of a repository (this command says so when it writes the hook), so in
+            # every worktree after the first the hook already exists -- and returning here
+            # took the merge-driver declaration with it. The command printed success and
+            # never touched .gitattributes, which made it a no-op in exactly the case
+            # `pack-doctor`'s WARN sends people to run it. Fall through instead.
             print("pre-commit hook already installed (unchanged)")
+            _install_merge_driver(repo, root)
             _print_settings_entry(repo)
             return 0
     target.write_text(body, encoding="utf-8", newline="\n")
@@ -2160,6 +2376,9 @@ def main(argv=None):
 
     if args.cmd == "install":
         return cmd_install(repo, root)
+
+    if args.cmd == "classify":
+        return cmd_classify_init(root, repo, force=args.force, timeout=args.timeout)
 
     if args.cmd == "class":
         klass, reason = classify(root, args.path)

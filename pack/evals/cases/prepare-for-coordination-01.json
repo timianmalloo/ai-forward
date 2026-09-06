@@ -1,0 +1,87 @@
+{
+  "skill": "prepare-for-coordination",
+  "prompt": "Run /prepare-for-coordination for the payments slice: divide the work across sessions or sub-agents, turn the coordination layer on first, and emit the plan as docs/coordination/coordination-payments-slice.md plus the matching .html.",
+  "assertions": [
+    {
+      "type": "file-exists",
+      "path": "docs/coordination/coordination-payments-slice.md"
+    },
+    {
+      "type": "file-exists",
+      "path": "docs/coordination/coordination-payments-slice.html"
+    },
+    {
+      "type": "frontmatter-valid",
+      "path": "docs/coordination/coordination-payments-slice.md"
+    },
+    {
+      "type": "file-exists",
+      "path": ".agents/artifacts.yml"
+    },
+    {
+      "type": "grep",
+      "path": "docs/coordination/coordination-payments-slice.md",
+      "pattern": "(?i)##\\s*Layer state"
+    },
+    {
+      "type": "grep",
+      "path": "docs/coordination/coordination-payments-slice.md",
+      "pattern": "(?i)##\\s*Artifact classes"
+    },
+    {
+      "type": "grep",
+      "path": "docs/coordination/coordination-payments-slice.md",
+      "pattern": "(?i)##\\s*Tracks"
+    },
+    {
+      "type": "grep",
+      "path": "docs/coordination/coordination-payments-slice.md",
+      "pattern": "(?i)##\\s*Serial spine"
+    },
+    {
+      "type": "grep",
+      "path": "docs/coordination/coordination-payments-slice.md",
+      "pattern": "(?i)##\\s*Struck tracks"
+    },
+    {
+      "type": "grep",
+      "path": "docs/coordination/coordination-payments-slice.md",
+      "pattern": "(?i)derived|register"
+    },
+    {
+      "type": "grep",
+      "path": "docs/coordination/coordination-payments-slice.md",
+      "pattern": "(?i)no coordination needed"
+    },
+    {
+      "type": "grep",
+      "path": "docs/coordination/coordination-payments-slice.md",
+      "pattern": "(?i)exit evidence"
+    },
+    {
+      "type": "grep",
+      "path": "docs/coordination/coordination-payments-slice.md",
+      "pattern": "(?i)fan-?out cap"
+    },
+    {
+      "type": "grep",
+      "path": "docs/coordination/coordination-payments-slice.md",
+      "pattern": "(?i)enforced|observed-only|unsupported"
+    },
+    {
+      "type": "grep",
+      "path": "docs/coordination/coordination-payments-slice.md",
+      "pattern": "(?i)coord install"
+    },
+    {
+      "type": "cmd-exit",
+      "cmd": [
+        "python3",
+        "docs/ai-forward-pack/scripts/docs-graph.py",
+        "validate"
+      ],
+      "exit": 0
+    }
+  ],
+  "id": "prepare-for-coordination-01"
+}

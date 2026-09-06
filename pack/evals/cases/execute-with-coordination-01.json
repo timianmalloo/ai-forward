@@ -1,0 +1,43 @@
+{
+  "skill": "execute-with-coordination",
+  "prompt": "Run /execute-with-coordination against docs/coordination/coordination-payments-slice.md: open a worktree per track, dispatch each with its contract, arbitrate the seams, and converge.",
+  "assertions": [
+    {
+      "type": "grep-transcript",
+      "pattern": "(?i)coord (doctor|worktree new)"
+    },
+    {
+      "type": "grep-transcript",
+      "pattern": "(?i)coord install"
+    },
+    {
+      "type": "grep-transcript",
+      "pattern": "(?i)convergence condition|budget"
+    },
+    {
+      "type": "grep-transcript",
+      "pattern": "(?i)termination variant|strictly decreas"
+    },
+    {
+      "type": "grep-transcript",
+      "pattern": "(?i)seam request"
+    },
+    {
+      "type": "grep-transcript",
+      "pattern": "(?i)enforced|observed-only|unsupported"
+    },
+    {
+      "type": "grep-transcript",
+      "pattern": "(?i)evidence, not authority|not authority"
+    },
+    {
+      "type": "grep-transcript",
+      "pattern": "(?i)planned vs actual"
+    },
+    {
+      "type": "grep-transcript",
+      "pattern": "(?i)(worktree cleanup|--remove)"
+    }
+  ],
+  "id": "execute-with-coordination-01"
+}

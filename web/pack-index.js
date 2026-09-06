@@ -11,7 +11,7 @@ window.PACK_INDEX = {
 {
 "id": "skills",
 "label": "Skills",
-"count": 25
+"count": 27
 },
 {
 "id": "templates",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 322,
+"total": 324,
 "items": [
 {
 "cat": "knowledge",
@@ -507,6 +507,15 @@ window.PACK_INDEX = {
 },
 {
 "cat": "skills",
+"id": "execute-with-coordination",
+"title": "/execute-with-coordination",
+"summary": "Take the coordinator role: spin up one worktree per agent or session from a coordination plan, assign explicit ownership, arbitrate seam requests and scope changes, and converge the tracks back to one branch.",
+"path": "pack/commands/execute-with-coordination/SKILL.md",
+"kind": "skill",
+"text": "/execute-with-coordination take the coordinator role: spin up one worktree per agent or session from a coordination plan, assign explicit ownership, arbitrate seam requests and scope changes, and converge the tracks back to one branch. skill: /execute-with-coordination grounding (first action) input cast flow then, inside the new tree: definition of done (exit gate) documentation & discoverability (last action)"
+},
+{
+"cat": "skills",
 "id": "extendaibundle",
 "title": "/extendaibundle",
 "summary": "Extend the AI-Forward pack itself from a prose prompt — add a new skill, knowledge doc, template, or script — running collectknowledge → specify → design → implement under the covers, specialized for the reality that pack work is writing…",
@@ -558,6 +567,15 @@ window.PACK_INDEX = {
 "path": "pack/commands/optimize-graph/SKILL.md",
 "kind": "skill",
 "text": "/optimize-graph analyse a prompt before executing it and produce an optimized execution graph — dependencies made explicit, incidental ordering removed, the critical path shortened, independent work parallelised under a bounded fan-out contract, nodes collapsed or promoted to the right granularity, every loop given a termination variant, and cost recorded against delivery. it may only increase completeness, rigor and determinism, never trade them. skill: /optimize-graph grounding (first action) input the pass stage 0 — triage. is planning worth it? (go16) stage 1 — build the naive graph (what would happen with no planning) stage 2 — add the mandatory floor nodes (go12) stage 3 — classify the edges and delete the fake ones (go2) stage 4 — measure the graph and attack the span (go4, go4a) stage 5 — decide concurrency (go5–go7) stage 6 — granularity and determinism (go11, go13–go14) stage 7 — bound every loop (go8–go10) stage 8 — disconfirm (the gate) stage 9 — converge — emit the plan stage 10 — execute, then record cost vs delivery (go18) output artifact definition of done (exit gate) documentation & discoverability (last action)"
+},
+{
+"cat": "skills",
+"id": "prepare-for-coordination",
+"title": "/prepare-for-coordination",
+"summary": "Turn the coordination layer on, then derive from the repo's own specs, architecture and artifact classes the optimal division of work across sessions or sub-agents - maximising parallelism while minimising contention - and emit the plan as…",
+"path": "pack/commands/prepare-for-coordination/SKILL.md",
+"kind": "skill",
+"text": "/prepare-for-coordination turn the coordination layer on, then derive from the repo's own specs, architecture and artifact classes the optimal division of work across sessions or sub-agents - maximising parallelism while minimising contention - and emit the plan as a committed md + html pair. skill: /prepare-for-coordination grounding (first action) input cast flow plan schema (the md is the contract — keep these headings and columns verbatim) layer state artifact classes tracks serial spine seams struck tracks order of operations definition of done (exit gate) documentation & discoverability (last action)"
 },
 {
 "cat": "skills",
@@ -917,7 +935,7 @@ window.PACK_INDEX = {
 "summary": "coord-core.py - agent coordination, Phase 1 walking skeleton.",
 "path": "pack/scripts/coord-core.py",
 "kind": "script",
-"text": "coord-core.py coord-core.py - agent coordination, phase 1 walking skeleton. holds the record of intent and answers \"may this session touch this artifact?\" from it. append-only jsonl, one file per session; every piece of state is a fold over it. no daemon, no database, no dependency beyond the standard library (adr-0007). four controls here were observed failing on the un-fixed shape before they were trusted: log-a an append onto a file not ending in a newline fuses two records and loses both r4 a check that scanned nothing must not report \"free\" ctrl-port os.open without o_binary translates newlines on windows -- which also masked the log-a control, because a stray cr still terminates a line f8 a claim over the coordination record itself would lock the substrate design: docs/design/coord-core-phase1.md __init__ repo_root resolve_root _norm _literal_segments overlaps make_event _next_seq append_event read_events fold check _safe render append_decision read_decisions append_record request_log_path read_request_events fold_requests _git unique_commits staged_paths _identity _build_parser entry_fingerprint conservation_lost merge_register _read_jsonl cmd_merge_register load_registry classify regen_command record_regen_owed regen_owed clear_regen_owed _reject_path _relativise parse_hook_request detect_harness hook_decision_of hook_response_is_valid hook_response _not_checked cmd_hook cmd_precommit cmd_guard _worktree_key active_sessions session_contract_path _role_token _strip_cell contract_ownership infer_session_roles owner_rows_for_path collaboration_findings cmd_session_list cmd_collaborate cmd_request _slug worktree_inventory worktree_is_clean worktree_safety cmd_worktree cmd_session cmd_metrics cmd_install _install_merge_driver _write_conflict read cmd_merge_derived cmd_regen driver_status cmd_doctor cmd_plugin_emit _print_settings_entry main"
+"text": "coord-core.py coord-core.py - agent coordination, phase 1 walking skeleton. holds the record of intent and answers \"may this session touch this artifact?\" from it. append-only jsonl, one file per session; every piece of state is a fold over it. no daemon, no database, no dependency beyond the standard library (adr-0007). four controls here were observed failing on the un-fixed shape before they were trusted: log-a an append onto a file not ending in a newline fuses two records and loses both r4 a check that scanned nothing must not report \"free\" ctrl-port os.open without o_binary translates newlines on windows -- which also masked the log-a control, because a stray cr still terminates a line f8 a claim over the coordination record itself would lock the substrate design: docs/design/coord-core-phase1.md __init__ repo_root resolve_root _norm _literal_segments overlaps make_event _next_seq append_event read_events fold check _safe render append_decision read_decisions append_record request_log_path read_request_events fold_requests _git unique_commits staged_paths _identity _build_parser entry_fingerprint conservation_lost merge_register _read_jsonl cmd_merge_register load_registry classify regen_command _canonical_project pack_defaults _dirty_paths verify_regen_command cmd_classify_init record_regen_owed regen_owed clear_regen_owed _reject_path _relativise parse_hook_request detect_harness hook_decision_of hook_response_is_valid hook_response _not_checked cmd_hook cmd_precommit cmd_guard _worktree_key active_sessions session_contract_path _role_token _strip_cell contract_ownership infer_session_roles owner_rows_for_path collaboration_findings cmd_session_list cmd_collaborate cmd_request _slug worktree_inventory worktree_is_clean worktree_safety cmd_worktree cmd_session cmd_metrics cmd_install _install_merge_driver _write_conflict read cmd_merge_derived cmd_regen driver_status cmd_doctor cmd_plugin_emit _print_settings_entry main"
 },
 {
 "cat": "scripts",
@@ -1016,7 +1034,7 @@ window.PACK_INDEX = {
 "summary": "pack-doctor.py — AI-Forward install-health check (deployable; runs in a TARGET repo).",
 "path": "pack/scripts/pack-doctor.py",
 "kind": "script",
-"text": "pack-doctor.py pack-doctor.py — ai-forward install-health check (deployable; runs in a target repo). reports whether this repo has the pack installed and healthy: the installed revision, both tool surfaces present, the managed blocks intact, and the knowledge graph valid + fresh. one pass/warn/fail line per check with a suggested fix; exit 1 if any fail, or if any warn is present under --strict. distinct from tools/check-consistency.py (which validates the pack source — pack/ == docs). a target repo has no pack/, so this checks install health, not source consistency. design: docs/design/pack-doctor.md. stdlib only; composes docs-graph.py for the graph half. usage pack-doctor.py [--root <repo>] [--json] [--strict] exit: 0 all pass/warn (or all pass under --strict) · 1 any fail/strict warn. _result check_installed check_surface _read check_claude_md_import check_copilot_settings check_claude_settings check_hooks check_block check_graph check_node_runner _works check_interpreter run main"
+"text": "pack-doctor.py pack-doctor.py — ai-forward install-health check (deployable; runs in a target repo). reports whether this repo has the pack installed and healthy: the installed revision, both tool surfaces present, the managed blocks intact, and the knowledge graph valid + fresh. one pass/warn/fail line per check with a suggested fix; exit 1 if any fail, or if any warn is present under --strict. distinct from tools/check-consistency.py (which validates the pack source — pack/ == docs). a target repo has no pack/, so this checks install health, not source consistency. design: docs/design/pack-doctor.md. stdlib only; composes docs-graph.py for the graph half. usage pack-doctor.py [--root <repo>] [--json] [--strict] exit: 0 all pass/warn (or all pass under --strict) · 1 any fail/strict warn. _result check_installed check_surface _read check_claude_md_import check_copilot_settings check_claude_settings check_hooks check_block check_graph check_coordination check_node_runner _works check_interpreter run main"
 },
 {
 "cat": "scripts",
@@ -1544,10 +1562,10 @@ window.PACK_INDEX = {
 "cat": "graph",
 "id": "api-index",
 "title": "API reference — the deployed script bundle",
-"summary": "Generated API reference for the pack's public surface — the deployed script bundle. 318 public functions across 21 modules, 40% carrying a docstring.",
+"summary": "Generated API reference for the pack's public surface — the deployed script bundle. 322 public functions across 21 modules, 41% carrying a docstring.",
 "path": "docs/api/index.md",
 "kind": "api",
-"text": "api reference — the deployed script bundle generated api reference for the pack's public surface — the deployed script bundle. 318 public functions across 21 modules, 40% carrying a docstring. api scripts generated index documents architecture"
+"text": "api reference — the deployed script bundle generated api reference for the pack's public surface — the deployed script bundle. 322 public functions across 21 modules, 41% carrying a docstring. api scripts generated index documents architecture"
 },
 {
 "cat": "graph",

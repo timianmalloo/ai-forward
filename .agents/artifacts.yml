@@ -1,0 +1,15 @@
+# .agents/artifacts.yml - what each artifact IS decides how it merges.
+# Written by `coord classify init`. Format: pattern: class [regenerate command]
+# Longest matching pattern wins. Everything not listed stays `authored` - the safe
+# default, resolved by a human through conventional conflict markers. Do not enumerate it.
+#
+# Every `derived` command below was RUN before it was written here: a wrong command
+# resolves the merge silently and leaves the artifact permanently stale while reporting
+# as handled. Re-verify with `coord classify init --force` after changing a generator.
+
+docs/docs-index.js: derived "C:\Users\malla\AppData\Local\Programs\Python\Python312\python.exe" docs/ai-forward-pack/scripts/docs-graph.py derive
+docs/audit/audit-data.js: derived "C:\Users\malla\AppData\Local\Programs\Python\Python312\python.exe" docs/ai-forward-pack/scripts/audit-log.py --root docs --project ai-forward render
+docs/audit/index.html: derived "C:\Users\malla\AppData\Local\Programs\Python\Python312\python.exe" docs/ai-forward-pack/scripts/audit-log.py --root docs --project ai-forward render
+docs/audit/audit-log.jsonl: register
+docs/audit/change-log.jsonl: register
+docs/health-history.jsonl: register

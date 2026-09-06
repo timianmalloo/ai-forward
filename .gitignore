@@ -21,8 +21,12 @@ playwright-report/
 # Spike Protocol scratch probes (kept locally unless a probe is worth keeping as evidence)
 spikes/
 
-# Local coordination state written by coord-core.py; not project history
-.agents/
+# Local coordination state written by coord-core.py; not project history.
+# `.agents/*` excludes the CONTENTS, not the directory: git does not descend into an
+# excluded directory, so a bare `.agents/` would make the negation below unreachable
+# and the artifact registry -- which MUST travel with the repo -- untrackable.
+.agents/*
+!.agents/artifacts.yml
 
 # Editor / OS
 .DS_Store

@@ -86,6 +86,21 @@ F-07 / CTX-D. The re-read guard is a control only when a host runs it.
 
 **Coverage gap** — no docstring in the source.
 
+### `check_coordination(root)`
+
+Is the coordination layer switched ON in this repo? (CTX-H)
+
+The layer ships inert: `coord-core.py` is deployed and nothing writes the one file the
+whole mechanism keys on. An uninstalled layer reports "0 decisions, nothing claimed",
+which is indistinguishable from a working layer that saw no traffic -- so the absence
+has to be checked here or it is not checked anywhere.
+
+Three states, three verdicts:
+  no script         the check does not apply
+  no/broken registry FAIL - every path is `authored`, nothing is ever regenerated
+  declared-not-registered WARN - .git/config is per-clone, so a fresh clone or a new
+                        worktree lands here every time
+
 ### `check_node_runner()`
 
 Report whether `npm run …` can actually resolve node on THIS machine.
@@ -126,6 +141,6 @@ lesson into a control that fires at the moment of the mistake).
 
 ## Coverage
 
-- Public functions: **11** · documented: **6** (**55%**)
+- Public functions: **12** · documented: **7** (**58%**)
 - Undocumented (recorded, not invented): `check_installed`, `check_surface`, `check_block`, `check_graph`, `run`
 
