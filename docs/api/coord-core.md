@@ -469,7 +469,22 @@ the adoption of the whole practice.
 
 **Coverage gap** — no docstring in the source.
 
-### `cmd_session(root, action, session, agent, cwd, now)`
+### `session_tree_kind(repo, cwd)`
+
+"primary" | "worktree", or None when it cannot be established.
+
+None is a real answer and must not collapse to either value: a session whose tree could
+not be resolved is not evidence of discipline (IO8).
+
+### `wt4_exception_rate(root)`
+
+How often did a session start in the primary checkout?
+
+Sessions recorded before this field existed carry no `tree` and are counted as
+`not_recorded` -- never as `worktree`, which would invent a number in the direction
+that flatters us.
+
+### `cmd_session(root, action, session, agent, cwd, now, repo=…)`
 
 **Coverage gap** — no docstring in the source.
 
@@ -524,6 +539,6 @@ follows by printing the settings entry rather than writing it.
 
 ## Coverage
 
-- Public functions: **60** · documented: **37** (**62%**)
+- Public functions: **62** · documented: **39** (**63%**)
 - Undocumented (recorded, not invented): `make_event`, `check`, `read_decisions`, `request_log_path`, `read_request_events`, `fold_requests`, `regen_command`, `record_regen_owed`, `regen_owed`, `clear_regen_owed`, `detect_harness`, `cmd_precommit`, `cmd_guard`, `session_contract_path`, `owner_rows_for_path`, `cmd_session_list`, `cmd_collaborate`, `cmd_request`, `cmd_worktree`, `cmd_session`, `cmd_metrics`, `cmd_install`, `cmd_doctor`
 

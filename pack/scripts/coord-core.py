@@ -1889,7 +1889,9 @@ def cmd_worktree(root, repo, action, cwd, now, session=None, agent=None,
             print("COORD-WORKTREE-ADD-FAILED: {}".format(_safe(err, 300)))
             return 4
         if session:
-            append_event(root, {"kind": "session-start", "session": session,
+            # `worktree new` is the OTHER session-start emitter. Both carry the field or
+            # the rate is wrong in the direction that flatters us.
+            append_event(root, {"kind": "session-start", "session": session, "tree": "worktree",
                                 "agent": agent or session, "wi": "WI-0", "path": "-",
                                 "at": now, "worktree": _worktree_key(target)})
         print("worktree ready\n  branch    {}\n  path      {}\n  next      cd {}"
@@ -1968,7 +1970,56 @@ def cmd_worktree(root, repo, action, cwd, now, session=None, agent=None,
     return 4 if failed else 0
 
 
-def cmd_session(root, action, session, agent, cwd, now):
+
+# --- WT4's exception, made countable (class CTX-I, proposal P5) ----------------------
+#
+# Measured across 48 sessions in three repos: 16 worktrees existed and NOT ONE profiled
+# session ran inside one, including three pairs that overlapped in time in a primary
+# checkout. WT4 permits the primary as a RECORDED exception -- and an exception with no
+# counter becomes the default, which is exactly what that measurement shows happened.
+#
+# Deliberately not a refusal. There is no baseline for how often the exception is correct,
+# and a refusal built on no baseline is tuning from a feeling -- the thing this whole loop
+# exists to prevent. Record the fact; argue about enforcement once there is a rate.
+
+def session_tree_kind(repo, cwd):
+    """"primary" | "worktree", or None when it cannot be established.
+
+    None is a real answer and must not collapse to either value: a session whose tree could
+    not be resolved is not evidence of discipline (IO8).
+    """
+    if not repo:
+        return None
+    try:
+        records, err = worktree_inventory(repo)
+    except Exception:
+        return None
+    if err or not records:
+        return None                       # R4: unresolved is not evidence of discipline
+    return ("primary" if _worktree_key(cwd) == _worktree_key(records[0]["path"])
+            else "worktree")
+
+
+def wt4_exception_rate(root):
+    """How often did a session start in the primary checkout?
+
+    Sessions recorded before this field existed carry no `tree` and are counted as
+    `not_recorded` -- never as `worktree`, which would invent a number in the direction
+    that flatters us.
+    """
+    events, _errors, _files = read_events(root)
+    starts = [e for e in events if e.get("kind") == "session-start"]
+    recorded = [e for e in starts if e.get("tree") in ("primary", "worktree")]
+    in_primary = sum(1 for e in recorded if e.get("tree") == "primary")
+    return {"sessions": len(starts),
+            "sessions_recorded": len(recorded),
+            "not_recorded": len(starts) - len(recorded),
+            "in_primary": in_primary,
+            # R4 again: a rate over an empty corpus is not a measurement.
+            "pct": round(100.0 * in_primary / len(recorded), 1) if recorded else None}
+
+
+def cmd_session(root, action, session, agent, cwd, now, repo=None):
     # simplify: occupancy is the newest session-start with no matching session-end,
     #   inside a staleness window.
     #   ceiling: a session killed without `session end` holds the tree until it elapses.
@@ -1998,7 +2049,9 @@ def cmd_session(root, action, session, agent, cwd, now):
                   .format(_safe(key, 300), _safe(holder)))
             return 3
         append_event(root, {"kind": "session-start", "session": session, "agent": agent,
-                            "wi": "WI-0", "path": "-", "at": now, "worktree": key})
+                            "wi": "WI-0", "path": "-", "at": now, "worktree": key,
+                            # WT4's exception, recorded where `coord metrics` can count it.
+                            "tree": session_tree_kind(repo, cwd)})
         print("session {} registered in {}".format(session, key))
         return 0
 
@@ -2017,9 +2070,11 @@ def cmd_metrics(root, repo, as_json):
     # G15 / R4: a rate over an empty corpus is not a measurement. Report the absence.
     pct = round(100.0 * allowed / total, 1) if total else None
     unique, unique_reason = unique_commits(repo)
+    wt4 = wt4_exception_rate(root)
     payload = {"decisions": len(decisions), "allowed": allowed, "refused": refused,
                "not_checked": unchecked, "edits_under_lease_pct": pct,
                "unique_commits": unique, "unique_commits_reason": unique_reason,
+               "wt4": wt4,
                "reason": "" if total else "no decisions recorded - nothing to rate"}
     if as_json:
         print(json.dumps(payload))
@@ -2032,6 +2087,17 @@ def cmd_metrics(root, repo, as_json):
         "{}%".format(pct) if pct is not None else "no decisions recorded - nothing to rate"))
     print("commits existing in one place   {}".format(
         unique if unique is not None else unique_reason))
+    if wt4["pct"] is None:
+        print("sessions started in the primary   no session carries the tree it started in"
+              + (" ({} predate the field)".format(wt4["not_recorded"])
+                 if wt4["not_recorded"] else ""))
+    else:
+        print("sessions started in the primary   {}% ({} of {}){}".format(
+            wt4["pct"], wt4["in_primary"], wt4["sessions_recorded"],
+            "; {} predate the field".format(wt4["not_recorded"])
+            if wt4["not_recorded"] else ""))
+        print("  meaning        WT4 allows the primary as a RECORDED exception. A rate that"
+              " does not fall is the finding.")
     return 0
 
 
@@ -2595,7 +2661,7 @@ def main(argv=None):
         return 0
 
     if args.cmd == "session":
-        return cmd_session(root, args.action, session, agent, os.getcwd(), now)
+        return cmd_session(root, args.action, session, agent, os.getcwd(), now, repo=repo)
 
     if args.cmd == "tail":
         # tail is the HUMAN stream, so it reads BOTH stores. `check` is the machine

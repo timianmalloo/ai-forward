@@ -336,5 +336,95 @@ class CapabilityIsNotAMeasurementTests(unittest.TestCase):
             self.m.HARNESS_STATUS = original
 
 
+class Wt4ExceptionIsCountedTests(unittest.TestCase):
+    """CTX-I / proposal P5: record which tree a session started in, so WT4 has a rate.
+
+    Measured across 48 sessions in three repos: 16 worktrees existed and NOT ONE profiled
+    session ran inside one, including three pairs that overlapped in time in a primary
+    checkout. WT4 permits the primary as a *recorded* exception -- and an exception with no
+    counter becomes the default, which is what the measurement shows happened.
+
+    This is deliberately NOT a refusal. There is no baseline for how often the exception is
+    correct, and a refusal built on no baseline is tuning from a feeling, which is the thing
+    the whole profiling loop exists to prevent. Record the fact; argue about enforcement once
+    there is a rate.
+
+    Sessions recorded before this field existed must read `not recorded`, never be counted as
+    worktree (IO8: degrade to unknown, never to a plausible wrong number).
+    """
+
+    def setUp(self):
+        self.m = load_coord()
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.repo = Path(self.tmp.name) / "r"
+        self.repo.mkdir(parents=True)
+        for args in (["init", "-q"], ["config", "user.email", "t@t"], ["config", "user.name", "t"]):
+            subprocess.run(["git", *args], cwd=str(self.repo), check=True, capture_output=True)
+        (self.repo / "f.txt").write_text("x" + chr(10), encoding="utf-8", newline=chr(10))
+        subprocess.run(["git", "add", "-A"], cwd=str(self.repo), capture_output=True)
+        subprocess.run(["git", "commit", "-qm", "f"], cwd=str(self.repo), capture_output=True)
+        self.root = self.repo / ".agents"
+        self.root.mkdir()
+
+    def _events(self):
+        events, _errors, _n = self.m.read_events(str(self.root))
+        return events
+
+    def test_a_session_started_in_the_primary_records_that(self):
+        self.m.cmd_session(str(self.root), "start", "s1", "a1", str(self.repo), 1000.0,
+                           repo=str(self.repo))
+        starts = [e for e in self._events() if e.get("kind") == "session-start"]
+        self.assertEqual(len(starts), 1)
+        self.assertEqual(starts[0].get("tree"), "primary",
+                         "WT4's exception must be recorded where a later pass can count it")
+
+    def test_a_session_started_in_a_linked_worktree_records_that(self):
+        wt = Path(self.tmp.name) / "r-feature"
+        subprocess.run(["git", "worktree", "add", "-q", "-b", "feature", str(wt)],
+                       cwd=str(self.repo), check=True, capture_output=True)
+        self.m.cmd_session(str(self.root), "start", "s2", "a2", str(wt), 1000.0,
+                           repo=str(self.repo))
+        starts = [e for e in self._events() if e.get("kind") == "session-start"]
+        self.assertEqual(starts[0].get("tree"), "worktree")
+
+    def test_metrics_reports_the_exception_rate(self):
+        self.m.cmd_session(str(self.root), "start", "s1", "a1", str(self.repo), 1000.0,
+                           repo=str(self.repo))
+        payload = self.m.wt4_exception_rate(str(self.root))
+        self.assertEqual(payload["sessions_recorded"], 1)
+        self.assertEqual(payload["in_primary"], 1)
+        self.assertEqual(payload["pct"], 100.0)
+
+    def test_sessions_from_before_the_field_read_not_recorded(self):
+        """IO8. An old event has no `tree`; counting it as a worktree would invent a number."""
+        self.m.append_event(str(self.root), {"kind": "session-start", "session": "old",
+                                             "agent": "a", "wi": "WI-0", "path": "-",
+                                             "at": 900.0, "worktree": "k"})
+        payload = self.m.wt4_exception_rate(str(self.root))
+        self.assertEqual(payload["sessions_recorded"], 0)
+        self.assertEqual(payload["not_recorded"], 1)
+        self.assertIsNone(payload["pct"], "a rate over an empty corpus is not a measurement")
+
+    def test_metrics_prints_it(self):
+        self.m.cmd_session(str(self.root), "start", "s1", "a1", str(self.repo), 1000.0,
+                           repo=str(self.repo))
+        import contextlib, io as _io
+        buf = _io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            self.m.cmd_metrics(str(self.root), str(self.repo), False)
+        out = buf.getvalue().lower()
+        self.assertIn("primary", out, "the WT4 rate must surface where the measures are read")
+
+    def test_worktree_new_records_a_worktree_session(self):
+        """`coord worktree new` is the OTHER session-start emitter. Both or neither."""
+        src = SCRIPT_COORD.read_text(encoding="utf-8")
+        body = src.split("def cmd_worktree", 1)[1].split(chr(10) + "def ", 1)[0]
+        start = body.split('"kind": "session-start"', 1)[1][:300]
+        self.assertIn('"tree"', start,
+                      "worktree new registers a session too; an uncounted emitter makes the "
+                      "rate wrong in the direction that flatters us")
+
+
 if __name__ == "__main__":
     unittest.main()

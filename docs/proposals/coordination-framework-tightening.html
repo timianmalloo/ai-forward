@@ -593,9 +593,11 @@
   gained a <code>coordination</code> check and <code>verify-bundle</code> gate 8b asserts this
   repo&rsquo;s own layer is on; <code>hotspot</code> is gone; and
   <code>render_harness_capability()</code> is now the single renderer both surfaces call, under a
-  heading that separates spike results from measured state. Each is covered by a control that was
-  observed failing first. <strong>P5 and P6 remain proposals</strong> &mdash; nothing in them is
-  built.</p>
+  heading that separates spike results from measured state. <strong>P5</strong> records
+  <code>tree: primary | worktree</code> on every session-start and reports the rate in
+  <code>coord metrics</code> &mdash; counted, not prevented, because there is still no baseline
+  to justify a refusal. Each is covered by a control that was observed failing first.
+  <strong>P6 remains a proposal</strong> &mdash; nothing in it is built.</p>
   <p>Three defects surfaced <em>while</em> implementing, none of them the thing being built: a
   generator owns a <em>set</em> of artifacts rather than one path (caught by the new check refusing
   a real entry); a bare <code>.agents/</code> made the registry untrackable, and
