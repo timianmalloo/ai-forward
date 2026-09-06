@@ -1,10 +1,35 @@
 {
   "skill": "also",
-  "prompt": "You are mid-way through a task. Use /also to add a late requirement to the prior prompt ('also make sure the output is sorted') without derailing the work in flight: capture it, finish the current work, then apply it. (Run in an AI-Forward clone workspace.)",
+  "prompt": "You are mid-way through a task that never declared a goal state. Use /also to add a late requirement to the prior prompt ('also make sure the output is sorted') without derailing the work in flight: capture it, finish the current work, then apply it. (Run in an AI-Forward clone workspace.)",
   "setup": [],
   "assertions": [
-    { "type": "file-exists", "path": ".github/prompts/also.prompt.md" },
-    { "type": "file-exists", "path": ".claude/skills/also/SKILL.md" }
+    {
+      "type": "file-exists",
+      "path": ".github/prompts/also.prompt.md"
+    },
+    {
+      "type": "file-exists",
+      "path": ".claude/skills/also/SKILL.md"
+    },
+    {
+      "type": "grep",
+      "path": ".claude/skills/also/SKILL.md",
+      "pattern": "(?i)no goal state"
+    },
+    {
+      "type": "grep",
+      "path": ".claude/skills/also/SKILL.md",
+      "pattern": "(?i)raise the tier"
+    },
+    {
+      "type": "grep",
+      "path": ".github/prompts/also.prompt.md",
+      "pattern": "(?i)no goal state"
+    },
+    {
+      "type": "grep-transcript",
+      "pattern": "(?i)goal|done when"
+    }
   ],
   "id": "also-01"
 }

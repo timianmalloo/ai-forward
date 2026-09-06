@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-06T22:27:43Z",
+  "generated": "2026-09-06T22:56:36Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3696,6 +3696,23 @@ window.AUDIT_DATA = {
       "main_budget": 40,
       "main_over_budget": false,
       "fan_out": 0
+    },
+    {
+      "id": "al-01M1WF06G1EFDAHJ7QZVBZHZDV",
+      "shortname": "session-profile-sp-0005",
+      "datetime": "2026-09-06T22:56:36Z",
+      "session": "sp-terrace-gpt6",
+      "prompt": "session-profile.py profile",
+      "summary": "Profile sp-0005: 12 session(s), 38 finding(s)",
+      "kind": "script",
+      "skill": "session-profiler",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/profiles/sp-0005/profile.md"
+      ],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [

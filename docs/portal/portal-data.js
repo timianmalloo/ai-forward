@@ -1780,7 +1780,7 @@ window.PORTAL_DATA = {
         "id": "api-index",
         "type": "api",
         "title": "API reference — the deployed script bundle",
-        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 328 public functions across 21 modules, 42% carrying a docstring."
+        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 329 public functions across 21 modules, 42% carrying a docstring."
       },
       {
         "id": "api-marker-lint",
@@ -2567,6 +2567,12 @@ window.PORTAL_DATA = {
         "type": "doc",
         "title": "Session profile sp-0004 - theterrace",
         "summary": "Measured pass over 12 session(s) in theterrace (last 10 days); 37 finding(s), top: SP-01, SP-02, SP-03."
+      },
+      {
+        "id": "profile-sp-0005",
+        "type": "doc",
+        "title": "Session profile sp-0005 - theterrace",
+        "summary": "Measured pass over 12 session(s) in theterrace (last 10 days); 38 finding(s), top: SP-01, SP-02, SP-03."
       },
       {
         "id": "project-memory",
@@ -4164,6 +4170,11 @@ window.PORTAL_DATA = {
       },
       {
         "from": "profile-sp-0004",
+        "to": "design-session-profiler",
+        "rel": "relates-to"
+      },
+      {
+        "from": "profile-sp-0005",
         "to": "design-session-profiler",
         "rel": "relates-to"
       },

@@ -97,6 +97,10 @@ FIXES = collections.OrderedDict([
     ("F-12", {"title": "Ask each host for its richest reasoning summary, and treat summary-derived judgements as Inferred",
               "where": "INSTALL.md 1.6; adapters/hooks/claude-code.settings.hooks.json (showThinkingSummaries); pack-doctor `claude settings`",
               "control": "SP-17 reports visible-reasoning share per family; a family under 10% marks every text-derived drift finding Inferred"}),
+    ("F-15", {"title": "`/also` establishes a bound rather than inheriting one that is absent",
+              "where": "commands/also/SKILL.md + adapters/copilot/prompts/also.prompt.md",
+              "control": "SP-20 flags an `/also` turn with no goal state, or a fan-out on one "
+                         "that declared no tier; the `also` eval asserts both rules are written"}),
     ("F-14", {"title": "A budget on the MAIN line, not only on the delegates",
               "where": "knowledge/communication-and-task-discipline.md CT19 (`Main-line budget:`); "
                        "scripts/audit-log.py --main-budget; selfcheck",
@@ -128,6 +132,7 @@ FINDINGS = collections.OrderedDict([
     ("SP-17", ("Reasoning visibility: the share of billed reasoning that came back as readable text", "Nit", ["F-12"])),
     ("SP-18", ("Intent-trace coverage: shell calls that carry a one-line description (the reasoning trace a profiler can read)", "Minor", ["F-13"])),
     ("SP-19", ("Main-line dominance: the turn's own loop, not its delegates, is where the cost is", "Major", ["F-14"])),
+    ("SP-20", ("Late addition on an unbounded turn: an `/also` that inherited no goal state or fanned out above no tier", "Major", ["F-15"])),
 ])
 
 INTENT_TOOLS = {"copilot": {"powershell", "bash", "shell"}, "claude": {"Bash", "PowerShell"}}
@@ -159,6 +164,37 @@ SEVERITY_RANK = {"Blocker": 0, "Major": 1, "Minor": 2, "Nit": 3}
 
 
 # --------------------------------------------------------------------------- helpers
+
+
+
+ALSO_RX = re.compile(r"(^|\s)/also\b|<command-(?:message|name)>\s*also\s*</", re.I)
+
+
+def late_addition_findings(turns):
+    """`/also` turns that acquired no bound (F-15, class CTX-N).
+
+    `/also` guards DIRECTION - "an extension is absorbed; a reversal is raised" - and had no
+    guard on SIZE. Measured in sp-0004: both `/also` turns were the only substantive turns on
+    that model carrying neither a goal state nor a tier, and one became 81 main requests, 6
+    sub-agents, 83 minutes and 13,411 AIU - the most expensive turn in the session.
+
+    Deliberately narrower than SP-09, which already owns the generic missing-goal-state case.
+    This one is about the *late addition* specifically, because the mechanism is different: an
+    addition to an unbounded turn INHERITS unboundedness rather than acquiring a bound, and
+    the skill's own flow assumed a goal state was there to re-read.
+    """
+    rows = []
+    for t in turns or []:
+        if not ALSO_RX.search(t.get("prompt") or ""):
+            continue
+        subs = len(t.get("sub_agents") or [])
+        if not t.get("goal_state"):
+            rows.append({"turn": t.get("turn"),
+                         "reason": "no goal state to inherit, so the addition acquired no bound"})
+        elif subs and not t.get("tier"):
+            rows.append({"turn": t.get("turn"),
+                         "reason": "{0} sub-agent(s) on a turn that declared no tier".format(subs)})
+    return rows
 
 
 def main_line_share(buckets):
@@ -883,6 +919,9 @@ def detect(session):
     # SP-19: where the money actually is. Fires when the main line both dominates the spend and
     # costs materially more per request than the delegates it convened - the shape every budget
     # the pack carries was pointed away from (class CTX-M).
+    la = late_addition_findings(turns)
+    if la:
+        add("SP-20", [_ev(r["turn"], r["reason"]) for r in la][:6], {"count": len(la)})
     ml = facts.get("main_line") or {}
     if ml.get("main_pct") is not None and ml.get("cost_ratio") is not None             and ml["main_pct"] >= 80 and ml["cost_ratio"] >= 3:
         add("SP-19", [_ev(None, "main line {0:,} requests / {1:,.0f} AIU ({2}% of the session) vs delegates {3:,} / {4:,.0f}; {5}x the cost per request".format(

@@ -9,7 +9,7 @@ links:
   - { to: architecture, rel: documents }
 review-by: "2027-03-03"
 summary: >-
-  Generated API reference for the pack's public surface — the deployed script bundle. 328 public functions across 21 modules, 42% carrying a docstring.
+  Generated API reference for the pack's public surface — the deployed script bundle. 329 public functions across 21 modules, 42% carrying a docstring.
 ---
 
 # API reference — the deployed script bundle
@@ -40,10 +40,10 @@ with no docstring is listed as a **coverage gap** rather than described from gue
 | [`pack-doctor.py`](pack-doctor.md) | 12 | 7 | — | pack-doctor.py — AI-Forward install-health check (deployable; runs in a TARGET repo). |
 | [`prompt-log.py`](prompt-log.md) | 16 | 5 | 8 | prompt-log.py — the fast prompt-reuse lens over the project's audit log. |
 | [`scrub.py`](scrub.md) | 2 | 2 | — | scrub.py — first-pass PII/secret redaction for Markdown (deployable). |
-| [`session-profile.py`](session-profile.md) | 28 | 8 | 4 | session-profile.py — measure how agent sessions actually ran, across harnesses and models. |
+| [`session-profile.py`](session-profile.md) | 29 | 9 | 4 | session-profile.py — measure how agent sessions actually ran, across harnesses and models. |
 | [`ui-craft-gate.py`](ui-craft-gate.md) | 6 | 4 | — | ui-craft-gate.py - the UI craft gate for AI-Forward. |
 | [`visual-assets-setup.py`](visual-assets-setup.md) | 12 | 5 | — | visual-assets-setup.py - wire up a generation backend for UI visual assets (AI-Forward). |
 | [`xaml-token-lint.py`](xaml-token-lint.md) | 9 | 0 | — | xaml-token-lint.py — first-slice token linter for XAML/native UI markup. |
 
-**Total** — 328 public functions across 21 modules, **138 documented (42%)**.
+**Total** — 329 public functions across 21 modules, **139 documented (42%)**.
 

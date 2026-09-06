@@ -78,6 +78,20 @@ Python 3.8+, stdlib only. Windows-safe (utf-8 stdout, read-only SQLite URI).
 
 ## Functions
 
+### `late_addition_findings(turns)`
+
+`/also` turns that acquired no bound (F-15, class CTX-N).
+
+`/also` guards DIRECTION - "an extension is absorbed; a reversal is raised" - and had no
+guard on SIZE. Measured in sp-0004: both `/also` turns were the only substantive turns on
+that model carrying neither a goal state nor a tier, and one became 81 main requests, 6
+sub-agents, 83 minutes and 13,411 AIU - the most expensive turn in the session.
+
+Deliberately narrower than SP-09, which already owns the generic missing-goal-state case.
+This one is about the *late addition* specifically, because the mechanism is different: an
+addition to an unbounded turn INHERITS unboundedness rather than acquiring a bound, and
+the skill's own flow assumed a goal state was there to re-read.
+
 ### `main_line_share(buckets)`
 
 Split a session's requests and cost between the main line and its delegates.
@@ -209,6 +223,6 @@ Aggregate per (family, harness): the tuning view. Drift indicators are counts pe
 
 ## Coverage
 
-- Public functions: **28** · documented: **8** (**29%**)
+- Public functions: **29** · documented: **9** (**31%**)
 - Undocumented (recorded, not invented): `parse_ts`, `iso`, `pct`, `est_tokens`, `model_family`, `norm_path`, `git`, `in_repo`, `copilot_home`, `copilot_settings`, `copilot_sessions`, `claude_home`, `claude_sessions`, `profile_claude`, `render_markdown`, `cmd_discover`, `profile_id`, `cmd_profile`, `cmd_compare`, `cmd_fixes`
 

@@ -6,6 +6,7 @@ pins one detector against an exact oracle: the finding id appears with the evide
 planted, and does not appear when the fixture is clean. A missing store reports `not recorded`.
 """
 import importlib.util
+import io
 import json
 import os
 import pathlib
@@ -362,6 +363,84 @@ class MainLineShareTests(unittest.TestCase):
         ids = dict(sp.FINDINGS)
         self.assertIn("SP-19", ids)
         self.assertTrue(ids["SP-19"][2], "SP-19 must name the fix it belongs to")
+
+
+
+class LateAdditionTests(unittest.TestCase):
+    """SP-20 (F-15, class CTX-N): a late addition landing on an unbounded turn.
+
+    `/also` exists to append a thought without derailing work in flight, and its guard is on
+    DIRECTION - "an extension is absorbed; a reversal is raised". It has no guard on SIZE.
+    Measured in sp-0004: two turns were `/also`, both were the only substantive turns on that
+    model carrying neither a goal state nor a tier, and one became 81 main requests, 6
+    sub-agents, 83 minutes and 13,411 AIU - the most expensive turn in the session.
+
+    The skill assumed a goal state existed ("re-read the goal state") and had a branch for
+    nothing-in-flight, but none for the case that actually happened: work in flight that never
+    declared one. An addition to an unbounded turn inherits unboundedness rather than
+    acquiring a bound.
+    """
+
+    def test_an_also_turn_with_no_goal_state_is_flagged(self):
+        turns = [{"turn": 9, "prompt": "/also i wonder if we should have an external link",
+                  "goal_state": False, "tier": False, "sub_agents": []}]
+        self.assertTrue(sp.late_addition_findings(turns))
+
+    def test_an_also_turn_that_fans_out_with_no_tier_is_flagged(self):
+        turns = [{"turn": 10, "prompt": "/also in the content creator side",
+                  "goal_state": True, "tier": False,
+                  "sub_agents": [{"name": "a"}, {"name": "b"}]}]
+        rows = sp.late_addition_findings(turns)
+        self.assertTrue(rows)
+        self.assertIn("tier", rows[0]["reason"].lower())
+
+    def test_a_bounded_also_turn_is_not_flagged(self):
+        turns = [{"turn": 11, "prompt": "/also add a sort", "goal_state": True, "tier": True,
+                  "sub_agents": []}]
+        self.assertEqual(sp.late_addition_findings(turns), [])
+
+    def test_a_turn_that_is_not_an_also_is_not_this_finding(self):
+        """SP-09 already owns the generic missing-goal-state case; this one is about /also."""
+        turns = [{"turn": 0, "prompt": "do the next steps", "goal_state": False,
+                  "tier": False, "sub_agents": []}]
+        self.assertEqual(sp.late_addition_findings(turns), [])
+
+    def test_the_command_form_is_recognised_too(self):
+        """Copilot records the slash command as a command-name block, not bare text."""
+        turns = [{"turn": 3, "prompt": "<command-message>also</command-message> <command-name>",
+                  "goal_state": False, "tier": False, "sub_agents": []}]
+        self.assertTrue(sp.late_addition_findings(turns))
+
+    def test_sp20_is_in_the_catalog_and_maps_to_a_fix(self):
+        ids = dict(sp.FINDINGS)
+        self.assertIn("SP-20", ids)
+        self.assertTrue(ids["SP-20"][2])
+
+
+class AlsoSkillContractTests(unittest.TestCase):
+    """The skill has to prescribe what the profiler measures, or SP-20 flags a rule
+    that was never written down."""
+
+    def _skill(self):
+        return io.open(os.path.join(ROOT, "pack", "commands", "also", "SKILL.md"),
+                       encoding="utf-8").read()
+
+    def test_it_handles_work_in_flight_with_no_goal_state(self):
+        text = self._skill().lower()
+        self.assertIn("no goal state", text,
+                      "the measured case - work in flight that never declared a goal state - "
+                      "is the one the skill had no branch for")
+
+    def test_it_requires_the_tier_to_be_raised_explicitly(self):
+        text = self._skill().lower()
+        self.assertTrue("raise the tier" in text or "raises the tier" in text,
+                        "an addition that exceeds the in-flight tier must raise it explicitly "
+                        "rather than absorb silently - that is the magnitude guard")
+
+    def test_the_copilot_prompt_carries_it_too(self):
+        text = io.open(os.path.join(ROOT, "pack", "adapters", "copilot", "prompts",
+                                    "also.prompt.md"), encoding="utf-8").read().lower()
+        self.assertIn("no goal state", text)
 
 
 if __name__ == "__main__":
