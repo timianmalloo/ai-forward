@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-06T21:06:55Z",
+  "generated": "2026-09-06T21:34:51Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3550,6 +3550,27 @@ window.AUDIT_DATA = {
       "outcome": "success",
       "goal": "Extend this repo's registry to its uncovered derived artifacts, after making --force safe to run",
       "done_when": "classify init --force preserves repo-local entries with a control observed red; the four artifacts classified with each command verified by execution; 11/11 gates",
+      "tier": "T0",
+      "fan_out": 0
+    },
+    {
+      "id": "al-01M1WAAG4FWEK6ZTJNATFCVBNS",
+      "shortname": "wt4-exception-counted",
+      "datetime": "2026-09-06T21:34:51Z",
+      "session": "sp-2026-09-06-tri",
+      "prompt": "do p5 then push make sure main is clean",
+      "summary": "P5. Every session-start event now carries tree: primary|worktree and coord metrics reports the rate. Both emitters write it (coord session start and coord worktree new) because an uncounted emitter biases the rate in the direction that flatters us; sessions predating the field read 'not recorded' rather than worktree, and an unresolvable tree is not evidence of discipline either (IO8/R4). Deliberately not a refusal: there is no baseline for how often WT4's exception is correct, and a refusal built on no baseline is tuning from a feeling. Read back on this repo: 'no session carries the tree it started in (7 predate the field)'. CTX-I moves to partially-controlled - the exception is counted, not prevented, and a rate that does not fall is itself the finding. Wt4ExceptionIsCountedTests (6 cases) observed red. 536 tests, 11/11 gates.",
+      "kind": "commit",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "P5 - make the WT4 exception countable, then land everything on main linearly and prove it green there",
+      "done_when": "coord session start records primary-or-tree; coord metrics reports the rate; control observed red; main fast-forwarded or rebased with no merge commits, 11/11 gates on main, pushed",
       "tier": "T0",
       "fan_out": 0
     }
