@@ -16,6 +16,7 @@ Written to fail first: every test here failed with AttributeError (no `cmd_class
 on 2026-09-06 before the command existed.
 """
 import importlib.util
+import io
 import os
 import subprocess
 import sys
@@ -169,6 +170,29 @@ class VerificationTests(InitCase):
         self.assertIn("gen/out.txt: derived", self.registry_text() or "")
         self.assertEqual(code, 0)
 
+    def test_a_generator_may_own_a_glob(self):
+        """`docs/api/*.md` - a generator that emits a directory. The stray check must match
+        the way `classify` does, or every directory-emitting generator is refused."""
+        self.write("gen/a.md", "old" + chr(10))
+        self.write("gen/b.md", "old" + chr(10))
+        self.commit_all()
+        candidates = [{"patterns": ["gen/*.md"], "class": "derived",
+                       "command": self._writer("gen/a.md", extra="gen/b.md"),
+                       "requires": ["gen/a.md"]}]
+        code = self.init(candidates=candidates)
+        self.assertIn("gen/*.md: derived", self.registry_text() or "")
+        self.assertEqual(code, 0)
+
+    def test_a_glob_does_not_excuse_a_stray_outside_it(self):
+        self.write("gen/a.md", "old" + chr(10))
+        self.write("src/hand.txt", "authored" + chr(10))
+        self.commit_all()
+        candidates = [{"patterns": ["gen/*.md"], "class": "derived",
+                       "command": self._writer("gen/a.md", extra="src/hand.txt"),
+                       "requires": ["gen/a.md"]}]
+        self.assertNotEqual(self.init(candidates=candidates), 0)
+        self.assertNotIn("gen/*.md", self.registry_text() or "")
+
 
 class SafetyTests(InitCase):
     def test_it_does_not_overwrite_an_existing_registry(self):
@@ -181,13 +205,19 @@ class SafetyTests(InitCase):
                          "a hand-tuned registry is repo configuration; never clobber it")
         self.assertNotEqual(code, 0)
 
-    def test_force_replaces_it_and_says_so(self):
-        self.write("docs/audit/audit-log.jsonl", "{}\n")
+    def test_force_on_a_managed_registry_replaces_the_managed_block(self):
+        """AMENDED 2026-09-06. This used to assert that --force replaced a hand-written,
+        marker-less registry wholesale, and PASSING WAS THE DEFECT: the registry carries the
+        pack's derivable entries AND this repo's own, and only a human knows the second kind.
+        --force now rewrites the managed block and refuses a file that carries no markers.
+        """
+        self.write("docs/audit/audit-log.jsonl", "{}" + chr(10))
         self.commit_all()
-        (self.root / self.m.REGISTRY_NAME).write_text("docs/mine.txt: register\n",
-                                                      encoding="utf-8", newline="\n")
+        self.init()
         self.init(force=True)
-        self.assertIn("docs/audit/audit-log.jsonl", self.registry_text() or "")
+        text = self.registry_text() or ""
+        self.assertIn("docs/audit/audit-log.jsonl", text)
+        self.assertEqual(text.count(self.m.MANAGED_BEGIN), 1, "markers must not accumulate")
 
     def test_the_cli_exposes_it(self):
         """`coord classify init` — the form the proposal published and the skills call."""
@@ -234,6 +264,79 @@ class OwnedSetTests(InitCase):
                 break
         else:
             self.fail("no audit renderer among the pack defaults")
+
+
+class ForcePreservesRepoLocalTests(InitCase):
+    """`--force` must not eat the entries a repo added by hand.
+
+    The registry is TWO things in one file: the pack's own generated artifacts, which are
+    derivable and identical everywhere, and this repo's own, which only a human knows. The
+    skill says to append the second kind by hand -- and the header this command writes says
+    to re-run with `--force` after changing a generator. Those two instructions together
+    destroyed the hand-added half, silently, on a command the file itself recommends.
+
+    Same shape as CTX-K and the OPS-B pair: a documented remedy that quietly undoes something.
+    The fix is the pack's existing managed-block idiom - regenerate between markers, never the
+    whole file - and, as `coord install` already does for a foreign pre-commit hook, REFUSE to
+    touch a registry that carries no markers rather than guess which lines are ours.
+
+    Observed red on 2026-09-06: --force wrote the defaults and dropped every repo-local line.
+    """
+
+    REPO_LOCAL = "web/pack-index.js: derived echo rebuilt"
+
+    def _seed(self):
+        self.write("docs/audit/audit-log.jsonl", "{}" + chr(10))
+        self.commit_all()
+        self.init()
+
+    def test_force_keeps_entries_outside_the_managed_block(self):
+        self._seed()
+        text = self.registry_text()
+        io.open(str(self.root / self.m.REGISTRY_NAME), "w", encoding="utf-8",
+                newline=chr(10)).write(text + self.REPO_LOCAL + chr(10))
+        self.init(force=True)
+        self.assertIn(self.REPO_LOCAL, self.registry_text() or "",
+                      "a repo-local entry was destroyed by the command the header recommends")
+
+    def test_force_refreshes_the_managed_block_itself(self):
+        """Preserving must not mean freezing: the pack's own half still regenerates."""
+        self._seed()
+        mangled = (self.registry_text() or "").replace("docs/audit/audit-log.jsonl: register",
+                                                       "docs/audit/audit-log.jsonl: authored")
+        io.open(str(self.root / self.m.REGISTRY_NAME), "w", encoding="utf-8",
+                newline=chr(10)).write(mangled)
+        self.init(force=True)
+        self.assertIn("docs/audit/audit-log.jsonl: register", self.registry_text() or "")
+
+    def test_the_written_file_carries_the_markers(self):
+        self._seed()
+        text = self.registry_text() or ""
+        self.assertIn(self.m.MANAGED_BEGIN, text)
+        self.assertIn(self.m.MANAGED_END, text)
+        self.assertLess(text.index(self.m.MANAGED_BEGIN), text.index(self.m.MANAGED_END))
+
+    def test_a_registry_with_no_markers_is_refused_not_rewritten(self):
+        """Someone hand-wrote this before markers existed. Guessing which lines are ours is
+        how you delete the half nobody can regenerate."""
+        self.write("docs/audit/audit-log.jsonl", "{}" + chr(10))
+        self.commit_all()
+        hand = "# mine" + chr(10) + self.REPO_LOCAL + chr(10)
+        io.open(str(self.root / self.m.REGISTRY_NAME), "w", encoding="utf-8",
+                newline=chr(10)).write(hand)
+        code = self.init(force=True)
+        self.assertEqual(self.registry_text(), hand, "a marker-less registry must be left alone")
+        self.assertNotEqual(code, 0, "and the refusal must be reported")
+
+    def test_the_result_still_parses_with_both_halves(self):
+        self._seed()
+        text = self.registry_text()
+        io.open(str(self.root / self.m.REGISTRY_NAME), "w", encoding="utf-8",
+                newline=chr(10)).write(text + self.REPO_LOCAL + chr(10))
+        self.init(force=True)
+        patterns = [p for p, _k, _c in (self.m.load_registry(str(self.root)) or [])]
+        self.assertIn("web/pack-index.js", patterns)
+        self.assertIn("docs/audit/audit-log.jsonl", patterns)
 
 
 if __name__ == "__main__":

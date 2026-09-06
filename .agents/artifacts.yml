@@ -1,15 +1,29 @@
 # .agents/artifacts.yml - what each artifact IS decides how it merges.
-# Written by `coord classify init`. Format: pattern: class [regenerate command]
-# Longest matching pattern wins. Everything not listed stays `authored` - the safe
-# default, resolved by a human through conventional conflict markers. Do not enumerate it.
+# Format: pattern: class [regenerate command]. Longest matching pattern wins.
+# Everything not listed stays `authored` - the safe default, resolved by a human through
+# conventional conflict markers. Do not enumerate it.
 #
-# Every `derived` command below was RUN before it was written here: a wrong command
-# resolves the merge silently and leaves the artifact permanently stale while reporting
-# as handled. Re-verify with `coord classify init --force` after changing a generator.
+# Every `derived` command in the managed block was RUN before it was written: a wrong
+# command resolves the merge silently and leaves the artifact permanently stale while
+# reporting as handled. Re-verify with `coord classify init --force` after changing a
+# generator - it rewrites the managed block and leaves everything else alone.
+#
+# Add THIS repo's own generated and append-only artifacts below the end marker, under the
+# same rule: run the command first.
 
+# >>> coord classify init - managed block. --force regenerates BETWEEN these
 docs/docs-index.js: derived "C:\Users\malla\AppData\Local\Programs\Python\Python312\python.exe" docs/ai-forward-pack/scripts/docs-graph.py derive
 docs/audit/audit-data.js: derived "C:\Users\malla\AppData\Local\Programs\Python\Python312\python.exe" docs/ai-forward-pack/scripts/audit-log.py --root docs --project ai-forward render
 docs/audit/index.html: derived "C:\Users\malla\AppData\Local\Programs\Python\Python312\python.exe" docs/ai-forward-pack/scripts/audit-log.py --root docs --project ai-forward render
 docs/audit/audit-log.jsonl: register
 docs/audit/change-log.jsonl: register
 docs/health-history.jsonl: register
+# <<< coord classify init - end managed block. Add your own entries BELOW.
+
+# --- this repo's own generated artifacts. `tools/` is not deployed to consuming
+# --- repos, so these are ai-forward's alone. Every command below was RUN before it
+# --- was written here, by the same check the managed block uses.
+docs/portal/portal-data.js: derived "C:\Users\malla\AppData\Local\Programs\Python\Python312\python.exe" tools/build-docs-portal.py
+web/pack-index.js: derived "C:\Users\malla\AppData\Local\Programs\Python\Python312\python.exe" tools/build-web-index.py
+docs/_site/bundle.html: derived "C:\Users\malla\AppData\Local\Programs\Python\Python312\python.exe" tools/build-doc-site.py
+docs/api/*.md: derived "C:\Users\malla\AppData\Local\Programs\Python\Python312\python.exe" tools/build-api-docs.py

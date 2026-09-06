@@ -28,3 +28,7 @@ docs/audit/index.html merge=coord-regen
 docs/audit/audit-log.jsonl merge=coord-register
 docs/audit/change-log.jsonl merge=coord-register
 docs/health-history.jsonl merge=coord-register
+docs/portal/portal-data.js merge=coord-regen
+web/pack-index.js merge=coord-regen
+docs/_site/bundle.html merge=coord-regen
+docs/api/*.md merge=coord-regen

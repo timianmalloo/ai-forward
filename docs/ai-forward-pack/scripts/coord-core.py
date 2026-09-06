@@ -974,31 +974,62 @@ def verify_regen_command(repo, patterns, command, timeout=180):
     after = _dirty_paths(repo)
     if after is None:
         return False, "git status is unreadable after the run"
-    owned = {_norm(p) for p in patterns}
-    stray = sorted((after - before) - owned)
+    # fnmatch, not set membership: a generator may own a GLOB (`docs/api/*.md`), and that is
+    # how `classify` matches too - a stray check stricter than the classifier would refuse
+    # every directory-emitting generator.
+    owned = [_norm(p) for p in patterns]
+    stray = sorted(c for c in (after - before)
+                   if not any(fnmatch.fnmatch(c, o) for o in owned))
     if stray:
         return False, "it also changed {0}".format(", ".join(stray[:4]))
     return True, ""
 
 
+# The registry is TWO things in one file: the pack's own generated artifacts, which are
+# derivable and identical in every install, and this repo's own, which only a human knows.
+# `--force` regenerates the first half ONLY, between these markers - the same managed-block
+# idiom the pack uses for AGENTS.md. Without them, the header's own advice ("re-verify with
+# --force after changing a generator") destroyed every hand-added entry, silently, on a
+# command the file itself recommends. Same shape as CTX-K: a documented remedy that undoes
+# something.
+MANAGED_BEGIN = "# >>> coord classify init - managed block. --force regenerates BETWEEN these"
+MANAGED_END = "# <<< coord classify init - end managed block. Add your own entries BELOW."
+
 REGISTRY_HEADER = """# .agents/{name} - what each artifact IS decides how it merges.
-# Written by `coord classify init`. Format: pattern: class [regenerate command]
-# Longest matching pattern wins. Everything not listed stays `authored` - the safe
-# default, resolved by a human through conventional conflict markers. Do not enumerate it.
+# Format: pattern: class [regenerate command]. Longest matching pattern wins.
+# Everything not listed stays `authored` - the safe default, resolved by a human through
+# conventional conflict markers. Do not enumerate it.
 #
-# Every `derived` command below was RUN before it was written here: a wrong command
-# resolves the merge silently and leaves the artifact permanently stale while reporting
-# as handled. Re-verify with `coord classify init --force` after changing a generator.
+# Every `derived` command in the managed block was RUN before it was written: a wrong
+# command resolves the merge silently and leaves the artifact permanently stale while
+# reporting as handled. Re-verify with `coord classify init --force` after changing a
+# generator - it rewrites the managed block and leaves everything else alone.
+#
+# Add THIS repo's own generated and append-only artifacts below the end marker, under the
+# same rule: run the command first.
 """
 
 
 def cmd_classify_init(root, repo, candidates=None, force=False, timeout=180):
     """Write `.agents/artifacts.yml` from what this repo actually has. Verified, not guessed."""
     target = Path(root) / REGISTRY_NAME
-    if target.exists() and not force:
+    existing = target.read_text(encoding="utf-8") if target.exists() else None
+    if existing is not None and not force:
         print("COORD-REGISTRY-EXISTS  {0} already exists - not overwritten.".format(target))
         print("  because     a hand-tuned registry is repo configuration, like .gitignore")
-        print("  remedy      re-run with --force to regenerate, or edit it by hand")
+        print("  remedy      re-run with --force to regenerate the managed block, or edit"
+              " it by hand")
+        return 2
+    if existing is not None and (MANAGED_BEGIN not in existing or MANAGED_END not in existing):
+        # G11/B6, the same stance `coord install` takes on a foreign pre-commit hook: this
+        # file predates the markers or was written by hand, and guessing which lines are ours
+        # is how you delete the half nobody can regenerate.
+        print("COORD-REGISTRY-UNMANAGED  {0} carries no managed block - not touched.".format(
+            target))
+        print("  because     without the markers there is no way to tell the pack's entries")
+        print("              from yours, and --force would rewrite the whole file")
+        print("  remedy      move it aside, run `classify init`, then paste your own entries")
+        print("              below the end marker")
         return 2
 
     candidates = pack_defaults(repo) if candidates is None else candidates
@@ -1021,7 +1052,15 @@ def cmd_classify_init(root, repo, candidates=None, force=False, timeout=180):
                 lines.append("{0}: {1}".format(pattern, cand["class"]))
 
     Path(root).mkdir(parents=True, exist_ok=True)
-    body = REGISTRY_HEADER.format(name=REGISTRY_NAME) + "\n" + "\n".join(lines) + "\n"
+    block = "\n".join([MANAGED_BEGIN] + lines + [MANAGED_END])
+    if existing is None:
+        body = REGISTRY_HEADER.format(name=REGISTRY_NAME) + "\n" + block + "\n"
+    else:
+        head, _old, tail = existing.partition(MANAGED_BEGIN)
+        _managed, _end, tail = tail.partition(MANAGED_END)
+        body = head + block + tail
+        if not body.endswith("\n"):
+            body += "\n"
     target.write_text(body, encoding="utf-8", newline="\n")
 
     try:
@@ -1032,7 +1071,9 @@ def cmd_classify_init(root, repo, candidates=None, force=False, timeout=180):
             target, exc.code))
         return 2
 
-    print("Wrote {0} - {1} pattern(s) verified.".format(target, len(entries or [])))
+    print("{0} {1} - {2} pattern(s) total, {3} in the managed block.".format(
+        "Rewrote the managed block of" if existing is not None else "Wrote",
+        target, len(entries or []), len(lines)))
     for line in lines:
         print("  {0}".format(line if len(line) <= 110 else line[:107] + "..."))
     for pattern, why in absent:

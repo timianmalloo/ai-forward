@@ -274,8 +274,7 @@ command fails or touches anything outside the set it owns. That refusal is the c
 a missing feature: a *wrong* regenerate command resolves every merge silently and leaves the
 artifact permanently stale while reporting as handled. (The check earns its keep — it found that
 `audit-log.py render` owns *two* artifacts, the data projection and the viewer, and a registry
-naming only the first would leave the second conflicting by hand forever.) Append repo-specific
-entries by hand under the same rule; everything unlisted stays `authored`, the safe default.
+naming only the first would leave the second conflicting by hand forever.) **Append this repo's own generated and append-only artifacts by hand, below the end marker, under the same rule — run the command first.** The file carries a managed block: `--force` rewrites only what is between the markers and leaves your entries alone, and it refuses outright to touch a registry that has no markers (there would be no way to tell the pack's entries from yours). A generator may own a **glob** — `docs/api/*.md` — when it emits a directory. Everything unlisted stays `authored`, the safe default; do not enumerate it.
 
 **`install`** declares the drivers in `.gitattributes` (committed, travels with the repo) and writes
 the pre-commit floor. It registers the driver in `.git/config`, which is **per-clone and never
