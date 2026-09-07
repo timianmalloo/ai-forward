@@ -361,6 +361,33 @@ def log_path(root, which):
     return os.path.join(audit_dir(root), "audit-log.jsonl" if which == "audit" else "change-log.jsonl")
 
 
+def ids_at_ref(root, which, ref):
+    """The set of entry ids in `ref`'s committed version of the log, or None if it cannot be read.
+    A forward ratchet fails open on a missing base (returns None), never on a bad current entry."""
+    try:
+        top = subprocess.run(["git", "-C", root, "rev-parse", "--show-toplevel"],
+                             capture_output=True, text=True, check=True).stdout.strip()
+        rel = os.path.relpath(log_path(root, which), top).replace(os.sep, "/")
+        show = subprocess.run(["git", "-C", root, "show", "{}:{}".format(ref, rel)],
+                             capture_output=True, text=True, encoding="utf-8", errors="replace")
+    except (OSError, subprocess.SubprocessError):
+        return None
+    if show.returncode != 0:
+        return None
+    ids = set()
+    for line in show.stdout.splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            entry = json.loads(line)
+        except (json.JSONDecodeError, ValueError):
+            continue
+        if isinstance(entry, dict) and entry.get("id"):
+            ids.add(entry["id"])
+    return ids
+
+
 # ---------- JSONL read / append ----------
 # FR-052. A malformed line must not be fatal (the log has to keep working) but it must not
 # be INVISIBLE either: this file is the system of record and the corpus /dream mines, so a
@@ -989,6 +1016,13 @@ def cmd_selfcheck(args):
     have = [e for e in subst if e.get("done_when")]
     tier_gaps = [e for e in have if not e.get("tier")]
     over_cap = [e for e in subst if e.get("fan_out") is not None and len(e.get("agent_runs") or []) > int(e.get("fan_out") or 0)]
+    if getattr(args, "since", None):
+        known = ids_at_ref(args.root, "audit", args.since)
+        if known is not None:
+            gaps = [e for e in gaps if e.get("id") not in known]
+            tier_gaps = [e for e in tier_gaps if e.get("id") not in known]
+            over_cap = [e for e in over_cap if e.get("id") not in known]
+    gate_fail = bool(getattr(args, "gate", False) and (gaps or tier_gaps or over_cap))
     budgets = budget_findings(subst)
     mainline = main_line_findings(subst)
     review = [{"shortname": e.get("shortname", "?"),
@@ -1007,7 +1041,7 @@ def cmd_selfcheck(args):
             "main_line_over": mainline["over_budget"],
             "review": review,
         }, ensure_ascii=False, indent=2))
-        return 0
+        return 1 if gate_fail else 0
     scope = f"session {args.session}" if args.session else "all sessions"
     if not subst:
         print(f"no substantive turns for {scope}")
@@ -1052,7 +1086,9 @@ def cmd_selfcheck(args):
         print("  scope review (done_when -> summary; judge drift yourself, this is not a verdict):")
         for r in review:
             print(f"    {r['shortname']}: '{r['done_when'][:60]}' -> '{r['summary'][:80]}'")
-    return 0
+    if gate_fail:
+        print("  GATE: FAIL - a substantive turn in scope recorded no goal-state/tier or exceeded its fan-out cap.")
+    return 1 if gate_fail else 0
 
 
 def cmd_import(args):
@@ -1201,6 +1237,10 @@ def main():
                                              "goal-state presence gaps + scope review for a session")
     ap_sc.add_argument("--session", help="the session to self-assess (recommended)")
     ap_sc.add_argument("--json", action="store_true")
+    ap_sc.add_argument("--since", help="a git ref (e.g. origin/main); consider only entries whose id "
+                                       "is absent from that ref's committed audit log - a forward ratchet")
+    ap_sc.add_argument("--gate", action="store_true", help="exit non-zero when a substantive turn in "
+                                       "scope recorded no goal-state/tier or exceeded its declared fan-out cap")
 
     ap_imp = sub.add_parser("import", help="ingest a session-export JSON array into the audit log")
     ap_imp.add_argument("--file", default="-", help="JSON file (or - for stdin)")

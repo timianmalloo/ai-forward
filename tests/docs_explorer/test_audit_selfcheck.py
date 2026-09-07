@@ -93,5 +93,54 @@ class SelfcheckTests(unittest.TestCase):
             self.assertEqual(data["review"][0]["done_when"], "X is done")
 
 
+    def test_gate_fails_on_a_gap_and_passes_when_clean(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = pathlib.Path(d)
+            self._fixture(root)  # turn-b is a substantive gap
+            self.assertEqual(self._run(root, "--session", "S", "--gate").returncode, 1,
+                             "--gate must exit non-zero when a substantive turn recorded no goal-state")
+            self._write_log(root, [
+                _entry(id="al-1", kind="skill", session="S", shortname="a", done_when="a done", tier="T0", summary="a"),
+                _entry(id="al-2", kind="manual", session="S", shortname="b", done_when="b done", tier="T1", summary="b"),
+            ])
+            self.assertEqual(self._run(root, "--session", "S", "--gate").returncode, 0,
+                             "--gate must exit 0 when every substantive turn has a goal-state")
+
+    def test_gate_over_fan_out_cap_fails(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = pathlib.Path(d)
+            self._write_log(root, [
+                _entry(id="al-1", kind="skill", session="S", shortname="council", done_when="x", tier="T0",
+                       fan_out=0, agent_runs=[{"agent": "one"}], summary="convened a sub-agent at T0 cap 0"),
+            ])
+            self.assertEqual(self._run(root, "--session", "S", "--gate").returncode, 1,
+                             "--gate must fail a turn whose agent_runs exceed its declared fan_out cap")
+
+    def test_gate_since_grandfathers_historical_but_catches_new(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = pathlib.Path(d)
+            self._write_log(root, [
+                _entry(id="al-1", kind="skill", session="S", shortname="old-gap", summary="historical, no done_when"),
+            ])
+            env = {"GIT_AUTHOR_NAME": "t", "GIT_AUTHOR_EMAIL": "t@t",
+                   "GIT_COMMITTER_NAME": "t", "GIT_COMMITTER_EMAIL": "t@t"}
+            import os as _os
+            runenv = {**_os.environ, **env}
+            subprocess.run(["git", "init", "-q"], cwd=root, check=True, env=runenv)
+            subprocess.run(["git", "add", "-A"], cwd=root, check=True, env=runenv)
+            subprocess.run(["git", "commit", "-qm", "base"], cwd=root, check=True, env=runenv)
+            # --gate alone fails on the historical gap; --since HEAD grandfathers it.
+            self.assertEqual(self._run(root, "--session", "S", "--gate").returncode, 1)
+            self.assertEqual(self._run(root, "--session", "S", "--gate", "--since", "HEAD").returncode, 0,
+                             "--since must grandfather entries already present on the ref")
+            # A NEW uncommitted gap is caught even with --since HEAD.
+            self._write_log(root, [
+                _entry(id="al-1", kind="skill", session="S", shortname="old-gap", summary="x"),
+                _entry(id="al-2", kind="skill", session="S", shortname="new-gap", summary="new, no done_when"),
+            ])
+            self.assertEqual(self._run(root, "--session", "S", "--gate", "--since", "HEAD").returncode, 1,
+                             "--since must still catch a gap introduced after the ref")
+
+
 if __name__ == "__main__":
     unittest.main()
