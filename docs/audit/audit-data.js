@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-07T00:05:55Z",
+  "generated": "2026-09-07T00:13:38Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3795,6 +3795,30 @@ window.AUDIT_DATA = {
       ],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-01M1WKD8S2ANN7H8HZDK6VN0NN",
+      "shortname": "node-capability-f17",
+      "datetime": "2026-09-07T00:13:38Z",
+      "session": "sp-terrace-gpt6",
+      "prompt": "keep going till the controls are finished",
+      "summary": "F-17, the last of the four sp-0008 fixes, and new class CTX-P. Five closing turns cost 16,765 AIU (17% of the session) for work with no novelty: /updatepack twice on the same repo at 1,179 and 8,890 AIU (7.5x), 'yes commit and push/merge all' at 5,173 over 21 requests. GO19 allocates a tier per PHASE and cannot reach these because the boundary is inside the turn. GO19 now requires a per-NODE capability (Reasoning / Independent review / Deterministic mechanics, taken from TheTerrace's A1 plan), a node with none is not admitted, and a Deterministic mechanics node is EXECUTED not prompted - cheap tier and no tier are different answers. /optimize-graph's node table carries the column. SP-22 is the recurrence signal, deliberately dumb about intent. Honest limit: no harness lets an agent re-dispatch its own turn, so this reports and prescribes, it cannot switch. Two of my own errors caught by running rather than reasoning: the SP-22 emit landed in _settings_note (shared anchor line) and the real run died on a NameError, so EveryFindingIsReachableTests now catches that class at test time; and I briefly concluded the detector missed the headline case when my own cut truncated the row. The always-on ratchet then fired as a real signal - a sandbox test grows ~400 tokens and my +523 had eaten the tolerance - so I trimmed a duplicated quote and recorded the rest. 590 tests, 11/11 gates. All four fixes from sp-0008 are now built; CTX-M/P partially-controlled, CTX-N/O controlled.",
+      "kind": "commit",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/profiles/sp-0008/profile.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "F-17 - a node declares whether it needs reasoning or is deterministic mechanics, so mechanical closing stops being paid at reasoning prices",
+      "done_when": "GO19 and the optimize-graph node table carry a Capability column; session-profile reports SP-22; controls observed red; 11/11 gates and CI green",
+      "tier": "T1",
+      "main_calls": 33,
+      "main_budget": 34,
+      "main_over_budget": false,
+      "fan_out": 0
     }
   ],
   "changes": [
