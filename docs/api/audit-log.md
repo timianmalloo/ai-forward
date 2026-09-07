@@ -87,6 +87,7 @@ Conventions
 | `--field` | print just this field (e.g. prompt) |
 | `--file` | JSON file (or - for stdin) |
 | `--from-json` | read fields from a JSON object (path or - for stdin) |
+| `--gate` | exit non-zero when a substantive turn in scope recorded no goal-state/tier or exceeded its declared fan-out cap |
 | `--git-before` | HEAD sha captured before the work began |
 | `--git` | capture current git context |
 | `--goal` | the turn's goal (front matter CT19) |
@@ -216,6 +217,11 @@ run. Returns None when there is none -- which degrades to no duration (IO8).
 ### `log_path(root, which)`
 
 **Coverage gap** — no docstring in the source.
+
+### `ids_at_ref(root, which, ref)`
+
+The set of entry ids in `ref`'s committed version of the log, or None if it cannot be read.
+A forward ratchet fails open on a missing base (returns None), never on a bad current entry.
 
 ### `read_log(root, which, warn=…)`
 
@@ -362,6 +368,6 @@ Ingest a session-export JSON array of turns into the audit log (build on session
 
 ## Coverage
 
-- Public functions: **37** · documented: **19** (**51%**)
+- Public functions: **38** · documented: **20** (**53%**)
 - Undocumented (recorded, not invented): `now_iso`, `record_start`, `audit_dir`, `log_path`, `read_log`, `append_log`, `git`, `git_context`, `commits_between`, `find_template`, `project_name`, `cmd_append`, `cmd_change`, `cmd_list`, `cmd_search`, `cmd_get`, `cmd_render`, `cmd_git_context`
 
