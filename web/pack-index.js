@@ -1562,10 +1562,10 @@ window.PACK_INDEX = {
 "cat": "graph",
 "id": "api-index",
 "title": "API reference — the deployed script bundle",
-"summary": "Generated API reference for the pack's public surface — the deployed script bundle. 332 public functions across 21 modules, 43% carrying a docstring.",
+"summary": "Generated API reference for the pack's public surface — the deployed script bundle. 333 public functions across 21 modules, 43% carrying a docstring.",
 "path": "docs/api/index.md",
 "kind": "api",
-"text": "api reference — the deployed script bundle generated api reference for the pack's public surface — the deployed script bundle. 332 public functions across 21 modules, 43% carrying a docstring. api scripts generated index documents architecture"
+"text": "api reference — the deployed script bundle generated api reference for the pack's public surface — the deployed script bundle. 333 public functions across 21 modules, 43% carrying a docstring. api scripts generated index documents architecture"
 },
 {
 "cat": "graph",
