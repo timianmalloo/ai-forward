@@ -92,6 +92,20 @@ This one is about the *late addition* specifically, because the mechanism is dif
 addition to an unbounded turn INHERITS unboundedness rather than acquiring a bound, and
 the skill's own flow assumed a goal state was there to re-read.
 
+### `mechanical_cost_findings(turns, min_aiu=…)`
+
+Closing work billed as though it needed novelty (F-17).
+
+Measured: `/updatepack` ran twice in one session - 1,179 AIU on claude-opus-4.8 and
+8,890 on gpt-6-astra. Same skill, same repo, 7.5x. "yes commit and push/merge all" cost
+5,173 AIU across 21 requests. None of that is novel work; all of it is a script with a
+reviewer, and GO19's per-phase tier does not reach it because the phase boundary is
+inside the turn.
+
+The finding is the PRICE, not the mechanics - closing work is legitimate and has to
+happen. A cheap mechanical turn is exactly right and is not reported. A turn with no
+recorded cost is not guessed at (IO8).
+
 ### `effective_model(models)`
 
 The model a session actually WAS, by cost. `models` is {model: {requests, cost}}.
@@ -248,6 +262,6 @@ Aggregate per (family, harness): the tuning view. Drift indicators are counts pe
 
 ## Coverage
 
-- Public functions: **31** · documented: **11** (**35%**)
+- Public functions: **32** · documented: **12** (**38%**)
 - Undocumented (recorded, not invented): `parse_ts`, `iso`, `pct`, `est_tokens`, `model_family`, `norm_path`, `git`, `in_repo`, `copilot_home`, `copilot_settings`, `copilot_sessions`, `claude_home`, `claude_sessions`, `profile_claude`, `render_markdown`, `cmd_discover`, `profile_id`, `cmd_profile`, `cmd_compare`, `cmd_fixes`
 

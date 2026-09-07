@@ -97,6 +97,11 @@ FIXES = collections.OrderedDict([
     ("F-12", {"title": "Ask each host for its richest reasoning summary, and treat summary-derived judgements as Inferred",
               "where": "INSTALL.md 1.6; adapters/hooks/claude-code.settings.hooks.json (showThinkingSummaries); pack-doctor `claude settings`",
               "control": "SP-17 reports visible-reasoning share per family; a family under 10% marks every text-derived drift finding Inferred"}),
+    ("F-17", {"title": "A node declares whether it needs reasoning, or is deterministic mechanics",
+              "where": "knowledge/execution-graph-optimization.md GO19 (per-node Capability); "
+                       "commands/optimize-graph (the node table)",
+              "control": "SP-22 flags a mechanical-close turn that ran at high effort and real "
+                         "cost; the node table has to carry a Capability before a plan is admitted"}),
     ("F-16", {"title": "Resolve the model from usage events, never from the recorded setting",
               "where": "scripts/session-profile.py (effective_model / model_attribution); any pack "
                        "guidance keyed to a model",
@@ -139,6 +144,7 @@ FINDINGS = collections.OrderedDict([
     ("SP-19", ("Main-line dominance: the turn's own loop, not its delegates, is where the cost is", "Major", ["F-14"])),
     ("SP-20", ("Late addition on an unbounded turn: an `/also` that inherited no goal state or fanned out above no tier", "Major", ["F-15"])),
     ("SP-21", ("Model attribution: the recorded setting is not the model that ran", "Major", ["F-16"])),
+    ("SP-22", ("Mechanical work at reasoning prices: a closing turn billed as though it needed novelty", "Major", ["F-17"])),
 ])
 
 INTENT_TOOLS = {"copilot": {"powershell", "bash", "shell"}, "claude": {"Bash", "PowerShell"}}
@@ -203,6 +209,45 @@ def late_addition_findings(turns):
     return rows
 
 
+
+
+
+# The SHAPE of a mechanical close. Deliberately narrow and deliberately dumb about intent:
+# it matches how the work was asked for, never whether it was right to ask.
+MECHANICAL_RX = re.compile(
+    r"^\s*(?:/updatepack|/document\b)"
+    r"|\b(?:commit and push|push and merge|commit,\s*push|merge (?:the )?pr\b|"
+    r"rebase(?:d)? then commit|regenerate the (?:index|docs)|"
+    r"commit and (?:push/)?merge|push/merge)\b", re.I)
+
+MECHANICAL_MIN_AIU = 500.0
+
+
+def mechanical_cost_findings(turns, min_aiu=MECHANICAL_MIN_AIU):
+    """Closing work billed as though it needed novelty (F-17).
+
+    Measured: `/updatepack` ran twice in one session - 1,179 AIU on claude-opus-4.8 and
+    8,890 on gpt-6-astra. Same skill, same repo, 7.5x. "yes commit and push/merge all" cost
+    5,173 AIU across 21 requests. None of that is novel work; all of it is a script with a
+    reviewer, and GO19's per-phase tier does not reach it because the phase boundary is
+    inside the turn.
+
+    The finding is the PRICE, not the mechanics - closing work is legitimate and has to
+    happen. A cheap mechanical turn is exactly right and is not reported. A turn with no
+    recorded cost is not guessed at (IO8).
+    """
+    rows = []
+    for t in turns or []:
+        if not MECHANICAL_RX.search(t.get("prompt") or ""):
+            continue
+        cost = t.get("cost_aiu")
+        if cost is None or cost < min_aiu:
+            continue
+        if (t.get("effort") or "").lower() not in ("high", "medium"):
+            continue
+        rows.append({"turn": t.get("turn"), "cost_aiu": cost,
+                     "effort": t.get("effort"), "requests": t.get("main_requests")})
+    return rows
 
 
 def _settings_note(facts):
@@ -993,6 +1038,11 @@ def detect(session):
     # SP-19: where the money actually is. Fires when the main line both dominates the spend and
     # costs materially more per request than the delegates it convened - the shape every budget
     # the pack carries was pointed away from (class CTX-M).
+    mech = mechanical_cost_findings(turns)
+    if mech:
+        add("SP-22", [_ev(r["turn"], "mechanical close at effort={0}: {1:,.0f} AIU over {2} main request(s)".format(
+            r["effort"], r["cost_aiu"], r["requests"])) for r in mech][:6],
+            {"count": len(mech), "aiu": round(sum(r["cost_aiu"] for r in mech), 1)})
     la = late_addition_findings(turns)
     if la:
         add("SP-20", [_ev(r["turn"], r["reason"]) for r in la][:6], {"count": len(la)})

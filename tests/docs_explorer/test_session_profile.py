@@ -531,5 +531,108 @@ class EffectiveModelTests(unittest.TestCase):
                              "configuration instead of execution")
 
 
+
+class MechanicalAtReasoningPricesTests(unittest.TestCase):
+    """SP-22 (F-17): a node that needed no reasoning, billed as though it did.
+
+    Measured across sp-0006: `/updatepack` ran twice in one session - 1,179 AIU on
+    claude-opus-4.8 and 8,890 AIU on gpt-6-astra. Same skill, same repo, 7.5x. And
+    "yes commit and push/merge all" cost 5,173 AIU across 21 requests. None of that work is
+    novel; all of it is a script with a reviewer.
+
+    GO19 already says to allocate the model tier per PHASE. What it does not say - and what
+    TheTerrace's A1 plan adds with its per-node `Capability` column - is finer and stronger:
+    a node declares whether it needs REASONING at all. A node that is Deterministic mechanics
+    should not be model-backed, not merely cheaply model-backed. "Cheap tier" and "no tier"
+    are different answers, and the second is usually available for closing work.
+
+    The detector is deliberately dumb about intent: it matches the mechanical-close SHAPE of
+    a prompt and reports what it cost, at what effort. It never claims the work was wrong.
+    """
+
+    def test_a_mechanical_prompt_at_high_effort_and_real_cost_is_flagged(self):
+        turns = [{"turn": 12, "prompt": "yes commit and push/merge all", "effort": "high",
+                  "cost_aiu": 5173.3, "main_requests": 21}]
+        rows = sp.mechanical_cost_findings(turns)
+        self.assertTrue(rows)
+        self.assertEqual(rows[0]["turn"], 12)
+
+    def test_updatepack_is_recognised_as_mechanical(self):
+        turns = [{"turn": 11, "prompt": "/updatepack", "effort": "high",
+                  "cost_aiu": 8890.4, "main_requests": 44}]
+        self.assertTrue(sp.mechanical_cost_findings(turns))
+
+    def test_a_cheap_mechanical_turn_is_not_flagged(self):
+        """The finding is the PRICE, not the mechanics. Closing work is legitimate."""
+        turns = [{"turn": 4, "prompt": "commit and push", "effort": "low",
+                  "cost_aiu": 29.5, "main_requests": 1}]
+        self.assertEqual(sp.mechanical_cost_findings(turns), [])
+
+    def test_a_reasoning_turn_is_never_this_finding(self):
+        turns = [{"turn": 5, "prompt": "ground yourself in the repo knowledge and the specs",
+                  "effort": "high", "cost_aiu": 3092.7, "main_requests": 34}]
+        self.assertEqual(sp.mechanical_cost_findings(turns), [])
+
+    def test_a_turn_with_no_recorded_cost_is_not_guessed_at(self):
+        """IO8: absent cost is absent, not zero and not a finding."""
+        turns = [{"turn": 2, "prompt": "commit and push", "effort": "high",
+                  "cost_aiu": None, "main_requests": 30}]
+        self.assertEqual(sp.mechanical_cost_findings(turns), [])
+
+    def test_sp22_is_in_the_catalog_and_maps_to_a_fix(self):
+        ids = dict(sp.FINDINGS)
+        self.assertIn("SP-22", ids)
+        self.assertTrue(ids["SP-22"][2])
+
+
+class NodeCapabilityTests(unittest.TestCase):
+    """The doctrine half: a node says what it needs, or nothing can be allocated to it."""
+
+    def _go(self):
+        return io.open(os.path.join(ROOT, "pack", "knowledge",
+                                    "execution-graph-optimization.md"), encoding="utf-8").read()
+
+    def test_go19_requires_a_per_node_capability(self):
+        text = self._go().lower()
+        self.assertIn("deterministic mechanics", text,
+                      "GO19 allocates a tier per phase; a node must also be able to say it "
+                      "needs no model at all - `cheap tier` and `no tier` are different answers")
+
+    def test_the_optimize_graph_node_table_carries_the_column(self):
+        text = io.open(os.path.join(ROOT, "pack", "commands", "optimize-graph", "SKILL.md"),
+                       encoding="utf-8").read().lower()
+        self.assertIn("capability", text,
+                      "the node table is where a plan declares it, or the rule is prose")
+
+
+
+class EveryFindingIsReachableTests(unittest.TestCase):
+    """A finding in the catalog that no detector emits is a finding that never fires.
+
+    Written after SP-22's emit was inserted into the wrong function - `_settings_note` shares
+    an anchor line with `detect`, and the pure-function tests passed because they never
+    rendered a session. The real profile run caught it with a NameError. This is the control
+    that catches it at test time instead.
+    """
+
+    def test_every_catalog_id_is_emitted_somewhere(self):
+        src = io.open(os.path.join(ROOT, "pack", "scripts", "session-profile.py"),
+                      encoding="utf-8").read()
+        # The two aggregate findings are raised by the comparison, not the per-session detector.
+        emitted = set()
+        for fid in sp.FINDINGS:
+            if 'add("{0}"'.format(fid) in src or '"id": "{0}"'.format(fid) in src:
+                emitted.add(fid)
+        missing = sorted(set(sp.FINDINGS) - emitted)
+        self.assertEqual(missing, [],
+                         "catalogued but never emitted: " + ", ".join(missing))
+
+    def test_every_finding_names_a_fix_that_exists(self):
+        fixes = set(sp.FIXES)
+        for fid, (_title, _sev, fix_ids) in sp.FINDINGS.items():
+            for f in fix_ids:
+                self.assertIn(f, fixes, "{0} names {1}, which is not in the fix catalog".format(fid, f))
+
+
 if __name__ == "__main__":
     unittest.main()

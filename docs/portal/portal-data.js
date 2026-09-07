@@ -1575,7 +1575,7 @@ window.PORTAL_DATA = {
     ],
     "classes": "Three defect classes came out of it and are recorded with controls: PACK-R, a fixed prefix sized by what fits rather than by what each call needs; PACK-S, a fan-out rediscovering per-run what was knowable once; and PACK-T, a generator prepending metadata over a source that already had it — which had been shipping two stacked frontmatter blocks in one instruction file, of which any reader parses only the first.",
     "live": {
-      "baseline": 45678,
+      "baseline": 46192,
       "tolerancePct": 2,
       "backstop": 60000,
       "derivation": {
@@ -1586,7 +1586,7 @@ window.PORTAL_DATA = {
       "tiers": {
         "always": {
           "docs": 13,
-          "tokens": 45982
+          "tokens": 46192
         },
         "reference": {
           "docs": 2,
@@ -1601,7 +1601,7 @@ window.PORTAL_DATA = {
           "tokens": 25898
         }
       },
-      "corpusTokens": 177420,
+      "corpusTokens": 177630,
       "alwaysPct": 26
     }
   },
@@ -1780,7 +1780,7 @@ window.PORTAL_DATA = {
         "id": "api-index",
         "type": "api",
         "title": "API reference — the deployed script bundle",
-        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 331 public functions across 21 modules, 43% carrying a docstring."
+        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 332 public functions across 21 modules, 43% carrying a docstring."
       },
       {
         "id": "api-marker-lint",
@@ -2579,6 +2579,12 @@ window.PORTAL_DATA = {
         "type": "doc",
         "title": "Session profile sp-0006 - theterrace",
         "summary": "Measured pass over 12 session(s) in theterrace (last 10 days); 39 finding(s), top: SP-01, SP-02, SP-03."
+      },
+      {
+        "id": "profile-sp-0008",
+        "type": "doc",
+        "title": "Session profile sp-0008 - theterrace",
+        "summary": "Measured pass over 12 session(s) in theterrace (last 10 days); 40 finding(s), top: SP-01, SP-02, SP-03."
       },
       {
         "id": "project-memory",
@@ -4186,6 +4192,11 @@ window.PORTAL_DATA = {
       },
       {
         "from": "profile-sp-0006",
+        "to": "design-session-profiler",
+        "rel": "relates-to"
+      },
+      {
+        "from": "profile-sp-0008",
         "to": "design-session-profiler",
         "rel": "relates-to"
       },
