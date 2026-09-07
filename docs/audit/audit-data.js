@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-06T23:55:44Z",
+  "generated": "2026-09-07T00:00:13Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3754,6 +3754,30 @@ window.AUDIT_DATA = {
       ],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-01M1WJMP2BDB4Y59MW17DBAJ5W",
+      "shortname": "effective-model-attribution-f16",
+      "datetime": "2026-09-07T00:00:13Z",
+      "session": "sp-terrace-gpt6",
+      "prompt": "do next",
+      "summary": "F-16, closing CTX-O. Settings recorded claude-opus-4.8 while gpt-6-astra took 96.9% of the main-line cost, switching at turn 3 and never back; 11 model/effort combinations ran across the session under one setting. effective_model() resolves by COST from per-request usage events (not request count - the delegate models had comparable counts at wildly different prices); model_attribution() reconciles against the setting; SP-21 flags disagreement; the session header prints the effective model beside the setting only where they differ. The recorded model having run is not enough to count as a match - it ran on 5% of requests, and presence is not attribution. An absent setting is not a mismatch (Claude Code records none). The contract is pinned at both ends - turn families from per-request models, and family_comparison keying on those - because it spans two functions and a test on one alone lets the other regress; my first attempt pinned the wrong end and passed for the wrong reason. 8 tests red first, SP-21 then fired on the real session. CTX-O's 'eleven' figure was whole-session while SP-21 measures the main line; the register now says which is which. 580 tests, 11/11 gates.",
+      "kind": "commit",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/profiles/sp-0006/profile.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "F-16 - make the profiler's model attribution a pinned contract rather than an accident",
+      "done_when": "SP-21 reports recorded vs effective; the header shows both when they differ; tests pin attribution from usage events; controls observed red; 11/11 gates and CI green",
+      "tier": "T1",
+      "main_calls": 29,
+      "main_budget": 32,
+      "main_over_budget": false,
+      "fan_out": 0
     }
   ],
   "changes": [
