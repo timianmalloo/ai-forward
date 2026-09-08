@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-forward",
-  "generated": "2026-09-07T00:13:38Z",
+  "project": "ai-forward-fix-coord-portability-and-builtin-drivers",
+  "generated": "2026-09-08T01:10:32Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3819,6 +3819,44 @@ window.AUDIT_DATA = {
       "main_budget": 34,
       "main_over_budget": false,
       "fan_out": 0
+    },
+    {
+      "id": "al-01M1Z925MYC2K9WRZHZ6X764MV",
+      "shortname": "fix-coord-portability-builtin-drivers-ratchet",
+      "datetime": "2026-09-08T01:10:32Z",
+      "session": "cfdbench-followup-01",
+      "prompt": "address all three [findings raised from the cfd-bench updatepack: coord doctor false NOT EFFECTIVE on git built-in drivers; absolute interpreter path in the committed registry; redundant repo-local goal-state gate]",
+      "summary": "Fixed three pack defects surfaced by USING the coordination layer in a consuming repo (cfd-bench) rather than by reading it. All three share one shape - a check that degrades to a plausible wrong answer instead of reporting what it could not establish - which is the same class the pack's own IO doctrine names. (1) PACK-P, interpreter half: classify init built regenerate commands from sys.executable, so .agents/artifacts.yml (the one file under .agents/ that IS committed) carried an absolute per-account path and every other clone got a derived command that cannot run. New portable_python() picks the first of python3/python/py -3 that actually prints \"Python 3\", reusing pack-doctor check_interpreter()'s candidate order AND its verification so advice and artifact cannot disagree; falls back to the absolute path only when no documented form runs, and verify_regen_command still executes whatever it returns before writing. (2) driver_status treated git's OWN drivers as unregistered custom ones: union/text/binary are compiled into git and never appear in `git config merge.<name>.driver`, so declaring merge=union on an append-only register - the correct answer before this layer is adopted, needing no install at all - reported NOT EFFECTIVE forever, a gap no coord install could close. Now counted as covered, reported separately as `builtin`, and named in the doctor line. pack-doctor was already correct (it filters to coord- names); only coord-core was wrong. (3) selfcheck --since failed CLOSED on an unreadable baseline while ids_at_ref's own docstring promised \"A forward ratchet fails open on a missing base\" - the call site skipped filtering and gated the whole unfiltered history, turning the ratchet into a retroactive audit of grandfathered work. Now reports GATE: NOT CHECKED with the ref and the fetch that fixes it, exit 0 - not a pass, and not a failure for a reason unrelated to the change (CI6). RED FIRST, all on 2026-09-07: BuiltinMergeDriverTests 4, PortableInterpreterTests 3, GateBaselineTests 4, each set including a guard that stops the new tests passing for the wrong reason (a real unregistered driver is still reported missing; the chosen interpreter token actually runs Python here; the fixture really would fail without a baseline). Two process notes worth keeping: the selfcheck tests exercise the DEPLOYED docs/ai-forward-pack/scripts copy while the coord tests exercise pack/scripts, so a source-only patch looked like a failing fix until sync-pack ran - and build-api-docs/build-doc-site must run BEFORE sync-pack, because sync-pack builds portal-data.js from their output. Revision 64, bundle 2026.09.07.1. verify-bundle: all 11 gates pass.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "pack/scripts/coord-core.py",
+        "pack/scripts/audit-log.py",
+        "pack/adapters/INSTALL.md"
+      ],
+      "tags": [
+        "coordination",
+        "portability",
+        "rev64"
+      ],
+      "outcome": "success",
+      "goal": "Fix at source the three defects the cfd-bench pack update surfaced, each with a test that fails on the old behaviour",
+      "done_when": "All three fixed with red-first tests; verify-bundle's 11 gates pass; revision bumped so consuming repos can pull it",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "git": {
+        "sha": "b14f8fb64f28e77212ffca509a08cdf256137960",
+        "short": "b14f8fb64",
+        "branch": "fix-coord-portability-and-builtin-drivers",
+        "pushed": null
+      }
     }
   ],
   "changes": [
