@@ -747,7 +747,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d20111a592f689b80156ac517c663703a50f3a4f39e9dc19c439cbbccdc5216e"
+      "sourceSha256": "5b969be6ffa19b43ffdccd45f65de15ca9a8bb28b3224acfc8db74e5631173dd"
     },
     {
       "id": "api-coord_ids",
@@ -909,7 +909,7 @@ window.DOCS_INDEX = {
       "phase": "",
       "reviewBy": "2027-03-03",
       "reviewSuggested": [],
-      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 334 public functions across 21 modules, 43% carrying a docstring.",
+      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 336 public functions across 21 modules, 43% carrying a docstring.",
       "tags": [
         "api",
         "scripts",
@@ -923,7 +923,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f76906acd1d63ba0a86b3673496790650d500aeb84cbf0cfd82d96e25d04ef81"
+      "sourceSha256": "b3642011cd5f8650a1f4ece410d2eaa488241566b6b93addf3d5656dc3923bc6"
     },
     {
       "id": "api-marker-lint",
@@ -2274,7 +2274,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "16abfe776e95aeade4d71cdd405618c822322870255d765d0b3e1ef7c9ec791d"
+      "sourceSha256": "3c86911a891df40cf74a478c4483a8f23d4254eab2076801beea63bb0031c86d"
     },
     {
       "id": "docs-index",
@@ -5691,7 +5691,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-forward-fix-coord-portability-and-builtin-drivers — Audit & Change Log",
+      "title": "ai-forward — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -5879,5 +5879,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "e0c0adb6e8fbc54e39a6cd0e4d828214884c743a42ea87efc81aa9b2aaa880b8"
+  "graphSha256": "e48c964e89b3b51d859b7f2d877231b46e797b56f306735f6c82f62b7168bff7"
 };

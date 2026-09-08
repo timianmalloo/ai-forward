@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-forward-fix-coord-portability-and-builtin-drivers",
-  "generated": "2026-09-08T01:10:32Z",
+  "project": "ai-forward",
+  "generated": "2026-09-08T01:19:50Z",
   "audit": [
     {
       "id": "al-0001",

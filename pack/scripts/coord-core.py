@@ -903,8 +903,12 @@ def portable_python():
     that IS committed, so a resolved path pins the registry to one machine and one account:
     every other clone, every other user and every CI runner then gets a `derived` command
     that cannot run, and `coord regen` fails for a reason that has nothing to do with the
-    merge. That is the same class as the `--project` note in `pack_defaults` below (PACK-P):
-    a value true only of the machine that ran the command, stamped into a shared file.
+    merge. This is **PACK-C** (the register's TABLE row: "platform assumption invisible on
+    the author's platform"), recorded 2026-09-07 as its fourth instance and reported from two
+    consuming repos independently. It rhymes with the `--project` note in `pack_defaults`
+    below, which is PACK-P -- both stamp a value true only of the writing machine into a
+    shared file -- but they are separate classes, and the register currently carries a known
+    id collision across PACK-A/B/C/P, so check the table row rather than the id alone.
 
     Verified, not assumed. Windows ships a `python3` App-Execution-Alias that is NOT Python
     -- it prints "Python was not found" and exits 9009 -- so a form that merely launches is
@@ -2350,6 +2354,48 @@ def cmd_regen(root, repo, timeout=120):
 BUILTIN_MERGE_DRIVERS = ("union", "text", "binary")
 
 
+def absolute_command_head(command):
+    """The command's interpreter token when it is an ABSOLUTE path, else None.
+
+    Only the head is examined. A regenerate command may legitimately mention an absolute
+    path in an argument; what makes the registry unportable is the interpreter it is
+    launched with, and a checker that flags more than the defect trains people to ignore it.
+    """
+    text = (command or "").strip()
+    if not text:
+        return None
+    if text.startswith('"') and '"' in text[1:]:
+        head = text[1:text.index('"', 1)]
+    else:
+        head = text.split()[0]
+    if head.startswith("/") or re.match(r"^[A-Za-z]:[\\/]", head):
+        return head
+    return None
+
+
+def registry_portability(root):
+    """Entries whose command is launched by an absolute interpreter path. PACK-C.
+
+    `.agents/artifacts.yml` is the one file under `.agents/` that is COMMITTED, so a path
+    resolved on the writing machine is read on every other one. `portable_python` stops new
+    registries acquiring this, and cannot help a registry already written -- and
+    `classify init` is not re-run on its own. Detection is therefore the durable half:
+    the class's own remedy column asks for a control that names the problem on the machine
+    that has it, rather than a convention nothing executes.
+    """
+    entries = load_registry(root)
+    if not entries:
+        return []
+    bad = []
+    for entry in entries:
+        pattern, klass, command = (entry + ("",))[:3] if isinstance(entry, tuple) else (
+            entry.get("pattern"), entry.get("class"), entry.get("command"))
+        head = absolute_command_head(command)
+        if head:
+            bad.append({"pattern": pattern, "class": klass, "interpreter": head})
+    return bad
+
+
 def driver_status(repo):
     """Is the merge driver EFFECTIVE? Requires reading BOTH sources (spike S13).
 
@@ -2388,6 +2434,21 @@ def driver_status(repo):
             "files_scanned": len((attrs or "").splitlines())}
 
 
+def _print_registry_portability(root):
+    """Report a registry that cannot be read on another machine. Returns problems added."""
+    bad = registry_portability(root)
+    if not bad:
+        return 0
+    print("registry portability  NOT PORTABLE  [COORD-REGISTRY-ABSOLUTE-INTERPRETER]")
+    for row in bad:
+        print("  {0}  launched by {1}".format(row["pattern"], row["interpreter"]))
+    print("  effect      this file is committed, so every other clone, account and CI"
+          " runner gets a command it cannot run")
+    print("  remedy      make a documented interpreter available (python3 / python / py -3),"
+          " then `coord classify init --force`")
+    return 1
+
+
 def _print_builtin_drivers(status):
     """Say so when git's own driver is carrying a path. It is covered and unregisterable,
     and a reader who is not told will go looking for the `git config` entry that proves it."""
@@ -2411,6 +2472,8 @@ def cmd_doctor(root, repo):
         print("registry         {}".format(exc.code))
         print("  because     {}".format(_safe(str(exc), 200)))
         problems += 1
+
+    problems += _print_registry_portability(root)
 
     status = driver_status(repo)
     if status["missing"]:

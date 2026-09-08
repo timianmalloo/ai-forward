@@ -344,7 +344,7 @@ if __name__ == "__main__":
 
 
 class PortableInterpreterTests(unittest.TestCase):
-    """The registry is COMMITTED, so a resolved absolute interpreter path is PACK-P.
+    """The registry is COMMITTED, so a resolved absolute interpreter path is PACK-C.
 
     `pack_defaults` built its regenerate commands from `sys.executable`, which on this
     machine is C:/Users/<name>/AppData/.../python.exe. That path is written into
@@ -352,9 +352,11 @@ class PortableInterpreterTests(unittest.TestCase):
     every other machine, every other account and every CI runner gets a `derived` command
     that cannot run. `coord regen` then fails for a reason unrelated to the merge.
 
-    Same class as the `--project` note directly above it in `pack_defaults`: a value true
-    only of the machine that ran the command, stamped into a shared file. Written to fail
-    first -- the pre-fix command began with a quoted absolute path.
+    PACK-C's fourth instance (the register's table row, "platform assumption invisible on
+    the author's platform"), reported from ai-de and cfd-bench independently on 2026-09-07.
+    A sibling of the `--project` note above it in `pack_defaults`, which is PACK-P -- both
+    stamp a writing-machine value into a shared file -- but distinct classes. Written to fail
+    first: the pre-fix command began with a quoted absolute path.
     """
 
     def setUp(self):
@@ -370,7 +372,7 @@ class PortableInterpreterTests(unittest.TestCase):
     def test_no_command_carries_an_absolute_interpreter_path(self):
         for command in self._commands():
             self.assertNotIn(sys.executable, command,
-                             "a resolved interpreter path in a COMMITTED file is PACK-P")
+                             "a resolved interpreter path in a COMMITTED file is PACK-C")
             self.assertFalse(command.startswith('"'),
                              "the command starts with a quoted absolute path: " + command)
 

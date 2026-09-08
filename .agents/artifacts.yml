@@ -12,9 +12,9 @@
 # same rule: run the command first.
 
 # >>> coord classify init - managed block. --force regenerates BETWEEN these
-docs/docs-index.js: derived "C:\Users\malla\AppData\Local\Programs\Python\Python312\python.exe" docs/ai-forward-pack/scripts/docs-graph.py derive
-docs/audit/audit-data.js: derived "C:\Users\malla\AppData\Local\Programs\Python\Python312\python.exe" docs/ai-forward-pack/scripts/audit-log.py --root docs --project ai-forward render
-docs/audit/index.html: derived "C:\Users\malla\AppData\Local\Programs\Python\Python312\python.exe" docs/ai-forward-pack/scripts/audit-log.py --root docs --project ai-forward render
+docs/docs-index.js: derived python docs/ai-forward-pack/scripts/docs-graph.py derive
+docs/audit/audit-data.js: derived python docs/ai-forward-pack/scripts/audit-log.py --root docs --project ai-forward render
+docs/audit/index.html: derived python docs/ai-forward-pack/scripts/audit-log.py --root docs --project ai-forward render
 docs/audit/audit-log.jsonl: register
 docs/audit/change-log.jsonl: register
 docs/health-history.jsonl: register
@@ -23,7 +23,7 @@ docs/health-history.jsonl: register
 # --- this repo's own generated artifacts. `tools/` is not deployed to consuming
 # --- repos, so these are ai-forward's alone. Every command below was RUN before it
 # --- was written here, by the same check the managed block uses.
-docs/portal/portal-data.js: derived "C:\Users\malla\AppData\Local\Programs\Python\Python312\python.exe" tools/build-docs-portal.py
-web/pack-index.js: derived "C:\Users\malla\AppData\Local\Programs\Python\Python312\python.exe" tools/build-web-index.py
-docs/_site/bundle.html: derived "C:\Users\malla\AppData\Local\Programs\Python\Python312\python.exe" tools/build-doc-site.py
-docs/api/*.md: derived "C:\Users\malla\AppData\Local\Programs\Python\Python312\python.exe" tools/build-api-docs.py
+docs/portal/portal-data.js: derived python tools/build-docs-portal.py
+web/pack-index.js: derived python tools/build-web-index.py
+docs/_site/bundle.html: derived python tools/build-doc-site.py
+docs/api/*.md: derived python tools/build-api-docs.py

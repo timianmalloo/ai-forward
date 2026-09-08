@@ -294,8 +294,12 @@ for anything it writes down. `.agents/artifacts.yml` is the single file under `.
 that IS committed, so a resolved path pins the registry to one machine and one account:
 every other clone, every other user and every CI runner then gets a `derived` command
 that cannot run, and `coord regen` fails for a reason that has nothing to do with the
-merge. That is the same class as the `--project` note in `pack_defaults` below (PACK-P):
-a value true only of the machine that ran the command, stamped into a shared file.
+merge. This is **PACK-C** (the register's TABLE row: "platform assumption invisible on
+the author's platform"), recorded 2026-09-07 as its fourth instance and reported from two
+consuming repos independently. It rhymes with the `--project` note in `pack_defaults`
+below, which is PACK-P -- both stamp a value true only of the writing machine into a
+shared file -- but they are separate classes, and the register currently carries a known
+id collision across PACK-A/B/C/P, so check the table row rather than the id alone.
 
 Verified, not assumed. Windows ships a `python3` App-Execution-Alias that is NOT Python
 -- it prints "Python was not found" and exits 9009 -- so a form that merely launches is
@@ -531,6 +535,25 @@ Run the regenerations the driver deferred. Returns (exit_code, results).
 A failed regeneration STAYS OWED and reports non-zero: a stale derived artifact looks
 finished, which is worse than a conflict.
 
+### `absolute_command_head(command)`
+
+The command's interpreter token when it is an ABSOLUTE path, else None.
+
+Only the head is examined. A regenerate command may legitimately mention an absolute
+path in an argument; what makes the registry unportable is the interpreter it is
+launched with, and a checker that flags more than the defect trains people to ignore it.
+
+### `registry_portability(root)`
+
+Entries whose command is launched by an absolute interpreter path. PACK-C.
+
+`.agents/artifacts.yml` is the one file under `.agents/` that is COMMITTED, so a path
+resolved on the writing machine is read on every other one. `portable_python` stops new
+registries acquiring this, and cannot help a registry already written -- and
+`classify init` is not re-run on its own. Detection is therefore the durable half:
+the class's own remedy column asks for a control that names the problem on the machine
+that has it, rather than a convention nothing executes.
+
 ### `driver_status(repo)`
 
 Is the merge driver EFFECTIVE? Requires reading BOTH sources (spike S13).
@@ -563,6 +586,6 @@ follows by printing the settings entry rather than writing it.
 
 ## Coverage
 
-- Public functions: **63** · documented: **40** (**63%**)
+- Public functions: **65** · documented: **42** (**65%**)
 - Undocumented (recorded, not invented): `make_event`, `check`, `read_decisions`, `request_log_path`, `read_request_events`, `fold_requests`, `regen_command`, `record_regen_owed`, `regen_owed`, `clear_regen_owed`, `detect_harness`, `cmd_precommit`, `cmd_guard`, `session_contract_path`, `owner_rows_for_path`, `cmd_session_list`, `cmd_collaborate`, `cmd_request`, `cmd_worktree`, `cmd_session`, `cmd_metrics`, `cmd_install`, `cmd_doctor`
 

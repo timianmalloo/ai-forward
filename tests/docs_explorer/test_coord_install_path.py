@@ -493,3 +493,54 @@ class BuiltinMergeDriverTests(unittest.TestCase):
         status = self.m.driver_status(str(self.repo))
         self.assertEqual(status["missing"], [])
         self.assertEqual(status["declared"], ["coord-regen"])
+
+
+class RegistryPortabilityTests(unittest.TestCase):
+    """PACK-C, fourth instance: the platform value is BAKED INTO A COMMITTED ARTIFACT.
+
+    `portable_python` stops a NEW registry acquiring an absolute interpreter, and can do
+    nothing for one already written -- and nobody re-runs `classify init` unprompted. So the
+    durable half of this class is detection, which is what its own remedy column asks for: a
+    control that names the problem on the machine that has it, rather than a convention
+    nothing executes.
+
+    Reported from two consuming repos independently (ai-de and cfd-bench, 2026-09-07).
+    Written to fail first: `registry_portability` did not exist.
+    """
+
+    def setUp(self):
+        self.m = load_coord()
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.root = Path(self.tmp.name) / ".agents"     # load_registry's root IS .agents/
+        self.root.mkdir(parents=True)
+        self.registry = self.root / "artifacts.yml"
+
+    def _write(self, body):
+        self.registry.write_text(body, encoding="utf-8", newline=chr(10))
+
+    def test_a_windows_absolute_interpreter_is_reported(self):
+        self._write('docs/x.js: derived "C:' + chr(92) + 'Python' + chr(92)
+                    + 'python.exe" docs/gen.py' + chr(10))
+        bad = self.m.registry_portability(str(self.root))
+        self.assertEqual(len(bad), 1)
+        self.assertTrue(bad[0]["interpreter"].startswith("C:"))
+
+    def test_a_posix_absolute_interpreter_is_reported(self):
+        self._write("docs/x.js: derived /usr/bin/python3 docs/gen.py" + chr(10))
+        bad = self.m.registry_portability(str(self.root))
+        self.assertEqual(len(bad), 1)
+
+    def test_a_portable_command_is_not_reported(self):
+        self._write("docs/x.js: derived python docs/gen.py" + chr(10))
+        self.assertEqual(self.m.registry_portability(str(self.root)), [])
+
+    def test_an_absolute_path_in_an_ARGUMENT_is_not_reported(self):
+        """Only the interpreter makes the registry unportable. A checker that flags more
+        than the defect is one people learn to ignore."""
+        self._write("docs/x.js: derived python docs/gen.py --out /var/tmp/x" + chr(10))
+        self.assertEqual(self.m.registry_portability(str(self.root)), [])
+
+    def test_a_register_entry_carries_no_command_and_is_not_reported(self):
+        self._write("docs/log.jsonl: register" + chr(10))
+        self.assertEqual(self.m.registry_portability(str(self.root)), [])
