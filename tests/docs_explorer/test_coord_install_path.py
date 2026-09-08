@@ -428,3 +428,68 @@ class Wt4ExceptionIsCountedTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class BuiltinMergeDriverTests(unittest.TestCase):
+    """git's OWN merge drivers are never in .git/config, and must not read as unregistered.
+
+    `union`, `text` and `binary` are built into git. `merge=union` on an append-only file
+    works in a fresh clone with no install step at all, which is strictly MORE robust than a
+    custom driver -- it is the right answer for a register file in a repo that has not
+    adopted the layer yet. But `driver_status` collected every name declared in
+    `.gitattributes` and required each to appear in `git config merge.<name>.driver`, so a
+    repo using the built-in reported NOT EFFECTIVE permanently: a false alarm about a driver
+    that works, and one that no `coord install` can ever clear.
+
+    Observed red on 2026-09-07 in cfd-bench, where an incoming PR declared
+    `docs/audit/audit-log.jsonl merge=union` before the rev-62 layer landed. Written to fail
+    first: both assertions failed against the pre-fix `driver_status`.
+    """
+
+    def setUp(self):
+        self.m = load_coord()
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.repo = Path(self.tmp.name) / "r"
+        (self.repo / "docs").mkdir(parents=True)
+        for args in (["init", "-q"], ["config", "user.email", "t@t"],
+                     ["config", "user.name", "t"]):
+            subprocess.run(["git", *args], cwd=str(self.repo), check=True, capture_output=True)
+        (self.repo / "docs" / "log.jsonl").write_text("{}" + chr(10), encoding="utf-8",
+                                                      newline=chr(10))
+        (self.repo / "docs" / "gen.js").write_text("x" + chr(10), encoding="utf-8",
+                                                   newline=chr(10))
+
+    def _attrs(self, text):
+        (self.repo / ".gitattributes").write_text(text, encoding="utf-8", newline=chr(10))
+        subprocess.run(["git", "add", "-A"], cwd=str(self.repo), capture_output=True)
+        subprocess.run(["git", "commit", "-qm", "f"], cwd=str(self.repo), capture_output=True)
+
+    def test_a_git_builtin_is_not_reported_missing(self):
+        self._attrs("docs/log.jsonl merge=union" + chr(10))
+        status = self.m.driver_status(str(self.repo))
+        self.assertEqual(status["missing"], [],
+                         "`union` is built into git and is never registered in .git/config; "
+                         "reporting it missing is a false alarm no install can clear")
+
+    def test_a_git_builtin_is_reported_as_builtin_not_as_a_custom_declaration(self):
+        self._attrs("docs/log.jsonl merge=union" + chr(10))
+        status = self.m.driver_status(str(self.repo))
+        self.assertIn("union", status["builtin"])
+        self.assertNotIn("union", status["declared"],
+                         "a built-in is not a custom driver this repo declared")
+
+    def test_a_custom_driver_is_still_reported_missing(self):
+        """The regression guard: the fix must not blind the check to the real gap."""
+        self._attrs("docs/gen.js merge=coord-regen" + chr(10))
+        status = self.m.driver_status(str(self.repo))
+        self.assertEqual(status["missing"], ["coord-regen"])
+
+    def test_a_builtin_beside_a_registered_custom_driver_still_reads_effective(self):
+        self._attrs("docs/log.jsonl merge=union" + chr(10)
+                    + "docs/gen.js merge=coord-regen" + chr(10))
+        subprocess.run(["git", "config", "merge.coord-regen.driver", "true"],
+                       cwd=str(self.repo), check=True, capture_output=True)
+        status = self.m.driver_status(str(self.repo))
+        self.assertEqual(status["missing"], [])
+        self.assertEqual(status["declared"], ["coord-regen"])

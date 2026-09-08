@@ -747,7 +747,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "3d184428c17649852cfe6e70512278e79dcacba66343c2daf6086e2eaac0b66f"
+      "sourceSha256": "d20111a592f689b80156ac517c663703a50f3a4f39e9dc19c439cbbccdc5216e"
     },
     {
       "id": "api-coord_ids",
@@ -909,7 +909,7 @@ window.DOCS_INDEX = {
       "phase": "",
       "reviewBy": "2027-03-03",
       "reviewSuggested": [],
-      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 333 public functions across 21 modules, 43% carrying a docstring.",
+      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 334 public functions across 21 modules, 43% carrying a docstring.",
       "tags": [
         "api",
         "scripts",
@@ -923,7 +923,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "cb61a1f5522dc3b8fb9bc09b462d26a87107c662d5ca98a1fa0d2fdbbbff9967"
+      "sourceSha256": "f76906acd1d63ba0a86b3673496790650d500aeb84cbf0cfd82d96e25d04ef81"
     },
     {
       "id": "api-marker-lint",
@@ -5879,5 +5879,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "efd0073cac20846f2e9df2e452647f61e0a93459acc3ff619892a03177fdf46c"
+  "graphSha256": "e0c0adb6e8fbc54e39a6cd0e4d828214884c743a42ea87efc81aa9b2aaa880b8"
 };

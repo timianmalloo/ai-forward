@@ -888,6 +888,45 @@ def _canonical_project(repo):
     return base or "repo"
 
 
+# The interpreter forms the pack documents, in `pack-doctor.py check_interpreter`'s order so
+# its advice and what we write down can never disagree.
+PY_CANDIDATES = (("python3", ["python3", "--version"]),
+                 ("python", ["python", "--version"]),
+                 ("py -3", ["py", "-3", "--version"]))
+
+
+def portable_python():
+    """The interpreter token to WRITE INTO A COMMITTED FILE.
+
+    `sys.executable` is the right answer for anything this process runs, and the wrong one
+    for anything it writes down. `.agents/artifacts.yml` is the single file under `.agents/`
+    that IS committed, so a resolved path pins the registry to one machine and one account:
+    every other clone, every other user and every CI runner then gets a `derived` command
+    that cannot run, and `coord regen` fails for a reason that has nothing to do with the
+    merge. That is the same class as the `--project` note in `pack_defaults` below (PACK-P):
+    a value true only of the machine that ran the command, stamped into a shared file.
+
+    Verified, not assumed. Windows ships a `python3` App-Execution-Alias that is NOT Python
+    -- it prints "Python was not found" and exits 9009 -- so a form that merely launches is
+    not a form that works, and only `Python 3` on stdout settles it.
+
+    Falls back to the quoted absolute path when no documented form runs. That is a worse
+    file, and it is still better than writing a command that was never going to work here:
+    `verify_regen_command` runs whatever this returns before it is written, so a fallback
+    that is wrong is caught at the moment of writing rather than at the first merge.
+    """
+    for label, argv in PY_CANDIDATES:
+        try:
+            proc = subprocess.run(argv, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                                  timeout=15)
+        except (OSError, ValueError, subprocess.TimeoutExpired):
+            continue        # "could not be launched" is an expected miss, not an error
+        out = (proc.stdout or b"").decode("utf-8", "replace").strip()
+        if proc.returncode == 0 and out.startswith("Python 3"):
+            return label
+    return '"{0}"'.format(sys.executable)
+
+
 def pack_defaults(repo):
     """The pack's own artifacts, as classify-init candidates.
 
@@ -896,7 +935,8 @@ def pack_defaults(repo):
     the file. Everything not listed stays `authored` -- the safe default. Do not enumerate it.
     """
     scripts = "docs/ai-forward-pack/scripts"
-    py = '"{0}"'.format(sys.executable)
+    # NOT sys.executable: this string is committed. See portable_python() above.
+    py = portable_python()
     project = _canonical_project(repo)
     return [
         {"patterns": ["docs/docs-index.js"], "class": "derived",
@@ -2302,6 +2342,14 @@ def cmd_regen(root, repo, timeout=120):
     return (1 if failed else 0), results
 
 
+# git's OWN merge drivers: compiled in, never present in `git config merge.<name>.driver`,
+# and effective in a fresh clone with no install step at all. `merge=union` is the right
+# answer for an append-only register in a repo that has not adopted this layer yet, so
+# treating it as an unregistered custom driver reports a permanent gap that no `coord
+# install` can close -- a false alarm about the one mechanism that needs no installing.
+BUILTIN_MERGE_DRIVERS = ("union", "text", "binary")
+
+
 def driver_status(repo):
     """Is the merge driver EFFECTIVE? Requires reading BOTH sources (spike S13).
 
@@ -2309,6 +2357,9 @@ def driver_status(repo):
     `git config` reports the registration without knowing what it covers. Only comparing
     the two finds the gap -- and .git/config is per-clone and never committed, so a fresh
     clone or a new worktree is exactly where the gap appears.
+
+    git's built-ins are counted as covered and reported separately: they are declared here
+    and registered nowhere, which is what "built in" means, not what "missing" means.
     """
     declared, err = _git(repo, "check-attr", "--all", "--", ".")
     names = set()
@@ -2318,19 +2369,31 @@ def driver_status(repo):
         if len(parts) >= 3:
             names.add(parts[1])
     attrs, _ = _git(repo, "ls-files")
-    declared_names, covered = set(), 0
+    declared_names, builtin_names, covered = set(), set(), 0
     for f in (attrs or "").splitlines():
         got, _e = _git(repo, "check-attr", "merge", "--", f)
         if got and ": merge: " in got:
             value = got.rsplit(": merge: ", 1)[1].strip()
             if value not in ("unspecified", "unset", "set"):
-                declared_names.add(value)
+                if value in BUILTIN_MERGE_DRIVERS:
+                    builtin_names.add(value)      # covered, and registered nowhere by design
+                else:
+                    declared_names.add(value)
                 covered += 1
     missing = sorted(declared_names - names)
     return {"declared": sorted(declared_names), "registered": sorted(names),
+            "builtin": sorted(builtin_names),
             "missing": missing, "covered_paths": covered,
             # R4: a scan of zero tracked files has not established "none declared".
             "files_scanned": len((attrs or "").splitlines())}
+
+
+def _print_builtin_drivers(status):
+    """Say so when git's own driver is carrying a path. It is covered and unregisterable,
+    and a reader who is not told will go looking for the `git config` entry that proves it."""
+    if status.get("builtin"):
+        print("  built-in    {} (git's own; effective with no install step)".format(
+            ", ".join(status["builtin"])))
 
 
 def cmd_doctor(root, repo):
@@ -2362,6 +2425,12 @@ def cmd_doctor(root, repo):
     elif status["declared"]:
         print("merge driver     effective - {} declared, {} registered".format(
             ", ".join(status["declared"]), ", ".join(status["registered"])))
+        _print_builtin_drivers(status)
+    elif status["builtin"]:
+        # No custom driver, but git's own is doing the job. Saying "none declared" here
+        # would be false: something IS declared, and it needs no installing.
+        print("merge driver     effective - git built-in only, nothing to register")
+        _print_builtin_drivers(status)
     elif status["files_scanned"] == 0:
         # R4 again, in code written the same afternoon the rule was cited. A scan of zero
         # tracked files has not established that no driver is declared.

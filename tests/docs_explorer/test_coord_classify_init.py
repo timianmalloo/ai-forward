@@ -341,3 +341,50 @@ class ForcePreservesRepoLocalTests(InitCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class PortableInterpreterTests(unittest.TestCase):
+    """The registry is COMMITTED, so a resolved absolute interpreter path is PACK-P.
+
+    `pack_defaults` built its regenerate commands from `sys.executable`, which on this
+    machine is C:/Users/<name>/AppData/.../python.exe. That path is written into
+    `.agents/artifacts.yml`, which is the one file under `.agents/` that IS committed -- so
+    every other machine, every other account and every CI runner gets a `derived` command
+    that cannot run. `coord regen` then fails for a reason unrelated to the merge.
+
+    Same class as the `--project` note directly above it in `pack_defaults`: a value true
+    only of the machine that ran the command, stamped into a shared file. Written to fail
+    first -- the pre-fix command began with a quoted absolute path.
+    """
+
+    def setUp(self):
+        self.m = load_module()
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.repo = Path(self.tmp.name) / "r"
+        self.repo.mkdir(parents=True)
+
+    def _commands(self):
+        return [d["command"] for d in self.m.pack_defaults(str(self.repo)) if d["command"]]
+
+    def test_no_command_carries_an_absolute_interpreter_path(self):
+        for command in self._commands():
+            self.assertNotIn(sys.executable, command,
+                             "a resolved interpreter path in a COMMITTED file is PACK-P")
+            self.assertFalse(command.startswith('"'),
+                             "the command starts with a quoted absolute path: " + command)
+
+    def test_the_interpreter_token_is_one_of_the_documented_forms(self):
+        for command in self._commands():
+            head = command.split(" docs/", 1)[0].strip()
+            self.assertIn(head, ("python3", "python", "py -3"),
+                          "the interpreter must be a form pack-doctor also probes for, "
+                          "so its advice and this file agree; got: " + head)
+
+    def test_the_chosen_token_actually_runs_python_here(self):
+        """Portable is not enough - it still has to be verified, like the command itself."""
+        token = self.m.portable_python()
+        proc = subprocess.run(token.split() + ["--version"], capture_output=True, text=True)
+        self.assertEqual(proc.returncode, 0)
+        self.assertTrue(((proc.stdout or "") + (proc.stderr or "")).startswith("Python 3"),
+                        "the Windows Store `python3` alias exits 9009 and is not Python")

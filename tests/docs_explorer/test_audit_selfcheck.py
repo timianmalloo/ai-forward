@@ -5,6 +5,7 @@ goal-state presence gaps and surfaces done_when -> summary review pairs (never a
 Seen failing on the pre-fix code: the subcommand does not exist, so the run errors.
 """
 import json
+import os
 import pathlib
 import subprocess
 import sys
@@ -140,6 +141,68 @@ class SelfcheckTests(unittest.TestCase):
             ])
             self.assertEqual(self._run(root, "--session", "S", "--gate", "--since", "HEAD").returncode, 1,
                              "--since must still catch a gap introduced after the ref")
+
+
+class GateBaselineTests(SelfcheckTests):
+    """A forward ratchet with no baseline has nothing to ratchet against.
+
+    `ids_at_ref` states the intended stance in its own docstring -- "A forward ratchet fails
+    open on a missing base (returns None), never on a bad current entry" -- but the call site
+    did the opposite. When the base could not be read it skipped the filtering entirely and
+    gated the WHOLE unfiltered history, so an unresolvable ref turned the ratchet into a
+    retroactive audit and failed the build on entries that were explicitly grandfathered.
+
+    That is the shape CI6 warns about -- a gate that fails for a reason unrelated to the
+    change is a gate someone deletes -- and it is IO doctrine too: a check that could not run
+    must say so rather than degrade to a plausible verdict in either direction.
+
+    Observed red on 2026-09-07: `selfcheck --gate --since <bogus-ref>` exited 1 in a repo
+    whose gate passed with a resolvable ref.
+
+    Inherits `_write_log` / `_run` from SelfcheckTests so the fixture shape cannot drift.
+    """
+
+    BOGUS = "refs/heads/definitely-not-a-ref"
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.root = pathlib.Path(self.tmp.name)
+        self._write_log(self.root, [
+            _entry(id="al-1", kind="skill", session="S", shortname="old-gap",
+                   summary="historical, no done_when"),
+        ])
+        env = {**os.environ, "GIT_AUTHOR_NAME": "t", "GIT_AUTHOR_EMAIL": "t@t",
+               "GIT_COMMITTER_NAME": "t", "GIT_COMMITTER_EMAIL": "t@t"}
+        for args in (["init", "-q"], ["add", "-A"], ["commit", "-qm", "base"]):
+            subprocess.run(["git", *args], cwd=self.root, check=True, env=env,
+                           capture_output=True)
+
+    def test_the_fixture_really_would_fail_without_a_baseline(self):
+        """Guards the other two: if the historical gap stopped failing, they would pass
+        for the wrong reason."""
+        self.assertEqual(self._run(self.root, "--session", "S", "--gate").returncode, 1)
+
+    def test_an_unreadable_base_ref_does_not_fail_the_gate(self):
+        result = self._run(self.root, "--session", "S", "--gate", "--since", self.BOGUS)
+        self.assertEqual(result.returncode, 0,
+                         "an unresolvable base makes every historical entry look new, so "
+                         "failing here is a retroactive audit rather than a ratchet")
+
+    def test_an_unreadable_base_ref_says_so_rather_than_passing_silently(self):
+        out = self._run(self.root, "--session", "S", "--gate", "--since", self.BOGUS).stdout
+        self.assertIn("NOT CHECKED", out,
+                      "a check that could not run must say so, not look like a pass")
+
+    def test_a_resolvable_base_still_gates_a_new_entry(self):
+        """The regression guard: failing open on a MISSING base must not blind the gate."""
+        self._write_log(self.root, [
+            _entry(id="al-1", kind="skill", session="S", shortname="old-gap", summary="x"),
+            _entry(id="al-2", kind="skill", session="S", shortname="new-gap",
+                   summary="new, no done_when"),
+        ])
+        self.assertEqual(
+            self._run(self.root, "--session", "S", "--gate", "--since", "HEAD").returncode, 1)
 
 
 if __name__ == "__main__":

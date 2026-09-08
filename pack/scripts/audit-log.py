@@ -1016,13 +1016,23 @@ def cmd_selfcheck(args):
     have = [e for e in subst if e.get("done_when")]
     tier_gaps = [e for e in have if not e.get("tier")]
     over_cap = [e for e in subst if e.get("fan_out") is not None and len(e.get("agent_runs") or []) > int(e.get("fan_out") or 0)]
+    baseline_unreadable = False
     if getattr(args, "since", None):
         known = ids_at_ref(args.root, "audit", args.since)
         if known is not None:
             gaps = [e for e in gaps if e.get("id") not in known]
             tier_gaps = [e for e in tier_gaps if e.get("id") not in known]
             over_cap = [e for e in over_cap if e.get("id") not in known]
-    gate_fail = bool(getattr(args, "gate", False) and (gaps or tier_gaps or over_cap))
+        else:
+            # ids_at_ref returns None when the ref, the repo or the file could not be read,
+            # and it documents the stance this branch exists to honour: a forward ratchet
+            # fails open on a missing base. Without a baseline EVERY historical entry looks
+            # new, so gating here audits grandfathered work retroactively and fails the build
+            # for a reason unrelated to the change - which is how a gate gets deleted (CI6).
+            # It must not read as a pass either: it is NOT CHECKED, and it says so.
+            baseline_unreadable = True
+    gate_fail = bool(getattr(args, "gate", False) and not baseline_unreadable
+                     and (gaps or tier_gaps or over_cap))
     budgets = budget_findings(subst)
     mainline = main_line_findings(subst)
     review = [{"shortname": e.get("shortname", "?"),
@@ -1040,6 +1050,9 @@ def cmd_selfcheck(args):
             "main_line_gaps": mainline["no_budget"],
             "main_line_over": mainline["over_budget"],
             "review": review,
+            "baseline": {"ref": getattr(args, "since", None),
+                         "readable": not baseline_unreadable} if getattr(args, "since", None)
+                        else None,
         }, ensure_ascii=False, indent=2))
         return 1 if gate_fail else 0
     scope = f"session {args.session}" if args.session else "all sessions"
@@ -1086,7 +1099,12 @@ def cmd_selfcheck(args):
         print("  scope review (done_when -> summary; judge drift yourself, this is not a verdict):")
         for r in review:
             print(f"    {r['shortname']}: '{r['done_when'][:60]}' -> '{r['summary'][:80]}'")
-    if gate_fail:
+    if baseline_unreadable:
+        print("  GATE: NOT CHECKED - the baseline ref {!r} could not be read, so nothing is"
+              " known to be historical.".format(args.since))
+        print("             This is not a pass. Fetch the ref (e.g. `git fetch --no-tags"
+              " --depth=1 origin main`) and re-run.")
+    elif gate_fail:
         print("  GATE: FAIL - a substantive turn in scope recorded no goal-state/tier or exceeded its fan-out cap.")
     return 1 if gate_fail else 0
 

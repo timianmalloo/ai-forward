@@ -285,6 +285,27 @@ needs a branch for "unknown".
 
 **Coverage gap** — no docstring in the source.
 
+### `portable_python()`
+
+The interpreter token to WRITE INTO A COMMITTED FILE.
+
+`sys.executable` is the right answer for anything this process runs, and the wrong one
+for anything it writes down. `.agents/artifacts.yml` is the single file under `.agents/`
+that IS committed, so a resolved path pins the registry to one machine and one account:
+every other clone, every other user and every CI runner then gets a `derived` command
+that cannot run, and `coord regen` fails for a reason that has nothing to do with the
+merge. That is the same class as the `--project` note in `pack_defaults` below (PACK-P):
+a value true only of the machine that ran the command, stamped into a shared file.
+
+Verified, not assumed. Windows ships a `python3` App-Execution-Alias that is NOT Python
+-- it prints "Python was not found" and exits 9009 -- so a form that merely launches is
+not a form that works, and only `Python 3` on stdout settles it.
+
+Falls back to the quoted absolute path when no documented form runs. That is a worse
+file, and it is still better than writing a command that was never going to work here:
+`verify_regen_command` runs whatever this returns before it is written, so a fallback
+that is wrong is caught at the moment of writing rather than at the first merge.
+
 ### `pack_defaults(repo)`
 
 The pack's own artifacts, as classify-init candidates.
@@ -519,6 +540,9 @@ Is the merge driver EFFECTIVE? Requires reading BOTH sources (spike S13).
 the two finds the gap -- and .git/config is per-clone and never committed, so a fresh
 clone or a new worktree is exactly where the gap appears.
 
+git's built-ins are counted as covered and reported separately: they are declared here
+and registered nowhere, which is what "built in" means, not what "missing" means.
+
 ### `cmd_doctor(root, repo)`
 
 **Coverage gap** — no docstring in the source.
@@ -539,6 +563,6 @@ follows by printing the settings entry rather than writing it.
 
 ## Coverage
 
-- Public functions: **62** · documented: **39** (**63%**)
+- Public functions: **63** · documented: **40** (**63%**)
 - Undocumented (recorded, not invented): `make_event`, `check`, `read_decisions`, `request_log_path`, `read_request_events`, `fold_requests`, `regen_command`, `record_regen_owed`, `regen_owed`, `clear_regen_owed`, `detect_harness`, `cmd_precommit`, `cmd_guard`, `session_contract_path`, `owner_rows_for_path`, `cmd_session_list`, `cmd_collaborate`, `cmd_request`, `cmd_worktree`, `cmd_session`, `cmd_metrics`, `cmd_install`, `cmd_doctor`
 
