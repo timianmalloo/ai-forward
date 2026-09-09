@@ -1,5 +1,6 @@
 import json
 import pathlib
+import shutil
 import re
 import subprocess
 import sys
@@ -189,6 +190,74 @@ class AuditLogSignalsTests(unittest.TestCase):
             signals = self._entries(root)[-1].get("signals")
             self.assertEqual(3, signals.get("guidance_required"))
             self.assertEqual(True, signals.get("acceptance_met"))
+
+
+class StartMarkerMeasuresOneRun(unittest.TestCase):
+    """DEFECT 4, judged: WORKING AS DESIGNED, DOCUMENTED AMBIGUOUSLY, and PINNED BY NOTHING.
+
+    The `start` marker is CONSUMED by the next `append` -- deliberately, so a stale stamp
+    can never attach a plausible wrong duration to an unrelated entry (IO8: degrade to
+    "not recorded", never to a wrong number). AL4a scopes the obligation to a RUN ("every
+    skill, as part of its grounding step"), and the session id is the key, not the scope.
+    Measured over this repo's own 162-entry log: of 22 multi-entry sessions, 5 carry more
+    than one duration -- so the claim that a session can only ever record one is false.
+
+    What was true is that nothing tested any of it. The pack's flagship self-instrumentation
+    was asserted in prose in four documents and verified nowhere; by CI6 that is a memoir.
+    """
+
+    SCRIPT = ROOT / "pack" / "scripts" / "audit-log.py"
+
+    def setUp(self):
+        self.tmp = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, self.tmp, True)
+        self.docs = pathlib.Path(self.tmp) / "docs"
+        (self.docs / "audit").mkdir(parents=True)
+
+    def run_log(self, *args):
+        result = subprocess.run([sys.executable, str(self.SCRIPT), "--root", str(self.docs),
+                                 *args], cwd=str(ROOT), capture_output=True, text=True,
+                                timeout=30)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        return result
+
+    def entries(self):
+        path = self.docs / "audit" / "audit-log.jsonl"
+        return [json.loads(l) for l in path.read_text(encoding="utf-8").splitlines() if l.strip()]
+
+    def append(self, shortname, session="S1"):
+        self.run_log("append", "--shortname", shortname, "--session", session,
+                     "--kind", "script", "--prompt", "probe the start marker",
+                     "--summary", "probe", "--outcome", "success")
+
+    def test_one_marker_measures_one_run(self):
+        self.run_log("start", "--session", "S1")
+        self.append("first")
+        self.append("second")
+        first, second = self.entries()
+        self.assertIn("duration_seconds", first, "the marked run is measured")
+        self.assertNotIn("duration_seconds", second,
+                         "and the next entry degrades to ABSENT, never to a wrong number")
+        self.assertNotIn("started_at", second)
+
+    def test_a_second_start_measures_a_second_run_in_the_same_session(self):
+        """The behaviour the documentation obscured: re-marking works, per run."""
+        self.run_log("start", "--session", "S1")
+        self.append("run-one-close")
+        self.run_log("start", "--session", "S1")
+        self.append("run-two-close")
+        first, second = self.entries()
+        self.assertIn("duration_seconds", first)
+        self.assertIn("duration_seconds", second)
+
+    def test_the_docs_say_one_marker_measures_one_run(self):
+        """The documentation half. A reader who marks once and appends five times must be
+        told why four say nothing, or they will read correct behaviour as a broken gauge."""
+        for rel in ("pack/knowledge/audit-and-change-log.md",
+                    "pack/adapters/managed-blocks/AGENTS.block.md"):
+            text = (ROOT / rel).read_text(encoding="utf-8", errors="replace").lower()
+            self.assertTrue("one marker measures one run" in text,
+                            rel + " must state the marker's scope where the claim is made")
 
 
 if __name__ == "__main__":

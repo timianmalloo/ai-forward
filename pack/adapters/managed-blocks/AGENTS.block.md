@@ -134,7 +134,9 @@ every non-trivial task.
   modeling around it. Every measurement path **degrades to "not recorded", never to a plausible wrong
   number**. This applies to the agent's own work too: a skill marks its start at grounding
   (`audit-log.py start --session <id>`) so the closing audit entry records **duration_seconds**
-  automatically — measured, not modeled, with no flag to remember (AL4a).
+  automatically — measured, not modeled, with no flag to remember. **One marker measures one run**:
+  the closing entry consumes it, so each run re-marks at its own grounding rather than a session
+  marking once (AL4a).
   `.github/instructions/instrumentation-over-inference.instructions.md` (IO1–IO12).
 - **Personas (dual-mode):** author in Peer Mode, review in Adversary Mode; the author never
   clears its own hard veto. Agents in `.github/agents/`; the operating standard in the
