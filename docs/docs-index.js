@@ -998,7 +998,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "8d9af8c26f50c9cbcb5a2b2abfbc3693f5930bbcb4cb3b39209b7f7e198d183f"
+      "sourceSha256": "55c9f52d5b8cc0cdc028a9d398d80af3f039ff2f9c3a005ccc1e7d6261272950"
     },
     {
       "id": "api-pack-doctor",
@@ -5879,5 +5879,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "d9b162a45be188bfacf25b52443a708f65a32ef630df4f2425769f2485591d38"
+  "graphSha256": "42018eedbc2fae1d66d9b70d92b4fa7fd9fec30756dc8d7774034f75320d701c"
 };

@@ -409,5 +409,96 @@ class GitignoreVerificationRule(unittest.TestCase):
                          ", ".join(offenders))
 
 
+class StaleApplierCannotSilentlyApplyAnOldMap(unittest.TestCase):
+    """The deployment map IS this program, so the program is its own bootstrap problem.
+
+    `/updatepack` runs the TARGET's installed `docs/ai-forward-pack/scripts/pack-apply.py`.
+    A revision whose whole point is a change to pack-apply.py therefore cannot protect the
+    very refresh that installs it: the old copy computes the plan, the new copy is merely
+    one of the files it copies. Measured 2026-09-09 against a real consuming repo at rev
+    63 planning against rev-64 source: `.gitignore | UPDATE | added spikes/, .agents/*` --
+    exactly the two lines that repo had declined and that rev 64 exists to withhold.
+
+    Detect it and say so; refuse to APPLY a stale map. Copying one file is the remedy.
+    """
+
+    def setUp(self):
+        self.tmp = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, self.tmp, True)
+        install = (ROOT / "pack" / "adapters" / "INSTALL.md").read_text(encoding="utf-8")
+        _w(self.tmp, "docs/ai-forward-pack/INSTALL.md", install)
+        _w(self.tmp, "AGENTS.md", "# AGENTS.md\n")
+        _w(self.tmp, ".gitignore", "bin/\n")
+
+    def install_applier(self, text):
+        _w(self.tmp, "docs/ai-forward-pack/scripts/pack-apply.py", text)
+
+    def _run(self, dry=True, **kw):
+        return pa.Applier(str(ROOT), self.tmp, dry=dry, force=True, baselines=False,
+                          **kw).run()
+
+    def test_a_matching_copy_raises_nothing(self):
+        self.install_applier(SCRIPT.read_text(encoding="utf-8"))
+        rows = [r for r in self._run() if r["path"].endswith("pack-apply.py")
+                and r["area"] == "meta"]
+        self.assertEqual(rows, [], "an up-to-date copy is not a finding")
+
+    def test_a_stale_copy_is_reported_on_plan(self):
+        self.install_applier("# an older pack-apply.py\n")
+        rows = [r for r in self._run() if r["action"] == "STALE-APPLIER"]
+        self.assertEqual(len(rows), 1, "the plan must say it was computed by an old map")
+        self.assertIn("pack-apply.py", rows[0]["note"],
+                      "and name the one file that has to be copied first")
+
+    def test_a_stale_copy_refuses_to_apply(self):
+        """Fail-safe: applying a stale map is how a repo silently misses the fix."""
+        self.install_applier("# an older pack-apply.py\n")
+        rows = self._run(dry=False)
+        self.assertEqual(len(rows), 1, "it stops rather than applying half an old map")
+        self.assertEqual(rows[0]["status"], "fail")
+        self.assertEqual(rows[0]["action"], "STALE-APPLIER")
+
+    def test_the_refusal_has_a_documented_escape(self):
+        self.install_applier("# an older pack-apply.py\n")
+        rows = pa.Applier(str(ROOT), self.tmp, dry=False, force=True, baselines=False,
+                          allow_stale=True).run()
+        self.assertFalse(any(r["status"] == "fail" and r["action"] == "STALE-APPLIER"
+                             for r in rows))
+
+    def test_a_target_with_no_applier_yet_is_not_stale(self):
+        """A fresh install has no copy to be stale; --install is the path, not a refusal."""
+        rows = [r for r in self._run() if r["action"] == "STALE-APPLIER"]
+        self.assertEqual(rows, [], "absent is not stale")
+
+
+class AWithheldBlanketTakesItsExceptionWithIt(unittest.TestCase):
+    """`!.agents/artifacts.yml` exists only to punch through `.agents/*`.
+
+    Proposing the exception while withholding the blanket leaves an inert negation in the
+    repo's .gitignore and tells the reader two opposite things in one report.
+    """
+
+    def setUp(self):
+        self.tmp = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, self.tmp, True)
+        subprocess.run(["git", "init", "-q"], cwd=self.tmp, capture_output=True)
+        for name, value in (("user.email", "t@example.invalid"), ("user.name", "t")):
+            subprocess.run(["git", "config", name, value], cwd=self.tmp, capture_output=True)
+        _w(self.tmp, ".gitignore", "bin/\n")
+        _w(self.tmp, ".agents/artifacts.yml", "docs/audit/audit-log.jsonl: register\n")
+        _w(self.tmp, ".agents/log/episode.jsonl", '{"kind":"episode-close"}\n')
+        subprocess.run(["git", "add", "-A"], cwd=self.tmp, capture_output=True)
+        subprocess.run(["git", "commit", "-qm", "records"], cwd=self.tmp, capture_output=True)
+
+    def test_the_exception_is_withheld_with_its_blanket(self):
+        pa.Applier(str(ROOT), self.tmp, dry=False, force=True, install=True,
+                   baselines=False, project="Demo").run()
+        text = _r(self.tmp, ".gitignore")
+        self.assertNotIn(".agents/*", text)
+        self.assertNotIn("!.agents/artifacts.yml", text,
+                         "a negation with nothing to negate is noise, and contradicts the "
+                         "KEEP row that withheld its blanket")
+
+
 if __name__ == "__main__":
     unittest.main()

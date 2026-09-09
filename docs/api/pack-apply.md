@@ -65,6 +65,7 @@ Python 3.8+, stdlib only. Exit 0 = applied/clean, 1 = conflicts or errors report
 
 | Option | Help |
 |---|---|
+| `--allow-stale` | apply even though the running pack-apply.py is older than the source's. It applies the OLD deployment map - the recorded exception, never the default |
 | `--force` | re-apply even when the revisions match |
 | `--install` | fresh install: allow a target with no installed pack |
 | `--json` | emit the action rows as JSON |

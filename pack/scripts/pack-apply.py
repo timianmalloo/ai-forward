@@ -108,6 +108,11 @@ CONDITIONAL_GITIGNORE = {
                   " and hide every NEW one, with no signature"),
 }
 
+# A `!` line exists only to punch through its blanket. Withhold the blanket and the
+# exception is a negation with nothing to negate -- inert, and it tells a reader the
+# opposite of the KEEP row that withheld the blanket.
+GITIGNORE_DEPENDENTS = {".agents/*": ("!.agents/artifacts.yml",)}
+
 DECLINE_MARKER = "# pack-apply: decline "
 
 
@@ -180,7 +185,8 @@ def git(args, cwd):
 
 # --------------------------------------------------------------------------- the applier
 class Applier(object):
-    def __init__(self, source, target, dry, project=None, install=False, force=False, baselines=True):
+    def __init__(self, source, target, dry, project=None, install=False, force=False,
+                 baselines=True, allow_stale=False):
         self.source = os.path.abspath(source)
         self.pack = os.path.join(self.source, "pack")
         self.target = os.path.abspath(target)
@@ -189,12 +195,44 @@ class Applier(object):
         self.install = install
         self.force = force
         self.baselines = baselines
+        self.allow_stale = allow_stale
         self.rows = []
         self.old_pack_sha = None
         self.source_rev, self.source_meta = self._source_revision()
         self.target_rev = self._target_revision()
 
     # ---- bookkeeping
+    def _stale_applier(self):
+        """Is the pack-apply.py RUNNING the one this source ships? (the bootstrap defect)
+
+        The deployment map IS this program, and `/updatepack` runs the TARGET's installed
+        copy. So a revision whose point is a change to pack-apply.py cannot protect the
+        very refresh that installs it: the old copy computes the plan, and the new copy is
+        merely one of the files it copies.
+
+        Measured 2026-09-09 against a consuming repo at revision 63, planning against
+        revision-64 source: `.gitignore | UPDATE | added spikes/, .agents/*` -- both lines
+        that repo had explicitly declined, and exactly what revision 64 exists to withhold.
+        The identical plan run with the rev-64 script withheld both, with reasons.
+
+        Returns the remedy note, or "" when there is nothing to say. An unreadable copy is
+        NOT reported as stale: absent or unreadable is not evidence of staleness (R4), and
+        a fresh install has no copy at all.
+        """
+        installed = os.path.join(self.target, "docs", "ai-forward-pack", "scripts",
+                                 "pack-apply.py")
+        if not os.path.isfile(installed):
+            return ""
+        mine, theirs = read(installed), read(os.path.join(self.pack, "scripts",
+                                                          "pack-apply.py"))
+        if mine is None or theirs is None or norm_nl(mine) == norm_nl(theirs):
+            return ""
+        return ("this plan was computed by the target's OWN pack-apply.py, which differs "
+                "from the one this source ships - the deployment map is this program, so a "
+                "revision that changes it cannot apply itself. Copy it first, then re-run: "
+                "cp <source>/pack/scripts/pack-apply.py docs/ai-forward-pack/scripts/  "
+                "(--allow-stale overrides, and applies the OLD map)")
+
     def row(self, area, path, action, status="ok", note=""):
         self.rows.append({"area": area, "path": path.replace("\\", "/"), "action": action, "status": status, "note": note})
 
@@ -490,6 +528,12 @@ class Applier(object):
             if line in have:
                 continue
             why = self._gitignore_withhold(line, have)
+            if not why:
+                owner = next((b for b, deps in GITIGNORE_DEPENDENTS.items()
+                              if line in deps and b in dict(withheld)), None)
+                if owner:
+                    why = "its blanket `{0}` was withheld, so it would negate nothing".format(
+                        owner)
             (withheld if why else missing).append((line, why) if why else line)
         for line, why in withheld:
             # REPORTED, never silent: a reversal nobody is told about is the defect.
@@ -621,6 +665,16 @@ class Applier(object):
             self.row("meta", "docs/ai-forward-pack/INSTALL.md", "ERROR", "fail",
                      "no installed pack found; pass --install for a fresh install (/addpacktorepo)")
             return self.rows
+        stale = self._stale_applier()
+        if stale:
+            # Reported on `plan` (the table above was computed by the OLD map) and FATAL on
+            # `apply`, because applying a stale deployment map is precisely how a repo
+            # silently misses the fix the revision exists to deliver.
+            fatal = not self.dry and not self.allow_stale
+            self.row("meta", "docs/ai-forward-pack/scripts/pack-apply.py", "STALE-APPLIER",
+                     "fail" if fatal else "ok", stale)
+            if fatal:
+                return self.rows
         if self.target_rev is not None and self.target_rev > self.source_rev:
             self.row("meta", "revision", "ERROR", "fail",
                      "target is at revision {0}, ahead of the source {1} - refusing".format(self.target_rev, self.source_rev))
@@ -793,6 +847,10 @@ def main(argv=None):
         p.add_argument("--no-baselines", action="store_true", help="do not run context-budget --update-baseline after applying")
         p.add_argument("--json", action="store_true", help="emit the action rows as JSON")
         p.add_argument("--quiet", action="store_true", help="only the UNCHANGED rows are hidden")
+        p.add_argument("--allow-stale", action="store_true",
+                       help="apply even though the running pack-apply.py is older than the "
+                            "source's. It applies the OLD deployment map - the recorded "
+                            "exception, never the default")
     args = ap.parse_args(argv)
     if not args.cmd:
         ap.print_help()
@@ -800,7 +858,7 @@ def main(argv=None):
     if not os.path.isfile(os.path.join(args.source, "pack", "adapters", "INSTALL.md")):
         print("pack-apply: --source must be an ai-forward clone containing pack/adapters/INSTALL.md", file=sys.stderr)
         return 2
-    app = Applier(args.source, args.target, dry=(args.cmd == "plan"), project=args.project, install=args.install,
+    app = Applier(args.source, args.target, dry=(args.cmd == "plan"), project=args.project, install=args.install, allow_stale=args.allow_stale,
                   force=args.force, baselines=not args.no_baselines)
     rows = app.run()
     if args.json:
