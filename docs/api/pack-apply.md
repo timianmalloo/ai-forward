@@ -82,6 +82,15 @@ _(no docstring — coverage gap)_
 
 ## Functions
 
+### `gitignore_negations(pattern)`
+
+The literal forms a repo writes to re-include a pattern this block would ignore.
+
+Note what git does NOT allow: `spikes/` followed by `!spikes/**` still ignores the
+tree, because git stops descending at an excluded directory and never consults the
+deeper negation (measured). So a negation cannot repair a blanket that was already
+appended -- which is why this is checked BEFORE appending, not after.
+
 ### `read(path)`
 
 **Coverage gap** — no docstring in the source.
@@ -135,6 +144,6 @@ original's skill-surface needles and required-phrase checks where they can be re
 
 ## Coverage
 
-- Public functions: **12** · documented: **5** (**42%**)
+- Public functions: **13** · documented: **6** (**46%**)
 - Undocumented (recorded, not invented): `read`, `norm_nl`, `frontmatter`, `git`, `normalise`, `render_table`, `summarize`
 

@@ -8,7 +8,9 @@ import importlib.util
 import json
 import os
 import pathlib
+import re
 import shutil
+import subprocess
 import tempfile
 import unittest
 
@@ -51,6 +53,13 @@ def _r(root, rel):
 
 def _rows(rows):
     return {(r["path"], r["action"]) for r in rows}
+
+# INSTALL.md's frontmatter `changes:` list is an append-only HISTORY of shipped revisions,
+# replayed in order by a repo catching up. Rewriting a past entry would falsify the record,
+# and a later entry already carries the correction -- so both gates below read the BODY.
+def install_body(text):
+    return text.split(chr(10) + "---" + chr(10), 1)[-1]
+
 
 
 class InstalledRepoTests(unittest.TestCase):
@@ -191,6 +200,213 @@ class FreshAndGuardTests(unittest.TestCase):
         self.assertEqual("---\nname: x\n---\nbody", pa.strip_tools("---\nname: x\ntools: [Read,\n  Grep]\n---\nbody"))
         self.assertEqual(pa.normalise("see `.github/instructions/rigor-protocol.instructions.md` now"),
                          pa.normalise("see `.claude/knowledge/rigor-protocol.md`   now"))
+
+
+class GitignoreDoesNotReverseARepoDecision(unittest.TestCase):
+    """A blanket appended below an existing rule wins by git's last-match rule.
+
+    Measured in a consuming repo on 2026-09-09: `.gitignore` line 495 recorded *"spikes/ is
+    NOT ignored in this repo (pack default overridden): a contract labelled Verified must
+    cite committed, re-runnable spike evidence (Test Architect gate, 2026-08-26)"*. The
+    pack's INSTALL-2 block re-appended a blanket `spikes/` twenty-nine lines later and won.
+    117 tracked spike files became reachable only with `git add -f` -- and a forgotten `-f`
+    loses evidence with NO signature: `git add -A` drops a new ignored file silently, git
+    status never lists it, and the commit succeeds.
+
+    The defect is the mechanism, not the default. `INSTALL.md` has always carried the
+    condition -- *"add `spikes/` to `.gitignore` **unless a probe is worth keeping as
+    evidence**"* -- and the script applied it unconditionally. A repo that TRACKS files
+    under `spikes/` has already answered that question in the only way git records an answer.
+
+    Written to fail first; every test here failed on 2026-09-09 against the plain append.
+    """
+
+    def setUp(self):
+        self.tmp = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, self.tmp, True)
+        _w(self.tmp, ".gitignore", "bin/\n")
+
+    def _git(self, *args):
+        return subprocess.run(["git", *args], cwd=self.tmp, capture_output=True, text=True)
+
+    def _init_repo(self):
+        self._git("init", "-q")
+        self._git("config", "user.email", "t@example.invalid")
+        self._git("config", "user.name", "t")
+
+    def _apply(self):
+        return pa.Applier(str(ROOT), self.tmp, dry=False, force=True, install=True,
+                          baselines=False, project="Demo").run()
+
+    def _gitignore_rows(self, rows):
+        return [r for r in rows if r["path"] == ".gitignore"]
+
+    def test_the_default_still_applies_to_a_repo_with_no_spikes(self):
+        """Proportionality: the pack default is right for repos that treat spikes/ as scratch."""
+        self._init_repo()
+        self._apply()
+        self.assertIn("spikes/", _r(self.tmp, ".gitignore"))
+
+    def test_a_repo_that_tracks_spikes_does_not_get_the_blanket(self):
+        """THE finding, and the condition INSTALL.md already states."""
+        self._init_repo()
+        _w(self.tmp, "spikes/mcp/probe.md", "committed spike evidence\n")
+        self._git("add", "-A")
+        self._git("commit", "-qm", "spike evidence")
+        rows = self._apply()
+        text = _r(self.tmp, ".gitignore")
+        self.assertNotIn("\nspikes/\n", "\n" + text,
+                         "a repo tracking spike evidence must not have it ignored under it")
+        self.assertTrue(any(r["action"] == "KEEP" and "spikes/" in r["note"]
+                            for r in self._gitignore_rows(rows)),
+                        "and the withholding must be REPORTED, not silent: " +
+                        str(self._gitignore_rows(rows)))
+
+    def test_a_pattern_the_repo_re_includes_is_reported_not_appended(self):
+        """The general class: never append a line that reverses an existing negation."""
+        self._init_repo()
+        _w(self.tmp, ".gitignore",
+           "# spikes/ is NOT ignored here (pack default overridden)\n!spikes/\n!spikes/**\n")
+        rows = self._apply()
+        text = _r(self.tmp, ".gitignore")
+        self.assertNotIn("\nspikes/\n", "\n" + text)
+        note = " ".join(r["note"] for r in self._gitignore_rows(rows))
+        self.assertIn("!spikes/", note, "the report must name the rule it would have reversed")
+
+    def test_a_declined_pattern_stays_declined_across_refreshes(self):
+        """Without this, deleting the line is undone by the next /updatepack -- measured."""
+        self._init_repo()
+        _w(self.tmp, ".gitignore",
+           "bin/\n" + pa.DECLINE_MARKER + "spikes/  our spikes are committed evidence\n")
+        self._apply()
+        self.assertNotIn("\nspikes/\n", "\n" + _r(self.tmp, ".gitignore"))
+        self._apply()
+        self.assertNotIn("\nspikes/\n", "\n" + _r(self.tmp, ".gitignore"),
+                         "a declination that a second apply reverses is not a declination")
+
+    def test_a_target_that_is_not_a_git_repo_keeps_the_old_behaviour(self):
+        """R4: `git ls-files` failing is not evidence that spikes are untracked."""
+        self._apply()
+        self.assertIn("spikes/", _r(self.tmp, ".gitignore"))
+
+    def test_every_other_pack_line_is_still_appended(self):
+        self._init_repo()
+        _w(self.tmp, "spikes/keep.md", "evidence\n")
+        self._git("add", "-A")
+        self._git("commit", "-qm", "spike")
+        self._apply()
+        text = _r(self.tmp, ".gitignore")
+        for line in pa.GITIGNORE_LINES:
+            if line == "spikes/":
+                continue
+            self.assertIn(line, text)
+
+
+class GitignoreInvariantNotOneLiteralPattern(unittest.TestCase):
+    """DEFECT 3. `.agents/*` + `!.agents/artifacts.yml` is ONE shape that satisfies the
+    invariant, and the pack prescribed it as though it were the invariant.
+
+    What the pack actually wants is *the registry travels with the repo*. Several ignore
+    shapes satisfy that. A repo that COMMITS its per-run records under `.agents/` -- an
+    episode-capture log, a coordination log -- satisfies it by the wider route, and the
+    literal pattern breaks that repo: existing tracked files stay tracked and look fine
+    while every NEW record becomes invisible to git. Measured in this very repository on
+    2026-09-09: two `.agents/log/*.jsonl` tracked and healthy, four newer ones and
+    `requests.jsonl` ignored, `git status` silent about all five.
+
+    The repo has already answered the question by tracking the files. Read that answer.
+    """
+
+    def setUp(self):
+        self.tmp = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, self.tmp, True)
+        self._git("init", "-q")
+        self._git("config", "user.email", "t@example.invalid")
+        self._git("config", "user.name", "t")
+
+    def _git(self, *args):
+        return subprocess.run(["git", *args], cwd=self.tmp, capture_output=True, text=True)
+
+    def _apply(self):
+        return pa.Applier(str(ROOT), self.tmp, dry=False, force=True, install=True,
+                          baselines=False, project="Demo").run()
+
+    def test_a_repo_that_commits_records_under_agents_keeps_them_visible(self):
+        _w(self.tmp, ".agents/artifacts.yml", "docs/audit/audit-log.jsonl: register\n")
+        _w(self.tmp, ".agents/log/episode.jsonl", '{"kind":"episode-close"}\n')
+        self._git("add", "-A")
+        self._git("commit", "-qm", "the repo commits its records")
+        rows = self._apply()
+        self.assertNotIn("\n.agents/*\n", "\n" + _r(self.tmp, ".gitignore"),
+                         "a blanket here makes every NEW record invisible to git")
+        note = " ".join(r["note"] for r in rows if r["path"] == ".gitignore")
+        self.assertIn(".agents/*", note, "and the withholding must be reported")
+
+    def test_a_repo_that_only_tracks_the_registry_still_gets_the_pattern(self):
+        """No false positive: the pack default is right wherever it is not contradicted."""
+        _w(self.tmp, ".agents/artifacts.yml", "docs/audit/audit-log.jsonl: register\n")
+        self._git("add", "-A")
+        self._git("commit", "-qm", "registry only")
+        self._apply()
+        text = _r(self.tmp, ".gitignore")
+        self.assertIn(".agents/*", text)
+        self.assertIn("!.agents/artifacts.yml", text)
+
+    def test_the_pattern_written_actually_leaves_the_registry_visible(self):
+        """Prove the INVARIANT, not the pattern -- with --quiet, never -v (see below)."""
+        self._apply()
+        self._git("add", ".gitignore")
+        probe = subprocess.run(["git", "check-ignore", "--quiet", ".agents/artifacts.yml"],
+                               cwd=self.tmp, capture_output=True, text=True)
+        self.assertEqual(probe.returncode, 1,
+                         "the registry must NOT be ignored; exit 1 from --quiet is that")
+
+
+class GitignoreVerificationRule(unittest.TestCase):
+    """`git check-ignore -v` INVERTS the answer for a re-included path -- measured.
+
+    With `-v`, exit 0 means "some pattern matched", and a `!` negation counts as a match.
+    So for `.agents/artifacts.yml` under `.agents/*` + `!.agents/artifacts.yml`:
+    `--quiet` exits 1 (correct: not ignored) while `-v` exits 0 and prints the negation.
+    Anyone verifying with `-v` concludes the opposite of the truth.
+
+    Revision 63 recorded this. Three pack surfaces still prescribed `-v` afterwards, and
+    one of them is an ALWAYS-APPLIED instruction, so the superseded guidance was the copy
+    loaded on every task while the correction sat in a changelog entry.
+    """
+
+    SURFACES = ["pack/knowledge/continuous-improvement.md",
+                "pack/knowledge/ui-visual-assets.md",
+                "pack/scripts/pack-apply.py",
+                "pack/adapters/INSTALL.md"]
+
+    def test_measured_the_inversion_is_real(self):
+        tmp = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, tmp, True)
+        subprocess.run(["git", "init", "-q"], cwd=tmp, capture_output=True)
+        _w(tmp, ".gitignore", ".agents/*\n!.agents/artifacts.yml\n")
+        _w(tmp, ".agents/artifacts.yml", "x: authored\n")
+        quiet = subprocess.run(["git", "check-ignore", "--quiet", ".agents/artifacts.yml"],
+                               cwd=tmp, capture_output=True, text=True)
+        verbose = subprocess.run(["git", "check-ignore", "-v", ".agents/artifacts.yml"],
+                                 cwd=tmp, capture_output=True, text=True)
+        self.assertEqual(quiet.returncode, 1, "--quiet: 1 == not ignored (the truth)")
+        self.assertEqual(verbose.returncode, 0,
+                         "-v: 0 == some pattern matched, including the negation")
+
+    def test_no_pack_surface_prescribes_dash_v_as_the_verification(self):
+        offenders = []
+        for rel in self.SURFACES:
+            text = (ROOT / rel).read_text(encoding="utf-8", errors="replace")
+            if rel.endswith("INSTALL.md"):
+                text = install_body(text)
+            for match in re.finditer(r"check-ignore\s+(-v|--verbose)", text):
+                line = text.count(chr(10), 0, match.start()) + 1
+                offenders.append("{0}:{1}".format(rel, line))
+        self.assertEqual(offenders, [],
+                         "`check-ignore -v` exits 0 for a re-included path and inverts the "
+                         "answer; the verification is `--quiet` (0 == ignored): " +
+                         ", ".join(offenders))
 
 
 if __name__ == "__main__":
