@@ -184,6 +184,23 @@ def git(args, cwd):
 
 
 # --------------------------------------------------------------------------- the applier
+RUNNING_SCRIPT = os.path.abspath(__file__)
+
+
+def default_source():
+    """The ai-forward clone that ships the RUNNING script, when there is one.
+
+    This is what makes the inverted invocation safe to document: the source and the
+    program that reads it cannot be mismatched, because the program derives the source
+    from where it lives. An INSTALLED copy sits at <repo>/docs/ai-forward-pack/scripts/,
+    which is not a clone, so it gets None and must still be told - never a guess (NG1).
+    """
+    clone = os.path.dirname(os.path.dirname(os.path.dirname(RUNNING_SCRIPT)))
+    if os.path.isfile(os.path.join(clone, "pack", "adapters", "INSTALL.md")):
+        return clone
+    return None
+
+
 class Applier(object):
     def __init__(self, source, target, dry, project=None, install=False, force=False,
                  baselines=True, allow_stale=False):
@@ -215,23 +232,27 @@ class Applier(object):
         that repo had explicitly declined, and exactly what revision 64 exists to withhold.
         The identical plan run with the rev-64 script withheld both, with reasons.
 
+        Rev 65 asked the wrong question. It compared the target's INSTALLED copy with the
+        source's, which is not the same as asking which program is computing this plan --
+        so it accused the source's own script of being the target's stale one whenever the
+        target happened to be behind. That false positive also hid the cure: running the
+        SOURCE's copy is exactly what makes staleness impossible, and the check said it was
+        the disease. Ask about `RUNNING_SCRIPT` and both readings come out right.
+
         Returns the remedy note, or "" when there is nothing to say. An unreadable copy is
-        NOT reported as stale: absent or unreadable is not evidence of staleness (R4), and
-        a fresh install has no copy at all.
+        NOT reported as stale: absent or unreadable is not evidence of staleness (R4).
         """
-        installed = os.path.join(self.target, "docs", "ai-forward-pack", "scripts",
-                                 "pack-apply.py")
-        if not os.path.isfile(installed):
-            return ""
-        mine, theirs = read(installed), read(os.path.join(self.pack, "scripts",
-                                                          "pack-apply.py"))
+        mine = read(RUNNING_SCRIPT)
+        theirs = read(os.path.join(self.pack, "scripts", "pack-apply.py"))
         if mine is None or theirs is None or norm_nl(mine) == norm_nl(theirs):
             return ""
-        return ("this plan was computed by the target's OWN pack-apply.py, which differs "
-                "from the one this source ships - the deployment map is this program, so a "
-                "revision that changes it cannot apply itself. Copy it first, then re-run: "
-                "cp <source>/pack/scripts/pack-apply.py docs/ai-forward-pack/scripts/  "
-                "(--allow-stale overrides, and applies the OLD map)")
+        return ("this plan was computed by {0}, which differs from the pack-apply.py this "
+                "source ships - the deployment map IS this program, so a revision that "
+                "changes it cannot apply itself. Run the SOURCE's copy instead, which "
+                "cannot be stale: python <source>/pack/scripts/pack-apply.py plan --target "
+                ". (--allow-stale overrides, and applies the OLD map)"
+                .format(os.path.basename(os.path.dirname(RUNNING_SCRIPT)) + "/"
+                        + os.path.basename(RUNNING_SCRIPT)))
 
     def row(self, area, path, action, status="ok", note=""):
         self.rows.append({"area": area, "path": path.replace("\\", "/"), "action": action, "status": status, "note": note})
@@ -839,7 +860,10 @@ def main(argv=None):
     sub = ap.add_subparsers(dest="cmd")
     for name in ("plan", "apply"):
         p = sub.add_parser(name, help="every action, no writes" if name == "plan" else "apply the map idempotently")
-        p.add_argument("--source", required=True, help="an ai-forward clone (holds pack/)")
+        p.add_argument("--source", default=default_source(),
+                       help="an ai-forward clone (holds pack/). Defaults to the clone "
+                            "shipping this script, so running the source's own copy needs "
+                            "no --source at all")
         p.add_argument("--target", default=os.getcwd(), help="the repo to update (default: cwd)")
         p.add_argument("--project", help="project name for docs/index.html on a fresh install")
         p.add_argument("--install", action="store_true", help="fresh install: allow a target with no installed pack")
@@ -854,6 +878,17 @@ def main(argv=None):
     args = ap.parse_args(argv)
     if not args.cmd:
         ap.print_help()
+        return 2
+    if not args.source:
+        # An installed copy cannot derive its clone. Say what to pass, and name the
+        # invocation that needs nothing - never guess a source (NG1).
+        print("pack-apply: --source is required here.\n"
+              "  because   this copy is not inside an ai-forward clone, so the"
+              " source cannot be derived from where it lives.\n"
+              "  better    run the SOURCE's own copy, which needs no --source"
+              " and can never be a stale deployment map:\n"
+              "              python <ai-forward-clone>/pack/scripts/pack-apply.py"
+              " plan --target .")
         return 2
     if not os.path.isfile(os.path.join(args.source, "pack", "adapters", "INSTALL.md")):
         print("pack-apply: --source must be an ai-forward clone containing pack/adapters/INSTALL.md", file=sys.stderr)

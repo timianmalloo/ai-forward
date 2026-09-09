@@ -72,7 +72,7 @@ Python 3.8+, stdlib only. Exit 0 = applied/clean, 1 = conflicts or errors report
 | `--no-baselines` | do not run context-budget --update-baseline after applying |
 | `--project` | project name for docs/index.html on a fresh install |
 | `--quiet` | only the UNCHANGED rows are hidden |
-| `--source` | an ai-forward clone (holds pack/) |
+| `--source` | an ai-forward clone (holds pack/). Defaults to the clone shipping this script, so running the source's own copy needs no --source at all |
 | `--target` | the repo to update (default: cwd) |
 
 ## Types
@@ -112,6 +112,15 @@ Equal after newline normalisation and a stripped BOM - a CRLF checkout is not a 
 
 **Coverage gap** — no docstring in the source.
 
+### `default_source()`
+
+The ai-forward clone that ships the RUNNING script, when there is one.
+
+This is what makes the inverted invocation safe to document: the source and the
+program that reads it cannot be mismatched, because the program derives the source
+from where it lives. An INSTALLED copy sits at <repo>/docs/ai-forward-pack/scripts/,
+which is not a clone, so it gets None and must still be told - never a guess (NG1).
+
 ### `strip_tools(text)`
 
 Drop the frontmatter `tools:` line and its indented continuation (INSTALL 1.2).
@@ -145,6 +154,6 @@ original's skill-surface needles and required-phrase checks where they can be re
 
 ## Coverage
 
-- Public functions: **13** · documented: **6** (**46%**)
+- Public functions: **14** · documented: **7** (**50%**)
 - Undocumented (recorded, not invented): `read`, `norm_nl`, `frontmatter`, `git`, `normalise`, `render_table`, `summarize`
 

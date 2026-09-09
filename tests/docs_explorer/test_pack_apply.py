@@ -10,6 +10,7 @@ import os
 import pathlib
 import re
 import shutil
+import sys
 import subprocess
 import tempfile
 import unittest
@@ -443,32 +444,45 @@ class StaleApplierCannotSilentlyApplyAnOldMap(unittest.TestCase):
                 and r["area"] == "meta"]
         self.assertEqual(rows, [], "an up-to-date copy is not a finding")
 
+    def stale_program(self):
+        """A pack-apply.py that DIFFERS from the source's, where a consumer keeps its own.
+
+        Staleness is a property of the program that is RUNNING, so a test for it has to
+        run one. Rev 65 compared the INSTALLED copy instead and could be satisfied - or
+        falsely tripped - by a file nobody executed.
+        """
+        return _w(self.tmp, "docs/ai-forward-pack/scripts/pack-apply.py",
+                  "# a consuming repo's OLDER copy\n" + SCRIPT.read_text(encoding="utf-8"))
+
+    def _cli(self, script, cmd, *args):
+        return subprocess.run([sys.executable, str(script), cmd, "--source", str(ROOT),
+                               "--target", self.tmp, *args],
+                              capture_output=True, text=True, timeout=180)
+
     def test_a_stale_copy_is_reported_on_plan(self):
-        self.install_applier("# an older pack-apply.py\n")
-        rows = [r for r in self._run() if r["action"] == "STALE-APPLIER"]
-        self.assertEqual(len(rows), 1, "the plan must say it was computed by an old map")
-        self.assertIn("pack-apply.py", rows[0]["note"],
-                      "and name the one file that has to be copied first")
+        out = self._cli(self.stale_program(), "plan").stdout
+        self.assertIn("STALE-APPLIER", out,
+                      "the plan must say it was computed by an old map")
+        self.assertIn("pack-apply.py", out, "and name the program at issue")
 
     def test_a_stale_copy_refuses_to_apply(self):
         """Fail-safe: applying a stale map is how a repo silently misses the fix."""
-        self.install_applier("# an older pack-apply.py\n")
-        rows = self._run(dry=False)
-        self.assertEqual(len(rows), 1, "it stops rather than applying half an old map")
-        self.assertEqual(rows[0]["status"], "fail")
-        self.assertEqual(rows[0]["action"], "STALE-APPLIER")
+        result = self._cli(self.stale_program(), "apply", "--force", "--no-baselines")
+        self.assertIn("STALE-APPLIER", result.stdout)
+        self.assertIn("fail", result.stdout.lower(),
+                      "it stops rather than applying half an old map")
+        self.assertIsNone(_r(self.tmp, "AGENTS.md.bak"), "and nothing was converted")
 
     def test_the_refusal_has_a_documented_escape(self):
-        self.install_applier("# an older pack-apply.py\n")
-        rows = pa.Applier(str(ROOT), self.tmp, dry=False, force=True, baselines=False,
-                          allow_stale=True).run()
-        self.assertFalse(any(r["status"] == "fail" and r["action"] == "STALE-APPLIER"
-                             for r in rows))
+        result = self._cli(self.stale_program(), "apply", "--force", "--no-baselines",
+                           "--allow-stale")
+        self.assertIn("STALE-APPLIER", result.stdout, "still reported, never silent")
+        self.assertNotIn("| fail |", result.stdout.lower(), result.stdout[-400:])
 
-    def test_a_target_with_no_applier_yet_is_not_stale(self):
-        """A fresh install has no copy to be stale; --install is the path, not a refusal."""
-        rows = [r for r in self._run() if r["action"] == "STALE-APPLIER"]
-        self.assertEqual(rows, [], "absent is not stale")
+    def test_the_sources_own_copy_is_never_stale(self):
+        """A fresh install, or any run of the source's copy, has nothing to be stale."""
+        out = self._cli(SCRIPT, "plan").stdout
+        self.assertNotIn("STALE-APPLIER", out, "absent is not stale, and current is not")
 
 
 class AWithheldBlanketTakesItsExceptionWithIt(unittest.TestCase):
@@ -498,6 +512,102 @@ class AWithheldBlanketTakesItsExceptionWithIt(unittest.TestCase):
         self.assertNotIn("!.agents/artifacts.yml", text,
                          "a negation with nothing to negate is noise, and contradicts the "
                          "KEEP row that withheld its blanket")
+
+
+class TheFirstHopIsClosedByRunningTheSourcesOwnCopy(unittest.TestCase):
+    """Revision 65 could DETECT a stale applier. It could not stop one being used.
+
+    The gap it left: a repo holding a PRE-65 copy gets no warning, because the check
+    ships in the copy that is missing. You cannot make an old program warn about itself.
+
+    But the old program is not the only thing in the loop. Two levers reach a stale
+    target on its FIRST hop:
+
+      1. The SOURCE's `INSTALL.md` is read fresh on every refresh, by the agent, however
+         stale the target is. Verified against a real rev-63 install: its `updatepack`
+         skill already says "the source of truth for what changes and why is INSTALL.md's
+         `changes` frontmatter IN THE PACK SOURCE ... read both before running anything".
+      2. Which copy of the program runs is itself a documented choice. Invert it - run the
+         SOURCE's copy with `--target <repo>` - and the target's copy never computes a plan
+         at all. Staleness stops being detected and becomes impossible.
+
+    (2) needs no new capability: `--target` already exists and every subprocess in this
+    file is already pinned to `cwd=self.target`. What it needed was for `--source` to
+    default to the clone shipping the running script, so the two cannot be mismatched,
+    and for the staleness check to ask about the RUNNING script rather than the installed
+    one - which is the rev-65 defect these tests exist to fail on first.
+    """
+
+    def setUp(self):
+        self.tmp = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, self.tmp, True)
+        self.target = os.path.join(self.tmp, "consumer")
+        os.makedirs(self.target)
+        install = (ROOT / "pack" / "adapters" / "INSTALL.md").read_text(encoding="utf-8")
+        _w(self.target, "docs/ai-forward-pack/INSTALL.md", install)
+        _w(self.target, "AGENTS.md", "# AGENTS.md\n")
+        _w(self.target, ".gitignore", "bin/\n")
+        subprocess.run(["git", "init", "-q"], cwd=self.target, capture_output=True)
+
+    def stale_copy(self):
+        """A genuinely different pack-apply.py where a consuming repo keeps its own."""
+        text = SCRIPT.read_text(encoding="utf-8")
+        return _w(self.target, "docs/ai-forward-pack/scripts/pack-apply.py",
+                  "# a consuming repo's OLDER copy\n" + text)
+
+    def run_script(self, script, *args):
+        return subprocess.run([sys.executable, str(script), "plan", "--target", self.target,
+                               *args], capture_output=True, text=True, timeout=120)
+
+    def test_running_the_sources_copy_is_never_stale(self):
+        """THE fix. The source's copy IS the map, so there is nothing to be stale about."""
+        self.stale_copy()
+        result = self.run_script(SCRIPT, "--source", str(ROOT))
+        out = result.stdout
+        # The plan must actually have run, or assertNotIn below proves nothing.
+        self.assertIn("source revision", out, result.stderr)
+        self.assertNotIn("STALE-APPLIER", out,
+                         "rev 65 compared the INSTALLED copy, so it accused the source's "
+                         "own script of being the target's stale one - a false positive, "
+                         "and it hid the fact that this invocation is the cure")
+
+    def test_running_a_stale_installed_copy_is_still_reported(self):
+        """The warn rung stays, for anyone using the old invocation."""
+        stale = self.stale_copy()
+        out = self.run_script(stale, "--source", str(ROOT)).stdout
+        self.assertIn("STALE-APPLIER", out)
+
+    def test_source_defaults_to_the_clone_shipping_the_running_script(self):
+        """So the documented command cannot pair one clone's script with another's pack."""
+        self.stale_copy()
+        result = self.run_script(SCRIPT)          # no --source at all
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("source revision", result.stdout)
+
+    def test_a_stale_copy_has_no_default_source_and_says_so(self):
+        """An installed copy is not in an ai-forward clone; it must still ask, not guess."""
+        stale = self.stale_copy()
+        result = self.run_script(stale)           # no --source, and none derivable
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("--source", result.stdout + result.stderr)
+
+    def test_the_documented_flow_does_not_reappend_a_declined_line(self):
+        """The acceptance test: a STALE consuming repo, refreshed the documented way."""
+        self.stale_copy()
+        _w(self.target, ".gitignore",
+           "bin/\n# pack-apply: decline spikes/  our spikes are committed evidence\n")
+        result = subprocess.run([sys.executable, str(SCRIPT), "apply", "--target",
+                                 self.target, "--force", "--no-baselines"],
+                                capture_output=True, text=True, timeout=180)
+        # An apply that never ran cannot prove a line was withheld (a green that proves
+        # nothing is the failure mode this whole task is about).
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("revision", result.stdout)
+        text = _r(self.target, ".gitignore")
+        self.assertNotIn("\nspikes/\n", "\n" + text,
+                         "the declined line must not come back, even though the repo's own "
+                         "installed applier predates the mechanism that honours it")
+        self.assertIn("# pack-apply: decline spikes/", text, "and the record must survive")
 
 
 if __name__ == "__main__":
