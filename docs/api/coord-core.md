@@ -73,7 +73,7 @@ Design: docs/design/coord-core-phase1.md
 | `--contract` | _(no help text — coverage gap)_ |
 | `--emit` | _(no help text — coverage gap)_ |
 | `--fix` | push, the cheapest second copy |
-| `--force` | replace an existing registry (it is repo configuration) |
+| `--force` | install from a linked worktree anyway. It overwrites the repository's shared registration with a path that dies with this tree - the recorded exception, never the default |
 | `--from-role` | _(no help text — coverage gap)_ |
 | `--json` | _(no help text — coverage gap)_ |
 | `--path` | _(no help text — coverage gap)_ |
@@ -492,7 +492,7 @@ that flatters us.
 
 **Coverage gap** — no docstring in the source.
 
-### `cmd_install(repo, root)`
+### `cmd_install(repo, root, force=…)`
 
 **Coverage gap** — no docstring in the source.
 
@@ -517,7 +517,36 @@ Is the merge driver EFFECTIVE? Requires reading BOTH sources (spike S13).
 `git check-attr` reports the DECLARATION whether or not a driver exists, and
 `git config` reports the registration without knowing what it covers. Only comparing
 the two finds the gap -- and .git/config is per-clone and never committed, so a fresh
-clone or a new worktree is exactly where the gap appears.
+CLONE is exactly where the gap appears. A worktree is not: it shares the parent's
+config and inherits the registration.
+
+This answers "is a driver registered", which is not the same question as "will its
+path still be there next month" -- see driver_path_status.
+
+### `driver_path_status(repo)`
+
+Will the registered driver path OUTLIVE the tree that wrote it? (measured defect)
+
+`driver_status` asks whether a driver is declared and registered. Both were true in the
+consuming repo that found this, throughout -- and the registration pointed inside a
+temporary worktree, because the pack told every agent to run `coord install` in one.
+A worktree SHARES .git/config, so that install did not add a registration, it replaced
+the repository's. WT8 cleanup then deletes the tree, and every declared path merges by
+invoking a script that is not there.
+
+There is no signature while the tree exists: the path resolves and names a byte-identical
+script. So the question `doctor` has to ask is not "is a driver registered" but "where
+does it point, and does that place outlive this merge". The primary checkout is the
+answer, because it is the only tree the repository cannot lose.
+
+The hazard is narrow and worth stating precisely: a path inside a LINKED WORKTREE,
+which WT8 cleanup deletes. A path merely outside the repository is a different and
+legitimate shape -- a global or out-of-tree install of the scripts -- and reporting it
+would be a false positive, so this does not.
+
+Returns one row per registered `merge.coord-*.driver`:
+  ok | missing | foreign | unreadable | unchecked
+`unchecked` is a real answer and never collapses to `ok` (R4).
 
 ### `cmd_doctor(root, repo)`
 
@@ -539,6 +568,6 @@ follows by printing the settings entry rather than writing it.
 
 ## Coverage
 
-- Public functions: **62** · documented: **39** (**63%**)
+- Public functions: **63** · documented: **40** (**63%**)
 - Undocumented (recorded, not invented): `make_event`, `check`, `read_decisions`, `request_log_path`, `read_request_events`, `fold_requests`, `regen_command`, `record_regen_owed`, `regen_owed`, `clear_regen_owed`, `detect_harness`, `cmd_precommit`, `cmd_guard`, `session_contract_path`, `owner_rows_for_path`, `cmd_session_list`, `cmd_collaborate`, `cmd_request`, `cmd_worktree`, `cmd_session`, `cmd_metrics`, `cmd_install`, `cmd_doctor`
 

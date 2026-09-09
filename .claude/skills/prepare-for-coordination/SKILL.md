@@ -37,7 +37,7 @@ python3 docs/ai-forward-pack/scripts/coord-core.py classify init
 python3 docs/ai-forward-pack/scripts/coord-core.py install
 python3 docs/ai-forward-pack/scripts/coord-core.py doctor      # read the state back (E14)
 ```
-`classify init` writes `.agents/artifacts.yml` from what this repo has, **running every regenerate command before writing it**. A refusal is the control working, not a failure: a *wrong* regenerate command resolves every merge silently and leaves the artifact permanently stale while reporting as handled. Then extend it by hand with this repo's own generated and append-only artifacts, **under the same rule — run the command first**. A `derived` entry needs a regenerate command; a `register` entry is append-only and union-merges; everything else stays `authored`, and you do not enumerate it. `install` is **per clone**: `.git/config` is never committed, so **every worktree this plan creates needs `coord install` run inside it**, and the plan must say so.
+`classify init` writes `.agents/artifacts.yml` from what this repo has, **running every regenerate command before writing it**. A refusal is the control working, not a failure: a *wrong* regenerate command resolves every merge silently and leaves the artifact permanently stale while reporting as handled. Then extend it by hand with this repo's own generated and append-only artifacts, **under the same rule — run the command first**. A `derived` entry needs a regenerate command; a `register` entry is append-only and union-merges; everything else stays `authored`, and you do not enumerate it. `install` is **per clone, in the primary checkout** — and *per clone is not per worktree*. A linked worktree shares `.git/config` and `.git/hooks` with its parent, so every tree this plan creates **inherits** the registration; running `coord install` inside one overwrites the repository's with a path that dies with the tree, and is refused. The plan says **install once, then `coord doctor` in each tree** to read the inherited state back.
 
 **Stage 2 — Read the intent, end to end.** Build the **surface list** (E7) the work must reach: store → model → service → projection/wire → client type → UI → compute reader. Name the bounded contexts and the aggregates. This is the material the track boundaries are cut from — a track that splits an aggregate will generate seam requests forever.
 
@@ -111,7 +111,7 @@ Close with the status table (Completed / Remaining / Best next action).
 - [ ] The 15× multiplier is stated and each track's justification names isolation, machine time, context hygiene, or genuine independence.
 - [ ] Struck tracks are listed with reasons.
 - [ ] Harness capability is recorded per track as enforced / observed-only / unsupported, from what was verified here.
-- [ ] The plan says that **every worktree needs `coord install` run inside it**.
+- [ ] The plan says the layer is installed **once, in the primary checkout**, and that each worktree **inherits** it — never that a worktree needs one of its own.
 - [ ] Both `.md` and `.html` are written and carry the same content; the md follows the schema above.
 - [ ] Status table emitted.
 

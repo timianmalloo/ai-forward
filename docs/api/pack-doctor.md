@@ -98,8 +98,11 @@ has to be checked here or it is not checked anywhere.
 Three states, three verdicts:
   no script         the check does not apply
   no/broken registry FAIL - every path is `authored`, nothing is ever regenerated
-  declared-not-registered WARN - .git/config is per-clone, so a fresh clone or a new
-                        worktree lands here every time
+  declared-not-registered WARN - .git/config is per-clone and never committed, so a
+                        fresh CLONE lands here. A worktree does NOT: it shares the
+                        parent's config and inherits the registration, which is why
+                        the remedy names the primary checkout and `coord install`
+                        refuses to run from a linked tree.
 
 ### `check_node_runner()`
 
