@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-07T00:13:38Z",
+  "generated": "2026-09-09T20:49:30Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3819,6 +3819,42 @@ window.AUDIT_DATA = {
       "main_budget": 34,
       "main_over_budget": false,
       "fan_out": 0
+    },
+    {
+      "id": "al-01M23YXM6V11ACAPZZZE4KR3PN",
+      "shortname": "pack-defects-from-consuming-repo",
+      "datetime": "2026-09-09T20:49:30Z",
+      "session": "01PXGs6quw67gGZao37P7xSC",
+      "prompt": "Fix, in the AI-Forward Pack source repo, four defects a consuming repo (C:\\projects\\ai-de) discovered today. Verify each claim before acting on it; do not fix what is repo-local; follow this repo's own revision protocol; red-first; run the full gate set; record the classes in its own format; commit and push.",
+      "summary": "3 of 4 confirmed and fixed; 1 judged working-as-designed with a documentation gap. (1) Worktree/coord install: CONFIRMED end to end on the real script - a worktree shares .git/config AND .git/hooks, so the install overwrote the parent's drivers and pre-commit hook with a worktree path. Fixed by refusal + a new driver_path_status check in coord doctor + corrections in 9 surfaces. (2) pack-apply blanket spikes/: CONFIRMED; INSTALL 2 always carried the condition the script ignored. Fixed with 3 deterministic guards, all reporting. (3) .agents gitignore: framing REFUTED (the capture mandate is ai-de-local, not in the pack) but the mechanism CONFIRMED and reproduced in this repo's own tree; INSTALL now states the invariant + --quiet verification, and 3 surfaces still teaching check-ignore -v were corrected. (4) audit-log start stamp: NOT a defect - measured, 5 of 22 multi-entry sessions carry >1 duration; documentation clarified, behaviour unchanged, mechanism given its first tests. Revision 64. 24 new tests, 14 observed red first.",
+      "kind": "manual",
+      "skill": null,
+      "tool": "Claude Code (Opus 5)",
+      "actor": null,
+      "artifacts": [
+        "pack/scripts/coord-core.py",
+        "pack/scripts/pack-apply.py",
+        "pack/adapters/INSTALL.md",
+        "docs/lessons/defect-classes.md",
+        "tests/docs_explorer/test_coord_worktree_config.py"
+      ],
+      "tags": [
+        "coordination",
+        "gitignore",
+        "worktree",
+        "defect-classes"
+      ],
+      "outcome": "success",
+      "goal": "Verify and fix upstream the four reported defects (worktree coord install, pack-apply gitignore blanket, .agents gitignore vs an invariant, audit-log start-stamp consumption), following ai-forward's own revision and gate protocol.",
+      "done_when": "Each defect independently verified or refuted with measured evidence; confirmed defects fixed with red-first controls; all 11 verify-bundle gates green on a clean tree; revision bumped with a changes entry; classes recorded in docs/lessons/defect-classes.md; commits pushed to main.",
+      "tier": "T2",
+      "fan_out": 3,
+      "git": {
+        "sha": "819428d582a550c750329a2460a50a189323c409",
+        "short": "819428d58",
+        "branch": "main",
+        "pushed": true
+      }
     }
   ],
   "changes": [
