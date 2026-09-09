@@ -747,7 +747,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "3d184428c17649852cfe6e70512278e79dcacba66343c2daf6086e2eaac0b66f"
+      "sourceSha256": "047f9588b9b5c1725334f57ff6321ee8a14116511211821b68e58d378e80bace"
     },
     {
       "id": "api-coord_ids",
@@ -909,7 +909,7 @@ window.DOCS_INDEX = {
       "phase": "",
       "reviewBy": "2027-03-03",
       "reviewSuggested": [],
-      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 333 public functions across 21 modules, 43% carrying a docstring.",
+      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 335 public functions across 21 modules, 43% carrying a docstring.",
       "tags": [
         "api",
         "scripts",
@@ -923,7 +923,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "cb61a1f5522dc3b8fb9bc09b462d26a87107c662d5ca98a1fa0d2fdbbbff9967"
+      "sourceSha256": "c0cf687a4d69096d4c916e4b6b9b7bb5e29b96429114e2493297c791a846761e"
     },
     {
       "id": "api-marker-lint",
@@ -998,7 +998,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "1ff5863b44b7d127514181a96b270cb412913d3de92527009f6132e03f623ff5"
+      "sourceSha256": "8d9af8c26f50c9cbcb5a2b2abfbc3693f5930bbcb4cb3b39209b7f7e198d183f"
     },
     {
       "id": "api-pack-doctor",
@@ -1023,7 +1023,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "39cfde54388512a39a23f4605074ddbedd897a50ab92d6dd0d03f81f5a7a9191"
+      "sourceSha256": "c28d7334e8331ad23c432fdff119c7f6cf511981a71901976a0f619b629b3c73"
     },
     {
       "id": "api-prompt-log",
@@ -2274,7 +2274,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "16abfe776e95aeade4d71cdd405618c822322870255d765d0b3e1ef7c9ec791d"
+      "sourceSha256": "b26745ee6379e53ac0ec32dc1a5eae83a837d28988f35b6e17c7a440d2a9b298"
     },
     {
       "id": "docs-index",
@@ -5879,5 +5879,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "efd0073cac20846f2e9df2e452647f61e0a93459acc3ff619892a03177fdf46c"
+  "graphSha256": "d9b162a45be188bfacf25b52443a708f65a32ef630df4f2425769f2485591d38"
 };
