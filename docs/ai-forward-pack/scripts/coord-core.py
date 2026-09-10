@@ -633,6 +633,7 @@ _HERE = os.path.dirname(os.path.abspath(__file__))
 if _HERE not in sys.path:
     sys.path.insert(0, _HERE)
 from coord_ids import new_id, resolve_prefix          # noqa: E402  (path set above)
+from repo_identity import canonical_project             # noqa: E402  (path set above)
 
 
 # --- register merges: the half that unique ids do NOT solve ------------------
@@ -871,26 +872,11 @@ def regen_command(root, path):
 def _canonical_project(repo):
     """The project name, derived from git -- never `basename(cwd)` (PACK-P).
 
-    Run from a worktree, `basename` stamps the WORKTREE folder into a committed generated
-    file. The remote is the canonical answer; the primary worktree is the fallback.
+    Delegates to `repo_identity.canonical_project`. This carried its own copy of the same
+    resolution ladder; two correct copies of one quantity is DM7/ONE-A, and copies only
+    diverge later, when one of them is edited. One implementation, five callers.
     """
-    url, _err = _git(repo, "config", "--get", "remote.origin.url")
-    name = (url or "").strip().rstrip("/")
-    if name:
-        name = name.rsplit("/", 1)[-1]
-        if name.endswith(".git"):
-            name = name[:-4]
-        if name:
-            return name
-    out, _err = _git(repo, "worktree", "list", "--porcelain")
-    for line in (out or "").splitlines():
-        if line.startswith("worktree "):
-            tail = line[len("worktree "):].strip().replace("\\", "/").rstrip("/")
-            base = tail.rsplit("/", 1)[-1]
-            if base:
-                return base
-    base = str(repo).replace("\\", "/").rstrip("/").rsplit("/", 1)[-1]
-    return base or "repo"
+    return canonical_project(str(repo))
 
 
 def pack_defaults(repo):

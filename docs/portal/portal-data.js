@@ -5,7 +5,7 @@ window.PORTAL_DATA = {
       "personas": 23,
       "knowledge": 38,
       "templates": 28,
-      "scripts": 22
+      "scripts": 23
     },
     "whatIs": "AI-Forward is a committed Markdown methodology pack that installs into a repo so Claude Code and GitHub Copilot direct work with a shared reasoning spine, adversarial persona review, and a library of workflow skills - nothing runs as a service; everything is versioned files and stdlib scripts.",
     "skillCount": 27,
@@ -1780,7 +1780,7 @@ window.PORTAL_DATA = {
         "id": "api-index",
         "type": "api",
         "title": "API reference — the deployed script bundle",
-        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 336 public functions across 21 modules, 43% carrying a docstring."
+        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 337 public functions across 22 modules, 44% carrying a docstring."
       },
       {
         "id": "api-marker-lint",
@@ -1811,6 +1811,12 @@ window.PORTAL_DATA = {
         "type": "api",
         "title": "API — prompt-log.py",
         "summary": "prompt-log.py — the fast prompt-reuse lens over the project's audit log."
+      },
+      {
+        "id": "api-repo_identity",
+        "type": "api",
+        "title": "API — repo_identity.py",
+        "summary": "repo_identity.py - the canonical project name, in ONE place (class PACK-P)."
       },
       {
         "id": "api-scrub",
@@ -2957,6 +2963,11 @@ window.PORTAL_DATA = {
       },
       {
         "from": "api-prompt-log",
+        "to": "api-index",
+        "rel": "refines"
+      },
+      {
+        "from": "api-repo_identity",
         "to": "api-index",
         "rel": "refines"
       },

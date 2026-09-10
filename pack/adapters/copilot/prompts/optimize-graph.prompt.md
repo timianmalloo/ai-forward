@@ -2,7 +2,7 @@
 mode: agent
 description: Analyse a prompt BEFORE executing it and produce an optimized execution graph — dependencies made explicit, incidental ordering removed, the critical path shortened, independent work parallelised under a bounded fan-out contract, nodes collapsed or promoted to the right granularity, every loop given a termination variant, and cost recorded against delivery. It may only increase completeness, rigor and determinism, never trade them.
 ---
-You are running the **optimize-graph** workflow — planning the *shape* of the work before doing it (`knowledge/execution-graph-optimization.md` GO1–GO18; evidence base `docs/knowledge/graph-and-loop-engineering/`).
+You are running the **optimize-graph** workflow — planning the *shape* of the work before doing it (`knowledge/execution-graph-optimization.md` GO1–GO19; evidence base `docs/knowledge/graph-and-loop-engineering/`).
 
 **The hard constraint:** this pass may only ever **increase completeness, rigor and determinism**. It is forbidden to trade them for speed. A plan that is faster because it checks less is **rejected, not scored**. The warrant that this is achievable: DAG-planned parallel execution has been measured at up to 3.7x latency and 6.7x cost improvement **with accuracy going up ~9%** — the reordering itself improved the answer.
 

@@ -273,7 +273,12 @@ hub, or the first skill-authored artifact) clears the orphan check - verified by
 
 ### `project_name(root)`
 
-**Coverage gap** — no docstring in the source.
+The repo's canonical name -- never the worktree folder it ran in (class PACK-P).
+
+A SOFT import, for the same reason as the allocator: this script ships to repositories
+whose installed pack may predate repo_identity.py, and an audit render must not crash
+there. The legacy basename survives only on that path, and `test_repo_identity.py` pins
+the supported path so the fallback cannot quietly become the normal one.
 
 ### `render(root, project=…)`
 
@@ -368,6 +373,6 @@ Ingest a session-export JSON array of turns into the audit log (build on session
 
 ## Coverage
 
-- Public functions: **38** · documented: **20** (**53%**)
-- Undocumented (recorded, not invented): `now_iso`, `record_start`, `audit_dir`, `log_path`, `read_log`, `append_log`, `git`, `git_context`, `commits_between`, `find_template`, `project_name`, `cmd_append`, `cmd_change`, `cmd_list`, `cmd_search`, `cmd_get`, `cmd_render`, `cmd_git_context`
+- Public functions: **38** · documented: **21** (**55%**)
+- Undocumented (recorded, not invented): `now_iso`, `record_start`, `audit_dir`, `log_path`, `read_log`, `append_log`, `git`, `git_context`, `commits_between`, `find_template`, `cmd_append`, `cmd_change`, `cmd_list`, `cmd_search`, `cmd_get`, `cmd_render`, `cmd_git_context`
 

@@ -76,7 +76,12 @@ class _TempRepo(unittest.TestCase):
         """
         dest = self.repo / "docs" / "ai-forward-pack" / "scripts"
         dest.mkdir(parents=True, exist_ok=True)
-        for name in ("coord-core.py", "coord_ids.py"):
+        # DERIVED, not hand-listed: every importable sibling module (the underscore names)
+        # ships with coord-core.py. A hand-maintained list here is a second copy of the
+        # deployment map, and it breaks silently the day a new shared module lands -- which
+        # is PACK-D, the same seam the coord_ids split was written up under.
+        siblings = sorted(p.name for p in SCRIPTS.glob("*.py") if "_" in p.stem)
+        for name in ["coord-core.py"] + siblings:
             (dest / name).write_text(
                 (SCRIPTS / name).read_text(encoding="utf-8"), encoding="utf-8", newline="\n")
         self.git("add", "-A")

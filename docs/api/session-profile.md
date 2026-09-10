@@ -182,8 +182,10 @@ Everything a session could have recorded to say 'I ran in this repo'.
 ### `repo_label(path)`
 
 A canonical, worktree-independent name for a repo (class PACK-P: a generated artifact
-must never stamp the worktree folder name): the origin owner/name when there is one, else
-the basename of the PRIMARY checkout from `git worktree list`, else the basename.
+must never stamp the worktree folder name).
+
+Delegates to `repo_identity.canonical_project` -- this was the third correct copy of one
+resolution ladder, and copies only diverge later (DM7/ONE-A).
 
 ### `claude_slug(path)`
 

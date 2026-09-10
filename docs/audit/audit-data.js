@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-10T20:40:09Z",
+  "generated": "2026-09-10T21:00:42Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3882,6 +3882,33 @@ window.AUDIT_DATA = {
       "goal": "Land the DC-118 control pack-level: the transcription-width check, both halves, at the smallest correct placement",
       "done_when": "GO14a in pack/knowledge/execution-graph-optimization.md with checklist rows in both plan-producing skills; revision bumped; verify-bundle BUNDLE CONSISTENT; pushed and CI observed green",
       "tier": "T1",
+      "fan_out": 0
+    },
+    {
+      "id": "al-01M26HYKF5XAXJW9WJCQ5EN10W",
+      "shortname": "pack-p-canonical-project-identity",
+      "datetime": "2026-09-10T21:00:34Z",
+      "session": "wt-pack-p-canonical-project",
+      "prompt": "Fix upstream at the root: audit-log.py render derives the viewer project name from the repo directory basename, so running it inside a worktree stamps the worktree name into committed artifacts. WT1 mandates worktrees and coord worktree new names them <repo>-<branch-slug>, so the pack's worktree discipline and its audit renderer are in direct conflict. Establish the real blast radius by sweep, derive the name from something that survives a worktree, red-first with an actual linked worktree, make it a control not a fix, and register the class.",
+      "summary": "Sweep found FIVE implementations of one quantity: three wrong (audit-log, docs-graph, pack-apply) and two already-correct private copies (coord-core, session-profile) - DM7/ONE-A. All five now delegate to the new shared module repo_identity.canonical_project: explicit --project > remote.origin.url > PRIMARY checkout via git rev-parse --git-common-dir > directory name. Every rung verified empirically, including that --git-common-dir returns the RELATIVE '.git' from a primary checkout (naive dirname yields empty) and exits 128 outside a repo. Control: tests/docs_explorer/test_repo_identity.py, 7 tests, built on a REAL linked worktree because a renamed directory moves every rung at once and cannot separate a broken resolver from a correct one; plus a sweep test that fails on any new script deriving identity from its own directory. Observed red first on both. Found en route and fixed: the coord worktree fixture hand-listed coord-core's sibling modules (PACK-D) and now derives them. PACK-P moved uncontrolled -> controlled. scripts 22->23, revision 68.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": "claude-code",
+      "artifacts": [
+        "pack/scripts/repo_identity.py",
+        "tests/docs_explorer/test_repo_identity.py",
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [
+        "defect-class",
+        "PACK-P",
+        "worktree"
+      ],
+      "outcome": "success",
+      "goal": "Close PACK-P at the root: one canonical project-name resolver, every generator wired to it, and a test that fails when a generated artifact's identity depends on the directory it was generated in",
+      "done_when": "repo_identity.py exists and five callers delegate; test_repo_identity.py observed red on the unfixed code and green after; class registered controlled; revision 68; verify-bundle BUNDLE CONSISTENT; pushed and CI observed green",
+      "tier": "T2",
       "fan_out": 0
     }
   ],

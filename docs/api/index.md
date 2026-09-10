@@ -9,7 +9,7 @@ links:
   - { to: architecture, rel: documents }
 review-by: "2027-03-03"
 summary: >-
-  Generated API reference for the pack's public surface — the deployed script bundle. 336 public functions across 21 modules, 43% carrying a docstring.
+  Generated API reference for the pack's public surface — the deployed script bundle. 337 public functions across 22 modules, 44% carrying a docstring.
 ---
 
 # API reference — the deployed script bundle
@@ -24,7 +24,7 @@ with no docstring is listed as a **coverage gap** rather than described from gue
 | Module | Public fns | Documented | CLI | Summary |
 |---|---:|---:|---:|---|
 | [`apply-learnings.py`](apply-learnings.md) | 16 | 9 | 2 | apply-learnings.py - the AI-Forward federation / push mechanism. |
-| [`audit-log.py`](audit-log.md) | 38 | 20 | 13 | audit-log.py — the AI-Forward Pack audit & change log bundle (audit-and-change-log.md). |
+| [`audit-log.py`](audit-log.md) | 38 | 21 | 13 | audit-log.py — the AI-Forward Pack audit & change log bundle (audit-and-change-log.md). |
 | [`bounded_process.py`](bounded_process.md) | 1 | 1 | — | Bounded subprocess execution for pack-owned tool invocations. |
 | [`context-budget.py`](context-budget.md) | 21 | 12 | 6 | context-budget.py — the always-on context budget, measured (AI-Forward Pack). |
 | [`coord-core.py`](coord-core.md) | 63 | 40 | 24 | coord-core.py - agent coordination, Phase 1 walking skeleton. |
@@ -39,11 +39,12 @@ with no docstring is listed as a **coverage gap** rather than described from gue
 | [`pack-apply.py`](pack-apply.md) | 14 | 7 | — | pack-apply.py — apply the AI-Forward deployment map to a repo, mechanically and reversibly. |
 | [`pack-doctor.py`](pack-doctor.md) | 12 | 7 | — | pack-doctor.py — AI-Forward install-health check (deployable; runs in a TARGET repo). |
 | [`prompt-log.py`](prompt-log.md) | 16 | 5 | 8 | prompt-log.py — the fast prompt-reuse lens over the project's audit log. |
+| [`repo_identity.py`](repo_identity.md) | 1 | 1 | — | repo_identity.py - the canonical project name, in ONE place (class PACK-P). |
 | [`scrub.py`](scrub.md) | 2 | 2 | — | scrub.py — first-pass PII/secret redaction for Markdown (deployable). |
 | [`session-profile.py`](session-profile.md) | 32 | 12 | 4 | session-profile.py — measure how agent sessions actually ran, across harnesses and models. |
 | [`ui-craft-gate.py`](ui-craft-gate.md) | 6 | 4 | — | ui-craft-gate.py - the UI craft gate for AI-Forward. |
 | [`visual-assets-setup.py`](visual-assets-setup.md) | 12 | 5 | — | visual-assets-setup.py - wire up a generation backend for UI visual assets (AI-Forward). |
 | [`xaml-token-lint.py`](xaml-token-lint.md) | 9 | 0 | — | xaml-token-lint.py — first-slice token linter for XAML/native UI markup. |
 
-**Total** — 336 public functions across 21 modules, **146 documented (43%)**.
+**Total** — 337 public functions across 22 modules, **148 documented (44%)**.
 

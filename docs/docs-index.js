@@ -672,7 +672,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "47f8d41a76ea7dbbe850fbbf26b5a49c6e5f622dd18e27fb58cf485d4401ea99"
+      "sourceSha256": "ee80fc6a26b0e9ddcff9bfeee25a9e5ef4fdc34427d3eacb457ad058964e0aca"
     },
     {
       "id": "api-bounded_process",
@@ -909,7 +909,7 @@ window.DOCS_INDEX = {
       "phase": "",
       "reviewBy": "2027-03-03",
       "reviewSuggested": [],
-      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 336 public functions across 21 modules, 43% carrying a docstring.",
+      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 337 public functions across 22 modules, 44% carrying a docstring.",
       "tags": [
         "api",
         "scripts",
@@ -923,7 +923,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0cb3870d8568870008ba2e961d4ab76202dd3f27e99a5cb775ffb1a49f31d398"
+      "sourceSha256": "4d68e49b4d0664ee5d82aa38bc0787687aefc0ec503911bcaa69e4abe275fc4a"
     },
     {
       "id": "api-marker-lint",
@@ -1051,6 +1051,31 @@ window.DOCS_INDEX = {
       "sourceSha256": "7a3945bec673080093ddb6f066747163011fb0470d013e924a8290b3137d9c49"
     },
     {
+      "id": "api-repo_identity",
+      "path": "docs/api/repo_identity.md",
+      "title": "API — repo_identity.py",
+      "type": "api",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-03-03",
+      "reviewSuggested": [],
+      "summary": "repo_identity.py - the canonical project name, in ONE place (class PACK-P).",
+      "tags": [
+        "api",
+        "scripts",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "api-index",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "1d6e59221f6b766c862e4b3bbbf510ef2898abc2f7652656f3bcdc4780285920"
+    },
+    {
       "id": "api-scrub",
       "path": "docs/api/scrub.md",
       "title": "API — scrub.py",
@@ -1098,7 +1123,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d3665dc9d69c5606b1d7848762d4e9903fe94a24eb97f2d6110a6f8304eb9254"
+      "sourceSha256": "5d9d6e41f5c5df06cf2eb5d9afecc8a586da5b4e262d3f670c6a47305cc00c59"
     },
     {
       "id": "api-ui-craft-gate",
@@ -2274,7 +2299,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d3a8a6d473d62e111efd140e4b5866ab6e05c5e8e75b2cdf2c6fde5dc67cf49b"
+      "sourceSha256": "c687aeb5ebfedf33de31d8de41f031e49dce8ad8fba11062d5ee605d82d67fcb"
     },
     {
       "id": "docs-index",
@@ -5879,5 +5904,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "6fe696e46fb6f7a64cbe8274da2a7546a3f46a3bde73ece7cc3598526e463331"
+  "graphSha256": "ede1fdcf9339feddd1ee500ff3dda2f11716ce7270e47fac490fd987253154b1"
 };

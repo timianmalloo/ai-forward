@@ -21,7 +21,7 @@ window.PACK_INDEX = {
 {
 "id": "scripts",
 "label": "Scripts",
-"count": 22
+"count": 23
 },
 {
 "id": "personas",
@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 175
+"count": 176
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 329,
+"total": 331,
 "items": [
 {
 "cat": "knowledge",
@@ -1025,7 +1025,7 @@ window.PACK_INDEX = {
 "summary": "pack-apply.py — apply the AI-Forward deployment map to a repo, mechanically and reversibly.",
 "path": "pack/scripts/pack-apply.py",
 "kind": "script",
-"text": "pack-apply.py pack-apply.py — apply the ai-forward deployment map to a repo, mechanically and reversibly. `/updatepack` and `/addpacktorepo` used to hand-apply install.md's deployment map, so every step a person could forget - re-pasting a managed block, deleting the wrapped copy of a doc whose load scope moved, converting claude.md to the `@agents.md` import, retiring a parity control that encoded the old invariant - was remembered or it was not. this script is the deployment map (install.md 1), run from the pack source against a target repo: pack-apply.py plan --source <ai-forward clone> --target <repo> # every action, no writes pack-apply.py apply --source <ai-forward clone> --target <repo> # do it, idempotently what it does, per artifact family (pack-owned names only - repo-local files are never touched): knowledge -> .claude/knowledge/<name>.md verbatim; .github/instructions/<name>.instructions.md (applyto-wrapped) for load: always|glob; .github/knowledge/<name>.md for load: skill|reference; the stale copy in the other copilot location is removed (ctx-e: a doc re-scoped to on-demand must stop attaching). skills -> .claude/skills/<name>/ (the whole directory: skill.md + reference/*.md); .github/prompts/<name>.prompt.md agents -> .claude/agents/ (both sets); .github/agents/<name>.agent.md (renamed, `tools:` stripped) bundle -> docs/ai-forward-pack/{templates,scripts,hooks,readme,overview,research-synthesis, install,context-budget.json}; .github/hooks/ai-forward.json; .claude/settings.json (hooks merged, showthinkingsummaries set); .gitignore lines; docs/index.html only if absent; docs/docs-index.js never (v10) front doors -> agents.md: the managed block replaced wholesale between markers (appended if absent). claude.md: converted to `@agents.md` + the addendum block (ctx-b); the old file is backed up under docs/ai-forward-pack/retired/, and every paragraph that is not in agents.md (after toolchain-path normalisation) is kept above the addendum. controls -> a repo-local parity test that asserts claude.md carries the standing-method block (the old invariant) is rewritten into a shim asserting the new invariant through pack-doctor, its other assertions carried over where they can be read; the original is backed up beside the claude.md backup. repo-local deviations are honoured, not reverted: a destination that differs from the version the repo received at its installed revision is three-way merged (`git merge-file`) against the pack's old and new text; a clean merge lands as merge, a conflicting one is left untouched with the new pack text written under docs/ai-forward-pack/conflicts/ and reported as conflict for the skill to reconcile. the installed revision advances only in `apply`. re-running is a no-op. python 3.8+, stdlib only. exit 0 = applied/clean, 1 = conflicts or errors reported, 2 = usage. gitignore_negations read norm_nl same frontmatter git default_source __init__ _stale_applier row rel _source_revision _target_revision _old_pack_text _write _remove place _transform_like _merge knowledge skills agents bundle _settings _tracked_under _gitignore_withhold _gitignore front_doors _retire_parity_controls advance run_baselines run strip_tools replace_block normalise _outside_block unique_paragraphs parity_shim render_table summarize main"
+"text": "pack-apply.py pack-apply.py — apply the ai-forward deployment map to a repo, mechanically and reversibly. `/updatepack` and `/addpacktorepo` used to hand-apply install.md's deployment map, so every step a person could forget - re-pasting a managed block, deleting the wrapped copy of a doc whose load scope moved, converting claude.md to the `@agents.md` import, retiring a parity control that encoded the old invariant - was remembered or it was not. this script is the deployment map (install.md 1), run from the pack source against a target repo: pack-apply.py plan --source <ai-forward clone> --target <repo> # every action, no writes pack-apply.py apply --source <ai-forward clone> --target <repo> # do it, idempotently what it does, per artifact family (pack-owned names only - repo-local files are never touched): knowledge -> .claude/knowledge/<name>.md verbatim; .github/instructions/<name>.instructions.md (applyto-wrapped) for load: always|glob; .github/knowledge/<name>.md for load: skill|reference; the stale copy in the other copilot location is removed (ctx-e: a doc re-scoped to on-demand must stop attaching). skills -> .claude/skills/<name>/ (the whole directory: skill.md + reference/*.md); .github/prompts/<name>.prompt.md agents -> .claude/agents/ (both sets); .github/agents/<name>.agent.md (renamed, `tools:` stripped) bundle -> docs/ai-forward-pack/{templates,scripts,hooks,readme,overview,research-synthesis, install,context-budget.json}; .github/hooks/ai-forward.json; .claude/settings.json (hooks merged, showthinkingsummaries set); .gitignore lines; docs/index.html only if absent; docs/docs-index.js never (v10) front doors -> agents.md: the managed block replaced wholesale between markers (appended if absent). claude.md: converted to `@agents.md` + the addendum block (ctx-b); the old file is backed up under docs/ai-forward-pack/retired/, and every paragraph that is not in agents.md (after toolchain-path normalisation) is kept above the addendum. controls -> a repo-local parity test that asserts claude.md carries the standing-method block (the old invariant) is rewritten into a shim asserting the new invariant through pack-doctor, its other assertions carried over where they can be read; the original is backed up beside the claude.md backup. repo-local deviations are honoured, not reverted: a destination that differs from the version the repo received at its installed revision is three-way merged (`git merge-file`) against the pack's old and new text; a clean merge lands as merge, a conflicting one is left untouched with the new pack text written under docs/ai-forward-pack/conflicts/ and reported as conflict for the skill to reconcile. the installed revision advances only in `apply`. re-running is a no-op. python 3.8+, stdlib only. exit 0 = applied/clean, 1 = conflicts or errors reported, 2 = usage. gitignore_negations read norm_nl same frontmatter git default_source __init__ _project_name _stale_applier row rel _source_revision _target_revision _old_pack_text _write _remove place _transform_like _merge knowledge skills agents bundle _settings _tracked_under _gitignore_withhold _gitignore front_doors _retire_parity_controls advance run_baselines run strip_tools replace_block normalise _outside_block unique_paragraphs parity_shim render_table summarize main"
 },
 {
 "cat": "scripts",
@@ -1044,6 +1044,15 @@ window.PACK_INDEX = {
 "path": "pack/scripts/prompt-log.py",
 "kind": "script",
 "text": "prompt-log.py prompt-log.py — the fast prompt-reuse lens over the project's audit log. a tiny, stdlib-only front-end for browsing, searching, and **reusing** the prompts already recorded in the committed **audit log** (docs/audit/audit-log.jsonl). unified with the audit & change log standard (audit-and-change-log.md): there is **one store of prompts** — the audit log — and this is the reuse lens over it (its arrow-navigable stack + clipboard reuse), the companion to the broader /auditlog timeline/search/change-log/viewer. add log a prompt (writes a kind:prompt entry to the audit log) -> via audit-log.py list show the stack, newest first (label · time) search freeform search; matches contain all terms show print one entry in full (label, time, text) get print one entry's raw text only (for piping/copying) browse interactive stack: up/down move, right expand, left collapse, enter reuse pick like browse, pre-filtered by a search query (powers /searchprompts) reuse model (honest about the medium). a script cannot type into the copilot cli's input line, so \"reuse\" copies the chosen prompt to the clipboard (pbcopy, when present) and prints it — you paste it into your next prompt (cmd+v) and edit before sending. one store. the default store is the committed audit log (docs/audit/audit-log.jsonl), so every prompt the audit mandate records — skill runs, scripts, and prompts you `add` — is reusable here, and there is no second parallel prompt store. `add` writes through audit-log.py (the single writer of record, al0.1) as a kind:prompt entry. override the store with --store or $aiforward_prompt_log (e.g. a legacy <repo>/.aiforward/prompts.jsonl); the reader adapts to either schema. stdlib only; no third-party import. _repo_root resolve_store _ensure_store_dir _adapt load_entries append_entry _now_iso _derive_label _fmt_time newest_first filter_entries resolve_one copy_to_clipboard _sibling cmd_add _print_list cmd_list cmd_search cmd_show cmd_get _reuse _run_curses app visible _prompt_filter _interactive_ok cmd_browse cmd_pick cmd_selftest check build_parser main"
+},
+{
+"cat": "scripts",
+"id": "repo_identity.py",
+"title": "repo_identity.py",
+"summary": "repo_identity.py - the canonical project name, in ONE place (class PACK-P).",
+"path": "pack/scripts/repo_identity.py",
+"kind": "script",
+"text": "repo_identity.py repo_identity.py - the canonical project name, in one place (class pack-p). why this exists. the pack's own worktree discipline (wt1) requires every writing session to work in its own linked worktree, and `coord worktree new` names that directory `<repo>-<branch-slug>`. any generator that names the project `basename(cwd)` therefore stamps the worktree folder into a committed artifact the moment the discipline is followed: `docs/audit/audit-data.js` (\"project\"), `docs/audit/index.html` (<title>), the docs explorer surface titles. following one rule guaranteed corrupting the other -- a tool that infers identity from the filesystem, inside a system whose own discipline moves work around the filesystem. observed in this repo (a commit stamped `ai-forward-feature-audit-signals-writer`) and repeatedly in a consuming repo, always caught by eye or by a bundle gate, never by a test. resolution order, and why each rung is where it is: 1. an explicit name the caller was given (`--project`) -- configuration beats inference, always, and this is the rung that makes the others a fallback rather than a guess; 2. `remote.origin.url` -- explicit git configuration, shared by every worktree of the repo, and the only rung that is stable across a clone whose directory was renamed; 3. the primary checkout's directory name, via `git rev-parse --git-common-dir` -- one call that resolves to the primary repo's `.git` even from a linked worktree; 4. the directory name -- last resort, for a tree that is not a git repository at all. verified, not assumed (windows, git 2.x, 2026-09-10): * from a linked worktree, `--git-common-dir` -> `c:/projects/ai-forward/.git` (absolute); * from the primary checkout it returns the relative string `.git`, whose dirname is ''. so rung 3 must resolve it against the repo path before taking a basename; a naive `dirname(common_dir)` yields an empty name in the most common case of all. * outside a git repository, `git rev-parse` exits 128 with empty stdout, and `git config --get remote.origin.url` exits 1 -- so both rungs must tolerate failure rather than raise. stdlib only, python 3.8+. the underscore in the filename is deliberate: a hyphen is not importable, which is why `coord_ids.py` and `bounded_process.py` are named the way they are. _git _from_remote _from_primary_checkout canonical_project"
 },
 {
 "cat": "scripts",
@@ -1562,10 +1571,10 @@ window.PACK_INDEX = {
 "cat": "graph",
 "id": "api-index",
 "title": "API reference — the deployed script bundle",
-"summary": "Generated API reference for the pack's public surface — the deployed script bundle. 336 public functions across 21 modules, 43% carrying a docstring.",
+"summary": "Generated API reference for the pack's public surface — the deployed script bundle. 337 public functions across 22 modules, 44% carrying a docstring.",
 "path": "docs/api/index.md",
 "kind": "api",
-"text": "api reference — the deployed script bundle generated api reference for the pack's public surface — the deployed script bundle. 336 public functions across 21 modules, 43% carrying a docstring. api scripts generated index documents architecture"
+"text": "api reference — the deployed script bundle generated api reference for the pack's public surface — the deployed script bundle. 337 public functions across 22 modules, 44% carrying a docstring. api scripts generated index documents architecture"
 },
 {
 "cat": "graph",
@@ -1611,6 +1620,15 @@ window.PACK_INDEX = {
 "path": "docs/api/prompt-log.md",
 "kind": "api",
 "text": "api — prompt-log.py prompt-log.py — the fast prompt-reuse lens over the project's audit log. api scripts generated refines api-index"
+},
+{
+"cat": "graph",
+"id": "api-repo_identity",
+"title": "API — repo_identity.py",
+"summary": "repo_identity.py - the canonical project name, in ONE place (class PACK-P).",
+"path": "docs/api/repo_identity.md",
+"kind": "api",
+"text": "api — repo_identity.py repo_identity.py - the canonical project name, in one place (class pack-p). api scripts generated refines api-index"
 },
 {
 "cat": "graph",

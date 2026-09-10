@@ -151,7 +151,7 @@ every non-trivial task.
   ↑ AND rigor ↑ AND tokens ↓** (a conjunction), and slower-while-unchanged is pure loss. **Rigor floors
   are immovable nodes: optimization may reorder them, never remove them.** Record planned vs actual so
   the next plan is better.
-  `.github/instructions/execution-graph-optimization.instructions.md` (GO1–GO18); evidence in
+  `.github/instructions/execution-graph-optimization.instructions.md` (GO1–GO19); evidence in
   `docs/knowledge/graph-and-loop-engineering/`; the workflow is the `optimize-graph` prompt.
 - **Instrumentation over inference (a standing bias, and a gate):** when you want to know how
   something behaves, **measure it — do not reason about it**. An uninstrumented system does not become

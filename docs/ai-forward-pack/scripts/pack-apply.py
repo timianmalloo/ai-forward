@@ -218,6 +218,22 @@ class Applier(object):
         self.source_rev, self.source_meta = self._source_revision()
         self.target_rev = self._target_revision()
 
+    def _project_name(self):
+        """The TARGET repo's canonical name -- never `basename(target)` (class PACK-P).
+
+        `--project` still wins. Without it this used the target directory's basename, which
+        stamps a WORKTREE folder into the target's committed `docs/index.html` and `AGENTS.md`
+        whenever the install is run from a worktree -- which WT1 requires it to be.
+        """
+        here = os.path.dirname(os.path.abspath(__file__))
+        if here not in sys.path:
+            sys.path.insert(0, here)
+        try:
+            from repo_identity import canonical_project
+        except ImportError:
+            return self.project or os.path.basename(self.target)
+        return canonical_project(self.target, self.project)
+
     # ---- bookkeeping
     def _stale_applier(self):
         """Is the pack-apply.py RUNNING the one this source ships? (the bootstrap defect)
@@ -459,7 +475,7 @@ class Applier(object):
         explorer = os.path.join(self.target, "docs", "index.html")
         if not os.path.isfile(explorer):
             tpl = read(os.path.join(self.pack, "templates", "docs-explorer.template.html")) or ""
-            self._write(explorer, tpl.replace("__PROJECT__", self.project or os.path.basename(self.target)))
+            self._write(explorer, tpl.replace("__PROJECT__", self._project_name()))
             self.row("bundle", "docs/index.html", "ADD", "ok", "Docs Explorer instantiated (one-time)")
         else:
             self.row("bundle", "docs/index.html", "SKIP", "ok", "exists - never overwritten")
@@ -581,7 +597,7 @@ class Applier(object):
         # AGENTS.md: replace the block wholesale (append if absent); create the file if missing.
         if agents is None:
             starter = "# {0}\n\nProject conventions live here. The AI-Forward Pack's reasoning stack is wired in below.\n\n".format(
-                self.project or os.path.basename(self.target))
+                self._project_name())
             self._write(agents_path, starter + agents_block)
             self.row("front-doors", "AGENTS.md", "ADD", "ok", "created with the managed block")
             agents = starter + agents_block
