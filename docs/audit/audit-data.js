@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-09T20:49:30Z",
+  "generated": "2026-09-10T20:40:09Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3855,6 +3855,34 @@ window.AUDIT_DATA = {
         "branch": "main",
         "pushed": true
       }
+    },
+    {
+      "id": "al-01M26GKZXT7CVB1JHXWJXRSHKC",
+      "shortname": "go14a-transcription-width",
+      "datetime": "2026-09-10T20:37:17Z",
+      "session": "wt-go5a-derived-guard-collision",
+      "prompt": "Upstream node - land one pack-level control in ai-forward and verify it is accepted. Class DC-118 (ai-de): a ruling-level collision check passes while the FAIL-CLAUSES derived from those rulings contradict on a declared shared surface. Second half added mid-task by Ruling 38: every scan-shaped guard must state its scanned root, recursion, token set and allowlist, and the clause it discharges must carry the same qualifier. Land both halves or neither; smallest correct placement; report the always-loaded character delta.",
+      "summary": "GO14a added beside GO14 (the oracle directive) in execution-graph-optimization.md - one directive carrying BOTH halves because both are one mechanism: transcription is a width-changing step and nothing checks the width. Widening goes red at the join; narrowing stays green while the promise is violated. Plus two self-verification rows in the same doc and one definition-of-done row in each plan-producing skill (optimize-graph, prepare-for-coordination) and their Copilot mirrors. No plan-lint exists in the pack and none was created. Always-on cost measured: +520 est. tokens (46,192 -> 46,712, inside the 2% ratchet tolerance, baseline recorded anyway); per-skill ratchet tripped by design and recorded (optimize-graph 3,104 -> 3,247; prepare-for-coordination 2,671 -> 2,785). Revision 66 -> 67.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": "claude-code",
+      "artifacts": [
+        "pack/knowledge/execution-graph-optimization.md",
+        "pack/commands/optimize-graph/SKILL.md",
+        "pack/commands/prepare-for-coordination/SKILL.md",
+        "pack/adapters/INSTALL.md"
+      ],
+      "tags": [
+        "defect-class",
+        "DC-118",
+        "execution-graph"
+      ],
+      "outcome": "success",
+      "goal": "Land the DC-118 control pack-level: the transcription-width check, both halves, at the smallest correct placement",
+      "done_when": "GO14a in pack/knowledge/execution-graph-optimization.md with checklist rows in both plan-producing skills; revision bumped; verify-bundle BUNDLE CONSISTENT; pushed and CI observed green",
+      "tier": "T1",
+      "fan_out": 0
     }
   ],
   "changes": [

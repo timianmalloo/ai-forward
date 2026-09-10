@@ -44,7 +44,7 @@ python3 docs/ai-forward-pack/scripts/coord-core.py doctor      # read the state 
 **Stage 3 — Classify the contention (EVIDENCE).** For every artifact the work will touch, record its class and *why it is that class*. Then:
 - `derived` and `register` → **no coordination needed**. Say so explicitly; this is the finding.
 - `authored` → the only real contention. **One owner per file.**
-Any file two tracks would both author is either a missing seam or a wrong boundary. Fix the boundary; do not schedule around it.
+Any file two tracks would both author is either a missing seam or a wrong boundary. Fix the boundary; do not schedule around it. One owner is not the whole check: for every shared surface, list each **other** track's guard over it and show it **jointly satisfiable** with what the owner may write, and require every scan-shaped guard to state its **root, recursion, token set and allowlist** — widening reddens at the join, narrowing stays green (GO14a).
 
 **Stage 4 — Build the DAG (INTERROGATE).** Real dependencies only — delete incidental ordering. Apply **GO5 independence**: no data edge, **no decision edge**, no shared exclusive resource; all three, or the tracks are not independent. Apply the **coupling test**: tightly-coupled work is cheaper and more reliable in one coherent session. **Every edge points one way** — the downstream side rebases and the upstream side never has to ask. A cycle is a boundary error, not a scheduling problem.
 
@@ -105,6 +105,7 @@ Close with the status table (Completed / Remaining / Best next action).
 - [ ] `coord doctor` was **run** and its output is in the plan — the layer's state is measured, not assumed.
 - [ ] `.agents/artifacts.yml` exists, every `derived` command was executed before it was written, and `coord doctor` reads back clean.
 - [ ] Every artifact the work touches carries a class and a reason; `derived`/`register` are explicitly marked *no coordination needed*.
+- [ ] Every shared surface carries each other track's guard over it, shown **jointly satisfiable** with what its owner may write, and every scan-shaped guard states its root, recursion, token set and allowlist (GO14a).
 - [ ] Every dependency edge points one way; no cycles; incidental ordering deleted.
 - [ ] The serial spine is named, with the reason each item fails GO5.
 - [ ] Every track has an owner, owned authored paths, a tier, a fan-out cap, a budget and **exit evidence** — the Test Architect's veto is cleared by a reviewer, not the author.

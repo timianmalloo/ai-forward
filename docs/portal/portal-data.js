@@ -1575,7 +1575,7 @@ window.PORTAL_DATA = {
     ],
     "classes": "Three defect classes came out of it and are recorded with controls: PACK-R, a fixed prefix sized by what fits rather than by what each call needs; PACK-S, a fan-out rediscovering per-run what was knowable once; and PACK-T, a generator prepending metadata over a source that already had it — which had been shipping two stacked frontmatter blocks in one instruction file, of which any reader parses only the first.",
     "live": {
-      "baseline": 46192,
+      "baseline": 46712,
       "tolerancePct": 2,
       "backstop": 60000,
       "derivation": {
@@ -1586,7 +1586,7 @@ window.PORTAL_DATA = {
       "tiers": {
         "always": {
           "docs": 13,
-          "tokens": 46239
+          "tokens": 46712
         },
         "reference": {
           "docs": 2,
@@ -1601,7 +1601,7 @@ window.PORTAL_DATA = {
           "tokens": 25898
         }
       },
-      "corpusTokens": 177852,
+      "corpusTokens": 178325,
       "alwaysPct": 26
     }
   },
