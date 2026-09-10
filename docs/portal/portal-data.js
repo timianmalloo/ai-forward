@@ -1575,7 +1575,7 @@ window.PORTAL_DATA = {
     ],
     "classes": "Three defect classes came out of it and are recorded with controls: PACK-R, a fixed prefix sized by what fits rather than by what each call needs; PACK-S, a fan-out rediscovering per-run what was knowable once; and PACK-T, a generator prepending metadata over a source that already had it — which had been shipping two stacked frontmatter blocks in one instruction file, of which any reader parses only the first.",
     "live": {
-      "baseline": 46712,
+      "baseline": 46916,
       "tolerancePct": 2,
       "backstop": 60000,
       "derivation": {
@@ -1586,7 +1586,7 @@ window.PORTAL_DATA = {
       "tiers": {
         "always": {
           "docs": 13,
-          "tokens": 46712
+          "tokens": 46916
         },
         "reference": {
           "docs": 2,
@@ -1601,7 +1601,7 @@ window.PORTAL_DATA = {
           "tokens": 25898
         }
       },
-      "corpusTokens": 178325,
+      "corpusTokens": 178529,
       "alwaysPct": 26
     }
   },
@@ -1780,7 +1780,7 @@ window.PORTAL_DATA = {
         "id": "api-index",
         "type": "api",
         "title": "API reference — the deployed script bundle",
-        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 337 public functions across 22 modules, 44% carrying a docstring."
+        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 339 public functions across 22 modules, 44% carrying a docstring."
       },
       {
         "id": "api-marker-lint",

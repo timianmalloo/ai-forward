@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-10T21:00:42Z",
+  "generated": "2026-09-10T21:33:13Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3908,6 +3908,35 @@ window.AUDIT_DATA = {
       "outcome": "success",
       "goal": "Close PACK-P at the root: one canonical project-name resolver, every generator wired to it, and a test that fails when a generated artifact's identity depends on the directory it was generated in",
       "done_when": "repo_identity.py exists and five callers delegate; test_repo_identity.py observed red on the unfixed code and green after; class registered controlled; revision 68; verify-bundle BUNDLE CONSISTENT; pushed and CI observed green",
+      "tier": "T2",
+      "fan_out": 0
+    },
+    {
+      "id": "al-01M26KTCFQWMQT7DP6CG0Z2TGS",
+      "shortname": "coord-worktree-base-and-cleanup",
+      "datetime": "2026-09-10T21:33:13Z",
+      "session": "wt-coord-worktree-base-and-cleanup",
+      "prompt": "Two more defects in coord worktree, both in PACK-P's family. (1) worktree new --base HEAD invoked from inside a linked worktree resolved HEAD against the primary checkout, producing a FALSE NEGATIVE on the rev-68 fix. (2) cleanup --remove reported 'removed 4 of 4' while one tree it counted was still present, and it is repo-wide by default with no way to scope it. Establish blast radius by sweep, red-first with a real linked worktree, register both, same acceptance bar.",
+      "summary": "WT-A: base_commit(cwd, repo, base) resolves --base against the INVOKING tree; the default is resolved explicitly too, so the behaviour now matches the help's 'current HEAD'; the chosen commit is printed in the banner so a wrong base cannot be silent again. WT-B: classify_removals(attempts, after) reads the post-prune inventory back and reports removed/not-removed/ORPHANED, each named, and no count at all if the read-back fails. Registration, not the error text, is the discriminator - git DE-REGISTERS BEFORE DELETING, reproduced as exit 255 'failed to delete' with the entry already gone, leaving a directory nothing tracks. WT-C: --path scopes the removal; the wide default now announces itself. 14 new tests, all observed failing first. Near-miss avoided: PACK-Q/R/S were about to be allocated and are all already taken in the register's other region - used WT-A/B/C and recorded the allocation rule. Always-on +204 tokens (WT8 gained its real scope and the measured-reporting rule).",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": "claude-code",
+      "artifacts": [
+        "pack/scripts/coord-core.py",
+        "tests/docs_explorer/test_coord_worktree_base_and_cleanup.py",
+        "pack/knowledge/session-worktree-discipline.md"
+      ],
+      "tags": [
+        "defect-class",
+        "WT-A",
+        "WT-B",
+        "WT-C",
+        "worktree"
+      ],
+      "outcome": "success",
+      "goal": "Fix coord worktree --base resolving against the primary, and cleanup reporting intent instead of measured outcome; both controlled by tests",
+      "done_when": "base_commit and classify_removals landed with --path scoping; all three classes observed red first and registered as WT-A/WT-B/WT-C; revision 69; verify-bundle BUNDLE CONSISTENT; pushed and CI observed green",
       "tier": "T2",
       "fan_out": 0
     }

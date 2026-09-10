@@ -9,7 +9,7 @@ links:
   - { to: architecture, rel: documents }
 review-by: "2027-03-03"
 summary: >-
-  Generated API reference for the pack's public surface — the deployed script bundle. 337 public functions across 22 modules, 44% carrying a docstring.
+  Generated API reference for the pack's public surface — the deployed script bundle. 339 public functions across 22 modules, 44% carrying a docstring.
 ---
 
 # API reference — the deployed script bundle
@@ -27,7 +27,7 @@ with no docstring is listed as a **coverage gap** rather than described from gue
 | [`audit-log.py`](audit-log.md) | 38 | 21 | 13 | audit-log.py — the AI-Forward Pack audit & change log bundle (audit-and-change-log.md). |
 | [`bounded_process.py`](bounded_process.md) | 1 | 1 | — | Bounded subprocess execution for pack-owned tool invocations. |
 | [`context-budget.py`](context-budget.md) | 21 | 12 | 6 | context-budget.py — the always-on context budget, measured (AI-Forward Pack). |
-| [`coord-core.py`](coord-core.md) | 63 | 40 | 24 | coord-core.py - agent coordination, Phase 1 walking skeleton. |
+| [`coord-core.py`](coord-core.md) | 65 | 42 | 24 | coord-core.py - agent coordination, Phase 1 walking skeleton. |
 | [`coord_ids.py`](coord_ids.md) | 2 | 2 | — | coord_ids.py - collision-proof identifiers, in ONE place. |
 | [`design-lint.py`](design-lint.md) | 3 | 2 | — | design-lint.py — token-reference linter for design-language docs (AI-Forward). |
 | [`docs-graph.py`](docs-graph.md) | 37 | 3 | 10 | docs-graph.py — the AI-Forward Pack docs script bundle (knowledge-visualization.md V18). |
@@ -46,5 +46,5 @@ with no docstring is listed as a **coverage gap** rather than described from gue
 | [`visual-assets-setup.py`](visual-assets-setup.md) | 12 | 5 | — | visual-assets-setup.py - wire up a generation backend for UI visual assets (AI-Forward). |
 | [`xaml-token-lint.py`](xaml-token-lint.md) | 9 | 0 | — | xaml-token-lint.py — first-slice token linter for XAML/native UI markup. |
 
-**Total** — 337 public functions across 22 modules, **148 documented (44%)**.
+**Total** — 339 public functions across 22 modules, **150 documented (44%)**.
 

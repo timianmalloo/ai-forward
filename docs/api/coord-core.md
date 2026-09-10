@@ -68,7 +68,7 @@ Design: docs/design/coord-core-phase1.md
 
 | Option | Help |
 |---|---|
-| `--base` | commit/branch to branch from (default: current HEAD) |
+| `--base` | commit/branch to branch from (default: the INVOKING tree's HEAD) |
 | `--branch` | branch to create; name it for the WORK, not the session |
 | `--contract` | _(no help text — coverage gap)_ |
 | `--emit` | _(no help text — coverage gap)_ |
@@ -457,6 +457,44 @@ Untracked is the condition that matters most: a new file nobody has committed ex
 nowhere else, so deleting its tree destroys the only copy. `git status --porcelain`
 includes untracked by default and the -z form survives paths with spaces or quotes.
 
+### `base_commit(cwd, repo, base)`
+
+Resolve `--base` against the INVOKING worktree, never the primary (class PACK-P).
+
+`repo` is deliberately the PRIMARY checkout: the coordination record is per repository,
+which is exactly what `repo_root` exists to answer. But HEAD, @ and every relative ref
+are per WORKTREE, so `git -C <primary> worktree add ... HEAD` run from a linked worktree
+silently bases the new tree on the PRIMARY's commit. That is PACK-P one level along --
+the right primitive for "which repository", used for a question that is "which tree".
+Branch and tag names resolve identically from either tree, so for those this is only ever
+a confirmation, never a change.
+
+MEASURED HARM, and why this is worse than a wrong directory name: a node that had just
+committed a fix created a tree with `--base HEAD`, silently got the primary's OLDER
+commit, ran the pre-fix script, saw the pre-fix result, and nearly reported a correct fix
+as broken. A tool that silently bases work on the wrong commit will be believed.
+
+Returns (sha, None) or (None, message).
+
+### `classify_removals(attempts, after, exists=…)`
+
+What ACTUALLY happened to each attempted removal -- read back, never inferred (E14).
+
+The old summary printed `len(removable) - failed`: a count derived from INTENT, where a
+git call that returned quietly counted as a success. An operator then reads "removed 4 of
+4" while a tree is still there, and an over-reporting cleanup is worse than an
+under-reporting one -- the recovery nobody takes is the one nobody knows is needed.
+
+REGISTRATION is the discriminator, not the error text, because git de-registers BEFORE it
+deletes. A delete that fails can therefore leave the tree unregistered AND on disk, and
+calling that "not removed" tells the operator to retry something git can no longer see.
+Observed on Windows with a file held open: exit 255, "failed to delete", entry already
+gone. That state is ORPHANED and must be named, because no worktree command will ever
+mention it again.
+
+`attempts` is [(record, err_text_or_None)]; `after` is the post-prune inventory.
+Returns (removed_paths, refused_pairs, orphaned_pairs).
+
 ### `worktree_safety(record, primary, cwd, live_keys, index)`
 
 WT7, in order, fail-safe. Returns (safe, reason).
@@ -465,7 +503,7 @@ Every condition is a HARD STOP that reports rather than removes. A cleanup that 
 on a heuristic will eventually delete the tree that mattered, and that single event ends
 the adoption of the whole practice.
 
-### `cmd_worktree(root, repo, action, cwd, now, session=…, agent=…, branch=…, base=…, remove=…)`
+### `cmd_worktree(root, repo, action, cwd, now, session=…, agent=…, branch=…, base=…, remove=…, only=…)`
 
 **Coverage gap** — no docstring in the source.
 
@@ -568,6 +606,6 @@ follows by printing the settings entry rather than writing it.
 
 ## Coverage
 
-- Public functions: **63** · documented: **40** (**63%**)
+- Public functions: **65** · documented: **42** (**65%**)
 - Undocumented (recorded, not invented): `make_event`, `check`, `read_decisions`, `request_log_path`, `read_request_events`, `fold_requests`, `regen_command`, `record_regen_owed`, `regen_owed`, `clear_regen_owed`, `detect_harness`, `cmd_precommit`, `cmd_guard`, `session_contract_path`, `owner_rows_for_path`, `cmd_session_list`, `cmd_collaborate`, `cmd_request`, `cmd_worktree`, `cmd_session`, `cmd_metrics`, `cmd_install`, `cmd_doctor`
 
