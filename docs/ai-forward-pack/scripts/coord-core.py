@@ -25,6 +25,10 @@ import time
 from pathlib import Path
 
 TTL_DEFAULT = 300
+# DC-163: a lease sized to a node's lifetime turns a shared control into a serial resource
+# (measured: the defect register held for an hour while edited never; two joins queued ~50
+# min). The cap is the ceiling a claim may ask for without saying why.
+TTL_CAP = 900
 SESSION_STALE_SECONDS = 8 * 3600
 COORD_DIRNAME = ".agents"
 SESSION_CONTRACT = "docs/collaboration/session-contracts.md"
@@ -487,6 +491,55 @@ def unique_commits(repo):
     return len([line for line in out.split() if line]), None
 
 
+def default_branch(repo):
+    """The repository's DEFAULT branch, resolved rather than assumed. Returns (name, None)
+    or (None, reason_code).
+
+    The ladder: `refs/remotes/origin/HEAD` (what a clone records) -> a local branch of that
+    name -> the remote-tracking ref of that name -> `main` -> `master`. Nothing is guessed:
+    a repository that resolves none of these reports COORD-NO-DEFAULT-BRANCH and the caller
+    HOLDS, because "merged" cannot be established against a branch nobody named (WT7).
+    """
+    names = []
+    out, err = _git(repo, "symbolic-ref", "-q", "--short", "refs/remotes/origin/HEAD")
+    if not err and (out or "").strip():
+        remote = out.strip()                       # e.g. origin/main
+        names.append(remote.split("/", 1)[1] if "/" in remote else remote)
+    for candidate in names + ["main", "master"]:
+        if not candidate:
+            continue
+        out, err = _git(repo, "rev-parse", "--verify", "--quiet", "refs/heads/" + candidate)
+        if not err and (out or "").strip():
+            return candidate, None
+        out, err = _git(repo, "rev-parse", "--verify", "--quiet",
+                        "refs/remotes/origin/" + candidate)
+        if not err and (out or "").strip():
+            return "origin/" + candidate, None
+    return None, "COORD-NO-DEFAULT-BRANCH"
+
+
+def commits_ahead_of_default(repo, branch):
+    """`git rev-list --count <default>..<branch>` -- the ONLY meaning of "merged" this tool
+    uses. Returns (count, default_name, None) or (None, default_name, reason_code).
+
+    DC-142 (recurrence 2, measured 2026-09-13): the old label was derived from
+    unique_commits(), whose question is "does every commit exist SOMEWHERE else?" A pushed
+    branch answers yes -- every commit is on its remote-tracking ref -- so a frozen tree 21
+    commits ahead of main was printed as `clean, merged, unheld` and would have been deleted
+    by --remove. "Merged" here means merged into the DEFAULT branch, and the count is printed
+    so a reader never has to take the word on trust (IO2).
+    """
+    default, code = default_branch(repo)
+    if code:
+        return None, None, code
+    if not branch:
+        return None, default, "COORD-DETACHED"
+    out, err = _git(repo, "rev-list", "--count", "{}..{}".format(default, branch))
+    if err or not (out or "").strip().isdigit():
+        return None, default, "COORD-NOT-CHECKED-GIT"
+    return int(out.strip()), default, None
+
+
 def staged_paths(repo):
     """Staged paths, NUL-separated. Returns (paths, error).
 
@@ -514,7 +567,13 @@ def _build_parser():
     claim = sub.add_parser("claim", help="declare intent over an artifact set")
     claim.add_argument("--wi", required=True)
     claim.add_argument("--path", required=True)
-    claim.add_argument("--ttl", type=float, default=TTL_DEFAULT)
+    claim.add_argument("--ttl", type=float, default=TTL_DEFAULT,
+                       help="seconds the lease lasts (default {}; capped at {} unless "
+                            "--long-edit names why - a lease is for the MINUTES of the edit, "
+                            "DC-163)".format(TTL_DEFAULT, TTL_CAP))
+    claim.add_argument("--long-edit", dest="long_edit", metavar="REASON",
+                       help="the recorded reason for a --ttl above the cap; it is written "
+                            "into the claim event so a queued peer can read why it waits")
 
     chk = sub.add_parser("check", help="may this session touch this path?")
     chk.add_argument("path")
@@ -569,6 +628,10 @@ def _build_parser():
                     help="session id to register (default: $AGENT_SESSION)")
     wt.add_argument("--remove", action="store_true",
                     help="cleanup: actually delete. Off by default - deletion is irreversible")
+    wt.add_argument("--include-unmerged", dest="include_unmerged", action="store_true",
+                    help="cleanup: also remove a clean tree whose branch has commits NOT on "
+                         "the default branch (a pushed but unmerged branch is HELD by "
+                         "default - DC-142). The count is printed either way.")
     met = sub.add_parser("metrics", help="the four measures this layer exists to move")
     met.add_argument("--json", action="store_true")
     inst = sub.add_parser("install",
@@ -1880,7 +1943,7 @@ def classify_removals(attempts, after, exists=os.path.isdir):
     return removed, refused, orphaned
 
 
-def worktree_safety(record, primary, cwd, live_keys, index):
+def worktree_safety(record, primary, cwd, live_keys, index, include_unmerged=False):
     """WT7, in order, fail-safe. Returns (safe, reason).
 
     Every condition is a HARD STOP that reports rather than removes. A cleanup that deletes
@@ -1912,11 +1975,22 @@ def worktree_safety(record, primary, cwd, live_keys, index):
     branch = record.get("branch")
     if branch and index.get(branch, 0) > 1:
         return False, "branch {} is checked out in another tree".format(_safe(branch, 60))
-    return True, "clean, merged, unheld"
+    # DC-142: "merged" is `rev-list --count <default>..<branch> == 0`, never "exists
+    # somewhere else". A pushed, open branch passed every hold above; this one catches it.
+    ahead, default, code = commits_ahead_of_default(path, branch)
+    if code:
+        return False, "cannot establish merged ({}): no default branch resolved".format(code)
+    if ahead > 0:
+        if include_unmerged:
+            return True, "clean, {} commit(s) not on {} - removed on --include-unmerged".format(
+                ahead, default)
+        return False, ("{} commit(s) not on {} - open work; pass --include-unmerged to remove"
+                       .format(ahead, default))
+    return True, "clean, merged into {} (0 ahead), unheld".format(default)
 
 
 def cmd_worktree(root, repo, action, cwd, now, session=None, agent=None,
-                 branch=None, base=None, remove=False, only=None):
+                 branch=None, base=None, remove=False, only=None, include_unmerged=False):
     records, err = worktree_inventory(repo)
     if err:
         print("COORD-NOT-CHECKED-GIT: {}".format(_safe(err, 200)))
@@ -1991,7 +2065,8 @@ def cmd_worktree(root, repo, action, cwd, now, session=None, agent=None,
 
     verdicts = []
     for record in records:
-        safe, reason = worktree_safety(record, primary, cwd, live_keys, index)
+        safe, reason = worktree_safety(record, primary, cwd, live_keys, index,
+                                       include_unmerged=include_unmerged)
         verdicts.append((record, safe, reason))
 
     if action == "list":
@@ -2847,7 +2922,8 @@ def main(argv=None):
         return cmd_worktree(root, repo, args.action, os.getcwd(), now,
                             session=chosen, agent=agent or chosen, branch=args.branch,
                             base=args.base, remove=args.remove,
-                            only=getattr(args, 'wt_path', None))
+                            only=getattr(args, 'wt_path', None),
+                            include_unmerged=getattr(args, 'include_unmerged', False))
 
     if args.cmd == "session" and args.action == "list":
         return cmd_session_list(root, now, args.json)
@@ -2884,14 +2960,39 @@ def main(argv=None):
         return 4
 
     if args.cmd == "claim":
+        # DC-163, two refusals BEFORE the check: neither is a contention verdict.
+        # (1) A `register`-class artifact merges by UNION (its driver is the mechanism), so
+        # a lease on it protects nothing and blocks every join that must append to it.
+        try:
+            klass, _why = classify(root, args.path)
+        except CoordError as exc:
+            print("{}: {}".format(exc.code, exc), file=sys.stderr)
+            return 2
+        if klass == "register":
+            print("COORD-CLAIM-REGISTER-CLASS  {}\n"
+                  "  a register-class artifact merges by union; no lease is needed and one\n"
+                  "  only queues the joins behind it - append (a placeholder id if the\n"
+                  "  allocator is the join's) and commit".format(_safe(args.path, 200)),
+                  file=sys.stderr)
+            return 3
+        # (2) A TTL past the cap needs a recorded reason: the lease is for the minutes of
+        # the edit, and a queued peer reads why it waits from the claim event itself.
+        if args.ttl > TTL_CAP and not args.long_edit:
+            print("COORD-CLAIM-TTL-CAP  --ttl {:g} exceeds the cap of {} s\n"
+                  "  claim for the minutes of the edit (default {} s) and release at once;\n"
+                  "  a genuinely long edit passes --long-edit <reason>".format(
+                      args.ttl, TTL_CAP, TTL_DEFAULT), file=sys.stderr)
+            return 3
         decision = check(root, args.path, session, now)
         if decision["decision"] == "deny":
             append_decision(root, session, agent, args.path, decision)
             print(render(decision))
             return 3
         try:
-            append_event(root, make_event("claim", session, agent, args.wi,
-                                          args.path, now, args.ttl))
+            event = make_event("claim", session, agent, args.wi, args.path, now, args.ttl)
+            if args.long_edit:
+                event["long_edit"] = args.long_edit
+            append_event(root, event)
         except CoordError as exc:
             print("{}: {}".format(exc.code, exc), file=sys.stderr)
             return 2

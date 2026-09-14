@@ -260,5 +260,126 @@ class StartMarkerMeasuresOneRun(unittest.TestCase):
                             rel + " must state the marker's scope where the claim is made")
 
 
+class MarkerIsKeyedBySessionAndSkill(StartMarkerMeasuresOneRun):
+    """Pack finding #2 (Addenda C/D, measured twice, 2026-09-13/14): `prompt-log.py add`
+    between a skill's `start` and its closing `append` CONSUMED the skill's marker, because
+    the key was the session alone and a prompt entry is an append like any other. The
+    skill's closing entry then re-marked and reported 16 s for a 3-minute run.
+
+    Two rules close it. A `kind:prompt` entry is a record, not a run: it never consumes.
+    And a marker set with `--skill` is consumed only by an append naming that skill; a
+    bare `start --session` stays the fallback every existing skill relies on."""
+
+    def append_prompt(self, session="S1"):
+        self.run_log("append", "--shortname", "a-logged-prompt", "--session", session,
+                     "--kind", "prompt", "--prompt", "the operator's words",
+                     "--summary", "prompt logged for reuse")
+
+    def test_a_prompt_entry_never_consumes_the_marker(self):
+        self.run_log("start", "--session", "S1")
+        self.append_prompt()
+        self.append("skill-close")
+        prompt, close = self.entries()
+        self.assertNotIn("duration_seconds", prompt, "a prompt is a record, not a run")
+        self.assertIn("duration_seconds", close, "the skill's own close still measures")
+
+    def test_a_skill_keyed_marker_is_not_consumed_by_another_skill(self):
+        self.run_log("start", "--session", "S1", "--skill", "implement")
+        self.run_log("append", "--shortname", "other", "--session", "S1", "--kind", "skill",
+                     "--skill", "auditlog", "--prompt", "p", "--summary", "s")
+        self.run_log("append", "--shortname", "mine", "--session", "S1", "--kind", "skill",
+                     "--skill", "implement", "--prompt", "p", "--summary", "s")
+        other, mine = self.entries()
+        self.assertNotIn("duration_seconds", other)
+        self.assertIn("duration_seconds", mine)
+
+    def test_a_bare_session_marker_still_serves_a_skill_append(self):
+        """Backward compatibility: every shipped skill calls `start --session` alone."""
+        self.run_log("start", "--session", "S1")
+        self.run_log("append", "--shortname", "mine", "--session", "S1", "--kind", "skill",
+                     "--skill", "implement", "--prompt", "p", "--summary", "s")
+        (mine,) = self.entries()
+        self.assertIn("duration_seconds", mine)
+
+
+class TextArgumentsReadFromFilesInUtf8(StartMarkerMeasuresOneRun):
+    """Pack finding #1: an em dash or an arrow in a value that travels through argv or a
+    console pipe became mojibake or a crash under a cp1252 console. Every text field takes
+    a --<field>-file, read as UTF-8, and stdin is UTF-8 whatever the console says."""
+
+    def test_goal_and_done_when_read_from_files(self):
+        goal = pathlib.Path(self.tmp) / "goal.txt"
+        done = pathlib.Path(self.tmp) / "done.txt"
+        goal.write_text("land it — whole → pushed", encoding="utf-8")
+        done.write_text("every gate green · the sha reported", encoding="utf-8")
+        self.run_log("append", "--shortname", "f", "--session", "S1", "--kind", "skill",
+                     "--prompt", "p", "--summary", "s", "--goal-file", str(goal),
+                     "--done-when-file", str(done))
+        (entry,) = self.entries()
+        self.assertEqual(entry["goal"], "land it — whole → pushed")
+        self.assertEqual(entry["done_when"], "every gate green · the sha reported")
+
+    def test_stdin_is_read_as_utf8_under_a_cp1252_console(self):
+        import os
+        env = dict(os.environ)
+        env.pop("PYTHONIOENCODING", None)
+        env.pop("PYTHONUTF8", None)
+        text = "an arrow → and a dash —"
+        result = subprocess.run([sys.executable, str(self.SCRIPT), "--root", str(self.docs),
+                                 "append", "--shortname", "u", "--session", "S1",
+                                 "--kind", "prompt", "--summary", "s", "--prompt-file", "-"],
+                                cwd=str(ROOT), input=text.encode("utf-8"), capture_output=True,
+                                timeout=30, env=env)
+        self.assertEqual(result.returncode, 0, result.stderr.decode("utf-8", "replace"))
+        (entry,) = self.entries()
+        self.assertEqual(entry["prompt"], text)
+
+
+class PromptLogAddSurvivesNonAscii(unittest.TestCase):
+    """Pack finding #1's instance: `prompt-log.py add` died on `→` under a Windows
+    console, and a summary with an em dash landed as mojibake. The script sets UTF-8 on
+    the seam it owns (the pipe to audit-log.py) and takes the prompt from a file."""
+
+    PROMPT_LOG = ROOT / "pack" / "scripts" / "prompt-log.py"
+
+    def setUp(self):
+        self.tmp = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, self.tmp, True)
+        self.repo = pathlib.Path(self.tmp) / "repo"
+        (self.repo / "docs" / "audit").mkdir(parents=True)
+        subprocess.run(["git", "init", "-q", str(self.repo)], check=True, capture_output=True)
+
+    def _add(self, *args, stdin=None):
+        import os
+        env = dict(os.environ)
+        env.pop("PYTHONIOENCODING", None)
+        env.pop("PYTHONUTF8", None)
+        return subprocess.run([sys.executable, str(self.PROMPT_LOG), "add", "--quiet", *args],
+                              cwd=str(self.repo), input=stdin, capture_output=True, timeout=60,
+                              env=env)
+
+    def _entries(self):
+        path = self.repo / "docs" / "audit" / "audit-log.jsonl"
+        return [json.loads(l) for l in path.read_text(encoding="utf-8").splitlines() if l.strip()]
+
+    def test_a_prompt_with_an_arrow_and_a_dash_round_trips_from_a_file(self):
+        text = "wire A → B — then stop"
+        src = pathlib.Path(self.tmp) / "prompt.txt"
+        src.write_text(text, encoding="utf-8")
+        result = self._add("--file", str(src), "--summary", "logged — for reuse")
+        self.assertEqual(result.returncode, 0, result.stderr.decode("utf-8", "replace"))
+        (entry,) = self._entries()
+        self.assertEqual(entry["prompt"], text)
+        self.assertEqual(entry["summary"], "logged — for reuse")
+        self.assertEqual(entry["kind"], "prompt")
+
+    def test_a_prompt_from_stdin_round_trips(self):
+        text = "compose → send"
+        result = self._add(stdin=text.encode("utf-8"))
+        self.assertEqual(result.returncode, 0, result.stderr.decode("utf-8", "replace"))
+        (entry,) = self._entries()
+        self.assertEqual(entry["prompt"], text)
+
+
 if __name__ == "__main__":
     unittest.main()

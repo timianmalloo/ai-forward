@@ -220,6 +220,7 @@ Copy-Item (Join-Path $pack "context-budget.json")    $docPack -Force
 $hooksDst = Join-Path $docPack "hooks"
 New-Item -ItemType Directory -Force -Path $hooksDst | Out-Null
 Copy-Item (Join-Path $pack "adapters\hooks\reread-guard.py") $hooksDst -Force
+Copy-Item (Join-Path $pack "adapters\hooks\session-start.py") $hooksDst -Force
 Copy-Item (Join-Path $pack "adapters\hooks\README.md")       $hooksDst -Force
 $ghHooks = Join-Path $repo ".github\hooks"
 New-Item -ItemType Directory -Force -Path $ghHooks | Out-Null

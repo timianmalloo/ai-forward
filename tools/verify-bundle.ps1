@@ -97,7 +97,8 @@ try {
                 # tests always run. CI runs `npm ci` first, so CI runs all three.
                 $coreTests = @(
                     "tests/docs_explorer/docs_explorer_core.test.js",
-                    "tests/docs_explorer/knowledge_surfaces.test.js"
+                    "tests/docs_explorer/knowledge_surfaces.test.js",
+                    "tests/docs_explorer/mockup_harness_audit.test.js"
                 )
                 if (Test-Path (Join-Path $repo "node_modules\playwright")) {
                     $coreTests += "tests/docs_explorer/browser_benchmark.test.js"
