@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-14T14:40:03Z",
+  "generated": "2026-09-14T20:26:49Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3982,6 +3982,100 @@ window.AUDIT_DATA = {
         "sha": "dd83f075b9e8e9edd990d7aa2be0805cbe24f82d",
         "short": "dd83f075b",
         "branch": "pack/addendum-cd-findings",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2GNYYWXTY2MXCGK8GR1WY32",
+      "shortname": "formal-verification-spec",
+      "datetime": "2026-09-14T19:23:04Z",
+      "session": "39b844ea-0267-4ae4-81aa-85b4636b86bd",
+      "prompt": "Let's review the spec you produced here too, so I can ask questions.",
+      "summary": "Prepared the proposed optional Verus-first formal-verification specification on the isolated revision-70 worktree. Two independent read-only review seats completed; one bounded correction clarified recovery, pre-invocation results, and safe concurrency refusal; the owning review seat passed the recheck. Native graph validation reports 182 artifacts and zero defects with seven pre-existing stale warnings. Local links, layers, criterion IDs, Mermaid syntax, and editor diagnostics pass. Tim acceptance remains pending; no feature implementation, verifier installation, commit, push, or PR.",
+      "kind": "skill",
+      "skill": "specify",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/specs/optional-formal-verification.md",
+        "docs/plans/optional-formal-verification-spec.md"
+      ],
+      "tags": [
+        "formal-verification",
+        "spec-only"
+      ],
+      "outcome": "success",
+      "goal": "Produce a self-contained proposed formal-verification spec for Tim to review, using AI-Forward SDD.",
+      "done_when": "Three-layer spec with falsifiable criteria, independent review, checked document and graph links, and a review-first handoff that does not authorize implementation.",
+      "tier": "T1",
+      "fan_out": 2,
+      "started_at": "2026-09-14T19:11:04Z",
+      "duration_seconds": 720.0,
+      "git": {
+        "sha": "17666d35927e2bf9374b45644ca03d13102837ef",
+        "short": "17666d359",
+        "branch": "docs/formal-verification-spec",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2GQ44N0DCZB21QDA01ABH6P",
+      "shortname": "spec-customer-value",
+      "datetime": "2026-09-14T19:43:22Z",
+      "session": "39b844ea-0267-4ae4-81aa-85b4636b86bd",
+      "prompt": "Great.  Is it possible to add this concrete illustration to the spec so that Tim immediately sees the value of the feature?  What's your best judgment on this?",
+      "summary": "Added a customer story and three-pages/two-entries malformed-request illustration at the start of the Review Brief. Linked the intended reliability value to the inspected OpenVMM validation-to-iteration boundary, labeled inferred benefits and unproven outcomes, and separated the recommended real-code pilot from FV-16's unchanged synthetic demonstration. No acceptance criteria or implementation scope changed. Graph validation passed with zero defects and seven pre-existing stale warnings; editor diagnostics clear; native index refreshed. Editorial-only follow-up: no new planning/review cycle, feature implementation, or formal-verifier execution.",
+      "kind": "manual",
+      "skill": null,
+      "tool": "apply_patch",
+      "actor": null,
+      "artifacts": [
+        "docs/specs/optional-formal-verification.md"
+      ],
+      "tags": [
+        "spec-only",
+        "customer-value"
+      ],
+      "outcome": "success",
+      "goal": "Make the proposed feature's customer and engineering value immediately understandable to Tim.",
+      "done_when": "Opening illustration explains the concrete failure, proposed proof benefit, and limits without changing acceptance criteria or implying completed OpenVMM verification.",
+      "tier": "T0",
+      "fan_out": 0,
+      "git": {
+        "sha": "17666d35927e2bf9374b45644ca03d13102837ef",
+        "short": "17666d359",
+        "branch": "docs/formal-verification-spec",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2GSKNMZFDNYZVEMYX4Z21B8",
+      "shortname": "spec-pr-publication-approved",
+      "datetime": "2026-09-14T20:26:48Z",
+      "session": "39b844ea-0267-4ae4-81aa-85b4636b86bd",
+      "prompt": "yes, go ahead",
+      "summary": "Contributor authorized committing, pushing, and opening a draft specification-only PR for Tim. Publication remains pending this entry. Preflight found and regenerated the required docs portal and web indexes; no runtime or test source changed. Validation setup failures were isolated to Windows temp-directory behavior, the virtual-environment process launcher, and a temporary fixture folder mistakenly placed inside a Git worktree. The corrected environment passed all 87 affected tests unchanged. The final full bundle gate and publication follow; no OpenVMM or Verus proof is claimed.",
+      "kind": "manual",
+      "skill": null,
+      "tool": "github-cli",
+      "actor": null,
+      "artifacts": [
+        "docs/specs/optional-formal-verification.md",
+        "docs/plans/optional-formal-verification-spec.md"
+      ],
+      "tags": [
+        "spec-only",
+        "pr-publication"
+      ],
+      "outcome": "partial",
+      "goal": "Publish a draft, spec-only pull request to timianmalloo/ai-forward as lucioctinoco for Tim to review.",
+      "done_when": "The documentation-only branch is validated, committed, pushed, and linked from a verified draft PR; implementation remains pending Tim approval.",
+      "tier": "T0",
+      "fan_out": 0,
+      "git": {
+        "sha": "17666d35927e2bf9374b45644ca03d13102837ef",
+        "short": "17666d359",
+        "branch": "docs/formal-verification-spec",
         "pushed": null
       }
     }
