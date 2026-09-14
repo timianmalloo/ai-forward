@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 180
+"count": 182
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 339,
+"total": 341,
 "items": [
 {
 "cat": "knowledge",
@@ -2271,6 +2271,15 @@ window.PACK_INDEX = {
 },
 {
 "cat": "graph",
+"id": "plan-optional-formal-verification-spec",
+"title": "Optional formal verification: specification authoring and review",
+"summary": "Bounded AI-Forward optimize-graph and specify execution record for producing a proposed formal-verification feature spec. Records review scope, validation, unresolved decisions, and the human-review stop before implementation.",
+"path": "docs/plans/optional-formal-verification-spec.md",
+"kind": "doc",
+"text": "optional formal verification: specification authoring and review bounded ai-forward optimize-graph and specify execution record for producing a proposed formal-verification feature spec. records review scope, validation, unresolved decisions, and the human-review stop before implementation. formal-verification planning specification-review relates-to spec-optional-formal-verification depends-on kb-graph-and-loop-engineering"
+},
+{
+"cat": "graph",
 "id": "profile-sp-0001",
 "title": "Session profile sp-0001 - theterrace, ai-forward",
 "summary": "Measured pass over 23 session(s) in theterrace, ai-forward (last 7 days); 84 finding(s), top: SP-01, SP-09, SP-02.",
@@ -3006,6 +3015,15 @@ window.PACK_INDEX = {
 "path": "docs/specs/native-app-ui-skill-extension.md",
 "kind": "spec",
 "text": "native app ui skill extension — specification specification for extending the ai-forward ui skills so wpf, winui, avalonia and other native client applications receive the same rigorous ux/ui reasoning as web surfaces. the spec defines the required native medium declaration, native proof pack, xaml/resource token mapping, native review artifacts, and the constraints for generated visual assets. ui-design visualize native-ui wpf winui avalonia desktop specification depends-on kb-native-client-ui-design relates-to architecture"
+},
+{
+"cat": "graph",
+"id": "spec-optional-formal-verification",
+"title": "Optional formal verification and Proof Pack evidence",
+"summary": "Proposed opt-in formal-verification capability for AI-Forward, with Verus as the first implementation target. Defines claim-scoped evidence, explicit trust boundaries, failure and freshness semantics, and a small reproducible example…",
+"path": "docs/specs/optional-formal-verification.md",
+"kind": "spec",
+"text": "optional formal verification and proof pack evidence proposed opt-in formal-verification capability for ai-forward, with verus as the first implementation target. defines claim-scoped evidence, explicit trust boundaries, failure and freshness semantics, and a small reproducible example without changing existing testing requirements. formal-verification verus rust proof-pack specification relates-to architecture"
 },
 {
 "cat": "graph",

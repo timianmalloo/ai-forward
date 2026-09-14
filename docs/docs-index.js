@@ -3278,6 +3278,41 @@ window.DOCS_INDEX = {
       "sourceSha256": "fb30d636f0c68014b333a7182f767e54d66af70659c3c027f266805d9a4539bb"
     },
     {
+      "id": "plan-optional-formal-verification-spec",
+      "path": "docs/plans/optional-formal-verification-spec.md",
+      "title": "Optional formal verification: specification authoring and review",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@lucioctinoco",
+      "phase": "",
+      "reviewBy": "2026-12-14",
+      "reviewSuggested": [],
+      "summary": "Bounded AI-Forward optimize-graph and specify execution record for producing a proposed formal-verification feature spec. Records review scope, validation, unresolved decisions, and the human-review stop before implementation.",
+      "tags": [
+        "formal-verification",
+        "planning",
+        "specification-review"
+      ],
+      "links": [
+        {
+          "to": "spec-optional-formal-verification",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-graph-and-loop-engineering",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Execution Graph",
+          "mermaid": "flowchart LR\n    G[Ground and isolate] --> S[Draft specification]\n    S --> V[Validate document structure]\n    V --> R1[Functional and trust review]\n    V --> R2[Scope and UX review]\n    R1 --> C[Consolidate and correct once]\n    R2 --> C\n    C --> H[Validate and hand off to Tim]"
+        }
+      ],
+      "sourceSha256": "0d1d4fdb694f9e1e13d56fe12d359cf7de3080bb53ab1e20e06d9d7303270e6e"
+    },
+    {
       "id": "profile-sp-0001",
       "path": "docs/profiles/sp-0001/profile.md",
       "title": "Session profile sp-0001 - theterrace, ai-forward",
@@ -5756,6 +5791,39 @@ window.DOCS_INDEX = {
       "sourceSha256": "2984ab64343317f5204e12b066d46f95f3ac0e2839209d25eeef307eb8e29fb6"
     },
     {
+      "id": "spec-optional-formal-verification",
+      "path": "docs/specs/optional-formal-verification.md",
+      "title": "Optional formal verification and Proof Pack evidence",
+      "type": "spec",
+      "status": "proposed",
+      "owner": "@lucioctinoco",
+      "phase": "formal-verification-pilot",
+      "reviewBy": "2026-12-14",
+      "reviewSuggested": [],
+      "summary": "Proposed opt-in formal-verification capability for AI-Forward, with Verus as the first implementation target. Defines claim-scoped evidence, explicit trust boundaries, failure and freshness semantics, and a small reproducible example without changing existing testing requirements.",
+      "tags": [
+        "formal-verification",
+        "verus",
+        "rust",
+        "proof-pack",
+        "specification"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "User Flow",
+          "mermaid": "flowchart TD\n    Task[Existing design-slice or implement task] --> Candidate{Formal verification selected?}\n    Candidate -->|No| Existing[Continue existing workflow and checks]\n    Candidate -->|Yes| Qualify{Target and environment qualified?}\n    Qualify -->|Unavailable or unsupported| Gap[State reason and next action; no formal pass]\n    Gap -->|Maintainer resolves prerequisites| Qualify\n    Gap -->|Maintainer revises verification plan| PlanChange[Record decision; retain prior outcome and residual risk]\n    PlanChange --> Existing\n    Qualify -->|Yes| Contract[Propose obligation, English meaning, and assumptions]\n    Contract --> Review{Contract reviewed?}\n    Review -->|Revise| Contract\n    Review -->|Decline| Existing\n    Review -->|Accept| Run[Run bounded verification]\n    Run --> Outcome{Declared obligations checked successfully?}\n    Outcome -->|No| EvidenceGap[Record failed, inconclusive, or cancelled with diagnostics]\n    EvidenceGap -->|Explicit retry with unchanged contract| Run\n    EvidenceGap -->|Contract or trust changes| Contract\n    EvidenceGap -->|Maintainer withdraws formal check| PlanChange\n    Outcome -->|Yes| Fresh{Recorded inputs still match?}\n    Fresh -->|No or unknown| Recheck[Retain historical result; current claim unresolved]\n    Recheck -->|Code-only change; contract and trust unchanged| Run\n    Recheck -->|Meaning or trust changes| Contract\n    Recheck -->|Maintainer withdraws formal check| PlanChange\n    Fresh -->|Yes| Pack[Attach scoped proof evidence to Proof Pack]\n    Pack --> Gates[Apply existing tests, review, and acceptance gates]"
+        }
+      ],
+      "sourceSha256": "6490e8c6042751830426304da058291b7214b5361f17fb3cbbd80a18559e64cd"
+    },
+    {
       "id": "threat-model",
       "path": "docs/security/threat-model.md",
       "title": "Threat Model",
@@ -6004,5 +6072,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "ab8d591009f5d17393d4a56445595e7526e2918a14e84761f882da394a29aadd"
+  "graphSha256": "20162bd954f87db366befe29e0e35691b56f0910e852ec3eeed05188a7e249ba"
 };
