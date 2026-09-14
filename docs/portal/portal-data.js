@@ -858,6 +858,11 @@ window.PORTAL_DATA = {
             "path": "../../docs/specs/native-app-ui-skill-extension.md"
           },
           {
+            "title": "Optional formal verification and Proof Pack evidence",
+            "summary": "Proposed opt-in formal-verification capability for AI-Forward, with Verus as the first implementation target. Defines claim-scoped evidence, explicit trust boundaries, failure and freshness semantics, and a small reproducible example without changing existing...",
+            "path": "../../docs/specs/optional-formal-verification.md"
+          },
+          {
             "title": "Owner review mechanics — decision request → numbered ruling, a heading-defined register, a citation gate and a stop-hook gate",
             "summary": "Specifies P5 of the coordination proposal (D6): the Owner seat gets a mechanism. A decision request is P1's typed seam request carrying five decision fields (options, evidence, recommendation, reversibility, blast radius) plus a deadline and a fallback,...",
             "path": "../../docs/specs/owner-review.md"
@@ -3828,6 +3833,12 @@ window.PORTAL_DATA = {
         "summary": "First live /optimize-graph run, on the prompt that asked for it. Records the plan, the planned-vs-actual ledger (GO18), and the run's headline measurement —..."
       },
       {
+        "id": "plan-optional-formal-verification-spec",
+        "type": "doc",
+        "title": "Optional formal verification: specification authoring and review",
+        "summary": "Bounded AI-Forward optimize-graph and specify execution record for producing a proposed formal-verification feature spec. Records review scope, validation,..."
+      },
+      {
         "id": "privacy-review",
         "type": "privacy-review",
         "title": "Privacy Review",
@@ -4138,6 +4149,12 @@ window.PORTAL_DATA = {
         "type": "spec",
         "title": "Native app UI skill extension — Specification",
         "summary": "Specification for extending the AI-Forward UI skills so WPF, WinUI, Avalonia and other native client applications receive the same rigorous UX/UI reasoning as..."
+      },
+      {
+        "id": "spec-optional-formal-verification",
+        "type": "spec",
+        "title": "Optional formal verification and Proof Pack evidence",
+        "summary": "Proposed opt-in formal-verification capability for AI-Forward, with Verus as the first implementation target. Defines claim-scoped evidence, explicit trust..."
       },
       {
         "id": "spec-owner-review",
@@ -7143,6 +7160,16 @@ window.PORTAL_DATA = {
         "rel": "depends-on"
       },
       {
+        "from": "plan-optional-formal-verification-spec",
+        "to": "kb-graph-and-loop-engineering",
+        "rel": "depends-on"
+      },
+      {
+        "from": "plan-optional-formal-verification-spec",
+        "to": "spec-optional-formal-verification",
+        "rel": "relates-to"
+      },
+      {
         "from": "privacy-review",
         "to": "architecture",
         "rel": "documents"
@@ -8076,6 +8103,11 @@ window.PORTAL_DATA = {
         "from": "spec-native-app-ui-skill-extension",
         "to": "kb-native-client-ui-design",
         "rel": "depends-on"
+      },
+      {
+        "from": "spec-optional-formal-verification",
+        "to": "architecture",
+        "rel": "relates-to"
       },
       {
         "from": "spec-owner-review",
