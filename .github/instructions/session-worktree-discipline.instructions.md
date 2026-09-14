@@ -90,6 +90,7 @@ individually:
 | It is **not** the current working directory | Deleting the floor you are standing on |
 | The tree is **clean** — no modified, staged or untracked files | Untracked is the dangerous one: a new file nobody has committed exists nowhere else |
 | It has **no commits absent from the integration branch** | Unmerged work is the only copy |
+| Its branch has **0 commits not on the repository's default branch** (`git rev-list --count <default>..<branch>`), and the count is printed | A *pushed* branch passes the row above — every commit exists on its remote-tracking ref — so a frozen tree 21 commits ahead of `main` was labelled "merged" and offered for removal (DC-142). "Merged" means merged into the default branch, never "exists somewhere else"; `--include-unmerged` is the named escape for an abandoned branch |
 | Its branch is **not checked out anywhere else** | Someone else is using it |
 | Its session is **ended or stale** | A live session's tree is in use |
 
