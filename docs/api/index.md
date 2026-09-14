@@ -9,7 +9,7 @@ links:
   - { to: architecture, rel: documents }
 review-by: "2027-03-03"
 summary: >-
-  Generated API reference for the pack's public surface — the deployed script bundle. 339 public functions across 22 modules, 44% carrying a docstring.
+  Generated API reference for the pack's public surface — the deployed script bundle. 363 public functions across 26 modules, 46% carrying a docstring.
 ---
 
 # API reference — the deployed script bundle
@@ -24,10 +24,11 @@ with no docstring is listed as a **coverage gap** rather than described from gue
 | Module | Public fns | Documented | CLI | Summary |
 |---|---:|---:|---:|---|
 | [`apply-learnings.py`](apply-learnings.md) | 16 | 9 | 2 | apply-learnings.py - the AI-Forward federation / push mechanism. |
-| [`audit-log.py`](audit-log.md) | 38 | 21 | 13 | audit-log.py — the AI-Forward Pack audit & change log bundle (audit-and-change-log.md). |
+| [`audit-log.py`](audit-log.md) | 39 | 22 | 13 | audit-log.py — the AI-Forward Pack audit & change log bundle (audit-and-change-log.md). |
 | [`bounded_process.py`](bounded_process.md) | 1 | 1 | — | Bounded subprocess execution for pack-owned tool invocations. |
+| [`conductor-join.py`](conductor-join.md) | 4 | 2 | — | conductor-join.py - the join, as a script: every step gated by its exit code, none by a |
 | [`context-budget.py`](context-budget.md) | 21 | 12 | 6 | context-budget.py — the always-on context budget, measured (AI-Forward Pack). |
-| [`coord-core.py`](coord-core.md) | 65 | 42 | 24 | coord-core.py - agent coordination, Phase 1 walking skeleton. |
+| [`coord-core.py`](coord-core.md) | 67 | 44 | 24 | coord-core.py - agent coordination, Phase 1 walking skeleton. |
 | [`coord_ids.py`](coord_ids.md) | 2 | 2 | — | coord_ids.py - collision-proof identifiers, in ONE place. |
 | [`design-lint.py`](design-lint.md) | 3 | 2 | — | design-lint.py — token-reference linter for design-language docs (AI-Forward). |
 | [`docs-graph.py`](docs-graph.md) | 37 | 3 | 10 | docs-graph.py — the AI-Forward Pack docs script bundle (knowledge-visualization.md V18). |
@@ -40,11 +41,14 @@ with no docstring is listed as a **coverage gap** rather than described from gue
 | [`pack-doctor.py`](pack-doctor.md) | 12 | 7 | — | pack-doctor.py — AI-Forward install-health check (deployable; runs in a TARGET repo). |
 | [`prompt-log.py`](prompt-log.md) | 16 | 5 | 8 | prompt-log.py — the fast prompt-reuse lens over the project's audit log. |
 | [`repo_identity.py`](repo_identity.md) | 1 | 1 | — | repo_identity.py - the canonical project name, in ONE place (class PACK-P). |
+| [`run-verify-gates.py`](run-verify-gates.md) | 5 | 3 | — | run-verify-gates.py - every verify-*.py gate, one exit status, no pipe. |
 | [`scrub.py`](scrub.md) | 2 | 2 | — | scrub.py — first-pass PII/secret redaction for Markdown (deployable). |
-| [`session-profile.py`](session-profile.md) | 32 | 12 | 4 | session-profile.py — measure how agent sessions actually ran, across harnesses and models. |
+| [`session-profile.py`](session-profile.md) | 37 | 17 | 4 | session-profile.py — measure how agent sessions actually ran, across harnesses and models. |
 | [`ui-craft-gate.py`](ui-craft-gate.md) | 6 | 4 | — | ui-craft-gate.py - the UI craft gate for AI-Forward. |
+| [`verify-no-conflict-markers.py`](verify-no-conflict-markers.md) | 4 | 2 | — | verify-no-conflict-markers.py - a conflict marker must never reach a commit. |
+| [`verify-no-new-console-launches.py`](verify-no-new-console-launches.md) | 3 | 1 | — | verify-no-new-console-launches.py - no code launches a child with CREATE_NEW_CONSOLE. |
 | [`visual-assets-setup.py`](visual-assets-setup.md) | 12 | 5 | — | visual-assets-setup.py - wire up a generation backend for UI visual assets (AI-Forward). |
 | [`xaml-token-lint.py`](xaml-token-lint.md) | 9 | 0 | — | xaml-token-lint.py — first-slice token linter for XAML/native UI markup. |
 
-**Total** — 339 public functions across 22 modules, **150 documented (44%)**.
+**Total** — 363 public functions across 26 modules, **166 documented (46%)**.
 

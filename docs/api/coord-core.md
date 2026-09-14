@@ -75,7 +75,9 @@ Design: docs/design/coord-core-phase1.md
 | `--fix` | push, the cheapest second copy |
 | `--force` | install from a linked worktree anyway. It overwrites the repository's shared registration with a path that dies with this tree - the recorded exception, never the default |
 | `--from-role` | _(no help text — coverage gap)_ |
+| `--include-unmerged` | cleanup: also remove a clean tree whose branch has commits NOT on the default branch (a pushed but unmerged branch is HELD by default - DC-142). The count is printed either way. |
 | `--json` | _(no help text — coverage gap)_ |
+| `--long-edit` | the recorded reason for a --ttl above the cap; it is written into the claim event so a queued peer can read why it waits |
 | `--path` | _(no help text — coverage gap)_ |
 | `--reason` | _(no help text — coverage gap)_ |
 | `--register` | _(no help text — coverage gap)_ |
@@ -211,6 +213,28 @@ Commits reachable from HEAD and from NO other ref. Returns (count, reason_code).
 that exists nowhere else, because --all implicitly includes HEAD -- so the expression
 reduces to `HEAD --not HEAD` and reports SAFE for the one case the guard exists to
 catch. `--exclude=<branch> --all` fails identically, because it does not exclude HEAD.
+
+### `default_branch(repo)`
+
+The repository's DEFAULT branch, resolved rather than assumed. Returns (name, None)
+or (None, reason_code).
+
+The ladder: `refs/remotes/origin/HEAD` (what a clone records) -> a local branch of that
+name -> the remote-tracking ref of that name -> `main` -> `master`. Nothing is guessed:
+a repository that resolves none of these reports COORD-NO-DEFAULT-BRANCH and the caller
+HOLDS, because "merged" cannot be established against a branch nobody named (WT7).
+
+### `commits_ahead_of_default(repo, branch)`
+
+`git rev-list --count <default>..<branch>` -- the ONLY meaning of "merged" this tool
+uses. Returns (count, default_name, None) or (None, default_name, reason_code).
+
+DC-142 (recurrence 2, measured 2026-09-13): the old label was derived from
+unique_commits(), whose question is "does every commit exist SOMEWHERE else?" A pushed
+branch answers yes -- every commit is on its remote-tracking ref -- so a frozen tree 21
+commits ahead of main was printed as `clean, merged, unheld` and would have been deleted
+by --remove. "Merged" here means merged into the DEFAULT branch, and the count is printed
+so a reader never has to take the word on trust (IO2).
 
 ### `staged_paths(repo)`
 
@@ -495,7 +519,7 @@ mention it again.
 `attempts` is [(record, err_text_or_None)]; `after` is the post-prune inventory.
 Returns (removed_paths, refused_pairs, orphaned_pairs).
 
-### `worktree_safety(record, primary, cwd, live_keys, index)`
+### `worktree_safety(record, primary, cwd, live_keys, index, include_unmerged=…)`
 
 WT7, in order, fail-safe. Returns (safe, reason).
 
@@ -503,7 +527,7 @@ Every condition is a HARD STOP that reports rather than removes. A cleanup that 
 on a heuristic will eventually delete the tree that mattered, and that single event ends
 the adoption of the whole practice.
 
-### `cmd_worktree(root, repo, action, cwd, now, session=…, agent=…, branch=…, base=…, remove=…, only=…)`
+### `cmd_worktree(root, repo, action, cwd, now, session=…, agent=…, branch=…, base=…, remove=…, only=…, include_unmerged=…)`
 
 **Coverage gap** — no docstring in the source.
 
@@ -606,6 +630,6 @@ follows by printing the settings entry rather than writing it.
 
 ## Coverage
 
-- Public functions: **65** · documented: **42** (**65%**)
+- Public functions: **67** · documented: **44** (**66%**)
 - Undocumented (recorded, not invented): `make_event`, `check`, `read_decisions`, `request_log_path`, `read_request_events`, `fold_requests`, `regen_command`, `record_regen_owed`, `regen_owed`, `clear_regen_owed`, `detect_harness`, `cmd_precommit`, `cmd_guard`, `session_contract_path`, `owner_rows_for_path`, `cmd_session_list`, `cmd_collaborate`, `cmd_request`, `cmd_worktree`, `cmd_session`, `cmd_metrics`, `cmd_install`, `cmd_doctor`
 

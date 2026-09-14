@@ -34,6 +34,14 @@ Sources (all local, all read-only):
                        ~/.copilot/session-state/<id>/events.jsonl   the full event stream
                        ~/.copilot/settings.json           model / contextTier / effortLevel
   Claude Code          ~/.claude/projects/<slug>/<session>.jsonl    the transcript
+                       ~/.claude/projects/<slug>/<session>/subagents/agent-*.jsonl (+ .meta.json)
+                                                          every sub-agent: model, requests, tokens,
+                                                          tool calls and waits, context, span, resumes
+
+Cost is reported in TOKENS and REQUESTS (the units a subscription-bound operator can act on),
+`_meta.quota` where the harness carries it, and dollars ONLY as an "if API-billed" estimate at
+first-party list rates that are printed beside every figure (LIST_RATES, with the date they
+were cached) - never as a bill.
 
 A repo is selected by path (`--repo <path>`, repeatable). Copilot sessions match on cwd or the
 `owner/name` remote; Claude Code sessions match on the project slug of the repo path and of each
@@ -77,6 +85,25 @@ Python 3.8+, stdlib only. Windows-safe (utf-8 stdout, read-only SQLite URI).
 | `--session` | restrict to session id(s) or prefixes |
 
 ## Functions
+
+### `est_usd(model, uncached_in, cache_read, cache_write, output)`
+
+USD at list rates for one usage row, or None when the model has no rate row.
+
+### `est_usd_rows(rows)`
+
+(usd, unpriced_requests) over usage rows that carry model/in/cr/cw/out.
+
+### `gate_behind_pipe(cmd)`
+
+True when a gate INVOCATION is piped straight into a formatter with no pipefail on the
+line. The invocation is the last command of the segment before the pipe (after any
+`&&`, `;` or `(`).
+
+### `shell_shape_counts(commands, results_by_id)`
+
+SP-24 / SP-25 over [(tool_use_id, command)] and {tool_use_id: result_text}. Returns
+(piped_gate_lines, also_commit, failed_heredocs, evidence_lines).
 
 ### `late_addition_findings(turns)`
 
@@ -220,6 +247,12 @@ One Copilot session -> normalized turns + session-level facts.
 
 **Coverage gap** — no docstring in the source.
 
+### `read_subagents(session_dir)`
+
+Every `subagents/agent-*.jsonl` (+ `.meta.json`) under the session's directory, one
+node row each. This is where 86% of a measured programme's tokens lived while the main
+transcript's `isSidechain` records held none of them (F-18). Returns (nodes, store_note).
+
 ### `profile_claude(sess)`
 
 **Coverage gap** — no docstring in the source.
@@ -264,6 +297,6 @@ Aggregate per (family, harness): the tuning view. Drift indicators are counts pe
 
 ## Coverage
 
-- Public functions: **32** · documented: **12** (**38%**)
+- Public functions: **37** · documented: **17** (**46%**)
 - Undocumented (recorded, not invented): `parse_ts`, `iso`, `pct`, `est_tokens`, `model_family`, `norm_path`, `git`, `in_repo`, `copilot_home`, `copilot_settings`, `copilot_sessions`, `claude_home`, `claude_sessions`, `profile_claude`, `render_markdown`, `cmd_discover`, `profile_id`, `cmd_profile`, `cmd_compare`, `cmd_fixes`
 

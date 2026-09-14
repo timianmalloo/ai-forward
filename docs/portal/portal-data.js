@@ -5,7 +5,7 @@ window.PORTAL_DATA = {
       "personas": 23,
       "knowledge": 38,
       "templates": 28,
-      "scripts": 23
+      "scripts": 27
     },
     "whatIs": "AI-Forward is a committed Markdown methodology pack that installs into a repo so Claude Code and GitHub Copilot direct work with a shared reasoning spine, adversarial persona review, and a library of workflow skills - nothing runs as a service; everything is versioned files and stdlib scripts.",
     "skillCount": 27,
@@ -1575,7 +1575,7 @@ window.PORTAL_DATA = {
     ],
     "classes": "Three defect classes came out of it and are recorded with controls: PACK-R, a fixed prefix sized by what fits rather than by what each call needs; PACK-S, a fan-out rediscovering per-run what was knowable once; and PACK-T, a generator prepending metadata over a source that already had it — which had been shipping two stacked frontmatter blocks in one instruction file, of which any reader parses only the first.",
     "live": {
-      "baseline": 46916,
+      "baseline": 47567,
       "tolerancePct": 2,
       "backstop": 60000,
       "derivation": {
@@ -1586,7 +1586,7 @@ window.PORTAL_DATA = {
       "tiers": {
         "always": {
           "docs": 13,
-          "tokens": 46916
+          "tokens": 47567
         },
         "reference": {
           "docs": 2,
@@ -1594,14 +1594,14 @@ window.PORTAL_DATA = {
         },
         "skill": {
           "docs": 18,
-          "tokens": 81502
+          "tokens": 81854
         },
         "glob": {
           "docs": 6,
           "tokens": 25898
         }
       },
-      "corpusTokens": 178529,
+      "corpusTokens": 179532,
       "alwaysPct": 26
     }
   },
@@ -1729,6 +1729,12 @@ window.PORTAL_DATA = {
         "summary": "Bounded subprocess execution for pack-owned tool invocations."
       },
       {
+        "id": "api-conductor-join",
+        "type": "api",
+        "title": "API — conductor-join.py",
+        "summary": "conductor-join.py - the join, as a script: every step gated by its exit code, none by a"
+      },
+      {
         "id": "api-context-budget",
         "type": "api",
         "title": "API — context-budget.py",
@@ -1780,7 +1786,7 @@ window.PORTAL_DATA = {
         "id": "api-index",
         "type": "api",
         "title": "API reference — the deployed script bundle",
-        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 339 public functions across 22 modules, 44% carrying a docstring."
+        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 363 public functions across 26 modules, 46% carrying a docstring."
       },
       {
         "id": "api-marker-lint",
@@ -1819,6 +1825,12 @@ window.PORTAL_DATA = {
         "summary": "repo_identity.py - the canonical project name, in ONE place (class PACK-P)."
       },
       {
+        "id": "api-run-verify-gates",
+        "type": "api",
+        "title": "API — run-verify-gates.py",
+        "summary": "run-verify-gates.py - every verify-*.py gate, one exit status, no pipe."
+      },
+      {
         "id": "api-scrub",
         "type": "api",
         "title": "API — scrub.py",
@@ -1835,6 +1847,18 @@ window.PORTAL_DATA = {
         "type": "api",
         "title": "API — ui-craft-gate.py",
         "summary": "ui-craft-gate.py - the UI craft gate for AI-Forward."
+      },
+      {
+        "id": "api-verify-no-conflict-markers",
+        "type": "api",
+        "title": "API — verify-no-conflict-markers.py",
+        "summary": "verify-no-conflict-markers.py - a conflict marker must never reach a commit."
+      },
+      {
+        "id": "api-verify-no-new-console-launches",
+        "type": "api",
+        "title": "API — verify-no-new-console-launches.py",
+        "summary": "verify-no-new-console-launches.py - no code launches a child with CREATE_NEW_CONSOLE."
       },
       {
         "id": "api-visual-assets-setup",
@@ -2897,6 +2921,11 @@ window.PORTAL_DATA = {
         "rel": "refines"
       },
       {
+        "from": "api-conductor-join",
+        "to": "api-index",
+        "rel": "refines"
+      },
+      {
         "from": "api-context-budget",
         "to": "api-index",
         "rel": "refines"
@@ -2972,6 +3001,11 @@ window.PORTAL_DATA = {
         "rel": "refines"
       },
       {
+        "from": "api-run-verify-gates",
+        "to": "api-index",
+        "rel": "refines"
+      },
+      {
         "from": "api-scrub",
         "to": "api-index",
         "rel": "refines"
@@ -2983,6 +3017,16 @@ window.PORTAL_DATA = {
       },
       {
         "from": "api-ui-craft-gate",
+        "to": "api-index",
+        "rel": "refines"
+      },
+      {
+        "from": "api-verify-no-conflict-markers",
+        "to": "api-index",
+        "rel": "refines"
+      },
+      {
+        "from": "api-verify-no-new-console-launches",
         "to": "api-index",
         "rel": "refines"
       },

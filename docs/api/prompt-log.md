@@ -65,6 +65,7 @@ either schema. Stdlib only; no third-party import.
 | Option | Help |
 |---|---|
 | `--copy` | also copy to the clipboard |
+| `--file` | read the prompt text from a UTF-8 file (the safe path for non-ASCII under a Windows console) |
 | `--json` | emit JSON |
 | `--label` | a short label / shortname (default: derived from the first line) |
 | `--limit` | max entries to show (0 = all) |

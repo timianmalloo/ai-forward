@@ -82,6 +82,7 @@ Conventions
 | `--audit-ref` | _(no help text — coverage gap)_ |
 | `--change` | link to a change-log id (cl-NNNN) |
 | `--datetime` | _(no help text — coverage gap)_ |
+| `--done-when-file` | read --done-when from a UTF-8 file |
 | `--done-when` | the terminal condition (front matter CT19); the PACK-O presence signal /dream mines (AL5b) |
 | `--fan-out` | the declared fan-out cap: most sub-agents the turn may convene (CT19; 0 at T0, 2 at T1) |
 | `--field` | print just this field (e.g. prompt) |
@@ -90,7 +91,9 @@ Conventions
 | `--gate` | exit non-zero when a substantive turn in scope recorded no goal-state/tier or exceeded its declared fan-out cap |
 | `--git-before` | HEAD sha captured before the work began |
 | `--git` | capture current git context |
+| `--goal-file` | read --goal from a UTF-8 file (or - for stdin); argv through a Windows console is not UTF-8 (pack finding #1) |
 | `--goal` | the turn's goal (front matter CT19) |
+| `--harness` | the session-start hook's form: a harness-session (and agent) marker that an append uses only when it has no marker of its own, recorded as duration_source=session-start-hook |
 | `--id` | _(no help text — coverage gap)_ |
 | `--json` | _(no help text — coverage gap)_ |
 | `--keyword` | _(no help text — coverage gap)_ |
@@ -201,14 +204,23 @@ that has been quiet because the work was clean.
 
 A persona with no history always gets its first run; the rule gates repeats, not entry.
 
-### `record_start(root, session, stamp=…)`
+### `record_start(root, session, stamp=…, skill=…)`
 
 **Coverage gap** — no docstring in the source.
 
-### `consume_start(root, session)`
+### `record_harness_start(root, harness_id, stamp=…)`
 
-Return the recorded start for this session and clear it, so one marker measures one
-run. Returns None when there is none -- which degrades to no duration (IO8).
+The session-start hook's marker (DC-190): keyed to the harness session (and agent),
+because the hook cannot know the session id a skill will close under.
+
+### `consume_start(root, session, skill=…)`
+
+Return (stamp, source) for this session and clear the marker, so one marker
+measures one run. The skill-keyed marker first, then the bare session marker, then -
+only when neither exists - the newest harness marker the session-start hook wrote,
+reported as `session-start-hook` so a reader knows the instant was the session's
+start rather than grounding. Returns (None, None) when there is none, which degrades
+to no duration (IO8).
 
 ### `audit_dir(root)`
 
@@ -373,6 +385,6 @@ Ingest a session-export JSON array of turns into the audit log (build on session
 
 ## Coverage
 
-- Public functions: **38** · documented: **21** (**55%**)
+- Public functions: **39** · documented: **22** (**56%**)
 - Undocumented (recorded, not invented): `now_iso`, `record_start`, `audit_dir`, `log_path`, `read_log`, `append_log`, `git`, `git_context`, `commits_between`, `find_template`, `cmd_append`, `cmd_change`, `cmd_list`, `cmd_search`, `cmd_get`, `cmd_render`, `cmd_git_context`
 

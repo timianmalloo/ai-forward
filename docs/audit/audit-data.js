@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-10T21:33:13Z",
+  "generated": "2026-09-14T14:40:03Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3939,6 +3939,51 @@ window.AUDIT_DATA = {
       "done_when": "base_commit and classify_removals landed with --path scoping; all three classes observed red first and registered as WT-A/WT-B/WT-C; revision 69; verify-bundle BUNDLE CONSISTENT; pushed and CI observed green",
       "tier": "T2",
       "fan_out": 0
+    },
+    {
+      "id": "al-01M2G5RQEHSF0P13V30PDBW1SQ",
+      "shortname": "extendaibundle-addendum-cd",
+      "datetime": "2026-09-14T14:40:03Z",
+      "session": "pack-cd",
+      "prompt": "Run the extendaibundle skill: the Addenda C/D programme's findings into the pack — the join as a script, the gate runner, the conflict-marker gate first, the console-launch gate, the cleanup label by rev-list, the lease cap, the audit-marker hook, the profiler's sub-agent reader and notification turns, cost as tokens/quota for subscription-bound operators, briefs that quote ADR tuples, oracle strings quoted from DESIGN.md, the spike protocol's recorded-run oracle check; from docs/notes/pack-findings-addendum-cd.md and docs/profiles/addendum-cd.md in the consuming repo C:\\projects\\ai-de. Rows a–h: (a) coord-core.py cleanup label = rev-list --count <default>..<branch> == 0 with the count printed (DC-142), claim refuses a register-class path and caps --ttl at 900 s unless --long-edit (DC-163); (b) audit-log.py / prompt-log.py UTF-8 by the scripts, --file for text arguments, the marker keyed by session and skill, prompt-log add never consumes, selfcheck flags done_when without tier; (c) session-profile.py reads subagents/agent-*.jsonl + .meta.json (F-18), task-notification records are continuations (F-19), tokens/requests primary with _meta.quota and dollars only if API-billed, SP-23/24/25/26; (d) new run-verify-gates.py, conductor-join.py, verify-no-conflict-markers.py (first in CHECKS), verify-no-new-console-launches.py; (e) the managed block / knowledge docs: a gate's status never behind a pipe, a multi-line program is a file then a run, nodes never call EnterWorktree, a resume carries start, the brief's start line first, claim for the minutes of the edit, placeholders never the register, a per-node context ceiling; (f) prepare-for-coordination rows quote the ADR line, ui-design Stage 5 oracle strings quoted from DESIGN.md, the join is the script, the spike protocol's recorded-run oracle check, one recount per join; (g) the mockup audit asserts a non-zero page box, a SessionStart hook that calls audit-log.py start; (h) INSTALL.md revision 70 with a changes entry per row. Red-first where a control can be red; pack tests and consistency green; commits in units; merge origin/main if it moved (never rebase); push pack/addendum-cd-findings and report. Do not touch the consuming repo.",
+      "summary": "Revision 70: the Addenda C/D findings landed as controls. (a) coord-core.py — \"merged\" is `rev-list --count <default>..<branch> == 0` with the count printed, a pushed-but-open tree HELD (DC-142; observed red: a tree 3 ahead reported WOULD remove); `claim` refuses a register-class path and caps --ttl at 900 s unless --long-edit (DC-163); 9 tests. (b) audit-log.py/prompt-log.py — UTF-8 set by the scripts, --file forms, the marker keyed by session and skill, kind:prompt never consumes (observed red: \"â†’\" mojibake, the marker eaten); selfcheck's tier gap was already present (pinned by test_ctx_controls); 6 tests. (c) session-profile.py — the subagents store read (168 agents / 10,821 requests on the real conductor session in 1.4 s; SP-23 found the 8,143 s EnterWorktree wait exactly), task-notifications are continuations (89 -> 33 turns), tokens/requests primary with quota and dollars only \"if API-billed\" at printed list rates (cached 2026-06-24, verified from the claude-api reference), SP-23/24/25/26; the script's own append passes --started; 12 tests. (d) run-verify-gates.py, conductor-join.py, verify-no-conflict-markers.py, verify-no-new-console-launches.py — generic, each --self-test proven red by mutation; scripts 23 -> 27. (e) CT27 shell shapes, CT19 context ceiling, AL4a marker keying, WT7 default-branch row, the brief and resume rules; the managed block re-pasted. (f) prepare-for-coordination quotes the ADR line; ui-design Stage 3 page box and Stage 5 oracle strings; the join is conductor-join.py only, one recount per join; the spike protocol's recorded-run oracle check. (g) session-start.py on SessionStart + SubagentStart with a harness slot audit-log consumes once (7 tests); mockup-harness audit() measures the page box first (node test, red first: \"6 contrast fail\" over a 0x0 box). (h) INSTALL.md revision 70, bundle 2026.09.14.1, six changes entries. check-consistency clean; verify-bundle: see the report.",
+      "kind": "skill",
+      "skill": "extendaibundle",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "pack/scripts/run-verify-gates.py",
+        "pack/scripts/conductor-join.py",
+        "pack/scripts/verify-no-conflict-markers.py",
+        "pack/scripts/verify-no-new-console-launches.py",
+        "pack/adapters/hooks/session-start.py",
+        "pack/scripts/coord-core.py",
+        "pack/scripts/audit-log.py",
+        "pack/scripts/prompt-log.py",
+        "pack/scripts/session-profile.py",
+        "pack/templates/mockup-harness.template.html",
+        "pack/knowledge/communication-and-task-discipline.md",
+        "pack/adapters/INSTALL.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Land the Addenda C/D findings (rows a-h) into the pack source as controls, revision 70, every test and self-test green, pushed on pack/addendum-cd-findings",
+      "done_when": "Each row landed with a red-to-green self-test or left with a stated reason; INSTALL.md at revision 70 with a changes entry per row; check-consistency and verify-bundle green; audit entry written; commits pushed to pack/addendum-cd-findings",
+      "tier": "T2",
+      "fan_out": 2,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-14T13:56:33Z",
+      "duration_seconds": 2610.0,
+      "git": {
+        "sha": "dd83f075b9e8e9edd990d7aa2be0805cbe24f82d",
+        "short": "dd83f075b",
+        "branch": "pack/addendum-cd-findings",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -5028,6 +5073,31 @@ window.AUDIT_DATA = {
         "branch": "session-profiler",
         "pushed": null,
         "commits": []
+      }
+    },
+    {
+      "id": "cl-01M2G5RQMN74AJ6V8WHSGSX99Q",
+      "datetime": "2026-09-14T14:40:03Z",
+      "session": "pack-cd",
+      "kind": "decision",
+      "skill": "extendaibundle",
+      "title": "Revision 70: the Addenda C/D findings as pack controls",
+      "prompt": "Run the extendaibundle skill: the Addenda C/D programme's findings into the pack — the join as a script, the gate runner, the conflict-marker gate first, the console-launch gate, the cleanup label by rev-list, the lease cap, the audit-marker hook, the profiler's sub-agent reader and notification turns, cost as tokens/quota for subscription-bound operators, briefs that quote ADR tuples, oracle strings quoted from DESIGN.md, the spike protocol's recorded-run oracle check; from docs/notes/pack-findings-addendum-cd.md and docs/profiles/addendum-cd.md in the consuming repo C:\\projects\\ai-de. Rows a–h: (a) coord-core.py cleanup label = rev-list --count <default>..<branch> == 0 with the count printed (DC-142), claim refuses a register-class path and caps --ttl at 900 s unless --long-edit (DC-163); (b) audit-log.py / prompt-log.py UTF-8 by the scripts, --file for text arguments, the marker keyed by session and skill, prompt-log add never consumes, selfcheck flags done_when without tier; (c) session-profile.py reads subagents/agent-*.jsonl + .meta.json (F-18), task-notification records are continuations (F-19), tokens/requests primary with _meta.quota and dollars only if API-billed, SP-23/24/25/26; (d) new run-verify-gates.py, conductor-join.py, verify-no-conflict-markers.py (first in CHECKS), verify-no-new-console-launches.py; (e) the managed block / knowledge docs: a gate's status never behind a pipe, a multi-line program is a file then a run, nodes never call EnterWorktree, a resume carries start, the brief's start line first, claim for the minutes of the edit, placeholders never the register, a per-node context ceiling; (f) prepare-for-coordination rows quote the ADR line, ui-design Stage 5 oracle strings quoted from DESIGN.md, the join is the script, the spike protocol's recorded-run oracle check, one recount per join; (g) the mockup audit asserts a non-zero page box, a SessionStart hook that calls audit-log.py start; (h) INSTALL.md revision 70 with a changes entry per row. Red-first where a control can be red; pack tests and consistency green; commits in units; merge origin/main if it moved (never rebase); push pack/addendum-cd-findings and report. Do not touch the consuming repo.",
+      "summary": "Revision 70: the Addenda C/D findings landed as controls. (a) coord-core.py — \"merged\" is `rev-list --count <default>..<branch> == 0` with the count printed, a pushed-but-open tree HELD (DC-142; observed red: a tree 3 ahead reported WOULD remove); `claim` refuses a register-class path and caps --ttl at 900 s unless --long-edit (DC-163); 9 tests. (b) audit-log.py/prompt-log.py — UTF-8 set by the scripts, --file forms, the marker keyed by session and skill, kind:prompt never consumes (observed red: \"â†’\" mojibake, the marker eaten); selfcheck's tier gap was already present (pinned by test_ctx_controls); 6 tests. (c) session-profile.py — the subagents store read (168 agents / 10,821 requests on the real conductor session in 1.4 s; SP-23 found the 8,143 s EnterWorktree wait exactly), task-notifications are continuations (89 -> 33 turns), tokens/requests primary with quota and dollars only \"if API-billed\" at printed list rates (cached 2026-06-24, verified from the claude-api reference), SP-23/24/25/26; the script's own append passes --started; 12 tests. (d) run-verify-gates.py, conductor-join.py, verify-no-conflict-markers.py, verify-no-new-console-launches.py — generic, each --self-test proven red by mutation; scripts 23 -> 27. (e) CT27 shell shapes, CT19 context ceiling, AL4a marker keying, WT7 default-branch row, the brief and resume rules; the managed block re-pasted. (f) prepare-for-coordination quotes the ADR line; ui-design Stage 3 page box and Stage 5 oracle strings; the join is conductor-join.py only, one recount per join; the spike protocol's recorded-run oracle check. (g) session-start.py on SessionStart + SubagentStart with a harness slot audit-log consumes once (7 tests); mockup-harness audit() measures the page box first (node test, red first: \"6 contrast fail\" over a 0x0 box). (h) INSTALL.md revision 70, bundle 2026.09.14.1, six changes entries. check-consistency clean; verify-bundle: see the report.",
+      "rationale": "Seventeen measured findings from one conductor programme, each converted into a control that fails on recurrence (a script self-test, a pytest, a node test) or, where a rule cannot be red, a profiler counter that measures it; the pack ships the tools it measured itself needing",
+      "artifacts": [
+        "pack/adapters/INSTALL.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "6275e10",
+        "after": "dd83f075b9e8e9edd990d7aa2be0805cbe24f82d",
+        "branch": "pack/addendum-cd-findings",
+        "pushed": null,
+        "commits": [
+          "dd83f07 docs(pack): CT27 shell shapes, the brief and join rules, ADR quoting, oracle strings, the recorded-run oracle check",
+          "b40fbe4 feat(scripts): the Addenda C/D controls â€” join as a script, gate runner, marker gates, cleanup by rev-list, the lease cap, the profiler's node reader, the session-start hook"
+        ]
       }
     }
   ]

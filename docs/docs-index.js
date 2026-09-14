@@ -672,7 +672,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ee80fc6a26b0e9ddcff9bfeee25a9e5ef4fdc34427d3eacb457ad058964e0aca"
+      "sourceSha256": "17947ea3d32bec6f2f85fc20a347d64a0ed4047511946dde2aef8e39051b178d"
     },
     {
       "id": "api-bounded_process",
@@ -698,6 +698,31 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "b6e7b8152a3e6fccbaca2e5109140c762632ffd18b379de93a1da1f9ccb80041"
+    },
+    {
+      "id": "api-conductor-join",
+      "path": "docs/api/conductor-join.md",
+      "title": "API — conductor-join.py",
+      "type": "api",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-03-03",
+      "reviewSuggested": [],
+      "summary": "conductor-join.py - the join, as a script: every step gated by its exit code, none by a",
+      "tags": [
+        "api",
+        "scripts",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "api-index",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "8644fd61e0c6ec5f0355a65965b565345f5d3e9989cec789b49e582f61da7d7e"
     },
     {
       "id": "api-context-budget",
@@ -747,7 +772,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "5793160aa5097cf636609c4902873d9de6895a1da5b0777ba141b2c498da82a3"
+      "sourceSha256": "31ace1b8334e9e21ed56fc2674f41c7165079c2a5a7116ae879dbd1cab0ea41e"
     },
     {
       "id": "api-coord_ids",
@@ -909,7 +934,7 @@ window.DOCS_INDEX = {
       "phase": "",
       "reviewBy": "2027-03-03",
       "reviewSuggested": [],
-      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 339 public functions across 22 modules, 44% carrying a docstring.",
+      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 363 public functions across 26 modules, 46% carrying a docstring.",
       "tags": [
         "api",
         "scripts",
@@ -923,7 +948,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "aa69e50911f2bc90886d6a4150e90c6c6e8d8edd243805c2a335792262df1be9"
+      "sourceSha256": "055294200fbc85936e7e717ecfe8ace6c0f98296fef7b4bbd4cd5a254d1d8515"
     },
     {
       "id": "api-marker-lint",
@@ -1048,7 +1073,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7a3945bec673080093ddb6f066747163011fb0470d013e924a8290b3137d9c49"
+      "sourceSha256": "1052af8654869435bf27079cbc18f49f5e0ea18c66269284e9ee6bb14298370d"
     },
     {
       "id": "api-repo_identity",
@@ -1074,6 +1099,31 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "1d6e59221f6b766c862e4b3bbbf510ef2898abc2f7652656f3bcdc4780285920"
+    },
+    {
+      "id": "api-run-verify-gates",
+      "path": "docs/api/run-verify-gates.md",
+      "title": "API — run-verify-gates.py",
+      "type": "api",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-03-03",
+      "reviewSuggested": [],
+      "summary": "run-verify-gates.py - every verify-*.py gate, one exit status, no pipe.",
+      "tags": [
+        "api",
+        "scripts",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "api-index",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "c21d8563f065fe5282e269441969b9e8c9c5445bee46e9cb31323e26fa4cb999"
     },
     {
       "id": "api-scrub",
@@ -1123,7 +1173,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "5d9d6e41f5c5df06cf2eb5d9afecc8a586da5b4e262d3f670c6a47305cc00c59"
+      "sourceSha256": "00eba82a5d78f607dad712a181abd45a048a6b89012b91fe6967a713d5996004"
     },
     {
       "id": "api-ui-craft-gate",
@@ -1149,6 +1199,56 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "26d846711c00ed3319be55c59bccc6e294feaae43a30d68b297b40cf201c0326"
+    },
+    {
+      "id": "api-verify-no-conflict-markers",
+      "path": "docs/api/verify-no-conflict-markers.md",
+      "title": "API — verify-no-conflict-markers.py",
+      "type": "api",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-03-03",
+      "reviewSuggested": [],
+      "summary": "verify-no-conflict-markers.py - a conflict marker must never reach a commit.",
+      "tags": [
+        "api",
+        "scripts",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "api-index",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "a99d621c2bfeecb72a8899a4cd0c869f2b59210be6c8eae5a0f7893047bc5039"
+    },
+    {
+      "id": "api-verify-no-new-console-launches",
+      "path": "docs/api/verify-no-new-console-launches.md",
+      "title": "API — verify-no-new-console-launches.py",
+      "type": "api",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-03-03",
+      "reviewSuggested": [],
+      "summary": "verify-no-new-console-launches.py - no code launches a child with CREATE_NEW_CONSOLE.",
+      "tags": [
+        "api",
+        "scripts",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "api-index",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "fb5b635cad98b0d08669bad368cf223e3ff81df86c7cbb13bd29443f06f6fe3b"
     },
     {
       "id": "api-visual-assets-setup",
@@ -5904,5 +6004,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "5edaba7ee23f484ed76cb48c9a8fa3e6f34a7c1156db2305d22cd4cd7641740a"
+  "graphSha256": "ab8d591009f5d17393d4a56445595e7526e2918a14e84761f882da394a29aadd"
 };
