@@ -78,7 +78,8 @@ IMPORT_LINE = "@AGENTS.md"
 # counts, so it exits 0 for a re-included path and inverts the answer (measured).
 GITIGNORE_LINES = ["*.jsonl.lock", "spikes/", "docs/audit/.run-starts.json",
                    "docs/audit/.run-starts.json.tmp",
-                   ".agents/*", "!.agents/artifacts.yml"]
+                   ".agents/*", "!.agents/artifacts.yml",
+                   "!.agents/skills*", "!.agents/hooks.json", "!.agents/rules*"]
 
 # A .gitignore is LAST-MATCH-WINS, so a blanket appended below an existing rule silently
 # reverses it. Measured 2026-09-09 in a consuming repo: line 495 recorded "spikes/ is NOT
@@ -436,6 +437,8 @@ class Applier(object):
                                os.path.join(self.target, ".claude", "skills", name, rel_in_skill), text)
                     self.place("skills", rel_skill,
                                os.path.join(self.target, ".grok", "skills", name, rel_in_skill), text)
+                    self.place("skills", rel_skill,
+                               os.path.join(self.target, ".agents", "skills", name, rel_in_skill), text)
             prompt = os.path.join(pdir, name + ".prompt.md")
             if os.path.isfile(prompt):
                 self.place("skills", "adapters/copilot/prompts/{0}.prompt.md".format(name),
@@ -486,9 +489,18 @@ class Applier(object):
         self.place("hooks", "adapters/hooks/grok.ai-forward-hooks.json",
                    os.path.join(self.target, ".grok", "hooks", "ai-forward.json"),
                    read(os.path.join(hooks, "grok.ai-forward-hooks.json")))
+        self.place("hooks", "adapters/hooks/agy.ai-forward-hooks.json",
+                   os.path.join(self.target, ".agents", "hooks.json"),
+                   read(os.path.join(hooks, "agy.ai-forward-hooks.json")))
         self.place("hooks", "adapters/grok/grok-surface.md",
                    os.path.join(self.target, ".grok", "rules", "grok-surface.md"),
                    read(os.path.join(self.pack, "adapters", "grok", "grok-surface.md")))
+        self.place("hooks", "adapters/antigravity/agy-surface.md",
+                   os.path.join(self.target, ".agents", "rules", "agy-surface.md"),
+                   read(os.path.join(self.pack, "adapters", "antigravity", "agy-surface.md")))
+        skills_json = json.dumps({"entries": [{"path": ".agents/skills"}, {"path": ".claude/skills"}]}, indent=2) + "\n"
+        self.place("bundle", ".agents/skills.json",
+                   os.path.join(self.target, ".agents", "skills.json"), skills_json)
         self._settings(read(os.path.join(hooks, "claude-code.settings.hooks.json")))
         self._gitignore()
         explorer = os.path.join(self.target, "docs", "index.html")

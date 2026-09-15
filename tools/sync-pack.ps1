@@ -58,7 +58,7 @@ function Reset-Dir([string]$path) {
     New-Item -ItemType Directory -Force -Path $path | Out-Null
 }
 
-Write-Host "Syncing pack/ -> .claude/ + .github/{instructions,prompts,agents}/ + .grok/ + docs/ (project: $ProjectName)" -ForegroundColor Cyan
+Write-Host "Syncing pack/ -> .claude/ + .github/{instructions,prompts,agents}/ + .grok/ + .agents/ + docs/ (project: $ProjectName)" -ForegroundColor Cyan
 
 # --- .claude/knowledge ---------------------------------------------------------
 $kDst = Join-Path $repo ".claude\knowledge"
@@ -246,6 +246,33 @@ Reset-Dir $grokRules
 Copy-Item (Join-Path $pack "adapters\grok\grok-surface.md") (Join-Path $grokRules "grok-surface.md") -Force
 Write-Host "  .grok/rules: grok-surface.md (path map only)"
 
+# --- .agents/{skills,rules,hooks.json,skills.json} (Antigravity — dogfood, INSTALL 1.8) -
+$agySkills = Join-Path $repo ".agents\skills"
+Reset-Dir $agySkills
+$agySkillCount = 0
+foreach ($cmd in Get-ChildItem (Join-Path $pack "commands") -Directory) {
+    $skill = Join-Path $cmd.FullName "SKILL.md"
+    if (Test-Path $skill) {
+        $target = Join-Path $agySkills $cmd.Name
+        New-Item -ItemType Directory -Force -Path $target | Out-Null
+        Copy-Item (Join-Path $cmd.FullName "*") $target -Recurse -Force
+        $agySkillCount++
+    }
+}
+Write-Host "  .agents/skills: $agySkillCount"
+
+$agyRules = Join-Path $repo ".agents\rules"
+Reset-Dir $agyRules
+Copy-Item (Join-Path $pack "adapters\antigravity\agy-surface.md") (Join-Path $agyRules "agy-surface.md") -Force
+Write-Host "  .agents/rules: agy-surface.md (path map only)"
+
+$agyHooksDst = Join-Path $repo ".agents\hooks.json"
+Copy-Item (Join-Path $pack "adapters\hooks\agy.ai-forward-hooks.json") $agyHooksDst -Force
+
+$agySkillsJson = "{`n  `"entries`": [`n    { `"path`": `".agents/skills`" },`n    { `"path`": `".claude/skills`" }`n  ]`n}"
+Set-Content (Join-Path $repo ".agents\skills.json") -Value $agySkillsJson -Encoding UTF8
+Write-Host "  .agents/hooks.json + .agents/skills.json"
+
 # --- docs/ai-forward-pack (templates, scripts, pack docs) ----------------------
 $docPack = Join-Path $repo "docs\ai-forward-pack"
 Reset-Dir (Join-Path $docPack "templates")
@@ -276,7 +303,7 @@ Copy-Item (Join-Path $pack "adapters\hooks\copilot.ai-forward-hooks.json") (Join
 $grokHooks = Join-Path $repo ".grok\hooks"
 New-Item -ItemType Directory -Force -Path $grokHooks | Out-Null
 Copy-Item (Join-Path $pack "adapters\hooks\grok.ai-forward-hooks.json") (Join-Path $grokHooks "ai-forward.json") -Force
-Write-Host "  hooks: reread-guard.py -> docs/ai-forward-pack/hooks/, .github/hooks/ai-forward.json, .grok/hooks/ai-forward.json"
+Write-Host "  hooks: reread-guard.py -> docs/ai-forward-pack/hooks/, .github/hooks/ai-forward.json, .grok/hooks/ai-forward.json, .agents/hooks.json"
 Write-Host "  docs/ai-forward-pack: templates + scripts + pack docs"
 
 # --- docs/index.html (Docs Explorer; regenerated from template) ----------------

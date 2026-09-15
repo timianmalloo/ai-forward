@@ -2,7 +2,7 @@
 
 *A repository-droppable extension that turns the **Agent Knowledge Pack** into a working swarm: collaborating peers that author, adversarial personas that review, and a staged reasoning discipline that slows the rush to a plausible answer and replaces it with evidence at every step.*
 
-Works with **Claude Code**, **GitHub Copilot**, **Grok Build**, or any combination. Install into any GitHub repo.
+Works with **Claude Code**, **GitHub Copilot**, **Grok Build**, **Antigravity**, or any combination. Install into any GitHub repo.
 
 ---
 
@@ -109,8 +109,9 @@ ai-forward-pack/
 │  ├─ audit-explorer.html (for /auditlog — the searchable timeline viewer)
 │  └─ documentation-bundle + doc-viewer.html (for /document)
 ├─ adapters/
-│  ├─ INSTALL.md                     ← manual wiring for Claude Code, Copilot, Grok Build, or any combination
+│  ├─ INSTALL.md                     ← manual wiring for Claude Code, Copilot, Grok Build, Antigravity, or any combination
 │  ├─ grok/grok-surface.md           ← Grok Build path map (deployed to .grok/rules/)
+│  ├─ antigravity/agy-surface.md     ← Antigravity path map (deployed to .agents/rules/)
 │  ├─ claude-code/agents/            ← 11 agents: 3 peers + 4 governance adversaries + 4 UI/app & docs lenses
 │  └─ copilot/
 │     ├─ agents/                     ← the 11 upgraded adversaries (emit the §8 verdict shape)
@@ -119,7 +120,7 @@ ai-forward-pack/
    └─ finance-repo/                  ← a worked /adddomainexperts result (3 domain experts)
 ```
 
-> Deploy **all 23 agents to every host** (the 12 claude-code-sourced lenses plus the 11 upgraded adversaries), every skill as a Claude skill, a Copilot prompt, *and* a Grok project skill (`.grok/skills/`), and the knowledge docs as Claude knowledge *and* Copilot `applyTo:"**"` instructions (Grok reads the shared `.claude/knowledge/` copies) — the deployment map is `adapters/INSTALL.md`.
+> Deploy **all 23 agents to every host** (the 12 claude-code-sourced lenses plus the 11 upgraded adversaries), every skill as a Claude skill, a Copilot prompt, a Grok project skill (`.grok/skills/`), and an Antigravity skill (`.agents/skills/`), and the knowledge docs as Claude knowledge *and* Copilot `applyTo:"**"` instructions (Grok and Antigravity read the shared `.claude/knowledge/` copies) — the deployment map is `adapters/INSTALL.md`.
 
 ---
 
@@ -132,6 +133,7 @@ Both tools share one model: **knowledge** = always-on reference, **skills** = wo
 - **Claude Code:** `CLAUDE.md` + `.claude/{knowledge,skills,agents,commands}/`. Skills auto-apply by description; spikes run under `spikes/`.
 - **GitHub Copilot:** `AGENTS.md` + `.github/{instructions,prompts,agents}/`, using `applyTo` globs to scope instructions (C# style on `**/*.cs`, the Rigor Protocol on `**`). Composes with the GitHub Spec Kit if you use it.
 - **Grok Build:** `AGENTS.md` (native project rules) + `.grok/{skills,agents,hooks,rules}/`. Personas spawn with `spawn_subagent` (`subagent_type` = persona `name`). Knowledge is the shared `.claude/knowledge/` copy — not wrapped into `.grok/rules/` (CTX-B). Project hooks need folder trust (`/hooks-trust`).
+- **Antigravity (agy):** `AGENTS.md` (native project rules) + `.agents/{skills,hooks.json,rules,skills.json}`. Auto-discovers skills from `.agents/skills/`. Hooks enforce re-read guard and session start. Knowledge is the shared `.claude/knowledge/` copy.
 - **Several hosts:** keep knowledge and templates as one source of truth in `docs/`; each host's skills reference the same files, so the protocol and personas stay identical.
 
 **Smallest viable install:** the Rules of the Road, the Rigor Protocol and Collaborating Personas, the `/specify` and `/implement` skills, and the orchestrator + product-strategist + domain-researcher + test-architect agents. That alone gives you the rush-interdicting spine, the peer/adversary switch, and a spec-to-tested-code loop.

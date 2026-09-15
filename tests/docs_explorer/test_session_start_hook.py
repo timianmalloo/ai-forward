@@ -122,6 +122,46 @@ class SessionStartHookTests(unittest.TestCase):
             cmds = [h["command"] for entry in snippet["hooks"].get(event, []) for h in entry.get("hooks", [])]
             self.assertTrue(any("session-start.py" in c for c in cmds), event + " must run the hook")
 
+    def test_agy_pre_invocation_invocation_one_records_marker(self):
+        env = dict(os.environ)
+        env.pop("AGENT_SESSION", None)
+        payload = {
+            "hookEventName": "PreInvocation",
+            "conversationId": "agy-abc-1",
+            "invocationNum": 1,
+            "workspacePaths": [str(self.repo)],
+        }
+        r = subprocess.run([sys.executable, str(self.hook), "--host", "agy"], cwd=str(self.repo),
+                           input=json.dumps(payload), capture_output=True, text=True, env=env, timeout=30)
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertEqual("", r.stdout.strip())
+        self.assertIn("__harness__:agy-abc-1", self._starts())
+
+    def test_agy_pre_invocation_subsequent_invocation_is_noop(self):
+        env = dict(os.environ)
+        env.pop("AGENT_SESSION", None)
+        payload = {
+            "hookEventName": "PreInvocation",
+            "conversationId": "agy-abc-2",
+            "invocationNum": 2,
+            "workspacePaths": [str(self.repo)],
+        }
+        r = subprocess.run([sys.executable, str(self.hook), "--host", "agy"], cwd=str(self.repo),
+                           input=json.dumps(payload), capture_output=True, text=True, env=env, timeout=30)
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertEqual("", r.stdout.strip())
+        self.assertNotIn("__harness__:agy-abc-2", self._starts())
+
+    def test_agy_hooks_config_wires_pre_invocation_and_pre_tool_use(self):
+        config = json.loads((ROOT / "pack" / "adapters" / "hooks" / "agy.ai-forward-hooks.json")
+                            .read_text(encoding="utf-8"))
+        self.assertIn("PreInvocation", config.get("session-start", {}))
+        self.assertIn("PreToolUse", config.get("reread-guard", {}))
+        pre_inv = [h["command"] for h in config["session-start"]["PreInvocation"]]
+        self.assertTrue(any("session-start.py" in c for c in pre_inv))
+        pre_tool = [h["command"] for entry in config["reread-guard"]["PreToolUse"] for h in entry.get("hooks", [])]
+        self.assertTrue(any("reread-guard.py" in c for c in pre_tool))
+
 
 if __name__ == "__main__":
     unittest.main()

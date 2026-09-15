@@ -106,6 +106,33 @@ class EvaluateTests(unittest.TestCase):
         self.assertIsNone(w)
         self.assertEqual(1, state["reads"][self.g.normalize("/x/h.md")])
 
+    def test_agy_payload_contract_uses_view_file_and_absolute_path(self):
+        state = {}
+        payload = {
+            "conversationId": "agy1",
+            "hookEventName": "PreToolUse",
+            "toolCall": {"name": "view_file", "args": {"AbsolutePath": "/x/a.md"}},
+        }
+        for _ in range(2):
+            state, w = self.g.evaluate("agy", payload, 3, state)
+            self.assertIsNone(w)
+        state, w = self.g.evaluate("agy", payload, 3, state)
+        self.assertIn("read 3 times", w)
+        state, w = self.g.evaluate("agy", {"hookEventName": "PreInvocation"}, 3, state)
+        self.assertEqual({}, state)
+
+    def test_agy_ranged_view_does_not_warn_on_paged_output(self):
+        payload = {
+            "conversationId": "agy1",
+            "hookEventName": "PreToolUse",
+            "toolCall": {
+                "name": "view_file",
+                "args": {"AbsolutePath": "/t/copilot-tool-output-0abc.txt", "StartLine": 1, "EndLine": 40},
+            },
+        }
+        state, w = self.g.evaluate("agy", payload, 3, {})
+        self.assertIsNone(w)
+
 
 class ProcessContractTests(unittest.TestCase):
     """The shapes the host configs rely on: exit 0 always; JSON on stdout only when warning."""
@@ -151,6 +178,24 @@ class ProcessContractTests(unittest.TestCase):
         out = json.loads(p.stdout)
         self.assertEqual("PreToolUse", out["hookSpecificOutput"]["hookEventName"])
         self.assertIn("additionalContext", out["hookSpecificOutput"])
+
+    def test_agy_warning_shape_uses_decision_allow_with_reason(self):
+        cid = "test-agy-{0}".format(os.getpid())
+        self._run("agy", json.dumps({"conversationId": cid, "hookEventName": "PreInvocation"}))
+        payload = json.dumps({
+            "conversationId": cid,
+            "hookEventName": "PreToolUse",
+            "toolCall": {"name": "view_file", "args": {"AbsolutePath": "/x/agy.md"}},
+        })
+        for _ in range(2):
+            p = self._run("agy", payload)
+            self.assertEqual(0, p.returncode)
+            self.assertEqual({"decision": "allow"}, json.loads(p.stdout))
+        p = self._run("agy", payload)
+        self.assertEqual(0, p.returncode)
+        out = json.loads(p.stdout)
+        self.assertEqual("allow", out.get("decision"))
+        self.assertIn("read 3 times", out.get("reason", ""))
 
     def test_fail_open_on_garbage_input(self):
         for stdin in ("", "not json", "[1,2]", "{}"):

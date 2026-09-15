@@ -56,8 +56,8 @@ def check_installed(root):
 
 
 def check_surface(root, label, subdirs):
-    missing = [d for d in subdirs if not os.path.isdir(os.path.join(root, *d.split("/")))]
-    names = {".claude": "Claude Code", ".github": "Copilot", ".grok": "Grok Build"}
+    missing = [d for d in subdirs if not os.path.exists(os.path.join(root, *d.split("/")))]
+    names = {".claude": "Claude Code", ".github": "Copilot", ".grok": "Grok Build", ".agents": "Antigravity"}
     surface = names.get(label, label)
     if not os.path.isdir(os.path.join(root, label)):
         return _result(f"{surface} surface", FAIL, f"{label}/ not present",
@@ -154,12 +154,15 @@ def check_hooks(root):
     """F-07 / CTX-D. The re-read guard is a control only when a host runs it."""
     cop = os.path.join(root, ".github", "hooks", "ai-forward.json")
     grok = os.path.join(root, ".grok", "hooks", "ai-forward.json")
+    agy = os.path.join(root, ".agents", "hooks.json")
     cc = _read(os.path.join(root, ".claude", "settings.json")) or ""
     have = []
     if os.path.isfile(cop):
         have.append("Copilot (.github/hooks/ai-forward.json)")
     if os.path.isfile(grok):
         have.append("Grok Build (.grok/hooks/ai-forward.json)")
+    if os.path.isfile(agy):
+        have.append("Antigravity (.agents/hooks.json)")
     if "reread-guard" in cc:
         have.append("Claude Code (.claude/settings.json)")
     guard = os.path.isfile(os.path.join(root, "docs", "ai-forward-pack", "hooks", "reread-guard.py"))
@@ -169,7 +172,7 @@ def check_hooks(root):
         return _result("re-read guard hook", FAIL, "hook config present but docs/ai-forward-pack/hooks/reread-guard.py is missing",
                        "copy adapters/hooks/reread-guard.py to docs/ai-forward-pack/hooks/ (INSTALL 1.5)")
     return _result("re-read guard hook", WARN, "not installed on any host",
-                   "copy adapters/hooks/copilot.ai-forward-hooks.json to .github/hooks/ai-forward.json, grok.ai-forward-hooks.json to .grok/hooks/ai-forward.json, and merge adapters/hooks/claude-code.settings.hooks.json into .claude/settings.json (INSTALL 1.4 / 1.7)")
+                   "copy adapters/hooks/copilot.ai-forward-hooks.json to .github/hooks/ai-forward.json, grok.ai-forward-hooks.json to .grok/hooks/ai-forward.json, agy.ai-forward-hooks.json to .agents/hooks.json, and merge adapters/hooks/claude-code.settings.hooks.json into .claude/settings.json (INSTALL 1.4 / 1.7 / 1.8)")
 
 
 def check_block(root, fname):
@@ -453,6 +456,7 @@ def run(root):
         check_surface(root, ".claude", [".claude/knowledge", ".claude/skills", ".claude/agents"]),
         check_surface(root, ".github", [".github/instructions", ".github/prompts", ".github/agents"]),
         check_surface(root, ".grok", [".grok/skills", ".grok/agents", ".grok/hooks", ".grok/rules"]),
+        check_surface(root, ".agents", [".agents/skills", ".agents/rules", ".agents/hooks.json"]),
         check_block(root, "CLAUDE.md"),
         check_block(root, "AGENTS.md"),
         check_claude_md_import(root),

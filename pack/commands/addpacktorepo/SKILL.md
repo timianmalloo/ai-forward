@@ -11,7 +11,7 @@ Adding the pack to a repo is not a mindless file dump: the target's language, ex
 
 ## Grounding (first action)
 
-Read the target repository before writing to it. Treat existing CLAUDE.md, AGENTS.md, `.claude/`, `.github/`, `.grok/`, and `docs/` as **evidence of prior decisions** — the install adapts to them, not over them. `<pack-source>/pack/adapters/INSTALL.md` is the authoritative deployment map. If `docs/ai-forward-pack/INSTALL.md` already exists in the target, this is an **update scenario** — redirect to `/updatepack` rather than re-running a full install. Skip grounding only if the user explicitly says so.
+Read the target repository before writing to it. Treat existing CLAUDE.md, AGENTS.md, `.claude/`, `.github/`, `.grok/`, `.agents/`, and `docs/` as **evidence of prior decisions** — the install adapts to them, not over them. `<pack-source>/pack/adapters/INSTALL.md` is the authoritative deployment map. If `docs/ai-forward-pack/INSTALL.md` already exists in the target, this is an **update scenario** — redirect to `/updatepack` rather than re-running a full install. Skip grounding only if the user explicitly says so.
 
 ## Locating the pack source
 
@@ -38,7 +38,7 @@ Path to the **target** repository (`$ARGUMENTS` or as part of the user's message
 **Stage 1 — OPEN (reconnaissance of the target repo).**
 Build an install profile by inspecting the target:
 - **Primary language(s):** what source extensions dominate? (`.cs`, `.py`, `.ts`, `.js`, `.go`, `.rs`, `.java`, `.rb`, etc.)
-- **Existing AI tooling:** does `CLAUDE.md` exist? `AGENTS.md`? `.claude/`? `.github/instructions/`? `.github/prompts/`? `.github/agents/`? `.grok/skills/`? `.grok/agents/`?
+- **Existing AI tooling:** does `CLAUDE.md` exist? `AGENTS.md`? `.claude/`? `.github/instructions/`? `.github/prompts/`? `.github/agents/`? `.grok/skills/`? `.grok/agents/`? `.agents/skills/`?
 - **Existing docs surface:** does `docs/` exist? `docs/ai-forward-pack/`? `docs/docs-index.js` (never seed or overwrite — V10)? `docs/index.html` (skip Docs Explorer copy if already present)?
 - **Pack already installed?** Check for `docs/ai-forward-pack/INSTALL.md` — if present, redirect to `/updatepack`.
 - **Tier signal:** repo size, number of modules, presence of tests, CI workflows — shapes whether to recommend a minimal or full install. State the tier assessment aloud.
@@ -55,7 +55,7 @@ From the recon, determine for each artifact class:
 Produce a brief "here is what I will install" preview and ask for confirmation before executing if any existing file will be modified.
 
 **Stage 3 — EVIDENCE (apply the full deployment map).**
-**Run the program first, then verify the list below against its table:** `python3 <pack-source>/pack/scripts/pack-apply.py apply --install --target <target> --project <repo-name>` performs steps 1–13 mechanically and idempotently (knowledge routed by load scope, whole skill directories to `.claude/skills/` **and** `.grok/skills/`, agents renamed and `tools:`-stripped for Copilot and Grok, templates/scripts/hooks/context-budget.json, `.claude/settings.json` merged, `.grok/hooks/ai-forward.json` and `.grok/rules/grok-surface.md`, `.gitignore` lines, `docs/index.html` only if absent, `docs/docs-index.js` never, both managed blocks, `CLAUDE.md` in the `@AGENTS.md` import form) and prints one row per action. The numbered list is the contract the program implements — read it to check the table, not to copy files by hand. Steps 14–16 remain judgement calls. Since revision 71 the program also deploys the Grok Build surface so a third host is configured without a separate map.
+**Run the program first, then verify the list below against its table:** `python3 <pack-source>/pack/scripts/pack-apply.py apply --install --target <target> --project <repo-name>` performs steps 1–13 mechanically and idempotently (knowledge routed by load scope, whole skill directories to `.claude/skills/`, `.grok/skills/`, and `.agents/skills/`, agents renamed and `tools:`-stripped for Copilot and Grok, templates/scripts/hooks/context-budget.json, `.claude/settings.json` merged, `.grok/hooks/ai-forward.json` and `.grok/rules/grok-surface.md`, `.agents/hooks.json`, `.agents/skills.json`, and `.agents/rules/agy-surface.md`, `.gitignore` lines, `docs/index.html` only if absent, `docs/docs-index.js` never, both managed blocks, `CLAUDE.md` in the `@AGENTS.md` import form) and prints one row per action. The numbered list is the contract the program implements — read it to check the table, not to copy files by hand. Steps 14–16 remain judgement calls. Since revision 71 the program also deploys the Grok Build surface, and since revision 72 the Antigravity surface, so multiple hosts are configured without a separate map.
 
 Execute the deployment map from INSTALL.md §1, in this order. All source paths below are relative to the resolved `<pack-source>` (e.g. `<pack-source>/pack/knowledge/*.md`); all destinations are relative to the target repo.
 
@@ -109,6 +109,7 @@ Before reporting success:
 - Confirm the C# knowledge wrap uses the `.cs`-scoped `applyTo`, not `"**"`.
 - Confirm `FOUNDATION.md` was deployed but NOT wrapped as a Copilot instruction.
 - Confirm `.grok/skills/`, `.grok/agents/`, `.grok/hooks/ai-forward.json`, and `.grok/rules/grok-surface.md` landed; confirm `.grok/rules/` contains no knowledge docs.
+- Confirm `.agents/skills/`, `.agents/rules/agy-surface.md`, `.agents/hooks.json`, and `.agents/skills.json` landed; confirm `.agents/rules/` contains no knowledge docs.
 - The Release Engineer vetos any ❌ action from being included in the summary as "done."
 
 **Stage 5 — CONVERGE (summary + docs pointers + commit offer).**
@@ -118,12 +119,13 @@ Produce a **tabular summary** of everything installed:
 |------|----------|-------------|--------------|--------|
 | knowledge | `rigor-protocol.md` | `.claude/knowledge/` + `.github/instructions/` | Reasoning spine — map → interrogate → evidence → disconfirm → converge on every non-trivial task | ✅ |
 | knowledge | `persona-cards.md` | `.claude/knowledge/` + `.github/instructions/` | 23 persona lenses as §8 cards with severity, veto-clears-when, and owned anti-patterns | ✅ |
-| skill | `specify/SKILL.md` | `.claude/skills/specify/` + `.github/prompts/specify.prompt.md` + `.grok/skills/specify/` | Turn a prompt into a testable spec (Functional / UX / UI layers) | ✅ |
-| skill | `implement/SKILL.md` | `.claude/skills/implement/` + `.github/prompts/implement.prompt.md` + `.grok/skills/implement/` | TDD feature implementation with adversarial pre-merge review (overrides Grok's bundled `/implement` in this repo) | ✅ |
+| skill | `specify/SKILL.md` | `.claude/skills/specify/` + `.github/prompts/specify.prompt.md` + `.grok/skills/specify/` + `.agents/skills/specify/` | Turn a prompt into a testable spec (Functional / UX / UI layers) | ✅ |
+| skill | `implement/SKILL.md` | `.claude/skills/implement/` + `.github/prompts/implement.prompt.md` + `.grok/skills/implement/` + `.agents/skills/implement/` | TDD feature implementation with adversarial pre-merge review (overrides Grok's bundled `/implement` in this repo) | ✅ |
 | agent | `orchestrator.md` | `.claude/agents/` + `.github/agents/` + `.grok/agents/` | Sequences the persona swarm, enforces phase gates, maintains the evidence trail | ✅ |
 | managed-block | AI-FORWARD-PACK block | `CLAUDE.md` | Wires Claude Code to the full reasoning stack (personas, skills, docs explorer) | ✅ |
-| managed-block | AI-FORWARD-PACK block | `AGENTS.md` | Same wiring for GitHub Copilot and Grok Build (Grok loads AGENTS.md natively) | ✅ |
+| managed-block | AI-FORWARD-PACK block | `AGENTS.md` | Same wiring for GitHub Copilot, Grok Build, and Antigravity (loaded natively) | ✅ |
 | grok | skills, agents, hooks, rules | `.grok/` | Native Grok Build surface (INSTALL 1.7); path map only in `.grok/rules/` | ✅ |
+| agy | skills, hooks, rules, manifest | `.agents/` | Native Antigravity (agy) surface (INSTALL 1.8); path map only in `.agents/rules/` | ✅ |
 | docs | `docs/ai-forward-pack/` | templates · scripts · INSTALL · README · OVERVIEW | Reference artifacts, graph scripts, installation guide | ✅ |
 | explorer | `docs/index.html` | `docs/` | Docs Explorer — hierarchy · graph · mind map · health views | ✅ |
 
@@ -164,6 +166,7 @@ Unlike the workflow skills, this is a **pack-lifecycle skill**: it installs the 
 - [ ] `FOUNDATION.md` deployed but NOT wrapped as a Copilot instruction.
 - [ ] C# knowledge wrap scoped to `**/*.cs,**/*.csx` only when C# files are present.
 - [ ] Grok surface present (`.grok/{skills,agents,hooks,rules}`); `.grok/rules/` is the path map only.
+- [ ] Antigravity surface present (`.agents/{skills,hooks,rules}` and `.agents/skills.json`); `.agents/rules/` is the path map only.
 - [ ] Summary table complete; docs and explainer links provided.
 - [ ] Commit offered with exact proposed message; user decision honoured.
 - [ ] Dry-run requests produced the install table with zero writes; a normal run is idempotent (re-runnable over a partial install without duplicate blocks; an already-installed target routes to `/updatepack`).

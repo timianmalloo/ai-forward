@@ -27,6 +27,9 @@ spikes/
 # and the artifact registry -- which MUST travel with the repo -- untrackable.
 .agents/*
 !.agents/artifacts.yml
+!.agents/skills*
+!.agents/hooks.json
+!.agents/rules*
 
 # Editor / OS
 .DS_Store
