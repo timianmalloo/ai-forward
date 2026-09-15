@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-15T00:40:59Z",
+  "generated": "2026-09-15T18:22:20Z",
   "audit": [
     {
       "id": "al-0001",
@@ -4017,6 +4017,28 @@ window.AUDIT_DATA = {
         "branch": "main",
         "pushed": true
       }
+    },
+    {
+      "id": "al-01M2K4WF51ZXW855XXJSV4BGMA",
+      "shortname": "antigravity-surface",
+      "datetime": "2026-09-15T18:22:20Z",
+      "session": "24cbf50d-3051-4e6a-b815-c710f0146e4d",
+      "prompt": "great make the right updates in the repo now",
+      "summary": "Add full native Antigravity (agy) surface support: 27 skills discoverable in .agents/skills/, skills.json manifest, hooks.json with reread-guard and session-start, agy-surface.md path map, pack-apply and pack-doctor support, INSTALL.md rev 72, all 11 CI verification gates passing.",
+      "kind": "command",
+      "skill": "updatepack",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Native Antigravity surface support with full parity",
+      "done_when": "All 11 bundle verification gates pass and pack-doctor reports Antigravity PASS",
+      "tier": "T1",
+      "fan_out": 0,
+      "duration_source": "session-start-hook",
+      "started_at": "2026-09-15T18:06:13Z",
+      "duration_seconds": 967.0
     }
   ],
   "changes": [
