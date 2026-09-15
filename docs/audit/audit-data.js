@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-14T14:40:03Z",
+  "generated": "2026-09-15T00:40:59Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3984,6 +3984,39 @@ window.AUDIT_DATA = {
         "branch": "pack/addendum-cd-findings",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M2H84E4NSPQQNGJM8SK3YRM9",
+      "shortname": "implement-grok-surface",
+      "datetime": "2026-09-15T00:40:38Z",
+      "session": "01a0a25c-29c1-71b3-8907-a5593c878c0b",
+      "prompt": "plan approved and move to the execution turn /implement the Grok surface via the mapped design",
+      "summary": "Revision 71: native Grok Build surface. pack-apply and sync-pack deploy .grok/{skills,agents,hooks,rules}. Knowledge stays at .claude/knowledge (CTX-B). Personas spawn as spawn_subagent types. pack-doctor and check-consistency parity on the third host. 708 tests passed. verify-bundle gate 2 dirty vs HEAD until commit (expected).",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Any repo that applies the pack is configured for Grok Build the same way it is for Claude Code and Copilot.",
+      "done_when": "Native .grok/ surface in the deployment map, tests red-then-green, INSTALL 1.7, pack-doctor PASS, check-consistency clean, Proof Pack committed.",
+      "tier": "T2",
+      "fan_out": 4,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "duration_source": "session-start-hook",
+      "started_at": "2026-09-14T23:59:04Z",
+      "duration_seconds": 2494.0,
+      "git": {
+        "sha": "17666d35927e2bf9374b45644ca03d13102837ef",
+        "short": "17666d359",
+        "branch": "main",
+        "pushed": true
+      }
     }
   ],
   "changes": [
@@ -5099,6 +5132,27 @@ window.AUDIT_DATA = {
           "b40fbe4 feat(scripts): the Addenda C/D controls â€” join as a script, gate runner, marker gates, cleanup by rev-list, the lease cap, the profiler's node reader, the session-start hook"
         ]
       }
+    },
+    {
+      "id": "cl-01M2H852GX84MKDJ7BKB067PS5",
+      "datetime": "2026-09-15T00:40:59Z",
+      "session": "01a0a25c-29c1-71b3-8907-a5593c878c0b",
+      "kind": "architecture",
+      "skill": "implement",
+      "title": "Grok Build is a third pack host (native .grok/ surface)",
+      "prompt": "plan approved and move to the execution turn /implement the Grok surface via the mapped design",
+      "summary": "pack-apply deploys .grok/{skills,agents,hooks,rules}. Knowledge stays at .claude/knowledge. Personas spawn as spawn_subagent types. Pack /implement overrides bundled implement in pack-installed repos.",
+      "rationale": "Claude compatibility is not an install (PACK-U). Grok loads AGENTS.md natively; skills/agents/hooks need native destinations. Dumping knowledge into .grok/rules/ would be CTX-B.",
+      "artifacts": [],
+      "tags": [],
+      "git": {
+        "before": null,
+        "after": "17666d35927e2bf9374b45644ca03d13102837ef",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      },
+      "audit_ref": "al-01M2H84E4NSPQQNGJM8SK3YRM9"
     }
   ]
 };

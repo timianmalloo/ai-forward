@@ -1,6 +1,6 @@
 {
   "_note": "Editorial metadata for the Documentation Portal. Read by tools/build-docs-portal.py and merged with DERIVED content (skill names + descriptions + counts scanned from pack/). Skill descriptions come from each skill's Copilot prompt frontmatter, NOT from here. This file carries only the editorial framing (getting-started, capability cards, per-skill group/when/produces/handoff, UI framing, systems, surfaces). Versioned; changing it and re-running the generator updates the portal. A skill present in pack/commands/ but missing from skillMeta still appears (with '-' fallbacks) and check-consistency flags it.",
-  "whatIs": "AI-Forward is a committed Markdown methodology pack that installs into a repo so Claude Code and GitHub Copilot direct work with a shared reasoning spine, adversarial persona review, and a library of workflow skills - nothing runs as a service; everything is versioned files and stdlib scripts.",
+  "whatIs": "AI-Forward is a committed Markdown methodology pack that installs into a repo so Claude Code, GitHub Copilot, and Grok Build direct work with a shared reasoning spine, adversarial persona review, and a library of workflow skills - nothing runs as a service; everything is versioned files and stdlib scripts.",
   "precisionNote": "This portal is the high-level, user-facing front door. It is a LENS over the repo's core knowledge, not a copy of it: the Foundations, UI, and Architecture sections list and link the structured artifacts (knowledge docs, ADRs, specs, designs) with derived summaries, while the artifacts themselves stay exactly where they are - as structured, individually-owned Markdown. Nothing here is hand-typed content that must be kept in sync; it is generated from those sources, so it cannot drift.",
   "uiStandards": [
     "ui-interaction-design",
@@ -78,7 +78,7 @@
     },
     {
       "h": "Know how skills are invoked",
-      "p": "In Claude Code, skills apply by description (.claude/skills/). In GitHub Copilot, they are prompts (.github/prompts/). Both surfaces read the same knowledge docs and personas.",
+      "p": "In Claude Code, skills apply by description (.claude/skills/). In GitHub Copilot, they are prompts (.github/prompts/). In Grok Build, skills are .grok/skills/ and personas spawn with spawn_subagent. Every host reads the same knowledge docs and personas.",
       "cmd": null
     },
     {

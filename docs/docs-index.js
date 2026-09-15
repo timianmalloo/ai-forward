@@ -934,7 +934,7 @@ window.DOCS_INDEX = {
       "phase": "",
       "reviewBy": "2027-03-03",
       "reviewSuggested": [],
-      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 363 public functions across 26 modules, 46% carrying a docstring.",
+      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 364 public functions across 26 modules, 46% carrying a docstring.",
       "tags": [
         "api",
         "scripts",
@@ -948,7 +948,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "055294200fbc85936e7e717ecfe8ace6c0f98296fef7b4bbd4cd5a254d1d8515"
+      "sourceSha256": "14893fec2bd1fbfff66f459181cf73cb6f446be7b88a4dfa98ae8395062b9c32"
     },
     {
       "id": "api-marker-lint",
@@ -1023,7 +1023,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c78eb60b9ed1eb93b0bb76850bfc4dec2ba533e2aa7740eb96bd4acd452cea92"
+      "sourceSha256": "fc73a669c797889c4505aeb1f4221e8a22a6daac40a517b5aa79bf4cd66b4105"
     },
     {
       "id": "api-pack-doctor",
@@ -1667,6 +1667,36 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "b2a9372d2ace904e4b66bc66a5826e48dd348ec9511cb401d4617dfeff9d0d53"
+    },
+    {
+      "id": "note-20260914-grok-build-surface",
+      "path": "docs/notes/note-20260914-grok-build-surface.md",
+      "title": "Grok Build is a third host: native .grok/ surface, shared knowledge, no rules dump",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2027-03-13",
+      "reviewSuggested": [],
+      "summary": "Deploy a native Grok Build surface under .grok/{skills,agents,hooks,rules} rather than relying on Claude compatibility. Knowledge stays at .claude/knowledge/. .grok/rules/ holds only the path map. Pack /implement overrides Grok's bundled implement in a pack-installed repo.",
+      "tags": [
+        "decision-note",
+        "grok",
+        "adapters",
+        "CTX-B"
+      ],
+      "links": [
+        {
+          "to": "plan-optimize-graph-grok-surface",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-grok-build-surface",
+          "rel": "tested-by"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "61c49b570b70d73f053de18c0d53a133ecb5e03351aec045e413c91dd82a5219"
     },
     {
       "id": "note-autopilot-open-questions-decisions",
@@ -2399,7 +2429,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a2224e03603e6d8ed2c59ed8d50ce886242af8996d754ba155da2b31bd004d4b"
+      "sourceSha256": "ecd2048b5c52760fa398d1584e7026fe439a4ae4119eb983805b77d92fdd72ff"
     },
     {
       "id": "docs-index",
@@ -3241,6 +3271,47 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "5bf8471b858442580beb4f227c56ae44fb370b0ff6185b66ba14d4d0da90ae07"
+    },
+    {
+      "id": "plan-optimize-graph-grok-surface",
+      "path": "docs/plans/optimize-graph-grok-surface.md",
+      "title": "optimize-graph — Grok Build surface for pack-consuming repos",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2027-03-13",
+      "reviewSuggested": [],
+      "summary": "Approved execution graph for adding a native Grok Build surface to the AI-Forward Pack so /addpacktorepo and pack-apply configure consuming repos the same way Claude Code and Copilot already are. Span shortened; floors early; no knowledge dump into .grok/rules/.",
+      "tags": [
+        "optimize-graph",
+        "plan",
+        "grok",
+        "adapters",
+        "pack-apply"
+      ],
+      "links": [
+        {
+          "to": "kb-graph-and-loop-engineering",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-20260914-grok-build-surface",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-grok-build-surface",
+          "rel": "tested-by"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Optimized graph (executed)",
+          "mermaid": "graph TD\n    A[Goal state] --> B[Ground]\n    B --> C1[Map Grok primitives]\n    B --> C2[Design .grok surface]\n    C1 --> D[Disconfirm / TDD]\n    C2 --> D\n    D --> E[Plan artifact]\n    E --> F[Implement]\n    F --> G[Ledger + audit]"
+        }
+      ],
+      "sourceSha256": "93de3c41eb31a67756ba4ff2d04b7c21fc79817c5cf4ff89209825daadfb45f4"
     },
     {
       "id": "plan-optimize-graph-live-01",
@@ -5431,6 +5502,36 @@ window.DOCS_INDEX = {
       "sourceSha256": "8596cd2175507a7b8da9f922cf7db6bee84be7eec6622235bc51964b5f370675"
     },
     {
+      "id": "proof-grok-build-surface",
+      "path": "docs/proof/grok-build-surface.md",
+      "title": "Proof Pack — Grok Build surface (revision 71)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2027-03-13",
+      "reviewSuggested": [],
+      "summary": "Proof that pack-apply and sync-pack deploy a native Grok Build surface (.grok/skills, agents, hooks, rules), that knowledge is not dumped into .grok/rules/, and that grok hook payloads (camelCase / target_file) are accepted. Red-first unit tests plus pack-doctor and deployed-agent parity.",
+      "tags": [
+        "grok",
+        "adapters",
+        "pack-apply",
+        "proof"
+      ],
+      "links": [
+        {
+          "to": "plan-optimize-graph-grok-surface",
+          "rel": "implements"
+        },
+        {
+          "to": "note-20260914-grok-build-surface",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "6a07665a54acbfb5d1a5321d494913ee0b3d06af9173d3e47f9d48f25ad4df88"
+    },
+    {
       "id": "proof-native-app-ui-skill-extension",
       "path": "docs/proof/native-app-ui-skill-extension.md",
       "title": "Proof Pack — Native app UI skill extension",
@@ -6004,5 +6105,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "ab8d591009f5d17393d4a56445595e7526e2918a14e84761f882da394a29aadd"
+  "graphSha256": "76f5e731c5083e02b7f4a8719db12db58e3525b12e9d66acd44d2e5566216e69"
 };

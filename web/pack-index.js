@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 180
+"count": 183
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 339,
+"total": 342,
 "items": [
 {
 "cat": "knowledge",
@@ -1034,7 +1034,7 @@ window.PACK_INDEX = {
 "summary": "pack-apply.py — apply the AI-Forward deployment map to a repo, mechanically and reversibly.",
 "path": "pack/scripts/pack-apply.py",
 "kind": "script",
-"text": "pack-apply.py pack-apply.py — apply the ai-forward deployment map to a repo, mechanically and reversibly. `/updatepack` and `/addpacktorepo` used to hand-apply install.md's deployment map, so every step a person could forget - re-pasting a managed block, deleting the wrapped copy of a doc whose load scope moved, converting claude.md to the `@agents.md` import, retiring a parity control that encoded the old invariant - was remembered or it was not. this script is the deployment map (install.md 1), run from the pack source against a target repo: pack-apply.py plan --source <ai-forward clone> --target <repo> # every action, no writes pack-apply.py apply --source <ai-forward clone> --target <repo> # do it, idempotently what it does, per artifact family (pack-owned names only - repo-local files are never touched): knowledge -> .claude/knowledge/<name>.md verbatim; .github/instructions/<name>.instructions.md (applyto-wrapped) for load: always|glob; .github/knowledge/<name>.md for load: skill|reference; the stale copy in the other copilot location is removed (ctx-e: a doc re-scoped to on-demand must stop attaching). skills -> .claude/skills/<name>/ (the whole directory: skill.md + reference/*.md); .github/prompts/<name>.prompt.md agents -> .claude/agents/ (both sets); .github/agents/<name>.agent.md (renamed, `tools:` stripped) bundle -> docs/ai-forward-pack/{templates,scripts,hooks,readme,overview,research-synthesis, install,context-budget.json}; .github/hooks/ai-forward.json; .claude/settings.json (hooks merged, showthinkingsummaries set); .gitignore lines; docs/index.html only if absent; docs/docs-index.js never (v10) front doors -> agents.md: the managed block replaced wholesale between markers (appended if absent). claude.md: converted to `@agents.md` + the addendum block (ctx-b); the old file is backed up under docs/ai-forward-pack/retired/, and every paragraph that is not in agents.md (after toolchain-path normalisation) is kept above the addendum. controls -> a repo-local parity test that asserts claude.md carries the standing-method block (the old invariant) is rewritten into a shim asserting the new invariant through pack-doctor, its other assertions carried over where they can be read; the original is backed up beside the claude.md backup. repo-local deviations are honoured, not reverted: a destination that differs from the version the repo received at its installed revision is three-way merged (`git merge-file`) against the pack's old and new text; a clean merge lands as merge, a conflicting one is left untouched with the new pack text written under docs/ai-forward-pack/conflicts/ and reported as conflict for the skill to reconcile. the installed revision advances only in `apply`. re-running is a no-op. python 3.8+, stdlib only. exit 0 = applied/clean, 1 = conflicts or errors reported, 2 = usage. gitignore_negations read norm_nl same frontmatter git default_source __init__ _project_name _stale_applier row rel _source_revision _target_revision _old_pack_text _write _remove place _transform_like _merge knowledge skills agents bundle _settings _tracked_under _gitignore_withhold _gitignore front_doors _retire_parity_controls advance run_baselines run strip_tools replace_block normalise _outside_block unique_paragraphs parity_shim render_table summarize main"
+"text": "pack-apply.py pack-apply.py — apply the ai-forward deployment map to a repo, mechanically and reversibly. `/updatepack` and `/addpacktorepo` used to hand-apply install.md's deployment map, so every step a person could forget - re-pasting a managed block, deleting the wrapped copy of a doc whose load scope moved, converting claude.md to the `@agents.md` import, retiring a parity control that encoded the old invariant - was remembered or it was not. this script is the deployment map (install.md 1), run from the pack source against a target repo: pack-apply.py plan --source <ai-forward clone> --target <repo> # every action, no writes pack-apply.py apply --source <ai-forward clone> --target <repo> # do it, idempotently what it does, per artifact family (pack-owned names only - repo-local files are never touched): knowledge -> .claude/knowledge/<name>.md verbatim; .github/instructions/<name>.instructions.md (applyto-wrapped) for load: always|glob; .github/knowledge/<name>.md for load: skill|reference; the stale copy in the other copilot location is removed (ctx-e: a doc re-scoped to on-demand must stop attaching). skills -> .claude/skills/<name>/ (the whole directory: skill.md + reference/*.md); .github/prompts/<name>.prompt.md; .grok/skills/<name>/ (same files; grok build native, wins over claude-compat scan) agents -> .claude/agents/ (both sets); .github/agents/<name>.agent.md (renamed, `tools:` stripped); .grok/agents/<name>.md (`_agent` suffix stripped, `tools:` stripped) bundle -> docs/ai-forward-pack/{templates,scripts,hooks,readme,overview,research-synthesis, install,context-budget.json}; .github/hooks/ai-forward.json; .claude/settings.json (hooks merged, showthinkingsummaries set); .grok/hooks/ai-forward.json; .grok/rules/grok-surface.md (path map only — not knowledge docs); .gitignore lines; docs/index.html only if absent; docs/docs-index.js never (v10) front doors -> agents.md: the managed block replaced wholesale between markers (appended if absent). claude.md: converted to `@agents.md` + the addendum block (ctx-b); the old file is backed up under docs/ai-forward-pack/retired/, and every paragraph that is not in agents.md (after toolchain-path normalisation) is kept above the addendum. controls -> a repo-local parity test that asserts claude.md carries the standing-method block (the old invariant) is rewritten into a shim asserting the new invariant through pack-doctor, its other assertions carried over where they can be read; the original is backed up beside the claude.md backup. repo-local deviations are honoured, not reverted: a destination that differs from the version the repo received at its installed revision is three-way merged (`git merge-file`) against the pack's old and new text; a clean merge lands as merge, a conflicting one is left untouched with the new pack text written under docs/ai-forward-pack/conflicts/ and reported as conflict for the skill to reconcile. the installed revision advances only in `apply`. re-running is a no-op. python 3.8+, stdlib only. exit 0 = applied/clean, 1 = conflicts or errors reported, 2 = usage. gitignore_negations read norm_nl same frontmatter git default_source __init__ _project_name _stale_applier row rel _source_revision _target_revision _old_pack_text _write _remove place _transform_like _merge knowledge skills agents bundle _settings _tracked_under _gitignore_withhold _gitignore front_doors _retire_parity_controls advance run_baselines run grok_agent_filename strip_tools replace_block normalise _outside_block unique_paragraphs parity_shim render_table summarize main"
 },
 {
 "cat": "scripts",
@@ -1616,10 +1616,10 @@ window.PACK_INDEX = {
 "cat": "graph",
 "id": "api-index",
 "title": "API reference — the deployed script bundle",
-"summary": "Generated API reference for the pack's public surface — the deployed script bundle. 363 public functions across 26 modules, 46% carrying a docstring.",
+"summary": "Generated API reference for the pack's public surface — the deployed script bundle. 364 public functions across 26 modules, 46% carrying a docstring.",
 "path": "docs/api/index.md",
 "kind": "api",
-"text": "api reference — the deployed script bundle generated api reference for the pack's public surface — the deployed script bundle. 363 public functions across 26 modules, 46% carrying a docstring. api scripts generated index documents architecture"
+"text": "api reference — the deployed script bundle generated api reference for the pack's public surface — the deployed script bundle. 364 public functions across 26 modules, 46% carrying a docstring. api scripts generated index documents architecture"
 },
 {
 "cat": "graph",
@@ -1836,6 +1836,15 @@ window.PACK_INDEX = {
 "path": "docs/notes/note-20260903-portal-collaboration-and-loop-sections.md",
 "kind": "decision-note",
 "text": "portal gains multi-agent collaboration and the prompt loop; roster becomes derived four decisions taken while adding the two requested pages sections: where they sit in the reading order, deriving the persona roster from the agent files rather than editorial, leaving the ui knowledge docs out of knowledgegroups on purpose, and recording git-a after a revert destroyed uncommitted work. portal pages personas prompt-loop inventory derived-artifacts relates-to architecture relates-to defect-classes"
+},
+{
+"cat": "graph",
+"id": "note-20260914-grok-build-surface",
+"title": "Grok Build is a third host: native .grok/ surface, shared knowledge, no rules dump",
+"summary": "Deploy a native Grok Build surface under .grok/{skills,agents,hooks,rules} rather than relying on Claude compatibility. Knowledge stays at .claude/knowledge/. .grok/rules/ holds only the path map. Pack /implement overrides Grok's bundled…",
+"path": "docs/notes/note-20260914-grok-build-surface.md",
+"kind": "decision-note",
+"text": "grok build is a third host: native .grok/ surface, shared knowledge, no rules dump deploy a native grok build surface under .grok/{skills,agents,hooks,rules} rather than relying on claude compatibility. knowledge stays at .claude/knowledge/. .grok/rules/ holds only the path map. pack /implement overrides grok's bundled implement in a pack-installed repo. decision-note grok adapters ctx-b relates-to plan-optimize-graph-grok-surface tested-by proof-grok-build-surface"
 },
 {
 "cat": "graph",
@@ -2259,6 +2268,15 @@ window.PACK_INDEX = {
 "path": "docs/lenses/graph-structure.md",
 "kind": "doc",
 "text": "lens - graph structure a read-time lens over the shape of the knowledge graph - artifacts by type and status, and the traceability chains (spec to design to proof). derived, never authoritative. lens obsidian dataview structure relates-to lens-graph-health"
+},
+{
+"cat": "graph",
+"id": "plan-optimize-graph-grok-surface",
+"title": "optimize-graph — Grok Build surface for pack-consuming repos",
+"summary": "Approved execution graph for adding a native Grok Build surface to the AI-Forward Pack so /addpacktorepo and pack-apply configure consuming repos the same way Claude Code and Copilot already are. Span shortened; floors early; no knowledge…",
+"path": "docs/plans/optimize-graph-grok-surface.md",
+"kind": "doc",
+"text": "optimize-graph — grok build surface for pack-consuming repos approved execution graph for adding a native grok build surface to the ai-forward pack so /addpacktorepo and pack-apply configure consuming repos the same way claude code and copilot already are. span shortened; floors early; no knowledge dump into .grok/rules/. optimize-graph plan grok adapters pack-apply depends-on kb-graph-and-loop-engineering relates-to note-20260914-grok-build-surface tested-by proof-grok-build-surface"
 },
 {
 "cat": "graph",
@@ -2934,6 +2952,15 @@ window.PACK_INDEX = {
 "path": "docs/proof/docs-explorer-redesign.md",
 "kind": "proof-pack",
 "text": "docs explorer redesign - proof pack accepted implementation evidence for the deterministic, local-first docs explorer, native spatial 3d knowledge portal, and bounded grounding packet implementation. the p0/p1 contract is covered by python, node, and three-engine browser suites; phase-attributed benchmark evidence separates graph work from process/host overhead. revision 17 remains intentionally unreleased pending pinned-reference performance proof or a human-approved deviation. docs-explorer grounding accessibility performance verification relates-to design-docs-explorer-grounding-spatial-navigation depends-on adr-0001-grounding-source-corpus-registry depends-on design-language-docs-explorer relates-to threat-model relates-to privacy-review"
+},
+{
+"cat": "graph",
+"id": "proof-grok-build-surface",
+"title": "Proof Pack — Grok Build surface (revision 71)",
+"summary": "Proof that pack-apply and sync-pack deploy a native Grok Build surface (.grok/skills, agents, hooks, rules), that knowledge is not dumped into .grok/rules/, and that grok hook payloads (camelCase / target_file) are accepted. Red-first unit…",
+"path": "docs/proof/grok-build-surface.md",
+"kind": "proof-pack",
+"text": "proof pack — grok build surface (revision 71) proof that pack-apply and sync-pack deploy a native grok build surface (.grok/skills, agents, hooks, rules), that knowledge is not dumped into .grok/rules/, and that grok hook payloads (camelcase / target_file) are accepted. red-first unit tests plus pack-doctor and deployed-agent parity. grok adapters pack-apply proof implements plan-optimize-graph-grok-surface relates-to note-20260914-grok-build-surface"
 },
 {
 "cat": "graph",

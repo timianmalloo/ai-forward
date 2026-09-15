@@ -468,7 +468,7 @@ class DeployedAgentParityTests(unittest.TestCase):
         self.module = load_module()
 
     def _root(self, temp, claude=12, copilot=11, deployed_claude=23, deployed_copilot=23,
-              copilot_tools=False):
+              deployed_grok=23, copilot_tools=False, grok_tools=False):
         root = Path(temp)
         for n in range(claude):
             d = root / "pack" / "adapters" / "claude-code" / "agents"
@@ -487,6 +487,11 @@ class DeployedAgentParityTests(unittest.TestCase):
             d.mkdir(parents=True, exist_ok=True)
             body = "---\nname: a\n" + ("tools: [read]\n" if copilot_tools else "") + "---\nx\n"
             (d / f"a{n}.agent.md").write_text(body, encoding="utf-8")
+        for n in range(deployed_grok):
+            d = root / ".grok" / "agents"
+            d.mkdir(parents=True, exist_ok=True)
+            body = "---\nname: a\n" + ("tools: [read]\n" if grok_tools else "") + "---\nx\n"
+            (d / f"a{n}.md").write_text(body, encoding="utf-8")
         return root
 
     def _run(self, root):
@@ -521,6 +526,16 @@ class DeployedAgentParityTests(unittest.TestCase):
             findings = self._run(self._root(temp, copilot_tools=True))
             self.assertTrue(findings, "a leaked tools: line must fail")
             self.assertTrue(any("tools:" in f for f in findings), findings)
+
+    def test_missing_grok_agent_is_reported(self):
+        with tempfile.TemporaryDirectory() as temp:
+            findings = self._run(self._root(temp, deployed_grok=0))
+            self.assertTrue(any(".grok/agents" in f for f in findings), findings)
+
+    def test_leaked_tools_line_on_grok_surface_is_reported(self):
+        with tempfile.TemporaryDirectory() as temp:
+            findings = self._run(self._root(temp, grok_tools=True))
+            self.assertTrue(any(".grok/agents" in f and "tools:" in f for f in findings), findings)
 
 
 class DirectiveRangeTests(unittest.TestCase):

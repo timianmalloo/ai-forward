@@ -2,13 +2,13 @@
 
 The practical orientation to the bundle: **how to install it, what it contains, and how to use the skills.** For *why* each piece exists, see `README.md`; for the evidence and design decisions behind it, `research-synthesis.md`.
 
-The pack is a repository-droppable extension to the **Agent Knowledge Pack**. It turns that pack's adversarial reviewer council into a working swarm — collaborating peers that *author*, adversarial personas that *attack*, and a staged reasoning discipline that slows the rush to a plausible answer and replaces it with evidence. It works with **Claude Code**, **GitHub Copilot**, or **both**.
+The pack is a repository-droppable extension to the **Agent Knowledge Pack**. It turns that pack's adversarial reviewer council into a working swarm — collaborating peers that *author*, adversarial personas that *attack*, and a staged reasoning discipline that slows the rush to a plausible answer and replaces it with evidence. It works with **Claude Code**, **GitHub Copilot**, **Grok Build**, or any combination.
 
 ---
 
 ## 1. How to install
 
-The pack is installed by **manual reconciliation** — it's all text, and every source path has exactly one destination per tool. The deployment map, the ready-to-paste managed blocks (`adapters/managed-blocks/`), the Copilot frontmatter wrap, and the update procedure are in **`adapters/INSTALL.md`** (installed copy: `docs/ai-forward-pack/INSTALL.md`) — whose **frontmatter `changes` changelog** is the refresh guide: on a repo refresh, read "what changed since the last version" and apply exactly those re-copies and managed-block re-pastes. In short: knowledge → `.claude/knowledge/` + `.github/instructions/` (wrapped), skills → `.claude/skills/` + the prewritten `.github/prompts/`, all 23 agents → both tools' agent directories, templates + pack docs → `docs/ai-forward-pack/`, the Docs Explorer template → `docs/index.html` (one-time copy), and the managed blocks appended to `CLAUDE.md` / `AGENTS.md`.
+The pack is installed by **manual reconciliation** — it's all text, and every source path has exactly one destination per host. The deployment map, the ready-to-paste managed blocks (`adapters/managed-blocks/`), the Copilot frontmatter wrap, the Grok path map (`.grok/rules/grok-surface.md`), and the update procedure are in **`adapters/INSTALL.md`** (installed copy: `docs/ai-forward-pack/INSTALL.md`) — whose **frontmatter `changes` changelog** is the refresh guide: on a repo refresh, read "what changed since the last version" and apply exactly those re-copies and managed-block re-pastes. In short: knowledge → `.claude/knowledge/` + `.github/instructions/` (wrapped; Grok reads the `.claude/knowledge/` copies), skills → `.claude/skills/` + `.github/prompts/` + `.grok/skills/`, all 23 agents → every host's agent directory, templates + pack docs → `docs/ai-forward-pack/`, the Docs Explorer template → `docs/index.html` (one-time copy), the managed block in `AGENTS.md`, and the Grok path map in `.grok/rules/`.
 
 **What lands in your repo** (for `--tool both`):
 
@@ -17,6 +17,7 @@ The pack is installed by **manual reconciliation** — it's all text, and every 
 ├─ CLAUDE.md / AGENTS.md             # a managed block is added (your own content is preserved)
 ├─ .claude/  (knowledge, skills, agents)      ← Claude Code
 ├─ .github/  (instructions, prompts, agents)  ← GitHub Copilot
+├─ .grok/    (skills, agents, hooks, rules)   ← Grok Build
 └─ docs/ai-forward-pack/  (README, research-synthesis, this overview, templates)
 ```
 
@@ -71,7 +72,7 @@ There are **27 skills** — six that carry a piece of work from idea to shipped 
 
 **Built-in delivery discipline.** `/define-architecture` *defines completely but phases vertically*: the whole architecture is specified, then delivery is partitioned into end-to-end vertical slices (Phase 1 a walking skeleton; mocks at unbuilt edges as contract seams) so serial implementation always yields a deployable, human-validatable increment. `/design-slice` performs a mandatory **failure-mode analysis** (each mode → an explicit disposition: prevent/detect/mitigate/recover/accept) and `/implement` carries every mode into code + a negative test. And `/define-architecture`, `/design-slice`, and `/implement` each **end with a status table** — completed / remaining / best next action — so you always know where the build stands.
 
-**How you invoke them.** In **Claude Code**, the skills install to `.claude/skills/` and apply automatically by their description, or you can call one explicitly (e.g. *"run /specify on this idea: …"*). In **GitHub Copilot**, each skill installs as a prompt in `.github/prompts/`; invoke it in chat as `/specify`, `/design-slice`, etc., with your input. Either way the skill convenes the right personas as peers to author and as adversaries to review — you don't summon agents by hand.
+**How you invoke them.** In **Claude Code**, the skills install to `.claude/skills/` and apply automatically by their description, or you can call one explicitly (e.g. *"run /specify on this idea: …"*). In **GitHub Copilot**, each skill installs as a prompt in `.github/prompts/`; invoke it in chat as `/specify`, `/design-slice`, etc., with your input. In **Grok Build**, skills install to `.grok/skills/` (slash `/specify`, …) and personas spawn with `spawn_subagent` (`subagent_type` = the persona `name`). Either way the skill convenes the right personas as peers to author and as adversaries to review — you don't summon agents by hand.
 
 **The natural flow** (use only the steps a given piece of work needs):
 

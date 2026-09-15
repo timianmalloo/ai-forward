@@ -535,7 +535,8 @@ def check_deployed_agent_parity(truth, findings):
     """
     expected = len(truth["cc_agents"]) + len(truth["cop_agents"])
     for label, rel, suffix in ((".claude/agents", os.path.join(ROOT, ".claude", "agents"), ".md"),
-                               (".github/agents", os.path.join(ROOT, ".github", "agents"), ".agent.md")):
+                               (".github/agents", os.path.join(ROOT, ".github", "agents"), ".agent.md"),
+                               (".grok/agents", os.path.join(ROOT, ".grok", "agents"), ".md")):
         if not os.path.isdir(rel):
             findings.append(f"{label}: directory missing; expected {expected} deployed personas")
             continue
@@ -548,19 +549,22 @@ def check_deployed_agent_parity(truth, findings):
 
     # A tools: line on the Copilot surface is misleading (Copilot ignores unknown tool
     # names and silently falls back to all-tools), so INSTALL 1.2 requires it stripped.
-    gh = os.path.join(ROOT, ".github", "agents")
-    if os.path.isdir(gh):
+    for label, rel, suffix in ((".github/agents", os.path.join(ROOT, ".github", "agents"), ".agent.md"),
+                               (".grok/agents", os.path.join(ROOT, ".grok", "agents"), ".md")):
+        if not os.path.isdir(rel):
+            continue
         leaked = []
-        for name in sorted(os.listdir(gh)):
-            if not name.endswith(".agent.md"):
+        for name in sorted(os.listdir(rel)):
+            if not name.endswith(suffix):
                 continue
-            with open(os.path.join(gh, name), "r", encoding="utf-8") as handle:
+            with open(os.path.join(rel, name), "r", encoding="utf-8") as handle:
                 if re.search(r"(?m)^tools:", handle.read()):
                     leaked.append(name)
         if leaked:
             findings.append(
-                f".github/agents: {len(leaked)} agent(s) still carry a `tools:` line, which "
-                f"INSTALL 1.2 requires stripped at the Copilot boundary: {', '.join(leaked[:4])}")
+                f"{label}: {len(leaked)} agent(s) still carry a `tools:` line, which "
+                f"INSTALL 1.2/1.7 requires stripped at the Copilot/Grok boundary: "
+                f"{', '.join(leaked[:4])}")
 
 
 def check_proof_coverage(truth, findings):

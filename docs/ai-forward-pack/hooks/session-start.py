@@ -21,7 +21,9 @@ the session's current directory; SessionStart cannot block. This hook prints not
 stdout (stdout is added to the model's context) and exits 0 on every path, including its
 own failures. Copilot CLI is not wired: its session-start event was not verified.
 
-Usage (from .claude/settings.json):  python docs/ai-forward-pack/hooks/session-start.py --host claude
+Usage:  python docs/ai-forward-pack/hooks/session-start.py --host claude|grok
+Grok Build sends camelCase keys (`sessionId`, `agentId`, `workspaceRoot`) with Claude
+aliases (`session_id`, `agent_id`, `cwd`); both spellings are accepted.
 """
 import argparse
 import json
@@ -48,17 +50,17 @@ def _audit_script(here):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--host", choices=["claude"], default="claude")
+    parser.add_argument("--host", choices=["claude", "grok"], default="claude")
     args = parser.parse_args()
     try:
         payload = json.loads(sys.stdin.read() or "{}")
         if not isinstance(payload, dict):
             return 0
-        session_id = str(payload.get("session_id") or "").strip()
+        session_id = str(payload.get("session_id") or payload.get("sessionId") or "").strip()
         if not session_id:
             return 0
-        agent_id = str(payload.get("agent_id") or "").strip()
-        cwd = payload.get("cwd") or os.getcwd()
+        agent_id = str(payload.get("agent_id") or payload.get("agentId") or "").strip()
+        cwd = payload.get("cwd") or payload.get("workspaceRoot") or os.getcwd()
         docs = os.path.join(cwd, "docs")
         if not os.path.isdir(docs):
             return 0

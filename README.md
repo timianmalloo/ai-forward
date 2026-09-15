@@ -4,14 +4,14 @@ The development home of the **AI-Forward Pack** — a repository-droppable exten
 the Agent Knowledge Pack's adversarial reviewer council into a working swarm: collaborating
 peers that *author*, adversarial personas that *attack*, and a staged reasoning discipline (the
 **Rigor Protocol**) that slows the rush to a plausible answer and replaces it with evidence at
-every step. It works with **Claude Code**, **GitHub Copilot**, or both.
+every step. It works with **Claude Code**, **GitHub Copilot**, **Grok Build**, or any combination.
 
 This repo is two things at once:
 
 1. **The canonical source** for the pack — everything you edit to expand it lives in [`pack/`](pack/).
-2. **A live install of the pack** — the pack is installed into this repo (`.claude/`, `docs/`)
-   so the skills, agents, and knowledge are active in Claude Code *while you work on the pack
-   itself*. Dogfooding: the pack is built using the pack.
+2. **A live install of the pack** — the pack is installed into this repo (`.claude/`, `.github/`,
+   `.grok/`, `docs/`) so the skills, agents, and knowledge are active in Claude Code, Copilot,
+   and Grok Build *while you work on the pack itself*. Dogfooding: the pack is built using the pack.
 
 For the pack's own story — why it exists, what's inside, how to use the twenty-seven skills — read
 [`pack/README.md`](pack/README.md) and [`pack/OVERVIEW.md`](pack/OVERVIEW.md).
@@ -32,6 +32,9 @@ ai-forward/
 ├─ .claude/               ← GENERATED install (Claude Code reads this) — do not edit by hand
 │   ├─ knowledge/  skills/  agents/
 │
+├─ .grok/                 ← GENERATED install (Grok Build reads this) — do not edit by hand
+│   ├─ skills/  agents/  hooks/  rules/
+│
 ├─ docs/                  ← GENERATED install — templates, scripts, pack docs, Docs Explorer
 │   ├─ index.html         ← the Docs Explorer (hierarchy · graph · mind map · health)
 │   └─ ai-forward-pack/   ← templates/ scripts/ + README/OVERVIEW/research-synthesis/INSTALL
@@ -48,9 +51,9 @@ ai-forward/
 └─ LICENSE                ← Apache-2.0
 ```
 
-`.claude/` and `docs/` are **generated from `pack/`** and committed so a fresh clone has a
-working install with no setup. `pack/` is the single source of truth — never edit the generated
-copies directly; they're overwritten on the next sync.
+`.claude/`, `.github/`, `.grok/`, and `docs/` are **generated from `pack/`** and committed so a
+fresh clone has a working install with no setup. `pack/` is the single source of truth — never
+edit the generated copies directly; they're overwritten on the next sync.
 
 ## Using the pack (in this repo)
 
@@ -85,8 +88,8 @@ The natural order and what each skill produces are in [`pack/OVERVIEW.md`](pack/
    pwsh tools/sync-pack.ps1
    ```
 3. Try the change in Claude Code in this repo (the regenerated skills/agents are now live).
-4. Commit `pack/` **and** the regenerated `.claude/` + `docs/` together so source and install
-   never drift. When you change the pack, also update the changelog in
+4. Commit `pack/` **and** the regenerated `.claude/` + `.github/` + `.grok/` + `docs/` together
+   so source and install never drift. When you change the pack, also update the changelog in
    `pack/adapters/INSTALL.md` (bump `revision`) per the convention documented there.
 
 ## Sharing / distributing the pack
@@ -97,8 +100,8 @@ pwsh tools/package-pack.ps1   # writes dist/ai-forward-pack.zip
 
 Recipients drop the pack into their own repo by manual reconciliation — the deployment map and
 update procedure are in [`pack/adapters/INSTALL.md`](pack/adapters/INSTALL.md). (`tools/sync-pack.ps1`
-mirrors only the Claude Code surface needed *here*; the distributable in `pack/` carries the full
-Claude Code **and** Copilot wiring.)
+mirrors the Claude Code, Copilot, and Grok Build surfaces needed *here*; the distributable in
+`pack/` carries the same wiring for consuming repos.)
 
 ## Documentation
 

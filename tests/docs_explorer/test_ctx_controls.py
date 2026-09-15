@@ -88,6 +88,13 @@ class PackDoctorCtxTests(unittest.TestCase):
         self._write("docs/ai-forward-pack/hooks/reread-guard.py", "# guard")
         self.assertEqual(self.doc.PASS, self.doc.check_hooks(self.tmp)["status"])
 
+    def test_grok_hooks_alone_pass(self):
+        self._write(".grok/hooks/ai-forward.json", "{}")
+        self._write("docs/ai-forward-pack/hooks/reread-guard.py", "# guard")
+        r = self.doc.check_hooks(self.tmp)
+        self.assertEqual(self.doc.PASS, r["status"], r)
+        self.assertIn("Grok Build", r["detail"])
+
     def test_claude_settings_check_wants_thinking_summaries(self):
         self.assertEqual(self.doc.WARN, self.doc.check_claude_settings(self.tmp)["status"], "absent file -> WARN with the fix")
         self._write(".claude/settings.json", json.dumps({"hooks": {}}))

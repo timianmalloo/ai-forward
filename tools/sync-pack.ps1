@@ -1,8 +1,9 @@
 <#
 .SYNOPSIS
-    Install the canonical pack in pack/ into this repo so both Claude Code and
-    GitHub Copilot can use it (the "dogfood" install). Regenerates .claude/,
-    .github/{instructions,prompts,agents}/, and docs/ from pack/.
+    Install the canonical pack in pack/ into this repo so Claude Code, GitHub
+    Copilot, and Grok Build can use it (the "dogfood" install). Regenerates
+    .claude/, .github/{instructions,prompts,agents}/, .grok/{skills,agents,hooks,rules}/,
+    and docs/ from pack/.
 
 .DESCRIPTION
     pack/ is the single source of truth. This script mirrors it into the locations
@@ -57,7 +58,7 @@ function Reset-Dir([string]$path) {
     New-Item -ItemType Directory -Force -Path $path | Out-Null
 }
 
-Write-Host "Syncing pack/ -> .claude/ + .github/{instructions,prompts,agents}/ + docs/ (project: $ProjectName)" -ForegroundColor Cyan
+Write-Host "Syncing pack/ -> .claude/ + .github/{instructions,prompts,agents}/ + .grok/ + docs/ (project: $ProjectName)" -ForegroundColor Cyan
 
 # --- .claude/knowledge ---------------------------------------------------------
 $kDst = Join-Path $repo ".claude\knowledge"
@@ -198,6 +199,53 @@ foreach ($cc in Get-ChildItem (Join-Path $pack "adapters\claude-code\agents") -F
 $ghAgentsCount = (Get-ChildItem $ghAgents -File).Count
 Write-Host "  .github/agents: $ghAgentsCount agents"
 
+# --- .grok/{skills,agents,hooks,rules} (Grok Build — dogfood, INSTALL 1.7) -----
+# Native destinations so the pack still works when [compat.claude] skills = false.
+# Knowledge is NOT copied into .grok/rules/ (CTX-B: Grok loads every *.md there
+# on every turn). The path map is the only rules file.
+$grokSkills = Join-Path $repo ".grok\skills"
+Reset-Dir $grokSkills
+$grokSkillCount = 0
+foreach ($cmd in Get-ChildItem (Join-Path $pack "commands") -Directory) {
+    $skill = Join-Path $cmd.FullName "SKILL.md"
+    if (Test-Path $skill) {
+        $target = Join-Path $grokSkills $cmd.Name
+        New-Item -ItemType Directory -Force -Path $target | Out-Null
+        Copy-Item (Join-Path $cmd.FullName "*") $target -Recurse -Force
+        $grokSkillCount++
+    }
+}
+Write-Host "  .grok/skills: $grokSkillCount"
+
+function Write-StrippedAgent([string]$src, [string]$dest) {
+    $lines = Get-Content $src
+    $out = New-Object System.Collections.Generic.List[string]
+    $inTools = $false
+    foreach ($line in $lines) {
+        if ($line -match '^tools:') { $inTools = $true; continue }
+        if ($inTools -and $line -match '^\s+\S') { continue }
+        $inTools = $false
+        $out.Add($line)
+    }
+    Set-Content -Path $dest -Value $out -Encoding UTF8
+}
+$grokAgents = Join-Path $repo ".grok\agents"
+Reset-Dir $grokAgents
+foreach ($cc in Get-ChildItem (Join-Path $pack "adapters\claude-code\agents") -Filter *.md -File) {
+    Write-StrippedAgent $cc.FullName (Join-Path $grokAgents $cc.Name)
+}
+foreach ($cop in Get-ChildItem (Join-Path $pack "adapters\copilot\agents") -Filter *_agent.md -File) {
+    $name = $cop.BaseName -replace '_agent$', ''
+    Write-StrippedAgent $cop.FullName (Join-Path $grokAgents ("{0}.md" -f $name))
+}
+$grokAgentsCount = (Get-ChildItem $grokAgents -File).Count
+Write-Host "  .grok/agents: $grokAgentsCount"
+
+$grokRules = Join-Path $repo ".grok\rules"
+Reset-Dir $grokRules
+Copy-Item (Join-Path $pack "adapters\grok\grok-surface.md") (Join-Path $grokRules "grok-surface.md") -Force
+Write-Host "  .grok/rules: grok-surface.md (path map only)"
+
 # --- docs/ai-forward-pack (templates, scripts, pack docs) ----------------------
 $docPack = Join-Path $repo "docs\ai-forward-pack"
 Reset-Dir (Join-Path $docPack "templates")
@@ -225,7 +273,10 @@ Copy-Item (Join-Path $pack "adapters\hooks\README.md")       $hooksDst -Force
 $ghHooks = Join-Path $repo ".github\hooks"
 New-Item -ItemType Directory -Force -Path $ghHooks | Out-Null
 Copy-Item (Join-Path $pack "adapters\hooks\copilot.ai-forward-hooks.json") (Join-Path $ghHooks "ai-forward.json") -Force
-Write-Host "  hooks: reread-guard.py -> docs/ai-forward-pack/hooks/, .github/hooks/ai-forward.json"
+$grokHooks = Join-Path $repo ".grok\hooks"
+New-Item -ItemType Directory -Force -Path $grokHooks | Out-Null
+Copy-Item (Join-Path $pack "adapters\hooks\grok.ai-forward-hooks.json") (Join-Path $grokHooks "ai-forward.json") -Force
+Write-Host "  hooks: reread-guard.py -> docs/ai-forward-pack/hooks/, .github/hooks/ai-forward.json, .grok/hooks/ai-forward.json"
 Write-Host "  docs/ai-forward-pack: templates + scripts + pack docs"
 
 # --- docs/index.html (Docs Explorer; regenerated from template) ----------------
@@ -297,4 +348,4 @@ if (Test-Path $buildPortal) {
     else { Write-Host "  docs/portal/portal-data.js skipped (python not found)" -ForegroundColor Yellow }
 }
 
-Write-Host "Done. Review changes, then commit pack/ + .claude/ + .github/{instructions,prompts,agents}/ + docs/ + CLAUDE.md/AGENTS.md together." -ForegroundColor Green
+Write-Host "Done. Review changes, then commit pack/ + .claude/ + .github/{instructions,prompts,agents}/ + .grok/ + docs/ + CLAUDE.md/AGENTS.md together." -ForegroundColor Green

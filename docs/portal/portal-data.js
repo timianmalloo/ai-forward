@@ -7,7 +7,7 @@ window.PORTAL_DATA = {
       "templates": 28,
       "scripts": 27
     },
-    "whatIs": "AI-Forward is a committed Markdown methodology pack that installs into a repo so Claude Code and GitHub Copilot direct work with a shared reasoning spine, adversarial persona review, and a library of workflow skills - nothing runs as a service; everything is versioned files and stdlib scripts.",
+    "whatIs": "AI-Forward is a committed Markdown methodology pack that installs into a repo so Claude Code, GitHub Copilot, and Grok Build direct work with a shared reasoning spine, adversarial persona review, and a library of workflow skills - nothing runs as a service; everything is versioned files and stdlib scripts.",
     "skillCount": 27,
     "precisionNote": "This portal is the high-level, user-facing front door. It is a LENS over the repo's core knowledge, not a copy of it: the Foundations, UI, and Architecture sections list and link the structured artifacts (knowledge docs, ADRs, specs, designs) with derived summaries, while the artifacts themselves stay exactly where they are - as structured, individually-owned Markdown. Nothing here is hand-typed content that must be kept in sync; it is generated from those sources, so it cannot drift."
   },
@@ -91,7 +91,7 @@ window.PORTAL_DATA = {
     },
     {
       "h": "Know how skills are invoked",
-      "p": "In Claude Code, skills apply by description (.claude/skills/). In GitHub Copilot, they are prompts (.github/prompts/). Both surfaces read the same knowledge docs and personas.",
+      "p": "In Claude Code, skills apply by description (.claude/skills/). In GitHub Copilot, they are prompts (.github/prompts/). In Grok Build, skills are .grok/skills/ and personas spawn with spawn_subagent. Every host reads the same knowledge docs and personas.",
       "cmd": null
     },
     {
@@ -1786,7 +1786,7 @@ window.PORTAL_DATA = {
         "id": "api-index",
         "type": "api",
         "title": "API reference — the deployed script bundle",
-        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 363 public functions across 26 modules, 46% carrying a docstring."
+        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 364 public functions across 26 modules, 46% carrying a docstring."
       },
       {
         "id": "api-marker-lint",
@@ -2551,6 +2551,12 @@ window.PORTAL_DATA = {
         "summary": "Four decisions taken while adding the two requested Pages sections: where they sit in the reading order, deriving the persona roster from the agent files..."
       },
       {
+        "id": "note-20260914-grok-build-surface",
+        "type": "decision-note",
+        "title": "Grok Build is a third host: native .grok/ surface, shared knowledge, no rules dump",
+        "summary": "Deploy a native Grok Build surface under .grok/{skills,agents,hooks,rules} rather than relying on Claude compatibility. Knowledge stays at .claude/knowledge/...."
+      },
+      {
         "id": "note-autopilot-open-questions-decisions",
         "type": "decision-note",
         "title": "Decisions on PACK-O open questions (logging, class granularity, autopilot caps)",
@@ -2561,6 +2567,12 @@ window.PORTAL_DATA = {
         "type": "decision-note",
         "title": "Decision — do not make pack-consistency a required status check on main",
         "summary": "Decision not to enable required status checks on main, taken while closing FR-062. The control would have prevented the original incident outright, but with..."
+      },
+      {
+        "id": "plan-optimize-graph-grok-surface",
+        "type": "doc",
+        "title": "optimize-graph — Grok Build surface for pack-consuming repos",
+        "summary": "Approved execution graph for adding a native Grok Build surface to the AI-Forward Pack so /addpacktorepo and pack-apply configure consuming repos the same way..."
       },
       {
         "id": "plan-optimize-graph-live-01",
@@ -2633,6 +2645,12 @@ window.PORTAL_DATA = {
         "type": "proof-pack",
         "title": "Docs Explorer Redesign - Proof Pack",
         "summary": "Accepted implementation evidence for the deterministic, local-first Docs Explorer, native Spatial 3D knowledge portal, and bounded grounding packet..."
+      },
+      {
+        "id": "proof-grok-build-surface",
+        "type": "proof-pack",
+        "title": "Proof Pack — Grok Build surface (revision 71)",
+        "summary": "Proof that pack-apply and sync-pack deploy a native Grok Build surface (.grok/skills, agents, hooks, rules), that knowledge is not dumped into .grok/rules/,..."
       },
       {
         "id": "proof-native-app-ui-skill-extension",
@@ -4136,6 +4154,16 @@ window.PORTAL_DATA = {
         "rel": "relates-to"
       },
       {
+        "from": "note-20260914-grok-build-surface",
+        "to": "plan-optimize-graph-grok-surface",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260914-grok-build-surface",
+        "to": "proof-grok-build-surface",
+        "rel": "tested-by"
+      },
+      {
         "from": "note-autopilot-open-questions-decisions",
         "to": "defect-classes",
         "rel": "relates-to"
@@ -4154,6 +4182,21 @@ window.PORTAL_DATA = {
         "from": "note-required-status-checks",
         "to": "forensic-review-rev48-backlog",
         "rel": "relates-to"
+      },
+      {
+        "from": "plan-optimize-graph-grok-surface",
+        "to": "kb-graph-and-loop-engineering",
+        "rel": "depends-on"
+      },
+      {
+        "from": "plan-optimize-graph-grok-surface",
+        "to": "note-20260914-grok-build-surface",
+        "rel": "relates-to"
+      },
+      {
+        "from": "plan-optimize-graph-grok-surface",
+        "to": "proof-grok-build-surface",
+        "rel": "tested-by"
       },
       {
         "from": "plan-optimize-graph-live-01",
@@ -4299,6 +4342,16 @@ window.PORTAL_DATA = {
         "from": "proof-docs-explorer-redesign",
         "to": "threat-model",
         "rel": "relates-to"
+      },
+      {
+        "from": "proof-grok-build-surface",
+        "to": "note-20260914-grok-build-surface",
+        "rel": "relates-to"
+      },
+      {
+        "from": "proof-grok-build-surface",
+        "to": "plan-optimize-graph-grok-surface",
+        "rel": "implements"
       },
       {
         "from": "proof-native-app-ui-skill-extension",

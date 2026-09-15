@@ -96,6 +96,18 @@ class SessionStartHookTests(unittest.TestCase):
         self.assertNotIn("duration_source", entry, "the skill's own grounding mark is the measurement")
         self.assertIn("__harness__:abc123", self._starts(), "the harness marker is left for a run that has none")
 
+    def test_grok_camelcase_payload_records_the_marker(self):
+        """Grok Build's SessionStart envelope uses sessionId / workspaceRoot (user-guide 10-hooks.md)."""
+        env = dict(os.environ)
+        env.pop("AGENT_SESSION", None)
+        payload = {"hookEventName": "session_start", "hook_event_name": "SessionStart",
+                   "sessionId": "grok-abc", "workspaceRoot": str(self.repo)}
+        r = subprocess.run([sys.executable, str(self.hook), "--host", "grok"], cwd=str(self.repo),
+                           input=json.dumps(payload), capture_output=True, text=True, env=env, timeout=30)
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertEqual("", r.stdout.strip())
+        self.assertIn("__harness__:grok-abc", self._starts())
+
     def test_the_hook_is_fail_open(self):
         r = subprocess.run([sys.executable, str(self.hook), "--host", "claude"], cwd=str(self.tmp),
                            input="not json", capture_output=True, text=True, timeout=30)

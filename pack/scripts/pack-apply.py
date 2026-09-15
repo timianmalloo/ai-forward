@@ -17,12 +17,15 @@ What it does, per artifact family (pack-owned names only - repo-local files are 
                  load: skill|reference; the STALE copy in the other Copilot location is removed
                  (CTX-E: a doc re-scoped to on-demand must stop attaching).
   skills      -> .claude/skills/<name>/ (the whole directory: SKILL.md + reference/*.md);
-                 .github/prompts/<name>.prompt.md
-  agents      -> .claude/agents/ (both sets); .github/agents/<name>.agent.md (renamed, `tools:` stripped)
+                 .github/prompts/<name>.prompt.md;
+                 .grok/skills/<name>/ (same files; Grok Build native, wins over Claude-compat scan)
+  agents      -> .claude/agents/ (both sets); .github/agents/<name>.agent.md (renamed, `tools:` stripped);
+                 .grok/agents/<name>.md (`_agent` suffix stripped, `tools:` stripped)
   bundle      -> docs/ai-forward-pack/{templates,scripts,hooks,README,OVERVIEW,research-synthesis,
                  INSTALL,context-budget.json}; .github/hooks/ai-forward.json; .claude/settings.json
-                 (hooks merged, showThinkingSummaries set); .gitignore lines; docs/index.html only if
-                 absent; docs/docs-index.js NEVER (V10)
+                 (hooks merged, showThinkingSummaries set); .grok/hooks/ai-forward.json;
+                 .grok/rules/grok-surface.md (path map only — not knowledge docs); .gitignore lines;
+                 docs/index.html only if absent; docs/docs-index.js NEVER (V10)
   front doors -> AGENTS.md: the managed block replaced wholesale between markers (appended if absent).
                  CLAUDE.md: converted to `@AGENTS.md` + the addendum block (CTX-B); the old file is
                  backed up under docs/ai-forward-pack/retired/, and every paragraph that is NOT in
@@ -427,8 +430,12 @@ class Applier(object):
                 for f in sorted(files):
                     src = os.path.join(base, f)
                     rel_in_skill = os.path.relpath(src, sdir)
-                    dest = os.path.join(self.target, ".claude", "skills", name, rel_in_skill)
-                    self.place("skills", "commands/{0}/{1}".format(name, rel_in_skill.replace("\\", "/")), dest, read(src))
+                    rel_skill = "commands/{0}/{1}".format(name, rel_in_skill.replace("\\", "/"))
+                    text = read(src)
+                    self.place("skills", rel_skill,
+                               os.path.join(self.target, ".claude", "skills", name, rel_in_skill), text)
+                    self.place("skills", rel_skill,
+                               os.path.join(self.target, ".grok", "skills", name, rel_in_skill), text)
             prompt = os.path.join(pdir, name + ".prompt.md")
             if os.path.isfile(prompt):
                 self.place("skills", "adapters/copilot/prompts/{0}.prompt.md".format(name),
@@ -443,12 +450,18 @@ class Applier(object):
                 self.place("agents", "adapters/claude-code/agents/" + name, os.path.join(self.target, ".claude", "agents", name), text)
                 self.place("agents", "adapters/claude-code/agents/" + name,
                            os.path.join(self.target, ".github", "agents", name[:-3] + ".agent.md"), strip_tools(text), "tools: stripped")
+                self.place("agents", "adapters/claude-code/agents/" + name,
+                           os.path.join(self.target, ".grok", "agents", grok_agent_filename(name)),
+                           strip_tools(text), "tools: stripped; Grok type name")
         for name in sorted(os.listdir(cop)):
             if name.endswith("_agent.md"):
                 text = read(os.path.join(cop, name))
                 self.place("agents", "adapters/copilot/agents/" + name, os.path.join(self.target, ".claude", "agents", name), text)
                 self.place("agents", "adapters/copilot/agents/" + name,
                            os.path.join(self.target, ".github", "agents", name[:-len("_agent.md")] + ".agent.md"), text, "renamed .agent.md")
+                self.place("agents", "adapters/copilot/agents/" + name,
+                           os.path.join(self.target, ".grok", "agents", grok_agent_filename(name)),
+                           strip_tools(text), "tools: stripped; Grok type name")
 
     def bundle(self):
         dp = os.path.join(self.target, "docs", "ai-forward-pack")
@@ -470,6 +483,12 @@ class Applier(object):
             self.place("hooks", "adapters/hooks/" + f, os.path.join(dp, "hooks", f), read(os.path.join(hooks, f)))
         self.place("hooks", "adapters/hooks/copilot.ai-forward-hooks.json",
                    os.path.join(self.target, ".github", "hooks", "ai-forward.json"), read(os.path.join(hooks, "copilot.ai-forward-hooks.json")))
+        self.place("hooks", "adapters/hooks/grok.ai-forward-hooks.json",
+                   os.path.join(self.target, ".grok", "hooks", "ai-forward.json"),
+                   read(os.path.join(hooks, "grok.ai-forward-hooks.json")))
+        self.place("hooks", "adapters/grok/grok-surface.md",
+                   os.path.join(self.target, ".grok", "rules", "grok-surface.md"),
+                   read(os.path.join(self.pack, "adapters", "grok", "grok-surface.md")))
         self._settings(read(os.path.join(hooks, "claude-code.settings.hooks.json")))
         self._gitignore()
         explorer = os.path.join(self.target, "docs", "index.html")
@@ -729,6 +748,13 @@ class Applier(object):
 
 
 # --------------------------------------------------------------------------- pure helpers
+def grok_agent_filename(name):
+    """Grok spawn_subagent types are the persona `name`, not the pack's `_agent` source suffix."""
+    if name.endswith("_agent.md"):
+        return name[:-len("_agent.md")] + ".md"
+    return name
+
+
 def strip_tools(text):
     """Drop the frontmatter `tools:` line and its indented continuation (INSTALL 1.2)."""
     out, in_tools = [], False

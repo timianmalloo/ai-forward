@@ -86,6 +86,26 @@ class EvaluateTests(unittest.TestCase):
         self.assertEqual({}, state)
         self.assertIsNone(w)
 
+    def test_grok_payload_contract_uses_target_file_and_camelcase(self):
+        """Grok Build's PreToolUse envelope (user-guide 10-hooks.md, read 2026-09-14):
+        camelCase keys, tool `read_file`, path in `toolInput.target_file`."""
+        state = {}
+        payload = {"hookEventName": "pre_tool_use", "hook_event_name": "PreToolUse",
+                   "sessionId": "g1", "toolName": "read_file",
+                   "toolInput": {"target_file": "/x/g.md"}}
+        for _ in range(2):
+            state, w = self.g.evaluate("grok", payload, 3, state)
+            self.assertIsNone(w)
+        state, w = self.g.evaluate("grok", payload, 3, state)
+        self.assertIn("read 3 times", w)
+        state, w = self.g.evaluate("grok", {"hook_event_name": "UserPromptSubmit"}, 3, state)
+        self.assertEqual({}, state)
+
+    def test_grok_read_alias_is_accepted(self):
+        state, w = self.g.evaluate("grok", {"toolName": "Read", "toolInput": {"file_path": "/x/h.md"}}, 3, {})
+        self.assertIsNone(w)
+        self.assertEqual(1, state["reads"][self.g.normalize("/x/h.md")])
+
 
 class ProcessContractTests(unittest.TestCase):
     """The shapes the host configs rely on: exit 0 always; JSON on stdout only when warning."""
@@ -116,6 +136,21 @@ class ProcessContractTests(unittest.TestCase):
                                              "toolArgs": {"path": "/t/copilot-tool-output-0f.txt"}}))
         self.assertEqual(0, p.returncode)
         self.assertIn("additionalContext", json.loads(p.stdout))
+
+    def test_grok_warning_shape_uses_additional_context(self):
+        sid = "test-grok-{0}".format(os.getpid())
+        self._run("grok", json.dumps({"sessionId": sid, "hook_event_name": "UserPromptSubmit"}))
+        payload = json.dumps({"sessionId": sid, "hook_event_name": "PreToolUse", "toolName": "read_file",
+                              "toolInput": {"target_file": "/x/g.md"}})
+        for _ in range(2):
+            p = self._run("grok", payload)
+            self.assertEqual(0, p.returncode)
+            self.assertEqual("", p.stdout.strip())
+        p = self._run("grok", payload)
+        self.assertEqual(0, p.returncode)
+        out = json.loads(p.stdout)
+        self.assertEqual("PreToolUse", out["hookSpecificOutput"]["hookEventName"])
+        self.assertIn("additionalContext", out["hookSpecificOutput"])
 
     def test_fail_open_on_garbage_input(self):
         for stdin in ("", "not json", "[1,2]", "{}"):

@@ -37,12 +37,15 @@ What it does, per artifact family (pack-owned names only - repo-local files are 
                  load: skill|reference; the STALE copy in the other Copilot location is removed
                  (CTX-E: a doc re-scoped to on-demand must stop attaching).
   skills      -> .claude/skills/<name>/ (the whole directory: SKILL.md + reference/*.md);
-                 .github/prompts/<name>.prompt.md
-  agents      -> .claude/agents/ (both sets); .github/agents/<name>.agent.md (renamed, `tools:` stripped)
+                 .github/prompts/<name>.prompt.md;
+                 .grok/skills/<name>/ (same files; Grok Build native, wins over Claude-compat scan)
+  agents      -> .claude/agents/ (both sets); .github/agents/<name>.agent.md (renamed, `tools:` stripped);
+                 .grok/agents/<name>.md (`_agent` suffix stripped, `tools:` stripped)
   bundle      -> docs/ai-forward-pack/{templates,scripts,hooks,README,OVERVIEW,research-synthesis,
                  INSTALL,context-budget.json}; .github/hooks/ai-forward.json; .claude/settings.json
-                 (hooks merged, showThinkingSummaries set); .gitignore lines; docs/index.html only if
-                 absent; docs/docs-index.js NEVER (V10)
+                 (hooks merged, showThinkingSummaries set); .grok/hooks/ai-forward.json;
+                 .grok/rules/grok-surface.md (path map only — not knowledge docs); .gitignore lines;
+                 docs/index.html only if absent; docs/docs-index.js NEVER (V10)
   front doors -> AGENTS.md: the managed block replaced wholesale between markers (appended if absent).
                  CLAUDE.md: converted to `@AGENTS.md` + the addendum block (CTX-B); the old file is
                  backed up under docs/ai-forward-pack/retired/, and every paragraph that is NOT in
@@ -121,6 +124,10 @@ program that reads it cannot be mismatched, because the program derives the sour
 from where it lives. An INSTALLED copy sits at <repo>/docs/ai-forward-pack/scripts/,
 which is not a clone, so it gets None and must still be told - never a guess (NG1).
 
+### `grok_agent_filename(name)`
+
+Grok spawn_subagent types are the persona `name`, not the pack's `_agent` source suffix.
+
 ### `strip_tools(text)`
 
 Drop the frontmatter `tools:` line and its indented continuation (INSTALL 1.2).
@@ -154,6 +161,6 @@ original's skill-surface needles and required-phrase checks where they can be re
 
 ## Coverage
 
-- Public functions: **14** · documented: **7** (**50%**)
+- Public functions: **15** · documented: **8** (**53%**)
 - Undocumented (recorded, not invented): `read`, `norm_nl`, `frontmatter`, `git`, `normalise`, `render_table`, `summarize`
 
