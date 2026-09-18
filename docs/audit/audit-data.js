@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-18T15:12:34Z",
+  "generated": "2026-09-18T15:15:36Z",
   "audit": [
     {
       "id": "al-0001",
@@ -4121,6 +4121,35 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "3aad9f562ce93fd9c8f352995c368d3e7f5d7501",
         "short": "3aad9f562",
+        "branch": "proposal/active-coordination-bus",
+        "pushed": true
+      }
+    },
+    {
+      "id": "al-01M2THCPXN9KM22SVM5PFQ1218",
+      "shortname": "proposal-active-coord-research-pass",
+      "datetime": "2026-09-18T15:15:36Z",
+      "session": "proposal-active-coord",
+      "prompt": "deep-research workflow completed; fold remaining gaps",
+      "summary": "Folded AutoGen Swarm vs Magentic topologies, A2A optional-push vs ANP mandatory notify, AGNTCY ACP archived, Raft/Chubby push-not-poll into the proposal. Research status Partial.",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proposals/active-multi-harness-coordination.md"
+      ],
+      "tags": [
+        "coordination"
+      ],
+      "outcome": "success",
+      "goal": "Incorporate the completed research pass without rewriting the architecture.",
+      "done_when": "Gaps folded, derived, committed, pushed.",
+      "tier": "T0",
+      "fan_out": 0,
+      "git": {
+        "sha": "0657c4b7c3afd1c4e1d6b4572b6e243d8426a182",
+        "short": "0657c4b7c",
         "branch": "proposal/active-coordination-bus",
         "pushed": true
       }

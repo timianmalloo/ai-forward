@@ -456,8 +456,25 @@
     Session Card should be A2A-shaped so the adapter is a rename, not a redesign.</p>
     <p>Anthropic’s own caution, which the pack already believes: most coding tasks have fewer
     truly parallelizable pieces than research, and models are not yet great at coordinating in
-    real time. The bus exists so the parallel work we <em>do</em> choose is not left to rot
-    when one participant blocks.</p>
+    real time. The same post records that <strong>subagent waves still run synchronously</strong>
+    — asynchronous subagents are future work. That is M5/M6 at the lab that invented the
+    pattern.</p>
+    <p><strong>Two topologies, not one.</strong> AutoGen ships SelectorGroupChat (central),
+    Swarm (<code>HandoffMessage</code>, the specialist <em>becomes</em> the active agent), and
+    MagenticOneGroupChat (stall-counter Orchestrator). OpenAI’s Agents SDK makes the same fork
+    first-class. AgentPlane is manager-retains-control. Independently launched Copilot/Grok/Claude
+    sessions are the Swarm shape. The elected Leader is how a Swarm grows a Magentic-One inner
+    loop without requiring every participant to have been spawned.</p>
+    <p><strong>A2A is not a P2P control plane.</strong> v1.0 is client–server; push is optional,
+    capability-gated, server-initiated, and one-way. ANP is the closer cousin: Profile P3
+    <em>requires</em> the peer-initiated notification <code>direct.incoming</code>. AGNTCY’s
+    invocation ACP was archived April 2026. Session Cards stay A2A-shaped; v1 <em>behaviour</em>
+    (mandatory notify on blocked/kick) is the ANP lesson.</p>
+    <p><strong>The distributed-systems theorem behind Q7.</strong> Raft’s leader
+    <em>pushes</em> heartbeats; followers do not poll. Chubby’s API was built around event
+    notification specifically so clients need not poll files. CRDTs converge only after
+    eventual sync — they are not an active coordination protocol. The 8,143&nbsp;s wait is
+    what you get when the control plane is a file the agent may choose not to read.</p>
   </div>
 
   <h3>Agent-native repositories</h3>

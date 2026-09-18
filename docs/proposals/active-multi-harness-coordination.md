@@ -314,7 +314,42 @@ should be A2A-shaped so the adapter is a rename, not a redesign.
 Anthropic's own caution, which the pack already believes: **most coding tasks have fewer truly
 parallelizable pieces than research, and models are not yet great at coordinating in real
 time.** Parallelism is a cost multiplier (GO6). The bus exists so the parallel work we *do*
-choose is not left to rot when one participant blocks.
+choose is not left to rot when one participant blocks. The same post records that **subagent
+waves still run synchronously** — the lead waits for each set. Asynchronous subagents are
+named as future work, not a shipped control plane. That is M5/M6 at the lab that invented
+the pattern.
+
+**Two topologies, not one, and we already picked.** AutoGen AgentChat ships three:
+SelectorGroupChat (central next-speaker), Swarm (`HandoffMessage`, no central orchestrator —
+the specialist *becomes* the active agent), and MagenticOneGroupChat (the stall-counter
+Orchestrator). OpenAI's Agents SDK makes the same fork first-class: manager retains control
+and calls specialists as tools, or a handoff makes the specialist the active agent. AI-DE's
+AgentPlane is the manager-retains-control shape (it *spawns* a lane and holds the protocol
+session). Independently launched Copilot/Grok/Claude sessions are the Swarm shape — nobody
+spawned them, so they can only *handoff* and *notify*. The elected Leader is how a Swarm
+grows a Magentic-One inner loop without requiring every participant to have been spawned by
+AgentPlane.
+
+**A2A is not a P2P control plane.** v1.0 is client–server: Agent Card at
+`/.well-known/agent-card.json`, server-owned Tasks, client may block, poll `GetTask`,
+subscribe via SSE, or register a webhook. Push is **optional, capability-gated,
+server-initiated, and one-way.** ANP is the closer cousin to what this proposal wants:
+federated DID-addressed JSON-RPC, and Profile P3 *requires* the peer-initiated notification
+`direct.incoming` after ingress accepts `direct.send` — success of send is acceptance, not
+completion. AGNTCY's invocation ACP (OpenAPI 0.2.3) was **archived 2026-04-11**; SLIM is a
+separate overlay with named nodes, not direct agent-to-agent sockets. Session Cards stay
+A2A-shaped for later; the v1 *behaviour* (mandatory notify on blocked/kick) is the ANP
+lesson, not the A2A one.
+
+**The distributed-systems theorem behind Q7.** Raft's leader *pushes* empty AppendEntries as
+heartbeats; a follower starts an election only after a timeout with no such RPC — it does
+not poll the leader for status. Chubby's client API was built around event notification and
+KeepAlive-piggybacked invalidations *specifically so clients need not poll files*. SWIM
+replaces all-to-all heartbeats with randomized ping plus indirect probes. Gossipsub replaced
+floodsub because unbounded flooding does not scale. CRDTs (Automerge) are not an active
+coordination protocol: they converge only after the same updates have eventually synced.
+The 8,143 s wait is what you get when the control plane is a file the agent may choose not
+to read. Push is not a taste. It is how every lease service that survived was built.
 
 ### 3.2 Agent-native repositories: do not replace GitHub; steal the live thread
 
@@ -874,10 +909,18 @@ Lab and protocol:
   https://www.microsoft.com/en-us/research/articles/magentic-one-a-generalist-multi-agent-system-for-solving-complex-tasks/
 - Magentic-UI: Towards Human-in-the-loop Agentic Systems, arXiv:2507.22358, 2025-07.
 - Google / Linux Foundation, Agent2Agent protocol v1.0 (stable 2026-03); donated Jun 2025.
-  https://opensource.googleblog.com/2026/04/a-year-of-open-collaboration-celebrating-the-anniversary-of-the-a2a.html
+  https://a2a-protocol.org/latest/specification/
+- Microsoft AutoGen v0.4 Core / AgentChat (SelectorGroupChat, Swarm, MagenticOneGroupChat).
+  https://microsoft.github.io/autogen/stable/user-guide/core-user-guide/index.html
+- OpenAI Agents SDK — orchestration and handoffs.
+  https://openai.github.io/openai-agents-python/agents/
 - Zed Industries, Agent Client Protocol. https://agentclientprotocol.com
 - Cisco Outshift / Linux Foundation, AGNTCY ("Internet of Agents"), donated Jul 2025.
+  ACP invocation spec archived 2026-04-11; SLIM remains a transport overlay.
+- ANP 1.1 — did:wba, ADSP, Profile P3 `direct.incoming` (mandatory peer-initiated notify).
+  https://github.com/agent-network-protocol/AgentNetworkProtocol
 - G. Chang et al., "Agent Network Protocol Technical White Paper," arXiv:2508.00007, 2025-07.
+- D. Ongaro, J. Ousterhout, "In Search of an Understandable Consensus Algorithm (Raft)."
 
 Agent-native repos and coordination:
 

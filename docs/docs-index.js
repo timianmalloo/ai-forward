@@ -3605,7 +3605,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "2e5046cf5c8302618a9c19207e66a7140dfc8c972338714f12995a01f6a9921f"
+      "sourceSha256": "e1dfd8a1bc4cad058b07f09718b1fefe04b0ed89f8ee4c12e76eabbb02960a39"
     },
     {
       "id": "proposal-hosting-and-dream-manifest",
@@ -6162,5 +6162,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "53a9f25c64de5a6200477633adfa7c4dcd5be208bb3688baed4c9a564fef7471"
+  "graphSha256": "f741e9afb2d52072336feae36c99bf57b595f6fedc0dc55b39f65c38577748a1"
 };
