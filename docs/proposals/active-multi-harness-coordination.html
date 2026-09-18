@@ -176,7 +176,8 @@
   <div><dt>Adds</dt><dd>optional bus</dd></div>
   <div><dt>In-session</dt><dd>Owner · Conductor · Worker</dd></div>
   <div><dt>Between sessions</dt><dd>elected Leader</dd></div>
-  <div><dt>Daemon required?</dt><dd class="good">no</dd></div>
+  <div><dt>Planes</dt><dd class="good">all three ship</dd></div>
+  <div><dt>Local bus</dt><dd>HTTP 127.0.0.1</dd></div>
   <div><dt>ai-de stall</dt><dd class="bad">8,143 s</dd></div>
 </dl>
 
@@ -452,7 +453,7 @@
   </div>
   <div class="col">
     <p>IBM’s Agent Communication Protocol merged into A2A (archived Aug 2025). Do not mint a
-    fourth wire format. Local v1 can be JSON lines over a Unix socket; the <em>schema</em> of a
+    fourth wire format. Local v1 is the §7 JSON over loopback HTTP; the <em>schema</em> of a
     Session Card should be A2A-shaped so the adapter is a rename, not a redesign.</p>
     <p>Anthropic’s own caution, which the pack already believes: most coding tasks have fewer
     truly parallelizable pieces than research, and models are not yet great at coordinating in
@@ -575,12 +576,12 @@
       <text x="690" y="186" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--muted)">Copilot · Grok · Claude Code · Antigravity</text>
 
       <rect x="20" y="216" width="880" height="56" rx="4" fill="var(--warn-bg)" stroke="var(--warn)"/>
-      <text x="460" y="238" text-anchor="middle" font-family="Archivo,sans-serif" font-size="13" font-weight="600" fill="var(--warn)">RELAY — optional, cloud · P8 when a second host appears</text>
+      <text x="460" y="238" text-anchor="middle" font-family="Archivo,sans-serif" font-size="13" font-weight="600" fill="var(--warn)">RELAY — ships, fail-open · HTTPS · same §7 kinds</text>
       <text x="460" y="256" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--muted)">presence · board · kick fan-out · never grants · never the only copy</text>
 
       <rect x="20" y="288" width="880" height="56" rx="4" fill="var(--sunk)" stroke="var(--rule-strong)"/>
-      <text x="460" y="310" text-anchor="middle" font-family="Archivo,sans-serif" font-size="13" font-weight="600" fill="var(--s2)">BUS — optional, local-first</text>
-      <text x="460" y="328" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--muted)">unix sockets · inbox · Loomkeeper board when AI-DE hosts</text>
+      <text x="460" y="310" text-anchor="middle" font-family="Archivo,sans-serif" font-size="13" font-weight="600" fill="var(--s2)">BUS — ships, fail-open · HTTP 127.0.0.1</text>
+      <text x="460" y="328" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--muted)">token file · inbox · Loomkeeper when AI-DE hosts · same client as the relay</text>
 
       <rect x="20" y="360" width="880" height="64" rx="4" fill="var(--go-bg)" stroke="var(--go)"/>
       <text x="460" y="384" text-anchor="middle" font-family="Archivo,sans-serif" font-size="13" font-weight="600" fill="var(--go)">LEDGER + GITHUB — required, defense in depth</text>
@@ -597,7 +598,7 @@
     <tbody>
       <tr><td>Peer Advertisement</td><td><strong>Session Card</strong> — harness, model, role, capabilities, worktree, listen address</td><td>Ledger event <code>session-card</code> + bus hello</td></tr>
       <tr><td>Peer Group</td><td>The repository, or a named workstream</td><td>Session contract (already exists)</td></tr>
-      <tr><td>Rendezvous</td><td>Optional <code>coord bus</code> locally, or the cloud relay when sessions do not share a filesystem</td><td>Runtime; membership is a fold of the ledger. The relay is a cache of that fold.</td></tr>
+      <tr><td>Rendezvous</td><td>Local: <code>coord bus serve</code> on <code>127.0.0.1</code>. Remote: the cloud relay. Same §7 kinds.</td><td>Runtime; membership is a fold of the ledger. The relay is a cache of that fold.</td></tr>
       <tr><td>Pipe</td><td>Directed message: kick, delegate, progress, blocked, unblocked</td><td>Dual-write: socket + ledger event</td></tr>
       <tr><td>Resolver</td><td><code>coord who --path</code> / <code>coord leader</code></td><td>Fold of the ledger; bus is a cache</td></tr>
     </tbody>
@@ -605,10 +606,10 @@
   </div>
 
   <div class="col">
-    <p>P5–P7 are <strong>loopback only</strong>. The relay (P8) leaves loopback and requires
-    signed Session Cards. Unsigned asserted identity (ADR-0011) must not be accepted on the
-    wire. A GitHub token may authenticate the operator to the relay; it is not the session’s
-    identity. Bus payloads stay data, never instruction.</p>
+    <p>P5–P7 are <strong>loopback HTTP</strong> on <code>127.0.0.1</code>, token-gated — not
+    Unix sockets. The relay (P8) is the same vocabulary on HTTPS and requires signed Session
+    Cards. Unsigned asserted identity (ADR-0011) must not be accepted on the wire. A GitHub
+    token may authenticate the operator to the relay; it is not the session’s identity.</p>
   </div>
 </section>
 
@@ -755,15 +756,24 @@
 
   <h3>Transport — stdlib, local-first, optional rendezvous</h3>
   <div class="col">
-    <p>Unix domain sockets under <code>.agents/bus/</code>. No Redis, NATS, libp2p, MQTT, or
-    sqlite in v1. Discovery is Napster-as-bootstrap locally. The cloud relay is the same
-    rendezvous when a session cannot see the socket — Copilot’s cloud agent, a second laptop,
-    a provisioned VM.</p>
+    <p><strong>Unix sockets are the wrong default</strong> for a bus that has to work on a Mac
+    and a PC. <code>AF_UNIX</code> on Windows is pathname-only, leftover files, a second
+    implementation. Named pipes on Windows are not POSIX FIFOs. The one stdlib path that is
+    identical on both, and identical to the cloud relay, is <strong>HTTP on
+    <code>127.0.0.1</code></strong>.</p>
+    <ul class="body-list">
+      <li>Bind <code>127.0.0.1</code> only — not <code>0.0.0.0</code> (Windows firewall), not
+      <code>localhost</code> (may be <code>::1</code>).</li>
+      <li>Port 0, then write <code>.agents/bus/listen.json</code>.</li>
+      <li>Per-repo token file (mode 0600 / user ACL). Loopback is reachable by any local account;
+      the token is the permission a Unix socket would have given us.</li>
+      <li>SSE or long-poll for push; POST for the §7 kinds. P8 is a URL change plus signatures.</li>
+    </ul>
     <div class="callout">
-      <p><strong>The relay is live path, not a second GitHub.</strong> It fans out presence and
-      kicks. It does not grant leases. Dual-write first: JSONL then POST. If the relay and the
-      fold disagree, the fold wins. A clone with <code>relay: off</code> is complete, slower.
-      Stand it up only when a measured session cannot see <code>.agents/bus/</code>.</p>
+      <p><strong>All three planes ship.</strong> Fail-open at runtime, not fail-absent at
+      delivery. The relay fans out presence and kicks. It does not grant leases. Dual-write
+      first: JSONL then POST. If the relay and the fold disagree, the fold wins. A clone with
+      <code>relay: off</code> is complete, slower — that is degradation, not a skipped plane.</p>
     </div>
     <p>Local discovery:</p>
     <ol class="body-list">
@@ -782,7 +792,7 @@
   <table>
     <thead><tr><th>Harness</th><th>Edit enforcement</th><th>SessionStart</th><th>Bus adapter</th></tr></thead>
     <tbody>
-      <tr><td>Claude Code</td><td>PreToolUse deny (executed)</td><td><code>--host claude</code></td><td>Inject via <code>additionalContext</code>; UDS in-process or helper</td></tr>
+      <tr><td>Claude Code</td><td>PreToolUse deny (executed)</td><td><code>--host claude</code></td><td>Inject via <code>additionalContext</code>; HTTP client to <code>listen.json</code></td></tr>
       <tr><td>Copilot CLI</td><td>PreToolUse invoked; <strong>deny not verified</strong>; timeout fails open at 30&nbsp;s</td><td><strong>Not wired</strong></td><td>Inbox file is the floor. Do not advertise live kick until session-start is verified.</td></tr>
       <tr><td>Grok Build</td><td>PreToolUse (project hooks need trust)</td><td><code>--host grok</code></td><td>Same as Claude; Grok already aliases the Claude payload shape</td></tr>
       <tr><td>Antigravity</td><td><code>view_file</code> / <code>PreInvocation</code></td><td><code>--host agy</code></td><td>Same helper; <code>conversationId</code> is the session key</td></tr>
@@ -844,11 +854,10 @@
       <code>delegate</code>. Demo: Grok Owner+Conductor, Claude Worker, Copilot as a second session.</dd>
     </div>
     <div>
-      <dt>P8 Relay when a second host appears</dt>
-      <dd>Signed Session Cards. Optional cloud relay: presence, board window, fan-out of
-      <code>blocked</code>/<code>kick</code>/<code>delegate</code>. Dual-write tested red-first;
-      the fold wins. Trigger: a measured session that cannot see <code>.agents/bus/</code>.
-      GitHub still has every kick.</dd>
+      <dt>P8 The relay, same client</dt>
+      <dd>Signed Session Cards. HTTPS presence, board, fan-out of
+      <code>blocked</code>/<code>kick</code>/<code>delegate</code> — the same three verbs as
+      P5. Dual-write tested red-first; the fold wins. GitHub still has every kick.</dd>
     </div>
   </div>
   <div class="col">
@@ -866,13 +875,13 @@
   <table>
     <thead><tr><th>#</th><th>Decision</th><th>Why</th></tr></thead>
     <tbody>
-      <tr><td class="n">D1</td><td>Three planes: ledger required; local bus optional; cloud relay optional</td><td>The relay is rendezvous for hosts that do not share a filesystem, not a second grantor. NFR-P2 kept.</td></tr>
+      <tr><td class="n">D1</td><td>All three planes ship. Ledger required at runtime; bus and relay fail-open</td><td>NFR-P2 is fail-open, not fail-absent. The relay is not a second grantor.</td></tr>
       <tr><td class="n">D2</td><td>Dual-write every state-changing message</td><td>A bus that is the only copy of a kick is Napster’s directory.</td></tr>
       <tr><td class="n">D3</td><td>Leader is a lease with a sequencer</td><td>Chubby. Sessions die. The fold outlives them.</td></tr>
       <tr><td class="n">D4</td><td>Kick ladder, not immediate reassign</td><td>Magentic-One stall-count; phi-accrual; false eviction is worse than a slow session.</td></tr>
       <tr><td class="n">D5</td><td>Owner / Conductor / Worker as seats</td><td>Anthropic + Magentic-One, made a mechanism. Capability is configured, not inferred at runtime.</td></tr>
       <tr><td class="n">D6</td><td>Delegate with four required fields; artifacts not prose</td><td>Anthropic’s duplication failure and telephone failure, both measured.</td></tr>
-      <tr><td class="n">D7</td><td>Loopback Unix sockets + inbox file; no required rendezvous</td><td>JXTA rendezvous as optimisation. Gnutella ping-flood avoided. Stdlib.</td></tr>
+      <tr><td class="n">D7</td><td>Loopback HTTP on <code>127.0.0.1</code> + token file + inbox; not Unix sockets</td><td>One stdlib implementation on Mac and Windows. Same client as the HTTPS relay. UDS is a POSIX-only second path.</td></tr>
       <tr><td class="n">D8</td><td>Session Card shaped like an A2A Agent Card</td><td>Do not invent a fourth identity format. Do not take the A2A dependency in v1.</td></tr>
       <tr><td class="n">D9</td><td>Do not CRDT the source tree</td><td>CodeCRDT: coupled tasks get slower; semantic conflicts remain.</td></tr>
       <tr><td class="n">D10</td><td>Do not replace GitHub; use it as defense in depth</td><td>Decouple liveness from fetch/push. Never decouple accountability from the git-tracked JSONL. A clone without the relay is complete, slower.</td></tr>
@@ -910,17 +919,16 @@
       injection of any kind, P5 degrades to “make the pull unmissable.” That still would not
       have unblocked the 8,143&nbsp;s wait. Recommendation: keep the split — inject
       coordination, never inject scores.</li>
-      <li><strong>When does the cloud relay get built?</strong> Not until a session that cannot
-      see <code>.agents/bus/</code> is a measured participant. P5–P7 stay local. Hosting
-      (Azure vs anything else) is operations. Dual-write and signed cards are the architecture.
-      GitHub stays the remote either way.</li>
+      <li><strong>Hosting for the relay?</strong> HTTPS + signed cards + dual-write is
+      architecture. Azure vs Fly vs a box is operations. Do not let the host choose the
+      protocol. Q9 (Unix sockets vs HTTP) is closed: <code>127.0.0.1</code>.</li>
     </ol>
   </div>
   <div class="callout go">
     <p><strong>Best next action.</strong> Decide Q7 (push vs pull) and Q1 (peer-group grain).
     Then <code>/specify</code> P5 against <em>ai-de</em>, not a toy repo. First demo: Copilot
-    posts, Claude sees it on the next tool call, two launches get two worktrees. Q8 (relay)
-    waits until a second host shows up in the profile.</p>
+    posts, Claude sees it on the next tool call over loopback HTTP, two launches get two
+    worktrees. P8 is the same demo pointed at the relay.</p>
   </div>
 </section>
 

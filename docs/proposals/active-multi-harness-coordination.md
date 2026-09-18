@@ -18,12 +18,11 @@ review-suggested: []
 summary: >-
   The pack's coordination layer is a git-tracked ledger. AI-DE already built the live surfaces
   (Loomkeeper board, standing files, MCP board tools, AgentPlane) and still measured collaboration
-  as empty, because every path is a pull the agent may ignore. This proposal adds an optional
-  local-first bus that *pushes* blocked-on, kick, and delegate — and keeps scores as a pull.
-  Owner / Conductor / Worker in-session; a lease-elected Leader between sessions. An optional
-  cloud relay may carry live notify when sessions do not share a filesystem; GitHub remains
-  defense in depth — every state-changing message still lands in the git-tracked ledger.
-  The bus is never the source of truth.
+  as empty, because every path is a pull the agent may ignore. This proposal ships all three
+  planes: git-tracked ledger (required), local loopback-HTTP bus (fail-open), cloud relay
+  (fail-open, same client). Scores stay a pull; blocked/kick/delegate are a push. Unix sockets
+  are not the local transport — HTTP on 127.0.0.1 is, so Mac and Windows share one
+  implementation. GitHub remains defense in depth.
 ---
 
 # Proposal: ledger and bus — active multi-harness coordination
@@ -318,7 +317,7 @@ by the strongest model *until* it must escalate.
 | Internet of agents | AGNTCY (Cisco → LF, Jul 2025), ANP (W3C CG, still draft as of 2026-06) | DNS-like discovery, signed identity, SLIM messaging | Overkill for one laptop. Design so a later remote hop can speak them. |
 
 IBM's Agent Communication Protocol merged into A2A (archived Aug 2025). Do not mint a fourth
-wire format. Local v1 can be JSON lines over a Unix socket; the *schema* of a Session Card
+wire format. Local v1 is the §7 JSON over loopback HTTP; the *schema* of a Session Card
 should be A2A-shaped so the adapter is a rename, not a redesign.
 
 Anthropic's own caution, which the pack already believes: **most coding tasks have fewer truly
@@ -454,15 +453,15 @@ can find you without a prior handshake.
         │                               │
         ▼                               ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│  RELAY  (optional, cloud)                                       │
+│  RELAY  (ships; fail-open; HTTPS)                               │
 │  presence · board · kick/delegate fan-out · SSE/webhook push    │
 │  never grants leases · never the only copy                      │
 └───────────────────────────────┬─────────────────────────────────┘
                                 │
 ┌───────────────────────────────▼─────────────────────────────────┐
-│  BUS  (optional, local-first)                                   │
-│  unix sockets · inbox file · Loomkeeper board when AI-DE hosts  │
-│  same messages; same fail-open                                  │
+│  BUS  (ships; fail-open)                                        │
+│  HTTP 127.0.0.1 + token · inbox file · Loomkeeper when AI-DE    │
+│  same §7 kinds as the relay                                     │
 └───────────────────────────────┬─────────────────────────────────┘
                                 │ dual-write (always)
                                 ▼
@@ -491,7 +490,7 @@ and "progress-φ uses the session's own inter-event history," not a global 30-se
 |---|---|---|
 | Peer Advertisement | **Session Card** — harness, model, role, capabilities, worktree, current leases, listen address | Ledger event `session-card` + bus hello |
 | Peer Group | The repository, or a named workstream inside it | Session contract (already exists) |
-| Rendezvous | Optional `coord bus` locally, **or** the cloud relay when sessions do not share a filesystem | Runtime; membership is a fold of the ledger. The relay is a cache of that fold, not a second membership. |
+| Rendezvous | Local: `coord bus serve` on `127.0.0.1`. Remote: the cloud relay. Same §7 kinds. | Runtime; membership is a fold of the ledger. The relay is a cache of that fold, not a second membership. |
 | Pipe | Directed message: kick, delegate, progress, blocked, unblocked | Dual-write: socket + ledger event |
 | Resolver | `coord who --path` / `coord leader` | Fold of the ledger; bus is a cache |
 | Peer Information Protocol | Heartbeat + progress events | Bus; folded for the operator view |
@@ -512,7 +511,7 @@ session-start event is still unverified — that residual stays named). Shape, A
   "capabilities": ["edit", "test", "review"],
   "worktree": "/Users/…/ai-forward-active-coord",
   "branch": "proposal/active-coordination-bus",
-  "listen": "unix:.agents/bus/ses_01.sock",
+  "listen": "http://127.0.0.1:<port>/",
   "card_version": 1
 }
 ```
@@ -532,8 +531,8 @@ Rules, carried forward and tightened:
    existing `scrub.py` (not a second implementation).
 2. A kick/delegate message is rendered into the receiving model under an explicit untrusted
    heading, the same way the Phase-4 projection is.
-3. v1 (P5–P7) is **loopback only.** Unix sockets under the repo's `.agents/bus/`.
-4. The **relay (P8)** leaves loopback. It requires signed Session Cards (A2A v1.0). Unsigned
+3. P5–P7 are **loopback HTTP** on `127.0.0.1`, token-gated. Not Unix sockets (see §8.1).
+4. The **relay (P8)** is the same vocabulary on HTTPS. It requires signed Session Cards (A2A v1.0). Unsigned
    loopback identity (ADR-0011, asserted) must not be accepted on the wire. A GitHub token
    may authenticate the *operator* to the relay; it is not the session's identity.
 5. Identity remains asserted on loopback (ADR-0011). A session that sets `AGENT_SESSION` to
@@ -709,46 +708,75 @@ third store would be DM6.
 
 ---
 
-## 8. Transport — local-first, optional rendezvous, stdlib
+## 8. Transport — all three planes, one vocabulary
 
-Solution-Selection Ladder, applied:
+**All three planes ship.** Ledger, local bus, cloud relay. Fail-open at runtime (a down bus or
+a down relay never refuses an edit). Not fail-absent at delivery: P5 builds the local bus, P8
+builds the relay, both are in the programme, neither is "maybe later."
+
+The message kinds in §7 are the protocol. The plane is just where a copy travels.
+
+### 8.1 Local bus — not Unix sockets
+
+Unix domain sockets are the wrong default for a bus that has to work on a Mac *and* a PC.
+
+| Candidate | macOS | Windows | One stdlib implementation? | Same client as the relay? |
+|---|---|---|---|---|
+| **Unix domain sockets** | Native, first-class | `AF_UNIX` exists since Windows 10 1803, pathname-only, leftover socket files, historically buggy in runtimes. A second implementation, not a port. | No | No |
+| **Named pipes** | POSIX FIFOs are *not* Windows named pipes (no multiplex, different blocking, no ACL-equivalent) | Native `\\.\pipe\…` | No | No |
+| **.NET `NamedPipeServerStream`** | Implemented *with* UDS on Unix | Native | Pack core is Python, not .NET. AI-DE can host; harnesses still have to speak it. | No |
+| **HTTP on `127.0.0.1`** | Identical | Identical | Yes — Python `http.client` / `http.server`; .NET `HttpListener` / `HttpClient` | **Yes.** Same §7 JSON, `http://127.0.0.1` vs `https://relay`. |
+
+**Chosen: loopback HTTP + SSE, bound to `127.0.0.1` only.**
+
+- Bind **`127.0.0.1`, not `0.0.0.0`, not `localhost`.** `localhost` can resolve to `::1` first
+  and miss; `0.0.0.0` trips the Windows firewall and is reachable off-box.
+- Port **0** (OS assigns), then write `.agents/bus/listen.json` `{host, port, pid, token_path}`.
+  No hashed-port scheme; collisions are not a coordination problem we need.
+- A per-repo **token file** (mode `0600` on POSIX; the equivalent user ACL on Windows). Any
+  local account can hit `127.0.0.1`; the token is the filesystem permission UDS would have
+  given us. First request without it is 401, not a hang.
+- SSE (or a long-poll) for push onto the next tool boundary. POST for `hello` / `progress` /
+  `blocked` / `kick` / `delegate`. This is A2A's webhook/SSE shape, used locally, so P8 is
+  a URL change plus signatures, not a second client.
+- If nothing is listening, senders write the ledger and the inbox file only. NFR-P2 kept.
+
+MCP, A2A, and Copilot's cloud path already speak HTTP. A UDS-only bus would be a fourth
+wire that only POSIX harnesses could use, which is how Copilot becomes `unsupported` by
+accident.
+
+Unix sockets remain a permitted *optimisation* behind the same HTTP vocabulary (a reverse
+proxy onto a UDS on macOS) if a spike ever shows loopback HTTP is the latency problem.
+They are not the contract.
+
+Solution-Selection Ladder:
 
 | Rung | Decision |
 |---|---|
-| 1 YAGNI | The five missing modes are real. A bus earns its place. A Raft cluster does not. |
-| 2 Reuse | SessionStart hook, `coord-core` fold, Unix sockets, the allocator, `scrub.py`. |
-| 3 stdlib | `socket`, `selectors`, `json`, `os`. No Redis, NATS, libp2p, MQTT, sqlite. |
-| 4 native | Unix domain sockets under `.agents/bus/`. Optional `launchd` user agent later, never required. |
-| 5+ | Not reached in v1. |
+| 1 YAGNI | All three planes earn their place. A Raft cluster does not. A second local protocol (UDS + named pipes) does not. |
+| 2 Reuse | SessionStart hook, `coord-core` fold, the allocator, `scrub.py`, the §7 JSON. The relay reuses the local bus's client. |
+| 3 stdlib | `http.client` / `http.server`, `json`, `os`, `secrets`. No Redis, NATS, libp2p, MQTT. |
+| 4 native | Loopback TCP, which both kernels already are. |
+| 5+ | Not reached. |
 
 **Discovery, Napster-as-bootstrap:**
 
 1. On SessionStart, write the Session Card to the ledger and to `.agents/bus/peers/<session>.json`.
-2. Try to connect to `.agents/bus/rendezvous.sock`. If it exists, register. If it does not,
-   **do not start it automatically.** The first session that wants to be Leader may start
-   `coord bus serve` in-process as a thread, or the operator starts it once. If nobody does,
-   peers still read `peers/*.json` and connect **directly** (full mesh is fine at N≤20).
+2. If `.agents/bus/listen.json` exists and the pid is alive, POST `hello` to that port with the
+   token. If it does not, the first session that wants to be Leader may start
+   `coord bus serve` (binds `127.0.0.1:0`, writes `listen.json`). If nobody does, senders
+   write the ledger and the inbox file only.
 3. Git remains the discovery path across machines and after a reboot: fetch, fold, see cards.
+   The relay (below) is the live path across machines *without* waiting for that fetch.
 
-That is JXTA rendezvous as an optimisation, not as a requirement. It is also NFR-P2: an agent
-can work the moment it has the repo.
+### 8.2 The cloud relay — the third plane, same vocabulary
 
-**Direct pipes.** `unix:.agents/bus/<session>.sock` owned by that session. The session process
-accepts, or a tiny per-session helper started by the same hook that already cannot fail closed
-(`session-start.py` exits 0 on every path). If the socket is absent, senders write the ledger
-and the inbox file only.
+The local bus does not reach a Copilot cloud agent, a session on another laptop, or a worker
+the workbench spawned into a VM. GitHub fetch reaches them, and it is too slow — that is M6.
+That is why the relay is a plane, not a future spike.
 
-**Windows.** Named pipes, same path contract, or fall back to inbox-file-only on platforms
-where UDS is painful. The ledger path is the portable one; the socket is a fast path.
-
-### 8.1 The cloud relay — live path, not a second GitHub
-
-Local sockets do not reach a Copilot cloud agent, a session on another laptop, or a worker
-the workbench spawned into a VM. That is the actual reason to host something. GitHub fetch
-reaches them, and it is too slow — that is M6.
-
-The relay is **optional rendezvous + message board + push**, hosted. It is not a lease
-server, not a merge queue, and not a replacement for Issues/PRs/Actions.
+The relay is **rendezvous + message board + push**, hosted. Same §7 kinds as the local bus.
+It is not a lease server, not a merge queue, and not a replacement for Issues/PRs/Actions.
 
 | It does | It does not |
 |---|---|
@@ -772,14 +800,15 @@ That is why we do not put the work list only in the cloud, and why we do not sto
 Zed can turn off PRs on Delta's own repo. We keep GitHub as the depth layer even if every
 live notify goes through the relay.
 
-**When to stand it up.** Not in P5. Local two-harness on one machine is the walking skeleton
-(Unix socket + inbox + Loomkeeper). Stand up the relay when a measured session is on another
-host — Copilot's cloud agent, a second laptop, AgentPlane's provisioned worktree that cannot
-see `.agents/bus/`. Until then a hosted service is YAGNI with a security surface.
+**Sequencing, not optionality.** P5 proves the vocabulary on one machine (loopback HTTP +
+inbox + Loomkeeper). P8 is the same client pointed at `https://`, plus signed cards. Both
+are in the programme. A repo may run with the relay off (`coord doctor` reports `relay: off`);
+that is fail-open, not "we did not build it."
 
-**Shape, when it does exist.** Small HTTPS service: POST event, GET/SSE board, webhook
-register. Stdlib client. Protocol is the message vocabulary in §7, signed. Hosting (Azure,
-Fly, a box) is an operations choice, not an architecture one. Do not take NATS/libp2p as a
+**Shape.** Small HTTPS service: POST event, GET/SSE board, webhook register. The local bus
+is the same three verbs on `127.0.0.1`. Stdlib client. Signed Session Cards on the wire.
+Hosting (Azure, Fly, a box) is an operations choice, not an architecture one. Do not take
+NATS/libp2p as a
 build dependency; the relay *is* the rendezvous.
 
 ---
@@ -790,7 +819,7 @@ The pack already installs four surfaces. The bus must not grow a fifth core.
 
 | Harness | Edit enforcement today | SessionStart today | Bus adapter |
 |---|---|---|---|
-| Claude Code | PreToolUse deny (executed) | `session-start.py --host claude` | Inject via `additionalContext`; UDS in the session process or a helper |
+| Claude Code | PreToolUse deny (executed) | `session-start.py --host claude` | Inject via `additionalContext`; HTTP client to `listen.json` |
 | Copilot CLI | PreToolUse invoked; **deny not verified**; timeout **fails open** at 30 s | **Not wired** | Inbox file is the floor until session-start is verified. Do not advertise "live kick into Copilot" until it is. |
 | Grok Build | PreToolUse (project hooks need trust) | `--host grok` | Same as Claude; Grok already aliases the Claude payload shape |
 | Antigravity | `view_file` / `PreInvocation` | `--host agy` | Same helper; `conversationId` is the session key |
@@ -859,8 +888,8 @@ This is the close of the loop AI-DE already half-built. Not a new product.
 - Session Card at SessionStart, written to the ledger and to `peers/`.
 - Inbox file + `coord mailbox`. When AI-DE is the host: the same line
   `aide_board_post` already appends, so the Observatory Board pane stops reading empty.
-- `hello` / `progress` / `blocked` as ledger events, with an optional UDS fast path if the
-  socket exists.
+- `hello` / `progress` / `blocked` as ledger events, with loopback HTTP if `listen.json`
+  is live.
 - **Push** of `blocked` onto the next tool boundary. Standing stays a pull.
 - Per-session worktree on "New <agent> session" (`coord worktree new`) — the gap
   `collaboration-not-happening` named, still open at launch.
@@ -887,20 +916,22 @@ This is the close of the loop AI-DE already half-built. Not a new product.
 - **Demo:** one Grok session as Owner+Conductor, a Claude Code sub-agent as Worker, a Copilot
   session as a second-session Worker. Delegate, join, mailbox.
 
-### P8 — Cards that travel, and the relay when a second host appears
+### P8 — The relay, same client, signed cards
 
 - Session Card schema frozen as a subset of A2A Agent Card, **signed**.
-- Optional cloud relay: presence, board window, fan-out of `blocked`/`kick`/`delegate`.
-  Dual-write invariant tested red-first (B13). Fold wins on disagreement.
-- Trigger to build it: a measured session that cannot see `.agents/bus/` (cloud agent,
-  second machine, provisioned VM). Until then, do not host.
+- Cloud relay: presence, board window, fan-out of `blocked`/`kick`/`delegate`. Same three
+  verbs as P5, on `https://`. Dual-write invariant tested red-first (B13). Fold wins.
 - Copilot session-start spike, or an honest `unsupported` forever.
 - **Not a promise to implement the full A2A stack.** A promise that the card and the
   notify kinds will not have to be redesigned, and that GitHub still has every kick.
 
-No phase makes the bus or the relay required. A repo that never runs `coord bus` and never
-configures a relay keeps today's behaviour plus an inbox that fills from the ledger on
-`coord mailbox` — still a win for M6, still passive for M8.
+A repo may run with `coord bus` down and the relay unconfigured — fail-open, inbox-only.
+That is a runtime degradation, not a delivery skip. All three planes are in the programme.
+
+---
+
+The local HTTP bus is P5's walking skeleton. The relay is P8 on the same client. GitHub
+is the depth layer from day one (the JSONL is already pushed).
 
 ---
 
@@ -908,13 +939,13 @@ configures a relay keeps today's behaviour plus an inbox that fills from the led
 
 | # | Decision | Why |
 |---|---|---|
-| D1 | Three planes: ledger required; local bus optional; cloud relay optional | ADR-0007 and NFR-P2 still hold for grants. Liveness is a different job. The relay is rendezvous for hosts that do not share a filesystem, not a second grantor. |
+| D1 | All three planes ship. Ledger required at runtime; local bus and relay fail-open | NFR-P2 is fail-open, not fail-absent. The relay is rendezvous for hosts that do not share a filesystem, not a second grantor. |
 | D2 | Dual-write every state-changing message | Accountability is the ledger's job. A bus that is the only copy of a kick is Napster's directory. |
 | D3 | Leader is a lease with a sequencer, not a designated process | Chubby. Sessions die. The fold outlives them. |
 | D4 | Kick ladder, not immediate reassign | Magentic-One stall-count; phi-accrual; optimistic unchoke. False eviction is worse than a slow session. |
 | D5 | Owner / Conductor / Worker as seats in the session contract | Anthropic + Magentic-One, made a mechanism. Capability is configured, not inferred from a model string at runtime. |
 | D6 | Delegate with four required fields; artifacts not prose | Anthropic's duplication failure and telephone failure, both measured. |
-| D7 | Loopback Unix sockets + inbox file; no required rendezvous | JXTA rendezvous as optimisation. Gnutella ping-flood avoided. Stdlib. |
+| D7 | Loopback HTTP on `127.0.0.1` + token file + inbox; not Unix sockets | One stdlib implementation on Mac and Windows. Same client as the HTTPS relay. UDS is a POSIX-only second code path, which is how Copilot becomes `unsupported` by accident. |
 | D8 | Session Card shaped like an A2A Agent Card | Do not invent a fourth agent identity format. Do not take the A2A dependency in v1. |
 | D9 | Do not CRDT the source tree | CodeCRDT: coupled tasks get slower; semantic conflicts remain. We already have artifact class. |
 | D10 | Do not replace GitHub; use it as defense in depth | Decouple liveness from fetch/push. Never decouple accountability from the git-tracked JSONL. A clone without the relay is complete, slower. |
@@ -965,11 +996,11 @@ never reads is `NOT CHECKED` for collaboration, not "all quiet"). That still wou
 unblocked the 8,143 s `EnterWorktree` wait — only a push, or a conductor that watches
 progress-φ, would. Recommendation: **keep the split.**
 
-**Q8. When does the cloud relay get built?** Recommendation: **not until a session that cannot
-see `.agents/bus/` is a measured participant** (Copilot cloud agent, second machine, AgentPlane
-VM). P5–P7 stay local. Hosting choice (Azure vs anything else) is operations, not architecture.
-The dual-write invariant and signed cards are the architecture. GitHub stays the remote either
-way.
+**Q8. Hosting for the relay?** Architecture is HTTPS + signed cards + dual-write. Hosting
+(Azure vs Fly vs a box) is operations. Recommendation: pick later; do not let the host choose
+the protocol. The local bus is HTTP on `127.0.0.1` so the client does not care.
+
+**Q9. (closed) Unix sockets vs loopback HTTP.** Closed: HTTP on `127.0.0.1`. See §8.1 and D7.
 
 ---
 
@@ -1053,4 +1084,4 @@ The live experiment, **ai-de** (read, not recalled):
 |---|---|
 | **Completed** | Research across lab multi-agent systems, agent-native repos, and classic P2P; diagnosis of M5–M9 against the pack's M1–M4 layer **and** against AI-DE's measured empty board, enlistment gap, and 8,143 s stall; a two-plane architecture that keeps ADR-0007; inject-coordination / pull-scores split; roles, leader lease, kick ladder, message vocabulary, transport, phasing, twelve key decisions, Q7. |
 | **Remaining** | Maintainer answers on Q1–Q7. Then `/specify` (acceptance criteria for P5) against *ai-de*, not a toy repo. |
-| **Best next action** | Decide Q7 (push vs pull) and Q1 (peer-group grain). P5's first demo is: Copilot posts, Claude sees it on the next tool call, two launches get two worktrees. Q8 (relay) waits until a second host is a measured participant. |
+| **Best next action** | Decide Q7 (push vs pull) and Q1 (peer-group grain). P5's first demo is: Copilot posts, Claude sees it on the next tool call over loopback HTTP, two launches get two worktrees. P8 is the same demo pointed at the relay. |
