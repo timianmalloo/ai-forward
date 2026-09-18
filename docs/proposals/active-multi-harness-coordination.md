@@ -20,8 +20,10 @@ summary: >-
   (Loomkeeper board, standing files, MCP board tools, AgentPlane) and still measured collaboration
   as empty, because every path is a pull the agent may ignore. This proposal adds an optional
   local-first bus that *pushes* blocked-on, kick, and delegate — and keeps scores as a pull.
-  Owner / Conductor / Worker in-session; a lease-elected Leader between sessions. The bus is
-  never the source of truth.
+  Owner / Conductor / Worker in-session; a lease-elected Leader between sessions. An optional
+  cloud relay may carry live notify when sessions do not share a filesystem; GitHub remains
+  defense in depth — every state-changing message still lands in the git-tracked ledger.
+  The bus is never the source of truth.
 ---
 
 # Proposal: ledger and bus — active multi-harness coordination
@@ -66,6 +68,14 @@ The proposal is not "add a daemon and throw ADR-0007 away." It is:
 
 If the bus is down, the existing layer still works — slower, the way it works today. That is
 the NFR-P2 constraint, kept.
+
+**GitHub is defense in depth, not the live path.** Decouple *liveness* from `git push` /
+`git fetch`. Do not decouple *accountability* from git. An optional cloud relay (message
+board + fan-out) is the live path when sessions do not share a machine. Every state-changing
+message is still dual-written to the JSONL that gets pushed, so a clone tomorrow, a PR
+review, and a relay outage all see the same kicks. That is Napster's transfer path with
+BitTorrent's "the file survives the tracker." GitHub Issues, PRs, and Actions stay. The
+relay is not a second GitHub.
 
 ---
 
@@ -444,17 +454,23 @@ can find you without a prior handshake.
         │                               │
         ▼                               ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│  BUS  (optional, local-first)                                   │
-│  advertisements · heartbeats · blocked-on · kick · delegate     │
-│  never the source of truth · fail open to the ledger            │
+│  RELAY  (optional, cloud)                                       │
+│  presence · board · kick/delegate fan-out · SSE/webhook push    │
+│  never grants leases · never the only copy                      │
 └───────────────────────────────┬─────────────────────────────────┘
-                                │ dual-write
+                                │
+┌───────────────────────────────▼─────────────────────────────────┐
+│  BUS  (optional, local-first)                                   │
+│  unix sockets · inbox file · Loomkeeper board when AI-DE hosts  │
+│  same messages; same fail-open                                  │
+└───────────────────────────────┬─────────────────────────────────┘
+                                │ dual-write (always)
                                 ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│  LEDGER  (existing, required)                                   │
+│  LEDGER  (required)  +  GitHub (defense in depth)               │
 │  .agents/log/<session>.jsonl  fold → leases, work items,        │
 │  decisions, blocked-on, leader lease, kick history              │
-│  enforced at PreToolUse + pre-commit                            │
+│  cloneable, reviewable, survives the relay                      │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -475,7 +491,7 @@ and "progress-φ uses the session's own inter-event history," not a global 30-se
 |---|---|---|
 | Peer Advertisement | **Session Card** — harness, model, role, capabilities, worktree, current leases, listen address | Ledger event `session-card` + bus hello |
 | Peer Group | The repository, or a named workstream inside it | Session contract (already exists) |
-| Rendezvous | Optional `coord bus` process, bound to a Unix socket under `.agents/bus/` | Not git-tracked (runtime); its *membership view* is a fold |
+| Rendezvous | Optional `coord bus` locally, **or** the cloud relay when sessions do not share a filesystem | Runtime; membership is a fold of the ledger. The relay is a cache of that fold, not a second membership. |
 | Pipe | Directed message: kick, delegate, progress, blocked, unblocked | Dual-write: socket + ledger event |
 | Resolver | `coord who --path` / `coord leader` | Fold of the ledger; bus is a cache |
 | Peer Information Protocol | Heartbeat + progress events | Bus; folded for the operator view |
@@ -516,11 +532,14 @@ Rules, carried forward and tightened:
    existing `scrub.py` (not a second implementation).
 2. A kick/delegate message is rendered into the receiving model under an explicit untrusted
    heading, the same way the Phase-4 projection is.
-3. v1 is **loopback only.** Unix sockets under the repo's `.agents/bus/`. No TCP, no LAN, no
-   cloud. Remote / A2A is P8 and wants signed Agent Cards.
-4. Identity remains asserted (ADR-0011). A session that sets `AGENT_SESSION` to another's can
-   already release leases; the bus does not make that worse, and the record still shows who
-   wrote what.
+3. v1 (P5–P7) is **loopback only.** Unix sockets under the repo's `.agents/bus/`.
+4. The **relay (P8)** leaves loopback. It requires signed Session Cards (A2A v1.0). Unsigned
+   loopback identity (ADR-0011, asserted) must not be accepted on the wire. A GitHub token
+   may authenticate the *operator* to the relay; it is not the session's identity.
+5. Identity remains asserted on loopback (ADR-0011). A session that sets `AGENT_SESSION` to
+   another's can already release leases; the local bus does not make that worse, and the
+   record still shows who wrote what. The relay is the first place impersonation is worth
+   preventing rather than detecting.
 
 ---
 
@@ -722,6 +741,47 @@ and the inbox file only.
 **Windows.** Named pipes, same path contract, or fall back to inbox-file-only on platforms
 where UDS is painful. The ledger path is the portable one; the socket is a fast path.
 
+### 8.1 The cloud relay — live path, not a second GitHub
+
+Local sockets do not reach a Copilot cloud agent, a session on another laptop, or a worker
+the workbench spawned into a VM. That is the actual reason to host something. GitHub fetch
+reaches them, and it is too slow — that is M6.
+
+The relay is **optional rendezvous + message board + push**, hosted. It is not a lease
+server, not a merge queue, and not a replacement for Issues/PRs/Actions.
+
+| It does | It does not |
+|---|---|
+| Accept a signed Session Card and keep presence | Grant or refuse a path lease (the ledger still does) |
+| Fan out `blocked` / `kick` / `delegate` / `unblocked` (SSE or webhook — A2A's optional push, made mandatory for these kinds, ANP P3's lesson) | Be the only copy of any of those messages |
+| Hold a short window of board posts for sessions that missed them | Persist the work list as a second source of truth |
+| Authenticate the operator (GitHub as one IdP is fine) | Treat a GitHub token as a session identity |
+
+**Defense in depth, the rule that makes this not Napster:**
+
+1. Every state-changing message is written to the session JSONL **before or atomically with**
+   the relay POST. If the relay ACK is lost, the ledger still has it.
+2. A clone with no relay config is a complete, slower system. `coord doctor` reports
+   `relay: off`.
+3. If the relay and the fold disagree, **the fold wins.** The relay is a cache. A repair is
+   "replay the fold to the relay," never the other way.
+4. GitHub remains the remote the JSONL is pushed to. A PR still shows who kicked whom. A
+   relay outage is an inconvenience; a GitHub-shaped history is the recovery.
+
+That is why we do not put the work list only in the cloud, and why we do not stop pushing.
+Zed can turn off PRs on Delta's own repo. We keep GitHub as the depth layer even if every
+live notify goes through the relay.
+
+**When to stand it up.** Not in P5. Local two-harness on one machine is the walking skeleton
+(Unix socket + inbox + Loomkeeper). Stand up the relay when a measured session is on another
+host — Copilot's cloud agent, a second laptop, AgentPlane's provisioned worktree that cannot
+see `.agents/bus/`. Until then a hosted service is YAGNI with a security surface.
+
+**Shape, when it does exist.** Small HTTPS service: POST event, GET/SSE board, webhook
+register. Stdlib client. Protocol is the message vocabulary in §7, signed. Hosting (Azure,
+Fly, a box) is an operations choice, not an architecture one. Do not take NATS/libp2p as a
+build dependency; the relay *is* the rendezvous.
+
 ---
 
 ## 9. Cross-harness reality
@@ -757,6 +817,9 @@ been seen on this machine. Until then Copilot is ledger + inbox file: better tha
 | B9 | Conductor telephones Worker output | **Prevent.** Delegate contract requires an artifact path; join reads the artifact. A `progress` with a 4 kB `body` is rejected. |
 | B10 | Owner expands the goal | **Detect.** Mandate is in the session contract; a `delegate` whose objective is not a child of the mandate is `nack`'d by the Worker if the Worker was given the mandate, and by the Leader's check otherwise. This is GO1/CT19 at fleet scale. |
 | B11 | Empty bus reported as "no stalls" | **Prevent.** Same R4 as the rest of the layer: a status view over zero Session Cards is `NOT CHECKED`, not "all quiet." |
+| B12 | Relay unreachable | **Degrade.** Local bus + ledger + git push. Same as B1. Never refuse an edit. |
+| B13 | Relay is the only copy of a kick | **Prevent.** Dual-write is the invariant. A relay POST without a ledger append is a defect, tested red-first. |
+| B14 | Unsigned card accepted on the relay | **Prevent.** Loopback identity is asserted; the wire requires a signature. Unsigned → 401, and the event is not fanned out. |
 
 ---
 
@@ -766,12 +829,15 @@ Each with the reason, so this proposal cannot be read as a licence to build them
 
 - **Replacing GitHub Issues, PRs, or Actions.** Zed is doing that experiment, and even they
   keep GitHub for the public `zed` repo. Our backlog and merge queue stay. The bus is
-  in-flight. The spec already said this.
+  in-flight. GitHub remains the durable remote for the ledger even if live notify moves to
+  the relay. The spec already said this.
 - **Replacing git with DeltaDB, Pijul, or a source CRDT.** Complementary. Out of this change.
-- **A required daemon or hosted broker.** Retracts ADR-0007 and NFR-P2. The rendezvous is
-  optional. The inbox file is enough for a degraded mode.
-- **Implementing A2A, AGNTCY, ANP, or libp2p in v1.** Speak their *shape* (Session Card ≈
-  Agent Card). Do not take a wire-format dependency until P8 has a real second machine.
+- **A *required* daemon or hosted broker.** Retracts ADR-0007 and NFR-P2. An *optional* cloud
+  relay is in scope at P8, fail-open, never the only copy. A repo that never configures it
+  is a complete system.
+- **Implementing A2A, AGNTCY, ANP, or libp2p in v1 (P5–P7).** Speak their *shape* (Session
+  Card ≈ Agent Card). The relay at P8 may speak A2A webhooks / SSE; it still must not become
+  a second grantor of leases.
 - **A planner that assigns work to minimise overlap.** Still the spec's non-goal. The Leader
   schedules the *already divided* work list (`/prepare-for-coordination` still divides). It
   does not invent tracks.
@@ -821,16 +887,20 @@ This is the close of the loop AI-DE already half-built. Not a new product.
 - **Demo:** one Grok session as Owner+Conductor, a Claude Code sub-agent as Worker, a Copilot
   session as a second-session Worker. Delegate, join, mailbox.
 
-### P8 — Cards that travel
+### P8 — Cards that travel, and the relay when a second host appears
 
-- Session Card schema frozen as a subset of A2A Agent Card.
-- Signed cards (A2A v1.0) only if/when we leave loopback.
+- Session Card schema frozen as a subset of A2A Agent Card, **signed**.
+- Optional cloud relay: presence, board window, fan-out of `blocked`/`kick`/`delegate`.
+  Dual-write invariant tested red-first (B13). Fold wins on disagreement.
+- Trigger to build it: a measured session that cannot see `.agents/bus/` (cloud agent,
+  second machine, provisioned VM). Until then, do not host.
 - Copilot session-start spike, or an honest `unsupported` forever.
-- **Not a promise to implement A2A.** A promise that we will not have to redesign the card.
+- **Not a promise to implement the full A2A stack.** A promise that the card and the
+  notify kinds will not have to be redesigned, and that GitHub still has every kick.
 
-No phase makes the bus required. A repo that never runs `coord bus` keeps today's behaviour
-plus an inbox that fills from the ledger on `coord mailbox` — still a win for M6, still
-passive for M8.
+No phase makes the bus or the relay required. A repo that never runs `coord bus` and never
+configures a relay keeps today's behaviour plus an inbox that fills from the ledger on
+`coord mailbox` — still a win for M6, still passive for M8.
 
 ---
 
@@ -838,7 +908,7 @@ passive for M8.
 
 | # | Decision | Why |
 |---|---|---|
-| D1 | Two planes: ledger required, bus optional | ADR-0007 and NFR-P2 still hold for grants. Liveness is a different job. |
+| D1 | Three planes: ledger required; local bus optional; cloud relay optional | ADR-0007 and NFR-P2 still hold for grants. Liveness is a different job. The relay is rendezvous for hosts that do not share a filesystem, not a second grantor. |
 | D2 | Dual-write every state-changing message | Accountability is the ledger's job. A bus that is the only copy of a kick is Napster's directory. |
 | D3 | Leader is a lease with a sequencer, not a designated process | Chubby. Sessions die. The fold outlives them. |
 | D4 | Kick ladder, not immediate reassign | Magentic-One stall-count; phi-accrual; optimistic unchoke. False eviction is worse than a slow session. |
@@ -847,11 +917,11 @@ passive for M8.
 | D7 | Loopback Unix sockets + inbox file; no required rendezvous | JXTA rendezvous as optimisation. Gnutella ping-flood avoided. Stdlib. |
 | D8 | Session Card shaped like an A2A Agent Card | Do not invent a fourth agent identity format. Do not take the A2A dependency in v1. |
 | D9 | Do not CRDT the source tree | CodeCRDT: coupled tasks get slower; semantic conflicts remain. We already have artifact class. |
-| D10 | Do not replace GitHub | Zed is running that experiment. We need a bus *across harnesses that still push to GitHub.* |
+| D10 | Do not replace GitHub; use it as defense in depth | Decouple liveness from fetch/push. Never decouple accountability from the git-tracked JSONL. A clone without the relay is complete, slower. |
 | D11 | Never advertise an unexecuted harness mode | Phase-3 conformance, applied to Copilot live-inject. |
 | D12 | Leader advises; ledger grants | Existing council ruling, kept. |
 | D13 | Inject coordination messages; never inject scores | AI-DE chose pull for standing (ADR-0019 anti-Goodhart) and was right. That reason does not apply to `blocked` / `kick` / `delegate`. The 8,143 s wait is what pull-only costs. |
-| D14 | Do not grow a third store | Loomkeeper Board is the bus's public pipe when the watcher is present. `coord-core` remains the ledger. One ledger, projected. |
+| D14 | Do not grow a third *source of truth* | Loomkeeper Board and the cloud relay are projections of the ledger. `coord-core` remains the grantor. One ledger, two caches. |
 
 ---
 
@@ -894,6 +964,12 @@ the pull unmissable" (SessionStart + Stop hooks force a mailbox/board read; a se
 never reads is `NOT CHECKED` for collaboration, not "all quiet"). That still would not have
 unblocked the 8,143 s `EnterWorktree` wait — only a push, or a conductor that watches
 progress-φ, would. Recommendation: **keep the split.**
+
+**Q8. When does the cloud relay get built?** Recommendation: **not until a session that cannot
+see `.agents/bus/` is a measured participant** (Copilot cloud agent, second machine, AgentPlane
+VM). P5–P7 stay local. Hosting choice (Azure vs anything else) is operations, not architecture.
+The dual-write invariant and signed cards are the architecture. GitHub stays the remote either
+way.
 
 ---
 
@@ -977,4 +1053,4 @@ The live experiment, **ai-de** (read, not recalled):
 |---|---|
 | **Completed** | Research across lab multi-agent systems, agent-native repos, and classic P2P; diagnosis of M5–M9 against the pack's M1–M4 layer **and** against AI-DE's measured empty board, enlistment gap, and 8,143 s stall; a two-plane architecture that keeps ADR-0007; inject-coordination / pull-scores split; roles, leader lease, kick ladder, message vocabulary, transport, phasing, twelve key decisions, Q7. |
 | **Remaining** | Maintainer answers on Q1–Q7. Then `/specify` (acceptance criteria for P5) against *ai-de*, not a toy repo. |
-| **Best next action** | Decide Q7 (push vs pull) and Q1 (peer-group grain). P5's first demo is: Copilot posts, Claude sees it on the next tool call, two launches get two worktrees. |
+| **Best next action** | Decide Q7 (push vs pull) and Q1 (peer-group grain). P5's first demo is: Copilot posts, Claude sees it on the next tool call, two launches get two worktrees. Q8 (relay) waits until a second host is a measured participant. |
