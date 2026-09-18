@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-18T15:18:54Z",
+  "generated": "2026-09-18T15:34:02Z",
   "audit": [
     {
       "id": "al-0001",
@@ -4179,6 +4179,35 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "897266c5f84708995dadda6b2c358bf205f552d6",
         "short": "897266c5f",
+        "branch": "proposal/active-coordination-bus",
+        "pushed": true
+      }
+    },
+    {
+      "id": "al-01M2TJEEGJHAMC52S4QWGVJKRG",
+      "shortname": "proposal-active-coord-http-all-planes",
+      "datetime": "2026-09-18T15:34:02Z",
+      "session": "proposal-active-coord",
+      "prompt": "two things: i want all the planes; local bus should work for both PC and Mac ... is Unix sockets the right choice?",
+      "summary": "All three planes ship (fail-open at runtime, not fail-absent). Local bus is HTTP on 127.0.0.1 + token file, not Unix sockets — one stdlib impl on Mac and Windows, same client as the HTTPS relay. Q9 closed.",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proposals/active-multi-harness-coordination.md"
+      ],
+      "tags": [
+        "coordination"
+      ],
+      "outcome": "success",
+      "goal": "Commit all three planes; pick a local transport that works on PC and Mac.",
+      "done_when": "Proposal updated, derived, committed, pushed.",
+      "tier": "T1",
+      "fan_out": 0,
+      "git": {
+        "sha": "5804ca11bbae47a5d556b4e88a39520f768367c3",
+        "short": "5804ca11b",
         "branch": "proposal/active-coordination-bus",
         "pushed": true
       }

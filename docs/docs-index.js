@@ -3568,7 +3568,7 @@ window.DOCS_INDEX = {
       "phase": "coordination",
       "reviewBy": "2026-12-18",
       "reviewSuggested": [],
-      "summary": "The pack's coordination layer is a git-tracked ledger. AI-DE already built the live surfaces (Loomkeeper board, standing files, MCP board tools, AgentPlane) and still measured collaboration as empty, because every path is a pull the agent may ignore. This proposal adds an optional local-first bus that *pushes* blocked-on, kick, and delegate — and keeps scores as a pull. Owner / Conductor / Worker in-session; a lease-elected Leader between sessions. An optional cloud relay may carry live notify when sessions do not share a filesystem; GitHub remains defense in depth — every state-changing message still lands in the git-tracked ledger. The bus is never the source of truth.",
+      "summary": "The pack's coordination layer is a git-tracked ledger. AI-DE already built the live surfaces (Loomkeeper board, standing files, MCP board tools, AgentPlane) and still measured collaboration as empty, because every path is a pull the agent may ignore. This proposal ships all three planes: git-tracked ledger (required), local loopback-HTTP bus (fail-open), cloud relay (fail-open, same client). Scores stay a pull; blocked/kick/delegate are a push. Unix sockets are not the local transport — HTTP on 127.0.0.1 is, so Mac and Windows share one implementation. GitHub remains defense in depth.",
       "tags": [
         "coordination",
         "p2p",
@@ -3605,7 +3605,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "625d01813e93a30f769606454ca006424bf2a81e44dfcac6c564b3ad567e3e0f"
+      "sourceSha256": "8a756b2f6adcd1d678d0c07602c417ed86635bcf59a321cfb3881219a569b23e"
     },
     {
       "id": "proposal-hosting-and-dream-manifest",
@@ -6162,5 +6162,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "c23cb89721ea1af482f36fdf66b247c5d2117d06058297ef88c5d81dda13f2d1"
+  "graphSha256": "2f46ce4cd7bdfcc4f1956706b28010f635be8ba4bcdc79e84faf110bba97a5b6"
 };
