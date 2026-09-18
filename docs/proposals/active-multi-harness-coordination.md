@@ -59,22 +59,22 @@ progress. That is the passivity.
 
 The proposal is not "add a daemon and throw ADR-0007 away." It is:
 
-> **Keep the ledger as the source of truth. Add an optional, local-first message bus for
-> liveness. Dual-write every coordination act to the ledger so accountability survives the bus
-> going down. Elect a Leader among sessions so someone is on the hook for the whole work list.
-> Inside a session, name Owner / Conductor / Worker so the most capable model decides and the
-> right-sized model executes.**
+> **Keep the ledger as the source of truth. Ship a local loopback-HTTP bus and a cloud relay
+> on the same message vocabulary. Dual-write every coordination act to the ledger so
+> accountability survives either plane going down. Elect a Leader among sessions so someone
+> is on the hook for the whole work list. Inside a session, name Owner / Conductor / Worker
+> so the most capable model decides and the right-sized model executes.**
 
-If the bus is down, the existing layer still works — slower, the way it works today. That is
-the NFR-P2 constraint, kept.
+If the bus or the relay is down, the existing layer still works — slower, the way it works
+today. That is NFR-P2: fail-open at runtime, not fail-absent at delivery. All three planes
+ship.
 
 **GitHub is defense in depth, not the live path.** Decouple *liveness* from `git push` /
-`git fetch`. Do not decouple *accountability* from git. An optional cloud relay (message
-board + fan-out) is the live path when sessions do not share a machine. Every state-changing
-message is still dual-written to the JSONL that gets pushed, so a clone tomorrow, a PR
-review, and a relay outage all see the same kicks. That is Napster's transfer path with
-BitTorrent's "the file survives the tracker." GitHub Issues, PRs, and Actions stay. The
-relay is not a second GitHub.
+`git fetch`. Do not decouple *accountability* from git. The cloud relay is the live path
+when sessions do not share a machine. Every state-changing message is still dual-written to
+the JSONL that gets pushed, so a clone tomorrow, a PR review, and a relay outage all see
+the same kicks. That is Napster's transfer path with BitTorrent's "the file survives the
+tracker." GitHub Issues, PRs, and Actions stay. The relay is not a second GitHub.
 
 ---
 
