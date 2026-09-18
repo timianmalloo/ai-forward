@@ -16,13 +16,12 @@ links:
 review-by: "2026-12-18"
 review-suggested: []
 summary: >-
-  The coordination layer is a git-tracked ledger with leases, hooks, and a fold. That is the
-  right substrate for accountability and it is the wrong substrate for liveness. This proposal
-  adds an optional, local-first message bus on top of that ledger: session advertisements,
-  heartbeats, blocked-on push, lease-based leader election, and a kick ladder so work continues
-  instead of waiting for the next fetch. In-session hierarchy is Owner / Conductor / Worker.
-  Between sessions one Conductor is elected Leader. The bus is never the source of truth; if it
-  is down the existing layer still works.
+  The pack's coordination layer is a git-tracked ledger. AI-DE already built the live surfaces
+  (Loomkeeper board, standing files, MCP board tools, AgentPlane) and still measured collaboration
+  as empty, because every path is a pull the agent may ignore. This proposal adds an optional
+  local-first bus that *pushes* blocked-on, kick, and delegate — and keeps scores as a pull.
+  Owner / Conductor / Worker in-session; a lease-elected Leader between sessions. The bus is
+  never the source of truth.
 ---
 
 # Proposal: ledger and bus — active multi-harness coordination
@@ -37,8 +36,9 @@ formatted for reading. This Markdown is the record (M1: readable with no special
 |---|---|
 | **Date** | 2026-09-18 |
 | **Tier** | T2 — sits on the edit path of every harness, federated by the pack |
-| **Grounding** | `spec-agent-coordination`, `architecture-agent-coordination`, ADR-0007 / 0008 / 0009 / 0010 / 0011, Phases 1–4 designs, plus the research cited in §15 |
+| **Grounding** | `spec-agent-coordination`, `architecture-agent-coordination`, ADR-0007 / 0008 / 0009 / 0010 / 0011, Phases 1–4 designs; **and** the live AI-DE experiment (`session-contracts`, Loomkeeper, AgentPlane, `note-20260902-collaboration-not-happening`, Addenda C/D profile) plus the research cited in §15 |
 | **Harnesses in scope** | GitHub Copilot (GPT-*), Grok Build, Claude Code, Antigravity — same repo, same worktrees, different runtimes |
+| **Two examples** | **ai-forward** is the pack (ledger, hooks, worktrees). **ai-de** is the product that tried to make that live across harnesses, and has the session history. |
 
 ---
 
@@ -117,6 +117,126 @@ designed for "the other agent is in another process, on another harness, and nee
 > of blocking. Inside a session: Owner (most capable) decides, Conductor coordinates and
 > delegates, Workers execute. Between sessions: one Leader tracks the total work list and kicks
 > sessions that stall.
+
+That is M5–M9. It does not retract M1–M4. A bus that forgets leases, artifact class, or the
+fold would re-introduce the four modes we already paid to close.
+
+### 1.4 The two examples are not two copies of one thing
+
+| | **ai-forward** (the pack) | **ai-de** (the live experiment) |
+|---|---|---|
+| Job | Ship a repo-droppable coordination *library*: record, fold, hooks, worktrees, session-contract template | Run several harnesses on one product, watch them, score them, and (the unsolved part) make them actually collaborate |
+| What exists | Phases 1–4 of coord-core. Claims, refusals, allocator, derived merge, collaboration check. Passive by design (ADR-0007: no daemon) | Loomkeeper Observatory (Sessions, Board, Ledger, Leaderboard). AgentPlane (ACP-spawned `claude-code` lane, Phase 1 scored Partial 15/15). MCP tools `aide_whoami` / `aide_board_read` / `aide_board_post`. Injected coordination contract (`board.json`, `standing/<session>.json`). Two-session contract: **Core = Claude Code**, **Design = Copilot** |
+| Session history | Pack dogfood | Addenda C/D: conductor `claude:919ba21f`, **56 h wall**, **52 writing nodes**, **114 persona reviews**, **166 sub-agents**, **40 Copilot `atlas/*` worktrees** beside it, **649 claims**, **31 `COORD-REFUSED`**. Est. list-price **$2,198**. Profiled in `docs/profiles/addendum-cd.md` |
+
+The pack answered *"may I touch this file?"* AI-DE tried to answer *"are we collaborating?"* and
+the measured answer, on 2026-09-02, was **no**.
+
+### 1.5 What ai-de measured — the bus was built as a pull, so it never fired
+
+These are not hypotheticals. They are named notes, named defects, and a session profile.
+
+**Collaboration surfaces rendered; nothing wrote them.**
+`note-20260902-collaboration-not-happening`: three live agents (Copilot, Claude Code, a pwsh
+terminal) all launched in **the same worktree** (`TheTerrace/docs/fix-broken-design-links`). The
+user asked Copilot to *"send a message to the loomkeeper board to let the other agents know you
+are here."* Copilot grepped, found `coord-core.py`, found no board command. The Board pane said
+*"No board posts yet."* The Ledger was empty. Harness identity and Verified trust had landed;
+collaboration had not.
+
+The code comment that followed is the diagnosis in one paragraph
+(`IngestHost.PostToBoard`):
+
+> `MessageBoardService` had **no callers anywhere in the product**. It was implemented, tested
+> and rendered as a pane, and nothing could write to it — a read surface over an empty store.
+
+That is CTX-H in the product: a control that ships uninstalled. The MCP slice
+(`design-mcp-enlightened-path`) then added `aide_board_read` / `aide_board_post` as a
+*translation* of the JSONL contract, not a second API. Two registered, trust-Verified agents
+were asked whether they knew Loomkeeper. **Both said no.** One had grepped `.claude/`,
+`.github/`, `docs/` first — *"no tool, no config, no endpoint."*
+
+**Standing — the kick — was also built as a pull, on purpose.**
+`StandingPublisher` writes `$AIDE_CONTRACT_LOG/standing/<session>.json`. The remarks are load-bearing:
+
+> It is still a pull. Nothing is injected into the agent's context — the file sits there and
+> the agent chooses to read it. That distinction is what ADR-0019's anti-Goodhart section
+> turns on.
+
+A C1 standing *tool* was added to `McpToolGateway` — correct, tested, **unreachable**: the
+gateway had no caller and no transport (ADR-0004: the MCP transport was spiked and never
+built). Adding a tool nothing can call does not deliver a story about receiving.
+
+`plan-daydream-and-collaboration-slices` measured the same shape on 2026-09-02: Message Board
+*writer added today, unverified in a running build*; `StandingComposer` — **zero production
+callers**; FleetAggregator — **zero production callers**.
+
+**Sessions register, they do not enlist.**
+`note-20260902-session-enlistment-telemetry-gap`: live Claude Code and Copilot rows read
+`Not Recorded · trust Asserted · 0 span(s) · Ended/Stale`. The App identity wiring was
+correct. Heartbeats, model identity, spans, and Asserted→Verified evidence were not arriving.
+Liveness is `UpsertHeartbeat`. No heartbeat, no Alive.
+
+**The stall the kick ladder exists for, timed.**
+Addenda C/D profile (`docs/profiles/addendum-cd.md`), conductor `claude:919ba21f`:
+
+| Event | Number | Mode |
+|---|---|---|
+| `EnterWorktree` refused (cwd was the repo root) on SH-4.1 | **8,143 s = 2 h 15 min** blocked | M5 |
+| S2 `/specify` answered 18 h later, 20 s of work | store span 65,516 s vs audit 4,992 s | M5 |
+| Joins + gates as share of the conductor's *active* time | **44.8%** (13,451 s of 8.3 h) | serial spine, not protocol |
+| Time spent in the coordination layer itself | **0.7%** (217 s) | the ledger was on; the bus was not |
+| Claims in the window | 649; 31 `COORD-REFUSED` | M1/M2 layer *was* used |
+| Peer Copilot fleet | 40 `atlas/*` worktrees beside the conductor | M9: they were *there* |
+| Mean live width vs cap of 3 | **1.9** (width 4 for 0.8% of live time) | GO6 held in practice |
+| Two Owner ids for one conductor | `claude-conductor-addendum-c` (20) and `conductor-addendum-c` (8) | identity asserted, not unified |
+
+The 2 h 15 min `EnterWorktree` wait is the kick ladder's rung 0–2, unbuilt. Nothing told the
+conductor the node was stuck on a worktree rule it already owns. The node sat. The operator
+was the detector.
+
+**The session contract worked as a document, and failed as a channel.**
+`docs/collaboration/session-contracts.md` is the richest in-session hierarchy this fleet has:
+Core (Claude Code) owns extractors/store/view-models; Design (Copilot) owns pixels. The seam
+is one sentence. Open requests are a table in the markdown. Four rebases, four conflicts,
+**always the same two files** (`docs/audit/*.jsonl` and derived views) — ADR-0009's exact
+prediction. Both sessions once edited `IpcServer.cs` / `CanvasGraphViewModel.cs` in the same
+window and converged; the lesson written down was "a claim + a glance at §4." That is
+announce-before-act, still pull.
+
+**Vocabulary collision, named so the rest of this document cannot smuggle it.**
+
+| Word | In this proposal | In AI-DE today |
+|---|---|---|
+| **Owner** | The most capable *model* in a session; reduces human paging within a written mandate | The *human* who signs execution graphs (Owner sign-off, 2026-09-09, five binding conditions) |
+| **Conductor** | A highly capable *model* that decomposes, delegates, joins, and may be elected Leader | **AgentPlane**: a product that *spawns* an ACP-speaking engine into a provisioned worktree, holds the protocol session, enforces spend/lease, and closes an episode into Loomkeeper. Phase 1 is one governed `claude-code` run. Phase 2 (plan/review/dispatch *multiple* lanes) is explicitly not claimed |
+| **Leader** | Elected among sessions, holds the work list, kicks | Not a role. The Observatory is a *view* |
+| **Board** | The bus's public pipe | Loomkeeper Message Board (US-4). Built. Empty when agents don't pull |
+| **Standing** | Kick / next-turn feedback | US-16 file. Built as pull, to avoid Goodhart |
+
+The proposal does **not** rename AI-DE's Conductor. AgentPlane stays the spawn/govern path for
+engines the workbench itself launched. Independently launched harness sessions (the Copilot
+atlas fleet, a Grok Build session, a Claude Code the operator started in a terminal) still
+need the bus, because AgentPlane never spawned them. The two compose: AgentPlane *is* a
+session that can hold the Leader lease; the bus is how everyone else hears it.
+
+### 1.6 The load-bearing split: inject coordination, never inject scores
+
+AI-DE chose pull for standing *for a real reason* (ADR-0019 anti-Goodhart: an agent shown its
+rank every turn is a different system). That reason does not apply to `blocked`, `kick`, or
+`delegate`. Those are facts about *other agents' work*, not a score of this one.
+
+| Payload | Channel | Why |
+|---|---|---|
+| Rank, trend, qualitative standing | **Pull** (standing file / `aide_standing`). Agent asks. | Goodhart. US-16 stays a pull. |
+| `blocked` / `kick` / `delegate` / `unblocked` | **Push** into the next tool boundary (`additionalContext`) *and* the mailbox/board | If the agent does not ask, work stops. That is the 8,143 s wait. |
+| Board posts (`question`, `decision`, `breadcrumb`) | Dual: MCP write (already designed) + hook inject of *"N new board posts"* count, not the prose | Agents treat every board message as untrusted data (`AgentProtocolDocument`). Inject the *existence*, not the instruction-shaped body. |
+| Heartbeat / liveness | Bus + Loomkeeper `UpsertHeartbeat` | Sessions that do not heartbeat read Ended. That is the enlistment gap. |
+
+P5 in this proposal is therefore **not a new product**. It is: (1) per-session worktree on
+launch (the app still does not call `coord worktree new`); (2) a push of coordination
+messages onto the next tool boundary; (3) dual-write into the Loomkeeper store the panes
+already read, so the Board stops lying about emptiness; (4) keep standing as a pull.
 
 That is M5–M9. It does not retract M1–M4. A bus that forgets leases, artifact class, or the
 fold would re-introduce the four modes we already paid to close.
@@ -516,13 +636,22 @@ model. Three adapters, in preference order:
 
 1. **Hook `additionalContext` / `systemMessage`** on the next tool boundary (already used by
    `reread-guard.py`). Best effort; the model only sees it when it next touches a tool.
-2. **Mailbox file** `.agents/bus/inbox/<session>.jsonl` that a session-start and a periodic
-   "read your mail" prompt in AGENTS.md tell the model to fold. Works even when hooks cannot
-   inject. The file is runtime, gitignored, rebuilt from the ledger on demand.
-3. **Operator page.** For the human at rung 4.
+   **This is the push.** Reserved for `blocked` / `kick` / `delegate` / `unblocked` and for a
+   *count* of new board posts — never for standing, rank, or board prose (see §1.6).
+2. **Mailbox file** `.agents/bus/inbox/<session>.jsonl`, and when AI-DE is the host, the
+   Loomkeeper board + `$AIDE_CONTRACT_LOG/standing/<session>.json` that already exist. Works
+   even when hooks cannot inject. Runtime, gitignored, rebuilt from the ledger on demand.
+3. **Operator page.** For the human at rung 4. In AI-DE this is the Observatory Board/Ledger
+   that already renders honestly when data exists.
 
 None of these is a daemon the agent must start. (1) piggy-backs on the edit path. (2) is a
-file. (3) is the existing operator view with a badge.
+file AI-DE already writes. (3) is the existing operator view with a badge.
+
+**Do not grow a second board.** Loomkeeper's Message Board is the bus's public pipe when the
+watcher is present; `coord-core` is the ledger everywhere. AI-DE already ruled this:
+pack sessions coordinate through `coord-core`; non-pack sessions get the injected contract;
+one ledger, projected, not duplicated (`architecture-loomkeeper` §6). A bus that wrote a
+third store would be DM6.
 
 ---
 
@@ -624,12 +753,21 @@ seams. Numbered as **P5–P8** so they sit after the existing four, not instead 
 
 ### P5 — Presence (walking skeleton of the bus)
 
+This is the close of the loop AI-DE already half-built. Not a new product.
+
 - Session Card at SessionStart, written to the ledger and to `peers/`.
-- Inbox file + `coord mailbox`.
+- Inbox file + `coord mailbox`. When AI-DE is the host: the same line
+  `aide_board_post` already appends, so the Observatory Board pane stops reading empty.
 - `hello` / `progress` / `blocked` as ledger events, with an optional UDS fast path if the
   socket exists.
+- **Push** of `blocked` onto the next tool boundary. Standing stays a pull.
+- Per-session worktree on "New <agent> session" (`coord worktree new`) — the gap
+  `collaboration-not-happening` named, still open at launch.
+- Heartbeat → Loomkeeper `UpsertHeartbeat` so a live agent reads Alive.
 - `coord doctor` grows `bus: off | advisory | live` and **asserts the corpus size** (R4).
-- **Demo:** two worktrees. A records `blocked-on: B`. B's mailbox shows it without a fetch.
+- **Demo, in ai-de, not a toy repo:** two harnesses (Claude Code + Copilot). A posts to the
+  board; B sees it on the next tool call *without* being asked to grep. A second demo: launch
+  two agent sessions; they land in distinct worktrees.
 - **Not yet:** Leader, kick, roles.
 
 ### P6 — Leader and the kick ladder
@@ -677,6 +815,8 @@ passive for M8.
 | D10 | Do not replace GitHub | Zed is running that experiment. We need a bus *across harnesses that still push to GitHub.* |
 | D11 | Never advertise an unexecuted harness mode | Phase-3 conformance, applied to Copilot live-inject. |
 | D12 | Leader advises; ledger grants | Existing council ruling, kept. |
+| D13 | Inject coordination messages; never inject scores | AI-DE chose pull for standing (ADR-0019 anti-Goodhart) and was right. That reason does not apply to `blocked` / `kick` / `delegate`. The 8,143 s wait is what pull-only costs. |
+| D14 | Do not grow a third store | Loomkeeper Board is the bus's public pipe when the watcher is present. `coord-core` remains the ledger. One ledger, projected. |
 
 ---
 
@@ -711,6 +851,14 @@ baseline? Recommendation: **P5 is notify-only. P6's automatic kick is off until
 mid-turn is the only way to stop a runaway Worker, and it is also how you scramble a
 half-finished edit. Recommendation: **next tool boundary + mailbox. Mid-turn abort is Owner
 only, and it is a harness capability we do not have uniformly.** Name it as residual.
+
+**Q7. Push vs pull — does §1.6 hold?** AI-DE's `StandingPublisher` deliberately does not inject,
+because of ADR-0019 anti-Goodhart. This proposal injects *coordination* messages and keeps
+standing as a pull. If the maintainer wants *no* injection of any kind, P5 degrades to "make
+the pull unmissable" (SessionStart + Stop hooks force a mailbox/board read; a session that
+never reads is `NOT CHECKED` for collaboration, not "all quiet"). That still would not have
+unblocked the 8,143 s `EnterWorktree` wait — only a push, or a conductor that watches
+progress-φ, would. Recommendation: **keep the split.**
 
 ---
 
@@ -763,12 +911,27 @@ This repo (read, not recalled):
 - `pack/templates/session-contract.template.md`
 - `pack/adapters/hooks/session-start.py`, `reread-guard.py`
 
+The live experiment, **ai-de** (read, not recalled):
+
+- `docs/collaboration/session-contracts.md` — Core (Claude Code) / Design (Copilot) seam
+- `docs/notes/collaboration-not-happening.md` — three agents, one worktree, empty board
+- `docs/notes/session-enlistment-telemetry-gap.md` — register ≠ enlist
+- `docs/architecture/loomkeeper.md`, `docs/architecture/agent-plane.md`
+- `docs/specs/agentic-watcher-substrate.md` US-4 / US-8 / US-16
+- `docs/design/mcp-enlightened-path.md` — MCP as translation of the JSONL contract
+- `docs/plans/daydream-and-collaboration-slices.md` — StandingComposer zero callers
+- `docs/plans/conductor-programme.md` — Phase 1 width 1; Phase 2 multi-lane not claimed
+- `docs/profiles/addendum-cd.md` — 8,143 s EnterWorktree stall; 44.8% joins/gates; 0.7% coord
+- `src/AiDe.Core/Watcher/IngestHost.cs` (`PostToBoard` remarks), `StandingPublisher.cs`,
+  `AgentProtocolDocument.cs`
+- `docs/knowledge/multi-agent-coordination/` — Kleppmann fencing, Cognition, MAST, METR
+
 ---
 
 ## Status
 
 | | |
 |---|---|
-| **Completed** | Research across lab multi-agent systems, agent-native repos, and classic P2P; diagnosis of M5–M9 against the existing M1–M4 layer; a two-plane architecture that keeps ADR-0007; roles, leader lease, kick ladder, message vocabulary, transport, phasing, and twelve key decisions. |
-| **Remaining** | Maintainer answers on Q1–Q6. Then `/specify` (acceptance criteria for P5) and `/design-slice` for P5 only — not a redesign of coord core. |
-| **Best next action** | Decide Q1 (peer-group grain), Q3 (Copilot floor), and Q5 (automatic kick off until measured). P5 can start without Q2/Q4/Q6. |
+| **Completed** | Research across lab multi-agent systems, agent-native repos, and classic P2P; diagnosis of M5–M9 against the pack's M1–M4 layer **and** against AI-DE's measured empty board, enlistment gap, and 8,143 s stall; a two-plane architecture that keeps ADR-0007; inject-coordination / pull-scores split; roles, leader lease, kick ladder, message vocabulary, transport, phasing, twelve key decisions, Q7. |
+| **Remaining** | Maintainer answers on Q1–Q7. Then `/specify` (acceptance criteria for P5) against *ai-de*, not a toy repo. |
+| **Best next action** | Decide Q7 (push vs pull) and Q1 (peer-group grain). P5's first demo is: Copilot posts, Claude sees it on the next tool call, two launches get two worktrees. |

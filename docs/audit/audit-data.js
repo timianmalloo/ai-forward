@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-18T15:06:15Z",
+  "generated": "2026-09-18T15:12:34Z",
   "audit": [
     {
       "id": "al-0001",
@@ -4093,6 +4093,36 @@ window.AUDIT_DATA = {
         "short": "4e0f3b07c",
         "branch": "proposal/active-coordination-bus",
         "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2TH75EBRSJJYW7FCECKFZXY",
+      "shortname": "proposal-active-coord-ai-de-evidence",
+      "datetime": "2026-09-18T15:12:34Z",
+      "session": "proposal-active-coord",
+      "prompt": "there are two examples ... what i have in the ai-forward repo and what i have in the ai-de repo... the ai-de is where we are actively trying to get active execution across harnesses so probably has more rich session history",
+      "summary": "Folded ai-de live evidence into the proposal: collaboration-not-happening (empty board, same worktree), enlistment gap, StandingPublisher pull-by-design, Addenda C/D 8143s stall, 0.7% coord-layer time, Core/Design session contract, AgentPlane vs role vocabulary, inject-coordination/pull-scores split (D13/D14, Q7).",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proposals/active-multi-harness-coordination.md"
+      ],
+      "tags": [
+        "coordination",
+        "proposal"
+      ],
+      "outcome": "success",
+      "goal": "Ground the bus proposal in ai-de's measured multi-harness history, not only the pack's paper architecture.",
+      "done_when": "Proposal md+html updated with ai-de evidence, derived, committed, pushed.",
+      "tier": "T1",
+      "fan_out": 0,
+      "git": {
+        "sha": "3aad9f562ce93fd9c8f352995c368d3e7f5d7501",
+        "short": "3aad9f562",
+        "branch": "proposal/active-coordination-bus",
+        "pushed": true
       }
     }
   ],
