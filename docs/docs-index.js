@@ -3568,7 +3568,7 @@ window.DOCS_INDEX = {
       "phase": "coordination",
       "reviewBy": "2026-12-18",
       "reviewSuggested": [],
-      "summary": "The pack's coordination layer is a git-tracked ledger. AI-DE already built the live surfaces (Loomkeeper board, standing files, MCP board tools, AgentPlane) and still measured collaboration as empty, because every path is a pull the agent may ignore. This proposal adds an optional local-first bus that *pushes* blocked-on, kick, and delegate — and keeps scores as a pull. Owner / Conductor / Worker in-session; a lease-elected Leader between sessions. The bus is never the source of truth.",
+      "summary": "The pack's coordination layer is a git-tracked ledger. AI-DE already built the live surfaces (Loomkeeper board, standing files, MCP board tools, AgentPlane) and still measured collaboration as empty, because every path is a pull the agent may ignore. This proposal adds an optional local-first bus that *pushes* blocked-on, kick, and delegate — and keeps scores as a pull. Owner / Conductor / Worker in-session; a lease-elected Leader between sessions. An optional cloud relay may carry live notify when sessions do not share a filesystem; GitHub remains defense in depth — every state-changing message still lands in the git-tracked ledger. The bus is never the source of truth.",
       "tags": [
         "coordination",
         "p2p",
@@ -3605,7 +3605,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e1dfd8a1bc4cad058b07f09718b1fefe04b0ed89f8ee4c12e76eabbb02960a39"
+      "sourceSha256": "625d01813e93a30f769606454ca006424bf2a81e44dfcac6c564b3ad567e3e0f"
     },
     {
       "id": "proposal-hosting-and-dream-manifest",
@@ -6162,5 +6162,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "f741e9afb2d52072336feae36c99bf57b595f6fedc0dc55b39f65c38577748a1"
+  "graphSha256": "c23cb89721ea1af482f36fdf66b247c5d2117d06058297ef88c5d81dda13f2d1"
 };

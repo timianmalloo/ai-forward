@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-18T15:15:36Z",
+  "generated": "2026-09-18T15:18:54Z",
   "audit": [
     {
       "id": "al-0001",
@@ -4150,6 +4150,35 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "0657c4b7c3afd1c4e1d6b4572b6e243d8426a182",
         "short": "0657c4b7c",
+        "branch": "proposal/active-coordination-bus",
+        "pushed": true
+      }
+    },
+    {
+      "id": "al-01M2THJRN7ZJBC35PBTBSW40JH",
+      "shortname": "proposal-active-coord-cloud-relay",
+      "datetime": "2026-09-18T15:18:54Z",
+      "session": "proposal-active-coord",
+      "prompt": "also i am not opposed to creating a cloud-hosted service that would act as a relay and a message board if needed... i.e. if we need to decouple from github ... but there is a benefit in having the defense in depth in github always",
+      "summary": "Added optional cloud relay as third plane (P8): live notify for hosts that do not share a filesystem. GitHub remains defense in depth — dual-write, fold wins, clone without relay is complete. Q8: do not host until a second host is measured.",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proposals/active-multi-harness-coordination.md"
+      ],
+      "tags": [
+        "coordination"
+      ],
+      "outcome": "success",
+      "goal": "Record an optional hosted relay without retracting NFR-P2 or replacing GitHub.",
+      "done_when": "Proposal updated, derived, committed, pushed.",
+      "tier": "T1",
+      "fan_out": 0,
+      "git": {
+        "sha": "897266c5f84708995dadda6b2c358bf205f552d6",
+        "short": "897266c5f",
         "branch": "proposal/active-coordination-bus",
         "pushed": true
       }

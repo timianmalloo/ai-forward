@@ -166,8 +166,8 @@
   <h1>The ledger is not a bus</h1>
   <p class="standfirst">Git, githooks, and the append-only fold are the right substrate for
   leases and accountability. They are the wrong substrate for liveness. This proposal adds an
-  optional, local-first message plane so Copilot, Grok, Claude Code, and Antigravity can chase
-  work instead of waiting for the next fetch.</p>
+  optional local bus, and — when sessions do not share a filesystem — an optional cloud relay.
+  GitHub stays defense in depth: every kick still lands in the git-tracked ledger.</p>
 </header>
 
 <dl class="rig">
@@ -553,37 +553,41 @@
 
 <section>
   <div class="sec-head"><span class="sec-num">04</span><div class="col">
-    <h2>Two planes</h2>
+    <h2>Three planes — GitHub is the depth</h2>
   </div></div>
 
   <figure>
-    <svg viewBox="0 0 920 420" role="img" aria-label="Owner above Conductor; Conductor talks to Workers in-session and to other sessions; both talk to an optional Bus which dual-writes to the required Ledger.">
-      <rect x="20" y="16" width="880" height="56" rx="4" fill="var(--sunk)" stroke="var(--rule-strong)"/>
-      <text x="460" y="38" text-anchor="middle" font-family="Archivo,sans-serif" font-size="13" font-weight="600" fill="var(--s4)">OWNER — strongest model · decides · reduces human interaction · holds the veto</text>
-      <text x="460" y="56" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--muted)">may not grant or refuse leases</text>
+    <svg viewBox="0 0 920 500" role="img" aria-label="Owner above Conductor; workers and other sessions; optional cloud relay; optional local bus; required ledger dual-written and pushed to GitHub.">
+      <rect x="20" y="16" width="880" height="48" rx="4" fill="var(--sunk)" stroke="var(--rule-strong)"/>
+      <text x="460" y="36" text-anchor="middle" font-family="Archivo,sans-serif" font-size="13" font-weight="600" fill="var(--s4)">OWNER — strongest model · decides · reduces human interaction · holds the veto</text>
+      <text x="460" y="52" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--muted)">may not grant or refuse leases</text>
 
-      <rect x="20" y="92" width="880" height="56" rx="4" fill="var(--surface)" stroke="var(--s2)"/>
-      <text x="460" y="114" text-anchor="middle" font-family="Archivo,sans-serif" font-size="13" font-weight="600" fill="var(--s2)">CONDUCTOR — decomposes, delegates, joins, watches stalls</text>
-      <text x="460" y="132" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--muted)">if elected: Leader of the fleet</text>
+      <rect x="20" y="80" width="880" height="48" rx="4" fill="var(--surface)" stroke="var(--s2)"/>
+      <text x="460" y="100" text-anchor="middle" font-family="Archivo,sans-serif" font-size="13" font-weight="600" fill="var(--s2)">CONDUCTOR — decomposes, delegates, joins, watches stalls · if elected: Leader</text>
+      <text x="460" y="116" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--muted)">advises; the ledger grants</text>
 
-      <rect x="20" y="168" width="420" height="72" rx="4" fill="var(--surface)" stroke="var(--rule)"/>
-      <text x="230" y="196" text-anchor="middle" font-family="Archivo,sans-serif" font-size="13" font-weight="600" fill="var(--s1)">WORKERS (in-session)</text>
-      <text x="230" y="216" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--muted)">right-sized model · artifact, not prose</text>
+      <rect x="20" y="144" width="420" height="56" rx="4" fill="var(--surface)" stroke="var(--rule)"/>
+      <text x="230" y="168" text-anchor="middle" font-family="Archivo,sans-serif" font-size="13" font-weight="600" fill="var(--s1)">WORKERS (in-session)</text>
+      <text x="230" y="186" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--muted)">right-sized model · artifact, not prose</text>
 
-      <rect x="480" y="168" width="420" height="72" rx="4" fill="var(--surface)" stroke="var(--rule)"/>
-      <text x="690" y="196" text-anchor="middle" font-family="Archivo,sans-serif" font-size="13" font-weight="600" fill="var(--s3)">OTHER SESSIONS</text>
-      <text x="690" y="216" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--muted)">Copilot · Grok · Claude Code · Antigravity</text>
+      <rect x="480" y="144" width="420" height="56" rx="4" fill="var(--surface)" stroke="var(--rule)"/>
+      <text x="690" y="168" text-anchor="middle" font-family="Archivo,sans-serif" font-size="13" font-weight="600" fill="var(--s3)">OTHER SESSIONS</text>
+      <text x="690" y="186" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--muted)">Copilot · Grok · Claude Code · Antigravity</text>
 
-      <rect x="20" y="260" width="880" height="64" rx="4" fill="var(--warn-bg)" stroke="var(--warn)"/>
-      <text x="460" y="284" text-anchor="middle" font-family="Archivo,sans-serif" font-size="13" font-weight="600" fill="var(--warn)">BUS — optional, local-first</text>
-      <text x="460" y="304" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--muted)">advertisements · heartbeats · blocked-on · kick · delegate · never the source of truth</text>
+      <rect x="20" y="216" width="880" height="56" rx="4" fill="var(--warn-bg)" stroke="var(--warn)"/>
+      <text x="460" y="238" text-anchor="middle" font-family="Archivo,sans-serif" font-size="13" font-weight="600" fill="var(--warn)">RELAY — optional, cloud · P8 when a second host appears</text>
+      <text x="460" y="256" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--muted)">presence · board · kick fan-out · never grants · never the only copy</text>
 
-      <rect x="20" y="344" width="880" height="60" rx="4" fill="var(--go-bg)" stroke="var(--go)"/>
-      <text x="460" y="368" text-anchor="middle" font-family="Archivo,sans-serif" font-size="13" font-weight="600" fill="var(--go)">LEDGER — existing, required</text>
-      <text x="460" y="386" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--muted)">.agents/log/*.jsonl · fold · PreToolUse + pre-commit · dual-write from the bus</text>
+      <rect x="20" y="288" width="880" height="56" rx="4" fill="var(--sunk)" stroke="var(--rule-strong)"/>
+      <text x="460" y="310" text-anchor="middle" font-family="Archivo,sans-serif" font-size="13" font-weight="600" fill="var(--s2)">BUS — optional, local-first</text>
+      <text x="460" y="328" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--muted)">unix sockets · inbox · Loomkeeper board when AI-DE hosts</text>
+
+      <rect x="20" y="360" width="880" height="64" rx="4" fill="var(--go-bg)" stroke="var(--go)"/>
+      <text x="460" y="384" text-anchor="middle" font-family="Archivo,sans-serif" font-size="13" font-weight="600" fill="var(--go)">LEDGER + GITHUB — required, defense in depth</text>
+      <text x="460" y="404" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--muted)">.agents/log/*.jsonl · fold grants leases · cloneable · a PR still shows who kicked whom</text>
     </svg>
-    <figcaption>The bus is a fast path. The ledger is the source of truth. A missing socket
-    degrades to today’s pull-based behaviour; it does not refuse work.</figcaption>
+    <figcaption>Decouple liveness from git fetch. Never decouple accountability from the
+    git-tracked JSONL. A clone with the relay off is a complete, slower system.</figcaption>
   </figure>
 
   <h3>JXTA vocabulary, grounded in this repo</h3>
@@ -593,7 +597,7 @@
     <tbody>
       <tr><td>Peer Advertisement</td><td><strong>Session Card</strong> — harness, model, role, capabilities, worktree, listen address</td><td>Ledger event <code>session-card</code> + bus hello</td></tr>
       <tr><td>Peer Group</td><td>The repository, or a named workstream</td><td>Session contract (already exists)</td></tr>
-      <tr><td>Rendezvous</td><td>Optional <code>coord bus</code> process, Unix socket under <code>.agents/bus/</code></td><td>Runtime, not git-tracked; membership is a fold</td></tr>
+      <tr><td>Rendezvous</td><td>Optional <code>coord bus</code> locally, or the cloud relay when sessions do not share a filesystem</td><td>Runtime; membership is a fold of the ledger. The relay is a cache of that fold.</td></tr>
       <tr><td>Pipe</td><td>Directed message: kick, delegate, progress, blocked, unblocked</td><td>Dual-write: socket + ledger event</td></tr>
       <tr><td>Resolver</td><td><code>coord who --path</code> / <code>coord leader</code></td><td>Fold of the ledger; bus is a cache</td></tr>
     </tbody>
@@ -601,10 +605,10 @@
   </div>
 
   <div class="col">
-    <p>v1 is <strong>loopback only</strong>. Unix sockets under the repo’s
-    <code>.agents/bus/</code>. No TCP, no LAN, no cloud. Bus payloads are data, never
-    instruction — same projection rules as architecture §7-E. Identity remains asserted
-    (ADR-0011).</p>
+    <p>P5–P7 are <strong>loopback only</strong>. The relay (P8) leaves loopback and requires
+    signed Session Cards. Unsigned asserted identity (ADR-0011) must not be accepted on the
+    wire. A GitHub token may authenticate the operator to the relay; it is not the session’s
+    identity. Bus payloads stay data, never instruction.</p>
   </div>
 </section>
 
@@ -752,7 +756,16 @@
   <h3>Transport — stdlib, local-first, optional rendezvous</h3>
   <div class="col">
     <p>Unix domain sockets under <code>.agents/bus/</code>. No Redis, NATS, libp2p, MQTT, or
-    sqlite. Discovery is Napster-as-bootstrap:</p>
+    sqlite in v1. Discovery is Napster-as-bootstrap locally. The cloud relay is the same
+    rendezvous when a session cannot see the socket — Copilot’s cloud agent, a second laptop,
+    a provisioned VM.</p>
+    <div class="callout">
+      <p><strong>The relay is live path, not a second GitHub.</strong> It fans out presence and
+      kicks. It does not grant leases. Dual-write first: JSONL then POST. If the relay and the
+      fold disagree, the fold wins. A clone with <code>relay: off</code> is complete, slower.
+      Stand it up only when a measured session cannot see <code>.agents/bus/</code>.</p>
+    </div>
+    <p>Local discovery:</p>
     <ol class="body-list">
       <li>On SessionStart, write the Session Card to the ledger and to <code>peers/</code>.</li>
       <li>Try <code>.agents/bus/rendezvous.sock</code>. If it exists, register. If it does not,
@@ -805,10 +818,11 @@
   </div>
 
   <div class="callout cut">
-    <p><strong>Will not do:</strong> replace GitHub Issues, PRs, or Actions; replace git with
-    DeltaDB or a source CRDT; require a daemon; implement A2A/AGNTCY/libp2p in v1; add a
-    planner that invents tracks; semantic merge; pretend a kick enforces reasoning. A kick
-    that is ignored is a metric (<code>kick_ack_rate</code>), not a solved problem.</p>
+    <p><strong>Will not do:</strong> replace GitHub Issues, PRs, or Actions — GitHub stays the
+    durable remote even if live notify moves to the relay; replace git with a source CRDT;
+    require a daemon (an <em>optional</em> cloud relay at P8 is in scope, fail-open, never the
+    only copy); implement A2A/libp2p in P5–P7; add a planner that invents tracks; semantic
+    merge; pretend a kick enforces reasoning.</p>
   </div>
 
   <h3>P5–P8 sit after the existing four phases</h3>
@@ -830,9 +844,11 @@
       <code>delegate</code>. Demo: Grok Owner+Conductor, Claude Worker, Copilot as a second session.</dd>
     </div>
     <div>
-      <dt>P8 Cards that travel</dt>
-      <dd>Session Card frozen as a subset of A2A Agent Card. Signed cards only if we leave
-      loopback. Not a promise to implement A2A — a promise we will not have to redesign the card.</dd>
+      <dt>P8 Relay when a second host appears</dt>
+      <dd>Signed Session Cards. Optional cloud relay: presence, board window, fan-out of
+      <code>blocked</code>/<code>kick</code>/<code>delegate</code>. Dual-write tested red-first;
+      the fold wins. Trigger: a measured session that cannot see <code>.agents/bus/</code>.
+      GitHub still has every kick.</dd>
     </div>
   </div>
   <div class="col">
@@ -850,7 +866,7 @@
   <table>
     <thead><tr><th>#</th><th>Decision</th><th>Why</th></tr></thead>
     <tbody>
-      <tr><td class="n">D1</td><td>Two planes: ledger required, bus optional</td><td>ADR-0007 and NFR-P2 still hold for grants. Liveness is a different job.</td></tr>
+      <tr><td class="n">D1</td><td>Three planes: ledger required; local bus optional; cloud relay optional</td><td>The relay is rendezvous for hosts that do not share a filesystem, not a second grantor. NFR-P2 kept.</td></tr>
       <tr><td class="n">D2</td><td>Dual-write every state-changing message</td><td>A bus that is the only copy of a kick is Napster’s directory.</td></tr>
       <tr><td class="n">D3</td><td>Leader is a lease with a sequencer</td><td>Chubby. Sessions die. The fold outlives them.</td></tr>
       <tr><td class="n">D4</td><td>Kick ladder, not immediate reassign</td><td>Magentic-One stall-count; phi-accrual; false eviction is worse than a slow session.</td></tr>
@@ -859,11 +875,11 @@
       <tr><td class="n">D7</td><td>Loopback Unix sockets + inbox file; no required rendezvous</td><td>JXTA rendezvous as optimisation. Gnutella ping-flood avoided. Stdlib.</td></tr>
       <tr><td class="n">D8</td><td>Session Card shaped like an A2A Agent Card</td><td>Do not invent a fourth identity format. Do not take the A2A dependency in v1.</td></tr>
       <tr><td class="n">D9</td><td>Do not CRDT the source tree</td><td>CodeCRDT: coupled tasks get slower; semantic conflicts remain.</td></tr>
-      <tr><td class="n">D10</td><td>Do not replace GitHub</td><td>Zed is running that experiment. We need a bus across harnesses that still push to GitHub.</td></tr>
+      <tr><td class="n">D10</td><td>Do not replace GitHub; use it as defense in depth</td><td>Decouple liveness from fetch/push. Never decouple accountability from the git-tracked JSONL. A clone without the relay is complete, slower.</td></tr>
       <tr><td class="n">D11</td><td>Never advertise an unexecuted harness mode</td><td>Phase-3 conformance, applied to Copilot live-inject.</td></tr>
       <tr><td class="n">D12</td><td>Leader advises; ledger grants</td><td>Existing council ruling, kept.</td></tr>
       <tr><td class="n">D13</td><td>Inject coordination messages; never inject scores</td><td>AI-DE chose pull for standing (anti-Goodhart) and was right. That reason does not apply to <code>blocked</code> / <code>kick</code> / <code>delegate</code>. The 8,143&nbsp;s wait is what pull-only costs.</td></tr>
-      <tr><td class="n">D14</td><td>Do not grow a third store</td><td>Loomkeeper Board is the bus’s public pipe when the watcher is present. <code>coord-core</code> remains the ledger.</td></tr>
+      <tr><td class="n">D14</td><td>Do not grow a third <em>source of truth</em></td><td>Loomkeeper Board and the cloud relay are projections. <code>coord-core</code> remains the grantor.</td></tr>
     </tbody>
   </table>
   </div>
@@ -894,12 +910,17 @@
       injection of any kind, P5 degrades to “make the pull unmissable.” That still would not
       have unblocked the 8,143&nbsp;s wait. Recommendation: keep the split — inject
       coordination, never inject scores.</li>
+      <li><strong>When does the cloud relay get built?</strong> Not until a session that cannot
+      see <code>.agents/bus/</code> is a measured participant. P5–P7 stay local. Hosting
+      (Azure vs anything else) is operations. Dual-write and signed cards are the architecture.
+      GitHub stays the remote either way.</li>
     </ol>
   </div>
   <div class="callout go">
     <p><strong>Best next action.</strong> Decide Q7 (push vs pull) and Q1 (peer-group grain).
     Then <code>/specify</code> P5 against <em>ai-de</em>, not a toy repo. First demo: Copilot
-    posts, Claude sees it on the next tool call, two launches get two worktrees.</p>
+    posts, Claude sees it on the next tool call, two launches get two worktrees. Q8 (relay)
+    waits until a second host shows up in the profile.</p>
   </div>
 </section>
 
