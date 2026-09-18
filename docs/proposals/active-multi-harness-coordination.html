@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ledger and bus — active multi-harness coordination</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --ground:#F6F8F7; --surface:#FFFFFF; --sunk:#EDF1F0;
+    --ink:#0C1B21; --body:#22343A; --muted:#5A6E75; --muted2:#8A9AA0;
+    --rule:#D6DFDE; --rule-strong:#B7C6C4;
+    --accent:#C8500F;
+    --go:#1F6F5C; --warn:#8A6100; --stop:#A32C1E;
+    --go-bg:#E3F0EB; --warn-bg:#F6EED9; --stop-bg:#F6E2DE;
+    --s1:#1F6F5C; --s2:#2E6F8E; --s3:#7A5AA6; --s4:#C8500F;
+    --shadow:0 1px 2px rgba(12,27,33,.05), 0 8px 24px -12px rgba(12,27,33,.18);
+    --measure:66ch;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ground:#081317; --surface:#0E1F25; --sunk:#0A1A1F;
+      --ink:#E6EFEE; --body:#C3D3D3; --muted:#8CA3A6; --muted2:#7A9195;
+      --rule:#1E333A; --rule-strong:#2C464E;
+      --accent:#F0793C;
+      --go:#5FC0A3; --warn:#D8A93A; --stop:#E4796A;
+      --go-bg:#102C26; --warn-bg:#2C2412; --stop-bg:#2E1815;
+      --s1:#5FC0A3; --s2:#6FB3D6; --s3:#B79BE0; --s4:#F0793C;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.7);
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#081317; --surface:#0E1F25; --sunk:#0A1A1F;
+    --ink:#E6EFEE; --body:#C3D3D3; --muted:#8CA3A6; --muted2:#7A9195;
+    --rule:#1E333A; --rule-strong:#2C464E;
+    --accent:#F0793C;
+    --go:#5FC0A3; --warn:#D8A93A; --stop:#E4796A;
+    --go-bg:#102C26; --warn-bg:#2C2412; --stop-bg:#2E1815;
+    --s1:#5FC0A3; --s2:#6FB3D6; --s3:#B79BE0; --s4:#F0793C;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.7);
+  }
+  *{box-sizing:border-box}
+  body{background:var(--ground); color:var(--body);
+    font-family:"Source Serif 4","Iowan Old Style",Georgia,serif;
+    font-size:17px; line-height:1.62; margin:0; -webkit-font-smoothing:antialiased}
+  .skip{position:absolute; left:12px; top:-48px; background:var(--ink); color:var(--ground);
+    padding:6px 10px; z-index:9}
+  .skip:focus{top:12px}
+  :focus-visible{outline:3px solid var(--accent); outline-offset:2px}
+  .wrap{max-width:1080px; margin:0 auto; padding:0 28px 96px}
+  .col{max-width:var(--measure)}
+  h1,h2,h3,h4{font-family:Archivo,"Helvetica Neue",Arial,sans-serif}
+  h1{font-size:clamp(2.1rem,4.4vw,3.1rem); line-height:1.06; font-weight:700;
+     letter-spacing:-.022em; color:var(--ink); margin:0 0 .5rem; text-wrap:balance}
+  h2{font-size:1.55rem; font-weight:700; letter-spacing:-.015em; color:var(--ink);
+     margin:0 0 .2rem; text-wrap:balance}
+  h3{font-size:1.08rem; font-weight:600; letter-spacing:-.008em; color:var(--ink);
+     margin:0 0 .35rem; text-wrap:balance}
+  h4{font-size:.95rem; font-weight:600; color:var(--ink); margin:1.3rem 0 .3rem}
+  p{margin:0 0 1.05rem}
+  strong{color:var(--ink); font-weight:600}
+  a{color:var(--accent)}
+  code,.num{font-family:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+    font-size:.87em; font-variant-numeric:tabular-nums}
+  code{background:var(--sunk); padding:.1em .38em; border-radius:3px; color:var(--ink)}
+  pre{background:var(--sunk); border:1px solid var(--rule); padding:16px 18px;
+    overflow-x:auto; margin:0 0 1.3rem; border-radius:2px}
+  pre code{background:none; padding:0; font-size:.8rem; line-height:1.62; color:var(--body)}
+  .eyebrow{font-family:Archivo,sans-serif; font-size:.7rem; font-weight:600;
+    letter-spacing:.14em; text-transform:uppercase; color:var(--muted); margin:0 0 .55rem}
+  header.top{border-bottom:2px solid var(--ink); padding:56px 0 22px}
+  .kicker{display:flex; gap:10px; align-items:baseline; flex-wrap:wrap;
+    font-family:Archivo,sans-serif; font-size:.72rem; font-weight:600;
+    letter-spacing:.13em; text-transform:uppercase; color:var(--muted); margin-bottom:18px}
+  .kicker .dot{color:var(--rule-strong)} .kicker .hl{color:var(--accent)}
+  .standfirst{font-size:1.16rem; line-height:1.55; color:var(--body); max-width:62ch; margin:0}
+  .rig{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:0;
+    border-bottom:1px solid var(--rule); margin:0 0 52px}
+  .rig div{padding:16px 18px 18px; border-right:1px solid var(--rule)}
+  .rig div:last-child{border-right:0}
+  .rig dt{font-family:Archivo,sans-serif; font-size:.66rem; font-weight:600;
+    letter-spacing:.11em; text-transform:uppercase; color:var(--muted); margin-bottom:5px}
+  .rig dd{margin:0; font-family:"IBM Plex Mono",monospace; font-size:.95rem; font-weight:500;
+    color:var(--ink); font-variant-numeric:tabular-nums}
+  .rig dd.bad{color:var(--stop)} .rig dd.good{color:var(--go)}
+  section{padding:44px 0; border-top:1px solid var(--rule)}
+  .sec-head{display:flex; gap:14px; align-items:baseline; margin-bottom:1.4rem}
+  .sec-num{font-family:"IBM Plex Mono",monospace; font-size:.8rem; color:var(--accent);
+    font-weight:500; padding-top:.28rem; flex:none}
+  .callout{background:var(--surface); border:1px solid var(--rule);
+    border-left:3px solid var(--accent); padding:20px 24px; margin:0 0 1.4rem; box-shadow:var(--shadow)}
+  .callout p:last-child{margin-bottom:0}
+  .callout.quiet{border-left-color:var(--rule-strong); box-shadow:none; background:var(--sunk)}
+  .callout.cut{border-left-color:var(--stop); box-shadow:none; background:var(--stop-bg)}
+  .callout.go{border-left-color:var(--go); background:var(--go-bg); box-shadow:none}
+  .tscroll{overflow-x:auto; margin:0 0 1.3rem; border:1px solid var(--rule); background:var(--surface)}
+  table{border-collapse:collapse; width:100%; font-size:.88rem}
+  th,td{text-align:left; padding:10px 14px; border-bottom:1px solid var(--rule); vertical-align:top}
+  thead th{font-family:Archivo,sans-serif; font-size:.64rem; font-weight:600; letter-spacing:.1em;
+    text-transform:uppercase; color:var(--muted); background:var(--sunk);
+    border-bottom:1px solid var(--rule-strong); white-space:nowrap}
+  tbody tr:last-child td{border-bottom:0}
+  td.n{font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums; white-space:nowrap}
+  .tag{font-family:Archivo,sans-serif; font-size:.62rem; font-weight:600; letter-spacing:.1em;
+    text-transform:uppercase; padding:3px 7px; border-radius:2px; white-space:nowrap}
+  .tag.a{background:var(--go-bg); color:var(--go)}
+  .tag.b{background:var(--warn-bg); color:var(--warn)}
+  .tag.c{background:var(--stop-bg); color:var(--stop)}
+  figure{margin:0 0 1.4rem; border:1px solid var(--rule); background:var(--surface); padding:22px 24px 18px}
+  figcaption{font-size:.83rem; color:var(--muted); margin-top:12px; line-height:1.5}
+  svg{display:block; width:100%; height:auto}
+  ul.body-list,ol.body-list{margin:0 0 1.1rem; padding-left:1.2em}
+  ul.body-list li,ol.body-list li{margin-bottom:.5rem}
+  ul.body-list li::marker,ol.body-list li::marker{color:var(--muted2)}
+  .roles{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:0;
+    border:1px solid var(--rule); background:var(--surface); margin:0 0 1.4rem}
+  .roles article{padding:18px 20px 16px; border-right:1px solid var(--rule)}
+  .roles article:last-child{border-right:0}
+  .roles .who{font-family:Archivo,sans-serif; font-size:.64rem; font-weight:600;
+    letter-spacing:.12em; text-transform:uppercase; margin:0 0 8px}
+  .roles h3{margin:0 0 .4rem}
+  .roles p{margin:0; font-size:.9rem}
+  .roles article:nth-child(1) .who{color:var(--s4)}
+  .roles article:nth-child(2) .who{color:var(--s2)}
+  .roles article:nth-child(3) .who{color:var(--s1)}
+  .ladder{display:grid; gap:0; border:1px solid var(--rule); margin:0 0 1.4rem; background:var(--surface)}
+  .ladder .rung{display:grid; grid-template-columns:56px 1fr; gap:0; border-bottom:1px solid var(--rule)}
+  .ladder .rung:last-child{border-bottom:0}
+  .ladder .n{font-family:"IBM Plex Mono",monospace; font-weight:600; font-size:.9rem;
+    padding:14px 12px; background:var(--sunk); color:var(--accent); text-align:center}
+  .ladder .bd{padding:12px 16px}
+  .ladder h3{margin:0 0 .2rem}
+  .ladder p{margin:0; font-size:.9rem}
+  .grid2{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:0;
+    border:1px solid var(--rule); background:var(--surface); margin:0 0 1.4rem}
+  .grid2 > div{padding:14px 22px 16px; border-right:1px solid var(--rule)}
+  .grid2 > div:last-child{border-right:0}
+  .grid2 dt{font-family:Archivo,sans-serif; font-size:.64rem; font-weight:600;
+    letter-spacing:.11em; text-transform:uppercase; color:var(--muted); margin-bottom:5px}
+  .grid2 dd{margin:0; font-size:.9rem; line-height:1.5}
+  footer.end{border-top:2px solid var(--ink); padding:28px 0 0; margin-top:44px;
+    font-size:.87rem; color:var(--muted)}
+  @media (max-width:640px){
+    body{font-size:16px}
+    .wrap{padding:0 18px 72px}
+    .rig div{border-right:0; border-bottom:1px solid var(--rule)}
+    .grid2 > div,.roles article{border-right:0; border-bottom:1px solid var(--rule)}
+    .ladder .rung{grid-template-columns:1fr}
+    .ladder .n{text-align:left}
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#start">Skip to content</a>
+<div class="wrap">
+
+<header class="top" id="start">
+  <div class="kicker">
+    <span>AI-Forward</span><span class="dot">/</span>
+    <span>Coordination</span><span class="dot">/</span>
+    <span class="hl">Proposal</span><span class="dot">/</span>
+    <span>18 September 2026</span>
+  </div>
+  <h1>The ledger is not a bus</h1>
+  <p class="standfirst">Git, githooks, and the append-only fold are the right substrate for
+  leases and accountability. They are the wrong substrate for liveness. This proposal adds an
+  optional, local-first message plane so Copilot, Grok, Claude Code, and Antigravity can chase
+  work instead of waiting for the next fetch.</p>
+</header>
+
+<dl class="rig">
+  <div><dt>Status</dt><dd>in-review</dd></div>
+  <div><dt>Keeps</dt><dd class="good">ADR-0007 ledger</dd></div>
+  <div><dt>Adds</dt><dd>optional bus</dd></div>
+  <div><dt>In-session</dt><dd>Owner · Conductor · Worker</dd></div>
+  <div><dt>Between sessions</dt><dd>elected Leader</dd></div>
+  <div><dt>Daemon required?</dt><dd class="good">no</dd></div>
+</dl>
+
+<section>
+  <div class="sec-head"><span class="sec-num">00</span><div class="col">
+    <h2>Thesis</h2>
+  </div></div>
+  <div class="col">
+    <p>The pack already built the right <strong>ledger</strong>. It has not built a <strong>bus</strong>.</p>
+    <p>Git, githooks, PreToolUse, pre-commit, and an append-only JSONL fold give concurrent
+    agents leases, collision-proof ids, derived-file regeneration, and an audit trail. That
+    layer answers <em>may I touch this file?</em> and <em>what was decided?</em> It does not
+    answer <em>the other session is stuck — tell it, and if it does not move, take the work.</em></p>
+    <p>GitHub and githooks are <strong>eventual</strong>. A claim is visible after a push and a
+    fetch, or after the next edit-boundary check. A blocked-on edge is a fold, not a message.
+    A stalled session expires a TTL and is discovered by whoever happens to claim next. Nobody
+    is responsible for chasing progress. That is the passivity.</p>
+    <div class="callout">
+      <p>Keep the ledger as the source of truth. Add an optional, local-first message bus for
+      liveness. Dual-write every coordination act to the ledger so accountability survives the
+      bus going down. Elect a Leader among sessions so someone is on the hook for the whole
+      work list. Inside a session, name Owner / Conductor / Worker so the most capable model
+      decides and the right-sized model executes.</p>
+    </div>
+    <p>If the bus is down, the existing layer still works — slower, the way it works today.
+    That is NFR-P2, kept. Canonical record:
+    <a href="./active-multi-harness-coordination.md"><code>active-multi-harness-coordination.md</code></a>.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">01</span><div class="col">
+    <h2>Diagnosis — the ledger is correct and too quiet</h2>
+  </div></div>
+  <div class="col">
+    <p>Phases 1–4 already close four measured modes: structural conflict on derived files (M1),
+    allocation collision (M2), silent divergence (M3), and work loss in a shared tree (M4).
+    The substrate decision still holds: append-only JSONL, one file per session, folded on
+    demand, <strong>no daemon, no database</strong> (ADR-0007). Spike S2 priced a 10,000-event
+    fold at 47&nbsp;ms p95 against a 100&nbsp;ms budget.</p>
+  </div>
+
+  <h3>What git and hooks cannot see</h3>
+  <div class="tscroll">
+  <table>
+    <thead><tr><th>Mode</th><th>What happens today</th><th>Why git/hooks cannot fix it</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="n">M5 Stall</td>
+        <td>A session is alive, holds leases, and is not making progress. TTL expiry is the only recovery, and it is silent.</td>
+        <td>A hook fires on <em>edit</em>, not on <em>absence of edit</em>.</td>
+      </tr>
+      <tr>
+        <td class="n">M6 Passivity</td>
+        <td>Session B records <code>blocked-on: A</code>. A does not find out until it folds, fetches, or happens to <code>coord tail</code>.</td>
+        <td>Git is pull. There is no push to a running model.</td>
+      </tr>
+      <tr>
+        <td class="n">M7 No hierarchy</td>
+        <td>Every session is a peer. Decisions that should be made by the strongest model wait for a human, or get made twice.</td>
+        <td>The session contract has roles as prose. Nothing elects, nothing delegates as a protocol.</td>
+      </tr>
+      <tr>
+        <td class="n">M8 No kick</td>
+        <td>Nobody is accountable for the fleet’s work list. A blocked waiter waits. A looping worker loops until a human notices.</td>
+        <td>The operator view is a query. It is not a supervisor.</td>
+      </tr>
+      <tr>
+        <td class="n">M9 Cross-harness liveness</td>
+        <td>Copilot, Grok, Claude Code, and Antigravity share a git remote and a JSONL directory. They do not share a live channel.</td>
+        <td>Each harness’s hook surface is an edit interceptor, not a mailbox.</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="col">
+    <p>The architecture already recorded the delay that makes this worse: the gate delay exceeds
+    the merge interval, and the push delay is the window a branch scanner cannot see into. The
+    allocator was designed for that window. The lease was designed for the gate delay. Nothing
+    was designed for “the other agent is in another process, on another harness, and needs to
+    be told <em>now</em>.”</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">02</span><div class="col">
+    <h2>What we keep</h2>
+  </div></div>
+  <div class="col">
+    <p>ADR-0007 cut the daemon because the fold met the latency budget, because a required
+    service makes “the agent cannot work until the service is up” a new failure mode, and
+    because for a control whose recorded ancestors failed by reporting success, a loud
+    non-blocking failure is worth more than 20&nbsp;ms.</p>
+    <p>Those three reasons still hold for <strong>grants and refusals</strong>. The bus is a
+    <strong>transport</strong>, not a store:</p>
+    <ul class="body-list">
+      <li>Every message that changes coordination state is dual-written to the session’s JSONL.</li>
+      <li>The fold remains the only source of leases, work-item status, blocked-on edges, and leader identity.</li>
+      <li>If the bus is down, the layer says so and degrades to today’s pull-based behaviour. It does not refuse work because a socket is missing.</li>
+    </ul>
+    <div class="callout quiet">
+      <p>The Enterprise Architect’s existing ruling is kept verbatim: if a planner is added
+      later it may <strong>advise, never grant or refuse</strong>. The Leader and the Conductor
+      advise, delegate, and kick. The ledger still grants and refuses.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">03</span><div class="col">
+    <h2>Research — what to steal, and what not to</h2>
+  </div></div>
+
+  <h3>Lab multi-agent systems</h3>
+  <div class="col">
+    <p><strong>Anthropic (June 2025).</strong> Orchestrator-worker. Opus 4 lead + Sonnet 4
+    subagents beat single-agent Opus 4 by <strong>90.2%</strong> on their internal research
+    eval. Token usage alone explained 80% of BrowseComp variance. Multi-agent runs use about
+    <strong>15×</strong> the tokens of a chat — the pack already encoded this as GO6. They also
+    recorded the production failure that matches M5/M6 exactly: the lead agent executes
+    subagents <em>synchronously</em>, cannot steer them, and can be blocked waiting for one of
+    them. Copy two tactics: teach the orchestrator to delegate with an objective, output format,
+    tools, and boundaries; and have subagents write artifacts to the filesystem and return a
+    reference, not a novel.</p>
+    <p><strong>Magentic-One (Microsoft, 2024) and Magentic-UI (2025).</strong> A lead Orchestrator
+    runs two loops. The outer loop owns a Task Ledger (facts, guesses, plan). The inner loop
+    owns a Progress Ledger (current assignment, “is progress being made?”). If the stall count
+    exceeds two, the outer loop replans. That is kick-and-replan as a control loop. Magentic-UI
+    then put a human on the team as <code>UserProxy</code> — the Owner in this proposal is that
+    seat, occupied by the strongest model until it must escalate.</p>
+  </div>
+
+  <h3>The 2026 protocol stack has split. Do not smash the layers.</h3>
+  <div class="tscroll">
+  <table>
+    <thead><tr><th>Layer</th><th>Protocol</th><th>Job</th><th>Our mapping</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>Agent ↔ tools</td>
+        <td>MCP (Anthropic → LF Agentic AI Foundation, Dec 2025)</td>
+        <td>Call tools</td>
+        <td>Existing <code>coord</code> CLI; future MCP host over the same core</td>
+      </tr>
+      <tr>
+        <td>Agent ↔ editor</td>
+        <td>ACP (Zed, Aug 2025; JetBrains co-maintains; v2 draft Jul 2026)</td>
+        <td>Drive a coding session inside an editor</td>
+        <td>Out of scope. We do not become an IDE.</td>
+      </tr>
+      <tr>
+        <td>Agent ↔ agent</td>
+        <td>A2A (Google, Apr 2025; Linux Foundation; v1.0 Mar 2026; 150+ orgs)</td>
+        <td>Discover, delegate, converse across vendors</td>
+        <td><strong>The bus’s public shape, later.</strong> Session Cards should be able to become A2A Agent Cards.</td>
+      </tr>
+      <tr>
+        <td>Internet of agents</td>
+        <td>AGNTCY (Cisco → LF, Jul 2025), ANP (W3C CG, still draft)</td>
+        <td>DNS-like discovery, signed identity, SLIM messaging</td>
+        <td>Overkill for one laptop. Design so a later remote hop can speak them.</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="col">
+    <p>IBM’s Agent Communication Protocol merged into A2A (archived Aug 2025). Do not mint a
+    fourth wire format. Local v1 can be JSON lines over a Unix socket; the <em>schema</em> of a
+    Session Card should be A2A-shaped so the adapter is a rename, not a redesign.</p>
+    <p>Anthropic’s own caution, which the pack already believes: most coding tasks have fewer
+    truly parallelizable pieces than research, and models are not yet great at coordinating in
+    real time. The bus exists so the parallel work we <em>do</em> choose is not left to rot
+    when one participant blocks.</p>
+  </div>
+
+  <h3>Agent-native repositories</h3>
+  <div class="col">
+    <p><strong>Zed Delta</strong> (public beta 16 Sep 2026) is the sharpest “replace GitHub”
+    attempt in this window. They disabled pull requests on Delta’s own repo and landed 570
+    changes to main from 33 people. The unit of work is a <strong>thread</strong> (conversation
+    + edits + worktrees + review), not a PR. DeltaDB extends Git with incremental deltas
+    between commits so the reasoning is not thrown away at <code>git commit</code>. They still
+    keep Git as the checkpoint you build from, and they still use GitHub for community
+    contributions to <code>zed-industries/zed</code>.</p>
+    <p>Steal the live thread. Do not steal replacing PRs or standing up a CRDT database as the
+    source of truth. Our ledger already is the conversation-about-intent; Git already is the
+    checkpoint. The missing piece is the live thread <em>between harnesses that are not Zed</em>.</p>
+    <p><strong>CodeCRDT</strong> (Pugachev, arXiv:2510.18893): observation-driven coordination
+    on a CRDT, 600 trials, zero merge failures, up to 21.1% faster on parallelizable tasks and
+    <strong>up to 39.4% slower on coupled ones</strong>, with 5–10% semantic conflicts the CRDT
+    cannot see. Independent confirmation of GO5 and ADR-0009. Do not put source files on a
+    CRDT. A CRDT of presence and work-item state is a plausible read-model for the bus.</p>
+    <p><strong>AgentRoom</strong> (2026) makes the same split we want: CRDT for the filesystem
+    <em>plus</em> explicit file-level claims. <strong>GitButler vcbench</strong> and
+    <strong>Jujutsu</strong> are a better agent VCS UX on top of Git; they do not coordinate two
+    harnesses. Mentioned so we do not “solve” VCS UX in this proposal.</p>
+  </div>
+
+  <h3>Classic P2P — the hybrid that survived</h3>
+  <div class="tscroll">
+  <table>
+    <thead><tr><th>System</th><th>Steal</th><th>Refuse</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>Napster</strong></td>
+        <td>A directory is fast. Use one as <em>bootstrap</em> (the Leader).</td>
+        <td>The directory as the only path. If the Leader is down, peers must still find each other from the ledger.</td>
+      </tr>
+      <tr>
+        <td><strong>Gnutella</strong></td>
+        <td>Membership must be hierarchical or the cheap nodes drown. 50% of early traffic was pings.</td>
+        <td>Flooding heartbeats. Five to twenty local sessions do not need a DHT; they do need to not ping-flood.</td>
+      </tr>
+      <tr>
+        <td><strong>JXTA</strong></td>
+        <td><strong>The vocabulary:</strong> advertisements, peer groups, optional rendezvous, pipes, resolver.</td>
+        <td>Implementing JXTA. Steal the concepts, ship JSON.</td>
+      </tr>
+      <tr>
+        <td><strong>BitTorrent</strong></td>
+        <td>Work items as pieces. Rare-first = serial spine first. Tit-for-tat = finish-and-release. Optimistic unchoke = give a stalled session a small piece to restart.</td>
+        <td>Treating source files as pieces of a blob. Artifact class already says which contention is real.</td>
+      </tr>
+      <tr>
+        <td><strong>Chubby / etcd</strong></td>
+        <td>Leader is a <em>lease</em>, not a personality. Sequencer token. Heartbeat renewal.</td>
+        <td>Building a Raft cluster for five local processes.</td>
+      </tr>
+      <tr>
+        <td><strong>Phi-accrual</strong></td>
+        <td>Stall ≠ dead. Two detectors: liveness-φ (heartbeats) and progress-φ (work-item events).</td>
+        <td>A single TTL for both “process died” and “model is looping.”</td>
+      </tr>
+      <tr>
+        <td><strong>CRDTs</strong></td>
+        <td>Fine for presence sets and the operator view.</td>
+        <td>Not for authored source. Not a replacement for the fold.</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="col">
+    <p>The hybrid that actually survived in P2P history is Napster’s transfer path plus
+    BitTorrent’s tracker-as-bootstrap plus JXTA’s advertisements. Centralised enough to be
+    fast, decentralised enough to survive the centre dying, with a published card so other
+    harnesses can find you without a prior handshake.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">04</span><div class="col">
+    <h2>Two planes</h2>
+  </div></div>
+
+  <figure>
+    <svg viewBox="0 0 920 420" role="img" aria-label="Owner above Conductor; Conductor talks to Workers in-session and to other sessions; both talk to an optional Bus which dual-writes to the required Ledger.">
+      <rect x="20" y="16" width="880" height="56" rx="4" fill="var(--sunk)" stroke="var(--rule-strong)"/>
+      <text x="460" y="38" text-anchor="middle" font-family="Archivo,sans-serif" font-size="13" font-weight="600" fill="var(--s4)">OWNER — strongest model · decides · reduces human interaction · holds the veto</text>
+      <text x="460" y="56" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--muted)">may not grant or refuse leases</text>
+
+      <rect x="20" y="92" width="880" height="56" rx="4" fill="var(--surface)" stroke="var(--s2)"/>
+      <text x="460" y="114" text-anchor="middle" font-family="Archivo,sans-serif" font-size="13" font-weight="600" fill="var(--s2)">CONDUCTOR — decomposes, delegates, joins, watches stalls</text>
+      <text x="460" y="132" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--muted)">if elected: Leader of the fleet</text>
+
+      <rect x="20" y="168" width="420" height="72" rx="4" fill="var(--surface)" stroke="var(--rule)"/>
+      <text x="230" y="196" text-anchor="middle" font-family="Archivo,sans-serif" font-size="13" font-weight="600" fill="var(--s1)">WORKERS (in-session)</text>
+      <text x="230" y="216" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--muted)">right-sized model · artifact, not prose</text>
+
+      <rect x="480" y="168" width="420" height="72" rx="4" fill="var(--surface)" stroke="var(--rule)"/>
+      <text x="690" y="196" text-anchor="middle" font-family="Archivo,sans-serif" font-size="13" font-weight="600" fill="var(--s3)">OTHER SESSIONS</text>
+      <text x="690" y="216" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--muted)">Copilot · Grok · Claude Code · Antigravity</text>
+
+      <rect x="20" y="260" width="880" height="64" rx="4" fill="var(--warn-bg)" stroke="var(--warn)"/>
+      <text x="460" y="284" text-anchor="middle" font-family="Archivo,sans-serif" font-size="13" font-weight="600" fill="var(--warn)">BUS — optional, local-first</text>
+      <text x="460" y="304" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--muted)">advertisements · heartbeats · blocked-on · kick · delegate · never the source of truth</text>
+
+      <rect x="20" y="344" width="880" height="60" rx="4" fill="var(--go-bg)" stroke="var(--go)"/>
+      <text x="460" y="368" text-anchor="middle" font-family="Archivo,sans-serif" font-size="13" font-weight="600" fill="var(--go)">LEDGER — existing, required</text>
+      <text x="460" y="386" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--muted)">.agents/log/*.jsonl · fold · PreToolUse + pre-commit · dual-write from the bus</text>
+    </svg>
+    <figcaption>The bus is a fast path. The ledger is the source of truth. A missing socket
+    degrades to today’s pull-based behaviour; it does not refuse work.</figcaption>
+  </figure>
+
+  <h3>JXTA vocabulary, grounded in this repo</h3>
+  <div class="tscroll">
+  <table>
+    <thead><tr><th>JXTA</th><th>Here</th><th>Stored in</th></tr></thead>
+    <tbody>
+      <tr><td>Peer Advertisement</td><td><strong>Session Card</strong> — harness, model, role, capabilities, worktree, listen address</td><td>Ledger event <code>session-card</code> + bus hello</td></tr>
+      <tr><td>Peer Group</td><td>The repository, or a named workstream</td><td>Session contract (already exists)</td></tr>
+      <tr><td>Rendezvous</td><td>Optional <code>coord bus</code> process, Unix socket under <code>.agents/bus/</code></td><td>Runtime, not git-tracked; membership is a fold</td></tr>
+      <tr><td>Pipe</td><td>Directed message: kick, delegate, progress, blocked, unblocked</td><td>Dual-write: socket + ledger event</td></tr>
+      <tr><td>Resolver</td><td><code>coord who --path</code> / <code>coord leader</code></td><td>Fold of the ledger; bus is a cache</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="col">
+    <p>v1 is <strong>loopback only</strong>. Unix sockets under the repo’s
+    <code>.agents/bus/</code>. No TCP, no LAN, no cloud. Bus payloads are data, never
+    instruction — same projection rules as architecture §7-E. Identity remains asserted
+    (ADR-0011).</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">05</span><div class="col">
+    <h2>In-session: Owner, Conductor, Worker</h2>
+  </div></div>
+
+  <div class="roles">
+    <article>
+      <p class="who">Seat 1</p>
+      <h3>Owner</h3>
+      <p>Most capable model available to the session. Decides architecture, scope, and “is this
+      done.” Reduces human interaction by taking decisions the mandate covers. Escalates when
+      it does not. Must not grant leases or quietly expand the goal.</p>
+    </article>
+    <article>
+      <p class="who">Seat 2</p>
+      <h3>Conductor</h3>
+      <p>Highly capable model; may be the same process as Owner. Decomposes, assigns, joins,
+      watches progress-φ, sends delegate/kick inside the session, and stands for Leader
+      between sessions. Must not do the Workers’ jobs by default, and must not spawn unbounded
+      subagents.</p>
+    </article>
+    <article>
+      <p class="who">Seat 3</p>
+      <h3>Worker</h3>
+      <p>Right-sized model for the task. Executes one assignment against owned paths. Writes
+      an artifact and returns a reference. Must not re-plan the session or touch another
+      Worker’s owned paths.</p>
+    </article>
+  </div>
+
+  <div class="col">
+    <p>The Owner’s autonomy is the session contract’s “Accountable for” column plus a short
+    written mandate at session start (goal, done-when, not-in-scope, decision rights). This is
+    CT19 applied to the fleet.</p>
+    <p>Every <code>delegate</code> message contains all four, or it is incomplete: objective;
+    output format / artifact path; tools and sources in bounds; boundaries (paths, fan-out cap,
+    budget). The Worker writes the artifact to the worktree and returns a <strong>reference</strong>.
+    The Conductor does not relay the Worker’s prose. That is Anthropic’s
+    filesystem-not-telephone rule, and it is already pack doctrine that only the Conductor
+    calls <code>conductor-join.py</code>.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">06</span><div class="col">
+    <h2>Between sessions: a Leader that kicks</h2>
+  </div></div>
+  <div class="col">
+    <p>One Leader per peer group (the repo, or a named workstream). The Leader is a Conductor
+    that holds an unexpired <code>leader-claim</code> in the ledger. Leader is a
+    <strong>lease</strong>, not a personality. A sequencer (the claim’s event id) lets anyone
+    verify that a kick came from the current Leader. If the Leader fails to renew, any
+    Conductor may claim; first append wins; the fold is the total order — the same
+    advisory-until-checked honesty as intersecting path claims.</p>
+    <p>Tie-break is not “highest model IQ.” Capability is advertised on the Session Card so a
+    human can <code>coord leader pin</code>. Automatic ranking of model strings is a policy
+    file if we ever want it; it is not the protocol. A wrong automatic ranking would elect a
+    fast, shallow Leader — the failure Magentic-One avoided by putting the strong model on the
+    Orchestrator.</p>
+    <p>The Leader is the fleet supervisor, not a second Owner of every session. It holds the
+    work list, runs <code>coord doctor</code> as a periodic self-check, kicks when progress-φ
+    crosses the threshold, reassigns after kick-without-ack, and unblocks waiters the moment a
+    dependency’s <code>done</code> hits the bus. It may <strong>advise</strong> assignment. It
+    may not grant a path lease.</p>
+  </div>
+
+  <h3>The kick ladder</h3>
+  <div class="ladder">
+    <div class="rung"><div class="n">0</div><div class="bd">
+      <h3>Notify</h3>
+      <p><code>blocked-on</code> recorded → bus delivers <code>blocked</code> to the holder immediately.</p>
+    </div></div>
+    <div class="rung"><div class="n">1</div><div class="bd">
+      <h3>Kick</h3>
+      <p>progress-φ ≥ threshold, or notify unanswered across one TTL → Leader sends
+      <code>kick</code> with reason, suggested action (an enum, not a paragraph), deadline.</p>
+    </div></div>
+    <div class="rung"><div class="n">2</div><div class="bd">
+      <h3>Reassign</h3>
+      <p>Kick unanswered, or liveness-φ says dead → write the expiry as an event, then
+      <code>delegate</code> to a capable idle session. That session still has to <code>claim</code>.</p>
+    </div></div>
+    <div class="rung"><div class="n">3</div><div class="bd">
+      <h3>Owner</h3>
+      <p>Reassign failed, or the work item is a decision not a task → escalate to the holding
+      session’s Owner, or the Leader’s Owner if the holder is gone.</p>
+    </div></div>
+    <div class="rung"><div class="n">4</div><div class="bd">
+      <h3>Human</h3>
+      <p>Mandate does not cover it, or two Owner decisions conflict → stop. The operator view
+      already exists; the bus pages it instead of waiting to be asked.</p>
+    </div></div>
+  </div>
+
+  <div class="col">
+    <p>Caps: at most two kicks per work item per hour before rung 2. Progress-φ is computed
+    from <em>that session’s</em> inter-progress intervals, not from a global “30&nbsp;s of
+    silence means dead.” A research session that heartbeats every turn and writes every five
+    minutes is healthy. A coding session that claimed <code>src/**</code> and has not appended
+    a progress event in the time it usually takes that session to edit is not.</p>
+    <p>BitTorrent, used lightly, for <em>ordering</em> only: rare-first (serial spine before
+    leaf tracks), tit-for-tat (finish-and-release to get the next piece), optimistic unchoke
+    (give a kicked session a smaller piece once before reassigning). Do not swarm the contents
+    of a file.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">07</span><div class="col">
+    <h2>Messages and transport</h2>
+  </div></div>
+  <div class="col">
+    <p>All messages are JSON with <code>kind</code>, allocator <code>id</code>,
+    <code>from</code>, <code>to</code> (<code>*</code> only for <code>hello</code> and
+    <code>leader-heartbeat</code>), and a typed body. Broadcast is membership-gossip only.
+    Work messages are directed. Idempotent by <code>id</code>.</p>
+  </div>
+  <div class="tscroll">
+  <table>
+    <thead><tr><th>kind</th><th>Direction</th><th>Ledger?</th></tr></thead>
+    <tbody>
+      <tr><td><code>hello</code></td><td>session → group (Session Card)</td><td>yes, once per card version</td></tr>
+      <tr><td><code>heartbeat</code></td><td>session → Leader</td><td>no (or sampled)</td></tr>
+      <tr><td><code>progress</code></td><td>worker/conductor → Conductor/Leader</td><td>yes</td></tr>
+      <tr><td><code>blocked</code> / <code>unblocked</code></td><td>waiter ↔ holder, copy to Leader</td><td>yes</td></tr>
+      <tr><td><code>delegate</code></td><td>Conductor/Leader → Worker/session (four-part contract)</td><td>yes</td></tr>
+      <tr><td><code>kick</code></td><td>Leader → session</td><td>yes</td></tr>
+      <tr><td><code>ack</code> / <code>nack</code></td><td>receiver → sender</td><td>yes for kick/delegate</td></tr>
+      <tr><td><code>leader-claim</code> / <code>reassign</code> / <code>escalate</code></td><td>Conductor/Leader → group</td><td>yes</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="col">
+    <p>Getting a message into a running model, in preference order: hook
+    <code>additionalContext</code> on the next tool boundary (already used by
+    <code>reread-guard.py</code>); a gitignored mailbox file
+    <code>.agents/bus/inbox/&lt;session&gt;.jsonl</code> that AGENTS.md tells the model to fold;
+    the operator page for rung 4. None of these is a daemon the agent must start.</p>
+  </div>
+
+  <h3>Transport — stdlib, local-first, optional rendezvous</h3>
+  <div class="col">
+    <p>Unix domain sockets under <code>.agents/bus/</code>. No Redis, NATS, libp2p, MQTT, or
+    sqlite. Discovery is Napster-as-bootstrap:</p>
+    <ol class="body-list">
+      <li>On SessionStart, write the Session Card to the ledger and to <code>peers/</code>.</li>
+      <li>Try <code>.agents/bus/rendezvous.sock</code>. If it exists, register. If it does not,
+      <strong>do not start it automatically</strong>. Full mesh is fine at N≤20.</li>
+      <li>Git remains the discovery path across machines and after a reboot: fetch, fold, see cards.</li>
+    </ol>
+    <p>That is JXTA rendezvous as an optimisation, not as a requirement. An agent can work the
+    moment it has the repo. Windows falls back to named pipes or inbox-file-only; the ledger
+    path is the portable one.</p>
+  </div>
+
+  <h3>Cross-harness floor</h3>
+  <div class="tscroll">
+  <table>
+    <thead><tr><th>Harness</th><th>Edit enforcement</th><th>SessionStart</th><th>Bus adapter</th></tr></thead>
+    <tbody>
+      <tr><td>Claude Code</td><td>PreToolUse deny (executed)</td><td><code>--host claude</code></td><td>Inject via <code>additionalContext</code>; UDS in-process or helper</td></tr>
+      <tr><td>Copilot CLI</td><td>PreToolUse invoked; <strong>deny not verified</strong>; timeout fails open at 30&nbsp;s</td><td><strong>Not wired</strong></td><td>Inbox file is the floor. Do not advertise live kick until session-start is verified.</td></tr>
+      <tr><td>Grok Build</td><td>PreToolUse (project hooks need trust)</td><td><code>--host grok</code></td><td>Same as Claude; Grok already aliases the Claude payload shape</td></tr>
+      <tr><td>Antigravity</td><td><code>view_file</code> / <code>PreInvocation</code></td><td><code>--host agy</code></td><td>Same helper; <code>conversationId</code> is the session key</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="col">
+    <p>The Phase-3 conformance rule stands: never advertise a harness mode you have not
+    executed. Copilot’s live injection is <code>unsupported</code> until a deny <em>and</em> a
+    session-start have been seen on this machine.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">08</span><div class="col">
+    <h2>Failure modes, non-goals, phasing</h2>
+  </div></div>
+
+  <div class="tscroll">
+  <table>
+    <thead><tr><th>#</th><th>Mode</th><th>Disposition</th></tr></thead>
+    <tbody>
+      <tr><td class="n">B1</td><td>Bus down</td><td>Degrade to ledger + inbox. Never refuse an edit because a socket is missing.</td></tr>
+      <tr><td class="n">B2</td><td>Leader dies</td><td>Lease TTL; next Conductor claims. Work list is a fold, so nothing was only in the Leader’s head.</td></tr>
+      <tr><td class="n">B3</td><td>Two Leaders</td><td>Fold picks one by total order; the other backs off.</td></tr>
+      <tr><td class="n">B4</td><td>Kick storm</td><td>Two-kick cap; phi-accrual; optimistic unchoke before reassign.</td></tr>
+      <tr><td class="n">B5</td><td>Weak-model Leader</td><td>Human pin. Only sessions that advertised <code>conductor</code> may claim.</td></tr>
+      <tr><td class="n">B6</td><td>Kick as injection</td><td>Schema + scrub + untrusted heading. <code>suggest</code> is an enum, not a paragraph.</td></tr>
+      <tr><td class="n">B7</td><td>Heartbeat bloat</td><td>Heartbeats are bus-only; sampled into the ledger at most once per TTL.</td></tr>
+      <tr><td class="n">B11</td><td>Empty bus reported quiet</td><td>A status view over zero Session Cards is <code>NOT CHECKED</code>, not “all quiet.” (R4)</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="callout cut">
+    <p><strong>Will not do:</strong> replace GitHub Issues, PRs, or Actions; replace git with
+    DeltaDB or a source CRDT; require a daemon; implement A2A/AGNTCY/libp2p in v1; add a
+    planner that invents tracks; semantic merge; pretend a kick enforces reasoning. A kick
+    that is ignored is a metric (<code>kick_ack_rate</code>), not a solved problem.</p>
+  </div>
+
+  <h3>P5–P8 sit after the existing four phases</h3>
+  <div class="grid2">
+    <div>
+      <dt>P5 Presence</dt>
+      <dd>Session Card, inbox file, <code>hello</code> / <code>progress</code> / <code>blocked</code>,
+      optional UDS. Demo: A records blocked-on B; B’s mailbox shows it without a fetch. No Leader yet.</dd>
+    </div>
+    <div>
+      <dt>P6 Leader + kick</dt>
+      <dd><code>leader-claim</code>, progress-φ and liveness-φ, kick ladder rungs 0–2. Automatic
+      kick stays off until <code>kick_ack_rate</code> has a denominator.</dd>
+    </div>
+    <div>
+      <dt>P7 In-session roles</dt>
+      <dd>Session contract gains Owner / Conductor / Worker and a mandate. Four-part
+      <code>delegate</code>. Demo: Grok Owner+Conductor, Claude Worker, Copilot as a second session.</dd>
+    </div>
+    <div>
+      <dt>P8 Cards that travel</dt>
+      <dd>Session Card frozen as a subset of A2A Agent Card. Signed cards only if we leave
+      loopback. Not a promise to implement A2A — a promise we will not have to redesign the card.</dd>
+    </div>
+  </div>
+  <div class="col">
+    <p>No phase makes the bus required. A repo that never runs <code>coord bus</code> keeps
+    today’s behaviour plus an inbox that fills from the ledger on <code>coord mailbox</code> —
+    still a win for M6, still passive for M8.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">09</span><div class="col">
+    <h2>Key decisions</h2>
+  </div></div>
+  <div class="tscroll">
+  <table>
+    <thead><tr><th>#</th><th>Decision</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td class="n">D1</td><td>Two planes: ledger required, bus optional</td><td>ADR-0007 and NFR-P2 still hold for grants. Liveness is a different job.</td></tr>
+      <tr><td class="n">D2</td><td>Dual-write every state-changing message</td><td>A bus that is the only copy of a kick is Napster’s directory.</td></tr>
+      <tr><td class="n">D3</td><td>Leader is a lease with a sequencer</td><td>Chubby. Sessions die. The fold outlives them.</td></tr>
+      <tr><td class="n">D4</td><td>Kick ladder, not immediate reassign</td><td>Magentic-One stall-count; phi-accrual; false eviction is worse than a slow session.</td></tr>
+      <tr><td class="n">D5</td><td>Owner / Conductor / Worker as seats</td><td>Anthropic + Magentic-One, made a mechanism. Capability is configured, not inferred at runtime.</td></tr>
+      <tr><td class="n">D6</td><td>Delegate with four required fields; artifacts not prose</td><td>Anthropic’s duplication failure and telephone failure, both measured.</td></tr>
+      <tr><td class="n">D7</td><td>Loopback Unix sockets + inbox file; no required rendezvous</td><td>JXTA rendezvous as optimisation. Gnutella ping-flood avoided. Stdlib.</td></tr>
+      <tr><td class="n">D8</td><td>Session Card shaped like an A2A Agent Card</td><td>Do not invent a fourth identity format. Do not take the A2A dependency in v1.</td></tr>
+      <tr><td class="n">D9</td><td>Do not CRDT the source tree</td><td>CodeCRDT: coupled tasks get slower; semantic conflicts remain.</td></tr>
+      <tr><td class="n">D10</td><td>Do not replace GitHub</td><td>Zed is running that experiment. We need a bus across harnesses that still push to GitHub.</td></tr>
+      <tr><td class="n">D11</td><td>Never advertise an unexecuted harness mode</td><td>Phase-3 conformance, applied to Copilot live-inject.</td></tr>
+      <tr><td class="n">D12</td><td>Leader advises; ledger grants</td><td>Existing council ruling, kept.</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">10</span><div class="col">
+    <h2>Open questions for the maintainer</h2>
+  </div></div>
+  <div class="col">
+    <p>The writer should not silently resolve these.</p>
+    <ol class="body-list">
+      <li><strong>Peer group grain.</strong> One Leader per repo, or one per workstream?
+      Recommendation: per session-contract when one exists, else per repo.</li>
+      <li><strong>Owner and Conductor as the same process?</strong> Recommendation: yes, and
+      that is the default. The protocol treats them as seats, not processes.</li>
+      <li><strong>Copilot.</strong> Wait for verified session-start + deny, or ship
+      inbox-file-only? Recommendation: ship inbox-file-only, name it, do not wait.</li>
+      <li><strong>Auto-start <code>coord bus serve</code> from SessionStart?</strong>
+      Recommendation: no. The first Leader claim may start it in-process; otherwise the
+      operator does. Measure how often P5’s direct-mesh is enough.</li>
+      <li><strong>Automatic kick.</strong> Recommendation: P5 is notify-only. P6’s automatic
+      kick is off until <code>kick_ack_rate</code> has a denominator (R4).</li>
+      <li><strong>Mid-turn abort?</strong> Recommendation: next tool boundary + mailbox.
+      Mid-turn abort is Owner only, and it is a harness capability we do not have uniformly.
+      Name it as residual.</li>
+    </ol>
+  </div>
+  <div class="callout go">
+    <p><strong>Best next action.</strong> Decide Q1 (peer-group grain), Q3 (Copilot floor), and
+    Q5 (automatic kick off until measured). Then <code>/specify</code> acceptance criteria for
+    P5 only — not a redesign of coord core. P5 can start without Q2, Q4, or Q6.</p>
+  </div>
+</section>
+
+<footer class="end">
+  <p>Grounded in <code>docs/specs/agent-coordination.md</code>,
+  <code>docs/architecture-agent-coordination.md</code>, ADR-0007 / 0005 / 0008 / 0009 / 0010 /
+  0011, the four coord design slices, <code>session-start.py</code>, and the research cited in
+  the Markdown’s §15 (Anthropic multi-agent research, Magentic-One, A2A v1.0, ACP, AGNTCY,
+  ANP, Zed Delta, CodeCRDT, AgentRoom, GitButler vcbench, Jujutsu, JXTA, Napster, Gnutella,
+  BitTorrent, Chubby, phi-accrual, SWIM). Nothing here is implemented.</p>
+  <p>Canonical record:
+  <a href="./active-multi-harness-coordination.md">active-multi-harness-coordination.md</a>.
+  Status: <code>in-review</code>.</p>
+</footer>
+
+</div>
+</body>
+</html>

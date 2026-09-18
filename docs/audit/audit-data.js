@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-18T14:39:29Z",
+  "generated": "2026-09-18T15:06:15Z",
   "audit": [
     {
       "id": "al-0001",
@@ -4064,6 +4064,36 @@ window.AUDIT_DATA = {
         "branch": "main",
         "pushed": true
       }
+    },
+    {
+      "id": "al-01M2TGVA5HJ68MJ44XH2NJRYPF",
+      "shortname": "proposal-active-multi-harness-coordination",
+      "datetime": "2026-09-18T15:06:06Z",
+      "session": "proposal-active-coord",
+      "prompt": "research multi-agent and multi-harness coordination models, also research peer-to-peer protocols (going back to things like jxta and more); currently coordinating through github and githooks is too passive; want active messaging/p2p/coordination for shared work between ghcp, grok, claude-code, antigravity with leases and distributed accountability plus proactive messaging; in-session Owner/Conductor/Worker hierarchy; between sessions elected Leader that kicks stalling work; look at latest lab research, agent-optimized repos (zed), distributed/p2p systems; proposal in md and html in ai-forward/proposals and push",
+      "summary": "Wrote docs/proposals/active-multi-harness-coordination.md and .html: two-plane ledger+bus architecture, Owner/Conductor/Worker, lease-based Leader, kick ladder, JXTA/A2A/Delta/Chubby grounding. Nothing implemented.",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proposals/active-multi-harness-coordination.md"
+      ],
+      "tags": [
+        "coordination",
+        "proposal"
+      ],
+      "outcome": "success",
+      "goal": "A research-backed proposal for active multi-harness coordination, as md+html in docs/proposals, pushed.",
+      "done_when": "MD and HTML are in docs/proposals, derived into the docs graph, committed, and pushed.",
+      "tier": "T1",
+      "fan_out": 0,
+      "git": {
+        "sha": "4e0f3b07cf5ced5282bfa1754c0896e4af287797",
+        "short": "4e0f3b07c",
+        "branch": "proposal/active-coordination-bus",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -5200,6 +5230,32 @@ window.AUDIT_DATA = {
         "commits": []
       },
       "audit_ref": "al-01M2H84E4NSPQQNGJM8SK3YRM9"
+    },
+    {
+      "id": "cl-01M2TGVJW81RCE606JKVJY4MYJ",
+      "datetime": "2026-09-18T15:06:15Z",
+      "session": "proposal-active-coord",
+      "kind": "design",
+      "skill": null,
+      "title": "Proposal: ledger and bus for active multi-harness coordination",
+      "prompt": "research multi-agent and multi-harness coordination; propose active P2P/messaging layer",
+      "summary": "Add a two-plane coordination proposal: keep the git-tracked ledger (ADR-0007) as source of truth; add an optional local-first bus for liveness, Session Cards, lease-based Leader election, and a kick ladder. In-session seats: Owner / Conductor / Worker. Does not replace GitHub or require a daemon.",
+      "rationale": "GitHub/githooks coordination is eventual (M5-M9). The existing layer correctly closes M1-M4 and must not be retracted. A bus that dual-writes to the ledger preserves NFR-P2.",
+      "artifacts": [
+        "docs/proposals/active-multi-harness-coordination.md"
+      ],
+      "tags": [
+        "coordination",
+        "proposal"
+      ],
+      "git": {
+        "before": null,
+        "after": "4e0f3b07cf5ced5282bfa1754c0896e4af287797",
+        "branch": "proposal/active-coordination-bus",
+        "pushed": null,
+        "commits": []
+      },
+      "audit_ref": "al-01M2TGVA5HJ68MJ44XH2NJRYPF"
     }
   ]
 };
