@@ -3559,6 +3559,55 @@ window.DOCS_INDEX = {
       "sourceSha256": "f01822ddf3158a68349ab584ebea4bc7c2d2f28abcea7995f267ca9e32bf9ae5"
     },
     {
+      "id": "proposal-active-multi-harness-coordination",
+      "path": "docs/proposals/active-multi-harness-coordination.md",
+      "title": "Proposal: ledger and bus — active multi-harness coordination",
+      "type": "doc",
+      "status": "in-review",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2026-12-18",
+      "reviewSuggested": [],
+      "summary": "The coordination layer is a git-tracked ledger with leases, hooks, and a fold. That is the right substrate for accountability and it is the wrong substrate for liveness. This proposal adds an optional, local-first message bus on top of that ledger: session advertisements, heartbeats, blocked-on push, lease-based leader election, and a kick ladder so work continues instead of waiting for the next fetch. In-session hierarchy is Owner / Conductor / Worker. Between sessions one Conductor is elected Leader. The bus is never the source of truth; if it is down the existing layer still works.",
+      "tags": [
+        "coordination",
+        "p2p",
+        "multi-harness",
+        "leader-election",
+        "leases",
+        "messaging",
+        "rfc"
+      ],
+      "links": [
+        {
+          "to": "spec-agent-coordination",
+          "rel": "refines"
+        },
+        {
+          "to": "architecture-agent-coordination",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0007-coordination-substrate",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0005-harness-runner-boundary",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-coord-collaboration-phase4",
+          "rel": "refines"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "149c4cacf56f3618b2bdccc1bdbced9310ab3533ccf44ec7f1e46e512f4dcfaf"
+    },
+    {
       "id": "proposal-hosting-and-dream-manifest",
       "path": "docs/notes/hosting-and-dream-manifest.md",
       "title": "Proposal / dialog: GitHub Pages hosting + the Dream Manifest",
@@ -6061,6 +6110,14 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-dream-review"
     },
     {
+      "id": "surface-proposals-active-multi-harness-coordination",
+      "path": "docs/proposals/active-multi-harness-coordination.html",
+      "title": "Ledger and bus — active multi-harness coordination",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "proposal-active-multi-harness-coordination"
+    },
+    {
       "id": "surface-backtest-optimize-graph-index",
       "path": "docs/backtest/optimize-graph/index.html",
       "title": "optimize-graph back-test — AI-Forward",
@@ -6105,5 +6162,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "76f5e731c5083e02b7f4a8719db12db58e3525b12e9d66acd44d2e5566216e69"
+  "graphSha256": "4bfb5a4e499b2c697c0a747dbcf2af18c0ee298c7bf8ae7e25caf0cbdfb8a7c7"
 };
