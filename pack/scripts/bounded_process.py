@@ -17,10 +17,13 @@ _WINDOWS_GATE_WRAPPER = (
     "raise SystemExit(result.returncode if result is not None else 125)"
 )
 _POSIX_LIMIT_WRAPPER = (
-    "import os,resource,sys;"
-    "memory=int(sys.argv[1]);"
-    "resource.setrlimit(resource.RLIMIT_AS,(memory,memory));"
-    "os.execvpe(sys.argv[2],sys.argv[2:],os.environ)"
+    "import os,resource,sys\n"
+    "memory=int(sys.argv[1])\n"
+    "try:\n"
+    " resource.setrlimit(resource.RLIMIT_AS,(memory,memory))\n"
+    "except (ValueError,OSError):\n"
+    " pass\n"
+    "os.execvpe(sys.argv[2],sys.argv[2:],os.environ)\n"
 )
 
 
@@ -161,7 +164,7 @@ def _terminate_tree(process, windows_job=None):
     else:
         try:
             os.killpg(process.pid, signal.SIGKILL)
-        except ProcessLookupError:
+        except (ProcessLookupError, PermissionError):
             pass
     return None
 
