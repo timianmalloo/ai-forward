@@ -6191,6 +6191,39 @@ window.DOCS_INDEX = {
       "sourceSha256": "1bed7709eab8db69824da6af228d34c9935c1664cc0d0607753415426d859bd2"
     },
     {
+      "id": "coordination-p0-p1",
+      "path": "docs/coordination/coordination-p0-p1.md",
+      "title": "Coordination plan - P0 doctrine home and P1 typed seam requests, two full loops after the P2/P4/P6/P8 joins",
+      "type": "plan",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2026-12-18",
+      "reviewSuggested": [],
+      "summary": "Two Sub-Agent tracks dispatched after the four P2/P4/P6/P8 joins land, because both touch files those tracks own: P0 turns agent-coordination.md into the always-loaded doctrine home (CO1–COn from the proposal's §3, with the seeded CO-S0 and CO-L sections kept) and registers CTX-Q; P1 gives seam requests a deadline, a fallback, an ack pinned to a blob, five states and a termination variant in coord-core.py. Disjoint authored paths; the coordinator owns the shared surfaces, the always-on budget baseline and the join.",
+      "tags": [
+        "coordination",
+        "worktrees",
+        "parallelism",
+        "doctrine",
+        "seam-requests",
+        "p0",
+        "p1"
+      ],
+      "links": [
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "implements"
+        },
+        {
+          "to": "coordination-p2-p8",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "ced7f9ec353ced4702c752f5e58487d8561c33a5ab011f46fab4c563d8772980"
+    },
+    {
       "id": "coordination-p2-p8",
       "path": "docs/coordination/coordination-p2-p8.md",
       "title": "Coordination plan - P2 leader, P4 message layer, P6 board, P8 readers: four full specify → design → implement loops",
@@ -7001,6 +7034,14 @@ window.DOCS_INDEX = {
       "artifactId": "coordination-compile-stage"
     },
     {
+      "id": "surface-coordination-coordination-p0-p1",
+      "path": "docs/coordination/coordination-p0-p1.html",
+      "title": "Coordination plan — P0 doctrine · P1 seam requests",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "coordination-p0-p1"
+    },
+    {
       "id": "surface-coordination-coordination-p2-p8",
       "path": "docs/coordination/coordination-p2-p8.html",
       "title": "Coordination plan — P2 leader · P8 readers",
@@ -7140,5 +7181,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "cc2643e992f976d3863e4ebbe7397e8bc293ce1796d589833d21f3cdce1d607a"
+  "graphSha256": "257fc66626bad0c48be1790b798e61b128ac4b899d274068c965c6309cae4cef"
 };
