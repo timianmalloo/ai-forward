@@ -1,6 +1,7 @@
 ---
 name: compile
 description: Compile a prose request into the harness- and model-specific starting prompt (goal state, traced clauses, marked assumptions, decision requests) without adding scope — the CO-S0 stage every prose-input skill runs first. `/compile "<text>"` or `/compile --from-audit <id>`; logs raw and compiled together so what the human changes is measured.
+runs_as: either
 ---
 
 # Skill: /compile

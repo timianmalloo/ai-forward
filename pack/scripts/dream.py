@@ -368,6 +368,74 @@ def build_proposals(corpus):
                              "auto-judged. Trivial/conversational turns are exempt from logging (AL5b)."),
                 "_freq": max(1, len(missing)), "_days": min(max(len(missing), 1), 3), "_has_control": True})
 
+    # 7. CO-S0 compile fields (spec-compile-readers US-3): the compile stage records, per workflow
+    #    run, `compiled: false` or `compiled_from`; per compilation, `decision_requests[].answer`,
+    #    `dispatchable` and `provenance.refusals`. Three deterministic candidates, proposals only:
+    #    presence gaps, decision requests still unanswered in the text a workflow received, and the
+    #    gate's refusals by code. Evidence carries ids, shortnames, DR ids and codes - never text.
+    comp_runs = [e for e in corpus["audit"] if e.get("kind") == "skill" and ("compiled" in e or e.get("compiled_from"))]
+    comps = [e for e in corpus["audit"] if e.get("kind") == "compilation" and isinstance(e.get("compiled"), dict)]
+    if comp_runs:
+        gaps = [e for e in comp_runs if e.get("compiled") is False]
+        pct = (len(gaps) * 100) // max(1, len(comp_runs))
+        ev = [{"eid": e.get("id", "al-?"), "note": "{0} - closed with compiled: false (tier {1})".format(
+            e.get("shortname", "?"), e.get("tier") or "unset")} for e in gaps[:8]]
+        proposals.append({
+            "kind": "Control upgrade", "group": "Control upgrade",
+            "title": "CO-S0: {0}/{1} substantive turns ({2}%) recorded compiled: false".format(len(gaps), len(comp_runs), pct),
+            "sig": "CO-S0 compiled:false presence", "scope": "general", "confidence": "v", "source": "deterministic",
+            "evidence": ev or [{"eid": comp_runs[0].get("id", "al-?"), "note": "every recorded run started compiled"}],
+            "control": {"rung": "automated control",
+                        "text": ("Presence (mechanical): a substantive turn closes with compiled_from or compiled: false; "
+                                 "the consuming skill cites CO-S0 (pack fix F-26) and session-profile.py SP-27 flags "
+                                 "a gap above T0. A T0 closed question needs no compile - review each gap."),
+                        "loc": "knowledge/agent-coordination.md#CO-S0"},
+            "boundary": "Presence is mechanical; whether a gap was a closed question is human review, never auto-judged.",
+            "_freq": max(1, len(gaps)), "_days": min(max(len(gaps), 1), 3), "_has_control": True})
+    if comps:
+        latest = {}
+        for c in sorted(comps, key=lambda e: e.get("datetime") or ""):
+            latest[(c["compiled"].get("raw_id") or c.get("id"))] = c  # the newest compilation of a raw prompt decides
+        dr_ev = []
+        for c in latest.values():
+            text = c.get("prompt") or ""
+            for dr in c["compiled"].get("decision_requests") or []:
+                did = dr.get("id", "DR-?")
+                if dr.get("answer") is None and re.search(re.escape(did) + r"\b.*answer: unanswered", text):
+                    dr_ev.append({"eid": c.get("id", "al-?"), "note": "{0} unanswered in the compiled text (dispatchable: {1})".format(
+                        did, c["compiled"].get("dispatchable"))})
+        if dr_ev:
+            proposals.append({
+                "kind": "Control upgrade", "group": "Control upgrade",
+                "title": "CO-S0: {0} decision request(s) never answered before the workflow ran".format(len(dr_ev)),
+                "sig": "CO-S0 unanswered decision requests", "scope": "general", "confidence": "v", "source": "deterministic",
+                "evidence": dr_ev[:8],
+                "control": {"rung": "automated control",
+                            "text": ("A consuming skill refuses a compiled prompt whose dispatchable is false or whose text still "
+                                     "carries an unanswered DR-n (stop: decision request unanswered) - verify-skill-contracts.py "
+                                     "and the optimize-graph dispatch stop."),
+                            "loc": "knowledge/agent-coordination.md#CO-S0"},
+                "boundary": "Only the newest compilation of a raw prompt is read; an answer in a later recompile clears the request.",
+                "_freq": len(dr_ev), "_days": min(len(dr_ev), 3), "_has_control": True})
+        codes = defaultdict(int)
+        first_by_code = {}
+        for c in comps:
+            for code in (c["compiled"].get("provenance") or {}).get("refusals") or []:
+                codes[code] += 1
+                first_by_code.setdefault(code, c.get("id", "al-?"))
+        if codes:
+            proposals.append({
+                "kind": "Control upgrade", "group": "Control upgrade",
+                "title": "CO-S0: the compile gate refused {0} fill(s) across {1} code(s)".format(sum(codes.values()), len(codes)),
+                "sig": "CO-S0 gate refusals", "scope": "general", "confidence": "v", "source": "deterministic",
+                "evidence": [{"eid": first_by_code[code], "note": "{0}: {1} refusal(s)".format(code, n)}
+                             for code, n in sorted(codes.items(), key=lambda kv: -kv[1])][:8],
+                "control": {"rung": "automated control",
+                            "text": "A refusal code that recurs is a template or fill-instruction class: revise the harness template version (pack fix F-27), not the fill.",
+                            "loc": "knowledge/agent-coordination.md#CO-S0"},
+                "boundary": "Counts by stable refusal code; the clause text stays in the compilation entry.",
+                "_freq": sum(codes.values()), "_days": min(len(codes), 3), "_has_control": True})
+
     # 6. Session profiles (docs/profiles/*/profile.json, written by session-profile.py): each
     #    finding id that recurs across profiles becomes a control-upgrade proposal carrying the
     #    fix catalog's control. Deterministic; the profiles are data the profiler measured, and

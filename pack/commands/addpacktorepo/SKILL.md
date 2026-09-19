@@ -1,6 +1,7 @@
 ---
 name: addpacktorepo
 description: Add the AI-Forward Pack to a local repository from a given path — reason over the target repo's language, tooling, and existing docs before writing anything, apply the full pack deployment map, produce a tabular summary of every artifact installed and what it does, point to the pack explainer and docs, and offer to commit and push. Run this from the AI-Forward repo.
+runs_as: Coordinator
 ---
 
 # /addpacktorepo — install the AI-Forward Pack into a local repository
