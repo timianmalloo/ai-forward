@@ -4,7 +4,8 @@
     "recount: the fast ring - the tests that the joined tracks own plus the audit-log suite; the full suite runs in verify-bundle before the push.",
     "regenerate: explicit, in-tree commands (never `coord regen`, which resolved against the primary checkout from a worktree once).",
     "gates: every verify-*.py in tools/ and the deployed script bundle, one exit status (run-verify-gates.py).",
-    "No push_remote: main requires linear history, so the coordinator rebuilds the joined tree as a linear commit and pushes over SSH."
+    "No push_remote: main requires linear history, so the coordinator rebuilds the joined tree as a linear commit and pushes over SSH.",
+    "pack_apply is excluded from the recount: test_source_repo_is_already_current needs a synced tree, and the join tree is synced only at the landing."
   ],
   "recount": [
     [
@@ -14,7 +15,7 @@
       "-q",
       "tests/docs_explorer",
       "-k",
-      "leader or join_epoch or mail or doorbell or board or readers or co_s0 or skill_contracts or coord_core or audit_log or compile or session_profile or dream or pack_apply or pack_doctor"
+      "leader or join_epoch or mail or doorbell or board or readers or co_s0 or skill_contracts or coord_core or audit_log or compile or session_profile or dream or pack_doctor"
     ]
   ],
   "regenerate": [
