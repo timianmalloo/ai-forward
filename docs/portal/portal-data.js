@@ -2778,6 +2778,12 @@ window.PORTAL_DATA = {
         "summary": "Measured pass over 12 session(s) in theterrace (last 10 days); 40 finding(s), top: SP-01, SP-02, SP-03."
       },
       {
+        "id": "profile-sp-0009",
+        "type": "doc",
+        "title": "Session profile sp-0009 - ai-forward",
+        "summary": "Measured pass over 3 session(s) in ai-forward (last 2 days); 9 finding(s), top: SP-01, SP-07, SP-24."
+      },
+      {
         "id": "project-memory",
         "type": "doc",
         "title": "Project Memory",
@@ -4693,6 +4699,11 @@ window.PORTAL_DATA = {
       },
       {
         "from": "profile-sp-0008",
+        "to": "design-session-profiler",
+        "rel": "relates-to"
+      },
+      {
+        "from": "profile-sp-0009",
         "to": "design-session-profiler",
         "rel": "relates-to"
       },
