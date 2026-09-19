@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 201
+"count": 202
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 363,
+"total": 364,
 "items": [
 {
 "cat": "knowledge",
@@ -1902,6 +1902,15 @@ window.PACK_INDEX = {
 },
 {
 "cat": "graph",
+"id": "note-20260919-coordination-decisions-ratified",
+"title": "Coordination decisions ratified: local message layer with git as the fallback, a board for humans, tracked ledgers, lease constants",
+"summary": "On 2026-09-19 the maintainer answered the proposal's four open questions and ratified four of its five design decisions; on the fifth (push channels) they asked for a formal local message layer with a human-readable board, keeping git as…",
+"path": "docs/notes/note-20260919-coordination-decisions-ratified.md",
+"kind": "decision-note",
+"text": "coordination decisions ratified: local message layer with git as the fallback, a board for humans, tracked ledgers, lease constants on 2026-09-19 the maintainer answered the proposal's four open questions and ratified four of its five design decisions; on the fifth (push channels) they asked for a formal local message layer with a human-readable board, keeping git as the fallback. d9 is revised, d12 and d13 are new, the build plan gains p6-p8 (board, compile stage, skill evolution). blast radius: the two coordination skills first, then every skill that dispatches or is dispatched. decision-note coordination messaging board leases skills relates-to proposal-owner-coordinator-subagent-coordination relates-to kb-multi-agent-coordination relates-to note-20260919-leadership-in-a-ref-not-the-ledger depends-on adr-0007-coordination-substrate"
+},
+{
+"cat": "graph",
 "id": "note-20260919-leadership-in-a-ref-not-the-ledger",
 "title": "Leadership is held in a git ref by compare-and-swap; the union-merged ledger only records it",
 "summary": "Executed spikes on 2026-09-18 showed two competing leader claims both survive a union merge (exit 0), while `git update-ref <ref> <new> <old>` and `--force-with-lease=<ref>:<expect>` refuse a stale expectation. Any leader or epoch the pack…",
@@ -2465,7 +2474,7 @@ window.PACK_INDEX = {
 "summary": "Replaces the two prior coordination proposals with a smaller design grounded in what the harnesses ship, what ai-de measured, and three executed git spikes. One role model (Owner / Coordinator / Sub-Agent) and two control relationships…",
 "path": "docs/proposals/owner-coordinator-subagent-coordination.md",
 "kind": "doc",
-"text": "proposal: owner / coordinator / sub-agent coordination across one, several, and federated harnesses replaces the two prior coordination proposals with a smaller design grounded in what the harnesses ship, what ai-de measured, and three executed git spikes. one role model (owner / coordinator / sub-agent) and two control relationships (spawned, registered) cover the three scenarios. leadership is human-designated and held in a git ref by compare-and-swap, never elected and never in the union-merged ledger. path leases are demoted to efficiency locks; the join is the fence. push uses the cheapest channel each harness actually has, and every cross-harness request carries a deadline and a fallback. no bus, no relay, no daemon in scope; each is a measured trigger, not a phase. coordination multi-harness owner-coordinator-subagent leader-designation leases fencing worktrees rfc refines spec-agent-coordination refines architecture-agent-coordination depends-on adr-0007-coordination-substrate depends-on adr-0005-harness-runner-boundary refines design-coord-collaboration-phase4 relates-to kb-multi-agent-coordination relates-to proposal-active-multi-harness-coordination relates-to defect-classes"
+"text": "proposal: owner / coordinator / sub-agent coordination across one, several, and federated harnesses replaces the two prior coordination proposals with a smaller design grounded in what the harnesses ship, what ai-de measured, and three executed git spikes. one role model (owner / coordinator / sub-agent) and two control relationships (spawned, registered) cover the three scenarios. leadership is human-designated and held in a git ref by compare-and-swap, never elected and never in the union-merged ledger. path leases are demoted to efficiency locks; the join is the fence. push uses the cheapest channel each harness actually has, and every cross-harness request carries a deadline and a fallback. a formal local message layer (file inbox as the store, each harness's own doorbell as the push, git as the fallback) and a board for humans (ratified 2026-09-19); a compile stage before planning; three shared stages the 27 skills cite. no broker, no relay, no election in scope; each is a measured trigger, not a phase. coordination multi-harness owner-coordinator-subagent leader-designation leases fencing worktrees rfc refines spec-agent-coordination refines architecture-agent-coordination depends-on adr-0007-coordination-substrate depends-on adr-0005-harness-runner-boundary refines design-coord-collaboration-phase4 relates-to kb-multi-agent-coordination relates-to proposal-active-multi-harness-coordination relates-to defect-classes relates-to note-20260919-coordination-decisions-ratified relates-to note-20260919-leadership-in-a-ref-not-the-ledger"
 },
 {
 "cat": "graph",

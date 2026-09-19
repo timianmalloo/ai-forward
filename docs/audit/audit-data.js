@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-19T15:26:35Z",
+  "generated": "2026-09-19T16:17:00Z",
   "audit": [
     {
       "actor": null,
@@ -4704,6 +4704,100 @@ window.AUDIT_DATA = {
         "span_seconds": 600.0,
         "speedup": 1.9,
         "peak_concurrency": 2
+      }
+    },
+    {
+      "id": "al-01M2X76T62C8K850HVZ8FP9SPF",
+      "shortname": "1: Ledger tracking default: yes change it / 2: Leader Lease constants 30…",
+      "datetime": "2026-09-19T16:15:20Z",
+      "session": "prompt-log",
+      "prompt": "1: Ledger tracking default: yes change it / 2: Leader Lease constants 300 with a 30 s quiet period / 3: probe first but copilot as inbox-plus-commit-floor is good (ideally validate with probe) / 4: probe agy for the hook surface --- design decisions 1: Leadership: yes 2: ACk on path leases 3: Yes on five-part delegation contract 4: ACK on owner review 5: this is where i am not sure... - I would like some form of board to create human transparency on messages as opposed to in git - I still feel git should be the fallback and we should formalize local message passing, Claude is SO much more effective on its own because of inter-agent message passing how do we get that across harnesses",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2X76TDS48D6DE6W4SXT1BFX",
+      "shortname": "also analyze the skills in the ai-forward repo and how they need to evol…",
+      "datetime": "2026-09-19T16:15:21Z",
+      "session": "prompt-log",
+      "prompt": "also analyze the skills in the ai-forward repo and how they need to evolve as part of this spec",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2X76TNC35QP3F11GA89THDQ",
+      "shortname": "another thing as well - i have been thinking we should have a \"compile\" …",
+      "datetime": "2026-09-19T16:15:21Z",
+      "session": "prompt-log",
+      "prompt": "another thing as well - i have been thinking we should have a \"compile\" step in the skills to take the human text and better produce the model specific prompt before tasks like optimize graph or prepare for coordination to have a better model specific prompt as a starting point... might be good to include as part of this spec ... as we analyze how the scripts need to evolve",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2X79VR0YD9Q31QQG728A72G",
+      "shortname": "proposal-coordination-decisions-ratified",
+      "datetime": "2026-09-19T16:17:00Z",
+      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
+      "prompt": "Apply the maintainer's answers to the coordination proposal's open questions and design decisions; analyze how the 27 skills evolve as part of the spec; add a compile stage that turns human text into the model-specific starting prompt.",
+      "summary": "Ratified: ledgers tracked by default, leader TTL 300 s / quiet 30 s, leadership by designation, path leases as efficiency locks, five-part contract, owner review as ruling. Revised D9: a formal local message layer — per-session inbox files as the store, each harness's own doorbell as the push (Claude socket, codex queue, agy PreInvocation injectSteps, Grok/Copilot tool-boundary hooks, Copilot agentStop block+reason), state-changing kinds dual-written to the ledger so git stays the fallback; D12 a board (coord board / board post) as a read model. Skills survey (Explore agent, grep-verified): 2 of 27 dispatch; 25 have rhetorical casts, no coord verbs, none of the vocabulary; four reusable pieces (CT19 block, GO7 contract emitted by optimize-graph and consumed by nobody, Handoff line, four hard stops). Evolution: three shared stages (CO-S0 compile, CO-S1 seat, CO-S2 stop = message) cited not copied; per-skill matrix in four groups; compile stage P7 (prompt-compile.py + /compile, verify-compiled-prompt refuses added scope); P8 verify-skill-contracts red-first. Copilot and Antigravity hook surfaces verified from docs (AC-40..42), execution pending. verify-bundle: 12/14 green; gate 2 = this branch's uncommitted files; gate 3 = the three pre-existing master-branch tests (734 passed).",
+      "kind": "manual",
+      "skill": null,
+      "tool": "claude-code",
+      "actor": null,
+      "artifacts": [
+        "docs/proposals/owner-coordinator-subagent-coordination.md",
+        "docs/notes/note-20260919-coordination-decisions-ratified.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "The owner/coordinator/sub-agent proposal (md + html) carries the ratified decisions, a formal local message layer with git as the fallback and a board for humans, a measured skills-evolution section, and a compile stage; KB and decision note updated; graph valid; gates green; landed on main.",
+      "done_when": "D9 revised, D10/D13 ratified, D12/D14/D15 added; §4b and §7b present in md and html; P4 rewritten and P6-P8 added; §10 answered; note-20260919-coordination-decisions-ratified written and linked; KB carries the Copilot and Antigravity hook surfaces with sources; docs-graph validate exit 0; verify-bundle green except the pre-existing gate 3 master-branch tests; commit rebased onto origin/main and pushed over SSH.",
+      "tier": "T1",
+      "main_calls": 36,
+      "main_budget": 60,
+      "main_over_budget": false,
+      "fan_out": 1,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true
+      },
+      "duration_source": "session-start-hook",
+      "started_at": "2026-09-19T16:06:28Z",
+      "duration_seconds": 632.0,
+      "agent_runs": [
+        {
+          "agent": "Explore",
+          "started_at": "2026-09-19T17:05:00Z",
+          "ended_at": "2026-09-19T17:08:12Z",
+          "duration_seconds": 192.0,
+          "calls": 38,
+          "budget_calls": 60,
+          "over_budget": false
+        }
+      ],
+      "parallelism": {
+        "agent_seconds": 192.0,
+        "span_seconds": 192.0,
+        "speedup": 1.0,
+        "peak_concurrency": 1
       }
     }
   ],

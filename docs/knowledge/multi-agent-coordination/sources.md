@@ -76,6 +76,9 @@ session's harness).
 | AC-34 | MCP SEP-2663 — Tasks extension | primary | https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/seps/2663-tasks-extension.md | tasks as extension |
 | AC-38 | AssetOpsBench retrospective | primary | https://arxiv.org/pdf/2605.08518 | token inversion |
 | AC-39 | Copilot CLI complete reference (community) | secondary | https://htekdev.github.io/copilot-cli-reference/ | hook names (Flagged) |
+| AC-40 | Antigravity Docs — Hooks | official | https://antigravity.google/docs/hooks | PreInvocation injectSteps, PostInvocation force_continue, Stop |
+| AC-41 | GitHub Docs — Hooks reference (Copilot) | official | https://docs.github.com/en/copilot/reference/hooks-reference | agentStop/subagentStop block+reason; exit codes |
+| AC-42 | GitHub Docs — Use hooks with Copilot CLI | official | https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/use-hooks | bash/powershell keys; runaway guard |
 
 ## P2P — peer-to-peer coordination track
 

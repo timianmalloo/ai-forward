@@ -1774,6 +1774,46 @@ window.DOCS_INDEX = {
       "sourceSha256": "61c49b570b70d73f053de18c0d53a133ecb5e03351aec045e413c91dd82a5219"
     },
     {
+      "id": "note-20260919-coordination-decisions-ratified",
+      "path": "docs/notes/note-20260919-coordination-decisions-ratified.md",
+      "title": "Coordination decisions ratified: local message layer with git as the fallback, a board for humans, tracked ledgers, lease constants",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-03-19",
+      "reviewSuggested": [],
+      "summary": "On 2026-09-19 the maintainer answered the proposal's four open questions and ratified four of its five design decisions; on the fifth (push channels) they asked for a formal local message layer with a human-readable board, keeping git as the fallback. D9 is revised, D12 and D13 are new, the build plan gains P6-P8 (board, compile stage, skill evolution). Blast radius: the two coordination skills first, then every skill that dispatches or is dispatched.",
+      "tags": [
+        "decision-note",
+        "coordination",
+        "messaging",
+        "board",
+        "leases",
+        "skills"
+      ],
+      "links": [
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-multi-agent-coordination",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-20260919-leadership-in-a-ref-not-the-ledger",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0007-coordination-substrate",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "ff7909392f851cd8ffe7a6d58a25463965085d779877c2d04883407898017f16"
+    },
+    {
       "id": "note-20260919-leadership-in-a-ref-not-the-ledger",
       "path": "docs/notes/note-20260919-leadership-in-a-ref-not-the-ledger.md",
       "title": "Leadership is held in a git ref by compare-and-swap; the union-merged ledger only records it",
@@ -3835,7 +3875,7 @@ window.DOCS_INDEX = {
       "phase": "coordination",
       "reviewBy": "2026-12-18",
       "reviewSuggested": [],
-      "summary": "Replaces the two prior coordination proposals with a smaller design grounded in what the harnesses ship, what ai-de measured, and three executed git spikes. One role model (Owner / Coordinator / Sub-Agent) and two control relationships (spawned, registered) cover the three scenarios. Leadership is human-designated and held in a git ref by compare-and-swap, never elected and never in the union-merged ledger. Path leases are demoted to efficiency locks; the join is the fence. Push uses the cheapest channel each harness actually has, and every cross-harness request carries a deadline and a fallback. No bus, no relay, no daemon in scope; each is a measured trigger, not a phase.",
+      "summary": "Replaces the two prior coordination proposals with a smaller design grounded in what the harnesses ship, what ai-de measured, and three executed git spikes. One role model (Owner / Coordinator / Sub-Agent) and two control relationships (spawned, registered) cover the three scenarios. Leadership is human-designated and held in a git ref by compare-and-swap, never elected and never in the union-merged ledger. Path leases are demoted to efficiency locks; the join is the fence. Push uses the cheapest channel each harness actually has, and every cross-harness request carries a deadline and a fallback. A formal local message layer (file inbox as the store, each harness's own doorbell as the push, git as the fallback) and a board for humans (ratified 2026-09-19); a compile stage before planning; three shared stages the 27 skills cite. No broker, no relay, no election in scope; each is a measured trigger, not a phase.",
       "tags": [
         "coordination",
         "multi-harness",
@@ -3878,10 +3918,18 @@ window.DOCS_INDEX = {
         {
           "to": "defect-classes",
           "rel": "relates-to"
+        },
+        {
+          "to": "note-20260919-coordination-decisions-ratified",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-20260919-leadership-in-a-ref-not-the-ledger",
+          "rel": "relates-to"
         }
       ],
       "diagrams": [],
-      "sourceSha256": "123c25ff42607a290771536e1e41fba9bd5a7543c61ff6020cea640f0adb4aec"
+      "sourceSha256": "40218e3dca6290024e5b9e8b86b535fae0ef00d406cc309e005b2206135490ce"
     },
     {
       "id": "proposal-proactive-multi-harness-coordination",
@@ -5447,7 +5495,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b64c3e3044ab97c24d0926b862d2d0b6bd0f1882e6b3a36202a4b966a09b5656"
+      "sourceSha256": "19d5222d0f3ef8788385d477ca6453f730f135773cc7602b90154fd0a6a83862"
     },
     {
       "id": "kb-multi-agent-coordination-glossary",
@@ -5555,7 +5603,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ea449c95ad83dd9d8a69d78b9657c225a9e177968fe30ba1d2149352d1e5ab1d"
+      "sourceSha256": "f17d46675aa046904f1e56a1ddcdf06c8b3161406b9d1338300dde53ba0ff0f8"
     },
     {
       "id": "kb-multi-agent-coordination-sources",
@@ -5580,7 +5628,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b03d7fa147410e94b5d574f7b07faa52691303ecc4a5f5f54f3bd3ec748d1ea2"
+      "sourceSha256": "00e7c58d63aba270819e50695e33ea0fae80cb6ba16c97c8e78c8fc4ca26b2cf"
     },
     {
       "id": "kb-native-client-ui-design",
@@ -6774,5 +6822,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "093a00812a88ceb63093b278d883373d7d37f860421aed834b56df336ce6e231"
+  "graphSha256": "1c565e8c0919eb67170389823dbd49c0060e3c23c4603d8ec6912e6702476d89"
 };

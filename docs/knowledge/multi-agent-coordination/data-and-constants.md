@@ -42,8 +42,21 @@ summary: >-
 | Codex 0.155.0 | `codex exec` | `--json` (JSONL events), `-o <file>` last message, `--output-schema <file>` | `codex queue --thread <uuid|name> --message <text>`; `app-server --listen stdio://|unix://|ws://`; `remote-control start|stop|pair` | `--worktree` (managed git worktree), `-C <dir>`, `--sandbox`, `--approve-for-me`; `codex exec resume`; `codex agents` lists daemon sessions |
 | Antigravity 1.2.7 | `agy -p|--print|--prompt` | `--output-format text|json|stream-json`, `--json-schema` | `--input-format stream-json` — one NDJSON message per line runs one turn each (spawned child only); `--remote-control` daemon | `--conversation <id>` resume; `--mode accept-edits|plan`; `--model`; `--effort`; `--print-timeout`; `--sandbox` |
 | Grok Build (installed) | `grok -p|--single <prompt>` | `--output-format plain|json|streaming-json (ACP)|streaming-messages-json`, `--json-schema` | none found | `--worktree[=name]`, `--worktree-ref`, `--resume`, `--session-id`, `--fork-session`, `--cwd`, `--max-turns`, `--permission-mode`, `--agents <JSON>`, `--no-subagents` |
-| Copilot CLI | `copilot -p` (docs) | — | none documented | **not installed here** — docs-only |
+| Copilot CLI | `copilot -p` (docs) | — | hooks only: `preToolUse` `additionalContext`; `agentStop`/`subagentStop` `decision: "block"` + `reason` (docs) | **not installed here** — docs-only |
 | Shell hazard | zsh `"$C1:refs/x"` | `:r` modifier eats the variable; write `"${C1}:refs/x"` |
+
+### Hook surfaces usable as a doorbell or a heartbeat (docs probes, 2026-09-19; execution pending except Claude Code)
+
+| Harness | Tool boundary | Turn / invocation boundary | Stop-class | Push shape | Source |
+|---|---|---|---|---|---|
+| Claude Code 2.1.278 | `PreToolUse` / `PostToolUse` | `UserPromptSubmit`, `SessionStart` | `Stop`, `SubagentStop`, `TaskCompleted` (exit 2 blocks) | native cross-session message (socket + registry) — no hook needed | [P2P-26] |
+| Codex 0.155.0 | — | — | — | `codex queue --thread --message` | [AC-6] |
+| Antigravity 1.2.7 | `PreToolUse` / `PostToolUse` | `PreInvocation` → `injectSteps`; `PostInvocation` `terminationBehavior: force_continue` | `Stop` | inbox drained at `PreInvocation`, injected as steps | [AC-40] |
+| Grok Build | Claude-format `PreToolUse` | `UserPromptSubmit` (`additionalContext`) | — | pull at the edge only | deployed hooks, observed |
+| Copilot CLI | `preToolUse` (`additionalContext`; exit 2 fail-closed) | `sessionStart`, `userPromptSubmitted` | `agentStop`, `subagentStop` (`decision: "block"` + `reason`; 8-block guard) | pointer in `reason` becomes the next prompt | [AC-41][AC-42] |
+
+A doorbell carries a **count and a pointer, never a body** (the body stays in the inbox file); a hook that injects the body would make the harness the store. Antigravity's `injectSteps` and Copilot's `reason` are the two channels that could smuggle a body in — the adapter contract forbids it.
+
 
 ## Measured fleet telemetry (read this session)
 

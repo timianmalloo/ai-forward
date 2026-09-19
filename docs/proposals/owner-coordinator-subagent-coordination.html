@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Owner / Coordinator / Sub-Agent coordination</title>
-<meta name="description" content="Critique of the two prior multi-harness coordination proposals and a smaller replacement design: one role model, two control relationships, leadership in a git ref, typed requests with a termination variant, and a ranked build plan with controls and measurements.">
+<meta name="description" content="Critique of the two prior multi-harness coordination proposals and a smaller replacement design: one role model, two control relationships, leadership in a git ref, typed requests with a termination variant, a file-backed message layer with a human board, a compile stage, how the 27 skills evolve, and a ranked build plan with controls and measurements.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
@@ -122,7 +122,7 @@
 <header class="top">
   <div class="kicker"><span>AI-Forward</span><span class="dot">/</span><span>Proposal</span><span class="dot">/</span><span class="hl">Coordination</span><span class="dot">/</span><span>19 September 2026</span></div>
   <h1>Owner / Coordinator / Sub-Agent coordination across one, several, and federated harnesses</h1>
-  <p class="standfirst">The pack has the right ledger and the right contention model. It is missing three protocol objects and one distinction, not a bus. This replaces the two prior proposals with a smaller design grounded in what the harnesses ship, what ai-de measured, and three executed git spikes.</p>
+  <p class="standfirst">The pack has the right ledger and the right contention model. It is missing three protocol objects, one distinction, and a message layer whose store is a file and whose push is each harness's own doorbell — not a bus daemon. This replaces the two prior proposals with a smaller design grounded in what the harnesses ship, what ai-de measured, and three executed git spikes.</p>
 </header>
 
 <dl class="rig" aria-label="Key figures">
@@ -133,6 +133,7 @@
   <div><dt>ai-de sessions never ended</dt><dd class="bad">58%</dd></div>
   <div><dt>Longest measured stall</dt><dd class="bad">8,143 s</dd></div>
   <div><dt>New daemons proposed</dt><dd class="good">0</dd></div>
+  <div><dt>Skills surveyed · that dispatch</dt><dd>27 · 2</dd></div>
 </dl>
 
 <main id="main">
@@ -330,6 +331,26 @@
 </section>
 
 <section>
+  <div class="sec-head"><span class="sec-num">04b</span><h2>The message layer (D9 revised, D12)</h2></div>
+  <div class="col"><p>The prior proposals were right that agents must be able to <em>tell</em> each other things and wrong about where the message lives. Claude Code's shipped design is the template: <strong>the file is the store; the doorbell is the push.</strong> A per-session inbox file holds the message; the harness's own hook or socket says "you have one"; the union-merged ledger and a deadline carry it when no doorbell exists — so <strong>git stays the durable fallback and the cross-machine path</strong>. Nothing here is a daemon.</p></div>
+  <div class="tscroll"><table aria-label="Message layer">
+    <thead><tr><th>Part</th><th>Shape</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td>Store</td><td><code>.agents/mail/&lt;session&gt;.jsonl</code>, machine-local, git-ignored; state-changing kinds (<code>delegate</code>, <code>blocked</code>, <code>unblocked</code>, <code>kick</code>, <code>decision-request</code>, <code>ruling</code>, <code>done</code>, <code>ack</code>/<code>nack</code>) are dual-written to the ledger</td><td>proposed (P4)</td></tr>
+      <tr><td>Send · read</td><td><code>coord mail send --to &lt;session|*&gt; --kind &lt;k&gt; --body … [--ref …]</code> · <code>coord mail read [--since &lt;id&gt;] [--ack]</code></td><td>proposed (P4)</td></tr>
+      <tr><td>Doorbell — Claude Code</td><td>native cross-session message (socket + file registry); read between tool calls or starts a turn when idle</td><td><strong>Verified</strong> (shipped)</td></tr>
+      <tr><td>Doorbell — Codex</td><td><code>codex queue --thread --message</code> with a count and a pointer</td><td>Verified CLI; drain unobserved</td></tr>
+      <tr><td>Doorbell — Antigravity</td><td><code>PreInvocation</code> hook drains the inbox into <code>injectSteps</code>; <code>PostInvocation</code> <code>force_continue</code> keeps a kicked agent working</td><td>Verified from docs (2026-09-19); execution pending</td></tr>
+      <tr><td>Doorbell — Grok Build</td><td>deployed <code>PreToolUse</code> / <code>UserPromptSubmit</code> hooks drain into <code>additionalContext</code></td><td>observed-only; pull at the edge</td></tr>
+      <tr><td>Doorbell — Copilot CLI</td><td><code>preToolUse</code> returns <code>additionalContext</code>; <code>agentStop</code> / <code>subagentStop</code> return <code>decision: "block"</code> + <code>reason</code> = the pointer, injected as the next prompt (8-block runaway guard)</td><td>Verified from docs (2026-09-19); <code>observed-only</code> until a drain is seen; inbox + commit floor meanwhile</td></tr>
+      <tr><td>Fallback (always on)</td><td>inbox + ledger + deadline/fallback on the request; nothing is lost if the doorbell never rings</td><td>D8</td></tr>
+      <tr><td>Board (D12)</td><td><code>coord board [--follow]</code>: one timeline over the inboxes and the ledger's message events — who → whom, kind, ref, age, acked? — in the terminal and in the operator HTML; <code>coord board post --to &lt;session|*&gt; "…"</code> writes a human message into the same inboxes. A read model, never a store; empty → <code>NOT CHECKED</code></td><td>proposed (P6)</td></tr>
+    </tbody>
+  </table></div>
+  <div class="col"><p><strong>Rules.</strong> A doorbell carries a count and a pointer, never a body (a hook that injects the body makes the harness the store). Nothing pushes scores or verdicts — a message is evidence, and a ruling is a ruling only when it is numbered. An agent's message is never consent. Constants borrowed from the shipped design: 50 queued, 100 held, 5-minute expiry of an undelivered doorbell.</p></div>
+</section>
+
+<section>
   <div class="sec-head"><span class="sec-num">05</span><h2>The three scenarios</h2></div>
   <div class="col"><h3>S2 — one harness, native fleet (the base case)</h3></div>
   <div class="tscroll"><table aria-label="S2 per harness">
@@ -396,7 +417,7 @@
       <tr><td>Phi-accrual detectors</td><td>Over-engineered below 9 nodes; no baseline</td><td>false-kick rate under P3's rule</td></tr>
       <tr><td>Automatic reassign / kill / worktree clean</td><td>WT11; false liveness; destructive on a false positive</td><td>never automatic — the Owner rules</td></tr>
       <tr><td>Mandatory worktree per sub-agent in S2</td><td>Contention is a property of the artifact; the join is 44.8% of conductor time; the 8,143 s stall was a worktree refusal</td><td>WT4 exception rate rising while overlap conflicts appear</td></tr>
-      <tr><td>Interactive board / TUI / MCP board tools</td><td><code>coord track</code> over the fold is the projection; a board is a pull nothing read</td><td>track read-rate still zero after SessionStart injection</td></tr>
+      <tr><td>A daemon or broker as the message <strong>store</strong></td><td>the store is a file per session and the push is the harness's own doorbell (§04b); a broker would be a second store with no git fallback</td><td>a measured case where a file inbox plus a doorbell loses or reorders a state-changing message under the fold</td></tr>
       <tr><td>CRDT for source or state</td><td>CodeCRDT −39% worst case; leases must be refused, not merged</td><td>none</td></tr>
       <tr><td>A2A / ANP / mTLS / DID</td><td>No harness implements A2A; the OS user is the trust boundary</td><td>a third party's agent joins the fleet</td></tr>
       <tr><td>MCP sampling as delegation primitive</td><td>Deprecated in MCP 2026-07-28</td><td>none</td></tr>
@@ -413,11 +434,75 @@
       <tr><td class="n">P1</td><td><strong>Typed seam requests with a termination variant.</strong> <code>--deadline --fallback</code>; <code>ack --blob</code>; <code>expire</code>; five states</td><td>a request past deadline with no ack folds to expired-fallback, never open; an ack without a blob is refused</td><td>unresolved rate (baseline 28%); median time-to-ack</td><td class="n">~1 day</td></tr>
       <tr><td class="n">P2</td><td><strong>Leader designation in a ref.</strong> <code>coord leader pin/who/renew/release/reclaim</code> over <code>refs/coord/leader</code> via CAS with epoch and quiet period; the join refuses a lower epoch</td><td>the three spikes as tests: stale old refused; <code>--force</code> never emitted; two concurrent pins → one epoch advances; join refuses lower epoch</td><td>leader-loss events; reclaim latency; contested pins</td><td class="n">~1 day</td></tr>
       <tr><td class="n">P3</td><td><strong>Progress liveness + running track.</strong> <code>session heartbeat</code> from PostToolUse/Stop hooks and worktree mtime; <code>coord track</code>; kick ladder 0–2</td><td>liveness pings with zero progress render stalled, not live; empty corpus → NOT CHECKED</td><td>stall detection latency (baseline 8,143 s); false-kick rate</td><td class="n">~2 days</td></tr>
-      <tr><td class="n">P4</td><td><strong>Push adapters by relationship.</strong> <code>coord dispatch --harness claude|codex|copilot</code> (bounded, audited, per-harness status recorded); S3 notify adapter by cheapest verified channel</td><td>a dispatch without budget or deadline is refused; an unexecuted channel renders unsupported</td><td>dispatch exit codes; kick-ack rate per host</td><td class="n">~3 days</td></tr>
-      <tr><td class="n">P5</td><td><strong>Owner review mechanics.</strong> <code>coord decide request/rule</code>; ruling verifier as a gate; TaskCompleted/Stop exit-2 gate where supported; skills updated (five-part contract, seat mapping, "enter worktree before first spawn")</td><td>a ruling cited without a heading fails the gate; a contract without a termination condition is refused at dispatch</td><td>rulings issued; review latency; contracts refused</td><td class="n">~2 days</td></tr>
+      <tr><td class="n">P4</td><td><strong>Message layer + dispatch (D9 revised).</strong> <code>coord mail send/read/ack</code> over per-session inbox files, state-changing kinds dual-written to the ledger; <code>coord dispatch --harness claude|codex|copilot|agy</code> (bounded, audited, per-harness status); one doorbell adapter per harness, each a count + pointer, never a body; inbox + ledger + deadline is the floor</td><td>a dispatch without a budget or deadline is refused; a doorbell that carries a body is refused; an unexecuted channel renders <code>unsupported</code>; an inbox <code>delegate</code>/<code>ruling</code> with no ledger twin fails <code>coord doctor</code></td><td>dispatch exit codes; mail sent/read/acked; doorbell latency per harness; kick-ack rate</td><td>~3 d</td></tr>
+      <tr><td class="n">P5</td><td><strong>Owner review mechanics.</strong> <code>coord decide request/rule</code>; ruling verifier as a gate; TaskCompleted/Stop exit-2 gate where supported; the two coordination skills carry the contract (the wider sweep is P8)</td><td>a ruling number with no heading definition fails; a contract without a termination condition is refused at dispatch</td><td>rulings issued; review latency; contracts refused</td><td>~2 d</td></tr>
+      <tr><td class="n">P6</td><td><strong>Board (D12).</strong> <code>coord board [--follow]</code> over the inboxes and the ledger's message events, terminal and operator HTML; <code>coord board post</code> writes a human message into the same inboxes. A read model, never a store</td><td>a board row with nothing behind it fails the fixture; a post that bypasses the inbox is impossible by construction; empty → <code>NOT CHECKED</code></td><td>board reads; human posts; time-to-first-human-read of a <code>blocked</code></td><td>~1 d</td></tr>
+      <tr><td class="n">P7</td><td><strong>Compile stage (§07b).</strong> <code>prompt-compile.py</code> turns the operator's prose into the harness- and model-specific starting prompt: goal state, resolved references, <code>assume:</code> markers, harness idiom, an empty contract slot. Raw and compiled logged together</td><td><code>verify-compiled-prompt.py</code>: a done-when clause tracing to no raw phrase and no assumption is refused (the compiler may not add scope); any of the five fields missing is refused</td><td>compile duration and tokens; assumptions surfaced; edit distance compiled → run; downstream boundary corrections per track</td><td>~2 d</td></tr>
+      <tr><td class="n">P8</td><td><strong>Skill evolution (§07b).</strong> The 27 skills re-cut for seats, the five-part contract, mail, board, leader designation, deadlines and hook-gated Owner review; the shared stages ship once and are cited, never copied</td><td><code>verify-skill-contracts.py</code>: no <code>Runs as:</code>, a cap without a termination condition, a spawn before the compile stage, or a dispatch without the five parts fails; context-budget on the added lines</td><td>delegations refused at dispatch; per-skill fan-out actual vs cap</td><td>~3 d</td></tr>
     </tbody>
   </table></div>
-  <div class="col"><p>P0–P2 are one commit each and independent; P3 depends on P0's fields; P4 on P1 and P2; P5 on P1. Every item lands with its control red first and a <code>coord metrics</code> row, exercised in <strong>ai-de</strong>, where the baselines are.</p></div>
+  <div class="col"><p>P0–P2 are one commit each and independent; P3 depends on P0's fields; P4 on P1 and P2; P5 on P1; P6 on P4; P7 on P0 only (the cheapest item after P0 and the maintainer's stated priority); P8 on P4, P5 and P7. Every item lands with its control red first and a <code>coord metrics</code> row, exercised in <strong>ai-de</strong>, where the baselines are.</p></div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">07b</span><h2>How the skills evolve, and the compile stage</h2></div>
+  <div class="col"><p>Added 2026-09-19 at the maintainer's request. The survey was a grep over all 27 <code>pack/commands/*/SKILL.md</code> files and the knowledge docs they cite; every count was observed, not recalled.</p></div>
+  <div class="tscroll"><table aria-label="What the skills do today">
+    <thead><tr><th>Finding (measured)</th><th>Evidence</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Only two of 27 skills dispatch anything.</strong> In the other 25, every Cast — peers, adversaries, "the full architect council" — is a rhetorical council enacted in one context. No skill says <em>spawn</em>, names a delegate brief, or reads a delegate's return.</td><td>grep for spawn · Agent tool · sub-agent · <code>--brief</code>: zero as an instruction to itself</td></tr>
+      <tr><td><strong>No skill outside those two touches the coordination layer.</strong> Two read-only hits: <code>session-profiler</code> lists worktrees (SP-15); <code>updatepack</code> warns against <code>git add -A</code> beside other trees.</td><td>grep <code>coord-core · claim · request · decision · doctor · metrics</code></td></tr>
+      <tr><td><strong>The vocabulary is absent.</strong> mail, board, inbox, doorbell, heartbeat, deadline, leader, Coordinator, resume: zero occurrences. "Owner" is only the frontmatter field.</td><td>grep, the whole list</td></tr>
+      <tr><td><strong>Harnesses appear only as install destinations</strong> (addpacktorepo, updatepack, extendaibundle) or telemetry stores (session-profiler) — never as a place to send work.</td><td>those four files</td></tr>
+      <tr><td><strong>Four reusable pieces exist:</strong> the CT19 goal-state block; GO7's five-part contract, which <code>/optimize-graph</code> emits and no skill consumes; the <code>Handoff:</code> last line in 24 of 25 (skill → skill, never agent → agent); four hard human stops (investigate, forensicreview, code-hygiene fix, apply-learnings).</td><td><code>also</code>, <code>optimize-graph</code> Stages 6–7, GO7, the four STOP stages</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout"><p><strong>The pack has a doctrine of delegation and no plumbing for it.</strong> So the evolution is not "rewrite 27 skills": write three shared stages once in the doctrine doc, then make each skill cite the stage it needs. A paragraph copied into 27 files is paid 27 times.</p></div>
+  <div class="tscroll"><table aria-label="The three shared stages">
+    <thead><tr><th>Stage</th><th>What it adds to a skill that cites it</th><th>Who runs it</th></tr></thead>
+    <tbody>
+      <tr><td><strong>CO-S0 Compile</strong></td><td>The operator's prose becomes the harness- and model-specific starting prompt (below). Idempotent; unresolved consequential <code>assume:</code> markers become decision requests before any work starts.</td><td>the fourteen prose-input skills, before <code>/optimize-graph</code></td></tr>
+      <tr><td><strong>CO-S1 Seat</strong></td><td><code>Runs as: Coordinator · Sub-Agent · either</code> in frontmatter. As Coordinator: dispatch only through the five-part contract with a termination condition, a deadline and a fallback; <code>coord leader who</code> before any join; review by decision request → ruling. As Sub-Agent: the goal state <em>is</em> the received contract; never spawn beyond the cap; last action is <code>coord mail send --kind done</code> with the exit evidence, not a skill → skill handoff.</td><td>every skill</td></tr>
+      <tr><td><strong>CO-S2 Stop = message</strong></td><td>A hard human stop or hard veto is <code>coord decide request</code> to the seat that can rule, plus a board post, plus the inbox entry the doorbell points at. The skill halts on the request, not on the paragraph.</td><td>the four stop skills and every skill with a hard veto</td></tr>
+    </tbody>
+  </table></div>
+  <div class="tscroll"><table aria-label="Per-skill changes">
+    <thead><tr><th>Group</th><th>Skills</th><th>Change</th></tr></thead>
+    <tbody>
+      <tr><td><strong>A · dispatchers</strong><br><small>Coordinator seat</small></td><td><code>prepare-for-coordination</code></td><td>Stage 0 compiles the scope; every track row gains deadline · fallback · termination condition · target harness · doorbell status; the plan pins the leader for S3 and records the compiled prompt id per track</td></tr>
+      <tr><td></td><td><code>execute-with-coordination</code></td><td>Stage 3 dispatches the compiled contract (<code>coord dispatch</code> cross-harness, native spawn otherwise); Stage 5 reads mail and the board instead of polling; the kick ladder replaces the two-pass rule; Stage 6 checks <code>coord leader who</code> before the join; exit evidence arrives as a <code>done</code> message pinned to a blob and is verified, not accepted</td></tr>
+      <tr><td></td><td><code>optimize-graph</code></td><td>Stage 0 consumes the compiled prompt; every fan-out node carries the five parts plus termination condition, deadline and fallback, so the plan is directly dispatchable; the cost ledger gains mail and doorbell counts</td></tr>
+      <tr><td><strong>B · prose-input workflows</strong><br><small>either seat</small></td><td><code>specify</code> · <code>define-architecture</code> · <code>design-slice</code> · <code>implement</code> · <code>investigate</code> · <code>ui-design</code> · <code>collectknowledge</code> · <code>forensicreview</code> · <code>migrate</code> · <code>document</code> · <code>code-hygiene</code> · <code>adopt</code> · <code>visualize</code> · <code>adddomainexperts</code></td><td>Cite CO-S0 before grounding and CO-S1 in frontmatter. The Cast stays rhetorical at T0; above it, with a cap above zero, an adversary persona may be spawned as a Sub-Agent under the contract and its hard veto becomes a numbered ruling (D6) instead of "authors do not self-clear" prose. The <code>Handoff:</code> line becomes the <code>done</code> message in the Sub-Agent seat</td></tr>
+      <tr><td></td><td><code>investigate</code> · <code>forensicreview</code> · <code>code-hygiene</code> (fix)</td><td>The Stage-7 STOP is CO-S2: a decision request to the human seat, posted to the board, the report as the referenced blob. "Do not proceed even on autopilot" is enforced by the absent ruling</td></tr>
+      <tr><td></td><td><code>implement</code></td><td>Its Proof Pack is the canonical exit-evidence shape for a <code>done</code> message; the pre-merge adversarial review is the hook-gated Owner review where the harness has a stop hook</td></tr>
+      <tr><td></td><td><code>design-slice</code> · <code>implement</code> · <code>ui-design</code></td><td>Their CTX-E rule extends to the compiled prompt: a Sub-Agent receives the contract once, in the brief, never by re-invoking the skill</td></tr>
+      <tr><td><strong>C · measurement and utilities</strong><br><small>dispatch nothing</small></td><td><code>session-profiler</code></td><td>Messages sent/read/acked per session, doorbell latency per harness, board read-rate, contracts refused at dispatch, compiled-vs-run edit distance; SP-15 reconciles sessions against mail senders</td></tr>
+      <tr><td></td><td><code>dream</code> · <code>apply-learnings</code></td><td>Mine refused dispatches, boundary corrections and compile assumptions as candidate classes; a plan-per-repo becomes a decision request to that repo's human seat when it runs the layer</td></tr>
+      <tr><td></td><td><code>also</code> · <code>auditlog</code> · <code>prompts</code> · <code>searchprompts</code></td><td><code>also</code> recompiles when it re-sizes a turn; <code>auditlog</code> gains the Messages view (the board); the prompt utilities show raw and compiled side by side and search both</td></tr>
+      <tr><td><strong>D · pack lifecycle</strong><br><small>install the plumbing</small></td><td><code>addpacktorepo</code> · <code>updatepack</code> · <code>extendaibundle</code></td><td>Install the five doorbell adapters, create <code>.agents/mail/</code> (ignored) and track <code>.agents/log/</code> (D10), ship <code>prompt-templates/&lt;harness&gt;.md</code>, report each harness's doorbell status from <code>pack-doctor</code>; a new skill without <code>Runs as:</code>, or dispatching without the five parts, fails <code>verify-skill-contracts.py</code> at authoring time</td></tr>
+    </tbody>
+  </table></div>
+  <div class="col">
+    <h3>The compile stage (P7) — from the operator's words to the starting prompt</h3>
+    <p>A <code>compile</code> step turns the human's text into the harness- and model-specific prompt a workflow starts from, before <code>/optimize-graph</code> or <code>/prepare-for-coordination</code> plan anything. Today the goal state is rewritten from raw prose on every turn, in every harness, with no record of what was inferred. Compilation makes that a first-class artifact with a control on it.</p>
+  </div>
+  <div class="tscroll"><table aria-label="What the compile stage emits">
+    <thead><tr><th>Part</th><th>Content</th><th>Where it comes from</th></tr></thead>
+    <tbody>
+      <tr><td>Goal state</td><td>Goal · Done when · Not in scope · Tier · Fan-out cap · Context ceiling · Main-line budget</td><td>the prose, and only the prose; every clause traces to a phrase</td></tr>
+      <tr><td>Resolved references</td><td>every path, id, spec and ADR the prose names, opened and confirmed; the docs-graph neighbours a grounding would traverse</td><td><code>docs-graph.py</code>, the filesystem</td></tr>
+      <tr><td>Assumptions</td><td>one <code>assume:</code> per open belief — the belief, what confirms it, what breaks; consequential ones become decision requests before dispatch</td><td>the compiler's own gaps</td></tr>
+      <tr><td>Harness idiom</td><td>a Claude Code brief (absolute paths, no <code>EnterWorktree</code>, the <code>start</code> line first); <code>codex exec --output-schema</code>; <code>copilot -p</code>; agy <code>injectSteps</code>; Grok <code>-p</code></td><td><code>pack/adapters/prompt-templates/&lt;harness&gt;.md</code></td></tr>
+      <tr><td>Contract slot</td><td>the five parts and the termination condition, empty until a Coordinator assigns the work — a compiled prompt is a contract before it has an assignee</td><td>GO7, D5</td></tr>
+    </tbody>
+  </table></div>
+  <div class="col">
+    <p><strong>How it runs.</strong> <code>prompt-compile.py</code> (stdlib) builds the deterministic skeleton — resolved references, graph neighbours, the harness template, the audit ids — and the running model fills the goal-state fields and the assumptions. The harness-specific shape is Verified (the dispatch forms were probed in §05). Model-specific phrasing is a template per harness and is <strong>Inferred until measured</strong>: the measurement is the edit distance between the compiled prompt and what the human actually ran, which is why raw and compiled are logged together and why <code>/prompts</code> shows both.</p>
+    <p><strong>Where it sits.</strong> A utility skill, <code>/compile</code> (27 → 28 skills), whose engine the fourteen prose-input skills call at CO-S0 when no compiled prompt is in hand. The human can run it alone, edit the result, and start the workflow from it — the better starting point the maintainer asked for. <code>/also</code> recompiles when it re-sizes a turn.</p>
+    <p><strong>What it must never do.</strong> Add scope. A done-when clause that traces to no raw phrase and no marked assumption is the compiler authoring a goal, and <code>verify-compiled-prompt.py</code> refuses it. It never resolves an assumption by guessing — check, mark or ask — and a prompt with any of the five fields missing is refused, so no skill starts on a half-compiled prompt.</p>
+    <p><strong>What it measures.</strong> Compile duration and tokens; assumptions surfaced per prompt and how many became decision requests; edit distance compiled → run; downstream, boundary corrections and refused decisions per track in <code>coord metrics</code> — the number that says whether compiling paid.</p>
+    <p><strong>Controls for the skill work (P8).</strong> <code>verify-skill-contracts.py</code>, red first against today's tree (25 of 27 fail on <code>Runs as:</code> alone); context-budget on the added lines; <code>/session-profiler</code> reporting per-skill fan-out actual vs cap, contracts refused, and edit distance — a skill whose delegations are refused repeatedly is a class, not an incident.</p>
+  </div>
 </section>
 
 <section>
@@ -440,19 +525,24 @@
       <tr><td class="n">D6</td><td>Owner review = decision request → numbered ruling, hook-gated where possible; reviewer ≠ author</td><td>MAST verification 21%; harness auto-approves plans</td></tr>
       <tr><td class="n">D7</td><td>Liveness from the world; heartbeats carry progress; no phi</td><td>DC-024; Temporal; Akka cutoff</td></tr>
       <tr><td class="n">D8</td><td>Push by the cheapest executed channel; unsupported until executed</td><td>Phase-3 rule; CTX-H</td></tr>
-      <tr><td class="n">D9</td><td>No bus, relay, election, auto-reassign, board or worktree mandate in scope; each has a reopen trigger</td><td>§06</td></tr>
-      <tr><td class="n">D10</td><td>Pack default tracks the ledgers</td><td>A8; cross-machine S3 needs it</td></tr>
+      <tr><td class="n">D9</td><td><strong>Revised 2026-09-19 (maintainer):</strong> a formal local message layer ships — per-session inbox files as the store, the harnesses' native doorbells as the push, state-changing kinds dual-written to the ledger so git stays the durable fallback and the cross-machine path (§04b). Still struck: a daemon as the store, election, auto-reassign, a worktree mandate</td><td>the maintainer: git as fallback, formal local message passing, because a session with inter-agent messaging is far more effective</td></tr>
+      <tr><td class="n">D10</td><td>Pack default tracks the ledgers — <strong>ratified 2026-09-19</strong></td><td>A8; cross-machine S3 needs it</td></tr>
       <tr><td class="n">D11</td><td>Vocabulary: Owner (seat) · human operator · AgentPlane conductor</td><td>ai-de collision</td></tr>
+      <tr><td class="n">D12</td><td><strong>A board for human transparency</strong> — <code>coord board</code> is a read model over the inboxes and the ledger's message events; humans post into the same inboxes. Never a second store</td><td>the maintainer wants to see messages without reading git; the earlier board was struck as a pull nothing read — this one is a projection of pushes that already happen</td></tr>
+      <tr><td class="n">D13</td><td>Leader lease: TTL <strong>300 s</strong>, renew every 100 s, retry 20 s, quiet period <strong>30 s</strong> — <strong>ratified 2026-09-19</strong>; tuned from <code>coord metrics</code></td><td>k8s ×20 for a sleeping laptop fleet; Consul lock-delay ×2</td></tr>
+      <tr><td class="n">D14</td><td><strong>Compile stage</strong>: prose is compiled into the harness- and model-specific starting prompt before any planning skill runs; the compiler may check, mark or ask, never add scope; raw and compiled logged together — <strong>added 2026-09-19</strong></td><td>CT19; NG1–NG11; the goal state was rewritten from raw prose on every turn with no record</td></tr>
+      <tr><td class="n">D15</td><td><strong>Skills cite three shared stages</strong> (compile · seat · stop = message) written once; every skill declares <code>Runs as:</code>; the Cast stays rhetorical at T0 — <strong>added 2026-09-19</strong></td><td>§07b: 25 of 27 skills have no delegation plumbing; context-budget forbids copying a stage into 27 files</td></tr>
     </tbody>
   </table></div>
   <div class="col">
-    <h3>Open questions for the maintainer</h3>
+    <h3>Open questions — answered by the maintainer, 2026-09-19</h3>
     <ol class="body-list">
-      <li><strong>Ledger tracking default (D10):</strong> change the pack default, or keep ignoring and require S3 users to opt in? Recommendation: change it; the doctor reports which.</li>
-      <li><strong>Leader lease constants:</strong> 300 s / 150 s / 20 s with a 30 s quiet period, tuned from metrics? Recommendation: start long; a false takeover costs more than a slow one.</li>
-      <li><strong>Copilot hooks:</strong> stop-class hook names are secondary-sourced. Probe the one doc page before P4.</li>
-      <li><strong>Antigravity as S1 host — resolved by execution (2026-09-19):</strong> agy 1.2.7 has a full print mode. Remaining probe: whether agy exposes a hook surface for the progress heartbeat (P3).</li>
+      <li><strong>Ledger tracking default (D10):</strong> change it. The pack default tracks <code>.agents/log/</code>; the doctor reports which mode a repo is in.</li>
+      <li><strong>Leader lease constants (D13):</strong> TTL 300 s with a 30 s quiet period; renew at TTL/3, retry 20 s; tuned from metrics, never hand-edited.</li>
+      <li><strong>Copilot hooks:</strong> probe first, inbox + commit floor acceptable. Docs probed the same day: <code>agentStop</code>/<code>subagentStop</code> return <code>decision: "block"</code> + <code>reason</code>; <code>preToolUse</code> returns <code>additionalContext</code>. A real stop-class doorbell; <code>observed-only</code> until a live drain is seen.</li>
+      <li><strong>Antigravity hook surface:</strong> probe it. Docs probed the same day: <code>PreToolUse</code>, <code>PostToolUse</code>, <code>PreInvocation</code> (<code>injectSteps</code>), <code>PostInvocation</code> (<code>force_continue</code>), <code>Stop</code>. Both the heartbeat (P3) and the doorbell (P4) have a hook to hang on.</li>
     </ol>
+    <p>Record: <code>docs/notes/note-20260919-coordination-decisions-ratified.md</code>.</p>
   </div>
 </section>
 
@@ -460,9 +550,9 @@
   <div class="sec-head"><span class="sec-num">10</span><h2>Status</h2></div>
   <div class="tscroll"><table aria-label="Status">
     <tbody>
-      <tr><td><strong>Completed</strong></td><td>Grounding in both repositories; four research tracks captured as a knowledge base; three executed spikes; 18 critique findings; the model, protocol objects, three scenario playbooks, the struck list with reopen triggers, a five-item build plan with controls and measurements, one defect class.</td></tr>
-      <tr><td><strong>Remaining</strong></td><td>Maintainer answers to §09; <code>/specify</code> for P0–P2; the Copilot probes (install the CLI; hook page). The agy probe and the cherry-pick spike are done. Bundle gates: 1 clean after regenerating the derived portal and web index; 2 fails only on the uncommitted tree; 3's five failures reproduce on a clean clone of <code>main</code> (pre-existing); graph, audit, coordination and context-budget gates pass.</td></tr>
-      <tr><td><strong>Best next action</strong></td><td>Decide D10 and D3; then <code>/specify</code> P2 (leader designation) against ai-de, whose baseline is a designated human leader today.</td></tr>
+      <tr><td><strong>Completed</strong></td><td>Grounding in both repositories; four research tracks as a knowledge base; three executed spikes; 18 critique findings; the model, protocol objects, three scenario playbooks, the struck list, the build plan, one defect class. <strong>2026-09-19 revision:</strong> maintainer rulings applied — D9 revised, D10 and D13 ratified, D12 board, D14 compile stage, D15 skill stages; §04b message layer; §07b skills evolution from a measured survey of all 27 skills; P4 rewritten, P6–P8 added; Copilot and Antigravity hook surfaces verified from their docs and folded into the KB.</td></tr>
+      <tr><td><strong>Remaining</strong></td><td><code>/specify</code> for P0–P2 and P7 against ai-de; live probes of the Copilot and Antigravity doorbells (docs-verified, execution pending); the per-harness prompt templates (Inferred until edit-distance measurements exist); <code>verify-skill-contracts.py</code> red-first against the 27 skills. Pre-existing gate 3 failures (<code>master</code>-branch tests) are unchanged.</td></tr>
+      <tr><td><strong>Best next action</strong></td><td><code>/specify</code> P7 (compile stage) first — the cheapest item after P0, the maintainer's stated priority, and every dispatcher consumes its output; then P2 (leader designation) against ai-de.</td></tr>
     </tbody>
   </table></div>
 </section>

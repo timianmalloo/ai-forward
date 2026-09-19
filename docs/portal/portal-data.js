@@ -2629,6 +2629,12 @@ window.PORTAL_DATA = {
         "summary": "Deploy a native Grok Build surface under .grok/{skills,agents,hooks,rules} rather than relying on Claude compatibility. Knowledge stays at .claude/knowledge/...."
       },
       {
+        "id": "note-20260919-coordination-decisions-ratified",
+        "type": "decision-note",
+        "title": "Coordination decisions ratified: local message layer with git as the fallback, a board for humans, tracked ledgers, lease constants",
+        "summary": "On 2026-09-19 the maintainer answered the proposal's four open questions and ratified four of its five design decisions; on the fifth (push channels) they..."
+      },
+      {
         "id": "note-20260919-leadership-in-a-ref-not-the-ledger",
         "type": "decision-note",
         "title": "Leadership is held in a git ref by compare-and-swap; the union-merged ledger only records it",
@@ -4372,6 +4378,26 @@ window.PORTAL_DATA = {
         "rel": "tested-by"
       },
       {
+        "from": "note-20260919-coordination-decisions-ratified",
+        "to": "adr-0007-coordination-substrate",
+        "rel": "depends-on"
+      },
+      {
+        "from": "note-20260919-coordination-decisions-ratified",
+        "to": "kb-multi-agent-coordination",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260919-coordination-decisions-ratified",
+        "to": "note-20260919-leadership-in-a-ref-not-the-ledger",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260919-coordination-decisions-ratified",
+        "to": "proposal-owner-coordinator-subagent-coordination",
+        "rel": "relates-to"
+      },
+      {
         "from": "note-20260919-leadership-in-a-ref-not-the-ledger",
         "to": "adr-0007-coordination-substrate",
         "rel": "depends-on"
@@ -4684,6 +4710,16 @@ window.PORTAL_DATA = {
       {
         "from": "proposal-owner-coordinator-subagent-coordination",
         "to": "kb-multi-agent-coordination",
+        "rel": "relates-to"
+      },
+      {
+        "from": "proposal-owner-coordinator-subagent-coordination",
+        "to": "note-20260919-coordination-decisions-ratified",
+        "rel": "relates-to"
+      },
+      {
+        "from": "proposal-owner-coordinator-subagent-coordination",
+        "to": "note-20260919-leadership-in-a-ref-not-the-ledger",
         "rel": "relates-to"
       },
       {
