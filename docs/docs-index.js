@@ -1699,6 +1699,41 @@ window.DOCS_INDEX = {
       "sourceSha256": "61c49b570b70d73f053de18c0d53a133ecb5e03351aec045e413c91dd82a5219"
     },
     {
+      "id": "note-20260919-leadership-in-a-ref-not-the-ledger",
+      "path": "docs/notes/note-20260919-leadership-in-a-ref-not-the-ledger.md",
+      "title": "Leadership is held in a git ref by compare-and-swap; the union-merged ledger only records it",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-03-18",
+      "reviewSuggested": [],
+      "summary": "Executed spikes on 2026-09-18 showed two competing leader claims both survive a union merge (exit 0), while `git update-ref <ref> <new> <old>` and `--force-with-lease=<ref>:<expect>` refuse a stale expectation. Any leader or epoch the pack introduces therefore lives in `refs/coord/leader` and is only recorded in `.agents/log`; the join checks the epoch. Blast radius: P2 of the proposal, and both prior proposals' election designs.",
+      "tags": [
+        "decision-note",
+        "coordination",
+        "leader",
+        "fencing",
+        "git"
+      ],
+      "links": [
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-multi-agent-coordination",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0007-coordination-substrate",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "8caab81356b8f554a5435c829a577ddcb3435392d777c58565b18acc694d04a8"
+    },
+    {
       "id": "note-autopilot-open-questions-decisions",
       "path": "docs/notes/autopilot-open-questions-decisions.md",
       "title": "Decisions on PACK-O open questions (logging, class granularity, autopilot caps)",
@@ -2429,7 +2464,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ecd2048b5c52760fa398d1584e7026fe439a4ae4119eb983805b77d92fdd72ff"
+      "sourceSha256": "c9506bd0b4d2de3aee6bbef9f960293e4837ab1c6889ed06de876ba3e7393177"
     },
     {
       "id": "docs-index",
@@ -3605,7 +3640,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "8a756b2f6adcd1d678d0c07602c417ed86635bcf59a321cfb3881219a569b23e"
+      "sourceSha256": "d9554229edaa9f754ed12a6fab3362abdb4dba28304475882c2cdec44bac496f"
     },
     {
       "id": "proposal-hosting-and-dream-manifest",
@@ -3647,6 +3682,64 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "69a9739b5ab387e841ebdf338c644cff7a93a61b48d89658622637b720687c5c"
+    },
+    {
+      "id": "proposal-owner-coordinator-subagent-coordination",
+      "path": "docs/proposals/owner-coordinator-subagent-coordination.md",
+      "title": "Proposal: Owner / Coordinator / Sub-Agent coordination across one, several, and federated harnesses",
+      "type": "doc",
+      "status": "in-review",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2026-12-18",
+      "reviewSuggested": [],
+      "summary": "Replaces the two prior coordination proposals with a smaller design grounded in what the harnesses ship, what ai-de measured, and three executed git spikes. One role model (Owner / Coordinator / Sub-Agent) and two control relationships (spawned, registered) cover the three scenarios. Leadership is human-designated and held in a git ref by compare-and-swap, never elected and never in the union-merged ledger. Path leases are demoted to efficiency locks; the join is the fence. Push uses the cheapest channel each harness actually has, and every cross-harness request carries a deadline and a fallback. No bus, no relay, no daemon in scope; each is a measured trigger, not a phase.",
+      "tags": [
+        "coordination",
+        "multi-harness",
+        "owner-coordinator-subagent",
+        "leader-designation",
+        "leases",
+        "fencing",
+        "worktrees",
+        "rfc"
+      ],
+      "links": [
+        {
+          "to": "spec-agent-coordination",
+          "rel": "refines"
+        },
+        {
+          "to": "architecture-agent-coordination",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0007-coordination-substrate",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0005-harness-runner-boundary",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-coord-collaboration-phase4",
+          "rel": "refines"
+        },
+        {
+          "to": "kb-multi-agent-coordination",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proposal-active-multi-harness-coordination",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "123c25ff42607a290771536e1e41fba9bd5a7543c61ff6020cea640f0adb4aec"
     },
     {
       "id": "proposal-turn-goal-state-and-stopping",
@@ -4986,6 +5079,247 @@ window.DOCS_INDEX = {
       "sourceSha256": "593b4f1934f7b583c5a39ae907941d2e22baa8179f5fea23d30524d27ac6d0c1"
     },
     {
+      "id": "kb-multi-agent-coordination",
+      "path": "docs/knowledge/multi-agent-coordination/index.md",
+      "title": "Multi-Agent Coordination — domain knowledge (agentic coordination · p2p protocols · distributed scheduling · quorum & leader election)",
+      "type": "knowledge",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2026-12-17",
+      "reviewSuggested": [],
+      "summary": "Sourced, confidence-labelled evidence base for coordinating an Owner / Coordinator / Sub-Agent hierarchy across one or several CLI harnesses (Claude Code, Codex, Copilot CLI, Antigravity, Grok Build) on one or two developer machines: what the harnesses actually ship, what distributed-systems theory forbids (leases are not mutual exclusion; a union-merged ledger cannot elect a leader), which scheduling and ownership results predict conflict, and the constants practitioners use. Four research tracks plus three executed git spikes.",
+      "tags": [
+        "multi-agent",
+        "coordination",
+        "multi-harness",
+        "p2p",
+        "scheduling",
+        "leases",
+        "fencing",
+        "leader-election",
+        "quorum",
+        "owner-coordinator-subagent"
+      ],
+      "links": [
+        {
+          "to": "architecture-agent-coordination",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-agent-coordination",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0007-coordination-substrate",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0005-harness-runner-boundary",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-coord-collaboration-phase4",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-graph-and-loop-engineering",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "fcbf0af0f4c384d108f84faa49317192b92e3c9739271d6472867f8c6abcf657"
+    },
+    {
+      "id": "kb-multi-agent-coordination-comparables",
+      "path": "docs/knowledge/multi-agent-coordination/comparables.md",
+      "title": "Comparable solutions & problem framings — multi-agent coordination",
+      "type": "knowledge",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2026-12-17",
+      "reviewSuggested": [],
+      "summary": "How existing systems frame and solve the three scenarios — harness-native fleets, managed hierarchies, blackboard-over-git, cluster schedulers, lock services and the two in-house attempts (ai-de and the pack's coord layer) — with what each does well and badly.",
+      "tags": [
+        "multi-agent",
+        "coordination",
+        "comparables"
+      ],
+      "links": [
+        {
+          "to": "kb-multi-agent-coordination",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "0d4354f9a4117e1e382f4beb553e855b81a1afc298264974797c77141853f8a2"
+    },
+    {
+      "id": "kb-multi-agent-coordination-data",
+      "path": "docs/knowledge/multi-agent-coordination/data-and-constants.md",
+      "title": "Domain data, constants & invariants — multi-agent coordination",
+      "type": "knowledge",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2026-12-17",
+      "reviewSuggested": [],
+      "summary": "The numbers: measured fleet telemetry from ai-de and the pack's profiler, practitioner constants for leases, heartbeats, election and messaging, the scheduling formulae, cost multipliers, and the three executed git spikes with their exit codes.",
+      "tags": [
+        "multi-agent",
+        "coordination",
+        "constants",
+        "measurements",
+        "spikes"
+      ],
+      "links": [
+        {
+          "to": "kb-multi-agent-coordination",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "b64c3e3044ab97c24d0926b862d2d0b6bd0f1882e6b3a36202a4b966a09b5656"
+    },
+    {
+      "id": "kb-multi-agent-coordination-glossary",
+      "path": "docs/knowledge/multi-agent-coordination/glossary.md",
+      "title": "Glossary — multi-agent coordination",
+      "type": "knowledge",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2026-12-17",
+      "reviewSuggested": [],
+      "summary": "The ubiquitous language for the Owner / Coordinator / Sub-Agent model and the distributed- systems terms it borrows — each with the near-miss it must not be confused with.",
+      "tags": [
+        "multi-agent",
+        "coordination",
+        "glossary",
+        "ubiquitous-language"
+      ],
+      "links": [
+        {
+          "to": "kb-multi-agent-coordination",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "7b9585d5711d79de709b3ea937194d29b1d9476ecec397cdcf580016848191a3"
+    },
+    {
+      "id": "kb-multi-agent-coordination-open-questions",
+      "path": "docs/knowledge/multi-agent-coordination/open-questions.md",
+      "title": "Open questions & domain failure modes — multi-agent coordination",
+      "type": "knowledge",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2026-12-17",
+      "reviewSuggested": [],
+      "summary": "What the research could not settle (with the cheapest probe for each), the domain's known failure modes, and the disconfirming views deliberately sought and how each fared.",
+      "tags": [
+        "multi-agent",
+        "coordination",
+        "open-questions",
+        "failure-modes",
+        "disconfirmation"
+      ],
+      "links": [
+        {
+          "to": "kb-multi-agent-coordination",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "80db4056c76741c27dc950575ab6244ef7afb086a32aced236471a6db63720ff"
+    },
+    {
+      "id": "kb-multi-agent-coordination-references",
+      "path": "docs/knowledge/multi-agent-coordination/references.md",
+      "title": "Reference information — multi-agent coordination",
+      "type": "knowledge",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2026-12-17",
+      "reviewSuggested": [],
+      "summary": "The standards, specifications, official harness documentation and seminal works this base rests on — what each defines and what it requires of the pack.",
+      "tags": [
+        "multi-agent",
+        "coordination",
+        "references",
+        "specs",
+        "papers"
+      ],
+      "links": [
+        {
+          "to": "kb-multi-agent-coordination",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "c597f25b1dfa8c5e972eb7c96167daad33bf754f5d534043fb8f7b1c05294a11"
+    },
+    {
+      "id": "kb-multi-agent-coordination-sota",
+      "path": "docs/knowledge/multi-agent-coordination/state-of-the-art.md",
+      "title": "State of the art — multi-agent coordination",
+      "type": "knowledge",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2026-12-17",
+      "reviewSuggested": [],
+      "summary": "Current best practice across four fields the pack must draw on: orchestration patterns and harness-native multi-agent surfaces (2026), peer-to-peer membership and messaging at small scale, distributed work scheduling and lease/fencing discipline, and quorum/leader election — each with where it wins, where it fails, and what is over-engineered at 2–20 sessions.",
+      "tags": [
+        "multi-agent",
+        "coordination",
+        "harness-primitives",
+        "protocols",
+        "leases",
+        "leader-election"
+      ],
+      "links": [
+        {
+          "to": "kb-multi-agent-coordination",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "ea449c95ad83dd9d8a69d78b9657c225a9e177968fe30ba1d2149352d1e5ab1d"
+    },
+    {
+      "id": "kb-multi-agent-coordination-sources",
+      "path": "docs/knowledge/multi-agent-coordination/sources.md",
+      "title": "Sources — multi-agent coordination",
+      "type": "knowledge",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2026-12-17",
+      "reviewSuggested": [],
+      "summary": "Every source cited in this base, by track tag, with type, URL, access date and what it was used for. All accessed 2026-09-18 unless noted. Executed spikes and in-session observations are listed as sources of the same standing.",
+      "tags": [
+        "multi-agent",
+        "coordination",
+        "sources"
+      ],
+      "links": [
+        {
+          "to": "kb-multi-agent-coordination",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "b03d7fa147410e94b5d574f7b07faa52691303ecc4a5f5f54f3bd3ec748d1ea2"
+    },
+    {
       "id": "kb-native-client-ui-design",
       "path": "docs/knowledge/native-client-ui-design/index.md",
       "title": "Native client UI design — WPF, WinUI, Avalonia and desktop apps",
@@ -6126,6 +6460,14 @@ window.DOCS_INDEX = {
       "artifactId": "backtest-optimize-graph"
     },
     {
+      "id": "surface-proposals-owner-coordinator-subagent-coordination",
+      "path": "docs/proposals/owner-coordinator-subagent-coordination.html",
+      "title": "Owner / Coordinator / Sub-Agent coordination",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "proposal-owner-coordinator-subagent-coordination"
+    },
+    {
       "id": "surface-proposals-context-prefix-budget",
       "path": "docs/proposals/context-prefix-budget.html",
       "title": "Proposal — Cutting the always-on context prefix",
@@ -6162,5 +6504,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "2f46ce4cd7bdfcc4f1956706b28010f635be8ba4bcdc79e84faf110bba97a5b6"
+  "graphSha256": "037a6eb1061a0e2d1f4a5fb1e18fa0c0e174a26a3420ae3b226d5fdfbfa8e42e"
 };

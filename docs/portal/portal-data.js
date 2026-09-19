@@ -2713,6 +2713,12 @@ window.PORTAL_DATA = {
         "summary": "Proof pack for implementing the native app UI skill extension: native UI triggers and guardrails, the reusable native UI proof-pack template, XAML token..."
       },
       {
+        "id": "proposal-active-multi-harness-coordination",
+        "type": "doc",
+        "title": "Proposal: ledger and bus — active multi-harness coordination",
+        "summary": "The pack's coordination layer is a git-tracked ledger. AI-DE already built the live surfaces (Loomkeeper board, standing files, MCP board tools, AgentPlane)..."
+      },
+      {
         "id": "proposal-hosting-and-dream-manifest",
         "type": "doc",
         "title": "Proposal / dialog: GitHub Pages hosting + the Dream Manifest",
@@ -4509,6 +4515,36 @@ window.PORTAL_DATA = {
         "rel": "tested-by"
       },
       {
+        "from": "proposal-active-multi-harness-coordination",
+        "to": "adr-0005-harness-runner-boundary",
+        "rel": "depends-on"
+      },
+      {
+        "from": "proposal-active-multi-harness-coordination",
+        "to": "adr-0007-coordination-substrate",
+        "rel": "depends-on"
+      },
+      {
+        "from": "proposal-active-multi-harness-coordination",
+        "to": "architecture-agent-coordination",
+        "rel": "refines"
+      },
+      {
+        "from": "proposal-active-multi-harness-coordination",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "proposal-active-multi-harness-coordination",
+        "to": "design-coord-collaboration-phase4",
+        "rel": "refines"
+      },
+      {
+        "from": "proposal-active-multi-harness-coordination",
+        "to": "spec-agent-coordination",
+        "rel": "refines"
+      },
+      {
         "from": "proposal-hosting-and-dream-manifest",
         "to": "adr-0002-fleet-learnings-store",
         "rel": "relates-to"
@@ -4556,6 +4592,11 @@ window.PORTAL_DATA = {
       {
         "from": "proposal-owner-coordinator-subagent-coordination",
         "to": "kb-multi-agent-coordination",
+        "rel": "relates-to"
+      },
+      {
+        "from": "proposal-owner-coordinator-subagent-coordination",
+        "to": "proposal-active-multi-harness-coordination",
         "rel": "relates-to"
       },
       {

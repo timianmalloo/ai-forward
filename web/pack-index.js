@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 193
+"count": 194
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 352,
+"total": 353,
 "items": [
 {
 "cat": "knowledge",
@@ -2370,6 +2370,15 @@ window.PACK_INDEX = {
 },
 {
 "cat": "graph",
+"id": "proposal-active-multi-harness-coordination",
+"title": "Proposal: ledger and bus — active multi-harness coordination",
+"summary": "The pack's coordination layer is a git-tracked ledger. AI-DE already built the live surfaces (Loomkeeper board, standing files, MCP board tools, AgentPlane) and still measured collaboration as empty, because every path is a pull the agent…",
+"path": "docs/proposals/active-multi-harness-coordination.md",
+"kind": "doc",
+"text": "proposal: ledger and bus — active multi-harness coordination the pack's coordination layer is a git-tracked ledger. ai-de already built the live surfaces (loomkeeper board, standing files, mcp board tools, agentplane) and still measured collaboration as empty, because every path is a pull the agent may ignore. this proposal ships all three planes: git-tracked ledger (required), local loopback-http bus (fail-open), cloud relay (fail-open, same client). scores stay a pull; blocked/kick/delegate are a push. unix sockets are not the local transport — http on 127.0.0.1 is, so mac and windows share one implementation. github remains defense in depth. coordination p2p multi-harness leader-election leases messaging rfc refines spec-agent-coordination refines architecture-agent-coordination depends-on adr-0007-coordination-substrate depends-on adr-0005-harness-runner-boundary refines design-coord-collaboration-phase4 relates-to defect-classes"
+},
+{
+"cat": "graph",
 "id": "proposal-hosting-and-dream-manifest",
 "title": "Proposal / dialog: GitHub Pages hosting + the Dream Manifest",
 "summary": "An RFC/dialog opener on (1) whether to host the Documentation Portal and surfaces on GitHub Pages, (2) how that impacts dream output and privacy, and (3) a proposed Dream Manifest - a first-class, reviewable, hostable artifact recording…",
@@ -2384,7 +2393,7 @@ window.PACK_INDEX = {
 "summary": "Replaces the two prior coordination proposals with a smaller design grounded in what the harnesses ship, what ai-de measured, and three executed git spikes. One role model (Owner / Coordinator / Sub-Agent) and two control relationships…",
 "path": "docs/proposals/owner-coordinator-subagent-coordination.md",
 "kind": "doc",
-"text": "proposal: owner / coordinator / sub-agent coordination across one, several, and federated harnesses replaces the two prior coordination proposals with a smaller design grounded in what the harnesses ship, what ai-de measured, and three executed git spikes. one role model (owner / coordinator / sub-agent) and two control relationships (spawned, registered) cover the three scenarios. leadership is human-designated and held in a git ref by compare-and-swap, never elected and never in the union-merged ledger. path leases are demoted to efficiency locks; the join is the fence. push uses the cheapest channel each harness actually has, and every cross-harness request carries a deadline and a fallback. no bus, no relay, no daemon in scope; each is a measured trigger, not a phase. coordination multi-harness owner-coordinator-subagent leader-designation leases fencing worktrees rfc refines spec-agent-coordination refines architecture-agent-coordination depends-on adr-0007-coordination-substrate depends-on adr-0005-harness-runner-boundary refines design-coord-collaboration-phase4 relates-to kb-multi-agent-coordination relates-to defect-classes"
+"text": "proposal: owner / coordinator / sub-agent coordination across one, several, and federated harnesses replaces the two prior coordination proposals with a smaller design grounded in what the harnesses ship, what ai-de measured, and three executed git spikes. one role model (owner / coordinator / sub-agent) and two control relationships (spawned, registered) cover the three scenarios. leadership is human-designated and held in a git ref by compare-and-swap, never elected and never in the union-merged ledger. path leases are demoted to efficiency locks; the join is the fence. push uses the cheapest channel each harness actually has, and every cross-harness request carries a deadline and a fallback. no bus, no relay, no daemon in scope; each is a measured trigger, not a phase. coordination multi-harness owner-coordinator-subagent leader-designation leases fencing worktrees rfc refines spec-agent-coordination refines architecture-agent-coordination depends-on adr-0007-coordination-substrate depends-on adr-0005-harness-runner-boundary refines design-coord-collaboration-phase4 relates-to kb-multi-agent-coordination relates-to proposal-active-multi-harness-coordination relates-to defect-classes"
 },
 {
 "cat": "graph",

@@ -13,6 +13,7 @@ links:
   - { to: adr-0005-harness-runner-boundary, rel: depends-on }
   - { to: design-coord-collaboration-phase4, rel: refines }
   - { to: kb-multi-agent-coordination, rel: relates-to }
+  - { to: proposal-active-multi-harness-coordination, rel: relates-to }
   - { to: defect-classes, rel: relates-to }
 review-by: "2026-12-18"
 review-suggested: []
