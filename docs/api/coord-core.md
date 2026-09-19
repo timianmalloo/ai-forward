@@ -309,6 +309,18 @@ needs a branch for "unknown".
 
 **Coverage gap** — no docstring in the source.
 
+### `resolve_interpreter(command)`
+
+Map a registry command's leading interpreter TOKEN to this machine's interpreter.
+
+`python3` (the documented POSIX name) and `python` (the python.org Windows name) are
+resolved to `sys.executable`, quoted, so the same tracked registry line runs on both
+operating systems. Anything else -- another tool, or an explicit interpreter path -- is
+returned unchanged ON PURPOSE: a stale absolute path must fail loudly where it runs,
+not be silently repaired here while `pack-doctor` reports it (class PLAT-B). Mirrors
+`conductor-join._interp`, which does the same for argv lists; this one takes the shell
+string the registry stores.
+
 ### `pack_defaults(repo)`
 
 The pack's own artifacts, as classify-init candidates.
@@ -630,6 +642,6 @@ follows by printing the settings entry rather than writing it.
 
 ## Coverage
 
-- Public functions: **67** · documented: **44** (**66%**)
+- Public functions: **68** · documented: **45** (**66%**)
 - Undocumented (recorded, not invented): `make_event`, `check`, `read_decisions`, `request_log_path`, `read_request_events`, `fold_requests`, `regen_command`, `record_regen_owed`, `regen_owed`, `clear_regen_owed`, `detect_harness`, `cmd_precommit`, `cmd_guard`, `session_contract_path`, `owner_rows_for_path`, `cmd_session_list`, `cmd_collaborate`, `cmd_request`, `cmd_worktree`, `cmd_session`, `cmd_metrics`, `cmd_install`, `cmd_doctor`
 
