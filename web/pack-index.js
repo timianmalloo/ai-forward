@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 194
+"count": 196
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 353,
+"total": 355,
 "items": [
 {
 "cat": "knowledge",
@@ -1043,7 +1043,7 @@ window.PACK_INDEX = {
 "summary": "pack-doctor.py — AI-Forward install-health check (deployable; runs in a TARGET repo).",
 "path": "pack/scripts/pack-doctor.py",
 "kind": "script",
-"text": "pack-doctor.py pack-doctor.py — ai-forward install-health check (deployable; runs in a target repo). reports whether this repo has the pack installed and healthy: the installed revision, both tool surfaces present, the managed blocks intact, and the knowledge graph valid + fresh. one pass/warn/fail line per check with a suggested fix; exit 1 if any fail, or if any warn is present under --strict. distinct from tools/check-consistency.py (which validates the pack source — pack/ == docs). a target repo has no pack/, so this checks install health, not source consistency. design: docs/design/pack-doctor.md. stdlib only; composes docs-graph.py for the graph half. usage pack-doctor.py [--root <repo>] [--json] [--strict] exit: 0 all pass/warn (or all pass under --strict) · 1 any fail/strict warn. _result check_installed check_surface _read check_claude_md_import check_copilot_settings check_claude_settings check_hooks check_block check_graph check_coordination check_node_runner _works check_interpreter run main"
+"text": "pack-doctor.py pack-doctor.py — ai-forward install-health check (deployable; runs in a target repo). reports whether this repo has the pack installed and healthy: the installed revision, both tool surfaces present, the managed blocks intact, and the knowledge graph valid + fresh. one pass/warn/fail line per check with a suggested fix; exit 1 if any fail, or if any warn is present under --strict. distinct from tools/check-consistency.py (which validates the pack source — pack/ == docs). a target repo has no pack/, so this checks install health, not source consistency. design: docs/design/pack-doctor.md. stdlib only; composes docs-graph.py for the graph half. usage pack-doctor.py [--root <repo>] [--json] [--strict] exit: 0 all pass/warn (or all pass under --strict) · 1 any fail/strict warn. _result check_installed check_surface _read check_codex check_claude_md_import check_copilot_settings check_claude_settings check_hooks check_block check_graph check_coordination check_node_runner _works check_interpreter run main"
 },
 {
 "cat": "scripts",
@@ -1616,10 +1616,10 @@ window.PACK_INDEX = {
 "cat": "graph",
 "id": "api-index",
 "title": "API reference — the deployed script bundle",
-"summary": "Generated API reference for the pack's public surface — the deployed script bundle. 364 public functions across 26 modules, 46% carrying a docstring.",
+"summary": "Generated API reference for the pack's public surface — the deployed script bundle. 365 public functions across 26 modules, 46% carrying a docstring.",
 "path": "docs/api/index.md",
 "kind": "api",
-"text": "api reference — the deployed script bundle generated api reference for the pack's public surface — the deployed script bundle. 364 public functions across 26 modules, 46% carrying a docstring. api scripts generated index documents architecture"
+"text": "api reference — the deployed script bundle generated api reference for the pack's public surface — the deployed script bundle. 365 public functions across 26 modules, 46% carrying a docstring. api scripts generated index documents architecture"
 },
 {
 "cat": "graph",
@@ -2280,6 +2280,15 @@ window.PACK_INDEX = {
 },
 {
 "cat": "graph",
+"id": "plan-codex-discovery",
+"title": "Codex pack discovery and grounding",
+"summary": "Verify Codex discovery and document native invocation, explicit grounding, and deployment health.",
+"path": "docs/plans/codex-discovery.md",
+"kind": "doc",
+"text": "codex pack discovery and grounding verify codex discovery and document native invocation, explicit grounding, and deployment health. codex installation verification depends-on kb-graph-and-loop-engineering relates-to architecture"
+},
+{
+"cat": "graph",
 "id": "plan-optimize-graph-grok-surface",
 "title": "optimize-graph — Grok Build surface for pack-consuming repos",
 "summary": "Approved execution graph for adding a native Grok Build surface to the AI-Forward Pack so /addpacktorepo and pack-apply configure consuming repos the same way Claude Code and Copilot already are. Span shortened; floors early; no knowledge…",
@@ -2394,6 +2403,15 @@ window.PACK_INDEX = {
 "path": "docs/proposals/owner-coordinator-subagent-coordination.md",
 "kind": "doc",
 "text": "proposal: owner / coordinator / sub-agent coordination across one, several, and federated harnesses replaces the two prior coordination proposals with a smaller design grounded in what the harnesses ship, what ai-de measured, and three executed git spikes. one role model (owner / coordinator / sub-agent) and two control relationships (spawned, registered) cover the three scenarios. leadership is human-designated and held in a git ref by compare-and-swap, never elected and never in the union-merged ledger. path leases are demoted to efficiency locks; the join is the fence. push uses the cheapest channel each harness actually has, and every cross-harness request carries a deadline and a fallback. no bus, no relay, no daemon in scope; each is a measured trigger, not a phase. coordination multi-harness owner-coordinator-subagent leader-designation leases fencing worktrees rfc refines spec-agent-coordination refines architecture-agent-coordination depends-on adr-0007-coordination-substrate depends-on adr-0005-harness-runner-boundary refines design-coord-collaboration-phase4 relates-to kb-multi-agent-coordination relates-to proposal-active-multi-harness-coordination relates-to defect-classes"
+},
+{
+"cat": "graph",
+"id": "proposal-proactive-multi-harness-coordination",
+"title": "Proposal: Proactive Multi-Harness Coordination — The Owner/Coordinator/Sub-Agent Architecture",
+"summary": "A comprehensive revision and advancement of multi-harness agent coordination. Addresses the failure of pull-based collaboration observed in AI-DE and the latency limits of git-only synchronization. Introduces an active, bi-directional…",
+"path": "docs/proposals/proactive-multi-harness-coordination.md",
+"kind": "doc",
+"text": "proposal: proactive multi-harness coordination — the owner/coordinator/sub-agent architecture a comprehensive revision and advancement of multi-harness agent coordination. addresses the failure of pull-based collaboration observed in ai-de and the latency limits of git-only synchronization. introduces an active, bi-directional message board and event bus (push and pull) paired with a strict owner / coordinator / sub-agent hierarchy across three operational topologies: cross-harness hub-and-spoke, single-harness fleet, and federated multi-harness. enforces strict per-agent git worktree isolation, automated ledger conflict resolution, kleppmann-fenced leases, and a continuous running track of work in flight, completed, and remaining. coordination proactive-bus message-board multi-harness leader-election p2p distributed-systems worktree-isolation rfc refines spec-agent-coordination refines architecture-agent-coordination depends-on adr-0007-coordination-substrate depends-on adr-0005-harness-runner-boundary refines design-coord-collaboration-phase4 relates-to defect-classes"
 },
 {
 "cat": "graph",

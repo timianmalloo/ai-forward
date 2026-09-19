@@ -80,6 +80,67 @@ def _read(path):
         return None
 
 
+def check_codex(root):
+    """Check the deployed pack contract, never claim a running Codex catalog was read."""
+    name = "Codex repository readiness"
+    fix = "run $updatepack (or pwsh tools/sync-pack.ps1 in the source repo); see docs/ai-forward-pack/codex.md"
+    problems = []
+    required = ["AGENTS.md", "docs/ai-forward-pack/codex.md",
+                "docs/ai-forward-pack/scripts/audit-log.py",
+                "docs/ai-forward-pack/scripts/prompt-log.py",
+                "docs/ai-forward-pack/scripts/docs-graph.py"]
+    required += [".claude/knowledge/" + doc + ".md" for doc in (
+        "agent-body-of-knowledge", "agent-rules-of-the-road", "agent-persona-catalog",
+        "layered-optimized-architecture", "engineering-governance")]
+    for rel in required:
+        if not (_read(os.path.join(root, rel)) or "").strip():
+            problems.append("missing or empty " + rel)
+    agents = _read(os.path.join(root, "AGENTS.md")) or ""
+    if "docs/ai-forward-pack/codex.md" not in agents:
+        problems.append("AGENTS.md does not direct Codex to its grounding guide")
+
+    manifest = "docs/ai-forward-pack/codex-skills.json"
+    try:
+        inventory = json.loads(_read(os.path.join(root, manifest)) or "null")
+    except ValueError:
+        inventory = None
+    if not isinstance(inventory, dict) or not inventory:
+        return _result(name, FAIL, "; ".join(problems + ["missing or invalid " + manifest]), fix)
+    for skill, files in inventory.items():
+        # Only the pack's portable relative-path inventory is admitted. Local extra
+        # skills are allowed and do not substitute for an absent pack-owned skill.
+        if (not re.fullmatch(r"[a-z0-9-]+", skill) or not isinstance(files, list)
+                or "SKILL.md" not in files or any(
+                    not isinstance(f, str) or not f or "\\" in f
+                    or f.startswith("/") or ":" in f or ".." in f.split("/") for f in files)):
+            problems.append("invalid skill inventory entry " + skill)
+            continue
+        for rel in files:
+            target = ".agents/skills/" + skill + "/" + rel
+            if not os.path.isfile(os.path.join(root, target)):
+                problems.append("missing " + target)
+        target = ".agents/skills/" + skill + "/SKILL.md"
+        text = _read(os.path.join(root, target)) or ""
+        header = re.match(r"\A---\r?\n(.*?)\r?\n---(?:\r?\n|$)", text, re.S)
+        fields = {}
+        if header:
+            for key in ("name", "description"):
+                match = re.search(r"^" + key + r":[ \t]*([^\r\n]+)", header.group(1), re.M)
+                fields[key] = match.group(1).strip().strip("\"'") if match else ""
+        # The pack emits single-line scalar metadata. This is a pack contract
+        # check, not a general YAML validator for arbitrary user skills.
+        if fields.get("name") != skill or not fields.get("description", "").strip():
+            problems.append("invalid name/description in " + target)
+    if problems:
+        return _result(name, FAIL, "; ".join(problems), fix)
+    if (_read(os.path.join(root, "AGENTS.override.md")) or "").strip():
+        return _result(name, WARN, "AGENTS.override.md takes precedence over AGENTS.md; pack grounding may be shadowed",
+                       "review the override with its owner; do not overwrite it automatically")
+    return _result(name, PASS,
+                   "%d pack skills, companion files, constitution and scripts present; filesystem only, Codex catalog not queried"
+                   % len(inventory))
+
+
 def check_claude_md_import(root):
     """CTX-B / F-01. Copilot CLI loads BOTH AGENTS.md and CLAUDE.md as custom instructions
     (measured: two ~58 KB <custom_instruction> blocks in one captured prefix), while Claude
@@ -457,6 +518,7 @@ def run(root):
         check_surface(root, ".github", [".github/instructions", ".github/prompts", ".github/agents"]),
         check_surface(root, ".grok", [".grok/skills", ".grok/agents", ".grok/hooks", ".grok/rules"]),
         check_surface(root, ".agents", [".agents/skills", ".agents/rules", ".agents/hooks.json"]),
+        check_codex(root),
         check_block(root, "CLAUDE.md"),
         check_block(root, "AGENTS.md"),
         check_claude_md_import(root),

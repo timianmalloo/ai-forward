@@ -934,7 +934,7 @@ window.DOCS_INDEX = {
       "phase": "",
       "reviewBy": "2027-03-03",
       "reviewSuggested": [],
-      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 364 public functions across 26 modules, 46% carrying a docstring.",
+      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 365 public functions across 26 modules, 46% carrying a docstring.",
       "tags": [
         "api",
         "scripts",
@@ -948,7 +948,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "14893fec2bd1fbfff66f459181cf73cb6f446be7b88a4dfa98ae8395062b9c32"
+      "sourceSha256": "0efec58cc7d59ff9cdd8a40ece357f81f35fa2a2cba18db9a9608e26e852e5be"
     },
     {
       "id": "api-marker-lint",
@@ -1048,7 +1048,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c28d7334e8331ad23c432fdff119c7f6cf511981a71901976a0f619b629b3c73"
+      "sourceSha256": "f0d2b1100e9d5d4e443027c284db99a24475abfb9d954dad59093c8a2fc98d8e"
     },
     {
       "id": "api-prompt-log",
@@ -2464,7 +2464,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c9506bd0b4d2de3aee6bbef9f960293e4837ab1c6889ed06de876ba3e7393177"
+      "sourceSha256": "8f9444bb6748260733c527bbe61171bafd3f5c660b6d6447c76b020652868868"
     },
     {
       "id": "docs-index",
@@ -2514,7 +2514,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "02521c5931a4ee1f4ac09c8ad621cc0b6bf0ffcab884f2f623e935e4f57a47e6"
+      "sourceSha256": "f4b9b17180faf759114a45948d4fbbd071c1532c44bc50bce5771f4684afffcf"
     },
     {
       "id": "forensic-review",
@@ -3308,6 +3308,41 @@ window.DOCS_INDEX = {
       "sourceSha256": "5bf8471b858442580beb4f227c56ae44fb370b0ff6185b66ba14d4d0da90ae07"
     },
     {
+      "id": "plan-codex-discovery",
+      "path": "docs/plans/codex-discovery.md",
+      "title": "Codex pack discovery and grounding",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "tooling",
+      "phase": "",
+      "reviewBy": "2026-12-19",
+      "reviewSuggested": [],
+      "summary": "Verify Codex discovery and document native invocation, explicit grounding, and deployment health.",
+      "tags": [
+        "codex",
+        "installation",
+        "verification"
+      ],
+      "links": [
+        {
+          "to": "kb-graph-and-loop-engineering",
+          "rel": "depends-on"
+        },
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Execution graph",
+          "mermaid": "graph LR\n A --> B --> D\n A --> C --> D\n D --> E --> G\n D --> F --> G"
+        }
+      ],
+      "sourceSha256": "0dfcc7d9775338ab3e1cfb5e0c1e3f94813a9005e9428755808682019810e12b"
+    },
+    {
       "id": "plan-optimize-graph-grok-surface",
       "path": "docs/plans/optimize-graph-grok-surface.md",
       "title": "optimize-graph — Grok Build surface for pack-consuming repos",
@@ -3740,6 +3775,88 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "123c25ff42607a290771536e1e41fba9bd5a7543c61ff6020cea640f0adb4aec"
+    },
+    {
+      "id": "proposal-proactive-multi-harness-coordination",
+      "path": "docs/proposals/proactive-multi-harness-coordination.md",
+      "title": "Proposal: Proactive Multi-Harness Coordination — The Owner/Coordinator/Sub-Agent Architecture",
+      "type": "doc",
+      "status": "in-review",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2026-12-18",
+      "reviewSuggested": [],
+      "summary": "A comprehensive revision and advancement of multi-harness agent coordination. Addresses the failure of pull-based collaboration observed in AI-DE and the latency limits of git-only synchronization. Introduces an active, bi-directional Message Board and Event Bus (push and pull) paired with a strict Owner / Coordinator / Sub-Agent hierarchy across three operational topologies: Cross-Harness Hub-and-Spoke, Single-Harness Fleet, and Federated Multi-Harness. Enforces strict per-agent git worktree isolation, automated ledger conflict resolution, Kleppmann-fenced leases, and a continuous running track of work in flight, completed, and remaining.",
+      "tags": [
+        "coordination",
+        "proactive-bus",
+        "message-board",
+        "multi-harness",
+        "leader-election",
+        "p2p",
+        "distributed-systems",
+        "worktree-isolation",
+        "rfc"
+      ],
+      "links": [
+        {
+          "to": "spec-agent-coordination",
+          "rel": "refines"
+        },
+        {
+          "to": "architecture-agent-coordination",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0007-coordination-substrate",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0005-harness-runner-boundary",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-coord-collaboration-phase4",
+          "rel": "refines"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "4. Theoretical Foundations (/collectknowledge Synthesis)",
+          "mermaid": "graph TD\n    P2P[\"Peer-to-Peer Protocols<br/>(JXTA, BitTorrent, Gossipsub)\"] --> ARCH[\"Proactive Multi-Harness<br/>Coordination Architecture\"]\n    M2M[\"Model-to-Model Comms<br/>(A2A, Actor Model, Blackboard)\"] --> ARCH\n    DIST[\"Distributed Systems<br/>(Leases, Fencing, Phi-Accrual)\"] --> ARCH\n    CONS[\"Quorum & Consensus<br/>(Raft, Lease-Based Leader Election)\"] --> ARCH"
+        },
+        {
+          "kind": "flowchart",
+          "title": "5.1 Scenario 1: Cross-Harness Hub-and-Spoke (Remote Delegation)",
+          "mermaid": "graph TD\n    HUMAN[Human Operator] -.->|Written Mandate| OWNER\n    subgraph Primary Harness [Antigravity / Main Session]\n        OWNER[Owner Agent<br/>Frontier Model] -->|Reviews & Vetoes| COORD[Coordinator / Leader<br/>High-Cap Model]\n        COORD -->|Maintains| TRACK[Running Progress Track<br/>In-Flight / Done / To-Do]\n        COORD -->|Publishes & Listens| BOARD[Proactive Message Board<br/>Event Bus + Blackboard]\n    end\n\n    COORD -->|Proactive Spawn & Push| WT_AGY[Worktree 1: Local Sub-Agent]\n    COORD -->|Proactive CLI/API Push| WT_CLAUDE[Worktree 2: Claude Code]\n    COORD -->|Proactive API Push| WT_CODEX[Worktree 3: Codex Cloud]\n    COORD -->|Proactive Push| WT_COPILOT[Worktree 4: Copilot CLI]\n\n    WT_AGY -->|Artifact Ref & Progress| BOARD\n    WT_CLAUDE -->|Artifact Ref & Progress| BOARD\n    WT_CODEX -->|Artifact Ref & Progress| BOARD\n    WT_COPILOT -->|Artifact Ref & Progress| BOARD\n\n    BOARD -->|Events & Interrupts| COORD\n    COORD -->|Join & Verification| REPO[(GitHub Repository<br/>Main Branch)]"
+        },
+        {
+          "kind": "flowchart",
+          "title": "5.2 Scenario 2: Single-Harness Internal Fleet (In-Session Swarm)",
+          "mermaid": "graph TD\n    HUMAN[Human Operator] -.->|Prompt & Scope| OWNER\n    subgraph Single Harness Runtime [e.g. Antigravity / Claude Code]\n        OWNER[Owner Seat<br/>Frontier Model] -->|Authorizes Plan| COORD[Coordinator Seat<br/>Orchestrator Model]\n        COORD -->|State & Work List| BOARD[Internal Message Board<br/>IPC / Memory / JSONL]\n        \n        COORD -->|Spawns in WT 1| SUB1[Worker 1: Code Impl<br/>Fast/Efficient Model]\n        COORD -->|Spawns in WT 2| SUB2[Worker 2: Unit Tests<br/>Fast/Efficient Model]\n        COORD -->|Spawns in WT 3| SUB3[Worker 3: Persona Audit<br/>Reviewer Model]\n        \n        SUB1 -->|Done: Commit & Proof| BOARD\n        SUB2 -->|Done: Commit & Proof| BOARD\n        SUB3 -->|Findings & Verdict| BOARD\n        \n        BOARD -->|Real-time Updates| COORD\n        COORD -->|Synthesizes & Joins| OWNER\n    end\n    OWNER -->|Final Verified Push| REPO[(GitHub Repository)]"
+        },
+        {
+          "kind": "flowchart",
+          "title": "5.3 Scenario 3: Federated Multi-Harness with Global Leader",
+          "mermaid": "graph TD\n    HUMAN[Human Operator] -->|Dispatches Domain Work| H1_O[Harness 1: Antigravity]\n    HUMAN -->|Dispatches Domain Work| H2_O[Harness 2: Claude Code]\n    HUMAN -->|Dispatches Domain Work| H3_O[Harness 3: Copilot CLI]\n\n    subgraph Harness 1: Antigravity [Elected Global Leader]\n        H1_O[Owner 1] --> H1_C[Coordinator 1 / Global Leader]\n        H1_C --> H1_W[Internal Sub-Agents]\n    end\n\n    subgraph Harness 2: Claude Code [Follower Harness]\n        H2_O[Owner 2] --> H2_C[Coordinator 2]\n        H2_C --> H2_W[Internal Sub-Agents]\n    end\n\n    subgraph Harness 3: Copilot CLI [Follower Harness]\n        H3_O[Owner 3] --> H3_C[Coordinator 3]\n        H3_C --> H3_W[Internal Sub-Agents]\n    end\n\n    H1_C <==>|Epoch-Fenced Leases & Work DAG| FED_BOARD[Federated Proactive Message Board<br/>Loopback HTTP / SSE / Relay]\n    H2_C <==>|Seam Contracts & Status Push| FED_BOARD\n    H3_C <==>|Seam Contracts & Status Push| FED_BOARD\n\n    FED_BOARD <==>|Dual-Write Ledger Sync| GIT_REPO[(GitHub Repository<br/>.agents/log/ + main)]"
+        },
+        {
+          "kind": "state",
+          "title": "8. Real-Time Running Progress Tracking (The Live State Vector)",
+          "mermaid": "stateDiagram-v2\n    [*] --> WorkToBeDone: Backlog / Spec Decomposition\n    WorkToBeDone --> WorkInFlight: Claimed & Dispatched to Sub-Agent\n    WorkInFlight --> WorkInFlight: Progress Events / Phi-Accrual Healthy\n    WorkInFlight --> Blocked: Dependency / Contention / Stalled\n    Blocked --> WorkInFlight: Kick / Seam Resolved / Reassigned\n    WorkInFlight --> WorkCompleted: Verified Proof Pack & Green Gates\n    WorkCompleted --> [*]: Merged to Main via Conductor Join"
+        },
+        {
+          "kind": "gantt",
+          "title": "10. Phasing & Implementation Roadmap",
+          "mermaid": "gantt\n    title Proactive Coordination Implementation Roadmap\n    dateFormat  YYYY-MM-DD\n    section Phase A: Substrate Hardening\n    Absorb COORD-I & COORD-J into scripts           :2026-10-01, 7d\n    Enforce Universal WT1 per-session worktrees     :2026-10-05, 7d\n    Automated union merge drivers for ledgers       :2026-10-10, 5d\n    section Phase B: Active Message Board\n    Loopback HTTP + SSE Event Bus (127.0.0.1:0)     :2026-10-15, 10d\n    CLI/TUI `coord board` and MCP tool endpoints   :2026-10-22, 7d\n    Proactive interrupt & multi-channel push       :2026-10-27, 8d\n    section Phase C: Topologies & State Vector\n    Scenario 1 & 2 Owner/Coordinator/Subagent engine:2026-11-05, 10d\n    Real-Time Running Progress Tracker (3-State)    :2026-11-12, 7d\n    Phi-accrual kick ladder & automated eviction   :2026-11-18, 7d\n    section Phase D: Multi-Harness Federation\n    Scenario 3 Global Leader election & lease sync  :2026-11-25, 10d\n    Cross-harness seam contracts & handoff tokens   :2026-12-05, 10d\n    End-to-End Validation across AGY, Claude, Copilot:2026-12-15, 7d"
+        }
+      ],
+      "sourceSha256": "e4c12caa79acf178f8fb14aa96593a4583f2ca2c443ae7581f771d0063ca742f"
     },
     {
       "id": "proposal-turn-goal-state-and-stopping",
@@ -6436,6 +6553,13 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     },
     {
+      "id": "surface-dreams-drm-0010-index",
+      "path": "docs/dreams/drm-0010/index.html",
+      "title": "Dream Review",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact."
+    },
+    {
       "id": "surface-mockups-dream-review",
       "path": "docs/mockups/dream-review.html",
       "title": "Dream Review — mockup",
@@ -6504,5 +6628,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "037a6eb1061a0e2d1f4a5fb1e18fa0c0e174a26a3420ae3b226d5fdfbfa8e42e"
+  "graphSha256": "ac89dfdc3feb5d74b21494b91b87e882a10c84bdc00a016d8484c9c7f645567a"
 };

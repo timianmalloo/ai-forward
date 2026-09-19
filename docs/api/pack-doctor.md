@@ -53,6 +53,10 @@ Exit: 0 all PASS/WARN (or all PASS under --strict) · 1 any FAIL/strict WARN.
 
 **Coverage gap** — no docstring in the source.
 
+### `check_codex(root)`
+
+Check the deployed pack contract, never claim a running Codex catalog was read.
+
 ### `check_claude_md_import(root)`
 
 CTX-B / F-01. Copilot CLI loads BOTH AGENTS.md and CLAUDE.md as custom instructions
@@ -144,6 +148,6 @@ lesson into a control that fires at the moment of the mistake).
 
 ## Coverage
 
-- Public functions: **12** · documented: **7** (**58%**)
+- Public functions: **13** · documented: **8** (**62%**)
 - Undocumented (recorded, not invented): `check_installed`, `check_surface`, `check_block`, `check_graph`, `run`
 

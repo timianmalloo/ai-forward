@@ -246,7 +246,7 @@ Reset-Dir $grokRules
 Copy-Item (Join-Path $pack "adapters\grok\grok-surface.md") (Join-Path $grokRules "grok-surface.md") -Force
 Write-Host "  .grok/rules: grok-surface.md (path map only)"
 
-# --- .agents/{skills,rules,hooks.json,skills.json} (Antigravity — dogfood, INSTALL 1.8) -
+# --- .agents/skills shared by Codex and Antigravity (INSTALL 1.8 / 1.9) ---------
 $agySkills = Join-Path $repo ".agents\skills"
 Reset-Dir $agySkills
 $agySkillCount = 0
@@ -260,6 +260,21 @@ foreach ($cmd in Get-ChildItem (Join-Path $pack "commands") -Directory) {
     }
 }
 Write-Host "  .agents/skills: $agySkillCount"
+
+# Pack-owned inventory lets a consuming repo detect missing skills without pack/.
+$codexInventory = [ordered]@{}
+foreach ($cmd in Get-ChildItem (Join-Path $pack "commands") -Directory | Sort-Object Name) {
+    if (Test-Path (Join-Path $cmd.FullName "SKILL.md")) {
+        [string[]]$codexFiles = @(Get-ChildItem $cmd.FullName -File -Recurse |
+            ForEach-Object { [IO.Path]::GetRelativePath($cmd.FullName, $_.FullName).Replace('\', '/') })
+        [Array]::Sort($codexFiles, [StringComparer]::Ordinal)
+        $codexInventory[$cmd.Name] = $codexFiles
+    }
+}
+$codexDocs = Join-Path $repo "docs/ai-forward-pack"
+New-Item -ItemType Directory -Force -Path $codexDocs | Out-Null
+$codexInventory | ConvertTo-Json -Depth 4 | Set-Content (Join-Path $codexDocs "codex-skills.json") -Encoding UTF8
+Copy-Item (Join-Path $pack "adapters/codex/codex.md") (Join-Path $codexDocs "codex.md") -Force
 
 $agyRules = Join-Path $repo ".agents\rules"
 Reset-Dir $agyRules

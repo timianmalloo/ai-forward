@@ -1786,7 +1786,7 @@ window.PORTAL_DATA = {
         "id": "api-index",
         "type": "api",
         "title": "API reference — the deployed script bundle",
-        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 364 public functions across 26 modules, 46% carrying a docstring."
+        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 365 public functions across 26 modules, 46% carrying a docstring."
       },
       {
         "id": "api-marker-lint",
@@ -2623,6 +2623,12 @@ window.PORTAL_DATA = {
         "summary": "Decision not to enable required status checks on main, taken while closing FR-062. The control would have prevented the original incident outright, but with..."
       },
       {
+        "id": "plan-codex-discovery",
+        "type": "doc",
+        "title": "Codex pack discovery and grounding",
+        "summary": "Verify Codex discovery and document native invocation, explicit grounding, and deployment health."
+      },
+      {
         "id": "plan-optimize-graph-grok-surface",
         "type": "doc",
         "title": "optimize-graph — Grok Build surface for pack-consuming repos",
@@ -2729,6 +2735,12 @@ window.PORTAL_DATA = {
         "type": "doc",
         "title": "Proposal: Owner / Coordinator / Sub-Agent coordination across one, several, and federated harnesses",
         "summary": "Replaces the two prior coordination proposals with a smaller design grounded in what the harnesses ship, what ai-de measured, and three executed git spikes...."
+      },
+      {
+        "id": "proposal-proactive-multi-harness-coordination",
+        "type": "doc",
+        "title": "Proposal: Proactive Multi-Harness Coordination — The Owner/Coordinator/Sub-Agent Architecture",
+        "summary": "A comprehensive revision and advancement of multi-harness agent coordination. Addresses the failure of pull-based collaboration observed in AI-DE and the..."
       },
       {
         "id": "proposal-turn-goal-state-and-stopping",
@@ -4335,6 +4347,16 @@ window.PORTAL_DATA = {
         "rel": "relates-to"
       },
       {
+        "from": "plan-codex-discovery",
+        "to": "architecture",
+        "rel": "relates-to"
+      },
+      {
+        "from": "plan-codex-discovery",
+        "to": "kb-graph-and-loop-engineering",
+        "rel": "depends-on"
+      },
+      {
         "from": "plan-optimize-graph-grok-surface",
         "to": "kb-graph-and-loop-engineering",
         "rel": "depends-on"
@@ -4601,6 +4623,36 @@ window.PORTAL_DATA = {
       },
       {
         "from": "proposal-owner-coordinator-subagent-coordination",
+        "to": "spec-agent-coordination",
+        "rel": "refines"
+      },
+      {
+        "from": "proposal-proactive-multi-harness-coordination",
+        "to": "adr-0005-harness-runner-boundary",
+        "rel": "depends-on"
+      },
+      {
+        "from": "proposal-proactive-multi-harness-coordination",
+        "to": "adr-0007-coordination-substrate",
+        "rel": "depends-on"
+      },
+      {
+        "from": "proposal-proactive-multi-harness-coordination",
+        "to": "architecture-agent-coordination",
+        "rel": "refines"
+      },
+      {
+        "from": "proposal-proactive-multi-harness-coordination",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "proposal-proactive-multi-harness-coordination",
+        "to": "design-coord-collaboration-phase4",
+        "rel": "refines"
+      },
+      {
+        "from": "proposal-proactive-multi-harness-coordination",
         "to": "spec-agent-coordination",
         "rel": "refines"
       },

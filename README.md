@@ -4,17 +4,21 @@ The development home of the **AI-Forward Pack** — a repository-droppable exten
 the Agent Knowledge Pack's adversarial reviewer council into a working swarm: collaborating
 peers that *author*, adversarial personas that *attack*, and a staged reasoning discipline (the
 **Rigor Protocol**) that slows the rush to a plausible answer and replaces it with evidence at
-every step. It works with **Claude Code**, **GitHub Copilot**, **Grok Build**, **Antigravity**, or any combination.
+every step. It works with **Claude Code**, **GitHub Copilot**, **Grok Build**, **Antigravity**, **Codex**, or any combination.
 
 This repo is two things at once:
 
 1. **The canonical source** for the pack — everything you edit to expand it lives in [`pack/`](pack/).
 2. **A live install of the pack** — the pack is installed into this repo (`.claude/`, `.github/`,
    `.grok/`, `.agents/`, `docs/`) so the skills, agents, and knowledge are active in Claude Code, Copilot,
-   Grok Build, and Antigravity *while you work on the pack itself*. Dogfooding: the pack is built using the pack.
+   Grok Build, Antigravity, and Codex *while you work on the pack itself*. Dogfooding: the pack is built using the pack.
 
 For the pack's own story — why it exists, what's inside, how to use the twenty-seven skills — read
 [`pack/README.md`](pack/README.md) and [`pack/OVERVIEW.md`](pack/OVERVIEW.md).
+
+**Codex users:** invoke `$collectknowledge` or `$specify` (CLI/IDE: `/skills` or `$`).
+Skills live in `.agents/skills/`; `AGENTS.md` supplies project instructions.
+See the [Codex setup and troubleshooting guide](docs/ai-forward-pack/codex.md).
 
 ## Layout
 

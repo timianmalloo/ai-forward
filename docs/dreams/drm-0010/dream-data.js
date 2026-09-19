@@ -1,0 +1,2306 @@
+window.DREAM_DATA = {
+  "id": "drm-0010",
+  "date": "2026-09-18",
+  "generated": "2026-09-18T15:12:44Z",
+  "window": "last 15 days · 52 audit · 3 change · 0 mitigations · 17 markers",
+  "counts": {
+    "audit": 52,
+    "change": 3,
+    "mitigations": 0,
+    "classes": 45,
+    "markers": 17,
+    "profiles": 7,
+    "rem": 16
+  },
+  "proposals": [
+    {
+      "id": "p44",
+      "kind": "New class",
+      "group": "Coordination (multi-harness)",
+      "title": "COORD-I — Control currency: a control runs at the version of the tree that invoked it",
+      "sig": "A lane branched before a control existed enforces the rule set of the day it branched, so every other control's coverage is a function of when its caller branched",
+      "scope": "general",
+      "confidence": "v",
+      "source": "rem:multi-harness-coordination-2026-09-18",
+      "score": 0.97,
+      "control": {
+        "rung": "reuse-in-codebase",
+        "text": "Absorb ai-de's DC-226 block into pack/scripts/coord-core.py: CONTROL_PATHS + CONTROL_CURRENCY_REF; `coord claim` refuses when `merge-base..origin/main` carries commits touching CONTROL_PATHS (direction-aware, one named no-remote escape that prints 'not recorded' and records it in the event); `coord worktree list` prints the behind-count per tree. Red-first: a fixture where a linked worktree behind main on a control path is refused on claim and a current tree is allowed.",
+        "loc": "pack/scripts/coord-core.py (claim, worktree list); tests/docs_explorer/test_coord_addendum_cd.py"
+      },
+      "boundary": "Applies to controls that live in tracked files a tree can be behind on (scripts, hooks, registries). It does not apply to controls served from the primary's hooks dir, which every worktree shares (SCOPE-A).",
+      "evidence": [
+        {
+          "eid": "ai-de:docs/ai-forward-pack/scripts/coord-core.py#DC-226",
+          "note": "13 references; the control exists there (~400 lines) and 0 references exist in ai-forward pack/scripts/coord-core.py (grep, 2026-09-18)."
+        },
+        {
+          "eid": "ai-de:.agents/log (cap.py, TTL cap landed 0f553858 2026-09-14)",
+          "note": "After the 900 s cap landed: 48 claims over the cap, 4 carrying the required --long-edit reason; 301 over-cap claims predate the cap and are not violations (corrected count)."
+        },
+        {
+          "eid": "ai-de:docs/audit/audit-log.jsonl (fleet read, recorded on Windows, not re-run here)",
+          "note": "140 of 144 trees stale, max 72 commits behind main — Inferred; probe: `coord-core.py worktree list` on the operator's machine."
+        },
+        {
+          "eid": "ai-de:git 22572b93..e0a9c116 (2026-09-17)",
+          "note": "The Atlas native lane held a lease on docs/audit/audit-log.jsonl and stopped a main join while its tree's coord-core.py had no COORD-CLAIM-REGISTER-CLASS (grep -c = 0; siblings 1)."
+        }
+      ]
+    },
+    {
+      "id": "p45",
+      "kind": "New class",
+      "group": "Coordination (multi-harness)",
+      "title": "COORD-J — The invisible join: a tool's completion read from the harness's exit status, not the tool's own record",
+      "sig": "A long-running multi-step tool run under a background shell is judged complete by the observer's status line while the tool never recorded that it finished",
+      "scope": "general",
+      "confidence": "v",
+      "source": "rem:multi-harness-coordination-2026-09-18",
+      "score": 0.95,
+      "control": {
+        "rung": "reuse-in-codebase",
+        "text": "Absorb ai-de's DC-227 control into pack/scripts/conductor-join.py: line_buffering=True on the log stream and a JoinState that writes .agents/joins/<shortname>.json per step with a terminal `complete` key; absence of the key is 'unfinished join', never 'exited 0'. Red-first: a join killed at step 7 leaves a state file without `complete`, and the profiler/doctor reports it as unfinished.",
+        "loc": "pack/scripts/conductor-join.py; pack/scripts/session-profile.py (SP-23 family); pack-doctor coordination check"
+      },
+      "boundary": "Applies to any pack script that runs longer than one tool call and is observed through a harness (join, gate runner, cleanup). It does not replace exit codes; it adds the record an exit code cannot carry when the observer is not the caller.",
+      "evidence": [
+        {
+          "eid": "ai-de:docs/ai-forward-pack/scripts/conductor-join.py#JoinState",
+          "note": "7 references to DC-227/JoinState in ai-de's vendored copy; 0 in ai-forward's pack copy (grep, 2026-09-18)."
+        },
+        {
+          "eid": "ai-de:git c5622968 (2026-09-17) feat(join): DC-227",
+          "note": "Two real joins: both logs ended at '== step 7: commit', the harness reported '[exited with code 0]', nothing was pushed, exit status never recorded."
+        },
+        {
+          "eid": "ai-forward:pack/knowledge/end-to-end-integrity.md#E-exit-code",
+          "note": "'An exit code is not a result — read the state' is already doctrine; the join had no state to read."
+        }
+      ]
+    },
+    {
+      "id": "p46",
+      "kind": "New class",
+      "group": "Coordination (multi-harness)",
+      "title": "COORD-L — The record cannot say which harness did the work",
+      "sig": "In a repository worked by several harnesses the audit and coordination records carry no controlled harness identity, so every cross-harness question is reconstructed from agent-id prefixes in a different ledger",
+      "scope": "general",
+      "confidence": "v",
+      "source": "rem:multi-harness-coordination-2026-09-18",
+      "score": 0.93,
+      "control": {
+        "rung": "minimum",
+        "text": "audit-log.py append takes a harness product id (claude|copilot|grok|agy|codex) from an environment default the session-start hook sets per host, validated against a controlled vocabulary, written as 'not recorded' when absent; `coord session start` carries `host` beside `tree`; `audit-log.py selfcheck --gate` counts unrecorded-harness substantive entries and fails above a threshold. Red-first: the gate is red today on both repos.",
+        "loc": "pack/scripts/audit-log.py (append, selfcheck); pack/adapters/hooks/session-start.py; pack/scripts/coord-core.py (cmd_session)"
+      },
+      "boundary": "Applies to the durable records (audit log, .agents/log). It does not require a harness to self-identify inside the model's context; the hook is the emitter.",
+      "evidence": [
+        {
+          "eid": "ai-de:docs/audit/audit-log.jsonl since 2026-09-03",
+          "note": "373 entries; `tool` recorded on 16 (4 spellings: 'Claude Code' 9, 'claude-code' 4, 'domain-researcher' 2, 'AiDe.App.exe --conduct' 1); `actor` on 81 — in a window with 4 harnesses (copilot 3,392 · codex 1,990 · claude 463 · grok 94 ledger events) and 188 agent identities."
+        },
+        {
+          "eid": "ai-forward:docs/audit/audit-log.jsonl",
+          "note": "172 entries; `tool` recorded on 84 with 5 spellings ('Copilot CLI' 76, 'GitHub Copilot CLI' 5, 'Claude Code (Opus 5)' 1, 'analysis' 1, 'implement' 1); every Claude Code entry in this window carries tool=None."
+        },
+        {
+          "eid": "ai-forward:pack/scripts/coord-core.py:1248,1359",
+          "note": "HARNESS_STATUS names two hosts (claude, copilot); detect_harness returns copilot-or-claude; the pack deploys four surfaces."
+        },
+        {
+          "eid": "ai-forward:pack/scripts/coord-core.py:2033",
+          "note": "session-start events carry `tree` (P5) and no host."
+        },
+        {
+          "eid": "ai-forward:pack/adapters/hooks/session-start.py:22-24",
+          "note": "--host is a hand-passed flag in the hook wiring, not detected; 'Copilot CLI is not wired: its session-start event was not verified.'"
+        }
+      ]
+    },
+    {
+      "id": "p47",
+      "kind": "Control upgrade",
+      "group": "Coordination (multi-harness)",
+      "title": "COORD-D upgrade — Registration without enlistment: session-end is not emitted, so 'who is live' is unanswerable",
+      "sig": "Entry verbs are emitted reliably and the exit verb is not, so liveness is inferred from a staleness window and a dead session holds its tree until the window elapses",
+      "scope": "general",
+      "confidence": "v",
+      "source": "rem:multi-harness-coordination-2026-09-18",
+      "score": 0.91,
+      "control": {
+        "rung": "one line",
+        "text": "`coord session list` / fleet view compute liveness from last-event age with the staleness horizon printed, and print 'no end recorded' for a session with a start and no end — never 'live'; `coord metrics` reports the start/end ratio. Red-first: a fixture with one start and no end must not render as live. The 8-hour occupancy window at coord-core.py:2209 keeps its simplify: marker until this lands.",
+        "loc": "pack/scripts/coord-core.py (cmd_session, metrics, worktree list)"
+      },
+      "boundary": "Applies to liveness READERS. It does not add a heartbeat writer (that is the active-coordination proposal's P5) and does not change lease semantics, which held: 0 overlapping live leases across 3,257 claims.",
+      "evidence": [
+        {
+          "eid": "ai-de:.agents/log since 2026-09-03 (ledger.py, re-run 2026-09-18)",
+          "note": "session-start 294 · session-end 134; 127 of 197 sessions never ended; 64 claims released only by TTL expiry; claim 3,257 / release 2,614."
+        },
+        {
+          "eid": "ai-forward:pack/scripts/coord-core.py:2209",
+          "note": "simplify: occupancy = newest session-start with no matching session-end inside an 8-hour window; upgrade trigger 'the first time a human is blocked by a dead session'."
+        },
+        {
+          "eid": "ai-forward:learnings/fleet-classes.md#COORD-D",
+          "note": "The class was promoted from drm-0009 with no built control in ai-forward."
+        },
+        {
+          "eid": "ai-forward-active-coord:docs/proposals/active-multi-harness-coordination.md#1.5",
+          "note": "Sessions register, they do not enlist: live Claude Code and Copilot rows read 'Not Recorded · trust Asserted · 0 span(s) · Ended/Stale' (recorded by ai-de 2026-09-02)."
+        }
+      ]
+    },
+    {
+      "id": "p48",
+      "kind": "New class",
+      "group": "Coordination (multi-harness)",
+      "title": "FED-B — The consumer-to-pack handoff channel rots exactly when the programme is hot",
+      "sig": "Findings addressed to the pack are recorded in a prose file in the consuming repo, the file stops being updated while landings continue, and the classes the pack most needs are the ones never registered",
+      "scope": "general",
+      "confidence": "v",
+      "source": "rem:multi-harness-coordination-2026-09-18",
+      "score": 0.9,
+      "control": {
+        "rung": "minimum",
+        "text": "Consuming repos write pack-addressed findings to a machine-readable learnings/pack-findings.jsonl (one row per class naming the pack as fix owner); dream.py's corpus loader ingests sibling repos' rows (path list in the dream config) so /dream reads them without an agent transcribing prose; a register gate in the consumer fails when a class whose Status names the pack has no row. Red-first: ai-de's DC-216 and DC-226/227 have no row today.",
+        "loc": "pack/scripts/dream.py (load_corpus); pack/scripts/audit-log.py selfcheck or a new verify-pack-findings.py; docs/lessons/defect-classes.md template"
+      },
+      "boundary": "Applies to the inbound half of federation (consumer → pack). The outbound half is DREAM-A / p49.",
+      "evidence": [
+        {
+          "eid": "ai-de:docs/notes/pack-findings-addendum-cd.md",
+          "note": "17 numbered findings, last commit 2026-09-14; DC-226, DC-227, the baseline-drift gate and the stranded-audit fix landed 2026-09-15..17 and were not added."
+        },
+        {
+          "eid": "ai-de:docs/lessons/defect-classes.md",
+          "note": "105 → 225 headings since 2026-09-03; DC-226 and DC-227 appear only in code and the audit log, not in the register; DC-216 Status: 'uncontrolled — a process class; the fix is the pack's'."
+        },
+        {
+          "eid": "ai-de (scripted scan)",
+          "note": "19 of the 120 new classes name the pack as the fix owner."
+        },
+        {
+          "eid": "ai-forward:docs/audit/audit-log.jsonl 2026-09-14 (rev 70)",
+          "note": "Every Addenda C/D control the pack absorbed was ai-de-sourced and arrived by a human carrying a prose file across."
+        }
+      ]
+    },
+    {
+      "id": "p49",
+      "kind": "Control upgrade",
+      "group": "Coordination (multi-harness)",
+      "title": "DREAM-A / FR-081 upgrade — Promotion succeeds, application is never committed, arrival is unverifiable",
+      "sig": "The federation loop's later stages (apply, commit, verify arrival) do not run, so the fleet store grows while no target register carries a fleet-sourced class",
+      "scope": "general",
+      "confidence": "v",
+      "source": "rem:multi-harness-coordination-2026-09-18",
+      "score": 0.89,
+      "control": {
+        "rung": "minimum",
+        "text": "apply-learnings writes a `Source: fleet/<dream>/<proposal>` line into every class it adds; a `verify-fleet-arrival` check (in pack-doctor) counts fleet-sourced classes in the target register and reports 0 as 'not arrived'; the dream diary records federation coverage (targets reachable on this host / total). Red-first: every target reads 0 today.",
+        "loc": "pack/scripts/apply-learnings.py; pack/scripts/pack-doctor.py; pack/scripts/dream.py (diary)"
+      },
+      "boundary": "Applies to the outbound half of federation. It does not automate the commit in the target (the classifier denial stands); it makes the non-arrival visible.",
+      "evidence": [
+        {
+          "eid": "ai-forward:docs/audit/audit-log.jsonl al-01M1PM0HSK9VFNHGFA8T2CHQHG (2026-09-04)",
+          "note": "'APPLIED as working-tree changes in 5 of 6 targets; NOT committed — the cross-repo commit was denied by the permission classifier.' No later entry records a commit."
+        },
+        {
+          "eid": "ai-forward:docs/backlog/forensic-review-rev59.md#FR-081",
+          "note": "Fleet provenance does not survive application: zero `Source: fleet` in any target."
+        },
+        {
+          "eid": "this host (survey 2026-09-18)",
+          "note": "Of the 6 federation targets, only ai-de exists on this machine; BioHacker, HealthWatch, TheTerrace, backlot, meridian-finance-planner are on the Windows host — coverage 1/6 for this dream."
+        },
+        {
+          "eid": "ai-forward:docs/dreams/drm-0009/dream.json#p22",
+          "note": "DREAM-A proposed 2026-09-03: 'promotion works; the later stages do not run.' Recurs."
+        }
+      ]
+    },
+    {
+      "id": "p50",
+      "kind": "Control upgrade",
+      "group": "Coordination (multi-harness)",
+      "title": "FED-A control — The fleet store double-promotes one class from successive dreams",
+      "sig": "The idempotency ledger is keyed by (dream, proposal), so the same class re-proposed by the next dream is appended again; the deduper that should catch it is the one FED-A says cannot",
+      "scope": "general",
+      "confidence": "v",
+      "source": "rem:multi-harness-coordination-2026-09-18",
+      "score": 0.88,
+      "control": {
+        "rung": "minimum",
+        "text": "Key learnings/promoted.jsonl by a normalised class slug as well as (dream, proposal); _promote_fleet refuses an existing slug and records a `re-promoted-from` link instead; a verify gate fails when fleet-classes.jsonl has duplicate slugs. Red-first: the gate is red today (10 duplicated slugs).",
+        "loc": "pack/scripts/dream.py (_promote_fleet, cmd_apply_decisions); tools/verify-bundle.ps1 gate"
+      },
+      "boundary": "Applies to the fleet store's write path. It does not decide what a duplicate MEANS across repos (FR-080's abstraction problem) — it stops the pack's own store from duplicating itself.",
+      "evidence": [
+        {
+          "eid": "ai-forward:learnings/fleet-classes.jsonl (measured 2026-09-18)",
+          "note": "37 records · 23 unique slugs · 10 slugs duplicated (PACK-C/D/E/H ×3; PACK-N/P/Q/O, SHELL-A, unknown-artifact-type ×2)."
+        },
+        {
+          "eid": "ai-forward:pack/scripts/dream.py cmd_apply_decisions",
+          "note": "promoted = {(dream, proposal)}; _promote_fleet appends unconditionally."
+        },
+        {
+          "eid": "ai-forward:docs/lessons/defect-classes.md:222",
+          "note": "FED-A Status: uncontrolled."
+        }
+      ]
+    },
+    {
+      "id": "p51",
+      "kind": "New class",
+      "group": "Coordination (multi-harness)",
+      "title": "HARN-A — The harness doing most of the work has the least verified pack surface",
+      "sig": "Pack capability claims are established per harness once and never re-tied to which harness actually carries the fleet's load, so the most active host runs with the weakest verified hooks",
+      "scope": "general",
+      "confidence": "v",
+      "source": "rem:multi-harness-coordination-2026-09-18",
+      "score": 0.87,
+      "control": {
+        "rung": "reuse-in-codebase",
+        "text": "verify-bundle fails when a deployed surface (.claude, .github, .grok, .agents) has no HARNESS_STATUS entry with an `established` date; pack-doctor gains check_grok_settings and check_agy_settings mirroring the Claude/Copilot checks; `coord doctor` prints, per host, the share of ledger events beside the capability line so 'enforcing / not wired' is read against load. Red-first: grok and agy have no entry today.",
+        "loc": "pack/scripts/coord-core.py HARNESS_STATUS; pack/scripts/pack-doctor.py:452-467; tools/verify-bundle.ps1"
+      },
+      "boundary": "Applies to capability CLAIMS. Whether Copilot honoured a deny is recorded two ways (pack: a live session did, 2026-08-24; proposal §9: 'deny not verified') — Flagged, resolve by re-executing, not by choosing a record.",
+      "evidence": [
+        {
+          "eid": "ai-de:.agents/log since 2026-09-03",
+          "note": "Harness split by agent-id prefix: copilot 3,392 · codex 1,990 · claude 463 · grok 94 of 6,311 events."
+        },
+        {
+          "eid": "ai-forward:pack/adapters/hooks/session-start.py:22",
+          "note": "'Copilot CLI is not wired: its session-start event was not verified.'"
+        },
+        {
+          "eid": "ai-forward:pack/scripts/coord-core.py:1256-1266",
+          "note": "Copilot: edit_boundary enforcing, established 2026-08-24; RESIDUAL 'fails OPEN on a 30s hook timeout'. No entry for grok or agy."
+        },
+        {
+          "eid": "ai-forward:pack/scripts/pack-doctor.py:456-459",
+          "note": "Grok and Antigravity get check_surface (directory presence) only; Claude and Copilot get a settings check."
+        },
+        {
+          "eid": "ai-de (tree survey)",
+          "note": "Grok sessions ran (94 events, .agents/sessions/grok-understanding-views-conductor.md) with no .grok/ surface and no .agents/skills/ present; ai-de is at pack rev 70, the Grok surface is rev 71."
+        }
+      ]
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "Build a control for FED-A (uncontrolled)",
+      "sig": "FED-A · The abstraction that makes a learning portable is what stops the deduper recognising it",
+      "scope": "general",
+      "confidence": "i",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "defect-classes#FED-A",
+          "note": "status: uncontrolled"
+        },
+        {
+          "eid": "al-01M1PKC0PYEGGN7KR5J2FY3YKQ",
+          "note": "recent reference"
+        },
+        {
+          "eid": "al-01M1PN6AYDMJF31YS82Y86MQ4Q",
+          "note": "recent reference"
+        },
+        {
+          "eid": "al-01M1PRR37VC9MV71YYCT385ZCN",
+          "note": "recent reference"
+        },
+        {
+          "eid": "ai-forward:learnings/fleet-classes.jsonl (measured 2026-09-18)",
+          "note": "37 records · 23 unique slugs · 10 duplicated — see p50 for the control."
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled.",
+        "loc": "docs/lessons/defect-classes.md#FED-A"
+      },
+      "boundary": "Applies wherever the class's signature recurs; a control is not a control until observed failing.",
+      "id": "p10",
+      "score": 0.86
+    },
+    {
+      "id": "p52",
+      "kind": "New class",
+      "group": "Coordination (multi-harness)",
+      "title": "COORD-M — A coordination reader reads its own worktree's ledger instead of the repository's",
+      "sig": "A verifier or view resolves .agents/ relative to the invoking tree, so from any linked worktree the fleet reads as empty or every session as dead",
+      "scope": "general",
+      "confidence": "v",
+      "source": "rem:multi-harness-coordination-2026-09-18",
+      "score": 0.85,
+      "control": {
+        "rung": "stdlib",
+        "text": "Every .agents/ reader resolves through the git common dir (coord-core's repo_root already does; the defects were readers bypassing it); a test invokes each reader from a linked worktree fixture and asserts it sees the primary's ledger. Sweep: grep pack/scripts for '.agents' path joins not routed through repo_root.",
+        "loc": "pack/scripts/coord-core.py repo_root; pack/scripts/*.py readers; tests"
+      },
+      "boundary": "Applies to readers of shared per-repository state. It does not apply to per-tree scratch (which DC-216 / p53 says must be keyed by AGENT_SESSION).",
+      "evidence": [
+        {
+          "eid": "ai-de:git 553bb9bc (2026-09-15)",
+          "note": "verify-stranded-audit.py read its own tree's .agents/log, 'so from any linked worktree every registered session was nobody live'."
+        },
+        {
+          "eid": "ai-de:docs/lessons/defect-classes.md:6720 DC-153",
+          "note": "A per-repository coordination marker tracked in one checkout is mutated by any worktree's command."
+        },
+        {
+          "eid": "ai-de:docs/lessons/defect-classes.md:4661 DC-115",
+          "note": "Evidence committed on a lane's branch is invisible to a verifier reading the parent checkout's working tree."
+        },
+        {
+          "eid": "ai-forward:docs/lessons/defect-classes.md:64 SCOPE-A",
+          "note": "The pack's own instance (.git/hooks shared) — controlled; the reader-side family is not."
+        }
+      ]
+    },
+    {
+      "id": "p54",
+      "kind": "New class",
+      "group": "Coordination (multi-harness)",
+      "title": "GATE-A — A two-platform gate set claimed green from one platform",
+      "sig": "A gate set that runs on two platforms carries one baseline and one verdict, so a run on one platform is read as the whole set's result",
+      "scope": "general",
+      "confidence": "v",
+      "source": "rem:multi-harness-coordination-2026-09-18",
+      "score": 0.8,
+      "control": {
+        "rung": "reuse-in-codebase",
+        "text": "Generalise ai-de's verify-test-run.py into the pack's run-verify-gates.py: the baseline is a map keyed by platform/job, failures are named, and upward drift is refused per key at the join. Red-first: a fixture whose two halves disagree must fail.",
+        "loc": "pack/scripts/run-verify-gates.py; tests/docs_explorer/test_addendum_cd_gates.py"
+      },
+      "boundary": "Applies where a gate set spans platforms or jobs. A single-platform repo keeps one key.",
+      "evidence": [
+        {
+          "eid": "ai-de:docs/lessons/defect-classes.md:5009 DC-119",
+          "note": "A 'gate set green' claim made from one platform for a two-platform set — uncontrolled."
+        },
+        {
+          "eid": "ai-de:git 53a498d3, 84069d54, 40a61bcd (2026-09-17)",
+          "note": "verify-test-run names the failures it counts, refuses upward baseline drift at the join; the first baseline read the wrong trx attribute and two of four numbers were unmeetable."
+        },
+        {
+          "eid": "ai-forward:docs/audit/audit-log.jsonl 2026-09-06 21:44",
+          "note": "main's CI red since 2026-09-05 on two Linux-only failures 'green on Windows throughout' — the pack's own instance."
+        }
+      ]
+    },
+    {
+      "id": "p53",
+      "kind": "New class",
+      "group": "Coordination (multi-harness)",
+      "title": "COORD-N — Parallel lanes share one scratch path keyed by the harness session",
+      "sig": "A per-run scratch file is keyed by the conductor's harness session, so two lanes under one conductor overwrite each other's output",
+      "scope": "general",
+      "confidence": "v",
+      "source": "rem:multi-harness-coordination-2026-09-18",
+      "score": 0.78,
+      "control": {
+        "rung": "reuse-in-codebase",
+        "text": "Sweep pack/scripts for temp/scratch paths and key them by AGENT_SESSION (falling back to session+pid), and add a test where two concurrent runs under one harness session produce two files.",
+        "loc": "pack/scripts/*.py (scratch/summary writers); tests"
+      },
+      "boundary": "Single measured instance — marked as such. Applies to scratch outputs; shared ledgers are the opposite rule (p52).",
+      "evidence": [
+        {
+          "eid": "ai-de:docs/lessons/defect-classes.md:8037 DC-216",
+          "note": "'Parallel lanes share one scratch file keyed by the conductor's session, so one lane's summary overwrites another's' — Status uncontrolled, 'the fix is the pack's'."
+        }
+      ]
+    },
+    {
+      "id": "p55",
+      "kind": "New class",
+      "group": "Coordination (multi-harness)",
+      "title": "GATE-B — A fail-closed gate newly wired into the join meets a pre-existing trunk defect and stops the fleet",
+      "sig": "A gate promoted from warn to fail is wired into the join line before it has been run against the trunk's current tree, so its first firing is on every lane at once",
+      "scope": "general",
+      "confidence": "v",
+      "source": "rem:multi-harness-coordination-2026-09-18",
+      "score": 0.76,
+      "control": {
+        "rung": "one line",
+        "text": "A gate promoted to fail-closed runs against main's current tree BEFORE it is wired, and the promotion commit carries that run's output; execute-with-coordination's join brief gains the row and conductor-join refuses to add a gate with no recorded trunk run.",
+        "loc": "pack/commands/execute-with-coordination/SKILL.md; pack/scripts/conductor-join.py"
+      },
+      "boundary": "Single instance, strong. Applies to promotions of existing gates; new gates already run red-first by the Testing Strategy.",
+      "evidence": [
+        {
+          "eid": "ai-de:git b1fd6ce5 (2026-09-17)",
+          "note": "'drop the one dangling graph edge, so the newly-wired validate gate does not refuse every join on main'."
+        },
+        {
+          "eid": "ai-forward:docs/audit/audit-log.jsonl (FR-056, rev 43)",
+          "note": "The pack's own earlier instance: correct V16 propagation reddened CI because validate failed on suggestions."
+        }
+      ]
+    },
+    {
+      "id": "p56",
+      "kind": "New class",
+      "group": "Coordination (multi-harness)",
+      "title": "REC-B — A durable record trails the code that cites it",
+      "sig": "Numbered decisions or classes are cited by code and audit entries before, or instead of, being written into the register that gives them their number",
+      "scope": "general",
+      "confidence": "v",
+      "source": "rem:multi-harness-coordination-2026-09-18",
+      "score": 0.74,
+      "control": {
+        "rung": "reuse-in-codebase",
+        "text": "A verify gate fails when a cited id (Ruling N, DC-N, FR-N) has no heading in its register; ai-de's verify-ruling-citations.py is the seed. Red-first: Rulings 128 and 131 and DC-226/227 fail it today.",
+        "loc": "pack/scripts (new verify-cited-ids.py) wired into run-verify-gates"
+      },
+      "boundary": "Applies to id-numbered registers. It does not require the register to precede the code — only that the turn does not close with a dangling citation.",
+      "evidence": [
+        {
+          "eid": "ai-de:docs/notes/addendum-c-council-rulings.md",
+          "note": "Last heading is Ruling 126; coord-core.py and conductor-join.py cite Rulings 128 and 131."
+        },
+        {
+          "eid": "ai-de:docs/lessons/defect-classes.md",
+          "note": "Register ends at DC-225; DC-226 and DC-227 are cited 13 and 7 times in the vendored scripts."
+        },
+        {
+          "eid": "ai-forward:docs/lessons/defect-classes.md (REC-A)",
+          "note": "The register's own status counts struck through as stale rather than derived — same family."
+        }
+      ]
+    },
+    {
+      "id": "p57",
+      "kind": "New class",
+      "group": "Coordination (multi-harness)",
+      "title": "COORD-O — A coordination surface built as a pull that nothing reads, so stalls are discovered by the operator",
+      "sig": "Board, standing and fleet surfaces exist as read views over stores nothing writes or nobody polls, so a blocked session waits until a human notices",
+      "scope": "general",
+      "confidence": "i",
+      "source": "rem:multi-harness-coordination-2026-09-18",
+      "score": 0.72,
+      "control": {
+        "rung": "minimum",
+        "text": "Until the active-coordination proposal is decided: `coord metrics` reports per session the read-rate of the inbox/board and renders 'NOT CHECKED' over zero session cards (never 'all quiet'); SessionStart/Stop hooks force one mailbox read so a never-reading session is countable. Red-first: a fixture with posts and no reads must report the unread count. The push half is the proposal's decision, not this control.",
+        "loc": "pack/scripts/coord-core.py metrics; pack/adapters/hooks/session-start.py"
+      },
+      "boundary": "Recorded by ai-de and the proposal; the numbers are theirs (Inferred here). Applies to liveness surfaces; scores stay pull (anti-Goodhart).",
+      "evidence": [
+        {
+          "eid": "ai-forward-active-coord:docs/proposals/active-multi-harness-coordination.md#1.5",
+          "note": "MessageBoardService had no callers anywhere in the product; StandingComposer and FleetAggregator zero production callers; two registered agents asked whether they knew the board: both said no."
+        },
+        {
+          "eid": "ai-forward-active-coord:docs/proposals/active-multi-harness-coordination.md#1.5 (Addenda C/D profile)",
+          "note": "One node blocked 8,143 s (2 h 15 min) on an EnterWorktree refusal the conductor already owned; the operator was the detector."
+        },
+        {
+          "eid": "ai-forward-active-coord:docs/proposals/active-multi-harness-coordination.md#Status",
+          "note": "Proposal in-review since 2026-09-18, seven open questions for the maintainer; nothing implemented."
+        }
+      ]
+    },
+    {
+      "id": "p58",
+      "kind": "Doc update",
+      "group": "Coordination (multi-harness)",
+      "title": "Coordination doctrine has no home: no knowledge doc, COORD-A..H uncontrolled, dreaming and coordination unlinked in the graph",
+      "sig": "The pack's coordination rules are spread across WT, CT27, GO7/GO14a/GO19, two skills and ADR-0007..0012, with no always-loaded document that owns them",
+      "scope": "general",
+      "confidence": "v",
+      "source": "rem:multi-harness-coordination-2026-09-18",
+      "score": 0.7,
+      "control": {
+        "rung": "always-loaded instruction",
+        "text": "Write pack/knowledge/agent-coordination.md (CO1–COn): identity (host + session + tree), leases and the TTL cap, control currency, the join as a script, liveness readers, fleet view semantics ('NOT CHECKED' over empty), the consumer→pack handoff; link it from architecture-agent-coordination and add an edge to architecture-dreaming so the two subsystems share a 2-hop neighbourhood. Falsifiable: docs-graph validate shows an inbound edge to architecture-dreaming; foundation-check lists the doc as load: always.",
+        "loc": "pack/knowledge/agent-coordination.md; docs/architecture-dreaming.md frontmatter"
+      },
+      "boundary": "Doc-only; it gives the controls above a place to be cited from. It does not itself control anything (CI6) — each CO directive must name its gate.",
+      "evidence": [
+        {
+          "eid": "ai-forward:.claude/knowledge/ (ls 2026-09-18)",
+          "note": "No file named for coordination; only collaborative-personas.md matches 'collab'."
+        },
+        {
+          "eid": "ai-forward:docs-graph context --id architecture-dreaming --hops 2",
+          "note": "7 outbound paths, zero inbound edges, no path to architecture-agent-coordination or ADR-0007..0012."
+        },
+        {
+          "eid": "ai-forward:learnings/fleet-classes.md COORD-A..H",
+          "note": "Promoted 2026-09-04; COORD-A's own prescription ('a WT-series directive with a lint in coord doctor') is unbuilt."
+        }
+      ]
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "Build a control for PACK-E (partially-controlled)",
+      "sig": "PACK-E · An ambiguous proper noun resolved inside my own frame",
+      "scope": "general",
+      "confidence": "i",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "defect-classes#PACK-E",
+          "note": "status: partially-controlled"
+        },
+        {
+          "eid": "al-01M1MNKXRB2GKP4VY7TSWBXF5J",
+          "note": "recent reference"
+        },
+        {
+          "eid": "al-01M1MQB43E3VVM9S9KK0JJE6YE",
+          "note": "recent reference"
+        },
+        {
+          "eid": "al-01M1MYMBJFAHKA6AXZS9ZNGZX2",
+          "note": "recent reference"
+        },
+        {
+          "eid": "al-01M1N0GQ3KQC7GP3RMEZNTEFM7",
+          "note": "recent reference"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled.",
+        "loc": "docs/lessons/defect-classes.md#PACK-E"
+      },
+      "boundary": "Applies wherever the class's signature recurs; a control is not a control until observed failing.",
+      "id": "p17",
+      "score": 0.68
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "Build a control for PACK-D (partially-controlled)",
+      "sig": "PACK-D · An array parameter arrives as one comma-joined string when the script is invoked as an executable",
+      "scope": "general",
+      "confidence": "i",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "defect-classes#PACK-D",
+          "note": "status: partially-controlled"
+        },
+        {
+          "eid": "al-01M1SA4T6KSP6CDGRTGTZWTKG9",
+          "note": "recent reference"
+        },
+        {
+          "eid": "al-01M1SK8AWN832QYRAKBFE5138M",
+          "note": "recent reference"
+        },
+        {
+          "eid": "al-01M1W2G3KM2F0PGBMXGBT9JVN3",
+          "note": "recent reference"
+        },
+        {
+          "eid": "al-01M1W7AKYR7PZK9KPTSW9J1XTQ",
+          "note": "recent reference"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled.",
+        "loc": "docs/lessons/defect-classes.md#PACK-D"
+      },
+      "boundary": "Applies wherever the class's signature recurs; a control is not a control until observed failing.",
+      "id": "p18",
+      "score": 0.68
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "Build a control for PACK-C (partially-controlled)",
+      "sig": "PACK-C · An assertion encodes a transient magnitude assumption",
+      "scope": "general",
+      "confidence": "i",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "defect-classes#PACK-C",
+          "note": "status: partially-controlled"
+        },
+        {
+          "eid": "al-01M1N1G09SWTTE0RPT6PNNAXJB",
+          "note": "recent reference"
+        },
+        {
+          "eid": "al-01M1WAWNB35NDZFM7TJS6JD0E5",
+          "note": "recent reference"
+        },
+        {
+          "eid": "al-01M2G5RQEHSF0P13V30PDBW1SQ",
+          "note": "recent reference"
+        },
+        {
+          "eid": "cl-01M2G5RQMN74AJ6V8WHSGSX99Q",
+          "note": "recent reference"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled.",
+        "loc": "docs/lessons/defect-classes.md#PACK-C"
+      },
+      "boundary": "Applies wherever the class's signature recurs; a control is not a control until observed failing.",
+      "id": "p19",
+      "score": 0.68
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "SP-01: Context accretion: the main conversation grew past the point where every step re-reads a book (seen in 7 profile(s))",
+      "sig": "session-profile SP-01",
+      "scope": "general",
+      "confidence": "v",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "sp-0001/SP-01",
+          "note": "context 56,985 -> 231,013 tokens over 18 main requests"
+        },
+        {
+          "eid": "sp-0001/SP-01",
+          "note": "context 246,435 -> 774,890 tokens over 41 main requests"
+        },
+        {
+          "eid": "sp-0001/SP-01",
+          "note": "context 403,550 -> 504,626 tokens over 31 main requests"
+        },
+        {
+          "eid": "sp-0001/SP-01",
+          "note": "context 508,349 -> 508,349 tokens over 1 main requests"
+        },
+        {
+          "eid": "sp-0001/SP-01",
+          "note": "context 158,572 -> 300,655 tokens over 94 main requests"
+        },
+        {
+          "eid": "sp-0001/SP-01",
+          "note": "context 301,882 -> 316,407 tokens over 13 main requests"
+        },
+        {
+          "eid": "sp-0001/SP-01",
+          "note": "context 396,398 -> 399,028 tokens over 6 main requests"
+        },
+        {
+          "eid": "sp-0001/SP-01",
+          "note": "context 399,358 -> 399,358 tokens over 1 main requests"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Apply pack fix(es) F-09, F-01; the profiler re-flags SP-01 on recurrence.",
+        "loc": "docs/profiles/ (session-profile.py)"
+      },
+      "boundary": "Measured from harness telemetry; heuristics (regex over text) are labelled Inferred in the profile.",
+      "id": "p23",
+      "score": 0.68
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "SP-02: Instruction double-load: two near-identical custom-instruction blocks in the static prefix (seen in 7 profile(s))",
+      "sig": "session-profile SP-02",
+      "scope": "general",
+      "confidence": "v",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "sp-0001/SP-02",
+          "note": "custom-instruction blocks of 26,752 and 25,128 chars in the static prefix"
+        },
+        {
+          "eid": "sp-0001/SP-02",
+          "note": "custom-instruction blocks of 58,511 and 57,648 chars in the static prefix"
+        },
+        {
+          "eid": "sp-0001/SP-02",
+          "note": "custom-instruction blocks of 58,511 and 57,712 chars in the static prefix"
+        },
+        {
+          "eid": "sp-0001/SP-02",
+          "note": "custom-instruction blocks of 58,511 and 57,712 chars in the static prefix"
+        },
+        {
+          "eid": "sp-0001/SP-02",
+          "note": "custom-instruction blocks of 58,511 and 57,712 chars in the static prefix"
+        },
+        {
+          "eid": "sp-0001/SP-02",
+          "note": "custom-instruction blocks of 24,567 and 24,449 chars in the static prefix"
+        },
+        {
+          "eid": "sp-0001/SP-02",
+          "note": "custom-instruction blocks of 24,123 and 24,019 chars in the static prefix"
+        },
+        {
+          "eid": "sp-0001/SP-02",
+          "note": "custom-instruction blocks of 24,123 and 24,019 chars in the static prefix"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Apply pack fix(es) F-01; the profiler re-flags SP-02 on recurrence.",
+        "loc": "docs/profiles/ (session-profile.py)"
+      },
+      "boundary": "Measured from harness telemetry; heuristics (regex over text) are labelled Inferred in the profile.",
+      "id": "p24",
+      "score": 0.68
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "SP-03: Static prefix larger than the budget models (seen in 7 profile(s))",
+      "sig": "session-profile SP-03",
+      "scope": "general",
+      "confidence": "v",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "sp-0001/SP-03",
+          "note": "static prefix ~91,595 est. tokens (324,247 chars; measured chars of the latest main prefix; tokens are an estimate at 3.54 chars/token)"
+        },
+        {
+          "eid": "sp-0001/SP-03",
+          "note": "static prefix ~113,057 est. tokens (400,222 chars; measured chars of the latest main prefix; tokens are an estimate at 3.54 chars/token)"
+        },
+        {
+          "eid": "sp-0001/SP-03",
+          "note": "static prefix ~290,196 est. tokens (1,027,295 chars; measured chars of the latest main prefix; tokens are an estimate at 3.54 chars/token)"
+        },
+        {
+          "eid": "sp-0001/SP-03",
+          "note": "static prefix ~290,998 est. tokens (1,030,133 chars; measured chars of the latest main prefix; tokens are an estimate at 3.54 chars/token)"
+        },
+        {
+          "eid": "sp-0001/SP-03",
+          "note": "static prefix ~289,952 est. tokens (1,026,431 chars; measured chars of the latest main prefix; tokens are an estimate at 3.54 chars/token)"
+        },
+        {
+          "eid": "sp-0001/SP-03",
+          "note": "static prefix ~270,766 est. tokens (958,510 chars; measured chars of the latest main prefix; tokens are an estimate at 3.54 chars/token)"
+        },
+        {
+          "eid": "sp-0001/SP-03",
+          "note": "static prefix ~269,551 est. tokens (954,210 chars; measured chars of the latest main prefix; tokens are an estimate at 3.54 chars/token)"
+        },
+        {
+          "eid": "sp-0001/SP-03",
+          "note": "static prefix ~271,101 est. tokens (959,699 chars; measured chars of the latest main prefix; tokens are an estimate at 3.54 chars/token)"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Apply pack fix(es) F-02; the profiler re-flags SP-03 on recurrence.",
+        "loc": "docs/profiles/ (session-profile.py)"
+      },
+      "boundary": "Measured from harness telemetry; heuristics (regex over text) are labelled Inferred in the profile.",
+      "id": "p25",
+      "score": 0.68
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "SP-04: Re-reads: the same file viewed three or more times in one turn, or a paged tool output viewed whole (seen in 7 profile(s))",
+      "sig": "session-profile SP-04",
+      "scope": "general",
+      "confidence": "v",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "sp-0001/SP-04",
+          "note": "chelsea-pivot-scouting-dossier.html viewed 3x"
+        },
+        {
+          "eid": "sp-0001/SP-04",
+          "note": "chelsea-barco-dossier.html viewed 3x"
+        },
+        {
+          "eid": "sp-0001/SP-04",
+          "note": "graphify-setup.py viewed 13x"
+        },
+        {
+          "eid": "sp-0001/SP-04",
+          "note": "obsidian-setup.py viewed 6x"
+        },
+        {
+          "eid": "sp-0001/SP-04",
+          "note": "csharp-style-guide.md viewed 4x"
+        },
+        {
+          "eid": "sp-0001/SP-04",
+          "note": "communication-and-task-discipline.md viewed 3x"
+        },
+        {
+          "eid": "sp-0001/SP-04",
+          "note": "coord-core.py viewed 5x"
+        },
+        {
+          "eid": "sp-0001/SP-04",
+          "note": "test_coord_core.py viewed 4x"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Apply pack fix(es) F-07; the profiler re-flags SP-04 on recurrence.",
+        "loc": "docs/profiles/ (session-profile.py)"
+      },
+      "boundary": "Measured from harness telemetry; heuristics (regex over text) are labelled Inferred in the profile.",
+      "id": "p26",
+      "score": 0.68
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "SP-05: Skill re-injection: the same skill invoked more than once in a session (seen in 7 profile(s))",
+      "sig": "session-profile SP-05",
+      "scope": "general",
+      "confidence": "v",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "sp-0001/SP-05",
+          "note": "ui-design invoked 2x"
+        },
+        {
+          "eid": "sp-0001/SP-05",
+          "note": "optimize-graph invoked 2x"
+        },
+        {
+          "eid": "sp-0001/SP-05",
+          "note": "document invoked 2x"
+        },
+        {
+          "eid": "sp-0002/SP-05",
+          "note": "also invoked 2x"
+        },
+        {
+          "eid": "sp-0002/SP-05",
+          "note": "optimize-graph invoked 12x"
+        },
+        {
+          "eid": "sp-0002/SP-05",
+          "note": "graphify invoked 4x"
+        },
+        {
+          "eid": "sp-0002/SP-05",
+          "note": "design invoked 2x"
+        },
+        {
+          "eid": "sp-0002/SP-05",
+          "note": "optimize-graph invoked 2x"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Apply pack fix(es) F-06; the profiler re-flags SP-05 on recurrence.",
+        "loc": "docs/profiles/ (session-profile.py)"
+      },
+      "boundary": "Measured from harness telemetry; heuristics (regex over text) are labelled Inferred in the profile.",
+      "id": "p27",
+      "score": 0.68
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "SP-06: Council above tier: a fan-out on a turn that declared no tier (seen in 7 profile(s))",
+      "sig": "session-profile SP-06",
+      "scope": "general",
+      "confidence": "v",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "sp-0001/SP-06",
+          "note": "6 sub-agent(s), no tier declared: product-strategist, test-architect, privacy-data-governance, security-identity-architect, ai-systems-engineer, ux-researcher-i"
+        },
+        {
+          "eid": "sp-0001/SP-06",
+          "note": "3 sub-agent(s), no tier declared: studio-prototype, domain-researcher, ux-accessibility"
+        },
+        {
+          "eid": "sp-0001/SP-06",
+          "note": "6 sub-agent(s), no tier declared: python-developer, test-architect, test-architect, python-developer, python-developer, test-architect"
+        },
+        {
+          "eid": "sp-0002/SP-06",
+          "note": "6 sub-agent(s), no tier declared: product-strategist, test-architect, privacy-data-governance, security-identity-architect, ai-systems-engineer, ux-researcher-i"
+        },
+        {
+          "eid": "sp-0002/SP-06",
+          "note": "3 sub-agent(s), no tier declared: studio-prototype, domain-researcher, ux-accessibility"
+        },
+        {
+          "eid": "sp-0002/SP-06",
+          "note": "3 sub-agent(s), no tier declared: Knowledge body analysis extractor, Knowledge body analysis extractor, TypeScript precision and resolution"
+        },
+        {
+          "eid": "sp-0002/SP-06",
+          "note": "33 sub-agent(s), no tier declared: coordination-research, scoring-research, observability-research, security-identity-architect, privacy-data-governance, the-si"
+        },
+        {
+          "eid": "sp-0002/SP-06",
+          "note": "10 sub-agent(s), no tier declared: Enterprise architect critique, Distributed systems critique, Data persistence critique, Security architecture critique, SRE d"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Apply pack fix(es) F-03; the profiler re-flags SP-06 on recurrence.",
+        "loc": "docs/profiles/ (session-profile.py)"
+      },
+      "boundary": "Measured from harness telemetry; heuristics (regex over text) are labelled Inferred in the profile.",
+      "id": "p28",
+      "score": 0.68
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "SP-07: Sub-agent runaway: a delegation past a sane tool-call/token budget, or one the parent had to tell to converge (seen in 7 profile(s))",
+      "sig": "session-profile SP-07",
+      "scope": "general",
+      "confidence": "v",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "sp-0001/SP-07",
+          "note": "studio-prototype: 18 tool calls, 1,713,862 tokens, 846s"
+        },
+        {
+          "eid": "sp-0001/SP-07",
+          "note": "domain-researcher: 123 tool calls, 3,018,239 tokens, 1476s"
+        },
+        {
+          "eid": "sp-0001/SP-07",
+          "note": "python-developer: 36 tool calls, 1,051,496 tokens, 250s"
+        },
+        {
+          "eid": "sp-0001/SP-07",
+          "note": "test-architect: 42 tool calls, 1,586,037 tokens, 485s"
+        },
+        {
+          "eid": "sp-0002/SP-07",
+          "note": "studio-prototype: 18 tool calls, 1,713,862 tokens, 846s"
+        },
+        {
+          "eid": "sp-0002/SP-07",
+          "note": "domain-researcher: 123 tool calls, 3,018,239 tokens, 1476s"
+        },
+        {
+          "eid": "sp-0002/SP-07",
+          "note": "the-simplifier: 23 tool calls, 1,467,913 tokens, 1560s"
+        },
+        {
+          "eid": "sp-0002/SP-07",
+          "note": "release-engineer: 46 tool calls, 195,180 tokens, 107s"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Apply pack fix(es) F-04; the profiler re-flags SP-07 on recurrence.",
+        "loc": "docs/profiles/ (session-profile.py)"
+      },
+      "boundary": "Measured from harness telemetry; heuristics (regex over text) are labelled Inferred in the profile.",
+      "id": "p29",
+      "score": 0.68
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "SP-08: Persona orientation reads: a sub-agent reading the roster docs or AGENTS.md to find out what it is (seen in 7 profile(s))",
+      "sig": "session-profile SP-08",
+      "scope": "general",
+      "confidence": "v",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "sp-0001/SP-08",
+          "note": "security-identity-architect: AGENTS.md"
+        },
+        {
+          "eid": "sp-0001/SP-08",
+          "note": "security-identity-architect: agent-body-of-knowledge.md"
+        },
+        {
+          "eid": "sp-0001/SP-08",
+          "note": "test-architect: persona-audit.md"
+        },
+        {
+          "eid": "sp-0001/SP-08",
+          "note": "test-architect: persona-cards.md"
+        },
+        {
+          "eid": "sp-0002/SP-08",
+          "note": "security-identity-architect: AGENTS.md"
+        },
+        {
+          "eid": "sp-0002/SP-08",
+          "note": "security-identity-architect: agent-body-of-knowledge.md"
+        },
+        {
+          "eid": "sp-0002/SP-08",
+          "note": "privacy-data-governance: AGENTS.md"
+        },
+        {
+          "eid": "sp-0002/SP-08",
+          "note": "privacy-data-governance: AGENTS.md"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Apply pack fix(es) F-05; the profiler re-flags SP-08 on recurrence.",
+        "loc": "docs/profiles/ (session-profile.py)"
+      },
+      "boundary": "Measured from harness telemetry; heuristics (regex over text) are labelled Inferred in the profile.",
+      "id": "p30",
+      "score": 0.68
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "SP-09: No goal state: a substantive turn whose first reply carries no Goal / Done when (seen in 7 profile(s))",
+      "sig": "session-profile SP-09",
+      "scope": "general",
+      "confidence": "v",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "sp-0001/SP-09",
+          "note": "'give me a table with each \"fix\" you would add to the ai-forw' - first reply has no Goal / Done when"
+        },
+        {
+          "eid": "sp-0001/SP-09",
+          "note": "'<command-message>also</command-message> <command-name>/also<' - first reply has no Goal / Done when"
+        },
+        {
+          "eid": "sp-0001/SP-09",
+          "note": "'/updatepack' - first reply has no Goal / Done when"
+        },
+        {
+          "eid": "sp-0001/SP-09",
+          "note": "'merge PR 749 yourself' - first reply has no Goal / Done when"
+        },
+        {
+          "eid": "sp-0001/SP-09",
+          "note": "'<command-message>updatepack</command-message> <command-name>' - first reply has no Goal / Done when"
+        },
+        {
+          "eid": "sp-0001/SP-09",
+          "note": "'a colleage profiled execution of a repo that adopted the ai-' - first reply has no Goal / Done when"
+        },
+        {
+          "eid": "sp-0001/SP-09",
+          "note": "'post \"hello world\" to the board' - first reply has no Goal / Done when"
+        },
+        {
+          "eid": "sp-0001/SP-09",
+          "note": "'are you aware of being registered with loomkeeper for cross ' - first reply has no Goal / Done when"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Apply pack fix(es) F-03; the profiler re-flags SP-09 on recurrence.",
+        "loc": "docs/profiles/ (session-profile.py)"
+      },
+      "boundary": "Measured from harness telemetry; heuristics (regex over text) are labelled Inferred in the profile.",
+      "id": "p31",
+      "score": 0.68
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "SP-10: Tail latency: main-agent time-to-first-token p90 above 20 s (seen in 7 profile(s))",
+      "sig": "session-profile SP-10",
+      "scope": "general",
+      "confidence": "v",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "sp-0001/SP-10",
+          "note": "ttft p50 12.1s / p90 34.9s / max 34.9s over 5 main requests"
+        },
+        {
+          "eid": "sp-0001/SP-10",
+          "note": "ttft p50 17.5s / p90 68.8s / max 109.5s over 81 main requests"
+        },
+        {
+          "eid": "sp-0002/SP-10",
+          "note": "ttft p50 12.1s / p90 34.9s / max 34.9s over 5 main requests"
+        },
+        {
+          "eid": "sp-0002/SP-10",
+          "note": "ttft p50 17.5s / p90 68.8s / max 109.5s over 81 main requests"
+        },
+        {
+          "eid": "sp-0002/SP-10",
+          "note": "ttft p50 24.4s / p90 24.4s / max 24.4s over 1 main requests"
+        },
+        {
+          "eid": "sp-0002/SP-10",
+          "note": "ttft p50 15.0s / p90 22.5s / max 56.4s over 27 main requests"
+        },
+        {
+          "eid": "sp-0002/SP-10",
+          "note": "ttft p50 20.9s / p90 27.3s / max 34.4s over 15 main requests"
+        },
+        {
+          "eid": "sp-0002/SP-10",
+          "note": "ttft p50 7.1s / p90 29.8s / max 29.8s over 2 main requests"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Apply pack fix(es) F-09, F-02; the profiler re-flags SP-10 on recurrence.",
+        "loc": "docs/profiles/ (session-profile.py)"
+      },
+      "boundary": "Measured from harness telemetry; heuristics (regex over text) are labelled Inferred in the profile.",
+      "id": "p32",
+      "score": 0.68
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "SP-11: Cap firings: harness completion nudges or user aborts inside a turn (seen in 7 profile(s))",
+      "sig": "session-profile SP-11",
+      "scope": "general",
+      "confidence": "v",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "sp-0001/SP-11",
+          "note": "1 nudge(s), 0 abort(s)"
+        },
+        {
+          "eid": "sp-0001/SP-11",
+          "note": "1 nudge(s), 0 abort(s)"
+        },
+        {
+          "eid": "sp-0001/SP-11",
+          "note": "1 nudge(s), 0 abort(s)"
+        },
+        {
+          "eid": "sp-0001/SP-11",
+          "note": "0 nudge(s), 1 abort(s)"
+        },
+        {
+          "eid": "sp-0001/SP-11",
+          "note": "1 nudge(s), 0 abort(s)"
+        },
+        {
+          "eid": "sp-0001/SP-11",
+          "note": "1 nudge(s), 0 abort(s)"
+        },
+        {
+          "eid": "sp-0001/SP-11",
+          "note": "1 nudge(s), 0 abort(s)"
+        },
+        {
+          "eid": "sp-0001/SP-11",
+          "note": "1 nudge(s), 0 abort(s)"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Apply pack fix(es) F-03; the profiler re-flags SP-11 on recurrence.",
+        "loc": "docs/profiles/ (session-profile.py)"
+      },
+      "boundary": "Measured from harness telemetry; heuristics (regex over text) are labelled Inferred in the profile.",
+      "id": "p33",
+      "score": 0.68
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "SP-12: Images and failed requests in the main context (seen in 7 profile(s))",
+      "sig": "session-profile SP-12",
+      "scope": "general",
+      "confidence": "v",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "sp-0001/SP-12",
+          "note": "2 image view(s), 0 failed request(s)"
+        },
+        {
+          "eid": "sp-0001/SP-12",
+          "note": "7 image view(s), 0 failed request(s)"
+        },
+        {
+          "eid": "sp-0001/SP-12",
+          "note": "1 image view(s), 0 failed request(s)"
+        },
+        {
+          "eid": "sp-0001/SP-12",
+          "note": "1 image view(s), 0 failed request(s)"
+        },
+        {
+          "eid": "sp-0002/SP-12",
+          "note": "2 image view(s), 0 failed request(s)"
+        },
+        {
+          "eid": "sp-0002/SP-12",
+          "note": "7 image view(s), 0 failed request(s)"
+        },
+        {
+          "eid": "sp-0002/SP-12",
+          "note": "1 image view(s), 0 failed request(s)"
+        },
+        {
+          "eid": "sp-0002/SP-12",
+          "note": "5 image view(s), 0 failed request(s)"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Apply pack fix(es) F-08; the profiler re-flags SP-12 on recurrence.",
+        "loc": "docs/profiles/ (session-profile.py)"
+      },
+      "boundary": "Measured from harness telemetry; heuristics (regex over text) are labelled Inferred in the profile.",
+      "id": "p34",
+      "score": 0.68
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "SP-13: Hook overhead above 5% of wall clock (seen in 7 profile(s))",
+      "sig": "session-profile SP-13",
+      "scope": "general",
+      "confidence": "v",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "sp-0001/SP-13",
+          "note": "hooks 2s of 4s wall (50%)"
+        },
+        {
+          "eid": "sp-0001/SP-13",
+          "note": "hooks 793s of 10243s wall (8%)"
+        },
+        {
+          "eid": "sp-0001/SP-13",
+          "note": "hooks 5s of 59s wall (8%)"
+        },
+        {
+          "eid": "sp-0001/SP-13",
+          "note": "hooks 5s of 51s wall (10%)"
+        },
+        {
+          "eid": "sp-0001/SP-13",
+          "note": "hooks 137s of 2594s wall (5%)"
+        },
+        {
+          "eid": "sp-0001/SP-13",
+          "note": "hooks 476s of 5075s wall (9%)"
+        },
+        {
+          "eid": "sp-0002/SP-13",
+          "note": "hooks 1728s of 28643s wall (6%)"
+        },
+        {
+          "eid": "sp-0002/SP-13",
+          "note": "hooks 5s of 59s wall (8%)"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Apply pack fix(es) see the fix catalog (session-profile.py fixes); the profiler re-flags SP-13 on recurrence.",
+        "loc": "docs/profiles/ (session-profile.py)"
+      },
+      "boundary": "Measured from harness telemetry; heuristics (regex over text) are labelled Inferred in the profile.",
+      "id": "p35",
+      "score": 0.68
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "SP-14: Model-family gap: one family carries 2x the cost or drift indicators of another on comparable turns (seen in 7 profile(s))",
+      "sig": "session-profile SP-14",
+      "scope": "general",
+      "confidence": "v",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "sp-0001/SP-14",
+          "note": "openai/copilot: 3.71 drift indicators per turn vs anthropic/claude: 0.84"
+        },
+        {
+          "eid": "sp-0001/SP-14",
+          "note": "caveat: the turn mix differs (14 vs 77 turns); confirm on like-for-like tasks before tuning"
+        },
+        {
+          "eid": "sp-0002/SP-14",
+          "note": "anthropic+openai/copilot: 34.6 drift indicators per turn vs anthropic+other/claude: 1.0"
+        },
+        {
+          "eid": "sp-0002/SP-14",
+          "note": "caveat: the turn mix differs (10 vs 3 turns); confirm on like-for-like tasks before tuning"
+        },
+        {
+          "eid": "sp-0003/SP-14",
+          "note": "openai/copilot: 4.79 drift indicators per turn vs anthropic/copilot: 1.0"
+        },
+        {
+          "eid": "sp-0003/SP-14",
+          "note": "caveat: the turn mix differs (19 vs 10 turns); confirm on like-for-like tasks before tuning"
+        },
+        {
+          "eid": "sp-0004/SP-14",
+          "note": "openai/copilot: 4.79 drift indicators per turn vs anthropic/copilot: 1.0"
+        },
+        {
+          "eid": "sp-0004/SP-14",
+          "note": "caveat: the turn mix differs (19 vs 10 turns); confirm on like-for-like tasks before tuning"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Apply pack fix(es) F-10; the profiler re-flags SP-14 on recurrence.",
+        "loc": "docs/profiles/ (session-profile.py)"
+      },
+      "boundary": "Measured from harness telemetry; heuristics (regex over text) are labelled Inferred in the profile.",
+      "id": "p36",
+      "score": 0.68
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "SP-15: Concurrent sessions in one checkout: overlapping sessions with the same cwd (seen in 7 profile(s))",
+      "sig": "session-profile SP-15",
+      "scope": "general",
+      "confidence": "v",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "sp-0001/SP-15",
+          "note": "copilot:fd3ccb67 and copilot:61c83fa4 overlapped in c:\\projects\\theterrace"
+        },
+        {
+          "eid": "sp-0001/SP-15",
+          "note": "claude:6a3922e7 and copilot:68051e5e overlapped in c:\\projects\\theterrace"
+        },
+        {
+          "eid": "sp-0002/SP-15",
+          "note": "copilot:fd3ccb67 and copilot:8c5a4abc overlapped in c:\\projects\\theterrace"
+        },
+        {
+          "eid": "sp-0002/SP-15",
+          "note": "copilot:fd3ccb67 and copilot:61c83fa4 overlapped in c:\\projects\\theterrace"
+        },
+        {
+          "eid": "sp-0003/SP-15",
+          "note": "copilot:fd3ccb67 and copilot:8c5a4abc overlapped in c:\\projects\\theterrace"
+        },
+        {
+          "eid": "sp-0003/SP-15",
+          "note": "copilot:fd3ccb67 and copilot:61c83fa4 overlapped in c:\\projects\\theterrace"
+        },
+        {
+          "eid": "sp-0004/SP-15",
+          "note": "copilot:fd3ccb67 and copilot:8c5a4abc overlapped in c:\\projects\\theterrace"
+        },
+        {
+          "eid": "sp-0004/SP-15",
+          "note": "copilot:fd3ccb67 and copilot:61c83fa4 overlapped in c:\\projects\\theterrace"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Apply pack fix(es) F-09; the profiler re-flags SP-15 on recurrence.",
+        "loc": "docs/profiles/ (session-profile.py)"
+      },
+      "boundary": "Measured from harness telemetry; heuristics (regex over text) are labelled Inferred in the profile.",
+      "id": "p37",
+      "score": 0.68
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "SP-16: Knowledge at hand re-fetched: the main agent viewed an instruction file that is already in its prefix (seen in 7 profile(s))",
+      "sig": "session-profile SP-16",
+      "scope": "general",
+      "confidence": "v",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "sp-0001/SP-16",
+          "note": "ui-craft-detection.instructions.md"
+        },
+        {
+          "eid": "sp-0001/SP-16",
+          "note": "ui-design-craft.instructions.md"
+        },
+        {
+          "eid": "sp-0002/SP-16",
+          "note": "ui-craft-detection.instructions.md"
+        },
+        {
+          "eid": "sp-0002/SP-16",
+          "note": "ui-design-craft.instructions.md"
+        },
+        {
+          "eid": "sp-0002/SP-16",
+          "note": "csharp-style-guide.instructions.md"
+        },
+        {
+          "eid": "sp-0002/SP-16",
+          "note": "csharp-style-guide.instructions.md"
+        },
+        {
+          "eid": "sp-0002/SP-16",
+          "note": "csharp-style-guide.instructions.md"
+        },
+        {
+          "eid": "sp-0002/SP-16",
+          "note": "CLAUDE.md"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Apply pack fix(es) F-08, F-02; the profiler re-flags SP-16 on recurrence.",
+        "loc": "docs/profiles/ (session-profile.py)"
+      },
+      "boundary": "Measured from harness telemetry; heuristics (regex over text) are labelled Inferred in the profile.",
+      "id": "p38",
+      "score": 0.68
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "SP-17: Reasoning visibility: the share of billed reasoning that came back as readable text (seen in 7 profile(s))",
+      "sig": "session-profile SP-17",
+      "scope": "general",
+      "confidence": "v",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "sp-0001/SP-17",
+          "note": "139,006 reasoning tokens billed on the main line; 6,420 chars of reasoning text on disk (~1% visible at 3.54 chars/token)"
+        },
+        {
+          "eid": "sp-0001/SP-17",
+          "note": "129 reasoning tokens billed on the main line; 0 chars of reasoning text on disk (~0% visible at 3.54 chars/token)"
+        },
+        {
+          "eid": "sp-0001/SP-17",
+          "note": "16 reasoning tokens billed on the main line; 0 chars of reasoning text on disk (~0% visible at 3.54 chars/token)"
+        },
+        {
+          "eid": "sp-0001/SP-17",
+          "note": "102 reasoning tokens billed on the main line; 0 chars of reasoning text on disk (~0% visible at 3.54 chars/token)"
+        },
+        {
+          "eid": "sp-0001/SP-17",
+          "note": "148,697 reasoning tokens billed on the main line; 81,663 chars of reasoning text on disk (~16% visible at 3.54 chars/token)"
+        },
+        {
+          "eid": "sp-0001/SP-17",
+          "note": "127,656 reasoning tokens billed on the main line; 0 chars of reasoning text on disk (~0% visible at 3.54 chars/token)"
+        },
+        {
+          "eid": "sp-0001/SP-17",
+          "note": "1,347 reasoning tokens billed on the main line; 0 chars of reasoning text on disk (~0% visible at 3.54 chars/token)"
+        },
+        {
+          "eid": "sp-0001/SP-17",
+          "note": "963 reasoning tokens billed on the main line; 1,452 chars of reasoning text on disk (~43% visible at 3.54 chars/token)"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Apply pack fix(es) F-12; the profiler re-flags SP-17 on recurrence.",
+        "loc": "docs/profiles/ (session-profile.py)"
+      },
+      "boundary": "Measured from harness telemetry; heuristics (regex over text) are labelled Inferred in the profile.",
+      "id": "p39",
+      "score": 0.68
+    },
+    {
+      "kind": "Doc update",
+      "group": "Doc / knowledge update",
+      "title": "Harvest 6 assume: marker(s) - each is an unverified belief with a stated trigger",
+      "sig": "assume marker harvest",
+      "scope": "repo-local",
+      "confidence": "v",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "web/pack-index.js#L227",
+          "note": "the provider returns iso-8601 in utc. seen in one sample payload, not stated in # the spec. if it is local time, every daily rollup silently shifts by the offset. # confirm: request one record and ins"
+        },
+        {
+          "eid": "tests/docs_explorer/test_marker_lint.py#L50",
+          "note": "the provider returns ISO-8601 in UTC. Seen in one sample payload, NOT stated in\\n\""
+        },
+        {
+          "eid": "tests/docs_explorer/test_marker_lint.py#L68",
+          "note": "the id is unique. If not, rows collide and the merge breaks.\\n\")"
+        },
+        {
+          "eid": "tests/docs_explorer/test_marker_lint.py#L76",
+          "note": "the id is unique. Verify by querying the index.\\n\")"
+        },
+        {
+          "eid": "tests/docs_explorer/test_marker_lint.py#L84",
+          "note": "rates are per-second. Verify against the vendor docs.\\n\")"
+        },
+        {
+          "eid": "pack/knowledge/no-guessing-protocol.md#L56",
+          "note": "the provider returns ISO-8601 in UTC. Seen in one sample payload, NOT stated in"
+        }
+      ],
+      "control": {
+        "rung": "knowledge doc",
+        "text": "Review each assume: marker; a triggered one is a bug already written down (NG9). Verify or convert to a control.",
+        "loc": "solution-selection-ladder.md L6 / no-guessing NG9"
+      },
+      "boundary": "Markers in this repo only; harvested at consolidation time.",
+      "id": "p20",
+      "score": 0.65
+    },
+    {
+      "kind": "Doc update",
+      "group": "Doc / knowledge update",
+      "title": "Harvest 11 simplify: marker(s) - each is a bounded shortcut with an upgrade trigger",
+      "sig": "simplify marker harvest",
+      "scope": "repo-local",
+      "confidence": "v",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "web/pack-index.js#L308",
+          "note": "global lock, ok at current write volume — go per-account if throughput becomes the bottleneck # simplify: o(n²) match, fine for n<1k batches — index it when batch size grows ``` the token is **`simpli"
+        },
+        {
+          "eid": "tests/docs_explorer/test_marker_lint.py#L41",
+          "note": "O(n2) match, fine for n<1k batches - index it when batch size grows\\n\")"
+        },
+        {
+          "eid": "tests/docs_explorer/test_marker_lint.py#L60",
+          "note": "just hardcode this for now\\n\")"
+        },
+        {
+          "eid": "tests/docs_explorer/test_marker_lint.py#L92",
+          "note": "naive scan\\n\""
+        },
+        {
+          "eid": "tests/docs_explorer/test_marker_lint.py#L100",
+          "note": "hardcoded\\n\")"
+        },
+        {
+          "eid": "tests/docs_explorer/test_marker_lint.py#L105",
+          "note": "hardcoded\\n\")"
+        },
+        {
+          "eid": "tests/docs_explorer/test_marker_lint.py#L110",
+          "note": "naive scan - index it when n grows\\n\")"
+        },
+        {
+          "eid": "tests/docs_explorer/test_marker_lint.py#L122",
+          "note": "a bad example with no trigger\\n\")"
+        }
+      ],
+      "control": {
+        "rung": "knowledge doc",
+        "text": "Review each simplify: marker against its upgrade trigger; a triggered one is debt due (L6).",
+        "loc": "solution-selection-ladder.md L6 / no-guessing NG9"
+      },
+      "boundary": "Markers in this repo only; harvested at consolidation time.",
+      "id": "p21",
+      "score": 0.65
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "Build a control for CTX-B (partially-controlled)",
+      "sig": "CTX-B · The budget gate measured the part it owned and reported the whole as green",
+      "scope": "general",
+      "confidence": "i",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "defect-classes#CTX-B",
+          "note": "status: partially-controlled"
+        },
+        {
+          "eid": "al-01M2H84E4NSPQQNGJM8SK3YRM9",
+          "note": "recent reference"
+        },
+        {
+          "eid": "cl-01M1SA4T3CR8XJ7BTJTEVN0Q34",
+          "note": "recent reference"
+        },
+        {
+          "eid": "cl-01M2H852GX84MKDJ7BKB067PS5",
+          "note": "recent reference"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled.",
+        "loc": "docs/lessons/defect-classes.md#CTX-B"
+      },
+      "boundary": "Applies wherever the class's signature recurs; a control is not a control until observed failing.",
+      "id": "p2",
+      "score": 0.62
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "Build a control for CTX-M (partially-controlled)",
+      "sig": "CTX-M · Every budget we built is on the cheap half",
+      "scope": "general",
+      "confidence": "i",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "defect-classes#CTX-M",
+          "note": "status: partially-controlled"
+        },
+        {
+          "eid": "al-01M1WCK8R952V6RJKJ24PG9KX8",
+          "note": "recent reference"
+        },
+        {
+          "eid": "al-01M1WDB9TKYH4FZX001ENTQBH1",
+          "note": "recent reference"
+        },
+        {
+          "eid": "al-01M1WKD8S2ANN7H8HZDK6VN0NN",
+          "note": "recent reference"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled.",
+        "loc": "docs/lessons/defect-classes.md#CTX-M"
+      },
+      "boundary": "Applies wherever the class's signature recurs; a control is not a control until observed failing.",
+      "id": "p8",
+      "score": 0.62
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "PACK-O: 4/27 substantive turns (14%) recorded no goal-state (done_when)",
+      "sig": "PACK-O front-matter presence + scope-drift review",
+      "scope": "general",
+      "confidence": "v",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "al-01M1S719501FAD1F6XAFQQXP8A",
+          "note": "session-profiler + 11 pack fixes - no done_when recorded (front matter skipped)"
+        },
+        {
+          "eid": "al-01M1SJSS2N185577AFWXCS4H67",
+          "note": "reasoning visibility increment - no done_when recorded (front matter skipped)"
+        },
+        {
+          "eid": "al-01M1SNJFW6TQJ7EBNE1PAF1ZZK",
+          "note": "updatepack applies the map mechanically - no done_when recorded (front matter skipped)"
+        },
+        {
+          "eid": "al-01M2TH74KJPSH98G3F6JRNAXMB",
+          "note": "/dream review all the latest in our ai-forward derived repos since the l… - no done_when recorded (front matter skipped)"
+        },
+        {
+          "eid": "al-01M1MNKXRB2GKP4VY7TSWBXF5J",
+          "note": "context-prefix-budget-proposal - goal-state without a tier (CT19 tier/fan-out cap, CTX-C)"
+        },
+        {
+          "eid": "al-01M1MQB43E3VVM9S9KK0JJE6YE",
+          "note": "fr-072-load-scope-tiering - goal-state without a tier (CT19 tier/fan-out cap, CTX-C)"
+        },
+        {
+          "eid": "al-01M1MWZ36JB5DQPDEGYEJ5YM9G",
+          "note": "document-portal-collaboration-loop - goal-state without a tier (CT19 tier/fan-out cap, CTX-C)"
+        },
+        {
+          "eid": "al-01M1MYMBJFAHKA6AXZS9ZNGZX2",
+          "note": "document-full-scope-bundle - goal-state without a tier (CT19 tier/fan-out cap, CTX-C)"
+        },
+        {
+          "eid": "al-01M1MNKXRB2GKP4VY7TSWBXF5J",
+          "note": "done_when='Root cause verified against the repo (not inferred), every p' -> summary='Profile (161.9M input tokens / 484 calls, 27 of 39 delegated runs failed, 57% of'"
+        },
+        {
+          "eid": "al-01M1MQB43E3VVM9S9KK0JJE6YE",
+          "note": "done_when='Every proposal has a working mechanism plus a control that f' -> summary='FR-072 load-scope tiering, all 8 parts. P1 every knowledge doc declares load: al'"
+        },
+        {
+          "eid": "al-01M1MWZ36JB5DQPDEGYEJ5YM9G",
+          "note": "done_when='Both sections live on the published portal, every inventory ' -> summary='Documentation Portal (the Pages front door) gains two sections: 4 Multi-Agent Co'"
+        },
+        {
+          "eid": "al-01M1MYMBJFAHKA6AXZS9ZNGZX2",
+          "note": "done_when='Every DoD box ticked or explicitly recorded as a gap; explai' -> summary='Full bundle. NEW docs/api/ (19 modules, 267 public fns, 40% documented) generate'"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Presence (mechanical): every substantive turn records done_when (CT19); a missing one skipped the front matter. Satisfaction: review each done_when->summary pair where the summary exceeds the goal (scope drift, PACK-O). The audit done_when field + this miner ARE the rung-2 control (CI6).",
+        "loc": "docs/lessons/defect-classes.md#PACK-O"
+      },
+      "boundary": "Presence is mechanical; 'summary exceeds goal' is surfaced for human review, not auto-judged. Trivial/conversational turns are exempt from logging (AL5b).",
+      "id": "p22",
+      "score": 0.62
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "SP-19: Main-line dominance: the turn's own loop, not its delegates, is where the cost is (seen in 4 profile(s))",
+      "sig": "session-profile SP-19",
+      "scope": "general",
+      "confidence": "v",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "sp-0004/SP-19",
+          "note": "main line 727 requests / 91,734 AIU (91.5% of the session) vs delegates 703 / 8,497; 10.4x the cost per request"
+        },
+        {
+          "eid": "sp-0005/SP-19",
+          "note": "main line 744 requests / 93,814 AIU (91.3% of the session) vs delegates 745 / 8,926; 10.5x the cost per request"
+        },
+        {
+          "eid": "sp-0006/SP-19",
+          "note": "main line 778 requests / 99,680 AIU (91.4% of the session) vs delegates 840 / 9,414; 11.4x the cost per request"
+        },
+        {
+          "eid": "sp-0008/SP-19",
+          "note": "main line 787 requests / 102,230 AIU (91.6% of the session) vs delegates 840 / 9,414; 11.6x the cost per request"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Apply pack fix(es) F-14; the profiler re-flags SP-19 on recurrence.",
+        "loc": "docs/profiles/ (session-profile.py)"
+      },
+      "boundary": "Measured from harness telemetry; heuristics (regex over text) are labelled Inferred in the profile.",
+      "id": "p40",
+      "score": 0.62
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "Build a control for PACK-N (uncontrolled)",
+      "sig": "PACK-N · Staleness inferred from a timestamp rather than from content truth",
+      "scope": "general",
+      "confidence": "i",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "defect-classes#PACK-N",
+          "note": "status: uncontrolled"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled.",
+        "loc": "docs/lessons/defect-classes.md#PACK-N"
+      },
+      "boundary": "Applies wherever the class's signature recurs; a control is not a control until observed failing.",
+      "id": "p15",
+      "score": 0.58
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "Build a control for CTX-I (partially-controlled)",
+      "sig": "CTX-I · Worktrees created for branch names while every session runs in the primary",
+      "scope": "general",
+      "confidence": "i",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "defect-classes#CTX-I",
+          "note": "status: partially-controlled"
+        },
+        {
+          "eid": "al-01M1W2G3KM2F0PGBMXGBT9JVN3",
+          "note": "recent reference"
+        },
+        {
+          "eid": "al-01M1WAAG4FWEK6ZTJNATFCVBNS",
+          "note": "recent reference"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled.",
+        "loc": "docs/lessons/defect-classes.md#CTX-I"
+      },
+      "boundary": "Applies wherever the class's signature recurs; a control is not a control until observed failing.",
+      "id": "p7",
+      "score": 0.56
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "Build a control for GIT-A (partially-controlled)",
+      "sig": "GIT-A · A revert used as an undo, on a file that also carries unrelated uncommitted work",
+      "scope": "general",
+      "confidence": "i",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "defect-classes#GIT-A",
+          "note": "status: partially-controlled"
+        },
+        {
+          "eid": "al-01M1MWZ36JB5DQPDEGYEJ5YM9G",
+          "note": "recent reference"
+        },
+        {
+          "eid": "al-01M1PM0HSK9VFNHGFA8T2CHQHG",
+          "note": "recent reference"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled.",
+        "loc": "docs/lessons/defect-classes.md#GIT-A"
+      },
+      "boundary": "Applies wherever the class's signature recurs; a control is not a control until observed failing.",
+      "id": "p11",
+      "score": 0.56
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "Build a control for PACK-P (partially-controlled)",
+      "sig": "PACK-P · A check reports its verdict over a corpus it never established was non-empty",
+      "scope": "general",
+      "confidence": "i",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "defect-classes#PACK-P",
+          "note": "status: partially-controlled"
+        },
+        {
+          "eid": "al-01M26HYKF5XAXJW9WJCQ5EN10W",
+          "note": "recent reference"
+        },
+        {
+          "eid": "al-01M26KTCFQWMQT7DP6CG0Z2TGS",
+          "note": "recent reference"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled.",
+        "loc": "docs/lessons/defect-classes.md#PACK-P"
+      },
+      "boundary": "Applies wherever the class's signature recurs; a control is not a control until observed failing.",
+      "id": "p14",
+      "score": 0.56
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "SP-20: Late addition on an unbounded turn: an `/also` that inherited no goal state or fanned out above no tier (seen in 3 profile(s))",
+      "sig": "session-profile SP-20",
+      "scope": "general",
+      "confidence": "v",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "sp-0005/SP-20",
+          "note": "no goal state to inherit, so the addition acquired no bound"
+        },
+        {
+          "eid": "sp-0005/SP-20",
+          "note": "no goal state to inherit, so the addition acquired no bound"
+        },
+        {
+          "eid": "sp-0006/SP-20",
+          "note": "no goal state to inherit, so the addition acquired no bound"
+        },
+        {
+          "eid": "sp-0006/SP-20",
+          "note": "no goal state to inherit, so the addition acquired no bound"
+        },
+        {
+          "eid": "sp-0008/SP-20",
+          "note": "no goal state to inherit, so the addition acquired no bound"
+        },
+        {
+          "eid": "sp-0008/SP-20",
+          "note": "no goal state to inherit, so the addition acquired no bound"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Apply pack fix(es) F-15; the profiler re-flags SP-20 on recurrence.",
+        "loc": "docs/profiles/ (session-profile.py)"
+      },
+      "boundary": "Measured from harness telemetry; heuristics (regex over text) are labelled Inferred in the profile.",
+      "id": "p41",
+      "score": 0.56
+    },
+    {
+      "id": "p59",
+      "kind": "Control upgrade",
+      "group": "Coordination (multi-harness)",
+      "title": "Absorb: audit-log.py `append --supersedes` (ai-de adds to append what upstream allows only on change)",
+      "sig": "A consuming repo patched a pack script for a small asymmetry and the patch lives only in its vendored copy",
+      "scope": "general",
+      "confidence": "v",
+      "source": "rem:multi-harness-coordination-2026-09-18",
+      "score": 0.55,
+      "control": {
+        "rung": "one line",
+        "text": "Add --supersedes to `append` in pack/scripts/audit-log.py mirroring `change`; a test asserts an append carrying supersedes is rendered as a correction.",
+        "loc": "pack/scripts/audit-log.py:1277 (change parser) → append parser"
+      },
+      "boundary": "Small; listed so the divergence closes rather than accumulating (FED-B's mechanism in miniature).",
+      "evidence": [
+        {
+          "eid": "ai-de:docs/ai-forward-pack/scripts/audit-log.py:800",
+          "note": "append honours --supersedes."
+        },
+        {
+          "eid": "ai-forward:pack/scripts/audit-log.py:1277",
+          "note": "--supersedes exists on the change parser only."
+        }
+      ]
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "Build a control for CTX-P (partially-controlled)",
+      "sig": "CTX-P · Mechanical work billed as though it needed novelty",
+      "scope": "general",
+      "confidence": "i",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "defect-classes#CTX-P",
+          "note": "status: partially-controlled"
+        },
+        {
+          "eid": "al-01M1WKD8S2ANN7H8HZDK6VN0NN",
+          "note": "recent reference"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled.",
+        "loc": "docs/lessons/defect-classes.md#CTX-P"
+      },
+      "boundary": "Applies wherever the class's signature recurs; a control is not a control until observed failing.",
+      "id": "p9",
+      "score": 0.45
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "Build a control for PACK-Q (partially-controlled)",
+      "sig": "PACK-Q · An adapter written to a contract's *documented* shape, never to a *recorded* one",
+      "scope": "general",
+      "confidence": "i",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "defect-classes#PACK-Q",
+          "note": "status: partially-controlled"
+        },
+        {
+          "eid": "al-01M26KTCFQWMQT7DP6CG0Z2TGS",
+          "note": "recent reference"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled.",
+        "loc": "docs/lessons/defect-classes.md#PACK-Q"
+      },
+      "boundary": "Applies wherever the class's signature recurs; a control is not a control until observed failing.",
+      "id": "p13",
+      "score": 0.45
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "SP-21: Model attribution: the recorded setting is not the model that ran (seen in 2 profile(s))",
+      "sig": "session-profile SP-21",
+      "scope": "general",
+      "confidence": "v",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "sp-0006/SP-21",
+          "note": "recorded setting 'claude-opus-4.8'; effective model 'gpt-6-astra' at 96.9% of main-line cost across 2 distinct model(s)"
+        },
+        {
+          "eid": "sp-0008/SP-21",
+          "note": "recorded setting 'claude-opus-4.8'; effective model 'gpt-6-astra' at 97.0% of main-line cost across 2 distinct model(s)"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Apply pack fix(es) F-16; the profiler re-flags SP-21 on recurrence.",
+        "loc": "docs/profiles/ (session-profile.py)"
+      },
+      "boundary": "Measured from harness telemetry; heuristics (regex over text) are labelled Inferred in the profile.",
+      "id": "p42",
+      "score": 0.45
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "Build a control for CTX-A (partially-controlled)",
+      "sig": "CTX-A · A session that carries several tasks re-reads all of them on every request",
+      "scope": "general",
+      "confidence": "i",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "defect-classes#CTX-A",
+          "note": "status: partially-controlled"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled.",
+        "loc": "docs/lessons/defect-classes.md#CTX-A"
+      },
+      "boundary": "Applies wherever the class's signature recurs; a control is not a control until observed failing.",
+      "id": "p1",
+      "score": 0.34
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "Build a control for CTX-C (partially-controlled)",
+      "sig": "CTX-C · A council convened on a turn that never declared a tier",
+      "scope": "general",
+      "confidence": "i",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "defect-classes#CTX-C",
+          "note": "status: partially-controlled"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled.",
+        "loc": "docs/lessons/defect-classes.md#CTX-C"
+      },
+      "boundary": "Applies wherever the class's signature recurs; a control is not a control until observed failing.",
+      "id": "p3",
+      "score": 0.34
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "Build a control for CTX-D (partially-controlled)",
+      "sig": "CTX-D · The same file read again while its contents were still in context",
+      "scope": "general",
+      "confidence": "i",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "defect-classes#CTX-D",
+          "note": "status: partially-controlled"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled.",
+        "loc": "docs/lessons/defect-classes.md#CTX-D"
+      },
+      "boundary": "Applies wherever the class's signature recurs; a control is not a control until observed failing.",
+      "id": "p4",
+      "score": 0.34
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "Build a control for CTX-E (partially-controlled)",
+      "sig": "CTX-E · Knowledge at hand re-fetched whole: skills re-injected and always-on docs re-read",
+      "scope": "general",
+      "confidence": "i",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "defect-classes#CTX-E",
+          "note": "status: partially-controlled"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled.",
+        "loc": "docs/lessons/defect-classes.md#CTX-E"
+      },
+      "boundary": "Applies wherever the class's signature recurs; a control is not a control until observed failing.",
+      "id": "p5",
+      "score": 0.34
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "Build a control for CTX-G (partially-controlled)",
+      "sig": "CTX-G · A persona reads the roster to find out what it is",
+      "scope": "general",
+      "confidence": "i",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "defect-classes#CTX-G",
+          "note": "status: partially-controlled"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled.",
+        "loc": "docs/lessons/defect-classes.md#CTX-G"
+      },
+      "boundary": "Applies wherever the class's signature recurs; a control is not a control until observed failing.",
+      "id": "p6",
+      "score": 0.34
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "Build a control for SHELL-A (partially-controlled)",
+      "sig": "SHELL-A · Content routed through a shell construct that performs substitution on it",
+      "scope": "general",
+      "confidence": "i",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "defect-classes#SHELL-A",
+          "note": "status: partially-controlled"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled.",
+        "loc": "docs/lessons/defect-classes.md#SHELL-A"
+      },
+      "boundary": "Applies wherever the class's signature recurs; a control is not a control until observed failing.",
+      "id": "p12",
+      "score": 0.34
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "Build a control for PACK-H (partially-controlled)",
+      "sig": "PACK-H · A fix to a hosted surface reported \"done\" from the working tree, not verified on the live surface",
+      "scope": "general",
+      "confidence": "i",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "defect-classes#PACK-H",
+          "note": "status: partially-controlled"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled.",
+        "loc": "docs/lessons/defect-classes.md#PACK-H"
+      },
+      "boundary": "Applies wherever the class's signature recurs; a control is not a control until observed failing.",
+      "id": "p16",
+      "score": 0.34
+    },
+    {
+      "kind": "Control upgrade",
+      "group": "Control upgrade",
+      "title": "SP-22: Mechanical work at reasoning prices: a closing turn billed as though it needed novelty (seen in 1 profile(s))",
+      "sig": "session-profile SP-22",
+      "scope": "general",
+      "confidence": "v",
+      "source": "deterministic",
+      "evidence": [
+        {
+          "eid": "sp-0008/SP-22",
+          "note": "mechanical close at effort=high: 1,179 AIU over 31 main request(s)"
+        },
+        {
+          "eid": "sp-0008/SP-22",
+          "note": "mechanical close at effort=high: 896 AIU over 10 main request(s)"
+        }
+      ],
+      "control": {
+        "rung": "automated control",
+        "text": "Apply pack fix(es) F-17; the profiler re-flags SP-22 on recurrence.",
+        "loc": "docs/profiles/ (session-profile.py)"
+      },
+      "boundary": "Measured from harness telemetry; heuristics (regex over text) are labelled Inferred in the profile.",
+      "id": "p43",
+      "score": 0.34
+    }
+  ],
+  "diary": {
+    "added": 0,
+    "merged": 0,
+    "superseded": 0,
+    "excluded": 0
+  },
+  "rem": {
+    "ran": true,
+    "focus": "Multi-agent / multi-harness coordination across the pack-consuming repos since drm-0009 (2026-09-03)",
+    "corpus": "ai-de (906 commits, .agents/{log,decisions,requests}, register 105→225 classes, vendored pack scripts) · ai-forward (52 audit, 22 register classes, sp-0001..0008, proposal branch active-coordination-bus) · myfinancialcoach/fusion360-mcp-server/templates (no activity in window)",
+    "read_only": true,
+    "measured": {
+      "ai_de_commits": 906,
+      "ai_de_log_events": 6311,
+      "claims": 3257,
+      "releases": 2614,
+      "session_start": 294,
+      "session_end": 134,
+      "sessions_never_ended": 127,
+      "sessions": 197,
+      "distinct_agent_ids": 188,
+      "harness_events": {
+        "copilot": 3392,
+        "codex": 1990,
+        "claude": 463,
+        "grok": 94
+      },
+      "true_lease_overlaps_after_ttl_and_release": 0,
+      "claims_expired_by_ttl_only": 64,
+      "over_cap_claims_after_cap": 48,
+      "over_cap_with_long_edit": 4,
+      "decisions": 12269,
+      "not_checked_identity": 129,
+      "refused": 57,
+      "requests_add": 577,
+      "requests_resolve": 324,
+      "ai_de_audit_entries": 373,
+      "ai_de_audit_tool_recorded": 16,
+      "ai_forward_audit_entries": 172,
+      "ai_forward_audit_tool_recorded": 84,
+      "ai_de_new_classes": 120,
+      "ai_de_classes_naming_pack_as_fix_owner": 19,
+      "fleet_store_records": 37,
+      "fleet_store_unique_slugs": 23,
+      "fleet_store_duplicated_slugs": 10,
+      "federation_targets_reachable_on_host": "1/6",
+      "mitigations_in_window": 0
+    },
+    "corrections": [
+      "Over-cap claims: 259 since 09-03 was split by the date the cap landed (0f553858, 2026-09-14): 301 predate it and are not violations; 48 postdate it, 4 with a reason. The corrected figure is the one used.",
+      "Lease overlaps: TTL-aware AND release-aware recomputation gives 0 across 3,257 claims (drm-0009's earlier mistake was not repeated); the lease mechanism is counter-evidence and is not proposed for change.",
+      "DC-226/DC-227 were first treated as register entries because commits cite them; grep shows they exist only in code and the audit log — reclassified as an unregistered-class finding (p56).",
+      "Copilot deny: the pack records a live deny honoured 2026-08-24; the proposal says 'deny not verified'. Left Flagged in p51 rather than resolved by choosing a record."
+    ],
+    "harness_split_note": "Harness attribution is by agent-id prefix in .agents/log because the audit log cannot carry it (p46)."
+  }
+};

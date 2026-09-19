@@ -17,6 +17,25 @@ summary: >-
 
 # Defect-class register
 
+**PACK-C / RIG-E instance, 2026-09-19 — Codex host contract.** The existing
+Antigravity `.agents/skills/` deployment was discoverable by Codex, but the pack
+documented slash invocation and did not define Codex constitution grounding or a
+Codex readiness check. Class → host assumptions hidden by compatible files.
+Sweep → sync, install/update, managed block, scripts, knowledge, guide, and hooks.
+Derive → skill discovery, invocation syntax, rule loading, and hook registration
+are separate contracts. Prevent → generated skill inventory, deployed doctor,
+`tests/docs_explorer/test_codex_surface.py`, and an always-loaded `AGENTS.md` pointer.
+Observed red before implementation; actual Codex CLI catalog later confirmed 27
+enabled skills and no errors. A second PACK-C shape appeared in the parity test:
+PowerShell's culture-sensitive sort ordered companion paths differently from
+Python's ordinal sort. Explicit ordinal sorting fixes it; the same parity test
+was observed red and then rerun. Desktop picker behavior is not claimed.
+The independent review also caught derived inventory being sent through the
+authored-file three-way merge path: no historical source file exists for it, so a
+future revision would park a conflict. The previous-revision update test failed
+before changing inventory handling to deterministic regeneration. This is a
+representation-contract failure, not a reason to bypass merges for authored files.
+
 *Governed by `continuous-improvement.md` (CI1–CI12). **One entry per class, not per bug.** A new occurrence of an existing class appends to that class's Instances and triggers a control review — it does not create a new entry. Read this at grounding (CI5) for the area you are working in.*
 
 **How to use this file**

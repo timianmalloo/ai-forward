@@ -423,14 +423,17 @@ class Applier(object):
     def skills(self):
         cdir = os.path.join(self.pack, "commands")
         pdir = os.path.join(self.pack, "adapters", "copilot", "prompts")
+        inventory = {}
         for name in sorted(os.listdir(cdir)):
             sdir = os.path.join(cdir, name)
             if not os.path.isfile(os.path.join(sdir, "SKILL.md")):
                 continue
+            inventory[name] = []
             for base, _dirs, files in os.walk(sdir):
                 for f in sorted(files):
                     src = os.path.join(base, f)
                     rel_in_skill = os.path.relpath(src, sdir)
+                    inventory[name].append(rel_in_skill.replace("\\", "/"))
                     rel_skill = "commands/{0}/{1}".format(name, rel_in_skill.replace("\\", "/"))
                     text = read(src)
                     self.place("skills", rel_skill,
@@ -443,6 +446,25 @@ class Applier(object):
             if os.path.isfile(prompt):
                 self.place("skills", "adapters/copilot/prompts/{0}.prompt.md".format(name),
                            os.path.join(self.target, ".github", "prompts", name + ".prompt.md"), read(prompt))
+        inventory = {name: sorted(files) for name, files in inventory.items()}
+        # This is derived data, not an authored pack file with a git merge base.
+        # Always regenerate stale inventory; preserve local skills by leaving
+        # their directories alone, not by merging them into the pack manifest.
+        manifest = os.path.join(self.target, "docs", "ai-forward-pack", "codex-skills.json")
+        try:
+            current_inventory = json.loads(read(manifest) or "null")
+        except ValueError:
+            current_inventory = None
+        if current_inventory == inventory:
+            self.row("bundle", self.rel(manifest), "UNCHANGED", "ok")
+        else:
+            action = "UPDATE" if os.path.exists(manifest) else "ADD"
+            self._write(manifest, json.dumps(inventory, indent=2) + "\n")
+            self.row("bundle", self.rel(manifest), action,
+                     "ok", "derived pack skill inventory regenerated from commands/")
+        self.place("bundle", "adapters/codex/codex.md",
+                   os.path.join(self.target, "docs", "ai-forward-pack", "codex.md"),
+                   read(os.path.join(self.pack, "adapters", "codex", "codex.md")))
 
     def agents(self):
         cc = os.path.join(self.pack, "adapters", "claude-code", "agents")

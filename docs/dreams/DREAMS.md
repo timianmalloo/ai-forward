@@ -72,3 +72,20 @@ summary: >-
 - correction made during the pass: an initial count of 11 cross-agent lease overlaps ignored TTL expiry.
   Recomputed respecting expiry, true overlaps are 0 - the lease invariant was never violated. The
   alarming number was withdrawn before any proposal rested on it.
+## drm-0010 - 2026-09-18
+- window: last 15 days · 52 audit · 3 change · 0 mitigations · 17 markers
+- proposals: 59 = 43 deterministic + 16 REM (added 0 - merged 0 - superseded 0 - excluded/tainted 0)
+- highest-leverage: COORD-I — Control currency: a control runs at the version of the tree that invoked it
+- REM focus: multi-agent / multi-harness coordination across the consuming repos since drm-0009. Corpus
+  read READ-ONLY: ai-de (906 commits, 6,311 ledger events, register 105→225, vendored pack scripts),
+  ai-forward's own register/profiles/proposal branch. Nothing was written in any target.
+- measured: 3,257 claims / 2,614 releases / 294 session-start / 134 session-end (127 of 197 sessions
+  never ended); harness split copilot 3,392 · codex 1,990 · claude 463 · grok 94; 0 true lease overlaps
+  (TTL- and release-aware); 48 over-cap claims after the cap landed, 4 with a reason; audit `tool`
+  recorded on 16/373 (ai-de) and 84/172 (ai-forward); fleet store 37 records / 23 unique / 10 duplicated.
+- coverage gap: 1 of the 6 federation targets is on this host; 0 mitigations captured in the window, so
+  the promotion oracle contributed nothing — every proposal rests on the weaker corpus paths.
+- corrections made during the pass: over-cap count split at the cap's landing date (301 pre / 48 post);
+  DC-226/227 reclassified from register entries to unregistered classes; Copilot-deny discrepancy between
+  two records left Flagged, not resolved.
+
