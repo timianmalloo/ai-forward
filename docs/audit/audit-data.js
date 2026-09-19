@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-19T19:16:33Z",
+  "generated": "2026-09-19T19:19:03Z",
   "audit": [
     {
       "actor": null,
@@ -5883,6 +5883,33 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-19T19:06:29Z",
       "duration_seconds": 604.0
+    },
+    {
+      "id": "al-01M2XHQ67MF04GFXZANT0G7C5G",
+      "shortname": "join-p1-requests",
+      "datetime": "2026-09-19T19:19:03Z",
+      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
+      "prompt": "the join of impl/p1-requests into integ/p0-p1",
+      "summary": "Track P1 joined: spec-typed-seam-requests, design-typed-seam-requests (blob-formula spike executed), request add requires --deadline/--fallback (exit 2), states sent/received/acked/resolved/expired, ack --blob with stale detection, expire records the fallback as the outcome, doctor FAILs a silent expiry and WARNs untyped rows, metrics counts or not recorded, claim --except (CTX-R control) and the lease-overlap WARN, coord_ids monotonic stamp with a 1,000-id order test (ID-A sweep: al/cl/req/mail through coord_ids; the legacy al-NNNN fallback reported); 19 tests red-first (16 failed first); coordinator patched the three untyped adds in test_coord_core.py; verified in its tree; 54/160 calls, 52 min recount_seconds=28 (docs_only=False).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Track p1-requests merged into the integration branch with the conflict-marker gate, recount and verify gates green",
+      "done_when": "merge commit present; recount green; run-verify-gates exit 0; no push",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-19T19:18:34Z",
+      "duration_seconds": 29.0
     }
   ],
   "changes": [
