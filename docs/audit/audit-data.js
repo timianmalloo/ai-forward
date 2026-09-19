@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-19T18:17:41Z",
+  "generated": "2026-09-19T18:26:05Z",
   "audit": [
     {
       "actor": null,
@@ -5352,12 +5352,128 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M2XE6V5G7SHNYEP9KFXVCARK",
-      "shortname": "join-p6-board",
+      "actor": null,
+      "artifacts": [],
+      "compiled": false,
       "datetime": "2026-09-19T18:17:41Z",
-      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
+      "done_when": "merge commit present; recount green; run-verify-gates exit 0; no push",
+      "duration_seconds": 8.0,
+      "fan_out": 0,
+      "goal": "Track p6-board merged into the integration branch with the conflict-marker gate, recount and verify gates green",
+      "id": "al-01M2XE6V5G7SHNYEP9KFXVCARK",
+      "kind": "skill",
+      "outcome": "success",
       "prompt": "the join of the resolved merge into integ/p2-p8",
+      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
+      "shortname": "join-p6-board",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-19T18:17:33Z",
       "summary": "Track P6 joined: spec-board (archetype B2), design-board, coord-board.py board/--follow/--json/post via P4's writer by path, audit-log render emits messages without bodies, Messages view in the template, 18 tests red-first; verified in its tree: 45 passed, lints exit 0, ui-craft-gate clean; 52/120 calls, 16 min. First attempt stopped at recount on the sync-dependent pack-apply test; selector corrected. recount_seconds=7 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/specs/compile-readers.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-09-19T18:09:44Z",
+      "done_when": "spec indexed and validating; gate record with the inline adversaries; audit entry; handoff to /design-slice",
+      "fan_out": 0,
+      "goal": "docs/specs/compile-readers.md: spec-compile-readers refining spec-compile-stage (US-3/6/8) - readers, seats, citations, lint",
+      "id": "al-01M2XDR8PG5W1WX0YN060RKRN8",
+      "kind": "skill",
+      "main_budget": 160,
+      "main_calls": 27,
+      "main_over_budget": false,
+      "outcome": "success",
+      "prompt": "Track P8 (coordination-p2-p8): /specify for the compile readers - session-profile.py and dream.py consume the compile stage's fields, every prose-input skill cites CO-S0, every skill declares runs_as, verify-skill-contracts.py enforces it.",
+      "session": "p8-readers",
+      "shortname": "specify-compile-readers",
+      "skill": "specify",
+      "summary": "Spec for P8: nine user stories (profiler measurements per session/template with not-recorded degradation; SP-27 Inferred, SP-28 Verified; F-26/F-27; dream CO-S0 miner; runs_as on every skill; the CO-S0 sentence once per prose-input skill; fan-out/hard-stop/dispatch lint rules; budget held). Drift recorded: Runs-as -> runs_as frontmatter key. Gate PASS-WITH-CONDITIONS (reference/co-s0.md fallback named for the Coordinator).",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/design/compile-readers.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-09-19T18:13:01Z",
+      "done_when": "design indexed and validating; audit and change entries; handoff to /implement; the docs/security documents links reported (not edited)",
+      "duration_seconds": 191.0,
+      "fan_out": 0,
+      "goal": "docs/design/compile-readers.md: the detailed design for spec-compile-readers - data model (derived rows, additivity), contracts for the profiler additions, the dream miner and the new lint, the seat table, budget arithmetic, failure modes, test plan",
+      "id": "al-01M2XDY8ZJZBTP4HSEWZ5MVB9B",
+      "kind": "skill",
+      "main_budget": 160,
+      "main_calls": 31,
+      "main_over_budget": false,
+      "outcome": "success",
+      "prompt": "Track P8: /design-slice for docs/design/compile-readers.md implementing spec-compile-readers - profiler compile measurements, dream CO-S0 miner, verify-skill-contracts.py, runs_as seats and CO-S0/CO-S2 citations.",
+      "session": "p8-readers",
+      "shortname": "design-slice-compile-readers",
+      "skill": "design-slice",
+      "started_at": "2026-09-19T18:09:50Z",
+      "summary": "Design: one pure reader in session-profile.py (by_session/by_template rows, SP-27 Inferred, SP-28 Verified, F-26/F-27, two compare columns), dream section-7 miner keyed by sig CO-S0, verify-skill-contracts.py with four rules + self-test + refusal grammar, the runs_as seat per skill justified, the CO-S0 sentence inline where 2% headroom holds it else reference/co-s0.md with a pointer (eight skills named for a baseline raise). Gate PASS-WITH-CONDITIONS.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "pack/scripts/session-profile.py",
+        "pack/scripts/dream.py",
+        "pack/scripts/verify-skill-contracts.py",
+        "tests/docs_explorer/test_readers_compile_fields.py",
+        "tests/docs_explorer/test_skill_co_s0_citation.py",
+        "docs/notes/note-20260919-readers-seat-and-citation-placement.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-09-19T18:24:32Z",
+      "done_when": "new tests + existing profiler/dream/budget suites green; lint self-test exit 0 and the tree refuses only P2's two skills; context-budget skills --gate exit 0; three portability lints exit 0; docs graph validating; Proof Pack recorded",
+      "duration_seconds": 688.0,
+      "fan_out": 0,
+      "goal": "Readers consume the compile fields (profiler rows, SP-27/SP-28, F-26/F-27, compare columns, compile subcommand; dream CO-S0 miner); every owned skill declares runs_as; prose-input skills cite CO-S0 once; hard stops cite CO-S2; optimize-graph carries the dispatchable stop; verify-skill-contracts.py with self-test",
+      "id": "al-01M2XEKC7ZMD350PWRHHRMFQPF",
+      "kind": "skill",
+      "main_budget": 160,
+      "main_calls": 62,
+      "main_over_budget": false,
+      "outcome": "success",
+      "prompt": "Track P8: /implement docs/design/compile-readers.md - session-profile.py compile measurements, dream.py CO-S0 miner, verify-skill-contracts.py lint, runs_as and CO-S0/CO-S2 lines on the pack's skills; red-first.",
+      "session": "p8-readers",
+      "shortname": "implement-compile-readers",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "started_at": "2026-09-19T18:13:04Z",
+      "summary": "Shipped: session-profile.py compile_measurements/compile_findings/render_compile_section + compile subcommand (SP-27 Inferred, SP-28 Verified, F-26/F-27, compiled + edit dist p50 columns); dream.py section-7 CO-S0 miner (presence, unanswered DR, refusals); verify-skill-contracts.py (4 rules, self-test, grammar, exit 0/1/2); runs_as on 26 skills; CO-S0 sentence inline on 7 prose-input skills and by reference/co-s0.md pointer on 7 (budget); CO-S2 one-liner on 4 hard stops; dispatchable stop on optimize-graph. Red-first observed: 34 lint refusals on base, 35 failing tests. Green: 119 passed; lint refuses only execute-with-coordination and prepare-for-coordination (P2); budget gate clean; lints clean. Proof Pack in docs/notes/note-20260919-readers-seat-and-citation-placement.md.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "id": "al-01M2XEP6DHB72YFHBCTXR9T0KZ",
+      "shortname": "join-p8-readers",
+      "datetime": "2026-09-19T18:26:04Z",
+      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
+      "prompt": "the join of impl/p8-readers into integ/p2-p8",
+      "summary": "Track P8 joined: spec-compile-readers, design-compile-readers, session-profile.py compile measurements + SP-27/SP-28 + F-26/F-27 + compile subcommand, dream.py CO-S0 miner, verify-skill-contracts.py (red first: 34 refusals across 28 skills; self-test 8 directions), runs_as on 26 skills, CO-S0 sentence on the prose-input skills (seven via reference/co-s0.md pending baseline raises), 38 tests red-first; verified in its tree: 119 passed, skills gate exit 0, lints exit 0; 62/160 calls, 40 min recount_seconds=8 (docs_only=False).",
       "kind": "skill",
       "skill": "execute-with-coordination",
       "tool": null,
@@ -5366,7 +5482,7 @@ window.AUDIT_DATA = {
       "tags": [],
       "outcome": "success",
       "compiled": false,
-      "goal": "Track p6-board merged into the integration branch with the conflict-marker gate, recount and verify gates green",
+      "goal": "Track p8-readers merged into the integration branch with the conflict-marker gate, recount and verify gates green",
       "done_when": "merge commit present; recount green; run-verify-gates exit 0; no push",
       "tier": "T1",
       "fan_out": 0,
@@ -5375,7 +5491,7 @@ window.AUDIT_DATA = {
         "verification_executed": true,
         "acceptance_met": true
       },
-      "started_at": "2026-09-19T18:17:33Z",
+      "started_at": "2026-09-19T18:25:56Z",
       "duration_seconds": 8.0
     }
   ],
@@ -6586,70 +6702,92 @@ window.AUDIT_DATA = {
       "title": "Explicit Codex discovery and grounding contract"
     },
     {
-      "id": "cl-01M2X8NPWS193FE4ZJ0TF80YYN",
-      "datetime": "2026-09-19T16:40:57Z",
-      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
-      "kind": "spec",
-      "skill": "specify",
-      "title": "Compile stage: no added scope, one store",
-      "prompt": "keep going with best next action",
-      "summary": "Spec spec-compile-stage settles two load-bearing decisions for P7: (1) the Compilation aggregate's invariant is no added scope — every done-when / not-in-scope clause traces to a raw phrase or a marked assumption, enforced by verify-compiled-prompt.py before the entry is logged; (2) the audit log is the only store — raw and compiled prompts are audit entries (kind:prompt plus a compilation entry naming raw id, raw hash and template version), no compiled/ directory. Resolved references are cited by path and hash, never inlined (injection lens). Templates are versioned data files, one per harness; a missing template refuses, never falls back.",
-      "rationale": "CT20 autonomy is the how; a compiler that could widen done-when would author goals silently on every turn. One store because the audit log already holds kind:prompt and a second directory would drift (AL0.1 single writer).",
       "artifacts": [
         "docs/specs/compile-stage.md"
       ],
-      "tags": [],
+      "datetime": "2026-09-19T16:40:57Z",
       "git": {
-        "before": "4a4c0b3",
         "after": "4a4c0b3a29dfd14fec48b84a5baf30547b54a0ae",
+        "before": "4a4c0b3",
         "branch": "spec/compile-stage-p7",
-        "pushed": true,
-        "commits": []
-      }
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-01M2X8NPWS193FE4ZJ0TF80YYN",
+      "kind": "spec",
+      "prompt": "keep going with best next action",
+      "rationale": "CT20 autonomy is the how; a compiler that could widen done-when would author goals silently on every turn. One store because the audit log already holds kind:prompt and a second directory would drift (AL0.1 single writer).",
+      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
+      "skill": "specify",
+      "summary": "Spec spec-compile-stage settles two load-bearing decisions for P7: (1) the Compilation aggregate's invariant is no added scope — every done-when / not-in-scope clause traces to a raw phrase or a marked assumption, enforced by verify-compiled-prompt.py before the entry is logged; (2) the audit log is the only store — raw and compiled prompts are audit entries (kind:prompt plus a compilation entry naming raw id, raw hash and template version), no compiled/ directory. Resolved references are cited by path and hash, never inlined (injection lens). Templates are versioned data files, one per harness; a missing template refuses, never falls back.",
+      "tags": [],
+      "title": "Compile stage: no added scope, one store"
     },
     {
-      "id": "cl-01M2X9MKF1CZF75TC9CR939P7B",
-      "datetime": "2026-09-19T16:57:49Z",
-      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
-      "kind": "design",
-      "skill": "design-slice",
-      "title": "Compile stage design: skeleton + bounded fill + verifier; compilation as an audit kind",
-      "prompt": "then use the owner-coordinator-sub.agent model to go through the whole design-slice/implement loop to get this spec implemented",
-      "summary": "The compiled prompt is a JSON the deterministic engine writes and the running agent fills; a separate gate refuses added scope before the only writer appends a kind:compilation audit entry whose prompt field is the rendered text. Templates are versioned data files; the audit log stays the single store.",
-      "rationale": "Reuse-in-codebase: the audit log already holds prompts and the pack already has the gate-as-script idiom; a JSON seam lets tests substitute the model; a new audit kind keeps compiled text out of the operator's reuse stack.",
       "artifacts": [
         "docs/design/compile-stage.md"
       ],
-      "tags": [],
+      "datetime": "2026-09-19T16:57:49Z",
       "git": {
-        "before": "fe7ada8",
         "after": "fe7ada84698f04b600e783e837e17123cff14bcf",
+        "before": "fe7ada8",
         "branch": "spec/compile-stage-p7",
-        "pushed": true,
-        "commits": []
-      }
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-01M2X9MKF1CZF75TC9CR939P7B",
+      "kind": "design",
+      "prompt": "then use the owner-coordinator-sub.agent model to go through the whole design-slice/implement loop to get this spec implemented",
+      "rationale": "Reuse-in-codebase: the audit log already holds prompts and the pack already has the gate-as-script idiom; a JSON seam lets tests substitute the model; a new audit kind keeps compiled text out of the operator's reuse stack.",
+      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
+      "skill": "design-slice",
+      "summary": "The compiled prompt is a JSON the deterministic engine writes and the running agent fills; a separate gate refuses added scope before the only writer appends a kind:compilation audit entry whose prompt field is the rendered text. Templates are versioned data files; the audit log stays the single store.",
+      "tags": [],
+      "title": "Compile stage design: skeleton + bounded fill + verifier; compilation as an audit kind"
     },
     {
-      "id": "cl-01M2XDN6ENZJ1JQBSH53SNY70E",
-      "datetime": "2026-09-19T18:08:03Z",
-      "session": "p6-board",
-      "kind": "design",
-      "skill": "design-slice",
-      "title": "Board (P6, D12): a read model over the inboxes and the ledger, never a store",
-      "prompt": "Track P6: /design-slice the board",
-      "summary": "docs/design/board.md (design-board)",
-      "rationale": "The prior board was struck because nothing wrote to it; D12 reopens it as a projection over the store agents already write. Reading writes nothing; posting goes only through the message layer's single writer imported by path; the page shows the ledger twins without bodies and says NOT CHECKED when empty.",
       "artifacts": [
         "docs/design/board.md"
       ],
-      "tags": [],
+      "datetime": "2026-09-19T18:08:03Z",
       "git": {
-        "before": null,
         "after": "2b3a8152476efaa80c9d311db865b4a94746c601",
+        "before": null,
         "branch": "impl/p6-board",
-        "pushed": null,
-        "commits": []
-      }
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-01M2XDN6ENZJ1JQBSH53SNY70E",
+      "kind": "design",
+      "prompt": "Track P6: /design-slice the board",
+      "rationale": "The prior board was struck because nothing wrote to it; D12 reopens it as a projection over the store agents already write. Reading writes nothing; posting goes only through the message layer's single writer imported by path; the page shows the ledger twins without bodies and says NOT CHECKED when empty.",
+      "session": "p6-board",
+      "skill": "design-slice",
+      "summary": "docs/design/board.md (design-board)",
+      "tags": [],
+      "title": "Board (P6, D12): a read model over the inboxes and the ledger, never a store"
+    },
+    {
+      "artifacts": [
+        "docs/design/compile-readers.md"
+      ],
+      "datetime": "2026-09-19T18:13:01Z",
+      "git": {
+        "after": "2b3a8152476efaa80c9d311db865b4a94746c601",
+        "before": "2b3a815",
+        "branch": "impl/p8-readers",
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-01M2XDY96PTKWYHRFY683V7YD8",
+      "kind": "design",
+      "prompt": "Track P8: /design-slice for compile-readers",
+      "rationale": "Nothing new persists; the audit log is the fact table. The context budget is a ratchet the Coordinator owns, so P8 holds it by progressive disclosure rather than raising baselines.",
+      "session": "p8-readers",
+      "skill": "design-slice",
+      "summary": "Readers compute rows at run time (derive-don't-store; profile snapshot rebuildable); seats fixed per skill (either for prose-input, Coordinator for optimize-graph/lifecycle/measurement); the CO-S0 sentence lives in reference/co-s0.md with a one-line pointer where baseline+2% cannot hold it.",
+      "tags": [],
+      "title": "Compile readers derive, never store: per-session and per-template measurements from the audit log; runs_as seats per skill; CO-S0 by pointer where the 2% budget cannot hold the sentence"
     }
   ]
 };

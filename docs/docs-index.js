@@ -1976,6 +1976,49 @@ window.DOCS_INDEX = {
       "sourceSha256": "8caab81356b8f554a5435c829a577ddcb3435392d777c58565b18acc694d04a8"
     },
     {
+      "id": "note-20260919-readers-seat-and-citation-placement",
+      "path": "docs/notes/note-20260919-readers-seat-and-citation-placement.md",
+      "title": "The seat key is runs_as, the CO-S0 sentence moves to reference/ where the 2% budget cannot hold it, and a dispatch instruction is a heading, a verb or a sentence-initial spawn",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-03-19",
+      "reviewSuggested": [],
+      "summary": "Three decisions taken while building P8, below ADR weight: the seat is declared as the YAML key `runs_as` (the proposal wrote `Runs as:`); seven prose-input skills carry the CO-S0 sentence in reference/co-s0.md behind a one-line pointer because their recorded baseline + 2% cannot hold 54 tokens; and the lint's dispatch-order rule reads an instruction to dispatch, not prose about spawning. The implement Proof Pack is recorded here because docs/proofs/ is not a P8-owned path.",
+      "tags": [
+        "decision-note",
+        "coordination",
+        "compile",
+        "readers",
+        "skills",
+        "runs-as",
+        "co-s0",
+        "context-budget",
+        "p8"
+      ],
+      "links": [
+        {
+          "to": "design-compile-readers",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-compile-readers",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "bb72fdca48c407cbbaa30725cdf52bfd8977bc271e350f68004f7a6c7774cb79"
+    },
+    {
       "id": "note-autopilot-open-questions-decisions",
       "path": "docs/notes/autopilot-open-questions-decisions.md",
       "title": "Decisions on PACK-O open questions (logging, class granularity, autopilot caps)",
@@ -2134,6 +2177,54 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "a914b430f57a1380b4df3eed4bfff538430d9ebc4157d98324d354791c82858e"
+    },
+    {
+      "id": "design-compile-readers",
+      "path": "docs/design/compile-readers.md",
+      "title": "Design — compile readers (session-profile.py compile measurements · dream.py CO-S0 miner · verify-skill-contracts.py · runs_as and the shared-stage citations)",
+      "type": "design",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-03-18",
+      "reviewSuggested": [],
+      "summary": "Detailed design for spec-compile-readers: one pure reader over the audit log inside session-profile.py (per-session and per-template-version compile measurements, SP-27/SP-28, F-26/F-27, two compare-table columns), one deterministic miner beside PACK-O in dream.py, a new stdlib lint verify-skill-contracts.py with four rules and a self-test, and the smallest edit to each SKILL.md: a runs_as frontmatter line, the fixed CO-S0 sentence, the CO-S2 one-liner and optimize-graph's dispatchable stop — all under the per-skill 2% budget.",
+      "tags": [
+        "coordination",
+        "compile",
+        "readers",
+        "session-profiler",
+        "dream",
+        "lint",
+        "skills",
+        "runs-as",
+        "co-s0",
+        "p8"
+      ],
+      "links": [
+        {
+          "to": "spec-compile-readers",
+          "rel": "implements"
+        },
+        {
+          "to": "design-compile-stage",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "refines"
+        },
+        {
+          "to": "audit-log",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "c561f8d9cb0c2e0467c8219e62d89a26f26725defe701784bf63037b80a5e784"
     },
     {
       "id": "design-compile-stage",
@@ -6798,6 +6889,60 @@ window.DOCS_INDEX = {
       "sourceSha256": "257dfd864b0345eb0d404c938075f439dcf095a4cc9a3bc994571f0d77e3cd61"
     },
     {
+      "id": "spec-compile-readers",
+      "path": "docs/specs/compile-readers.md",
+      "title": "Compile readers — the profiler and dream consume the compile stage's fields; every skill declares its seat and cites the shared stages",
+      "type": "spec",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-03-18",
+      "reviewSuggested": [],
+      "summary": "Specifies P8 of the coordination proposal: the two readers of the audit log (session-profile.py, dream.py) consume the compile stage's fields — compiled, compiled_from, edit_distance, dispatchable, provenance — as measurements that degrade to \"not recorded\"; every skill declares the seat it runs in (runs_as) and every prose-input skill cites CO-S0 in one fixed sentence; a stdlib lint (verify-skill-contracts.py) refuses a skill that breaks any of it, red-first against today's tree, under the per-skill context budget.",
+      "tags": [
+        "coordination",
+        "compile",
+        "readers",
+        "session-profiler",
+        "dream",
+        "skills",
+        "co-s0",
+        "runs-as",
+        "lint",
+        "p8"
+      ],
+      "links": [
+        {
+          "to": "spec-compile-stage",
+          "rel": "refines"
+        },
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "relates-to"
+        },
+        {
+          "to": "design-compile-stage",
+          "rel": "relates-to"
+        },
+        {
+          "to": "audit-log",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "User flows",
+          "mermaid": "flowchart TD\n  A[profile run] --> B{audit-log.jsonl present?}\n  B -- no --> C[compile section: not recorded; findings unchanged]\n  B -- yes --> D[one pass: compilations by id, workflow runs by session]\n  D --> E{any compiled:false with tier != T0?}\n  E -- yes --> F[SP-27 Inferred, fix F-26]\n  D --> G{template median edit_distance > 0.2?}\n  G -- yes --> H[SP-28 Verified, fix F-27]\n  D --> I[render tables; every empty cell = not recorded]\n  L[lint run] --> M{skills root found?}\n  M -- no --> N[exit 2: usage, names the roots tried]\n  M -- yes --> O[per skill: seat, fan-out, hard stop, dispatch order]\n  O --> P{refusals?}\n  P -- yes --> Q[print grammar lines; exit 1]\n  P -- no --> R[clean; exit 0]"
+        }
+      ],
+      "sourceSha256": "ef675b2f3273b971ef356b89c223904a51e80dbfb58d5fa76baf16bdc0508dee"
+    },
+    {
       "id": "spec-compile-stage",
       "path": "docs/specs/compile-stage.md",
       "title": "Compile stage — from the operator's prose to the harness- and model-specific starting prompt",
@@ -7314,5 +7459,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "601b191ba7e24d44cdeaeb8d2c48d56ed498358dd96321386bd05d9159ac70dd"
+  "graphSha256": "b1c78e6bfba11361e18ace59a9bb69d1a2d85f6a74bba5306df28d55736e7395"
 };
