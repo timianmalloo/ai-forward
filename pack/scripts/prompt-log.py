@@ -101,8 +101,29 @@ def _adapt(e):
         text = e.get("text", "")
     label = e.get("shortname") or e.get("label") or _derive_label(text or "")
     ts = e.get("datetime") or e.get("ts") or ""
+    compiled = e.get("compiled")
+    raw_id = compiled.get("raw_id") if isinstance(compiled, dict) else None
     return {"id": e.get("id", ""), "ts": ts, "label": label, "text": text or "",
-            "tags": e.get("tags") or [], "kind": e.get("kind"), "skill": e.get("skill")}
+            "tags": e.get("tags") or [], "kind": e.get("kind"), "skill": e.get("skill"),
+            "raw_id": raw_id}
+
+
+def display_label(e):
+    """The stack row's label. A `kind:compilation` row (P7) is the rendered compiled twin of a
+    logged prompt, so it is suffixed with the raw prompt it was compiled from - the operator
+    sees both and can reuse either (spec-compile-stage US-6)."""
+    label = e.get("label") or "(untitled)"
+    if e.get("kind") == "compilation":
+        return f"{label} \u27f2 compiled from {e.get('raw_id') or '?'}"
+    return label
+
+
+def filter_raw(entries, raw_id):
+    """--raw <al-id>: the raw prompt and its compilations only (any kind whose id is the raw id,
+    plus every compilation naming it); preserves order."""
+    if not raw_id:
+        return entries
+    return [e for e in entries if e.get("id") == raw_id or e.get("raw_id") == raw_id]
 
 
 def load_entries(store):
@@ -287,11 +308,12 @@ def _print_list(entries_newest, as_json=False):
         return
     width = len(str(len(entries_newest)))
     for i, e in enumerate(entries_newest, 1):
-        print(f"  {str(i).rjust(width)}. {e.get('label','(untitled)')}   ·   {_fmt_time(e.get('ts'))}")
+        print(f"  {str(i).rjust(width)}. {display_label(e)}   ·   {_fmt_time(e.get('ts'))}")
 
 
 def cmd_list(args):
     entries = newest_first(load_entries(resolve_store(args.store)))
+    entries = filter_raw(entries, getattr(args, "raw", None))
     if args.limit and args.limit > 0:
         entries = entries[: args.limit]
     _print_list(entries, args.json)
@@ -300,6 +322,7 @@ def cmd_list(args):
 
 def cmd_search(args):
     entries = newest_first(load_entries(resolve_store(args.store)))
+    entries = filter_raw(entries, getattr(args, "raw", None))
     matches = filter_entries(entries, " ".join(args.query))
     if not args.json:
         print(f"{len(matches)} match(es) for: {' '.join(args.query)!r}")
@@ -389,7 +412,7 @@ def _run_curses(entries_newest):
             lines = []
             for idx, e in enumerate(view):
                 marker = "▸" if idx not in expanded else "▾"
-                label = e.get("label", "(untitled)")
+                label = display_label(e)
                 lines.append((idx, f"{marker} {label}   ·   {_fmt_time(e.get('ts'))}", True))
                 if idx in expanded:
                     for seg in e.get("text", "").splitlines() or [""]:
@@ -575,11 +598,13 @@ def build_parser():
 
     l = sub.add_parser("list", help="show the stack, newest first")
     l.add_argument("--limit", type=int, default=30, help="max entries to show (0 = all)")
+    l.add_argument("--raw", metavar="AL-ID", help="show one raw prompt and its compilations only (P7)")
     l.add_argument("--json", action="store_true", help="emit JSON")
     l.set_defaults(func=cmd_list)
 
     s = sub.add_parser("search", help="freeform search (matches contain ALL terms)")
     s.add_argument("query", nargs="+", help="search terms")
+    s.add_argument("--raw", metavar="AL-ID", help="search within one raw prompt and its compilations only (P7)")
     s.add_argument("--json", action="store_true", help="emit JSON")
     s.set_defaults(func=cmd_search)
 

@@ -53,7 +53,13 @@ for _stream in (sys.stdin, sys.stdout, sys.stderr):
 
 
 ISO = "%Y-%m-%dT%H:%M:%SZ"
-AUDIT_KINDS = ["skill", "command", "script", "prompt", "commit", "manual", "session-import"]
+# `compilation` (P7, note-20260919-compilation-is-an-audit-kind): the rendered compiled prompt
+# lives in `prompt` so /prompts lists it unchanged; the structured record is the `compiled`
+# object beside it. Like `prompt`, it is a RECORD, not a run: no marker, no duration, no
+# goal-state expected by `selfcheck`.
+AUDIT_KINDS = ["skill", "command", "script", "prompt", "commit", "manual", "session-import",
+               "compilation"]
+RECORD_KINDS = {"prompt", "compilation"}
 CHANGE_KINDS = ["architecture", "design", "knowledge", "migration", "decision", "spec", "other"]
 
 
@@ -728,6 +734,38 @@ def cmd_append(args):
         "tags": (args.tag or []) or base.get("tags") or [],
         "outcome": args.outcome or base.get("outcome") or "success",
     }
+    # P7 compile stage (spec US-6, design-compile-stage "Data shapes"): a workflow started from a
+    # compiled prompt names it (`compiled_from`) and records how much the human changed
+    # (`edit_distance`, a ratio in [0, 1] - non-additive, aggregate by distribution). A skill
+    # entry with no compiled prompt writes `compiled: false` - a stored flag so the PACK-O
+    # miner reads presence without a join. The compilation entry itself carries its
+    # structured record (`compiled`, `mode`, `dispatchable`) via --from-json only: the object
+    # is written by prompt-compile.py `finish`, never typed by hand.
+    _cf = getattr(args, "compiled_from", None) or base.get("compiled_from")
+    _ed = getattr(args, "edit_distance", None)
+    if _ed is None:
+        _ed = base.get("edit_distance")
+    if _ed is not None:
+        if not _cf:
+            sys.stderr.write("audit-log append: --edit-distance requires --compiled-from\n")
+            return 2
+        try:
+            _ed = float(_ed)
+        except (TypeError, ValueError):
+            sys.stderr.write(f"audit-log append: --edit-distance must be a number in [0, 1], got {_ed!r}\n")
+            return 2
+        if not 0.0 <= _ed <= 1.0:
+            sys.stderr.write(f"audit-log append: --edit-distance must be in [0, 1], got {_ed}\n")
+            return 2
+    if _cf:
+        entry["compiled_from"] = _cf
+        if _ed is not None:
+            entry["edit_distance"] = _ed
+    elif entry["kind"] == "skill":
+        entry["compiled"] = False
+    for _key in ("compiled", "mode", "dispatchable"):
+        if _key in base and _key not in entry:
+            entry[_key] = base[_key]
     # Front-matter goal-state (CT19): done_when is the terminal condition, and is the PACK-O
     # PRESENCE signal /dream mines (a substantive turn without it skipped the front matter, AL5b).
     for _opt in ("goal", "done_when", "tier"):
@@ -777,12 +815,18 @@ def cmd_append(args):
     # elapsed time instead of measuring it.
     # A `kind:prompt` entry is a RECORD of the operator's words, not a run: it never
     # consumes a marker (pack finding #2 - `prompt-log.py add` was eating the skill's).
-    _started = args.started or base.get("started_at")
-    if not _started and entry["kind"] != "prompt":
-        _started, _source = consume_start(args.root, session, skill=entry.get("skill"))
-        if _started and _source == "session-start-hook":
-            entry["duration_source"] = _source
-    entry.update(duration_fields(_started, entry["datetime"]))
+    # A `kind:compilation` entry is the same shape of thing (P7): the /compile skill's own
+    # closing `skill` entry is the run; the compilation carries no duration fields at all.
+    if entry["kind"] in RECORD_KINDS:
+        _started = None if entry["kind"] == "compilation" else (args.started or base.get("started_at"))
+    else:
+        _started = args.started or base.get("started_at")
+        if not _started:
+            _started, _source = consume_start(args.root, session, skill=entry.get("skill"))
+            if _started and _source == "session-start-hook":
+                entry["duration_source"] = _source
+    if _started:
+        entry.update(duration_fields(_started, entry["datetime"]))
     # P8: per-run spans make fan-out measurable. Summed agent time cannot tell serial from
     # parallel; the union of the intervals can. Unusable spans are dropped and COUNTED, so a
     # partial record never masquerades as a complete one.
@@ -1040,6 +1084,8 @@ def cmd_suggest(args):
 # PACK-O substantive turns: the kinds that carry a goal-state. Must match dream.py's PACKO_SUBSTANTIVE
 # (the same presence check, run offline over the fleet corpus) - kept as one small stable definition
 # per script because both are standalone stdlib scripts that cannot import each other cleanly.
+# `compilation` is deliberately absent (P7): a compilation is a record of a prompt, not a turn,
+# so `selfcheck` never asks it for a goal-state - exactly as for `prompt`.
 PACKO_SUBSTANTIVE = {"skill", "manual", "prompt", "command"}
 
 
@@ -1275,6 +1321,13 @@ def main():
                       help="one persona's findings raised vs accepted; repeatable. Makes the "
                            "roster tunable on measured yield rather than belief (P6) — an "
                            "advisory lens re-convenes only on an accepted finding.")
+    ap_a.add_argument("--compiled-from", dest="compiled_from", metavar="AL-ID",
+                      help="the kind:compilation entry this workflow run started from (P7, spec US-6); "
+                           "a kind:skill entry without it records compiled: false")
+    ap_a.add_argument("--edit-distance", dest="edit_distance", metavar="RATIO",
+                      help="1 - SequenceMatcher ratio between the compiled prompt and the text the "
+                           "workflow received, in [0, 1] (prompt-compile.py distance); requires "
+                           "--compiled-from")
     ap_a.add_argument("--from-json", dest="from_json", help="read fields from a JSON object (path or - for stdin)")
 
     ap_c = sub.add_parser("change", help="add a change-log entry")

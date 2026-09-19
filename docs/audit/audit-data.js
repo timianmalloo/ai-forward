@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-19T16:40:57Z",
+  "generated": "2026-09-19T17:13:18Z",
   "audit": [
     {
       "actor": null,
@@ -4846,6 +4846,29 @@ window.AUDIT_DATA = {
         "speedup": 1.0,
         "peak_concurrency": 1
       }
+    },
+    {
+      "id": "al-01M2XAGYPDFA63PYRG1MB0FNV2",
+      "shortname": "implement-compile-stage-track-b",
+      "datetime": "2026-09-19T17:13:18Z",
+      "session": "compile-b",
+      "prompt": "Track B brief: audit fields, /compile skill, CO-S0",
+      "summary": "Built: audit-log.py (compilation kind; --compiled-from/--edit-distance in [0,1], edit-distance requires compiled-from; compiled:false on plain skill entries; compilation never consumes a start marker and carries no duration; --from-json carries compiled/mode/dispatchable), prompt-log.py (⟲ compiled from <raw_id> suffix on list/browse; --raw <al-id> on list/search), tests/docs_explorer/test_compile_audit_fields.py (15 tests, red first: 13 failed/2 passed observed, then green), pack/commands/compile/SKILL.md (~1,581 tokens), compile.prompt.md, evals/cases/compile-01.json, knowledge/agent-coordination.md (load: skill; CO-S0 seeded), one Stage-0 sentence in optimize-graph and prepare-for-coordination. Observed: pytest 4 files 78 passed; context-budget skills --gate exit 0 (compile ~1,581); verify-no-machine-paths/subprocess-utf8/portable-text-io each exit 0; temp-root compilation append exit 0 with compiled/mode/dispatchable on the line. Findings for the Coordinator: derived surfaces (.agents/skills, docs/portal, tools/docs-portal-editorial.json skillMeta + knowledge routing for agent-coordination) fail 5 inventory/surface tests until sync-pack + editorial entries; context-budget.json has no skills_baseline entry for compile (gate passes without one); coord_derived x3 and pack_apply test_source_repo_is_already_current fail identically on the primary tree (pre-existing); audit viewer does not enumerate kinds (no index.html edit needed).",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "pack/scripts/audit-log.py",
+        "pack/commands/compile/SKILL.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "tier": "T2",
+      "main_calls": 33,
+      "main_budget": 70,
+      "main_over_budget": false,
+      "fan_out": 0
     }
   ],
   "changes": [
