@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-19T17:18:36Z",
+  "generated": "2026-09-19T17:18:58Z",
   "audit": [
     {
       "actor": null,
@@ -5004,6 +5004,135 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-19T17:18:31Z",
       "duration_seconds": 5.0
+    },
+    {
+      "id": "al-01M2XAV91B451GESGZE4D9DGTK",
+      "shortname": "Add a deadline and a fallback to seam requests; the join should refuse a…",
+      "datetime": "2026-09-19T17:18:57Z",
+      "session": "prompt-compile",
+      "prompt": "Add a deadline and a fallback to seam requests; the join should refuse an expired one. Do not touch the leases.",
+      "summary": "raw prompt logged for compilation",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2XAV9RG8HDKPDZ2EEX80JSG",
+      "shortname": "compile-Add a deadline and a fallback to seam requests; the join should refuse a…",
+      "datetime": "2026-09-19T17:18:57Z",
+      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
+      "prompt": "python3 docs/ai-forward-pack/scripts/audit-log.py start --session 2eb8c619-5ab2-4b61-8a57-06c628aebe54 --skill <skill>\nGoal state\nGoal: Seam requests carry a deadline and a fallback, and the join refuses an expired request\nDone when: request add accepts --deadline and --fallback; the join refuses an expired request; expiry is judged against the request's own stamp\nNot in scope: the leases\nTier: T1\nFan-out cap: 2\nContext ceiling: 400000\nMain-line budget: 60\nTrace\n| clause | trace |\n|---|---|\n| done_when: request add accepts --deadline and --fallback | phrase: Add a deadline and a fallback to seam requests |\n| done_when: the join refuses an expired request | phrase: the join should refuse an expired one |\n| done_when: expiry is judged against the request's own stamp | #1 |\n| not_in_scope: the leases | phrase: Do not touch the leases |\nReferences\n- none\nAssumptions\n- #1 belief: expired means past the deadline in the request's own stamp, not wall-clock at the join · confirm: ADR-0007 fencing section; the request record's stamp field · breaks: a paused laptop expires every request at resume · consequential: true\nDecision requests\n- DR-1 (#1): Judge expiry by the request's stamp or by wall-clock at the join? · default: the request's stamp · answer: unanswered\nContract slot\nwidth_cap: unset\ntransient_retry: unset\nper_branch_exit: unset\njoin_rule: unset\ncontainment: unset\ntermination: unset\ndeadline: unset\nfallback: unset\nRules: absolute paths only; a multi-line program is a file, then a run; a gate's exit status is never behind a pipe.\nProvenance\nraw id: al-01M2XAV91B451GESGZE4D9DGTK\nraw sha256: 3a6f09455dd6f5254aba3881f77b542c1794c75b635b5e9302aad0d859e1ca24\ncompiler model: claude-fable-5-1\nengine seconds: 0.001\ntokens: not recorded\ngate: pass\ndispatchable: false\n",
+      "summary": "compiled al-01M2XAV91B451GESGZE4D9DGTK for claude-code v1: 4 clauses, 1 assumptions, 1 decision requests",
+      "kind": "compilation",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "compiled": {
+        "assumptions": [
+          {
+            "id": "#1",
+            "belief": "expired means past the deadline in the request's own stamp, not wall-clock at the join",
+            "confirm": "ADR-0007 fencing section; the request record's stamp field",
+            "breaks": "a paused laptop expires every request at resume",
+            "consequential": true
+          }
+        ],
+        "clauses": [
+          {
+            "section": "done_when",
+            "text": "request add accepts --deadline and --fallback",
+            "trace": {
+              "kind": "phrase",
+              "ref": "Add a deadline and a fallback to seam requests"
+            }
+          },
+          {
+            "section": "done_when",
+            "text": "the join refuses an expired request",
+            "trace": {
+              "kind": "phrase",
+              "ref": "the join should refuse an expired one"
+            }
+          },
+          {
+            "section": "done_when",
+            "text": "expiry is judged against the request's own stamp",
+            "trace": {
+              "kind": "assume",
+              "ref": "#1"
+            }
+          },
+          {
+            "section": "not_in_scope",
+            "text": "the leases",
+            "trace": {
+              "kind": "phrase",
+              "ref": "Do not touch the leases"
+            }
+          }
+        ],
+        "contract_slot": {
+          "containment": null,
+          "deadline": null,
+          "fallback": null,
+          "join_rule": null,
+          "per_branch_exit": null,
+          "termination": null,
+          "transient_retry": null,
+          "width_cap": null
+        },
+        "decision_requests": [
+          {
+            "id": "DR-1",
+            "assumption": "#1",
+            "question": "Judge expiry by the request's stamp or by wall-clock at the join?",
+            "default": "the request's stamp",
+            "answer": null
+          }
+        ],
+        "dispatchable": false,
+        "goal_state": {
+          "goal": "Seam requests carry a deadline and a fallback, and the join refuses an expired request",
+          "done_when": [
+            "request add accepts --deadline and --fallback",
+            "the join refuses an expired request",
+            "expiry is judged against the request's own stamp"
+          ],
+          "not_in_scope": [
+            "the leases"
+          ],
+          "tier": "T1",
+          "fan_out_cap": 2,
+          "context_ceiling": 400000,
+          "main_line_budget": 60
+        },
+        "graph_neighbours": [],
+        "harness": "claude-code",
+        "mode": "compiled",
+        "provenance": {
+          "compile_tokens": null,
+          "compiler_model": "claude-fable-5-1",
+          "engine_seconds": 0.001,
+          "refusals": [],
+          "retries": 0
+        },
+        "raw_id": "al-01M2XAV91B451GESGZE4D9DGTK",
+        "raw_sha256": "3a6f09455dd6f5254aba3881f77b542c1794c75b635b5e9302aad0d859e1ca24",
+        "raw_text_normalised": false,
+        "references": [],
+        "schema": "compiled-prompt/1",
+        "template": "claude-code",
+        "template_version": 1
+      },
+      "mode": "compiled",
+      "dispatchable": false
     }
   ],
   "changes": [

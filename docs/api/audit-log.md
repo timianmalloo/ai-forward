@@ -81,9 +81,11 @@ Conventions
 | `--artifact` | _(no help text — coverage gap)_ |
 | `--audit-ref` | _(no help text — coverage gap)_ |
 | `--change` | link to a change-log id (cl-NNNN) |
+| `--compiled-from` | the kind:compilation entry this workflow run started from (P7, spec US-6); a kind:skill entry without it records compiled: false |
 | `--datetime` | _(no help text — coverage gap)_ |
 | `--done-when-file` | read --done-when from a UTF-8 file |
 | `--done-when` | the terminal condition (front matter CT19); the PACK-O presence signal /dream mines (AL5b) |
+| `--edit-distance` | 1 - SequenceMatcher ratio between the compiled prompt and the text the workflow received, in [0, 1] (prompt-compile.py distance); requires --compiled-from |
 | `--fan-out` | the declared fan-out cap: most sub-agents the turn may convene (CT19; 0 at T0, 2 at T1) |
 | `--field` | print just this field (e.g. prompt) |
 | `--file` | JSON file (or - for stdin) |

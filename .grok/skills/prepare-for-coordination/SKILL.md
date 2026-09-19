@@ -29,7 +29,7 @@ A scope: a spec, an architecture doc, a milestone, or prose describing the work 
 
 ## Flow
 
-**Stage 0 — Interdict the rush.** Do not draw tracks yet. The first move is *classification*, and the second is reading the intent. A division of work drawn before the artifact classes are known will allocate humans to problems a merge driver solves for free.
+**Stage 0 — Interdict the rush.** Consume the compiled prompt when one is in hand (CO-S0, `knowledge/agent-coordination.md`; `/compile`): its goal state is the turn's goal state and its Not-in-scope is the interdiction — derive nothing from raw prose that a compiled prompt already fixed. Do not draw tracks yet. The first move is *classification*, and the second is reading the intent. A division of work drawn before the artifact classes are known will allocate humans to problems a merge driver solves for free.
 
 **Stage 1 — Turn the layer on (do this first; it is the best ratio in the skill).**
 ```
