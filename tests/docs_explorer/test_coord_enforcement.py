@@ -326,7 +326,13 @@ class InstallTests(GitCase):
         entry = json.loads(out[start:end])          # raises if malformed
         hook = entry["hooks"]["PreToolUse"][0]["hooks"][0]
         self.assertEqual(hook["type"], "command")
-        self.assertIn("hook", hook["args"])
+        # Revision 74 (PLAT-B): one command string, interpreter resolved at run time, script
+        # named relative to the repo - the entry is pasted into a TRACKED file, so it must
+        # carry nothing about this machine (the earlier form printed sys.executable in
+        # `command` and an absolute script path in `args`).
+        self.assertTrue(hook["command"].rstrip().endswith(" hook"), hook["command"])
+        self.assertIn("import sys;print(sys.executable)", hook["command"])
+        self.assertNotIn(sys.executable, hook["command"])
         self.assertNotIn("{{", out)
         self.assertNotIn("}}", out)
 

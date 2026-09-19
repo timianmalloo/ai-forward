@@ -27,6 +27,7 @@ CI_WORKFLOW = REPO / ".github" / "workflows" / "pack-consistency.yml"
 # (gate id, substring that must appear in verify-bundle.ps1, substring in the CI step name)
 CANONICAL_GATES = [
     ("counts",        "1. counts, skill/prompt parity",      "Count & skill-list consistency"),
+    ("machine-paths", "1b. no machine-specific paths",       "No machine-specific paths in tracked files"),
     ("drift",         "2. source<->install drift",           "Source↔install drift"),
     ("pytest",        "3. python test suite",                "Python test suite"),
     ("docs-explorer", "4. docs explorer core contracts",     "Docs Explorer core contracts"),

@@ -184,8 +184,12 @@ class RunEvalsCommandTests(unittest.TestCase):
         self.assertEqual([], failures)
         self.assertEqual("hello & exit 9", captured["env"]["AIF_EVAL_PROMPT"])
         self.assertEqual("safe-case", captured["env"]["AIF_EVAL_CASE"])
-        self.assertEqual(str(Path(workspace).resolve()), captured["env"]["AIF_EVAL_WORKSPACE"])
-        self.assertEqual(str(Path(workspace).resolve()), captured["cwd"])
+        # Compare resolved to resolved: macOS temp dirs live under /private/var and are reached
+        # through the /var symlink, so a one-sided resolve() fails there (T-2, cross-platform
+        # readiness). Both sides name the same directory; that is the contract.
+        self.assertEqual(str(Path(workspace).resolve()),
+                         str(Path(captured["env"]["AIF_EVAL_WORKSPACE"]).resolve()))
+        self.assertEqual(str(Path(workspace).resolve()), str(Path(captured["cwd"]).resolve()))
         self.assertEqual(7, captured["timeout_seconds"])
 
     @staticmethod

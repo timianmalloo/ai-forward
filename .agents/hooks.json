@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python ../docs/ai-forward-pack/hooks/reread-guard.py --host agy",
+            "command": "py=$(python3 -c 'import sys;print(sys.executable)' 2>/dev/null); [ -x \"$py\" ] || py=$(python -c 'import sys;print(sys.executable)'); \"$py\" \"$(git rev-parse --show-toplevel)/docs/ai-forward-pack/hooks/reread-guard.py\" --host agy",
             "timeout": 10
           }
         ]
@@ -17,7 +17,7 @@
     "PreInvocation": [
       {
         "type": "command",
-        "command": "python ../docs/ai-forward-pack/hooks/session-start.py --host agy",
+        "command": "py=$(python3 -c 'import sys;print(sys.executable)' 2>/dev/null); [ -x \"$py\" ] || py=$(python -c 'import sys;print(sys.executable)'); \"$py\" \"$(git rev-parse --show-toplevel)/docs/ai-forward-pack/hooks/session-start.py\" --host agy",
         "timeout": 15
       }
     ]

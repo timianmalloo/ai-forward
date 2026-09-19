@@ -14,7 +14,7 @@ Usage
   pack-doctor.py [--root <repo>] [--json] [--strict]
 Exit: 0 all PASS/WARN (or all PASS under --strict) · 1 any FAIL/strict WARN.
 """
-import argparse, json, os, re, sys
+import argparse, json, os, re, shutil, sys
 
 from bounded_process import run_bounded
 
@@ -311,6 +311,17 @@ def check_graph(root):
 
 
 
+def _command_head(command):
+    """The first word of a registry command: a quoted path as one token, else up to the
+    first space. `"C:\\Program Files\\Python\\python.exe" x.py` -> the path; `python3 x.py`
+    -> `python3`."""
+    text = (command or "").strip()
+    if text.startswith('"'):
+        end = text.find('"', 1)
+        return text[1:end] if end > 0 else text[1:]
+    return text.split(None, 1)[0] if text else ""
+
+
 def check_coordination(root):
     """Is the coordination layer switched ON in this repo? (CTX-H)
 
@@ -340,7 +351,7 @@ def check_coordination(root):
                        "every path is treated as `authored` and nothing is regenerated",
                        "python docs/ai-forward-pack/scripts/coord-core.py classify init")
 
-    entries, bad = 0, ""
+    entries, bad, derived = 0, "", []
     try:
         for lineno, raw in enumerate(
                 open(registry, encoding="utf-8").read().splitlines(), start=1):
@@ -350,11 +361,13 @@ def check_coordination(root):
             if ":" not in line:
                 bad = "line {0}: expected `pattern: class [command]`".format(lineno)
                 break
-            klass = line.split(":", 1)[1].strip().split(None, 1)
-            klass = klass[0] if klass else ""
+            parts = line.split(":", 1)[1].strip().split(None, 1)
+            klass = parts[0] if parts else ""
             if klass not in ("authored", "derived", "register"):
                 bad = "line {0}: unknown class {1!r}".format(lineno, klass)
                 break
+            if klass == "derived" and len(parts) > 1:
+                derived.append((lineno, parts[1].strip()))
             entries += 1
     except OSError as e:
         return _result(name, FAIL, f"registry unreadable ({e})",
@@ -363,6 +376,30 @@ def check_coordination(root):
         # `classify` degrades to `authored` on a broken registry - safe, and invisible.
         return _result(name, FAIL, f"registry does not parse - {bad}",
                        "fix .agents/artifacts.yml, or regenerate with `coord classify init --force`")
+
+    # PLAT-B: a registry whose derived command cannot run HERE must FAIL, not parse-and-pass.
+    # A Windows `python.exe` path written by `classify init` on one machine passed this check
+    # on macOS for a week while `coord regen` failed with "command not found". The token
+    # `python3`/`python` is resolved at run time by coord-core, so it always resolves; any
+    # other first word must exist as a file or on PATH.
+    unresolved = []
+    for lineno, command in derived:
+        head = _command_head(command)
+        if head in ("python3", "python", "py"):
+            continue
+        if os.path.isabs(head) or os.sep in head or "/" in head:
+            ok = os.path.exists(head)
+        else:
+            ok = shutil.which(head) is not None
+        if not ok:
+            unresolved.append("line {0}: {1!r}".format(lineno, head))
+    if unresolved:
+        return _result(name, FAIL,
+                       "{0} derived command(s) name an interpreter or tool that does not "
+                       "exist on this machine - {1}".format(len(unresolved), "; ".join(unresolved)),
+                       "the registry travels with the repo and must carry the portable token "
+                       "`python3`, never one machine's path: run `coord classify init --force` "
+                       "(it now writes the token) and commit .agents/artifacts.yml")
 
     declared = set()
     ga = os.path.join(root, ".gitattributes")

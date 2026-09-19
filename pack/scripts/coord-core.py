@@ -937,6 +937,30 @@ def regen_command(root, path):
 # RUNS each command before it writes it, and refuses the entry if the command fails or
 # touches anything but its own target.
 
+INTERPRETER_TOKEN = "python3"
+_INTERPRETER_WORDS = ("python3", "python")
+
+
+def resolve_interpreter(command):
+    """Map a registry command's leading interpreter TOKEN to this machine's interpreter.
+
+    `python3` (the documented POSIX name) and `python` (the python.org Windows name) are
+    resolved to `sys.executable`, quoted, so the same tracked registry line runs on both
+    operating systems. Anything else -- another tool, or an explicit interpreter path -- is
+    returned unchanged ON PURPOSE: a stale absolute path must fail loudly where it runs,
+    not be silently repaired here while `pack-doctor` reports it (class PLAT-B). Mirrors
+    `conductor-join._interp`, which does the same for argv lists; this one takes the shell
+    string the registry stores.
+    """
+    text = (command or "").strip()
+    if not text:
+        return command
+    head, sep, rest = text.partition(" ")
+    if head in _INTERPRETER_WORDS:
+        return '"{0}"{1}{2}'.format(sys.executable, sep, rest)
+    return command
+
+
 def _canonical_project(repo):
     """The project name, derived from git -- never `basename(cwd)` (PACK-P).
 
@@ -955,7 +979,12 @@ def pack_defaults(repo):
     the file. Everything not listed stays `authored` -- the safe default. Do not enumerate it.
     """
     scripts = "docs/ai-forward-pack/scripts"
-    py = '"{0}"'.format(sys.executable)
+    # The registry is TRACKED, so it carries the portable token, never `sys.executable`:
+    # a Windows `python.exe` path written here broke `coord regen` on every macOS clone
+    # while `pack-doctor` passed (class PLAT-B). `resolve_interpreter` maps the token to
+    # THIS machine's interpreter at run time, in every consumer (classify init's
+    # verification run, `coord regen`, the merge driver's deferred regeneration).
+    py = INTERPRETER_TOKEN
     project = _canonical_project(repo)
     return [
         {"patterns": ["docs/docs-index.js"], "class": "derived",
@@ -1020,8 +1049,10 @@ def verify_regen_command(repo, patterns, command, timeout=180):
         # DEVIATION (Rules of the Road 4): shell=True mirrors cmd_regen, and for the same
         # reason -- a regenerate command may use shell operators and must run identically on
         # POSIX and Windows. The string is pack-derived or repo-local config, never input.
-        proc = subprocess.run(command, cwd=str(repo), shell=True, capture_output=True,
-                              text=True, timeout=timeout)
+        # The interpreter token is resolved to THIS machine's Python first (PLAT-B).
+        proc = subprocess.run(resolve_interpreter(command), cwd=str(repo), shell=True,
+                              capture_output=True, text=True, encoding="utf-8",
+                              errors="replace", timeout=timeout)
     except subprocess.TimeoutExpired:
         return False, "exceeded {0}s".format(timeout)
     except OSError as exc:
@@ -2327,7 +2358,10 @@ def cmd_install(repo, root, force=False):
         hooks_dir = Path(repo) / hooks_dir
     hooks_dir.mkdir(parents=True, exist_ok=True)
     target = hooks_dir / "pre-commit"
-    body = HOOK_BODY.format(marker=HOOK_MARKER, python=sys.executable,
+    # .git/hooks is per-clone, so an absolute interpreter path is correct HERE (never in a
+    # tracked file). Both paths are forward-slashed: the hook runs under `sh` (Git Bash on
+    # Windows), and only the script path was normalised before (XP-06).
+    body = HOOK_BODY.format(marker=HOOK_MARKER, python=sys.executable.replace("\\", "/"),
                             script=str(Path(__file__).resolve()).replace("\\", "/"))
     if target.exists():
         existing = target.read_text(encoding="utf-8", errors="replace")
@@ -2505,8 +2539,10 @@ def cmd_regen(root, repo, timeout=120):
             # surface. It is retained rather than tokenized because registry regen commands may use
             # shell operators (&&, |, >) and must run identically on POSIX and Windows; a shlex
             # arg-list split mishandles Windows path separators and would break the regen path.
-            proc = subprocess.run(command, cwd=str(repo), shell=True, capture_output=True,
-                                  text=True, timeout=timeout)
+            # The interpreter token is resolved to THIS machine's Python first (PLAT-B).
+            proc = subprocess.run(resolve_interpreter(command), cwd=str(repo), shell=True,
+                                  capture_output=True, text=True, encoding="utf-8",
+                                  errors="replace", timeout=timeout)
             ok = proc.returncode == 0
             results.append({"path": path, "status": "ok" if ok else "failed",
                             "detail": _safe((proc.stderr or proc.stdout).strip(), 200)})
@@ -2773,7 +2809,12 @@ def cmd_plugin_emit(out_dir):
     hooks = {"hooks": {"PreToolUse": [{
         "matcher": ".*",
         "hooks": [{"type": "command",
-                   "command": 'python "${CLAUDE_PLUGIN_ROOT}/hooks/hook.py"',
+                   # The bundle is emitted ON the machine that loads it, so the bare
+                   # interpreter is chosen here: `python` is the python.org Windows name
+                   # (the live Copilot run that proved this shape ran there), `python3`
+                   # is the name macOS and Linux actually have (XP-04).
+                   "command": '{0} "${{CLAUDE_PLUGIN_ROOT}}/hooks/hook.py"'.format(
+                       "python" if os.name == "nt" else "python3"),
                    "timeout": 10}]}]}}
 
     (out / ".claude-plugin").mkdir(parents=True, exist_ok=True)
@@ -2805,11 +2846,21 @@ def _print_settings_entry(repo):
     Windows path - output that reads correctly and is invalid the moment it is pasted.
     A serializer cannot make either mistake.
     """
+    # .claude/settings.json is TRACKED, so the entry must carry nothing about this machine
+    # (class PLAT-B): the interpreter is resolved at run time by the same shell form the
+    # pack's hook adapters use, and the script is named relative to the repo when it lives
+    # inside it. The earlier form printed `sys.executable` and an absolute script path.
+    me = Path(__file__).resolve()
+    try:
+        script = me.relative_to(Path(repo).resolve()).as_posix()
+    except ValueError:
+        script = me.as_posix()
     entry = {"hooks": {"PreToolUse": [{
         "matcher": "Write|Edit",
         "hooks": [{"type": "command",
-                   "command": sys.executable,
-                   "args": [str(Path(__file__).resolve()), "hook"],
+                   "command": ("py=$(python3 -c 'import sys;print(sys.executable)' 2>/dev/null); "
+                               "[ -x \"$py\" ] || py=$(python -c 'import sys;print(sys.executable)'); "
+                               "\"$py\" \"{0}\" hook".format(script)),
                    "timeout": 5}]}]}}
     print("")
     print("Add this to .claude/settings.json yourself - this tool does not edit it:")

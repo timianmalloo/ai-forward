@@ -1354,7 +1354,7 @@ sequenceDiagram
         module = load_module()
         stderr = SimpleNamespace(buffer=io.BytesIO())
         stdout = SimpleNamespace(buffer=io.BytesIO())
-        seeded_path = r"C:\Users\private-user\repo\secret.md"
+        seeded_path = r"C:\Users\private-user\repo\secret.md"  # machine-path-ok: the path IS the scrub fixture
         seeded_token = "ghp_seeded-secret-token"
         seeded_user = "private-user"
         failure = RuntimeError(

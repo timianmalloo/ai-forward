@@ -53,6 +53,18 @@ $pack = Join-Path $repo "pack"
 
 if (-not (Test-Path $pack)) { throw "pack/ not found at $pack -- run from the repo root." }
 
+# One interpreter, resolved ONCE (class PLAT-A): python3 -> python -> py -3, accepting only
+# real Python 3 output (the Windows Store `python3` alias exits 9009). The three derived
+# indexes below used to probe `python` then `python3` each on their own and skip SILENTLY
+# when neither matched - which gate 2 then reported as drift.
+$pyExe = $null; $pyArgs = @()
+foreach ($c in @(@{ exe = 'python3'; args = @() }, @{ exe = 'python'; args = @() }, @{ exe = 'py'; args = @('-3') })) {
+    if (-not (Get-Command $c.exe -ErrorAction SilentlyContinue)) { continue }
+    try { $probe = (& $c.exe @($c.args) --version 2>&1 | Out-String).Trim() } catch { continue }
+    if ($LASTEXITCODE -eq 0 -and $probe -like 'Python 3*') { $pyExe = $c.exe; $pyArgs = $c.args; break }
+}
+if (-not $pyExe) { throw 'No working Python 3 found as python3, python, or py -3 - the derived indexes cannot be regenerated.' }
+
 function Reset-Dir([string]$path) {
     if (Test-Path $path) { Remove-Item $path -Recurse -Force }
     New-Item -ItemType Directory -Force -Path $path | Out-Null
@@ -363,31 +375,25 @@ Update-ManagedBlock (Join-Path $repo "AGENTS.md")  (Join-Path $pack "adapters\ma
 # made for web/pack-index.js), so the ordering fix is now safe and gate 2 stays green.
 # Detection remains too: check-consistency.py drift-gates BOTH dependents, so a hand-run that
 # skips sync still cannot ship a stale pair.
-$deriveGraph = Join-Path $repo "docs\ai-forward-pack\scripts\docs-graph.py"
+$deriveGraph = Join-Path $repo "docs/ai-forward-pack/scripts/docs-graph.py"
 if (Test-Path $deriveGraph) {
-    $pyCmd0 = Get-Command python -ErrorAction SilentlyContinue
-    if (-not $pyCmd0) { $pyCmd0 = Get-Command python3 -ErrorAction SilentlyContinue }
-    if ($pyCmd0) { & $pyCmd0.Source $deriveGraph derive | ForEach-Object { Write-Host "  $_" } }
-    else { Write-Host "  docs/docs-index.js skipped (python not found)" -ForegroundColor Yellow }
+    & $pyExe @pyArgs $deriveGraph derive | ForEach-Object { Write-Host "  $_" }
+    if ($LASTEXITCODE -ne 0) { throw "docs-graph derive failed (exit $LASTEXITCODE)" }
 }
 
 # Regenerate the whole-pack navigable/searchable index that web/index.html renders (freshness contract).
-$buildWebIndex = Join-Path $repo "tools\build-web-index.py"
+$buildWebIndex = Join-Path $repo "tools/build-web-index.py"
 if (Test-Path $buildWebIndex) {
-    $pyCmd = Get-Command python -ErrorAction SilentlyContinue
-    if (-not $pyCmd) { $pyCmd = Get-Command python3 -ErrorAction SilentlyContinue }
-    if ($pyCmd) { & $pyCmd.Source $buildWebIndex | ForEach-Object { Write-Host "  $_" } }
-    else { Write-Host "  web/pack-index.js skipped (python not found)" -ForegroundColor Yellow }
+    & $pyExe @pyArgs $buildWebIndex | ForEach-Object { Write-Host "  $_" }
+    if ($LASTEXITCODE -ne 0) { throw "build-web-index failed (exit $LASTEXITCODE)" }
 }
 
 # Regenerate the Documentation Portal data (docs/portal/portal-data.js) - the derived, drift-gated
 # front door (spec-documentation-portal). Derived from pack sources so it cannot rot as the repo evolves.
-$buildPortal = Join-Path $repo "tools\build-docs-portal.py"
+$buildPortal = Join-Path $repo "tools/build-docs-portal.py"
 if (Test-Path $buildPortal) {
-    $pyCmd2 = Get-Command python -ErrorAction SilentlyContinue
-    if (-not $pyCmd2) { $pyCmd2 = Get-Command python3 -ErrorAction SilentlyContinue }
-    if ($pyCmd2) { & $pyCmd2.Source $buildPortal | ForEach-Object { Write-Host "  $_" } }
-    else { Write-Host "  docs/portal/portal-data.js skipped (python not found)" -ForegroundColor Yellow }
+    & $pyExe @pyArgs $buildPortal | ForEach-Object { Write-Host "  $_" }
+    if ($LASTEXITCODE -ne 0) { throw "build-docs-portal failed (exit $LASTEXITCODE)" }
 }
 
 Write-Host "Done. Review changes, then commit pack/ + .claude/ + .github/{instructions,prompts,agents}/ + .grok/ + docs/ + CLAUDE.md/AGENTS.md together." -ForegroundColor Green

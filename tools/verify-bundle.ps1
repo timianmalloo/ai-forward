@@ -7,6 +7,7 @@
     wrong instead of only the first thing.
 
         1.  Count & skill-list consistency     tools/check-consistency.py
+        1b. No machine-specific paths          pack/scripts/verify-no-machine-paths.py (PLAT-B)
         2.  Source<->install drift             sync-pack.ps1 THEN git diff --exit-code
         3.  Python test suite                  pytest tests
         4.  Docs Explorer core contracts       node --test (see the gate-4 note)
@@ -42,6 +43,20 @@ $ErrorActionPreference = "Stop"
 $repo = Split-Path -Parent $PSScriptRoot
 $results = [System.Collections.Generic.List[object]]::new()
 
+# One interpreter, resolved ONCE (class PLAT-A). python.org Windows ships no `python3`;
+# stock macOS ships no `python`; a bare word here was correct on exactly one of them. The
+# probe requires real Python 3 output, so the Windows Store `python3` alias (exit 9009,
+# "Python was not found") is rejected rather than trusted. Copied from
+# setup-knowledge-graphs.ps1, which had this right and was the only tool that did.
+$pyExe = $null; $pyArgs = @()
+foreach ($c in @(@{ exe = 'python3'; args = @() }, @{ exe = 'python'; args = @() }, @{ exe = 'py'; args = @('-3') })) {
+    if (-not (Get-Command $c.exe -ErrorAction SilentlyContinue)) { continue }
+    try { $probe = (& $c.exe @($c.args) --version 2>&1 | Out-String).Trim() } catch { continue }
+    if ($LASTEXITCODE -eq 0 -and $probe -like 'Python 3*') { $pyExe = $c.exe; $pyArgs = $c.args; break }
+}
+if (-not $pyExe) { throw 'No working Python 3 found as python3, python, or py -3 (pack-doctor names the working form).' }
+Write-Host ("python: {0} {1}" -f $pyExe, ($pyArgs -join ' ')) -ForegroundColor DarkGray
+
 function Gate([string]$name, [scriptblock]$action) {
     Write-Host "`n=== $name ===" -ForegroundColor Cyan
     $status = "PASS"
@@ -65,7 +80,14 @@ function Skip([string]$name, [string]$why) {
 Push-Location $repo
 try {
     Gate "1. counts, skill/prompt parity, proof coverage" {
-        python (Join-Path $repo "tools\check-consistency.py")
+        & $pyExe @pyArgs (Join-Path $repo "tools/check-consistency.py")
+    }
+
+    # PLAT-B: a tracked, machine-readable file never carries one machine's paths. The
+    # registry shipped a Windows python.exe path for a week and only `coord regen` on a Mac
+    # noticed. Self-test proves the gate can fail (DC-104).
+    Gate "1b. no machine-specific paths in tracked files" {
+        & $pyExe @pyArgs (Join-Path $repo "pack/scripts/verify-no-machine-paths.py") --root $repo
     }
 
     # FR-057: sync AND compare. The comparison is the gate; the sync alone is only a repair.
@@ -85,7 +107,7 @@ try {
         Skip "3. python test suite" "-SkipTests was passed (CI still runs it)"
         Skip "4. docs explorer core contracts" "-SkipTests was passed (CI still runs it)"
     } else {
-        Gate "3. python test suite" { python -m pytest tests -q }
+        Gate "3. python test suite" { & $pyExe @pyArgs -m pytest tests -q }
         $node = Get-Command node -ErrorAction SilentlyContinue
         if ($node) {
             Gate "4. docs explorer core contracts" {
@@ -117,15 +139,15 @@ try {
     }
 
     Gate "5. knowledge-graph validation" {
-        python (Join-Path $repo "docs\ai-forward-pack\scripts\docs-graph.py") validate | Out-Null
+        & $pyExe @pyArgs (Join-Path $repo "docs/ai-forward-pack/scripts/docs-graph.py") validate | Out-Null
     }
 
     Gate "6. vendored-foundation drift" {
-        python (Join-Path $repo "pack\scripts\foundation-check.py") | Select-Object -Last 1
+        & $pyExe @pyArgs (Join-Path $repo "pack/scripts/foundation-check.py") | Select-Object -Last 1
     }
 
     Gate "6b. audit log is fully readable" {
-        python (Join-Path $repo "pack\scripts\audit-log.py") verify
+        & $pyExe @pyArgs (Join-Path $repo "pack/scripts/audit-log.py") verify
     }
 
     # Gate 11 (numbered 8b so the always-on budget keeps its place in CI's order).
@@ -134,7 +156,7 @@ try {
     # would have passed throughout the two revisions the layer shipped switched off.
     Gate "8b. coordination layer installed (pack-doctor)" {
         $doctor = Join-Path $repo "docs/ai-forward-pack/scripts/pack-doctor.py"
-        $raw = python $doctor --root $repo --json
+        $raw = & $pyExe @pyArgs $doctor --root $repo --json
         if ($LASTEXITCODE -ne 0 -and -not $raw) { throw "pack-doctor produced no output" }
         $coord = ($raw | ConvertFrom-Json).checks | Where-Object { $_.name -eq "coordination" }
         if (-not $coord) { throw "pack-doctor has no `coordination` check" }
@@ -146,7 +168,7 @@ try {
     }
 
     Gate "7. eval cases well-formed" {
-        python -c @"
+        & $pyExe @pyArgs -c @"
 import glob, json, re, sys, os
 root = r'$repo'
 bad = 0
@@ -179,17 +201,17 @@ sys.exit(1 if bad else 0)
     # persona quietly inherits the whole set is not a budget. Short-circuiting on the first
     # would hide the second until the first was fixed.
     Gate "8. always-on context budget" {
-        $budget = Join-Path $repo "pack\scripts\context-budget.py"
-        python $budget gate
+        $budget = Join-Path $repo "pack/scripts/context-budget.py"
+        & $pyExe @pyArgs $budget gate
         $ceilingOk = ($LASTEXITCODE -eq 0)
-        python $budget agents | Select-Object -Last 4
+        & $pyExe @pyArgs $budget agents | Select-Object -Last 4
         $lensOk = ($LASTEXITCODE -eq 0)
         # CTX-B / CTX-E: the WHOLE prefix (blocks + always-on + allowances) and every SKILL.md
         # carry their own ratchets. A knowledge-only budget that stayed green while the real
         # prefix was 2.5x larger is the shape this closes.
-        python $budget prefix --gate | Select-Object -Last 3
+        & $pyExe @pyArgs $budget prefix --gate | Select-Object -Last 3
         $prefixOk = ($LASTEXITCODE -eq 0)
-        python $budget skills --gate | Select-Object -Last 2
+        & $pyExe @pyArgs $budget skills --gate | Select-Object -Last 2
         $skillsOk = ($LASTEXITCODE -eq 0)
         if (-not ($ceilingOk -and $lensOk -and $prefixOk -and $skillsOk)) { $global:LASTEXITCODE = 1 } else { $global:LASTEXITCODE = 0 }
     }
