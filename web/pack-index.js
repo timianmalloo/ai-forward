@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 202
+"count": 203
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 364,
+"total": 365,
 "items": [
 {
 "cat": "knowledge",
@@ -3195,6 +3195,15 @@ window.PACK_INDEX = {
 "path": "docs/specs/collaborate-skill.md",
 "kind": "spec",
 "text": "spec - /collaborate skill proposal proposal for a future /collaborate skill that starts a cross-agent collaboration session by creating or entering a worktree, registering the session, scaffolding or updating the session contract, claiming the first files, and printing the collaboration checks before coding begins. coordination collaborate skill worktrees refines design-coord-collaboration-phase4 implements spec-agent-coordination"
+},
+{
+"cat": "graph",
+"id": "spec-compile-stage",
+"title": "Compile stage — from the operator's prose to the harness- and model-specific starting prompt",
+"summary": "Specifies P7 of the coordination proposal: a compile stage that turns the operator's prose into the harness- and model-specific prompt a workflow starts from — goal state, resolved references, assume: markers, harness idiom and an empty…",
+"path": "docs/specs/compile-stage.md",
+"kind": "spec",
+"text": "compile stage — from the operator's prose to the harness- and model-specific starting prompt specifies p7 of the coordination proposal: a compile stage that turns the operator's prose into the harness- and model-specific prompt a workflow starts from — goal state, resolved references, assume: markers, harness idiom and an empty contract slot — before /optimize-graph or /prepare-for-coordination plan anything. the one invariant is that compilation never adds scope: every done-when clause traces to a raw phrase or a marked assumption, and a gate refuses the rest. raw and compiled prompts are logged together so the compiler's quality is measured by the edit distance to what the human actually ran. coordination compile prompt goal-state no-guessing harness skills p7 refines proposal-owner-coordinator-subagent-coordination relates-to spec-agent-coordination relates-to note-20260919-coordination-decisions-ratified relates-to kb-multi-agent-coordination relates-to audit-log relates-to defect-classes"
 },
 {
 "cat": "graph",

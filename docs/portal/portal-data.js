@@ -737,6 +737,11 @@ window.PORTAL_DATA = {
             "path": "../../docs/specs/collaborate-skill.md"
           },
           {
+            "title": "Compile stage — from the operator's prose to the harness- and model-specific starting prompt",
+            "summary": "Specifies P7 of the coordination proposal: a compile stage that turns the operator's prose into the harness- and model-specific prompt a workflow starts from — goal state, resolved references, assume: markers, harness idiom and an empty contract slot — before...",
+            "path": "../../docs/specs/compile-stage.md"
+          },
+          {
             "title": "Rename /design to /design-slice — Specification",
             "summary": "Specification for renaming AI-Forward's detailed component-design workflow from /design to /design-slice. The rename avoids a generic skill-name collision while preserving the workflow's meaning and updating generated Claude/Copilot pack surfaces.",
             "path": "../../docs/specs/design-slice-rename.md"
@@ -2809,6 +2814,12 @@ window.PORTAL_DATA = {
         "summary": "Proposal for a future /collaborate skill that starts a cross-agent collaboration session by creating or entering a worktree, registering the session,..."
       },
       {
+        "id": "spec-compile-stage",
+        "type": "spec",
+        "title": "Compile stage — from the operator's prose to the harness- and model-specific starting prompt",
+        "summary": "Specifies P7 of the coordination proposal: a compile stage that turns the operator's prose into the harness- and model-specific prompt a workflow starts from —..."
+      },
+      {
         "id": "spec-design-slice-rename",
         "type": "spec",
         "title": "Rename /design to /design-slice — Specification",
@@ -4836,6 +4847,36 @@ window.PORTAL_DATA = {
         "from": "spec-collaborate-skill",
         "to": "spec-agent-coordination",
         "rel": "implements"
+      },
+      {
+        "from": "spec-compile-stage",
+        "to": "audit-log",
+        "rel": "relates-to"
+      },
+      {
+        "from": "spec-compile-stage",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "spec-compile-stage",
+        "to": "kb-multi-agent-coordination",
+        "rel": "relates-to"
+      },
+      {
+        "from": "spec-compile-stage",
+        "to": "note-20260919-coordination-decisions-ratified",
+        "rel": "relates-to"
+      },
+      {
+        "from": "spec-compile-stage",
+        "to": "proposal-owner-coordinator-subagent-coordination",
+        "rel": "refines"
+      },
+      {
+        "from": "spec-compile-stage",
+        "to": "spec-agent-coordination",
+        "rel": "relates-to"
       },
       {
         "from": "spec-design-slice-rename",

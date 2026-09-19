@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-19T16:17:00Z",
+  "generated": "2026-09-19T16:40:57Z",
   "audit": [
     {
       "actor": null,
@@ -4799,6 +4799,53 @@ window.AUDIT_DATA = {
         "speedup": 1.0,
         "peak_concurrency": 1
       }
+    },
+    {
+      "id": "al-01M2X8NPNE2B6T2V7WCJDG9B2G",
+      "shortname": "specify-compile-stage",
+      "datetime": "2026-09-19T16:40:57Z",
+      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
+      "prompt": "keep going with best next action",
+      "summary": "docs/specs/compile-stage.md (spec-compile-stage) for P7 of the coordination proposal. Part A: problem measured in this repo's audit log (128 substantive entries, 49 with goal+done_when = 38%, 17 with tier+fan_out = 13%, 21 raw prompts; PACK-O already registered); personas (operator, Coordinator seat, Sub-Agent seat, reviewer); core scenario; in/out scope (no metric-driven optimisation, no execution, no second store, never rewrite the raw prompt); conceptual model — bounded context Prompt compilation, ubiquitous language (raw prompt, compiled prompt, clause, trace with a validity rule, reference grammar, assumption, template, contract slot, compilation, pass-through), two aggregates: Compilation (invariant: no added scope — every Done-when / Not-in-scope clause traces to a verbatim raw phrase or an existing assumption; an assumption-only trace is consequential and raises a decision request) and Template set (one current version per harness); US-1..US-8 in Gherkin with a shared refusal grammar; ISO 25010 NFRs with thresholds; boundary set (17 rows); comparables sourced and labelled (DSPy, Anthropic prompt improver 2024-10-14, Kiro/EARS, GitHub Spec Kit, TSCG arXiv 2605.04107, the pack's --brief mode, the audit-log counts); governance lenses incl. STRIDE-light (references by path+sha256 never inlined; no free-text instruction slot; raw hash recomputed by the gate); LOA allocation (deterministic skeleton + bounded model fill). Part B: CLI IA (eight sections), flows as Mermaid with pass-through still gated, no-model path, bounded retry (2), decision requests -> dispatchable:false, interruption -> stale-marker/not recorded; wireframe; UX criteria. Part C: N/A, CLI only. Gate: Test Architect adversary (spawned separately) first verdict BLOCK — 3 vetoes (trace validity unchecked; pass-through bypassed the invariant; probabilistic criteria as exact match), 12 must-fix, 5 should-fix, 4 nits — all folded in: seven --self-test directions, eval fixture set as measurement not acceptance, dispatchable field, reference grammar, named edit-distance metric, /also recompiles on any Done-when change, E7 surface list. Re-review result recorded in the gate record. Change-log entry: no added scope + one store. Handoff -> /design-slice.",
+      "kind": "skill",
+      "skill": "specify",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/specs/compile-stage.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "A /specify spec for P7, the compile stage, in docs/specs/compile-stage.md: functional and UX layers, UI marked N/A with reason, conceptual domain model, Gherkin criteria, NFRs, boundary set, sourced comparables, governance lenses, gate record; indexed; landed on main with CI green.",
+      "done_when": "docs/specs/compile-stage.md exists with frontmatter and typed links; docs-graph validate exit 0; Test Architect adversary review returned and its findings resolved in the spec; audit and change entries appended; verify-bundle green except the pre-existing gate 3 master-branch tests; commit rebased onto origin/main and pushed over SSH; pack-consistency run green on three runners.",
+      "tier": "T1",
+      "main_calls": 30,
+      "main_budget": 60,
+      "main_over_budget": false,
+      "fan_out": 1,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true
+      },
+      "started_at": "2026-09-19T16:24:53Z",
+      "duration_seconds": 964.0,
+      "agent_runs": [
+        {
+          "agent": "test-architect",
+          "started_at": "2026-09-19T16:37:16Z",
+          "ended_at": "2026-09-19T16:40:45Z",
+          "duration_seconds": 209.0,
+          "calls": 13,
+          "budget_calls": 40,
+          "over_budget": false
+        }
+      ],
+      "parallelism": {
+        "agent_seconds": 209.0,
+        "span_seconds": 209.0,
+        "speedup": 1.0,
+        "peak_concurrency": 1
+      }
     }
   ],
   "changes": [
@@ -6006,6 +6053,28 @@ window.AUDIT_DATA = {
       "summary": "Reuse native .agents/skills; document dollar invocation and explicit shared constitution grounding; deploy guide and derived inventory; validate fresh installs and upgrades with pack-doctor. All 11 bundle gates passed and Codex CLI discovered 27 enabled skills.",
       "tags": [],
       "title": "Explicit Codex discovery and grounding contract"
+    },
+    {
+      "id": "cl-01M2X8NPWS193FE4ZJ0TF80YYN",
+      "datetime": "2026-09-19T16:40:57Z",
+      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
+      "kind": "spec",
+      "skill": "specify",
+      "title": "Compile stage: no added scope, one store",
+      "prompt": "keep going with best next action",
+      "summary": "Spec spec-compile-stage settles two load-bearing decisions for P7: (1) the Compilation aggregate's invariant is no added scope — every done-when / not-in-scope clause traces to a raw phrase or a marked assumption, enforced by verify-compiled-prompt.py before the entry is logged; (2) the audit log is the only store — raw and compiled prompts are audit entries (kind:prompt plus a compilation entry naming raw id, raw hash and template version), no compiled/ directory. Resolved references are cited by path and hash, never inlined (injection lens). Templates are versioned data files, one per harness; a missing template refuses, never falls back.",
+      "rationale": "CT20 autonomy is the how; a compiler that could widen done-when would author goals silently on every turn. One store because the audit log already holds kind:prompt and a second directory would drift (AL0.1 single writer).",
+      "artifacts": [
+        "docs/specs/compile-stage.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "4a4c0b3",
+        "after": "4a4c0b3a29dfd14fec48b84a5baf30547b54a0ae",
+        "branch": "spec/compile-stage-p7",
+        "pushed": true,
+        "commits": []
+      }
     }
   ]
 };

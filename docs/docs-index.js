@@ -6390,6 +6390,62 @@ window.DOCS_INDEX = {
       "sourceSha256": "257dfd864b0345eb0d404c938075f439dcf095a4cc9a3bc994571f0d77e3cd61"
     },
     {
+      "id": "spec-compile-stage",
+      "path": "docs/specs/compile-stage.md",
+      "title": "Compile stage — from the operator's prose to the harness- and model-specific starting prompt",
+      "type": "spec",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-03-18",
+      "reviewSuggested": [],
+      "summary": "Specifies P7 of the coordination proposal: a compile stage that turns the operator's prose into the harness- and model-specific prompt a workflow starts from — goal state, resolved references, assume: markers, harness idiom and an empty contract slot — before /optimize-graph or /prepare-for-coordination plan anything. The one invariant is that compilation never adds scope: every done-when clause traces to a raw phrase or a marked assumption, and a gate refuses the rest. Raw and compiled prompts are logged together so the compiler's quality is measured by the edit distance to what the human actually ran.",
+      "tags": [
+        "coordination",
+        "compile",
+        "prompt",
+        "goal-state",
+        "no-guessing",
+        "harness",
+        "skills",
+        "p7"
+      ],
+      "links": [
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-agent-coordination",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-20260919-coordination-decisions-ratified",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-multi-agent-coordination",
+          "rel": "relates-to"
+        },
+        {
+          "to": "audit-log",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "User flows (happy + alternate + error + recovery)",
+          "mermaid": "flowchart TD\n  start([Operator: /compile text or --from-audit id]) --> empty{empty?}\n  empty -->|yes| rEmpty[Refuse: empty prompt] --> stop1([Nothing logged])\n  empty -->|no| pass{goal-state block present?}\n  pass -->|yes| pt[Pass-through: keep goal state, self-trace each clause] --> tmpl\n  pass -->|no| tmpl{template for harness?}\n  tmpl -->|missing| rTmpl[Refuse: template missing, list installed] --> stop2([Nothing logged])\n  tmpl -->|found| skel[Engine: resolve references, graph neighbours, skeleton]\n  skel --> model{model step available?}\n  model -->|no| nc[Fields = NOT COMPILED] --> gateNC[Gate: field missing + raw mismatch only; compiled:false]\n  gateNC -->|pass| out\n  model -->|yes| fill[Model fills goal-state fields and assumptions]\n  fill --> gate[verify-compiled-prompt.py]\n  gate -->|refused| why[Show clause or field and the fix] --> retry{retries < 2?}\n  retry -->|yes| fill\n  retry -->|no| hand[Hand to the operator with the refusal; nothing logged] --> stop3([Operator edits prose or answers])\n  gate -->|pass| cons{consequential assumptions?}\n  gateNC -->|refused| why\n  cons -->|yes| dr[Emit decision requests; mark not-dispatchable until answered]\n  cons -->|no| out\n  dr --> out[Print compiled prompt; clipboard when available else reported as skipped; append compilation entry]\n  out --> edit{operator edits?}\n  edit -->|yes| out2[Edited text is what the workflow receives; its entry records edit_distance]\n  edit -->|no| run\n  out2 --> run([Workflow starts from the compiled prompt: compiled_from = id])\n  interrupt([Interrupted anywhere before append]) -.-> none([No partial entry; a later entry marks the stale marker: duration not recorded])"
+        }
+      ],
+      "sourceSha256": "0b9b1afd2f95b563a0f940af93dbc5aa6d0ca90c71b7ea5531369fcc29396c3f"
+    },
+    {
       "id": "spec-design-slice-rename",
       "path": "docs/specs/design-slice-rename.md",
       "title": "Rename /design to /design-slice — Specification",
@@ -6822,5 +6878,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "1c565e8c0919eb67170389823dbd49c0060e3c23c4603d8ec6912e6702476d89"
+  "graphSha256": "1b1bfd276a401141e699a835a3a693d328fef89967c319c2ae148fb0381e9acf"
 };
