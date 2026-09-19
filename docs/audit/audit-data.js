@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-19T18:38:57Z",
+  "generated": "2026-09-19T19:17:47Z",
   "audit": [
     {
       "actor": null,
@@ -5792,6 +5792,85 @@ window.AUDIT_DATA = {
         "speedup": 2.77,
         "peak_concurrency": 4
       }
+    },
+    {
+      "id": "al-01M2XGVJPQHTZ8W90R1TFQSB9Y",
+      "shortname": "specify-agent-coordination-doctrine",
+      "datetime": "2026-09-19T19:03:58Z",
+      "session": "p0-doctrine",
+      "prompt": "Track P0: /specify the doctrine home - pack/knowledge/agent-coordination.md as the always-loaded Owner/Coordinator/Sub-Agent doctrine (CO1-COn, <=3,000 tokens, CO-S0/CO-L verbatim)",
+      "summary": "docs/specs/agent-coordination-doctrine.md: Part A with the doc-as-aggregate model (completeness under the ceiling), US-1..US-12 Gherkin, NFRs, boundary set; Part B as the reading surface; Part C N/A; gate PASS-WITH-CONDITIONS (adversaries inline, fan-out 0)",
+      "kind": "skill",
+      "skill": "specify",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/specs/agent-coordination-doctrine.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "P0 doctrine home through specify -> design-slice -> implement",
+      "done_when": "spec, design, doc <=3000 tokens with every 3.3 invariant as a CO line, tests green red-first, lints 0",
+      "tier": "T2",
+      "fan_out": 0
+    },
+    {
+      "id": "al-01M2XH0Q5PYB05C6GTJ4KV4YFQ",
+      "shortname": "design-slice-agent-coordination-doctrine",
+      "datetime": "2026-09-19T19:06:46Z",
+      "session": "p0-doctrine",
+      "prompt": "Track P0: /design-slice design-agent-coordination-doctrine - implements spec-agent-coordination-doctrine; the data model is the doc's structure (sections as the aggregate, CO numbering as identity)",
+      "summary": "docs/design/agent-coordination-doctrine.md: doc-as-aggregate with CO ids as append-only identity, a per-section byte budget (14,490-byte ceiling) with a fixed trim order, contracts, E7 surface list with owners, failure modes, STRIDE/LINDDUN, telemetry via context-budget.py, test plan red-first; gate PASS-WITH-CONDITIONS (adversaries inline)",
+      "kind": "skill",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/design/agent-coordination-doctrine.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-09-19T19:03:58Z",
+      "duration_seconds": 168.0
+    },
+    {
+      "id": "al-01M2XHMW6RAZVRN2PV6WNTJ7PP",
+      "shortname": "implement-agent-coordination-doctrine",
+      "datetime": "2026-09-19T19:17:47Z",
+      "session": "p0-doctrine",
+      "prompt": "Track P0: /implement design-agent-coordination-doctrine - red-first: tests/docs_explorer/test_agent_coordination_doctrine.py, then pack/knowledge/agent-coordination.md (load: always, CO1-CO17, CO-S1/CO-S2, CO-S0/CO-L verbatim) and the WT12 pointer",
+      "summary": "pack/knowledge/agent-coordination.md is the always-loaded doctrine at 2,982 est. tokens (14,405 bytes): CO1-CO2 seats and relationships, CO3-CO15 invariants each with its measurement or spike, CO16 protocol objects, CO17 kick ladder, scenarios, struck list with reopen triggers, CO-S1/CO-S2 stages, CO-S0 and CO-L byte-for-byte; one CTX-Q/CO-L pointer after WT12; 19 tests red-first (12 failed on the seed, 19 pass); the three lints exit 0; context-budget gate reports +3,075 unacknowledged (the Coordinator's baseline change); note-20260919-doctrine-stages-close-the-document records the section order",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "pack/knowledge/agent-coordination.md",
+        "pack/knowledge/session-worktree-discipline.md",
+        "tests/docs_explorer/test_agent_coordination_doctrine.py",
+        "docs/notes/note-20260919-doctrine-stages-close-the-document.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "P0 doctrine home through specify -> design-slice -> implement",
+      "done_when": "doc load: always under 3,000 tokens with every 3.3 invariant as a CO line and CO-S0/CO-L verbatim; tests green red-first; lints 0; CTX-Q text and the always-on delta reported",
+      "tier": "T2",
+      "main_calls": 49,
+      "main_budget": 120,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-19T19:06:47Z",
+      "duration_seconds": 660.0
     }
   ],
   "changes": [
@@ -7131,6 +7210,28 @@ window.AUDIT_DATA = {
       "summary": "Five coord leader verbs over a blob in refs/coord/leader; release keeps the epoch; quiet period on expiry only; step-0 fence in conductor-join.py",
       "tags": [],
       "title": "Leader designation: the ref decides by update-ref CAS, the ledger records, conductor-join fences on the epoch (exit 11)"
+    },
+    {
+      "id": "cl-01M2XH0QDJ1Q64F3VPYQXKHJAB",
+      "datetime": "2026-09-19T19:06:47Z",
+      "session": null,
+      "kind": "design",
+      "skill": "design-slice",
+      "title": "The doctrine doc is one aggregate: completeness under a 3,000-token ceiling, CO ids as append-only identity, seeded sections frozen byte-for-byte, stage detail cited by id",
+      "prompt": "Track P0: /design-slice design-agent-coordination-doctrine",
+      "summary": "Section plan with a byte budget and a trim order (struck list first, invariants never); the pinning test derives every expectation from the proposal, origin/main and est_tokens",
+      "rationale": "PACK-R: an always-on doc is a per-request tax, so the ceiling is absolute and growth becomes a citation; CI6: the invariant list must fail the build when it diverges from the proposal, so it is parsed, never copied",
+      "artifacts": [
+        "docs/design/agent-coordination-doctrine.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "902a252",
+        "after": "902a252019c15fff37f1d4959927e740b2d1a595",
+        "branch": "impl/p0-doctrine",
+        "pushed": null,
+        "commits": []
+      }
     }
   ],
   "messages": []

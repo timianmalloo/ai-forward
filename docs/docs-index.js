@@ -2016,6 +2016,41 @@ window.DOCS_INDEX = {
       "sourceSha256": "ff7909392f851cd8ffe7a6d58a25463965085d779877c2d04883407898017f16"
     },
     {
+      "id": "note-20260919-doctrine-stages-close-the-document",
+      "path": "docs/notes/note-20260919-doctrine-stages-close-the-document.md",
+      "title": "The doctrine doc ends with its frozen sections: CO-S0 → CO-S1 → CO-S2 → CO-L close the file, and the ceiling was met by cutting prose, never a rule",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-03-19",
+      "reviewSuggested": [],
+      "summary": "Three calls made while implementing P0: the seeded CO-S0 and CO-L sections sit at the end of the doctrine doc (a byte-for-byte contract on a section that runs to end-of-file would break on any text appended after it), the ceiling was met at 2,982 est. tokens by removing a References section and clause-level prose while keeping every CO line's phrase and citation, and the CTX-Q rule landed as its own directive (CO15) rather than as a clause on CO14. Blast radius: the doc's section order and any future edit that wants to append after CO-L.",
+      "tags": [
+        "decision-note",
+        "coordination",
+        "doctrine",
+        "context-budget",
+        "p0"
+      ],
+      "links": [
+        {
+          "to": "design-agent-coordination-doctrine",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-agent-coordination-doctrine",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "8a35901d70f096f697f4dce9ae75ca12f4f9f404bddb09b4722a15ed8bc08865"
+    },
+    {
       "id": "note-20260919-leader-release-keeps-the-epoch",
       "path": "docs/notes/note-20260919-leader-release-keeps-the-epoch.md",
       "title": "A leader release clears the holder and keeps the epoch; no verb deletes refs/coord/leader; the quiet period applies to an expiry, not to a release",
@@ -2223,6 +2258,48 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "0aafd71674a56549465f3ff88b7145f7c2dd9d16dafdbe7517046f411c5dc8f3"
+    },
+    {
+      "id": "design-agent-coordination-doctrine",
+      "path": "docs/design/agent-coordination-doctrine.md",
+      "title": "Design — the doctrine doc's structure: sections as the aggregate, CO ids as identity, a byte budget per section, and the test that pins completeness under the ceiling",
+      "type": "design",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-03-19",
+      "reviewSuggested": [],
+      "summary": "Detailed design for spec-agent-coordination-doctrine. The component is a Markdown document and its pinning test: a fixed section order with a byte budget per section that sums under the 3,000-token ceiling as context-budget.py counts it, CO ids as append-only identity, the two seeded sections carried byte-for-byte, every proposal §3.3 invariant as one CO line with its citation, and one stdlib test module that derives every check from the sources (the proposal, origin/main, est_tokens) rather than from a hand-kept table. No script, no dependency.",
+      "tags": [
+        "coordination",
+        "doctrine",
+        "knowledge-doc",
+        "always-on",
+        "context-budget",
+        "p0",
+        "ctx-q",
+        "co-lines"
+      ],
+      "links": [
+        {
+          "to": "spec-agent-coordination-doctrine",
+          "rel": "implements"
+        },
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "refines"
+        },
+        {
+          "to": "kb-multi-agent-coordination",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "d746517b8bf7749e109d9f5dc6c80bccb559d219ce7833a59b918d01500721cc"
     },
     {
       "id": "design-agent-focus-controls",
@@ -7039,6 +7116,56 @@ window.DOCS_INDEX = {
       "sourceSha256": "7110f681c6dea5b21077cee305d30de2ff4f7067d114a6bb4d62e875f6d9c810"
     },
     {
+      "id": "spec-agent-coordination-doctrine",
+      "path": "docs/specs/agent-coordination-doctrine.md",
+      "title": "Spec — the doctrine home: pack/knowledge/agent-coordination.md as the always-loaded Owner / Coordinator / Sub-Agent doctrine under a 3,000-token ceiling",
+      "type": "spec",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-03-19",
+      "reviewSuggested": [],
+      "summary": "Specifies P0 of the coordination proposal: pack/knowledge/agent-coordination.md becomes the always-loaded doctrine for the Owner / Coordinator / Sub-Agent model — one CO<n> line per §3.3 invariant naming its measurement or spike, the §4 protocol objects by name, the kick ladder, the vocabulary, the three shared stages and the struck list with reopen triggers — while keeping the seeded CO-S0 and CO-L sections byte-for-byte and the whole document under 3,000 estimated tokens as context-budget.py counts them. Stage detail beyond the ceiling lives in the knowledge base and is cited by id.",
+      "tags": [
+        "coordination",
+        "doctrine",
+        "knowledge-doc",
+        "always-on",
+        "context-budget",
+        "p0",
+        "ctx-q",
+        "co-lines"
+      ],
+      "links": [
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-agent-coordination",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-20260919-coordination-decisions-ratified",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-multi-agent-coordination",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-compile-stage",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-leader-designation",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "d9d16ef618536ef1c78234ac0957e8982230212571db2e3f1ff3931b6413b94b"
+    },
+    {
       "id": "spec-agent-focus-controls",
       "path": "docs/specs/agent-focus-controls.md",
       "title": "Spec — Agent focus & scope controls (goal-state structure, bounded self-assessment, convene trigger)",
@@ -7848,5 +7975,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "fecba2b9e1d8f08e503acaa106036bcb8a5ed556128842ef87efc2eadbf20f53"
+  "graphSha256": "994c799135131f27644ed9ec95bb7708791cdead22e52257263164f3bc044b76"
 };
