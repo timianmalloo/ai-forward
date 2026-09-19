@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-19T17:45:48Z",
+  "generated": "2026-09-19T18:24:32Z",
   "audit": [
     {
       "actor": null,
@@ -5244,6 +5244,95 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-19T17:42:53Z",
       "duration_seconds": 174.0
+    },
+    {
+      "id": "al-01M2XDR8PG5W1WX0YN060RKRN8",
+      "shortname": "specify-compile-readers",
+      "datetime": "2026-09-19T18:09:44Z",
+      "session": "p8-readers",
+      "prompt": "Track P8 (coordination-p2-p8): /specify for the compile readers - session-profile.py and dream.py consume the compile stage's fields, every prose-input skill cites CO-S0, every skill declares runs_as, verify-skill-contracts.py enforces it.",
+      "summary": "Spec for P8: nine user stories (profiler measurements per session/template with not-recorded degradation; SP-27 Inferred, SP-28 Verified; F-26/F-27; dream CO-S0 miner; runs_as on every skill; the CO-S0 sentence once per prose-input skill; fan-out/hard-stop/dispatch lint rules; budget held). Drift recorded: Runs-as -> runs_as frontmatter key. Gate PASS-WITH-CONDITIONS (reference/co-s0.md fallback named for the Coordinator).",
+      "kind": "skill",
+      "skill": "specify",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/specs/compile-readers.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "docs/specs/compile-readers.md: spec-compile-readers refining spec-compile-stage (US-3/6/8) - readers, seats, citations, lint",
+      "done_when": "spec indexed and validating; gate record with the inline adversaries; audit entry; handoff to /design-slice",
+      "tier": "T2",
+      "main_calls": 27,
+      "main_budget": 160,
+      "main_over_budget": false,
+      "fan_out": 0
+    },
+    {
+      "id": "al-01M2XDY8ZJZBTP4HSEWZ5MVB9B",
+      "shortname": "design-slice-compile-readers",
+      "datetime": "2026-09-19T18:13:01Z",
+      "session": "p8-readers",
+      "prompt": "Track P8: /design-slice for docs/design/compile-readers.md implementing spec-compile-readers - profiler compile measurements, dream CO-S0 miner, verify-skill-contracts.py, runs_as seats and CO-S0/CO-S2 citations.",
+      "summary": "Design: one pure reader in session-profile.py (by_session/by_template rows, SP-27 Inferred, SP-28 Verified, F-26/F-27, two compare columns), dream section-7 miner keyed by sig CO-S0, verify-skill-contracts.py with four rules + self-test + refusal grammar, the runs_as seat per skill justified, the CO-S0 sentence inline where 2% headroom holds it else reference/co-s0.md with a pointer (eight skills named for a baseline raise). Gate PASS-WITH-CONDITIONS.",
+      "kind": "skill",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/design/compile-readers.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "docs/design/compile-readers.md: the detailed design for spec-compile-readers - data model (derived rows, additivity), contracts for the profiler additions, the dream miner and the new lint, the seat table, budget arithmetic, failure modes, test plan",
+      "done_when": "design indexed and validating; audit and change entries; handoff to /implement; the docs/security documents links reported (not edited)",
+      "tier": "T2",
+      "main_calls": 31,
+      "main_budget": 160,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "started_at": "2026-09-19T18:09:50Z",
+      "duration_seconds": 191.0
+    },
+    {
+      "id": "al-01M2XEKC7ZMD350PWRHHRMFQPF",
+      "shortname": "implement-compile-readers",
+      "datetime": "2026-09-19T18:24:32Z",
+      "session": "p8-readers",
+      "prompt": "Track P8: /implement docs/design/compile-readers.md - session-profile.py compile measurements, dream.py CO-S0 miner, verify-skill-contracts.py lint, runs_as and CO-S0/CO-S2 lines on the pack's skills; red-first.",
+      "summary": "Shipped: session-profile.py compile_measurements/compile_findings/render_compile_section + compile subcommand (SP-27 Inferred, SP-28 Verified, F-26/F-27, compiled + edit dist p50 columns); dream.py section-7 CO-S0 miner (presence, unanswered DR, refusals); verify-skill-contracts.py (4 rules, self-test, grammar, exit 0/1/2); runs_as on 26 skills; CO-S0 sentence inline on 7 prose-input skills and by reference/co-s0.md pointer on 7 (budget); CO-S2 one-liner on 4 hard stops; dispatchable stop on optimize-graph. Red-first observed: 34 lint refusals on base, 35 failing tests. Green: 119 passed; lint refuses only execute-with-coordination and prepare-for-coordination (P2); budget gate clean; lints clean. Proof Pack in docs/notes/note-20260919-readers-seat-and-citation-placement.md.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "pack/scripts/session-profile.py",
+        "pack/scripts/dream.py",
+        "pack/scripts/verify-skill-contracts.py",
+        "tests/docs_explorer/test_readers_compile_fields.py",
+        "tests/docs_explorer/test_skill_co_s0_citation.py",
+        "docs/notes/note-20260919-readers-seat-and-citation-placement.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Readers consume the compile fields (profiler rows, SP-27/SP-28, F-26/F-27, compare columns, compile subcommand; dream CO-S0 miner); every owned skill declares runs_as; prose-input skills cite CO-S0 once; hard stops cite CO-S2; optimize-graph carries the dispatchable stop; verify-skill-contracts.py with self-test",
+      "done_when": "new tests + existing profiler/dream/budget suites green; lint self-test exit 0 and the tree refuses only P2's two skills; context-budget skills --gate exit 0; three portability lints exit 0; docs graph validating; Proof Pack recorded",
+      "tier": "T2",
+      "main_calls": 62,
+      "main_budget": 160,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-19T18:13:04Z",
+      "duration_seconds": 688.0
     }
   ],
   "changes": [
@@ -6493,6 +6582,28 @@ window.AUDIT_DATA = {
         "after": "fe7ada84698f04b600e783e837e17123cff14bcf",
         "branch": "spec/compile-stage-p7",
         "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M2XDY96PTKWYHRFY683V7YD8",
+      "datetime": "2026-09-19T18:13:01Z",
+      "session": "p8-readers",
+      "kind": "design",
+      "skill": "design-slice",
+      "title": "Compile readers derive, never store: per-session and per-template measurements from the audit log; runs_as seats per skill; CO-S0 by pointer where the 2% budget cannot hold the sentence",
+      "prompt": "Track P8: /design-slice for compile-readers",
+      "summary": "Readers compute rows at run time (derive-don't-store; profile snapshot rebuildable); seats fixed per skill (either for prose-input, Coordinator for optimize-graph/lifecycle/measurement); the CO-S0 sentence lives in reference/co-s0.md with a one-line pointer where baseline+2% cannot hold it.",
+      "rationale": "Nothing new persists; the audit log is the fact table. The context budget is a ratchet the Coordinator owns, so P8 holds it by progressive disclosure rather than raising baselines.",
+      "artifacts": [
+        "docs/design/compile-readers.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "2b3a815",
+        "after": "2b3a8152476efaa80c9d311db865b4a94746c601",
+        "branch": "impl/p8-readers",
+        "pushed": null,
         "commits": []
       }
     }
