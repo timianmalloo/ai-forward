@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-19T19:21:44Z",
+  "generated": "2026-09-19T19:24:48Z",
   "audit": [
     {
       "actor": null,
@@ -6016,6 +6016,67 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-19T19:20:06Z",
       "duration_seconds": 29.0
+    },
+    {
+      "id": "al-01M2XJ1Q6SFX7XNTFY8P8H1P5K",
+      "shortname": "coordinate-p0-p1",
+      "datetime": "2026-09-19T19:24:48Z",
+      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
+      "prompt": "keep going - land the four joins then do P0 and P1",
+      "summary": "P0 (49/120 calls, ~17 min): agent-coordination.md is the always-loaded doctrine at 2,982 est. tokens (CO1-CO17, scenarios, struck list with reopen triggers, CO-S0/S1/S2, CO-L verbatim), WT12 pointer, 19 tests red-first; CTX-Q section delivered and installed as partially-controlled. P1 (54/160, ~52 min): request add requires --deadline/--fallback, five states, ack --blob with stale detection, expire records the fallback, doctor FAILs a silent expiry, metrics counts, claim --except + lease-overlap WARN (CTX-R control), coord_ids monotonic stamp with a 1,000-id order test (ID-A sweep), 19 tests red-first; two pre-existing untyped tests patched by the coordinator. Coordinator: every exit claim re-run in the track's tree; joins P1 then P0 (one expected stop on the always-on ratchet, acknowledged in its own commit: 47,642 -> 50,717); managed block cites the doctrine; rollups; INSTALL rev 78; sync; every generator; gates.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/coordination/coordination-p0-p1.md",
+        "pack/knowledge/agent-coordination.md",
+        "pack/scripts/coord-core.py"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Two Sub-Agent tracks (P0 doctrine home, P1 typed seam requests), each a full specify -> design-slice -> implement loop in its own worktree, joined by conductor-join.py, landed on main as one linear commit with CI green.",
+      "done_when": "two join commits with recount and gates green; the always-on ratchet acknowledged in its own commit; CTX-Q controlled; managed block cites the doctrine; INSTALL rev 78; verify-bundle green except the known machine-dependent tests; linear commit pushed; CI green on three runners; trees removed; planned vs actual recorded.",
+      "tier": "T2",
+      "main_calls": 40,
+      "main_budget": 60,
+      "main_over_budget": false,
+      "fan_out": 2,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "duration_source": "session-start-hook",
+      "started_at": "2026-09-19T18:58:34Z",
+      "duration_seconds": 1574.0,
+      "agent_runs": [
+        {
+          "agent": "python-developer",
+          "started_at": "2026-09-19T18:58:00Z",
+          "ended_at": "2026-09-19T19:15:00Z",
+          "duration_seconds": 1020.0,
+          "calls": 49,
+          "budget_calls": 120,
+          "over_budget": false
+        },
+        {
+          "agent": "python-developer",
+          "started_at": "2026-09-19T18:58:00Z",
+          "ended_at": "2026-09-19T19:50:00Z",
+          "duration_seconds": 3120.0,
+          "calls": 54,
+          "budget_calls": 160,
+          "over_budget": false
+        }
+      ],
+      "parallelism": {
+        "agent_seconds": 4140.0,
+        "span_seconds": 3120.0,
+        "speedup": 1.33,
+        "peak_concurrency": 2
+      }
     }
   ],
   "changes": [

@@ -6785,7 +6785,7 @@ window.DOCS_INDEX = {
       "path": "docs/coordination/coordination-p0-p1.md",
       "title": "Coordination plan - P0 doctrine home and P1 typed seam requests, two full loops after the P2/P4/P6/P8 joins",
       "type": "plan",
-      "status": "proposed",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "coordination",
       "reviewBy": "2026-12-18",
@@ -6811,7 +6811,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b55370c23728f42d6a2d9b047a9a506236520ff01e94d89ccd55787bd09a6c2c"
+      "sourceSha256": "8ba4711d8ca49036251d99736fb37c43dfe190cb9a7eb20fd13996ba1d984871"
     },
     {
       "id": "coordination-p2-p8",
@@ -8178,5 +8178,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "4d624936bd81ad7d42677784e872106466c1128972ae02df5ae3173ee556d4cf"
+  "graphSha256": "5c1900fdfc934881e6943611c5cfed48ea755c4b7db4e28bff1d976999f749dc"
 };

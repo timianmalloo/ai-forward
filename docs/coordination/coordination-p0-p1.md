@@ -2,7 +2,7 @@
 id: coordination-p0-p1
 title: "Coordination plan - P0 doctrine home and P1 typed seam requests, two full loops after the P2/P4/P6/P8 joins"
 type: plan
-status: proposed
+status: accepted
 owner: "@timianmalloo"
 phase: "coordination"
 tags: [coordination, worktrees, parallelism, doctrine, seam-requests, p0, p1]
@@ -81,9 +81,20 @@ summary: >-
 | 3 | verify returns in-tree; commit each on its branch; join P0 then P1 by `conductor-join.py` | 10 min each | E16 |
 | 4 | coordinator: CTX-Q row, rollups, counts, INSTALL rev 78, `context-budget.py gate --update-baseline` (acknowledged in the commit message), sync, every generator, full pytest, `verify-bundle.ps1`; linear landing; CI; cleanup; planned vs actual | 30 min | shared surfaces |
 
+## Planned vs actual (2026-09-19, execution)
+| track | budget planned | actual | seam requests | coordinator verification | join |
+|---|---|---|---|---|---|
+| P0 doctrine | 120 calls · 120 min | 49 calls · ≈ 17 min (18:58Z → 19:15Z); 19 tests red-first (12 failed first); doc 2,982 est. tokens, 18 under the ceiling after three trim rounds (first assembly 3,389) | 0 | 21 passed re-run, lints 0, commit `3342658` | `106e9db` after one expected stop: the always-on ratchet (47,642 → 50,717) acknowledged in its own commit `ec0439d`, then `--continue` (260 passed, 7 gates) |
+| P1 typed requests | 160 · 150 | 54 calls · ≈ 52 min; 19 tests red-first (16 failed first); blob-formula spike executed | 2 raised (the three untyped `request add` calls in `test_coord_core.py` — coordinator-owned; patched in P1's tree before its commit) | 159 passed re-run, lints 0, commit `d918fcb` | `66766d9` (241 passed, 7 gates) |
+| Coordinator | — | CTX-Q replaced with the controlled section; managed block cites the always-on doctrine; rollups for two designs; prefix baseline re-measured; INSTALL rev 78; sync; generators; gates | — | verify-bundle (see the landing entry) | linear commit |
+
+**Did it pay?** Both tracks overlapped (≈ 52 min of wall for ≈ 69 min of track time), both under half their budgets. The one boundary correction was the coordinator's own: two pre-existing tests encoded the untyped contract, and P1's new refusal was right to break them. The join stopped exactly where the design said it must — the always-on ratchet — and the acknowledgement is a commit a reviewer can read.
+
+**Carried forward:** the mechanical dispatch refusal on a `pending` tree (CTX-Q's last layer, `execute-with-coordination`); `coord-mail.py`'s private monotonic-stamp copy (P4's owner; ONE-A shape); the legacy `al-NNNN` fallback in `audit-log.py` outside `coord_ids`; `REQUEST_RETRY` named but unconsumed until P3.
+
 ## Status
 | | |
 |---|---|
-| **Completed** | plan |
-| **Remaining** | waits for the P2/P4/P6/P8 landing |
-| **Best next action** | step 1 once `main` carries the four joins |
+| **Completed** | plan; both tracks executed, verified, joined; landed |
+| **Remaining** | the carried-forward findings; `coordination-p3-xp` |
+| **Best next action** | dispatch `coordination-p3-xp` off the landed main, in a new session (WT1a) |
