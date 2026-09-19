@@ -294,6 +294,15 @@ whose installed pack may predate repo_identity.py, and an audit render must not 
 there. The legacy basename survives only on that path, and `test_repo_identity.py` pins
 the supported path so the fallback cannot quietly become the normal one.
 
+### `read_ledger_mail(root)`
+
+The board's page-side source (spec-board US-7): the coord ledger's `type: mail` twins.
+
+Reads <root>/../.agents/log/*.jsonl and keeps ONLY the twin's identifying fields — never a
+body, even when a record carries one by mistake (the page is committed; the ledger's
+contract carries no body). An unreadable line is reported in the read_log idiom and
+skipped; a missing ledger directory yields [] (an older repo renders unchanged).
+
 ### `render(root, project=…)`
 
 Regenerate audit-data.js and the managed viewer from canonical sources.
@@ -387,6 +396,6 @@ Ingest a session-export JSON array of turns into the audit log (build on session
 
 ## Coverage
 
-- Public functions: **39** · documented: **22** (**56%**)
+- Public functions: **40** · documented: **23** (**58%**)
 - Undocumented (recorded, not invented): `now_iso`, `record_start`, `audit_dir`, `log_path`, `read_log`, `append_log`, `git`, `git_context`, `commits_between`, `find_template`, `cmd_append`, `cmd_change`, `cmd_list`, `cmd_search`, `cmd_get`, `cmd_render`, `cmd_git_context`
 

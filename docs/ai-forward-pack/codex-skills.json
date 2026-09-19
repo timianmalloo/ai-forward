@@ -6,7 +6,8 @@
     "SKILL.md"
   ],
   "adopt": [
-    "SKILL.md"
+    "SKILL.md",
+    "reference/co-s0.md"
   ],
   "also": [
     "SKILL.md"
@@ -21,7 +22,8 @@
     "SKILL.md"
   ],
   "collectknowledge": [
-    "SKILL.md"
+    "SKILL.md",
+    "reference/co-s0.md"
   ],
   "compile": [
     "SKILL.md"
@@ -31,6 +33,7 @@
   ],
   "design-slice": [
     "SKILL.md",
+    "reference/co-s0.md",
     "reference/definition-of-done.md",
     "reference/flow.md"
   ],
@@ -47,10 +50,12 @@
     "SKILL.md"
   ],
   "forensicreview": [
-    "SKILL.md"
+    "SKILL.md",
+    "reference/co-s0.md"
   ],
   "implement": [
     "SKILL.md",
+    "reference/co-s0.md",
     "reference/definition-of-done.md",
     "reference/flow.md"
   ],
@@ -58,7 +63,8 @@
     "SKILL.md"
   ],
   "migrate": [
-    "SKILL.md"
+    "SKILL.md",
+    "reference/co-s0.md"
   ],
   "optimize-graph": [
     "SKILL.md"
@@ -80,6 +86,7 @@
   ],
   "ui-design": [
     "SKILL.md",
+    "reference/co-s0.md",
     "reference/definition-of-done.md",
     "reference/flow.md",
     "reference/triggered-standards.md"

@@ -32,6 +32,12 @@ each step is a subprocess whose return code decides whether the next runs. The
 `execute-with-coordination` skill names it as the only join line.
 
 Steps, in order, stop on the first red (the exit status is the failing step's number):
+  0. leader fence                     `coord-core.py leader who --json` BEFORE the merge (and
+                                      before --continue): refused with exit 11 (EXIT_FENCE - 0
+                                      is success) when the epoch this join carries (--epoch,
+                                      default: the ref's epoch at the join's start) is lower
+                                      than the ref's, or when the ref cannot be read; an absent
+                                      ref is "not applicable" (S2 has no leader)
   1. git merge --no-ff <branch>       a conflict stops here with the file list; resolve by hand,
                                       `git add`, `git commit --no-edit`, re-run with --continue
   2. audit marker                     `audit-log.py start --session <s> --skill execute-with-coordination`
@@ -66,8 +72,8 @@ Usage (from the checkout the join lands on):
       [--artifact <path> ...] [--docs-only] [--no-push] [--no-build] [--continue]
       [--join <join.json>] [--session <id>] [--self-test]
 
-Exit 0 on a complete join; the failing step's number otherwise; 2 on a usage error.
-Stdlib only.
+Exit 0 on a complete join; the failing step's number otherwise; 11 when the leader fence (step
+0) refuses; 2 on a usage error. Stdlib only.
 ```
 
 ## CLI — options
@@ -81,6 +87,7 @@ Stdlib only.
 | `--audit-summary` | _(no help text — coverage gap)_ |
 | `--continue` | the merge was resolved by hand; start at step 2 |
 | `--docs-only` | skip the recount (no test or product change) |
+| `--epoch` | _(no help text — coverage gap)_ |
 | `--join` | the join contract (default docs/coordination/join.json) |
 | `--no-build` | _(no help text — coverage gap)_ |
 | `--no-push` | _(no help text — coverage gap)_ |
@@ -107,6 +114,14 @@ The join contract for this repository, or the defaults. A malformed file is a us
 error, never a silent fallback to defaults (a join that skipped the recount because its
 config had a typo would report as complete).
 
+### `leader_fence(j, given, log)`
+
+Step 0 - the join carries an epoch and the ref decides (spec-leader-designation US-7).
+
+Not a `Join.run` step: `run` knows exit codes only and the fence must read the JSON
+(absent is not-applicable; expired/released still carry the epoch). Refuses with
+EXIT_FENCE; never proceeds on an unread fence (R4: NOT CHECKED is not "no leader").
+
 ### `join(args, root, contract, log=…)`
 
 **Coverage gap** — no docstring in the source.
@@ -120,6 +135,6 @@ shape, a hand-resolved file - stops at step 3 with NO join commit.
 
 ## Coverage
 
-- Public functions: **4** · documented: **2** (**50%**)
+- Public functions: **5** · documented: **3** (**60%**)
 - Undocumented (recorded, not invented): `repo_root`, `join`
 

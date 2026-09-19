@@ -17,8 +17,10 @@ Design: docs/design/coord-core-phase1.md
 import argparse
 import fnmatch
 import json
+import math
 import os
 import re
+import statistics
 import subprocess
 import sys
 import time
@@ -42,6 +44,16 @@ SESSION_STALE_SECONDS = 8 * 3600
 COORD_DIRNAME = ".agents"
 SESSION_CONTRACT = "docs/collaboration/session-contracts.md"
 REQUESTS_FILE = "requests.jsonl"
+
+# --- leader designation (spec-leader-designation; D13, ratified 2026-09-19) ---------------
+# ONE block. Tune these from `coord metrics` (leader_loss, contested_pins, reclaim latency),
+# never from prose: the doctrine (agent-coordination.md CO-L) cites the NAMES, not the numbers.
+LEADER_REF = "refs/coord/leader"
+LEADER_TTL = 300          # s - a designation lapses without a renew
+LEADER_RENEW = 100        # s - the holder renews every TTL/3
+LEADER_RETRY = 20         # s - a lost compare-and-swap re-reads and retries after this
+LEADER_QUIET = 30         # s - after an EXPIRY nobody may reclaim (Consul lock-delay x2)
+ZERO_OID = "0" * 40       # `update-ref <ref> <new> <zeros>` creates, and refuses if present
 
 
 class CoordError(Exception):
@@ -465,6 +477,326 @@ def _git(repo, *args):
     return proc.stdout, None
 
 
+def _git_status(repo, *args, stdin=None):
+    """Run git and keep the RETURN CODE. `rev-parse -q --verify` says absent with 1 and broken
+    with 128; `_git` above folds both into one error, which would render broken as absent.
+    (None, "", reason) when git could not run at all."""
+    try:
+        proc = subprocess.run(["git", *args], cwd=str(repo), capture_output=True, text=True,
+                              encoding="utf-8", errors="replace", timeout=30, input=stdin)
+    except (OSError, subprocess.SubprocessError) as exc:
+        return None, "", "{}: {}".format(exc.__class__.__name__, exc)
+    return proc.returncode, proc.stdout, proc.stderr
+
+
+# --- leader designation -----------------------------------------------------
+# Pattern: compare-and-swap cell + fencing token (Kleppmann; etcd creation revision). The ref
+# DECIDES (`update-ref <ref> <new> <old>` is git's own CAS), the ledger RECORDS, the join
+# FENCES on the epoch. A union-merged ledger cannot refuse a competing claim (SPK-3), so no
+# leader fact is ever read back from the ledger to decide anything.
+
+_LEADER_NOT_CHECKED = "COORD-LEADER-NOT-CHECKED"
+
+
+def leader_validate(record):
+    """The blob's contract; anything else is NOT CHECKED, never a leader and never absent."""
+    if not isinstance(record, dict):
+        return "not a JSON object"
+    leader = record.get("leader")
+    if leader is not None and not isinstance(leader, str):
+        return "leader is not a string"
+    epoch = record.get("epoch")
+    if isinstance(epoch, bool) or not isinstance(epoch, int) or epoch < 1:
+        return "epoch is not a positive integer"
+    for key in ("pinned_at", "expires_at"):
+        value = record.get(key)
+        if isinstance(value, bool) or not isinstance(value, (int, float)):
+            return "{} is not a number".format(key)
+    return None
+
+
+def leader_read(repo):
+    """(record, oid, err). (None, None, None) is ABSENT - a read that succeeded and found no
+    ref. Every failure is err - rendered NOT CHECKED, never "absent" (R4)."""
+    code, out, stderr = _git_status(repo, "rev-parse", "-q", "--verify", LEADER_REF)
+    if code == 1 and not out.strip():
+        return None, None, None
+    if code != 0:
+        return None, None, {"code": _LEADER_NOT_CHECKED, "reason": _safe(
+            stderr.strip() or "git rev-parse exited {}".format(code), 200)}
+    oid = out.strip()
+    code, out, stderr = _git_status(repo, "cat-file", "-p", oid)
+    if code != 0:
+        return None, oid, {"code": _LEADER_NOT_CHECKED, "reason": _safe(
+            stderr.strip() or "git cat-file exited {}".format(code), 200)}
+    try:
+        record = json.loads(out)
+    except json.JSONDecodeError as exc:
+        return None, oid, {"code": _LEADER_NOT_CHECKED,
+                           "reason": "the leader blob is not JSON: {}".format(exc.msg)}
+    problem = leader_validate(record)
+    if problem:
+        return None, oid, {"code": _LEADER_NOT_CHECKED,
+                           "reason": "the leader blob is not the contract: " + problem}
+    return record, oid, None
+
+
+def leader_state(record, now):
+    """absent | live | expired | released - derived on every read, never stored (DM7)."""
+    if record is None:
+        return "absent"
+    if record.get("leader") is None:
+        return "released"
+    return "live" if now < float(record["expires_at"]) else "expired"
+
+
+def leader_decide(action, record, now, me, target, ttl, host=None, tree=None):
+    """Pure: (new_record, None) or (None, refusal). Touches neither git nor the clock.
+
+    The invariant it holds (with the CAS in leader_write): at most one live designation, and
+    the epoch advances by exactly one on every change of holder - never on a renew.
+    """
+    state = leader_state(record, now)
+    epoch = int(record["epoch"]) if record else 0
+    holder = record.get("leader") if record else None
+
+    def refuse(code, because, remedy):
+        return None, {"code": code, "because": because, "remedy": remedy,
+                      "state": state, "epoch": epoch or None, "holder": holder}
+
+    if action in ("pin", "reclaim"):
+        if state == "live":
+            return refuse("COORD-LEADER-HELD",
+                          "{} leads (epoch {}) for {} s more".format(
+                              holder, epoch, int(record["expires_at"] - now)),
+                          "wait for a release or the expiry; this contested {} is recorded"
+                          .format(action))
+        if state == "expired":
+            left = float(record["expires_at"]) + LEADER_QUIET - now
+            if action == "pin":
+                return refuse("COORD-LEADER-EXPIRED",
+                              "{}'s designation (epoch {}) expired {} s ago".format(
+                                  holder, epoch, int(now - record["expires_at"])),
+                              "reclaim after the quiet period ({} s): `coord leader reclaim "
+                              "<session>` or `pin --reclaim`".format(LEADER_QUIET))
+            if left > 0:
+                return refuse("COORD-LEADER-QUIET",
+                              "quiet period after {}'s expiry (epoch {}): {} s left".format(
+                                  holder, epoch, int(math.ceil(left))),
+                              "retry after the quiet period; an in-flight join of the old "
+                              "leader may still be finishing")
+        elif action == "reclaim" and state == "absent":
+            return refuse("COORD-LEADER-ABSENT", "no designation exists - nothing to reclaim",
+                          "`coord leader pin <session>`")
+        new = {"leader": target, "epoch": epoch + 1, "pinned_at": now,
+               "expires_at": now + float(ttl), "ttl": float(ttl), "host": host, "tree": tree}
+        return new, None
+
+    if state == "absent":
+        return refuse("COORD-LEADER-ABSENT", "no designation exists", "`coord leader pin <session>`")
+    if not me or me != holder:
+        return refuse("COORD-LEADER-NOT-HOLDER",
+                      "{} is held by {}, not {}".format(
+                          LEADER_REF, holder or "nobody (released)", me or "an unset AGENT_SESSION"),
+                      "only the holder may {}; export AGENT_SESSION=<holder>".format(action))
+    if action == "renew":
+        if state == "expired":
+            return refuse("COORD-LEADER-EXPIRED",
+                          "the designation (epoch {}) expired {} s ago".format(
+                              epoch, int(now - record["expires_at"])),
+                          "a lapsed designation is not renewed; reclaim after the quiet period")
+        new = dict(record)
+        new["expires_at"] = now + float(record.get("ttl") or ttl)
+        return new, None
+    if action == "release":
+        new = dict(record)
+        new["leader"] = None            # the epoch SURVIVES (note-20260919-leader-release-keeps-the-epoch)
+        new["released_at"] = now
+        return new, None
+    return refuse("COORD-LEADER-USAGE", "unknown action {}".format(_safe(action, 40)),
+                  "pin | who | renew | release | reclaim")
+
+
+def leader_write(repo, record, old_oid):
+    """hash-object then `update-ref <ref> <new> <old>`: the ONLY writer, and the CAS.
+
+    No `-d`, no `--force`, no `--force-with-lease` anywhere in this file (SPK-2: `--force`
+    silently overrides the lease); a test walks every git argv here to keep it so.
+    """
+    payload = json.dumps(record, sort_keys=True) + "\n"
+    code, out, stderr = _git_status(repo, "hash-object", "-w", "--stdin", stdin=payload)
+    if code != 0:
+        return None, {"code": _LEADER_NOT_CHECKED, "reason": _safe(
+            stderr.strip() or "git hash-object exited {}".format(code), 200)}
+    new_oid = out.strip()
+    code, out, stderr = _git_status(repo, "update-ref", LEADER_REF, new_oid, old_oid or ZERO_OID)
+    if code == 0:
+        return new_oid, None
+    text = (stderr or "").lower()
+    if code == 128 and ("cannot lock ref" in text or "already exists" in text or "expected" in text):
+        last = stderr.strip().splitlines()[-1] if stderr.strip() else "the ref changed under us"
+        return None, {"code": "COORD-LEADER-STALE", "reason": _safe(last, 200)}
+    return None, {"code": _LEADER_NOT_CHECKED, "reason": _safe(
+        stderr.strip() or "git update-ref exited {}".format(code), 200)}
+
+
+def leader_metrics(events):
+    """The three measures P2 exists to move (proposal §7, P2). R4: an empty corpus is a
+    reason, never a zero."""
+    rows = [e for e in events if e.get("kind") == "leader"]
+    if not rows:
+        return {"leader_loss": None, "reclaims": None, "contested_pins": None,
+                "reclaim_latency_median_seconds": None,
+                "leader_reason": "no leader events recorded"}
+    reclaims = [e for e in rows if e.get("action") == "reclaim" and e.get("outcome") == "ok"]
+    losses = [e for e in reclaims if e.get("expired_at") is not None]
+    latencies = [float(e["at"]) - float(e["expired_at"]) for e in losses]
+    contested = sum(1 for e in rows if e.get("action") in ("pin", "reclaim")
+                    and e.get("outcome") == "refused" and e.get("code") == "COORD-LEADER-HELD")
+    return {"leader_loss": len(losses), "reclaims": len(reclaims), "contested_pins": contested,
+            "reclaim_latency_median_seconds": (round(statistics.median(latencies), 1)
+                                               if latencies else None),
+            "leader_reason": ""}
+
+
+def _leader_lines(record, state, now):
+    lines = ["leader      {}".format(record.get("leader") or "-"),
+             "epoch       {}".format(record["epoch"]),
+             "state       {}".format(state)]
+    if state == "live":
+        lines.append("expires in  {} s".format(int(record["expires_at"] - now)))
+    elif state == "expired":
+        lines.append("expired     {} s ago (reclaimable {} s after expiry)".format(
+            int(now - record["expires_at"]), LEADER_QUIET))
+    else:
+        lines.append("released    {} s ago".format(int(now - record.get("released_at", now))))
+    lines.append("host        {}".format(record.get("host") or "-"))
+    lines.append("tree        {}".format(record.get("tree") or "-"))
+    return [_safe(line, 300) for line in lines]
+
+
+def leader_doctor_line(repo, now):
+    """(line, is_problem) for `coord doctor`: the holder, the epoch, the time left - or
+    NOT CHECKED, which counts as a problem because a fence cannot run over it."""
+    record, _oid, err = leader_read(repo)
+    if err:
+        return ("leader           NOT CHECKED  [{}]\n  because     {}\n  remedy      fix the "
+                "ref (`git update-ref -d {}` by hand is the rollback), then re-run".format(
+                    err["code"], err["reason"], LEADER_REF), True)
+    state = leader_state(record, now)
+    if state == "absent":
+        return "leader           none designated", False
+    if state == "live":
+        return ("leader           {} epoch {} expires in {} s".format(
+            _safe(record["leader"], 80), record["epoch"], int(record["expires_at"] - now)), False)
+    if state == "expired":
+        return ("leader           EXPIRED {} s ago (epoch {}, was {}) - reclaimable {} s after "
+                "expiry".format(int(now - record["expires_at"]), record["epoch"],
+                                _safe(record["leader"], 80), LEADER_QUIET), False)
+    return "leader           released (epoch {})".format(record["epoch"]), False
+
+
+def cmd_leader(root, repo, action, args, session, agent, cwd, now):
+    as_json = bool(getattr(args, "json", False))
+    record, oid, err = leader_read(repo)
+    if err:
+        if as_json:
+            print(json.dumps({"state": "not_checked", "code": err["code"], "reason": err["reason"]}))
+        else:
+            print("leader NOT CHECKED  [{}]\n  because   {}\n  remedy    fix the condition "
+                  "above, then re-run; this is not a pass and it is not \"no leader\"".format(
+                      err["code"], err["reason"]))
+        return 4
+    state = leader_state(record, now)
+
+    if action == "who":
+        if as_json:
+            payload = dict(record or {})
+            payload.update({"state": state, "oid": oid,
+                            "expires_in": (float(record["expires_at"]) - now) if record else None})
+            print(json.dumps(payload, sort_keys=True))
+        elif record is None:
+            print("leader      -\nstate       absent (no designation; `coord leader pin <session>`)")
+        else:
+            print("\n".join(_leader_lines(record, state, now)))
+        return 0 if state == "live" else 3
+
+    if action == "pin" and getattr(args, "reclaim", False):
+        action = "reclaim"
+    if action in ("pin", "reclaim"):
+        target = args.leader_session
+        me = session or target            # a human pinning from a shell has no AGENT_SESSION
+        ttl = float(getattr(args, "ttl", LEADER_TTL) or LEADER_TTL)
+        if ttl > TTL_CAP:
+            print("COORD-LEADER-TTL-CAP  --ttl {:g} exceeds the cap of {} s\n  because   a "
+                  "designation is renewed every {} s, not sized to a session\n  remedy    "
+                  "use the default ({} s) and renew".format(ttl, TTL_CAP, LEADER_RENEW, LEADER_TTL))
+            return 3
+    else:
+        if not session:
+            print(render({"decision": "not_checked", "path": LEADER_REF,
+                          "code": "COORD-NOT-CHECKED-IDENTITY",
+                          "reason": "AGENT_SESSION is unset"}), file=sys.stderr)
+            return 4
+        me, target = session, (record.get("leader") if record else None)
+        ttl = float(record.get("ttl") or LEADER_TTL) if record else float(LEADER_TTL)
+    host = getattr(args, "host", None) or os.environ.get("AGENT_HOST") or "unknown"
+    tree = session_tree_kind(repo, cwd)
+
+    event = {"kind": "leader", "type": "leader", "action": action, "session": me,
+             "agent": agent or me, "wi": "WI-0", "path": "-", "at": now,
+             "leader": target, "host": host, "tree": tree, "ref_old": oid or ZERO_OID,
+             "previous_epoch": (record["epoch"] if record else None)}
+
+    def refused(refusal):
+        event.update({"outcome": "refused", "code": refusal["code"],
+                      "epoch": record["epoch"] if record else None})
+        try:
+            append_event(root, event)
+        except OSError as exc:
+            print("COORD-NOT-CHECKED-RECORD  the refusal was not recorded: {}".format(
+                _safe(exc, 200)), file=sys.stderr)
+        held = ("\n  held by   {} - epoch {}".format(_safe(refusal["holder"], 80), refusal["epoch"])
+                if refusal.get("holder") else "")
+        print("{}  {}{}\n  because   {}\n  remedy    {}".format(
+            refusal["code"], _safe(target or "-", 80), held, _safe(refusal["because"], 300),
+            _safe(refusal["remedy"], 300)))
+        return 3
+
+    new, refusal = leader_decide(action, record, now, me, target, ttl, host=host, tree=tree)
+    if refusal:
+        return refused(refusal)
+    new_oid, err = leader_write(repo, new, oid)
+    if err and err["code"] == "COORD-LEADER-STALE":
+        return refused({"code": err["code"], "holder": None, "epoch": None,
+                        "because": err["reason"],
+                        "remedy": "another writer won the compare-and-swap; re-read "
+                                  "`coord leader who` and retry after {} s".format(LEADER_RETRY)})
+    if err:
+        print("leader NOT CHECKED  [{}]\n  because   {}\n  remedy    the write did not run; "
+              "this is not a pass".format(err["code"], err["reason"]))
+        return 4
+    event.update({"outcome": "ok", "epoch": new["epoch"], "ref_new": new_oid,
+                  "expires_at": new["expires_at"]})
+    if action == "reclaim" and state == "expired":
+        event["expired_at"] = record["expires_at"]          # metrics: reclaim latency, leader loss
+    try:
+        append_event(root, event)
+    except OSError as exc:
+        # F9 (accepted): the ref is the truth and it changed; the missing record is reported.
+        print("COORD-NOT-CHECKED-RECORD  {} {} epoch {} took effect but was NOT recorded: {}"
+              .format(action, _safe(target or "-", 80), new["epoch"], _safe(exc, 200)),
+              file=sys.stderr)
+        return 4
+    if action == "release":
+        print("released  {} epoch {} kept (the next pin advances it)".format(
+            _safe(target, 80), new["epoch"]))
+    else:
+        print("{}  {} epoch {} until +{} s (renew every {} s)".format(
+            action, _safe(target, 80), new["epoch"], int(new["expires_at"] - now), LEADER_RENEW))
+    return 0
+
+
 def unique_commits(repo):
     """Commits reachable from HEAD and from NO other ref. Returns (count, reason_code).
 
@@ -643,6 +975,27 @@ def _build_parser():
                          "default - DC-142). The count is printed either way.")
     met = sub.add_parser("metrics", help="the four measures this layer exists to move")
     met.add_argument("--json", action="store_true")
+    # spec-leader-designation: the ref decides, the ledger records, the join fences.
+    ld = sub.add_parser("leader", help="designation in {} by compare-and-swap: "
+                                        "pin | who | renew | release | reclaim".format(LEADER_REF))
+    ld_sub = ld.add_subparsers(dest="leader_action", required=True)
+    for verb, text in (("pin", "designate a session (refused while a live leader exists)"),
+                       ("reclaim", "take a lapsed designation after the quiet period; epoch + 1")):
+        ld_verb = ld_sub.add_parser(verb, help=text)
+        ld_verb.add_argument("leader_session", metavar="session")
+        ld_verb.add_argument("--ttl", type=float, default=LEADER_TTL,
+                             help="seconds until the designation lapses (default {}; renew "
+                                  "every {})".format(LEADER_TTL, LEADER_RENEW))
+        ld_verb.add_argument("--host", default=None,
+                             help="harness name recorded in the blob (default $AGENT_HOST)")
+        if verb == "pin":
+            ld_verb.add_argument("--reclaim", action="store_true",
+                                 help="the same path as `reclaim`: over an EXPIRED "
+                                      "designation, after the quiet period")
+    ld_who = ld_sub.add_parser("who", help="who leads, as of which epoch, until when")
+    ld_who.add_argument("--json", action="store_true")
+    ld_sub.add_parser("renew", help="extend the holder's designation (holder only)")
+    ld_sub.add_parser("release", help="clear the holder; the epoch survives (holder only)")
     inst = sub.add_parser("install",
                           help="write the pre-commit hook; print the settings entry")
     inst.add_argument("--force", action="store_true",
@@ -661,6 +1014,12 @@ def _build_parser():
     md = sub.add_parser("merge-derived", help="the .gitattributes merge driver (always 0)")
     md.add_argument("result"); md.add_argument("base")
     md.add_argument("theirs"); md.add_argument("realpath")
+    # P4 / P6: the message layer and the board live in sibling scripts; `coord mail …` and
+    # `coord board …` pass every remaining argument through unchanged (one front door).
+    ml = sub.add_parser("mail", help="send | read | ack | dispatch (delegates to coord-mail.py)")
+    ml.add_argument("mail_args", nargs=argparse.REMAINDER)
+    bd = sub.add_parser("board", help="board [--follow] | board post (delegates to coord-board.py)")
+    bd.add_argument("board_args", nargs=argparse.REMAINDER)
     rg = sub.add_parser("regen", help="run the regenerations the driver deferred")
     rg.add_argument("--timeout", type=float, default=120)
     sub.add_parser("doctor", help="is the driver effective? is the registry sane?")
@@ -2159,7 +2518,11 @@ def cmd_worktree(root, repo, action, cwd, now, session=None, agent=None,
         return 0
     attempts = []
     for record, _why in removable:
-        out, err = _git(repo, "worktree", "remove", "--force", record.get("path", ""))
+        # No `--force`: cleanup only reaches here for a tree it measured clean INCLUDING
+        # untracked files, so git's own refusal of an unclean tree is a second floor under
+        # ours, not an obstacle. It also keeps `--force` out of every git argv in this file
+        # (spec-leader-designation US-9: `--force` silently overrides `--force-with-lease`).
+        out, err = _git(repo, "worktree", "remove", record.get("path", ""))
         attempts.append((record, err))
         if err:
             print("  FAILED  {}: {}".format(_safe(record.get("path", "?"), 140), _safe(err, 160)))
@@ -2297,11 +2660,13 @@ def cmd_metrics(root, repo, as_json):
     pct = round(100.0 * allowed / total, 1) if total else None
     unique, unique_reason = unique_commits(repo)
     wt4 = wt4_exception_rate(root)
+    leader = leader_metrics(read_events(root)[0])
     payload = {"decisions": len(decisions), "allowed": allowed, "refused": refused,
                "not_checked": unchecked, "edits_under_lease_pct": pct,
                "unique_commits": unique, "unique_commits_reason": unique_reason,
                "wt4": wt4,
                "reason": "" if total else "no decisions recorded - nothing to rate"}
+    payload.update(leader)
     if as_json:
         print(json.dumps(payload))
         return 0
@@ -2324,6 +2689,16 @@ def cmd_metrics(root, repo, as_json):
             if wt4["not_recorded"] else ""))
         print("  meaning        WT4 allows the primary as a RECORDED exception. A rate that"
               " does not fall is the finding.")
+    if leader["leader_reason"]:
+        print("leader           {}".format(leader["leader_reason"]))
+    else:
+        print("leader loss (reclaims after an expiry)   {}".format(leader["leader_loss"]))
+        print("  reclaims       {}".format(leader["reclaims"]))
+        print("  reclaim latency, median   {}".format(
+            "{} s".format(leader["reclaim_latency_median_seconds"])
+            if leader["reclaim_latency_median_seconds"] is not None else "no expiry reclaimed"))
+        print("  contested pins {}   (a pin or reclaim refused because a live leader existed)"
+              .format(leader["contested_pins"]))
     return 0
 
 
@@ -2744,6 +3119,11 @@ def cmd_doctor(root, repo):
         print("regeneration     {} artifact(s) OWED - run `coord regen`".format(len(owed)))
         problems += 1
 
+    line, is_problem = leader_doctor_line(repo, time.time())
+    print(line)
+    if is_problem:
+        problems += 1
+
     # NFR-S2: state the limit of our own control rather than implying enforcement we have not
     # established. Everything above this point is MEASURED in this repo; everything below it
     # is a spike result about a harness and is the same in every repo (CTX-H / P3). The blank
@@ -2973,6 +3353,24 @@ def main(argv=None):
 
     if args.cmd == "metrics":
         return cmd_metrics(root, repo, args.json)
+
+    # BEFORE the identity gate: `who` is a read (the join script and a human both ask it with
+    # no AGENT_SESSION), and `pin`/`reclaim` name their target; the holder check for
+    # `renew`/`release` is inside cmd_leader.
+    if args.cmd == "leader":
+        return cmd_leader(root, repo, args.leader_action, args, session, agent, os.getcwd(), now)
+
+    # BEFORE the identity gate for the same reason: the delegate scripts own their identity
+    # rules (read/board are reads; send/post read AGENT_SESSION themselves). The exit code is
+    # the child's, never folded (an exit code is a result only when it is read).
+    if args.cmd in ("mail", "board"):
+        target = os.path.join(_HERE, "coord-mail.py" if args.cmd == "mail" else "coord-board.py")
+        passthrough = args.mail_args if args.cmd == "mail" else args.board_args
+        if not os.path.isfile(target):
+            print("COORD-NOT-CHECKED  {} is not beside coord-core.py; the message layer is not installed here".format(os.path.basename(target)))
+            return 4
+        completed = subprocess.run([sys.executable, target, *passthrough], encoding="utf-8", errors="replace")
+        return completed.returncode
 
     # Dispatched BEFORE the identity gate: `worktree list` and `cleanup` are read/maintenance
     # commands, and refusing to tell someone what trees exist because AGENT_SESSION is unset

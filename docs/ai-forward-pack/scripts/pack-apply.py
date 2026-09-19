@@ -78,8 +78,13 @@ IMPORT_LINE = "@AGENTS.md"
 # counts, so it exits 0 for a re-included path and inverts the answer (measured).
 GITIGNORE_LINES = ["*.jsonl.lock", "spikes/", "docs/audit/.run-starts.json",
                    "docs/audit/.run-starts.json.tmp",
-                   ".agents/*", "!.agents/artifacts.yml",
-                   "!.agents/skills*", "!.agents/hooks.json", "!.agents/rules*"]
+                   ".agents/*", "!.agents/artifacts.yml", "!.agents/log/",
+                   "!.agents/skills*", "!.agents/hooks.json", "!.agents/rules*",
+                   ".agents/mail/"]
+# D10 (ratified 2026-09-19): the coord ledgers `.agents/log/` are TRACKED by default - git is the
+# durable and cross-machine path for state-changing mail (their body-less twins). The mail
+# inboxes `.agents/mail/` are machine-local and carry bodies, so they are ignored by an EXPLICIT
+# line that holds even when the `.agents/*` blanket is withheld below.
 
 # A .gitignore is LAST-MATCH-WINS, so a blanket appended below an existing rule silently
 # reverses it. Measured 2026-09-09 in a consuming repo: line 495 recorded "spikes/ is NOT
@@ -115,7 +120,7 @@ CONDITIONAL_GITIGNORE = {
 # A `!` line exists only to punch through its blanket. Withhold the blanket and the
 # exception is a negation with nothing to negate -- inert, and it tells a reader the
 # opposite of the KEEP row that withheld the blanket.
-GITIGNORE_DEPENDENTS = {".agents/*": ("!.agents/artifacts.yml",)}
+GITIGNORE_DEPENDENTS = {".agents/*": ("!.agents/artifacts.yml", "!.agents/log/")}
 
 # PLAT-A (P3): the pack writes LF everywhere and merges derived files by byte identity; both
 # rest on the working tree being LF on every OS, which only .gitattributes can promise.
@@ -519,7 +524,7 @@ class Applier(object):
         for f in ("README.md", "OVERVIEW.md", "research-synthesis.md", "context-budget.json"):
             self.place("bundle", f, os.path.join(dp, f), read(os.path.join(self.pack, f)))
         hooks = os.path.join(self.pack, "adapters", "hooks")
-        for f in ("reread-guard.py", "session-start.py", "README.md"):
+        for f in ("reread-guard.py", "session-start.py", "mail-doorbell.py", "README.md"):
             self.place("hooks", "adapters/hooks/" + f, os.path.join(dp, "hooks", f), read(os.path.join(hooks, f)))
         self.place("hooks", "adapters/hooks/copilot.ai-forward-hooks.json",
                    os.path.join(self.target, ".github", "hooks", "ai-forward.json"), read(os.path.join(hooks, "copilot.ai-forward-hooks.json")))

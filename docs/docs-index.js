@@ -673,7 +673,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a0b0764d4ef5c3850f6db4c9e9515b1ba1f6854182b1e2440674560c653d095c"
+      "sourceSha256": "ba52f37e6adae417de4620f1c20785f550de0a69e05314f91a24a38466a28c49"
     },
     {
       "id": "api-bounded_process",
@@ -723,7 +723,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "8644fd61e0c6ec5f0355a65965b565345f5d3e9989cec789b49e582f61da7d7e"
+      "sourceSha256": "48cbf76b1b4889d394dd35241fab5cd14a98284c6a6abfc6b0de7e7babd81bf2"
     },
     {
       "id": "api-context-budget",
@@ -751,6 +751,31 @@ window.DOCS_INDEX = {
       "sourceSha256": "df1daf4fe3ffc191577bb5434c53e1b6997d73b002d30cd1446b2779021e1e30"
     },
     {
+      "id": "api-coord-board",
+      "path": "docs/api/coord-board.md",
+      "title": "API — coord-board.py",
+      "type": "api",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-03-03",
+      "reviewSuggested": [],
+      "summary": "coord-board.py — the board: human transparency over agent messages (spec-board, D12).",
+      "tags": [
+        "api",
+        "scripts",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "api-index",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "4a4f4e78d1ba8d821231248cb8d75f15b4f5dfaf072b76ee06636dbefb19e3f0"
+    },
+    {
       "id": "api-coord-core",
       "path": "docs/api/coord-core.md",
       "title": "API — coord-core.py",
@@ -773,7 +798,32 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7a35b9db1ad5d2914316d10b8ea78e09a8beb716c5c596a6cdb971fe90781c66"
+      "sourceSha256": "9b05cd7ae371b1d149ce586686bb150f297d2e66f200ccadf9c11859b787256d"
+    },
+    {
+      "id": "api-coord-mail",
+      "path": "docs/api/coord-mail.md",
+      "title": "API — coord-mail.py",
+      "type": "api",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-03-03",
+      "reviewSuggested": [],
+      "summary": "coord-mail.py - the local message layer: per-session inbox files, ledger twins, bounded dispatch.",
+      "tags": [
+        "api",
+        "scripts",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "api-index",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "e6e0d4850cea3f5b65c5ee6c34b4ce23fde14502d36d80a07ee9c5c31dab5bb7"
     },
     {
       "id": "api-coord_ids",
@@ -935,7 +985,7 @@ window.DOCS_INDEX = {
       "phase": "",
       "reviewBy": "2027-03-03",
       "reviewSuggested": [],
-      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 409 public functions across 31 modules, 45% carrying a docstring.",
+      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 465 public functions across 34 modules, 46% carrying a docstring.",
       "tags": [
         "api",
         "scripts",
@@ -949,7 +999,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "bb62254e9eb7d3b66931606428c49df9dccb8197927fc82eaa7d62f93cca750b"
+      "sourceSha256": "e1e22fb0ecaa425e00313f656d25e354843b9d504dcbc843bdb88795d8206b8a"
     },
     {
       "id": "api-marker-lint",
@@ -1049,7 +1099,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f0d2b1100e9d5d4e443027c284db99a24475abfb9d954dad59093c8a2fc98d8e"
+      "sourceSha256": "ebe782e0767fae1e315fa2378509066986e8e0affbb1f8613012c890fb66e67d"
     },
     {
       "id": "api-prompt-compile",
@@ -1199,7 +1249,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "00eba82a5d78f607dad712a181abd45a048a6b89012b91fe6967a713d5996004"
+      "sourceSha256": "ac2e670cd94128d6df8aa9bec7a56e8ed9cdf6ba4503e67f2397d1ab5befebb5"
     },
     {
       "id": "api-ui-craft-gate",
@@ -1350,6 +1400,31 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "2abbfe9a815d901d7316e0cd6ab9f50ae700229ed698f4388f64f2d18529983f"
+    },
+    {
+      "id": "api-verify-skill-contracts",
+      "path": "docs/api/verify-skill-contracts.md",
+      "title": "API — verify-skill-contracts.py",
+      "type": "api",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-03-03",
+      "reviewSuggested": [],
+      "summary": "verify-skill-contracts.py - every skill declares its seat and cites the shared stage its shape needs.",
+      "tags": [
+        "api",
+        "scripts",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "api-index",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "d33c90585fcfbfe128d5d74f1b11566a0c0c55982b3cfdd3a21e9ca35c469914"
     },
     {
       "id": "api-verify-subprocess-utf8",
@@ -3060,7 +3135,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d5822bcb0b2792161b3f06067beb857f45ebbb8c1e2d711ab57e749db87be401"
+      "sourceSha256": "4f3a20564ad2b70557721bf7a525b7fd9cf628f3135f4dedae8da3bea76cdf23"
     },
     {
       "id": "docs-index",
@@ -6651,6 +6726,10 @@ window.DOCS_INDEX = {
           "rel": "documents"
         },
         {
+          "to": "design-leader-designation",
+          "rel": "documents"
+        },
+        {
           "to": "design-message-layer",
           "rel": "documents"
         },
@@ -6692,7 +6771,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b9f8246f0b09f7fcfa6e1cc98d4813e3b38b1ff46f0f9150be0a03bb84c675ed"
+      "sourceSha256": "46c135bc6bad760f19c6d5a78067655cacd1669353e960a5d25ef20b95d95d89"
     },
     {
       "id": "forensic-review-rev48-proof",
@@ -7482,6 +7561,10 @@ window.DOCS_INDEX = {
           "rel": "documents"
         },
         {
+          "to": "design-leader-designation",
+          "rel": "documents"
+        },
+        {
           "to": "design-message-layer",
           "rel": "documents"
         },
@@ -7523,7 +7606,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a0c9f1d54e22155ba8ed39089a7bbcb87cc53c79a26a18bc34ff38f152ca2588"
+      "sourceSha256": "199bbf7dc2a4a351e70ed8b690e097f6cc91e9db2fde9a44c63cfd74b818f860"
     }
   ],
   "surfaces": [
@@ -7765,5 +7848,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "d159ab840f2456b88b0e3e636c6ab5e87387b72ca13881de4f464a97068ebd2d"
+  "graphSha256": "7cffb1e5fe2b32fd81ba1d03ef481ca146efdd5e4cb9fe9d1f547497839ad6dc"
 };

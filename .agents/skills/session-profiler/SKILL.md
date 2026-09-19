@@ -1,6 +1,7 @@
 ---
 name: session-profiler
 description: Profile one or more pack-consuming repos' Claude Code and Copilot CLI sessions from their local telemetry and produce a findings table and a fixes table for performance, efficiency, task adherence, parallelism and cross-harness coordination — the continuous-improvement loop for how the pack performs on every model and harness. Use weekly, after any session that felt slow or drifty, and before/after a model or harness change.
+runs_as: Coordinator
 ---
 
 # Skill: /session-profiler

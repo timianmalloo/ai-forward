@@ -1,6 +1,7 @@
 ---
 name: searchprompts
 description: Search your logged prompts by freeform text and reuse a match — the same arrow-navigable expand/collapse stack as /prompts, pre-filtered to prompts whose label or text contains all your terms. A utility skill backed by the stdlib prompt-log engine.
+runs_as: either
 ---
 
 # Skill: /searchprompts
