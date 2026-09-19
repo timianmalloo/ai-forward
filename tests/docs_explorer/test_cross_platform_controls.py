@@ -71,7 +71,7 @@ class RegistryTokenTests(unittest.TestCase):
         for lineno, line in enumerate(text.splitlines(), 1):
             if line.strip().startswith("#") or ": derived" not in line:
                 continue
-            self.assertNotRegex(line, r"[A-Za-z]:\\|python\.exe|/opt/homebrew/|/Users/",
+            self.assertNotRegex(line, r"[A-Za-z]:\\|python\.exe|/opt/homebrew/|/Users/",  # machine-path-ok: the assertion
                                 ".agents/artifacts.yml:%d carries a machine path" % lineno)
 
 
@@ -121,7 +121,7 @@ class HookAdapterConformanceTests(unittest.TestCase):
                 with self.subTest(adapter=name, command=command):
                     self.assertFalse(command.startswith('"'), "quoted executable")
                     self.assertNotIn("../", command, "a path that escapes the repo")
-                    self.assertNotRegex(command, r"[A-Za-z]:\\|/Users/|/home/|/opt/homebrew/",
+                    self.assertNotRegex(command, r"[A-Za-z]:\\|/Users/|/home/|/opt/homebrew/",  # machine-path-ok: the assertion
                                         "a machine-specific path in a tracked hook config")
                     self.assertIn("import sys;print(sys.executable)", command,
                                   "the interpreter is fixed instead of resolved at run time")

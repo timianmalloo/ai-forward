@@ -15,9 +15,10 @@ manifests. Prose under docs/ is out of scope on purpose - investigations and def
 cite offending paths as evidence, and a lint that forbids naming the defect is a lint that
 forbids fixing it.
 
-WHAT IT REFUSES. Any line matching a machine-path shape:
-  <drive>:\\Users\\   <drive>:/Users/   /Users/<name>   /home/<name>   /opt/homebrew/
-  \\.pyenv/           AppData\\Local     AppData/Local
+WHAT IT REFUSES. Any line matching a machine-path shape (each line below carries the
+opt-out marker because it names the shapes; the marker is `machine-path-ok`):
+  <drive>:\\Users\\   <drive>:/Users/   /Users/<name>   /home/<name>   /opt/homebrew/   machine-path-ok
+  \\.pyenv/           AppData\\Local     AppData/Local                                machine-path-ok
 A line may opt out with the marker `machine-path-ok` when the path is a fixture and the
 test says why (the exemption is visible in the diff; the pattern is not silently widened).
 
@@ -44,7 +45,7 @@ PATTERNS = [
     re.compile(r"[A-Za-z]:[\\/]Users[\\/]"),
     re.compile(r"(^|[^A-Za-z0-9_])/Users/[A-Za-z]"),
     re.compile(r"(^|[^A-Za-z0-9_])/home/[a-z]"),
-    re.compile(r"/opt/homebrew/"),
+    re.compile(r"/opt/homebrew/"),   # machine-path-ok: the pattern itself
     re.compile(r"\.pyenv[\\/]"),
     re.compile(r"AppData[\\/]Local"),
 ]
