@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-19T16:40:57Z",
+  "generated": "2026-09-19T17:01:02Z",
   "audit": [
     {
       "actor": null,
@@ -4846,6 +4846,60 @@ window.AUDIT_DATA = {
         "speedup": 1.0,
         "peak_concurrency": 1
       }
+    },
+    {
+      "id": "al-01M2X9MK7P9W1Y0PP8MN820ME4",
+      "shortname": "design-slice-compile-stage",
+      "datetime": "2026-09-19T16:57:49Z",
+      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
+      "prompt": "then use the owner-coordinator-sub.agent model to go through the whole design-slice/implement loop to get this spec implemented",
+      "summary": "Design of the compile stage. Data model: append-only kind:compilation entries (grain = one gate-passing compile of one raw prompt for one harness), workflow entries gain compiled_from + edit_distance (non-additive) or compiled:false; templates as versioned data files with one current per harness; dispatchable stored as a labelled compile-time snapshot. CLI: prompt-compile.py skeleton|finish|render|distance; verify-compiled-prompt.py verify|--self-test (nine directions); refusal grammar and thirteen stable codes; placeholder substitution with a simplify: ceiling. Patterns: deterministic skeleton + bounded fill + verifier (TSCG shape), registry-as-data, gate-as-script idiom, single store new kind (decision note). Failure modes (15) dispositioned with tests; STRIDE per boundary with negative tests (no instruction slot, path+sha256 only, realpath-under-root, raw hash recompute, no environ); LINDDUN no new data. Test plan T1/T2/T4/T8/T9/T11/T14 -> D1/D2/D4/D7/A1/A3/A6, red first. Tracks: A engine+gate+templates+tests; B audit/prompt-log fields + /compile skill + eval + seeded agent-coordination.md (load: skill) + one Stage-0 sentence in two skills; coordinator owns counts, INSTALL rev 76, sync, join. No spike needed: every consumed contract read in this repo.",
+      "kind": "skill",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/design/compile-stage.md",
+        "docs/notes/note-20260919-compilation-is-an-audit-kind.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "docs/design/compile-stage.md: the detailed design for spec-compile-stage — data model first, CLI contract for prompt-compile.py and verify-compiled-prompt.py, template registry, refusal codes, failure/STRIDE/LINDDUN analyses, telemetry, test plan, and two disjoint tracks for /prepare-for-coordination.",
+      "done_when": "design indexed and validating; rollups linked and refreshed; decision note for the audit kind; audit and change entries; handoff to /prepare-for-coordination.",
+      "tier": "T2",
+      "main_calls": 22,
+      "main_budget": 60,
+      "main_over_budget": false,
+      "fan_out": 2,
+      "duration_source": "session-start-hook",
+      "started_at": "2026-09-19T16:37:22Z",
+      "duration_seconds": 1227.0
+    },
+    {
+      "id": "al-01M2X9TF8M191NZ9QDQ9N2J9V8",
+      "shortname": "coordination-compile-stage",
+      "datetime": "2026-09-19T17:01:02Z",
+      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
+      "prompt": "then use the owner-coordinator-sub.agent model to go through the whole design-slice/implement loop to get this spec implemented",
+      "summary": "Layer measured: registry ok (10 patterns), merge driver effective, 6 derived artifacts owed (regenerated once at the join), claude edit boundary enforcing (S5), 1 active session, 6 worktrees. Classes: derived + register need no coordination; sync-pack generated surfaces are a rule (coordinator only); authored paths split A / B / coordinator with no overlap. Tracks: A engine+gate+templates+tests (90 calls, 90 min); B audit/prompt-log fields + /compile skill + eval + agent-coordination.md seed + two Stage-0 sentences (70 calls, 60 min); coordinator owns counts, INSTALL rev 76, sync, verify-bundle. Serial spine: CLI contract fixed in the design; AUDIT_KINDS lands with B so the end-to-end runs at the join; sync once. Struck: readers (P8), other harness templates (P4), one-track-per-script (coupling), a third track. Multiplier ~3x, paid for independence and context hygiene.",
+      "kind": "skill",
+      "skill": "prepare-for-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/coordination/coordination-compile-stage.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "A coordination plan for implementing design-compile-stage: measured layer state, artifact classes, two tracks with disjoint authored paths, serial spine, seams, struck tracks, order of operations; md + html.",
+      "done_when": "docs/coordination/coordination-compile-stage.md and .html written to the schema; coord doctor output in the plan; every track has owner, paths, tier, cap, budget, exit evidence, harness; derive + validate green; audit entry.",
+      "tier": "T1",
+      "main_calls": 8,
+      "main_budget": 60,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "started_at": "2026-09-19T16:58:00Z",
+      "duration_seconds": 182.0
     }
   ],
   "changes": [
@@ -6071,6 +6125,28 @@ window.AUDIT_DATA = {
       "git": {
         "before": "4a4c0b3",
         "after": "4a4c0b3a29dfd14fec48b84a5baf30547b54a0ae",
+        "branch": "spec/compile-stage-p7",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M2X9MKF1CZF75TC9CR939P7B",
+      "datetime": "2026-09-19T16:57:49Z",
+      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
+      "kind": "design",
+      "skill": "design-slice",
+      "title": "Compile stage design: skeleton + bounded fill + verifier; compilation as an audit kind",
+      "prompt": "then use the owner-coordinator-sub.agent model to go through the whole design-slice/implement loop to get this spec implemented",
+      "summary": "The compiled prompt is a JSON the deterministic engine writes and the running agent fills; a separate gate refuses added scope before the only writer appends a kind:compilation audit entry whose prompt field is the rendered text. Templates are versioned data files; the audit log stays the single store.",
+      "rationale": "Reuse-in-codebase: the audit log already holds prompts and the pack already has the gate-as-script idiom; a JSON seam lets tests substitute the model; a new audit kind keeps compiled text out of the operator's reuse stack.",
+      "artifacts": [
+        "docs/design/compile-stage.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "fe7ada8",
+        "after": "fe7ada84698f04b600e783e837e17123cff14bcf",
         "branch": "spec/compile-stage-p7",
         "pushed": true,
         "commits": []
