@@ -323,10 +323,13 @@ def cmd_post(args, root):
     sender = args.sender or os.environ.get("AGENT_SESSION") or "human"
     entry = build_entry(args.to, body, args.kind, args.ref, sender, now=time.time())
     try:
-        writer.append_mail(str(root), args.to, entry)
+        # The writer's second argument is the SENDER (P4: append_mail(root, session, entry)); the
+        # recipient travels inside the entry. Passing the recipient here wrote a file named after
+        # `*` on POSIX and raised EINVAL on Windows (CI, 2026-09-19).
+        written = writer.append_mail(str(root), sender, entry)
     except Exception as exc:
         return refuse("writer raised {}: {}".format(type(exc).__name__, exc))
-    print("posted {} → {}  {}".format(entry["id"], args.to, args.kind))
+    print("posted {} → {}  {}".format(written or entry["id"], args.to, args.kind))
     return 0
 
 

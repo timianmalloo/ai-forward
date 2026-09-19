@@ -298,7 +298,8 @@ class LintTests(unittest.TestCase):
         self.tmp = tempfile.mkdtemp()
 
     def _run(self, *args):
-        p = subprocess.run([sys.executable, str(LINT)] + list(args), capture_output=True, text=True)
+        p = subprocess.run([sys.executable, str(LINT)] + list(args), capture_output=True, text=True,
+                           encoding="utf-8", errors="replace")
         return p.returncode, p.stdout + p.stderr
 
     def test_self_test_exits_zero(self):

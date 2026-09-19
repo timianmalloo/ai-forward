@@ -143,12 +143,21 @@ class RegistryIsCommittableTests(unittest.TestCase):
                          "the artifact registry must be committable; ignored by " + why)
 
     def test_this_repo_still_ignores_the_local_coordination_state(self):
-        """The negation must not re-admit the per-run state it was protecting us from."""
-        for path in [".agents/log/session.jsonl", ".agents/regen-owed.txt",
+        """The negation must not re-admit the per-run state it was protecting us from.
+
+        D10 (ratified 2026-09-19): the ledger `.agents/log/` is TRACKED by default so a
+        cross-machine S3 fold can read it; the machine-local mail store `.agents/mail/` and the
+        other per-run state stay ignored."""
+        for path in [".agents/mail/session.jsonl", ".agents/regen-owed.txt",
                      ".agents/requests.jsonl"]:
             with self.subTest(path=path):
                 ignored, _why = self._check_ignore(REPO, path)
                 self.assertTrue(ignored, path + " is per-run state and must stay ignored")
+
+    def test_this_repo_tracks_the_ledger_by_default(self):
+        """D10: the ledger is the durable, union-merged record; ignoring it hides the S3 fold."""
+        ignored, why = self._check_ignore(REPO, ".agents/log/session.jsonl")
+        self.assertFalse(ignored, ".agents/log/ must be tracked (D10); ignored by " + why)
 
     def test_the_deployed_gitignore_lines_carry_the_same_shape(self):
         """A consuming repo must inherit the correction, not just this one."""

@@ -208,8 +208,11 @@ class BoardPostTests(unittest.TestCase):
             self.assertIn("posted ", result.stdout)
             calls = [json.loads(ln) for ln in (repo.root / "writer-calls.jsonl").read_text(encoding="utf-8").splitlines()]
             self.assertEqual(len(calls), 1)
-            self.assertEqual(calls[0]["session"], "p4-mail")
+            # The writer's `session` is the SENDER (P4: append_mail(root, session, entry)); the
+            # recipient travels inside the entry. CI on Windows caught the inversion (EINVAL on `*`).
+            self.assertEqual(calls[0]["session"], "human")
             entry = calls[0]["entry"]
+            self.assertEqual(entry["to"], "p4-mail")
             self.assertEqual(set(entry), {"id", "ts", "from", "to", "kind", "body", "ref", "ack"})
             self.assertEqual(entry["kind"], "note")
             self.assertEqual(entry["to"], "p4-mail")
