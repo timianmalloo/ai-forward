@@ -25,7 +25,7 @@ summary: >-
 
 # Investigation: cross-platform readiness of the pack (Windows and macOS)
 
-- **Status:** Root causes verified (six classes); fix plan in `docs/plans/cross-platform-readiness.md` — **P0 and P1 landed at revision 74**, P2–P5 open
+- **Status:** Root causes verified (six classes); fix plan in `docs/plans/cross-platform-readiness.md` — **P0 and P1 landed at revision 74, P2 and P3 at revision 75**; P4 and the `master`-branch half of P5 open
 - **Severity / tier:** T1. Nothing blocks today's Mac/pyenv or Windows/python.org developer, but several defects corrupt silently when a repo is shared across the two.
 - **Reported by / date:** operator request, 2026-09-19 ("analyze the repo in terms of pack, scripts and skills; ensure they all work cross-platform")
 - **Worktree:** `analysis/cross-platform-readiness` @ `11e0197` (origin/main)

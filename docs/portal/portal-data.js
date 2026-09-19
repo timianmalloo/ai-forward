@@ -5,7 +5,7 @@ window.PORTAL_DATA = {
       "personas": 23,
       "knowledge": 38,
       "templates": 28,
-      "scripts": 28
+      "scripts": 30
     },
     "whatIs": "AI-Forward is a committed Markdown methodology pack that installs into a repo so Claude Code, GitHub Copilot, and Grok Build direct work with a shared reasoning spine, adversarial persona review, and a library of workflow skills - nothing runs as a service; everything is versioned files and stdlib scripts.",
     "skillCount": 27,
@@ -1786,7 +1786,7 @@ window.PORTAL_DATA = {
         "id": "api-index",
         "type": "api",
         "title": "API reference — the deployed script bundle",
-        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 370 public functions across 27 modules, 46% carrying a docstring."
+        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 376 public functions across 29 modules, 46% carrying a docstring."
       },
       {
         "id": "api-marker-lint",
@@ -1865,6 +1865,18 @@ window.PORTAL_DATA = {
         "type": "api",
         "title": "API — verify-no-new-console-launches.py",
         "summary": "verify-no-new-console-launches.py - no code launches a child with CREATE_NEW_CONSOLE."
+      },
+      {
+        "id": "api-verify-portable-text-io",
+        "type": "api",
+        "title": "API — verify-portable-text-io.py",
+        "summary": "verify-portable-text-io.py - text the pack writes is LF and UTF-8 on every OS, and every CLI survives a legacy console."
+      },
+      {
+        "id": "api-verify-subprocess-utf8",
+        "type": "api",
+        "title": "API — verify-subprocess-utf8.py",
+        "summary": "verify-subprocess-utf8.py - a text-mode subprocess states its encoding; the locale never decides."
       },
       {
         "id": "api-visual-assets-setup",
@@ -3146,6 +3158,16 @@ window.PORTAL_DATA = {
       },
       {
         "from": "api-verify-no-new-console-launches",
+        "to": "api-index",
+        "rel": "refines"
+      },
+      {
+        "from": "api-verify-portable-text-io",
+        "to": "api-index",
+        "rel": "refines"
+      },
+      {
+        "from": "api-verify-subprocess-utf8",
         "to": "api-index",
         "rel": "refines"
       },

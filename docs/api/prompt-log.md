@@ -108,7 +108,14 @@ Resolve a 1-based newest-first index OR an id (full/unique-prefix) to an entry.
 
 ### `copy_to_clipboard(text)`
 
-pbcopy (macOS) / xclip / clip.exe when available; returns the tool name or None.
+pbcopy (macOS) / xclip / wl-copy (Wayland) / clip.exe; returns the tool name or None.
+
+Two cross-platform rules (DC-211). (1) `clip.exe` decodes its stdin with the console
+code page, so UTF-8 bytes land as mojibake - it is fed UTF-16LE with a BOM, the one
+encoding it reads unambiguously whatever the code page is. (2) The ladder falls
+THROUGH: a tool that is on PATH but fails to launch (an xclip with no DISPLAY, a WSL
+shim) hands its turn to the next rung instead of ending the ladder at the first
+failure, which previously returned None with Wayland/clip.exe still untried.
 
 ### `cmd_add(args)`
 

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-19T15:03:03Z",
+  "generated": "2026-09-19T15:26:35Z",
   "audit": [
     {
       "actor": null,
@@ -4656,6 +4656,55 @@ window.AUDIT_DATA = {
       "duration_source": "session-start-hook",
       "started_at": "2026-09-19T13:59:41Z",
       "duration_seconds": 3802.0
+    },
+    {
+      "id": "al-01M2X4DH7K2ZBYKF1ZNPQ0A77T",
+      "shortname": "implement-cross-platform-p2-p3",
+      "datetime": "2026-09-19T15:26:35Z",
+      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
+      "prompt": "keep going with P2 and P3",
+      "summary": "Revision 75, class PLAT-A controlled. Two gates that stay, red first: verify-subprocess-utf8.py (absorbed from ai-de DC-211; 21 sites) and verify-portable-text-io.py (text writes without newline, unguarded printing CLIs, mkstemp(text=True); 30 sites), wired as verify-bundle 1c/1d, CI steps on ubuntu/macOS/Windows, gate-parity registry, tests. Sweeps by two sub-agents in disjoint file sets plus nine orphan scripts by the coordinator: utf-8 on every text-mode subprocess; newline on every text write; stdio guard on every printing CLI; hooks reconfigure stdin. prompt-log hands clip.exe UTF-16LE and falls through the ladder; verify-no-conflict-markers NOT-CHECKED when git ls-files fails (4th self-test direction); scrub refuses to rewrite undecodable bytes and preserves EOLs; context-budget inserts with the file's EOL (anchor regexes now \\r?\\n); ui-craft-gate splits its override with shlex; docs-graph drops mkstemp(text=True). pack-apply appends '* text=auto eol=lf' to .gitattributes and creates .editorconfig once; pack-doctor FAILs coord drivers declared without an eol rule; this repo gains .editorconfig. Gate false positive fixed: write_text only in attribute form. Second review of scrub/context-budget: approved. Local: 734 passed, 3 failed (master-branch tests).",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/plans/cross-platform-readiness.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "main_calls": 48,
+      "main_budget": 60,
+      "main_over_budget": false,
+      "duration_source": "session-start-hook",
+      "started_at": "2026-09-19T15:12:48Z",
+      "duration_seconds": 827.0,
+      "agent_runs": [
+        {
+          "agent": "python-developer",
+          "started_at": "2026-09-19T15:10:00Z",
+          "ended_at": "2026-09-19T15:19:00Z",
+          "duration_seconds": 540.0,
+          "calls": 58,
+          "budget_calls": 60,
+          "over_budget": false
+        },
+        {
+          "agent": "python-developer",
+          "started_at": "2026-09-19T15:10:00Z",
+          "ended_at": "2026-09-19T15:20:00Z",
+          "duration_seconds": 600.0,
+          "calls": 48,
+          "budget_calls": 60,
+          "over_budget": false
+        }
+      ],
+      "parallelism": {
+        "agent_seconds": 1140.0,
+        "span_seconds": 600.0,
+        "speedup": 1.9,
+        "peak_concurrency": 2
+      }
     }
   ],
   "changes": [

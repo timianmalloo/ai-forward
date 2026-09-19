@@ -81,7 +81,7 @@ Return (kind, canonical, rules). Detect - never assume - which copy is authorita
 
 **Coverage gap** — no docstring in the source.
 
-### `write_text(path, text, dry)`
+### `write_text_lf(path, text, dry)`
 
 **Coverage gap** — no docstring in the source.
 
@@ -118,5 +118,5 @@ Compute the two gaps between intent and reality (GK11).
 ## Coverage
 
 - Public functions: **11** · documented: **4** (**36%**)
-- Undocumented (recorded, not invented): `ignore_template`, `out`, `write_text`, `run`, `load_code_graph`, `load_docs_graph`, `render_join`
+- Undocumented (recorded, not invented): `ignore_template`, `out`, `write_text_lf`, `run`, `load_code_graph`, `load_docs_graph`, `render_join`
 

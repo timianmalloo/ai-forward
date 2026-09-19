@@ -9,7 +9,7 @@ links:
   - { to: architecture, rel: documents }
 review-by: "2027-03-03"
 summary: >-
-  Generated API reference for the pack's public surface — the deployed script bundle. 370 public functions across 27 modules, 46% carrying a docstring.
+  Generated API reference for the pack's public surface — the deployed script bundle. 376 public functions across 29 modules, 46% carrying a docstring.
 ---
 
 # API reference — the deployed script bundle
@@ -45,11 +45,13 @@ with no docstring is listed as a **coverage gap** rather than described from gue
 | [`scrub.py`](scrub.md) | 2 | 2 | — | scrub.py — first-pass PII/secret redaction for Markdown (deployable). |
 | [`session-profile.py`](session-profile.md) | 37 | 17 | 4 | session-profile.py — measure how agent sessions actually ran, across harnesses and models. |
 | [`ui-craft-gate.py`](ui-craft-gate.md) | 6 | 4 | — | ui-craft-gate.py - the UI craft gate for AI-Forward. |
-| [`verify-no-conflict-markers.py`](verify-no-conflict-markers.md) | 4 | 2 | — | verify-no-conflict-markers.py - a conflict marker must never reach a commit. |
+| [`verify-no-conflict-markers.py`](verify-no-conflict-markers.md) | 4 | 3 | — | verify-no-conflict-markers.py - a conflict marker must never reach a commit. |
 | [`verify-no-machine-paths.py`](verify-no-machine-paths.md) | 4 | 1 | — | verify-no-machine-paths.py - a tracked, machine-readable file never carries one machine's paths. |
 | [`verify-no-new-console-launches.py`](verify-no-new-console-launches.md) | 3 | 1 | — | verify-no-new-console-launches.py - no code launches a child with CREATE_NEW_CONSOLE. |
+| [`verify-portable-text-io.py`](verify-portable-text-io.md) | 3 | 0 | — | verify-portable-text-io.py - text the pack writes is LF and UTF-8 on every OS, and every CLI survives a legacy |
+| [`verify-subprocess-utf8.py`](verify-subprocess-utf8.md) | 3 | 1 | — | verify-subprocess-utf8.py - a text-mode subprocess states its encoding; the locale never decides. |
 | [`visual-assets-setup.py`](visual-assets-setup.md) | 12 | 5 | — | visual-assets-setup.py - wire up a generation backend for UI visual assets (AI-Forward). |
 | [`xaml-token-lint.py`](xaml-token-lint.md) | 9 | 0 | — | xaml-token-lint.py — first-slice token linter for XAML/native UI markup. |
 
-**Total** — 370 public functions across 27 modules, **170 documented (46%)**.
+**Total** — 376 public functions across 29 modules, **172 documented (46%)**.
 

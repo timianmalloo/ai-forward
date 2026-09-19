@@ -83,7 +83,7 @@ Print without dying on a legacy Windows console codepage.
 
 **Coverage gap** — no docstring in the source.
 
-### `write_text(path, text, dry)`
+### `write_text_lf(path, text, dry)`
 
 **Coverage gap** — no docstring in the source.
 
@@ -159,5 +159,5 @@ browser install them with the user's consent.
 ## Coverage
 
 - Public functions: **17** · documented: **7** (**41%**)
-- Undocumented (recorded, not invented): `write_json`, `write_text`, `components`, `analyze`, `render_report`, `init_vault`, `update_gitignore`, `fetch_registry`, `app_install_command`, `app_installed`
+- Undocumented (recorded, not invented): `write_json`, `write_text_lf`, `components`, `analyze`, `render_report`, `init_vault`, `update_gitignore`, `fetch_registry`, `app_install_command`, `app_installed`
 

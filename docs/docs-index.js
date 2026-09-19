@@ -922,7 +922,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "dcf024201c70d2ea571794a9ce6fb706ba897c8f55e1c5b2e5fb82e5e8ea046b"
+      "sourceSha256": "b57e70f157c0faea8c55a23dfb2a8f7b24d6c449dd7c88e6fde657162640527d"
     },
     {
       "id": "api-index",
@@ -934,7 +934,7 @@ window.DOCS_INDEX = {
       "phase": "",
       "reviewBy": "2027-03-03",
       "reviewSuggested": [],
-      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 370 public functions across 27 modules, 46% carrying a docstring.",
+      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 376 public functions across 29 modules, 46% carrying a docstring.",
       "tags": [
         "api",
         "scripts",
@@ -948,7 +948,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "fe0578dd29067ae41290d989e6f3c38a312eb937aa0950d80a5a7223c63b92f1"
+      "sourceSha256": "c39237d80d6c32183dafabfd2b5c1f8efa7dba1e4e535d33f0e546f390215090"
     },
     {
       "id": "api-marker-lint",
@@ -998,7 +998,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "cc325d20da799743c84f2811966f5dd6f1fa2a781108b18c980f915123cffcc9"
+      "sourceSha256": "40c69030222d3ff1c0cac6f2b783b9b8929706bebd7c4b4c1866d3cfc2f8e435"
     },
     {
       "id": "api-pack-apply",
@@ -1073,7 +1073,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "1052af8654869435bf27079cbc18f49f5e0ea18c66269284e9ee6bb14298370d"
+      "sourceSha256": "9205d35d87ba456e1a5017e1a11dd1f69bf3a88068f662f2aaa5550b8b0f30e4"
     },
     {
       "id": "api-repo_identity",
@@ -1223,7 +1223,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a99d621c2bfeecb72a8899a4cd0c869f2b59210be6c8eae5a0f7893047bc5039"
+      "sourceSha256": "c203d619f0b2d27c3f9628131eaef6379d09860d16e01f7a2cb35d66f9864bc0"
     },
     {
       "id": "api-verify-no-machine-paths",
@@ -1274,6 +1274,56 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "fb5b635cad98b0d08669bad368cf223e3ff81df86c7cbb13bd29443f06f6fe3b"
+    },
+    {
+      "id": "api-verify-portable-text-io",
+      "path": "docs/api/verify-portable-text-io.md",
+      "title": "API — verify-portable-text-io.py",
+      "type": "api",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-03-03",
+      "reviewSuggested": [],
+      "summary": "verify-portable-text-io.py - text the pack writes is LF and UTF-8 on every OS, and every CLI survives a legacy console.",
+      "tags": [
+        "api",
+        "scripts",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "api-index",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "2abbfe9a815d901d7316e0cd6ab9f50ae700229ed698f4388f64f2d18529983f"
+    },
+    {
+      "id": "api-verify-subprocess-utf8",
+      "path": "docs/api/verify-subprocess-utf8.md",
+      "title": "API — verify-subprocess-utf8.py",
+      "type": "api",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-03-03",
+      "reviewSuggested": [],
+      "summary": "verify-subprocess-utf8.py - a text-mode subprocess states its encoding; the locale never decides.",
+      "tags": [
+        "api",
+        "scripts",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "api-index",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "d0cb93a9dbbeafb6a03dc4711c54dd3c55046fa7c0f92853cd135ee66abef36b"
     },
     {
       "id": "api-visual-assets-setup",
@@ -2489,7 +2539,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "878d2d79c107d81fbaf35303a1285a86559ef492acea3d5eb958b533c3e242dd"
+      "sourceSha256": "17ac4f5a53de989119307b4e461eee8df4fdf18f3d0caac12383b995808e9461"
     },
     {
       "id": "docs-index",
@@ -3397,7 +3447,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "425657739dec196fbad57317beff75f902d1b6f68367d4b5f91deeeb1ee583ea"
+      "sourceSha256": "277c03965ae56b5dcb1a3ca6cc87fd6f12da2c61496a2f281812048cf37ed771"
     },
     {
       "id": "plan-optimize-graph-grok-surface",
@@ -4198,7 +4248,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a568ace2d759be25bf61a3bef48fa0ebb01f9f9488520daf3c4f34bf3b337f94"
+      "sourceSha256": "40400c1b4dc0f7cf991a1f5e1cd9fd7c9a5af28c19702dfe2ffdc25ccd8be6ee"
     },
     {
       "id": "kb-agent-autopilot-controls",
@@ -6724,5 +6774,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "6bffd70ba00384aa4c671d26d0bbbfaea4656812b68f4c7426531582e5501b46"
+  "graphSha256": "093a00812a88ceb63093b278d883373d7d37f860421aed834b56df336ce6e231"
 };

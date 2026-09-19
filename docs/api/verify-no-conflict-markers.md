@@ -65,7 +65,9 @@ empty corpus is not a verdict, PACK-P). Stdlib only.
 
 ### `tracked_files(root)`
 
-**Coverage gap** — no docstring in the source.
+Returns (files, error). A failed `git ls-files` yields an EMPTY list, and an empty
+corpus read as "no markers found" is a fail-open gate (PACK-P): the return code is
+read and handed back, so the caller reports NOT-CHECKED instead of OK.
 
 ### `scan(root, files)`
 
@@ -79,6 +81,6 @@ refused rather than reported clean.
 
 ## Coverage
 
-- Public functions: **4** · documented: **2** (**50%**)
-- Undocumented (recorded, not invented): `repo_root`, `tracked_files`
+- Public functions: **4** · documented: **3** (**75%**)
+- Undocumented (recorded, not invented): `repo_root`
 
