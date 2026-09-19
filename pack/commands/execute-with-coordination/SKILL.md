@@ -15,7 +15,7 @@ Run a coordination plan. You become the **coordinator**: you own the division of
 **Spine:** the Rigor Protocol, weighted to **Stage 5 CONVERGE** (the merge is the deliverable, not the delegations). **Authority:** `knowledge/session-worktree-discipline.md` (WT1–WT12), `knowledge/execution-graph-optimization.md` (GO5–GO9, GO17 fan-out contract), `knowledge/communication-and-task-discipline.md` (CT19–CT25). **Mode:** Peer Mode while dispatching, Adversary Mode at every join. **Lead:** the **Orchestrator**.
 
 ## Grounding (first action)
-`audit-log.py start --session <id>` (IO1). Then:
+CO-S0 applies first — the sentence is `reference/co-s0.md`. `audit-log.py start --session <id>` (IO1). Then:
 1. Read the plan (`docs/coordination/<plan-id>.md`). If none exists, or the named one does not parse against the schema, **stop and run `/prepare-for-coordination`** — do not improvise a division.
 2. `coord doctor` — **read the layer's state back**. A plan is not proof the layer is on.
 3. `coord worktree list` and `coord session list` — what already exists and who holds it. Never plan over a tree you did not look at.

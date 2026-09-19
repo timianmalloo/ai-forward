@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 223
+"count": 226
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 392,
+"total": 395,
 "items": [
 {
 "cat": "knowledge",
@@ -1641,12 +1641,30 @@ window.PACK_INDEX = {
 },
 {
 "cat": "graph",
+"id": "api-coord-board",
+"title": "API — coord-board.py",
+"summary": "coord-board.py — the board: human transparency over agent messages (spec-board, D12).",
+"path": "docs/api/coord-board.md",
+"kind": "api",
+"text": "api — coord-board.py coord-board.py — the board: human transparency over agent messages (spec-board, d12). api scripts generated refines api-index"
+},
+{
+"cat": "graph",
 "id": "api-coord-core",
 "title": "API — coord-core.py",
 "summary": "coord-core.py - agent coordination, Phase 1 walking skeleton.",
 "path": "docs/api/coord-core.md",
 "kind": "api",
 "text": "api — coord-core.py coord-core.py - agent coordination, phase 1 walking skeleton. api scripts generated refines api-index"
+},
+{
+"cat": "graph",
+"id": "api-coord-mail",
+"title": "API — coord-mail.py",
+"summary": "coord-mail.py - the local message layer: per-session inbox files, ledger twins, bounded dispatch.",
+"path": "docs/api/coord-mail.md",
+"kind": "api",
+"text": "api — coord-mail.py coord-mail.py - the local message layer: per-session inbox files, ledger twins, bounded dispatch. api scripts generated refines api-index"
 },
 {
 "cat": "graph",
@@ -1706,10 +1724,10 @@ window.PACK_INDEX = {
 "cat": "graph",
 "id": "api-index",
 "title": "API reference — the deployed script bundle",
-"summary": "Generated API reference for the pack's public surface — the deployed script bundle. 409 public functions across 31 modules, 45% carrying a docstring.",
+"summary": "Generated API reference for the pack's public surface — the deployed script bundle. 465 public functions across 34 modules, 46% carrying a docstring.",
 "path": "docs/api/index.md",
 "kind": "api",
-"text": "api reference — the deployed script bundle generated api reference for the pack's public surface — the deployed script bundle. 409 public functions across 31 modules, 45% carrying a docstring. api scripts generated index documents architecture"
+"text": "api reference — the deployed script bundle generated api reference for the pack's public surface — the deployed script bundle. 465 public functions across 34 modules, 46% carrying a docstring. api scripts generated index documents architecture"
 },
 {
 "cat": "graph",
@@ -1854,6 +1872,15 @@ window.PACK_INDEX = {
 "path": "docs/api/verify-portable-text-io.md",
 "kind": "api",
 "text": "api — verify-portable-text-io.py verify-portable-text-io.py - text the pack writes is lf and utf-8 on every os, and every cli survives a legacy console. api scripts generated refines api-index"
+},
+{
+"cat": "graph",
+"id": "api-verify-skill-contracts",
+"title": "API — verify-skill-contracts.py",
+"summary": "verify-skill-contracts.py - every skill declares its seat and cites the shared stage its shape needs.",
+"path": "docs/api/verify-skill-contracts.md",
+"kind": "api",
+"text": "api — verify-skill-contracts.py verify-skill-contracts.py - every skill declares its seat and cites the shared stage its shape needs. api scripts generated refines api-index"
 },
 {
 "cat": "graph",

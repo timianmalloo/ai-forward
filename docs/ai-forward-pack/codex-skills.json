@@ -44,7 +44,8 @@
     "SKILL.md"
   ],
   "execute-with-coordination": [
-    "SKILL.md"
+    "SKILL.md",
+    "reference/co-s0.md"
   ],
   "extendaibundle": [
     "SKILL.md"

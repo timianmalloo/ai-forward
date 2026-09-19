@@ -1804,10 +1804,22 @@ window.PORTAL_DATA = {
         "summary": "context-budget.py — the always-on context budget, measured (AI-Forward Pack)."
       },
       {
+        "id": "api-coord-board",
+        "type": "api",
+        "title": "API — coord-board.py",
+        "summary": "coord-board.py — the board: human transparency over agent messages (spec-board, D12)."
+      },
+      {
         "id": "api-coord-core",
         "type": "api",
         "title": "API — coord-core.py",
         "summary": "coord-core.py - agent coordination, Phase 1 walking skeleton."
+      },
+      {
+        "id": "api-coord-mail",
+        "type": "api",
+        "title": "API — coord-mail.py",
+        "summary": "coord-mail.py - the local message layer: per-session inbox files, ledger twins, bounded dispatch."
       },
       {
         "id": "api-coord_ids",
@@ -1849,7 +1861,7 @@ window.PORTAL_DATA = {
         "id": "api-index",
         "type": "api",
         "title": "API reference — the deployed script bundle",
-        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 409 public functions across 31 modules, 45% carrying a docstring."
+        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 465 public functions across 34 modules, 46% carrying a docstring."
       },
       {
         "id": "api-marker-lint",
@@ -1946,6 +1958,12 @@ window.PORTAL_DATA = {
         "type": "api",
         "title": "API — verify-portable-text-io.py",
         "summary": "verify-portable-text-io.py - text the pack writes is LF and UTF-8 on every OS, and every CLI survives a legacy console."
+      },
+      {
+        "id": "api-verify-skill-contracts",
+        "type": "api",
+        "title": "API — verify-skill-contracts.py",
+        "summary": "verify-skill-contracts.py - every skill declares its seat and cites the shared stage its shape needs."
       },
       {
         "id": "api-verify-subprocess-utf8",
@@ -3252,7 +3270,17 @@ window.PORTAL_DATA = {
         "rel": "refines"
       },
       {
+        "from": "api-coord-board",
+        "to": "api-index",
+        "rel": "refines"
+      },
+      {
         "from": "api-coord-core",
+        "to": "api-index",
+        "rel": "refines"
+      },
+      {
+        "from": "api-coord-mail",
         "to": "api-index",
         "rel": "refines"
       },
@@ -3368,6 +3396,11 @@ window.PORTAL_DATA = {
       },
       {
         "from": "api-verify-portable-text-io",
+        "to": "api-index",
+        "rel": "refines"
+      },
+      {
+        "from": "api-verify-skill-contracts",
         "to": "api-index",
         "rel": "refines"
       },
