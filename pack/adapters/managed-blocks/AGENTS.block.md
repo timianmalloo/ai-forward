@@ -60,6 +60,13 @@ every non-trivial task.
   commit that exists nowhere else, and is unheld — anything else is *reported, never removed*, and
   deletion is opt-in (`--remove`). `coord worktree new|list|cleanup`;
   `.github/instructions/session-worktree-discipline.instructions.md` (WT1–WT12).
+- **Agent coordination (the Owner / Coordinator / Sub-Agent doctrine):** seats and the capability floor,
+  the two control relationships, the invariants each traceable to a measurement, the protocol objects
+  (session card, delegation contract, seam request, decision request → ruling, leader designation, join
+  state, mail, board), the kick ladder, and the three stages every skill cites — **CO-S0 compile first,
+  CO-S1 declare the seat, CO-S2 a stop is a message** — plus **CO-L** leadership by designation in a git
+  ref. The tree comes before the first spawn (CO15). `.github/instructions/agent-coordination.instructions.md`
+  (CO1–CO17, CO-S0–CO-S2, CO-L); `coord leader|mail|board|request`.
 - **Continuous improvement (a primary directive):** every bug you create, every mistaken
   assumption, and every correction you receive is captured — as a **class, not an instance** — in
   `docs/lessons/defect-classes.md`, and converted into a **control** that fails when the shape
