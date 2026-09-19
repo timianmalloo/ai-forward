@@ -7,13 +7,38 @@
     "No push_remote: main requires linear history, so the coordinator rebuilds the joined tree as a linear commit and pushes over SSH."
   ],
   "recount": [
-    ["python3", "-m", "pytest", "-q", "tests/docs_explorer/test_prompt_compile.py", "tests/docs_explorer/test_verify_compiled_prompt.py", "tests/docs_explorer/test_compile_audit_fields.py", "tests/docs_explorer/test_audit_log.py", "tests/docs_explorer/test_audit_selfcheck.py", "tests/docs_explorer/test_prescribed_types_registered.py"]
+    [
+      "python3",
+      "-m",
+      "pytest",
+      "-q",
+      "tests/docs_explorer",
+      "-k",
+      "compile or audit_log or audit_selfcheck or prescribed_types or agent_run_spans"
+    ]
   ],
   "regenerate": [
-    ["python3", "docs/ai-forward-pack/scripts/docs-graph.py", "derive"],
-    ["python3", "docs/ai-forward-pack/scripts/audit-log.py", "--root", "docs", "--project", "ai-forward", "render"]
+    [
+      "python3",
+      "docs/ai-forward-pack/scripts/docs-graph.py",
+      "derive"
+    ],
+    [
+      "python3",
+      "docs/ai-forward-pack/scripts/audit-log.py",
+      "--root",
+      "docs",
+      "--project",
+      "ai-forward",
+      "render"
+    ]
   ],
   "gates": [
-    ["python3", "docs/ai-forward-pack/scripts/run-verify-gates.py", "--skip", "verify-explainer-render.js"]
+    [
+      "python3",
+      "docs/ai-forward-pack/scripts/run-verify-gates.py",
+      "--skip",
+      "verify-explainer-render.js"
+    ]
   ]
 }
