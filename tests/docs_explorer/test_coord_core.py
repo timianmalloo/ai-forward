@@ -784,6 +784,7 @@ class CollaborationTests(CoordTestCase):
         add = self.run_cli(
             "request", "add",
             "--to", "Core",
+            "--deadline", "900", "--fallback", "coordinator rules at the join",
             "--contract", "ContextMapView.Shortfall",
             "--reason", "Design needs the bounded-read shortfall rendered",
             "--path", "src/AiDe.Core/Projections/ContextMapView.cs",
@@ -796,7 +797,7 @@ class CollaborationTests(CoordTestCase):
         self.assertEqual(0, listed.returncode, listed.stderr)
         requests = json.loads(listed.stdout)["requests"]
         self.assertEqual([request_id], [r["id"] for r in requests])
-        self.assertEqual("open", requests[0]["status"])
+        self.assertEqual("sent", requests[0]["status"])  # typed requests start at `sent` (P1)
 
         resolved = self.run_cli("request", "resolve", request_id, "--resolution", "accepted")
         self.assertEqual(0, resolved.returncode, resolved.stderr)
@@ -825,12 +826,14 @@ class CollaborationTests(CoordTestCase):
         self.run_cli(
             "request", "add",
             "--to", "Design",
+            "--deadline", "900", "--fallback", "coordinator rules at the join",
             "--contract", "ContextMapView.IsDeclared",
             "--reason", "Core needs the first-run state rendered",
         )
         resolved = self.run_cli(
             "request", "add",
             "--to", "Core",
+            "--deadline", "900", "--fallback", "coordinator rules at the join",
             "--contract", "ContextMapView.Shortfall",
             "--reason", "Design needs shortfall available",
         )

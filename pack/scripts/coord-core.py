@@ -16,6 +16,7 @@ Design: docs/design/coord-core-phase1.md
 """
 import argparse
 import fnmatch
+import hashlib
 import json
 import math
 import os
@@ -54,6 +55,16 @@ LEADER_RENEW = 100        # s - the holder renews every TTL/3
 LEADER_RETRY = 20         # s - a lost compare-and-swap re-reads and retries after this
 LEADER_QUIET = 30         # s - after an EXPIRY nobody may reclaim (Consul lock-delay x2)
 ZERO_OID = "0" * 40       # `update-ref <ref> <new> <zeros>` creates, and refuses if present
+
+# --- seam requests (spec-typed-seam-requests; D5, D13) ------------------------------------
+# ONE block, beside the leader's. Tune from `coord metrics` (unresolved by deadline, fallback
+# taken, stale acks), never from prose: the doctrine cites the NAMES, not the numbers.
+REQUEST_DEADLINE = 900    # s - the long lease; a request is terminal by then, by resolution or fallback
+REQUEST_RETRY = 20        # s - a waiting requester re-reads at this cadence (D13's retry)
+# simplify: REQUEST_RETRY is named here so the block is complete; P3's kick ladder consumes it.
+#   ceiling: nothing in P1 reads it.  upgrade trigger: `session heartbeat` (P3) lands.
+REQUEST_TERMINAL = ("resolved", "expired")
+REQUEST_OPEN = ("sent", "received", "acked", "untyped")
 
 
 class CoordError(Exception):
@@ -159,9 +170,19 @@ def overlaps(a, b):
     return sa[:n] == sb[:n]
 
 
+def excepted(lease, path):
+    """Is `path` carved out of this lease by its `except` list (claim --except, class CTX-R)?"""
+    return any(overlaps(e, path) for e in lease.get("except", ()))
+
+
+def lease_covers(lease, path):
+    """Does a live lease cover this path? A directory lease minus the peer's named files."""
+    return overlaps(lease["path"], path) and not excepted(lease, path)
+
+
 # --- the record -------------------------------------------------------------
 
-def make_event(kind, session, agent, wi, path, at, ttl=TTL_DEFAULT, seq=None):
+def make_event(kind, session, agent, wi, path, at, ttl=TTL_DEFAULT, seq=None, excepts=None):
     first = next((seg for seg in _norm(path).split("/") if seg not in (".", "")), "")
     if first == COORD_DIRNAME:
         raise CoordError("COORD-CLAIM-SELF",
@@ -170,6 +191,8 @@ def make_event(kind, session, agent, wi, path, at, ttl=TTL_DEFAULT, seq=None):
              "path": _norm(path), "at": float(at)}
     if kind == "claim":
         event["ttl"] = float(ttl)
+        if excepts:
+            event["except"] = [_norm(e) for e in excepts]
     if seq is not None:
         event["seq"] = int(seq)
     return event
@@ -259,6 +282,7 @@ def fold(events, now):
             leases[key] = {"path": event["path"], "session": event["session"],
                            "agent": event.get("agent", event["session"]),
                            "wi": event.get("wi", ""),
+                           "except": list(event.get("except", [])),
                            "expires": event["at"] + event.get("ttl", TTL_DEFAULT)}
         elif event.get("kind") == "release":
             leases.pop(key, None)
@@ -289,7 +313,7 @@ def check(root, path, me, now):
                 "reason": "0 files scanned - there is no record here, so nothing was checked"}
 
     for lease in fold(events, now).values():
-        if lease["session"] != me and overlaps(lease["path"], path):
+        if lease["session"] != me and lease_covers(lease, path):
             return {"decision": "deny", "path": path, "files_scanned": files,
                     "events_scanned": len(events), "code": "COORD-REFUSED",
                     "holder": lease["agent"], "session": lease["session"],
@@ -445,22 +469,173 @@ def read_request_events(root):
 
 
 def fold_requests(events):
+    """Pure fold: request-* rows -> one state per request id (spec-typed-seam-requests).
+
+    sent -> received -> acked -> resolved | expired. Terminal wins: a row of a later kind after
+    a terminal state is ignored (the CLI refuses to write one; the fold does not rely on that).
+    An add with no deadline_at predates the typed shape and folds to `untyped` - listed, never
+    expired, never failed (US-10).
+    """
     requests = {}
     for event in events:
         rid = event.get("id")
         if not rid:
             continue
-        if event.get("kind") == "request-add":
+        kind = event.get("kind")
+        if kind == "request-add":
             row = dict(event)
-            row["status"] = "open"
+            row["status"] = "sent" if row.get("deadline_at") is not None else "untyped"
+            row.setdefault("text", row.get("contract", ""))
             requests[rid] = row
-        elif event.get("kind") == "request-resolve" and rid in requests:
-            requests[rid] = dict(requests[rid])
-            requests[rid]["status"] = "resolved"
-            requests[rid]["resolution"] = event.get("resolution", "")
-            requests[rid]["resolved_at"] = event.get("at")
-            requests[rid]["resolved_by"] = event.get("session", "")
+            continue
+        if rid not in requests or requests[rid]["status"] in REQUEST_TERMINAL:
+            continue
+        row = dict(requests[rid])
+        who, at = event.get("session", ""), event.get("at")
+        if kind == "request-receive":
+            row.update(status="received", received_at=at, received_by=who)
+        elif kind == "request-ack":
+            row.update(status="acked", ack_blob=event.get("blob", ""), acked_at=at, acked_by=who)
+        elif kind == "request-resolve":
+            row.update(status="resolved", outcome="resolution",
+                       resolution=event.get("resolution", ""), resolved_at=at, resolved_by=who)
+        elif kind == "request-expire":
+            row.update(status="expired", outcome="fallback", expired_at=at, expired_by=who,
+                       fallback=event.get("fallback", row.get("fallback", "")))
+        else:
+            continue
+        requests[rid] = row
     return sorted(requests.values(), key=lambda r: r.get("at", 0.0))
+
+
+def blob_sha(data):
+    """git's blob id: sha1("blob <len>\0" + bytes). Spiked against `git hash-object`."""
+    return hashlib.sha1(b"blob %d\0" % len(data) + data).hexdigest()
+
+
+def current_blob(repo, path):
+    """The blob id of repo/path now, in-process; None (rendered `not recorded`) when there is
+    no path, the path escapes the repository (STRIDE: a crafted --path reads nothing outside
+    it), or the file cannot be read."""
+    if not path or repo is None:
+        return None
+    base = Path(repo).resolve()
+    target = (base / _norm(path)).resolve()
+    try:
+        target.relative_to(base)
+    except ValueError:
+        return None
+    try:
+        with open(target, "rb") as fh:
+            return blob_sha(fh.read())
+    except OSError:
+        return None
+
+
+def annotate_requests(requests, repo, now):
+    """Derived fields, never stored (DM7): overdue, deadline_in, stale.
+
+    stale is True/False only when an ack pinned a blob AND the cited path can be hashed now;
+    otherwise the string "not recorded" - an absent comparison never renders as "fresh".
+    """
+    out = []
+    for request in requests:
+        row = dict(request)
+        deadline = row.get("deadline_at")
+        typed = deadline is not None
+        row["overdue"] = bool(typed and row["status"] in REQUEST_OPEN and now >= deadline)
+        row["deadline_in"] = round(deadline - now, 1) if typed else "not recorded"
+        if row.get("ack_blob") and row["status"] == "acked":
+            current = current_blob(repo, row.get("path"))
+            row["stale"] = "not recorded" if current is None else (current != row["ack_blob"])
+        else:
+            row["stale"] = "not recorded"
+        out.append(row)
+    return out
+
+
+def request_doctor_lines(root, repo, now):
+    """(lines, problems) for `coord doctor` and pack-doctor's `requests` check.
+
+    FAIL  a typed request past its deadline with no recorded outcome (silence - the 28%)
+    WARN  an ack pinned to a blob that has since changed; untyped rows (counted, never failed)
+    An absent store is `not recorded`, never "0 problems" (R4).
+    """
+    if not request_log_path(root).is_file():
+        return ["requests         not recorded (no {}/{} here)".format(
+            COORD_DIRNAME, REQUESTS_FILE)], 0
+    events, errors = read_request_events(root)
+    if errors:
+        return ["requests         NOT CHECKED  [COORD-REQUEST-NOT-CHECKED]",
+                "  because     " + _safe("; ".join(errors[:2]), 200)], 1
+    rows = annotate_requests(fold_requests(events), repo, now)
+    silent = [r["id"] for r in rows if r["overdue"]]
+    stale = [r["id"] for r in rows if r["stale"] is True]
+    untyped = sum(1 for r in rows if r["status"] == "untyped")
+    lines, problems = [], 0
+    if silent:
+        lines.append("requests         FAIL  [COORD-REQUEST-SILENT-EXPIRY] {} past the deadline with"
+                     " no recorded outcome: {}".format(
+                         len(silent), ", ".join(_safe(i, 40) for i in silent[:5])))
+        lines.append("  remedy      `coord request expire` records each one's fallback as the"
+                     " outcome - a request never ends in silence")
+        problems += 1
+    else:
+        terminal = sum(1 for r in rows if r["status"] in REQUEST_TERMINAL)
+        lines.append("requests         ok - {} request(s), {} open, {} terminal".format(
+            len(rows), len(rows) - terminal, terminal))
+    if stale:
+        lines.append("  WARN  [COORD-REQUEST-STALE-ACK] {} ack(s) pinned to a blob that has since"
+                     " changed: {}".format(len(stale), ", ".join(_safe(i, 40) for i in stale[:5])))
+    if untyped:
+        lines.append("  WARN  [COORD-REQUEST-UNTYPED {}] request(s) predate deadline/fallback;"
+                     " listed as untyped, never expired, never failed".format(untyped))
+    return lines, problems
+
+
+def request_metrics(root, repo, now):
+    """Three counts, or `not recorded` over nothing - a rate over an empty corpus is not a
+    measurement (R4/PACK-P)."""
+    absent = {"requests_unresolved_by_deadline": "not recorded",
+              "requests_fallback_taken": "not recorded",
+              "requests_stale_acks": "not recorded", "requests_untyped": 0}
+    if not request_log_path(root).is_file():
+        return dict(absent, requests_reason="no requests recorded - nothing to count")
+    events, errors = read_request_events(root)
+    if errors:
+        return dict(absent, requests_reason="the requests store could not be read")
+    rows = annotate_requests(fold_requests(events), repo, now)
+    typed = [r for r in rows if r.get("deadline_at") is not None]
+    if not typed:
+        return dict(absent, requests_untyped=len(rows),
+                    requests_reason="no typed requests recorded - nothing to count")
+    return {"requests_unresolved_by_deadline": sum(1 for r in typed if r["overdue"]),
+            "requests_fallback_taken": sum(1 for r in typed if r.get("outcome") == "fallback"),
+            "requests_stale_acks": sum(1 for r in typed if r["stale"] is True),
+            "requests_untyped": len(rows) - len(typed), "requests_reason": ""}
+
+
+def lease_overlap_lines(root, now):
+    """(lines, warns): two live leases from two sessions that cover each other's path and
+    neither excepts the other (class CTX-R's detector). A WARN never changes doctor's exit."""
+    events, errors, _files = read_events(root)
+    if errors:
+        return ["lease overlap    NOT CHECKED  [COORD-NOT-CHECKED-RECORD] "
+                + _safe("; ".join(errors[:2]), 200)], 0
+    leases = list(fold(events, now).values())
+    pairs = [(a, b) for i, a in enumerate(leases) for b in leases[i + 1:]
+             if a["session"] != b["session"] and overlaps(a["path"], b["path"])
+             and not excepted(a, b["path"]) and not excepted(b, a["path"])]
+    if not pairs:
+        return ["lease overlap    none ({} live lease(s))".format(len(leases))], 0
+    lines = []
+    for a, b in pairs:
+        lines.append("lease overlap    WARN  [COORD-LEASE-OVERLAP] {} holds {} and {} holds {}".format(
+            _safe(a["session"], 40), _safe(a["path"], 120),
+            _safe(b["session"], 40), _safe(b["path"], 120)))
+        lines.append("  remedy      the wider lease re-claims with --except <the peer's path>"
+                     " (class CTX-R); a WARN does not change this exit")
+    return lines, len(pairs)
 
 
 # --- git plumbing -----------------------------------------------------------
@@ -915,6 +1090,9 @@ def _build_parser():
     claim.add_argument("--long-edit", dest="long_edit", metavar="REASON",
                        help="the recorded reason for a --ttl above the cap; it is written "
                             "into the claim event so a queued peer can read why it waits")
+    claim.add_argument("--except", dest="excepts", action="append", default=[], metavar="PATH",
+                       help="carve this path out of the lease (repeatable): a directory lease "
+                            "that excludes a peer's owned files (class CTX-R)")
 
     chk = sub.add_parser("check", help="may this session touch this path?")
     chk.add_argument("path")
@@ -938,20 +1116,41 @@ def _build_parser():
     collab = sub.add_parser("collaborate", help="cross-session collaboration checks")
     collab.add_argument("action", choices=["check", "summary"])
     collab.add_argument("--json", action="store_true")
-    req = sub.add_parser("request", help="record or resolve a seam request")
+    req = sub.add_parser("request", help="a typed seam request: add | receive | ack | resolve | "
+                                         "expire | list (sent -> received -> acked -> resolved | expired)")
     req_sub = req.add_subparsers(dest="request_action", required=True)
-    req_add = req_sub.add_parser("add", help="append an open seam request")
+    req_add = req_sub.add_parser("add", help="send a seam request; refused without a deadline "
+                                            "and a fallback (its termination variant)")
+    req_add.add_argument("text", nargs="?", default="", help="what is asked (or --contract)")
     req_add.add_argument("--to", required=True)
-    req_add.add_argument("--contract", required=True)
-    req_add.add_argument("--reason", required=True)
+    req_add.add_argument("--deadline", default=None, metavar="SECONDS",
+                         help="seconds until the request must be terminal, or `default` "
+                              "({} s); omitting it is refused".format(REQUEST_DEADLINE))
+    req_add.add_argument("--fallback", default=None, metavar="TEXT",
+                         help="what the requester does at the deadline; omitting it is refused")
+    req_add.add_argument("--blob", default="", help="the blob sha the request was written against")
+    req_add.add_argument("--ref", default="", help="a mail id (coord mail) this request answers")
+    req_add.add_argument("--contract", default="")
+    req_add.add_argument("--reason", default="")
     req_add.add_argument("--from-role", default="")
     req_add.add_argument("--path", default="")
+    req_receive = req_sub.add_parser("receive", help="the addressee has seen it")
+    req_receive.add_argument("id")
+    req_ack = req_sub.add_parser("ack", help="acknowledge, pinned to the blob you read")
+    req_ack.add_argument("id")
+    req_ack.add_argument("--blob", default=None, help="the blob sha you read; required")
     req_list = req_sub.add_parser("list", help="list seam requests")
     req_list.add_argument("--json", action="store_true")
-    req_list.add_argument("--status", choices=["open", "resolved", "all"], default="open")
+    req_list.add_argument("--status", default="open",
+                          choices=["open", "all", "sent", "received", "acked", "resolved",
+                                   "expired", "untyped"],
+                          help="open = every non-terminal state (default)")
     req_resolve = req_sub.add_parser("resolve", help="resolve a seam request")
     req_resolve.add_argument("id")
     req_resolve.add_argument("--resolution", required=True)
+    req_expire = req_sub.add_parser("expire", help="past the deadline: record the fallback as "
+                                                   "the outcome - every open one, or <id>")
+    req_expire.add_argument("id", nargs="?", default=None)
     # WT1-WT12: a new session starts in a new worktree, and nothing is left behind.
     wt = sub.add_parser("worktree", help="session worktree lifecycle: new | list | cleanup")
     wt.add_argument("action", choices=["new", "list", "cleanup"])
@@ -2147,7 +2346,7 @@ def cmd_collaborate(root, repo, action, now, as_json=False):
     findings = collaboration_findings(root, repo, now, snapshot=(sessions, errors, files))
     request_events, request_errors = read_request_events(root)
     requests = fold_requests(request_events)
-    open_requests = [r for r in requests if r.get("status") == "open"]
+    open_requests = [r for r in requests if r.get("status") in REQUEST_OPEN]
     payload = {"files_scanned": files, "active_sessions": sessions, "findings": findings,
                "contract": SESSION_CONTRACT, "contract_exists": session_contract_path(repo).is_file()}
     if action == "summary":
@@ -2182,49 +2381,161 @@ def cmd_collaborate(root, repo, action, now, as_json=False):
     return 3 if any(f.get("severity") == "blocker" for f in findings) else 0
 
 
-def cmd_request(root, action, now, session, agent, args):
+def _parse_deadline(raw):
+    """Seconds, or `default` -> REQUEST_DEADLINE; None when absent or not a positive number."""
+    if raw is None:
+        return None
+    if str(raw).strip().lower() == "default":
+        return float(REQUEST_DEADLINE)
+    try:
+        value = float(raw)
+    except ValueError:
+        return None
+    return value if value > 0 else None
+
+
+def _request_twin(root, session, agent, action, rid, now, **extra):
+    """The ledger row per transition (`type: request`). The store is the state; this is the
+    audit trail - a twin that cannot be written is reported, and never changes the verdict."""
+    event = {"kind": "request", "type": "request", "action": action, "id": rid,
+             "session": session or "anon", "agent": agent or "anon",
+             "wi": "WI-0", "path": "-", "at": now}
+    event.update(extra)
+    try:
+        append_event(root, event)
+    except OSError as exc:
+        print("COORD-NOT-CHECKED-RECORD  the ledger twin was not recorded: {}".format(
+            _safe(exc, 200)), file=sys.stderr)
+
+
+def _deadline_text(row):
+    if row.get("deadline_at") is None:
+        return "untyped"
+    remaining = row.get("deadline_in", 0)
+    return "in {:g}s".format(remaining) if remaining >= 0 else "overdue {:g}s".format(-remaining)
+
+
+def cmd_request(root, action, now, session, agent, args, repo=None):
     events, errors = read_request_events(root)
     if errors:
         print("COORD-REQUEST-NOT-CHECKED  {}".format(_safe("; ".join(errors[:2]), 200)),
               file=sys.stderr)
         return 4
+    store = request_log_path(root)
+    who = {"session": session or "anon", "agent": agent or "anon"}
+
     if action == "add":
+        text = args.text or args.contract
+        fallback = (args.fallback or "").strip()
+        seconds = _parse_deadline(args.deadline)
+        missing = [flag for flag, value in (("--deadline", seconds), ("--fallback", fallback),
+                                            ("<text>", text)) if not value]
+        if missing:
+            print("COORD-REQUEST-INCOMPLETE  a seam request without {} has no termination"
+                  " variant\n  because   a request nobody answers must still end - by its"
+                  " deadline, through its fallback\n  remedy    pass --deadline <seconds|default>"
+                  " ({} s) and --fallback <what you do at the deadline>".format(
+                      " and ".join(missing), REQUEST_DEADLINE), file=sys.stderr)
+            return 2
         rid = new_id("req")
-        record = {"kind": "request-add", "id": rid, "at": now,
-                  "session": session or "anon", "agent": agent or "anon",
-                  "from": args.from_role or agent or session or "unknown",
-                  "to": args.to, "contract": args.contract,
-                  "reason": args.reason, "path": _norm(args.path or "")}
-        append_record(request_log_path(root), record)
-        print(json.dumps({"id": rid, "status": "open"}))
+        deadline_at = now + seconds
+        record = {"kind": "request-add", "id": rid, "at": now, **who,
+                  "from": args.from_role or agent or session or "unknown", "to": args.to,
+                  "text": text, "path": _norm(args.path or ""), "deadline_at": deadline_at,
+                  "fallback": fallback}
+        for key in ("contract", "reason", "blob", "ref"):
+            if getattr(args, key, ""):
+                record[key] = getattr(args, key)
+        append_record(store, record)
+        _request_twin(root, session, agent, "add", rid, now, to=args.to, deadline_at=deadline_at)
+        print(json.dumps({"id": rid, "status": "sent", "deadline_at": deadline_at}))
         return 0
-    if action == "resolve":
-        folded = {r["id"]: r for r in fold_requests(events)}
-        if args.id not in folded:
-            print("COORD-REQUEST-NOT-FOUND  {}".format(_safe(args.id, 80)))
-            return 4
-        append_record(request_log_path(root), {"kind": "request-resolve", "id": args.id,
-                                               "at": now, "session": session or "anon",
-                                               "agent": agent or "anon",
-                                               "resolution": args.resolution})
-        print(json.dumps({"id": args.id, "status": "resolved",
-                          "resolution": args.resolution}))
+
+    if action == "list":
+        rows = annotate_requests(fold_requests(events), repo, now)
+        if args.status == "open":
+            rows = [r for r in rows if r["status"] in REQUEST_OPEN]
+        elif args.status != "all":
+            rows = [r for r in rows if r["status"] == args.status]
+        payload = {"requests": rows, "events_scanned": len(events), "errors": []}
+        if args.json:
+            print(json.dumps(payload, indent=2, sort_keys=True))
+            return 0
+        print("{} request(s)".format(len(rows)))
+        for row in rows:
+            print("  {:<30} {:<9} -> {:<12} {:<14} stale={:<13} {}".format(
+                _safe(row.get("id", ""), 30), _safe(row.get("status", ""), 9),
+                _safe(row.get("to", ""), 12), _deadline_text(row), str(row["stale"]),
+                _safe(row.get("text", ""), 80)))
         return 0
-    # list
-    folded = fold_requests(events)
-    if args.status != "all":
-        folded = [r for r in folded if r.get("status") == args.status]
-    payload = {"requests": folded, "events_scanned": len(events), "errors": []}
-    if args.json:
-        print(json.dumps(payload, indent=2, sort_keys=True))
-    else:
-        print("{} request(s)".format(len(folded)))
-        for request in folded:
-            print("  {:<22} {:<8} -> {:<12} {}".format(
-                _safe(request.get("id", ""), 22),
-                _safe(request.get("status", ""), 8),
-                _safe(request.get("to", ""), 12),
-                _safe(request.get("contract", ""), 100)))
+
+    folded = {r["id"]: r for r in fold_requests(events)}
+
+    if action == "expire":
+        if args.id:
+            row = folded.get(args.id)
+            if row is None:
+                print("COORD-REQUEST-NOT-FOUND  {}".format(_safe(args.id, 80)))
+                return 4
+            if row.get("deadline_at") is None:
+                print("COORD-REQUEST-UNTYPED  {} predates deadline/fallback and is never expired;"
+                      " resolve it, or re-add it typed".format(_safe(args.id, 80)))
+                return 3
+            if row["status"] in REQUEST_TERMINAL:
+                print("COORD-REQUEST-TERMINAL  {} is already {}".format(
+                    _safe(args.id, 80), row["status"]))
+                return 3
+            if now < row["deadline_at"]:
+                print("COORD-REQUEST-NOT-DUE  {} has {:g}s left; the fallback is for the"
+                      " deadline, not before it".format(_safe(args.id, 80), row["deadline_at"] - now))
+                return 3
+            due = [row]
+        else:
+            due = [r for r in folded.values() if r.get("deadline_at") is not None
+                   and r["status"] in REQUEST_OPEN and now >= r["deadline_at"]]
+        for row in due:
+            append_record(store, {"kind": "request-expire", "id": row["id"], "at": now, **who,
+                                  "outcome": "fallback", "fallback": row.get("fallback", "")})
+            _request_twin(root, session, agent, "expire", row["id"], now, outcome="fallback",
+                          deadline_at=row.get("deadline_at"))
+        print("{} expired".format(len(due)))
+        for row in due:
+            print("  {}  fallback: {}".format(_safe(row["id"], 40),
+                                              _safe(row.get("fallback", ""), 200)))
+        return 0
+
+    row = folded.get(args.id)
+    if row is None:
+        print("COORD-REQUEST-NOT-FOUND  {}".format(_safe(args.id, 80)))
+        return 4
+    if row["status"] in REQUEST_TERMINAL:
+        print("COORD-REQUEST-TERMINAL  {} is already {} ({})".format(
+            _safe(args.id, 80), row["status"], _safe(row.get("outcome", ""), 20)))
+        return 3
+
+    if action == "receive":
+        append_record(store, {"kind": "request-receive", "id": args.id, "at": now, **who})
+        _request_twin(root, session, agent, "receive", args.id, now)
+        print(json.dumps({"id": args.id, "status": "received"}))
+        return 0
+
+    if action == "ack":
+        if not args.blob:
+            print("COORD-REQUEST-ACK-NO-BLOB  {}\n  because   an ack says what you READ; without"
+                  " the blob sha a later change is invisible\n  remedy    ack <id> --blob"
+                  " $(git hash-object <the artifact>)".format(_safe(args.id, 80)), file=sys.stderr)
+            return 2
+        append_record(store, {"kind": "request-ack", "id": args.id, "at": now, **who,
+                              "blob": args.blob})
+        _request_twin(root, session, agent, "ack", args.id, now, blob=args.blob)
+        print(json.dumps({"id": args.id, "status": "acked", "blob": args.blob}))
+        return 0
+
+    # resolve (the pre-P1 shape, kept)
+    append_record(store, {"kind": "request-resolve", "id": args.id, "at": now, **who,
+                          "resolution": args.resolution})
+    _request_twin(root, session, agent, "resolve", args.id, now, outcome="resolution")
+    print(json.dumps({"id": args.id, "status": "resolved", "resolution": args.resolution}))
     return 0
 
 
@@ -2661,12 +2972,14 @@ def cmd_metrics(root, repo, as_json):
     unique, unique_reason = unique_commits(repo)
     wt4 = wt4_exception_rate(root)
     leader = leader_metrics(read_events(root)[0])
+    requests = request_metrics(root, repo, time.time())
     payload = {"decisions": len(decisions), "allowed": allowed, "refused": refused,
                "not_checked": unchecked, "edits_under_lease_pct": pct,
                "unique_commits": unique, "unique_commits_reason": unique_reason,
                "wt4": wt4,
                "reason": "" if total else "no decisions recorded - nothing to rate"}
     payload.update(leader)
+    payload.update(requests)
     if as_json:
         print(json.dumps(payload))
         return 0
@@ -2699,6 +3012,18 @@ def cmd_metrics(root, repo, as_json):
             if leader["reclaim_latency_median_seconds"] is not None else "no expiry reclaimed"))
         print("  contested pins {}   (a pin or reclaim refused because a live leader existed)"
               .format(leader["contested_pins"]))
+    if requests["requests_reason"]:
+        print("requests         {}".format(requests["requests_reason"]))
+    else:
+        print("requests unresolved by deadline   {}   (open past deadline_at with no outcome)"
+              .format(requests["requests_unresolved_by_deadline"]))
+        print("  fallback taken {}   (expired: the fallback was recorded as the outcome)"
+              .format(requests["requests_fallback_taken"]))
+        print("  stale acks     {}   (acked blob no longer the artifact's current blob)"
+              .format(requests["requests_stale_acks"]))
+        if requests["requests_untyped"]:
+            print("  untyped        {}   (predate deadline/fallback)".format(
+                requests["requests_untyped"]))
     return 0
 
 
@@ -3124,6 +3449,13 @@ def cmd_doctor(root, repo):
     if is_problem:
         problems += 1
 
+    lines, request_problems = request_doctor_lines(root, repo, time.time())
+    for line in lines:
+        print(line)
+    problems += request_problems
+    for line in lease_overlap_lines(root, time.time())[0]:
+        print(line)
+
     # NFR-S2: state the limit of our own control rather than implying enforcement we have not
     # established. Everything above this point is MEASURED in this repo; everything below it
     # is a spike result about a harness and is the same in every repo (CTX-H / P3). The blank
@@ -3390,7 +3722,7 @@ def main(argv=None):
         return cmd_collaborate(root, repo, args.action, now, args.json)
 
     if args.cmd == "request":
-        return cmd_request(root, args.request_action, now, session, agent, args)
+        return cmd_request(root, args.request_action, now, session, agent, args, repo=repo)
 
     if args.cmd == "check":
         decision = check(root, args.path, session, now)
@@ -3447,7 +3779,8 @@ def main(argv=None):
             print(render(decision))
             return 3
         try:
-            event = make_event("claim", session, agent, args.wi, args.path, now, args.ttl)
+            event = make_event("claim", session, agent, args.wi, args.path, now, args.ttl,
+                               excepts=args.excepts)
             if args.long_edit:
                 event["long_edit"] = args.long_edit
             append_event(root, event)
