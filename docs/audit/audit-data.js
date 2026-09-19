@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-19T14:41:04Z",
+  "generated": "2026-09-19T15:03:03Z",
   "audit": [
     {
       "actor": null,
@@ -4636,6 +4636,26 @@ window.AUDIT_DATA = {
       "summary": "Revision 73. P1: coord-core.resolve_interpreter maps the registry token python3/python to sys.executable in classify init, regen and the merge driver; pack_defaults writes the token, never sys.executable; the Claude Code, Grok and Antigravity hook adapters resolve python3-then-python in the shell and the agy path is anchored at git top level (../ removed); coord install prints a machine-neutral settings entry; coord plugin names python3 off Windows; pack-doctor FAILs a derived command whose interpreter does not resolve; new gate verify-no-machine-paths.py (self-test, gate 1b, CI step); verify-bundle.ps1 and sync-pack.ps1 resolve python3->python->py -3 once; .agents/artifacts.yml re-normalised; T-2 test compares resolved paths. P0: windows-latest and macos-latest jobs with the cp1252 --help sweep, byte-identical registry and docs-index checks, and the pre-commit hook under Git Bash sh. Red first: 17 assertions, 7 lint hits, doctor on the Windows path. Gates: 10/12 pass locally; gate 2 is the uncommitted tree, gate 3 is the 4 pre-existing failures (3 assume master, 1 selfcheck --since). Found while landing: coord classify init/regen from a worktree act on the primary checkout's registry and derived files (.agents resolves to the primary) - restored the primary's registry by hand; recorded on the plan.",
       "tags": [],
       "tool": null
+    },
+    {
+      "id": "al-01M2X32EH3SWD59CX2VJ0SFDJA",
+      "shortname": "cross-platform-p0-p1-measured",
+      "datetime": "2026-09-19T15:03:03Z",
+      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
+      "prompt": "keep going then commit and push all when its complete",
+      "summary": "P0 measured on the new runners. Run 35449895490: ubuntu green; Windows 735/3 (T-3 + two Codex tests reading UTF-8 via cp1252); macOS 725/1 (T-3). Run 35450221833 with proofs before pytest: Windows - cp1252 --help sweep, byte-identical registry, byte-identical docs-index.js (XP-07 disconfirmed), pre-commit under Git Bash sh all pass; macOS - all proofs pass. T-3 root cause verified and fixed: audit-log.py ids_at_ref compared git's real toplevel path against the caller's symlinked temp path, so --since grandfathered nothing on macOS and Windows; both sides now realpath'd. Two Codex test reads given an explicit encoding. Local suite: 723 passed, 3 failed (the master-branch tests, which pass on the runners).",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/plans/cross-platform-readiness.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "duration_source": "session-start-hook",
+      "started_at": "2026-09-19T13:59:41Z",
+      "duration_seconds": 3802.0
     }
   ],
   "changes": [

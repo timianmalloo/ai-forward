@@ -407,8 +407,15 @@ def ids_at_ref(root, which, ref):
     A forward ratchet fails open on a missing base (returns None), never on a bad current entry."""
     try:
         top = subprocess.run(["git", "-C", root, "rev-parse", "--show-toplevel"],
-                             capture_output=True, text=True, check=True).stdout.strip()
-        rel = os.path.relpath(log_path(root, which), top).replace(os.sep, "/")
+                             capture_output=True, text=True, encoding="utf-8", errors="replace",
+                             check=True).stdout.strip()
+        # Both sides resolved: git answers with the REAL path (macOS /private/var for a /var
+        # temp dir; Windows long names for an 8.3 TEMP), while `root` is whatever the caller
+        # typed. Unresolved, relpath produced ../../../var/... and `git show` found nothing, so
+        # --since silently grandfathered nothing on macOS and Windows (T-3, cross-platform
+        # readiness; the same shape as the run-evals /private/var fix).
+        rel = os.path.relpath(os.path.realpath(log_path(root, which)),
+                              os.path.realpath(top)).replace(os.sep, "/")
         show = subprocess.run(["git", "-C", root, "show", "{}:{}".format(ref, rel)],
                              capture_output=True, text=True, encoding="utf-8", errors="replace")
     except (OSError, subprocess.SubprocessError):

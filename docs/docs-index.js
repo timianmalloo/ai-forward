@@ -3397,7 +3397,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4d210fee92557fcc10ac99d5c3c29c9988f5464c983037ed6d0f45bb0cc1d5bf"
+      "sourceSha256": "b3f6c9a4b08f8c78651e199b23ddcff4626e6188f905079201480717a9a9a513"
     },
     {
       "id": "plan-optimize-graph-grok-surface",
@@ -4198,7 +4198,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9c6265029f4b614413e4e536677cf05958237d9a1e6557ab5ba07e19756deb3c"
+      "sourceSha256": "a568ace2d759be25bf61a3bef48fa0ebb01f9f9488520daf3c4f34bf3b337f94"
     },
     {
       "id": "kb-agent-autopilot-controls",
@@ -6724,5 +6724,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "08f654abba52fcf591d714b0da128566918921e52885e4087739cc5a88bba795"
+  "graphSha256": "7b1114974378497e1c7e971d26621eb729059b1228d3d0d8df76e4fbdbef2336"
 };

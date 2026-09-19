@@ -48,12 +48,12 @@ class CodexSurfaceTests(unittest.TestCase):
                 self.assertEqual(source.read_bytes(), (ROOT / ".agents/skills" / rel).read_bytes())
         agents = (self.root / "AGENTS.md").read_text(encoding="utf-8")  # cp1252 on Windows otherwise (P0 run 35449895490)
         self.assertIn("docs/ai-forward-pack/codex.md", agents)
-        guide = (self.root / "docs/ai-forward-pack/codex.md").read_text()
+        guide = (self.root / "docs/ai-forward-pack/codex.md").read_text(encoding="utf-8")
         for term in ("$collectknowledge", "$specify", ".claude/knowledge/", "AGENTS.override.md"):
             self.assertIn(term, guide)
         inventory = "docs/ai-forward-pack/codex-skills.json"
-        self.assertEqual(json.loads((ROOT / inventory).read_text()),
-                         json.loads((self.root / inventory).read_text()))
+        self.assertEqual(json.loads((ROOT / inventory).read_text(encoding="utf-8")),
+                         json.loads((self.root / inventory).read_text(encoding="utf-8")))
         for source in (ROOT / "pack/scripts").glob("*.py"):
             self.assertEqual(source.read_bytes(),
                              (self.root / "docs/ai-forward-pack/scripts" / source.name).read_bytes())
@@ -68,7 +68,7 @@ class CodexSurfaceTests(unittest.TestCase):
 
     def test_previous_revision_update_regenerates_inventory(self):
         path = self.root / "docs/ai-forward-pack/codex-skills.json"
-        expected = json.loads(path.read_text())
+        expected = json.loads(path.read_text(encoding="utf-8"))
         old = dict(expected)
         old.pop("specify")
         path.write_text(json.dumps(old))
@@ -79,9 +79,9 @@ class CodexSurfaceTests(unittest.TestCase):
                            encoding="utf-8", newline="\n")
         app = apply.Applier(str(ROOT), str(self.root), dry=True, baselines=False, project="Codex fixture")
         app.run()
-        self.assertEqual(old, json.loads(path.read_text()), "preview must not write")
+        self.assertEqual(old, json.loads(path.read_text(encoding="utf-8")), "preview must not write")
         rows = apply.Applier(str(ROOT), str(self.root), dry=False, baselines=False, project="Codex fixture").run()
-        self.assertEqual(expected, json.loads(path.read_text()))
+        self.assertEqual(expected, json.loads(path.read_text(encoding="utf-8")))
         self.assertFalse(any(r["action"] == "CONFLICT" and r["path"].endswith("codex-skills.json") for r in rows))
 
     def test_missing_skill_reference_constitution_or_script_fails(self):
@@ -104,7 +104,7 @@ class CodexSurfaceTests(unittest.TestCase):
         for text in ("# specify", "---\nname: specify\ndescription: ''\n---\n",
                      "---\nname: wrong-name\ndescription: valid\n---\n"):
             with self.subTest(text=text):
-                path.write_text(text)
+                path.write_text(text, encoding="utf-8", newline="\n")
                 self.assertEqual("FAIL", self.check()["status"])
 
     def test_missing_skill_in_both_mirrors_is_not_a_false_pass(self):
@@ -112,29 +112,29 @@ class CodexSurfaceTests(unittest.TestCase):
             shutil.rmtree(self.root / host / "skills/specify")
         local = self.root / ".agents/skills/local-extra"
         local.mkdir()
-        (local / "SKILL.md").write_text("---\nname: local-extra\ndescription: Local skill\n---\n")
+        (local / "SKILL.md").write_text("---\nname: local-extra\ndescription: Local skill\n---\n", encoding="utf-8", newline="\n")
         self.assertEqual("FAIL", self.check()["status"])
 
     def test_extra_local_skill_does_not_fail_pack_readiness(self):
         local = self.root / ".agents/skills/local-extra"
         local.mkdir()
-        (local / "SKILL.md").write_text("---\nname: local-extra\ndescription: Local skill\n---\n")
+        (local / "SKILL.md").write_text("---\nname: local-extra\ndescription: Local skill\n---\n", encoding="utf-8", newline="\n")
         self.assertEqual("PASS", self.check()["status"])
 
     def test_invalid_inventory_fails_closed(self):
         path = self.root / "docs/ai-forward-pack/codex-skills.json"
         for text in ("{", "{}", '{"specify": ["SKILL.md", "../../outside"]}'):
             with self.subTest(text=text):
-                path.write_text(text)
+                path.write_text(text, encoding="utf-8", newline="\n")
                 self.assertEqual("FAIL", self.check()["status"])
 
     def test_override_reports_shadowing_without_overwriting_user_file(self):
         path = self.root / "AGENTS.override.md"
-        path.write_text("Custom instructions\n")
+        path.write_text("Custom instructions\n", encoding="utf-8", newline="\n")
         result = self.check()
         self.assertEqual("WARN", result["status"])
         self.assertIn("AGENTS.override.md", result["detail"])
-        self.assertEqual("Custom instructions\n", path.read_text())
+        self.assertEqual("Custom instructions\n", path.read_text(encoding="utf-8"))
 
 
 if __name__ == "__main__":
