@@ -6645,7 +6645,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ced7f9ec353ced4702c752f5e58487d8561c33a5ab011f46fab4c563d8772980"
+      "sourceSha256": "b55370c23728f42d6a2d9b047a9a506236520ff01e94d89ccd55787bd09a6c2c"
     },
     {
       "id": "coordination-p2-p8",
@@ -6691,6 +6691,43 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "8f676fb3c5c10e3a76ce3aaa8b27b82914ee305de2b3cca45ff3649422f82bc0"
+    },
+    {
+      "id": "coordination-p3-xp",
+      "path": "docs/coordination/coordination-p3-xp.md",
+      "title": "Coordination plan - P3 liveness, the cross-platform residue, and the stale knowledge review (after P0/P1)",
+      "type": "plan",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2026-12-18",
+      "reviewSuggested": [],
+      "summary": "Three tracks after the P0/P1 landing: P3 progress liveness and the running track with the kick ladder (coord-core.py, hook adapters — so it waits for P1's coord-core changes); the cross-platform residue (documented commands that run in any shell, the three master-branch tests); and a review of the seven pack-evolution knowledge docs whose review dates passed on 2026-09-12 and have kept the docs workflow red since. Disjoint paths; coordinator owns the shared surfaces and the join.",
+      "tags": [
+        "coordination",
+        "worktrees",
+        "parallelism",
+        "liveness",
+        "cross-platform",
+        "docs-freshness",
+        "p3"
+      ],
+      "links": [
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "implements"
+        },
+        {
+          "to": "coordination-p0-p1",
+          "rel": "refines"
+        },
+        {
+          "to": "plan-cross-platform-readiness",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "73a479d81358a879b11c1630bd0a2c9bf44813f1dad946f1275da14161b74f33"
     },
     {
       "id": "privacy-review",
@@ -7717,6 +7754,14 @@ window.DOCS_INDEX = {
       "artifactId": "coordination-p2-p8"
     },
     {
+      "id": "surface-coordination-coordination-p3-xp",
+      "path": "docs/coordination/coordination-p3-xp.html",
+      "title": "Coordination plan — P3 liveness · cross-platform residue · knowledge review",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "coordination-p3-xp"
+    },
+    {
       "id": "surface-dreams-drm-0002-index",
       "path": "docs/dreams/drm-0002/index.html",
       "title": "Dream Review",
@@ -7848,5 +7893,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "fecba2b9e1d8f08e503acaa106036bcb8a5ed556128842ef87efc2eadbf20f53"
+  "graphSha256": "02c6481670d0f685d57e4c578c200b4ecdb747440b0a9fe3579eeb56c6d45c23"
 };
