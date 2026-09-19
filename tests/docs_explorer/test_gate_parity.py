@@ -28,6 +28,8 @@ CI_WORKFLOW = REPO / ".github" / "workflows" / "pack-consistency.yml"
 CANONICAL_GATES = [
     ("counts",        "1. counts, skill/prompt parity",      "Count & skill-list consistency"),
     ("machine-paths", "1b. no machine-specific paths",       "No machine-specific paths in tracked files"),
+    ("subprocess-utf8", "1c. subprocess text decodes state utf-8", "Subprocess text decodes state utf-8"),
+    ("text-io",       "1d. text writes and consoles are portable", "Text writes and consoles are portable"),
     ("drift",         "2. source<->install drift",           "Source↔install drift"),
     ("pytest",        "3. python test suite",                "Python test suite"),
     ("docs-explorer", "4. docs explorer core contracts",     "Docs Explorer core contracts"),

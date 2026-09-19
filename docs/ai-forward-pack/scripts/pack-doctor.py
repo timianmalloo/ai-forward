@@ -402,6 +402,7 @@ def check_coordination(root):
                        "(it now writes the token) and commit .agents/artifacts.yml")
 
     declared = set()
+    eol_rule = False
     ga = os.path.join(root, ".gitattributes")
     if os.path.exists(ga):
         try:
@@ -410,8 +411,23 @@ def check_coordination(root):
                     value = line.rsplit("merge=", 1)[1].strip()
                     if value.startswith("coord-"):
                         declared.add(value)
+                if re.search(r"\beol=lf\b", line) and not line.lstrip().startswith("#"):
+                    eol_rule = True
         except OSError:
             pass
+    if declared and not eol_rule:
+        # PLAT-A (P3): every LF-writer in the pack and the byte-identity of the derived-file
+        # merge rest on the working tree being LF on every OS. That is only true when
+        # .gitattributes says so; a Windows clone with core.autocrlf=true and no `eol=lf`
+        # rule checks the ledgers out CRLF, and a union merge then keeps a CRLF line and
+        # its LF twin as two entries. The pack ships the rule via pack-apply; a repo that
+        # declares the coord merge drivers without it has half the mechanism.
+        return _result(name, FAIL,
+                       ".gitattributes declares {0} but no `eol=lf` rule - the ledgers and derived "
+                       "files these drivers merge by byte identity would check out CRLF on a Windows "
+                       "clone with core.autocrlf=true".format(", ".join(sorted(declared))),
+                       "add `* text=auto eol=lf` to .gitattributes (pack-apply appends it), then "
+                       "`git add --renormalize .` once")
     if declared:
         registered = set()
         try:

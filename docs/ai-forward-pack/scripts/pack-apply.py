@@ -117,6 +117,21 @@ CONDITIONAL_GITIGNORE = {
 # opposite of the KEEP row that withheld the blanket.
 GITIGNORE_DEPENDENTS = {".agents/*": ("!.agents/artifacts.yml",)}
 
+# PLAT-A (P3): the pack writes LF everywhere and merges derived files by byte identity; both
+# rest on the working tree being LF on every OS, which only .gitattributes can promise.
+GITATTRIBUTES_LINES = ["* text=auto eol=lf"]
+EDITORCONFIG_TEXT = (
+    "# AI-Forward Pack (INSTALL 2, revision 75): the editor-level twin of .gitattributes eol=lf,\n"
+    "# so a Windows editor does not re-introduce CRLF between commits. Yours to extend.\n"
+    "root = true\n"
+    "\n"
+    "[*]\n"
+    "charset = utf-8\n"
+    "end_of_line = lf\n"
+    "insert_final_newline = true\n"
+    "trim_trailing_whitespace = false\n"
+)
+
 DECLINE_MARKER = "# pack-apply: decline "
 
 
@@ -525,6 +540,8 @@ class Applier(object):
                    os.path.join(self.target, ".agents", "skills.json"), skills_json)
         self._settings(read(os.path.join(hooks, "claude-code.settings.hooks.json")))
         self._gitignore()
+        self._gitattributes()
+        self._editorconfig()
         explorer = os.path.join(self.target, "docs", "index.html")
         if not os.path.isfile(explorer):
             tpl = read(os.path.join(self.pack, "templates", "docs-explorer.template.html")) or ""
@@ -574,7 +591,8 @@ class Applier(object):
         """
         try:
             proc = subprocess.run(["git", "ls-files", "--", path], cwd=self.target,
-                                  capture_output=True, text=True, timeout=20)
+                                  capture_output=True, text=True, encoding="utf-8",
+                                  errors="replace", timeout=20)
         except (OSError, subprocess.SubprocessError):
             return None
         if proc.returncode != 0:
@@ -638,6 +656,44 @@ class Applier(object):
         text += "\n# AI-Forward Pack (INSTALL 2): local coordination and per-run state, never committed\n" + "\n".join(missing) + "\n"
         self._write(dest, text)
         self.row("bundle", ".gitignore", "UPDATE", "ok", "added " + ", ".join(missing))
+
+    def _gitattributes(self):
+        """Ship the line-ending policy every LF-writer in the pack rests on (PLAT-A, P3).
+
+        The coord merge drivers merge derived files and append-only ledgers by byte identity,
+        and every script writes LF on purpose - none of which holds on a Windows clone with
+        core.autocrlf=true unless .gitattributes says `eol=lf`. This repo happened to carry
+        the rule; a consuming repo need not, and the pack installed nothing. Lines are
+        APPENDED when missing and never rewritten or removed: a repo's own attributes are
+        its own (the same stance as `_gitignore`).
+        """
+        dest = os.path.join(self.target, ".gitattributes")
+        current = read(dest) or ""
+        have = {" ".join(l.split()) for l in norm_nl(current).splitlines()}
+        missing = [line for line in GITATTRIBUTES_LINES if " ".join(line.split()) not in have]
+        if not missing:
+            self.row("bundle", ".gitattributes", "UNCHANGED", "ok")
+            return
+        text = norm_nl(current)
+        if text and not text.endswith("\n"):
+            text += "\n"
+        text += ("\n# AI-Forward Pack (INSTALL 2, revision 75): text is LF on every OS, so the ledgers and\n"
+                 "# derived files the coord merge drivers compare by byte identity mean the same thing\n"
+                 "# on Windows and macOS. Run `git add --renormalize .` once after adding this.\n"
+                 + "\n".join(missing) + "\n")
+        self._write(dest, text)
+        self.row("bundle", ".gitattributes", "UPDATE", "ok", "added " + ", ".join(missing))
+
+    def _editorconfig(self):
+        """Create .editorconfig once (LF, UTF-8, final newline) and never overwrite it - an
+        editor-level twin of the git filter, so a Windows editor does not re-introduce CRLF
+        into the working tree between commits (XT-10)."""
+        dest = os.path.join(self.target, ".editorconfig")
+        if os.path.exists(dest):
+            self.row("bundle", ".editorconfig", "SKIP", "ok", "exists - never overwritten")
+            return
+        self._write(dest, EDITORCONFIG_TEXT)
+        self.row("bundle", ".editorconfig", "ADD", "ok", "LF, UTF-8, final newline")
 
     # ---- front doors
     def front_doors(self):
@@ -741,7 +797,9 @@ class Applier(object):
         script = os.path.join(self.target, "docs", "ai-forward-pack", "scripts", "context-budget.py")
         for args in (["gate", "--update-baseline"], ["prefix", "--update-baseline"], ["skills", "--update-baseline"]):
             try:
-                p = subprocess.run([sys.executable, script] + args, cwd=self.target, capture_output=True, text=True, timeout=120)
+                p = subprocess.run([sys.executable, script] + args, cwd=self.target,
+                                   capture_output=True, text=True, encoding="utf-8",
+                                   errors="replace", timeout=120)
                 self.row("meta", "context-budget {0}".format(args[0]), "BASELINE", "ok" if p.returncode == 0 else "fail",
                          (p.stdout.strip().splitlines() or [""])[-1][:120])
             except (OSError, subprocess.SubprocessError) as exc:

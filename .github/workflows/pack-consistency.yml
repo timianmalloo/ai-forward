@@ -50,6 +50,13 @@ jobs:
       - name: No machine-specific paths in tracked files
         run: python3 pack/scripts/verify-no-machine-paths.py
 
+      # PLAT-A (P2/P3): the sweeps that stay - every text-mode subprocess states utf-8; every
+      # text write is LF and every printing CLI guards a cp1252 console.
+      - name: Subprocess text decodes state utf-8
+        run: python3 pack/scripts/verify-subprocess-utf8.py
+      - name: Text writes and consoles are portable
+        run: python3 pack/scripts/verify-portable-text-io.py
+
       # FR-033. The repository's foundational invariant: pack/ is source, .claude/ and
       # .github/ are generated. verify-bundle.ps1 has always checked this locally and CI
       # never ran it, so source↔install drift — the one failure mode the whole architecture
@@ -177,6 +184,13 @@ jobs:
         shell: pwsh
         run: python pack/scripts/verify-no-machine-paths.py
 
+      - name: Subprocess text decodes state utf-8
+        shell: pwsh
+        run: python pack/scripts/verify-subprocess-utf8.py
+      - name: Text writes and consoles are portable
+        shell: pwsh
+        run: python pack/scripts/verify-portable-text-io.py
+
       - name: Source↔install drift (pwsh on Windows)
         shell: pwsh
         run: |
@@ -274,6 +288,13 @@ jobs:
 
       - name: No machine-specific paths in tracked files
         run: python3 pack/scripts/verify-no-machine-paths.py
+
+      # PLAT-A (P2/P3): the sweeps that stay - every text-mode subprocess states utf-8; every
+      # text write is LF and every printing CLI guards a cp1252 console.
+      - name: Subprocess text decodes state utf-8
+        run: python3 pack/scripts/verify-subprocess-utf8.py
+      - name: Text writes and consoles are portable
+        run: python3 pack/scripts/verify-portable-text-io.py
 
       - name: Source↔install drift (pwsh on macOS)
         shell: pwsh

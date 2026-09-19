@@ -93,8 +93,10 @@ class DoctorCoordinationTests(unittest.TestCase):
         new worktree starts with the driver declared and not registered."""
         self.install_script()
         self.registry("docs/audit/audit-log.jsonl: register\n")
+        # The eol rule pack-apply ships (revision 75) is present; without it the check FAILs
+        # first, on purpose - see test_portable_text_io_gates.DoctorRequiresEolRuleTests.
         (self.root / ".gitattributes").write_text(
-            "docs/audit/audit-log.jsonl merge=coord-register\n",
+            "* text=auto eol=lf\ndocs/audit/audit-log.jsonl merge=coord-register\n",
             encoding="utf-8", newline="\n")
         result = self.check()
         self.assertEqual(result["status"], self.m.WARN)

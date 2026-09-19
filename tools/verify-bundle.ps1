@@ -8,6 +8,8 @@
 
         1.  Count & skill-list consistency     tools/check-consistency.py
         1b. No machine-specific paths          pack/scripts/verify-no-machine-paths.py (PLAT-B)
+        1c. Subprocess decodes state utf-8     pack/scripts/verify-subprocess-utf8.py (PLAT-A)
+        1d. Text writes/consoles portable      pack/scripts/verify-portable-text-io.py (PLAT-A)
         2.  Source<->install drift             sync-pack.ps1 THEN git diff --exit-code
         3.  Python test suite                  pytest tests
         4.  Docs Explorer core contracts       node --test (see the gate-4 note)
@@ -88,6 +90,17 @@ try {
     # noticed. Self-test proves the gate can fail (DC-104).
     Gate "1b. no machine-specific paths in tracked files" {
         & $pyExe @pyArgs (Join-Path $repo "pack/scripts/verify-no-machine-paths.py") --root $repo
+    }
+
+    # PLAT-A (P2/P3): a platform lesson fixed in one file and left in its siblings. These two
+    # are the sweeps that stay: every text-mode subprocess states utf-8 (ai-de's DC-211, 21
+    # sites red first), every text write is LF and every printing CLI guards a cp1252 console
+    # (30 sites red first).
+    Gate "1c. subprocess text decodes state utf-8" {
+        & $pyExe @pyArgs (Join-Path $repo "pack/scripts/verify-subprocess-utf8.py") --root $repo
+    }
+    Gate "1d. text writes and consoles are portable" {
+        & $pyExe @pyArgs (Join-Path $repo "pack/scripts/verify-portable-text-io.py") --root $repo
     }
 
     # FR-057: sync AND compare. The comparison is the gate; the sync alone is only a repair.
