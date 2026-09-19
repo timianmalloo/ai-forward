@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-19T17:45:48Z",
+  "generated": "2026-09-19T18:26:27Z",
   "audit": [
     {
       "actor": null,
@@ -5244,6 +5244,84 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-19T17:42:53Z",
       "duration_seconds": 174.0
+    },
+    {
+      "id": "al-01M2XDN9A7WMVJVE84GYGS2N1G",
+      "shortname": "specify-message-layer",
+      "datetime": "2026-09-19T18:08:06Z",
+      "session": "p4-mail",
+      "prompt": "Track P4: build-plan item P4 (message layer + dispatch, D9 revised, section 4b) through /specify -> /design-slice -> /implement in the P4 worktree, red-first, against the fixed mail store contract in coordination-p2-p8.md",
+      "summary": "docs/specs/message-layer.md: Part A functional (domain model, US-1..US-9 Gherkin, NFRs, three contract deviations raised to coordinator and P6 as req-01M2XDMSD0N3SJSHJESEWAKFF9 / req-01M2XDMSKGF4Y3B9NC8J40VCPG), Part B in CLI terms, Part C N/A; gate PASS-WITH-CONDITIONS, adversaries enacted inline (fan-out 0)",
+      "kind": "skill",
+      "skill": "specify",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/specs/message-layer.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "P4 message layer spec, design, implementation with red-first tests",
+      "done_when": "exit evidence (1)-(9) observed",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-09-19T18:00:24Z",
+      "duration_seconds": 462.0
+    },
+    {
+      "id": "al-01M2XDVXRVRH8GCQCR53XRFYTN",
+      "shortname": "design-slice-message-layer",
+      "datetime": "2026-09-19T18:11:44Z",
+      "session": "p4-mail",
+      "prompt": "Track P4: /design-slice for spec-message-layer - coord-mail.py send/read/ack/dispatch, mail-doorbell.py per host, pack-apply ignore rules (D10), pack-doctor checks; distributed-systems lens; do not edit docs/security/*",
+      "summary": "docs/design/message-layer.md: data model first (inbox/twin/harness-status aggregates, grain, derive-don't-store), E7 surface list, sourced contracts, six named patterns past both lenses, at-least-once + idempotent colocated acks + id ordering, failure/STRIDE/LINDDUN with tests, dispatch and doorbell shapes, test plan; documents links for the two security rollups reported to the coordinator; decision note for the three raised deviations",
+      "kind": "skill",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/design/message-layer.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-09-19T18:08:06Z",
+      "duration_seconds": 218.0
+    },
+    {
+      "id": "al-01M2XEPWN9228YYBP9R2SK84P8",
+      "shortname": "implement-message-layer",
+      "datetime": "2026-09-19T18:26:27Z",
+      "session": "p4-mail",
+      "prompt": "Track P4: /implement design-message-layer red-first - coord-mail.py (send/read/ack/dispatch, append_mail single writer), mail-doorbell.py (count + pointer per host), hook adapter entries, pack-apply ignore rules (D10), pack-doctor mail checks, tests",
+      "summary": "37 P4 tests green (test_coord_mail.py, test_mail_doorbells.py) plus pack_apply/pack_doctor/cross-platform/session-start suites; only test_source_repo_is_already_current is red pending the coordinator's sync-pack (4 install rows). Real dispatches verified on this machine: claude-code 2.1.278 and codex-cli 0.155.1 under bounded_process with a 120 s deadline; copilot unsupported (not installed); agy/grok not executed (unsupported). Three lints exit 0. Defects found at implement: ids minted in one millisecond ordered by random bits (fixed by a process-monotonic stamp); brief redaction by argv position (fixed by value)",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "pack/scripts/coord-mail.py",
+        "pack/adapters/hooks/mail-doorbell.py",
+        "tests/docs_explorer/test_coord_mail.py",
+        "tests/docs_explorer/test_mail_doorbells.py"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "tier": "T2",
+      "main_calls": 67,
+      "main_budget": 160,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true
+      },
+      "started_at": "2026-09-19T18:11:56Z",
+      "duration_seconds": 871.0
     }
   ],
   "changes": [
@@ -6493,6 +6571,28 @@ window.AUDIT_DATA = {
         "after": "fe7ada84698f04b600e783e837e17123cff14bcf",
         "branch": "spec/compile-stage-p7",
         "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M2XDVXZXQP9600S8VT3M0ET4",
+      "datetime": "2026-09-19T18:11:44Z",
+      "session": null,
+      "kind": "design",
+      "skill": "design-slice",
+      "title": "Mail store: append-only inbox files + body-less ledger twins; doorbell = count + pointer; dispatch bounded and recorded per harness",
+      "prompt": "P4 design-slice",
+      "summary": "design-message-layer settled the store, twin, ack, doorbell and dispatch shapes; three contract additions raised to P6/coordinator",
+      "rationale": "the file is the store, the doorbell is the push; git carries state-changing kinds; nothing not executed here reads verified (D8/D9/D10)",
+      "artifacts": [
+        "docs/design/message-layer.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "2b3a8152476efaa80c9d311db865b4a94746c601",
+        "after": "2b3a8152476efaa80c9d311db865b4a94746c601",
+        "branch": "impl/p4-mail",
+        "pushed": null,
         "commits": []
       }
     }

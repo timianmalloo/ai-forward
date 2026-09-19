@@ -21,5 +21,14 @@
         "timeout": 15
       }
     ]
+  },
+  "mail-doorbell": {
+    "PreInvocation": [
+      {
+        "type": "command",
+        "command": "py=$(python3 -c 'import sys;print(sys.executable)' 2>/dev/null); [ -x \"$py\" ] || py=$(python -c 'import sys;print(sys.executable)'); \"$py\" \"$(git rev-parse --show-toplevel)/docs/ai-forward-pack/hooks/mail-doorbell.py\" --host agy --event PreInvocation",
+        "timeout": 10
+      }
+    ]
   }
 }
