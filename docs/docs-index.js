@@ -2164,6 +2164,44 @@ window.DOCS_INDEX = {
       "sourceSha256": "bb72fdca48c407cbbaa30725cdf52bfd8977bc271e350f68004f7a6c7774cb79"
     },
     {
+      "id": "note-20260919-seam-request-terminal-by-deadline",
+      "path": "docs/notes/note-20260919-seam-request-terminal-by-deadline.md",
+      "title": "A seam request is terminal by its deadline or it is refused; the fallback is copied onto the expire row; staleness is derived from the cited path's current blob, never stored",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-03-19",
+      "reviewSuggested": [],
+      "summary": "Four calls made while building P1: (1) `request add` refuses (exit 2) rather than defaulting a missing deadline or fallback - a default would make the termination variant invisible again; (2) `deadline_at` is the one stored deadline quantity, the seconds are the input; (3) the expire row carries a copy of the fallback text as the outcome fact, so `tail` and the ledger read whole; (4) `stale` and `status` are folded at read time, never written. Also: the monotonic id stamp moved from coord-mail.py into coord_ids.new_id so every prefix gets it (ID-A sweep).",
+      "tags": [
+        "decision-note",
+        "coordination",
+        "seam-request",
+        "deadline",
+        "fallback",
+        "stale-ack",
+        "ctx-r",
+        "id-a"
+      ],
+      "links": [
+        {
+          "to": "spec-typed-seam-requests",
+          "rel": "relates-to"
+        },
+        {
+          "to": "design-typed-seam-requests",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "56fbbd48bf3ce59783feb9915545558853bc505562321882119069f0843d0e57"
+    },
+    {
       "id": "note-autopilot-open-questions-decisions",
       "path": "docs/notes/autopilot-open-questions-decisions.md",
       "title": "Decisions on PACK-O open questions (logging, class granularity, autopilot caps)",
@@ -2952,6 +2990,57 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "28068e1639907e23f54fb31b877d4d6f8b351178daa851fdb960a5d447693c8c"
+    },
+    {
+      "id": "design-typed-seam-requests",
+      "path": "docs/design/typed-seam-requests.md",
+      "title": "Design — typed seam requests (the Request aggregate's rows · stale-by-blob · expire · doctor/metrics · claim --except · coord_ids monotonic stamp)",
+      "type": "design",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-03-19",
+      "reviewSuggested": [],
+      "summary": "Detailed design for spec-typed-seam-requests: five request-* row kinds folded into one Request state per id in .agents/requests.jsonl, a twin `type: request` row per transition in the session ledger, staleness derived at read time from git's blob formula over the cited path, `expire` as the termination variant that records the fallback, doctor FAIL/WARN lines, three metrics that read \"not recorded\" over nothing, `claim --except` carried on the claim event and honoured by `overlaps`, and a process-monotonic millisecond stamp inside coord_ids.new_id (ID-A).",
+      "tags": [
+        "coordination",
+        "seam-request",
+        "deadline",
+        "fallback",
+        "ack",
+        "blob",
+        "termination",
+        "cli",
+        "p1"
+      ],
+      "links": [
+        {
+          "to": "spec-typed-seam-requests",
+          "rel": "implements"
+        },
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0007-coordination-substrate",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-message-layer",
+          "rel": "relates-to"
+        },
+        {
+          "to": "design-coord-enforcement-phase2",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-multi-agent-coordination-data",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "bd3693bd0f5d84a4e9493bc8fa99372af6ed91a2bbf27009d5c5e70e60509956"
     },
     {
       "id": "mockup-documentation-portal",
@@ -7533,6 +7622,59 @@ window.DOCS_INDEX = {
       "sourceSha256": "2984ab64343317f5204e12b066d46f95f3ac0e2839209d25eeef307eb8e29fb6"
     },
     {
+      "id": "spec-typed-seam-requests",
+      "path": "docs/specs/typed-seam-requests.md",
+      "title": "Typed seam requests with a termination variant — coord request add|receive|ack|resolve|expire|list, claim --except, doctor and metrics",
+      "type": "spec",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-03-19",
+      "reviewSuggested": [],
+      "summary": "Specifies P1 of the coordination proposal: a seam request is refused unless it carries a deadline and a fallback, moves through sent/received/acked/resolved/expired with an ack pinned to the blob it read (a changed blob renders the ack stale), reaches a terminal state by its deadline through resolution or its own recorded fallback (never silence), and is counted by doctor and metrics. Also the CTX-R control: a directory lease with --except, and a doctor warning on overlapping leases.",
+      "tags": [
+        "coordination",
+        "seam-request",
+        "deadline",
+        "fallback",
+        "ack",
+        "blob",
+        "termination",
+        "cli",
+        "p1"
+      ],
+      "links": [
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-agent-coordination",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-message-layer",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0007-coordination-substrate",
+          "rel": "depends-on"
+        },
+        {
+          "to": "kb-multi-agent-coordination-data",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "User flows",
+          "mermaid": "flowchart TD\n  A[add --deadline --fallback] -->|exit 0, sent| B{peer acts before deadline?}\n  A0[add without deadline or fallback] -->|exit 2 COORD-REQUEST-INCOMPLETE| A\n  B -->|receive| C[received]\n  C -->|ack --blob S| D[acked]\n  B -->|ack --blob S| D\n  D -->|blob changed| D2[acked, stale: doctor WARN]\n  B -->|resolve --resolution| E[resolved]\n  C --> E\n  D --> E\n  B -->|deadline passes, expire| F[expired, outcome fallback]\n  C --> F\n  D --> F\n  B -->|deadline passes, nobody runs expire| G[doctor FAIL: silent expiry]\n  G -->|expire| F"
+        }
+      ],
+      "sourceSha256": "e5f628a228383e85f65daf8ae202eafe4024612cd76a02e64c19e213a157826e"
+    },
+    {
       "id": "threat-model",
       "path": "docs/security/threat-model.md",
       "title": "Threat Model",
@@ -7848,5 +7990,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "fecba2b9e1d8f08e503acaa106036bcb8a5ed556128842ef87efc2eadbf20f53"
+  "graphSha256": "f122f6f6a0320d36c476423a045035587565d74b9dd46cd0d68803d315c099a7"
 };

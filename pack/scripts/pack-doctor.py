@@ -422,6 +422,35 @@ def check_mail(root):
     return results
 
 
+def check_requests(root):
+    """Typed seam requests (spec-typed-seam-requests): FAIL on a request past its deadline with
+    no recorded outcome; WARN on stale acks and untyped rows; `not recorded` with no store.
+    One reader: coord-core.py's request_doctor_lines, loaded beside this file."""
+    core_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "coord-core.py")
+    if not os.path.isfile(core_path):
+        return _result("requests", PASS, "not recorded (coord-core.py is not installed beside pack-doctor.py)")
+    import importlib.util
+    import time
+    spec = importlib.util.spec_from_file_location("coord_core_for_doctor", core_path)
+    core = importlib.util.module_from_spec(spec)
+    try:
+        spec.loader.exec_module(core)
+    except Exception as exc:  # a broken coord-core is a finding here, not a crash
+        return _result("requests", FAIL, "coord-core.py could not be loaded ({0})".format(exc),
+                       "re-run pack-apply.py to restore pack/scripts/coord-core.py")
+    lines, problems = core.request_doctor_lines(os.path.join(root, ".agents"), root, time.time())
+    flagged = [re.sub(r"^requests\s+", "", line.strip()) for line in lines
+               if "WARN" in line or "FAIL" in line or "NOT CHECKED" in line]
+    detail = "; ".join(flagged) if flagged else lines[0].split(None, 1)[1]
+    if problems:
+        return _result("requests", FAIL, detail,
+                       "run `coord request expire` - every open request past its deadline records its fallback")
+    if flagged:
+        return _result("requests", WARN, detail,
+                       "re-ack against the current blob; re-add untyped requests with --deadline and --fallback")
+    return _result("requests", PASS, detail)
+
+
 def _command_head(command):
     """The first word of a registry command: a quoted path as one token, else up to the
     first space. `"C:\\Program Files\\Python\\python.exe" x.py` -> the path; `python3 x.py`
@@ -693,6 +722,7 @@ def run(root):
         check_coordination(root),
     ]
     checks.extend(check_mail(root))
+    checks.append(check_requests(root))
     return checks
 
 

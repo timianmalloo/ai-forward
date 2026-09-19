@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-19T18:38:57Z",
+  "generated": "2026-09-19T19:16:33Z",
   "audit": [
     {
       "actor": null,
@@ -5792,6 +5792,97 @@ window.AUDIT_DATA = {
         "speedup": 2.77,
         "peak_concurrency": 4
       }
+    },
+    {
+      "id": "al-01M2XGVPYA21VSDY3F7Q72YVZ8",
+      "shortname": "specify-typed-seam-requests",
+      "datetime": "2026-09-19T19:04:02Z",
+      "session": "p1-requests",
+      "prompt": "Track P1 of coordination-p0-p1: /specify typed seam requests (deadline, fallback, ack --blob, five states, expire, doctor/metrics, claim --except, ID-A sweep)",
+      "summary": "docs/specs/typed-seam-requests.md: ten stories US-1..US-10, Request aggregate with the invariant 'terminal by its deadline by resolution or its own fallback', Part B in CLI terms, Part C N/A, gate PASS-WITH-CONDITIONS (R1: existing add-without-deadline test conflicts; req-01M2XGPYW5ZNC39094ZCM0WHRW filed)",
+      "kind": "skill",
+      "skill": "specify",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/specs/typed-seam-requests.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "P1 typed seam requests through specify/design-slice/implement",
+      "done_when": "spec, design, code and red-first tests green; lints 0; demo transcript",
+      "tier": "T2",
+      "main_calls": 20,
+      "main_budget": 160,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "started_at": "2026-09-19T18:58:41Z",
+      "duration_seconds": 321.0
+    },
+    {
+      "id": "al-01M2XGZTM2EAAYACER5M0EQV5R",
+      "shortname": "design-slice-typed-seam-requests",
+      "datetime": "2026-09-19T19:06:17Z",
+      "session": "p1-requests",
+      "prompt": "Track P1: /design-slice typed seam requests from docs/specs/typed-seam-requests.md; data model first",
+      "summary": "docs/design/typed-seam-requests.md: Request aggregate rows (five request-* kinds, grain one transition), ledger twin type:request, staleness derived from git's blob formula (spiked: matches git hash-object), expire as the termination verb, doctor/metrics contracts, claim --except via lease_covers, coord_ids monotonic stamp; gate PASS",
+      "kind": "skill",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/design/typed-seam-requests.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "P1 typed seam requests",
+      "done_when": "design with gate record; derive ok",
+      "tier": "T2",
+      "main_calls": 27,
+      "main_budget": 160,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "started_at": "2026-09-19T19:04:03Z",
+      "duration_seconds": 134.0
+    },
+    {
+      "id": "al-01M2XHJMHQ0G180G1MAGK1SH9P",
+      "shortname": "implement-typed-seam-requests",
+      "datetime": "2026-09-19T19:16:33Z",
+      "session": "p1-requests",
+      "prompt": "Track P1 of coordination-p0-p1: /implement typed seam requests red-first from docs/design/typed-seam-requests.md",
+      "summary": "coord request add refuses without --deadline/--fallback (exit 2); receive/ack --blob/resolve/expire with five states and a type:request ledger twin per transition; stale derived from the cited path's blob; doctor FAIL on silent expiry, WARN on stale/untyped and on overlapping live leases; metrics not-recorded over nothing; claim --except (CTX-R); coord_ids.new_id monotonic stamp (ID-A); pack-doctor requests check. Red observed first: 16 failed/3 passed; green: 19 passed. Six named suites: 133 passed, 2 failed - both in test_coord_core.py (not P1-owned) adding requests without a deadline, filed as req-01M2XGPYW5ZNC39094ZCM0WHRW / req-01M2XHE3K1XBPTJCS09092R754 for the Coordinator. Sibling suites 105 passed. Three portability lints exit 0. Proof Pack: design section 11 + this entry.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "pack/scripts/coord-core.py",
+        "pack/scripts/coord_ids.py",
+        "pack/scripts/pack-doctor.py",
+        "tests/docs_explorer/test_coord_requests_typed.py",
+        "tests/docs_explorer/test_coord_ids_order.py",
+        "docs/notes/note-20260919-seam-request-terminal-by-deadline.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "compiled": false,
+      "goal": "P1 typed seam requests through specify/design-slice/implement",
+      "done_when": "spec, design, code and red-first tests green; existing coord suites green except the filed conflict; lints 0; demo transcript",
+      "tier": "T2",
+      "main_calls": 53,
+      "main_budget": 160,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-19T19:06:29Z",
+      "duration_seconds": 604.0
     }
   ],
   "changes": [
@@ -7131,6 +7222,28 @@ window.AUDIT_DATA = {
       "summary": "Five coord leader verbs over a blob in refs/coord/leader; release keeps the epoch; quiet period on expiry only; step-0 fence in conductor-join.py",
       "tags": [],
       "title": "Leader designation: the ref decides by update-ref CAS, the ledger records, conductor-join fences on the epoch (exit 11)"
+    },
+    {
+      "id": "cl-01M2XH018CN5CPA7W5N3F316KV",
+      "datetime": "2026-09-19T19:06:24Z",
+      "session": null,
+      "kind": "design",
+      "skill": "design-slice",
+      "title": "Seam requests: deadline_at stored once, staleness and status derived at read time, expire is a verb not a daemon",
+      "prompt": "Track P1 design-slice",
+      "summary": "Request aggregate over appended rows; the fallback copied onto the expire row as the outcome fact; not recorded over an empty corpus",
+      "rationale": "DM7 derive-don't-store; D9 no daemon; R4 empty corpus is not zero",
+      "artifacts": [
+        "docs/design/typed-seam-requests.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "902a252019c15fff37f1d4959927e740b2d1a595",
+        "after": "902a252019c15fff37f1d4959927e740b2d1a595",
+        "branch": "impl/p1-requests",
+        "pushed": null,
+        "commits": []
+      }
     }
   ],
   "messages": []
