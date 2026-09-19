@@ -2660,7 +2660,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "17ac4f5a53de989119307b4e461eee8df4fdf18f3d0caac12383b995808e9461"
+      "sourceSha256": "3c789407cef1681ea2cc2b6391c93d6c118a936154c903e52b1a89df1619b712"
     },
     {
       "id": "docs-index",
@@ -6974,5 +6974,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "da1bd8d153a25324fea6e43a3022e0e17d5c2db375f16413991c61f2bb38d725"
+  "graphSha256": "3c63879bfc321e1213e2d3577e51606666daf1a29a6139e643f581b6776d84e4"
 };
