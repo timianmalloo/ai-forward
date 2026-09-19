@@ -2,7 +2,7 @@
 id: coordination-p2-p8
 title: "Coordination plan - P2 leader, P4 message layer, P6 board, P8 readers: four full specify → design → implement loops"
 type: plan
-status: proposed
+status: accepted
 owner: "@timianmalloo"
 phase: "coordination"
 tags: [coordination, worktrees, parallelism, leader, mail, board, readers, p2, p4, p6, p8]
@@ -105,9 +105,22 @@ Both tracks: `audit-log.py start --session <track-id> --skill specify` as the br
 | 5 | coordinator: rollup links + `docs-graph.py rollup` ×2; counts; INSTALL rev 77; `context-budget.py skills --update-baseline`; sync; **all four builders**; derive; render; full pytest; `verify-bundle.ps1` on its own line | 30 min | shared surfaces |
 | 6 | linear rebuild off `origin/main`, push over SSH, watch CI, `coord worktree cleanup --remove --include-unmerged`, planned vs actual, `/session-profiler` | 15 min | linear history |
 
+## Planned vs actual (2026-09-19, execution)
+| track | budget planned | actual (from the reports; spans approximate to the minute) | seam requests | coordinator verification | join |
+|---|---|---|---|---|---|
+| P2 leader | 160 calls · 150 min | 113 calls · ≈ 50 min (17:59Z → 18:50Z); 38 tests red-first (36 failed first), 116 passed in-tree | 1 raised (P8's directory lease over `pack/commands` covered P2's two skills; ≈ 15 min waiting; resolved, class CTX-R) | 143 passed re-run, lints 0, commit `a03e3d2` | `e88de41` (recount 367 passed, 7 gates) |
+| P4 message layer | 160 · 150 | 68 · ≈ 60 min; 37 tests red-first; claude-code and codex dispatched for real (verified), copilot unsupported | 2 raised (store additions: broadcast file, `mail-` ids, colocated acks) — resolved after the coordinator's integration run | 60 passed re-run, lints 0, commit `7a4d1f1` | `2fdba17` (329 passed) |
+| P6 board | 120 · 120 | 52 · ≈ 16 min; 18 tests red-first (17 failed first); ui-craft-gate clean | 0 | 45 passed re-run, lints 0, commit `4eb62dd` | `7c606b6` (254 passed after the recount selector fix) |
+| P8 readers | 160 · 150 | 62 · ≈ 40 min; 38 tests red-first (35 failed first); lint red-first 34 refusals / 28 skills | 0 | 119 passed re-run, lints 0, commit `a413fb6` | `eeaad98` (292 passed) |
+| Coordinator | — | ≈ 60 min after the last return: integration (mail → board → post), `coord mail`/`board` front doors, seams, classes, rollups, INSTALL rev 77, gate 1e, sync, generators, gates | — | verify-bundle 14/15 (gate 3 = environment-dependent tests); a first gate run found one lint refusal (execute-with-coordination lacked CO-S0 before its dispatch stage) and one sync gap (`mail-doorbell.py` not copied) — both fixed | linear commit |
+
+**Did it pay?** All four tracks overlapped for their whole span (≈ 60 min of wall for ≈ 166 min of track time), every track returned under its budget, one boundary correction (a directory lease) and zero refused decisions. The coordinator's serial spine remained the critical path, as in `sp-0009`. Two contract gaps were found by the join's own controls, not by review: the lint P8 built refused a skill P2 owned (both right; the citation belonged in the Grounding), and a sync rule nobody owned (the new hook) surfaced as a promised-path finding.
+
+**Carried forward (findings, not goals):** `board post` should let the writer mint the id (the posted id lacked the `mail-` prefix); `coord claim --except` and a doctor warning for overlapping live leases (CTX-R, P1); the id-mint sweep (ID-A); the Edit-after-shell-read line in the brief template (CTX-S); the seven skills whose CO-S0 sentence lives behind a `reference/co-s0.md` pointer until their baselines are raised; the eight pre-existing ruff findings in `coord-core.py`/`conductor-join.py`; the DOM-shim render proof for the audit page.
+
 ## Status
 | | |
 |---|---|
-| **Completed** | plan |
-| **Remaining** | everything in the order of operations |
-| **Best next action** | step 1 |
+| **Completed** | plan; four tracks executed, verified, joined and integrated; landed |
+| **Remaining** | the carried-forward findings above; P0 and P1 (`coordination-p0-p1`) |
+| **Best next action** | dispatch `coordination-p0-p1` off the landed main |

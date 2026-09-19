@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-19T18:35:34Z",
+  "generated": "2026-09-19T18:38:57Z",
   "audit": [
     {
       "actor": null,
@@ -5712,6 +5712,86 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-19T18:29:22Z",
       "duration_seconds": 18.0
+    },
+    {
+      "id": "al-01M2XFDS5XV825V1BQXAS9F52A",
+      "shortname": "coordinate-p2-p4-p6-p8",
+      "datetime": "2026-09-19T18:38:57Z",
+      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
+      "prompt": "keep going - work on the P2 Leader designation and the P8 readers with two separate agents using our coordination framework - do the full loop from specify through implement; we should add the P4 message layer and P6 board as separate parallel tracks in this turn as well",
+      "summary": "Four tracks executed and landed. P2 (113/160 calls, ~50 min): leader verbs over refs/coord/leader by CAS with D13 constants, join fence exit 11, doctor/metrics, CO-L section, runs_as + dispatchable-stop sentence in both coordination skills; 116 passed. P4 (68/160, ~60 min): coord-mail.py store/twins/dispatch (claude-code and codex executed here and verified; copilot unsupported), doorbell adapters count+pointer only, pack-apply/pack-doctor mail rules; 60 passed. P6 (52/120, ~16 min): coord-board.py read model + post through the single writer, Messages view in the audit explorer, render emits messages; 45 passed. P8 (62/160, ~40 min): profiler and dream read the compile fields (SP-27/28, F-26/27, compile subcommand), verify-skill-contracts.py (red first 34/28), runs_as on every skill, CO-S0 on the prose-input skills; 119 passed. Coordinator: every exit claim re-run in the track's tree; joins P6, P8, P4, P2 with recount and 6-7 gates green; mail->board->post integration on the joined tree; coord mail/board front doors; three seams resolved; classes CTX-R, CTX-S, ID-A; rollups for four designs; INSTALL rev 77; gate 1e wired (verify-bundle, CI x3, gate parity); two join-found gaps fixed (CO-S0 before dispatch in execute-with-coordination; mail-doorbell.py sync rule); verify-bundle 14/15; 923 passed.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/coordination/coordination-p2-p8.md",
+        "pack/scripts/coord-mail.py",
+        "pack/scripts/coord-board.py",
+        "pack/scripts/verify-skill-contracts.py"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Four Sub-Agent tracks (P2 leader, P4 message layer, P6 board, P8 readers), each a full specify -> design-slice -> implement loop in its own worktree, joined by conductor-join.py, integrated by the coordinator, landed on main as one linear commit with CI green.",
+      "done_when": "four join commits with recount and run-verify-gates green; mail-to-board integration exercised on the joined tree; coord mail/board front doors; seams resolved; classes registered; INSTALL rev 77; gate 1e wired; verify-bundle green except the known environment-dependent gate 3; linear commit pushed; pack-consistency green on three runners; trees removed; planned vs actual in the plan.",
+      "tier": "T2",
+      "main_calls": 58,
+      "main_budget": 60,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "duration_source": "session-start-hook",
+      "started_at": "2026-09-19T18:01:41Z",
+      "duration_seconds": 2236.0,
+      "agent_runs": [
+        {
+          "agent": "python-developer",
+          "started_at": "2026-09-19T17:59:00Z",
+          "ended_at": "2026-09-19T18:50:00Z",
+          "duration_seconds": 3060.0,
+          "calls": 113,
+          "budget_calls": 160,
+          "over_budget": false
+        },
+        {
+          "agent": "python-developer",
+          "started_at": "2026-09-19T17:57:00Z",
+          "ended_at": "2026-09-19T18:57:00Z",
+          "duration_seconds": 3600.0,
+          "calls": 68,
+          "budget_calls": 160,
+          "over_budget": false
+        },
+        {
+          "agent": "python-developer",
+          "started_at": "2026-09-19T17:57:00Z",
+          "ended_at": "2026-09-19T18:13:00Z",
+          "duration_seconds": 960.0,
+          "calls": 52,
+          "budget_calls": 120,
+          "over_budget": false
+        },
+        {
+          "agent": "python-developer",
+          "started_at": "2026-09-19T18:01:51Z",
+          "ended_at": "2026-09-19T18:41:00Z",
+          "duration_seconds": 2349.0,
+          "calls": 62,
+          "budget_calls": 160,
+          "over_budget": false
+        }
+      ],
+      "parallelism": {
+        "agent_seconds": 9969.0,
+        "span_seconds": 3600.0,
+        "speedup": 2.77,
+        "peak_concurrency": 4
+      }
     }
   ],
   "changes": [

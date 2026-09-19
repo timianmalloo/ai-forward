@@ -6652,7 +6652,7 @@ window.DOCS_INDEX = {
       "path": "docs/coordination/coordination-p2-p8.md",
       "title": "Coordination plan - P2 leader, P4 message layer, P6 board, P8 readers: four full specify → design → implement loops",
       "type": "plan",
-      "status": "proposed",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "coordination",
       "reviewBy": "2026-12-18",
@@ -6690,7 +6690,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "824ee2805789e0233cb76e813b1744a7340d05a32acdc231ba0c54b566a4ca40"
+      "sourceSha256": "8f676fb3c5c10e3a76ce3aaa8b27b82914ee305de2b3cca45ff3649422f82bc0"
     },
     {
       "id": "privacy-review",
@@ -7848,5 +7848,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "7cffb1e5fe2b32fd81ba1d03ef481ca146efdd5e4cb9fe9d1f547497839ad6dc"
+  "graphSha256": "fecba2b9e1d8f08e503acaa106036bcb8a5ed556128842ef87efc2eadbf20f53"
 };
