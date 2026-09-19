@@ -1,0 +1,52 @@
+{
+  "skill": "compile",
+  "prompt": "Use /compile on this two-line request for the claude-code harness: 'Add a --raw filter to prompt-log.py list so I can see one prompt and its compilations.\nDon't touch the audit viewer.' Run the skeleton, fill it with a trace per clause and marked assumptions, finish it through the gate, show the compiled prompt and state whether it is dispatchable. (Run in an AI-Forward clone workspace.)",
+  "setup": [],
+  "assertions": [
+    {
+      "type": "file-exists",
+      "path": ".github/prompts/compile.prompt.md"
+    },
+    {
+      "type": "file-exists",
+      "path": ".claude/skills/compile/SKILL.md"
+    },
+    {
+      "type": "grep",
+      "path": ".claude/skills/compile/SKILL.md",
+      "pattern": "(?i)never adds scope|may not add scope"
+    },
+    {
+      "type": "grep",
+      "path": ".claude/skills/compile/SKILL.md",
+      "pattern": "prompt-compile\\.py skeleton"
+    },
+    {
+      "type": "grep",
+      "path": ".claude/skills/compile/SKILL.md",
+      "pattern": "prompt-compile\\.py finish"
+    },
+    {
+      "type": "grep",
+      "path": ".github/prompts/compile.prompt.md",
+      "pattern": "(?i)never add scope"
+    },
+    {
+      "type": "grep-transcript",
+      "pattern": "prompt-compile\\.py skeleton"
+    },
+    {
+      "type": "grep-transcript",
+      "pattern": "(?i)trace|verbatim"
+    },
+    {
+      "type": "grep-transcript",
+      "pattern": "prompt-compile\\.py finish"
+    },
+    {
+      "type": "grep-transcript",
+      "pattern": "(?i)dispatchable"
+    }
+  ],
+  "id": "compile-01"
+}

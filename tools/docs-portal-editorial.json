@@ -53,7 +53,8 @@
     "code-knowledge-graph": "Continuous improvement & memory",
     "obsidian-lens": "Continuous improvement & memory",
     "project-memory-and-obsidian": "Continuous improvement & memory",
-    "responsible-ai-policy": "Continuous improvement & memory"
+    "responsible-ai-policy": "Continuous improvement & memory",
+    "agent-coordination": "Discipline & optimization"
   },
   "architectureIntro": "How the repo is shaped and why. The architecture of record, the decisions (ADRs) with their rationale and rejected options, the specifications that govern each feature, and the component designs. All carry frontmatter and live in the knowledge graph; this section is the reading order. Architecture *guidance* (the Layered-Optimized-Architecture for AI-integrated systems) is a foundation - see Foundations.",
   "uiExamplesIntro": "Beyond the standards, the pack ships concrete UX/UI examples: self-contained reviewable mockups that render the hard states, the project design language (DESIGN.md), and design-language exemplars adapted from real products. Learn the craft from the artifacts, not just the rules.",
@@ -284,6 +285,12 @@
       "when": "To run a coordination plan as the coordinator - one worktree per agent or session, explicit ownership per track. With no plan it calls /prepare-for-coordination first.",
       "produces": "one worktree and one dispatched contract per track, resolved seam requests, a merge in dependency order with the integrated gate set green, and planned-vs-actual appended to the plan",
       "handoff": "/session-profiler (measure the division), then /dream (a recurring boundary correction is a class)"
+    },
+    "compile": {
+      "group": "Utilities & lenses",
+      "when": "Turning the operator's prose into the harness-specific starting prompt before /optimize-graph or /prepare-for-coordination run (stage CO-S0).",
+      "produces": "A compiled prompt (goal state, traces, references, assumptions, decision requests) logged as a kind:compilation audit entry beside the raw prompt.",
+      "handoff": "/optimize-graph or /prepare-for-coordination with the compiled prompt; /prompts shows raw and compiled side by side."
     }
   },
   "ui": {

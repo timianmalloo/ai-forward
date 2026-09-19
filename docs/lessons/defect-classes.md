@@ -287,6 +287,14 @@ representation-contract failure, not a reason to bypass merges for authored file
 - **Control:** `tools/sync-pack.ps1` now **strips** the source frontmatter at the wrap boundary rather than prepending over it (`Get-LoadScope` returns the body separately), so a second block cannot be produced. The generator also throws on a missing or unknown `load:` scope instead of defaulting, so an unparsed source fails loudly. Structural — the shape is no longer expressible.
 - **Status:** `controlled`
 
+### PACK-V — A skill prescribes a frontmatter value the pack's own validator rejects
+- **Signature:** a skill's output schema (here `/prepare-for-coordination`'s plan schema: `type: plan`) names a frontmatter value, and the pack's validator (`docs-graph.py` `TYPES`) does not accept it, so the first artifact written exactly to the skill's instructions fails `validate` with "unknown type". Both halves are pack source; the drift is invisible until someone runs the skill end to end.
+- **Why it survives:** the schema lives in a SKILL.md and the registry in a script; nothing joins them, and the skill's own tests exercise the plan's *parse*, not the graph's *validate*. A skill that has never been run to its last step reads as complete.
+- **Instances:**
+  - `2026-09-19` **ai-forward** — `docs/coordination/coordination-compile-stage.md`, the first plan written to the schema: `validate: 1 defect(s) … unknown type: plan`.
+- **Control:** `tests/docs_explorer/test_prescribed_types_registered.py` (observed red first, 2 failures) — every `type:` value prescribed by any `pack/commands/**/*.md` or `pack/templates/*.md` must be in `docs-graph.py` `TYPES`; `plan` registered at revision 76. Sweep: no other prescribed type was missing (13 template types, 1 skill type checked).
+- **Status:** `controlled`
+
 ### PACK-U — A vendor compatibility scan is treated as an install of the pack on that host
 - **Signature:** host B documents that it will discover host A's skill/agent/hook directories when a compatibility flag is on (the default). The pack therefore ships only host A's layout and calls that "works with B". The tell: **no native destination for B in the deployment map**, and a user who turns the compatibility cell off — or who looks up B's own documented paths — finds nothing.
 - **Why it survives:** with the default on, a demo in a repo that already has `.claude/skills/` looks complete. Skills auto-invoke, `AGENTS.md` loads, and nothing errors. The missing native surface is invisible until compatibility is off, until personas are spawned from B's agent directory, or until B's hook JSON is the one that must fire.

@@ -20,7 +20,8 @@ window.DOCS_INDEX = {
     "api",
     "source",
     "doc",
-    "index"
+    "index",
+    "plan"
   ],
   "relationRegistry": [
     "implements",
@@ -672,7 +673,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "17947ea3d32bec6f2f85fc20a347d64a0ed4047511946dde2aef8e39051b178d"
+      "sourceSha256": "a0b0764d4ef5c3850f6db4c9e9515b1ba1f6854182b1e2440674560c653d095c"
     },
     {
       "id": "api-bounded_process",
@@ -934,7 +935,7 @@ window.DOCS_INDEX = {
       "phase": "",
       "reviewBy": "2027-03-03",
       "reviewSuggested": [],
-      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 376 public functions across 29 modules, 46% carrying a docstring.",
+      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 409 public functions across 31 modules, 45% carrying a docstring.",
       "tags": [
         "api",
         "scripts",
@@ -948,7 +949,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c39237d80d6c32183dafabfd2b5c1f8efa7dba1e4e535d33f0e546f390215090"
+      "sourceSha256": "bb62254e9eb7d3b66931606428c49df9dccb8197927fc82eaa7d62f93cca750b"
     },
     {
       "id": "api-marker-lint",
@@ -1051,6 +1052,31 @@ window.DOCS_INDEX = {
       "sourceSha256": "f0d2b1100e9d5d4e443027c284db99a24475abfb9d954dad59093c8a2fc98d8e"
     },
     {
+      "id": "api-prompt-compile",
+      "path": "docs/api/prompt-compile.md",
+      "title": "API — prompt-compile.py",
+      "type": "api",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-03-03",
+      "reviewSuggested": [],
+      "summary": "prompt-compile.py - the compile stage: a logged raw prompt -> a gated, harness-rendered prompt.",
+      "tags": [
+        "api",
+        "scripts",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "api-index",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "7573d344c974c208bd4ad7e964cd03715da53f833321cc1a797908f41142d531"
+    },
+    {
       "id": "api-prompt-log",
       "path": "docs/api/prompt-log.md",
       "title": "API — prompt-log.py",
@@ -1073,7 +1099,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9205d35d87ba456e1a5017e1a11dd1f69bf3a88068f662f2aaa5550b8b0f30e4"
+      "sourceSha256": "31518578f066d785716382cf36fcba3c31a22d5e88a1740bc2ff5d87ef0aac16"
     },
     {
       "id": "api-repo_identity",
@@ -1199,6 +1225,31 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "26d846711c00ed3319be55c59bccc6e294feaae43a30d68b297b40cf201c0326"
+    },
+    {
+      "id": "api-verify-compiled-prompt",
+      "path": "docs/api/verify-compiled-prompt.md",
+      "title": "API — verify-compiled-prompt.py",
+      "type": "api",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-03-03",
+      "reviewSuggested": [],
+      "summary": "verify-compiled-prompt.py - the compile-stage gate: a compiled prompt never adds scope.",
+      "tags": [
+        "api",
+        "scripts",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "api-index",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "b0efe1b922320259583ae458aa3786f01533f48fe9f864af7a17733a522c851f"
     },
     {
       "id": "api-verify-no-conflict-markers",
@@ -1774,6 +1825,41 @@ window.DOCS_INDEX = {
       "sourceSha256": "61c49b570b70d73f053de18c0d53a133ecb5e03351aec045e413c91dd82a5219"
     },
     {
+      "id": "note-20260919-compilation-is-an-audit-kind",
+      "path": "docs/notes/note-20260919-compilation-is-an-audit-kind.md",
+      "title": "A compilation is its own audit kind, and its prompt field is the rendered text",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-03-19",
+      "reviewSuggested": [],
+      "summary": "The compile stage records each gate-passing compile as a `kind: compilation` audit entry rather than a `kind: prompt` one, so the /prompts lens never shows compiled text as if the operator typed it; the entry's `prompt` field carries the rendered compiled text so the unchanged lens lists it for reuse, and the structured record lives beside it in a `compiled` object. Blast radius: `AUDIT_KINDS` in audit-log.py, the audit viewer's kind badge, prompt-log's stack label.",
+      "tags": [
+        "decision-note",
+        "coordination",
+        "compile",
+        "audit-log",
+        "prompt-log"
+      ],
+      "links": [
+        {
+          "to": "design-compile-stage",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-compile-stage",
+          "rel": "relates-to"
+        },
+        {
+          "to": "audit-log",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "48f2bacf7d28dac382f0214e26efc60fa6b9d99d6f9d905d4f183230248ed3e5"
+    },
+    {
       "id": "note-20260919-coordination-decisions-ratified",
       "path": "docs/notes/note-20260919-coordination-decisions-ratified.md",
       "title": "Coordination decisions ratified: local message layer with git as the fallback, a board for humans, tracked ledgers, lease constants",
@@ -1964,6 +2050,52 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "4c52b72da4a80dc78ea30213c6eefc577fb8af212764b95e8d85b603b7354fde"
+    },
+    {
+      "id": "design-compile-stage",
+      "path": "docs/design/compile-stage.md",
+      "title": "Design — the compile stage (prompt-compile.py · verify-compiled-prompt.py · harness templates · /compile · audit fields)",
+      "type": "design",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-03-18",
+      "reviewSuggested": [],
+      "summary": "Detailed design for spec-compile-stage. One stdlib engine (prompt-compile.py: skeleton · finish · render · distance) and one gate (verify-compiled-prompt.py, nine self-test directions) around a compiled-prompt JSON whose invariant is no added scope; versioned harness templates as data files (v1 claude-code, codex); the compilation recorded as a new audit-log kind that the existing /prompts lens reads unchanged; a thin /compile skill and a seeded agent-coordination.md carrying the CO-S0 stage. Divided into two disjoint tracks for /prepare-for-coordination.",
+      "tags": [
+        "coordination",
+        "compile",
+        "prompt",
+        "audit-log",
+        "prompt-log",
+        "templates",
+        "skill",
+        "p7"
+      ],
+      "links": [
+        {
+          "to": "spec-compile-stage",
+          "rel": "implements"
+        },
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "refines"
+        },
+        {
+          "to": "design-coord-federation-phase3",
+          "rel": "relates-to"
+        },
+        {
+          "to": "audit-log",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "cb0ecb9b3c2d0235961f886c13363fc27c07a38cd05564ed5da0c38c7cf82a7d"
     },
     {
       "id": "design-coord-collaboration-phase4",
@@ -2579,7 +2711,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "17ac4f5a53de989119307b4e461eee8df4fdf18f3d0caac12383b995808e9461"
+      "sourceSha256": "3c789407cef1681ea2cc2b6391c93d6c118a936154c903e52b1a89df1619b712"
     },
     {
       "id": "docs-index",
@@ -5998,6 +6130,41 @@ window.DOCS_INDEX = {
       "sourceSha256": "21bfb1d3ca4bd03f9dcae01e0887e3c46dc60fc650d4a17337f353a042fc85da"
     },
     {
+      "id": "coordination-compile-stage",
+      "path": "docs/coordination/coordination-compile-stage.md",
+      "title": "Coordination plan - compile stage (P7): two tracks and a join",
+      "type": "plan",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2026-12-18",
+      "reviewSuggested": [],
+      "summary": "Divides the compile-stage implementation into two tracks with disjoint authored paths — A: engine, gate, templates, tests; B: audit-log and prompt-log fields, the /compile skill, eval case, the seeded agent-coordination.md — plus the coordinator's join (counts, INSTALL revision, sync, verify-bundle). Measured layer state, classes, serial spine, seams, struck tracks and order of operations follow the plan schema so /execute-with-coordination can parse it.",
+      "tags": [
+        "coordination",
+        "worktrees",
+        "parallelism",
+        "compile",
+        "p7"
+      ],
+      "links": [
+        {
+          "to": "design-compile-stage",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-compile-stage",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "45f44b8504bf06116ca28141a13e144f415cc0f800ff21e93d7ca2d917f76d22"
+    },
+    {
       "id": "privacy-review",
       "path": "docs/security/privacy-review.md",
       "title": "Privacy Review",
@@ -6031,6 +6198,10 @@ window.DOCS_INDEX = {
           "rel": "documents"
         },
         {
+          "to": "design-compile-stage",
+          "rel": "documents"
+        },
+        {
           "to": "design-coord-enforcement-phase2",
           "rel": "documents"
         },
@@ -6056,7 +6227,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ab3b4a62cc46e22937455268263da61502b8608edc73744fc8b36605ee2426dc"
+      "sourceSha256": "d0bcd103d2c63f6cb7941b415d8b3d015590e9433b02c287c073fca4bfa58d96"
     },
     {
       "id": "forensic-review-rev48-proof",
@@ -6635,6 +6806,10 @@ window.DOCS_INDEX = {
           "rel": "documents"
         },
         {
+          "to": "design-compile-stage",
+          "rel": "documents"
+        },
+        {
           "to": "design-coord-enforcement-phase2",
           "rel": "documents"
         },
@@ -6660,7 +6835,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "6a111418338fdd1b4951a3d0759627a1783d12622e048998153f69d825d4ccc7"
+      "sourceSha256": "54d492bf72bb9359ab511d90082418298daa216422443142e473a29f1e6df8cb"
     }
   ],
   "surfaces": [
@@ -6745,6 +6920,14 @@ window.DOCS_INDEX = {
       "title": "Coordination Framework Tightening",
       "kind": "knowledge-tool",
       "description": "Open an interactive knowledge artifact."
+    },
+    {
+      "id": "surface-coordination-coordination-compile-stage",
+      "path": "docs/coordination/coordination-compile-stage.html",
+      "title": "Coordination plan — compile stage (P7)",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "coordination-compile-stage"
     },
     {
       "id": "surface-dreams-drm-0002-index",
@@ -6878,5 +7061,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "1b1bfd276a401141e699a835a3a693d328fef89967c319c2ae148fb0381e9acf"
+  "graphSha256": "ecea36a36c213379006e69154c1f790cd7aaf2861ff1d2bd2fa1b19d1a33147c"
 };

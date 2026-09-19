@@ -1,14 +1,14 @@
 window.PORTAL_DATA = {
   "meta": {
     "counts": {
-      "skills": 27,
+      "skills": 28,
       "personas": 23,
-      "knowledge": 38,
+      "knowledge": 39,
       "templates": 28,
-      "scripts": 30
+      "scripts": 32
     },
     "whatIs": "AI-Forward is a committed Markdown methodology pack that installs into a repo so Claude Code, GitHub Copilot, and Grok Build direct work with a shared reasoning spine, adversarial persona review, and a library of workflow skills - nothing runs as a service; everything is versioned files and stdlib scripts.",
-    "skillCount": 27,
+    "skillCount": 28,
     "precisionNote": "This portal is the high-level, user-facing front door. It is a LENS over the repo's core knowledge, not a copy of it: the Foundations, UI, and Architecture sections list and link the structured artifacts (knowledge docs, ADRs, specs, designs) with derived summaries, while the artifacts themselves stay exactly where they are - as structured, individually-owned Markdown. Nothing here is hand-typed content that must be kept in sync; it is generated from those sources, so it cannot drift."
   },
   "sections": [
@@ -25,7 +25,7 @@ window.PORTAL_DATA = {
     {
       "id": "skills",
       "n": "3",
-      "title": "The 27 Skills"
+      "title": "The 28 Skills"
     },
     {
       "id": "agents",
@@ -312,6 +312,13 @@ window.PORTAL_DATA = {
           "handoff": "-"
         },
         {
+          "cmd": "/compile",
+          "desc": "Compile a prose request into the harness- and model-specific starting prompt — goal state, traced clauses, marked assumptions, decision requests — without adding scope (CO-S0); raw and compiled logged together.",
+          "when": "Turning the operator's prose into the harness-specific starting prompt before /optimize-graph or /prepare-for-coordination run (stage CO-S0).",
+          "produces": "A compiled prompt (goal state, traces, references, assumptions, decision requests) logged as a kind:compilation audit entry beside the raw prompt.",
+          "handoff": "/optimize-graph or /prepare-for-coordination with the compiled prompt; /prompts shows raw and compiled side by side."
+        },
+        {
           "cmd": "/prompts",
           "desc": "Browse your logged prompts as a stack (newest on top) and reuse one — ↑/↓ move, → expand, ← collapse, Enter copies it for paste-and-edit. Utility skill over the stdlib prompt-log engine.",
           "when": "Reusing a prior prompt.",
@@ -408,6 +415,12 @@ window.PORTAL_DATA = {
       {
         "group": "Discipline & optimization",
         "items": [
+          {
+            "name": "agent-coordination",
+            "title": "Agent coordination — Owner / Coordinator / Sub-Agent (seeded: CO-S0 only)",
+            "summary": "Normative keywords (MUST, SHOULD, MAY, MUST NOT) follow RFC 2119.",
+            "path": "../../pack/knowledge/agent-coordination.md"
+          },
           {
             "name": "communication-and-task-discipline",
             "title": "Communication & Task Discipline",
@@ -775,6 +788,11 @@ window.PORTAL_DATA = {
             "title": "Design — aiforward CLI (suggestion 1)",
             "summary": "A single stdlib-only Python developer CLI (tools/aiforward.py) that is a thin Façade dispatcher over the pack's existing scripts (sync, verify, check, new, doctor, graph, scrub) — one memorable entry point with --help, no new runtime dependency.",
             "path": "../../docs/design/aiforward-cli.md"
+          },
+          {
+            "title": "Design — the compile stage (prompt-compile.py · verify-compiled-prompt.py · harness templates · /compile · audit fields)",
+            "summary": "Detailed design for spec-compile-stage. One stdlib engine (prompt-compile.py: skeleton · finish · render · distance) and one gate (verify-compiled-prompt.py, nine self-test directions) around a compiled-prompt JSON whose invariant is no added scope; versioned...",
+            "path": "../../docs/design/compile-stage.md"
           },
           {
             "title": "Design - coord collaboration mode, Phase 4",
@@ -1598,15 +1616,15 @@ window.PORTAL_DATA = {
           "tokens": 24213
         },
         "skill": {
-          "docs": 18,
-          "tokens": 81854
+          "docs": 19,
+          "tokens": 82600
         },
         "glob": {
           "docs": 6,
           "tokens": 25898
         }
       },
-      "corpusTokens": 179532,
+      "corpusTokens": 180278,
       "alwaysPct": 26
     }
   },
@@ -1791,7 +1809,7 @@ window.PORTAL_DATA = {
         "id": "api-index",
         "type": "api",
         "title": "API reference — the deployed script bundle",
-        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 376 public functions across 29 modules, 46% carrying a docstring."
+        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 409 public functions across 31 modules, 45% carrying a docstring."
       },
       {
         "id": "api-marker-lint",
@@ -1816,6 +1834,12 @@ window.PORTAL_DATA = {
         "type": "api",
         "title": "API — pack-doctor.py",
         "summary": "pack-doctor.py — AI-Forward install-health check (deployable; runs in a TARGET repo)."
+      },
+      {
+        "id": "api-prompt-compile",
+        "type": "api",
+        "title": "API — prompt-compile.py",
+        "summary": "prompt-compile.py - the compile stage: a logged raw prompt -> a gated, harness-rendered prompt."
       },
       {
         "id": "api-prompt-log",
@@ -1852,6 +1876,12 @@ window.PORTAL_DATA = {
         "type": "api",
         "title": "API — ui-craft-gate.py",
         "summary": "ui-craft-gate.py - the UI craft gate for AI-Forward."
+      },
+      {
+        "id": "api-verify-compiled-prompt",
+        "type": "api",
+        "title": "API — verify-compiled-prompt.py",
+        "summary": "verify-compiled-prompt.py - the compile-stage gate: a compiled prompt never adds scope."
       },
       {
         "id": "api-verify-no-conflict-markers",
@@ -1926,6 +1956,12 @@ window.PORTAL_DATA = {
         "summary": "Back-test of the /optimize-graph skill against twelve real prompts drawn from 750 committed audit entries across TheTerrace, meridian-finance-planner and..."
       },
       {
+        "id": "coordination-compile-stage",
+        "type": "plan",
+        "title": "Coordination plan - compile stage (P7): two tracks and a join",
+        "summary": "Divides the compile-stage implementation into two tracks with disjoint authored paths — A: engine, gate, templates, tests; B: audit-log and prompt-log fields,..."
+      },
+      {
         "id": "defect-classes",
         "type": "doc",
         "title": "Defect-class register",
@@ -1942,6 +1978,12 @@ window.PORTAL_DATA = {
         "type": "design",
         "title": "Design — aiforward CLI (suggestion 1)",
         "summary": "A single stdlib-only Python developer CLI (tools/aiforward.py) that is a thin Façade dispatcher over the pack's existing scripts (sync, verify, check, new,..."
+      },
+      {
+        "id": "design-compile-stage",
+        "type": "design",
+        "title": "Design — the compile stage (prompt-compile.py · verify-compiled-prompt.py · harness templates · /compile · audit fields)",
+        "summary": "Detailed design for spec-compile-stage. One stdlib engine (prompt-compile.py: skeleton · finish · render · distance) and one gate (verify-compiled-prompt.py,..."
       },
       {
         "id": "design-coord-collaboration-phase4",
@@ -2634,6 +2676,12 @@ window.PORTAL_DATA = {
         "summary": "Deploy a native Grok Build surface under .grok/{skills,agents,hooks,rules} rather than relying on Claude compatibility. Knowledge stays at .claude/knowledge/...."
       },
       {
+        "id": "note-20260919-compilation-is-an-audit-kind",
+        "type": "decision-note",
+        "title": "A compilation is its own audit kind, and its prompt field is the rendered text",
+        "summary": "The compile stage records each gate-passing compile as a `kind: compilation` audit entry rather than a `kind: prompt` one, so the /prompts lens never shows..."
+      },
+      {
         "id": "note-20260919-coordination-decisions-ratified",
         "type": "decision-note",
         "title": "Coordination decisions ratified: local message layer with git as the fallback, a board for humans, tracked ledgers, lease constants",
@@ -3134,6 +3182,11 @@ window.PORTAL_DATA = {
         "rel": "refines"
       },
       {
+        "from": "api-prompt-compile",
+        "to": "api-index",
+        "rel": "refines"
+      },
+      {
         "from": "api-prompt-log",
         "to": "api-index",
         "rel": "refines"
@@ -3160,6 +3213,11 @@ window.PORTAL_DATA = {
       },
       {
         "from": "api-ui-craft-gate",
+        "to": "api-index",
+        "rel": "refines"
+      },
+      {
+        "from": "api-verify-compiled-prompt",
         "to": "api-index",
         "rel": "refines"
       },
@@ -3274,6 +3332,21 @@ window.PORTAL_DATA = {
         "rel": "depends-on"
       },
       {
+        "from": "coordination-compile-stage",
+        "to": "design-compile-stage",
+        "rel": "implements"
+      },
+      {
+        "from": "coordination-compile-stage",
+        "to": "proposal-owner-coordinator-subagent-coordination",
+        "rel": "relates-to"
+      },
+      {
+        "from": "coordination-compile-stage",
+        "to": "spec-compile-stage",
+        "rel": "relates-to"
+      },
+      {
         "from": "defect-classes",
         "to": "architecture",
         "rel": "relates-to"
@@ -3296,6 +3369,31 @@ window.PORTAL_DATA = {
       {
         "from": "design-aiforward-cli",
         "to": "kb-pack-evolution",
+        "rel": "implements"
+      },
+      {
+        "from": "design-compile-stage",
+        "to": "audit-log",
+        "rel": "relates-to"
+      },
+      {
+        "from": "design-compile-stage",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "design-compile-stage",
+        "to": "design-coord-federation-phase3",
+        "rel": "relates-to"
+      },
+      {
+        "from": "design-compile-stage",
+        "to": "proposal-owner-coordinator-subagent-coordination",
+        "rel": "refines"
+      },
+      {
+        "from": "design-compile-stage",
+        "to": "spec-compile-stage",
         "rel": "implements"
       },
       {
@@ -4389,6 +4487,21 @@ window.PORTAL_DATA = {
         "rel": "tested-by"
       },
       {
+        "from": "note-20260919-compilation-is-an-audit-kind",
+        "to": "audit-log",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260919-compilation-is-an-audit-kind",
+        "to": "design-compile-stage",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260919-compilation-is-an-audit-kind",
+        "to": "spec-compile-stage",
+        "rel": "relates-to"
+      },
+      {
         "from": "note-20260919-coordination-decisions-ratified",
         "to": "adr-0007-coordination-substrate",
         "rel": "depends-on"
@@ -4501,6 +4614,11 @@ window.PORTAL_DATA = {
       {
         "from": "privacy-review",
         "to": "design-aiforward-cli",
+        "rel": "documents"
+      },
+      {
+        "from": "privacy-review",
+        "to": "design-compile-stage",
         "rel": "documents"
       },
       {
@@ -4940,6 +5058,11 @@ window.PORTAL_DATA = {
       },
       {
         "from": "threat-model",
+        "to": "design-compile-stage",
+        "rel": "documents"
+      },
+      {
+        "from": "threat-model",
         "to": "design-coord-core-phase1",
         "rel": "documents"
       },
@@ -5005,6 +5128,7 @@ window.PORTAL_DATA = {
       "glossary",
       "investigation",
       "knowledge",
+      "plan",
       "privacy-review",
       "proof-pack",
       "spec",

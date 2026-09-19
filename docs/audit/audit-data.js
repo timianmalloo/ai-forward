@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-19T16:40:57Z",
+  "generated": "2026-09-19T17:24:07Z",
   "audit": [
     {
       "actor": null,
@@ -4638,213 +4638,561 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M2X32EH3SWD59CX2VJ0SFDJA",
-      "shortname": "cross-platform-p0-p1-measured",
-      "datetime": "2026-09-19T15:03:03Z",
-      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
-      "prompt": "keep going then commit and push all when its complete",
-      "summary": "P0 measured on the new runners. Run 35449895490: ubuntu green; Windows 735/3 (T-3 + two Codex tests reading UTF-8 via cp1252); macOS 725/1 (T-3). Run 35450221833 with proofs before pytest: Windows - cp1252 --help sweep, byte-identical registry, byte-identical docs-index.js (XP-07 disconfirmed), pre-commit under Git Bash sh all pass; macOS - all proofs pass. T-3 root cause verified and fixed: audit-log.py ids_at_ref compared git's real toplevel path against the caller's symlinked temp path, so --since grandfathered nothing on macOS and Windows; both sides now realpath'd. Two Codex test reads given an explicit encoding. Local suite: 723 passed, 3 failed (the master-branch tests, which pass on the runners).",
-      "kind": "manual",
-      "skill": null,
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/plans/cross-platform-readiness.md"
       ],
-      "tags": [],
-      "outcome": "success",
+      "datetime": "2026-09-19T15:03:03Z",
+      "duration_seconds": 3802.0,
       "duration_source": "session-start-hook",
+      "id": "al-01M2X32EH3SWD59CX2VJ0SFDJA",
+      "kind": "manual",
+      "outcome": "success",
+      "prompt": "keep going then commit and push all when its complete",
+      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
+      "shortname": "cross-platform-p0-p1-measured",
+      "skill": null,
       "started_at": "2026-09-19T13:59:41Z",
-      "duration_seconds": 3802.0
+      "summary": "P0 measured on the new runners. Run 35449895490: ubuntu green; Windows 735/3 (T-3 + two Codex tests reading UTF-8 via cp1252); macOS 725/1 (T-3). Run 35450221833 with proofs before pytest: Windows - cp1252 --help sweep, byte-identical registry, byte-identical docs-index.js (XP-07 disconfirmed), pre-commit under Git Bash sh all pass; macOS - all proofs pass. T-3 root cause verified and fixed: audit-log.py ids_at_ref compared git's real toplevel path against the caller's symlinked temp path, so --since grandfathered nothing on macOS and Windows; both sides now realpath'd. Two Codex test reads given an explicit encoding. Local suite: 723 passed, 3 failed (the master-branch tests, which pass on the runners).",
+      "tags": [],
+      "tool": null
     },
     {
-      "id": "al-01M2X4DH7K2ZBYKF1ZNPQ0A77T",
-      "shortname": "implement-cross-platform-p2-p3",
-      "datetime": "2026-09-19T15:26:35Z",
-      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
-      "prompt": "keep going with P2 and P3",
-      "summary": "Revision 75, class PLAT-A controlled. Two gates that stay, red first: verify-subprocess-utf8.py (absorbed from ai-de DC-211; 21 sites) and verify-portable-text-io.py (text writes without newline, unguarded printing CLIs, mkstemp(text=True); 30 sites), wired as verify-bundle 1c/1d, CI steps on ubuntu/macOS/Windows, gate-parity registry, tests. Sweeps by two sub-agents in disjoint file sets plus nine orphan scripts by the coordinator: utf-8 on every text-mode subprocess; newline on every text write; stdio guard on every printing CLI; hooks reconfigure stdin. prompt-log hands clip.exe UTF-16LE and falls through the ladder; verify-no-conflict-markers NOT-CHECKED when git ls-files fails (4th self-test direction); scrub refuses to rewrite undecodable bytes and preserves EOLs; context-budget inserts with the file's EOL (anchor regexes now \\r?\\n); ui-craft-gate splits its override with shlex; docs-graph drops mkstemp(text=True). pack-apply appends '* text=auto eol=lf' to .gitattributes and creates .editorconfig once; pack-doctor FAILs coord drivers declared without an eol rule; this repo gains .editorconfig. Gate false positive fixed: write_text only in attribute form. Second review of scrub/context-budget: approved. Local: 734 passed, 3 failed (master-branch tests).",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
       "actor": null,
-      "artifacts": [
-        "docs/plans/cross-platform-readiness.md"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "main_calls": 48,
-      "main_budget": 60,
-      "main_over_budget": false,
-      "duration_source": "session-start-hook",
-      "started_at": "2026-09-19T15:12:48Z",
-      "duration_seconds": 827.0,
       "agent_runs": [
         {
           "agent": "python-developer",
-          "started_at": "2026-09-19T15:10:00Z",
-          "ended_at": "2026-09-19T15:19:00Z",
-          "duration_seconds": 540.0,
-          "calls": 58,
           "budget_calls": 60,
-          "over_budget": false
+          "calls": 58,
+          "duration_seconds": 540.0,
+          "ended_at": "2026-09-19T15:19:00Z",
+          "over_budget": false,
+          "started_at": "2026-09-19T15:10:00Z"
         },
         {
           "agent": "python-developer",
-          "started_at": "2026-09-19T15:10:00Z",
-          "ended_at": "2026-09-19T15:20:00Z",
-          "duration_seconds": 600.0,
-          "calls": 48,
           "budget_calls": 60,
-          "over_budget": false
+          "calls": 48,
+          "duration_seconds": 600.0,
+          "ended_at": "2026-09-19T15:20:00Z",
+          "over_budget": false,
+          "started_at": "2026-09-19T15:10:00Z"
         }
       ],
+      "artifacts": [
+        "docs/plans/cross-platform-readiness.md"
+      ],
+      "datetime": "2026-09-19T15:26:35Z",
+      "duration_seconds": 827.0,
+      "duration_source": "session-start-hook",
+      "id": "al-01M2X4DH7K2ZBYKF1ZNPQ0A77T",
+      "kind": "skill",
+      "main_budget": 60,
+      "main_calls": 48,
+      "main_over_budget": false,
+      "outcome": "success",
       "parallelism": {
         "agent_seconds": 1140.0,
+        "peak_concurrency": 2,
         "span_seconds": 600.0,
-        "speedup": 1.9,
-        "peak_concurrency": 2
-      }
-    },
-    {
-      "id": "al-01M2X76T62C8K850HVZ8FP9SPF",
-      "shortname": "1: Ledger tracking default: yes change it / 2: Leader Lease constants 30…",
-      "datetime": "2026-09-19T16:15:20Z",
-      "session": "prompt-log",
-      "prompt": "1: Ledger tracking default: yes change it / 2: Leader Lease constants 300 with a 30 s quiet period / 3: probe first but copilot as inbox-plus-commit-floor is good (ideally validate with probe) / 4: probe agy for the hook surface --- design decisions 1: Leadership: yes 2: ACk on path leases 3: Yes on five-part delegation contract 4: ACK on owner review 5: this is where i am not sure... - I would like some form of board to create human transparency on messages as opposed to in git - I still feel git should be the fallback and we should formalize local message passing, Claude is SO much more effective on its own because of inter-agent message passing how do we get that across harnesses",
-      "summary": "prompt logged for reuse",
-      "kind": "prompt",
-      "skill": null,
-      "tool": null,
-      "actor": null,
-      "artifacts": [],
-      "tags": [],
-      "outcome": "success"
-    },
-    {
-      "id": "al-01M2X76TDS48D6DE6W4SXT1BFX",
-      "shortname": "also analyze the skills in the ai-forward repo and how they need to evol…",
-      "datetime": "2026-09-19T16:15:21Z",
-      "session": "prompt-log",
-      "prompt": "also analyze the skills in the ai-forward repo and how they need to evolve as part of this spec",
-      "summary": "prompt logged for reuse",
-      "kind": "prompt",
-      "skill": null,
-      "tool": null,
-      "actor": null,
-      "artifacts": [],
-      "tags": [],
-      "outcome": "success"
-    },
-    {
-      "id": "al-01M2X76TNC35QP3F11GA89THDQ",
-      "shortname": "another thing as well - i have been thinking we should have a \"compile\" …",
-      "datetime": "2026-09-19T16:15:21Z",
-      "session": "prompt-log",
-      "prompt": "another thing as well - i have been thinking we should have a \"compile\" step in the skills to take the human text and better produce the model specific prompt before tasks like optimize graph or prepare for coordination to have a better model specific prompt as a starting point... might be good to include as part of this spec ... as we analyze how the scripts need to evolve",
-      "summary": "prompt logged for reuse",
-      "kind": "prompt",
-      "skill": null,
-      "tool": null,
-      "actor": null,
-      "artifacts": [],
-      "tags": [],
-      "outcome": "success"
-    },
-    {
-      "id": "al-01M2X79VR0YD9Q31QQG728A72G",
-      "shortname": "proposal-coordination-decisions-ratified",
-      "datetime": "2026-09-19T16:17:00Z",
+        "speedup": 1.9
+      },
+      "prompt": "keep going with P2 and P3",
       "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
-      "prompt": "Apply the maintainer's answers to the coordination proposal's open questions and design decisions; analyze how the 27 skills evolve as part of the spec; add a compile stage that turns human text into the model-specific starting prompt.",
-      "summary": "Ratified: ledgers tracked by default, leader TTL 300 s / quiet 30 s, leadership by designation, path leases as efficiency locks, five-part contract, owner review as ruling. Revised D9: a formal local message layer — per-session inbox files as the store, each harness's own doorbell as the push (Claude socket, codex queue, agy PreInvocation injectSteps, Grok/Copilot tool-boundary hooks, Copilot agentStop block+reason), state-changing kinds dual-written to the ledger so git stays the fallback; D12 a board (coord board / board post) as a read model. Skills survey (Explore agent, grep-verified): 2 of 27 dispatch; 25 have rhetorical casts, no coord verbs, none of the vocabulary; four reusable pieces (CT19 block, GO7 contract emitted by optimize-graph and consumed by nobody, Handoff line, four hard stops). Evolution: three shared stages (CO-S0 compile, CO-S1 seat, CO-S2 stop = message) cited not copied; per-skill matrix in four groups; compile stage P7 (prompt-compile.py + /compile, verify-compiled-prompt refuses added scope); P8 verify-skill-contracts red-first. Copilot and Antigravity hook surfaces verified from docs (AC-40..42), execution pending. verify-bundle: 12/14 green; gate 2 = this branch's uncommitted files; gate 3 = the three pre-existing master-branch tests (734 passed).",
-      "kind": "manual",
-      "skill": null,
-      "tool": "claude-code",
+      "shortname": "implement-cross-platform-p2-p3",
+      "skill": "implement",
+      "started_at": "2026-09-19T15:12:48Z",
+      "summary": "Revision 75, class PLAT-A controlled. Two gates that stay, red first: verify-subprocess-utf8.py (absorbed from ai-de DC-211; 21 sites) and verify-portable-text-io.py (text writes without newline, unguarded printing CLIs, mkstemp(text=True); 30 sites), wired as verify-bundle 1c/1d, CI steps on ubuntu/macOS/Windows, gate-parity registry, tests. Sweeps by two sub-agents in disjoint file sets plus nine orphan scripts by the coordinator: utf-8 on every text-mode subprocess; newline on every text write; stdio guard on every printing CLI; hooks reconfigure stdin. prompt-log hands clip.exe UTF-16LE and falls through the ladder; verify-no-conflict-markers NOT-CHECKED when git ls-files fails (4th self-test direction); scrub refuses to rewrite undecodable bytes and preserves EOLs; context-budget inserts with the file's EOL (anchor regexes now \\r?\\n); ui-craft-gate splits its override with shlex; docs-graph drops mkstemp(text=True). pack-apply appends '* text=auto eol=lf' to .gitattributes and creates .editorconfig once; pack-doctor FAILs coord drivers declared without an eol rule; this repo gains .editorconfig. Gate false positive fixed: write_text only in attribute form. Second review of scrub/context-budget: approved. Local: 734 passed, 3 failed (master-branch tests).",
+      "tags": [],
+      "tool": null
+    },
+    {
       "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-19T16:15:20Z",
+      "id": "al-01M2X76T62C8K850HVZ8FP9SPF",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "1: Ledger tracking default: yes change it / 2: Leader Lease constants 300 with a 30 s quiet period / 3: probe first but copilot as inbox-plus-commit-floor is good (ideally validate with probe) / 4: probe agy for the hook surface --- design decisions 1: Leadership: yes 2: ACk on path leases 3: Yes on five-part delegation contract 4: ACK on owner review 5: this is where i am not sure... - I would like some form of board to create human transparency on messages as opposed to in git - I still feel git should be the fallback and we should formalize local message passing, Claude is SO much more effective on its own because of inter-agent message passing how do we get that across harnesses",
+      "session": "prompt-log",
+      "shortname": "1: Ledger tracking default: yes change it / 2: Leader Lease constants 30…",
+      "skill": null,
+      "summary": "prompt logged for reuse",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-19T16:15:21Z",
+      "id": "al-01M2X76TDS48D6DE6W4SXT1BFX",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "also analyze the skills in the ai-forward repo and how they need to evolve as part of this spec",
+      "session": "prompt-log",
+      "shortname": "also analyze the skills in the ai-forward repo and how they need to evol…",
+      "skill": null,
+      "summary": "prompt logged for reuse",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-19T16:15:21Z",
+      "id": "al-01M2X76TNC35QP3F11GA89THDQ",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "another thing as well - i have been thinking we should have a \"compile\" step in the skills to take the human text and better produce the model specific prompt before tasks like optimize graph or prepare for coordination to have a better model specific prompt as a starting point... might be good to include as part of this spec ... as we analyze how the scripts need to evolve",
+      "session": "prompt-log",
+      "shortname": "another thing as well - i have been thinking we should have a \"compile\" …",
+      "skill": null,
+      "summary": "prompt logged for reuse",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": null,
+      "agent_runs": [
+        {
+          "agent": "Explore",
+          "budget_calls": 60,
+          "calls": 38,
+          "duration_seconds": 192.0,
+          "ended_at": "2026-09-19T17:08:12Z",
+          "over_budget": false,
+          "started_at": "2026-09-19T17:05:00Z"
+        }
+      ],
       "artifacts": [
         "docs/proposals/owner-coordinator-subagent-coordination.md",
         "docs/notes/note-20260919-coordination-decisions-ratified.md"
       ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "The owner/coordinator/sub-agent proposal (md + html) carries the ratified decisions, a formal local message layer with git as the fallback and a board for humans, a measured skills-evolution section, and a compile stage; KB and decision note updated; graph valid; gates green; landed on main.",
+      "datetime": "2026-09-19T16:17:00Z",
       "done_when": "D9 revised, D10/D13 ratified, D12/D14/D15 added; §4b and §7b present in md and html; P4 rewritten and P6-P8 added; §10 answered; note-20260919-coordination-decisions-ratified written and linked; KB carries the Copilot and Antigravity hook surfaces with sources; docs-graph validate exit 0; verify-bundle green except the pre-existing gate 3 master-branch tests; commit rebased onto origin/main and pushed over SSH.",
-      "tier": "T1",
-      "main_calls": 36,
-      "main_budget": 60,
-      "main_over_budget": false,
-      "fan_out": 1,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true
-      },
-      "duration_source": "session-start-hook",
-      "started_at": "2026-09-19T16:06:28Z",
       "duration_seconds": 632.0,
-      "agent_runs": [
-        {
-          "agent": "Explore",
-          "started_at": "2026-09-19T17:05:00Z",
-          "ended_at": "2026-09-19T17:08:12Z",
-          "duration_seconds": 192.0,
-          "calls": 38,
-          "budget_calls": 60,
-          "over_budget": false
-        }
-      ],
+      "duration_source": "session-start-hook",
+      "fan_out": 1,
+      "goal": "The owner/coordinator/sub-agent proposal (md + html) carries the ratified decisions, a formal local message layer with git as the fallback and a board for humans, a measured skills-evolution section, and a compile stage; KB and decision note updated; graph valid; gates green; landed on main.",
+      "id": "al-01M2X79VR0YD9Q31QQG728A72G",
+      "kind": "manual",
+      "main_budget": 60,
+      "main_calls": 36,
+      "main_over_budget": false,
+      "outcome": "success",
       "parallelism": {
         "agent_seconds": 192.0,
+        "peak_concurrency": 1,
         "span_seconds": 192.0,
-        "speedup": 1.0,
-        "peak_concurrency": 1
-      }
+        "speedup": 1.0
+      },
+      "prompt": "Apply the maintainer's answers to the coordination proposal's open questions and design decisions; analyze how the 27 skills evolve as part of the spec; add a compile stage that turns human text into the model-specific starting prompt.",
+      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
+      "shortname": "proposal-coordination-decisions-ratified",
+      "signals": {
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": null,
+      "started_at": "2026-09-19T16:06:28Z",
+      "summary": "Ratified: ledgers tracked by default, leader TTL 300 s / quiet 30 s, leadership by designation, path leases as efficiency locks, five-part contract, owner review as ruling. Revised D9: a formal local message layer — per-session inbox files as the store, each harness's own doorbell as the push (Claude socket, codex queue, agy PreInvocation injectSteps, Grok/Copilot tool-boundary hooks, Copilot agentStop block+reason), state-changing kinds dual-written to the ledger so git stays the fallback; D12 a board (coord board / board post) as a read model. Skills survey (Explore agent, grep-verified): 2 of 27 dispatch; 25 have rhetorical casts, no coord verbs, none of the vocabulary; four reusable pieces (CT19 block, GO7 contract emitted by optimize-graph and consumed by nobody, Handoff line, four hard stops). Evolution: three shared stages (CO-S0 compile, CO-S1 seat, CO-S2 stop = message) cited not copied; per-skill matrix in four groups; compile stage P7 (prompt-compile.py + /compile, verify-compiled-prompt refuses added scope); P8 verify-skill-contracts red-first. Copilot and Antigravity hook surfaces verified from docs (AC-40..42), execution pending. verify-bundle: 12/14 green; gate 2 = this branch's uncommitted files; gate 3 = the three pre-existing master-branch tests (734 passed).",
+      "tags": [],
+      "tier": "T1",
+      "tool": "claude-code"
     },
     {
-      "id": "al-01M2X8NPNE2B6T2V7WCJDG9B2G",
-      "shortname": "specify-compile-stage",
-      "datetime": "2026-09-19T16:40:57Z",
-      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
-      "prompt": "keep going with best next action",
-      "summary": "docs/specs/compile-stage.md (spec-compile-stage) for P7 of the coordination proposal. Part A: problem measured in this repo's audit log (128 substantive entries, 49 with goal+done_when = 38%, 17 with tier+fan_out = 13%, 21 raw prompts; PACK-O already registered); personas (operator, Coordinator seat, Sub-Agent seat, reviewer); core scenario; in/out scope (no metric-driven optimisation, no execution, no second store, never rewrite the raw prompt); conceptual model — bounded context Prompt compilation, ubiquitous language (raw prompt, compiled prompt, clause, trace with a validity rule, reference grammar, assumption, template, contract slot, compilation, pass-through), two aggregates: Compilation (invariant: no added scope — every Done-when / Not-in-scope clause traces to a verbatim raw phrase or an existing assumption; an assumption-only trace is consequential and raises a decision request) and Template set (one current version per harness); US-1..US-8 in Gherkin with a shared refusal grammar; ISO 25010 NFRs with thresholds; boundary set (17 rows); comparables sourced and labelled (DSPy, Anthropic prompt improver 2024-10-14, Kiro/EARS, GitHub Spec Kit, TSCG arXiv 2605.04107, the pack's --brief mode, the audit-log counts); governance lenses incl. STRIDE-light (references by path+sha256 never inlined; no free-text instruction slot; raw hash recomputed by the gate); LOA allocation (deterministic skeleton + bounded model fill). Part B: CLI IA (eight sections), flows as Mermaid with pass-through still gated, no-model path, bounded retry (2), decision requests -> dispatchable:false, interruption -> stale-marker/not recorded; wireframe; UX criteria. Part C: N/A, CLI only. Gate: Test Architect adversary (spawned separately) first verdict BLOCK — 3 vetoes (trace validity unchecked; pass-through bypassed the invariant; probabilistic criteria as exact match), 12 must-fix, 5 should-fix, 4 nits — all folded in: seven --self-test directions, eval fixture set as measurement not acceptance, dispatchable field, reference grammar, named edit-distance metric, /also recompiles on any Done-when change, E7 surface list. Re-review result recorded in the gate record. Change-log entry: no added scope + one store. Handoff -> /design-slice.",
-      "kind": "skill",
-      "skill": "specify",
-      "tool": null,
       "actor": null,
-      "artifacts": [
-        "docs/specs/compile-stage.md"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "A /specify spec for P7, the compile stage, in docs/specs/compile-stage.md: functional and UX layers, UI marked N/A with reason, conceptual domain model, Gherkin criteria, NFRs, boundary set, sourced comparables, governance lenses, gate record; indexed; landed on main with CI green.",
-      "done_when": "docs/specs/compile-stage.md exists with frontmatter and typed links; docs-graph validate exit 0; Test Architect adversary review returned and its findings resolved in the spec; audit and change entries appended; verify-bundle green except the pre-existing gate 3 master-branch tests; commit rebased onto origin/main and pushed over SSH; pack-consistency run green on three runners.",
-      "tier": "T1",
-      "main_calls": 30,
-      "main_budget": 60,
-      "main_over_budget": false,
-      "fan_out": 1,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true
-      },
-      "started_at": "2026-09-19T16:24:53Z",
-      "duration_seconds": 964.0,
       "agent_runs": [
         {
           "agent": "test-architect",
-          "started_at": "2026-09-19T16:37:16Z",
-          "ended_at": "2026-09-19T16:40:45Z",
-          "duration_seconds": 209.0,
-          "calls": 13,
           "budget_calls": 40,
+          "calls": 13,
+          "duration_seconds": 209.0,
+          "ended_at": "2026-09-19T16:40:45Z",
+          "over_budget": false,
+          "started_at": "2026-09-19T16:37:16Z"
+        }
+      ],
+      "artifacts": [
+        "docs/specs/compile-stage.md"
+      ],
+      "datetime": "2026-09-19T16:40:57Z",
+      "done_when": "docs/specs/compile-stage.md exists with frontmatter and typed links; docs-graph validate exit 0; Test Architect adversary review returned and its findings resolved in the spec; audit and change entries appended; verify-bundle green except the pre-existing gate 3 master-branch tests; commit rebased onto origin/main and pushed over SSH; pack-consistency run green on three runners.",
+      "duration_seconds": 964.0,
+      "fan_out": 1,
+      "goal": "A /specify spec for P7, the compile stage, in docs/specs/compile-stage.md: functional and UX layers, UI marked N/A with reason, conceptual domain model, Gherkin criteria, NFRs, boundary set, sourced comparables, governance lenses, gate record; indexed; landed on main with CI green.",
+      "id": "al-01M2X8NPNE2B6T2V7WCJDG9B2G",
+      "kind": "skill",
+      "main_budget": 60,
+      "main_calls": 30,
+      "main_over_budget": false,
+      "outcome": "success",
+      "parallelism": {
+        "agent_seconds": 209.0,
+        "peak_concurrency": 1,
+        "span_seconds": 209.0,
+        "speedup": 1.0
+      },
+      "prompt": "keep going with best next action",
+      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
+      "shortname": "specify-compile-stage",
+      "signals": {
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "specify",
+      "started_at": "2026-09-19T16:24:53Z",
+      "summary": "docs/specs/compile-stage.md (spec-compile-stage) for P7 of the coordination proposal. Part A: problem measured in this repo's audit log (128 substantive entries, 49 with goal+done_when = 38%, 17 with tier+fan_out = 13%, 21 raw prompts; PACK-O already registered); personas (operator, Coordinator seat, Sub-Agent seat, reviewer); core scenario; in/out scope (no metric-driven optimisation, no execution, no second store, never rewrite the raw prompt); conceptual model — bounded context Prompt compilation, ubiquitous language (raw prompt, compiled prompt, clause, trace with a validity rule, reference grammar, assumption, template, contract slot, compilation, pass-through), two aggregates: Compilation (invariant: no added scope — every Done-when / Not-in-scope clause traces to a verbatim raw phrase or an existing assumption; an assumption-only trace is consequential and raises a decision request) and Template set (one current version per harness); US-1..US-8 in Gherkin with a shared refusal grammar; ISO 25010 NFRs with thresholds; boundary set (17 rows); comparables sourced and labelled (DSPy, Anthropic prompt improver 2024-10-14, Kiro/EARS, GitHub Spec Kit, TSCG arXiv 2605.04107, the pack's --brief mode, the audit-log counts); governance lenses incl. STRIDE-light (references by path+sha256 never inlined; no free-text instruction slot; raw hash recomputed by the gate); LOA allocation (deterministic skeleton + bounded model fill). Part B: CLI IA (eight sections), flows as Mermaid with pass-through still gated, no-model path, bounded retry (2), decision requests -> dispatchable:false, interruption -> stale-marker/not recorded; wireframe; UX criteria. Part C: N/A, CLI only. Gate: Test Architect adversary (spawned separately) first verdict BLOCK — 3 vetoes (trace validity unchecked; pass-through bypassed the invariant; probabilistic criteria as exact match), 12 must-fix, 5 should-fix, 4 nits — all folded in: seven --self-test directions, eval fixture set as measurement not acceptance, dispatchable field, reference grammar, named edit-distance metric, /also recompiles on any Done-when change, E7 surface list. Re-review result recorded in the gate record. Change-log entry: no added scope + one store. Handoff -> /design-slice.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/design/compile-stage.md",
+        "docs/notes/note-20260919-compilation-is-an-audit-kind.md"
+      ],
+      "datetime": "2026-09-19T16:57:49Z",
+      "done_when": "design indexed and validating; rollups linked and refreshed; decision note for the audit kind; audit and change entries; handoff to /prepare-for-coordination.",
+      "duration_seconds": 1227.0,
+      "duration_source": "session-start-hook",
+      "fan_out": 2,
+      "goal": "docs/design/compile-stage.md: the detailed design for spec-compile-stage — data model first, CLI contract for prompt-compile.py and verify-compiled-prompt.py, template registry, refusal codes, failure/STRIDE/LINDDUN analyses, telemetry, test plan, and two disjoint tracks for /prepare-for-coordination.",
+      "id": "al-01M2X9MK7P9W1Y0PP8MN820ME4",
+      "kind": "skill",
+      "main_budget": 60,
+      "main_calls": 22,
+      "main_over_budget": false,
+      "outcome": "success",
+      "prompt": "then use the owner-coordinator-sub.agent model to go through the whole design-slice/implement loop to get this spec implemented",
+      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
+      "shortname": "design-slice-compile-stage",
+      "skill": "design-slice",
+      "started_at": "2026-09-19T16:37:22Z",
+      "summary": "Design of the compile stage. Data model: append-only kind:compilation entries (grain = one gate-passing compile of one raw prompt for one harness), workflow entries gain compiled_from + edit_distance (non-additive) or compiled:false; templates as versioned data files with one current per harness; dispatchable stored as a labelled compile-time snapshot. CLI: prompt-compile.py skeleton|finish|render|distance; verify-compiled-prompt.py verify|--self-test (nine directions); refusal grammar and thirteen stable codes; placeholder substitution with a simplify: ceiling. Patterns: deterministic skeleton + bounded fill + verifier (TSCG shape), registry-as-data, gate-as-script idiom, single store new kind (decision note). Failure modes (15) dispositioned with tests; STRIDE per boundary with negative tests (no instruction slot, path+sha256 only, realpath-under-root, raw hash recompute, no environ); LINDDUN no new data. Test plan T1/T2/T4/T8/T9/T11/T14 -> D1/D2/D4/D7/A1/A3/A6, red first. Tracks: A engine+gate+templates+tests; B audit/prompt-log fields + /compile skill + eval + seeded agent-coordination.md (load: skill) + one Stage-0 sentence in two skills; coordinator owns counts, INSTALL rev 76, sync, join. No spike needed: every consumed contract read in this repo.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/coordination/coordination-compile-stage.md"
+      ],
+      "datetime": "2026-09-19T17:01:02Z",
+      "done_when": "docs/coordination/coordination-compile-stage.md and .html written to the schema; coord doctor output in the plan; every track has owner, paths, tier, cap, budget, exit evidence, harness; derive + validate green; audit entry.",
+      "duration_seconds": 182.0,
+      "fan_out": 0,
+      "goal": "A coordination plan for implementing design-compile-stage: measured layer state, artifact classes, two tracks with disjoint authored paths, serial spine, seams, struck tracks, order of operations; md + html.",
+      "id": "al-01M2X9TF8M191NZ9QDQ9N2J9V8",
+      "kind": "skill",
+      "main_budget": 60,
+      "main_calls": 8,
+      "main_over_budget": false,
+      "outcome": "success",
+      "prompt": "then use the owner-coordinator-sub.agent model to go through the whole design-slice/implement loop to get this spec implemented",
+      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
+      "shortname": "coordination-compile-stage",
+      "skill": "prepare-for-coordination",
+      "started_at": "2026-09-19T16:58:00Z",
+      "summary": "Layer measured: registry ok (10 patterns), merge driver effective, 6 derived artifacts owed (regenerated once at the join), claude edit boundary enforcing (S5), 1 active session, 6 worktrees. Classes: derived + register need no coordination; sync-pack generated surfaces are a rule (coordinator only); authored paths split A / B / coordinator with no overlap. Tracks: A engine+gate+templates+tests (90 calls, 90 min); B audit/prompt-log fields + /compile skill + eval + agent-coordination.md seed + two Stage-0 sentences (70 calls, 60 min); coordinator owns counts, INSTALL rev 76, sync, verify-bundle. Serial spine: CLI contract fixed in the design; AUDIT_KINDS lands with B so the end-to-end runs at the join; sync once. Struck: readers (P8), other harness templates (P4), one-track-per-script (coupling), a third track. Multiplier ~3x, paid for independence and context hygiene.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "pack/scripts/audit-log.py",
+        "pack/commands/compile/SKILL.md"
+      ],
+      "datetime": "2026-09-19T17:13:18Z",
+      "fan_out": 0,
+      "id": "al-01M2XAGYPDFA63PYRG1MB0FNV2",
+      "kind": "skill",
+      "main_budget": 70,
+      "main_calls": 33,
+      "main_over_budget": false,
+      "outcome": "success",
+      "prompt": "Track B brief: audit fields, /compile skill, CO-S0",
+      "session": "compile-b",
+      "shortname": "implement-compile-stage-track-b",
+      "skill": "implement",
+      "summary": "Built: audit-log.py (compilation kind; --compiled-from/--edit-distance in [0,1], edit-distance requires compiled-from; compiled:false on plain skill entries; compilation never consumes a start marker and carries no duration; --from-json carries compiled/mode/dispatchable), prompt-log.py (⟲ compiled from <raw_id> suffix on list/browse; --raw <al-id> on list/search), tests/docs_explorer/test_compile_audit_fields.py (15 tests, red first: 13 failed/2 passed observed, then green), pack/commands/compile/SKILL.md (~1,581 tokens), compile.prompt.md, evals/cases/compile-01.json, knowledge/agent-coordination.md (load: skill; CO-S0 seeded), one Stage-0 sentence in optimize-graph and prepare-for-coordination. Observed: pytest 4 files 78 passed; context-budget skills --gate exit 0 (compile ~1,581); verify-no-machine-paths/subprocess-utf8/portable-text-io each exit 0; temp-root compilation append exit 0 with compiled/mode/dispatchable on the line. Findings for the Coordinator: derived surfaces (.agents/skills, docs/portal, tools/docs-portal-editorial.json skillMeta + knowledge routing for agent-coordination) fail 5 inventory/surface tests until sync-pack + editorial entries; context-budget.json has no skills_baseline entry for compile (gate passes without one); coord_derived x3 and pack_apply test_source_repo_is_already_current fail identically on the primary tree (pre-existing); audit viewer does not enumerate kinds (no index.html edit needed).",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "pack/scripts/audit-log.py",
+        "pack/commands/compile/SKILL.md"
+      ],
+      "datetime": "2026-09-19T17:15:19Z",
+      "done_when": "merge commit present; recount green; run-verify-gates exit 0; no push (linear landing follows)",
+      "duration_seconds": 4.0,
+      "fan_out": 0,
+      "goal": "Track B's authored paths merged into the integration branch with the conflict-marker gate, the fast recount and the verify gates green",
+      "id": "al-01M2XAMMFZRFSZ65ZXYNN72515",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of impl/compile-stage-b into spec/compile-stage-p7",
+      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
+      "shortname": "join-compile-b",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-19T17:15:15Z",
+      "summary": "Track B joined: audit-log.py (kind compilation, --compiled-from/--edit-distance, compiled:false on plain skill entries, no marker for compilations), prompt-log.py twins, /compile SKILL + Copilot prompt + eval, agent-coordination.md seeded with CO-S0, one Stage-0 sentence in optimize-graph and prepare-for-coordination; 15 new tests; verified in its tree: 100 passed, skills gate and 1b/1c/1d exit 0 recount_seconds=3 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "pack/scripts/prompt-compile.py",
+        "pack/scripts/verify-compiled-prompt.py"
+      ],
+      "datetime": "2026-09-19T17:17:18Z",
+      "fan_out": 0,
+      "id": "al-01M2XAR8VTRJ9APNC987EX15DR",
+      "kind": "skill",
+      "main_budget": 90,
+      "main_calls": 51,
+      "main_over_budget": false,
+      "outcome": "success",
+      "prompt": "Track A brief: engine, gate, templates",
+      "session": "compile-a",
+      "shortname": "implement-compile-stage-track-a",
+      "skill": "implement",
+      "summary": "Built pack/scripts/prompt-compile.py (skeleton/finish/render/distance), pack/scripts/verify-compiled-prompt.py (nine-direction gate, bare form = self-test), pack/templates/prompt-templates/{claude-code,codex}.v1.md, tests/docs_explorer/test_prompt_compile.py + test_verify_compiled_prompt.py (42 tests), fixtures/compile-eval (20 belief + 10 instruction prompts + README). Observed: gate --self-test exit 0 (nine directions ok); render --self-test exit 0; pytest 42 passed 0 failed; verify-no-machine-paths / verify-subprocess-utf8 / verify-portable-text-io each exit 0; ruff clean except EXE001 (sibling convention). Seams applied: templates at pack/templates/prompt-templates + --templates-dir; argument-free gate runs self-test. Not done: real audit append needs Track B's kind compilation (tests substitute the append).",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "id": "al-01M2XATMN1QY170Q9PV49MBW1A",
+      "shortname": "join-compile-a",
+      "datetime": "2026-09-19T17:18:36Z",
+      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
+      "prompt": "the join of impl/compile-stage-a into spec/compile-stage-p7",
+      "summary": "Track A joined: prompt-compile.py (skeleton|finish|render|distance), verify-compiled-prompt.py (nine directions; bare form = self-test), templates claude-code.v1 and codex.v1 under pack/templates/prompt-templates, 42 tests, 31 eval fixtures; verified in its tree: self-tests exit 0, 42 passed, 1b/1c/1d exit 0; two seams applied (template location, argument-free gate) recount_seconds=4 (docs_only=False).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "pack/scripts/prompt-compile.py",
+        "pack/scripts/verify-compiled-prompt.py"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Track A's authored paths merged after B with the conflict-marker gate, the recount and the verify gates green",
+      "done_when": "merge commit present; recount green; run-verify-gates exit 0 (now including the new gate argument-free); no push",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-19T17:18:31Z",
+      "duration_seconds": 5.0
+    },
+    {
+      "id": "al-01M2XAV91B451GESGZE4D9DGTK",
+      "shortname": "Add a deadline and a fallback to seam requests; the join should refuse a…",
+      "datetime": "2026-09-19T17:18:57Z",
+      "session": "prompt-compile",
+      "prompt": "Add a deadline and a fallback to seam requests; the join should refuse an expired one. Do not touch the leases.",
+      "summary": "raw prompt logged for compilation",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2XAV9RG8HDKPDZ2EEX80JSG",
+      "shortname": "compile-Add a deadline and a fallback to seam requests; the join should refuse a…",
+      "datetime": "2026-09-19T17:18:57Z",
+      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
+      "prompt": "python3 docs/ai-forward-pack/scripts/audit-log.py start --session 2eb8c619-5ab2-4b61-8a57-06c628aebe54 --skill <skill>\nGoal state\nGoal: Seam requests carry a deadline and a fallback, and the join refuses an expired request\nDone when: request add accepts --deadline and --fallback; the join refuses an expired request; expiry is judged against the request's own stamp\nNot in scope: the leases\nTier: T1\nFan-out cap: 2\nContext ceiling: 400000\nMain-line budget: 60\nTrace\n| clause | trace |\n|---|---|\n| done_when: request add accepts --deadline and --fallback | phrase: Add a deadline and a fallback to seam requests |\n| done_when: the join refuses an expired request | phrase: the join should refuse an expired one |\n| done_when: expiry is judged against the request's own stamp | #1 |\n| not_in_scope: the leases | phrase: Do not touch the leases |\nReferences\n- none\nAssumptions\n- #1 belief: expired means past the deadline in the request's own stamp, not wall-clock at the join · confirm: ADR-0007 fencing section; the request record's stamp field · breaks: a paused laptop expires every request at resume · consequential: true\nDecision requests\n- DR-1 (#1): Judge expiry by the request's stamp or by wall-clock at the join? · default: the request's stamp · answer: unanswered\nContract slot\nwidth_cap: unset\ntransient_retry: unset\nper_branch_exit: unset\njoin_rule: unset\ncontainment: unset\ntermination: unset\ndeadline: unset\nfallback: unset\nRules: absolute paths only; a multi-line program is a file, then a run; a gate's exit status is never behind a pipe.\nProvenance\nraw id: al-01M2XAV91B451GESGZE4D9DGTK\nraw sha256: 3a6f09455dd6f5254aba3881f77b542c1794c75b635b5e9302aad0d859e1ca24\ncompiler model: claude-fable-5-1\nengine seconds: 0.001\ntokens: not recorded\ngate: pass\ndispatchable: false\n",
+      "summary": "compiled al-01M2XAV91B451GESGZE4D9DGTK for claude-code v1: 4 clauses, 1 assumptions, 1 decision requests",
+      "kind": "compilation",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "compiled": {
+        "assumptions": [
+          {
+            "id": "#1",
+            "belief": "expired means past the deadline in the request's own stamp, not wall-clock at the join",
+            "confirm": "ADR-0007 fencing section; the request record's stamp field",
+            "breaks": "a paused laptop expires every request at resume",
+            "consequential": true
+          }
+        ],
+        "clauses": [
+          {
+            "section": "done_when",
+            "text": "request add accepts --deadline and --fallback",
+            "trace": {
+              "kind": "phrase",
+              "ref": "Add a deadline and a fallback to seam requests"
+            }
+          },
+          {
+            "section": "done_when",
+            "text": "the join refuses an expired request",
+            "trace": {
+              "kind": "phrase",
+              "ref": "the join should refuse an expired one"
+            }
+          },
+          {
+            "section": "done_when",
+            "text": "expiry is judged against the request's own stamp",
+            "trace": {
+              "kind": "assume",
+              "ref": "#1"
+            }
+          },
+          {
+            "section": "not_in_scope",
+            "text": "the leases",
+            "trace": {
+              "kind": "phrase",
+              "ref": "Do not touch the leases"
+            }
+          }
+        ],
+        "contract_slot": {
+          "containment": null,
+          "deadline": null,
+          "fallback": null,
+          "join_rule": null,
+          "per_branch_exit": null,
+          "termination": null,
+          "transient_retry": null,
+          "width_cap": null
+        },
+        "decision_requests": [
+          {
+            "id": "DR-1",
+            "assumption": "#1",
+            "question": "Judge expiry by the request's stamp or by wall-clock at the join?",
+            "default": "the request's stamp",
+            "answer": null
+          }
+        ],
+        "dispatchable": false,
+        "goal_state": {
+          "goal": "Seam requests carry a deadline and a fallback, and the join refuses an expired request",
+          "done_when": [
+            "request add accepts --deadline and --fallback",
+            "the join refuses an expired request",
+            "expiry is judged against the request's own stamp"
+          ],
+          "not_in_scope": [
+            "the leases"
+          ],
+          "tier": "T1",
+          "fan_out_cap": 2,
+          "context_ceiling": 400000,
+          "main_line_budget": 60
+        },
+        "graph_neighbours": [],
+        "harness": "claude-code",
+        "mode": "compiled",
+        "provenance": {
+          "compile_tokens": null,
+          "compiler_model": "claude-fable-5-1",
+          "engine_seconds": 0.001,
+          "refusals": [],
+          "retries": 0
+        },
+        "raw_id": "al-01M2XAV91B451GESGZE4D9DGTK",
+        "raw_sha256": "3a6f09455dd6f5254aba3881f77b542c1794c75b635b5e9302aad0d859e1ca24",
+        "raw_text_normalised": false,
+        "references": [],
+        "schema": "compiled-prompt/1",
+        "template": "claude-code",
+        "template_version": 1
+      },
+      "mode": "compiled",
+      "dispatchable": false
+    },
+    {
+      "id": "al-01M2XB4R1101KKPFKCH2A9VV1S",
+      "shortname": "coordinate-compile-stage",
+      "datetime": "2026-09-19T17:24:07Z",
+      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
+      "prompt": "then use the owner-coordinator-sub.agent model to go through the whole design-slice/implement loop to get this spec implemented",
+      "summary": "Track A (python-developer, tree impl/compile-stage-a): prompt-compile.py, verify-compiled-prompt.py (nine directions; bare form = self-test), two v1 templates under pack/templates/prompt-templates, 42 tests, 31 eval fixtures; 52/90 calls, 14 of 90 min; two coordinator seams applied (template location, argument-free gate). Track B (python-developer, tree impl/compile-stage-b): audit-log kind compilation + --compiled-from/--edit-distance + compiled:false, prompt-log twins, /compile skill (1,581 tokens), Copilot prompt, eval case, agent-coordination.md seeded with CO-S0, one Stage-0 sentence in two skills; 15 tests; 33/70 calls, 8 of 60 min. Coordinator verified every exit claim by re-running it in the track's tree (E16), committed each track, joined B then A by conductor-join.py (recount + run-verify-gates green both times), applied counts (28 skills, 39 knowledge docs, 32 scripts), INSTALL rev 76, class PACK-V + its red-first test (type plan registered in docs-graph), portal editorial entries, skills baseline; e2e compile: skeleton 0.086 s, gate pass, finish exit 0, entry al-01M2XAV9RG8HDKPDZ2EEX80JSG. Parallelism paid: span 14 min vs 22 min serial; zero refused decisions, zero edits outside a lease. Interpretations recorded by A (engine_seconds null in the skeleton, measured at finish; raw_id read back by text match) accepted.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/coordination/coordination-compile-stage.md",
+        "pack/scripts/prompt-compile.py",
+        "pack/commands/compile/SKILL.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Both tracks of coordination-compile-stage dispatched as Sub-Agents in their own worktrees under five-part contracts, their exit evidence verified (not accepted), joined by conductor-join.py B then A, the coordinator's surfaces applied, the end-to-end compile run against the real audit log, gates green, landed on main as one linear commit.",
+      "done_when": "join commits present with recount and run-verify-gates green; e2e finish exit 0 with a kind:compilation entry; verify-bundle 12/14 (gate 2 = own uncommitted files / gate 3 = three pre-existing master-branch tests); linear commit pushed over SSH; pack-consistency run green on three runners; planned vs actual recorded in the plan.",
+      "tier": "T2",
+      "main_calls": 44,
+      "main_budget": 60,
+      "main_over_budget": false,
+      "fan_out": 2,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "duration_source": "session-start-hook",
+      "started_at": "2026-09-19T17:03:55Z",
+      "duration_seconds": 1212.0,
+      "agent_runs": [
+        {
+          "agent": "python-developer",
+          "started_at": "2026-09-19T17:03:11Z",
+          "ended_at": "2026-09-19T17:17:00Z",
+          "duration_seconds": 829.0,
+          "calls": 52,
+          "budget_calls": 90,
+          "over_budget": false
+        },
+        {
+          "agent": "python-developer",
+          "started_at": "2026-09-19T17:04:03Z",
+          "ended_at": "2026-09-19T17:12:00Z",
+          "duration_seconds": 477.0,
+          "calls": 33,
+          "budget_calls": 70,
           "over_budget": false
         }
       ],
       "parallelism": {
-        "agent_seconds": 209.0,
-        "span_seconds": 209.0,
-        "speedup": 1.0,
-        "peak_concurrency": 1
+        "agent_seconds": 1306.0,
+        "span_seconds": 829.0,
+        "speedup": 1.58,
+        "peak_concurrency": 2
       }
     }
   ],
@@ -6071,6 +6419,28 @@ window.AUDIT_DATA = {
       "git": {
         "before": "4a4c0b3",
         "after": "4a4c0b3a29dfd14fec48b84a5baf30547b54a0ae",
+        "branch": "spec/compile-stage-p7",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M2X9MKF1CZF75TC9CR939P7B",
+      "datetime": "2026-09-19T16:57:49Z",
+      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
+      "kind": "design",
+      "skill": "design-slice",
+      "title": "Compile stage design: skeleton + bounded fill + verifier; compilation as an audit kind",
+      "prompt": "then use the owner-coordinator-sub.agent model to go through the whole design-slice/implement loop to get this spec implemented",
+      "summary": "The compiled prompt is a JSON the deterministic engine writes and the running agent fills; a separate gate refuses added scope before the only writer appends a kind:compilation audit entry whose prompt field is the rendered text. Templates are versioned data files; the audit log stays the single store.",
+      "rationale": "Reuse-in-codebase: the audit log already holds prompts and the pack already has the gate-as-script idiom; a JSON seam lets tests substitute the model; a new audit kind keeps compiled text out of the operator's reuse stack.",
+      "artifacts": [
+        "docs/design/compile-stage.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "fe7ada8",
+        "after": "fe7ada84698f04b600e783e837e17123cff14bcf",
         "branch": "spec/compile-stage-p7",
         "pushed": true,
         "commits": []

@@ -71,6 +71,7 @@ either schema. Stdlib only; no third-party import.
 | `--limit` | max entries to show (0 = all) |
 | `--no-copy` | don't copy the chosen prompt to the clipboard |
 | `--quiet` | don't echo the logged line |
+| `--raw` | show one raw prompt and its compilations only (P7) |
 | `--session` | the session id to record on the audit entry (default: prompt-log) |
 | `--store` | _(no help text — coverage gap)_ |
 | `--summary` | the audit summary (default: 'prompt logged for reuse') |
@@ -82,6 +83,17 @@ either schema. Stdlib only; no third-party import.
 ### `resolve_store(explicit=…)`
 
 **Coverage gap** — no docstring in the source.
+
+### `display_label(e)`
+
+The stack row's label. A `kind:compilation` row (P7) is the rendered compiled twin of a
+logged prompt, so it is suffixed with the raw prompt it was compiled from - the operator
+sees both and can reuse either (spec-compile-stage US-6).
+
+### `filter_raw(entries, raw_id)`
+
+--raw <al-id>: the raw prompt and its compilations only (any kind whose id is the raw id,
+plus every compilation naming it); preserves order.
 
 ### `load_entries(store)`
 
@@ -155,6 +167,6 @@ Exercise the data layer end-to-end in a temp store (no TTY needed).
 
 ## Coverage
 
-- Public functions: **16** · documented: **5** (**31%**)
+- Public functions: **18** · documented: **7** (**39%**)
 - Undocumented (recorded, not invented): `resolve_store`, `append_entry`, `newest_first`, `cmd_add`, `cmd_list`, `cmd_search`, `cmd_show`, `cmd_get`, `cmd_browse`, `cmd_pick`, `build_parser`
 

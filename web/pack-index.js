@@ -6,12 +6,12 @@ window.PACK_INDEX = {
 {
 "id": "knowledge",
 "label": "Knowledge docs",
-"count": 39
+"count": 40
 },
 {
 "id": "skills",
 "label": "Skills",
-"count": 27
+"count": 28
 },
 {
 "id": "templates",
@@ -21,7 +21,7 @@ window.PACK_INDEX = {
 {
 "id": "scripts",
 "label": "Scripts",
-"count": 30
+"count": 32
 },
 {
 "id": "personas",
@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 203
+"count": 208
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 365,
+"total": 374,
 "items": [
 {
 "cat": "knowledge",
@@ -63,6 +63,15 @@ window.PACK_INDEX = {
 "path": "pack/knowledge/agent-body-of-knowledge.md",
 "kind": "knowledge",
 "text": "agent body of knowledge --- agent body of knowledge part i — the three prime directives d1 — correctness over completion d2 — no guessing at contracts d3 — verification is never self-certified part ii — the reasoning method ii.1 — coning: diverge, then converge ii.2 — iterative critical thinking: the gap-closing loop ii.3 — adversarial validation precedes commitment part iii — the contract due-diligence protocol iii.1 — hierarchy of sources of truth iii.2 — verify by execution where possible part iv — methodology spine: spec-driven and test-driven iv.1 — spec-driven development (the macro loop) iv.2 — test-driven development (the micro loop) iv.2.1 — testing strategy selection is normative part v — working in an existing codebase v.1 — conform before you change v.2 — change existing code safely v.3 — stateful changes: data, schemas, migrations part vi — agent self-management vi.1 — treat your own knowledge as a claim, not a fact vi.2 — hold the thread over long tasks vi.3 — know when to ask and when to proceed part vii — craft knowledge by domain vii.1 — c# / .net vii.2 — rust vii.3 — python vii.4 — shell scripting vii.5 — api design (the producer side) vii.6 — ai sdk integration vii.7 — ai-forward development (how the agent itself works) vii.8 — performance: measure, don't guess part viii — anti-patterns of agent reasoning part ix — the deviation protocol --- load: reference --- # agent body of knowledge *the constitution for a coding-agent session. version 1.2.* > **v1.2 changes:** adds the testing strategy as the normative companion for choosing test types, test quality bars, ai-eval separation, mock-fidelity rules, and prompt/schema regression gates. v1.1 added part v (working in an existing codebase) and part vi (agent self-management); a dependency adopt-or-not pre-check and an attack-surface dimension to part iii; a verification toolkit (property/fuzz/contract/characterization/mutation) to §iv.2; a cross-cutting performance subsection (§vii.8); and seven new reasoning anti-patterns. craft/anti-patterns/deviation renumbered to parts vii/viii/ix. this document is the **constitution** for coding agents working in this codebase. it governs *how the agent thinks, researches, and decides* — not *how the code is formatted* (see the **c# coding style guide**), *how tests are selected and judged* (see the **testing strategy**), or *how ai-integrated systems are architected* (see **layered optimized architecture**, \"loa\"). those companion documents are authoritative within their domains; this one is authoritative over the agent's reasoning. where they speak, defer to them. where they are silent, this governs. normative keywords (**must**, **should**, **may**) follow rfc 2119. --- ## part i — the three prime directives everything else is derived from three commitments. when any rule below conflicts with these, these win. ### d1 — correctness over completion the goal is not a green checkmark or a closed ticket. the goal is code that is *right* — correct under the boundary conditions, the failure modes, and the security model that actually apply. a task is not done because it compiles, because tests pass, or because it looks plausible. it is done when its correctness has been *demonstrated*, not asserted. > \"getting it done\" optimizes for the moment the agent stops typing. \"getting it right\" optimizes for the moment the code meets reality. the second is the only one that matters. **the agent must not report a task as complete to claim progress.** partial, honest progress (\"the happy path works; the concurrent case is unverified\") is worth more than a confident false \"done.\" ### d2 — no guessing at contracts an api, library, protocol, or schema has a *contract*: a semantics, a set of boundary conditions, an error model, a security model, a concurrency model, and a resource lifecycle. **the agent must not invoke a contract it has not established.** plausible-looking is not the same as correct. the method that \"probably\" returns `null` on miss might throw; the call that \"should be\" thread-safe might not be; the parameter that \"looks like\" milliseconds might be seconds. guessing is the single largest source of ai-generated defects, because a language model is *built* to produce plausible text, and a wrong api call is often more plausible than the right one. the discipline below exists to defeat exactly that tendency. ### d3 — verification is never self-certified correctness that the producer asserts about its own work is not established correctness. **the agent must not approve its own work.** every correctness claim passes through a gate or an adversarial persona before it is treated as verified (part ii.3). self-certification — the producing agent declaring its own output correct — is the failure mode this directive exists to defeat (see §viii). --- ## part ii — the reasoning method two complementary techniques structure every non-trivial decision: **coning** governs *breadth then depth*; **iterative critical thinking** governs *the loop that closes the gaps*. they are not ceremony — they are the difference between solving the problem in front of you and solving the problem you imagined. ### ii.1 — coning: diverge, then converge a cone is wide at the mouth and narrow at the tip. the agent reasons the same way: **open wide on the problem space before narrowing to a solution.** premature narrowing is the most common failure of fast reasoners — the agent locks onto the first plausible framing and never sees that it solved the wrong problem. coning has two strokes, in order. skipping the first is forbidden. **stroke 1 — diverge (open the cone).** before committing to *any* interpretation, enumerate the space: - *what is actually being asked?* state the request in the agent's own words. name the ambiguities. - *what are the candidate framings?* there is almost always more than one reading of a task. list them. - *what are the scenarios?* borrowing from the **cone of plausibility**: the baseline…"
+},
+{
+"cat": "knowledge",
+"id": "agent-coordination",
+"title": "Agent coordination — Owner / Coordinator / Sub-Agent (seeded: CO-S0 only)",
+"summary": "---",
+"path": "pack/knowledge/agent-coordination.md",
+"kind": "knowledge",
+"text": "agent coordination — owner / coordinator / sub-agent (seeded: co-s0 only) --- agent coordination — owner / coordinator / sub-agent (seeded: co-s0 only) co-s0 — compile (the first stage of every prose-input skill) --- load: skill skills: [compile, optimize-graph, prepare-for-coordination] --- # agent coordination — owner / coordinator / sub-agent (seeded: co-s0 only) *normative guidance for how an owner, a coordinator and sub-agents divide and hand over work. the stage directives **co1–con** (the local message layer with git fallback, the human board, dispatch, rulings, the doorbells) arrive with build-plan item **p0** of `proposal-owner-coordinator-subagent-coordination`. this document currently holds only the **compile stage** — the first stage of every prose-input skill, built as item p7 (`spec-compile-stage`, `design-compile-stage`).* normative keywords (**must**, **should**, **may**, **must not**) follow rfc 2119. ## co-s0 — compile (the first stage of every prose-input skill) **what it is.** the operator's prose becomes the **harness- and model-specific starting prompt**: the seven-field goal state (goal · done when · not in scope · tier · fan-out cap · context ceiling · main-line budget — ct19), every *done when* / *not in scope* clause **traced** to a verbatim raw phrase or a marked assumption, and the assumptions written as belief · confirm · breaks (ng4). the engine is deterministic (`prompt-compile.py`); the one model step is a bounded json fill; a gate (`verify-compiled-prompt.py`) refuses the fill before anything is logged. **when it runs.** before `/optimize-graph` or `/prepare-for-coordination`, and before any prose-input skill grounds. it is **idempotent**: when a compiled prompt is already in hand — the seven line-initial labels in ct19 order — the stage is skipped and the prompt passes through, self-traced and still gated; a consuming skill **must** take a compiled prompt's goal state as the turn's goal state and its *not in scope* as the interdiction, and **must not** derive from raw prose anything the compiled prompt already fixed. **no added scope.** the compiler **must not** add scope (ct20: autonomy is latitude in the *how*, never the *what*). a clause with no raw phrase behind it is an assumption, or it does not exist; an instruction found in the prose or a referenced file has no slot to land in. the gate enforces it (`added scope` · `invalid trace` · `decision request missing`), and a fill that fails after two retries is handed to the operator with the clause named — never silently accepted. **consequential assumptions → decision requests.** an assumption whose wrong belief would change *done when* is **consequential**; every assumption-only clause makes its assumption consequential and gets a numbered decision request (`dr-n`) that **must** be answered **before dispatch**. a compiled prompt with an unanswered `dr-n` is `dispatchable: false`, and a consuming skill stops at the point of dispatch with `decision request unanswered: dr-<n>` (go7: a branch is dispatched under a bounded contract, never under an open question). **raw and compiled are logged together.** the raw prompt is a `kind: prompt` audit entry; the compilation is a `kind: compilation` entry naming the raw id, the raw text's sha256 and the template version; the workflow started from it closes with `compiled_from` and `edit_distance` (what the human changed — the compiler's quality measure), and a workflow started without one records `compiled: false`. a recompile is a new entry; nothing is edited in place. **the command.** `/compile \"<text>\" | --from-audit <id> [--harness claude-code|codex] [--edit]` (`commands/compile/skill.md`); `/prompts` shows raw and compiled side by side (`⟲ compiled from <raw id>`, `--raw <id>`)."
 },
 {
 "cat": "knowledge",
@@ -468,6 +477,15 @@ window.PACK_INDEX = {
 "path": "pack/commands/collectknowledge/SKILL.md",
 "kind": "skill",
 "text": "/collectknowledge before (or at the start of) design, run deep research on the project's domain and problem and save it as a structured markdown knowledge base in the repository (docs/knowledge/). captures industry state of the art, comparable solutions and problem framings, authoritative references, key data, and a glossary — every claim sourced and confidence-labeled. bootstraps domain expertise for the whole team and for the personas. use when starting a project in an unfamiliar or high-stakes domain, or whenever design would otherwise rest on assumptions. skill: /collectknowledge grounding (first action) input cast flow (rigor protocol, specialized to the domain) output artifact definition of done (exit gate) documentation & discoverability (last action)"
+},
+{
+"cat": "skills",
+"id": "compile",
+"title": "/compile",
+"summary": "Compile a prose request into the harness- and model-specific starting prompt (goal state, traced clauses, marked assumptions, decision requests) without adding scope — the CO-S0 stage every prose-input skill runs first. `/compile \"<text>\"`…",
+"path": "pack/commands/compile/SKILL.md",
+"kind": "skill",
+"text": "/compile compile a prose request into the harness- and model-specific starting prompt (goal state, traced clauses, marked assumptions, decision requests) without adding scope — the co-s0 stage every prose-input skill runs first. `/compile \"<text>\"` or `/compile --from-audit <id>`; logs raw and compiled together so what the human changes is measured. skill: /compile input flow engine reference (verbs and flags, verbatim from design-compile-stage › contracts › exposed) definition of done documentation & discoverability audit (last action)"
 },
 {
 "cat": "skills",
@@ -1047,12 +1065,21 @@ window.PACK_INDEX = {
 },
 {
 "cat": "scripts",
+"id": "prompt-compile.py",
+"title": "prompt-compile.py",
+"summary": "prompt-compile.py - the compile stage: a logged raw prompt -> a gated, harness-rendered prompt.",
+"path": "pack/scripts/prompt-compile.py",
+"kind": "script",
+"text": "prompt-compile.py prompt-compile.py - the compile stage: a logged raw prompt -> a gated, harness-rendered prompt. the shape (design docs/design/compile-stage.md): a deterministic skeleton (references resolved under the repo root and hashed, pass-through detected by a fixed grammar, the harness template loaded from the registry) -> the running agent fills the model-only fields in the json -> finish runs the gate (verify-compiled-prompt.py, imported by path), renders the harness idiom, appends one `kind: compilation` audit entry and copies the text to the clipboard. nothing is logged on a refusal; `finish` is the only writer and writes last. verbs skeleton --text \"<raw>\" | --text-file <path> | --from-audit <al-id> --harness <name> --out <path.json> [--no-model] [--audit-root <docs dir>] [--templates-dir <dir>] finish <compiled.json> [--harness <name>] --session <id> [--compiler-model <name>] [--compile-tokens <n>] [--no-clipboard] [--audit-root <docs dir>] [--templates-dir <dir>] render <compiled.json> --harness <name> [--templates-dir <dir>] | render --self-test distance --compiled <al-id> --received-file <path> [--audit-root <docs dir>] refusals (stderr, `<code>: <target> - fix: <text>`, exit 1): empty prompt · raw not found · template missing · template ambiguous · forbidden construct · and every gate code. exit 2 is usage (a malformed compiled json names the offending key). stdlib only; utf-8 on every seam. __init__ _here _sibling _repo_root default_templates_dir _load_by_path _gate copy_to_clipboard _audit_path read_entries find_entry log_raw_prompt append_compilation_entry _split_items _int_or_text detect_pass_through _walk_files _frontmatter docs_graph _is_pathlike extract_tokens add _levenshtein _sha256_file resolve_reference inside _parse_frontmatter_value read_template load_template build_skeleton check_schema _list render_sections render_document edit_distance norm _audit_root _templates_dir _read_doc cmd_skeleton _usage cmd_finish render_self_test cmd_render cmd_distance main"
+},
+{
+"cat": "scripts",
 "id": "prompt-log.py",
 "title": "prompt-log.py",
 "summary": "prompt-log.py — the fast prompt-reuse lens over the project's audit log.",
 "path": "pack/scripts/prompt-log.py",
 "kind": "script",
-"text": "prompt-log.py prompt-log.py — the fast prompt-reuse lens over the project's audit log. a tiny, stdlib-only front-end for browsing, searching, and **reusing** the prompts already recorded in the committed **audit log** (docs/audit/audit-log.jsonl). unified with the audit & change log standard (audit-and-change-log.md): there is **one store of prompts** — the audit log — and this is the reuse lens over it (its arrow-navigable stack + clipboard reuse), the companion to the broader /auditlog timeline/search/change-log/viewer. add log a prompt (writes a kind:prompt entry to the audit log) -> via audit-log.py list show the stack, newest first (label · time) search freeform search; matches contain all terms show print one entry in full (label, time, text) get print one entry's raw text only (for piping/copying) browse interactive stack: up/down move, right expand, left collapse, enter reuse pick like browse, pre-filtered by a search query (powers /searchprompts) reuse model (honest about the medium). a script cannot type into the copilot cli's input line, so \"reuse\" copies the chosen prompt to the clipboard (pbcopy, when present) and prints it — you paste it into your next prompt (cmd+v) and edit before sending. one store. the default store is the committed audit log (docs/audit/audit-log.jsonl), so every prompt the audit mandate records — skill runs, scripts, and prompts you `add` — is reusable here, and there is no second parallel prompt store. `add` writes through audit-log.py (the single writer of record, al0.1) as a kind:prompt entry. override the store with --store or $aiforward_prompt_log (e.g. a legacy <repo>/.aiforward/prompts.jsonl); the reader adapts to either schema. stdlib only; no third-party import. _repo_root resolve_store _ensure_store_dir _adapt load_entries append_entry _now_iso _derive_label _fmt_time newest_first filter_entries resolve_one copy_to_clipboard _sibling cmd_add _print_list cmd_list cmd_search cmd_show cmd_get _reuse _run_curses app visible _prompt_filter _interactive_ok cmd_browse cmd_pick cmd_selftest check build_parser main"
+"text": "prompt-log.py prompt-log.py — the fast prompt-reuse lens over the project's audit log. a tiny, stdlib-only front-end for browsing, searching, and **reusing** the prompts already recorded in the committed **audit log** (docs/audit/audit-log.jsonl). unified with the audit & change log standard (audit-and-change-log.md): there is **one store of prompts** — the audit log — and this is the reuse lens over it (its arrow-navigable stack + clipboard reuse), the companion to the broader /auditlog timeline/search/change-log/viewer. add log a prompt (writes a kind:prompt entry to the audit log) -> via audit-log.py list show the stack, newest first (label · time) search freeform search; matches contain all terms show print one entry in full (label, time, text) get print one entry's raw text only (for piping/copying) browse interactive stack: up/down move, right expand, left collapse, enter reuse pick like browse, pre-filtered by a search query (powers /searchprompts) reuse model (honest about the medium). a script cannot type into the copilot cli's input line, so \"reuse\" copies the chosen prompt to the clipboard (pbcopy, when present) and prints it — you paste it into your next prompt (cmd+v) and edit before sending. one store. the default store is the committed audit log (docs/audit/audit-log.jsonl), so every prompt the audit mandate records — skill runs, scripts, and prompts you `add` — is reusable here, and there is no second parallel prompt store. `add` writes through audit-log.py (the single writer of record, al0.1) as a kind:prompt entry. override the store with --store or $aiforward_prompt_log (e.g. a legacy <repo>/.aiforward/prompts.jsonl); the reader adapts to either schema. stdlib only; no third-party import. _repo_root resolve_store _ensure_store_dir _adapt display_label filter_raw load_entries append_entry _now_iso _derive_label _fmt_time newest_first filter_entries resolve_one copy_to_clipboard _sibling cmd_add _print_list cmd_list cmd_search cmd_show cmd_get _reuse _run_curses app visible _prompt_filter _interactive_ok cmd_browse cmd_pick cmd_selftest check build_parser main"
 },
 {
 "cat": "scripts",
@@ -1098,6 +1125,15 @@ window.PACK_INDEX = {
 "path": "pack/scripts/ui-craft-gate.py",
 "kind": "script",
 "text": "ui-craft-gate.py ui-craft-gate.py - the ui craft gate for ai-forward. runs the impeccable deterministic detector (`impeccable detect --json`) over a ui surface and translates its findings into the pack's own review shape, per `ui-craft-detection.md` cd11: every finding gains a **dimension** (one of the dx22 rubric dimensions), a pack **severity** (nit/minor/major/blocker) with the cd12 accessibility and token-discipline floors applied, and the owning pack directive. stdlib only; lives in the script bundle (deployed to docs/ai-forward-pack/scripts/). why this exists: the detector is the rung-2 automated control under the pack's ui craft doctrine (`continuous-improvement.md` ci6), but its raw output is not a review finding. this performs the translation once, in a script, rather than by hand in every session - and it applies the severity floors that u16 (accessibility hard veto) and u3/u20 (token discipline) require and a linter's own defaults do not. modes (default) report - print the measurement + the rubric table; exit 0 --gate gate - exit 1 if any blocker-mapped finding is present --a11y-obligation accessibility findings become blockers (cd12) --markdown emit a paste-ready markdown section for docs/reviews/ui-<surface>.md --json emit the translated findings as json exit codes: 0 clean/report, 1 blockers present (with --gate), 2 detector unavailable or it scanned nothing (cd9 - an empty corpus is a success-shaped failure). usage: ui-craft-gate.py <file-or-dir-or-url> [...] [--gate] [--a11y-obligation] [--markdown] [--json] [--impeccable <cmd>] resolve_detector run_detector translate measurement render_markdown render_text main"
+},
+{
+"cat": "scripts",
+"id": "verify-compiled-prompt.py",
+"title": "verify-compiled-prompt.py",
+"summary": "verify-compiled-prompt.py - the compile-stage gate: a compiled prompt never adds scope.",
+"path": "pack/scripts/verify-compiled-prompt.py",
+"kind": "script",
+"text": "verify-compiled-prompt.py verify-compiled-prompt.py - the compile-stage gate: a compiled prompt never adds scope. the class (spec us-4, design docs/design/compile-stage.md). a model step turns the operator's prose into a goal state. the measured failure is that it adds scope: a *done when* clause the operator never asked for, a phrase \"quoted\" from the prompt that is not in it, or a belief laundered into a clause through an assumption nobody was asked about. this gate refuses each of those shapes deterministically, against the raw text the audit log holds, before anything is logged or rendered. what it checks, in order (each refusal `<code>: <target> - fix: <text>` on stderr, exit 1) field missing: <name> the seven goal_state fields are non-empty (\"not compiled\" counts) raw mismatch: <raw_id> sha256(raw text) != raw_sha256 assumption incomplete: #<n> belief / confirm / breaks all non-empty added scope: <clause> a done_when / not_in_scope clause with no trace invalid trace: <clause> a phrase trace that is not a verbatim substring of the raw text (whitespace runs collapsed, line endings normalised, case-sensitive), or an assume trace naming an id that is not in assumptions decision request missing: #<n> a clause whose only trace is an assumption needs that assumption consequential: true and a decision request referencing it pass-through refused: <x> pass-through mode: the same minus the trace checks raw not found: <raw_id> (cli) the raw id is not a kind:prompt entry in the audit log in \"not-compiled\" mode the trace checks are skipped; field and hash checks still run. usage python3 verify-compiled-prompt.py verify <compiled.json> [--audit-root <docs dir>] python3 verify-compiled-prompt.py --self-test the nine directions in a temp dir python3 verify-compiled-prompt.py the same (run-verify-gates.py's argument-free form) exit 0 pass · 1 refused · 2 usage. stdlib only. refusal collapse sha256_text _empty _repo_root load_raw verify_document add trace_table verify_file _base_doc _directions self_test_refusals self_test main"
 },
 {
 "cat": "scripts",
@@ -1643,10 +1679,10 @@ window.PACK_INDEX = {
 "cat": "graph",
 "id": "api-index",
 "title": "API reference — the deployed script bundle",
-"summary": "Generated API reference for the pack's public surface — the deployed script bundle. 376 public functions across 29 modules, 46% carrying a docstring.",
+"summary": "Generated API reference for the pack's public surface — the deployed script bundle. 409 public functions across 31 modules, 45% carrying a docstring.",
 "path": "docs/api/index.md",
 "kind": "api",
-"text": "api reference — the deployed script bundle generated api reference for the pack's public surface — the deployed script bundle. 376 public functions across 29 modules, 46% carrying a docstring. api scripts generated index documents architecture"
+"text": "api reference — the deployed script bundle generated api reference for the pack's public surface — the deployed script bundle. 409 public functions across 31 modules, 45% carrying a docstring. api scripts generated index documents architecture"
 },
 {
 "cat": "graph",
@@ -1683,6 +1719,15 @@ window.PACK_INDEX = {
 "path": "docs/api/pack-doctor.md",
 "kind": "api",
 "text": "api — pack-doctor.py pack-doctor.py — ai-forward install-health check (deployable; runs in a target repo). api scripts generated refines api-index"
+},
+{
+"cat": "graph",
+"id": "api-prompt-compile",
+"title": "API — prompt-compile.py",
+"summary": "prompt-compile.py - the compile stage: a logged raw prompt -> a gated, harness-rendered prompt.",
+"path": "docs/api/prompt-compile.md",
+"kind": "api",
+"text": "api — prompt-compile.py prompt-compile.py - the compile stage: a logged raw prompt -> a gated, harness-rendered prompt. api scripts generated refines api-index"
 },
 {
 "cat": "graph",
@@ -1737,6 +1782,15 @@ window.PACK_INDEX = {
 "path": "docs/api/ui-craft-gate.md",
 "kind": "api",
 "text": "api — ui-craft-gate.py ui-craft-gate.py - the ui craft gate for ai-forward. api scripts generated refines api-index"
+},
+{
+"cat": "graph",
+"id": "api-verify-compiled-prompt",
+"title": "API — verify-compiled-prompt.py",
+"summary": "verify-compiled-prompt.py - the compile-stage gate: a compiled prompt never adds scope.",
+"path": "docs/api/verify-compiled-prompt.md",
+"kind": "api",
+"text": "api — verify-compiled-prompt.py verify-compiled-prompt.py - the compile-stage gate: a compiled prompt never adds scope. api scripts generated refines api-index"
 },
 {
 "cat": "graph",
@@ -1902,6 +1956,15 @@ window.PACK_INDEX = {
 },
 {
 "cat": "graph",
+"id": "note-20260919-compilation-is-an-audit-kind",
+"title": "A compilation is its own audit kind, and its prompt field is the rendered text",
+"summary": "The compile stage records each gate-passing compile as a `kind: compilation` audit entry rather than a `kind: prompt` one, so the /prompts lens never shows compiled text as if the operator typed it; the entry's `prompt` field carries the…",
+"path": "docs/notes/note-20260919-compilation-is-an-audit-kind.md",
+"kind": "decision-note",
+"text": "a compilation is its own audit kind, and its prompt field is the rendered text the compile stage records each gate-passing compile as a `kind: compilation` audit entry rather than a `kind: prompt` one, so the /prompts lens never shows compiled text as if the operator typed it; the entry's `prompt` field carries the rendered compiled text so the unchanged lens lists it for reuse, and the structured record lives beside it in a `compiled` object. blast radius: `audit_kinds` in audit-log.py, the audit viewer's kind badge, prompt-log's stack label. decision-note coordination compile audit-log prompt-log relates-to design-compile-stage relates-to spec-compile-stage relates-to audit-log"
+},
+{
+"cat": "graph",
 "id": "note-20260919-coordination-decisions-ratified",
 "title": "Coordination decisions ratified: local message layer with git as the fallback, a board for humans, tracked ledgers, lease constants",
 "summary": "On 2026-09-19 the maintainer answered the proposal's four open questions and ratified four of its five design decisions; on the fifth (push channels) they asked for a formal local message layer with a human-readable board, keeping git as…",
@@ -1953,6 +2016,15 @@ window.PACK_INDEX = {
 "path": "docs/design/aiforward-cli.md",
 "kind": "design",
 "text": "design — aiforward cli (suggestion 1) a single stdlib-only python developer cli (tools/aiforward.py) that is a thin façade dispatcher over the pack's existing scripts (sync, verify, check, new, doctor, graph, scrub) — one memorable entry point with --help, no new runtime dependency. cli tooling dx implements kb-pack-evolution"
+},
+{
+"cat": "graph",
+"id": "design-compile-stage",
+"title": "Design — the compile stage (prompt-compile.py · verify-compiled-prompt.py · harness templates · /compile · audit fields)",
+"summary": "Detailed design for spec-compile-stage. One stdlib engine (prompt-compile.py: skeleton · finish · render · distance) and one gate (verify-compiled-prompt.py, nine self-test directions) around a compiled-prompt JSON whose invariant is no…",
+"path": "docs/design/compile-stage.md",
+"kind": "design",
+"text": "design — the compile stage (prompt-compile.py · verify-compiled-prompt.py · harness templates · /compile · audit fields) detailed design for spec-compile-stage. one stdlib engine (prompt-compile.py: skeleton · finish · render · distance) and one gate (verify-compiled-prompt.py, nine self-test directions) around a compiled-prompt json whose invariant is no added scope; versioned harness templates as data files (v1 claude-code, codex); the compilation recorded as a new audit-log kind that the existing /prompts lens reads unchanged; a thin /compile skill and a seeded agent-coordination.md carrying the co-s0 stage. divided into two disjoint tracks for /prepare-for-coordination. coordination compile prompt audit-log prompt-log templates skill p7 implements spec-compile-stage refines proposal-owner-coordinator-subagent-coordination relates-to design-coord-federation-phase3 relates-to audit-log relates-to defect-classes"
 },
 {
 "cat": "graph",
@@ -3108,12 +3180,21 @@ window.PACK_INDEX = {
 },
 {
 "cat": "graph",
+"id": "coordination-compile-stage",
+"title": "Coordination plan - compile stage (P7): two tracks and a join",
+"summary": "Divides the compile-stage implementation into two tracks with disjoint authored paths — A: engine, gate, templates, tests; B: audit-log and prompt-log fields, the /compile skill, eval case, the seeded agent-coordination.md — plus the…",
+"path": "docs/coordination/coordination-compile-stage.md",
+"kind": "plan",
+"text": "coordination plan - compile stage (p7): two tracks and a join divides the compile-stage implementation into two tracks with disjoint authored paths — a: engine, gate, templates, tests; b: audit-log and prompt-log fields, the /compile skill, eval case, the seeded agent-coordination.md — plus the coordinator's join (counts, install revision, sync, verify-bundle). measured layer state, classes, serial spine, seams, struck tracks and order of operations follow the plan schema so /execute-with-coordination can parse it. coordination worktrees parallelism compile p7 implements design-compile-stage relates-to spec-compile-stage relates-to proposal-owner-coordinator-subagent-coordination"
+},
+{
+"cat": "graph",
 "id": "privacy-review",
 "title": "Privacy Review",
 "summary": "Repo-level privacy posture for the pack-evolution tooling: the CLI and doctor touch no personal data; project memory may incidentally record handles/names (no special-category data, mitigated by the scrub); the scrub is itself a privacy…",
 "path": "docs/security/privacy-review.md",
 "kind": "privacy-review",
-"text": "privacy review repo-level privacy posture for the pack-evolution tooling: the cli and doctor touch no personal data; project memory may incidentally record handles/names (no special-category data, mitigated by the scrub); the scrub is itself a privacy control; docs explorer navigation state remains local. the reviewed model-orchestration experiment was reverted before an executable provider-routing boundary was added. privacy linddun data-governance documents architecture documents forensic-review documents design-aiforward-cli documents design-coord-core-phase1 documents design-coord-enforcement-phase2 documents design-coord-federation-phase3 documents design-pack-doctor documents design-project-memory documents design-rai-and-scrub documents design-docs-explorer-grounding-spatial-navigation"
+"text": "privacy review repo-level privacy posture for the pack-evolution tooling: the cli and doctor touch no personal data; project memory may incidentally record handles/names (no special-category data, mitigated by the scrub); the scrub is itself a privacy control; docs explorer navigation state remains local. the reviewed model-orchestration experiment was reverted before an executable provider-routing boundary was added. privacy linddun data-governance documents architecture documents forensic-review documents design-aiforward-cli documents design-coord-core-phase1 documents design-compile-stage documents design-coord-enforcement-phase2 documents design-coord-federation-phase3 documents design-pack-doctor documents design-project-memory documents design-rai-and-scrub documents design-docs-explorer-grounding-spatial-navigation"
 },
 {
 "cat": "graph",
@@ -3248,7 +3329,7 @@ window.PACK_INDEX = {
 "summary": "Repo-level security posture for the pack-evolution tooling. The scrub handles potentially sensitive file content, while the Docs Explorer crosses committed-Markdown, filesystem, browser-rendering, and optional dependency boundaries; the…",
 "path": "docs/security/threat-model.md",
 "kind": "threat-model",
-"text": "threat model repo-level security posture for the pack-evolution tooling. the scrub handles potentially sensitive file content, while the docs explorer crosses committed-markdown, filesystem, browser-rendering, and optional dependency boundaries; the remaining tools are local and read-mostly. security threat-model documents architecture documents design-aiforward-cli documents design-coord-core-phase1 documents design-coord-enforcement-phase2 documents design-coord-federation-phase3 documents design-pack-doctor documents design-project-memory documents design-rai-and-scrub documents design-docs-explorer-grounding-spatial-navigation"
+"text": "threat model repo-level security posture for the pack-evolution tooling. the scrub handles potentially sensitive file content, while the docs explorer crosses committed-markdown, filesystem, browser-rendering, and optional dependency boundaries; the remaining tools are local and read-mostly. security threat-model documents architecture documents design-aiforward-cli documents design-coord-core-phase1 documents design-compile-stage documents design-coord-enforcement-phase2 documents design-coord-federation-phase3 documents design-pack-doctor documents design-project-memory documents design-rai-and-scrub documents design-docs-explorer-grounding-spatial-navigation"
 },
 {
 "cat": "guides",

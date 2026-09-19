@@ -23,6 +23,9 @@
   "collectknowledge": [
     "SKILL.md"
   ],
+  "compile": [
+    "SKILL.md"
+  ],
   "define-architecture": [
     "SKILL.md"
   ],

@@ -1,0 +1,44 @@
+{
+  "_comment": [
+    "The join contract for ai-forward, read by docs/ai-forward-pack/scripts/conductor-join.py.",
+    "recount: the fast ring - the tests that the joined tracks own plus the audit-log suite; the full suite runs in verify-bundle before the push.",
+    "regenerate: explicit, in-tree commands (never `coord regen`, which resolved against the primary checkout from a worktree once).",
+    "gates: every verify-*.py in tools/ and the deployed script bundle, one exit status (run-verify-gates.py).",
+    "No push_remote: main requires linear history, so the coordinator rebuilds the joined tree as a linear commit and pushes over SSH."
+  ],
+  "recount": [
+    [
+      "python3",
+      "-m",
+      "pytest",
+      "-q",
+      "tests/docs_explorer",
+      "-k",
+      "compile or audit_log or audit_selfcheck or prescribed_types or agent_run_spans"
+    ]
+  ],
+  "regenerate": [
+    [
+      "python3",
+      "docs/ai-forward-pack/scripts/docs-graph.py",
+      "derive"
+    ],
+    [
+      "python3",
+      "docs/ai-forward-pack/scripts/audit-log.py",
+      "--root",
+      "docs",
+      "--project",
+      "ai-forward",
+      "render"
+    ]
+  ],
+  "gates": [
+    [
+      "python3",
+      "docs/ai-forward-pack/scripts/run-verify-gates.py",
+      "--skip",
+      "verify-explainer-render.js"
+    ]
+  ]
+}
