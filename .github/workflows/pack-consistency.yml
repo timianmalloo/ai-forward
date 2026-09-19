@@ -57,6 +57,9 @@ jobs:
       - name: Text writes and consoles are portable
         run: python3 pack/scripts/verify-portable-text-io.py
 
+      - name: Skill contracts: seat, CO-S0 before dispatch, CO-S2 on hard stops
+        run: python3 pack/scripts/verify-skill-contracts.py
+
       # FR-033. The repository's foundational invariant: pack/ is source, .claude/ and
       # .github/ are generated. verify-bundle.ps1 has always checked this locally and CI
       # never ran it, so source↔install drift — the one failure mode the whole architecture
@@ -191,6 +194,10 @@ jobs:
         shell: pwsh
         run: python pack/scripts/verify-portable-text-io.py
 
+      - name: Skill contracts: seat, CO-S0 before dispatch, CO-S2 on hard stops (Windows)
+        shell: pwsh
+        run: python pack/scripts/verify-skill-contracts.py
+
       - name: Source↔install drift (pwsh on Windows)
         shell: pwsh
         run: |
@@ -295,6 +302,9 @@ jobs:
         run: python3 pack/scripts/verify-subprocess-utf8.py
       - name: Text writes and consoles are portable
         run: python3 pack/scripts/verify-portable-text-io.py
+
+      - name: Skill contracts: seat, CO-S0 before dispatch, CO-S2 on hard stops
+        run: python3 pack/scripts/verify-skill-contracts.py
 
       - name: Source↔install drift (pwsh on macOS)
         shell: pwsh

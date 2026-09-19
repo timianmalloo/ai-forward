@@ -288,6 +288,30 @@ representation-contract failure, not a reason to bypass merges for authored file
 - **Control:** `tools/sync-pack.ps1` now **strips** the source frontmatter at the wrap boundary rather than prepending over it (`Get-LoadScope` returns the body separately), so a second block cannot be produced. The generator also throws on a missing or unknown `load:` scope instead of defaulting, so an unparsed source fails loudly. Structural — the shape is no longer expressible.
 - **Status:** `controlled`
 
+### CTX-R — A directory lease is wider than the plan's ownership
+- **Signature:** a track claims a directory (`pack/commands`) with `--long-edit` to cover the many files it owns beneath it, and the lease also covers the few files another track owns there. The other track, honouring the lease, cannot edit its own files for most of its run and either waits or prepares a hand-off. Nothing errors; the plan said "one owner per file" and the lease said "one owner per directory".
+- **Why it survives:** `coord claim` takes one path per call, so a track with 26 files reaches for the directory; the plan's ownership table is per file; the lease has no notion of "except these".
+- **Instances:**
+  - `2026-09-19` **ai-forward, coordination-p2-p8** — P8 leased `pack/commands` for ~40 min; P2's two owned skills sat under it; P2 raised `req-01M2XEERW07PGWMJVSTPKY2NC0` and landed its edits after the lease lapsed. No lost work; ~15 min of P2's wall spent waiting.
+- **Control:** the plan's per-file ownership becomes the lease's shape: `execute-with-coordination`'s brief says *claim your owned files individually or with a pattern that excludes a peer's paths*; `coord claim` gains `--except <path>` (P1's track, with the typed requests) and `coord doctor` warns when a live lease covers a path another live session has claimed. Until then: the profiler's SP-15 family and the seam request are the detectors.
+- **Status:** `open` — control named, not yet built (P1)
+
+### CTX-S — The Edit tool refuses a file the agent read through the shell
+- **Signature:** an agent reads a file with `cat`/`sed` in Bash, then calls the harness Edit tool, which requires a prior Read-tool view of that file in the same conversation and refuses; the agent re-reads with the Read tool and retries. Each occurrence costs two calls and re-injects the file.
+- **Why it survives:** both reads look identical to the agent; only the harness distinguishes them.
+- **Instances:**
+  - `2026-09-19` **ai-forward, track P2** — 15 of 113 tool calls lost to this shape (self-reported in the track's planned-vs-actual).
+- **Control:** the brief's line "read with the Read tool any file you will Edit; use Bash reads only for files you will not edit" (added to `execute-with-coordination`'s brief template at the next revision); the profiler counts Edit refusals followed by a Read of the same path (SP candidate).
+- **Status:** `open`
+
+### ID-A — A time-ordered id is not a total order within one tick
+- **Signature:** ids are minted from a timestamp plus random bits; two ids minted in the same millisecond sort by their random part, so "newest id" and `--since <id>` are non-deterministic inside a tick. Tests that mint quickly flake.
+- **Why it survives:** ULID-shaped ids look sortable; the tick granularity is below the mint rate only under test or burst.
+- **Instances:**
+  - `2026-09-19` **ai-forward, track P4** — `coord-mail.py` pointers and `--since` flaked under test; fixed by a process-monotonic millisecond stamp shared by `ts` and the id.
+- **Control:** `coord_ids.new_id()` (the pack's one id scheme) carries the monotonic stamp; `test_coord_mail.py` mints a burst and asserts strict order. Sweep: every other minted id in the pack (`audit-log.py` `al-`/`cl-`, `coord request` `req-`) goes through the same helper or is checked by the same test shape — recorded as a P1 item.
+- **Status:** `controlled` for mail; `open` for the sweep
+
 ### PACK-V — A skill prescribes a frontmatter value the pack's own validator rejects
 - **Signature:** a skill's output schema (here `/prepare-for-coordination`'s plan schema: `type: plan`) names a frontmatter value, and the pack's validator (`docs-graph.py` `TYPES`) does not accept it, so the first artifact written exactly to the skill's instructions fails `validate` with "unknown type". Both halves are pack source; the drift is invisible until someone runs the skill end to end.
 - **Why it survives:** the schema lives in a SKILL.md and the registry in a script; nothing joins them, and the skill's own tests exercise the plan's *parse*, not the graph's *validate*. A skill that has never been run to its last step reads as complete.

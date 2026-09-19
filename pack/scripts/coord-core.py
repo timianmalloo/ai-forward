@@ -1014,6 +1014,12 @@ def _build_parser():
     md = sub.add_parser("merge-derived", help="the .gitattributes merge driver (always 0)")
     md.add_argument("result"); md.add_argument("base")
     md.add_argument("theirs"); md.add_argument("realpath")
+    # P4 / P6: the message layer and the board live in sibling scripts; `coord mail …` and
+    # `coord board …` pass every remaining argument through unchanged (one front door).
+    ml = sub.add_parser("mail", help="send | read | ack | dispatch (delegates to coord-mail.py)")
+    ml.add_argument("mail_args", nargs=argparse.REMAINDER)
+    bd = sub.add_parser("board", help="board [--follow] | board post (delegates to coord-board.py)")
+    bd.add_argument("board_args", nargs=argparse.REMAINDER)
     rg = sub.add_parser("regen", help="run the regenerations the driver deferred")
     rg.add_argument("--timeout", type=float, default=120)
     sub.add_parser("doctor", help="is the driver effective? is the registry sane?")
@@ -3353,6 +3359,18 @@ def main(argv=None):
     # `renew`/`release` is inside cmd_leader.
     if args.cmd == "leader":
         return cmd_leader(root, repo, args.leader_action, args, session, agent, os.getcwd(), now)
+
+    # BEFORE the identity gate for the same reason: the delegate scripts own their identity
+    # rules (read/board are reads; send/post read AGENT_SESSION themselves). The exit code is
+    # the child's, never folded (an exit code is a result only when it is read).
+    if args.cmd in ("mail", "board"):
+        target = os.path.join(_HERE, "coord-mail.py" if args.cmd == "mail" else "coord-board.py")
+        passthrough = args.mail_args if args.cmd == "mail" else args.board_args
+        if not os.path.isfile(target):
+            print("COORD-NOT-CHECKED  {} is not beside coord-core.py; the message layer is not installed here".format(os.path.basename(target)))
+            return 4
+        completed = subprocess.run([sys.executable, target, *passthrough], encoding="utf-8", errors="replace")
+        return completed.returncode
 
     # Dispatched BEFORE the identity gate: `worktree list` and `cleanup` are read/maintenance
     # commands, and refusing to tell someone what trees exist because AGENT_SESSION is unset
