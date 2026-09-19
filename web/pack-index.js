@@ -21,7 +21,7 @@ window.PACK_INDEX = {
 {
 "id": "scripts",
 "label": "Scripts",
-"count": 27
+"count": 28
 },
 {
 "id": "personas",
@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 196
+"count": 199
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 355,
+"total": 359,
 "items": [
 {
 "cat": "knowledge",
@@ -944,7 +944,7 @@ window.PACK_INDEX = {
 "summary": "coord-core.py - agent coordination, Phase 1 walking skeleton.",
 "path": "pack/scripts/coord-core.py",
 "kind": "script",
-"text": "coord-core.py coord-core.py - agent coordination, phase 1 walking skeleton. holds the record of intent and answers \"may this session touch this artifact?\" from it. append-only jsonl, one file per session; every piece of state is a fold over it. no daemon, no database, no dependency beyond the standard library (adr-0007). four controls here were observed failing on the un-fixed shape before they were trusted: log-a an append onto a file not ending in a newline fuses two records and loses both r4 a check that scanned nothing must not report \"free\" ctrl-port os.open without o_binary translates newlines on windows -- which also masked the log-a control, because a stray cr still terminates a line f8 a claim over the coordination record itself would lock the substrate design: docs/design/coord-core-phase1.md __init__ repo_root resolve_root _norm _literal_segments overlaps make_event _next_seq append_event read_events fold check _safe render append_decision read_decisions append_record request_log_path read_request_events fold_requests _git unique_commits default_branch commits_ahead_of_default staged_paths _identity _build_parser entry_fingerprint conservation_lost merge_register _read_jsonl cmd_merge_register load_registry classify regen_command _canonical_project pack_defaults _dirty_paths verify_regen_command cmd_classify_init record_regen_owed regen_owed clear_regen_owed _reject_path render_harness_capability _relativise parse_hook_request detect_harness hook_decision_of hook_response_is_valid hook_response _not_checked cmd_hook cmd_precommit cmd_guard _worktree_key active_sessions session_contract_path _role_token _strip_cell contract_ownership infer_session_roles owner_rows_for_path collaboration_findings cmd_session_list cmd_collaborate cmd_request _slug worktree_inventory worktree_is_clean base_commit classify_removals worktree_safety cmd_worktree session_tree_kind wt4_exception_rate cmd_session cmd_metrics cmd_install _install_merge_driver _write_conflict read cmd_merge_derived cmd_regen driver_status driver_path_status cmd_doctor cmd_plugin_emit _print_settings_entry main"
+"text": "coord-core.py coord-core.py - agent coordination, phase 1 walking skeleton. holds the record of intent and answers \"may this session touch this artifact?\" from it. append-only jsonl, one file per session; every piece of state is a fold over it. no daemon, no database, no dependency beyond the standard library (adr-0007). four controls here were observed failing on the un-fixed shape before they were trusted: log-a an append onto a file not ending in a newline fuses two records and loses both r4 a check that scanned nothing must not report \"free\" ctrl-port os.open without o_binary translates newlines on windows -- which also masked the log-a control, because a stray cr still terminates a line f8 a claim over the coordination record itself would lock the substrate design: docs/design/coord-core-phase1.md __init__ repo_root resolve_root _norm _literal_segments overlaps make_event _next_seq append_event read_events fold check _safe render append_decision read_decisions append_record request_log_path read_request_events fold_requests _git unique_commits default_branch commits_ahead_of_default staged_paths _identity _build_parser entry_fingerprint conservation_lost merge_register _read_jsonl cmd_merge_register load_registry classify regen_command resolve_interpreter _canonical_project pack_defaults _dirty_paths verify_regen_command cmd_classify_init record_regen_owed regen_owed clear_regen_owed _reject_path render_harness_capability _relativise parse_hook_request detect_harness hook_decision_of hook_response_is_valid hook_response _not_checked cmd_hook cmd_precommit cmd_guard _worktree_key active_sessions session_contract_path _role_token _strip_cell contract_ownership infer_session_roles owner_rows_for_path collaboration_findings cmd_session_list cmd_collaborate cmd_request _slug worktree_inventory worktree_is_clean base_commit classify_removals worktree_safety cmd_worktree session_tree_kind wt4_exception_rate cmd_session cmd_metrics cmd_install _install_merge_driver _write_conflict read cmd_merge_derived cmd_regen driver_status driver_path_status cmd_doctor cmd_plugin_emit _print_settings_entry main"
 },
 {
 "cat": "scripts",
@@ -1043,7 +1043,7 @@ window.PACK_INDEX = {
 "summary": "pack-doctor.py — AI-Forward install-health check (deployable; runs in a TARGET repo).",
 "path": "pack/scripts/pack-doctor.py",
 "kind": "script",
-"text": "pack-doctor.py pack-doctor.py — ai-forward install-health check (deployable; runs in a target repo). reports whether this repo has the pack installed and healthy: the installed revision, both tool surfaces present, the managed blocks intact, and the knowledge graph valid + fresh. one pass/warn/fail line per check with a suggested fix; exit 1 if any fail, or if any warn is present under --strict. distinct from tools/check-consistency.py (which validates the pack source — pack/ == docs). a target repo has no pack/, so this checks install health, not source consistency. design: docs/design/pack-doctor.md. stdlib only; composes docs-graph.py for the graph half. usage pack-doctor.py [--root <repo>] [--json] [--strict] exit: 0 all pass/warn (or all pass under --strict) · 1 any fail/strict warn. _result check_installed check_surface _read check_codex check_claude_md_import check_copilot_settings check_claude_settings check_hooks check_block check_graph check_coordination check_node_runner _works check_interpreter run main"
+"text": "pack-doctor.py pack-doctor.py — ai-forward install-health check (deployable; runs in a target repo). reports whether this repo has the pack installed and healthy: the installed revision, both tool surfaces present, the managed blocks intact, and the knowledge graph valid + fresh. one pass/warn/fail line per check with a suggested fix; exit 1 if any fail, or if any warn is present under --strict. distinct from tools/check-consistency.py (which validates the pack source — pack/ == docs). a target repo has no pack/, so this checks install health, not source consistency. design: docs/design/pack-doctor.md. stdlib only; composes docs-graph.py for the graph half. usage pack-doctor.py [--root <repo>] [--json] [--strict] exit: 0 all pass/warn (or all pass under --strict) · 1 any fail/strict warn. _result check_installed check_surface _read check_codex check_claude_md_import check_copilot_settings check_claude_settings check_hooks check_block check_graph _command_head check_coordination check_node_runner _works check_interpreter run main"
 },
 {
 "cat": "scripts",
@@ -1107,6 +1107,15 @@ window.PACK_INDEX = {
 "path": "pack/scripts/verify-no-conflict-markers.py",
 "kind": "script",
 "text": "verify-no-conflict-markers.py verify-no-conflict-markers.py - a conflict marker must never reach a commit. the control for defect class dc-136 (a merge resolved as \"regenerate, then stage everything\" leaves markers in a file that is patched in place, not regenerated), measured in a consuming repo: two published pages carried `<<<<<<< head` / `=======` / `>>>>>>>` on main. every existing gate passed - a figure check verified four copies of a right answer, and a derived-views check did not own the file because it was only partially derived. a content check cannot see structural damage by construction. then a join resolved a register conflict, piped this gate's output through `| tail -1`, read the remedy text as a pass, and sealed a merge carrying markers (dc-113's fourth recurrence). that is why this gate is first in a join's step list and runs on its own line: a marker is syntactically legal in almost every text format we commit, survives a skimmed diff of a large generated file, and is unambiguous evidence that a file which should have been regenerated was resolved by hand instead. there is no legitimate reason for one in a tracked file, which makes this the rare check with no judgement in it. what is checked. every tracked text file, for `<<<<<<<`, `>>>>>>>` and `|||||||` at the start of a line. `=======` alone is deliberately not flagged: it is a markdown setext heading underline and a restructuredtext rule, and a gate that fires on valid prose is a gate someone switches off. usage python3 verify-no-conflict-markers.py scan every tracked file python3 verify-no-conflict-markers.py --root <repo> scan that repository python3 verify-no-conflict-markers.py --self-test prove all three directions exit 0 when clean, 1 on any finding (or when nothing could be read - a verdict over an empty corpus is not a verdict, pack-p). stdlib only. repo_root tracked_files scan self_test main"
+},
+{
+"cat": "scripts",
+"id": "verify-no-machine-paths.py",
+"title": "verify-no-machine-paths.py",
+"summary": "verify-no-machine-paths.py - a tracked, machine-readable file never carries one machine's paths.",
+"path": "pack/scripts/verify-no-machine-paths.py",
+"kind": "script",
+"text": "verify-no-machine-paths.py verify-no-machine-paths.py - a tracked, machine-readable file never carries one machine's paths. why this exists (plat-b, docs/lessons/defect-classes.md). `coord classify init` wrote `sys.executable` - `c:\\\\users\\\\<user>\\\\...\\\\python.exe` - into the tracked registry `.agents/artifacts.yml`. the file was correct on the machine that wrote it and the tool reported success; `coord regen` then failed on macos days later with \"command not found\", while `pack-doctor` passed because it checked that the registry parsed, never that its commands resolve here. a home directory, a drive letter or an interpreter path inside a file git carries is state about one machine masquerading as configuration for all of them. what it scans. tracked files (`git ls-files`) under the machine-readable surfaces: pack/, tools/, tests/, web/, .claude/, .github/, .grok/, .agents/ and the repo-root dotfiles and manifests. prose under docs/ is out of scope on purpose - investigations and defect classes cite offending paths as evidence, and a lint that forbids naming the defect is a lint that forbids fixing it. what it refuses. any line matching a machine-path shape: <drive>:\\\\users\\\\ <drive>:/users/ /users/<name> /home/<name> /opt/homebrew/ \\\\.pyenv/ appdata\\\\local appdata/local a line may opt out with the marker `machine-path-ok` when the path is a fixture and the test says why (the exemption is visible in the diff; the pattern is not silently widened). usage python3 verify-no-machine-paths.py scan the tracked surfaces of this repo python3 verify-no-machine-paths.py --root <repo> scan that repository python3 verify-no-machine-paths.py --self-test prove the gate can fail (dc-104) exit 0 clean · 1 a machine path was found · 2 usage / git unavailable tracked_files in_scope scan self_test main"
 },
 {
 "cat": "scripts",
@@ -1722,6 +1731,15 @@ window.PACK_INDEX = {
 },
 {
 "cat": "graph",
+"id": "api-verify-no-machine-paths",
+"title": "API — verify-no-machine-paths.py",
+"summary": "verify-no-machine-paths.py - a tracked, machine-readable file never carries one machine's paths.",
+"path": "docs/api/verify-no-machine-paths.md",
+"kind": "api",
+"text": "api — verify-no-machine-paths.py verify-no-machine-paths.py - a tracked, machine-readable file never carries one machine's paths. api scripts generated refines api-index"
+},
+{
+"cat": "graph",
 "id": "api-verify-no-new-console-launches",
 "title": "API — verify-no-new-console-launches.py",
 "summary": "verify-no-new-console-launches.py - no code launches a child with CREATE_NEW_CONSOLE.",
@@ -2289,6 +2307,15 @@ window.PACK_INDEX = {
 },
 {
 "cat": "graph",
+"id": "plan-cross-platform-readiness",
+"title": "Plan: make the pack's scripts, hooks, tools and skills work unchanged on Windows and macOS",
+"summary": "Six phases, ranked by benefit ÷ cost, each landing with a control that was observed failing first: one interpreter resolver used everywhere; three lints (encoding on subprocess, newline on writers, no machine paths in tracked files) that…",
+"path": "docs/plans/cross-platform-readiness.md",
+"kind": "doc",
+"text": "plan: make the pack's scripts, hooks, tools and skills work unchanged on windows and macos six phases, ranked by benefit ÷ cost, each landing with a control that was observed failing first: one interpreter resolver used everywhere; three lints (encoding on subprocess, newline on writers, no machine paths in tracked files) that mechanise the sweeps the pack skipped; a .gitattributes template and a registry-execution check in pack-doctor; skill commands rewritten without bash-only syntax; a windows and a macos ci job so the nt branches and the mac-only test failures are seen; and the five red tests made configuration-independent. awaiting approval before any file is changed. cross-platform windows macos plan controls ci implements investigation-cross-platform-readiness relates-to defect-classes"
+},
+{
+"cat": "graph",
 "id": "plan-optimize-graph-grok-surface",
 "title": "optimize-graph — Grok Build surface for pack-consuming repos",
 "summary": "Approved execution graph for adding a native Grok Build surface to the AI-Forward Pack so /addpacktorepo and pack-apply configure consuming repos the same way Claude Code and Copilot already are. Span shortened; floors early; no knowledge…",
@@ -2484,6 +2511,15 @@ window.PACK_INDEX = {
 "path": "docs/investigations/blank-explainer-live.md",
 "kind": "investigation",
 "text": "investigation: the hosted explainer renders blank even after the 'fix' the hosted explainer stayed blank after a fix was declared, because the fix lived only in the working tree — it was never deployed, so the live url still served the old syntax-broken file. a compounding cause: the earlier fix was proven with `node --check` (syntax) but never with a render check (the mounted surface). both verified here: the live file is the old corrupted version; a jsdom load-and-run proves the fixed file mounts while the old one stays blank. root cause = not-deployed + verified-at-the-wrong-level. registered as class pack-h. ui hosting github-pages explainer deploy render-verification relates-to adr-0006-dream-manifest relates-to proposal-hosting-and-dream-manifest"
+},
+{
+"cat": "graph",
+"id": "investigation-cross-platform-readiness",
+"title": "Investigation: does the AI-Forward Pack — scripts, hooks, tools, skills — work on both Windows and macOS?",
+"summary": "Read-only cross-platform audit of pack/scripts, pack/adapters/hooks, tools/*.ps1, the hook wiring for five harnesses, CI, and every command the skills and knowledge docs tell an agent to run, with ai-de's Windows defect register as the…",
+"path": "docs/investigations/cross-platform-readiness.md",
+"kind": "investigation",
+"text": "investigation: does the ai-forward pack — scripts, hooks, tools, skills — work on both windows and macos? read-only cross-platform audit of pack/scripts, pack/adapters/hooks, tools/*.ps1, the hook wiring for five harnesses, ci, and every command the skills and knowledge docs tell an agent to run, with ai-de's windows defect register as the empirical baseline. verdict: the pack is much better than average on encoding and platform branching, but six systemic classes remain — an interpreter word never resolved at one seam, machine state persisted into tracked files, no windows or macos ci so the `nt` branches never execute, subprocess output decoded without an encoding, posix shell syntax in agent-typed commands, and tests that assume the linux ci box. nothing is fixed here; the plan is a sibling document awaiting approval. cross-platform windows macos interpreter encoding newlines hooks ci investigation relates-to defect-classes relates-to architecture-agent-coordination relates-to kb-multi-agent-coordination"
 },
 {
 "cat": "graph",

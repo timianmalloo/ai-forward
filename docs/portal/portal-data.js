@@ -5,7 +5,7 @@ window.PORTAL_DATA = {
       "personas": 23,
       "knowledge": 38,
       "templates": 28,
-      "scripts": 27
+      "scripts": 28
     },
     "whatIs": "AI-Forward is a committed Markdown methodology pack that installs into a repo so Claude Code, GitHub Copilot, and Grok Build direct work with a shared reasoning spine, adversarial persona review, and a library of workflow skills - nothing runs as a service; everything is versioned files and stdlib scripts.",
     "skillCount": 27,
@@ -1855,6 +1855,12 @@ window.PORTAL_DATA = {
         "summary": "verify-no-conflict-markers.py - a conflict marker must never reach a commit."
       },
       {
+        "id": "api-verify-no-machine-paths",
+        "type": "api",
+        "title": "API — verify-no-machine-paths.py",
+        "summary": "verify-no-machine-paths.py - a tracked, machine-readable file never carries one machine's paths."
+      },
+      {
         "id": "api-verify-no-new-console-launches",
         "type": "api",
         "title": "API — verify-no-new-console-launches.py",
@@ -2135,6 +2141,12 @@ window.PORTAL_DATA = {
         "type": "investigation",
         "title": "Investigation: the hosted explainer renders blank even after the 'fix'",
         "summary": "The hosted explainer stayed blank after a fix was declared, because the fix lived only in the working tree — it was never deployed, so the live URL still..."
+      },
+      {
+        "id": "investigation-cross-platform-readiness",
+        "type": "investigation",
+        "title": "Investigation: does the AI-Forward Pack — scripts, hooks, tools, skills — work on both Windows and macOS?",
+        "summary": "Read-only cross-platform audit of pack/scripts, pack/adapters/hooks, tools/*.ps1, the hook wiring for five harnesses, CI, and every command the skills and..."
       },
       {
         "id": "investigation-fr-071",
@@ -2629,6 +2641,12 @@ window.PORTAL_DATA = {
         "summary": "Verify Codex discovery and document native invocation, explicit grounding, and deployment health."
       },
       {
+        "id": "plan-cross-platform-readiness",
+        "type": "doc",
+        "title": "Plan: make the pack's scripts, hooks, tools and skills work unchanged on Windows and macOS",
+        "summary": "Six phases, ranked by benefit ÷ cost, each landing with a control that was observed failing first: one interpreter resolver used everywhere; three lints..."
+      },
+      {
         "id": "plan-optimize-graph-grok-surface",
         "type": "doc",
         "title": "optimize-graph — Grok Build surface for pack-consuming repos",
@@ -3118,6 +3136,11 @@ window.PORTAL_DATA = {
       },
       {
         "from": "api-verify-no-conflict-markers",
+        "to": "api-index",
+        "rel": "refines"
+      },
+      {
+        "from": "api-verify-no-machine-paths",
         "to": "api-index",
         "rel": "refines"
       },
@@ -3772,6 +3795,21 @@ window.PORTAL_DATA = {
         "rel": "relates-to"
       },
       {
+        "from": "investigation-cross-platform-readiness",
+        "to": "architecture-agent-coordination",
+        "rel": "relates-to"
+      },
+      {
+        "from": "investigation-cross-platform-readiness",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "investigation-cross-platform-readiness",
+        "to": "kb-multi-agent-coordination",
+        "rel": "relates-to"
+      },
+      {
         "from": "investigation-fr-071",
         "to": "audit-log",
         "rel": "documents"
@@ -4355,6 +4393,16 @@ window.PORTAL_DATA = {
         "from": "plan-codex-discovery",
         "to": "kb-graph-and-loop-engineering",
         "rel": "depends-on"
+      },
+      {
+        "from": "plan-cross-platform-readiness",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "plan-cross-platform-readiness",
+        "to": "investigation-cross-platform-readiness",
+        "rel": "implements"
       },
       {
         "from": "plan-optimize-graph-grok-surface",

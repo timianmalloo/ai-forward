@@ -9,7 +9,7 @@ links:
   - { to: architecture, rel: documents }
 review-by: "2027-03-03"
 summary: >-
-  Generated API reference for the pack's public surface — the deployed script bundle. 365 public functions across 26 modules, 46% carrying a docstring.
+  Generated API reference for the pack's public surface — the deployed script bundle. 370 public functions across 27 modules, 46% carrying a docstring.
 ---
 
 # API reference — the deployed script bundle
@@ -28,7 +28,7 @@ with no docstring is listed as a **coverage gap** rather than described from gue
 | [`bounded_process.py`](bounded_process.md) | 1 | 1 | — | Bounded subprocess execution for pack-owned tool invocations. |
 | [`conductor-join.py`](conductor-join.md) | 4 | 2 | — | conductor-join.py - the join, as a script: every step gated by its exit code, none by a |
 | [`context-budget.py`](context-budget.md) | 21 | 12 | 6 | context-budget.py — the always-on context budget, measured (AI-Forward Pack). |
-| [`coord-core.py`](coord-core.md) | 67 | 44 | 24 | coord-core.py - agent coordination, Phase 1 walking skeleton. |
+| [`coord-core.py`](coord-core.md) | 68 | 45 | 24 | coord-core.py - agent coordination, Phase 1 walking skeleton. |
 | [`coord_ids.py`](coord_ids.md) | 2 | 2 | — | coord_ids.py - collision-proof identifiers, in ONE place. |
 | [`design-lint.py`](design-lint.md) | 3 | 2 | — | design-lint.py — token-reference linter for design-language docs (AI-Forward). |
 | [`docs-graph.py`](docs-graph.md) | 37 | 3 | 10 | docs-graph.py — the AI-Forward Pack docs script bundle (knowledge-visualization.md V18). |
@@ -46,9 +46,10 @@ with no docstring is listed as a **coverage gap** rather than described from gue
 | [`session-profile.py`](session-profile.md) | 37 | 17 | 4 | session-profile.py — measure how agent sessions actually ran, across harnesses and models. |
 | [`ui-craft-gate.py`](ui-craft-gate.md) | 6 | 4 | — | ui-craft-gate.py - the UI craft gate for AI-Forward. |
 | [`verify-no-conflict-markers.py`](verify-no-conflict-markers.md) | 4 | 2 | — | verify-no-conflict-markers.py - a conflict marker must never reach a commit. |
+| [`verify-no-machine-paths.py`](verify-no-machine-paths.md) | 4 | 1 | — | verify-no-machine-paths.py - a tracked, machine-readable file never carries one machine's paths. |
 | [`verify-no-new-console-launches.py`](verify-no-new-console-launches.md) | 3 | 1 | — | verify-no-new-console-launches.py - no code launches a child with CREATE_NEW_CONSOLE. |
 | [`visual-assets-setup.py`](visual-assets-setup.md) | 12 | 5 | — | visual-assets-setup.py - wire up a generation backend for UI visual assets (AI-Forward). |
 | [`xaml-token-lint.py`](xaml-token-lint.md) | 9 | 0 | — | xaml-token-lint.py — first-slice token linter for XAML/native UI markup. |
 
-**Total** — 365 public functions across 26 modules, **168 documented (46%)**.
+**Total** — 370 public functions across 27 modules, **170 documented (46%)**.
 

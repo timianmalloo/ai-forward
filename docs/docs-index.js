@@ -772,7 +772,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "31ace1b8334e9e21ed56fc2674f41c7165079c2a5a7116ae879dbd1cab0ea41e"
+      "sourceSha256": "7a35b9db1ad5d2914316d10b8ea78e09a8beb716c5c596a6cdb971fe90781c66"
     },
     {
       "id": "api-coord_ids",
@@ -1224,6 +1224,31 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "a99d621c2bfeecb72a8899a4cd0c869f2b59210be6c8eae5a0f7893047bc5039"
+    },
+    {
+      "id": "api-verify-no-machine-paths",
+      "path": "docs/api/verify-no-machine-paths.md",
+      "title": "API — verify-no-machine-paths.py",
+      "type": "api",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-03-03",
+      "reviewSuggested": [],
+      "summary": "verify-no-machine-paths.py - a tracked, machine-readable file never carries one machine's paths.",
+      "tags": [
+        "api",
+        "scripts",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "api-index",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "0548ce76cfad9e2cf3b8f052ce964e00ca21bf1566e91d8807167bfccc499603"
     },
     {
       "id": "api-verify-no-new-console-launches",
@@ -2464,7 +2489,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "8f9444bb6748260733c527bbe61171bafd3f5c660b6d6447c76b020652868868"
+      "sourceSha256": "878d2d79c107d81fbaf35303a1285a86559ef492acea3d5eb958b533c3e242dd"
     },
     {
       "id": "docs-index",
@@ -3343,6 +3368,38 @@ window.DOCS_INDEX = {
       "sourceSha256": "0dfcc7d9775338ab3e1cfb5e0c1e3f94813a9005e9428755808682019810e12b"
     },
     {
+      "id": "plan-cross-platform-readiness",
+      "path": "docs/plans/cross-platform-readiness.md",
+      "title": "Plan: make the pack's scripts, hooks, tools and skills work unchanged on Windows and macOS",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "pack-hygiene",
+      "reviewBy": "2026-12-18",
+      "reviewSuggested": [],
+      "summary": "Six phases, ranked by benefit ÷ cost, each landing with a control that was observed failing first: one interpreter resolver used everywhere; three lints (encoding on subprocess, newline on writers, no machine paths in tracked files) that mechanise the sweeps the pack skipped; a .gitattributes template and a registry-execution check in pack-doctor; skill commands rewritten without bash-only syntax; a Windows and a macOS CI job so the nt branches and the Mac-only test failures are seen; and the five red tests made configuration-independent. Awaiting approval before any file is changed.",
+      "tags": [
+        "cross-platform",
+        "windows",
+        "macos",
+        "plan",
+        "controls",
+        "ci"
+      ],
+      "links": [
+        {
+          "to": "investigation-cross-platform-readiness",
+          "rel": "implements"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "3874635b76c22a251a9b7713c174d2ec36476b021bd5de2817a40060e06b0f29"
+    },
+    {
       "id": "plan-optimize-graph-grok-surface",
       "path": "docs/plans/optimize-graph-grok-surface.md",
       "title": "optimize-graph — Grok Build surface for pack-consuming repos",
@@ -4103,6 +4160,45 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "f16679f8cf89726bce68ed00a6d3e8d29fed442dae57701e709204121043d2af"
+    },
+    {
+      "id": "investigation-cross-platform-readiness",
+      "path": "docs/investigations/cross-platform-readiness.md",
+      "title": "Investigation: does the AI-Forward Pack — scripts, hooks, tools, skills — work on both Windows and macOS?",
+      "type": "investigation",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "pack-hygiene",
+      "reviewBy": "",
+      "reviewSuggested": [],
+      "summary": "Read-only cross-platform audit of pack/scripts, pack/adapters/hooks, tools/*.ps1, the hook wiring for five harnesses, CI, and every command the skills and knowledge docs tell an agent to run, with ai-de's Windows defect register as the empirical baseline. Verdict: the pack is much better than average on encoding and platform branching, but six systemic classes remain — an interpreter word never resolved at one seam, machine state persisted into tracked files, no Windows or macOS CI so the `nt` branches never execute, subprocess output decoded without an encoding, POSIX shell syntax in agent-typed commands, and tests that assume the Linux CI box. Nothing is fixed here; the plan is a sibling document awaiting approval.",
+      "tags": [
+        "cross-platform",
+        "windows",
+        "macos",
+        "interpreter",
+        "encoding",
+        "newlines",
+        "hooks",
+        "ci",
+        "investigation"
+      ],
+      "links": [
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        },
+        {
+          "to": "architecture-agent-coordination",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-multi-agent-coordination",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "490b57e3cc1aee09c4682c5a7c816dd372139794030826effa89278c00ffe50c"
     },
     {
       "id": "kb-agent-autopilot-controls",
@@ -6628,5 +6724,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "ac89dfdc3feb5d74b21494b91b87e882a10c84bdc00a016d8484c9c7f645567a"
+  "graphSha256": "ac79f864cab5156dfd822f6942f5747dfd4fa6034ea1deef3e6309f217ceb5e9"
 };

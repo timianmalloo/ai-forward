@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-19T14:17:55Z",
+  "generated": "2026-09-19T14:41:04Z",
   "audit": [
     {
       "actor": null,
@@ -4498,40 +4498,144 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M2X0EKCN0BHDQVF80AFXFH47",
-      "shortname": "rebase as main has moved and the commit and push all",
-      "datetime": "2026-09-19T14:17:15Z",
-      "session": "codex-publish",
-      "prompt": "rebase as main has moved and the commit and push all",
-      "summary": "prompt logged for reuse",
-      "kind": "prompt",
-      "skill": null,
-      "tool": null,
       "actor": null,
       "artifacts": [],
+      "datetime": "2026-09-19T14:17:15Z",
+      "id": "al-01M2X0EKCN0BHDQVF80AFXFH47",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "rebase as main has moved and the commit and push all",
+      "session": "codex-publish",
+      "shortname": "rebase as main has moved and the commit and push all",
+      "skill": null,
+      "summary": "prompt logged for reuse",
       "tags": [],
-      "outcome": "success"
+      "tool": null
     },
     {
-      "id": "al-01M2X0FTCJJHCM8J8EJZ1BFQTS",
-      "shortname": "rebase-and-publish-all",
-      "datetime": "2026-09-19T14:17:55Z",
-      "session": "codex-publish",
-      "prompt": "rebase as main has moved and the commit and push all",
-      "summary": "Rebased primary main onto origin/main 11e0197 after preserving all pending tracked and untracked work in stash ac596df. Restored cleanly; verified both audit logs retain every remote and stashed record, and nine untracked files match byte-for-byte. Release graph: rebase/preservation -> regeneration/full bundle gates -> commit all and non-force push. Primary-checkout integration exception continues; other worktrees remain untouched. Full verification is required before commit/push.",
-      "kind": "command",
-      "skill": "release",
-      "tool": null,
       "actor": null,
       "artifacts": [],
-      "tags": [],
-      "outcome": "success",
-      "goal": "Rebase current work onto latest main and commit and push all pending changes",
+      "datetime": "2026-09-19T14:17:55Z",
       "done_when": "All pending files committed on linear main, full bundle verification passes, remote SHA matches local HEAD",
-      "tier": "T1",
+      "duration_seconds": 40.0,
       "fan_out": 0,
+      "goal": "Rebase current work onto latest main and commit and push all pending changes",
+      "id": "al-01M2X0FTCJJHCM8J8EJZ1BFQTS",
+      "kind": "command",
+      "outcome": "success",
+      "prompt": "rebase as main has moved and the commit and push all",
+      "session": "codex-publish",
+      "shortname": "rebase-and-publish-all",
+      "skill": "release",
       "started_at": "2026-09-19T14:17:15Z",
-      "duration_seconds": 40.0
+      "summary": "Rebased primary main onto origin/main 11e0197 after preserving all pending tracked and untracked work in stash ac596df. Restored cleanly; verified both audit logs retain every remote and stashed record, and nine untracked files match byte-for-byte. Release graph: rebase/preservation -> regeneration/full bundle gates -> commit all and non-force push. Primary-checkout integration exception continues; other worktrees remain untouched. Full verification is required before commit/push.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-19T14:00:51Z",
+      "id": "al-01M2WZGJ40BZ025F9AKQGYFBJ1",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "in a separate work tree analyze the repo in terms of pack, scripts and skills ensure that they all work cross-platform (windows and mac)",
+      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
+      "shortname": "in a separate work tree analyze the repo in terms of pack, scripts and s…",
+      "skill": null,
+      "summary": "prompt logged for reuse",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": null,
+      "agent_runs": [
+        {
+          "agent": "Explore",
+          "budget_calls": 60,
+          "calls": 58,
+          "duration_seconds": 540.0,
+          "ended_at": "2026-09-19T14:09:00Z",
+          "over_budget": false,
+          "started_at": "2026-09-19T14:00:00Z"
+        },
+        {
+          "agent": "Explore",
+          "budget_calls": 60,
+          "calls": 52,
+          "duration_seconds": 300.0,
+          "ended_at": "2026-09-19T14:05:00Z",
+          "over_budget": false,
+          "started_at": "2026-09-19T14:00:00Z"
+        },
+        {
+          "agent": "Explore",
+          "budget_calls": 60,
+          "calls": 62,
+          "duration_seconds": 360.0,
+          "ended_at": "2026-09-19T14:06:00Z",
+          "over_budget": true,
+          "started_at": "2026-09-19T14:00:00Z"
+        },
+        {
+          "agent": "Explore",
+          "budget_calls": 60,
+          "calls": 41,
+          "duration_seconds": 300.0,
+          "ended_at": "2026-09-19T14:05:00Z",
+          "over_budget": false,
+          "started_at": "2026-09-19T14:00:00Z"
+        }
+      ],
+      "artifacts": [
+        "docs/investigations/cross-platform-readiness.md"
+      ],
+      "datetime": "2026-09-19T14:12:28Z",
+      "duration_seconds": 697.0,
+      "id": "al-01M2X05TVERB1PH2VJ7DPR60JA",
+      "kind": "skill",
+      "main_budget": 60,
+      "main_calls": 34,
+      "main_over_budget": false,
+      "outcome": "success",
+      "parallelism": {
+        "agent_seconds": 1500.0,
+        "peak_concurrency": 4,
+        "span_seconds": 540.0,
+        "speedup": 2.78
+      },
+      "prompt": "in a separate work tree analyze the repo in terms of pack, scripts and skills ensure that they all work cross-platform (windows and mac)",
+      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
+      "shortname": "investigate-cross-platform-readiness",
+      "skill": "investigate",
+      "started_at": "2026-09-19T14:00:51Z",
+      "summary": "docs/investigations/cross-platform-readiness.md + docs/plans/cross-platform-readiness.md. Measured: 82 Python files AST-scanned (1 open() without encoding; 26 pack writers without newline=; 21 subprocess text decodes without encoding; 0 python3 literals in process calls); 84 documented python3 commands, 10 bare-python contradictions, 8 backslash continuations, 4 && chains; CI ubuntu-only; 5 red tests on this Mac (3 assume master, 1 /private/var, 1 unexplained). Six verified systemic causes: interpreter resolved at the wrong seam; platform lessons never swept (PLAT-A); machine state in tracked files (PLAT-B, the artifacts.yml python.exe path); no Windows/macOS CI; bash-only syntax in agent commands; tests assume the CI box. Plan P0-P5 with a red-first control per phase; awaiting approval, nothing changed.",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/plans/cross-platform-readiness.md"
+      ],
+      "datetime": "2026-09-19T14:37:58Z",
+      "duration_seconds": 2280.0,
+      "duration_source": "session-start-hook",
+      "id": "al-01M2X1MH1VA4NWXRYW3VP6KHP6",
+      "kind": "skill",
+      "main_budget": 60,
+      "main_calls": 52,
+      "main_over_budget": false,
+      "outcome": "success",
+      "prompt": "approve P0 and P1, commit, rebase and push",
+      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
+      "shortname": "implement-cross-platform-p0-p1",
+      "skill": "implement",
+      "started_at": "2026-09-19T13:59:58Z",
+      "summary": "Revision 73. P1: coord-core.resolve_interpreter maps the registry token python3/python to sys.executable in classify init, regen and the merge driver; pack_defaults writes the token, never sys.executable; the Claude Code, Grok and Antigravity hook adapters resolve python3-then-python in the shell and the agy path is anchored at git top level (../ removed); coord install prints a machine-neutral settings entry; coord plugin names python3 off Windows; pack-doctor FAILs a derived command whose interpreter does not resolve; new gate verify-no-machine-paths.py (self-test, gate 1b, CI step); verify-bundle.ps1 and sync-pack.ps1 resolve python3->python->py -3 once; .agents/artifacts.yml re-normalised; T-2 test compares resolved paths. P0: windows-latest and macos-latest jobs with the cp1252 --help sweep, byte-identical registry and docs-index checks, and the pre-commit hook under Git Bash sh. Red first: 17 assertions, 7 lint hits, doctor on the Windows path. Gates: 10/12 pass locally; gate 2 is the uncommitted tree, gate 3 is the 4 pre-existing failures (3 assume master, 1 selfcheck --since). Found while landing: coord classify init/regen from a worktree act on the primary checkout's registry and derived files (.agents resolves to the primary) - restored the primary's registry by hand; recorded on the plan.",
+      "tags": [],
+      "tool": null
     }
   ],
   "changes": [
