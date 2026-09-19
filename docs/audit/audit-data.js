@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-19T17:45:48Z",
+  "generated": "2026-09-19T18:15:10Z",
   "audit": [
     {
       "actor": null,
@@ -5244,6 +5244,85 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-19T17:42:53Z",
       "duration_seconds": 174.0
+    },
+    {
+      "id": "al-01M2XDHQ27VAMDJTVWYM7XRGTD",
+      "shortname": "specify-board",
+      "datetime": "2026-09-19T18:06:09Z",
+      "session": "p6-board",
+      "prompt": "Track P6 of coordination-p2-p8: /specify the board (D12) — a read model over the inboxes and the ledger, never a store; coord-board.py board/post, audit-log.py render messages, a Messages view in the audit explorer",
+      "summary": "docs/specs/board.md (spec-board): Part A with the projection rule (one row per mail id, union of inboxes and ledger twins, ledger-only shows (not on this machine), empty corpus NOT CHECKED exit 0, --follow capped by --max-polls, post through the single writer), Part B (terminal IA, explorer Messages view as a third toggle, flows incl. error/recovery), Part C (archetype B2 Enterprise Master-Detail auto-selected with deviations; tokens inherited; acked on the page is 'not recorded here'). Adversaries inline (fan-out 0): PASS-WITH-CONDITIONS, six findings folded in.",
+      "kind": "skill",
+      "skill": "specify",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/specs/board.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "spec-board written, indexed, gate recorded",
+      "done_when": "docs/specs/board.md exists with Parts A/B/C, archetype recorded, derive run",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-09-19T18:01:01Z",
+      "duration_seconds": 308.0
+    },
+    {
+      "id": "al-01M2XDN6NFQENR7NSJCGF00AYW",
+      "shortname": "design-slice-board",
+      "datetime": "2026-09-19T18:08:03Z",
+      "session": "p6-board",
+      "prompt": "Track P6 of coordination-p2-p8: /design-slice the board from spec-board",
+      "summary": "docs/design/board.md (design-board, implements spec-board): row value object keyed by mail id, fold over inboxes + ledger twins, contracts for board/post/render/template, single-writer facade via path import with --writer, bounded --follow, failure/STRIDE/LINDDUN, UI on existing tokens, telemetry names the read-rate gap, 13-test plan. Adversaries inline: PASS-WITH-CONDITIONS.",
+      "kind": "skill",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/design/board.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "design-board written and indexed",
+      "done_when": "docs/design/board.md exists, derive run, change entry",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-09-19T18:06:09Z",
+      "duration_seconds": 114.0
+    },
+    {
+      "id": "al-01M2XE27M6KHZ8QAE420HPWX8E",
+      "shortname": "implement-board",
+      "datetime": "2026-09-19T18:15:10Z",
+      "session": "p6-board",
+      "prompt": "Track P6 of coordination-p2-p8: /implement the board from design-board, red-first, in the P6 worktree",
+      "summary": "pack/scripts/coord-board.py (board [--follow --since --session --json], board post via append_mail imported by path with --writer), audit-log.py render emits messages[] from the ledger's type: mail twins (no bodies), audit-explorer template gains the Messages view (third toggle, kind filter, table with scope=col, NOT CHECKED / filtered-empty / loading / error states, existing tokens only). tests/docs_explorer/test_coord_board.py: 18 tests seen red (17 failed, 1 passed) then green; 45 passed with test_audit_log.py. Lints 1b/1c/1d exit 0; ui-craft-gate no findings; gate 4b exit 0 (covers the explainer page only). Decision note note-20260919-board-read-model.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "pack/scripts/coord-board.py",
+        "pack/templates/audit-explorer.template.html",
+        "pack/scripts/audit-log.py",
+        "tests/docs_explorer/test_coord_board.py",
+        "docs/notes/note-20260919-board-read-model.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "board built red-first and proven",
+      "done_when": "tests green, lints 0, demo run, render shows messages",
+      "tier": "T2",
+      "main_calls": 51,
+      "main_budget": 120,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "started_at": "2026-09-19T18:08:03Z",
+      "duration_seconds": 427.0
     }
   ],
   "changes": [
@@ -6493,6 +6572,28 @@ window.AUDIT_DATA = {
         "after": "fe7ada84698f04b600e783e837e17123cff14bcf",
         "branch": "spec/compile-stage-p7",
         "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M2XDN6ENZJ1JQBSH53SNY70E",
+      "datetime": "2026-09-19T18:08:03Z",
+      "session": "p6-board",
+      "kind": "design",
+      "skill": "design-slice",
+      "title": "Board (P6, D12): a read model over the inboxes and the ledger, never a store",
+      "prompt": "Track P6: /design-slice the board",
+      "summary": "docs/design/board.md (design-board)",
+      "rationale": "The prior board was struck because nothing wrote to it; D12 reopens it as a projection over the store agents already write. Reading writes nothing; posting goes only through the message layer's single writer imported by path; the page shows the ledger twins without bodies and says NOT CHECKED when empty.",
+      "artifacts": [
+        "docs/design/board.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": null,
+        "after": "2b3a8152476efaa80c9d311db865b4a94746c601",
+        "branch": "impl/p6-board",
+        "pushed": null,
         "commits": []
       }
     }
