@@ -58,7 +58,7 @@
       "updatepack": 2548,
       "visualize": 3222
   },
-  "prefix_tokens": 92785,
+  "prefix_tokens": 92931,
   "prefix_set_on": "2026-09-19",
   "prefix_note": "rev 60 (CTX-B) - the WHOLE static prefix as Copilot CLI assembles it: AGENTS.md + the CLAUDE.md import stub + 13 always-on docs + the two allowances below; ratcheted by `context-budget.py prefix --gate`",
   "prefix_allowances": { "tool_definitions": 24070, "host_prompt": 12000 },

@@ -798,7 +798,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9b05cd7ae371b1d149ce586686bb150f297d2e66f200ccadf9c11859b787256d"
+      "sourceSha256": "329a0e38673d1373bbb7065e613aaca661a43addb7d84a4feffd6c9827a85d1b"
     },
     {
       "id": "api-coord-mail",
@@ -985,7 +985,7 @@ window.DOCS_INDEX = {
       "phase": "",
       "reviewBy": "2027-03-03",
       "reviewSuggested": [],
-      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 465 public functions across 34 modules, 46% carrying a docstring.",
+      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 474 public functions across 34 modules, 47% carrying a docstring.",
       "tags": [
         "api",
         "scripts",
@@ -999,7 +999,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e1e22fb0ecaa425e00313f656d25e354843b9d504dcbc843bdb88795d8206b8a"
+      "sourceSha256": "9102eb95f3ce444a4eb21727a9d473727aeb24adb37894e60e888093c954b2f9"
     },
     {
       "id": "api-marker-lint",
@@ -1099,7 +1099,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ebe782e0767fae1e315fa2378509066986e8e0affbb1f8613012c890fb66e67d"
+      "sourceSha256": "66dc582f44dd747fdc8a05acb06b6a4953d9cf0249ecdf1ee31eb98a08743285"
     },
     {
       "id": "api-prompt-compile",
@@ -3301,7 +3301,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4f3a20564ad2b70557721bf7a525b7fd9cf628f3135f4dedae8da3bea76cdf23"
+      "sourceSha256": "d64f5cb1c6d71336c65356111e20bfc2f2837ce3ee337e76bd422929ec289a35"
     },
     {
       "id": "docs-index",
@@ -6929,6 +6929,14 @@ window.DOCS_INDEX = {
           "rel": "documents"
         },
         {
+          "to": "design-agent-coordination-doctrine",
+          "rel": "documents"
+        },
+        {
+          "to": "design-typed-seam-requests",
+          "rel": "documents"
+        },
+        {
           "to": "design-leader-designation",
           "rel": "documents"
         },
@@ -6974,7 +6982,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "46c135bc6bad760f19c6d5a78067655cacd1669353e960a5d25ef20b95d95d89"
+      "sourceSha256": "ceab4b43ce6be09d3d58c46c4669793abaa65477f4184264bc845b915c5e8bf1"
     },
     {
       "id": "forensic-review-rev48-proof",
@@ -7867,6 +7875,14 @@ window.DOCS_INDEX = {
           "rel": "documents"
         },
         {
+          "to": "design-agent-coordination-doctrine",
+          "rel": "documents"
+        },
+        {
+          "to": "design-typed-seam-requests",
+          "rel": "documents"
+        },
+        {
           "to": "design-leader-designation",
           "rel": "documents"
         },
@@ -7912,7 +7928,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "199bbf7dc2a4a351e70ed8b690e097f6cc91e9db2fde9a44c63cfd74b818f860"
+      "sourceSha256": "1f541bf2c8531c084e8a7ead44ddc7bde2137327c9e9a6d0d26755f8ecfd24ac"
     }
   ],
   "surfaces": [
@@ -8162,5 +8178,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "b59b4e8a3c2461008d622ab17a2a322884d61a5403750e7822bc6c2273f67d5f"
+  "graphSha256": "4d624936bd81ad7d42677784e872106466c1128972ae02df5ae3173ee556d4cf"
 };

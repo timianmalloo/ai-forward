@@ -39,7 +39,8 @@ Design: docs/design/coord-core-phase1.md
 
 | Subcommand | Help |
 |---|---|
-| `add` | append an open seam request |
+| `ack` | acknowledge, pinned to the blob you read |
+| `add` | send a seam request; refused without a deadline and a fallback (its termination variant) |
 | `allocate` | one collision-proof identifier |
 | `board` | board [--follow] | board post (delegates to coord-board.py) |
 | `check` | may this session touch this path? |
@@ -48,6 +49,7 @@ Design: docs/design/coord-core-phase1.md
 | `classify` | write the artifact registry from what this repo has |
 | `collaborate` | cross-session collaboration checks |
 | `doctor` | is the driver effective? is the registry sane? |
+| `expire` | past the deadline: record the fallback as the outcome - every open one, or <id> |
 | `guard` | refuse to move HEAD over work held in one place |
 | `hook` | PreToolUse adapter: stdin JSON in, decision JSON out |
 | `install` | write the pre-commit hook; print the settings entry |
@@ -59,10 +61,11 @@ Design: docs/design/coord-core-phase1.md
 | `metrics` | the four measures this layer exists to move |
 | `plugin` | emit the bundle both harnesses read; never installs |
 | `precommit` | the universal floor: refuse unclaimed staged paths |
+| `receive` | the addressee has seen it |
 | `regen` | run the regenerations the driver deferred |
 | `release` | drop a lease |
 | `renew` | extend the holder's designation (holder only) |
-| `request` | record or resolve a seam request |
+| `request` | a typed seam request: add | receive | ack | resolve | expire | list (sent -> received -> acked -> resolved | expired) |
 | `resolve` | resolve a seam request |
 | `session` | one session per working tree |
 | `tail` | the merged chronological stream |
@@ -74,9 +77,13 @@ Design: docs/design/coord-core-phase1.md
 | Option | Help |
 |---|---|
 | `--base` | commit/branch to branch from (default: the INVOKING tree's HEAD) |
+| `--blob` | the blob sha the request was written against |
 | `--branch` | branch to create; name it for the WORK, not the session |
 | `--contract` | _(no help text — coverage gap)_ |
+| `--deadline` | _(no help text — coverage gap)_ |
 | `--emit` | _(no help text — coverage gap)_ |
+| `--except` | carve this path out of the lease (repeatable): a directory lease that excludes a peer's owned files (class CTX-R) |
+| `--fallback` | what the requester does at the deadline; omitting it is refused |
 | `--fix` | push, the cheapest second copy |
 | `--force` | install from a linked worktree anyway. It overwrites the repository's shared registration with a path that dies with this tree - the recorded exception, never the default |
 | `--from-role` | _(no help text — coverage gap)_ |
@@ -87,12 +94,13 @@ Design: docs/design/coord-core-phase1.md
 | `--path` | _(no help text — coverage gap)_ |
 | `--reason` | _(no help text — coverage gap)_ |
 | `--reclaim` | the same path as `reclaim`: over an EXPIRED designation, after the quiet period |
+| `--ref` | a mail id (coord mail) this request answers |
 | `--register` | _(no help text — coverage gap)_ |
 | `--remove` | cleanup: actually delete. Off by default - deletion is irreversible |
 | `--resolution` | _(no help text — coverage gap)_ |
 | `--scheme` | _(no help text — coverage gap)_ |
 | `--session` | session id to register (default: $AGENT_SESSION) |
-| `--status` | _(no help text — coverage gap)_ |
+| `--status` | open = every non-terminal state (default) |
 | `--timeout` | _(no help text — coverage gap)_ |
 | `--to` | _(no help text — coverage gap)_ |
 | `--ttl` | _(no help text — coverage gap)_ |
@@ -149,7 +157,15 @@ simplify: fnmatch both ways plus a segment-prefix test.
   upgrade trigger: the first refusal a human calls wrong, or Phase 3's artifact-class
   registry introducing nested patterns.
 
-### `make_event(kind, session, agent, wi, path, at, ttl=…, seq=…)`
+### `excepted(lease, path)`
+
+Is `path` carved out of this lease by its `except` list (claim --except, class CTX-R)?
+
+### `lease_covers(lease, path)`
+
+Does a live lease cover this path? A directory lease minus the peer's named files.
+
+### `make_event(kind, session, agent, wi, path, at, ttl=…, seq=…, excepts=…)`
 
 **Coverage gap** — no docstring in the source.
 
@@ -209,7 +225,47 @@ Append one JSONL row to a small operator ledger.
 
 ### `fold_requests(events)`
 
-**Coverage gap** — no docstring in the source.
+Pure fold: request-* rows -> one state per request id (spec-typed-seam-requests).
+
+sent -> received -> acked -> resolved | expired. Terminal wins: a row of a later kind after
+a terminal state is ignored (the CLI refuses to write one; the fold does not rely on that).
+An add with no deadline_at predates the typed shape and folds to `untyped` - listed, never
+expired, never failed (US-10).
+
+### `blob_sha(data)`
+
+git's blob id: sha1("blob <len> " + bytes). Spiked against `git hash-object`.
+
+### `current_blob(repo, path)`
+
+The blob id of repo/path now, in-process; None (rendered `not recorded`) when there is
+no path, the path escapes the repository (STRIDE: a crafted --path reads nothing outside
+it), or the file cannot be read.
+
+### `annotate_requests(requests, repo, now)`
+
+Derived fields, never stored (DM7): overdue, deadline_in, stale.
+
+stale is True/False only when an ack pinned a blob AND the cited path can be hashed now;
+otherwise the string "not recorded" - an absent comparison never renders as "fresh".
+
+### `request_doctor_lines(root, repo, now)`
+
+(lines, problems) for `coord doctor` and pack-doctor's `requests` check.
+
+FAIL  a typed request past its deadline with no recorded outcome (silence - the 28%)
+WARN  an ack pinned to a blob that has since changed; untyped rows (counted, never failed)
+An absent store is `not recorded`, never "0 problems" (R4).
+
+### `request_metrics(root, repo, now)`
+
+Three counts, or `not recorded` over nothing - a rate over an empty corpus is not a
+measurement (R4/PACK-P).
+
+### `lease_overlap_lines(root, now)`
+
+(lines, warns): two live leases from two sessions that cover each other's path and
+neither excepts the other (class CTX-R's detector). A WARN never changes doctor's exit.
 
 ### `leader_validate(record)`
 
@@ -522,7 +578,7 @@ to avoid merge/rebase damage, but it does not pretend a claim is a distributed l
 
 **Coverage gap** — no docstring in the source.
 
-### `cmd_request(root, action, now, session, agent, args)`
+### `cmd_request(root, action, now, session, agent, args, repo=…)`
 
 **Coverage gap** — no docstring in the source.
 
@@ -690,6 +746,6 @@ follows by printing the settings entry rather than writing it.
 
 ## Coverage
 
-- Public functions: **76** · documented: **52** (**68%**)
-- Undocumented (recorded, not invented): `make_event`, `check`, `read_decisions`, `request_log_path`, `read_request_events`, `fold_requests`, `cmd_leader`, `regen_command`, `record_regen_owed`, `regen_owed`, `clear_regen_owed`, `detect_harness`, `cmd_precommit`, `cmd_guard`, `session_contract_path`, `owner_rows_for_path`, `cmd_session_list`, `cmd_collaborate`, `cmd_request`, `cmd_worktree`, `cmd_session`, `cmd_metrics`, `cmd_install`, `cmd_doctor`
+- Public functions: **84** · documented: **61** (**73%**)
+- Undocumented (recorded, not invented): `make_event`, `check`, `read_decisions`, `request_log_path`, `read_request_events`, `cmd_leader`, `regen_command`, `record_regen_owed`, `regen_owed`, `clear_regen_owed`, `detect_harness`, `cmd_precommit`, `cmd_guard`, `session_contract_path`, `owner_rows_for_path`, `cmd_session_list`, `cmd_collaborate`, `cmd_request`, `cmd_worktree`, `cmd_session`, `cmd_metrics`, `cmd_install`, `cmd_doctor`
 

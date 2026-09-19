@@ -417,8 +417,8 @@ window.PORTAL_DATA = {
         "items": [
           {
             "name": "agent-coordination",
-            "title": "Agent coordination — Owner / Coordinator / Sub-Agent (seeded: CO-S0, CO-L)",
-            "summary": "Normative keywords (MUST, SHOULD, MAY, MUST NOT) follow RFC 2119.",
+            "title": "Agent coordination — Owner / Coordinator / Sub-Agent",
+            "summary": "Owner seat — the model seat that rules and holds the veto; never the person. The person is the human operator, the only source of consent. ai-de's conductor keeps its name. A Coordinator decomposes, dispatches and joins; a Sub-Agent executes one contract in...",
             "path": "../../pack/knowledge/agent-coordination.md"
           },
           {
@@ -735,6 +735,11 @@ window.PORTAL_DATA = {
         "group": "Specifications",
         "items": [
           {
+            "title": "Spec — the doctrine home: pack/knowledge/agent-coordination.md as the always-loaded Owner / Coordinator / Sub-Agent doctrine under a 3,000-token ceiling",
+            "summary": "Specifies P0 of the coordination proposal: pack/knowledge/agent-coordination.md becomes the always-loaded doctrine for the Owner / Coordinator / Sub-Agent model — one CO<n> line per §3.3 invariant naming its measurement or spike, the §4 protocol objects by...",
+            "path": "../../docs/specs/agent-coordination-doctrine.md"
+          },
+          {
             "title": "Agent coordination — shared context and explicit coordination across worktrees and agents",
             "summary": "Specification for a repo-local, model-agnostic coordination layer that lets several agents and worktrees work one repository at once without losing work or time. Grounded in measured evidence from TheTerrace, HealthWatch and Meridian, it targets four distinct...",
             "path": "../../docs/specs/agent-coordination.md"
@@ -793,12 +798,22 @@ window.PORTAL_DATA = {
             "title": "Native app UI skill extension — Specification",
             "summary": "Specification for extending the AI-Forward UI skills so WPF, WinUI, Avalonia and other native client applications receive the same rigorous UX/UI reasoning as web surfaces. The spec defines the required native medium declaration, native proof pack,...",
             "path": "../../docs/specs/native-app-ui-skill-extension.md"
+          },
+          {
+            "title": "Typed seam requests with a termination variant — coord request add|receive|ack|resolve|expire|list, claim --except, doctor and metrics",
+            "summary": "Specifies P1 of the coordination proposal: a seam request is refused unless it carries a deadline and a fallback, moves through sent/received/acked/resolved/expired with an ack pinned to the blob it read (a changed blob renders the ack stale), reaches a...",
+            "path": "../../docs/specs/typed-seam-requests.md"
           }
         ]
       },
       {
         "group": "Component designs",
         "items": [
+          {
+            "title": "Design — the doctrine doc's structure: sections as the aggregate, CO ids as identity, a byte budget per section, and the test that pins completeness under the ceiling",
+            "summary": "Detailed design for spec-agent-coordination-doctrine. The component is a Markdown document and its pinning test: a fixed section order with a byte budget per section that sums under the 3,000-token ceiling as context-budget.py counts it, CO ids as append-only...",
+            "path": "../../docs/design/agent-coordination-doctrine.md"
+          },
           {
             "title": "Design — Agent focus & scope controls",
             "summary": "Design for the three agent-focus controls. FC-1: a stdlib `audit-log.py selfcheck --session` subcommand (bounded, deterministic, reuses read_log + the PACKO_SUBSTANTIVE set) plus a CT25 closing-self-assessment directive. FC-2: sharpen CT19 to a fixed...",
@@ -893,6 +908,11 @@ window.PORTAL_DATA = {
             "title": "Tier-2 prose→structure: opt-in Proof-Pack sections (E7/E8, IO2) — Design",
             "summary": "Tier-2 of the prose→structure review: give E7/E8 (change-surface list + reader trace) and IO2 (operator questions) a structured home as opt-in tables in the Proof-Pack template, referenced from the directives — piloted, deliberately not a mandatory block or a...",
             "path": "../../docs/design/tier2-proof-pack-sections.md"
+          },
+          {
+            "title": "Design — typed seam requests (the Request aggregate's rows · stale-by-blob · expire · doctor/metrics · claim --except · coord_ids monotonic stamp)",
+            "summary": "Detailed design for spec-typed-seam-requests: five request-* row kinds folded into one Request state per id in .agents/requests.jsonl, a twin `type: request` row per transition in the session ledger, staleness derived at read time from git's blob formula over...",
+            "path": "../../docs/design/typed-seam-requests.md"
           }
         ]
       }
@@ -1638,7 +1658,7 @@ window.PORTAL_DATA = {
     ],
     "classes": "Three defect classes came out of it and are recorded with controls: PACK-R, a fixed prefix sized by what fits rather than by what each call needs; PACK-S, a fan-out rediscovering per-run what was knowable once; and PACK-T, a generator prepending metadata over a source that already had it — which had been shipping two stacked frontmatter blocks in one instruction file, of which any reader parses only the first.",
     "live": {
-      "baseline": 47642,
+      "baseline": 50717,
       "tolerancePct": 2,
       "backstop": 60000,
       "derivation": {
@@ -1648,24 +1668,24 @@ window.PORTAL_DATA = {
       },
       "tiers": {
         "always": {
-          "docs": 13,
-          "tokens": 47642
+          "docs": 14,
+          "tokens": 50717
         },
         "reference": {
           "docs": 2,
           "tokens": 24213
         },
         "skill": {
-          "docs": 19,
-          "tokens": 83206
+          "docs": 18,
+          "tokens": 81854
         },
         "glob": {
           "docs": 6,
           "tokens": 25898
         }
       },
-      "corpusTokens": 180959,
-      "alwaysPct": 26
+      "corpusTokens": 182682,
+      "alwaysPct": 28
     }
   },
   "systems": [
@@ -1861,7 +1881,7 @@ window.PORTAL_DATA = {
         "id": "api-index",
         "type": "api",
         "title": "API reference — the deployed script bundle",
-        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 465 public functions across 34 modules, 46% carrying a docstring."
+        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 474 public functions across 34 modules, 47% carrying a docstring."
       },
       {
         "id": "api-marker-lint",
@@ -2032,10 +2052,22 @@ window.PORTAL_DATA = {
         "summary": "Four Sub-Agent tracks, each running the whole loop (/specify, /design-slice, /implement) in its own worktree: P4 ships the local message layer and dispatch, P6..."
       },
       {
+        "id": "coordination-p3-xp",
+        "type": "plan",
+        "title": "Coordination plan - P3 liveness, the cross-platform residue, and the stale knowledge review (after P0/P1)",
+        "summary": "Three tracks after the P0/P1 landing: P3 progress liveness and the running track with the kick ladder (coord-core.py, hook adapters — so it waits for P1's..."
+      },
+      {
         "id": "defect-classes",
         "type": "doc",
         "title": "Defect-class register",
         "summary": "This repository's register of defect classes — the recurring shapes of things that go wrong here, what each one survives, and the control that now fails when..."
+      },
+      {
+        "id": "design-agent-coordination-doctrine",
+        "type": "design",
+        "title": "Design — the doctrine doc's structure: sections as the aggregate, CO ids as identity, a byte budget per section, and the test that pins completeness under the ceiling",
+        "summary": "Detailed design for spec-agent-coordination-doctrine. The component is a Markdown document and its pinning test: a fixed section order with a byte budget per..."
       },
       {
         "id": "design-agent-focus-controls",
@@ -2156,6 +2188,12 @@ window.PORTAL_DATA = {
         "type": "design",
         "title": "Tier-2 prose→structure: opt-in Proof-Pack sections (E7/E8, IO2) — Design",
         "summary": "Tier-2 of the prose→structure review: give E7/E8 (change-surface list + reader trace) and IO2 (operator questions) a structured home as opt-in tables in the..."
+      },
+      {
+        "id": "design-typed-seam-requests",
+        "type": "design",
+        "title": "Design — typed seam requests (the Request aggregate's rows · stale-by-blob · expire · doctor/metrics · claim --except · coord_ids monotonic stamp)",
+        "summary": "Detailed design for spec-typed-seam-requests: five request-* row kinds folded into one Request state per id in .agents/requests.jsonl, a twin `type: request`..."
       },
       {
         "id": "docs-index",
@@ -2788,6 +2826,12 @@ window.PORTAL_DATA = {
         "summary": "On 2026-09-19 the maintainer answered the proposal's four open questions and ratified four of its five design decisions; on the fifth (push channels) they..."
       },
       {
+        "id": "note-20260919-doctrine-stages-close-the-document",
+        "type": "decision-note",
+        "title": "The doctrine doc ends with its frozen sections: CO-S0 → CO-S1 → CO-S2 → CO-L close the file, and the ceiling was met by cutting prose, never a rule",
+        "summary": "Three calls made while implementing P0: the seeded CO-S0 and CO-L sections sit at the end of the doctrine doc (a byte-for-byte contract on a section that runs..."
+      },
+      {
         "id": "note-20260919-leader-release-keeps-the-epoch",
         "type": "decision-note",
         "title": "A leader release clears the holder and keeps the epoch; no verb deletes refs/coord/leader; the quiet period applies to an expiry, not to a release",
@@ -2810,6 +2854,12 @@ window.PORTAL_DATA = {
         "type": "decision-note",
         "title": "The seat key is runs_as, the CO-S0 sentence moves to reference/ where the 2% budget cannot hold it, and a dispatch instruction is a heading, a verb or a sentence-initial spawn",
         "summary": "Three decisions taken while building P8, below ADR weight: the seat is declared as the YAML key `runs_as` (the proposal wrote `Runs as:`); seven prose-input..."
+      },
+      {
+        "id": "note-20260919-seam-request-terminal-by-deadline",
+        "type": "decision-note",
+        "title": "A seam request is terminal by its deadline or it is refused; the fallback is copied onto the expire row; staleness is derived from the cited path's current blob, never stored",
+        "summary": "Four calls made while building P1: (1) `request add` refuses (exit 2) rather than defaulting a missing deadline or fallback - a default would make the..."
       },
       {
         "id": "note-autopilot-open-questions-decisions",
@@ -2974,6 +3024,12 @@ window.PORTAL_DATA = {
         "summary": "Specification for a repo-local, model-agnostic coordination layer that lets several agents and worktrees work one repository at once without losing work or..."
       },
       {
+        "id": "spec-agent-coordination-doctrine",
+        "type": "spec",
+        "title": "Spec — the doctrine home: pack/knowledge/agent-coordination.md as the always-loaded Owner / Coordinator / Sub-Agent doctrine under a 3,000-token ceiling",
+        "summary": "Specifies P0 of the coordination proposal: pack/knowledge/agent-coordination.md becomes the always-loaded doctrine for the Owner / Coordinator / Sub-Agent..."
+      },
+      {
         "id": "spec-agent-focus-controls",
         "type": "spec",
         "title": "Spec — Agent focus & scope controls (goal-state structure, bounded self-assessment, convene trigger)",
@@ -3038,6 +3094,12 @@ window.PORTAL_DATA = {
         "type": "spec",
         "title": "Native app UI skill extension — Specification",
         "summary": "Specification for extending the AI-Forward UI skills so WPF, WinUI, Avalonia and other native client applications receive the same rigorous UX/UI reasoning as..."
+      },
+      {
+        "id": "spec-typed-seam-requests",
+        "type": "spec",
+        "title": "Typed seam requests with a termination variant — coord request add|receive|ack|resolve|expire|list, claim --except, doctor and metrics",
+        "summary": "Specifies P1 of the coordination proposal: a seam request is refused unless it carries a deadline and a fallback, moves through..."
       },
       {
         "id": "threat-model",
@@ -3540,6 +3602,21 @@ window.PORTAL_DATA = {
         "rel": "relates-to"
       },
       {
+        "from": "coordination-p3-xp",
+        "to": "coordination-p0-p1",
+        "rel": "refines"
+      },
+      {
+        "from": "coordination-p3-xp",
+        "to": "plan-cross-platform-readiness",
+        "rel": "relates-to"
+      },
+      {
+        "from": "coordination-p3-xp",
+        "to": "proposal-owner-coordinator-subagent-coordination",
+        "rel": "implements"
+      },
+      {
         "from": "defect-classes",
         "to": "architecture",
         "rel": "relates-to"
@@ -3548,6 +3625,26 @@ window.PORTAL_DATA = {
         "from": "defect-classes",
         "to": "kb-domain-and-data-modelling",
         "rel": "relates-to"
+      },
+      {
+        "from": "design-agent-coordination-doctrine",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "design-agent-coordination-doctrine",
+        "to": "kb-multi-agent-coordination",
+        "rel": "relates-to"
+      },
+      {
+        "from": "design-agent-coordination-doctrine",
+        "to": "proposal-owner-coordinator-subagent-coordination",
+        "rel": "refines"
+      },
+      {
+        "from": "design-agent-coordination-doctrine",
+        "to": "spec-agent-coordination-doctrine",
+        "rel": "implements"
       },
       {
         "from": "design-agent-focus-controls",
@@ -3888,6 +3985,36 @@ window.PORTAL_DATA = {
         "from": "design-tier2-proof-pack-sections",
         "to": "design-marker-completeness-lint",
         "rel": "relates-to"
+      },
+      {
+        "from": "design-typed-seam-requests",
+        "to": "adr-0007-coordination-substrate",
+        "rel": "depends-on"
+      },
+      {
+        "from": "design-typed-seam-requests",
+        "to": "design-coord-enforcement-phase2",
+        "rel": "relates-to"
+      },
+      {
+        "from": "design-typed-seam-requests",
+        "to": "design-message-layer",
+        "rel": "relates-to"
+      },
+      {
+        "from": "design-typed-seam-requests",
+        "to": "kb-multi-agent-coordination-data",
+        "rel": "relates-to"
+      },
+      {
+        "from": "design-typed-seam-requests",
+        "to": "proposal-owner-coordinator-subagent-coordination",
+        "rel": "refines"
+      },
+      {
+        "from": "design-typed-seam-requests",
+        "to": "spec-typed-seam-requests",
+        "rel": "implements"
       },
       {
         "from": "docs-index",
@@ -4845,6 +4972,21 @@ window.PORTAL_DATA = {
         "rel": "relates-to"
       },
       {
+        "from": "note-20260919-doctrine-stages-close-the-document",
+        "to": "design-agent-coordination-doctrine",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260919-doctrine-stages-close-the-document",
+        "to": "proposal-owner-coordinator-subagent-coordination",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260919-doctrine-stages-close-the-document",
+        "to": "spec-agent-coordination-doctrine",
+        "rel": "relates-to"
+      },
+      {
         "from": "note-20260919-leader-release-keeps-the-epoch",
         "to": "note-20260919-leadership-in-a-ref-not-the-ledger",
         "rel": "relates-to"
@@ -4907,6 +5049,21 @@ window.PORTAL_DATA = {
       {
         "from": "note-20260919-readers-seat-and-citation-placement",
         "to": "spec-compile-readers",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260919-seam-request-terminal-by-deadline",
+        "to": "design-typed-seam-requests",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260919-seam-request-terminal-by-deadline",
+        "to": "proposal-owner-coordinator-subagent-coordination",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260919-seam-request-terminal-by-deadline",
+        "to": "spec-typed-seam-requests",
         "rel": "relates-to"
       },
       {
@@ -4986,6 +5143,11 @@ window.PORTAL_DATA = {
       },
       {
         "from": "privacy-review",
+        "to": "design-agent-coordination-doctrine",
+        "rel": "documents"
+      },
+      {
+        "from": "privacy-review",
         "to": "design-aiforward-cli",
         "rel": "documents"
       },
@@ -5047,6 +5209,11 @@ window.PORTAL_DATA = {
       {
         "from": "privacy-review",
         "to": "design-rai-and-scrub",
+        "rel": "documents"
+      },
+      {
+        "from": "privacy-review",
+        "to": "design-typed-seam-requests",
         "rel": "documents"
       },
       {
@@ -5340,6 +5507,36 @@ window.PORTAL_DATA = {
         "rel": "relates-to"
       },
       {
+        "from": "spec-agent-coordination-doctrine",
+        "to": "kb-multi-agent-coordination",
+        "rel": "relates-to"
+      },
+      {
+        "from": "spec-agent-coordination-doctrine",
+        "to": "note-20260919-coordination-decisions-ratified",
+        "rel": "relates-to"
+      },
+      {
+        "from": "spec-agent-coordination-doctrine",
+        "to": "proposal-owner-coordinator-subagent-coordination",
+        "rel": "refines"
+      },
+      {
+        "from": "spec-agent-coordination-doctrine",
+        "to": "spec-agent-coordination",
+        "rel": "relates-to"
+      },
+      {
+        "from": "spec-agent-coordination-doctrine",
+        "to": "spec-compile-stage",
+        "rel": "relates-to"
+      },
+      {
+        "from": "spec-agent-coordination-doctrine",
+        "to": "spec-leader-designation",
+        "rel": "relates-to"
+      },
+      {
         "from": "spec-agent-focus-controls",
         "to": "architecture",
         "rel": "relates-to"
@@ -5535,8 +5732,38 @@ window.PORTAL_DATA = {
         "rel": "depends-on"
       },
       {
+        "from": "spec-typed-seam-requests",
+        "to": "adr-0007-coordination-substrate",
+        "rel": "depends-on"
+      },
+      {
+        "from": "spec-typed-seam-requests",
+        "to": "kb-multi-agent-coordination-data",
+        "rel": "relates-to"
+      },
+      {
+        "from": "spec-typed-seam-requests",
+        "to": "proposal-owner-coordinator-subagent-coordination",
+        "rel": "refines"
+      },
+      {
+        "from": "spec-typed-seam-requests",
+        "to": "spec-agent-coordination",
+        "rel": "relates-to"
+      },
+      {
+        "from": "spec-typed-seam-requests",
+        "to": "spec-message-layer",
+        "rel": "relates-to"
+      },
+      {
         "from": "threat-model",
         "to": "architecture",
+        "rel": "documents"
+      },
+      {
+        "from": "threat-model",
+        "to": "design-agent-coordination-doctrine",
         "rel": "documents"
       },
       {
@@ -5602,6 +5829,11 @@ window.PORTAL_DATA = {
       {
         "from": "threat-model",
         "to": "design-rai-and-scrub",
+        "rel": "documents"
+      },
+      {
+        "from": "threat-model",
+        "to": "design-typed-seam-requests",
         "rel": "documents"
       },
       {
