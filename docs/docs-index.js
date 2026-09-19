@@ -6134,7 +6134,7 @@ window.DOCS_INDEX = {
       "path": "docs/coordination/coordination-compile-stage.md",
       "title": "Coordination plan - compile stage (P7): two tracks and a join",
       "type": "plan",
-      "status": "proposed",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "coordination",
       "reviewBy": "2026-12-18",
@@ -6162,7 +6162,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7ecf463297e73f8192e1544b5727708b8b87c1c3bfed97f6b8672f99dc9adb56"
+      "sourceSha256": "45f44b8504bf06116ca28141a13e144f415cc0f800ff21e93d7ca2d917f76d22"
     },
     {
       "id": "privacy-review",
@@ -7061,5 +7061,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "2705fb11254270b150de2f79ab2464ccec17ad138d95b43941715487b2f39d94"
+  "graphSha256": "ecea36a36c213379006e69154c1f790cd7aaf2861ff1d2bd2fa1b19d1a33147c"
 };

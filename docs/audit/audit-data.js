@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-19T17:18:58Z",
+  "generated": "2026-09-19T17:24:07Z",
   "audit": [
     {
       "actor": null,
@@ -5133,6 +5133,67 @@ window.AUDIT_DATA = {
       },
       "mode": "compiled",
       "dispatchable": false
+    },
+    {
+      "id": "al-01M2XB4R1101KKPFKCH2A9VV1S",
+      "shortname": "coordinate-compile-stage",
+      "datetime": "2026-09-19T17:24:07Z",
+      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
+      "prompt": "then use the owner-coordinator-sub.agent model to go through the whole design-slice/implement loop to get this spec implemented",
+      "summary": "Track A (python-developer, tree impl/compile-stage-a): prompt-compile.py, verify-compiled-prompt.py (nine directions; bare form = self-test), two v1 templates under pack/templates/prompt-templates, 42 tests, 31 eval fixtures; 52/90 calls, 14 of 90 min; two coordinator seams applied (template location, argument-free gate). Track B (python-developer, tree impl/compile-stage-b): audit-log kind compilation + --compiled-from/--edit-distance + compiled:false, prompt-log twins, /compile skill (1,581 tokens), Copilot prompt, eval case, agent-coordination.md seeded with CO-S0, one Stage-0 sentence in two skills; 15 tests; 33/70 calls, 8 of 60 min. Coordinator verified every exit claim by re-running it in the track's tree (E16), committed each track, joined B then A by conductor-join.py (recount + run-verify-gates green both times), applied counts (28 skills, 39 knowledge docs, 32 scripts), INSTALL rev 76, class PACK-V + its red-first test (type plan registered in docs-graph), portal editorial entries, skills baseline; e2e compile: skeleton 0.086 s, gate pass, finish exit 0, entry al-01M2XAV9RG8HDKPDZ2EEX80JSG. Parallelism paid: span 14 min vs 22 min serial; zero refused decisions, zero edits outside a lease. Interpretations recorded by A (engine_seconds null in the skeleton, measured at finish; raw_id read back by text match) accepted.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/coordination/coordination-compile-stage.md",
+        "pack/scripts/prompt-compile.py",
+        "pack/commands/compile/SKILL.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Both tracks of coordination-compile-stage dispatched as Sub-Agents in their own worktrees under five-part contracts, their exit evidence verified (not accepted), joined by conductor-join.py B then A, the coordinator's surfaces applied, the end-to-end compile run against the real audit log, gates green, landed on main as one linear commit.",
+      "done_when": "join commits present with recount and run-verify-gates green; e2e finish exit 0 with a kind:compilation entry; verify-bundle 12/14 (gate 2 = own uncommitted files / gate 3 = three pre-existing master-branch tests); linear commit pushed over SSH; pack-consistency run green on three runners; planned vs actual recorded in the plan.",
+      "tier": "T2",
+      "main_calls": 44,
+      "main_budget": 60,
+      "main_over_budget": false,
+      "fan_out": 2,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "duration_source": "session-start-hook",
+      "started_at": "2026-09-19T17:03:55Z",
+      "duration_seconds": 1212.0,
+      "agent_runs": [
+        {
+          "agent": "python-developer",
+          "started_at": "2026-09-19T17:03:11Z",
+          "ended_at": "2026-09-19T17:17:00Z",
+          "duration_seconds": 829.0,
+          "calls": 52,
+          "budget_calls": 90,
+          "over_budget": false
+        },
+        {
+          "agent": "python-developer",
+          "started_at": "2026-09-19T17:04:03Z",
+          "ended_at": "2026-09-19T17:12:00Z",
+          "duration_seconds": 477.0,
+          "calls": 33,
+          "budget_calls": 70,
+          "over_budget": false
+        }
+      ],
+      "parallelism": {
+        "agent_seconds": 1306.0,
+        "span_seconds": 829.0,
+        "speedup": 1.58,
+        "peak_concurrency": 2
+      }
     }
   ],
   "changes": [

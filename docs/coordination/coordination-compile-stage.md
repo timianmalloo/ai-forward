@@ -2,7 +2,7 @@
 id: coordination-compile-stage
 title: "Coordination plan - compile stage (P7): two tracks and a join"
 type: plan
-status: proposed
+status: accepted
 owner: "@timianmalloo"
 phase: "coordination"
 tags: [coordination, worktrees, parallelism, compile, p7]
@@ -98,9 +98,20 @@ Both tracks: `audit-log.py start --session <track-id> --skill implement` is the 
 | 7 | commit (conventional, one for A+B+join or three), rebase on `origin/main`, push over SSH, watch CI; `coord worktree cleanup` (report; `--remove` only for clean, merged, unheld trees) | 10 min | linear history on `main`; trees closed |
 | 8 | `/session-profiler` on the three sessions: did the division pay? | later | planned vs actual for the next plan |
 
+## Planned vs actual (2026-09-19, execution)
+| track | budget planned | actual | seam requests | boundary corrections | exit evidence verified by the coordinator |
+|---|---|---|---|---|---|
+| A — engine, gate, templates | 90 calls · 90 min | 52 calls · 14 min (17:03Z → 17:17Z) | 2, both raised by the coordinator (templates under `pack/templates/prompt-templates` so the existing sync rule deploys them; argument-free `verify-compiled-prompt.py` = self-test so `run-verify-gates.py` counts it) | 0 | self-tests exit 0 (nine directions; render three cases); 42 passed; lints 1b/1c/1d exit 0 — re-run in the track's tree, then committed `cf0d466` |
+| B — audit fields, skill, knowledge | 70 calls · 60 min | 33 calls · 8 min (17:04Z → 17:12Z) | 0 | 0 (one addition inside its surface: the `skills:` frontmatter line an existing test requires) | 100 passed incl. `test_context_budget`; skills gate exit 0 (compile ≈ 1,581 tokens); lints exit 0 — re-run in the track's tree, then committed `ea9cdff` |
+| Coordinator | — | joins ≈ 10 min each; counts, INSTALL rev 76, PACK-V, editorial, sync, e2e, gates ≈ 40 min | — | 1 (docs-graph `TYPES` lacked `plan`: class PACK-V, red-first test) | join B `1d74acf`, join A `b005fd5`: recount + `run-verify-gates` green both times; e2e `finish` exit 0 → `al-01M2XAV9RG8HDKPDZ2EEX80JSG`; verify-bundle 12/14 on the clean tree (gate 3 = the three pre-existing `master`-branch tests) |
+
+**Did the parallelism pay?** Yes, narrowly: the two tracks overlapped for their whole span (14 min wall vs ≈ 22 min serial) at roughly 2× the tokens of one session, below the 3× stated. The isolation paid more than the speed: neither track's context carried the other's file, and both returned under half their budgets. **Refused decisions:** 0. **Edits outside a lease:** 0. **Interpretations recorded by A and accepted:** `engine_seconds` is null in the skeleton (so the determinism golden test holds) and measured at `finish`; `raw_id` is read back as the newest `kind:prompt` entry whose text equals the input because `prompt-log.py add` prints the label, not the id — a follow-up for `prompt-log.py` to print the id.
+
+**Findings carried forward (not new goals):** the consuming skills' `dispatchable` stop, the readers (`session-profiler`, `dream`), the twelve other prose-input skills' CO-S0 citation and the viewer's `compiled` badge are P8; templates for Copilot, Grok and Antigravity wait for P4; `prompt-log.py add` should print the new entry's id.
+
 ## Status
 | | |
 |---|---|
 | **Completed** | layer state measured; classes recorded; two tracks with owners, budgets and exit evidence; serial spine; seams; struck tracks; order of operations |
-| **Remaining** | execution (`/execute-with-coordination --agents`), the join, the coordinator's surfaces, P8 readers |
-| **Best next action** | `/execute-with-coordination --agents coordination-compile-stage` |
+| **Remaining** | P8 readers and the consuming skills' `dispatchable` stop; other harness templates after P4; `prompt-log.py add` printing the id |
+| **Best next action** | `/session-profiler` over sessions compile-a, compile-b and the coordinator: did the division pay by the profiler's measure, not the coordinator's |
