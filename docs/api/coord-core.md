@@ -41,6 +41,7 @@ Design: docs/design/coord-core-phase1.md
 |---|---|
 | `add` | append an open seam request |
 | `allocate` | one collision-proof identifier |
+| `board` | board [--follow] | board post (delegates to coord-board.py) |
 | `check` | may this session touch this path? |
 | `claim` | declare intent over an artifact set |
 | `class` | what class is this artifact? |
@@ -50,7 +51,9 @@ Design: docs/design/coord-core-phase1.md
 | `guard` | refuse to move HEAD over work held in one place |
 | `hook` | PreToolUse adapter: stdin JSON in, decision JSON out |
 | `install` | write the pre-commit hook; print the settings entry |
+| `leader` | _(no help text — coverage gap)_ |
 | `list` | list seam requests |
+| `mail` | send | read | ack | dispatch (delegates to coord-mail.py) |
 | `merge-derived` | the .gitattributes merge driver (always 0) |
 | `merge-register` | union two append-only registers (always 0) |
 | `metrics` | the four measures this layer exists to move |
@@ -58,10 +61,12 @@ Design: docs/design/coord-core-phase1.md
 | `precommit` | the universal floor: refuse unclaimed staged paths |
 | `regen` | run the regenerations the driver deferred |
 | `release` | drop a lease |
+| `renew` | extend the holder's designation (holder only) |
 | `request` | record or resolve a seam request |
 | `resolve` | resolve a seam request |
 | `session` | one session per working tree |
 | `tail` | the merged chronological stream |
+| `who` | who leads, as of which epoch, until when |
 | `worktree` | session worktree lifecycle: new | list | cleanup |
 
 ## CLI — options
@@ -75,11 +80,13 @@ Design: docs/design/coord-core-phase1.md
 | `--fix` | push, the cheapest second copy |
 | `--force` | install from a linked worktree anyway. It overwrites the repository's shared registration with a path that dies with this tree - the recorded exception, never the default |
 | `--from-role` | _(no help text — coverage gap)_ |
+| `--host` | harness name recorded in the blob (default $AGENT_HOST) |
 | `--include-unmerged` | cleanup: also remove a clean tree whose branch has commits NOT on the default branch (a pushed but unmerged branch is HELD by default - DC-142). The count is printed either way. |
 | `--json` | _(no help text — coverage gap)_ |
 | `--long-edit` | the recorded reason for a --ttl above the cap; it is written into the claim event so a queued peer can read why it waits |
 | `--path` | _(no help text — coverage gap)_ |
 | `--reason` | _(no help text — coverage gap)_ |
+| `--reclaim` | the same path as `reclaim`: over an EXPIRED designation, after the quiet period |
 | `--register` | _(no help text — coverage gap)_ |
 | `--remove` | cleanup: actually delete. Off by default - deletion is irreversible |
 | `--resolution` | _(no help text — coverage gap)_ |
@@ -201,6 +208,47 @@ Append one JSONL row to a small operator ledger.
 **Coverage gap** — no docstring in the source.
 
 ### `fold_requests(events)`
+
+**Coverage gap** — no docstring in the source.
+
+### `leader_validate(record)`
+
+The blob's contract; anything else is NOT CHECKED, never a leader and never absent.
+
+### `leader_read(repo)`
+
+(record, oid, err). (None, None, None) is ABSENT - a read that succeeded and found no
+ref. Every failure is err - rendered NOT CHECKED, never "absent" (R4).
+
+### `leader_state(record, now)`
+
+absent | live | expired | released - derived on every read, never stored (DM7).
+
+### `leader_decide(action, record, now, me, target, ttl, host=…, tree=…)`
+
+Pure: (new_record, None) or (None, refusal). Touches neither git nor the clock.
+
+The invariant it holds (with the CAS in leader_write): at most one live designation, and
+the epoch advances by exactly one on every change of holder - never on a renew.
+
+### `leader_write(repo, record, old_oid)`
+
+hash-object then `update-ref <ref> <new> <old>`: the ONLY writer, and the CAS.
+
+No `-d`, no `--force`, no `--force-with-lease` anywhere in this file (SPK-2: `--force`
+silently overrides the lease); a test walks every git argv here to keep it so.
+
+### `leader_metrics(events)`
+
+The three measures P2 exists to move (proposal §7, P2). R4: an empty corpus is a
+reason, never a zero.
+
+### `leader_doctor_line(repo, now)`
+
+(line, is_problem) for `coord doctor`: the holder, the epoch, the time left - or
+NOT CHECKED, which counts as a problem because a fence cannot run over it.
+
+### `cmd_leader(root, repo, action, args, session, agent, cwd, now)`
 
 **Coverage gap** — no docstring in the source.
 
@@ -642,6 +690,6 @@ follows by printing the settings entry rather than writing it.
 
 ## Coverage
 
-- Public functions: **68** · documented: **45** (**66%**)
-- Undocumented (recorded, not invented): `make_event`, `check`, `read_decisions`, `request_log_path`, `read_request_events`, `fold_requests`, `regen_command`, `record_regen_owed`, `regen_owed`, `clear_regen_owed`, `detect_harness`, `cmd_precommit`, `cmd_guard`, `session_contract_path`, `owner_rows_for_path`, `cmd_session_list`, `cmd_collaborate`, `cmd_request`, `cmd_worktree`, `cmd_session`, `cmd_metrics`, `cmd_install`, `cmd_doctor`
+- Public functions: **76** · documented: **52** (**68%**)
+- Undocumented (recorded, not invented): `make_event`, `check`, `read_decisions`, `request_log_path`, `read_request_events`, `fold_requests`, `cmd_leader`, `regen_command`, `record_regen_owed`, `regen_owed`, `clear_regen_owed`, `detect_harness`, `cmd_precommit`, `cmd_guard`, `session_contract_path`, `owner_rows_for_path`, `cmd_session_list`, `cmd_collaborate`, `cmd_request`, `cmd_worktree`, `cmd_session`, `cmd_metrics`, `cmd_install`, `cmd_doctor`
 

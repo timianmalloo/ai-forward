@@ -9,7 +9,7 @@ links:
   - { to: architecture, rel: documents }
 review-by: "2027-03-03"
 summary: >-
-  Generated API reference for the pack's public surface — the deployed script bundle. 409 public functions across 31 modules, 45% carrying a docstring.
+  Generated API reference for the pack's public surface — the deployed script bundle. 465 public functions across 34 modules, 46% carrying a docstring.
 ---
 
 # API reference — the deployed script bundle
@@ -24,11 +24,13 @@ with no docstring is listed as a **coverage gap** rather than described from gue
 | Module | Public fns | Documented | CLI | Summary |
 |---|---:|---:|---:|---|
 | [`apply-learnings.py`](apply-learnings.md) | 16 | 9 | 2 | apply-learnings.py - the AI-Forward federation / push mechanism. |
-| [`audit-log.py`](audit-log.md) | 39 | 22 | 13 | audit-log.py — the AI-Forward Pack audit & change log bundle (audit-and-change-log.md). |
+| [`audit-log.py`](audit-log.md) | 40 | 23 | 13 | audit-log.py — the AI-Forward Pack audit & change log bundle (audit-and-change-log.md). |
 | [`bounded_process.py`](bounded_process.md) | 1 | 1 | — | Bounded subprocess execution for pack-owned tool invocations. |
-| [`conductor-join.py`](conductor-join.md) | 4 | 2 | — | conductor-join.py - the join, as a script: every step gated by its exit code, none by a |
+| [`conductor-join.py`](conductor-join.md) | 5 | 3 | — | conductor-join.py - the join, as a script: every step gated by its exit code, none by a |
 | [`context-budget.py`](context-budget.md) | 21 | 12 | 6 | context-budget.py — the always-on context budget, measured (AI-Forward Pack). |
-| [`coord-core.py`](coord-core.md) | 68 | 45 | 24 | coord-core.py - agent coordination, Phase 1 walking skeleton. |
+| [`coord-board.py`](coord-board.md) | 14 | 7 | 2 | coord-board.py — the board: human transparency over agent messages (spec-board, D12). |
+| [`coord-core.py`](coord-core.md) | 76 | 52 | 29 | coord-core.py - agent coordination, Phase 1 walking skeleton. |
+| [`coord-mail.py`](coord-mail.md) | 22 | 5 | 4 | coord-mail.py - the local message layer: per-session inbox files, ledger twins, bounded dispatch. |
 | [`coord_ids.py`](coord_ids.md) | 2 | 2 | — | coord_ids.py - collision-proof identifiers, in ONE place. |
 | [`design-lint.py`](design-lint.md) | 3 | 2 | — | design-lint.py — token-reference linter for design-language docs (AI-Forward). |
 | [`docs-graph.py`](docs-graph.md) | 37 | 3 | 10 | docs-graph.py — the AI-Forward Pack docs script bundle (knowledge-visualization.md V18). |
@@ -38,22 +40,23 @@ with no docstring is listed as a **coverage gap** rather than described from gue
 | [`marker-lint.py`](marker-lint.md) | 1 | 0 | — | marker-lint.py - completeness check for the pack's inline decision markers. |
 | [`obsidian-setup.py`](obsidian-setup.md) | 17 | 7 | — | obsidian-setup.py - stand up (and analyze) the Obsidian lens over an AI-Forward docs graph. |
 | [`pack-apply.py`](pack-apply.md) | 15 | 8 | — | pack-apply.py — apply the AI-Forward deployment map to a repo, mechanically and reversibly. |
-| [`pack-doctor.py`](pack-doctor.md) | 13 | 8 | — | pack-doctor.py — AI-Forward install-health check (deployable; runs in a TARGET repo). |
+| [`pack-doctor.py`](pack-doctor.md) | 14 | 9 | — | pack-doctor.py — AI-Forward install-health check (deployable; runs in a TARGET repo). |
 | [`prompt-compile.py`](prompt-compile.md) | 22 | 7 | 4 | prompt-compile.py - the compile stage: a logged raw prompt -> a gated, harness-rendered prompt. |
 | [`prompt-log.py`](prompt-log.md) | 18 | 7 | 8 | prompt-log.py — the fast prompt-reuse lens over the project's audit log. |
 | [`repo_identity.py`](repo_identity.md) | 1 | 1 | — | repo_identity.py - the canonical project name, in ONE place (class PACK-P). |
 | [`run-verify-gates.py`](run-verify-gates.md) | 5 | 3 | — | run-verify-gates.py - every verify-*.py gate, one exit status, no pipe. |
 | [`scrub.py`](scrub.md) | 2 | 2 | — | scrub.py — first-pass PII/secret redaction for Markdown (deployable). |
-| [`session-profile.py`](session-profile.md) | 37 | 17 | 4 | session-profile.py — measure how agent sessions actually ran, across harnesses and models. |
+| [`session-profile.py`](session-profile.md) | 41 | 20 | 5 | session-profile.py — measure how agent sessions actually ran, across harnesses and models. |
 | [`ui-craft-gate.py`](ui-craft-gate.md) | 6 | 4 | — | ui-craft-gate.py - the UI craft gate for AI-Forward. |
 | [`verify-compiled-prompt.py`](verify-compiled-prompt.md) | 9 | 5 | 1 | verify-compiled-prompt.py - the compile-stage gate: a compiled prompt never adds scope. |
 | [`verify-no-conflict-markers.py`](verify-no-conflict-markers.md) | 4 | 3 | — | verify-no-conflict-markers.py - a conflict marker must never reach a commit. |
 | [`verify-no-machine-paths.py`](verify-no-machine-paths.md) | 4 | 1 | — | verify-no-machine-paths.py - a tracked, machine-readable file never carries one machine's paths. |
 | [`verify-no-new-console-launches.py`](verify-no-new-console-launches.md) | 3 | 1 | — | verify-no-new-console-launches.py - no code launches a child with CREATE_NEW_CONSOLE. |
 | [`verify-portable-text-io.py`](verify-portable-text-io.md) | 3 | 0 | — | verify-portable-text-io.py - text the pack writes is LF and UTF-8 on every OS, and every CLI survives a legacy |
+| [`verify-skill-contracts.py`](verify-skill-contracts.md) | 5 | 2 | — | verify-skill-contracts.py - every skill declares its seat and cites the shared stage its shape needs. |
 | [`verify-subprocess-utf8.py`](verify-subprocess-utf8.md) | 3 | 1 | — | verify-subprocess-utf8.py - a text-mode subprocess states its encoding; the locale never decides. |
 | [`visual-assets-setup.py`](visual-assets-setup.md) | 12 | 5 | — | visual-assets-setup.py - wire up a generation backend for UI visual assets (AI-Forward). |
 | [`xaml-token-lint.py`](xaml-token-lint.md) | 9 | 0 | — | xaml-token-lint.py — first-slice token linter for XAML/native UI markup. |
 
-**Total** — 409 public functions across 31 modules, **186 documented (45%)**.
+**Total** — 465 public functions across 34 modules, **213 documented (46%)**.
 

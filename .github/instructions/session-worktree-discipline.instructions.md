@@ -158,6 +158,11 @@ declined to remove and the condition that stopped it. A cleanup that silently sk
 indistinguishable from a cleanup that found nothing, and the difference is exactly the
 information the human needs.
 
+**The join carries the leader's epoch (S3).** When several sessions share one repository under a
+designated leader, the join is run as `conductor-join.py --epoch <n>` with the epoch from
+`coord leader who`; a lower epoch or an unread `refs/coord/leader` is refused before the merge
+(exit 11), never merged and sorted out afterwards (`agent-coordination.md` CO-L).
+
 ---
 
 ## 4. Self-verification checklist

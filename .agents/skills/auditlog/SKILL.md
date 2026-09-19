@@ -1,6 +1,7 @@
 ---
 name: auditlog
 description: The command-line lens over the project's audit & change log — see the last N actions, search the history by session, date, or keyword, copy or re-run a past prompt, toggle to the meaningful-change timeline, and surface decisions not yet captured. Use to recall what was done or decided in this repo (across sessions), to redo a prior prompt, or to open the interactive timeline viewer. Reads the durable, committed history every skill writes to.
+runs_as: either
 ---
 
 # Skill: /auditlog

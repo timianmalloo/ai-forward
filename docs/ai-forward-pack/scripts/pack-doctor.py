@@ -14,7 +14,7 @@ Usage
   pack-doctor.py [--root <repo>] [--json] [--strict]
 Exit: 0 all PASS/WARN (or all PASS under --strict) · 1 any FAIL/strict WARN.
 """
-import argparse, json, os, re, shutil, sys
+import argparse, json, os, re, shutil, subprocess, sys
 
 from bounded_process import run_bounded
 
@@ -311,6 +311,117 @@ def check_graph(root):
 
 
 
+def _git_lines(root, *args):
+    """git output lines, or None when git is unavailable or root is not a checkout."""
+    try:
+        proc = subprocess.run(["git", "-C", root, *args], capture_output=True, text=True,
+                              encoding="utf-8", timeout=30, check=False)
+    except (OSError, subprocess.SubprocessError):
+        return None
+    if proc.returncode not in (0, 1):
+        return None
+    return proc.returncode, [line for line in proc.stdout.splitlines() if line.strip()]
+
+
+def _jsonl_rows(path):
+    rows = []
+    try:
+        with open(path, encoding="utf-8") as handle:
+            for line in handle:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    row = json.loads(line)
+                except ValueError:
+                    continue
+                if isinstance(row, dict):
+                    rows.append(row)
+    except OSError:
+        return rows
+    return rows
+
+
+def check_mail(root):
+    """The message layer's invariants (design-message-layer section 9; D10).
+
+    mail dir         FAIL when anything under .agents/mail/ is tracked (bodies would reach git)
+    ledger tracking  FAIL when .agents/log/ is ignored (D10 tracks the ledgers by default)
+    mail twins       FAIL naming every state-changing mail id with no {"type":"mail"} ledger twin
+    doorbells        one line per harness from .agents/harness-status.json; absent -> "not recorded"
+    """
+    results = []
+    agents = os.path.join(root, ".agents")
+    tracked = _git_lines(root, "ls-files", "--", ".agents/mail")
+    if tracked is None:
+        results.append(_result("mail dir", PASS, "not a git checkout here (nothing can be tracked)"))
+    elif tracked[1]:
+        results.append(_result("mail dir", FAIL, "tracked: " + ", ".join(tracked[1][:3]),
+                               "git rm --cached -r .agents/mail && add `.agents/mail/` to .gitignore "
+                               "(mail bodies are machine-local; pack-apply writes the line)"))
+    else:
+        results.append(_result("mail dir", PASS, ".agents/mail/ is not tracked"))
+    ignored = _git_lines(root, "check-ignore", "-q", "--", ".agents/log/probe.jsonl")
+    if ignored is None:
+        results.append(_result("ledger tracking", PASS, "not a git checkout here (nothing is ignored)"))
+    elif ignored[0] == 0:
+        results.append(_result("ledger tracking", FAIL,
+                               ".agents/log/ is ignored - D10 tracks the coord ledgers by default so git "
+                               "carries the mail twins across machines",
+                               "add `!.agents/log/` after the `.agents/*` line in .gitignore (D10; pack-apply writes it)"))
+    else:
+        results.append(_result("ledger tracking", PASS, ".agents/log/ is tracked (D10)"))
+    mail_dir = os.path.join(agents, "mail")
+    inbox_only = {"note", "ack", "nack"}
+    if not os.path.isdir(mail_dir):
+        results.append(_result("mail twins", PASS, "no inboxes present (nothing to check)"))
+    else:
+        twins = set()
+        log_dir = os.path.join(agents, "log")
+        if os.path.isdir(log_dir):
+            for name in sorted(os.listdir(log_dir)):
+                if name.endswith(".jsonl"):
+                    for row in _jsonl_rows(os.path.join(log_dir, name)):
+                        if row.get("type") == "mail" and row.get("mail_id"):
+                            twins.add(row["mail_id"])
+        missing = []
+        for name in sorted(os.listdir(mail_dir)):
+            if not name.endswith(".jsonl"):
+                continue
+            for row in _jsonl_rows(os.path.join(mail_dir, name)):
+                kind = row.get("kind")
+                if kind and kind not in inbox_only and row.get("id") and row["id"] not in twins:
+                    missing.append("{0} ({1})".format(row["id"], kind))
+        if missing:
+            results.append(_result("mail twins", FAIL,
+                                   "{0} state-changing mail(s) with no ledger twin: {1}".format(
+                                       len(missing), ", ".join(missing[:3])),
+                                   "re-issue the twin through coord-mail.py (append_mail is the only writer) "
+                                   "or check that .agents/log/ was not deleted"))
+        else:
+            results.append(_result("mail twins", PASS, "every delegate/ruling/... has its ledger twin"))
+    status_path = os.path.join(agents, "harness-status.json")
+    if not os.path.isfile(status_path):
+        results.append(_result("doorbells", PASS, "not recorded (run coord-mail.py dispatch to probe a harness)"))
+    else:
+        try:
+            with open(status_path, encoding="utf-8") as handle:
+                data = json.load(handle)
+        except (OSError, ValueError) as exc:
+            data = None
+            results.append(_result("doorbells", FAIL, "harness-status.json unreadable ({0})".format(exc),
+                                   "delete .agents/harness-status.json and re-run coord-mail.py dispatch"))
+        if isinstance(data, dict):
+            parts = []
+            for harness in sorted(data):
+                row = data[harness] if isinstance(data[harness], dict) else {}
+                parts.append("{0}: {1} ({2}, {3})".format(harness, row.get("status", "unsupported"),
+                                                          row.get("version") or "version not recorded",
+                                                          row.get("date") or "undated"))
+            results.append(_result("doorbells", PASS, "; ".join(parts) or "no harness recorded"))
+    return results
+
+
 def _command_head(command):
     """The first word of a registry command: a quoted path as one token, else up to the
     first space. `"C:\\Program Files\\Python\\python.exe" x.py` -> the path; `python3 x.py`
@@ -581,6 +692,7 @@ def run(root):
         check_graph(root),
         check_coordination(root),
     ]
+    checks.extend(check_mail(root))
     return checks
 
 

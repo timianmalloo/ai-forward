@@ -673,7 +673,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a0b0764d4ef5c3850f6db4c9e9515b1ba1f6854182b1e2440674560c653d095c"
+      "sourceSha256": "ba52f37e6adae417de4620f1c20785f550de0a69e05314f91a24a38466a28c49"
     },
     {
       "id": "api-bounded_process",
@@ -723,7 +723,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "8644fd61e0c6ec5f0355a65965b565345f5d3e9989cec789b49e582f61da7d7e"
+      "sourceSha256": "48cbf76b1b4889d394dd35241fab5cd14a98284c6a6abfc6b0de7e7babd81bf2"
     },
     {
       "id": "api-context-budget",
@@ -751,6 +751,31 @@ window.DOCS_INDEX = {
       "sourceSha256": "df1daf4fe3ffc191577bb5434c53e1b6997d73b002d30cd1446b2779021e1e30"
     },
     {
+      "id": "api-coord-board",
+      "path": "docs/api/coord-board.md",
+      "title": "API — coord-board.py",
+      "type": "api",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-03-03",
+      "reviewSuggested": [],
+      "summary": "coord-board.py — the board: human transparency over agent messages (spec-board, D12).",
+      "tags": [
+        "api",
+        "scripts",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "api-index",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "4a4f4e78d1ba8d821231248cb8d75f15b4f5dfaf072b76ee06636dbefb19e3f0"
+    },
+    {
       "id": "api-coord-core",
       "path": "docs/api/coord-core.md",
       "title": "API — coord-core.py",
@@ -773,7 +798,32 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7a35b9db1ad5d2914316d10b8ea78e09a8beb716c5c596a6cdb971fe90781c66"
+      "sourceSha256": "9b05cd7ae371b1d149ce586686bb150f297d2e66f200ccadf9c11859b787256d"
+    },
+    {
+      "id": "api-coord-mail",
+      "path": "docs/api/coord-mail.md",
+      "title": "API — coord-mail.py",
+      "type": "api",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-03-03",
+      "reviewSuggested": [],
+      "summary": "coord-mail.py - the local message layer: per-session inbox files, ledger twins, bounded dispatch.",
+      "tags": [
+        "api",
+        "scripts",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "api-index",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "e6e0d4850cea3f5b65c5ee6c34b4ce23fde14502d36d80a07ee9c5c31dab5bb7"
     },
     {
       "id": "api-coord_ids",
@@ -935,7 +985,7 @@ window.DOCS_INDEX = {
       "phase": "",
       "reviewBy": "2027-03-03",
       "reviewSuggested": [],
-      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 409 public functions across 31 modules, 45% carrying a docstring.",
+      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 465 public functions across 34 modules, 46% carrying a docstring.",
       "tags": [
         "api",
         "scripts",
@@ -949,7 +999,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "bb62254e9eb7d3b66931606428c49df9dccb8197927fc82eaa7d62f93cca750b"
+      "sourceSha256": "e1e22fb0ecaa425e00313f656d25e354843b9d504dcbc843bdb88795d8206b8a"
     },
     {
       "id": "api-marker-lint",
@@ -1049,7 +1099,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f0d2b1100e9d5d4e443027c284db99a24475abfb9d954dad59093c8a2fc98d8e"
+      "sourceSha256": "ebe782e0767fae1e315fa2378509066986e8e0affbb1f8613012c890fb66e67d"
     },
     {
       "id": "api-prompt-compile",
@@ -1199,7 +1249,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "00eba82a5d78f607dad712a181abd45a048a6b89012b91fe6967a713d5996004"
+      "sourceSha256": "ac2e670cd94128d6df8aa9bec7a56e8ed9cdf6ba4503e67f2397d1ab5befebb5"
     },
     {
       "id": "api-ui-craft-gate",
@@ -1350,6 +1400,31 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "2abbfe9a815d901d7316e0cd6ab9f50ae700229ed698f4388f64f2d18529983f"
+    },
+    {
+      "id": "api-verify-skill-contracts",
+      "path": "docs/api/verify-skill-contracts.md",
+      "title": "API — verify-skill-contracts.py",
+      "type": "api",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-03-03",
+      "reviewSuggested": [],
+      "summary": "verify-skill-contracts.py - every skill declares its seat and cites the shared stage its shape needs.",
+      "tags": [
+        "api",
+        "scripts",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "api-index",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "d33c90585fcfbfe128d5d74f1b11566a0c0c55982b3cfdd3a21e9ca35c469914"
     },
     {
       "id": "api-verify-subprocess-utf8",
@@ -1825,6 +1900,47 @@ window.DOCS_INDEX = {
       "sourceSha256": "61c49b570b70d73f053de18c0d53a133ecb5e03351aec045e413c91dd82a5219"
     },
     {
+      "id": "note-20260919-board-read-model",
+      "path": "docs/notes/note-20260919-board-read-model.md",
+      "title": "Board decisions: acks are not on the page, reading never writes, the writer is imported by path",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-03-18",
+      "reviewSuggested": [],
+      "summary": "Three sub-ADR decisions taken while building P6 (the board): the audit explorer's Messages view shows \"ack: not recorded here\" because acks are not twinned to the ledger by contract; the board emits nothing on read, so its read-rate (the reopen trigger) is measured from the shell history and the session profiler; and board post reaches the inbox only through P4's append_mail() imported by path, with a --writer override that the tests fill with a fixture.",
+      "tags": [
+        "decision-note",
+        "coordination",
+        "board",
+        "mail",
+        "ledger",
+        "p6",
+        "d12"
+      ],
+      "links": [
+        {
+          "to": "spec-board",
+          "rel": "relates-to"
+        },
+        {
+          "to": "design-board",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "refines"
+        },
+        {
+          "to": "note-20260919-coordination-decisions-ratified",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "4929d8ca7bd82d2cf08c6e9c4c8bf74947f70b90f99d500836bea552a82abe6c"
+    },
+    {
       "id": "note-20260919-compilation-is-an-audit-kind",
       "path": "docs/notes/note-20260919-compilation-is-an-audit-kind.md",
       "title": "A compilation is its own audit kind, and its prompt field is the rendered text",
@@ -1900,6 +2016,41 @@ window.DOCS_INDEX = {
       "sourceSha256": "ff7909392f851cd8ffe7a6d58a25463965085d779877c2d04883407898017f16"
     },
     {
+      "id": "note-20260919-leader-release-keeps-the-epoch",
+      "path": "docs/notes/note-20260919-leader-release-keeps-the-epoch.md",
+      "title": "A leader release clears the holder and keeps the epoch; no verb deletes refs/coord/leader; the quiet period applies to an expiry, not to a release",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-03-18",
+      "reviewSuggested": [],
+      "summary": "If `coord leader release` deleted the ref, the next pin would restart at epoch 1 and the join fence would let a stale epoch-2 plan through; so release writes `leader: null` with the epoch kept, and every later pin or reclaim advances it. The 30 s quiet period guards an invalidated holder that may still be writing; a holder that released knows it is done, so a pin after a release is immediate. Blast radius: the five verbs, the fence, the metrics' leader-loss count.",
+      "tags": [
+        "decision-note",
+        "coordination",
+        "leader",
+        "epoch",
+        "fencing"
+      ],
+      "links": [
+        {
+          "to": "spec-leader-designation",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-20260919-leadership-in-a-ref-not-the-ledger",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "5a68ddcb7e6cd58036eaa59f9d28cbce20762facf8a2da62e7867e43dccb1f12"
+    },
+    {
       "id": "note-20260919-leadership-in-a-ref-not-the-ledger",
       "path": "docs/notes/note-20260919-leadership-in-a-ref-not-the-ledger.md",
       "title": "Leadership is held in a git ref by compare-and-swap; the union-merged ledger only records it",
@@ -1933,6 +2084,84 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "8caab81356b8f554a5435c829a577ddcb3435392d777c58565b18acc694d04a8"
+    },
+    {
+      "id": "note-20260919-mail-store-deviations",
+      "path": "docs/notes/note-20260919-mail-store-deviations.md",
+      "title": "The mail store keeps the fixed contract with three named additions: a broadcast file, prefixed ULIDs, and colocated acks",
+      "type": "decision-note",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "coordination P4",
+      "reviewBy": "2026-12-18",
+      "reviewSuggested": [],
+      "summary": "Three shapes the fixed mail contract left open are settled here and raised to the coordinator and Track P6 as seam requests before any line was written; blast radius is P6's fold (file glob, id ordering, acked? derivation) and nothing else.",
+      "tags": [
+        "decision-note",
+        "coordination",
+        "mail",
+        "p4",
+        "p6"
+      ],
+      "links": [
+        {
+          "to": "spec-message-layer",
+          "rel": "relates-to"
+        },
+        {
+          "to": "design-message-layer",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "6f91e6ae708dc7b70e88705d898adb9e0d50fa38b883d824d0e1fb81e0626d8a"
+    },
+    {
+      "id": "note-20260919-readers-seat-and-citation-placement",
+      "path": "docs/notes/note-20260919-readers-seat-and-citation-placement.md",
+      "title": "The seat key is runs_as, the CO-S0 sentence moves to reference/ where the 2% budget cannot hold it, and a dispatch instruction is a heading, a verb or a sentence-initial spawn",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-03-19",
+      "reviewSuggested": [],
+      "summary": "Three decisions taken while building P8, below ADR weight: the seat is declared as the YAML key `runs_as` (the proposal wrote `Runs as:`); seven prose-input skills carry the CO-S0 sentence in reference/co-s0.md behind a one-line pointer because their recorded baseline + 2% cannot hold 54 tokens; and the lint's dispatch-order rule reads an instruction to dispatch, not prose about spawning. The implement Proof Pack is recorded here because docs/proofs/ is not a P8-owned path.",
+      "tags": [
+        "decision-note",
+        "coordination",
+        "compile",
+        "readers",
+        "skills",
+        "runs-as",
+        "co-s0",
+        "context-budget",
+        "p8"
+      ],
+      "links": [
+        {
+          "to": "design-compile-readers",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-compile-readers",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "bb72fdca48c407cbbaa30725cdf52bfd8977bc271e350f68004f7a6c7774cb79"
     },
     {
       "id": "note-autopilot-open-questions-decisions",
@@ -2050,6 +2279,97 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "4c52b72da4a80dc78ea30213c6eefc577fb8af212764b95e8d85b603b7354fde"
+    },
+    {
+      "id": "design-board",
+      "path": "docs/design/board.md",
+      "title": "Design — the board (coord-board.py · audit-log.py render messages · the audit explorer's Messages view)",
+      "type": "design",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-03-18",
+      "reviewSuggested": [],
+      "summary": "Detailed design for spec-board. One stdlib reader (coord-board.py) that folds every inbox and every ledger twin into rows keyed by mail id, prints them or polls them under a cap, and posts a human note or ruling only through the message layer's append_mail() imported by path; one added field in audit-log.py render (messages, ledger twins without bodies); one added view in the audit explorer template, built on the page's existing tokens and states. No store, no write on read, no new dependency, no new colour.",
+      "tags": [
+        "coordination",
+        "board",
+        "mail",
+        "ledger",
+        "read-model",
+        "audit-explorer",
+        "messages-view",
+        "p6",
+        "d12"
+      ],
+      "links": [
+        {
+          "to": "spec-board",
+          "rel": "implements"
+        },
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "refines"
+        },
+        {
+          "to": "audit-log",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "a914b430f57a1380b4df3eed4bfff538430d9ebc4157d98324d354791c82858e"
+    },
+    {
+      "id": "design-compile-readers",
+      "path": "docs/design/compile-readers.md",
+      "title": "Design — compile readers (session-profile.py compile measurements · dream.py CO-S0 miner · verify-skill-contracts.py · runs_as and the shared-stage citations)",
+      "type": "design",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-03-18",
+      "reviewSuggested": [],
+      "summary": "Detailed design for spec-compile-readers: one pure reader over the audit log inside session-profile.py (per-session and per-template-version compile measurements, SP-27/SP-28, F-26/F-27, two compare-table columns), one deterministic miner beside PACK-O in dream.py, a new stdlib lint verify-skill-contracts.py with four rules and a self-test, and the smallest edit to each SKILL.md: a runs_as frontmatter line, the fixed CO-S0 sentence, the CO-S2 one-liner and optimize-graph's dispatchable stop — all under the per-skill 2% budget.",
+      "tags": [
+        "coordination",
+        "compile",
+        "readers",
+        "session-profiler",
+        "dream",
+        "lint",
+        "skills",
+        "runs-as",
+        "co-s0",
+        "p8"
+      ],
+      "links": [
+        {
+          "to": "spec-compile-readers",
+          "rel": "implements"
+        },
+        {
+          "to": "design-compile-stage",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "refines"
+        },
+        {
+          "to": "audit-log",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "c561f8d9cb0c2e0467c8219e62d89a26f26725defe701784bf63037b80a5e784"
     },
     {
       "id": "design-compile-stage",
@@ -2318,6 +2638,60 @@ window.DOCS_INDEX = {
       "sourceSha256": "38a09a51a44004a2939929a9c81f95d19b2c074492484fa31a1f097578b76f1f"
     },
     {
+      "id": "design-leader-designation",
+      "path": "docs/design/leader-designation.md",
+      "title": "Design — leader designation (coord leader verbs over refs/coord/leader · the join fence · doctor/metrics · CO-L)",
+      "type": "design",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-03-18",
+      "reviewSuggested": [],
+      "summary": "Detailed design for spec-leader-designation: five stdlib verbs in coord-core.py over one blob held by `git update-ref <ref> <new> <old>` (the 40-zero old for creation; no -d, no --force), a state machine absent/live/expired/released with a strictly monotonic epoch, one constants block (D13), a ledger fact per attempted transition, a leader line in doctor, three measures in metrics, and a fence step in conductor-join.py that exits 11 before the merge on a lower epoch or an unread ref.",
+      "tags": [
+        "coordination",
+        "leader",
+        "fencing",
+        "epoch",
+        "git-ref",
+        "compare-and-swap",
+        "conductor-join",
+        "p2"
+      ],
+      "links": [
+        {
+          "to": "spec-leader-designation",
+          "rel": "implements"
+        },
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "refines"
+        },
+        {
+          "to": "note-20260919-leadership-in-a-ref-not-the-ledger",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-20260919-leader-release-keeps-the-epoch",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0007-coordination-substrate",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-coord-enforcement-phase2",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-multi-agent-coordination-data",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "7c243c54472e049a7af884726d3a758e9402caa2332ccf369d52c2376071c433"
+    },
+    {
       "id": "design-marker-completeness-lint",
       "path": "docs/design/marker-completeness-lint.md",
       "title": "Marker completeness lint (Tier-1 prose→structure) — Design",
@@ -2343,6 +2717,56 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "ea314d0fcf650f5815fee5f7da2d777e2da1e7ed195d643ce09480505a5e3558"
+    },
+    {
+      "id": "design-message-layer",
+      "path": "docs/design/message-layer.md",
+      "title": "Design — the local message layer and dispatch (coord-mail.py · mail-doorbell.py · pack-apply ignore rules · pack-doctor checks)",
+      "type": "design",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "coordination P4",
+      "reviewBy": "2027-03-18",
+      "reviewSuggested": [],
+      "summary": "One stdlib script owns the inbox writer (append_mail), the reader, the ack and the bounded dispatch; one hook script rings every host's doorbell with a count and a pointer built from a function that has no body parameter; pack-apply re-includes the ledgers and ignores the mail dir; pack-doctor fails on a tracked mail dir, an ignored ledger, or a state-changing mail with no twin. Delivery is at-least-once with idempotent, colocated acks; ordering is by id.",
+      "tags": [
+        "coordination",
+        "mail",
+        "doorbell",
+        "dispatch",
+        "harness",
+        "pack-apply",
+        "pack-doctor",
+        "p4"
+      ],
+      "links": [
+        {
+          "to": "spec-message-layer",
+          "rel": "implements"
+        },
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "refines"
+        },
+        {
+          "to": "design-coord-core-phase1",
+          "rel": "relates-to"
+        },
+        {
+          "to": "design-coord-federation-phase3",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-multi-agent-coordination",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-20260919-mail-store-deviations",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "67748cdddf2e5cedb9aac6be932e47a80d6a038e884640d1748fa55a4c04b844"
     },
     {
       "id": "design-native-app-ui-skill-extension",
@@ -2711,7 +3135,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d5822bcb0b2792161b3f06067beb857f45ebbb8c1e2d711ab57e749db87be401"
+      "sourceSha256": "4f3a20564ad2b70557721bf7a525b7fd9cf628f3135f4dedae8da3bea76cdf23"
     },
     {
       "id": "docs-index",
@@ -6191,6 +6615,84 @@ window.DOCS_INDEX = {
       "sourceSha256": "1bed7709eab8db69824da6af228d34c9935c1664cc0d0607753415426d859bd2"
     },
     {
+      "id": "coordination-p0-p1",
+      "path": "docs/coordination/coordination-p0-p1.md",
+      "title": "Coordination plan - P0 doctrine home and P1 typed seam requests, two full loops after the P2/P4/P6/P8 joins",
+      "type": "plan",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2026-12-18",
+      "reviewSuggested": [],
+      "summary": "Two Sub-Agent tracks dispatched after the four P2/P4/P6/P8 joins land, because both touch files those tracks own: P0 turns agent-coordination.md into the always-loaded doctrine home (CO1–COn from the proposal's §3, with the seeded CO-S0 and CO-L sections kept) and registers CTX-Q; P1 gives seam requests a deadline, a fallback, an ack pinned to a blob, five states and a termination variant in coord-core.py. Disjoint authored paths; the coordinator owns the shared surfaces, the always-on budget baseline and the join.",
+      "tags": [
+        "coordination",
+        "worktrees",
+        "parallelism",
+        "doctrine",
+        "seam-requests",
+        "p0",
+        "p1"
+      ],
+      "links": [
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "implements"
+        },
+        {
+          "to": "coordination-p2-p8",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "ced7f9ec353ced4702c752f5e58487d8561c33a5ab011f46fab4c563d8772980"
+    },
+    {
+      "id": "coordination-p2-p8",
+      "path": "docs/coordination/coordination-p2-p8.md",
+      "title": "Coordination plan - P2 leader, P4 message layer, P6 board, P8 readers: four full specify → design → implement loops",
+      "type": "plan",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2026-12-18",
+      "reviewSuggested": [],
+      "summary": "Four Sub-Agent tracks, each running the whole loop (/specify, /design-slice, /implement) in its own worktree: P4 ships the local message layer and dispatch, P6 the board over it, P2 puts leader designation in a git ref by compare-and-swap with the ratified constants and fences the join; P8 makes the readers consume the compile stage's fields and gives every prose-input skill its CO-S0 citation and the consuming skills their dispatchable stop. Authored paths are disjoint; the coordinator owns the shared surfaces and the join.",
+      "tags": [
+        "coordination",
+        "worktrees",
+        "parallelism",
+        "leader",
+        "mail",
+        "board",
+        "readers",
+        "p2",
+        "p4",
+        "p6",
+        "p8"
+      ],
+      "links": [
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "implements"
+        },
+        {
+          "to": "coordination-compile-stage",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-compile-stage",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-20260919-leadership-in-a-ref-not-the-ledger",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "8f676fb3c5c10e3a76ce3aaa8b27b82914ee305de2b3cca45ff3649422f82bc0"
+    },
+    {
       "id": "privacy-review",
       "path": "docs/security/privacy-review.md",
       "title": "Privacy Review",
@@ -6224,6 +6726,22 @@ window.DOCS_INDEX = {
           "rel": "documents"
         },
         {
+          "to": "design-leader-designation",
+          "rel": "documents"
+        },
+        {
+          "to": "design-message-layer",
+          "rel": "documents"
+        },
+        {
+          "to": "design-compile-readers",
+          "rel": "documents"
+        },
+        {
+          "to": "design-board",
+          "rel": "documents"
+        },
+        {
           "to": "design-compile-stage",
           "rel": "documents"
         },
@@ -6253,7 +6771,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d0bcd103d2c63f6cb7941b415d8b3d015590e9433b02c287c073fca4bfa58d96"
+      "sourceSha256": "46c135bc6bad760f19c6d5a78067655cacd1669353e960a5d25ef20b95d95d89"
     },
     {
       "id": "forensic-review-rev48-proof",
@@ -6557,6 +7075,55 @@ window.DOCS_INDEX = {
       "sourceSha256": "0bab610129bf747d1805d1319d76df463ec17ee3dd8b30ca505209b6ac612afa"
     },
     {
+      "id": "spec-board",
+      "path": "docs/specs/board.md",
+      "title": "Board — human transparency over agent messages: a read model over the inboxes and the ledger, never a store",
+      "type": "spec",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-03-18",
+      "reviewSuggested": [],
+      "summary": "Specifies P6 of the coordination proposal (D12): the board a human reads instead of git — a read model that folds every session inbox and the ledger's message twins into one timeline, one row per mail id, in the terminal (coord board, with --follow) and in the audit explorer (a Messages view beside the timeline). Never a store: reading writes nothing, an empty corpus says NOT CHECKED, and a human post goes through the message layer's single writer.",
+      "tags": [
+        "coordination",
+        "board",
+        "mail",
+        "ledger",
+        "read-model",
+        "audit-explorer",
+        "messages-view",
+        "p6",
+        "d12"
+      ],
+      "links": [
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "refines"
+        },
+        {
+          "to": "note-20260919-coordination-decisions-ratified",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-message-layer",
+          "rel": "relates-to"
+        },
+        {
+          "to": "audit-log",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "User flows (happy + alternate + error + recovery)",
+          "mermaid": "flowchart TD\n  A[coord board] --> B{any inbox or ledger mail?}\n  B -- no --> N[print NOT CHECKED — no inbox or ledger mail found under root; exit 0]\n  B -- yes --> R[print one row per mail id]\n  R --> U{unreadable lines?}\n  U -- yes --> W[stderr: NOT CHECKED — file:line unreadable; rows still printed; exit 0]\n  U -- no --> D[exit 0]\n  F[coord board --follow] --> P[poll every interval]\n  P --> C{max-polls reached?}\n  C -- yes --> S[print stopped: --max-polls N reached; exit 0]\n  C -- no --> P\n  P -. Ctrl-C .-> K[print stopped: interrupted; exit 0]\n  T[coord board post --to s text] --> V{writer importable?}\n  V -- no --> E[stderr: message layer not installed; --writer; exit 2]\n  V -- yes --> Q{kind ruling without --ref?}\n  Q -- yes --> E2[stderr: --ref required for a ruling; exit 2]\n  Q -- no --> Z[writer.append_mail; print posted id; exit 0]"
+        }
+      ],
+      "sourceSha256": "392f3475d5265ec0bd6b051c379e2707836f151f8ab17cbc01ebb6fde3ae3532"
+    },
+    {
       "id": "spec-collaborate-skill",
       "path": "docs/specs/collaborate-skill.md",
       "title": "Spec - /collaborate skill proposal",
@@ -6585,6 +7152,60 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "257dfd864b0345eb0d404c938075f439dcf095a4cc9a3bc994571f0d77e3cd61"
+    },
+    {
+      "id": "spec-compile-readers",
+      "path": "docs/specs/compile-readers.md",
+      "title": "Compile readers — the profiler and dream consume the compile stage's fields; every skill declares its seat and cites the shared stages",
+      "type": "spec",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-03-18",
+      "reviewSuggested": [],
+      "summary": "Specifies P8 of the coordination proposal: the two readers of the audit log (session-profile.py, dream.py) consume the compile stage's fields — compiled, compiled_from, edit_distance, dispatchable, provenance — as measurements that degrade to \"not recorded\"; every skill declares the seat it runs in (runs_as) and every prose-input skill cites CO-S0 in one fixed sentence; a stdlib lint (verify-skill-contracts.py) refuses a skill that breaks any of it, red-first against today's tree, under the per-skill context budget.",
+      "tags": [
+        "coordination",
+        "compile",
+        "readers",
+        "session-profiler",
+        "dream",
+        "skills",
+        "co-s0",
+        "runs-as",
+        "lint",
+        "p8"
+      ],
+      "links": [
+        {
+          "to": "spec-compile-stage",
+          "rel": "refines"
+        },
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "relates-to"
+        },
+        {
+          "to": "design-compile-stage",
+          "rel": "relates-to"
+        },
+        {
+          "to": "audit-log",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "User flows",
+          "mermaid": "flowchart TD\n  A[profile run] --> B{audit-log.jsonl present?}\n  B -- no --> C[compile section: not recorded; findings unchanged]\n  B -- yes --> D[one pass: compilations by id, workflow runs by session]\n  D --> E{any compiled:false with tier != T0?}\n  E -- yes --> F[SP-27 Inferred, fix F-26]\n  D --> G{template median edit_distance > 0.2?}\n  G -- yes --> H[SP-28 Verified, fix F-27]\n  D --> I[render tables; every empty cell = not recorded]\n  L[lint run] --> M{skills root found?}\n  M -- no --> N[exit 2: usage, names the roots tried]\n  M -- yes --> O[per skill: seat, fan-out, hard stop, dispatch order]\n  O --> P{refusals?}\n  P -- yes --> Q[print grammar lines; exit 1]\n  P -- no --> R[clean; exit 0]"
+        }
+      ],
+      "sourceSha256": "ef675b2f3273b971ef356b89c223904a51e80dbfb58d5fa76baf16bdc0508dee"
     },
     {
       "id": "spec-compile-stage",
@@ -6764,6 +7385,114 @@ window.DOCS_INDEX = {
       "sourceSha256": "3a1b4242dc83c313fbc9b3e14877e875e9e44eb3b5eeb59025efd5abd1b0a13d"
     },
     {
+      "id": "spec-leader-designation",
+      "path": "docs/specs/leader-designation.md",
+      "title": "Leader designation in a git ref — coord leader pin|who|renew|release|reclaim over refs/coord/leader, and the join fence",
+      "type": "spec",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-03-18",
+      "reviewSuggested": [],
+      "summary": "Specifies P2 of the coordination proposal: a designated (never elected) leader held in the git ref refs/coord/leader by compare-and-swap, with a monotonic epoch, a 300 s lease renewed at 100 s, a 30 s quiet period after an expiry, and a join that refuses a plan carrying an epoch lower than the ref's. The ref decides, the ledger records; a ref that cannot be read is NOT CHECKED, never \"no leader\". Every acceptance criterion maps to one of the three executed spikes or to a red-first test.",
+      "tags": [
+        "coordination",
+        "leader",
+        "fencing",
+        "epoch",
+        "git-ref",
+        "compare-and-swap",
+        "cli",
+        "p2"
+      ],
+      "links": [
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "refines"
+        },
+        {
+          "to": "note-20260919-leadership-in-a-ref-not-the-ledger",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0007-coordination-substrate",
+          "rel": "depends-on"
+        },
+        {
+          "to": "kb-multi-agent-coordination-data",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-agent-coordination",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "User flows (happy + alternate + error + recovery)",
+          "mermaid": "flowchart TD\n  A[pin S] --> R{read ref}\n  R -->|unreadable| N[NOT CHECKED exit 4]\n  R -->|absent| C1[CAS create epoch 1] --> OK[exit 0 + ledger]\n  R -->|released epoch n| C2[CAS write epoch n+1] --> OK\n  R -->|live| H[COORD-LEADER-HELD exit 3 + ledger refused]\n  R -->|expired| E[COORD-LEADER-EXPIRED exit 3: reclaim after quiet]\n  C1 -->|git 128| ST[COORD-LEADER-STALE exit 3 - re-read, retry after 20 s]\n  C2 -->|git 128| ST"
+        },
+        {
+          "kind": "flowchart",
+          "title": "User flows (happy + alternate + error + recovery)",
+          "mermaid": "flowchart TD\n  L[leader alive] -->|every 100 s| RN[renew] -->|holder & live| OK[expires_at = now+300]\n  RN -->|not holder| X[COORD-LEADER-NOT-HOLDER exit 3]\n  L -->|dies| EX[lease expires at T]\n  EX -->|now < T+30| Q[reclaim: COORD-LEADER-QUIET exit 3, seconds left]\n  EX -->|now >= T+30| RC[reclaim S2: CAS epoch+1] --> OK2[exit 0 + ledger leader-loss]\n  RC -->|another reclaim won| ST[COORD-LEADER-STALE exit 3 - human paged: contested]\n  L -->|done| REL[release: holder cleared, epoch kept] --> P[next pin: epoch+1, no quiet]"
+        },
+        {
+          "kind": "flowchart",
+          "title": "User flows (happy + alternate + error + recovery)",
+          "mermaid": "flowchart TD\n  J[conductor-join.py --epoch e] --> W[coord leader who --json]\n  W -->|exit 4| F4[fence: NOT CHECKED - exit 11, no merge]\n  W -->|absent| S1[fence not applicable - step 1 merge]\n  W -->|epoch E, e < E| F[fence refused: e < E - exit 11, no merge]\n  W -->|e >= E| S1"
+        }
+      ],
+      "sourceSha256": "e1d28979d8b96215d05ed8bbc243515717e54850ef0186b6954c514a73b958df"
+    },
+    {
+      "id": "spec-message-layer",
+      "path": "docs/specs/message-layer.md",
+      "title": "Spec — the local message layer and dispatch (coord mail send/read/ack · dispatch · doorbells)",
+      "type": "spec",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "coordination P4",
+      "reviewBy": "2027-03-18",
+      "reviewSuggested": [],
+      "summary": "Sessions in one repository leave each other messages in per-session append-only inbox files; state-changing kinds are twinned into the coord ledger so git carries them; each harness we can reach rings a doorbell that says how many and which, never what; a dispatch verb runs another harness headless under a budget and records what was actually executed here.",
+      "tags": [
+        "coordination",
+        "mail",
+        "doorbell",
+        "dispatch",
+        "harness",
+        "p4"
+      ],
+      "links": [
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "refines"
+        },
+        {
+          "to": "note-20260919-coordination-decisions-ratified",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-multi-agent-coordination",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0007-coordination-substrate",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Part B — UX specification (CLI terms)",
+          "mermaid": "flowchart TD\n  S[send] --> V{valid kind, size, identity?}\n  V -- no --> E2[exit 2, reason]\n  V -- yes --> F{recipient queued < 50?}\n  F -- no --> E3[exit 3 inbox full]\n  F -- yes --> W[append inbox line] --> T{state-changing?}\n  T -- yes --> L[append ledger twin, no body] --> OK[print id, exit 0]\n  T -- no --> OK\n  R[read] --> P{files parse?}\n  P -- no --> E4[exit 4 NOT CHECKED]\n  P -- yes --> H[own inbox + broadcast, minus my acks, since id] --> A{--ack?}\n  A -- yes --> K[one ack line per shown message] --> OUT[render under untrusted heading / --json]\n  A -- no --> OUT\n  D[doorbell at hook seam] --> I{session known and inbox readable?}\n  I -- no --> Q[emit nothing, exit 0]\n  I -- yes --> C{count of unacked within 5 min > 0?}\n  C -- no --> Q\n  C -- yes --> B[host-shaped payload: count + pointer] --> Q"
+        }
+      ],
+      "sourceSha256": "ecae38a312f905e183888d7af4b29483c8e2e29ce130660dba8d0c28e4f21f03"
+    },
+    {
       "id": "spec-native-app-ui-skill-extension",
       "path": "docs/specs/native-app-ui-skill-extension.md",
       "title": "Native app UI skill extension — Specification",
@@ -6832,6 +7561,22 @@ window.DOCS_INDEX = {
           "rel": "documents"
         },
         {
+          "to": "design-leader-designation",
+          "rel": "documents"
+        },
+        {
+          "to": "design-message-layer",
+          "rel": "documents"
+        },
+        {
+          "to": "design-compile-readers",
+          "rel": "documents"
+        },
+        {
+          "to": "design-board",
+          "rel": "documents"
+        },
+        {
           "to": "design-compile-stage",
           "rel": "documents"
         },
@@ -6861,7 +7606,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "54d492bf72bb9359ab511d90082418298daa216422443142e473a29f1e6df8cb"
+      "sourceSha256": "199bbf7dc2a4a351e70ed8b690e097f6cc91e9db2fde9a44c63cfd74b818f860"
     }
   ],
   "surfaces": [
@@ -6954,6 +7699,22 @@ window.DOCS_INDEX = {
       "kind": "knowledge-tool",
       "description": "Open an interactive knowledge artifact.",
       "artifactId": "coordination-compile-stage"
+    },
+    {
+      "id": "surface-coordination-coordination-p0-p1",
+      "path": "docs/coordination/coordination-p0-p1.html",
+      "title": "Coordination plan — P0 doctrine · P1 seam requests",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "coordination-p0-p1"
+    },
+    {
+      "id": "surface-coordination-coordination-p2-p8",
+      "path": "docs/coordination/coordination-p2-p8.html",
+      "title": "Coordination plan — P2 leader · P8 readers",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "coordination-p2-p8"
     },
     {
       "id": "surface-dreams-drm-0002-index",
@@ -7087,5 +7848,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "cad8b5d3aa17833134aebe41ca88b839aaee5bdebe84d3bcebe34944a402e45b"
+  "graphSha256": "fecba2b9e1d8f08e503acaa106036bcb8a5ed556128842ef87efc2eadbf20f53"
 };

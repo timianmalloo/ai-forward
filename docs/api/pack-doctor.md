@@ -90,6 +90,15 @@ F-07 / CTX-D. The re-read guard is a control only when a host runs it.
 
 **Coverage gap** — no docstring in the source.
 
+### `check_mail(root)`
+
+The message layer's invariants (design-message-layer section 9; D10).
+
+mail dir         FAIL when anything under .agents/mail/ is tracked (bodies would reach git)
+ledger tracking  FAIL when .agents/log/ is ignored (D10 tracks the ledgers by default)
+mail twins       FAIL naming every state-changing mail id with no {"type":"mail"} ledger twin
+doorbells        one line per harness from .agents/harness-status.json; absent -> "not recorded"
+
 ### `check_coordination(root)`
 
 Is the coordination layer switched ON in this repo? (CTX-H)
@@ -148,6 +157,6 @@ lesson into a control that fires at the moment of the mistake).
 
 ## Coverage
 
-- Public functions: **13** · documented: **8** (**62%**)
+- Public functions: **14** · documented: **9** (**64%**)
 - Undocumented (recorded, not invented): `check_installed`, `check_surface`, `check_block`, `check_graph`, `run`
 

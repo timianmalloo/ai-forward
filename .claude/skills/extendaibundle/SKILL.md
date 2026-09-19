@@ -1,6 +1,7 @@
 ---
 name: extendaibundle
 description: Extend the AI-Forward pack itself from a prose prompt — add a new skill, knowledge doc, template, or script — running collectknowledge → specify → design → implement under the covers, specialized for the reality that pack work is writing Markdown and scripts. Bakes in the consistency discipline (scaffold via tools/new-capability.py, prove via tools/verify-bundle.ps1) so any contributor extends the bundle the same way, with zero drift, fit for both Claude Code and GitHub Copilot. Run it from an AI-Forward clone with a description of the capability you want.
+runs_as: Coordinator
 ---
 
 # Skill: /extendaibundle

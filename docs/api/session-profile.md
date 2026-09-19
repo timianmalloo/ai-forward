@@ -63,6 +63,7 @@ Python 3.8+, stdlib only. Windows-safe (utf-8 stdout, read-only SQLite URI).
 | Subcommand | Help |
 |---|---|
 | `compare` | aggregate by model family x harness |
+| `compile` | the compile-stage measurements from docs/audit/audit-log.jsonl (no harness store needed) |
 | `discover` | list matching sessions |
 | `fixes` | print the fix and finding catalogs |
 | `profile` | profile sessions and write docs/profiles/<sp-id>/ |
@@ -263,13 +264,29 @@ Rule-based detectors over one profiled session. Returns finding dicts with evide
 Every rule is deterministic; the 'confidence' is Verified for measured facts and Inferred
 where a heuristic (regex over text) stands in for a field the harness does not record.
 
+### `compile_measurements(root, days)`
+
+Per-session and per-template-version compile measurements from <root>/docs/audit/audit-log.jsonl.
+Missing log, empty log or no compile-bearing entry -> source NOT_RECORDED and empty maps.
+
+### `compile_findings(measure)`
+
+SP-27 (Inferred: a T0 closed question needs no compile, so only gaps above T0 count) and
+SP-28 (Verified: the template's median edit distance is a measured number).
+
+### `render_compile_section(measure, findings=…)`
+
+**Coverage gap** — no docstring in the source.
+
 ### `cross_session_findings(sessions)`
 
 SP-15 concurrent sessions in one checkout (same cwd, overlapping windows).
 
-### `family_comparison(sessions)`
+### `family_comparison(sessions, compile=…)`
 
 Aggregate per (family, harness): the tuning view. Drift indicators are counts per turn.
+`compile` is the compile_measurements() dict; its per-session rows join on the session id and
+give the group its compiled share and pooled edit-distance median (never a median of medians).
 
 ### `render_markdown(profile)`
 
@@ -291,12 +308,17 @@ Aggregate per (family, harness): the tuning view. Drift indicators are counts pe
 
 **Coverage gap** — no docstring in the source.
 
+### `cmd_compile(args)`
+
+The compile section alone, from the audit log - needs no harness store, so it answers
+'is the compile stage used' even on a machine with no session telemetry.
+
 ### `cmd_fixes(args)`
 
 **Coverage gap** — no docstring in the source.
 
 ## Coverage
 
-- Public functions: **37** · documented: **17** (**46%**)
-- Undocumented (recorded, not invented): `parse_ts`, `iso`, `pct`, `est_tokens`, `model_family`, `norm_path`, `git`, `in_repo`, `copilot_home`, `copilot_settings`, `copilot_sessions`, `claude_home`, `claude_sessions`, `profile_claude`, `render_markdown`, `cmd_discover`, `profile_id`, `cmd_profile`, `cmd_compare`, `cmd_fixes`
+- Public functions: **41** · documented: **20** (**49%**)
+- Undocumented (recorded, not invented): `parse_ts`, `iso`, `pct`, `est_tokens`, `model_family`, `norm_path`, `git`, `in_repo`, `copilot_home`, `copilot_settings`, `copilot_sessions`, `claude_home`, `claude_sessions`, `profile_claude`, `render_compile_section`, `render_markdown`, `cmd_discover`, `profile_id`, `cmd_profile`, `cmd_compare`, `cmd_fixes`
 

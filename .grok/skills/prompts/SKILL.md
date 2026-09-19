@@ -1,6 +1,7 @@
 ---
 name: prompts
 description: Browse your logged prompts as a stack (newest on top) and reuse one — arrow keys to move, right-arrow to expand a prompt, left-arrow to collapse, Enter to copy it for paste-and-edit. A utility skill backed by the stdlib prompt-log engine.
+runs_as: either
 ---
 
 # Skill: /prompts

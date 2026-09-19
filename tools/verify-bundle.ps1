@@ -10,6 +10,7 @@
         1b. No machine-specific paths          pack/scripts/verify-no-machine-paths.py (PLAT-B)
         1c. Subprocess decodes state utf-8     pack/scripts/verify-subprocess-utf8.py (PLAT-A)
         1d. Text writes/consoles portable      pack/scripts/verify-portable-text-io.py (PLAT-A)
+        1e. Skill contracts (seat, CO-S0, CO-S2)  pack/scripts/verify-skill-contracts.py (P8)
         2.  Source<->install drift             sync-pack.ps1 THEN git diff --exit-code
         3.  Python test suite                  pytest tests
         4.  Docs Explorer core contracts       node --test (see the gate-4 note)
@@ -101,6 +102,9 @@ try {
     }
     Gate "1d. text writes and consoles are portable" {
         & $pyExe @pyArgs (Join-Path $repo "pack/scripts/verify-portable-text-io.py") --root $repo
+    }
+    Gate "1e. skill contracts: seat, CO-S0 before dispatch, CO-S2 on hard stops" {
+        & $pyExe @pyArgs (Join-Path $repo "pack/scripts/verify-skill-contracts.py") --root $repo
     }
 
     # FR-057: sync AND compare. The comparison is the gate; the sync alone is only a repair.

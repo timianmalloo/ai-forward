@@ -647,12 +647,60 @@ def project_name(root):
     return canonical_project(os.path.join(root, ".."))
 
 
+MESSAGE_FIELDS = ("id", "ts", "from", "to", "kind", "ref", "session")
+
+
+def read_ledger_mail(root):
+    """The board's page-side source (spec-board US-7): the coord ledger's `type: mail` twins.
+
+    Reads <root>/../.agents/log/*.jsonl and keeps ONLY the twin's identifying fields — never a
+    body, even when a record carries one by mistake (the page is committed; the ledger's
+    contract carries no body). An unreadable line is reported in the read_log idiom and
+    skipped; a missing ledger directory yields [] (an older repo renders unchanged).
+    """
+    ledger = os.path.join(root, "..", ".agents", "log")
+    if not os.path.isdir(ledger):
+        return []
+    out = []
+    for name in sorted(os.listdir(ledger)):
+        if not name.endswith(".jsonl"):
+            continue
+        p = os.path.join(ledger, name)
+        with open(p, encoding="utf-8") as handle:
+            for lineno, ln in enumerate(handle, 1):
+                ln = ln.strip()
+                if not ln:
+                    continue
+                try:
+                    rec = json.loads(ln)
+                except json.JSONDecodeError as exc:
+                    print(f"warning: {p}:{lineno} is not valid JSON and was SKIPPED ({exc}); "
+                          f"the Messages view will not show that line.", file=sys.stderr)
+                    continue
+                if not isinstance(rec, dict) or rec.get("type") != "mail" or not rec.get("mail_id"):
+                    continue
+                ts = rec.get("ts")
+                if not ts and rec.get("at") is not None:
+                    try:
+                        ts = datetime.datetime.fromtimestamp(
+                            float(rec["at"]), datetime.timezone.utc).strftime(ISO)
+                    except (TypeError, ValueError, OverflowError, OSError):
+                        ts = None
+                row = {"id": rec["mail_id"], "ts": ts or "", "from": rec.get("from") or "",
+                       "to": rec.get("to") or "", "kind": rec.get("kind") or "",
+                       "ref": rec.get("ref"), "session": rec.get("session") or name[:-6]}
+                out.append({k: row[k] for k in MESSAGE_FIELDS})
+    out.sort(key=lambda r: (r["ts"], r["id"]))
+    return out
+
+
 def render(root, project=None):
     """Regenerate audit-data.js and the managed viewer from canonical sources."""
     ensure_hub(audit_dir(root))
     os.makedirs(audit_dir(root), exist_ok=True)
     data = {"project": project or project_name(root), "generated": now_iso(),
-            "audit": read_log(root, "audit"), "changes": read_log(root, "change")}
+            "audit": read_log(root, "audit"), "changes": read_log(root, "change"),
+            "messages": read_ledger_mail(root)}
     # </ is escaped so a prompt containing </script> can never break the <script> host.
     payload = json.dumps(data, ensure_ascii=False, indent=2).replace("</", "<\\/")
     body = ("// Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit"

@@ -30,6 +30,8 @@ spikes/
 !.agents/skills*
 !.agents/hooks.json
 !.agents/rules*
+!.agents/log/
+.agents/mail/
 
 # Editor / OS
 .DS_Store

@@ -30,6 +30,7 @@ CANONICAL_GATES = [
     ("machine-paths", "1b. no machine-specific paths",       "No machine-specific paths in tracked files"),
     ("subprocess-utf8", "1c. subprocess text decodes state utf-8", "Subprocess text decodes state utf-8"),
     ("text-io",       "1d. text writes and consoles are portable", "Text writes and consoles are portable"),
+    ("skill-contracts", "1e. skill contracts: seat, CO-S0 before dispatch, CO-S2 on hard stops", "Skill contracts: seat, CO-S0 before dispatch, CO-S2 on hard stops"),
     ("drift",         "2. source<->install drift",           "Source↔install drift"),
     ("pytest",        "3. python test suite",                "Python test suite"),
     ("docs-explorer", "4. docs explorer core contracts",     "Docs Explorer core contracts"),

@@ -1,6 +1,7 @@
 ---
 name: also
 description: Append a late addition to the prior prompt without derailing the work already in flight. Use when — mid-turn or just after — you think of something you meant to include — `/also <addition>` captures it now, lets the current reasoning and work finish undisturbed, and folds the addition in afterwards, either as refined context for the remaining work or as a task appended to the end of the current turn.
+runs_as: either
 ---
 
 # Skill: /also

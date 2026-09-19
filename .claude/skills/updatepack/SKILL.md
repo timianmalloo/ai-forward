@@ -1,6 +1,7 @@
 ---
 name: updatepack
 description: Update an installed AI-Forward Pack to the latest revision — reads the pack source INSTALL.md from a local ai-forward clone, diffs the installed vs source revision, applies the deployment map mechanically with pack-apply.py (managed-block re-paste, stale-copy removal, the CLAUDE.md import conversion, parity-control retirement, three-way merges over repo-local deviations), and produces a tabular action summary before offering to commit and push. Run this from the repo that already has the pack installed.
+runs_as: Coordinator
 ---
 
 # /updatepack — pull the latest AI-Forward Pack into an installed repo

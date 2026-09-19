@@ -11,6 +11,10 @@ links:
   - { to: forensic-review, rel: documents }
   - { to: design-aiforward-cli, rel: documents }
   - { to: design-coord-core-phase1, rel: documents }
+  - { to: design-leader-designation, rel: documents }
+  - { to: design-message-layer, rel: documents }
+  - { to: design-compile-readers, rel: documents }
+  - { to: design-board, rel: documents }
   - { to: design-compile-stage, rel: documents }
   - { to: design-coord-enforcement-phase2, rel: documents }
   - { to: design-coord-federation-phase3, rel: documents }

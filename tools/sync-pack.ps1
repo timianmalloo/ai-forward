@@ -323,6 +323,7 @@ $hooksDst = Join-Path $docPack "hooks"
 New-Item -ItemType Directory -Force -Path $hooksDst | Out-Null
 Copy-Item (Join-Path $pack "adapters\hooks\reread-guard.py") $hooksDst -Force
 Copy-Item (Join-Path $pack "adapters\hooks\session-start.py") $hooksDst -Force
+Copy-Item (Join-Path $pack "adapters\hooks\mail-doorbell.py") $hooksDst -Force
 Copy-Item (Join-Path $pack "adapters\hooks\README.md")       $hooksDst -Force
 $ghHooks = Join-Path $repo ".github\hooks"
 New-Item -ItemType Directory -Force -Path $ghHooks | Out-Null
@@ -330,7 +331,7 @@ Copy-Item (Join-Path $pack "adapters\hooks\copilot.ai-forward-hooks.json") (Join
 $grokHooks = Join-Path $repo ".grok\hooks"
 New-Item -ItemType Directory -Force -Path $grokHooks | Out-Null
 Copy-Item (Join-Path $pack "adapters\hooks\grok.ai-forward-hooks.json") (Join-Path $grokHooks "ai-forward.json") -Force
-Write-Host "  hooks: reread-guard.py -> docs/ai-forward-pack/hooks/, .github/hooks/ai-forward.json, .grok/hooks/ai-forward.json, .agents/hooks.json"
+Write-Host "  hooks: reread-guard.py + session-start.py + mail-doorbell.py -> docs/ai-forward-pack/hooks/, .github/hooks/ai-forward.json, .grok/hooks/ai-forward.json, .agents/hooks.json"
 Write-Host "  docs/ai-forward-pack: templates + scripts + pack docs"
 
 # --- docs/index.html (Docs Explorer; regenerated from template) ----------------

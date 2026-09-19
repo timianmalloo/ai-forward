@@ -5,7 +5,7 @@ window.PORTAL_DATA = {
       "personas": 23,
       "knowledge": 39,
       "templates": 28,
-      "scripts": 32
+      "scripts": 35
     },
     "whatIs": "AI-Forward is a committed Markdown methodology pack that installs into a repo so Claude Code, GitHub Copilot, and Grok Build direct work with a shared reasoning spine, adversarial persona review, and a library of workflow skills - nothing runs as a service; everything is versioned files and stdlib scripts.",
     "skillCount": 28,
@@ -417,7 +417,7 @@ window.PORTAL_DATA = {
         "items": [
           {
             "name": "agent-coordination",
-            "title": "Agent coordination — Owner / Coordinator / Sub-Agent (seeded: CO-S0 only)",
+            "title": "Agent coordination — Owner / Coordinator / Sub-Agent (seeded: CO-S0, CO-L)",
             "summary": "Normative keywords (MUST, SHOULD, MAY, MUST NOT) follow RFC 2119.",
             "path": "../../pack/knowledge/agent-coordination.md"
           },
@@ -745,9 +745,19 @@ window.PORTAL_DATA = {
             "path": "../../docs/specs/agent-focus-controls.md"
           },
           {
+            "title": "Board — human transparency over agent messages: a read model over the inboxes and the ledger, never a store",
+            "summary": "Specifies P6 of the coordination proposal (D12): the board a human reads instead of git — a read model that folds every session inbox and the ledger's message twins into one timeline, one row per mail id, in the terminal (coord board, with --follow) and in...",
+            "path": "../../docs/specs/board.md"
+          },
+          {
             "title": "Spec - /collaborate skill proposal",
             "summary": "Proposal for a future /collaborate skill that starts a cross-agent collaboration session by creating or entering a worktree, registering the session, scaffolding or updating the session contract, claiming the first files, and printing the collaboration checks...",
             "path": "../../docs/specs/collaborate-skill.md"
+          },
+          {
+            "title": "Compile readers — the profiler and dream consume the compile stage's fields; every skill declares its seat and cites the shared stages",
+            "summary": "Specifies P8 of the coordination proposal: the two readers of the audit log (session-profile.py, dream.py) consume the compile stage's fields — compiled, compiled_from, edit_distance, dispatchable, provenance — as measurements that degrade to \"not recorded\";...",
+            "path": "../../docs/specs/compile-readers.md"
           },
           {
             "title": "Compile stage — from the operator's prose to the harness- and model-specific starting prompt",
@@ -770,6 +780,16 @@ window.PORTAL_DATA = {
             "path": "../../docs/specs/dreaming-continuous-improvement.md"
           },
           {
+            "title": "Leader designation in a git ref — coord leader pin|who|renew|release|reclaim over refs/coord/leader, and the join fence",
+            "summary": "Specifies P2 of the coordination proposal: a designated (never elected) leader held in the git ref refs/coord/leader by compare-and-swap, with a monotonic epoch, a 300 s lease renewed at 100 s, a 30 s quiet period after an expiry, and a join that refuses a...",
+            "path": "../../docs/specs/leader-designation.md"
+          },
+          {
+            "title": "Spec — the local message layer and dispatch (coord mail send/read/ack · dispatch · doorbells)",
+            "summary": "Sessions in one repository leave each other messages in per-session append-only inbox files; state-changing kinds are twinned into the coord ledger so git carries them; each harness we can reach rings a doorbell that says how many and which, never what; a...",
+            "path": "../../docs/specs/message-layer.md"
+          },
+          {
             "title": "Native app UI skill extension — Specification",
             "summary": "Specification for extending the AI-Forward UI skills so WPF, WinUI, Avalonia and other native client applications receive the same rigorous UX/UI reasoning as web surfaces. The spec defines the required native medium declaration, native proof pack,...",
             "path": "../../docs/specs/native-app-ui-skill-extension.md"
@@ -788,6 +808,16 @@ window.PORTAL_DATA = {
             "title": "Design — aiforward CLI (suggestion 1)",
             "summary": "A single stdlib-only Python developer CLI (tools/aiforward.py) that is a thin Façade dispatcher over the pack's existing scripts (sync, verify, check, new, doctor, graph, scrub) — one memorable entry point with --help, no new runtime dependency.",
             "path": "../../docs/design/aiforward-cli.md"
+          },
+          {
+            "title": "Design — the board (coord-board.py · audit-log.py render messages · the audit explorer's Messages view)",
+            "summary": "Detailed design for spec-board. One stdlib reader (coord-board.py) that folds every inbox and every ledger twin into rows keyed by mail id, prints them or polls them under a cap, and posts a human note or ruling only through the message layer's append_mail()...",
+            "path": "../../docs/design/board.md"
+          },
+          {
+            "title": "Design — compile readers (session-profile.py compile measurements · dream.py CO-S0 miner · verify-skill-contracts.py · runs_as and the shared-stage citations)",
+            "summary": "Detailed design for spec-compile-readers: one pure reader over the audit log inside session-profile.py (per-session and per-template-version compile measurements, SP-27/SP-28, F-26/F-27, two compare-table columns), one deterministic miner beside PACK-O in...",
+            "path": "../../docs/design/compile-readers.md"
           },
           {
             "title": "Design — the compile stage (prompt-compile.py · verify-compiled-prompt.py · harness templates · /compile · audit fields)",
@@ -820,9 +850,19 @@ window.PORTAL_DATA = {
             "path": "../../docs/design/docs-explorer-grounding-and-spatial-navigation.md"
           },
           {
+            "title": "Design — leader designation (coord leader verbs over refs/coord/leader · the join fence · doctor/metrics · CO-L)",
+            "summary": "Detailed design for spec-leader-designation: five stdlib verbs in coord-core.py over one blob held by `git update-ref <ref> <new> <old>` (the 40-zero old for creation; no -d, no --force), a state machine absent/live/expired/released with a strictly monotonic...",
+            "path": "../../docs/design/leader-designation.md"
+          },
+          {
             "title": "Marker completeness lint (Tier-1 prose→structure) — Design",
             "summary": "Tier-1 of the prose→structure review: give the assume: (NG4) and simplify: (L5) inline markers an enforced field-completeness check via a new marker-lint.py, using backward-compatible semantic-cue detection (trigger / confirm / consequence) that warns on...",
             "path": "../../docs/design/marker-completeness-lint.md"
+          },
+          {
+            "title": "Design — the local message layer and dispatch (coord-mail.py · mail-doorbell.py · pack-apply ignore rules · pack-doctor checks)",
+            "summary": "One stdlib script owns the inbox writer (append_mail), the reader, the ack and the bounded dispatch; one hook script rings every host's doorbell with a count and a pointer built from a function that has no body parameter; pack-apply re-includes the ledgers...",
+            "path": "../../docs/design/message-layer.md"
           },
           {
             "title": "Native app UI skill extension — Design",
@@ -1609,7 +1649,7 @@ window.PORTAL_DATA = {
       "tiers": {
         "always": {
           "docs": 13,
-          "tokens": 47567
+          "tokens": 47642
         },
         "reference": {
           "docs": 2,
@@ -1617,14 +1657,14 @@ window.PORTAL_DATA = {
         },
         "skill": {
           "docs": 19,
-          "tokens": 82600
+          "tokens": 83206
         },
         "glob": {
           "docs": 6,
           "tokens": 25898
         }
       },
-      "corpusTokens": 180278,
+      "corpusTokens": 180959,
       "alwaysPct": 26
     }
   },
@@ -1764,10 +1804,22 @@ window.PORTAL_DATA = {
         "summary": "context-budget.py — the always-on context budget, measured (AI-Forward Pack)."
       },
       {
+        "id": "api-coord-board",
+        "type": "api",
+        "title": "API — coord-board.py",
+        "summary": "coord-board.py — the board: human transparency over agent messages (spec-board, D12)."
+      },
+      {
         "id": "api-coord-core",
         "type": "api",
         "title": "API — coord-core.py",
         "summary": "coord-core.py - agent coordination, Phase 1 walking skeleton."
+      },
+      {
+        "id": "api-coord-mail",
+        "type": "api",
+        "title": "API — coord-mail.py",
+        "summary": "coord-mail.py - the local message layer: per-session inbox files, ledger twins, bounded dispatch."
       },
       {
         "id": "api-coord_ids",
@@ -1809,7 +1861,7 @@ window.PORTAL_DATA = {
         "id": "api-index",
         "type": "api",
         "title": "API reference — the deployed script bundle",
-        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 409 public functions across 31 modules, 45% carrying a docstring."
+        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 465 public functions across 34 modules, 46% carrying a docstring."
       },
       {
         "id": "api-marker-lint",
@@ -1908,6 +1960,12 @@ window.PORTAL_DATA = {
         "summary": "verify-portable-text-io.py - text the pack writes is LF and UTF-8 on every OS, and every CLI survives a legacy console."
       },
       {
+        "id": "api-verify-skill-contracts",
+        "type": "api",
+        "title": "API — verify-skill-contracts.py",
+        "summary": "verify-skill-contracts.py - every skill declares its seat and cites the shared stage its shape needs."
+      },
+      {
         "id": "api-verify-subprocess-utf8",
         "type": "api",
         "title": "API — verify-subprocess-utf8.py",
@@ -1962,6 +2020,18 @@ window.PORTAL_DATA = {
         "summary": "Divides the compile-stage implementation into two tracks with disjoint authored paths — A: engine, gate, templates, tests; B: audit-log and prompt-log fields,..."
       },
       {
+        "id": "coordination-p0-p1",
+        "type": "plan",
+        "title": "Coordination plan - P0 doctrine home and P1 typed seam requests, two full loops after the P2/P4/P6/P8 joins",
+        "summary": "Two Sub-Agent tracks dispatched after the four P2/P4/P6/P8 joins land, because both touch files those tracks own: P0 turns agent-coordination.md into the..."
+      },
+      {
+        "id": "coordination-p2-p8",
+        "type": "plan",
+        "title": "Coordination plan - P2 leader, P4 message layer, P6 board, P8 readers: four full specify → design → implement loops",
+        "summary": "Four Sub-Agent tracks, each running the whole loop (/specify, /design-slice, /implement) in its own worktree: P4 ships the local message layer and dispatch, P6..."
+      },
+      {
         "id": "defect-classes",
         "type": "doc",
         "title": "Defect-class register",
@@ -1978,6 +2048,18 @@ window.PORTAL_DATA = {
         "type": "design",
         "title": "Design — aiforward CLI (suggestion 1)",
         "summary": "A single stdlib-only Python developer CLI (tools/aiforward.py) that is a thin Façade dispatcher over the pack's existing scripts (sync, verify, check, new,..."
+      },
+      {
+        "id": "design-board",
+        "type": "design",
+        "title": "Design — the board (coord-board.py · audit-log.py render messages · the audit explorer's Messages view)",
+        "summary": "Detailed design for spec-board. One stdlib reader (coord-board.py) that folds every inbox and every ledger twin into rows keyed by mail id, prints them or..."
+      },
+      {
+        "id": "design-compile-readers",
+        "type": "design",
+        "title": "Design — compile readers (session-profile.py compile measurements · dream.py CO-S0 miner · verify-skill-contracts.py · runs_as and the shared-stage citations)",
+        "summary": "Detailed design for spec-compile-readers: one pure reader over the audit log inside session-profile.py (per-session and per-template-version compile..."
       },
       {
         "id": "design-compile-stage",
@@ -2022,10 +2104,22 @@ window.PORTAL_DATA = {
         "summary": "Token and interaction language for the Docs Explorer knowledge portal: browse, graph, mind-map, deterministic Spatial 3D, and derived HTML knowledge surfaces...."
       },
       {
+        "id": "design-leader-designation",
+        "type": "design",
+        "title": "Design — leader designation (coord leader verbs over refs/coord/leader · the join fence · doctor/metrics · CO-L)",
+        "summary": "Detailed design for spec-leader-designation: five stdlib verbs in coord-core.py over one blob held by `git update-ref <ref> <new> <old>` (the 40-zero old for..."
+      },
+      {
         "id": "design-marker-completeness-lint",
         "type": "design",
         "title": "Marker completeness lint (Tier-1 prose→structure) — Design",
         "summary": "Tier-1 of the prose→structure review: give the assume: (NG4) and simplify: (L5) inline markers an enforced field-completeness check via a new marker-lint.py,..."
+      },
+      {
+        "id": "design-message-layer",
+        "type": "design",
+        "title": "Design — the local message layer and dispatch (coord-mail.py · mail-doorbell.py · pack-apply ignore rules · pack-doctor checks)",
+        "summary": "One stdlib script owns the inbox writer (append_mail), the reader, the ack and the bounded dispatch; one hook script rings every host's doorbell with a count..."
       },
       {
         "id": "design-native-app-ui-skill-extension",
@@ -2676,6 +2770,12 @@ window.PORTAL_DATA = {
         "summary": "Deploy a native Grok Build surface under .grok/{skills,agents,hooks,rules} rather than relying on Claude compatibility. Knowledge stays at .claude/knowledge/...."
       },
       {
+        "id": "note-20260919-board-read-model",
+        "type": "decision-note",
+        "title": "Board decisions: acks are not on the page, reading never writes, the writer is imported by path",
+        "summary": "Three sub-ADR decisions taken while building P6 (the board): the audit explorer's Messages view shows \"ack: not recorded here\" because acks are not twinned to..."
+      },
+      {
         "id": "note-20260919-compilation-is-an-audit-kind",
         "type": "decision-note",
         "title": "A compilation is its own audit kind, and its prompt field is the rendered text",
@@ -2688,10 +2788,28 @@ window.PORTAL_DATA = {
         "summary": "On 2026-09-19 the maintainer answered the proposal's four open questions and ratified four of its five design decisions; on the fifth (push channels) they..."
       },
       {
+        "id": "note-20260919-leader-release-keeps-the-epoch",
+        "type": "decision-note",
+        "title": "A leader release clears the holder and keeps the epoch; no verb deletes refs/coord/leader; the quiet period applies to an expiry, not to a release",
+        "summary": "If `coord leader release` deleted the ref, the next pin would restart at epoch 1 and the join fence would let a stale epoch-2 plan through; so release writes..."
+      },
+      {
         "id": "note-20260919-leadership-in-a-ref-not-the-ledger",
         "type": "decision-note",
         "title": "Leadership is held in a git ref by compare-and-swap; the union-merged ledger only records it",
         "summary": "Executed spikes on 2026-09-18 showed two competing leader claims both survive a union merge (exit 0), while `git update-ref <ref> <new> <old>` and..."
+      },
+      {
+        "id": "note-20260919-mail-store-deviations",
+        "type": "decision-note",
+        "title": "The mail store keeps the fixed contract with three named additions: a broadcast file, prefixed ULIDs, and colocated acks",
+        "summary": "Three shapes the fixed mail contract left open are settled here and raised to the coordinator and Track P6 as seam requests before any line was written; blast..."
+      },
+      {
+        "id": "note-20260919-readers-seat-and-citation-placement",
+        "type": "decision-note",
+        "title": "The seat key is runs_as, the CO-S0 sentence moves to reference/ where the 2% budget cannot hold it, and a dispatch instruction is a heading, a verb or a sentence-initial spawn",
+        "summary": "Three decisions taken while building P8, below ADR weight: the seat is declared as the YAML key `runs_as` (the proposal wrote `Runs as:`); seven prose-input..."
       },
       {
         "id": "note-autopilot-open-questions-decisions",
@@ -2862,10 +2980,22 @@ window.PORTAL_DATA = {
         "summary": "Specifies the three approved controls from the agent-focus proposal for tightening extended-reasoning models to the task: (FC-2) promote the goal-state turn..."
       },
       {
+        "id": "spec-board",
+        "type": "spec",
+        "title": "Board — human transparency over agent messages: a read model over the inboxes and the ledger, never a store",
+        "summary": "Specifies P6 of the coordination proposal (D12): the board a human reads instead of git — a read model that folds every session inbox and the ledger's message..."
+      },
+      {
         "id": "spec-collaborate-skill",
         "type": "spec",
         "title": "Spec - /collaborate skill proposal",
         "summary": "Proposal for a future /collaborate skill that starts a cross-agent collaboration session by creating or entering a worktree, registering the session,..."
+      },
+      {
+        "id": "spec-compile-readers",
+        "type": "spec",
+        "title": "Compile readers — the profiler and dream consume the compile stage's fields; every skill declares its seat and cites the shared stages",
+        "summary": "Specifies P8 of the coordination proposal: the two readers of the audit log (session-profile.py, dream.py) consume the compile stage's fields — compiled,..."
       },
       {
         "id": "spec-compile-stage",
@@ -2890,6 +3020,18 @@ window.PORTAL_DATA = {
         "type": "spec",
         "title": "Dreaming — continuous-improvement consolidation, review, and cross-repo federation",
         "summary": "Specification for AI-Forward's dreaming capability: a /dream consolidation skill that mines the committed corpus (audit/change logs, defect-class register,..."
+      },
+      {
+        "id": "spec-leader-designation",
+        "type": "spec",
+        "title": "Leader designation in a git ref — coord leader pin|who|renew|release|reclaim over refs/coord/leader, and the join fence",
+        "summary": "Specifies P2 of the coordination proposal: a designated (never elected) leader held in the git ref refs/coord/leader by compare-and-swap, with a monotonic..."
+      },
+      {
+        "id": "spec-message-layer",
+        "type": "spec",
+        "title": "Spec — the local message layer and dispatch (coord mail send/read/ack · dispatch · doorbells)",
+        "summary": "Sessions in one repository leave each other messages in per-session append-only inbox files; state-changing kinds are twinned into the coord ledger so git..."
       },
       {
         "id": "spec-native-app-ui-skill-extension",
@@ -3128,7 +3270,17 @@ window.PORTAL_DATA = {
         "rel": "refines"
       },
       {
+        "from": "api-coord-board",
+        "to": "api-index",
+        "rel": "refines"
+      },
+      {
         "from": "api-coord-core",
+        "to": "api-index",
+        "rel": "refines"
+      },
+      {
+        "from": "api-coord-mail",
         "to": "api-index",
         "rel": "refines"
       },
@@ -3248,6 +3400,11 @@ window.PORTAL_DATA = {
         "rel": "refines"
       },
       {
+        "from": "api-verify-skill-contracts",
+        "to": "api-index",
+        "rel": "refines"
+      },
+      {
         "from": "api-verify-subprocess-utf8",
         "to": "api-index",
         "rel": "refines"
@@ -3353,6 +3510,36 @@ window.PORTAL_DATA = {
         "rel": "relates-to"
       },
       {
+        "from": "coordination-p0-p1",
+        "to": "coordination-p2-p8",
+        "rel": "refines"
+      },
+      {
+        "from": "coordination-p0-p1",
+        "to": "proposal-owner-coordinator-subagent-coordination",
+        "rel": "implements"
+      },
+      {
+        "from": "coordination-p2-p8",
+        "to": "coordination-compile-stage",
+        "rel": "refines"
+      },
+      {
+        "from": "coordination-p2-p8",
+        "to": "note-20260919-leadership-in-a-ref-not-the-ledger",
+        "rel": "relates-to"
+      },
+      {
+        "from": "coordination-p2-p8",
+        "to": "proposal-owner-coordinator-subagent-coordination",
+        "rel": "implements"
+      },
+      {
+        "from": "coordination-p2-p8",
+        "to": "spec-compile-stage",
+        "rel": "relates-to"
+      },
+      {
         "from": "defect-classes",
         "to": "architecture",
         "rel": "relates-to"
@@ -3375,6 +3562,51 @@ window.PORTAL_DATA = {
       {
         "from": "design-aiforward-cli",
         "to": "kb-pack-evolution",
+        "rel": "implements"
+      },
+      {
+        "from": "design-board",
+        "to": "audit-log",
+        "rel": "relates-to"
+      },
+      {
+        "from": "design-board",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "design-board",
+        "to": "proposal-owner-coordinator-subagent-coordination",
+        "rel": "refines"
+      },
+      {
+        "from": "design-board",
+        "to": "spec-board",
+        "rel": "implements"
+      },
+      {
+        "from": "design-compile-readers",
+        "to": "audit-log",
+        "rel": "relates-to"
+      },
+      {
+        "from": "design-compile-readers",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "design-compile-readers",
+        "to": "design-compile-stage",
+        "rel": "relates-to"
+      },
+      {
+        "from": "design-compile-readers",
+        "to": "proposal-owner-coordinator-subagent-coordination",
+        "rel": "refines"
+      },
+      {
+        "from": "design-compile-readers",
+        "to": "spec-compile-readers",
         "rel": "implements"
       },
       {
@@ -3533,9 +3765,74 @@ window.PORTAL_DATA = {
         "rel": "documents"
       },
       {
+        "from": "design-leader-designation",
+        "to": "adr-0007-coordination-substrate",
+        "rel": "depends-on"
+      },
+      {
+        "from": "design-leader-designation",
+        "to": "design-coord-enforcement-phase2",
+        "rel": "relates-to"
+      },
+      {
+        "from": "design-leader-designation",
+        "to": "kb-multi-agent-coordination-data",
+        "rel": "relates-to"
+      },
+      {
+        "from": "design-leader-designation",
+        "to": "note-20260919-leader-release-keeps-the-epoch",
+        "rel": "relates-to"
+      },
+      {
+        "from": "design-leader-designation",
+        "to": "note-20260919-leadership-in-a-ref-not-the-ledger",
+        "rel": "relates-to"
+      },
+      {
+        "from": "design-leader-designation",
+        "to": "proposal-owner-coordinator-subagent-coordination",
+        "rel": "refines"
+      },
+      {
+        "from": "design-leader-designation",
+        "to": "spec-leader-designation",
+        "rel": "implements"
+      },
+      {
         "from": "design-marker-completeness-lint",
         "to": "design-agent-focus-controls",
         "rel": "relates-to"
+      },
+      {
+        "from": "design-message-layer",
+        "to": "design-coord-core-phase1",
+        "rel": "relates-to"
+      },
+      {
+        "from": "design-message-layer",
+        "to": "design-coord-federation-phase3",
+        "rel": "relates-to"
+      },
+      {
+        "from": "design-message-layer",
+        "to": "kb-multi-agent-coordination",
+        "rel": "relates-to"
+      },
+      {
+        "from": "design-message-layer",
+        "to": "note-20260919-mail-store-deviations",
+        "rel": "relates-to"
+      },
+      {
+        "from": "design-message-layer",
+        "to": "proposal-owner-coordinator-subagent-coordination",
+        "rel": "refines"
+      },
+      {
+        "from": "design-message-layer",
+        "to": "spec-message-layer",
+        "rel": "implements"
       },
       {
         "from": "design-native-app-ui-skill-extension",
@@ -4493,6 +4790,26 @@ window.PORTAL_DATA = {
         "rel": "tested-by"
       },
       {
+        "from": "note-20260919-board-read-model",
+        "to": "design-board",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260919-board-read-model",
+        "to": "note-20260919-coordination-decisions-ratified",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260919-board-read-model",
+        "to": "proposal-owner-coordinator-subagent-coordination",
+        "rel": "refines"
+      },
+      {
+        "from": "note-20260919-board-read-model",
+        "to": "spec-board",
+        "rel": "relates-to"
+      },
+      {
         "from": "note-20260919-compilation-is-an-audit-kind",
         "to": "audit-log",
         "rel": "relates-to"
@@ -4528,6 +4845,21 @@ window.PORTAL_DATA = {
         "rel": "relates-to"
       },
       {
+        "from": "note-20260919-leader-release-keeps-the-epoch",
+        "to": "note-20260919-leadership-in-a-ref-not-the-ledger",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260919-leader-release-keeps-the-epoch",
+        "to": "proposal-owner-coordinator-subagent-coordination",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260919-leader-release-keeps-the-epoch",
+        "to": "spec-leader-designation",
+        "rel": "relates-to"
+      },
+      {
         "from": "note-20260919-leadership-in-a-ref-not-the-ledger",
         "to": "adr-0007-coordination-substrate",
         "rel": "depends-on"
@@ -4540,6 +4872,41 @@ window.PORTAL_DATA = {
       {
         "from": "note-20260919-leadership-in-a-ref-not-the-ledger",
         "to": "proposal-owner-coordinator-subagent-coordination",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260919-mail-store-deviations",
+        "to": "design-message-layer",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260919-mail-store-deviations",
+        "to": "proposal-owner-coordinator-subagent-coordination",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260919-mail-store-deviations",
+        "to": "spec-message-layer",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260919-readers-seat-and-citation-placement",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260919-readers-seat-and-citation-placement",
+        "to": "design-compile-readers",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260919-readers-seat-and-citation-placement",
+        "to": "proposal-owner-coordinator-subagent-coordination",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260919-readers-seat-and-citation-placement",
+        "to": "spec-compile-readers",
         "rel": "relates-to"
       },
       {
@@ -4624,6 +4991,16 @@ window.PORTAL_DATA = {
       },
       {
         "from": "privacy-review",
+        "to": "design-board",
+        "rel": "documents"
+      },
+      {
+        "from": "privacy-review",
+        "to": "design-compile-readers",
+        "rel": "documents"
+      },
+      {
+        "from": "privacy-review",
         "to": "design-compile-stage",
         "rel": "documents"
       },
@@ -4645,6 +5022,16 @@ window.PORTAL_DATA = {
       {
         "from": "privacy-review",
         "to": "design-docs-explorer-grounding-spatial-navigation",
+        "rel": "documents"
+      },
+      {
+        "from": "privacy-review",
+        "to": "design-leader-designation",
+        "rel": "documents"
+      },
+      {
+        "from": "privacy-review",
+        "to": "design-message-layer",
         "rel": "documents"
       },
       {
@@ -4968,6 +5355,26 @@ window.PORTAL_DATA = {
         "rel": "implements"
       },
       {
+        "from": "spec-board",
+        "to": "audit-log",
+        "rel": "relates-to"
+      },
+      {
+        "from": "spec-board",
+        "to": "note-20260919-coordination-decisions-ratified",
+        "rel": "relates-to"
+      },
+      {
+        "from": "spec-board",
+        "to": "proposal-owner-coordinator-subagent-coordination",
+        "rel": "refines"
+      },
+      {
+        "from": "spec-board",
+        "to": "spec-message-layer",
+        "rel": "relates-to"
+      },
+      {
         "from": "spec-collaborate-skill",
         "to": "design-coord-collaboration-phase4",
         "rel": "refines"
@@ -4976,6 +5383,31 @@ window.PORTAL_DATA = {
         "from": "spec-collaborate-skill",
         "to": "spec-agent-coordination",
         "rel": "implements"
+      },
+      {
+        "from": "spec-compile-readers",
+        "to": "audit-log",
+        "rel": "relates-to"
+      },
+      {
+        "from": "spec-compile-readers",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "spec-compile-readers",
+        "to": "design-compile-stage",
+        "rel": "relates-to"
+      },
+      {
+        "from": "spec-compile-readers",
+        "to": "proposal-owner-coordinator-subagent-coordination",
+        "rel": "relates-to"
+      },
+      {
+        "from": "spec-compile-readers",
+        "to": "spec-compile-stage",
+        "rel": "refines"
       },
       {
         "from": "spec-compile-stage",
@@ -5048,6 +5480,51 @@ window.PORTAL_DATA = {
         "rel": "implements"
       },
       {
+        "from": "spec-leader-designation",
+        "to": "adr-0007-coordination-substrate",
+        "rel": "depends-on"
+      },
+      {
+        "from": "spec-leader-designation",
+        "to": "kb-multi-agent-coordination-data",
+        "rel": "relates-to"
+      },
+      {
+        "from": "spec-leader-designation",
+        "to": "note-20260919-leadership-in-a-ref-not-the-ledger",
+        "rel": "relates-to"
+      },
+      {
+        "from": "spec-leader-designation",
+        "to": "proposal-owner-coordinator-subagent-coordination",
+        "rel": "refines"
+      },
+      {
+        "from": "spec-leader-designation",
+        "to": "spec-agent-coordination",
+        "rel": "relates-to"
+      },
+      {
+        "from": "spec-message-layer",
+        "to": "adr-0007-coordination-substrate",
+        "rel": "depends-on"
+      },
+      {
+        "from": "spec-message-layer",
+        "to": "kb-multi-agent-coordination",
+        "rel": "relates-to"
+      },
+      {
+        "from": "spec-message-layer",
+        "to": "note-20260919-coordination-decisions-ratified",
+        "rel": "relates-to"
+      },
+      {
+        "from": "spec-message-layer",
+        "to": "proposal-owner-coordinator-subagent-coordination",
+        "rel": "refines"
+      },
+      {
         "from": "spec-native-app-ui-skill-extension",
         "to": "architecture",
         "rel": "relates-to"
@@ -5065,6 +5542,16 @@ window.PORTAL_DATA = {
       {
         "from": "threat-model",
         "to": "design-aiforward-cli",
+        "rel": "documents"
+      },
+      {
+        "from": "threat-model",
+        "to": "design-board",
+        "rel": "documents"
+      },
+      {
+        "from": "threat-model",
+        "to": "design-compile-readers",
         "rel": "documents"
       },
       {
@@ -5090,6 +5577,16 @@ window.PORTAL_DATA = {
       {
         "from": "threat-model",
         "to": "design-docs-explorer-grounding-spatial-navigation",
+        "rel": "documents"
+      },
+      {
+        "from": "threat-model",
+        "to": "design-leader-designation",
+        "rel": "documents"
+      },
+      {
+        "from": "threat-model",
+        "to": "design-message-layer",
         "rel": "documents"
       },
       {

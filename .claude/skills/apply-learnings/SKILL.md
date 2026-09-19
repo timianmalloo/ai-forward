@@ -1,13 +1,14 @@
 ---
 name: apply-learnings
 description: Push approved, generalised fleet learnings (promoted from /dream into the ai-forward learnings/ store) into one or more target repos, reconciling each against that repo's existing register so nothing is duplicated or contradicted. Produces a reviewable plan per repo — never merges, never executes.
+runs_as: Coordinator
 ---
 
 # Skill: /apply-learnings
 
 **Push** approved, generalised **fleet learnings** — the control-bearing classes promoted from `/dream` into the ai-forward `learnings/` store — into one or more **target repos**, **reconciling** each against that repo's existing directives and defect-class register so nothing is duplicated or silently contradicted. It is the **push** half of federation (the pull half is `/updatepack`); it operationalises NASA's *Disseminate → Apply* and CI8 ("raise it upstream / share it across") **automatically and safely**.
 
-**The safety posture is the whole point:** `/apply-learnings` produces a **reviewable plan/diff per target repo** — it **never merges** and **never executes** anything in a target (spec-dreaming US-5; ADR-0002/0004/0005). A human reviews each plan and applies it by hand or via a PR.
+**The safety posture is the whole point:** `/apply-learnings` produces a **reviewable plan/diff per target repo** — it **never merges** and **never executes** anything in a target (the stop is a message — CO-S2, `knowledge/agent-coordination.md`) (spec-dreaming US-5; ADR-0002/0004/0005). A human reviews each plan and applies it by hand or via a PR.
 
 **Spine:** the Rigor Protocol on the *distribution* — Stage 3 establishes each target's existing state (don't guess what a repo already knows), Stage 4 the Simplifier/Security check that nothing leaks or duplicates. **Authority:** `spec-dreaming` (US-5), `architecture-dreaming` (Federation context), ADR-0002 (two federation paths), ADR-0004 (abstraction + the five guards). **Lead:** the maintainer, with **Privacy & Data Governance** (hard veto — nothing personal/specific crosses a repo boundary) and the **Simplifier** (no duplicate classes).
 
