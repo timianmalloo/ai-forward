@@ -10,6 +10,7 @@ links:
   - { to: architecture, rel: documents }
   - { to: design-aiforward-cli, rel: documents }
   - { to: design-coord-core-phase1, rel: documents }
+  - { to: design-message-layer, rel: documents }
   - { to: design-compile-readers, rel: documents }
   - { to: design-board, rel: documents }
   - { to: design-compile-stage, rel: documents }
