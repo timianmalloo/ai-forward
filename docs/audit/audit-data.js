@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-19T16:40:57Z",
+  "generated": "2026-09-19T17:17:18Z",
   "audit": [
     {
       "actor": null,
@@ -4846,6 +4846,29 @@ window.AUDIT_DATA = {
         "speedup": 1.0,
         "peak_concurrency": 1
       }
+    },
+    {
+      "id": "al-01M2XAR8VTRJ9APNC987EX15DR",
+      "shortname": "implement-compile-stage-track-a",
+      "datetime": "2026-09-19T17:17:18Z",
+      "session": "compile-a",
+      "prompt": "Track A brief: engine, gate, templates",
+      "summary": "Built pack/scripts/prompt-compile.py (skeleton/finish/render/distance), pack/scripts/verify-compiled-prompt.py (nine-direction gate, bare form = self-test), pack/templates/prompt-templates/{claude-code,codex}.v1.md, tests/docs_explorer/test_prompt_compile.py + test_verify_compiled_prompt.py (42 tests), fixtures/compile-eval (20 belief + 10 instruction prompts + README). Observed: gate --self-test exit 0 (nine directions ok); render --self-test exit 0; pytest 42 passed 0 failed; verify-no-machine-paths / verify-subprocess-utf8 / verify-portable-text-io each exit 0; ruff clean except EXE001 (sibling convention). Seams applied: templates at pack/templates/prompt-templates + --templates-dir; argument-free gate runs self-test. Not done: real audit append needs Track B's kind compilation (tests substitute the append).",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "pack/scripts/prompt-compile.py",
+        "pack/scripts/verify-compiled-prompt.py"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "tier": "T2",
+      "main_calls": 51,
+      "main_budget": 90,
+      "main_over_budget": false,
+      "fan_out": 0
     }
   ],
   "changes": [
