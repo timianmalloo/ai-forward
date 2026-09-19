@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-19T17:55:57Z",
+  "generated": "2026-09-19T18:17:41Z",
   "audit": [
     {
       "actor": null,
@@ -4977,71 +4977,60 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M2XATMN1QY170Q9PV49MBW1A",
-      "shortname": "join-compile-a",
-      "datetime": "2026-09-19T17:18:36Z",
-      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
-      "prompt": "the join of impl/compile-stage-a into spec/compile-stage-p7",
-      "summary": "Track A joined: prompt-compile.py (skeleton|finish|render|distance), verify-compiled-prompt.py (nine directions; bare form = self-test), templates claude-code.v1 and codex.v1 under pack/templates/prompt-templates, 42 tests, 31 eval fixtures; verified in its tree: self-tests exit 0, 42 passed, 1b/1c/1d exit 0; two seams applied (template location, argument-free gate) recount_seconds=4 (docs_only=False).",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "pack/scripts/prompt-compile.py",
         "pack/scripts/verify-compiled-prompt.py"
       ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "Track A's authored paths merged after B with the conflict-marker gate, the recount and the verify gates green",
+      "datetime": "2026-09-19T17:18:36Z",
       "done_when": "merge commit present; recount green; run-verify-gates exit 0 (now including the new gate argument-free); no push",
-      "tier": "T1",
+      "duration_seconds": 5.0,
       "fan_out": 0,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": true
-      },
-      "started_at": "2026-09-19T17:18:31Z",
-      "duration_seconds": 5.0
-    },
-    {
-      "id": "al-01M2XAV91B451GESGZE4D9DGTK",
-      "shortname": "Add a deadline and a fallback to seam requests; the join should refuse a…",
-      "datetime": "2026-09-19T17:18:57Z",
-      "session": "prompt-compile",
-      "prompt": "Add a deadline and a fallback to seam requests; the join should refuse an expired one. Do not touch the leases.",
-      "summary": "raw prompt logged for compilation",
-      "kind": "prompt",
-      "skill": null,
-      "tool": null,
-      "actor": null,
-      "artifacts": [],
-      "tags": [],
-      "outcome": "success"
-    },
-    {
-      "id": "al-01M2XAV9RG8HDKPDZ2EEX80JSG",
-      "shortname": "compile-Add a deadline and a fallback to seam requests; the join should refuse a…",
-      "datetime": "2026-09-19T17:18:57Z",
-      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
-      "prompt": "python3 docs/ai-forward-pack/scripts/audit-log.py start --session 2eb8c619-5ab2-4b61-8a57-06c628aebe54 --skill <skill>\nGoal state\nGoal: Seam requests carry a deadline and a fallback, and the join refuses an expired request\nDone when: request add accepts --deadline and --fallback; the join refuses an expired request; expiry is judged against the request's own stamp\nNot in scope: the leases\nTier: T1\nFan-out cap: 2\nContext ceiling: 400000\nMain-line budget: 60\nTrace\n| clause | trace |\n|---|---|\n| done_when: request add accepts --deadline and --fallback | phrase: Add a deadline and a fallback to seam requests |\n| done_when: the join refuses an expired request | phrase: the join should refuse an expired one |\n| done_when: expiry is judged against the request's own stamp | #1 |\n| not_in_scope: the leases | phrase: Do not touch the leases |\nReferences\n- none\nAssumptions\n- #1 belief: expired means past the deadline in the request's own stamp, not wall-clock at the join · confirm: ADR-0007 fencing section; the request record's stamp field · breaks: a paused laptop expires every request at resume · consequential: true\nDecision requests\n- DR-1 (#1): Judge expiry by the request's stamp or by wall-clock at the join? · default: the request's stamp · answer: unanswered\nContract slot\nwidth_cap: unset\ntransient_retry: unset\nper_branch_exit: unset\njoin_rule: unset\ncontainment: unset\ntermination: unset\ndeadline: unset\nfallback: unset\nRules: absolute paths only; a multi-line program is a file, then a run; a gate's exit status is never behind a pipe.\nProvenance\nraw id: al-01M2XAV91B451GESGZE4D9DGTK\nraw sha256: 3a6f09455dd6f5254aba3881f77b542c1794c75b635b5e9302aad0d859e1ca24\ncompiler model: claude-fable-5-1\nengine seconds: 0.001\ntokens: not recorded\ngate: pass\ndispatchable: false\n",
-      "summary": "compiled al-01M2XAV91B451GESGZE4D9DGTK for claude-code v1: 4 clauses, 1 assumptions, 1 decision requests",
-      "kind": "compilation",
-      "skill": null,
-      "tool": null,
-      "actor": null,
-      "artifacts": [],
-      "tags": [],
+      "goal": "Track A's authored paths merged after B with the conflict-marker gate, the recount and the verify gates green",
+      "id": "al-01M2XATMN1QY170Q9PV49MBW1A",
+      "kind": "skill",
       "outcome": "success",
+      "prompt": "the join of impl/compile-stage-a into spec/compile-stage-p7",
+      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
+      "shortname": "join-compile-a",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-19T17:18:31Z",
+      "summary": "Track A joined: prompt-compile.py (skeleton|finish|render|distance), verify-compiled-prompt.py (nine directions; bare form = self-test), templates claude-code.v1 and codex.v1 under pack/templates/prompt-templates, 42 tests, 31 eval fixtures; verified in its tree: self-tests exit 0, 42 passed, 1b/1c/1d exit 0; two seams applied (template location, argument-free gate) recount_seconds=4 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-19T17:18:57Z",
+      "id": "al-01M2XAV91B451GESGZE4D9DGTK",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "Add a deadline and a fallback to seam requests; the join should refuse an expired one. Do not touch the leases.",
+      "session": "prompt-compile",
+      "shortname": "Add a deadline and a fallback to seam requests; the join should refuse a…",
+      "skill": null,
+      "summary": "raw prompt logged for compilation",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
       "compiled": {
         "assumptions": [
           {
-            "id": "#1",
             "belief": "expired means past the deadline in the request's own stamp, not wall-clock at the join",
-            "confirm": "ADR-0007 fencing section; the request record's stamp field",
             "breaks": "a paused laptop expires every request at resume",
-            "consequential": true
+            "confirm": "ADR-0007 fencing section; the request record's stamp field",
+            "consequential": true,
+            "id": "#1"
           }
         ],
         "clauses": [
@@ -5090,28 +5079,28 @@ window.AUDIT_DATA = {
         },
         "decision_requests": [
           {
-            "id": "DR-1",
+            "answer": null,
             "assumption": "#1",
-            "question": "Judge expiry by the request's stamp or by wall-clock at the join?",
             "default": "the request's stamp",
-            "answer": null
+            "id": "DR-1",
+            "question": "Judge expiry by the request's stamp or by wall-clock at the join?"
           }
         ],
         "dispatchable": false,
         "goal_state": {
-          "goal": "Seam requests carry a deadline and a fallback, and the join refuses an expired request",
+          "context_ceiling": 400000,
           "done_when": [
             "request add accepts --deadline and --fallback",
             "the join refuses an expired request",
             "expiry is judged against the request's own stamp"
           ],
+          "fan_out_cap": 2,
+          "goal": "Seam requests carry a deadline and a fallback, and the join refuses an expired request",
+          "main_line_budget": 60,
           "not_in_scope": [
             "the leases"
           ],
-          "tier": "T1",
-          "fan_out_cap": 2,
-          "context_ceiling": 400000,
-          "main_line_budget": 60
+          "tier": "T1"
         },
         "graph_neighbours": [],
         "harness": "claude-code",
@@ -5131,146 +5120,263 @@ window.AUDIT_DATA = {
         "template": "claude-code",
         "template_version": 1
       },
+      "datetime": "2026-09-19T17:18:57Z",
+      "dispatchable": false,
+      "id": "al-01M2XAV9RG8HDKPDZ2EEX80JSG",
+      "kind": "compilation",
       "mode": "compiled",
-      "dispatchable": false
+      "outcome": "success",
+      "prompt": "python3 docs/ai-forward-pack/scripts/audit-log.py start --session 2eb8c619-5ab2-4b61-8a57-06c628aebe54 --skill <skill>\nGoal state\nGoal: Seam requests carry a deadline and a fallback, and the join refuses an expired request\nDone when: request add accepts --deadline and --fallback; the join refuses an expired request; expiry is judged against the request's own stamp\nNot in scope: the leases\nTier: T1\nFan-out cap: 2\nContext ceiling: 400000\nMain-line budget: 60\nTrace\n| clause | trace |\n|---|---|\n| done_when: request add accepts --deadline and --fallback | phrase: Add a deadline and a fallback to seam requests |\n| done_when: the join refuses an expired request | phrase: the join should refuse an expired one |\n| done_when: expiry is judged against the request's own stamp | #1 |\n| not_in_scope: the leases | phrase: Do not touch the leases |\nReferences\n- none\nAssumptions\n- #1 belief: expired means past the deadline in the request's own stamp, not wall-clock at the join · confirm: ADR-0007 fencing section; the request record's stamp field · breaks: a paused laptop expires every request at resume · consequential: true\nDecision requests\n- DR-1 (#1): Judge expiry by the request's stamp or by wall-clock at the join? · default: the request's stamp · answer: unanswered\nContract slot\nwidth_cap: unset\ntransient_retry: unset\nper_branch_exit: unset\njoin_rule: unset\ncontainment: unset\ntermination: unset\ndeadline: unset\nfallback: unset\nRules: absolute paths only; a multi-line program is a file, then a run; a gate's exit status is never behind a pipe.\nProvenance\nraw id: al-01M2XAV91B451GESGZE4D9DGTK\nraw sha256: 3a6f09455dd6f5254aba3881f77b542c1794c75b635b5e9302aad0d859e1ca24\ncompiler model: claude-fable-5-1\nengine seconds: 0.001\ntokens: not recorded\ngate: pass\ndispatchable: false\n",
+      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
+      "shortname": "compile-Add a deadline and a fallback to seam requests; the join should refuse a…",
+      "skill": null,
+      "summary": "compiled al-01M2XAV91B451GESGZE4D9DGTK for claude-code v1: 4 clauses, 1 assumptions, 1 decision requests",
+      "tags": [],
+      "tool": null
     },
     {
-      "id": "al-01M2XB4R1101KKPFKCH2A9VV1S",
-      "shortname": "coordinate-compile-stage",
-      "datetime": "2026-09-19T17:24:07Z",
-      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
-      "prompt": "then use the owner-coordinator-sub.agent model to go through the whole design-slice/implement loop to get this spec implemented",
-      "summary": "Track A (python-developer, tree impl/compile-stage-a): prompt-compile.py, verify-compiled-prompt.py (nine directions; bare form = self-test), two v1 templates under pack/templates/prompt-templates, 42 tests, 31 eval fixtures; 52/90 calls, 14 of 90 min; two coordinator seams applied (template location, argument-free gate). Track B (python-developer, tree impl/compile-stage-b): audit-log kind compilation + --compiled-from/--edit-distance + compiled:false, prompt-log twins, /compile skill (1,581 tokens), Copilot prompt, eval case, agent-coordination.md seeded with CO-S0, one Stage-0 sentence in two skills; 15 tests; 33/70 calls, 8 of 60 min. Coordinator verified every exit claim by re-running it in the track's tree (E16), committed each track, joined B then A by conductor-join.py (recount + run-verify-gates green both times), applied counts (28 skills, 39 knowledge docs, 32 scripts), INSTALL rev 76, class PACK-V + its red-first test (type plan registered in docs-graph), portal editorial entries, skills baseline; e2e compile: skeleton 0.086 s, gate pass, finish exit 0, entry al-01M2XAV9RG8HDKPDZ2EEX80JSG. Parallelism paid: span 14 min vs 22 min serial; zero refused decisions, zero edits outside a lease. Interpretations recorded by A (engine_seconds null in the skeleton, measured at finish; raw_id read back by text match) accepted.",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
       "actor": null,
+      "agent_runs": [
+        {
+          "agent": "python-developer",
+          "budget_calls": 90,
+          "calls": 52,
+          "duration_seconds": 829.0,
+          "ended_at": "2026-09-19T17:17:00Z",
+          "over_budget": false,
+          "started_at": "2026-09-19T17:03:11Z"
+        },
+        {
+          "agent": "python-developer",
+          "budget_calls": 70,
+          "calls": 33,
+          "duration_seconds": 477.0,
+          "ended_at": "2026-09-19T17:12:00Z",
+          "over_budget": false,
+          "started_at": "2026-09-19T17:04:03Z"
+        }
+      ],
       "artifacts": [
         "docs/coordination/coordination-compile-stage.md",
         "pack/scripts/prompt-compile.py",
         "pack/commands/compile/SKILL.md"
       ],
+      "compiled": false,
+      "datetime": "2026-09-19T17:24:07Z",
+      "done_when": "join commits present with recount and run-verify-gates green; e2e finish exit 0 with a kind:compilation entry; verify-bundle 12/14 (gate 2 = own uncommitted files / gate 3 = three pre-existing master-branch tests); linear commit pushed over SSH; pack-consistency run green on three runners; planned vs actual recorded in the plan.",
+      "duration_seconds": 1212.0,
+      "duration_source": "session-start-hook",
+      "fan_out": 2,
+      "goal": "Both tracks of coordination-compile-stage dispatched as Sub-Agents in their own worktrees under five-part contracts, their exit evidence verified (not accepted), joined by conductor-join.py B then A, the coordinator's surfaces applied, the end-to-end compile run against the real audit log, gates green, landed on main as one linear commit.",
+      "id": "al-01M2XB4R1101KKPFKCH2A9VV1S",
+      "kind": "skill",
+      "main_budget": 60,
+      "main_calls": 44,
+      "main_over_budget": false,
+      "outcome": "success",
+      "parallelism": {
+        "agent_seconds": 1306.0,
+        "peak_concurrency": 2,
+        "span_seconds": 829.0,
+        "speedup": 1.58
+      },
+      "prompt": "then use the owner-coordinator-sub.agent model to go through the whole design-slice/implement loop to get this spec implemented",
+      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
+      "shortname": "coordinate-compile-stage",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-19T17:03:55Z",
+      "summary": "Track A (python-developer, tree impl/compile-stage-a): prompt-compile.py, verify-compiled-prompt.py (nine directions; bare form = self-test), two v1 templates under pack/templates/prompt-templates, 42 tests, 31 eval fixtures; 52/90 calls, 14 of 90 min; two coordinator seams applied (template location, argument-free gate). Track B (python-developer, tree impl/compile-stage-b): audit-log kind compilation + --compiled-from/--edit-distance + compiled:false, prompt-log twins, /compile skill (1,581 tokens), Copilot prompt, eval case, agent-coordination.md seeded with CO-S0, one Stage-0 sentence in two skills; 15 tests; 33/70 calls, 8 of 60 min. Coordinator verified every exit claim by re-running it in the track's tree (E16), committed each track, joined B then A by conductor-join.py (recount + run-verify-gates green both times), applied counts (28 skills, 39 knowledge docs, 32 scripts), INSTALL rev 76, class PACK-V + its red-first test (type plan registered in docs-graph), portal editorial entries, skills baseline; e2e compile: skeleton 0.086 s, gate pass, finish exit 0, entry al-01M2XAV9RG8HDKPDZ2EEX80JSG. Parallelism paid: span 14 min vs 22 min serial; zero refused decisions, zero edits outside a lease. Interpretations recorded by A (engine_seconds null in the skeleton, measured at finish; raw_id read back by text match) accepted.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/profiles/sp-0009/profile.md"
+      ],
+      "datetime": "2026-09-19T17:43:07Z",
+      "duration_seconds": 0.0,
+      "id": "al-01M2XC7HCSYVF645QR3X4HWA4F",
+      "kind": "script",
+      "outcome": "success",
+      "prompt": "session-profile.py profile",
+      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
+      "shortname": "session-profile-sp-0009",
+      "skill": "session-profiler",
+      "started_at": "2026-09-19T17:43:07Z",
+      "summary": "Profile sp-0009: 3 session(s), 9 finding(s)",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/profiles/sp-0009/profile.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-09-19T17:45:47Z",
+      "done_when": "discover, profile (sp-0009) and compare ran; every Inferred finding confirmed or struck against the transcript; fixes name pack surface and control; SP-15 reconciled; instances registered; audit entry with tier T0 fan-out 0; profile committed and pushed.",
+      "duration_seconds": 174.0,
+      "fan_out": 0,
+      "goal": "Profile sessions compile-a, compile-b and the coordinator (2eb8c619) for the compile-stage implementation and answer, from the store, whether the two-track division paid.",
+      "id": "al-01M2XCCE6R0XFNJNQ5FDMPG2VA",
+      "kind": "skill",
+      "main_budget": 60,
+      "main_calls": 14,
+      "main_over_budget": false,
+      "outcome": "success",
+      "prompt": "do the worktree clean up now then /session-profiler",
+      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
+      "shortname": "session-profiler-sp-0009",
+      "signals": {
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "session-profiler",
+      "started_at": "2026-09-19T17:42:53Z",
+      "summary": "sp-0009: 3 sessions, 9 findings. Compile-stage window (turn 11): Track A 902 s / 28 req / 53 tools / 3.36 M cache-read (est. $3.47), Track B 627 s / 34 req / 48 tools / 3.49 M (est. $2.78), fully overlapped -> 41% wall saved on the delegated part, both under half their budgets, 0 converge nudges; the coordinator's serial spine (design, plan, two joins, gates) took 2,847 s and 26 M cache-read on the same turn, so the plan's 3x multiplier was not observed (about 1.3x on tokens vs the main line; no single-session baseline exists). Confirmed: SP-01 (five tasks in one session, 388k->940k then 157k->467k after one compaction; CTX-A instance), SP-09 on all four flagged turns by opening the transcript (PACK-O instances), SP-24 turns 4-5, SP-25 turn 9 (SHELL-A instance), SP-07 turn 0 research nodes only - the contracted nodes show F-04 holding. Struck: SP-17 (no decision changes). Not raised: SP-14 (2 turns in the second family). SP-15 reconciled against the worktree list; three trees removed by the fail-safe cleanup.",
+      "tags": [],
+      "tier": "T0",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/coordination/coordination-p2-p8.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-09-19T17:55:57Z",
+      "done_when": "docs/coordination/coordination-p2-p8.md + .html written to the schema; validate exit 0; audit entry.",
+      "duration_seconds": 108.0,
+      "fan_out": 0,
+      "goal": "A coordination plan for two full-loop tracks (P2 leader designation, P8 readers) with disjoint authored paths, the one crossing resolved by ownership, shared surfaces owned by the coordinator.",
+      "id": "al-01M2XCZ1A10P09V0Q97ECJ2378",
+      "kind": "skill",
+      "main_budget": 60,
+      "main_calls": 6,
+      "main_over_budget": false,
+      "outcome": "success",
+      "prompt": "keep going - work on the P2 Leader designation and the P8 readers with two separate agents using our coordination framework - do the full loop from specify through implement",
+      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
+      "shortname": "coordination-p2-p8",
+      "skill": "prepare-for-coordination",
+      "started_at": "2026-09-19T17:54:09Z",
+      "summary": "Two tracks: P2 (coord-core leader verbs over refs/coord/leader by CAS with D13 constants, conductor-join epoch fence, doctor/metrics, two coordination skills incl. the dispatchable-stop sentence P8 fixes, agent-coordination.md leader section, tests red-first) and P8 (session-profile + dream readers of the compile fields, CO-S0 citation in 13 skills, Runs as: on every skill it owns, verify-skill-contracts.py red-first, tests). Coordinator owns security rollups, counts, INSTALL rev 77, baselines, sync, all four builders, join, linear landing. Struck: splitting either track; a third track for cross-platform residue. Multiplier measured last time at ~1.3x tokens.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/specs/board.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-09-19T18:06:09Z",
+      "done_when": "docs/specs/board.md exists with Parts A/B/C, archetype recorded, derive run",
+      "duration_seconds": 308.0,
+      "fan_out": 0,
+      "goal": "spec-board written, indexed, gate recorded",
+      "id": "al-01M2XDHQ27VAMDJTVWYM7XRGTD",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Track P6 of coordination-p2-p8: /specify the board (D12) — a read model over the inboxes and the ledger, never a store; coord-board.py board/post, audit-log.py render messages, a Messages view in the audit explorer",
+      "session": "p6-board",
+      "shortname": "specify-board",
+      "skill": "specify",
+      "started_at": "2026-09-19T18:01:01Z",
+      "summary": "docs/specs/board.md (spec-board): Part A with the projection rule (one row per mail id, union of inboxes and ledger twins, ledger-only shows (not on this machine), empty corpus NOT CHECKED exit 0, --follow capped by --max-polls, post through the single writer), Part B (terminal IA, explorer Messages view as a third toggle, flows incl. error/recovery), Part C (archetype B2 Enterprise Master-Detail auto-selected with deviations; tokens inherited; acked on the page is 'not recorded here'). Adversaries inline (fan-out 0): PASS-WITH-CONDITIONS, six findings folded in.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/design/board.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-09-19T18:08:03Z",
+      "done_when": "docs/design/board.md exists, derive run, change entry",
+      "duration_seconds": 114.0,
+      "fan_out": 0,
+      "goal": "design-board written and indexed",
+      "id": "al-01M2XDN6NFQENR7NSJCGF00AYW",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Track P6 of coordination-p2-p8: /design-slice the board from spec-board",
+      "session": "p6-board",
+      "shortname": "design-slice-board",
+      "skill": "design-slice",
+      "started_at": "2026-09-19T18:06:09Z",
+      "summary": "docs/design/board.md (design-board, implements spec-board): row value object keyed by mail id, fold over inboxes + ledger twins, contracts for board/post/render/template, single-writer facade via path import with --writer, bounded --follow, failure/STRIDE/LINDDUN, UI on existing tokens, telemetry names the read-rate gap, 13-test plan. Adversaries inline: PASS-WITH-CONDITIONS.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "pack/scripts/coord-board.py",
+        "pack/templates/audit-explorer.template.html",
+        "pack/scripts/audit-log.py",
+        "tests/docs_explorer/test_coord_board.py",
+        "docs/notes/note-20260919-board-read-model.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-09-19T18:15:10Z",
+      "done_when": "tests green, lints 0, demo run, render shows messages",
+      "duration_seconds": 427.0,
+      "fan_out": 0,
+      "goal": "board built red-first and proven",
+      "id": "al-01M2XE27M6KHZ8QAE420HPWX8E",
+      "kind": "skill",
+      "main_budget": 120,
+      "main_calls": 51,
+      "main_over_budget": false,
+      "outcome": "success",
+      "prompt": "Track P6 of coordination-p2-p8: /implement the board from design-board, red-first, in the P6 worktree",
+      "session": "p6-board",
+      "shortname": "implement-board",
+      "skill": "implement",
+      "started_at": "2026-09-19T18:08:03Z",
+      "summary": "pack/scripts/coord-board.py (board [--follow --since --session --json], board post via append_mail imported by path with --writer), audit-log.py render emits messages[] from the ledger's type: mail twins (no bodies), audit-explorer template gains the Messages view (third toggle, kind filter, table with scope=col, NOT CHECKED / filtered-empty / loading / error states, existing tokens only). tests/docs_explorer/test_coord_board.py: 18 tests seen red (17 failed, 1 passed) then green; 45 passed with test_audit_log.py. Lints 1b/1c/1d exit 0; ui-craft-gate no findings; gate 4b exit 0 (covers the explainer page only). Decision note note-20260919-board-read-model.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "id": "al-01M2XE6V5G7SHNYEP9KFXVCARK",
+      "shortname": "join-p6-board",
+      "datetime": "2026-09-19T18:17:41Z",
+      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
+      "prompt": "the join of the resolved merge into integ/p2-p8",
+      "summary": "Track P6 joined: spec-board (archetype B2), design-board, coord-board.py board/--follow/--json/post via P4's writer by path, audit-log render emits messages without bodies, Messages view in the template, 18 tests red-first; verified in its tree: 45 passed, lints exit 0, ui-craft-gate clean; 52/120 calls, 16 min. First attempt stopped at recount on the sync-dependent pack-apply test; selector corrected. recount_seconds=7 (docs_only=False).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
       "tags": [],
       "outcome": "success",
       "compiled": false,
-      "goal": "Both tracks of coordination-compile-stage dispatched as Sub-Agents in their own worktrees under five-part contracts, their exit evidence verified (not accepted), joined by conductor-join.py B then A, the coordinator's surfaces applied, the end-to-end compile run against the real audit log, gates green, landed on main as one linear commit.",
-      "done_when": "join commits present with recount and run-verify-gates green; e2e finish exit 0 with a kind:compilation entry; verify-bundle 12/14 (gate 2 = own uncommitted files / gate 3 = three pre-existing master-branch tests); linear commit pushed over SSH; pack-consistency run green on three runners; planned vs actual recorded in the plan.",
-      "tier": "T2",
-      "main_calls": 44,
-      "main_budget": 60,
-      "main_over_budget": false,
-      "fan_out": 2,
+      "goal": "Track p6-board merged into the integration branch with the conflict-marker gate, recount and verify gates green",
+      "done_when": "merge commit present; recount green; run-verify-gates exit 0; no push",
+      "tier": "T1",
+      "fan_out": 0,
       "signals": {
         "verification_path": true,
         "verification_executed": true,
         "acceptance_met": true
       },
-      "duration_source": "session-start-hook",
-      "started_at": "2026-09-19T17:03:55Z",
-      "duration_seconds": 1212.0,
-      "agent_runs": [
-        {
-          "agent": "python-developer",
-          "started_at": "2026-09-19T17:03:11Z",
-          "ended_at": "2026-09-19T17:17:00Z",
-          "duration_seconds": 829.0,
-          "calls": 52,
-          "budget_calls": 90,
-          "over_budget": false
-        },
-        {
-          "agent": "python-developer",
-          "started_at": "2026-09-19T17:04:03Z",
-          "ended_at": "2026-09-19T17:12:00Z",
-          "duration_seconds": 477.0,
-          "calls": 33,
-          "budget_calls": 70,
-          "over_budget": false
-        }
-      ],
-      "parallelism": {
-        "agent_seconds": 1306.0,
-        "span_seconds": 829.0,
-        "speedup": 1.58,
-        "peak_concurrency": 2
-      }
-    },
-    {
-      "id": "al-01M2XC7HCSYVF645QR3X4HWA4F",
-      "shortname": "session-profile-sp-0009",
-      "datetime": "2026-09-19T17:43:07Z",
-      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
-      "prompt": "session-profile.py profile",
-      "summary": "Profile sp-0009: 3 session(s), 9 finding(s)",
-      "kind": "script",
-      "skill": "session-profiler",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "docs/profiles/sp-0009/profile.md"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "started_at": "2026-09-19T17:43:07Z",
-      "duration_seconds": 0.0
-    },
-    {
-      "id": "al-01M2XCCE6R0XFNJNQ5FDMPG2VA",
-      "shortname": "session-profiler-sp-0009",
-      "datetime": "2026-09-19T17:45:47Z",
-      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
-      "prompt": "do the worktree clean up now then /session-profiler",
-      "summary": "sp-0009: 3 sessions, 9 findings. Compile-stage window (turn 11): Track A 902 s / 28 req / 53 tools / 3.36 M cache-read (est. $3.47), Track B 627 s / 34 req / 48 tools / 3.49 M (est. $2.78), fully overlapped -> 41% wall saved on the delegated part, both under half their budgets, 0 converge nudges; the coordinator's serial spine (design, plan, two joins, gates) took 2,847 s and 26 M cache-read on the same turn, so the plan's 3x multiplier was not observed (about 1.3x on tokens vs the main line; no single-session baseline exists). Confirmed: SP-01 (five tasks in one session, 388k->940k then 157k->467k after one compaction; CTX-A instance), SP-09 on all four flagged turns by opening the transcript (PACK-O instances), SP-24 turns 4-5, SP-25 turn 9 (SHELL-A instance), SP-07 turn 0 research nodes only - the contracted nodes show F-04 holding. Struck: SP-17 (no decision changes). Not raised: SP-14 (2 turns in the second family). SP-15 reconciled against the worktree list; three trees removed by the fail-safe cleanup.",
-      "kind": "skill",
-      "skill": "session-profiler",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "docs/profiles/sp-0009/profile.md"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "compiled": false,
-      "goal": "Profile sessions compile-a, compile-b and the coordinator (2eb8c619) for the compile-stage implementation and answer, from the store, whether the two-track division paid.",
-      "done_when": "discover, profile (sp-0009) and compare ran; every Inferred finding confirmed or struck against the transcript; fixes name pack surface and control; SP-15 reconciled; instances registered; audit entry with tier T0 fan-out 0; profile committed and pushed.",
-      "tier": "T0",
-      "main_calls": 14,
-      "main_budget": 60,
-      "main_over_budget": false,
-      "fan_out": 0,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true
-      },
-      "started_at": "2026-09-19T17:42:53Z",
-      "duration_seconds": 174.0
-    },
-    {
-      "id": "al-01M2XCZ1A10P09V0Q97ECJ2378",
-      "shortname": "coordination-p2-p8",
-      "datetime": "2026-09-19T17:55:57Z",
-      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
-      "prompt": "keep going - work on the P2 Leader designation and the P8 readers with two separate agents using our coordination framework - do the full loop from specify through implement",
-      "summary": "Two tracks: P2 (coord-core leader verbs over refs/coord/leader by CAS with D13 constants, conductor-join epoch fence, doctor/metrics, two coordination skills incl. the dispatchable-stop sentence P8 fixes, agent-coordination.md leader section, tests red-first) and P8 (session-profile + dream readers of the compile fields, CO-S0 citation in 13 skills, Runs as: on every skill it owns, verify-skill-contracts.py red-first, tests). Coordinator owns security rollups, counts, INSTALL rev 77, baselines, sync, all four builders, join, linear landing. Struck: splitting either track; a third track for cross-platform residue. Multiplier measured last time at ~1.3x tokens.",
-      "kind": "skill",
-      "skill": "prepare-for-coordination",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "docs/coordination/coordination-p2-p8.md"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "compiled": false,
-      "goal": "A coordination plan for two full-loop tracks (P2 leader designation, P8 readers) with disjoint authored paths, the one crossing resolved by ownership, shared surfaces owned by the coordinator.",
-      "done_when": "docs/coordination/coordination-p2-p8.md + .html written to the schema; validate exit 0; audit entry.",
-      "tier": "T1",
-      "main_calls": 6,
-      "main_budget": 60,
-      "main_over_budget": false,
-      "fan_out": 0,
-      "started_at": "2026-09-19T17:54:09Z",
-      "duration_seconds": 108.0
+      "started_at": "2026-09-19T18:17:33Z",
+      "duration_seconds": 8.0
     }
   ],
   "changes": [
@@ -6520,6 +6626,28 @@ window.AUDIT_DATA = {
         "after": "fe7ada84698f04b600e783e837e17123cff14bcf",
         "branch": "spec/compile-stage-p7",
         "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M2XDN6ENZJ1JQBSH53SNY70E",
+      "datetime": "2026-09-19T18:08:03Z",
+      "session": "p6-board",
+      "kind": "design",
+      "skill": "design-slice",
+      "title": "Board (P6, D12): a read model over the inboxes and the ledger, never a store",
+      "prompt": "Track P6: /design-slice the board",
+      "summary": "docs/design/board.md (design-board)",
+      "rationale": "The prior board was struck because nothing wrote to it; D12 reopens it as a projection over the store agents already write. Reading writes nothing; posting goes only through the message layer's single writer imported by path; the page shows the ledger twins without bodies and says NOT CHECKED when empty.",
+      "artifacts": [
+        "docs/design/board.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": null,
+        "after": "2b3a8152476efaa80c9d311db865b4a94746c601",
+        "branch": "impl/p6-board",
+        "pushed": null,
         "commits": []
       }
     }

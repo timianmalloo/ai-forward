@@ -1825,6 +1825,47 @@ window.DOCS_INDEX = {
       "sourceSha256": "61c49b570b70d73f053de18c0d53a133ecb5e03351aec045e413c91dd82a5219"
     },
     {
+      "id": "note-20260919-board-read-model",
+      "path": "docs/notes/note-20260919-board-read-model.md",
+      "title": "Board decisions: acks are not on the page, reading never writes, the writer is imported by path",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-03-18",
+      "reviewSuggested": [],
+      "summary": "Three sub-ADR decisions taken while building P6 (the board): the audit explorer's Messages view shows \"ack: not recorded here\" because acks are not twinned to the ledger by contract; the board emits nothing on read, so its read-rate (the reopen trigger) is measured from the shell history and the session profiler; and board post reaches the inbox only through P4's append_mail() imported by path, with a --writer override that the tests fill with a fixture.",
+      "tags": [
+        "decision-note",
+        "coordination",
+        "board",
+        "mail",
+        "ledger",
+        "p6",
+        "d12"
+      ],
+      "links": [
+        {
+          "to": "spec-board",
+          "rel": "relates-to"
+        },
+        {
+          "to": "design-board",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "refines"
+        },
+        {
+          "to": "note-20260919-coordination-decisions-ratified",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "4929d8ca7bd82d2cf08c6e9c4c8bf74947f70b90f99d500836bea552a82abe6c"
+    },
+    {
       "id": "note-20260919-compilation-is-an-audit-kind",
       "path": "docs/notes/note-20260919-compilation-is-an-audit-kind.md",
       "title": "A compilation is its own audit kind, and its prompt field is the rendered text",
@@ -2050,6 +2091,49 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "4c52b72da4a80dc78ea30213c6eefc577fb8af212764b95e8d85b603b7354fde"
+    },
+    {
+      "id": "design-board",
+      "path": "docs/design/board.md",
+      "title": "Design — the board (coord-board.py · audit-log.py render messages · the audit explorer's Messages view)",
+      "type": "design",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-03-18",
+      "reviewSuggested": [],
+      "summary": "Detailed design for spec-board. One stdlib reader (coord-board.py) that folds every inbox and every ledger twin into rows keyed by mail id, prints them or polls them under a cap, and posts a human note or ruling only through the message layer's append_mail() imported by path; one added field in audit-log.py render (messages, ledger twins without bodies); one added view in the audit explorer template, built on the page's existing tokens and states. No store, no write on read, no new dependency, no new colour.",
+      "tags": [
+        "coordination",
+        "board",
+        "mail",
+        "ledger",
+        "read-model",
+        "audit-explorer",
+        "messages-view",
+        "p6",
+        "d12"
+      ],
+      "links": [
+        {
+          "to": "spec-board",
+          "rel": "implements"
+        },
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "refines"
+        },
+        {
+          "to": "audit-log",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "a914b430f57a1380b4df3eed4bfff538430d9ebc4157d98324d354791c82858e"
     },
     {
       "id": "design-compile-stage",
@@ -6635,6 +6719,55 @@ window.DOCS_INDEX = {
       "sourceSha256": "0bab610129bf747d1805d1319d76df463ec17ee3dd8b30ca505209b6ac612afa"
     },
     {
+      "id": "spec-board",
+      "path": "docs/specs/board.md",
+      "title": "Board — human transparency over agent messages: a read model over the inboxes and the ledger, never a store",
+      "type": "spec",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-03-18",
+      "reviewSuggested": [],
+      "summary": "Specifies P6 of the coordination proposal (D12): the board a human reads instead of git — a read model that folds every session inbox and the ledger's message twins into one timeline, one row per mail id, in the terminal (coord board, with --follow) and in the audit explorer (a Messages view beside the timeline). Never a store: reading writes nothing, an empty corpus says NOT CHECKED, and a human post goes through the message layer's single writer.",
+      "tags": [
+        "coordination",
+        "board",
+        "mail",
+        "ledger",
+        "read-model",
+        "audit-explorer",
+        "messages-view",
+        "p6",
+        "d12"
+      ],
+      "links": [
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "refines"
+        },
+        {
+          "to": "note-20260919-coordination-decisions-ratified",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-message-layer",
+          "rel": "relates-to"
+        },
+        {
+          "to": "audit-log",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "User flows (happy + alternate + error + recovery)",
+          "mermaid": "flowchart TD\n  A[coord board] --> B{any inbox or ledger mail?}\n  B -- no --> N[print NOT CHECKED — no inbox or ledger mail found under root; exit 0]\n  B -- yes --> R[print one row per mail id]\n  R --> U{unreadable lines?}\n  U -- yes --> W[stderr: NOT CHECKED — file:line unreadable; rows still printed; exit 0]\n  U -- no --> D[exit 0]\n  F[coord board --follow] --> P[poll every interval]\n  P --> C{max-polls reached?}\n  C -- yes --> S[print stopped: --max-polls N reached; exit 0]\n  C -- no --> P\n  P -. Ctrl-C .-> K[print stopped: interrupted; exit 0]\n  T[coord board post --to s text] --> V{writer importable?}\n  V -- no --> E[stderr: message layer not installed; --writer; exit 2]\n  V -- yes --> Q{kind ruling without --ref?}\n  Q -- yes --> E2[stderr: --ref required for a ruling; exit 2]\n  Q -- no --> Z[writer.append_mail; print posted id; exit 0]"
+        }
+      ],
+      "sourceSha256": "392f3475d5265ec0bd6b051c379e2707836f151f8ab17cbc01ebb6fde3ae3532"
+    },
+    {
       "id": "spec-collaborate-skill",
       "path": "docs/specs/collaborate-skill.md",
       "title": "Spec - /collaborate skill proposal",
@@ -7181,5 +7314,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "257fc66626bad0c48be1790b798e61b128ac4b899d274068c965c6309cae4cef"
+  "graphSha256": "601b191ba7e24d44cdeaeb8d2c48d56ed498358dd96321386bd05d9159ac70dd"
 };
