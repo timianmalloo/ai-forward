@@ -2156,6 +2156,46 @@ window.DOCS_INDEX = {
       "sourceSha256": "6f91e6ae708dc7b70e88705d898adb9e0d50fa38b883d824d0e1fb81e0626d8a"
     },
     {
+      "id": "note-20260919-pack-evolution-knowledge-review",
+      "path": "docs/notes/note-20260919-pack-evolution-knowledge-review.md",
+      "title": "Pack-evolution knowledge review: the four evaluated capabilities have all shipped; seven docs re-verified against revision 78",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-03-18",
+      "reviewSuggested": [],
+      "summary": "The V13 review of the seven pack-evolution knowledge docs (review-by 2026-09-12, red on the docs workflow since): every \"proposed / we have none\" claim about the unified CLI, the installed-repo doctor, project memory and the Responsible-AI policy + scrub is now false because all four shipped; those lines were corrected in place with the verifying file cited, external claims were confirmed as written, and review-by moved to 2026-12-18 (knowledge SLA 90 days). One open question stays Flagged: the memory ledger mechanism shipped but its newest entry (2026-08-28) predates this review by three weeks.",
+      "tags": [
+        "decision-note",
+        "knowledge",
+        "freshness",
+        "v13",
+        "pack-evolution",
+        "kb-track"
+      ],
+      "links": [
+        {
+          "to": "kb-pack-evolution",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-pack-evolution-open-questions",
+          "rel": "relates-to"
+        },
+        {
+          "to": "coordination-p3-xp",
+          "rel": "implements"
+        },
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "acf84816a395b9f830c6863e1612455de4451221095b8304f43969942fd8a6a6"
+    },
+    {
       "id": "note-20260919-readers-seat-and-citation-placement",
       "path": "docs/notes/note-20260919-readers-seat-and-citation-placement.md",
       "title": "The seat key is runs_as, the CO-S0 sentence moves to reference/ where the 2% budget cannot hold it, and a dispatch instruction is a heading, a verb or a sentence-initial spawn",
@@ -4503,7 +4543,7 @@ window.DOCS_INDEX = {
       "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "pack-evolution",
-      "reviewBy": "2026-09-20",
+      "reviewBy": "2026-12-18",
       "reviewSuggested": [],
       "summary": "The durable, append-only record of what this project has learned and decided — read at every skill's grounding and appended to at every skill's convergence. Frontmatter/graph is authority; this ledger is narrative.",
       "tags": [
@@ -4521,7 +4561,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f01822ddf3158a68349ab584ebea4bc7c2d2f28abcea7995f267ca9e32bf9ae5"
+      "sourceSha256": "19058061c90f324ea0a711804f4355850b2ea7389e01a7a59e1fa643ea6268fa"
     },
     {
       "id": "proposal-active-multi-harness-coordination",
@@ -4956,7 +4996,7 @@ window.DOCS_INDEX = {
       "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "pack-evolution",
-      "reviewBy": "2026-09-12",
+      "reviewBy": "2026-12-18",
       "reviewSuggested": [],
       "summary": "The ubiquitous language for the pack-evolution work: pack-lifecycle skill, source consistency vs install health, doctor, project memory / ledger, Obsidian vault, RAI policy, scrub, stdlib-only, zero-drift.",
       "tags": [
@@ -4973,7 +5013,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a0c670c403ddf6e56e037ac25043bd7a6c2d16bb5f138a6794e412e896814925"
+      "sourceSha256": "41dc6aa69e4f355bff49822783657bb9e6efb501d8429cf8316e552685374b08"
     },
     {
       "id": "investigation-blank-explainer-live",
@@ -6592,7 +6632,7 @@ window.DOCS_INDEX = {
       "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "pack-evolution",
-      "reviewBy": "2026-09-12",
+      "reviewBy": "2026-12-18",
       "reviewSuggested": [],
       "summary": "Sourced evidence base for four capabilities AI-Forward is considering adopting from agent-orchestration products (notably bradygaster/squad): a unified CLI, an installed-repo doctor, persistent project memory (and whether to introduce Obsidian), and a committed Responsible-AI policy plus a PII/secret scrub. Every load-bearing claim is confidence-labeled.",
       "tags": [
@@ -6611,7 +6651,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d4973f47e05c295dbc4ceefd4de2adc9f4abcde61954bcf830c636a01279c2f1"
+      "sourceSha256": "f12f5f5911db4511ae63cfb8526e59cc9791e1e7a03b37c6225cf61f6937c31d"
     },
     {
       "id": "kb-pack-evolution-comparables",
@@ -6621,7 +6661,7 @@ window.DOCS_INDEX = {
       "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "pack-evolution",
-      "reviewBy": "2026-09-12",
+      "reviewBy": "2026-12-18",
       "reviewSuggested": [],
       "summary": "Squad-vs-AI-Forward capability comparison for the four suggestions, what to borrow (intent) and what to reject (runtime form), plus adjacent doctor/changesets/Dataview patterns worth borrowing.",
       "tags": [
@@ -6639,7 +6679,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "711863d64f4e49cfa268e819be41d1ec5018b8931d40ea1794049c735ddf18e1"
+      "sourceSha256": "819716b7cc37046a7c8f4ee327da1cb814924b071569dfc004c0f2a7d6be28ad"
     },
     {
       "id": "kb-pack-evolution-open-questions",
@@ -6649,7 +6689,7 @@ window.DOCS_INDEX = {
       "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "pack-evolution",
-      "reviewBy": "2026-09-12",
+      "reviewBy": "2026-12-18",
       "reviewSuggested": [],
       "summary": "Flagged unknowns (regex-scrub recall, ledger freshness, CLI cross-shell), the domain's failure modes (runtime creep, drift, RAI theater, Obsidian lock-in, doctor false confidence), and disconfirming views sought.",
       "tags": [
@@ -6666,7 +6706,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c58e35c06ab17a2f55ee41b18653a1bd35fa9519b79269b9007c5038d6d5eb67"
+      "sourceSha256": "7657c2bdd93bc00e4b62c299d7a38c8c6a24a43a85c5e730dd127c5cc283666d"
     },
     {
       "id": "kb-pack-evolution-references",
@@ -6676,7 +6716,7 @@ window.DOCS_INDEX = {
       "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "pack-evolution",
-      "reviewBy": "2026-09-12",
+      "reviewBy": "2026-12-18",
       "reviewSuggested": [],
       "summary": "Standards (MS RAI Standard, NIST AI RMF, EU AI Act/GDPR), the pack's own contracts the capabilities conform to (knowledge-visualization V1–V18, INSTALL deployment map, engineering-governance), and tooling references.",
       "tags": [
@@ -6692,7 +6732,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "2256a95932e51eead9e8d49c73f0e2480919eccbfed065cab14e64125a0df60d"
+      "sourceSha256": "fb43ab01f9a226f894791d1dc04ec495df17f1bc9c9081d4be918d16a73e9e57"
     },
     {
       "id": "kb-pack-evolution-sota",
@@ -6702,7 +6742,7 @@ window.DOCS_INDEX = {
       "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "pack-evolution",
-      "reviewBy": "2026-09-12",
+      "reviewBy": "2026-12-18",
       "reviewSuggested": [],
       "summary": "Current best practice for the four capabilities: CLI distribution (repo-local stdlib Python wins), the doctor pattern, persistent project/agent memory, Obsidian as an optional lens, and RAI policy + PII scrubbing.",
       "tags": [
@@ -6719,7 +6759,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7963340d55793856d967c6b7559bd663abf5eadf7e98c4a9e84ce2b97f70f62f"
+      "sourceSha256": "a65c249b66645084ed1953247332abe2e08cc57a76a4788e22f0cf0e1981541e"
     },
     {
       "id": "kb-pack-evolution-sources",
@@ -6729,7 +6769,7 @@ window.DOCS_INDEX = {
       "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "pack-evolution",
-      "reviewBy": "2026-09-12",
+      "reviewBy": "2026-12-18",
       "reviewSuggested": [],
       "summary": "The full source list with access dates for the pack-evolution knowledge base — Squad, the pack's own files, the MS RAI and NIST RMF standards, the scrub tooling, and the web research rows.",
       "tags": [
@@ -6743,7 +6783,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "21bfb1d3ca4bd03f9dcae01e0887e3c46dc60fc650d4a17337f353a042fc85da"
+      "sourceSha256": "342d6bc49e294e8e4d7f47192101284bba69c94482959154bd05297b78e2b928"
     },
     {
       "id": "coordination-compile-stage",
@@ -8178,5 +8218,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "f224a355de8c04685783fabbbfef0e8c5f8af707d83388281f6f6562c9093e30"
+  "graphSha256": "1e8aa4ccacc2d9fec6ad69a5ef7adffd05ef5d39b82a6b5e2414365e61ffdf0d"
 };

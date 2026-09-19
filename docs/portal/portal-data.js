@@ -2850,6 +2850,12 @@ window.PORTAL_DATA = {
         "summary": "Three shapes the fixed mail contract left open are settled here and raised to the coordinator and Track P6 as seam requests before any line was written; blast..."
       },
       {
+        "id": "note-20260919-pack-evolution-knowledge-review",
+        "type": "decision-note",
+        "title": "Pack-evolution knowledge review: the four evaluated capabilities have all shipped; seven docs re-verified against revision 78",
+        "summary": "The V13 review of the seven pack-evolution knowledge docs (review-by 2026-09-12, red on the docs workflow since): every \"proposed / we have none\" claim about..."
+      },
+      {
         "id": "note-20260919-readers-seat-and-citation-placement",
         "type": "decision-note",
         "title": "The seat key is runs_as, the CO-S0 sentence moves to reference/ where the 2% budget cannot hold it, and a dispatch instruction is a heading, a verb or a sentence-initial spawn",
@@ -5029,6 +5035,26 @@ window.PORTAL_DATA = {
       {
         "from": "note-20260919-mail-store-deviations",
         "to": "spec-message-layer",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260919-pack-evolution-knowledge-review",
+        "to": "coordination-p3-xp",
+        "rel": "implements"
+      },
+      {
+        "from": "note-20260919-pack-evolution-knowledge-review",
+        "to": "kb-pack-evolution",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260919-pack-evolution-knowledge-review",
+        "to": "kb-pack-evolution-open-questions",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260919-pack-evolution-knowledge-review",
+        "to": "proposal-owner-coordinator-subagent-coordination",
         "rel": "relates-to"
       },
       {

@@ -8,7 +8,7 @@ phase: "pack-evolution"
 tags: [responsible-ai, nist, standards, tooling]
 links:
   - { to: kb-pack-evolution, rel: refines }
-review-by: "2026-09-12"
+review-by: "2026-12-18"
 summary: >-
   Standards (MS RAI Standard, NIST AI RMF, EU AI Act/GDPR), the pack's own contracts the capabilities
   conform to (knowledge-visualization V1–V18, INSTALL deployment map, engineering-governance), and tooling references.
@@ -25,14 +25,14 @@ summary: >-
 ## Specifications & primary sources (the pack's own contracts)
 
 - **`knowledge-visualization.md` (V1–V18)** — the authoritative model for memory-as-graph: V2 (frontmatter is the record), V13 (freshness SLAs + ownership), V14 (glossary + relation registry), V16 (change-impact propagation), V17 (decision notes = session exhaust), V18 (all graph mechanics via `docs-graph.py`). **§0 + V2 state `docs/` is a valid Obsidian vault.** The memory design MUST conform to this. *(Verified — pack file)*
-- **`adapters/INSTALL.md`** — the deployment map (every source path → destination per tool) + the `revision`/`changes` changelog convention. The CLI, doctor, and scrub must deploy through this map; the RAI doc + memory convention become `changes` entries. *(Verified — pack file)*
+- **`adapters/INSTALL.md`** — the deployment map (every source path → destination per tool) + the `revision`/`changes` changelog convention. The doctor and scrub deploy through this map (`pack-doctor.py` and `scrub.py` are in `docs/ai-forward-pack/scripts/`); the CLI (`tools/aiforward.py`) is a source-repo tool and is not deployed (its header says so); the RAI doc + memory convention become `changes` entries. *(Verified — pack file)*
 - **`engineering-governance.md`** — §3 Threat model (STRIDE), §4 Privacy & data governance, §5 Accessibility, §9 Supply chain. The RAI policy doc *maps onto* this checklist rather than duplicating it. *(Verified — pack file)*
 - **Rules of the Road** + **Persona Operating Standard (`persona-audit.md` §8)** — the human-in-the-loop gates and the Privacy/Security hard vetoes that the RAI policy formalizes as a stance. *(Verified — pack files)*
 
 ## Tooling references (suggestions #1, #2, #4)
 
-- **Existing stdlib-only pack scripts** — `docs/ai-forward-pack/scripts/docs-graph.py` (`inventory|validate|derive|freshness|flag|clear-flag|stub|snapshot|rollup`), `pack/scripts/foundation-check.py`, `tools/check-consistency.py`, `tools/new-capability.py`. The CLI dispatches to these; the doctor composes `docs-graph.py`. All Python 3.8+, no third-party imports — the binding convention for any new script. *(Verified — files; `docs-graph.py --help`)*
-- **`tools/sync-pack.ps1` / `tools/verify-bundle.ps1`** — the canonical sync engine and the consistency proof (`BUNDLE CONSISTENT`). The CLI's `update`/`verify` shell out to these; PowerShell stays the engine. *(Verified — files)*
+- **Existing stdlib-only pack scripts** — `docs/ai-forward-pack/scripts/docs-graph.py` (`inventory|derive|validate|freshness|flag|clear-flag|stub|snapshot|rollup|context`), `pack/scripts/foundation-check.py`, `tools/check-consistency.py`, `tools/new-capability.py`. The CLI dispatches to these; the doctor composes `docs-graph.py`. All Python 3.8+, no third-party imports — the binding convention for any new script. *(Verified — files; `docs-graph.py --help`)*
+- **`tools/sync-pack.ps1` / `tools/verify-bundle.ps1`** — the canonical sync engine and the consistency proof (`BUNDLE CONSISTENT`). The CLI's `sync`/`verify` shell out to these; PowerShell stays the engine. *(Verified — files)*
 - **Microsoft Presidio** — NLP PII detection/anonymization, CI-integrable (the CI-grade PII tool the scrub points at, not vendored). *(Verified — https://github.com/microsoft/presidio)*
 - **gitleaks** / **detect-secrets** (Yelp) / **TruffleHog** — secret scanners for CI/pre-commit (the CI-grade secret tools the scrub points at). *(Verified — https://github.com/gitleaks/gitleaks)*
 - **git-filter-repo / BFG Repo-Cleaner** — history rewriting to *purge* a leaked secret (the scrub redacts going forward; these remove what already leaked). *(Verified — PII/secret-scrub research)*

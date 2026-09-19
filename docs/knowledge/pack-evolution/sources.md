@@ -8,7 +8,7 @@ phase: "pack-evolution"
 tags: [sources, citations]
 links:
   - { to: kb-pack-evolution, rel: refines }
-review-by: "2026-09-12"
+review-by: "2026-12-18"
 summary: >-
   The full source list with access dates for the pack-evolution knowledge base — Squad, the pack's own
   files, the MS RAI and NIST RMF standards, the scrub tooling, and the web research rows.

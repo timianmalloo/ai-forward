@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 233
+"count": 234
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 402,
+"total": 403,
 "items": [
 {
 "cat": "knowledge",
@@ -2070,6 +2070,15 @@ window.PACK_INDEX = {
 "path": "docs/notes/note-20260919-mail-store-deviations.md",
 "kind": "decision-note",
 "text": "the mail store keeps the fixed contract with three named additions: a broadcast file, prefixed ulids, and colocated acks three shapes the fixed mail contract left open are settled here and raised to the coordinator and track p6 as seam requests before any line was written; blast radius is p6's fold (file glob, id ordering, acked? derivation) and nothing else. decision-note coordination mail p4 p6 relates-to spec-message-layer relates-to design-message-layer relates-to proposal-owner-coordinator-subagent-coordination"
+},
+{
+"cat": "graph",
+"id": "note-20260919-pack-evolution-knowledge-review",
+"title": "Pack-evolution knowledge review: the four evaluated capabilities have all shipped; seven docs re-verified against revision 78",
+"summary": "The V13 review of the seven pack-evolution knowledge docs (review-by 2026-09-12, red on the docs workflow since): every \"proposed / we have none\" claim about the unified CLI, the installed-repo doctor, project memory and the Responsible-AI…",
+"path": "docs/notes/note-20260919-pack-evolution-knowledge-review.md",
+"kind": "decision-note",
+"text": "pack-evolution knowledge review: the four evaluated capabilities have all shipped; seven docs re-verified against revision 78 the v13 review of the seven pack-evolution knowledge docs (review-by 2026-09-12, red on the docs workflow since): every \"proposed / we have none\" claim about the unified cli, the installed-repo doctor, project memory and the responsible-ai policy + scrub is now false because all four shipped; those lines were corrected in place with the verifying file cited, external claims were confirmed as written, and review-by moved to 2026-12-18 (knowledge sla 90 days). one open question stays flagged: the memory ledger mechanism shipped but its newest entry (2026-08-28) predates this review by three weeks. decision-note knowledge freshness v13 pack-evolution kb-track relates-to kb-pack-evolution relates-to kb-pack-evolution-open-questions implements coordination-p3-xp relates-to proposal-owner-coordinator-subagent-coordination"
 },
 {
 "cat": "graph",

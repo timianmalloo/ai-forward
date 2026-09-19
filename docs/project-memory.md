@@ -9,7 +9,7 @@ tags: [memory, continuity]
 links:
   - { to: architecture, rel: relates-to }
   - { to: design-project-memory, rel: implements }
-review-by: "2026-09-20"
+review-by: "2026-12-18"
 summary: >-
   The durable, append-only record of what this project has learned and decided — read at every
   skill's grounding and appended to at every skill's convergence. Frontmatter/graph is authority;
@@ -46,6 +46,10 @@ HOW IT WORKS (the convention that makes it load-bearing):
 
 ## Log (newest first)
 *Append an entry at each skill's convergence. Format: `### <ISO date> — <headline>` + 1–3 sentences + a confidence label + back-links to touched artifacts.*
+
+### 2026-09-19 — Landed the coordination layer's build plan P0–P2, P4, P6–P7 and the P8 readers; P3, P5 and the P8 skill sweep remain
+The Owner / Coordinator / Sub-Agent proposal's build plan is six-ninths landed across INSTALL revisions 76–78: the always-loaded doctrine (`agent-coordination.md`, CO1–CO17), typed seam requests with deadline and fallback, leader designation in `refs/coord/leader`, the message layer with `coord dispatch` and one doorbell adapter per harness, the board, the compile stage, and the compile readers with `verify-skill-contracts.py`. Each landing ran as a coordinated multi-track session (`coordination-p0-p1`, `coordination-p2-p8`, `coordination-compile-stage`) with red-first tests and a `conductor-join.py` join. Not yet landed: P3 progress liveness and the kick ladder, P5 owner-review mechanics, and the ten skills without a CO-S0 citation. The docs workflow went red on 2026-09-12 when the pack-evolution knowledge docs passed review-by; they were re-verified against revision 78 the same day this entry was written (`note-20260919-pack-evolution-knowledge-review`). *(Verified — git log 4d5c5ed…a655697, `coord doctor`, the three coordination plans' planned-vs-actual tables, CI run 35464651721.)*
+Touches: [[proposal-owner-coordinator-subagent-coordination]], [[coordination-p0-p1]], [[coordination-p2-p8]], [[coordination-compile-stage]], [[note-20260919-pack-evolution-knowledge-review]], [[agent-coordination]]
 
 ### 2026-08-28 — Reconciled the post-restart repository baseline
 The interrupted session ended before implementation, but the durable audit log and Git history record the work that followed through pack revision 49. The current tree is clean, local verification passes all nine gates, remote `pack-consistency` and Pages runs pass for `6e9b1fb`, the docs graph has 118 healthy artifacts, and no unused worktree remains. *(Verified — live repository, audit log, GitHub Actions, graph inventory, and coordination cleanup.)*

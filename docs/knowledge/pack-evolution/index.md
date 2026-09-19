@@ -8,7 +8,7 @@ phase: "pack-evolution"
 tags: [cli, doctor, memory, obsidian, responsible-ai, pii, squad]
 links:
   - { to: architecture, rel: relates-to }
-review-by: "2026-09-12"
+review-by: "2026-12-18"
 summary: >-
   Sourced evidence base for four capabilities AI-Forward is considering adopting from
   agent-orchestration products (notably bradygaster/squad): a unified CLI, an installed-repo
@@ -18,11 +18,11 @@ summary: >-
 
 # Pack Evolution — domain knowledge
 
-**Domain & problem:** AI-Forward is a Markdown methodology pack (reasoning spine + 23 persona lenses + 13 skills) that installs into a repo for Claude Code and GitHub Copilot. We are evaluating four capabilities borrowed from runtime agent-orchestration products — **(1) a unified CLI**, **(2) an installed-repo `doctor`**, **(3) persistent project memory** (with an explicit Obsidian decision), and **(4) a committed Responsible-AI policy + a PII/secret scrub** — and must decide *whether* and *how* to adopt each **without compromising the pack's identity** (tool-neutral, dependency-averse, zero-drift, human-in-the-loop).
+**Domain & problem:** AI-Forward is a Markdown methodology pack (reasoning spine + 23 persona lenses + 28 skills) that installs into a repo for Claude Code and GitHub Copilot. We are evaluating four capabilities borrowed from runtime agent-orchestration products — **(1) a unified CLI**, **(2) an installed-repo `doctor`**, **(3) persistent project memory** (with an explicit Obsidian decision), and **(4) a committed Responsible-AI policy + a PII/secret scrub** — and must decide *whether* and *how* to adopt each **without compromising the pack's identity** (tool-neutral, dependency-averse, zero-drift, human-in-the-loop).
 
 **Canonical framing:** the industry frames these as features of an *agent runtime/product* (Squad ships them as TypeScript/npm). Our framing differs and that difference is load-bearing: AI-Forward is a **methodology pack, not a runtime**, so each capability must be re-expressed as **committed Markdown + stdlib-only scripts**, not as a service or a new runtime dependency. Adopting the *intent* while rejecting the *form* is the through-line.
 
-**Compiled:** 2026-06-14 · **Lead:** Domain Researcher · **Status:** fresh
+**Compiled:** 2026-06-14 · **Reviewed:** 2026-09-19 against INSTALL revision 78 (`pack/adapters/INSTALL.md`) · **Lead:** Domain Researcher · **Status:** fresh
 
 ## Headline findings
 
@@ -38,11 +38,11 @@ summary: >-
 - Load-bearing Flagged claims: (a) the *long-term maintenance cost* of a regex scrubber's false-negative rate; (b) whether a rolling project-memory ledger will be *kept current by agents* without a freshness gate. Both are design risks, not blockers.
 
 ## Design implications (what the next phase should do with this)
-- **CLI (#1):** build `tools/aiforward.py` (stdlib-only) as a thin dispatcher — `init`/`update`/`extend` map to the meta-skills' mechanics, `verify` → `verify-bundle.ps1`, `doctor` → the new doctor, `graph` → `docs-graph.py`. It is a *convenience entry point*, not new logic. Keep PowerShell as the canonical sync engine; the CLI shells out.
-- **Doctor (#2):** ship a **deployable** `doctor` (lands in installed repos via the deployment map) that reports revision, both-tool-surface presence, managed-block integrity, and graph health (composing `docs-graph.py`). Distinct from the source-only `check-consistency.py`.
-- **Memory (#3):** add a **project-memory convention** — a graph-linked, append-only `docs/project-memory.md` (+ the existing decision-notes flow) that skills read at grounding and append to at convergence; document the **already-true Obsidian compatibility** and ship an optional `.obsidian/` workspace; do **not** make Obsidian required.
-- **RAI (#4):** add a committed **RAI policy knowledge doc** (principles ← MS RAI; lifecycle controls ← NIST RMF) that *maps to the existing personas/templates*, plus a stdlib **`scrub.py`** redaction script labeled as a first-pass. Wire both into the governance checklist.
+- **CLI (#1):** build `tools/aiforward.py` (stdlib-only) as a thin dispatcher — `verify` → `verify-bundle.ps1`, `doctor` → the new doctor, `graph` → `docs-graph.py`. It is a *convenience entry point*, not new logic. Keep PowerShell as the canonical sync engine; the CLI shells out. **Shipped** (2026-09-19 check): `tools/aiforward.py` is source-repo only (not deployed to targets) and its commands are `verify · sync · check · new · doctor · graph · audit · scrub` (`python3 tools/aiforward.py --help`); the `init`/`update`/`extend` mapping first proposed here was not adopted.
+- **Doctor (#2):** ship a **deployable** `doctor` (lands in installed repos via the deployment map) that reports revision, tool-surface presence, managed-block integrity, and graph health (composing `docs-graph.py`). Distinct from the source-only `check-consistency.py`. **Shipped** as `pack/scripts/pack-doctor.py` (deployed to `docs/ai-forward-pack/scripts/`); it checks four surfaces — `.claude/`, `.github/`, `.grok/`, `.agents/` — not two (`pack-doctor.py` lines 710–713, 2026-09-19).
+- **Memory (#3):** add a **project-memory convention** — a graph-linked, append-only `docs/project-memory.md` (+ the existing decision-notes flow) that skills read at grounding and append to at convergence; document the **already-true Obsidian compatibility** and ship an optional `.obsidian/` workspace; do **not** make Obsidian required. **Shipped:** `docs/project-memory.md` (carries `review-by`), `pack/knowledge/project-memory-and-obsidian.md` (M1–M8), `pack/scripts/obsidian-setup.py`; the vault *config* is committed and only per-user state is git-ignored (`.gitignore` lines 42–48), not the whole `.obsidian/`.
+- **RAI (#4):** add a committed **RAI policy knowledge doc** (principles ← MS RAI; lifecycle controls ← NIST RMF) that *maps to the existing personas/templates*, plus a stdlib **`scrub.py`** redaction script labeled as a first-pass. Wire both into the governance checklist. **Shipped:** `pack/knowledge/responsible-ai-policy.md` (`load: always`) and `pack/scripts/scrub.py` (`--help`: "NOT CI-grade"). The governance-checklist wiring is **not** present: `pack/knowledge/engineering-governance.md` has no reference to either (grep, 2026-09-19).
 - **Cross-cutting:** every one of these is a **pack capability**, so it ships through `/extendaibundle` and must pass `verify-bundle.ps1` (BUNDLE CONSISTENT) — both tool surfaces, reconciled counts, bumped revision.
 
 ## How to use this base
-Personas and the `/design` and `/extendaibundle` skills cite these files as evidence (BoK §III.1). Refresh when Squad moves or when the RAI standards revise; re-run `/collectknowledge` and bump the date above.
+Personas and the `/design-slice` and `/extendaibundle` skills cite these files as evidence (BoK §III.1). Refresh when Squad moves or when the RAI standards revise; re-run `/collectknowledge` and bump the date above.
