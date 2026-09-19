@@ -2383,6 +2383,54 @@ window.PORTAL_DATA = {
         "summary": "Part IV of the Layered Optimized Architecture, held separately because it is a lookup surface rather than a linear read. Every pattern with its intent,..."
       },
       {
+        "id": "kb-multi-agent-coordination",
+        "type": "knowledge",
+        "title": "Multi-Agent Coordination — domain knowledge (agentic coordination · p2p protocols · distributed scheduling · quorum & leader election)",
+        "summary": "Sourced, confidence-labelled evidence base for coordinating an Owner / Coordinator / Sub-Agent hierarchy across one or several CLI harnesses (Claude Code,..."
+      },
+      {
+        "id": "kb-multi-agent-coordination-comparables",
+        "type": "knowledge",
+        "title": "Comparable solutions & problem framings — multi-agent coordination",
+        "summary": "How existing systems frame and solve the three scenarios — harness-native fleets, managed hierarchies, blackboard-over-git, cluster schedulers, lock services..."
+      },
+      {
+        "id": "kb-multi-agent-coordination-data",
+        "type": "knowledge",
+        "title": "Domain data, constants & invariants — multi-agent coordination",
+        "summary": "The numbers: measured fleet telemetry from ai-de and the pack's profiler, practitioner constants for leases, heartbeats, election and messaging, the scheduling..."
+      },
+      {
+        "id": "kb-multi-agent-coordination-glossary",
+        "type": "knowledge",
+        "title": "Glossary — multi-agent coordination",
+        "summary": "The ubiquitous language for the Owner / Coordinator / Sub-Agent model and the distributed- systems terms it borrows — each with the near-miss it must not be..."
+      },
+      {
+        "id": "kb-multi-agent-coordination-open-questions",
+        "type": "knowledge",
+        "title": "Open questions & domain failure modes — multi-agent coordination",
+        "summary": "What the research could not settle (with the cheapest probe for each), the domain's known failure modes, and the disconfirming views deliberately sought and..."
+      },
+      {
+        "id": "kb-multi-agent-coordination-references",
+        "type": "knowledge",
+        "title": "Reference information — multi-agent coordination",
+        "summary": "The standards, specifications, official harness documentation and seminal works this base rests on — what each defines and what it requires of the pack."
+      },
+      {
+        "id": "kb-multi-agent-coordination-sota",
+        "type": "knowledge",
+        "title": "State of the art — multi-agent coordination",
+        "summary": "Current best practice across four fields the pack must draw on: orchestration patterns and harness-native multi-agent surfaces (2026), peer-to-peer membership..."
+      },
+      {
+        "id": "kb-multi-agent-coordination-sources",
+        "type": "knowledge",
+        "title": "Sources — multi-agent coordination",
+        "summary": "Every source cited in this base, by track tag, with type, URL, access date and what it was used for. All accessed 2026-09-18 unless noted. Executed spikes and..."
+      },
+      {
         "id": "kb-native-client-ui-design",
         "type": "knowledge",
         "title": "Native client UI design — WPF, WinUI, Avalonia and desktop apps",
@@ -2557,6 +2605,12 @@ window.PORTAL_DATA = {
         "summary": "Deploy a native Grok Build surface under .grok/{skills,agents,hooks,rules} rather than relying on Claude compatibility. Knowledge stays at .claude/knowledge/...."
       },
       {
+        "id": "note-20260919-leadership-in-a-ref-not-the-ledger",
+        "type": "decision-note",
+        "title": "Leadership is held in a git ref by compare-and-swap; the union-merged ledger only records it",
+        "summary": "Executed spikes on 2026-09-18 showed two competing leader claims both survive a union merge (exit 0), while `git update-ref <ref> <new> <old>` and..."
+      },
+      {
         "id": "note-autopilot-open-questions-decisions",
         "type": "decision-note",
         "title": "Decisions on PACK-O open questions (logging, class granularity, autopilot caps)",
@@ -2663,6 +2717,12 @@ window.PORTAL_DATA = {
         "type": "doc",
         "title": "Proposal / dialog: GitHub Pages hosting + the Dream Manifest",
         "summary": "An RFC/dialog opener on (1) whether to host the Documentation Portal and surfaces on GitHub Pages, (2) how that impacts dream output and privacy, and (3) a..."
+      },
+      {
+        "id": "proposal-owner-coordinator-subagent-coordination",
+        "type": "doc",
+        "title": "Proposal: Owner / Coordinator / Sub-Agent coordination across one, several, and federated harnesses",
+        "summary": "Replaces the two prior coordination proposals with a smaller design grounded in what the harnesses ship, what ai-de measured, and three executed git spikes...."
       },
       {
         "id": "proposal-turn-goal-state-and-stopping",
@@ -3959,6 +4019,76 @@ window.PORTAL_DATA = {
         "rel": "refines"
       },
       {
+        "from": "kb-multi-agent-coordination",
+        "to": "adr-0005-harness-runner-boundary",
+        "rel": "depends-on"
+      },
+      {
+        "from": "kb-multi-agent-coordination",
+        "to": "adr-0007-coordination-substrate",
+        "rel": "depends-on"
+      },
+      {
+        "from": "kb-multi-agent-coordination",
+        "to": "architecture-agent-coordination",
+        "rel": "refines"
+      },
+      {
+        "from": "kb-multi-agent-coordination",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "kb-multi-agent-coordination",
+        "to": "design-coord-collaboration-phase4",
+        "rel": "relates-to"
+      },
+      {
+        "from": "kb-multi-agent-coordination",
+        "to": "kb-graph-and-loop-engineering",
+        "rel": "relates-to"
+      },
+      {
+        "from": "kb-multi-agent-coordination",
+        "to": "spec-agent-coordination",
+        "rel": "relates-to"
+      },
+      {
+        "from": "kb-multi-agent-coordination-comparables",
+        "to": "kb-multi-agent-coordination",
+        "rel": "refines"
+      },
+      {
+        "from": "kb-multi-agent-coordination-data",
+        "to": "kb-multi-agent-coordination",
+        "rel": "refines"
+      },
+      {
+        "from": "kb-multi-agent-coordination-glossary",
+        "to": "kb-multi-agent-coordination",
+        "rel": "refines"
+      },
+      {
+        "from": "kb-multi-agent-coordination-open-questions",
+        "to": "kb-multi-agent-coordination",
+        "rel": "refines"
+      },
+      {
+        "from": "kb-multi-agent-coordination-references",
+        "to": "kb-multi-agent-coordination",
+        "rel": "refines"
+      },
+      {
+        "from": "kb-multi-agent-coordination-sota",
+        "to": "kb-multi-agent-coordination",
+        "rel": "refines"
+      },
+      {
+        "from": "kb-multi-agent-coordination-sources",
+        "to": "kb-multi-agent-coordination",
+        "rel": "refines"
+      },
+      {
         "from": "kb-native-client-ui-design",
         "to": "architecture",
         "rel": "relates-to"
@@ -4162,6 +4292,21 @@ window.PORTAL_DATA = {
         "from": "note-20260914-grok-build-surface",
         "to": "proof-grok-build-surface",
         "rel": "tested-by"
+      },
+      {
+        "from": "note-20260919-leadership-in-a-ref-not-the-ledger",
+        "to": "adr-0007-coordination-substrate",
+        "rel": "depends-on"
+      },
+      {
+        "from": "note-20260919-leadership-in-a-ref-not-the-ledger",
+        "to": "kb-multi-agent-coordination",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260919-leadership-in-a-ref-not-the-ledger",
+        "to": "proposal-owner-coordinator-subagent-coordination",
+        "rel": "relates-to"
       },
       {
         "from": "note-autopilot-open-questions-decisions",
@@ -4382,6 +4527,41 @@ window.PORTAL_DATA = {
         "from": "proposal-hosting-and-dream-manifest",
         "to": "spec-documentation-portal",
         "rel": "relates-to"
+      },
+      {
+        "from": "proposal-owner-coordinator-subagent-coordination",
+        "to": "adr-0005-harness-runner-boundary",
+        "rel": "depends-on"
+      },
+      {
+        "from": "proposal-owner-coordinator-subagent-coordination",
+        "to": "adr-0007-coordination-substrate",
+        "rel": "depends-on"
+      },
+      {
+        "from": "proposal-owner-coordinator-subagent-coordination",
+        "to": "architecture-agent-coordination",
+        "rel": "refines"
+      },
+      {
+        "from": "proposal-owner-coordinator-subagent-coordination",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "proposal-owner-coordinator-subagent-coordination",
+        "to": "design-coord-collaboration-phase4",
+        "rel": "refines"
+      },
+      {
+        "from": "proposal-owner-coordinator-subagent-coordination",
+        "to": "kb-multi-agent-coordination",
+        "rel": "relates-to"
+      },
+      {
+        "from": "proposal-owner-coordinator-subagent-coordination",
+        "to": "spec-agent-coordination",
+        "rel": "refines"
       },
       {
         "from": "proposal-turn-goal-state-and-stopping",

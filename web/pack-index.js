@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 183
+"count": 193
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 342,
+"total": 352,
 "items": [
 {
 "cat": "knowledge",
@@ -1848,6 +1848,15 @@ window.PACK_INDEX = {
 },
 {
 "cat": "graph",
+"id": "note-20260919-leadership-in-a-ref-not-the-ledger",
+"title": "Leadership is held in a git ref by compare-and-swap; the union-merged ledger only records it",
+"summary": "Executed spikes on 2026-09-18 showed two competing leader claims both survive a union merge (exit 0), while `git update-ref <ref> <new> <old>` and `--force-with-lease=<ref>:<expect>` refuse a stale expectation. Any leader or epoch the pack…",
+"path": "docs/notes/note-20260919-leadership-in-a-ref-not-the-ledger.md",
+"kind": "decision-note",
+"text": "leadership is held in a git ref by compare-and-swap; the union-merged ledger only records it executed spikes on 2026-09-18 showed two competing leader claims both survive a union merge (exit 0), while `git update-ref <ref> <new> <old>` and `--force-with-lease=<ref>:<expect>` refuse a stale expectation. any leader or epoch the pack introduces therefore lives in `refs/coord/leader` and is only recorded in `.agents/log`; the join checks the epoch. blast radius: p2 of the proposal, and both prior proposals' election designs. decision-note coordination leader fencing git relates-to proposal-owner-coordinator-subagent-coordination relates-to kb-multi-agent-coordination depends-on adr-0007-coordination-substrate"
+},
+{
+"cat": "graph",
 "id": "note-autopilot-open-questions-decisions",
 "title": "Decisions on PACK-O open questions (logging, class granularity, autopilot caps)",
 "summary": "The user's answers to the three open questions from the task-discipline / front-matter proposal (revision 3), which gate the next change: making PACK-O controllable.",
@@ -2370,6 +2379,15 @@ window.PACK_INDEX = {
 },
 {
 "cat": "graph",
+"id": "proposal-owner-coordinator-subagent-coordination",
+"title": "Proposal: Owner / Coordinator / Sub-Agent coordination across one, several, and federated harnesses",
+"summary": "Replaces the two prior coordination proposals with a smaller design grounded in what the harnesses ship, what ai-de measured, and three executed git spikes. One role model (Owner / Coordinator / Sub-Agent) and two control relationships…",
+"path": "docs/proposals/owner-coordinator-subagent-coordination.md",
+"kind": "doc",
+"text": "proposal: owner / coordinator / sub-agent coordination across one, several, and federated harnesses replaces the two prior coordination proposals with a smaller design grounded in what the harnesses ship, what ai-de measured, and three executed git spikes. one role model (owner / coordinator / sub-agent) and two control relationships (spawned, registered) cover the three scenarios. leadership is human-designated and held in a git ref by compare-and-swap, never elected and never in the union-merged ledger. path leases are demoted to efficiency locks; the join is the fence. push uses the cheapest channel each harness actually has, and every cross-harness request carries a deadline and a fallback. no bus, no relay, no daemon in scope; each is a measured trigger, not a phase. coordination multi-harness owner-coordinator-subagent leader-designation leases fencing worktrees rfc refines spec-agent-coordination refines architecture-agent-coordination depends-on adr-0007-coordination-substrate depends-on adr-0005-harness-runner-boundary refines design-coord-collaboration-phase4 relates-to kb-multi-agent-coordination relates-to defect-classes"
+},
+{
+"cat": "graph",
 "id": "proposal-turn-goal-state-and-stopping",
 "title": "Proposal: define the goal state before acting — bounding the agent turn",
 "summary": "An incident analysis and proposal. A closed question (\"is /optimize-graph wired into the skills?\") was answered on the first tool call and then became an eighteen-file change proposal over ten more; two explicit stops did not stop it. Root…",
@@ -2790,6 +2808,78 @@ window.PACK_INDEX = {
 "path": "docs/knowledge/layered-optimized-architecture/pattern-catalog.md",
 "kind": "knowledge",
 "text": "loa — pattern catalog part iv of the layered optimized architecture, held separately because it is a lookup surface rather than a linear read. every pattern with its intent, structure, applicability, trade-offs and cost impact — extracted verbatim so the loa's principles can be loaded without paying for the whole catalog on every read. loa patterns architecture pattern-catalog reference refines kb-loa relates-to architecture"
+},
+{
+"cat": "graph",
+"id": "kb-multi-agent-coordination",
+"title": "Multi-Agent Coordination — domain knowledge (agentic coordination · p2p protocols · distributed scheduling · quorum & leader election)",
+"summary": "Sourced, confidence-labelled evidence base for coordinating an Owner / Coordinator / Sub-Agent hierarchy across one or several CLI harnesses (Claude Code, Codex, Copilot CLI, Antigravity, Grok Build) on one or two developer machines: what…",
+"path": "docs/knowledge/multi-agent-coordination/index.md",
+"kind": "knowledge",
+"text": "multi-agent coordination — domain knowledge (agentic coordination · p2p protocols · distributed scheduling · quorum & leader election) sourced, confidence-labelled evidence base for coordinating an owner / coordinator / sub-agent hierarchy across one or several cli harnesses (claude code, codex, copilot cli, antigravity, grok build) on one or two developer machines: what the harnesses actually ship, what distributed-systems theory forbids (leases are not mutual exclusion; a union-merged ledger cannot elect a leader), which scheduling and ownership results predict conflict, and the constants practitioners use. four research tracks plus three executed git spikes. multi-agent coordination multi-harness p2p scheduling leases fencing leader-election quorum owner-coordinator-subagent refines architecture-agent-coordination relates-to spec-agent-coordination depends-on adr-0007-coordination-substrate depends-on adr-0005-harness-runner-boundary relates-to design-coord-collaboration-phase4 relates-to kb-graph-and-loop-engineering relates-to defect-classes"
+},
+{
+"cat": "graph",
+"id": "kb-multi-agent-coordination-comparables",
+"title": "Comparable solutions & problem framings — multi-agent coordination",
+"summary": "How existing systems frame and solve the three scenarios — harness-native fleets, managed hierarchies, blackboard-over-git, cluster schedulers, lock services and the two in-house attempts (ai-de and the pack's coord layer) — with what each…",
+"path": "docs/knowledge/multi-agent-coordination/comparables.md",
+"kind": "knowledge",
+"text": "comparable solutions & problem framings — multi-agent coordination how existing systems frame and solve the three scenarios — harness-native fleets, managed hierarchies, blackboard-over-git, cluster schedulers, lock services and the two in-house attempts (ai-de and the pack's coord layer) — with what each does well and badly. multi-agent coordination comparables refines kb-multi-agent-coordination"
+},
+{
+"cat": "graph",
+"id": "kb-multi-agent-coordination-data",
+"title": "Domain data, constants & invariants — multi-agent coordination",
+"summary": "The numbers: measured fleet telemetry from ai-de and the pack's profiler, practitioner constants for leases, heartbeats, election and messaging, the scheduling formulae, cost multipliers, and the three executed git spikes with their exit…",
+"path": "docs/knowledge/multi-agent-coordination/data-and-constants.md",
+"kind": "knowledge",
+"text": "domain data, constants & invariants — multi-agent coordination the numbers: measured fleet telemetry from ai-de and the pack's profiler, practitioner constants for leases, heartbeats, election and messaging, the scheduling formulae, cost multipliers, and the three executed git spikes with their exit codes. multi-agent coordination constants measurements spikes refines kb-multi-agent-coordination"
+},
+{
+"cat": "graph",
+"id": "kb-multi-agent-coordination-glossary",
+"title": "Glossary — multi-agent coordination",
+"summary": "The ubiquitous language for the Owner / Coordinator / Sub-Agent model and the distributed- systems terms it borrows — each with the near-miss it must not be confused with.",
+"path": "docs/knowledge/multi-agent-coordination/glossary.md",
+"kind": "knowledge",
+"text": "glossary — multi-agent coordination the ubiquitous language for the owner / coordinator / sub-agent model and the distributed- systems terms it borrows — each with the near-miss it must not be confused with. multi-agent coordination glossary ubiquitous-language refines kb-multi-agent-coordination"
+},
+{
+"cat": "graph",
+"id": "kb-multi-agent-coordination-open-questions",
+"title": "Open questions & domain failure modes — multi-agent coordination",
+"summary": "What the research could not settle (with the cheapest probe for each), the domain's known failure modes, and the disconfirming views deliberately sought and how each fared.",
+"path": "docs/knowledge/multi-agent-coordination/open-questions.md",
+"kind": "knowledge",
+"text": "open questions & domain failure modes — multi-agent coordination what the research could not settle (with the cheapest probe for each), the domain's known failure modes, and the disconfirming views deliberately sought and how each fared. multi-agent coordination open-questions failure-modes disconfirmation refines kb-multi-agent-coordination"
+},
+{
+"cat": "graph",
+"id": "kb-multi-agent-coordination-references",
+"title": "Reference information — multi-agent coordination",
+"summary": "The standards, specifications, official harness documentation and seminal works this base rests on — what each defines and what it requires of the pack.",
+"path": "docs/knowledge/multi-agent-coordination/references.md",
+"kind": "knowledge",
+"text": "reference information — multi-agent coordination the standards, specifications, official harness documentation and seminal works this base rests on — what each defines and what it requires of the pack. multi-agent coordination references specs papers refines kb-multi-agent-coordination"
+},
+{
+"cat": "graph",
+"id": "kb-multi-agent-coordination-sota",
+"title": "State of the art — multi-agent coordination",
+"summary": "Current best practice across four fields the pack must draw on: orchestration patterns and harness-native multi-agent surfaces (2026), peer-to-peer membership and messaging at small scale, distributed work scheduling and lease/fencing…",
+"path": "docs/knowledge/multi-agent-coordination/state-of-the-art.md",
+"kind": "knowledge",
+"text": "state of the art — multi-agent coordination current best practice across four fields the pack must draw on: orchestration patterns and harness-native multi-agent surfaces (2026), peer-to-peer membership and messaging at small scale, distributed work scheduling and lease/fencing discipline, and quorum/leader election — each with where it wins, where it fails, and what is over-engineered at 2–20 sessions. multi-agent coordination harness-primitives protocols leases leader-election refines kb-multi-agent-coordination"
+},
+{
+"cat": "graph",
+"id": "kb-multi-agent-coordination-sources",
+"title": "Sources — multi-agent coordination",
+"summary": "Every source cited in this base, by track tag, with type, URL, access date and what it was used for. All accessed 2026-09-18 unless noted. Executed spikes and in-session observations are listed as sources of the same standing.",
+"path": "docs/knowledge/multi-agent-coordination/sources.md",
+"kind": "knowledge",
+"text": "sources — multi-agent coordination every source cited in this base, by track tag, with type, url, access date and what it was used for. all accessed 2026-09-18 unless noted. executed spikes and in-session observations are listed as sources of the same standing. multi-agent coordination sources refines kb-multi-agent-coordination"
 },
 {
 "cat": "graph",
