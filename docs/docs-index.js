@@ -1900,6 +1900,41 @@ window.DOCS_INDEX = {
       "sourceSha256": "ff7909392f851cd8ffe7a6d58a25463965085d779877c2d04883407898017f16"
     },
     {
+      "id": "note-20260919-leader-release-keeps-the-epoch",
+      "path": "docs/notes/note-20260919-leader-release-keeps-the-epoch.md",
+      "title": "A leader release clears the holder and keeps the epoch; no verb deletes refs/coord/leader; the quiet period applies to an expiry, not to a release",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-03-18",
+      "reviewSuggested": [],
+      "summary": "If `coord leader release` deleted the ref, the next pin would restart at epoch 1 and the join fence would let a stale epoch-2 plan through; so release writes `leader: null` with the epoch kept, and every later pin or reclaim advances it. The 30 s quiet period guards an invalidated holder that may still be writing; a holder that released knows it is done, so a pin after a release is immediate. Blast radius: the five verbs, the fence, the metrics' leader-loss count.",
+      "tags": [
+        "decision-note",
+        "coordination",
+        "leader",
+        "epoch",
+        "fencing"
+      ],
+      "links": [
+        {
+          "to": "spec-leader-designation",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-20260919-leadership-in-a-ref-not-the-ledger",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "5a68ddcb7e6cd58036eaa59f9d28cbce20762facf8a2da62e7867e43dccb1f12"
+    },
+    {
       "id": "note-20260919-leadership-in-a-ref-not-the-ledger",
       "path": "docs/notes/note-20260919-leadership-in-a-ref-not-the-ledger.md",
       "title": "Leadership is held in a git ref by compare-and-swap; the union-merged ledger only records it",
@@ -2316,6 +2351,60 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "38a09a51a44004a2939929a9c81f95d19b2c074492484fa31a1f097578b76f1f"
+    },
+    {
+      "id": "design-leader-designation",
+      "path": "docs/design/leader-designation.md",
+      "title": "Design — leader designation (coord leader verbs over refs/coord/leader · the join fence · doctor/metrics · CO-L)",
+      "type": "design",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-03-18",
+      "reviewSuggested": [],
+      "summary": "Detailed design for spec-leader-designation: five stdlib verbs in coord-core.py over one blob held by `git update-ref <ref> <new> <old>` (the 40-zero old for creation; no -d, no --force), a state machine absent/live/expired/released with a strictly monotonic epoch, one constants block (D13), a ledger fact per attempted transition, a leader line in doctor, three measures in metrics, and a fence step in conductor-join.py that exits 11 before the merge on a lower epoch or an unread ref.",
+      "tags": [
+        "coordination",
+        "leader",
+        "fencing",
+        "epoch",
+        "git-ref",
+        "compare-and-swap",
+        "conductor-join",
+        "p2"
+      ],
+      "links": [
+        {
+          "to": "spec-leader-designation",
+          "rel": "implements"
+        },
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "refines"
+        },
+        {
+          "to": "note-20260919-leadership-in-a-ref-not-the-ledger",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-20260919-leader-release-keeps-the-epoch",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0007-coordination-substrate",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-coord-enforcement-phase2",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-multi-agent-coordination-data",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "7c243c54472e049a7af884726d3a758e9402caa2332ccf369d52c2376071c433"
     },
     {
       "id": "design-marker-completeness-lint",
@@ -6764,6 +6853,68 @@ window.DOCS_INDEX = {
       "sourceSha256": "3a1b4242dc83c313fbc9b3e14877e875e9e44eb3b5eeb59025efd5abd1b0a13d"
     },
     {
+      "id": "spec-leader-designation",
+      "path": "docs/specs/leader-designation.md",
+      "title": "Leader designation in a git ref — coord leader pin|who|renew|release|reclaim over refs/coord/leader, and the join fence",
+      "type": "spec",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-03-18",
+      "reviewSuggested": [],
+      "summary": "Specifies P2 of the coordination proposal: a designated (never elected) leader held in the git ref refs/coord/leader by compare-and-swap, with a monotonic epoch, a 300 s lease renewed at 100 s, a 30 s quiet period after an expiry, and a join that refuses a plan carrying an epoch lower than the ref's. The ref decides, the ledger records; a ref that cannot be read is NOT CHECKED, never \"no leader\". Every acceptance criterion maps to one of the three executed spikes or to a red-first test.",
+      "tags": [
+        "coordination",
+        "leader",
+        "fencing",
+        "epoch",
+        "git-ref",
+        "compare-and-swap",
+        "cli",
+        "p2"
+      ],
+      "links": [
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "refines"
+        },
+        {
+          "to": "note-20260919-leadership-in-a-ref-not-the-ledger",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0007-coordination-substrate",
+          "rel": "depends-on"
+        },
+        {
+          "to": "kb-multi-agent-coordination-data",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-agent-coordination",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "User flows (happy + alternate + error + recovery)",
+          "mermaid": "flowchart TD\n  A[pin S] --> R{read ref}\n  R -->|unreadable| N[NOT CHECKED exit 4]\n  R -->|absent| C1[CAS create epoch 1] --> OK[exit 0 + ledger]\n  R -->|released epoch n| C2[CAS write epoch n+1] --> OK\n  R -->|live| H[COORD-LEADER-HELD exit 3 + ledger refused]\n  R -->|expired| E[COORD-LEADER-EXPIRED exit 3: reclaim after quiet]\n  C1 -->|git 128| ST[COORD-LEADER-STALE exit 3 - re-read, retry after 20 s]\n  C2 -->|git 128| ST"
+        },
+        {
+          "kind": "flowchart",
+          "title": "User flows (happy + alternate + error + recovery)",
+          "mermaid": "flowchart TD\n  L[leader alive] -->|every 100 s| RN[renew] -->|holder & live| OK[expires_at = now+300]\n  RN -->|not holder| X[COORD-LEADER-NOT-HOLDER exit 3]\n  L -->|dies| EX[lease expires at T]\n  EX -->|now < T+30| Q[reclaim: COORD-LEADER-QUIET exit 3, seconds left]\n  EX -->|now >= T+30| RC[reclaim S2: CAS epoch+1] --> OK2[exit 0 + ledger leader-loss]\n  RC -->|another reclaim won| ST[COORD-LEADER-STALE exit 3 - human paged: contested]\n  L -->|done| REL[release: holder cleared, epoch kept] --> P[next pin: epoch+1, no quiet]"
+        },
+        {
+          "kind": "flowchart",
+          "title": "User flows (happy + alternate + error + recovery)",
+          "mermaid": "flowchart TD\n  J[conductor-join.py --epoch e] --> W[coord leader who --json]\n  W -->|exit 4| F4[fence: NOT CHECKED - exit 11, no merge]\n  W -->|absent| S1[fence not applicable - step 1 merge]\n  W -->|epoch E, e < E| F[fence refused: e < E - exit 11, no merge]\n  W -->|e >= E| S1"
+        }
+      ],
+      "sourceSha256": "e1d28979d8b96215d05ed8bbc243515717e54850ef0186b6954c514a73b958df"
+    },
+    {
       "id": "spec-native-app-ui-skill-extension",
       "path": "docs/specs/native-app-ui-skill-extension.md",
       "title": "Native app UI skill extension — Specification",
@@ -7087,5 +7238,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "cad8b5d3aa17833134aebe41ca88b839aaee5bdebe84d3bcebe34944a402e45b"
+  "graphSha256": "c657844d393b2952d2ce0e17f5abea44ec3402110d954b497097215b8e27b731"
 };

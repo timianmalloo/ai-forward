@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-19T17:45:48Z",
+  "generated": "2026-09-19T18:27:17Z",
   "audit": [
     {
       "actor": null,
@@ -5244,6 +5244,93 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-19T17:42:53Z",
       "duration_seconds": 174.0
+    },
+    {
+      "id": "al-01M2XDJ2H9J17SSCXPSDMMVSNP",
+      "shortname": "specify-leader-designation",
+      "datetime": "2026-09-19T18:06:21Z",
+      "session": "p2-leader",
+      "prompt": "Track P2: /specify leader designation in a ref (coord leader pin|who|renew|release|reclaim over refs/coord/leader by update-ref CAS; epoch; D13 constants; join fence) - docs/specs/leader-designation.md, fan-out 0, adversaries enacted inline",
+      "summary": "Spec for P2: Designation aggregate (one live designation per repo, epoch strictly monotonic), nine user stories with Gherkin, NFRs, Part B in CLI terms, Part C N/A; blob CAS spike re-executed; decision note: release keeps the epoch, quiet period applies to expiry not release. Gate PASS-WITH-CONDITIONS, adversaries enacted inline (fan-out 0), not independently cleared.",
+      "kind": "skill",
+      "skill": "specify",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/specs/leader-designation.md",
+        "docs/notes/note-20260919-leader-release-keeps-the-epoch.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "P2 spec: what a fenced, designated leader in a ref must do",
+      "done_when": "docs/specs/leader-designation.md written with a gate record and derived into the docs index",
+      "tier": "T2",
+      "fan_out": 0
+    },
+    {
+      "id": "al-01M2XDSFTWRY4XA1BWKASPY3VX",
+      "shortname": "design-slice-leader-designation",
+      "datetime": "2026-09-19T18:10:24Z",
+      "session": "p2-leader",
+      "prompt": "Track P2: /design-slice docs/specs/leader-designation.md -> docs/design/leader-designation.md (coord leader verbs over refs/coord/leader by update-ref CAS; join fence --epoch; doctor/metrics; CO-L doctrine), fan-out 0",
+      "summary": "Design for P2: blob record + ledger fact (grain, additivity, history rule), five verbs as pure decide + CLI wrapper over update-ref CAS with _git_status keeping return codes, state machine absent/live/expired/released, one D13 constants block, doctor line, three metrics, conductor-join step 0 leader fence exiting 11, F1-F14 dispositions, STRIDE, test plan D0/D1/D4/D6. Gate PASS-WITH-CONDITIONS, adversaries enacted inline (fan-out 0).",
+      "kind": "skill",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/design/leader-designation.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "P2 design: how the fenced leader ref, verbs, fence and measures are built",
+      "done_when": "docs/design/leader-designation.md written with a gate record and derived into the docs index",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-09-19T18:06:24Z",
+      "duration_seconds": 240.0
+    },
+    {
+      "id": "al-01M2XERDC7AFZJTG67R1W0207A",
+      "shortname": "implement-leader-designation",
+      "datetime": "2026-09-19T18:27:17Z",
+      "session": "p2-leader",
+      "prompt": "Track P2 of coordination-p2-p8: leader designation in a ref through /specify -> /design-slice -> /implement, red-first, in worktree impl/p2-leader; coord leader pin|who|renew|release|reclaim over refs/coord/leader by update-ref CAS with D13 constants; conductor-join.py epoch fence; doctor/metrics; CO-L doctrine; the two coordination skills' runs_as and CO-S0 dispatch sentence",
+      "summary": "Shipped: five leader verbs (pure decide + CAS write via _git_status), state machine absent/live/expired/released, one D13 constants block, ledger type:leader rows incl. refusals, doctor leader line, metrics leader_loss/reclaims/median latency/contested_pins, conductor-join step-0 fence (exit 11) + self-test case c, CO-L section, WT paragraph, runs_as + verbatim CO-S0 sentence + CO-L lines in both coordination skills within baseline+2%. Red observed 36 failed/2 passed before code; after 38 passed; four-file run 116 passed; lints and gates exit 0; demo transcript in temp repo. Proof Pack in docs/design/leader-designation.md. Removed a pre-existing --force from worktree remove (the grep control found it). Seam req-01M2XEERW07PGWMJVSTPKY2NC0: p8-readers held P2's two skill files for most of the run; lease lapsed before close and the edits landed here.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "pack/scripts/coord-core.py",
+        "pack/scripts/conductor-join.py",
+        "tests/docs_explorer/test_coord_leader.py",
+        "tests/docs_explorer/test_join_epoch.py",
+        "pack/knowledge/agent-coordination.md",
+        "pack/knowledge/session-worktree-discipline.md",
+        "pack/commands/execute-with-coordination/SKILL.md",
+        "pack/commands/prepare-for-coordination/SKILL.md",
+        "docs/design/leader-designation.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "P2: a fenced, designated leader in refs/coord/leader with the ratified constants, the join fence, doctor and metrics, doctrine and skill lines",
+      "done_when": "tests red then green, demo transcript observed, lints and gates exit 0, only owned/derived/register paths changed",
+      "tier": "T2",
+      "main_calls": 113,
+      "main_budget": 160,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-19T18:10:28Z",
+      "duration_seconds": 1009.0
     }
   ],
   "changes": [
@@ -6493,6 +6580,28 @@ window.AUDIT_DATA = {
         "after": "fe7ada84698f04b600e783e837e17123cff14bcf",
         "branch": "spec/compile-stage-p7",
         "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M2XDSG1W384Y7WSD40X9S119",
+      "datetime": "2026-09-19T18:10:24Z",
+      "session": null,
+      "kind": "design",
+      "skill": "design-slice",
+      "title": "Leader designation: the ref decides by update-ref CAS, the ledger records, conductor-join fences on the epoch (exit 11)",
+      "prompt": "Track P2 /design-slice of spec-leader-designation",
+      "summary": "Five coord leader verbs over a blob in refs/coord/leader; release keeps the epoch; quiet period on expiry only; step-0 fence in conductor-join.py",
+      "rationale": "SPK-1..3: a union-merged ledger cannot refuse a competing claim; git refs are a compare-and-swap cell; D13 constants ratified",
+      "artifacts": [
+        "docs/design/leader-designation.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "2b3a8152476efaa80c9d311db865b4a94746c601",
+        "after": "2b3a8152476efaa80c9d311db865b4a94746c601",
+        "branch": "impl/p2-leader",
+        "pushed": null,
         "commits": []
       }
     }
