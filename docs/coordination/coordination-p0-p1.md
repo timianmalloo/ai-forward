@@ -33,7 +33,7 @@ summary: >-
 | registry · merge driver | ok; effective (measured 2026-09-19T16:58Z) | unchanged |
 | regeneration | owed until the join | coordinator regenerates once — every generator in the registry plus the two `tools/build-*` views |
 | harness · claude | enforcing boundary; Agent-tool delegation observed on six tracks today | as before |
-| base | `origin/main` **after** the P2/P4/P6/P8 landing commit | the trees are created off that commit, never earlier |
+| base | `origin/main` = `902a252` (the P2/P4/P6/P8 landing plus its CI fixes) | the trees are created off that commit |
 
 ## Artifact classes
 | path / pattern | class | mechanism | coordination needed |
