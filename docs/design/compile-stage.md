@@ -102,7 +102,7 @@ No unfamiliar contract; **no spike needed**. The one open contract — how well 
 | Pattern | Where | Why it survives both lenses |
 |---|---|---|
 | **Compiler front-end split: deterministic skeleton + bounded fill + verifier** (TSCG's shape; LOA "deterministic wrapper around a model step") | `skeleton` → agent edits JSON → `finish` | The Simplifier's alternative — "let the agent write the goal state as today" — is the measured 38% problem; the Patterns Expert's alternative — a pipeline DSL — is DSPy, struck as a non-goal. The JSON-in-the-middle is the smallest seam that lets a test substitute the model. |
-| **Registry as data files with one `current`** (already used for `.agents/artifacts.yml` and the hook adapters) | `pack/adapters/prompt-templates/<harness>.v<n>.md` | Reuse-in-codebase rung; a Python dict of templates would hide versions from `git log`. |
+| **Registry as data files with one `current`** (already used for `.agents/artifacts.yml` and the hook adapters) | `pack/templates/prompt-templates/<harness>.v<n>.md` | Reuse-in-codebase rung; a Python dict of templates would hide versions from `git log`. |
 | **Gate as a separate script with `--self-test`** (the pack's own idiom: `verify-no-conflict-markers.py`, `verify-subprocess-utf8.py`) | `verify-compiled-prompt.py` | Conformance to the local convention; the engine imports it by path rather than duplicating rules. |
 | **Single store, new kind** | `kind: compilation` | Ladder rung "reuse what already lives here"; a `compiled/` directory was the rejected alternative (second store, drift). |
 | **Placeholder substitution, not a template engine** | `{{goal_state}}`, `{{trace}}`, `{{references}}`, `{{assumptions}}`, `{{decision_requests}}`, `{{contract_slot}}`, `{{provenance}}` via `str.replace` | stdlib rung; `simplify:` marker — ceiling: seven named placeholders, no conditionals; upgrade trigger: a template needs a loop or a conditional. |
@@ -137,7 +137,7 @@ Rejected: Jinja2 (new dependency for seven substitutions); a `.py` template modu
 
 The audit entry: `{ kind: "compilation", shortname: "compile-<raw shortname>", prompt: "<rendered text>", summary: "compiled <raw_id> for <harness> v<n>: <k> clauses, <a> assumptions, <d> decision requests", artifacts: [], compiled: { …the object above minus raw_text… }, compiled_from: null, dispatchable, mode }`. A workflow's entry: `{ …, compiled_from: "al-…", edit_distance: 0.0731 }` or `{ …, compiled: false }`.
 
-Template file (`pack/adapters/prompt-templates/claude-code.v1.md`):
+Template file (`pack/templates/prompt-templates/claude-code.v1.md`):
 
 ```
 ---
@@ -240,7 +240,7 @@ Red first: the nine self-test directions and `test_compile_audit_fields.py` are 
 
 | Track | Owns (authored) | Depends on | Exit evidence |
 |---|---|---|---|
-| **A — engine, gate, templates** | `pack/scripts/prompt-compile.py`, `pack/scripts/verify-compiled-prompt.py`, `pack/adapters/prompt-templates/claude-code.v1.md`, `pack/adapters/prompt-templates/codex.v1.md`, `tests/docs_explorer/test_prompt_compile.py`, `tests/docs_explorer/test_verify_compiled_prompt.py`, `tests/docs_explorer/fixtures/compile-eval/**` | the CLI contract above (fixed); B's `AUDIT_KINDS` change only at `finish` (A's tests stub the append until B lands; the join runs the end-to-end test) | both scripts' `--self-test` exit 0; the two test files green; gates 1b–1d green on the new files |
+| **A — engine, gate, templates** | `pack/scripts/prompt-compile.py`, `pack/scripts/verify-compiled-prompt.py`, `pack/templates/prompt-templates/claude-code.v1.md`, `pack/templates/prompt-templates/codex.v1.md`, `tests/docs_explorer/test_prompt_compile.py`, `tests/docs_explorer/test_verify_compiled_prompt.py`, `tests/docs_explorer/fixtures/compile-eval/**` | the CLI contract above (fixed); B's `AUDIT_KINDS` change only at `finish` (A's tests stub the append until B lands; the join runs the end-to-end test) | both scripts' `--self-test` exit 0; the two test files green; gates 1b–1d green on the new files |
 | **B — audit fields, skill, knowledge** | `pack/scripts/audit-log.py`, `pack/scripts/prompt-log.py`, `tests/docs_explorer/test_compile_audit_fields.py`, `pack/commands/compile/SKILL.md`, `pack/adapters/copilot/prompts/compile.prompt.md`, `pack/evals/cases/compile-01.json`, `pack/knowledge/agent-coordination.md`, one Stage-0 sentence in `pack/commands/optimize-graph/SKILL.md` and `pack/commands/prepare-for-coordination/SKILL.md` | the CLI contract above (the skill's commands); A's script names | `test_compile_audit_fields.py` green; existing `test_audit_log.py` green; the skill under the 5,000-token skill ceiling |
 | **Coordinator (join)** | `pack/adapters/INSTALL.md` (rev 76, counts, changelog), `README.md`, `pack/README.md`, `pack/OVERVIEW.md`, `pack/adapters/managed-blocks/*.block.md` (28), `tools/check-consistency.py`, `pack/context-budget.json`, `docs/notes/note-20260919-compilation-is-an-audit-kind.md`, derived surfaces via `sync-pack.ps1` | A and B joined | `verify-bundle.ps1` green except the three pre-existing gate-3 tests; end-to-end `finish` on a real prompt in this repo |
 

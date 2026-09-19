@@ -2095,7 +2095,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "cb0ecb9b3c2d0235961f886c13363fc27c07a38cd05564ed5da0c38c7cf82a7d"
+      "sourceSha256": "7b39f1a3da9b899e776ea76fcb784084d91b5524e6a97a107f58638c2dca84cf"
     },
     {
       "id": "design-coord-collaboration-phase4",
@@ -6162,7 +6162,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "45f44b8504bf06116ca28141a13e144f415cc0f800ff21e93d7ca2d917f76d22"
+      "sourceSha256": "1bed7709eab8db69824da6af228d34c9935c1664cc0d0607753415426d859bd2"
     },
     {
       "id": "privacy-review",
@@ -7061,5 +7061,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "ecea36a36c213379006e69154c1f790cd7aaf2861ff1d2bd2fa1b19d1a33147c"
+  "graphSha256": "5f97df4b685564e844e3ef9bd260ee48a69600fa6b054a7f64a15e0db9ba482c"
 };
