@@ -46,7 +46,7 @@ class CodexSurfaceTests(unittest.TestCase):
                 rel = source.relative_to(ROOT / "pack/commands")
                 self.assertEqual(source.read_bytes(), (self.root / ".agents/skills" / rel).read_bytes())
                 self.assertEqual(source.read_bytes(), (ROOT / ".agents/skills" / rel).read_bytes())
-        agents = (self.root / "AGENTS.md").read_text()
+        agents = (self.root / "AGENTS.md").read_text(encoding="utf-8")  # cp1252 on Windows otherwise (P0 run 35449895490)
         self.assertIn("docs/ai-forward-pack/codex.md", agents)
         guide = (self.root / "docs/ai-forward-pack/codex.md").read_text()
         for term in ("$collectknowledge", "$specify", ".claude/knowledge/", "AGENTS.override.md"):
@@ -74,7 +74,9 @@ class CodexSurfaceTests(unittest.TestCase):
         path.write_text(json.dumps(old))
         install = self.root / "docs/ai-forward-pack/INSTALL.md"
         install.write_text(re.sub(r"(?m)^revision: (\d+)",
-                                 lambda m: "revision: " + str(int(m[1]) - 1), install.read_text()))
+                                 lambda m: "revision: " + str(int(m[1]) - 1),
+                                 install.read_text(encoding="utf-8")),  # cp1252 on Windows otherwise
+                           encoding="utf-8", newline="\n")
         app = apply.Applier(str(ROOT), str(self.root), dry=True, baselines=False, project="Codex fixture")
         app.run()
         self.assertEqual(old, json.loads(path.read_text()), "preview must not write")
