@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Owner / Coordinator / Sub-Agent coordination</title>
+<meta name="description" content="Critique of the two prior multi-harness coordination proposals and a smaller replacement design: one role model, two control relationships, leadership in a git ref, typed requests with a termination variant, and a ranked build plan with controls and measurements.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --ground:#F6F8F7; --surface:#FFFFFF; --sunk:#EDF1F0;
+    --ink:#0C1B21; --body:#22343A; --muted:#5A6E75; --muted2:#8A9AA0;
+    --rule:#D6DFDE; --rule-strong:#B7C6C4;
+    --accent:#C8500F;
+    --go:#1F6F5C; --warn:#8A6100; --stop:#A32C1E;
+    --go-bg:#E3F0EB; --warn-bg:#F6EED9; --stop-bg:#F6E2DE;
+    --s1:#1F6F5C; --s2:#2E6F8E; --s3:#7A5AA6; --s4:#C8500F;
+    --shadow:0 1px 2px rgba(12,27,33,.05), 0 8px 24px -12px rgba(12,27,33,.18);
+    --measure:68ch;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ground:#081317; --surface:#0E1F25; --sunk:#0A1A1F;
+      --ink:#E6EFEE; --body:#C3D3D3; --muted:#8CA3A6; --muted2:#7A9195;
+      --rule:#1E333A; --rule-strong:#2C464E;
+      --accent:#F0793C;
+      --go:#5FC0A3; --warn:#D8A93A; --stop:#E4796A;
+      --go-bg:#102C26; --warn-bg:#2C2412; --stop-bg:#2E1815;
+      --s1:#5FC0A3; --s2:#6FB3D6; --s3:#B79BE0; --s4:#F0793C;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.7);
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#081317; --surface:#0E1F25; --sunk:#0A1A1F;
+    --ink:#E6EFEE; --body:#C3D3D3; --muted:#8CA3A6; --muted2:#7A9195;
+    --rule:#1E333A; --rule-strong:#2C464E;
+    --accent:#F0793C;
+    --go:#5FC0A3; --warn:#D8A93A; --stop:#E4796A;
+    --go-bg:#102C26; --warn-bg:#2C2412; --stop-bg:#2E1815;
+    --s1:#5FC0A3; --s2:#6FB3D6; --s3:#B79BE0; --s4:#F0793C;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.7);
+  }
+  *{box-sizing:border-box}
+  body{background:var(--ground); color:var(--body);
+    font-family:"Source Serif 4","Iowan Old Style",Georgia,serif;
+    font-size:17px; line-height:1.62; margin:0; -webkit-font-smoothing:antialiased}
+  .skip{position:absolute; left:12px; top:-48px; background:var(--ink); color:var(--ground); padding:6px 10px; z-index:9}
+  .skip:focus{top:12px}
+  :focus-visible{outline:3px solid var(--accent); outline-offset:2px}
+  .wrap{max-width:1120px; margin:0 auto; padding:0 16px 96px}
+  @media (min-width:720px){.wrap{padding:0 28px 96px}}
+  .col{max-width:var(--measure)}
+  h1,h2,h3,h4{font-family:Archivo,"Helvetica Neue",Arial,sans-serif}
+  h1{font-size:clamp(2rem,4.4vw,3rem); line-height:1.06; font-weight:700; letter-spacing:-.022em; color:var(--ink); margin:0 0 .5rem; text-wrap:balance}
+  h2{font-size:1.5rem; font-weight:700; letter-spacing:-.015em; color:var(--ink); margin:0 0 .2rem; text-wrap:balance}
+  h3{font-size:1.08rem; font-weight:600; letter-spacing:-.008em; color:var(--ink); margin:1.6rem 0 .5rem; text-wrap:balance}
+  p{margin:0 0 1.05rem}
+  strong{color:var(--ink); font-weight:600}
+  a{color:var(--accent)}
+  code{font-family:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace; font-size:.85em; background:var(--sunk); padding:.1em .38em; border-radius:3px; color:var(--ink)}
+  pre{background:var(--sunk); border:1px solid var(--rule); padding:16px 18px; overflow-x:auto; margin:0 0 1.3rem; border-radius:2px}
+  pre code{background:none; padding:0; font-size:.8rem; line-height:1.6; color:var(--body)}
+  .eyebrow{font-family:Archivo,sans-serif; font-size:.7rem; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); margin:0 0 .55rem}
+  header.top{border-bottom:2px solid var(--ink); padding:56px 0 22px}
+  .kicker{display:flex; gap:10px; align-items:baseline; flex-wrap:wrap; font-family:Archivo,sans-serif; font-size:.72rem; font-weight:600; letter-spacing:.13em; text-transform:uppercase; color:var(--muted); margin-bottom:18px}
+  .kicker .dot{color:var(--rule-strong)} .kicker .hl{color:var(--accent)}
+  .standfirst{font-size:1.14rem; line-height:1.55; color:var(--body); max-width:64ch; margin:0}
+  .rig{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:0; border-bottom:1px solid var(--rule); margin:0 0 48px}
+  .rig div{padding:16px 18px 18px; border-right:1px solid var(--rule)}
+  .rig div:last-child{border-right:0}
+  .rig dt{font-family:Archivo,sans-serif; font-size:.66rem; font-weight:600; letter-spacing:.11em; text-transform:uppercase; color:var(--muted); margin-bottom:5px}
+  .rig dd{margin:0; font-family:"IBM Plex Mono",monospace; font-size:.95rem; font-weight:500; color:var(--ink); font-variant-numeric:tabular-nums}
+  .rig dd.bad{color:var(--stop)} .rig dd.good{color:var(--go)}
+  section{padding:44px 0; border-top:1px solid var(--rule)}
+  .sec-head{display:flex; gap:14px; align-items:baseline; margin-bottom:1.2rem}
+  .sec-num{font-family:"IBM Plex Mono",monospace; font-size:.8rem; color:var(--accent); font-weight:500; padding-top:.28rem; flex:none}
+  .callout{background:var(--surface); border:1px solid var(--rule); border-left:3px solid var(--accent); padding:20px 24px; margin:0 0 1.4rem; box-shadow:var(--shadow)}
+  .callout p:last-child{margin-bottom:0}
+  .callout.quiet{border-left-color:var(--rule-strong); box-shadow:none; background:var(--sunk)}
+  .callout.cut{border-left-color:var(--stop); box-shadow:none; background:var(--stop-bg)}
+  .callout.go{border-left-color:var(--go); background:var(--go-bg); box-shadow:none}
+  .tscroll{overflow-x:auto; margin:0 0 1.3rem; border:1px solid var(--rule); background:var(--surface)}
+  table{border-collapse:collapse; width:100%; font-size:.86rem}
+  th,td{text-align:left; padding:10px 14px; border-bottom:1px solid var(--rule); vertical-align:top}
+  thead th{font-family:Archivo,sans-serif; font-size:.64rem; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); background:var(--sunk); border-bottom:1px solid var(--rule-strong); white-space:nowrap}
+  tbody tr:last-child td{border-bottom:0}
+  td.n{font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums; white-space:nowrap}
+  .tag{font-family:Archivo,sans-serif; font-size:.62rem; font-weight:600; letter-spacing:.1em; text-transform:uppercase; padding:3px 7px; border-radius:2px; white-space:nowrap}
+  .tag.a{background:var(--go-bg); color:var(--go)} .tag.b{background:var(--warn-bg); color:var(--warn)} .tag.c{background:var(--stop-bg); color:var(--stop)}
+  ul.body-list,ol.body-list{margin:0 0 1.1rem; padding-left:1.2em}
+  ul.body-list li,ol.body-list li{margin-bottom:.5rem}
+  .roles{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:0; border:1px solid var(--rule); background:var(--surface); margin:0 0 1.4rem}
+  .roles article{padding:18px 20px 16px; border-right:1px solid var(--rule)}
+  .roles article:last-child{border-right:0}
+  .roles .who{font-family:Archivo,sans-serif; font-size:.64rem; font-weight:600; letter-spacing:.12em; text-transform:uppercase; margin:0 0 8px}
+  .roles h3{margin:0 0 .4rem}
+  .roles p{margin:0; font-size:.9rem}
+  .roles article:nth-child(1) .who{color:var(--s4)} .roles article:nth-child(2) .who{color:var(--s2)} .roles article:nth-child(3) .who{color:var(--s1)}
+  .ladder{display:grid; gap:0; border:1px solid var(--rule); margin:0 0 1.4rem; background:var(--surface)}
+  .ladder .rung{display:grid; grid-template-columns:56px 1fr; gap:0; border-bottom:1px solid var(--rule)}
+  .ladder .rung:last-child{border-bottom:0}
+  .ladder .n{font-family:"IBM Plex Mono",monospace; font-weight:600; font-size:.9rem; padding:14px 12px; background:var(--sunk); color:var(--accent); text-align:center}
+  .ladder .bd{padding:12px 16px}
+  .ladder h3{margin:0 0 .2rem}
+  .ladder p{margin:0; font-size:.9rem}
+  figure{margin:0 0 1.4rem; border:1px solid var(--rule); background:var(--surface); padding:22px 24px 18px}
+  figcaption{font-size:.83rem; color:var(--muted); margin-top:12px; line-height:1.5}
+  svg{display:block; width:100%; height:auto}
+  .svg-ink{fill:var(--ink)} .svg-body{fill:var(--body)} .svg-muted{fill:var(--muted)}
+  .svg-rule{stroke:var(--rule-strong)} .svg-surface{fill:var(--surface)} .svg-sunk{fill:var(--sunk)}
+  .svg-s1{stroke:var(--s1)} .svg-s2{stroke:var(--s2)} .svg-s4{stroke:var(--s4)}
+  .svg-f1{fill:var(--s1)} .svg-f2{fill:var(--s2)} .svg-f4{fill:var(--s4)}
+  footer{border-top:2px solid var(--ink); padding:28px 0 0; font-size:.9rem; color:var(--muted)}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="wrap">
+
+<header class="top">
+  <div class="kicker"><span>AI-Forward</span><span class="dot">/</span><span>Proposal</span><span class="dot">/</span><span class="hl">Coordination</span><span class="dot">/</span><span>19 September 2026</span></div>
+  <h1>Owner / Coordinator / Sub-Agent coordination across one, several, and federated harnesses</h1>
+  <p class="standfirst">The pack has the right ledger and the right contention model. It is missing three protocol objects and one distinction, not a bus. This replaces the two prior proposals with a smaller design grounded in what the harnesses ship, what ai-de measured, and three executed git spikes.</p>
+</header>
+
+<dl class="rig" aria-label="Key figures">
+  <div><dt>Prior proposals critiqued</dt><dd>2 · 18 findings</dd></div>
+  <div><dt>Research tracks</dt><dd>4</dd></div>
+  <div><dt>Spikes executed</dt><dd class="good">3</dd></div>
+  <div><dt>ai-de requests unresolved</dt><dd class="bad">28% of 901</dd></div>
+  <div><dt>ai-de sessions never ended</dt><dd class="bad">58%</dd></div>
+  <div><dt>Longest measured stall</dt><dd class="bad">8,143 s</dd></div>
+  <div><dt>New daemons proposed</dt><dd class="good">0</dd></div>
+</dl>
+
+<main id="main">
+
+<section>
+  <div class="sec-head"><span class="sec-num">00</span><h2>Thesis</h2></div>
+  <div class="col">
+    <div class="callout">
+      <p><strong>Designated leader in a compare-and-swap cell</strong> (a git ref), recorded in the ledger, fenced at the join — never elected, never arbitrated by a union merge. <strong>Five-part delegation contract</strong> whose fifth part is the termination condition, and whose cross-harness form carries a deadline and a fallback. <strong>Mechanical Owner review</strong>: typed decision requests answered by numbered rulings. And the distinction between a <strong>spawned</strong> relationship (the parent holds the process: push, liveness and join are free) and a <strong>registered</strong> one (peers share only files and git: push is best-effort).</p>
+      <p><strong>S2 is spawned-native. S1 is spawned-remote. S3 is registered.</strong> The same objects flow through all three; only the channel differs.</p>
+    </div>
+    <p>Everything else the prior proposals add — a loopback bus, a cloud relay, phi-accrual stall detection, automatic reassignment, per-sub-agent worktree mandates, an interactive board — is already shipped by a harness, contradicted by a measurement, or has no measured trigger. Each is listed in §06 with the number that would justify building it.</p>
+    <p>Evidence base: <code>docs/knowledge/multi-agent-coordination/</code>. Record: <code>owner-coordinator-subagent-coordination.md</code> (this page is the reading view).</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">01</span><h2>Grounding — what exists, what was measured</h2></div>
+  <div class="col">
+    <p><strong>The pack today.</strong> <code>coord-core.py</code> has 21 verbs; leases are TTL 300 s default / 900 s cap with expiry computed, never stored; verdicts fail to NOT CHECKED, never to allow. Session liveness is a start with no end inside an <strong>8-hour</strong> staleness window. There is no leader, inbox, board, heartbeat or push. The pack's default <code>.gitignore</code> <em>ignores</em> the ledgers; ai-de overrides it and tracks 206 log files, 156 decision files and 55 session files. Both prior proposals say "git-tracked ledger"; only ai-de's is.</p>
+    <p><strong>drm-0010</strong> (undecided) already proposes the doctrine home this design needs: p58, <em>coordination doctrine has no home — write an always-loaded <code>agent-coordination.md</code></em>. p57 defers "the push half" to a proposal. This is that proposal.</p>
+  </div>
+  <div class="tscroll"><table aria-label="ai-de measurements">
+    <thead><tr><th>ai-de, main @ 62e3ed29</th><th>Value</th></tr></thead>
+    <tbody>
+      <tr><td>Ledger events / sessions</td><td class="n">6,557 / 206</td></tr>
+      <tr><td>Claims never released · sessions never ended</td><td class="n">648 (19%) · 183 (58%)</td></tr>
+      <tr><td>Seam requests with no recorded resolution</td><td class="n">~253 of 901 (28%)</td></tr>
+      <tr><td>Watcher poll · Claude watcher</td><td class="n">15 s · OFF</td></tr>
+      <tr><td>PreToolUse wired</td><td>No — the commit floor is the control</td></tr>
+      <tr><td>Longest stall (background node, EnterWorktree refusal)</td><td class="n">8,143 s</td></tr>
+      <tr><td>Conductor active time in joins/gates · in coordination logic</td><td class="n">44.8% · 0.7%</td></tr>
+      <tr><td>Harnesses present</td><td>Claude Code (Opus 5), Copilot CLI, Codex (gpt-6-astra), Grok. Antigravity absent.</td></tr>
+    </tbody>
+  </table></div>
+  <div class="col">
+    <p><strong>What worked there:</strong> one ownership register ("you edit it, the other session proposes changes to it"); handshake revisions frozen by blob hash with <em>PRODUCER / CONSUMER ACK AS WRITTEN</em>; Rulings 1–139 defined by headings and enforced by a gate ("a decision that cannot be read is not a decision; it is a number with a reputation"); the join as one script; liveness commits recording "not waiting on Codex". <strong>What failed:</strong> free-text request/resolve produced ACK loops; nothing ended sessions or released claims by protocol; the board and standing files were pulls nobody read.</p>
+  </div>
+  <div class="tscroll"><table aria-label="Research headlines">
+    <thead><tr><th>#</th><th>What the research established</th><th>Confidence</th></tr></thead>
+    <tbody>
+      <tr><td class="n">1</td><td>A lease is never mutual exclusion; only a fenced resource is (Jepsen: ~18% acknowledged-update loss; <code>client-go</code>: "does not guarantee … fencing").</td><td><span class="tag a">Verified</span></td></tr>
+      <tr><td class="n">2</td><td>Git refs are the one CAS cell in the stack: <code>update-ref</code> refuses a stale old (exit 128); <code>--force-with-lease=&lt;ref&gt;:&lt;expect&gt;</code> refuses "stale info" (exit 1); <strong><code>--force</code> silently overrides the lease</strong>. Two leader claims survive a union merge with exit 0.</td><td><span class="tag a">Executed</span></td></tr>
+      <tr><td class="n">3</td><td>At 2–10 crash-only sessions with a human present, designation with a reclamation lease beats election (two nodes cannot self-elect; FLP; incident command is appointed).</td><td><span class="tag b">Inferred synthesis</span></td></tr>
+      <tr><td class="n">4</td><td>Claude Code (per-session socket, turn injection; <code>--bg</code> background sessions), Codex (<code>codex queue --thread … --message …</code>; <code>app-server --listen ws://</code>) and Antigravity (stdin <code>stream-json</code> turns into a spawned child) expose a supported push into a running session. Four of five harnesses have a headless print mode with JSON output and a schema (executed <code>--help</code>, 2026-09-19). Every harness has native fan-out; none has a cross-harness coordinator.</td><td><span class="tag a">Executed</span></td></tr>
+      <tr><td class="n">5</td><td>A Stop-class hook that drains an inbox and exits 2 is the portable push where such a hook exists.</td><td><span class="tag b">Verified for Claude Code · Flagged elsewhere</span></td></tr>
+      <tr><td class="n">6</td><td>Heartbeats must carry progress; ratios cluster at renew TTL/3 and ≥3 missed beats; phi-accrual is over-engineered below ~9 nodes.</td><td><span class="tag a">Verified</span></td></tr>
+      <tr><td class="n">7</td><td>Contention is predicted by files changed simultaneously on both branches; ownership concentration predicts fewer defects; parallelism has a finite optimum; write-parallelism needs a test oracle.</td><td><span class="tag a">Verified</span></td></tr>
+      <tr><td class="n">8</td><td>Verification is 21% of measured multi-agent failures, and the harness auto-approves a teammate's plan without the lead reviewing it.</td><td><span class="tag a">Verified</span></td></tr>
+      <tr><td class="n">9</td><td>An agent message is never consent; the harness forbids permission laundering by design.</td><td><span class="tag a">Verified</span></td></tr>
+      <tr><td class="n">10</td><td>"AgentRoom (arXiv:2608.23740)", cited by both prior proposals, could not be found.</td><td><span class="tag c">Negative result</span></td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">02</span><h2>Critique of the two prior proposals</h2></div>
+  <div class="col">
+    <h3>"Ledger and bus" — <code>active-multi-harness-coordination.md</code></h3>
+    <p><strong>Keep:</strong> the M5–M9 diagnosis; "leader advises, ledger grants"; dual-write; inject coordination and never scores; the four-part delegate; artifacts not prose; a kick <em>ladder</em>; the non-goals list; Copilot honesty; questions left to the maintainer; demos in ai-de. Its §1.5 is the best account of why the pull-only board failed.</p>
+  </div>
+  <div class="tscroll"><table aria-label="Findings on proposal A">
+    <thead><tr><th>#</th><th>Finding</th><th>Evidence</th></tr></thead>
+    <tbody>
+      <tr><td class="n">A1</td><td><strong>One topology.</strong> Every session is a peer reached over a bus. A Coordinator that <em>spawned</em> a worker already holds its stdin/stdout/exit — the strongest push channel there is — and the design never uses it. S1 and S2 are not designed.</td><td><code>claude -p</code> binds an inbox socket; Codex app-server; native fan-out on all five</td></tr>
+      <tr><td class="n">A2</td><td><strong>Three planes ship, including a hosted relay with signed cards,</strong> before any measurement says the local inbox is insufficient. By the pack's own ladder and R4 the relay is a trigger-gated follow-on.</td><td>Solution-Selection Ladder; IO rules</td></tr>
+      <tr><td class="n">A3</td><td><strong>Leader by election — "first append wins; the fold is the total order."</strong> Executed: two leader-claim lines union-merge with exit 0 and both survive. Election adds a split-brain mode with no measured need.</td><td>SPK-3</td></tr>
+      <tr><td class="n">A4</td><td><strong>Progress-φ per session.</strong> Needs an inter-arrival distribution a session never produces; its own Q5 concedes automatic kick is off until a baseline exists. A deadline plus a from-the-world liveness signal is what can be measured today.</td><td>Akka's cutoff at 9 nodes</td></tr>
+      <tr><td class="n">A5</td><td><strong>Push = hook <code>additionalContext</code> at the next tool boundary.</strong> A pull at the harness edge: cannot reach an idle session, a hung subprocess, or a harness with no hook (ai-de has none wired). Ignores Claude Code's native cross-session delivery.</td><td>ai-de settings; observed in this session</td></tr>
+      <tr><td class="n">A6</td><td><strong>Liveness still depends on the agent volunteering a heartbeat.</strong> 58% of sessions never end; the gap is structural. Liveness must be read from the world.</td><td>DC-024, DC-067</td></tr>
+      <tr><td class="n">A7</td><td><strong>The Owner seat has no mechanism</strong> — mandate as prose — while ai-de runs a numbered, heading-defined ruling register that works.</td><td><code>verify-ruling-citations.py</code></td></tr>
+      <tr><td class="n">A8</td><td><strong>"Git-tracked ledger" throughout;</strong> the pack default gitignores it. Only ai-de tracks it.</td><td><code>.gitignore:28-32</code> vs ai-de <code>:552-565</code></td></tr>
+    </tbody>
+  </table></div>
+  <div class="col">
+    <h3>"Proactive multi-harness coordination" — <code>proactive-multi-harness-coordination.md</code></h3>
+    <p><strong>Keep:</strong> S1/S2/S3 named explicitly; the running track as an operator surface; harness and model ids in every event; union merge for per-session ledgers; a contract schema with budget, deadline and forbidden paths; the A2A-shaped card kept as a shape.</p>
+  </div>
+  <div class="tscroll"><table aria-label="Findings on proposal B">
+    <thead><tr><th>#</th><th>Finding</th><th>Evidence</th></tr></thead>
+    <tbody>
+      <tr><td class="n">B1</td><td><strong>Grounding errors on load-bearing rows.</strong> Tier table names "Gemini 2.5/3 Pro, Claude 3.7, Sonnet 3.7, GPT-4o"; the fleet ran Opus 5 and gpt-6-astra, and this harness offers Fable 5.1 / Opus 5 / Sonnet 5 / Haiku 4.5. "8-hour timeouts" conflates staleness with lease TTL. "Antigravity as Leader": absent from ai-de, no status entry, no headless flags.</td><td><code>coord-core.py:27-32</code>; ai-de trailers</td></tr>
+      <tr><td class="n">B2</td><td><strong>Fencing is declared, not built.</strong> "Token_worker ≥ Token_active_lease at commit" is not Kleppmann's rule; no store keeps "highest seen", no verb issues the token, the join is never named. Same shape as <code>hotspot</code> (CTX-H).</td><td>KB finding 1</td></tr>
+      <tr><td class="n">B3</td><td><strong>Universal WT1 enforcement</strong> contradicts three recorded decisions (P5 of the tightening proposal; INSTALL "ONE SESSION legal"; the 8,143 s stall <em>was</em> a worktree refusal). Per-sub-agent worktrees in S2 multiply a join cost already at 44.8%.</td><td>DC-206</td></tr>
+      <tr><td class="n">B4</td><td><strong>Invented constants and destructive rungs</strong> — Φ thresholds, 90 s ack, then "terminate, revoke, clean the worktree, reassign" on a detector with no baseline, against WT11.</td><td>WT11; DC-067</td></tr>
+      <tr><td class="n">B5</td><td><strong>Advertised harness capabilities with no spike:</strong> writing into a terminal, stdin injectors for Copilot/Codex, OS signals, "send_message wakes the agy loop". §13 lists mid-turn interruption as open while Rung 1 depends on it.</td><td>Phase-3 rule</td></tr>
+      <tr><td class="n">B6</td><td><strong>Election by lease + "higher total-order commit wins"</strong> — no total order exists on git before merge.</td><td>SPK-3</td></tr>
+      <tr><td class="n">B7</td><td><strong>Scope:</strong> four phases Oct–Dec (bus, TUI, MCP tools, dashboard, detectors, federation, relay), no struck list, no control that fails first, targets verified by "simulated" tests rather than the profiler that exists.</td><td>CI6; SP-07/15/19</td></tr>
+      <tr><td class="n">B8</td><td><strong>Ignores what measurably worked in ai-de</strong> (frozen handshakes, rulings, join.json, "not waiting on Codex") and misreads the largest stall class — ACK discipline and bounded waits, not transport latency.</td><td>§01</td></tr>
+      <tr><td class="n">B9</td><td><strong>Vocabulary collision unaddressed:</strong> "Owner" = a model here, the ruling seat in ai-de.</td><td>ai-de <code>claude-conductor.md</code></td></tr>
+      <tr><td class="n">B10</td><td><strong>"Message delay = ∞ because the board had 0 callers"</strong> conflates a product bug (an uninstalled control) with a protocol property.</td><td>CTX-H</td></tr>
+    </tbody>
+  </table></div>
+  <div class="col">
+    <div class="callout quiet"><p><strong>Both:</strong> neither maps the seats onto what each harness can run; neither gives the operator a playbook; neither defines a termination variant for a cross-harness request — the one thing ai-de had to improvise and the largest measured stall class. Both cite a paper that does not exist.</p></div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">03</span><h2>The model</h2></div>
+  <div class="roles" aria-label="Seats">
+    <article><p class="who">Owner</p><h3>Most capable model available</h3><p>Answers decision requests with numbered rulings; holds the veto; sets the mandate; escalates to the human when a ruling's reversibility or blast radius exceeds it. Never grants leases, never authors track work, never answers a permission prompt for the human, never clears its own veto.</p></article>
+    <article><p class="who">Coordinator</p><h3>Capable enough to decompose and join</h3><p>Decomposes for disjoint authored sets; authors shared contracts before fan-out; dispatches under five-part contracts; watches progress; joins; holds the leader designation in S3. Never authors track work, never widens fan-out past the cap, never reassigns without a ruling.</p></article>
+    <article><p class="who">Sub-Agent</p><h3>Fit for the task</h3><p>Executes one contract in one worktree; returns artifact references and proof of done; may <code>nack</code> a contract outside the mandate. Never re-plans, never touches another track's authored set, never spawns teams, never relays a denied action.</p></article>
+  </div>
+  <div class="col">
+    <p>Seats are <strong>seats, not processes</strong>: in S2 the Owner and Coordinator are usually one process in two modes, and the veto rule is satisfied by a <strong>separate review sub-agent on the Owner-tier model</strong>. Vocabulary: <em>Owner</em> is the model seat; the person is the <em>human operator</em>; ai-de's AgentPlane conductor keeps its name.</p>
+  </div>
+  <figure>
+    <svg viewBox="0 0 900 300" role="img" aria-labelledby="fig1t fig1d">
+      <title id="fig1t">Two control relationships</title>
+      <desc id="fig1d">Left: a spawned relationship where the Coordinator holds the sub-agent's process, so push, liveness and join are free. Right: a registered relationship where independent sessions share only the .agents directory and git, so push is best-effort and every request carries a deadline and fallback.</desc>
+      <rect x="20" y="20" width="410" height="260" rx="4" class="svg-surface svg-rule" stroke-width="1"/>
+      <text x="40" y="50" class="svg-ink" font-family="Archivo, sans-serif" font-size="15" font-weight="700">SPAWNED — S2 native · S1 remote</text>
+      <rect x="40" y="70" width="170" height="52" rx="3" class="svg-sunk svg-s4" stroke-width="2"/>
+      <text x="125" y="92" text-anchor="middle" class="svg-ink" font-family="Archivo, sans-serif" font-size="13" font-weight="600">Owner + Coordinator</text>
+      <text x="125" y="110" text-anchor="middle" class="svg-muted" font-family="IBM Plex Mono, monospace" font-size="11">one process, two modes</text>
+      <rect x="40" y="190" width="110" height="46" rx="3" class="svg-sunk svg-s1" stroke-width="2"/>
+      <text x="95" y="210" text-anchor="middle" class="svg-ink" font-family="Archivo, sans-serif" font-size="12" font-weight="600">Sub-agent</text>
+      <text x="95" y="226" text-anchor="middle" class="svg-muted" font-family="IBM Plex Mono, monospace" font-size="10">Agent / claude -p</text>
+      <rect x="170" y="190" width="110" height="46" rx="3" class="svg-sunk svg-s1" stroke-width="2"/>
+      <text x="225" y="210" text-anchor="middle" class="svg-ink" font-family="Archivo, sans-serif" font-size="12" font-weight="600">Sub-agent</text>
+      <text x="225" y="226" text-anchor="middle" class="svg-muted" font-family="IBM Plex Mono, monospace" font-size="10">codex exec</text>
+      <rect x="300" y="190" width="110" height="46" rx="3" class="svg-sunk svg-s1" stroke-width="2"/>
+      <text x="355" y="210" text-anchor="middle" class="svg-ink" font-family="Archivo, sans-serif" font-size="12" font-weight="600">Reviewer</text>
+      <text x="355" y="226" text-anchor="middle" class="svg-muted" font-family="IBM Plex Mono, monospace" font-size="10">Owner-tier model</text>
+      <path d="M100 122 L95 188" class="svg-s4" stroke-width="2" fill="none"/>
+      <path d="M125 122 L225 188" class="svg-s4" stroke-width="2" fill="none"/>
+      <path d="M150 122 L355 188" class="svg-s4" stroke-width="2" fill="none"/>
+      <text x="230" y="160" text-anchor="middle" class="svg-body" font-family="IBM Plex Mono, monospace" font-size="11">stdin · tool results · exit · budget</text>
+      <text x="40" y="265" class="svg-muted" font-family="IBM Plex Mono, monospace" font-size="11">push, liveness, join: free</text>
+      <rect x="470" y="20" width="410" height="260" rx="4" class="svg-surface svg-rule" stroke-width="1"/>
+      <text x="490" y="50" class="svg-ink" font-family="Archivo, sans-serif" font-size="15" font-weight="700">REGISTERED — S3</text>
+      <rect x="490" y="70" width="110" height="60" rx="3" class="svg-sunk svg-s2" stroke-width="2"/>
+      <text x="545" y="92" text-anchor="middle" class="svg-ink" font-family="Archivo, sans-serif" font-size="12" font-weight="600">Antigravity</text>
+      <text x="545" y="108" text-anchor="middle" class="svg-muted" font-family="IBM Plex Mono, monospace" font-size="10">own hierarchy</text>
+      <text x="545" y="122" text-anchor="middle" class="svg-f4" font-family="IBM Plex Mono, monospace" font-size="10" font-weight="600">LEADER (pinned)</text>
+      <rect x="620" y="70" width="110" height="60" rx="3" class="svg-sunk svg-s2" stroke-width="2"/>
+      <text x="675" y="92" text-anchor="middle" class="svg-ink" font-family="Archivo, sans-serif" font-size="12" font-weight="600">Claude Code</text>
+      <text x="675" y="108" text-anchor="middle" class="svg-muted" font-family="IBM Plex Mono, monospace" font-size="10">own hierarchy</text>
+      <rect x="750" y="70" width="110" height="60" rx="3" class="svg-sunk svg-s2" stroke-width="2"/>
+      <text x="805" y="92" text-anchor="middle" class="svg-ink" font-family="Archivo, sans-serif" font-size="12" font-weight="600">Copilot CLI</text>
+      <text x="805" y="108" text-anchor="middle" class="svg-muted" font-family="IBM Plex Mono, monospace" font-size="10">own hierarchy</text>
+      <rect x="490" y="190" width="370" height="46" rx="3" class="svg-sunk svg-rule" stroke-width="1"/>
+      <text x="675" y="209" text-anchor="middle" class="svg-ink" font-family="Archivo, sans-serif" font-size="12" font-weight="600">.agents/ (machine-local) + git (durable) + refs/coord/leader</text>
+      <text x="675" y="226" text-anchor="middle" class="svg-muted" font-family="IBM Plex Mono, monospace" font-size="10">typed requests · deadline + fallback · ACK by blob hash</text>
+      <path d="M545 130 L545 188" class="svg-s2" stroke-width="2" fill="none"/>
+      <path d="M675 130 L675 188" class="svg-s2" stroke-width="2" fill="none"/>
+      <path d="M805 130 L805 188" class="svg-s2" stroke-width="2" fill="none"/>
+      <text x="490" y="265" class="svg-muted" font-family="IBM Plex Mono, monospace" font-size="11">push: best-effort → every request has a termination variant</text>
+    </svg>
+    <figcaption>Two control relationships. The same protocol objects flow through both; only the channel differs. The human pins the leader; no election.</figcaption>
+  </figure>
+  <div class="col">
+    <h3>Invariants</h3>
+    <ol class="body-list">
+      <li><strong>Leadership is a CAS cell</strong> (<code>refs/coord/leader</code> via <code>update-ref &lt;ref&gt; &lt;new&gt; &lt;old&gt;</code>), recorded in the ledger, fenced at the join.</li>
+      <li><strong>Designate, don't elect.</strong> Reclaim after expiry + quiet period with a strictly higher epoch; a contested claim pages the human.</li>
+      <li><strong>Path leases are efficiency locks;</strong> TTL 300/900 unchanged; git is the correctness arbiter.</li>
+      <li><strong>Never <code>--force</code> with <code>--force-with-lease</code>;</strong> always the three-part form.</li>
+      <li><strong>Liveness from the world; heartbeats carry progress;</strong> "no end recorded" is never rendered "live".</li>
+      <li><strong>Five-part contract; artifacts not prose.</strong></li>
+      <li><strong>Every cross-harness request carries a deadline and a fallback;</strong> ACK pinned to a blob hash.</li>
+      <li><strong>Two tracks never author one file or one slice in the same window.</strong></li>
+      <li><strong>An agent message is never consent.</strong></li>
+      <li><strong>Never advertise a channel not executed on this machine.</strong></li>
+      <li><strong>Empty fleet view is NOT CHECKED.</strong></li>
+      <li><strong>Fan-out declares all GO7 fields and a main-line budget;</strong> width 3–5 by default.</li>
+    </ol>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">04</span><h2>Protocol objects</h2></div>
+  <div class="col"><p>All are ledger lines with a stable <code>id</code>, an HLC-shaped stamp, <code>host</code> and <code>tree</code>. Order and dedup are fold-time properties; <code>merge=union</code> is path-scoped to these files only.</p></div>
+  <div class="tscroll"><table aria-label="Protocol objects">
+    <thead><tr><th>Object</th><th>Verb (proposed)</th><th>Fields</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>Session Card</td><td><code>coord session start --host --roles --model</code></td><td>roles claimed, model, worktree, branch, base, listen address</td><td>A2A-shaped; roles claimed, not granted</td></tr>
+      <tr><td>Delegation contract</td><td><code>coord delegate --to --wi</code></td><td>five parts; budget; deadline; fallback</td><td>cross-harness form = seam request + contract</td></tr>
+      <tr><td>Running track</td><td><code>coord track</code></td><td>wi, owner, state, blocked-on, deadline, last progress</td><td>derived; never a second store</td></tr>
+      <tr><td>Progress heartbeat</td><td><code>coord session heartbeat</code></td><td>calls, files, tokens since last</td><td>from hooks where present; worktree mtime otherwise</td></tr>
+      <tr><td>Seam request (typed)</td><td><code>request add --deadline --fallback</code> · <code>ack --blob</code> · <code>resolve</code> · <code>expire</code></td><td>sent → received → ack-as-written → resolved · expired-fallback</td><td>ai-de's handshake, mechanised</td></tr>
+      <tr><td>Decision request / Ruling</td><td><code>coord decide request</code> · <code>coord decide rule &lt;n&gt;</code></td><td>options, evidence, recommendation, reversibility, blast radius</td><td>ruling verifier absorbed as a gate</td></tr>
+      <tr><td>Leader designation</td><td><code>coord leader pin|who|renew|release|reclaim</code></td><td>epoch, ttl, quiet period</td><td>ref CAS; ledger records</td></tr>
+      <tr><td>Join state</td><td><code>conductor-join.py</code> + JoinState</td><td>per-step state, terminal complete, epoch checked</td><td>the fence</td></tr>
+    </tbody>
+  </table></div>
+  <div class="ladder" aria-label="Kick ladder">
+    <div class="rung"><div class="n">0</div><div class="bd"><h3>Notify</h3><p>Blocked recorded → pushed by the cheapest verified channel.</p></div></div>
+    <div class="rung"><div class="n">1</div><div class="bd"><h3>Kick</h3><p>Deadline passed or three missed progress beats; <code>suggest</code> is an enum. Cap two per work item; count them.</p></div></div>
+    <div class="rung"><div class="n">2</div><div class="bd"><h3>Escalate to the Owner</h3><p>A decision request. Reassignment happens only under a ruling — never automatically, never by killing a process or removing a tree.</p></div></div>
+    <div class="rung"><div class="n">3</div><div class="bd"><h3>Human</h3><p>When the ruling exceeds the mandate.</p></div></div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">05</span><h2>The three scenarios</h2></div>
+  <div class="col"><h3>S2 — one harness, native fleet (the base case)</h3></div>
+  <div class="tscroll"><table aria-label="S2 per harness">
+    <thead><tr><th>Harness</th><th>Coordinator spawns</th><th>Model per sub-agent</th><th>Isolation</th><th>Owner review</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td>Claude Code</td><td>Agent tool (background); agent teams for long-lived tracks; Workflow for pipelines</td><td><code>model: sonnet|haiku|opus|fable</code></td><td><code>isolation: worktree</code> for writers</td><td>review sub-agent on <code>fable</code>; TaskCompleted/Stop exit 2</td><td><span class="tag a">enforced</span> (observed v2.1.x)</td></tr>
+      <tr><td>Antigravity</td><td><code>invoke_subagent</code> / <code>define_subagent</code></td><td><code>model: inherit|flash|pro</code></td><td><code>workspace: branch</code></td><td>reviewer with <code>model: pro</code></td><td><span class="tag b">observed-only</span></td></tr>
+      <tr><td>Copilot CLI</td><td><code>/fleet</code></td><td>per session (per-subagent Flagged)</td><td>undocumented</td><td>handoff to a review agent</td><td><span class="tag b">observed-only</span></td></tr>
+      <tr><td>Grok Build</td><td><code>spawn_subagent --parallel</code> (≤ 8)</td><td>via subagent type</td><td>worktree per child</td><td>reviewer type</td><td><span class="tag b">observed-only</span></td></tr>
+      <tr><td>Codex</td><td>manager + workers (caps Flagged)</td><td>Flagged</td><td>sandbox</td><td>reviewer worker</td><td><span class="tag b">observed-only</span></td></tr>
+    </tbody>
+  </table></div>
+  <div class="col">
+    <div class="callout go"><p><strong>Playbook today (Claude Code).</strong> Main session on the strongest model: <code>/prepare-for-coordination</code> (disjoint authored sets, serial spine first) → <code>/execute-with-coordination --agents</code>. Dispatch writers with <code>isolation: worktree</code> and a <code>model</code> override; dispatch the review on <code>fable</code> in Adversary mode before fan-out and after each artifact. <strong>Enter the worktree before the first spawn.</strong> Join with <code>conductor-join.py</code> only.</p></div>
+    <h3>S1 — one harness hosts Owner + Coordinator, sub-agents on other harnesses</h3>
+    <p>S2 with remote spawned sub-agents: the Coordinator's shell tool launches each external harness headless, in its own worktree, under <code>bounded_process.py</code>, with an <code>--agent-run</code> audit span carrying the budget.</p>
+  </div>
+  <div class="tscroll"><table aria-label="S1 dispatch per harness">
+    <thead><tr><th>Target</th><th>Dispatch (today)</th><th>Mid-run steering</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td>Claude Code 2.1.278</td><td><code>claude -p "&lt;contract&gt;" --output-format json --json-schema … --permission-mode acceptEdits</code> in the track worktree (not <code>--bare</code>); or <code>--bg</code> for a managed background session</td><td>inbox socket; <code>--resume &lt;id&gt;</code>; <code>claude agents|attach|logs|stop</code></td><td><span class="tag a">executed --help</span> · <span class="tag b">Flagged</span> socket discovery</td></tr>
+      <tr><td>Codex 0.155.0</td><td><code>codex exec --json -o … --output-schema … --worktree -C … --sandbox … --approve-for-me</code></td><td><code>codex queue --thread … --message …</code>; <code>app-server --listen ws://</code></td><td><span class="tag a">executed --help</span> · caps Flagged</td></tr>
+      <tr><td>Antigravity 1.2.7</td><td><code>agy -p "&lt;contract&gt;" --output-format json --json-schema … --mode accept-edits --model … --effort … --print-timeout …</code></td><td><code>--input-format stream-json</code> (one turn per stdin line); <code>--conversation &lt;id&gt;</code></td><td><span class="tag a">executed --help</span></td></tr>
+      <tr><td>Grok Build</td><td><code>grok -p "&lt;contract&gt;" --output-format json --json-schema … --worktree=… --permission-mode … --max-turns …</code></td><td>none found; <code>--resume</code></td><td><span class="tag a">executed --help</span></td></tr>
+      <tr><td>Copilot CLI</td><td><code>copilot -p "&lt;contract&gt;" --allow-tool …</code> (narrow lists)</td><td>none documented</td><td><span class="tag b">observed-only</span> — not installed here</td></tr>
+    </tbody>
+  </table></div>
+  <div class="col">
+    <p>Antigravity works today both as <strong>host</strong> (its shell tool launches the CLIs) and as a <strong>spoke</strong> (<code>agy -p</code>); the earlier "unsupported" row was wrong and is corrected by execution.</p>
+    <h3>S3 — several harnesses, each self-contained, one designated leader</h3>
+    <ol class="body-list">
+      <li><strong>Register:</strong> <code>coord session start --host &lt;h&gt; --roles coordinator</code> → Session Card.</li>
+      <li><strong>Designate:</strong> the human runs <code>coord leader pin &lt;session&gt; --ttl 300</code> → CAS on <code>refs/coord/leader</code>, epoch +1, ledger line.</li>
+      <li><strong>Own:</strong> each harness's authored set is in the one ownership register; artifact classes decide what needs no coordination at all.</li>
+      <li><strong>Coordinate seams:</strong> <code>request add --deadline --fallback</code>; consumer <code>ack --blob</code>; producer <code>resolve</code>. At the deadline with no ack the requester runs the fallback and records <code>expired-fallback</code> — "not waiting on Codex" as a protocol step.</li>
+      <li><strong>Lead:</strong> the leader holds the running track, re-folds every 15 s, notifies waiters on done/release, kicks on deadline or three missed beats, escalates. It advises assignment; <code>coord claim</code> still grants.</li>
+      <li><strong>Renew / lose / reclaim:</strong> renew at TTL/3; a lapsed designation is reclaimable after a 30 s quiet period with epoch +1; the takeover re-establishes the in-flight table before acting.</li>
+      <li><strong>Push by the cheapest verified channel:</strong> Claude↔Claude native message; stop-class hook inbox drain; otherwise inbox file + SessionStart count. Recorded per host as enforced / observed-only / unsupported.</li>
+    </ol>
+    <div class="callout quiet"><p><strong>Today, without §07:</strong> everything except <code>leader</code>, typed request states and <code>track</code> exists. The human names the leader in the session contract; the leader runs <code>coord tail</code> and <code>coord collaborate summary</code> on a 15 s monitor; Claude Code peers use <code>SendMessage</code>. That is S3 as ai-de runs it now, with ai-de's failure rates.</p></div>
+  </div>
+  <div class="tscroll"><table aria-label="S3 failure modes">
+    <thead><tr><th>Mode</th><th>Disposition</th></tr></thead>
+    <tbody>
+      <tr><td>Leader session dies</td><td>Designation lapses; reclaim after quiet period by CAS; in-flight table re-read from the fold; human paged if two reclaims collide</td></tr>
+      <tr><td>Two leaders (laptop sleep, clock jump)</td><td>The ref has one value; the join refuses the lower epoch; on wake a leader whose monotonic and wall clocks disagree beyond the skew budget steps down and re-pins</td></tr>
+      <tr><td>Silent peer</td><td>Deadline + fallback; <code>expired-fallback</code> counted</td></tr>
+      <tr><td>Stall</td><td>Kick ladder to the Owner; no automatic reassignment</td></tr>
+      <tr><td>Free-text ACK churn</td><td>Typed states; ACK pinned to blob hash</td></tr>
+      <tr><td>Empty fleet view</td><td>NOT CHECKED</td></tr>
+      <tr><td>Harness without hooks</td><td>Commit floor + inbox file; recorded observed-only</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">06</span><h2>What I am not proposing</h2></div>
+  <div class="tscroll"><table aria-label="Struck items with reopen triggers">
+    <thead><tr><th>Struck</th><th>Why</th><th>Measured trigger that would reopen it</th></tr></thead>
+    <tbody>
+      <tr><td>Loopback HTTP/SSE bus daemon</td><td>Claude Code ships a per-session socket with turn injection; Codex a WebSocket control plane; the measured stall classes are ACK discipline and bounded waits, not transport latency; a daemon re-adds the dependency ADR-0007 removed</td><td>median time-to-ack &gt; 60 s after P1 + P4, from <code>coord metrics</code></td></tr>
+      <tr><td>Cloud relay with signed cards</td><td>No cross-machine fleet exists in either repo; no harness implements A2A</td><td>a second machine appears in a session contract</td></tr>
+      <tr><td>Leader election</td><td>SPK-3; FLP; human present; two nodes cannot self-elect</td><td>leader-loss stalls &gt; 1/week after P2</td></tr>
+      <tr><td>Phi-accrual detectors</td><td>Over-engineered below 9 nodes; no baseline</td><td>false-kick rate under P3's rule</td></tr>
+      <tr><td>Automatic reassign / kill / worktree clean</td><td>WT11; false liveness; destructive on a false positive</td><td>never automatic — the Owner rules</td></tr>
+      <tr><td>Mandatory worktree per sub-agent in S2</td><td>Contention is a property of the artifact; the join is 44.8% of conductor time; the 8,143 s stall was a worktree refusal</td><td>WT4 exception rate rising while overlap conflicts appear</td></tr>
+      <tr><td>Interactive board / TUI / MCP board tools</td><td><code>coord track</code> over the fold is the projection; a board is a pull nothing read</td><td>track read-rate still zero after SessionStart injection</td></tr>
+      <tr><td>CRDT for source or state</td><td>CodeCRDT −39% worst case; leases must be refused, not merged</td><td>none</td></tr>
+      <tr><td>A2A / ANP / mTLS / DID</td><td>No harness implements A2A; the OS user is the trust boundary</td><td>a third party's agent joins the fleet</td></tr>
+      <tr><td>MCP sampling as delegation primitive</td><td>Deprecated in MCP 2026-07-28</td><td>none</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">07</span><h2>Build plan — ranked by benefit ÷ cost</h2></div>
+  <div class="tscroll"><table aria-label="Build plan">
+    <thead><tr><th>#</th><th>Item</th><th>Control that fails on recurrence</th><th>Measurement</th><th>Cost</th></tr></thead>
+    <tbody>
+      <tr><td class="n">P0</td><td><strong>Doctrine home + hygiene.</strong> Always-loaded <code>agent-coordination.md</code> (CO1–COn, drm p58) carrying §03; register CTX-Q; pack default tracks the ledgers (ai-de's split) with a doctor check; COORD-L <code>--host</code>; COORD-D "no end recorded" never "live"</td><td>foundation-check lists the doc; doctor FAILs ignored ledgers; start-and-no-end never renders live; selfcheck counts unrecorded host</td><td>start/end ratio; % entries with host</td><td class="n">~1 day</td></tr>
+      <tr><td class="n">P1</td><td><strong>Typed seam requests with a termination variant.</strong> <code>--deadline --fallback</code>; <code>ack --blob</code>; <code>expire</code>; five states</td><td>a request past deadline with no ack folds to expired-fallback, never open; an ack without a blob is refused</td><td>unresolved rate (baseline 28%); median time-to-ack</td><td class="n">~1 day</td></tr>
+      <tr><td class="n">P2</td><td><strong>Leader designation in a ref.</strong> <code>coord leader pin/who/renew/release/reclaim</code> over <code>refs/coord/leader</code> via CAS with epoch and quiet period; the join refuses a lower epoch</td><td>the three spikes as tests: stale old refused; <code>--force</code> never emitted; two concurrent pins → one epoch advances; join refuses lower epoch</td><td>leader-loss events; reclaim latency; contested pins</td><td class="n">~1 day</td></tr>
+      <tr><td class="n">P3</td><td><strong>Progress liveness + running track.</strong> <code>session heartbeat</code> from PostToolUse/Stop hooks and worktree mtime; <code>coord track</code>; kick ladder 0–2</td><td>liveness pings with zero progress render stalled, not live; empty corpus → NOT CHECKED</td><td>stall detection latency (baseline 8,143 s); false-kick rate</td><td class="n">~2 days</td></tr>
+      <tr><td class="n">P4</td><td><strong>Push adapters by relationship.</strong> <code>coord dispatch --harness claude|codex|copilot</code> (bounded, audited, per-harness status recorded); S3 notify adapter by cheapest verified channel</td><td>a dispatch without budget or deadline is refused; an unexecuted channel renders unsupported</td><td>dispatch exit codes; kick-ack rate per host</td><td class="n">~3 days</td></tr>
+      <tr><td class="n">P5</td><td><strong>Owner review mechanics.</strong> <code>coord decide request/rule</code>; ruling verifier as a gate; TaskCompleted/Stop exit-2 gate where supported; skills updated (five-part contract, seat mapping, "enter worktree before first spawn")</td><td>a ruling cited without a heading fails the gate; a contract without a termination condition is refused at dispatch</td><td>rulings issued; review latency; contracts refused</td><td class="n">~2 days</td></tr>
+    </tbody>
+  </table></div>
+  <div class="col"><p>P0–P2 are one commit each and independent; P3 depends on P0's fields; P4 on P1 and P2; P5 on P1. Every item lands with its control red first and a <code>coord metrics</code> row, exercised in <strong>ai-de</strong>, where the baselines are.</p></div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">08</span><h2>Defect class registered from this turn</h2></div>
+  <div class="col">
+    <div class="callout cut"><p><strong>CTX-Q — A parent enters a worktree after delegating, stranding its delegates.</strong> Four research sub-agents were spawned from the primary checkout; the parent then entered a worktree; the worktree guard resolved each sub-agent's cwd to the shared checkout and refused every shell call for the rest of their runs. Control: the always-loaded doctrine (P0) carries "enter the worktree before the first spawn", and the coordination skill refuses to spawn while the worktree state is pending. Registered as <code>uncontrolled</code> until P0 lands.</p></div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">09</span><h2>Decisions and open questions</h2></div>
+  <div class="tscroll"><table aria-label="Decisions">
+    <thead><tr><th>#</th><th>Decision</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td class="n">D1</td><td>One role model, two control relationships; design by relationship</td><td>spawned children are push channels for free; registered peers are not</td></tr>
+      <tr><td class="n">D2</td><td>Leadership in <code>refs/coord/leader</code> by CAS; ledger records; join fences</td><td>SPK-1..3; Jepsen; Kleppmann</td></tr>
+      <tr><td class="n">D3</td><td>Designation with reclamation, never election</td><td>FLP; two-node arithmetic; incident command; human present</td></tr>
+      <tr><td class="n">D4</td><td>Path leases stay 300/900 and are efficiency locks</td><td>git is the arbiter; DC-163</td></tr>
+      <tr><td class="n">D5</td><td>Five-part contract; deadline + fallback on every cross-harness request; ACK by blob</td><td>MAST termination-unaware 12.4%; ai-de 28% unresolved</td></tr>
+      <tr><td class="n">D6</td><td>Owner review = decision request → numbered ruling, hook-gated where possible; reviewer ≠ author</td><td>MAST verification 21%; harness auto-approves plans</td></tr>
+      <tr><td class="n">D7</td><td>Liveness from the world; heartbeats carry progress; no phi</td><td>DC-024; Temporal; Akka cutoff</td></tr>
+      <tr><td class="n">D8</td><td>Push by the cheapest executed channel; unsupported until executed</td><td>Phase-3 rule; CTX-H</td></tr>
+      <tr><td class="n">D9</td><td>No bus, relay, election, auto-reassign, board or worktree mandate in scope; each has a reopen trigger</td><td>§06</td></tr>
+      <tr><td class="n">D10</td><td>Pack default tracks the ledgers</td><td>A8; cross-machine S3 needs it</td></tr>
+      <tr><td class="n">D11</td><td>Vocabulary: Owner (seat) · human operator · AgentPlane conductor</td><td>ai-de collision</td></tr>
+    </tbody>
+  </table></div>
+  <div class="col">
+    <h3>Open questions for the maintainer</h3>
+    <ol class="body-list">
+      <li><strong>Ledger tracking default (D10):</strong> change the pack default, or keep ignoring and require S3 users to opt in? Recommendation: change it; the doctor reports which.</li>
+      <li><strong>Leader lease constants:</strong> 300 s / 150 s / 20 s with a 30 s quiet period, tuned from metrics? Recommendation: start long; a false takeover costs more than a slow one.</li>
+      <li><strong>Copilot hooks:</strong> stop-class hook names are secondary-sourced. Probe the one doc page before P4.</li>
+      <li><strong>Antigravity as S1 host — resolved by execution (2026-09-19):</strong> agy 1.2.7 has a full print mode. Remaining probe: whether agy exposes a hook surface for the progress heartbeat (P3).</li>
+    </ol>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">10</span><h2>Status</h2></div>
+  <div class="tscroll"><table aria-label="Status">
+    <tbody>
+      <tr><td><strong>Completed</strong></td><td>Grounding in both repositories; four research tracks captured as a knowledge base; three executed spikes; 18 critique findings; the model, protocol objects, three scenario playbooks, the struck list with reopen triggers, a five-item build plan with controls and measurements, one defect class.</td></tr>
+      <tr><td><strong>Remaining</strong></td><td>Maintainer answers to §09; <code>/specify</code> for P0–P2; the Copilot probes (install the CLI; hook page). The agy probe and the cherry-pick spike are done. Bundle gates: 1 clean after regenerating the derived portal and web index; 2 fails only on the uncommitted tree; 3's five failures reproduce on a clean clone of <code>main</code> (pre-existing); graph, audit, coordination and context-budget gates pass.</td></tr>
+      <tr><td><strong>Best next action</strong></td><td>Decide D10 and D3; then <code>/specify</code> P2 (leader designation) against ai-de, whose baseline is a designated human leader today.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+</main>
+
+<footer>
+  <p>Record: <code>docs/proposals/owner-coordinator-subagent-coordination.md</code>. Evidence: <code>docs/knowledge/multi-agent-coordination/</code> (index · state-of-the-art · comparables · references · data-and-constants · glossary · open-questions · sources). Prior proposals: <code>active-multi-harness-coordination.md</code> (on <code>main</code> since <code>28fda01</code>), <code>proactive-multi-harness-coordination.md</code> (untracked). Grounded in ai-forward <code>4e0f3b0</code> and ai-de <code>62e3ed29</code>, read on 2026-09-18.</p>
+</footer>
+
+</div>
+</body>
+</html>
