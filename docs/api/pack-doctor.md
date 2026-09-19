@@ -99,6 +99,12 @@ ledger tracking  FAIL when .agents/log/ is ignored (D10 tracks the ledgers by de
 mail twins       FAIL naming every state-changing mail id with no {"type":"mail"} ledger twin
 doorbells        one line per harness from .agents/harness-status.json; absent -> "not recorded"
 
+### `check_requests(root)`
+
+Typed seam requests (spec-typed-seam-requests): FAIL on a request past its deadline with
+no recorded outcome; WARN on stale acks and untyped rows; `not recorded` with no store.
+One reader: coord-core.py's request_doctor_lines, loaded beside this file.
+
 ### `check_coordination(root)`
 
 Is the coordination layer switched ON in this repo? (CTX-H)
@@ -157,6 +163,6 @@ lesson into a control that fires at the moment of the mistake).
 
 ## Coverage
 
-- Public functions: **14** · documented: **9** (**64%**)
+- Public functions: **15** · documented: **10** (**67%**)
 - Undocumented (recorded, not invented): `check_installed`, `check_surface`, `check_block`, `check_graph`, `run`
 

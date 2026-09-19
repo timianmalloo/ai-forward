@@ -798,7 +798,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9b05cd7ae371b1d149ce586686bb150f297d2e66f200ccadf9c11859b787256d"
+      "sourceSha256": "329a0e38673d1373bbb7065e613aaca661a43addb7d84a4feffd6c9827a85d1b"
     },
     {
       "id": "api-coord-mail",
@@ -985,7 +985,7 @@ window.DOCS_INDEX = {
       "phase": "",
       "reviewBy": "2027-03-03",
       "reviewSuggested": [],
-      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 465 public functions across 34 modules, 46% carrying a docstring.",
+      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 474 public functions across 34 modules, 47% carrying a docstring.",
       "tags": [
         "api",
         "scripts",
@@ -999,7 +999,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e1e22fb0ecaa425e00313f656d25e354843b9d504dcbc843bdb88795d8206b8a"
+      "sourceSha256": "9102eb95f3ce444a4eb21727a9d473727aeb24adb37894e60e888093c954b2f9"
     },
     {
       "id": "api-marker-lint",
@@ -1099,7 +1099,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ebe782e0767fae1e315fa2378509066986e8e0affbb1f8613012c890fb66e67d"
+      "sourceSha256": "66dc582f44dd747fdc8a05acb06b6a4953d9cf0249ecdf1ee31eb98a08743285"
     },
     {
       "id": "api-prompt-compile",
@@ -2016,6 +2016,41 @@ window.DOCS_INDEX = {
       "sourceSha256": "ff7909392f851cd8ffe7a6d58a25463965085d779877c2d04883407898017f16"
     },
     {
+      "id": "note-20260919-doctrine-stages-close-the-document",
+      "path": "docs/notes/note-20260919-doctrine-stages-close-the-document.md",
+      "title": "The doctrine doc ends with its frozen sections: CO-S0 → CO-S1 → CO-S2 → CO-L close the file, and the ceiling was met by cutting prose, never a rule",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-03-19",
+      "reviewSuggested": [],
+      "summary": "Three calls made while implementing P0: the seeded CO-S0 and CO-L sections sit at the end of the doctrine doc (a byte-for-byte contract on a section that runs to end-of-file would break on any text appended after it), the ceiling was met at 2,982 est. tokens by removing a References section and clause-level prose while keeping every CO line's phrase and citation, and the CTX-Q rule landed as its own directive (CO15) rather than as a clause on CO14. Blast radius: the doc's section order and any future edit that wants to append after CO-L.",
+      "tags": [
+        "decision-note",
+        "coordination",
+        "doctrine",
+        "context-budget",
+        "p0"
+      ],
+      "links": [
+        {
+          "to": "design-agent-coordination-doctrine",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-agent-coordination-doctrine",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "8a35901d70f096f697f4dce9ae75ca12f4f9f404bddb09b4722a15ed8bc08865"
+    },
+    {
       "id": "note-20260919-leader-release-keeps-the-epoch",
       "path": "docs/notes/note-20260919-leader-release-keeps-the-epoch.md",
       "title": "A leader release clears the holder and keeps the epoch; no verb deletes refs/coord/leader; the quiet period applies to an expiry, not to a release",
@@ -2164,6 +2199,44 @@ window.DOCS_INDEX = {
       "sourceSha256": "bb72fdca48c407cbbaa30725cdf52bfd8977bc271e350f68004f7a6c7774cb79"
     },
     {
+      "id": "note-20260919-seam-request-terminal-by-deadline",
+      "path": "docs/notes/note-20260919-seam-request-terminal-by-deadline.md",
+      "title": "A seam request is terminal by its deadline or it is refused; the fallback is copied onto the expire row; staleness is derived from the cited path's current blob, never stored",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-03-19",
+      "reviewSuggested": [],
+      "summary": "Four calls made while building P1: (1) `request add` refuses (exit 2) rather than defaulting a missing deadline or fallback - a default would make the termination variant invisible again; (2) `deadline_at` is the one stored deadline quantity, the seconds are the input; (3) the expire row carries a copy of the fallback text as the outcome fact, so `tail` and the ledger read whole; (4) `stale` and `status` are folded at read time, never written. Also: the monotonic id stamp moved from coord-mail.py into coord_ids.new_id so every prefix gets it (ID-A sweep).",
+      "tags": [
+        "decision-note",
+        "coordination",
+        "seam-request",
+        "deadline",
+        "fallback",
+        "stale-ack",
+        "ctx-r",
+        "id-a"
+      ],
+      "links": [
+        {
+          "to": "spec-typed-seam-requests",
+          "rel": "relates-to"
+        },
+        {
+          "to": "design-typed-seam-requests",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "56fbbd48bf3ce59783feb9915545558853bc505562321882119069f0843d0e57"
+    },
+    {
       "id": "note-autopilot-open-questions-decisions",
       "path": "docs/notes/autopilot-open-questions-decisions.md",
       "title": "Decisions on PACK-O open questions (logging, class granularity, autopilot caps)",
@@ -2223,6 +2296,48 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "0aafd71674a56549465f3ff88b7145f7c2dd9d16dafdbe7517046f411c5dc8f3"
+    },
+    {
+      "id": "design-agent-coordination-doctrine",
+      "path": "docs/design/agent-coordination-doctrine.md",
+      "title": "Design — the doctrine doc's structure: sections as the aggregate, CO ids as identity, a byte budget per section, and the test that pins completeness under the ceiling",
+      "type": "design",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-03-19",
+      "reviewSuggested": [],
+      "summary": "Detailed design for spec-agent-coordination-doctrine. The component is a Markdown document and its pinning test: a fixed section order with a byte budget per section that sums under the 3,000-token ceiling as context-budget.py counts it, CO ids as append-only identity, the two seeded sections carried byte-for-byte, every proposal §3.3 invariant as one CO line with its citation, and one stdlib test module that derives every check from the sources (the proposal, origin/main, est_tokens) rather than from a hand-kept table. No script, no dependency.",
+      "tags": [
+        "coordination",
+        "doctrine",
+        "knowledge-doc",
+        "always-on",
+        "context-budget",
+        "p0",
+        "ctx-q",
+        "co-lines"
+      ],
+      "links": [
+        {
+          "to": "spec-agent-coordination-doctrine",
+          "rel": "implements"
+        },
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "refines"
+        },
+        {
+          "to": "kb-multi-agent-coordination",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "d746517b8bf7749e109d9f5dc6c80bccb559d219ce7833a59b918d01500721cc"
     },
     {
       "id": "design-agent-focus-controls",
@@ -2954,6 +3069,57 @@ window.DOCS_INDEX = {
       "sourceSha256": "28068e1639907e23f54fb31b877d4d6f8b351178daa851fdb960a5d447693c8c"
     },
     {
+      "id": "design-typed-seam-requests",
+      "path": "docs/design/typed-seam-requests.md",
+      "title": "Design — typed seam requests (the Request aggregate's rows · stale-by-blob · expire · doctor/metrics · claim --except · coord_ids monotonic stamp)",
+      "type": "design",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-03-19",
+      "reviewSuggested": [],
+      "summary": "Detailed design for spec-typed-seam-requests: five request-* row kinds folded into one Request state per id in .agents/requests.jsonl, a twin `type: request` row per transition in the session ledger, staleness derived at read time from git's blob formula over the cited path, `expire` as the termination variant that records the fallback, doctor FAIL/WARN lines, three metrics that read \"not recorded\" over nothing, `claim --except` carried on the claim event and honoured by `overlaps`, and a process-monotonic millisecond stamp inside coord_ids.new_id (ID-A).",
+      "tags": [
+        "coordination",
+        "seam-request",
+        "deadline",
+        "fallback",
+        "ack",
+        "blob",
+        "termination",
+        "cli",
+        "p1"
+      ],
+      "links": [
+        {
+          "to": "spec-typed-seam-requests",
+          "rel": "implements"
+        },
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0007-coordination-substrate",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-message-layer",
+          "rel": "relates-to"
+        },
+        {
+          "to": "design-coord-enforcement-phase2",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-multi-agent-coordination-data",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "bd3693bd0f5d84a4e9493bc8fa99372af6ed91a2bbf27009d5c5e70e60509956"
+    },
+    {
       "id": "mockup-documentation-portal",
       "path": "docs/mockups/documentation-portal.md",
       "title": "Documentation Portal — mockup",
@@ -3135,7 +3301,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4f3a20564ad2b70557721bf7a525b7fd9cf628f3135f4dedae8da3bea76cdf23"
+      "sourceSha256": "d64f5cb1c6d71336c65356111e20bfc2f2837ce3ee337e76bd422929ec289a35"
     },
     {
       "id": "docs-index",
@@ -6619,7 +6785,7 @@ window.DOCS_INDEX = {
       "path": "docs/coordination/coordination-p0-p1.md",
       "title": "Coordination plan - P0 doctrine home and P1 typed seam requests, two full loops after the P2/P4/P6/P8 joins",
       "type": "plan",
-      "status": "proposed",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "coordination",
       "reviewBy": "2026-12-18",
@@ -6645,7 +6811,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ced7f9ec353ced4702c752f5e58487d8561c33a5ab011f46fab4c563d8772980"
+      "sourceSha256": "8ba4711d8ca49036251d99736fb37c43dfe190cb9a7eb20fd13996ba1d984871"
     },
     {
       "id": "coordination-p2-p8",
@@ -6693,6 +6859,43 @@ window.DOCS_INDEX = {
       "sourceSha256": "8f676fb3c5c10e3a76ce3aaa8b27b82914ee305de2b3cca45ff3649422f82bc0"
     },
     {
+      "id": "coordination-p3-xp",
+      "path": "docs/coordination/coordination-p3-xp.md",
+      "title": "Coordination plan - P3 liveness, the cross-platform residue, and the stale knowledge review (after P0/P1)",
+      "type": "plan",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2026-12-18",
+      "reviewSuggested": [],
+      "summary": "Three tracks after the P0/P1 landing: P3 progress liveness and the running track with the kick ladder (coord-core.py, hook adapters — so it waits for P1's coord-core changes); the cross-platform residue (documented commands that run in any shell, the three master-branch tests); and a review of the seven pack-evolution knowledge docs whose review dates passed on 2026-09-12 and have kept the docs workflow red since. Disjoint paths; coordinator owns the shared surfaces and the join.",
+      "tags": [
+        "coordination",
+        "worktrees",
+        "parallelism",
+        "liveness",
+        "cross-platform",
+        "docs-freshness",
+        "p3"
+      ],
+      "links": [
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "implements"
+        },
+        {
+          "to": "coordination-p0-p1",
+          "rel": "refines"
+        },
+        {
+          "to": "plan-cross-platform-readiness",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "73a479d81358a879b11c1630bd0a2c9bf44813f1dad946f1275da14161b74f33"
+    },
+    {
       "id": "privacy-review",
       "path": "docs/security/privacy-review.md",
       "title": "Privacy Review",
@@ -6723,6 +6926,14 @@ window.DOCS_INDEX = {
         },
         {
           "to": "design-coord-core-phase1",
+          "rel": "documents"
+        },
+        {
+          "to": "design-agent-coordination-doctrine",
+          "rel": "documents"
+        },
+        {
+          "to": "design-typed-seam-requests",
           "rel": "documents"
         },
         {
@@ -6771,7 +6982,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "46c135bc6bad760f19c6d5a78067655cacd1669353e960a5d25ef20b95d95d89"
+      "sourceSha256": "ceab4b43ce6be09d3d58c46c4669793abaa65477f4184264bc845b915c5e8bf1"
     },
     {
       "id": "forensic-review-rev48-proof",
@@ -7037,6 +7248,56 @@ window.DOCS_INDEX = {
         }
       ],
       "sourceSha256": "7110f681c6dea5b21077cee305d30de2ff4f7067d114a6bb4d62e875f6d9c810"
+    },
+    {
+      "id": "spec-agent-coordination-doctrine",
+      "path": "docs/specs/agent-coordination-doctrine.md",
+      "title": "Spec — the doctrine home: pack/knowledge/agent-coordination.md as the always-loaded Owner / Coordinator / Sub-Agent doctrine under a 3,000-token ceiling",
+      "type": "spec",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-03-19",
+      "reviewSuggested": [],
+      "summary": "Specifies P0 of the coordination proposal: pack/knowledge/agent-coordination.md becomes the always-loaded doctrine for the Owner / Coordinator / Sub-Agent model — one CO<n> line per §3.3 invariant naming its measurement or spike, the §4 protocol objects by name, the kick ladder, the vocabulary, the three shared stages and the struck list with reopen triggers — while keeping the seeded CO-S0 and CO-L sections byte-for-byte and the whole document under 3,000 estimated tokens as context-budget.py counts them. Stage detail beyond the ceiling lives in the knowledge base and is cited by id.",
+      "tags": [
+        "coordination",
+        "doctrine",
+        "knowledge-doc",
+        "always-on",
+        "context-budget",
+        "p0",
+        "ctx-q",
+        "co-lines"
+      ],
+      "links": [
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-agent-coordination",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-20260919-coordination-decisions-ratified",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-multi-agent-coordination",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-compile-stage",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-leader-designation",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "d9d16ef618536ef1c78234ac0957e8982230212571db2e3f1ff3931b6413b94b"
     },
     {
       "id": "spec-agent-focus-controls",
@@ -7533,6 +7794,59 @@ window.DOCS_INDEX = {
       "sourceSha256": "2984ab64343317f5204e12b066d46f95f3ac0e2839209d25eeef307eb8e29fb6"
     },
     {
+      "id": "spec-typed-seam-requests",
+      "path": "docs/specs/typed-seam-requests.md",
+      "title": "Typed seam requests with a termination variant — coord request add|receive|ack|resolve|expire|list, claim --except, doctor and metrics",
+      "type": "spec",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-03-19",
+      "reviewSuggested": [],
+      "summary": "Specifies P1 of the coordination proposal: a seam request is refused unless it carries a deadline and a fallback, moves through sent/received/acked/resolved/expired with an ack pinned to the blob it read (a changed blob renders the ack stale), reaches a terminal state by its deadline through resolution or its own recorded fallback (never silence), and is counted by doctor and metrics. Also the CTX-R control: a directory lease with --except, and a doctor warning on overlapping leases.",
+      "tags": [
+        "coordination",
+        "seam-request",
+        "deadline",
+        "fallback",
+        "ack",
+        "blob",
+        "termination",
+        "cli",
+        "p1"
+      ],
+      "links": [
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-agent-coordination",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-message-layer",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0007-coordination-substrate",
+          "rel": "depends-on"
+        },
+        {
+          "to": "kb-multi-agent-coordination-data",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "User flows",
+          "mermaid": "flowchart TD\n  A[add --deadline --fallback] -->|exit 0, sent| B{peer acts before deadline?}\n  A0[add without deadline or fallback] -->|exit 2 COORD-REQUEST-INCOMPLETE| A\n  B -->|receive| C[received]\n  C -->|ack --blob S| D[acked]\n  B -->|ack --blob S| D\n  D -->|blob changed| D2[acked, stale: doctor WARN]\n  B -->|resolve --resolution| E[resolved]\n  C --> E\n  D --> E\n  B -->|deadline passes, expire| F[expired, outcome fallback]\n  C --> F\n  D --> F\n  B -->|deadline passes, nobody runs expire| G[doctor FAIL: silent expiry]\n  G -->|expire| F"
+        }
+      ],
+      "sourceSha256": "e5f628a228383e85f65daf8ae202eafe4024612cd76a02e64c19e213a157826e"
+    },
+    {
       "id": "threat-model",
       "path": "docs/security/threat-model.md",
       "title": "Threat Model",
@@ -7558,6 +7872,14 @@ window.DOCS_INDEX = {
         },
         {
           "to": "design-coord-core-phase1",
+          "rel": "documents"
+        },
+        {
+          "to": "design-agent-coordination-doctrine",
+          "rel": "documents"
+        },
+        {
+          "to": "design-typed-seam-requests",
           "rel": "documents"
         },
         {
@@ -7606,7 +7928,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "199bbf7dc2a4a351e70ed8b690e097f6cc91e9db2fde9a44c63cfd74b818f860"
+      "sourceSha256": "1f541bf2c8531c084e8a7ead44ddc7bde2137327c9e9a6d0d26755f8ecfd24ac"
     }
   ],
   "surfaces": [
@@ -7715,6 +8037,14 @@ window.DOCS_INDEX = {
       "kind": "knowledge-tool",
       "description": "Open an interactive knowledge artifact.",
       "artifactId": "coordination-p2-p8"
+    },
+    {
+      "id": "surface-coordination-coordination-p3-xp",
+      "path": "docs/coordination/coordination-p3-xp.html",
+      "title": "Coordination plan — P3 liveness · cross-platform residue · knowledge review",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "coordination-p3-xp"
     },
     {
       "id": "surface-dreams-drm-0002-index",
@@ -7848,5 +8178,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "fecba2b9e1d8f08e503acaa106036bcb8a5ed556128842ef87efc2eadbf20f53"
+  "graphSha256": "5c1900fdfc934881e6943611c5cfed48ea755c4b7db4e28bff1d976999f749dc"
 };

@@ -15,7 +15,7 @@
       "-q",
       "tests/docs_explorer",
       "-k",
-      "leader or join_epoch or mail or doorbell or board or readers or co_s0 or skill_contracts or coord_core or audit_log or compile or session_profile or dream or pack_doctor"
+      "doctrine or requests_typed or ids_order or coord_core or coord_enforcement or leader or join_epoch or context_budget or mail or board or audit_log"
     ]
   ],
   "regenerate": [

@@ -9,7 +9,7 @@ links:
   - { to: architecture, rel: documents }
 review-by: "2027-03-03"
 summary: >-
-  Generated API reference for the pack's public surface — the deployed script bundle. 465 public functions across 34 modules, 46% carrying a docstring.
+  Generated API reference for the pack's public surface — the deployed script bundle. 474 public functions across 34 modules, 47% carrying a docstring.
 ---
 
 # API reference — the deployed script bundle
@@ -29,7 +29,7 @@ with no docstring is listed as a **coverage gap** rather than described from gue
 | [`conductor-join.py`](conductor-join.md) | 5 | 3 | — | conductor-join.py - the join, as a script: every step gated by its exit code, none by a |
 | [`context-budget.py`](context-budget.md) | 21 | 12 | 6 | context-budget.py — the always-on context budget, measured (AI-Forward Pack). |
 | [`coord-board.py`](coord-board.md) | 14 | 7 | 2 | coord-board.py — the board: human transparency over agent messages (spec-board, D12). |
-| [`coord-core.py`](coord-core.md) | 76 | 52 | 29 | coord-core.py - agent coordination, Phase 1 walking skeleton. |
+| [`coord-core.py`](coord-core.md) | 84 | 61 | 32 | coord-core.py - agent coordination, Phase 1 walking skeleton. |
 | [`coord-mail.py`](coord-mail.md) | 22 | 5 | 4 | coord-mail.py - the local message layer: per-session inbox files, ledger twins, bounded dispatch. |
 | [`coord_ids.py`](coord_ids.md) | 2 | 2 | — | coord_ids.py - collision-proof identifiers, in ONE place. |
 | [`design-lint.py`](design-lint.md) | 3 | 2 | — | design-lint.py — token-reference linter for design-language docs (AI-Forward). |
@@ -40,7 +40,7 @@ with no docstring is listed as a **coverage gap** rather than described from gue
 | [`marker-lint.py`](marker-lint.md) | 1 | 0 | — | marker-lint.py - completeness check for the pack's inline decision markers. |
 | [`obsidian-setup.py`](obsidian-setup.md) | 17 | 7 | — | obsidian-setup.py - stand up (and analyze) the Obsidian lens over an AI-Forward docs graph. |
 | [`pack-apply.py`](pack-apply.md) | 15 | 8 | — | pack-apply.py — apply the AI-Forward deployment map to a repo, mechanically and reversibly. |
-| [`pack-doctor.py`](pack-doctor.md) | 14 | 9 | — | pack-doctor.py — AI-Forward install-health check (deployable; runs in a TARGET repo). |
+| [`pack-doctor.py`](pack-doctor.md) | 15 | 10 | — | pack-doctor.py — AI-Forward install-health check (deployable; runs in a TARGET repo). |
 | [`prompt-compile.py`](prompt-compile.md) | 22 | 7 | 4 | prompt-compile.py - the compile stage: a logged raw prompt -> a gated, harness-rendered prompt. |
 | [`prompt-log.py`](prompt-log.md) | 18 | 7 | 8 | prompt-log.py — the fast prompt-reuse lens over the project's audit log. |
 | [`repo_identity.py`](repo_identity.md) | 1 | 1 | — | repo_identity.py - the canonical project name, in ONE place (class PACK-P). |
@@ -58,5 +58,5 @@ with no docstring is listed as a **coverage gap** rather than described from gue
 | [`visual-assets-setup.py`](visual-assets-setup.md) | 12 | 5 | — | visual-assets-setup.py - wire up a generation backend for UI visual assets (AI-Forward). |
 | [`xaml-token-lint.py`](xaml-token-lint.md) | 9 | 0 | — | xaml-token-lint.py — first-slice token linter for XAML/native UI markup. |
 
-**Total** — 465 public functions across 34 modules, **213 documented (46%)**.
+**Total** — 474 public functions across 34 modules, **223 documented (47%)**.
 

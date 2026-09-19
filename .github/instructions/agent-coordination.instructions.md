@@ -1,5 +1,5 @@
 ---
-load: always
+applyTo: "**"
 ---
 # Agent coordination — Owner / Coordinator / Sub-Agent
 

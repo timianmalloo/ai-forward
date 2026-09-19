@@ -163,6 +163,8 @@ designated leader, the join is run as `conductor-join.py --epoch <n>` with the e
 `coord leader who`; a lower epoch or an unread `refs/coord/leader` is refused before the merge
 (exit 11), never merged and sorted out afterwards (`agent-coordination.md` CO-L).
 
+**Coordinators: the tree comes before the first spawn.** A session that delegates and *then* enters a worktree strands its delegates — class **CTX-Q** in `docs/lessons/defect-classes.md` — so a Coordinator runs `coord worktree new` (WT1) before its first spawn, its brief tells each Sub-Agent it never calls `EnterWorktree`, and the join is fenced as `agent-coordination.md` **CO-L** states. This paragraph points at both; it restates neither.
+
 ---
 
 ## 4. Self-verification checklist
