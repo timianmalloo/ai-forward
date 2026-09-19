@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-19T17:15:19Z",
+  "generated": "2026-09-19T17:18:36Z",
   "audit": [
     {
       "actor": null,
@@ -4925,24 +4925,76 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M2XAMMFZRFSZ65ZXYNN72515",
-      "shortname": "join-compile-b",
-      "datetime": "2026-09-19T17:15:19Z",
-      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
-      "prompt": "the join of impl/compile-stage-b into spec/compile-stage-p7",
-      "summary": "Track B joined: audit-log.py (kind compilation, --compiled-from/--edit-distance, compiled:false on plain skill entries, no marker for compilations), prompt-log.py twins, /compile SKILL + Copilot prompt + eval, agent-coordination.md seeded with CO-S0, one Stage-0 sentence in optimize-graph and prepare-for-coordination; 15 new tests; verified in its tree: 100 passed, skills gate and 1b/1c/1d exit 0 recount_seconds=3 (docs_only=False).",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "pack/scripts/audit-log.py",
         "pack/commands/compile/SKILL.md"
       ],
+      "datetime": "2026-09-19T17:15:19Z",
+      "done_when": "merge commit present; recount green; run-verify-gates exit 0; no push (linear landing follows)",
+      "duration_seconds": 4.0,
+      "fan_out": 0,
+      "goal": "Track B's authored paths merged into the integration branch with the conflict-marker gate, the fast recount and the verify gates green",
+      "id": "al-01M2XAMMFZRFSZ65ZXYNN72515",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of impl/compile-stage-b into spec/compile-stage-p7",
+      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
+      "shortname": "join-compile-b",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-19T17:15:15Z",
+      "summary": "Track B joined: audit-log.py (kind compilation, --compiled-from/--edit-distance, compiled:false on plain skill entries, no marker for compilations), prompt-log.py twins, /compile SKILL + Copilot prompt + eval, agent-coordination.md seeded with CO-S0, one Stage-0 sentence in optimize-graph and prepare-for-coordination; 15 new tests; verified in its tree: 100 passed, skills gate and 1b/1c/1d exit 0 recount_seconds=3 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "pack/scripts/prompt-compile.py",
+        "pack/scripts/verify-compiled-prompt.py"
+      ],
+      "datetime": "2026-09-19T17:17:18Z",
+      "fan_out": 0,
+      "id": "al-01M2XAR8VTRJ9APNC987EX15DR",
+      "kind": "skill",
+      "main_budget": 90,
+      "main_calls": 51,
+      "main_over_budget": false,
+      "outcome": "success",
+      "prompt": "Track A brief: engine, gate, templates",
+      "session": "compile-a",
+      "shortname": "implement-compile-stage-track-a",
+      "skill": "implement",
+      "summary": "Built pack/scripts/prompt-compile.py (skeleton/finish/render/distance), pack/scripts/verify-compiled-prompt.py (nine-direction gate, bare form = self-test), pack/templates/prompt-templates/{claude-code,codex}.v1.md, tests/docs_explorer/test_prompt_compile.py + test_verify_compiled_prompt.py (42 tests), fixtures/compile-eval (20 belief + 10 instruction prompts + README). Observed: gate --self-test exit 0 (nine directions ok); render --self-test exit 0; pytest 42 passed 0 failed; verify-no-machine-paths / verify-subprocess-utf8 / verify-portable-text-io each exit 0; ruff clean except EXE001 (sibling convention). Seams applied: templates at pack/templates/prompt-templates + --templates-dir; argument-free gate runs self-test. Not done: real audit append needs Track B's kind compilation (tests substitute the append).",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "id": "al-01M2XATMN1QY170Q9PV49MBW1A",
+      "shortname": "join-compile-a",
+      "datetime": "2026-09-19T17:18:36Z",
+      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
+      "prompt": "the join of impl/compile-stage-a into spec/compile-stage-p7",
+      "summary": "Track A joined: prompt-compile.py (skeleton|finish|render|distance), verify-compiled-prompt.py (nine directions; bare form = self-test), templates claude-code.v1 and codex.v1 under pack/templates/prompt-templates, 42 tests, 31 eval fixtures; verified in its tree: self-tests exit 0, 42 passed, 1b/1c/1d exit 0; two seams applied (template location, argument-free gate) recount_seconds=4 (docs_only=False).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "pack/scripts/prompt-compile.py",
+        "pack/scripts/verify-compiled-prompt.py"
+      ],
       "tags": [],
       "outcome": "success",
-      "goal": "Track B's authored paths merged into the integration branch with the conflict-marker gate, the fast recount and the verify gates green",
-      "done_when": "merge commit present; recount green; run-verify-gates exit 0; no push (linear landing follows)",
+      "goal": "Track A's authored paths merged after B with the conflict-marker gate, the recount and the verify gates green",
+      "done_when": "merge commit present; recount green; run-verify-gates exit 0 (now including the new gate argument-free); no push",
       "tier": "T1",
       "fan_out": 0,
       "signals": {
@@ -4950,8 +5002,8 @@ window.AUDIT_DATA = {
         "verification_executed": true,
         "acceptance_met": true
       },
-      "started_at": "2026-09-19T17:15:15Z",
-      "duration_seconds": 4.0
+      "started_at": "2026-09-19T17:18:31Z",
+      "duration_seconds": 5.0
     }
   ],
   "changes": [
