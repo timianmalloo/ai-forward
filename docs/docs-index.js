@@ -6191,6 +6191,51 @@ window.DOCS_INDEX = {
       "sourceSha256": "1bed7709eab8db69824da6af228d34c9935c1664cc0d0607753415426d859bd2"
     },
     {
+      "id": "coordination-p2-p8",
+      "path": "docs/coordination/coordination-p2-p8.md",
+      "title": "Coordination plan - P2 leader, P4 message layer, P6 board, P8 readers: four full specify → design → implement loops",
+      "type": "plan",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2026-12-18",
+      "reviewSuggested": [],
+      "summary": "Four Sub-Agent tracks, each running the whole loop (/specify, /design-slice, /implement) in its own worktree: P4 ships the local message layer and dispatch, P6 the board over it, P2 puts leader designation in a git ref by compare-and-swap with the ratified constants and fences the join; P8 makes the readers consume the compile stage's fields and gives every prose-input skill its CO-S0 citation and the consuming skills their dispatchable stop. Authored paths are disjoint; the coordinator owns the shared surfaces and the join.",
+      "tags": [
+        "coordination",
+        "worktrees",
+        "parallelism",
+        "leader",
+        "mail",
+        "board",
+        "readers",
+        "p2",
+        "p4",
+        "p6",
+        "p8"
+      ],
+      "links": [
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "implements"
+        },
+        {
+          "to": "coordination-compile-stage",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-compile-stage",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-20260919-leadership-in-a-ref-not-the-ledger",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "824ee2805789e0233cb76e813b1744a7340d05a32acdc231ba0c54b566a4ca40"
+    },
+    {
       "id": "privacy-review",
       "path": "docs/security/privacy-review.md",
       "title": "Privacy Review",
@@ -6956,6 +7001,14 @@ window.DOCS_INDEX = {
       "artifactId": "coordination-compile-stage"
     },
     {
+      "id": "surface-coordination-coordination-p2-p8",
+      "path": "docs/coordination/coordination-p2-p8.html",
+      "title": "Coordination plan — P2 leader · P8 readers",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "coordination-p2-p8"
+    },
+    {
       "id": "surface-dreams-drm-0002-index",
       "path": "docs/dreams/drm-0002/index.html",
       "title": "Dream Review",
@@ -7087,5 +7140,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "cad8b5d3aa17833134aebe41ca88b839aaee5bdebe84d3bcebe34944a402e45b"
+  "graphSha256": "cc2643e992f976d3863e4ebbe7397e8bc293ce1796d589833d21f3cdce1d607a"
 };

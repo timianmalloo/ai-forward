@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-19T17:45:48Z",
+  "generated": "2026-09-19T17:55:57Z",
   "audit": [
     {
       "actor": null,
@@ -5244,6 +5244,33 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-19T17:42:53Z",
       "duration_seconds": 174.0
+    },
+    {
+      "id": "al-01M2XCZ1A10P09V0Q97ECJ2378",
+      "shortname": "coordination-p2-p8",
+      "datetime": "2026-09-19T17:55:57Z",
+      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
+      "prompt": "keep going - work on the P2 Leader designation and the P8 readers with two separate agents using our coordination framework - do the full loop from specify through implement",
+      "summary": "Two tracks: P2 (coord-core leader verbs over refs/coord/leader by CAS with D13 constants, conductor-join epoch fence, doctor/metrics, two coordination skills incl. the dispatchable-stop sentence P8 fixes, agent-coordination.md leader section, tests red-first) and P8 (session-profile + dream readers of the compile fields, CO-S0 citation in 13 skills, Runs as: on every skill it owns, verify-skill-contracts.py red-first, tests). Coordinator owns security rollups, counts, INSTALL rev 77, baselines, sync, all four builders, join, linear landing. Struck: splitting either track; a third track for cross-platform residue. Multiplier measured last time at ~1.3x tokens.",
+      "kind": "skill",
+      "skill": "prepare-for-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/coordination/coordination-p2-p8.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "A coordination plan for two full-loop tracks (P2 leader designation, P8 readers) with disjoint authored paths, the one crossing resolved by ownership, shared surfaces owned by the coordinator.",
+      "done_when": "docs/coordination/coordination-p2-p8.md + .html written to the schema; validate exit 0; audit entry.",
+      "tier": "T1",
+      "main_calls": 6,
+      "main_budget": 60,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "started_at": "2026-09-19T17:54:09Z",
+      "duration_seconds": 108.0
     }
   ],
   "changes": [

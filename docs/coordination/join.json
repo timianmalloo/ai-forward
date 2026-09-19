@@ -14,7 +14,7 @@
       "-q",
       "tests/docs_explorer",
       "-k",
-      "compile or audit_log or audit_selfcheck or prescribed_types or agent_run_spans"
+      "leader or join_epoch or mail or doorbell or board or readers or co_s0 or skill_contracts or coord_core or audit_log or compile or session_profile or dream or pack_apply or pack_doctor"
     ]
   ],
   "regenerate": [
