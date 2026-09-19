@@ -44,6 +44,12 @@ jobs:
       - name: Count & skill-list consistency
         run: python3 tools/check-consistency.py
 
+      # PLAT-B. A tracked, machine-readable file never carries one machine's paths. The
+      # coordination registry shipped a Windows python.exe path and only `coord regen` on a
+      # Mac noticed; pack-doctor passed because it checked parse, not resolution.
+      - name: No machine-specific paths in tracked files
+        run: python3 pack/scripts/verify-no-machine-paths.py
+
       # FR-033. The repository's foundational invariant: pack/ is source, .claude/ and
       # .github/ are generated. verify-bundle.ps1 has always checked this locally and CI
       # never ran it, so source↔install drift — the one failure mode the whole architecture
@@ -140,3 +146,163 @@ jobs:
       # on every sub-agent run.
       - name: Agent knowledge lenses declared
         run: python3 pack/scripts/context-budget.py agents
+
+  # ---------------------------------------------------------------------------------------
+  # Cross-platform readiness (docs/plans/cross-platform-readiness.md P0). Until this job
+  # existed every `os.name == "nt"` branch in pack/scripts was dead code in CI, and the
+  # tracked registry carried one developer's python.exe path for a week. This job runs the
+  # Python gates on Windows with the documented Windows interpreter form (`python`), then
+  # the Windows-only proofs: every script answers --help under the legacy cp1252 code page
+  # (XP-14), the registry regenerates byte-identically (PLAT-B), docs-index.js regenerates
+  # byte-identically (XP-07), and the pre-commit hook `coord install` writes runs under Git
+  # Bash `sh`. Node/browser gates stay on the ubuntu job (one runner, one truth for them).
+  # A red step here is a measurement the plan's later phases close, not a reason to mute it.
+  # ---------------------------------------------------------------------------------------
+  consistency-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with: { python-version: "3.x" }
+
+      - name: Interpreter form on this runner (pack-doctor names it)
+        shell: pwsh
+        run: python pack/scripts/pack-doctor.py --root . | Select-String -Pattern "python interpreter" -Context 0,1
+
+      - name: Count & skill-list consistency
+        shell: pwsh
+        run: python tools/check-consistency.py
+
+      - name: No machine-specific paths in tracked files
+        shell: pwsh
+        run: python pack/scripts/verify-no-machine-paths.py
+
+      - name: Source↔install drift (pwsh on Windows)
+        shell: pwsh
+        run: |
+          pwsh tools/sync-pack.ps1
+          git --no-pager diff --stat -- .claude .github/instructions .github/prompts .github/agents docs web CLAUDE.md AGENTS.md
+          git diff --exit-code -- .claude .github/instructions .github/prompts .github/agents docs web CLAUDE.md AGENTS.md
+
+      # Under Git Bash so `sh` is on PATH: the hook-adapter conformance test executes the
+      # settings.json command string the way Claude Code does on Windows.
+      - name: Python test suite (Git Bash)
+        shell: bash
+        run: |
+          python -m pip install --disable-pip-version-check --quiet pytest
+          python -m pytest tests -q
+
+      - name: Knowledge-graph validation
+        shell: pwsh
+        run: python docs/ai-forward-pack/scripts/docs-graph.py validate
+
+      - name: Vendored-foundation drift
+        shell: pwsh
+        run: python pack/scripts/foundation-check.py
+
+      - name: Audit log is fully readable
+        shell: pwsh
+        run: python pack/scripts/audit-log.py verify
+
+      - name: Always-on context budget
+        shell: pwsh
+        run: python pack/scripts/context-budget.py gate
+
+      # XP-14: `--help` must not raise UnicodeEncodeError on a cp1252 console. Every script
+      # answered --help with exit 0 on macOS on 2026-09-19; the legacy code page is the part
+      # only Windows can prove.
+      - name: Every script answers --help under cp1252
+        shell: pwsh
+        run: |
+          chcp 1252 | Out-Null
+          $env:PYTHONIOENCODING = ""
+          $failed = @()
+          Get-ChildItem pack/scripts/*.py, pack/adapters/hooks/*.py | ForEach-Object {
+            $null = & python $_.FullName --help 2>&1
+            if ($LASTEXITCODE -ne 0) { $failed += "$($_.Name) (exit $LASTEXITCODE)" }
+          }
+          if ($failed.Count) { Write-Host "FAIL --help under cp1252:"; $failed | ForEach-Object { Write-Host "  $_" }; exit 1 }
+          Write-Host "every script answers --help under cp1252"
+
+      # PLAT-B: the registry must regenerate byte-identically here, i.e. carry the token,
+      # never this runner's interpreter path.
+      - name: Registry regenerates byte-identically (coord classify init --force)
+        shell: pwsh
+        run: |
+          python docs/ai-forward-pack/scripts/coord-core.py classify init --force
+          git --no-pager diff -- .agents/artifacts.yml
+          git diff --exit-code -- .agents/artifacts.yml
+
+      # XP-07: docs-index.js is a `derived` artifact merged by byte identity; a CRLF write on
+      # Windows would make every regeneration a spurious diff.
+      - name: docs-index.js regenerates byte-identically on Windows
+        shell: pwsh
+        run: |
+          python docs/ai-forward-pack/scripts/docs-graph.py derive
+          git --no-pager diff --stat -- docs/docs-index.js
+          git diff --exit-code -- docs/docs-index.js
+
+      # The pre-commit floor `coord install` writes is `#!/bin/sh` + an absolute interpreter
+      # path; Git for Windows runs it through its bundled sh. Prove it here, with
+      # AGENT_SESSION unset (advisory path, exit 0) and set (enforcing path, exit 0 on a
+      # clean index).
+      - name: Pre-commit hook runs under Git Bash sh
+        shell: bash
+        run: |
+          python docs/ai-forward-pack/scripts/coord-core.py install
+          test -f .git/hooks/pre-commit
+          sh .git/hooks/pre-commit
+          AGENT_SESSION=ci-windows sh .git/hooks/pre-commit
+          python pack/scripts/pack-doctor.py --root . --json > pack-doctor.json
+          python -c "import json,sys; c=[x for x in json.load(open('pack-doctor.json'))['checks'] if x['name']=='coordination'][0]; print(c['status'], '-', c['detail']); sys.exit(1 if c['status']=='FAIL' else 0)"
+
+  # The macOS half of P0: stock macOS has no `python`; the documented `python3` form runs.
+  # This is where the Mac-only test failures (T-1/T-2/T-3 in the investigation) are seen by
+  # something other than a developer's terminal.
+  consistency-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with: { python-version: "3.x" }
+
+      - name: Count & skill-list consistency
+        run: python3 tools/check-consistency.py
+
+      - name: No machine-specific paths in tracked files
+        run: python3 pack/scripts/verify-no-machine-paths.py
+
+      - name: Source↔install drift (pwsh on macOS)
+        shell: pwsh
+        run: |
+          pwsh tools/sync-pack.ps1
+          git --no-pager diff --stat -- .claude .github/instructions .github/prompts .github/agents docs web CLAUDE.md AGENTS.md
+          git diff --exit-code -- .claude .github/instructions .github/prompts .github/agents docs web CLAUDE.md AGENTS.md
+
+      - name: Python test suite
+        run: |
+          python3 -m pip install --disable-pip-version-check --quiet pytest
+          python3 -m pytest tests -q
+
+      - name: Knowledge-graph validation
+        run: python3 docs/ai-forward-pack/scripts/docs-graph.py validate
+
+      - name: Vendored-foundation drift
+        run: python3 pack/scripts/foundation-check.py
+
+      - name: Audit log is fully readable
+        run: python3 pack/scripts/audit-log.py verify
+
+      - name: Always-on context budget
+        run: python3 pack/scripts/context-budget.py gate
+
+      - name: Registry regenerates byte-identically (coord classify init --force)
+        run: |
+          python3 docs/ai-forward-pack/scripts/coord-core.py classify init --force
+          git --no-pager diff -- .agents/artifacts.yml
+          git diff --exit-code -- .agents/artifacts.yml
+
+      - name: Coordination layer installed
+        run: |
+          python3 pack/scripts/pack-doctor.py --root . --json > pack-doctor.json || true
+          python3 -c "import json,sys; c=[x for x in json.load(open('pack-doctor.json'))['checks'] if x['name']=='coordination']; sys.exit('pack-doctor has no coordination check') if not c else None; print(c[0]['status'], '-', c[0]['detail']); sys.exit('coordination layer not installed - fix: ' + c[0]['fix']) if c[0]['status']=='FAIL' else None"
