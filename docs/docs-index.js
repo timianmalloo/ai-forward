@@ -2711,7 +2711,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "3c789407cef1681ea2cc2b6391c93d6c118a936154c903e52b1a89df1619b712"
+      "sourceSha256": "d5822bcb0b2792161b3f06067beb857f45ebbb8c1e2d711ab57e749db87be401"
     },
     {
       "id": "docs-index",
@@ -3880,6 +3880,32 @@ window.DOCS_INDEX = {
       "sourceSha256": "8c9ed4b75cb346279ea94c1a6a6778ecbde31be10972bb1c6e398a02275c7569"
     },
     {
+      "id": "profile-sp-0009",
+      "path": "docs/profiles/sp-0009/profile.md",
+      "title": "Session profile sp-0009 - ai-forward",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-18",
+      "reviewSuggested": [],
+      "summary": "Measured pass over 3 session(s) in ai-forward (last 2 days); 9 finding(s), top: SP-01, SP-07, SP-24.",
+      "tags": [
+        "profile",
+        "session-profiler",
+        "efficiency",
+        "adherence"
+      ],
+      "links": [
+        {
+          "to": "design-session-profiler",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "8020e259d99979f2715cef2d250d5f34a14934d5018fd502233cab012bcd5a36"
+    },
+    {
       "id": "project-memory",
       "path": "docs/project-memory.md",
       "title": "Project Memory",
@@ -4213,7 +4239,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "bde78bdcafa3c7820b15071fa91a93930898828e1f8875a7347a60b9a80dbfb7"
+      "sourceSha256": "f71b07d1d9a2c7f0a8d4cb216c47a25d2dd8002660400de8efd23bb8a8a2d367"
     },
     {
       "id": "ui-capability-guide",
@@ -7061,5 +7087,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "5f97df4b685564e844e3ef9bd260ee48a69600fa6b054a7f64a15e0db9ba482c"
+  "graphSha256": "cad8b5d3aa17833134aebe41ca88b839aaee5bdebe84d3bcebe34944a402e45b"
 };

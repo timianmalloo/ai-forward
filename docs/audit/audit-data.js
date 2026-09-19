@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-19T17:24:07Z",
+  "generated": "2026-09-19T17:45:48Z",
   "audit": [
     {
       "actor": null,
@@ -5194,6 +5194,56 @@ window.AUDIT_DATA = {
         "speedup": 1.58,
         "peak_concurrency": 2
       }
+    },
+    {
+      "id": "al-01M2XC7HCSYVF645QR3X4HWA4F",
+      "shortname": "session-profile-sp-0009",
+      "datetime": "2026-09-19T17:43:07Z",
+      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
+      "prompt": "session-profile.py profile",
+      "summary": "Profile sp-0009: 3 session(s), 9 finding(s)",
+      "kind": "script",
+      "skill": "session-profiler",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/profiles/sp-0009/profile.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "started_at": "2026-09-19T17:43:07Z",
+      "duration_seconds": 0.0
+    },
+    {
+      "id": "al-01M2XCCE6R0XFNJNQ5FDMPG2VA",
+      "shortname": "session-profiler-sp-0009",
+      "datetime": "2026-09-19T17:45:47Z",
+      "session": "2eb8c619-5ab2-4b61-8a57-06c628aebe54",
+      "prompt": "do the worktree clean up now then /session-profiler",
+      "summary": "sp-0009: 3 sessions, 9 findings. Compile-stage window (turn 11): Track A 902 s / 28 req / 53 tools / 3.36 M cache-read (est. $3.47), Track B 627 s / 34 req / 48 tools / 3.49 M (est. $2.78), fully overlapped -> 41% wall saved on the delegated part, both under half their budgets, 0 converge nudges; the coordinator's serial spine (design, plan, two joins, gates) took 2,847 s and 26 M cache-read on the same turn, so the plan's 3x multiplier was not observed (about 1.3x on tokens vs the main line; no single-session baseline exists). Confirmed: SP-01 (five tasks in one session, 388k->940k then 157k->467k after one compaction; CTX-A instance), SP-09 on all four flagged turns by opening the transcript (PACK-O instances), SP-24 turns 4-5, SP-25 turn 9 (SHELL-A instance), SP-07 turn 0 research nodes only - the contracted nodes show F-04 holding. Struck: SP-17 (no decision changes). Not raised: SP-14 (2 turns in the second family). SP-15 reconciled against the worktree list; three trees removed by the fail-safe cleanup.",
+      "kind": "skill",
+      "skill": "session-profiler",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/profiles/sp-0009/profile.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Profile sessions compile-a, compile-b and the coordinator (2eb8c619) for the compile-stage implementation and answer, from the store, whether the two-track division paid.",
+      "done_when": "discover, profile (sp-0009) and compare ran; every Inferred finding confirmed or struck against the transcript; fixes name pack surface and control; SP-15 reconciled; instances registered; audit entry with tier T0 fan-out 0; profile committed and pushed.",
+      "tier": "T0",
+      "main_calls": 14,
+      "main_budget": 60,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true
+      },
+      "started_at": "2026-09-19T17:42:53Z",
+      "duration_seconds": 174.0
     }
   ],
   "changes": [

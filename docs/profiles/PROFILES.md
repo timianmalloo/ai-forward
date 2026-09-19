@@ -29,3 +29,4 @@ summary: >-
 | [sp-0005](sp-0005/profile.md) | 2026-09-06T22:56:36Z | theterrace | 12 | 38 | SP-01, SP-02, SP-03 |
 | [sp-0006](sp-0006/profile.md) | 2026-09-06T23:55:44Z | theterrace | 12 | 39 | SP-01, SP-02, SP-03 |
 | [sp-0008](sp-0008/profile.md) | 2026-09-07T00:05:55Z | theterrace | 12 | 40 | SP-01, SP-02, SP-03 |
+| [sp-0009](sp-0009/profile.md) | 2026-09-19T17:43:07Z | ai-forward | 3 | 9 | SP-01, SP-07, SP-24 |
