@@ -79,7 +79,7 @@ def _sibling(name: str) -> str:
 
 def repo_root(start: Path | None = None) -> Path | None:
     done = subprocess.run(["git", "rev-parse", "--show-toplevel"], cwd=str(start or Path.cwd()),
-                          capture_output=True, text=True)
+                          capture_output=True, text=True, encoding="utf-8", errors="replace")
     if done.returncode != 0 or not done.stdout.strip():
         return None
     return Path(done.stdout.strip())
@@ -243,7 +243,8 @@ def self_test() -> int:
     measured duration; (b) a branch that commits a file with a conflict marker - DC-136's
     shape, a hand-resolved file - stops at step 3 with NO join commit."""
     def git(cwd, *a):
-        done = subprocess.run(["git", *a], cwd=str(cwd), capture_output=True, text=True)
+        done = subprocess.run(["git", *a], cwd=str(cwd), capture_output=True, text=True,
+                              encoding="utf-8", errors="replace")
         if done.returncode != 0:
             raise AssertionError("git {0}: {1}".format(" ".join(a), done.stderr))
         return done.stdout
@@ -256,17 +257,17 @@ def self_test() -> int:
         git(repo, "config", "user.email", "join@example.invalid")
         git(repo, "config", "user.name", "join")
         (repo / "docs" / "audit").mkdir(parents=True)
-        (repo / "README.md").write_text("base\n", encoding="utf-8")
+        (repo / "README.md").write_text("base\n", encoding="utf-8", newline="\n")
         git(repo, "add", "-A")
         git(repo, "commit", "-qm", "init")
         contract = {"regenerate": [], "gates": [["python3", "-c", "print('gates ok')"]]}
-        (repo / "join.json").write_text(json.dumps(contract), encoding="utf-8")
+        (repo / "join.json").write_text(json.dumps(contract), encoding="utf-8", newline="\n")
         git(repo, "add", "-A")
         git(repo, "commit", "-qm", "join contract")
 
         # (a) the clean branch
         git(repo, "checkout", "-q", "-b", "feature/clean")
-        (repo / "clean.txt").write_text("done\n", encoding="utf-8")
+        (repo / "clean.txt").write_text("done\n", encoding="utf-8", newline="\n")
         git(repo, "add", "-A")
         git(repo, "commit", "-qm", "clean work")
         git(repo, "checkout", "-q", "main")
@@ -299,7 +300,7 @@ def self_test() -> int:
         git(repo, "checkout", "-q", "-b", "feature/markers")
         (repo / "resolved-by-hand.md").write_text(
             "before\n" + "<" * 7 + " HEAD\nmine\n=======\ntheirs\n" + ">" * 7 + " theirs\n",
-            encoding="utf-8")
+            encoding="utf-8", newline="\n")
         git(repo, "add", "-A")
         git(repo, "commit", "-qm", "a file resolved by hand")
         git(repo, "checkout", "-q", "main")

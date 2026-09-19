@@ -32,6 +32,18 @@ import os
 import subprocess
 import sys
 
+# The host pipes a JSON payload in and reads a JSON line out. On Windows both ends default
+# to the console code page, so a non-ASCII path arrives mojibake or raises (DC-211/PLAT-A).
+# Every arm is fail-open: a guard that cannot reconfigure still runs.
+for _stream, _kw in ((sys.stdin, {"encoding": "utf-8", "errors": "replace"}),
+                     (sys.stdout, {"encoding": "utf-8", "errors": "replace"}),
+                     (sys.stderr, {"encoding": "utf-8", "errors": "replace"})):
+    if hasattr(_stream, "reconfigure"):
+        try:
+            _stream.reconfigure(**_kw)
+        except (ValueError, OSError, UnicodeError):
+            pass
+
 
 def _audit_script(here):
     """audit-log.py, resolved from the hook's own location: the deployed layout first

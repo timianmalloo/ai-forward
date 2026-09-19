@@ -14,6 +14,17 @@ graph slice. Stdlib only. Re-run after any pack change (wired into sync-pack.ps1
 """
 import glob, html, json, os, re, sys
 
+# Windows consoles default to cp1252, which cannot encode the box/arrow glyphs this tool
+# prints - `prompt-log.py --help` crashed outright with UnicodeEncodeError (FR-047). The guard
+# is applied uniformly (class PLAT-A): a script that survives only because its glyphs happen
+# to exist in cp1252 is luck, not an invariant.
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        try:
+            _stream.reconfigure(encoding="utf-8", errors="replace")
+        except (ValueError, OSError):
+            pass
+
 
 
 

@@ -186,16 +186,29 @@ def resolve_one(entries_newest, ref):
 
 
 def copy_to_clipboard(text):
-    """pbcopy (macOS) / xclip / clip.exe when available; returns the tool name or None."""
+    """pbcopy (macOS) / xclip / wl-copy (Wayland) / clip.exe; returns the tool name or None.
+
+    Two cross-platform rules (DC-211). (1) `clip.exe` decodes its stdin with the console
+    code page, so UTF-8 bytes land as mojibake - it is fed UTF-16LE with a BOM, the one
+    encoding it reads unambiguously whatever the code page is. (2) The ladder falls
+    THROUGH: a tool that is on PATH but fails to launch (an xclip with no DISPLAY, a WSL
+    shim) hands its turn to the next rung instead of ending the ladder at the first
+    failure, which previously returned None with Wayland/clip.exe still untried."""
     for tool, cmd in (("pbcopy", ["pbcopy"]),
                       ("xclip", ["xclip", "-selection", "clipboard"]),
+                      ("wl-copy", ["wl-copy"]),
                       ("clip", ["clip.exe"])):
-        if shutil.which(cmd[0]):
-            try:
-                subprocess.run(cmd, input=text.encode("utf-8"), check=True)
-                return tool
-            except (subprocess.SubprocessError, OSError):
-                return None
+        if not shutil.which(cmd[0]):
+            continue
+        if cmd[0] == "clip.exe":
+            payload = b"\xff\xfe" + text.encode("utf-16-le", "replace")
+        else:
+            payload = text.encode("utf-8")
+        try:
+            subprocess.run(cmd, input=payload, check=True)
+            return tool
+        except (subprocess.SubprocessError, OSError):
+            continue
     return None
 
 

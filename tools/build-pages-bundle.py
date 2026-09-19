@@ -26,7 +26,18 @@ the boundary before it ever ships. The Pages workflow runs the same script. Stdl
 """
 import argparse, os, re, shutil, sys
 
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# Windows consoles default to cp1252, which cannot encode the box/arrow glyphs this
+# tool prints - `prompt-log.py --help` crashed outright with UnicodeEncodeError (FR-047).
+# The other scripts survived only because their glyphs happen to exist in cp1252, which is
+# luck rather than an invariant, so the guard is applied uniformly.
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        try:
+            _stream.reconfigure(encoding="utf-8", errors="replace")
+        except (ValueError, OSError):
+            pass
+
+ROOT =os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # top-level dirs/files to publish (allowlist - nothing sensitive slips in by default)
 PUBLISH_DIRS = ["docs", "pack", "web"]
@@ -136,7 +147,7 @@ def main():
     # root redirect -> the portal, and .nojekyll (paths with dots/underscores)
     with open(os.path.join(out, "index.html"), "w", encoding="utf-8", newline="\n") as fh:
         fh.write(REDIRECT)
-    open(os.path.join(out, ".nojekyll"), "w").close()
+    open(os.path.join(out, ".nojekyll"), "w", encoding="utf-8", newline="\n").close()
     stats["files"] += 2
 
     # backward-compat aliases for the pre-Option-A root URLs (bookmarks must not 404)

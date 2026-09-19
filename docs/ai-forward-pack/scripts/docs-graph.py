@@ -336,11 +336,13 @@ def _atomic_write_text(path, text):
     directory = os.path.dirname(destination)
     os.makedirs(directory, exist_ok=True)
     existing_mode = _reject_unsafe_destination(destination)
+    # No text=True: the fd is reopened below with an explicit encoding and newline="\n".
+    # On Windows text=True would set O_TEXT on the descriptor and translate "\n" to CRLF
+    # underneath that newline="" contract; elsewhere the flag does nothing at all.
     descriptor, temporary = tempfile.mkstemp(
         prefix=".docs-graph-",
         suffix=".tmp",
         dir=directory,
-        text=True,
     )
     try:
         with os.fdopen(descriptor, "w", encoding="utf-8", newline="\n") as output:
@@ -1115,11 +1117,11 @@ def cmd_derive(args):
             raise _source_changed_error(a["id"])
     destination_directory = os.path.dirname(os.path.abspath(dst))
     os.makedirs(destination_directory, exist_ok=True)
+    # No text=True — see _atomic_write_text: the fd carries its own encoding and newline.
     fd, temporary = tempfile.mkstemp(
         prefix=".docs-index-",
         suffix=".tmp",
         dir=destination_directory,
-        text=True,
     )
     try:
         with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as index_file:

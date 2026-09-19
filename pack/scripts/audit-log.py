@@ -523,7 +523,8 @@ def next_id(entries, prefix, allocator=_MISSING):
 def git(args, root):
     try:
         cwd = os.path.dirname(os.path.abspath(root)) or "."
-        r = subprocess.run(["git", *args], cwd=cwd, capture_output=True, text=True, timeout=15)
+        r = subprocess.run(["git", *args], cwd=cwd, capture_output=True, text=True,
+                           encoding="utf-8", errors="replace", timeout=15)
         return r.stdout.strip() if r.returncode == 0 else None
     except (OSError, subprocess.SubprocessError):
         return None

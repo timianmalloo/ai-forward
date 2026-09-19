@@ -544,7 +544,10 @@ def norm_path(p):
 
 def git(args, cwd):
     try:
-        out = subprocess.run(["git"] + args, cwd=cwd, capture_output=True, text=True, timeout=20)
+        # text=True alone decodes with locale.getpreferredencoding() — cp1252 on a Windows
+        # console — so a non-ASCII branch name or author line raises UnicodeDecodeError.
+        out = subprocess.run(["git"] + args, cwd=cwd, capture_output=True, text=True,
+                             encoding="utf-8", errors="replace", timeout=20)
         return out.stdout if out.returncode == 0 else ""
     except (OSError, subprocess.SubprocessError):
         return ""
@@ -1698,10 +1701,10 @@ def cmd_profile(args):
         print(json.dumps(profile, ensure_ascii=False, indent=2, default=str))
         return 0
     os.makedirs(out_dir, exist_ok=True)
-    with open(os.path.join(out_dir, "profile.json"), "w", encoding="utf-8") as fh:
+    with open(os.path.join(out_dir, "profile.json"), "w", encoding="utf-8", newline="\n") as fh:
         json.dump(profile, fh, ensure_ascii=False, indent=2, default=str)
     md = render_markdown(profile)
-    with open(os.path.join(out_dir, "profile.md"), "w", encoding="utf-8") as fh:
+    with open(os.path.join(out_dir, "profile.md"), "w", encoding="utf-8", newline="\n") as fh:
         fh.write(md)
     _index(root, profile)
     _audit(root, pid, len(sessions), len(findings), args.session_id)
@@ -1723,10 +1726,10 @@ def _index(root, profile):
               "# Session profiles\n\n*Each row is one measured pass over the harness telemetry (`session-profile.py`). "
               "Mined by `/dream` as findings.*\n\n| id | generated | repos | sessions | findings | top |\n|---|---|---|---|---|---|\n")
     if not os.path.isfile(path):
-        with open(path, "w", encoding="utf-8") as fh:
+        with open(path, "w", encoding="utf-8", newline="\n") as fh:
             fh.write(header)
     top = ", ".join(f["id"] for f in profile["findings"][:3]) or "\u2014"
-    with open(path, "a", encoding="utf-8") as fh:
+    with open(path, "a", encoding="utf-8", newline="\n") as fh:
         fh.write("| [{0}]({0}/profile.md) | {1} | {2} | {3} | {4} | {5} |\n".format(
             profile["id"], profile["generated"], ", ".join(profile.get("repo_labels") or [repo_label(r) for r in profile["repos"]]),
             len(profile["sessions"]), len(profile["findings"]), top))

@@ -24,6 +24,15 @@ import sys
 import time
 from pathlib import Path
 
+# Windows consoles default to cp1252, which cannot encode the glyphs this tool prints
+# (DC-211/PLAT-A). Without this the script dies with UnicodeEncodeError on output alone.
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        try:
+            _stream.reconfigure(encoding="utf-8", errors="replace")
+        except (ValueError, OSError):
+            pass
+
 TTL_DEFAULT = 300
 # DC-163: a lease sized to a node's lifetime turns a shared control into a serial resource
 # (measured: the defect register held for an hour while edited never; two joins queued ~50
@@ -448,7 +457,7 @@ def _git(repo, *args):
     """Run git and READ THE RESULT BACK. An exit code is not a result (CTRL-E)."""
     try:
         proc = subprocess.run(["git", *args], cwd=str(repo), capture_output=True,
-                              text=True, timeout=30)
+                              text=True, encoding="utf-8", errors="replace", timeout=30)
     except (OSError, subprocess.SubprocessError) as exc:
         return None, "{}: {}".format(exc.__class__.__name__, exc)
     if proc.returncode != 0:

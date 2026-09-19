@@ -28,6 +28,15 @@ import re
 import subprocess
 import sys
 
+# Windows consoles default to cp1252, which cannot encode the glyphs this tool prints
+# (DC-211/PLAT-A). Without this the script dies with UnicodeEncodeError on output alone.
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        try:
+            _stream.reconfigure(encoding="utf-8", errors="replace")
+        except (ValueError, OSError):
+            pass
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEMPLATE = os.path.join(ROOT, "pack", "templates", "doc-viewer.template.html")
 OUT = os.path.join(ROOT, "docs", "_site", "bundle.html")
@@ -78,7 +87,8 @@ def pages():
 def head_sha():
     try:
         r = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT,
-                           capture_output=True, text=True, timeout=15)
+                           capture_output=True, text=True, encoding="utf-8",
+                           errors="replace", timeout=15)
         return r.stdout.strip() if r.returncode == 0 else ""
     except (OSError, subprocess.SubprocessError):
         return ""

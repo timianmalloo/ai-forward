@@ -19,6 +19,15 @@ Exit 0 clean, 1 on any finding.
 """
 import json, math, os, re, sys
 
+# Windows consoles default to cp1252, which cannot encode the glyphs this tool prints
+# (DC-211/PLAT-A). Without this the script dies with UnicodeEncodeError on output alone.
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        try:
+            _stream.reconfigure(encoding="utf-8", errors="replace")
+        except (ValueError, OSError):
+            pass
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PACK = os.path.join(ROOT, "pack")
 
@@ -847,7 +856,8 @@ def check_html_inline_scripts(findings):
             tf = tempfile.NamedTemporaryFile("w", suffix=".js", delete=False, encoding="utf-8")  # noqa: SIM115
             try:
                 tf.write(body); tf.close()
-                r = subprocess.run([node, "--check", tf.name], capture_output=True, text=True, timeout=30)
+                r = subprocess.run([node, "--check", tf.name], capture_output=True, text=True,
+                                   encoding="utf-8", errors="replace", timeout=30)
                 if r.returncode != 0:
                     err = (r.stderr or r.stdout or "").strip().splitlines()
                     msg = next((l for l in err if "Error" in l), (err[-1] if err else "syntax error"))
@@ -978,7 +988,8 @@ def _check_derived_artifact(findings, label, generator, artifact):
         return
     try:
         r = subprocess.run([sys.executable, gen, "--check"], cwd=ROOT,
-                           capture_output=True, text=True, timeout=60)
+                           capture_output=True, text=True, encoding="utf-8",
+                           errors="replace", timeout=60)
     except (OSError, subprocess.SubprocessError) as e:
         findings.append(f"{label}: could not run drift check ({e})")
         return
