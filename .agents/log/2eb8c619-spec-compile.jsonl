@@ -1,0 +1,2 @@
+{"agent": "2eb8c619-spec-compile", "at": 1789834969.1270678, "kind": "session-start", "path": "-", "seq": 1, "session": "2eb8c619-spec-compile", "tree": "worktree", "wi": "WI-0", "worktree": "ai-forward-spec-compile-stage"}
+{"agent": "2eb8c619-spec-compile", "at": 1789835272.208458, "kind": "session-end", "path": "-", "seq": 2, "session": "2eb8c619-spec-compile", "wi": "WI-0", "worktree": "ai-forward-spec-compile-stage"}

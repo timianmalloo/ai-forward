@@ -5,7 +5,7 @@ window.PORTAL_DATA = {
       "personas": 23,
       "knowledge": 39,
       "templates": 28,
-      "scripts": 35
+      "scripts": 38
     },
     "whatIs": "AI-Forward is a committed Markdown methodology pack that installs into a repo so Claude Code, GitHub Copilot, and Grok Build direct work with a shared reasoning spine, adversarial persona review, and a library of workflow skills - nothing runs as a service; everything is versioned files and stdlib scripts.",
     "skillCount": 28,
@@ -790,6 +790,11 @@ window.PORTAL_DATA = {
             "path": "../../docs/specs/leader-designation.md"
           },
           {
+            "title": "Spec — progress liveness, the running track and the kick ladder (coord session heartbeat · coord track · coord kick)",
+            "summary": "A session's liveness is read from the world, never volunteered: each host's tool-boundary hook samples a heartbeat that carries progress deltas into the coord ledger, `coord track` folds heartbeats and worktree mtimes into one state per work item (live ·...",
+            "path": "../../docs/specs/liveness-and-track.md"
+          },
+          {
             "title": "Spec — the local message layer and dispatch (coord mail send/read/ack · dispatch · doorbells)",
             "summary": "Sessions in one repository leave each other messages in per-session append-only inbox files; state-changing kinds are twinned into the coord ledger so git carries them; each harness we can reach rings a doorbell that says how many and which, never what; a...",
             "path": "../../docs/specs/message-layer.md"
@@ -798,6 +803,16 @@ window.PORTAL_DATA = {
             "title": "Native app UI skill extension — Specification",
             "summary": "Specification for extending the AI-Forward UI skills so WPF, WinUI, Avalonia and other native client applications receive the same rigorous UX/UI reasoning as web surfaces. The spec defines the required native medium declaration, native proof pack,...",
             "path": "../../docs/specs/native-app-ui-skill-extension.md"
+          },
+          {
+            "title": "Owner review mechanics — decision request → numbered ruling, a heading-defined register, a citation gate and a stop-hook gate",
+            "summary": "Specifies P5 of the coordination proposal (D6): the Owner seat gets a mechanism. A decision request is P1's typed seam request carrying five decision fields (options, evidence, recommendation, reversibility, blast radius) plus a deadline and a fallback,...",
+            "path": "../../docs/specs/owner-review.md"
+          },
+          {
+            "title": "Skill evolution — the ten remaining skills cite CO-S0, the §7b.3 rows land as text the lint can refuse, and the owner-review sentences reach the two coordination skills",
+            "summary": "Specifies the P8 skill sweep: the ten skills that still cite no CO-S0 carry the citation (a Grounding sentence, or the fixed sentence behind a reference/co-s0.md pointer where the 2% budget cannot hold it); the proposal §7b.3 rows for groups C and D land as...",
+            "path": "../../docs/specs/skill-evolution.md"
           },
           {
             "title": "Typed seam requests with a termination variant — coord request add|receive|ack|resolve|expire|list, claim --except, doctor and metrics",
@@ -870,6 +885,11 @@ window.PORTAL_DATA = {
             "path": "../../docs/design/leader-designation.md"
           },
           {
+            "title": "Design — progress liveness, the running track and the kick ladder (heartbeat_tick · track_fold · kick ladder · log portable)",
+            "summary": "One new fact kind (`heartbeat`) and one new event kind (`kick-ladder`) in the existing session ledger; a machine-local accumulator between samples in the git common dir; a pure fold (`track_fold`) from ledger rows and worktree mtimes to one state per work...",
+            "path": "../../docs/design/liveness-and-track.md"
+          },
+          {
             "title": "Marker completeness lint (Tier-1 prose→structure) — Design",
             "summary": "Tier-1 of the prose→structure review: give the assume: (NG4) and simplify: (L5) inline markers an enforced field-completeness check via a new marker-lint.py, using backward-compatible semantic-cue detection (trigger / confirm / consequence) that warns on...",
             "path": "../../docs/design/marker-completeness-lint.md"
@@ -883,6 +903,11 @@ window.PORTAL_DATA = {
             "title": "Native app UI skill extension — Design",
             "summary": "Detailed design for making native client applications first-class in the AI-Forward UI skills. The design updates /ui-design and /visualize, adds a reusable native UI proof-pack template, adds native desktop archetype rows, and introduces a deterministic XAML...",
             "path": "../../docs/design/native-app-ui-skill-extension.md"
+          },
+          {
+            "title": "Design — owner review (coord-decide.py · docs/notes/rulings.md · verify-ruling-citations.py · owner-review-gate.py)",
+            "summary": "Detailed design for spec-owner-review. One stdlib CLI (coord-decide.py) that writes a decision request only by running coord-core.py's own `request add` and `request resolve`, sends its two mails only through coord-mail.py's append_mail imported by path, and...",
+            "path": "../../docs/design/owner-review.md"
           },
           {
             "title": "Design — installed-repo doctor (suggestion 2)",
@@ -903,6 +928,11 @@ window.PORTAL_DATA = {
             "title": "Design — session profiler (the measured half of tuning)",
             "summary": "A deployable, stdlib-only session-profile.py that reads the telemetry Claude Code and GitHub Copilot CLI already write to disk for one or more pack-consuming repos and emits a findings table (SP-01..SP-16, with per-turn evidence), a fixes table (F-01..F-11,...",
             "path": "../../docs/design/session-profiler.md"
+          },
+          {
+            "title": "Design: skill evolution — per-skill edits under the 2% budget, three lint rules red-first, the seam (b) insertions",
+            "summary": "Detailed design for spec-skill-evolution: the exact sentence each of the ten skills gains and where; which six take the reference/co-s0.md pointer; the three new verify-skill-contracts.py rules (compile missing, pointer without reference, dispatch without...",
+            "path": "../../docs/design/skill-evolution.md"
           },
           {
             "title": "Tier-2 prose→structure: opt-in Proof-Pack sections (E7/E8, IO2) — Design",
@@ -1669,7 +1699,7 @@ window.PORTAL_DATA = {
       "tiers": {
         "always": {
           "docs": 14,
-          "tokens": 50717
+          "tokens": 50861
         },
         "reference": {
           "docs": 2,
@@ -1677,14 +1707,14 @@ window.PORTAL_DATA = {
         },
         "skill": {
           "docs": 18,
-          "tokens": 81854
+          "tokens": 81869
         },
         "glob": {
           "docs": 6,
           "tokens": 25898
         }
       },
-      "corpusTokens": 182682,
+      "corpusTokens": 182841,
       "alwaysPct": 28
     }
   },
@@ -1836,6 +1866,12 @@ window.PORTAL_DATA = {
         "summary": "coord-core.py - agent coordination, Phase 1 walking skeleton."
       },
       {
+        "id": "api-coord-decide",
+        "type": "api",
+        "title": "API — coord-decide.py",
+        "summary": "coord-decide.py - the Owner seat's mechanism: decision request -> numbered ruling (D6)."
+      },
+      {
         "id": "api-coord-mail",
         "type": "api",
         "title": "API — coord-mail.py",
@@ -1881,7 +1917,7 @@ window.PORTAL_DATA = {
         "id": "api-index",
         "type": "api",
         "title": "API reference — the deployed script bundle",
-        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 474 public functions across 34 modules, 47% carrying a docstring."
+        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 506 public functions across 37 modules, 48% carrying a docstring."
       },
       {
         "id": "api-marker-lint",
@@ -1956,6 +1992,12 @@ window.PORTAL_DATA = {
         "summary": "verify-compiled-prompt.py - the compile-stage gate: a compiled prompt never adds scope."
       },
       {
+        "id": "api-verify-documented-commands",
+        "type": "api",
+        "title": "API — verify-documented-commands.py",
+        "summary": "verify-documented-commands.py - every documented command under pack/ runs in any shell."
+      },
+      {
         "id": "api-verify-no-conflict-markers",
         "type": "api",
         "title": "API — verify-no-conflict-markers.py",
@@ -1978,6 +2020,12 @@ window.PORTAL_DATA = {
         "type": "api",
         "title": "API — verify-portable-text-io.py",
         "summary": "verify-portable-text-io.py - text the pack writes is LF and UTF-8 on every OS, and every CLI survives a legacy console."
+      },
+      {
+        "id": "api-verify-ruling-citations",
+        "type": "api",
+        "title": "API — verify-ruling-citations.py",
+        "summary": "verify-ruling-citations.py - every ruling cited as authority resolves to exactly one heading that says what it decided."
       },
       {
         "id": "api-verify-skill-contracts",
@@ -2050,6 +2098,12 @@ window.PORTAL_DATA = {
         "type": "plan",
         "title": "Coordination plan - P2 leader, P4 message layer, P6 board, P8 readers: four full specify → design → implement loops",
         "summary": "Four Sub-Agent tracks, each running the whole loop (/specify, /design-slice, /implement) in its own worktree: P4 ships the local message layer and dispatch, P6..."
+      },
+      {
+        "id": "coordination-p3-p5-p8",
+        "type": "plan",
+        "title": "Coordination plan - P3 liveness, P5 owner review, the cross-platform residue, then the P8 skill sweep (to cross-harness smoke-test readiness)",
+        "summary": "The last three build-plan items of the Owner / Coordinator / Sub-Agent proposal, run as one coordinated session from compiled prompt..."
       },
       {
         "id": "coordination-p3-xp",
@@ -2142,6 +2196,12 @@ window.PORTAL_DATA = {
         "summary": "Detailed design for spec-leader-designation: five stdlib verbs in coord-core.py over one blob held by `git update-ref <ref> <new> <old>` (the 40-zero old for..."
       },
       {
+        "id": "design-liveness-and-track",
+        "type": "design",
+        "title": "Design — progress liveness, the running track and the kick ladder (heartbeat_tick · track_fold · kick ladder · log portable)",
+        "summary": "One new fact kind (`heartbeat`) and one new event kind (`kick-ladder`) in the existing session ledger; a machine-local accumulator between samples in the git..."
+      },
+      {
         "id": "design-marker-completeness-lint",
         "type": "design",
         "title": "Marker completeness lint (Tier-1 prose→structure) — Design",
@@ -2158,6 +2218,12 @@ window.PORTAL_DATA = {
         "type": "design",
         "title": "Native app UI skill extension — Design",
         "summary": "Detailed design for making native client applications first-class in the AI-Forward UI skills. The design updates /ui-design and /visualize, adds a reusable..."
+      },
+      {
+        "id": "design-owner-review",
+        "type": "design",
+        "title": "Design — owner review (coord-decide.py · docs/notes/rulings.md · verify-ruling-citations.py · owner-review-gate.py)",
+        "summary": "Detailed design for spec-owner-review. One stdlib CLI (coord-decide.py) that writes a decision request only by running coord-core.py's own `request add` and..."
       },
       {
         "id": "design-pack-doctor",
@@ -2182,6 +2248,12 @@ window.PORTAL_DATA = {
         "type": "design",
         "title": "Design — session profiler (the measured half of tuning)",
         "summary": "A deployable, stdlib-only session-profile.py that reads the telemetry Claude Code and GitHub Copilot CLI already write to disk for one or more pack-consuming..."
+      },
+      {
+        "id": "design-skill-evolution",
+        "type": "design",
+        "title": "Design: skill evolution — per-skill edits under the 2% budget, three lint rules red-first, the seam (b) insertions",
+        "summary": "Detailed design for spec-skill-evolution: the exact sentence each of the ten skills gains and where; which six take the reference/co-s0.md pointer; the three..."
       },
       {
         "id": "design-tier2-proof-pack-sections",
@@ -2826,6 +2898,12 @@ window.PORTAL_DATA = {
         "summary": "On 2026-09-19 the maintainer answered the proposal's four open questions and ratified four of its five design decisions; on the fifth (push channels) they..."
       },
       {
+        "id": "note-20260919-cross-harness-smoke-test-readiness",
+        "type": "decision-note",
+        "title": "Cross-harness smoke-test readiness: what is landed, what each harness channel's status is, and the probe order",
+        "summary": "The coordination solution's nine build-plan items are landed (P0–P8) and the layer is ready for a cross-harness smoke test on this machine, subject to the..."
+      },
+      {
         "id": "note-20260919-doctrine-stages-close-the-document",
         "type": "decision-note",
         "title": "The doctrine doc ends with its frozen sections: CO-S0 → CO-S1 → CO-S2 → CO-L close the file, and the ceiling was met by cutting prose, never a rule",
@@ -2844,10 +2922,28 @@ window.PORTAL_DATA = {
         "summary": "Executed spikes on 2026-09-18 showed two competing leader claims both survive a union merge (exit 0), while `git update-ref <ref> <new> <old>` and..."
       },
       {
+        "id": "note-20260919-liveness-heartbeat-renews-the-leader",
+        "type": "decision-note",
+        "title": "A sampled heartbeat from the session that holds refs/coord/leader renews the designation; it never reclaims one that lapsed (F-1 accepted)",
+        "summary": "D13's leader lease (TTL 300 s, renew 100 s) was tuned for a running process; an interactive coordinator lapsed between renews and reclaimed at every join (plan..."
+      },
+      {
+        "id": "note-20260919-liveness-worktree-field-is-a-label",
+        "type": "decision-note",
+        "title": "The ledger's `worktree` field is the worktree's basename (a label), never a path; `tree` was never the carrier (F-3 as found)",
+        "summary": "Plan finding F-3 names `tree` as the field carrying the absolute worktree path that gate 1b (PLAT-B) refuses. Grep over the primary's ledgers found 26 absolute..."
+      },
+      {
         "id": "note-20260919-mail-store-deviations",
         "type": "decision-note",
         "title": "The mail store keeps the fixed contract with three named additions: a broadcast file, prefixed ULIDs, and colocated acks",
         "summary": "Three shapes the fixed mail contract left open are settled here and raised to the coordinator and Track P6 as seam requests before any line was written; blast..."
+      },
+      {
+        "id": "note-20260919-owner-review-register-and-scan-scope",
+        "type": "decision-note",
+        "title": "Owner review: the register opens with Ruling 1, the contract is a JSON object, the gate scans prose not records, a mail failure never changes a write's verdict, and the stop gate counts only what the session sent",
+        "summary": "Six calls made while building P5: (1) docs/notes/rulings.md is committed carrying Ruling 1 — the decision to create the register — so the file is never an..."
       },
       {
         "id": "note-20260919-pack-evolution-knowledge-review",
@@ -2866,6 +2962,18 @@ window.PORTAL_DATA = {
         "type": "decision-note",
         "title": "A seam request is terminal by its deadline or it is refused; the fallback is copied onto the expire row; staleness is derived from the cited path's current blob, never stored",
         "summary": "Four calls made while building P1: (1) `request add` refuses (exit 2) rather than defaulting a missing deadline or fallback - a default would make the..."
+      },
+      {
+        "id": "note-20260919-skill-evolution-citation-forms-and-budget",
+        "type": "decision-note",
+        "title": "A utility skill cites CO-S0 by naming its own touch-point; the join detail moves to reference/join.md so P5's verbatim sentences fit; every skill now needs the citation, so the lint's older fixtures gained it",
+        "summary": "Three decisions below ADR weight taken while landing the P8 skill sweep: (1) the four turn/log utilities cite CO-S0 in one sentence that names what they do..."
+      },
+      {
+        "id": "note-20260919-xp-cross-platform",
+        "type": "decision-note",
+        "title": "XP cross-platform residue: documented commands made shell-neutral, the default-branch tests made honest, the session-id sanitiser cut as a seam patch",
+        "summary": "Track XP of coordination-p3-p5-p8 (T1, fan-out 0). Every documented command under pack/ is now a single line, unchained and `python3`; a gate..."
       },
       {
         "id": "note-autopilot-open-questions-decisions",
@@ -2982,6 +3090,12 @@ window.PORTAL_DATA = {
         "summary": "Proof that pack-apply and sync-pack deploy a native Grok Build surface (.grok/skills, agents, hooks, rules), that knowledge is not dumped into .grok/rules/,..."
       },
       {
+        "id": "proof-liveness-and-track",
+        "type": "proof-pack",
+        "title": "Proof Pack — progress liveness, the running track and the kick ladder (P3)",
+        "summary": "Forty-one red-first tests (plus the five of the XP seam) prove the heartbeat sampling, the fold's four states with the 299/301 s boundary, the NOT CHECKED..."
+      },
+      {
         "id": "proof-native-app-ui-skill-extension",
         "type": "proof-pack",
         "title": "Proof Pack — Native app UI skill extension",
@@ -3016,6 +3130,18 @@ window.PORTAL_DATA = {
         "type": "doc",
         "title": "Proposal: define the goal state before acting — bounding the agent turn",
         "summary": "An incident analysis and proposal. A closed question (\"is /optimize-graph wired into the skills?\") was answered on the first tool call and then became an..."
+      },
+      {
+        "id": "rulings",
+        "type": "doc",
+        "title": "Rulings — the Owner seat's numbered decisions (the only definition site)",
+        "summary": "The ruling register. Each `### Ruling NN — <title>` heading defines exactly one numbered decision of the Owner seat; prose anywhere cites it as `Ruling NN`...."
+      },
+      {
+        "id": "seam-p5-to-coordinator",
+        "type": "doc",
+        "title": "Seam P5 → coordinator: the `decide` front door, the two skills' contract sentences, the register line, the INSTALL delta, the doctrine sentence",
+        "summary": "What track P5 needs in files it does not own, delivered as text for the coordinator to apply at the landing: one parser block and one delegation branch in..."
       },
       {
         "id": "session-profiles",
@@ -3090,6 +3216,12 @@ window.PORTAL_DATA = {
         "summary": "Specifies P2 of the coordination proposal: a designated (never elected) leader held in the git ref refs/coord/leader by compare-and-swap, with a monotonic..."
       },
       {
+        "id": "spec-liveness-and-track",
+        "type": "spec",
+        "title": "Spec — progress liveness, the running track and the kick ladder (coord session heartbeat · coord track · coord kick)",
+        "summary": "A session's liveness is read from the world, never volunteered: each host's tool-boundary hook samples a heartbeat that carries progress deltas into the coord..."
+      },
+      {
         "id": "spec-message-layer",
         "type": "spec",
         "title": "Spec — the local message layer and dispatch (coord mail send/read/ack · dispatch · doorbells)",
@@ -3100,6 +3232,18 @@ window.PORTAL_DATA = {
         "type": "spec",
         "title": "Native app UI skill extension — Specification",
         "summary": "Specification for extending the AI-Forward UI skills so WPF, WinUI, Avalonia and other native client applications receive the same rigorous UX/UI reasoning as..."
+      },
+      {
+        "id": "spec-owner-review",
+        "type": "spec",
+        "title": "Owner review mechanics — decision request → numbered ruling, a heading-defined register, a citation gate and a stop-hook gate",
+        "summary": "Specifies P5 of the coordination proposal (D6): the Owner seat gets a mechanism. A decision request is P1's typed seam request carrying five decision fields..."
+      },
+      {
+        "id": "spec-skill-evolution",
+        "type": "spec",
+        "title": "Skill evolution — the ten remaining skills cite CO-S0, the §7b.3 rows land as text the lint can refuse, and the owner-review sentences reach the two coordination skills",
+        "summary": "Specifies the P8 skill sweep: the ten skills that still cite no CO-S0 carry the citation (a Grounding sentence, or the fixed sentence behind a..."
       },
       {
         "id": "spec-typed-seam-requests",
@@ -3348,6 +3492,11 @@ window.PORTAL_DATA = {
         "rel": "refines"
       },
       {
+        "from": "api-coord-decide",
+        "to": "api-index",
+        "rel": "refines"
+      },
+      {
         "from": "api-coord-mail",
         "to": "api-index",
         "rel": "refines"
@@ -3448,6 +3597,11 @@ window.PORTAL_DATA = {
         "rel": "refines"
       },
       {
+        "from": "api-verify-documented-commands",
+        "to": "api-index",
+        "rel": "refines"
+      },
+      {
         "from": "api-verify-no-conflict-markers",
         "to": "api-index",
         "rel": "refines"
@@ -3464,6 +3618,11 @@ window.PORTAL_DATA = {
       },
       {
         "from": "api-verify-portable-text-io",
+        "to": "api-index",
+        "rel": "refines"
+      },
+      {
+        "from": "api-verify-ruling-citations",
         "to": "api-index",
         "rel": "refines"
       },
@@ -3606,6 +3765,31 @@ window.PORTAL_DATA = {
         "from": "coordination-p2-p8",
         "to": "spec-compile-stage",
         "rel": "relates-to"
+      },
+      {
+        "from": "coordination-p3-p5-p8",
+        "to": "coordination-p0-p1",
+        "rel": "refines"
+      },
+      {
+        "from": "coordination-p3-p5-p8",
+        "to": "coordination-p2-p8",
+        "rel": "refines"
+      },
+      {
+        "from": "coordination-p3-p5-p8",
+        "to": "coordination-p3-xp",
+        "rel": "supersedes"
+      },
+      {
+        "from": "coordination-p3-p5-p8",
+        "to": "note-20260919-pack-evolution-knowledge-review",
+        "rel": "relates-to"
+      },
+      {
+        "from": "coordination-p3-p5-p8",
+        "to": "proposal-owner-coordinator-subagent-coordination",
+        "rel": "implements"
       },
       {
         "from": "coordination-p3-xp",
@@ -3903,6 +4087,41 @@ window.PORTAL_DATA = {
         "rel": "implements"
       },
       {
+        "from": "design-liveness-and-track",
+        "to": "adr-0007-coordination-substrate",
+        "rel": "depends-on"
+      },
+      {
+        "from": "design-liveness-and-track",
+        "to": "design-leader-designation",
+        "rel": "depends-on"
+      },
+      {
+        "from": "design-liveness-and-track",
+        "to": "design-message-layer",
+        "rel": "depends-on"
+      },
+      {
+        "from": "design-liveness-and-track",
+        "to": "design-typed-seam-requests",
+        "rel": "depends-on"
+      },
+      {
+        "from": "design-liveness-and-track",
+        "to": "note-20260919-liveness-heartbeat-renews-the-leader",
+        "rel": "relates-to"
+      },
+      {
+        "from": "design-liveness-and-track",
+        "to": "note-20260919-liveness-worktree-field-is-a-label",
+        "rel": "relates-to"
+      },
+      {
+        "from": "design-liveness-and-track",
+        "to": "spec-liveness-and-track",
+        "rel": "implements"
+      },
+      {
         "from": "design-marker-completeness-lint",
         "to": "design-agent-focus-controls",
         "rel": "relates-to"
@@ -3958,6 +4177,31 @@ window.PORTAL_DATA = {
         "rel": "implements"
       },
       {
+        "from": "design-owner-review",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "design-owner-review",
+        "to": "design-message-layer",
+        "rel": "depends-on"
+      },
+      {
+        "from": "design-owner-review",
+        "to": "design-typed-seam-requests",
+        "rel": "depends-on"
+      },
+      {
+        "from": "design-owner-review",
+        "to": "proposal-owner-coordinator-subagent-coordination",
+        "rel": "refines"
+      },
+      {
+        "from": "design-owner-review",
+        "to": "spec-owner-review",
+        "rel": "implements"
+      },
+      {
         "from": "design-pack-doctor",
         "to": "kb-pack-evolution",
         "rel": "implements"
@@ -3985,6 +4229,31 @@ window.PORTAL_DATA = {
       {
         "from": "design-session-profiler",
         "to": "kb-pack-evolution",
+        "rel": "implements"
+      },
+      {
+        "from": "design-skill-evolution",
+        "to": "coordination-p3-p5-p8",
+        "rel": "relates-to"
+      },
+      {
+        "from": "design-skill-evolution",
+        "to": "design-compile-readers",
+        "rel": "refines"
+      },
+      {
+        "from": "design-skill-evolution",
+        "to": "note-20260919-readers-seat-and-citation-placement",
+        "rel": "relates-to"
+      },
+      {
+        "from": "design-skill-evolution",
+        "to": "proposal-owner-coordinator-subagent-coordination",
+        "rel": "relates-to"
+      },
+      {
+        "from": "design-skill-evolution",
+        "to": "spec-skill-evolution",
         "rel": "implements"
       },
       {
@@ -4978,6 +5247,36 @@ window.PORTAL_DATA = {
         "rel": "relates-to"
       },
       {
+        "from": "note-20260919-cross-harness-smoke-test-readiness",
+        "to": "coordination-p3-p5-p8",
+        "rel": "implements"
+      },
+      {
+        "from": "note-20260919-cross-harness-smoke-test-readiness",
+        "to": "note-20260919-coordination-decisions-ratified",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260919-cross-harness-smoke-test-readiness",
+        "to": "proposal-owner-coordinator-subagent-coordination",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260919-cross-harness-smoke-test-readiness",
+        "to": "spec-liveness-and-track",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260919-cross-harness-smoke-test-readiness",
+        "to": "spec-message-layer",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260919-cross-harness-smoke-test-readiness",
+        "to": "spec-owner-review",
+        "rel": "relates-to"
+      },
+      {
         "from": "note-20260919-doctrine-stages-close-the-document",
         "to": "design-agent-coordination-doctrine",
         "rel": "relates-to"
@@ -5023,6 +5322,36 @@ window.PORTAL_DATA = {
         "rel": "relates-to"
       },
       {
+        "from": "note-20260919-liveness-heartbeat-renews-the-leader",
+        "to": "coordination-p3-p5-p8",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260919-liveness-heartbeat-renews-the-leader",
+        "to": "spec-leader-designation",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260919-liveness-heartbeat-renews-the-leader",
+        "to": "spec-liveness-and-track",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260919-liveness-worktree-field-is-a-label",
+        "to": "adr-0007-coordination-substrate",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260919-liveness-worktree-field-is-a-label",
+        "to": "coordination-p3-p5-p8",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260919-liveness-worktree-field-is-a-label",
+        "to": "spec-liveness-and-track",
+        "rel": "relates-to"
+      },
+      {
         "from": "note-20260919-mail-store-deviations",
         "to": "design-message-layer",
         "rel": "relates-to"
@@ -5035,6 +5364,21 @@ window.PORTAL_DATA = {
       {
         "from": "note-20260919-mail-store-deviations",
         "to": "spec-message-layer",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260919-owner-review-register-and-scan-scope",
+        "to": "design-owner-review",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260919-owner-review-register-and-scan-scope",
+        "to": "proposal-owner-coordinator-subagent-coordination",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260919-owner-review-register-and-scan-scope",
+        "to": "spec-owner-review",
         "rel": "relates-to"
       },
       {
@@ -5091,6 +5435,36 @@ window.PORTAL_DATA = {
         "from": "note-20260919-seam-request-terminal-by-deadline",
         "to": "spec-typed-seam-requests",
         "rel": "relates-to"
+      },
+      {
+        "from": "note-20260919-skill-evolution-citation-forms-and-budget",
+        "to": "design-skill-evolution",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260919-skill-evolution-citation-forms-and-budget",
+        "to": "note-20260919-readers-seat-and-citation-placement",
+        "rel": "refines"
+      },
+      {
+        "from": "note-20260919-skill-evolution-citation-forms-and-budget",
+        "to": "proposal-owner-coordinator-subagent-coordination",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260919-skill-evolution-citation-forms-and-budget",
+        "to": "spec-skill-evolution",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260919-xp-cross-platform",
+        "to": "investigation-cross-platform-readiness",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260919-xp-cross-platform",
+        "to": "plan-cross-platform-readiness",
+        "rel": "implements"
       },
       {
         "from": "note-autopilot-open-questions-decisions",
@@ -5343,6 +5717,16 @@ window.PORTAL_DATA = {
         "rel": "implements"
       },
       {
+        "from": "proof-liveness-and-track",
+        "to": "design-liveness-and-track",
+        "rel": "tested-by"
+      },
+      {
+        "from": "proof-liveness-and-track",
+        "to": "spec-liveness-and-track",
+        "rel": "tested-by"
+      },
+      {
         "from": "proof-native-app-ui-skill-extension",
         "to": "design-native-app-ui-skill-extension",
         "rel": "tested-by"
@@ -5505,6 +5889,31 @@ window.PORTAL_DATA = {
       {
         "from": "proposal-turn-goal-state-and-stopping",
         "to": "project-memory",
+        "rel": "relates-to"
+      },
+      {
+        "from": "rulings",
+        "to": "design-owner-review",
+        "rel": "relates-to"
+      },
+      {
+        "from": "rulings",
+        "to": "spec-agent-coordination-doctrine",
+        "rel": "relates-to"
+      },
+      {
+        "from": "rulings",
+        "to": "spec-owner-review",
+        "rel": "relates-to"
+      },
+      {
+        "from": "seam-p5-to-coordinator",
+        "to": "design-owner-review",
+        "rel": "relates-to"
+      },
+      {
+        "from": "seam-p5-to-coordinator",
+        "to": "spec-owner-review",
         "rel": "relates-to"
       },
       {
@@ -5728,6 +6137,46 @@ window.PORTAL_DATA = {
         "rel": "relates-to"
       },
       {
+        "from": "spec-liveness-and-track",
+        "to": "coordination-p3-p5-p8",
+        "rel": "implements"
+      },
+      {
+        "from": "spec-liveness-and-track",
+        "to": "kb-multi-agent-coordination",
+        "rel": "relates-to"
+      },
+      {
+        "from": "spec-liveness-and-track",
+        "to": "note-20260919-liveness-heartbeat-renews-the-leader",
+        "rel": "relates-to"
+      },
+      {
+        "from": "spec-liveness-and-track",
+        "to": "note-20260919-liveness-worktree-field-is-a-label",
+        "rel": "relates-to"
+      },
+      {
+        "from": "spec-liveness-and-track",
+        "to": "proposal-owner-coordinator-subagent-coordination",
+        "rel": "refines"
+      },
+      {
+        "from": "spec-liveness-and-track",
+        "to": "spec-leader-designation",
+        "rel": "depends-on"
+      },
+      {
+        "from": "spec-liveness-and-track",
+        "to": "spec-message-layer",
+        "rel": "depends-on"
+      },
+      {
+        "from": "spec-liveness-and-track",
+        "to": "spec-typed-seam-requests",
+        "rel": "depends-on"
+      },
+      {
         "from": "spec-message-layer",
         "to": "adr-0007-coordination-substrate",
         "rel": "depends-on"
@@ -5756,6 +6205,61 @@ window.PORTAL_DATA = {
         "from": "spec-native-app-ui-skill-extension",
         "to": "kb-native-client-ui-design",
         "rel": "depends-on"
+      },
+      {
+        "from": "spec-owner-review",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "spec-owner-review",
+        "to": "proposal-owner-coordinator-subagent-coordination",
+        "rel": "refines"
+      },
+      {
+        "from": "spec-owner-review",
+        "to": "spec-agent-coordination-doctrine",
+        "rel": "relates-to"
+      },
+      {
+        "from": "spec-owner-review",
+        "to": "spec-message-layer",
+        "rel": "depends-on"
+      },
+      {
+        "from": "spec-owner-review",
+        "to": "spec-typed-seam-requests",
+        "rel": "depends-on"
+      },
+      {
+        "from": "spec-skill-evolution",
+        "to": "coordination-p3-p5-p8",
+        "rel": "relates-to"
+      },
+      {
+        "from": "spec-skill-evolution",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "spec-skill-evolution",
+        "to": "note-20260919-readers-seat-and-citation-placement",
+        "rel": "relates-to"
+      },
+      {
+        "from": "spec-skill-evolution",
+        "to": "proposal-owner-coordinator-subagent-coordination",
+        "rel": "implements"
+      },
+      {
+        "from": "spec-skill-evolution",
+        "to": "spec-compile-readers",
+        "rel": "refines"
+      },
+      {
+        "from": "spec-skill-evolution",
+        "to": "spec-owner-review",
+        "rel": "relates-to"
       },
       {
         "from": "spec-typed-seam-requests",

@@ -1,0 +1,17 @@
+{"agent": "p1-requests", "at": 1789844215.1610398, "kind": "session-start", "path": "-", "seq": 1, "session": "p1-requests", "tree": "worktree", "wi": "WI-0", "worktree": "ai-forward-impl-p1-requests"}
+{"agent": "p1-requests", "at": 1789844486.828298, "kind": "claim", "path": "docs/specs/typed-seam-requests.md", "seq": 2, "session": "p1-requests", "ttl": 300.0, "wi": "p1-requests"}
+{"agent": "p1-requests", "at": 1789844642.990166, "kind": "release", "path": "docs/specs/typed-seam-requests.md", "seq": 3, "session": "p1-requests", "wi": "p1-requests"}
+{"agent": "p1-requests", "at": 1789844643.20875, "kind": "claim", "path": "docs/design/typed-seam-requests.md", "seq": 4, "session": "p1-requests", "ttl": 300.0, "wi": "p1-requests"}
+{"agent": "p1-requests", "at": 1789844788.425389, "kind": "release", "path": "docs/design/typed-seam-requests.md", "seq": 5, "session": "p1-requests", "wi": "p1-requests"}
+{"agent": "p1-requests", "at": 1789844788.646871, "kind": "claim", "path": "pack/scripts/coord-core.py", "seq": 6, "session": "p1-requests", "ttl": 300.0, "wi": "p1-requests"}
+{"agent": "p1-requests", "at": 1789844788.8750458, "kind": "claim", "path": "pack/scripts/coord_ids.py", "seq": 7, "session": "p1-requests", "ttl": 300.0, "wi": "p1-requests"}
+{"agent": "p1-requests", "at": 1789844789.100279, "kind": "claim", "path": "pack/scripts/pack-doctor.py", "seq": 8, "session": "p1-requests", "ttl": 300.0, "wi": "p1-requests"}
+{"agent": "p1-requests", "at": 1789844789.3287601, "kind": "claim", "path": "tests/docs_explorer/test_coord_requests_typed.py", "seq": 9, "session": "p1-requests", "ttl": 300.0, "wi": "p1-requests"}
+{"agent": "p1-requests", "at": 1789844789.552711, "kind": "claim", "path": "tests/docs_explorer/test_coord_ids_order.py", "seq": 10, "session": "p1-requests", "ttl": 300.0, "wi": "p1-requests"}
+{"action": "add", "agent": "p1-requests", "at": 1789845245.5375822, "deadline_at": 1789846145.5375822, "id": "req-01M2XHE3K1XBPTJCS09092R754", "kind": "request", "path": "-", "seq": 11, "session": "p1-requests", "to": "coordinator", "type": "request", "wi": "WI-0"}
+{"agent": "p1-requests", "at": 1789845396.264796, "kind": "release", "path": "pack/scripts/coord-core.py", "seq": 12, "session": "p1-requests", "wi": "p1-requests"}
+{"agent": "p1-requests", "at": 1789845396.482243, "kind": "release", "path": "pack/scripts/coord_ids.py", "seq": 13, "session": "p1-requests", "wi": "p1-requests"}
+{"agent": "p1-requests", "at": 1789845396.7021508, "kind": "release", "path": "pack/scripts/pack-doctor.py", "seq": 14, "session": "p1-requests", "wi": "p1-requests"}
+{"agent": "p1-requests", "at": 1789845396.9215949, "kind": "release", "path": "tests/docs_explorer/test_coord_requests_typed.py", "seq": 15, "session": "p1-requests", "wi": "p1-requests"}
+{"agent": "p1-requests", "at": 1789845397.144243, "kind": "release", "path": "tests/docs_explorer/test_coord_ids_order.py", "seq": 16, "session": "p1-requests", "wi": "p1-requests"}
+{"agent": "p1-requests", "at": 1789846260.797652, "kind": "session-end", "path": "-", "seq": 17, "session": "p1-requests", "wi": "WI-0", "worktree": "ai-forward-impl-p1-requests"}

@@ -170,6 +170,24 @@ class InstalledRepoTests(unittest.TestCase):
         self.assertTrue(os.path.exists(os.path.join(self.tmp, ".github/agents/test-architect.agent.md")))
         self.assertTrue(os.path.exists(os.path.join(self.tmp, ".github/hooks/ai-forward.json")))
 
+    def test_every_hook_the_claude_config_names_is_installed(self):
+        """P8 seam 1: the merged Claude hook config pointed PostToolUse/Stop at heartbeat.py and
+        owner-review-gate.py while pack-apply copied only three adapters - a fresh install ran
+        hooks that did not exist. Every `docs/ai-forward-pack/hooks/<name>.py` the config names
+        must be placed."""
+        import json
+        import re
+        self._apply()
+        cfg = json.load(open(os.path.join(ROOT, "pack", "adapters", "hooks", "claude-code.settings.hooks.json"), encoding="utf-8"))
+        named = set()
+        for entries in cfg["hooks"].values():
+            for entry in entries:
+                for hook in entry.get("hooks", []):
+                    named.update(re.findall(r"docs/ai-forward-pack/hooks/([\w.-]+\.py)", hook.get("command", "")))
+        self.assertTrue(named, "the Claude hook config names no adapter - the test premise is gone")
+        missing = sorted(n for n in named if not os.path.exists(os.path.join(self.tmp, "docs/ai-forward-pack/hooks", n)))
+        self.assertEqual([], missing, f"named by the hook config but not installed: {missing}")
+
     def test_second_apply_is_a_no_op(self):
         self._apply()
         rows = self._apply()

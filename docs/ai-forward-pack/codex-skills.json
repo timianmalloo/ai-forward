@@ -3,7 +3,8 @@
     "SKILL.md"
   ],
   "addpacktorepo": [
-    "SKILL.md"
+    "SKILL.md",
+    "reference/co-s0.md"
   ],
   "adopt": [
     "SKILL.md",
@@ -13,7 +14,8 @@
     "SKILL.md"
   ],
   "apply-learnings": [
-    "SKILL.md"
+    "SKILL.md",
+    "reference/co-s0.md"
   ],
   "auditlog": [
     "SKILL.md"
@@ -41,14 +43,17 @@
     "SKILL.md"
   ],
   "dream": [
-    "SKILL.md"
-  ],
-  "execute-with-coordination": [
     "SKILL.md",
     "reference/co-s0.md"
   ],
+  "execute-with-coordination": [
+    "SKILL.md",
+    "reference/co-s0.md",
+    "reference/join.md"
+  ],
   "extendaibundle": [
-    "SKILL.md"
+    "SKILL.md",
+    "reference/co-s0.md"
   ],
   "forensicreview": [
     "SKILL.md",
@@ -80,7 +85,8 @@
     "SKILL.md"
   ],
   "session-profiler": [
-    "SKILL.md"
+    "SKILL.md",
+    "reference/co-s0.md"
   ],
   "specify": [
     "SKILL.md"
@@ -93,7 +99,8 @@
     "reference/triggered-standards.md"
   ],
   "updatepack": [
-    "SKILL.md"
+    "SKILL.md",
+    "reference/co-s0.md"
   ],
   "visualize": [
     "SKILL.md"

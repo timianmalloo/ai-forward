@@ -451,6 +451,29 @@ def check_requests(root):
     return _result("requests", PASS, detail)
 
 
+def check_heartbeat(root):
+    """Progress liveness (spec-liveness-and-track, P3): who beats, how fresh, how many stalled -
+    or `not recorded` when no heartbeat row exists (CTX-H: an uninstalled control looks like a
+    quiet fleet). One reader: coord-core.py's heartbeat_doctor_line, loaded beside this file."""
+    core_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "coord-core.py")
+    if not os.path.isfile(core_path):
+        return _result("heartbeat", PASS, "not recorded (coord-core.py is not installed beside pack-doctor.py)")
+    import importlib.util
+    import time
+    spec = importlib.util.spec_from_file_location("coord_core_for_heartbeat_doctor", core_path)
+    core = importlib.util.module_from_spec(spec)
+    try:
+        spec.loader.exec_module(core)
+    except Exception as exc:  # a broken coord-core is a finding here, not a crash
+        return _result("heartbeat", FAIL, "coord-core.py could not be loaded ({0})".format(exc),
+                       "re-run pack-apply.py to restore pack/scripts/coord-core.py")
+    line, problem = core.heartbeat_doctor_line(os.path.join(root, ".agents"), time.time())
+    detail = re.sub(r"^heartbeat\s+", "", line.strip())
+    if problem:
+        return _result("heartbeat", FAIL, detail, "repair the unreadable ledger row named above")
+    return _result("heartbeat", PASS, detail)
+
+
 def _command_head(command):
     """The first word of a registry command: a quoted path as one token, else up to the
     first space. `"C:\\Program Files\\Python\\python.exe" x.py` -> the path; `python3 x.py`
@@ -723,6 +746,7 @@ def run(root):
     ]
     checks.extend(check_mail(root))
     checks.append(check_requests(root))
+    checks.append(check_heartbeat(root))
     return checks
 
 

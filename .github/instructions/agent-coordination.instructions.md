@@ -32,11 +32,11 @@ applyTo: "**"
 
 ## CO16 — Protocol objects (§4, §4b)
 
-Ledger lines with a stable id and an HLC stamp; `coord` verbs in parentheses. **Session card** (`session start`; roles claimed, not granted) · **delegation contract** (`delegate`: the five parts plus budget, deadline, fallback) · **seam request** (`request add / ack / resolve / expire`: typed states, the ack pinned to a blob — P1) · **decision request / ruling** (`decide request` / `rule <n>` → a numbered ruling) · **leader designation** (`leader`, CO-L) · **join state** (`conductor-join.py`, the fence) · **mail** (inbox files are the store, the doorbell the push — a count and a pointer, never a body; state-changing kinds dual-written to the ledger) · **board** (a read model over inboxes and ledger, never a store).
+Ledger lines with a stable id and an HLC stamp; `coord` verbs in parentheses. **Session card** (`session start`; roles claimed, not granted) · **delegation contract** (`delegate`: the five parts plus budget, deadline, fallback) · **seam request** (`request add / ack / resolve / expire`: typed states, the ack pinned to a blob — P1) · **decision request / ruling** (`decide request` / `rule <n>` → `Ruling NN` in `docs/notes/rulings.md`) · **leader designation** (`leader`, CO-L) · **join state** (`conductor-join.py`, the fence) · **mail** (inbox files are the store, the doorbell the push — a count and a pointer, never a body; state-changing kinds dual-written to the ledger) · **board** (a read model over inboxes and ledger, never a store).
 
 ## CO17 — Kick ladder
 
-0 notify (a `blocked` is recorded and pushed by the cheapest channel) → 1 kick (deadline passed or three missed progress beats) → 2 **escalate to the Owner with a decision request** (reassignment only under a ruling) → 3 **human**. Cap: **two kicks per work item**, counted; nothing automatic (WT11).
+0 notify (a `blocked` is recorded and pushed by cheapest channel) → 1 kick (deadline passed or three missed beats) → 2 **escalate to the Owner with a decision request** (reassignment only by ruling) → 3 **human**. Cap: **two kicks per work item**, counted; nothing automatic (WT11). D7: a zero-delta `heartbeat` is `stalled`, never `live`; a leader beat renews CO-L.
 
 ## Scenarios (the playbooks stay in the proposal)
 

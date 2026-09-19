@@ -27,3 +27,4 @@ docs/portal/portal-data.js: derived python3 tools/build-docs-portal.py
 web/pack-index.js: derived python3 tools/build-web-index.py
 docs/_site/bundle.html: derived python3 tools/build-doc-site.py
 docs/api/*.md: derived python3 tools/build-api-docs.py
+docs/notes/rulings.md: register

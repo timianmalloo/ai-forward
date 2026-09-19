@@ -2,7 +2,7 @@
 id: coordination-p3-xp
 title: "Coordination plan - P3 liveness, the cross-platform residue, and the stale knowledge review (after P0/P1)"
 type: plan
-status: proposed
+status: superseded
 owner: "@timianmalloo"
 phase: "coordination"
 tags: [coordination, worktrees, parallelism, liveness, cross-platform, docs-freshness, p3]

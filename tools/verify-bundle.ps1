@@ -107,6 +107,17 @@ try {
         & $pyExe @pyArgs (Join-Path $repo "pack/scripts/verify-skill-contracts.py") --root $repo
     }
 
+    # PLAT-A (XP): a documented command that only one shell can run. Single-line, unchained,
+    # python3 - the 26 sites were red first (coordination-p3-p5-p8, track XP).
+    Gate "1f. documented commands run in any shell" {
+        & $pyExe @pyArgs (Join-Path $repo "pack/scripts/verify-documented-commands.py") --root $repo
+    }
+    # ID-A (P5, D6): a ruling cited as authority must resolve to a heading in docs/notes/rulings.md;
+    # ai-de measured eight numbers that defined nothing. Self-test proves the gate can fail.
+    Gate "1g. ruling citations resolve to one heading each" {
+        & $pyExe @pyArgs (Join-Path $repo "pack/scripts/verify-ruling-citations.py") --root $repo
+    }
+
     # FR-057: sync AND compare. The comparison is the gate; the sync alone is only a repair.
     Gate "2. source<->install drift (pack/ is the only source of truth)" {
         pwsh (Join-Path $repo "tools\sync-pack.ps1") | Out-Null

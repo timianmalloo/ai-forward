@@ -334,7 +334,7 @@ class LintTests(unittest.TestCase):
         self.assertIn("fan-out without contract: fan — fix:", out)
 
     def test_fan_out_with_zero_cap_exempt(self):
-        skill(self.tmp, "zero", "---\nname: zero\n" + SEAT + "---\n## Flow\nfan-out cap 0 → 2 is a raise; the tier · fan-out cap · budget row.\n")
+        skill(self.tmp, "zero", "---\nname: zero\n" + SEAT + "---\n## Flow\nCO-S0. fan-out cap 0 → 2 is a raise; the tier · fan-out cap · budget row.\n")
         rc, out = self._run("--root", self.tmp)
         self.assertEqual(0, rc, out)
 
@@ -343,7 +343,7 @@ class LintTests(unittest.TestCase):
         rc, out = self._run("--root", self.tmp)
         self.assertEqual(1, rc)
         self.assertIn("hard stop without message: halt — fix:", out)
-        skill(self.tmp, "halt", "---\nname: halt\n" + SEAT + "---\n## Flow\nThen **STOP for human triage** (CO-S2).\n")
+        skill(self.tmp, "halt", "---\nname: halt\n" + SEAT + "---\n## Flow\nCO-S0. Then **STOP for human triage** (CO-S2).\n")
         self.assertEqual(0, self._run("--root", self.tmp)[0])
 
     def test_dispatch_before_compile_refused(self):
@@ -351,7 +351,7 @@ class LintTests(unittest.TestCase):
         rc, out = self._run("--root", self.tmp)
         self.assertEqual(1, rc)
         self.assertIn("dispatch before compile: disp — fix:", out)
-        skill(self.tmp, "disp", "---\nname: disp\n" + SEAT + "---\n## Stage 0\nCO-S0 first.\n## Stage 3 — Dispatch\nspawn the tracks.\n")
+        skill(self.tmp, "disp", "---\nname: disp\n" + SEAT + "---\n## Stage 0\nCO-S0 first.\n## Stage 3 — Dispatch\nspawn the tracks with a deadline and a fallback.\n")
         self.assertEqual(0, self._run("--root", self.tmp)[0])
 
     def test_exit_2_when_no_skills_root(self):

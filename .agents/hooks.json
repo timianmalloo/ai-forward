@@ -30,5 +30,21 @@
         "timeout": 10
       }
     ]
+  },
+  "heartbeat": {
+    "PostToolUse": [
+      {
+        "type": "command",
+        "command": "py=$(python3 -c 'import sys;print(sys.executable)' 2>/dev/null); [ -x \"$py\" ] || py=$(python -c 'import sys;print(sys.executable)'); \"$py\" \"$(git rev-parse --show-toplevel)/docs/ai-forward-pack/hooks/heartbeat.py\" --host agy --event PostToolUse",
+        "timeout": 10
+      }
+    ],
+    "Stop": [
+      {
+        "type": "command",
+        "command": "py=$(python3 -c 'import sys;print(sys.executable)' 2>/dev/null); [ -x \"$py\" ] || py=$(python -c 'import sys;print(sys.executable)'); \"$py\" \"$(git rev-parse --show-toplevel)/docs/ai-forward-pack/hooks/heartbeat.py\" --host agy --event Stop",
+        "timeout": 10
+      }
+    ]
   }
 }

@@ -1,0 +1,146 @@
+---
+id: coordination-p3-p5-p8
+title: "Coordination plan - P3 liveness, P5 owner review, the cross-platform residue, then the P8 skill sweep (to cross-harness smoke-test readiness)"
+type: plan
+status: accepted
+owner: "@timianmalloo"
+phase: "coordination"
+tags: [coordination, worktrees, parallelism, liveness, owner-review, cross-platform, skills, p3, p5, p8]
+links:
+  - { to: proposal-owner-coordinator-subagent-coordination, rel: implements }
+  - { to: coordination-p3-xp, rel: supersedes }
+  - { to: coordination-p2-p8, rel: refines }
+  - { to: coordination-p0-p1, rel: refines }
+  - { to: note-20260919-pack-evolution-knowledge-review, rel: relates-to }
+review-by: "2026-12-18"
+review-suggested: []
+summary: >-
+  The last three build-plan items of the Owner / Coordinator / Sub-Agent proposal, run as one
+  coordinated session from compiled prompt al-01M2XN5XYFCHE5PWRQ3SSJGMM9: P3 progress liveness
+  with the running track and the kick ladder, P5 owner-review mechanics in a new
+  coord-decide.py, and the cross-platform residue XP in parallel (width 3, disjoint authored
+  sets, three seams), then P8's skill sweep serially once P5 has joined. The KB track of the
+  superseded plan ran first as the red-main fix. Coordinator owns the shared surfaces, the
+  front door for `decide`, INSTALL rev 79 and the linear landing; the close is a written
+  cross-harness smoke-test readiness statement.
+---
+
+# Coordination plan — P3 liveness · P5 owner review · XP residue · then P8
+
+- **Compiled from:** `al-01M2XN5XYFCHE5PWRQ3SSJGMM9` (raw `al-01M2XMRRFSBV7VYM2GKKGCP9YJ`, harness `claude-code`, dispatchable, no open decision request). Its goal state is this run's goal state; its *Not in scope* is the interdiction (CO-S0).
+- **Scope:** build-plan items **P3**, **P5** and the remainder of **P8** of the proposal (§7); the cross-platform residue **XP** (`docs/plans/cross-platform-readiness.md` P4/P5); the **KB** review (already landed as the red-main fix, `note-20260919-pack-evolution-knowledge-review`); the recorded residue of `coordination-p2-p8` "Carried forward".
+- **Supersedes** `coordination-p3-xp` (proposed, never dispatched): same P3 and XP rows, KB executed, P5 un-struck by moving `coord decide` out of `coord-core.py` (assumption #1 of the compiled prompt: the `mail`/`board` front doors already delegate by file name, `coord-core.py:1218-1220, 3699`).
+- **Coordinator:** session `coord-p3-p5-p8` (this session; Owner seat held by the same session per proposal §3.1, Adversary Mode at every join). **Sub-Agents:** `python-developer` for P3, P5 and XP; `python-developer` for P8 (skills are Markdown plus one lint).
+- **Multiplier:** measured ≈ 1.3× tokens, wall dominated by the coordinator's spine (`sp-0009`; `coordination-p2-p8` planned-vs-actual: four tracks ≈ 60 min wall for ≈ 166 min track time). **Tier:** T2 · **Fan-out cap:** 3, then 1.
+
+## Layer state
+| check | result | meaning |
+|---|---|---|
+| registry · merge driver | ok, 10 patterns; `coord-regen`, `coord-register` declared and registered (measured 2026-09-19T20:14Z, primary) | unchanged |
+| regeneration | 6 artifact(s) owed in the primary | regenerated in the fix tree by verify-bundle; the landing regenerates again |
+| leader | `coord-p3-p5-p8` pinned epoch 1 at 20:14Z; **lapsed** by 20:24Z (D13 TTL 300 s, renew 100 s) | the coordinator reclaims before each join (`--epoch` from `leader who`); **finding F-1** below |
+| requests | 1 silent expiry (`req-01M2XHE3K1XBPTJCS09092R754`, P1 → coordinator) — **resolved** 20:16Z: both tests were patched in `2b2cbea`; 1 untyped (predates P1) | clean after the resolve; the untyped one is reported, never expired |
+| sessions | `2eb8c619…` live in `ai-forward-coordination-decisions-ratified` (branch `land/p0-p1`, never ended); `red-main-fix` in the fix tree | residue R-2: end and clean up after the landing |
+| harness capability | claude edit boundary **enforcing** (spike S5); copilot **enforcing** (CLI 1.0.80), fails open on a 30 s hook timeout; `harness-status.json` absent — every dispatch channel is `observed-only` until the probe runs | tracks run on claude, `Agent` tool; nothing unverified is used as enforced |
+| base | `origin/main` after the red-main fix lands (this plan's first step) | every tree created off that commit |
+
+## Artifact classes
+| path / pattern | class | mechanism | coordination needed |
+|---|---|---|---|
+| `docs/docs-index.js`, `docs/audit/audit-data.js`, `docs/audit/index.html`, `docs/portal/portal-data.js`, `web/pack-index.js`, `docs/_site/bundle.html`, `docs/api/*.md` | derived | `coord-regen` | none — regenerated at the join (explicit commands from `join.json`, never `coord regen` from a worktree) |
+| `docs/audit/*.jsonl`, `docs/health-history.jsonl`, `.agents/log/*.jsonl`, `.agents/requests.jsonl` | register | union | none — each track's skills append their own entries; **never claimed** |
+| `docs/ai-forward-pack/**`, `.claude/**`, `.github/**`, `.grok/**`, `.agents/{skills*,hooks.json,rules/**}` | generated by `sync-pack.ps1` | none | **rule:** no track runs sync-pack; the coordinator syncs once at the landing |
+| `pack/scripts/coord-core.py` (`session heartbeat`, `coord track`, kick ladder 0–2), `pack/adapters/hooks/heartbeat.py` (new), **`pack/adapters/hooks/*.json` (all four hosts — the only writer of the hook configs this run)**, `pack/adapters/hooks/README.md`, `pack/scripts/pack-doctor.py` (heartbeat/track status), `tests/docs_explorer/test_coord_liveness.py`, `docs/specs/liveness-and-track.md`, `docs/design/liveness-and-track.md`, `docs/notes/note-*liveness*.md` | authored | lease | **Track P3 only** |
+| `pack/scripts/coord-decide.py` (new: `decide request`, `decide rule`, `decide list`), `pack/scripts/verify-ruling-citations.py` (new — absorbed from `~/projects/ai-de/tools/verify-ruling-citations.py`, re-homed to this repo's `docs/notes/`), `pack/adapters/hooks/owner-review-gate.py` (new; the `Stop`/`TaskCompleted` exit-2 gate), `docs/notes/rulings.md` (new register: `### Ruling NN — …` blocks, the only definition site), `tests/docs_explorer/test_coord_decide.py`, `tests/docs_explorer/test_verify_ruling_citations.py`, `docs/specs/owner-review.md`, `docs/design/owner-review.md`, `docs/notes/note-*owner-review*.md` | authored | lease | **Track P5 only** |
+| the counted command sites (`docs/investigations/cross-platform-readiness.md` XC-*): the 8 backslash-continued and 4 `&&`-chained documented commands in `pack/commands/**/SKILL.md`, `pack/knowledge/*.md`, `pack/adapters/INSTALL.md` **body**; the 10 bare `python` skill commands; the skill scaffold's Audit-block sentence (the scaffold `tools/new-capability.py` writes — there is no `pack/templates/skill*` file; XP confirms the site from the investigation before editing); CT27's `$LASTEXITCODE` remedy (`pack/knowledge/communication-and-task-discipline.md`); `tests/docs_explorer/test_coord_derived.py` (default branch from `git symbolic-ref` or `git init -b main`), `tests/docs_explorer/test_run_evals.py` (`realpath` both sides), T-3 (`audit-log selfcheck --since`), `tests/docs_explorer/test_documented_commands_portable.py` (new lint-shaped test), `pack/scripts/verify-documented-commands.py` (new gate, if the test is promoted) | authored | lease | **Track XP only** — command *shape* edits, never meaning; the `AGENT_SESSION` sanitiser is one function in P3's file and travels as a seam |
+| `pack/commands/*/SKILL.md` (28) beyond command shape, `pack/adapters/copilot/prompts/*.prompt.md`, `pack/adapters/claude-code/agents/*.md` and `pack/adapters/copilot/agents/*.md` (persona cards), `pack/scripts/verify-skill-contracts.py`, `tests/docs_explorer/test_verify_skill_contracts.py`, `docs/specs/skill-evolution.md`, `docs/design/skill-evolution.md` | authored | lease | **Track P8 only — dispatched after P3 and P5 have joined** (P8 depends on P5's `decide`, P4's mail and P7's compile) |
+| `pack/adapters/INSTALL.md` **frontmatter** (rev 79, `changes`, `counts`), `README.md`, `pack/README.md`, `pack/OVERVIEW.md`, managed blocks, `tools/check-consistency.py`, `pack/context-budget.json`, `.agents/artifacts.yml`, `docs/coordination/**`, `docs/security/**`, `docs/lessons/defect-classes.md`, `pack/knowledge/agent-coordination.md` (doctrine sentences the tracks hand over), the `decide` front door in `coord-core.py` (one parser, one delegation target — added **after** P3's join) | authored | lease | **Coordinator only** |
+
+### Fixed contracts (GO5: no decision edge between the parallel tracks)
+
+**Hook configs have one writer (P3).** Claude Code's `hooks` object takes an array per event, so a second command on `Stop` is additive. P5 writes its gate as its own script (`owner-review-gate.py`) and hands the JSON entry per host (event, matcher, command in the README's interpreter-resolution form) as **seam P5 → P3** (`docs/coordination/seam-p5-to-p3.json` in P5's tree); P3 applies it before its implement stage closes, or the coordinator applies it at P5's join if P3 has already joined. Grok/agy/Copilot entries are `observed-only` until a live session shows them fire (CO12).
+
+**The decision request is P1's typed request (landed), not a new store.** P3's kick-ladder rung 2 emits `coord request add --to <owner-session> --deadline <s> --fallback <text> --reason kick-ladder --ref <kick mail id>` and a `decision-request` mail (P4 kind, landed). P5's `coord decide request` writes **the same request record** plus the five decision fields (options · evidence · recommendation · reversibility · blast radius) in `--contract`, and dual-writes the `decision-request` mail. A `coord decide rule <n>` appends `### Ruling NN — <title>` to `docs/notes/rulings.md`, resolves the request (`coord request resolve --resolution "Ruling NN"`) and sends a `ruling` mail. So P3 needs nothing from P5 to build; P5 needs nothing from P3.
+
+**The ruling register is `docs/notes/rulings.md`.** Definitions are headings (`### Ruling NN — …`), citations are prose; `verify-ruling-citations.py` fails a number cited anywhere under `docs/`, `pack/`, `.agents/log` with no heading definition, and a heading defined twice. Numbering is monotonic from the register (no allocator elsewhere — ID-A). The coordinator adds the register's `.agents/artifacts.yml` line at the join (`register` class).
+
+**Track state vocabulary (P3):** `live · stalled · blocked · done`, rendered by `coord track` from heartbeats (`.agents/log/<session>.jsonl` `kind: heartbeat` with progress deltas: calls, files, tokens since the last beat) and the worktree mtime fallback; **pings with zero progress deltas render `stalled`, never `live`**; an empty corpus renders `NOT CHECKED`. The kick ladder is `notify` (mail `note`) → `kick` (mail `kick`, **capped at two per work item**, counted) → decision request (rung 2 above). D7: no phi-accrual.
+
+**Owner review gate (P5):** the `Stop` (Claude Code) / `agentStop` (Copilot) hook exits 2 with a reason when the stopping session holds an unresolved decision request it sent, or when its track's plan row names exit evidence that the session's audit entry does not carry; exits 0 on every path it cannot evaluate (fail-safe, like the doorbell). Where a host has no such event it is `unsupported`, recorded in `HARNESS_STATUS`.
+
+## Tracks
+| track | owns (authored) | depends on | tier | fan-out cap | budget | exit evidence | harness |
+|---|---|---|---|---|---|---|---|
+| **KB — stale knowledge review** (done) | the KB row of `coordination-p3-xp` | V13; the freshness gate | T1 | 0 | 80 calls · 60 min | **returned 20:20Z:** seven docs re-verified against rev 78, `freshness --gate fail` exit 0, decision note; coordinator re-ran the three gates; landed as the red-main fix (19 calls, ≈ 5 min, `general-purpose`) | claude |
+| **P3 — liveness + track** | the P3 row above | proposal §4 (progress heartbeat, running track, kick ladder), §7 P3, D7; CO17 as landed in `agent-coordination.md`; KB hook-surface table (`docs/knowledge/multi-agent-coordination/data-and-constants.md`); P4's doorbell adapters as landed (`mail-doorbell.py`, the four hook JSONs — add entries, do not restructure); P1's typed requests as landed (rung 2); `session-start.py` as the model for a hook script | T2 | 0 | 160 calls · 150 min · ceiling 400k | `docs/specs/liveness-and-track.md`, `docs/design/liveness-and-track.md` with gate records; `session heartbeat` from `PostToolUse`/`Stop` (Claude Code), the Grok/agy/Copilot equivalents written to the documented contract and marked `observed-only`, worktree-mtime fallback; `coord track` per work item: owner, state, blocked-on, deadline, last progress; the fixture: zero-delta pings render `stalled`; empty corpus → NOT CHECKED; kick ladder 0–2 with the two-kick cap; `pack-doctor` prints heartbeat status; `coord metrics` counts stalls, kicks, rung-2 escalations; tests red-first (`test_coord_liveness.py`); existing coord tests green in-tree; lints 0; the XP sanitiser patch applied | claude — enforced boundary; `Agent` tool observed |
+| **P5 — owner review mechanics** | the P5 row above | proposal §4 "Decision request / Ruling" (line 285), §3.2, D6; `~/projects/ai-de/tools/verify-ruling-citations.py` (the gate to absorb: header measured 2026-09-11, eight numbers defined nothing) and `~/projects/ai-de/docs/collaboration/session-contracts.md`; P1's request verbs and P4's mail kinds as landed; the `Stop`/`agentStop` hook contracts in `pack/adapters/hooks/README.md` | T2 | 0 | 160 calls · 150 min · ceiling 400k | `docs/specs/owner-review.md`, `docs/design/owner-review.md` with gate records; `coord-decide.py request` refuses without the five fields, a deadline and a fallback; `rule <n>` appends the heading, resolves, mails; `list` renders open requests and rulings (empty → NOT CHECKED); `verify-ruling-citations.py` red-first against a fixture with an undefined and a twice-defined number, then green against the repo; `owner-review-gate.py` exit 2 with reason on an unresolved decision request, exit 0 on every unevaluable path; the seam JSON for P3; tests red-first (`test_coord_decide.py`, `test_verify_ruling_citations.py`); lints 0; the contract sentences for the two coordination skills delivered as text to the coordinator | claude — as P3 |
+| **XP — cross-platform residue** | the XP row above | `docs/plans/cross-platform-readiness.md` P4/P5; `docs/investigations/cross-platform-readiness.md` (the counted sites XS-01..25, T-1/T-2/T-3); classes PLAT-A/PLAT-B; CT27; DC-207 | T1 | 0 | 100 calls · 90 min · ceiling 400k | the counted commands rewritten (single lines or separate lines; `python` → `python3`); a lint-shaped test that fails on a backslash continuation or `&&` chain inside a documented command block under `pack/`; `test_coord_derived.py` green under both `-c init.defaultBranch=main` and `=master` (the three failures in `verify-bundle` gate 3 today); `test_run_evals.py` realpath; T-3 established and fixed or recorded as not reproducible with the run; the `AGENT_SESSION` sanitiser as a patch file (`docs/coordination/seam-xp-to-p3.patch`) with its test; lints 0 | claude — as P3 |
+| **P8 — skill sweep** (after P3 + P5 join) | the P8 row above | proposal §7b.3 (the per-skill rows for `also`, `prompts`/`searchprompts`, `addpacktorepo`/`updatepack`, `extendaibundle`, `session-profiler`, `dream`, `apply-learnings`, `auditlog`), §7b.5; `verify-skill-contracts.py` and `note-20260919-readers-seat-and-citation-placement` as landed; P5's `decide` verbs as landed; `context-budget.py skills --gate` | T2 | 0 | 160 calls · 150 min · ceiling 400k | `docs/specs/skill-evolution.md`, `docs/design/skill-evolution.md`; the ten skills without a CO-S0 citation carry it (inline or `reference/co-s0.md` where the budget cannot hold it); the §7b.3 rows applied; `apply-learnings`' plan becomes a `decision-request` to the target's human seat; `addpacktorepo`/`updatepack` install the doorbell adapters, create `.agents/mail/` (ignored) and stop ignoring `.agents/log/`; `extendaibundle` refuses a new skill without `runs_as`; `verify-skill-contracts.py` extended red-first for each new rule; `context-budget.py skills --gate` green; Copilot prompt mirrors synced by the coordinator; lints 0 | claude — as P3 |
+
+## Serial spine
+| item | why it cannot be parallel | who owns it |
+|---|---|---|
+| The red-main fix lands before any tree is cut | every track's base is `origin/main`; a red base makes every track's CI red | coordinator (done first) |
+| P8 after P3 and P5 have joined | P8 re-cuts skills against `decide` verbs and the kick ladder that do not exist yet (GO5(b): its shape changes with theirs) | coordinator |
+| The `decide` front door in `coord-core.py` | P3 owns the file during its span; one parser line after P3's join | coordinator |
+| INSTALL rev 79 frontmatter, counts, `artifacts.yml` lines, doctrine sentences, sync, generators, `verify-bundle`, linear landing | shared surfaces | coordinator |
+
+## Seams
+| from -> to | the request | resolved by |
+|---|---|---|
+| XP -> P3 | the `AGENT_SESSION` sanitiser (reject `:` `/` `\`) + its test, as `docs/coordination/seam-xp-to-p3.patch` in XP's tree | P3 applies before its implement stage closes; if P3 has closed, the coordinator applies at XP's join |
+| P5 -> P3 | the hook JSON entries for `owner-review-gate.py` per host, as `docs/coordination/seam-p5-to-p3.json` in P5's tree | P3 applies before its implement stage closes; else the coordinator at P5's join |
+| P3 -> coordinator | the doctrine sentence(s) for `agent-coordination.md` (if CO17 needs a word), the INSTALL delta text, the `pack-doctor` line | coordinator at the landing |
+| P5 -> coordinator | the front-door parser line; the contract sentences for `execute-with-coordination` and `prepare-for-coordination` (verbatim, with their insertion point); the `artifacts.yml` register line for `docs/notes/rulings.md`; the INSTALL delta text | coordinator at the landing (skills text lands with P8 unless P8 is struck) |
+| XP -> coordinator | the INSTALL body edits are XP's own (the coordinator edits only the frontmatter, after the join); the lint's gate line for `run-verify-gates.py` | coordinator at the landing |
+
+## Struck tracks
+| track | why it was not worth its multiplier |
+|---|---|
+| A separate Owner sub-agent for rulings | proposal §3.1 lets the Coordinator equal the Owner; a second seat costs one dispatch per ruling on a run whose rulings are few (compiled prompt assumption #2) |
+| Running the cross-harness smoke test in this run | *Not in scope* of the compiled prompt; readiness is the deliverable, and the dispatch probe needs the human's harness logins |
+| Merging XP into P3 | different intent and reviewers; XP is T1 |
+| Re-running the KB track | landed before this plan was written; recorded above as done |
+
+## Order of operations
+| # | action | cost | why now |
+|---|---|---|---|
+| 1 | land the red-main fix (fix tree → `main`, linear); confirm both workflows green | ≈ 10 min | the base |
+| 2 | `coord worktree new` × 3 off `origin/main` (`feat/p3-liveness`, `feat/p5-owner-review`, `fix/xp-cross-platform`); `coord doctor` in each; coordinator land tree `land/p3-p5-p8` | ≈ 5 min | trees before the first spawn (CO15) |
+| 3 | dispatch P3, P5, XP with the five-part contract (width 3), each brief opening with the `start` line | — | the parallel span |
+| 4 | coordinator loop: collect, verify in-tree, resolve seams oldest first, `coord metrics`; variant = tracks with unreturned evidence | — | Stage 5 |
+| 5 | join XP, then P3, then P5 (`conductor-join.py`, `--epoch` after `leader reclaim`); apply any unapplied seam at the join; add the `decide` front door | ≈ 15 min each | dependency order |
+| 6 | dispatch P8 off the joined land branch; verify; join | ≈ 60 min | unblocked by 5 |
+| 7 | landing: register classes; rollups; `artifacts.yml` lines; doctrine sentences; INSTALL rev 79; sync; every generator; full pytest; `verify-bundle.ps1`; linear commit; CI both workflows; `coord worktree cleanup` (report, then `--remove`); end the stale `2eb8c619` session; planned vs actual; readiness statement | ≈ 45 min | the deliverable |
+
+## Findings carried into this run (F-n) and residue (R-n)
+| id | finding / residue | owner | disposition |
+|---|---|---|---|
+| F-1 | D13's leader TTL (300 s, renew 100 s) is tuned for a running process; an interactive coordinator whose turn takes minutes lapses between renews and reclaims at every join | P3 | P3's `PostToolUse` heartbeat is the natural renewer: a heartbeat from the leader session renews the designation (design decision for P3's spec; if struck, record why) |
+| F-2 | `harness-status.json` is absent on this machine: every dispatch channel is `observed-only` | coordinator | readiness statement names the probe per harness as the smoke test's first step |
+| F-3 | **D10 collides with PLAT-B in the log writer.** The eleven `.agents/log/*.jsonl` from the P0–P8 tracks are tracked by policy (D10) but could not land in the red-main fix: their `session-start`/`session-end` records carry the absolute worktree path in `tree`, and gate 1b (`no machine-specific paths in tracked files`) refuses them, as does `test_cross_platform_controls.py::test_the_repo_is_clean`. Found by the gate, not by review, on the first attempt to commit them | P3 | `coord-core.py`'s session writer records `tree` repo-relative (or the basename) and the heartbeat writer follows the same rule; a red-first test writes a session-start in a linked worktree and asserts no absolute path in the record; the eleven logs are then re-recorded or committed with the `tree` field rewritten **by the writer's own migration**, never by hand |
+| R-1 | the RAI policy and `scrub.py` are not referenced from `engineering-governance.md`'s checklist (KB finding) | coordinator | one sentence at the landing if the budget allows, else deferred with the reason |
+| R-2 | session `2eb8c619…` live in `land/p0-p1`, tree HELD | coordinator | `coord session end` + cleanup at step 7 |
+| R-3 | `board post` should let the writer mint the id (`mail-` prefix); eight pre-existing ruff findings in `coord-core.py`/`conductor-join.py`; the DOM-shim render proof for the audit page (from `coordination-p2-p8`) | — | deferred: not on the path to smoke-test readiness; listed in the close |
+| R-4 | one untyped request predates P1 (`req-01M2XGPYW5ZNC39094ZCM0WHRW`) | coordinator | reported, never expired (doctor WARN by design) |
+
+## Planned vs actual (2026-09-19, execution)
+| track | budget planned | actual (from the reports; spans to the minute) | seam requests | coordinator verification | join |
+|---|---|---|---|---|---|
+| KB knowledge review | 80 calls · 60 min | 19 calls · ≈ 5 min (`general-purpose`); seven docs re-verified, one wrong date in its report (ledger newest entry 2026-08-28, not 2026-07-11) caught at verification | 0 | derive/validate/freshness re-run exit 0; landed as `a01ed77` on `main` (linear), all three workflows green | the red-main fix, before any tree was cut |
+| XP cross-platform | 100 · 90 | 44 · ≈ 25 min; 26 findings red → 0; three default-branch tests green under both settings; T-2/T-3 found already fixed | 1 raised by design (sanitiser patch to P3) — applied by P3 | gate exit 0, 4 + 24 + 24 tests re-run, patch `--check` clean, `coord-core.py` equals base | `111fa26` / `2c9eeea` (260 passed, 7 gates) |
+| P5 owner review | 160 · 150 | 52 · ≈ 27 min; red-first 43 → 35 (+3 front-door tests by the coordinator) | 2 written (to P3: hook entries; to coordinator: front door, sentences, register line, INSTALL, doctrine) — all applied | self-test 6 cases, gate OK 1/1, 35 tests re-run, fail-safe exit 0 observed with `--host claude`, shared files equal base | `6451348` / `74cd4bf` (263 passed) |
+| P3 liveness | 160 · 150 | 63 · 31 min; red-first 41 → 46 (with the XP seam test); context ≈ 300k/400k | 1 applied (XP → P3); 1 absent at its close (P5 → P3, applied by the coordinator at integration) | 46 tests re-run, four hook JSONs parse, `track` rendered live, machine-path gate clean | `747a97b` / `364a941` (266 passed) — **one hand-resolved conflict**: `pack/adapters/hooks/README.md`, edited by P5 outside its ownership (boundary correction; both rows kept) |
+| P8 skill sweep | 160 · 150 | 54 · 26 min; lint red-first 11 refusals → clean; tests 12 → 18; budget gate held by compressions + `reference/join.md` | 0 raised; 5 engine seams reported (pack-apply hooks — built by the coordinator; scaffold `runs_as`; two reader gaps; a superseded template path) | lint + self-test + budget gate + 25 tests re-run; seam (b) sentences present | `e952f99` (266 passed) |
+| Coordinator | 400 calls main line | ≈ 230 tool calls over ≈ 3 h 10 min (20:14Z → 23:25Z), the serial spine: red-main fix, compile, plan, 5 joins, integration (front door + WT-A fix, hook seam, doctrine under the ceiling, log migration, rollups, 4 classes, gates 1f/1g canonical + CI, pack-apply hooks), INSTALL rev 79, sync, verify, linear landing | 1 stale request resolved (P1's, late); leader lapsed at every join until F-1 (reclaimed 4×, epoch 1 → 5) | — | linear rebuild of `land/p3-p5-p8` onto `main` |
+
+**Did it pay?** Three tracks overlapped for their whole span: ≈ 31 min of wall for ≈ 83 min of track time, every track well under budget (the budgets were 2.5–3× what was needed — the fixed contracts removed the decision edges, so the next plan's budgets come down). P8 ran serially as planned (26 min). Zero refused decisions, one boundary correction (P5 → README), two integration defects found by the coordinator's own verification rather than by the tracks (WT-A: the register resolved at the primary; the pack-apply hook list) and two more found by gates the previous landing left in place (gate parity refused the two new gates until CI carried them; gate 1b refused the logs). The coordinator's spine stayed the critical path, as in `sp-0009` and `coordination-p2-p8`.
+
+**Carried forward (findings, not goals):** the WT-A sweep over the other `repo_root(` call sites; the GATE-A control (gates scan index + untracked); the MEAS-A baseline rule in Proof Packs; the TEST-B sweep of 34 subTest sites; the scaffold writes `runs_as` + the CO-S0 pointer (P8 seam 2); `session-profile.py`/`dream.py` readers for messages, doorbells, board reads, refused dispatches (P8 seam 4); `runs_as: Coordinator` on five skills that dispatch nothing; the inline bare `python` in `extendaibundle.prompt.md`; the six pointer skills' baselines (~60 tokens each) if the CO-S0 sentence should be inline; `coord track` deadline `not recorded` until `delegate`; R-3 unchanged; the `simplify:` marker at `coord-core.py:64`.
+
+## Status
+| | |
+|---|---|
+| **Completed** | red main (a01ed77, all workflows green); compiled prompt; plan; KB, XP, P5, P3 and P8 executed, verified in-tree and joined by `conductor-join.py`; coordinator integration; INSTALL rev 79; readiness statement (`note-20260919-cross-harness-smoke-test-readiness`) |
+| **Remaining** | the carried-forward findings above (none on the smoke-test path); the smoke test itself (out of scope — operator logins) |
+| **Best next action** | run probe 1 of the readiness note in a fresh Claude Code session on this repo: three tool calls, `coord track`, then a `decide request` and a refused stop — the two promotions that turn `observed-only` into `enforced` on the first harness |

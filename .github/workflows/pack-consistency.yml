@@ -60,6 +60,13 @@ jobs:
       - name: "Skill contracts: seat, CO-S0 before dispatch, CO-S2 on hard stops"
         run: python3 pack/scripts/verify-skill-contracts.py
 
+      # PLAT-A (XP): a documented command only one shell can run. ID-A (P5): a ruling cited
+      # as authority must resolve to exactly one heading in docs/notes/rulings.md.
+      - name: Documented commands run in any shell
+        run: python3 pack/scripts/verify-documented-commands.py
+      - name: Ruling citations resolve to one heading each
+        run: python3 pack/scripts/verify-ruling-citations.py
+
       # FR-033. The repository's foundational invariant: pack/ is source, .claude/ and
       # .github/ are generated. verify-bundle.ps1 has always checked this locally and CI
       # never ran it, so source↔install drift — the one failure mode the whole architecture
@@ -198,6 +205,13 @@ jobs:
         shell: pwsh
         run: python pack/scripts/verify-skill-contracts.py
 
+      - name: Documented commands run in any shell (Windows)
+        shell: pwsh
+        run: python pack/scripts/verify-documented-commands.py
+      - name: Ruling citations resolve to one heading each (Windows)
+        shell: pwsh
+        run: python pack/scripts/verify-ruling-citations.py
+
       - name: Source↔install drift (pwsh on Windows)
         shell: pwsh
         run: |
@@ -305,6 +319,13 @@ jobs:
 
       - name: "Skill contracts: seat, CO-S0 before dispatch, CO-S2 on hard stops"
         run: python3 pack/scripts/verify-skill-contracts.py
+
+      # PLAT-A (XP): a documented command only one shell can run. ID-A (P5): a ruling cited
+      # as authority must resolve to exactly one heading in docs/notes/rulings.md.
+      - name: Documented commands run in any shell
+        run: python3 pack/scripts/verify-documented-commands.py
+      - name: Ruling citations resolve to one heading each
+        run: python3 pack/scripts/verify-ruling-citations.py
 
       - name: Source↔install drift (pwsh on macOS)
         shell: pwsh

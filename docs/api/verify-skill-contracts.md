@@ -34,10 +34,17 @@ WHAT IT CHECKS. Every `<skills-root>/<name>/SKILL.md` (plus that skill's `refere
   3. hard stop       a hard-stop stage (`**STOP`, `stop for human`, `never merges`) cites CO-S2
   4. dispatch order  a dispatcher (a Dispatch heading or stage label, `coord dispatch`, or a
                      sentence-initial `spawn`) cites CO-S0 in SKILL.md before that instruction
+  5. compile         every skill cites CO-S0 in SKILL.md - inline, or the one-line pointer to
+                     `reference/co-s0.md` (spec-skill-evolution US-1; measured 10 of 28 without)
+  6. pointer         a SKILL.md that names `reference/co-s0.md` has a reference text carrying CO-S0
+  7. deadline        a dispatcher, or a skill naming a fan-out cap above zero, names a deadline
+                     and a fallback for the dispatch (CO8, CO9; measured: execute-with-coordination
+                     said "fallback" once and "deadline" nowhere)
 
 Refusals, one per line on stdout, in the pack's grammar:  <code>: <skill> — fix: <text>
 Codes are stable (O7): seat missing · seat invalid · fan-out without compile · fan-out without
-contract · hard stop without message · dispatch before compile · skills root missing.
+contract · hard stop without message · dispatch before compile · compile missing · pointer without
+reference · dispatch without deadline · skills root missing.
 
 USAGE
   python3 verify-skill-contracts.py                 check pack/commands (or .claude/skills)

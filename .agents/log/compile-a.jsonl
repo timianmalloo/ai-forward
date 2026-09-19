@@ -1,0 +1,20 @@
+{"agent": "compile-a", "at": 1789837264.176092, "kind": "session-start", "path": "-", "seq": 1, "session": "compile-a", "tree": "worktree", "wi": "WI-0", "worktree": "ai-forward-impl-compile-stage-a"}
+{"agent": "compile-a", "at": 1789837557.7815402, "kind": "claim", "path": "pack/scripts/prompt-compile.py", "seq": 2, "session": "compile-a", "ttl": 900.0, "wi": "compile-a"}
+{"agent": "compile-a", "at": 1789837557.9946198, "kind": "claim", "path": "pack/scripts/verify-compiled-prompt.py", "seq": 3, "session": "compile-a", "ttl": 900.0, "wi": "compile-a"}
+{"agent": "compile-a", "at": 1789837558.207672, "kind": "claim", "path": "pack/adapters/prompt-templates/claude-code.v1.md", "seq": 4, "session": "compile-a", "ttl": 900.0, "wi": "compile-a"}
+{"agent": "compile-a", "at": 1789837558.424242, "kind": "claim", "path": "pack/adapters/prompt-templates/codex.v1.md", "seq": 5, "session": "compile-a", "ttl": 900.0, "wi": "compile-a"}
+{"agent": "compile-a", "at": 1789837558.638226, "kind": "claim", "path": "tests/docs_explorer/test_prompt_compile.py", "seq": 6, "session": "compile-a", "ttl": 900.0, "wi": "compile-a"}
+{"agent": "compile-a", "at": 1789837558.853247, "kind": "claim", "path": "tests/docs_explorer/test_verify_compiled_prompt.py", "seq": 7, "session": "compile-a", "ttl": 900.0, "wi": "compile-a"}
+{"agent": "compile-a", "at": 1789837559.065954, "kind": "claim", "path": "tests/docs_explorer/fixtures/compile-eval", "seq": 8, "session": "compile-a", "ttl": 900.0, "wi": "compile-a"}
+{"agent": "compile-a", "at": 1789837731.750627, "kind": "release", "path": "pack/adapters/prompt-templates/claude-code.v1.md", "seq": 9, "session": "compile-a", "wi": "compile-a"}
+{"agent": "compile-a", "at": 1789837731.967881, "kind": "release", "path": "pack/adapters/prompt-templates/codex.v1.md", "seq": 10, "session": "compile-a", "wi": "compile-a"}
+{"agent": "compile-a", "at": 1789837732.184347, "kind": "claim", "path": "pack/templates/prompt-templates/claude-code.v1.md", "seq": 11, "session": "compile-a", "ttl": 900.0, "wi": "compile-a"}
+{"agent": "compile-a", "at": 1789837732.397963, "kind": "claim", "path": "pack/templates/prompt-templates/codex.v1.md", "seq": 12, "session": "compile-a", "ttl": 900.0, "wi": "compile-a"}
+{"agent": "compile-a", "at": 1789838238.813558, "kind": "release", "path": "pack/scripts/prompt-compile.py", "seq": 13, "session": "compile-a", "wi": "compile-a"}
+{"agent": "compile-a", "at": 1789838239.030213, "kind": "release", "path": "pack/scripts/verify-compiled-prompt.py", "seq": 14, "session": "compile-a", "wi": "compile-a"}
+{"agent": "compile-a", "at": 1789838239.248429, "kind": "release", "path": "pack/templates/prompt-templates/claude-code.v1.md", "seq": 15, "session": "compile-a", "wi": "compile-a"}
+{"agent": "compile-a", "at": 1789838239.4685812, "kind": "release", "path": "pack/templates/prompt-templates/codex.v1.md", "seq": 16, "session": "compile-a", "wi": "compile-a"}
+{"agent": "compile-a", "at": 1789838239.68743, "kind": "release", "path": "tests/docs_explorer/test_prompt_compile.py", "seq": 17, "session": "compile-a", "wi": "compile-a"}
+{"agent": "compile-a", "at": 1789838239.905347, "kind": "release", "path": "tests/docs_explorer/test_verify_compiled_prompt.py", "seq": 18, "session": "compile-a", "wi": "compile-a"}
+{"agent": "compile-a", "at": 1789838240.123989, "kind": "release", "path": "tests/docs_explorer/fixtures/compile-eval", "seq": 19, "session": "compile-a", "wi": "compile-a"}
+{"agent": "compile-a", "at": 1789839108.073951, "kind": "session-end", "path": "-", "seq": 20, "session": "compile-a", "wi": "WI-0", "worktree": "ai-forward-impl-compile-stage-a"}

@@ -105,6 +105,12 @@ Typed seam requests (spec-typed-seam-requests): FAIL on a request past its deadl
 no recorded outcome; WARN on stale acks and untyped rows; `not recorded` with no store.
 One reader: coord-core.py's request_doctor_lines, loaded beside this file.
 
+### `check_heartbeat(root)`
+
+Progress liveness (spec-liveness-and-track, P3): who beats, how fresh, how many stalled -
+or `not recorded` when no heartbeat row exists (CTX-H: an uninstalled control looks like a
+quiet fleet). One reader: coord-core.py's heartbeat_doctor_line, loaded beside this file.
+
 ### `check_coordination(root)`
 
 Is the coordination layer switched ON in this repo? (CTX-H)
@@ -163,6 +169,6 @@ lesson into a control that fires at the moment of the mistake).
 
 ## Coverage
 
-- Public functions: **15** · documented: **10** (**67%**)
+- Public functions: **16** · documented: **11** (**69%**)
 - Undocumented (recorded, not invented): `check_installed`, `check_surface`, `check_block`, `check_graph`, `run`
 

@@ -72,7 +72,7 @@ downstream dispatch risk was retired by removing the capability, not by acceptin
 |---|---|---|---|---|---|
 | [design-docs-explorer-grounding-spatial-navigation](design/docs-explorer-grounding-and-spatial-navigation.md) | Committed project docs + local search/selection/context state | **L/D** stable artifact IDs and selected context are visible in the same-device URL/history; no new personal-data category is introduced | mitigate | Same-origin local operation only; no analytics, model egress, cross-user store, or remote state. Existing no-secrets/no-PII rules for committed docs still apply. | Navigation state lasts only in browser history/session and is cleared by leaving the page or removing the hash; document retention follows Git governance. |
 
-<!-- rolled up from 1 artifact(s) by docs-graph.py rollup on 2026-09-03 -->
+<!-- rolled up from 1 artifact(s) by docs-graph.py rollup on 2026-09-19 -->
 <!-- END GENERATED -->
 
 ## 4. Accepted-risk register (maintained by hand)

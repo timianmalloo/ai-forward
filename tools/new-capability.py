@@ -115,7 +115,7 @@ Load what already exists and treat it as the authoritative source of truth (Rigo
 - [ ] Adversarial gate passed; vetoes resolved or recorded; authors did not self-clear.
 
 ## Documentation & discoverability (last action)
-Per the Discoverability Mandate (V10): write the artifact's frontmatter and sync the derived index via `python3 docs/ai-forward-pack/scripts/docs-graph.py derive` — never ad-hoc scripts (V18). Verify the artifact is linked into the graph. Work that is not discoverable in the Explorer is not done.
+Per the Discoverability Mandate (V10): write the artifact's frontmatter and sync the derived index via `python3 docs/ai-forward-pack/scripts/docs-graph.py derive` — never ad-hoc scripts (V18). Verify the artifact is linked into the graph. Work that is not discoverable in the Explorer is not done. On Windows the interpreter word is `python` or `py -3`, not `python3` — `pack-doctor.py`'s `python interpreter` check names the working form for this machine.
 
 **Handoff:** <the next skill, if any>.
 """

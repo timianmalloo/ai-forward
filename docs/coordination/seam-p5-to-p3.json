@@ -1,0 +1,76 @@
+{
+  "seam": "P5 -> P3",
+  "plan": "docs/coordination/coordination-p3-p5-p8.md",
+  "script": "pack/adapters/hooks/owner-review-gate.py",
+  "deploys_to": "docs/ai-forward-pack/hooks/owner-review-gate.py",
+  "rule": "P3 (the one writer of pack/adapters/hooks/*.json) adds each entry below to the named host config, additively - Claude Code's `hooks` object takes an array per event, so a second entry on an event is appended, never replaced. The command form is the README's run-time interpreter resolution; nothing machine-specific (PLAT-A/PLAT-B). Status per host is `observed-only` until a live session shows the hook refuse a stop (CO12); Antigravity is `unsupported` (no stop event documented) and gets no entry.",
+  "entries": {
+    "claude-code.settings.hooks.json": {
+      "path": "hooks",
+      "add": {
+        "Stop": [
+          {
+            "hooks": [
+              {
+                "type": "command",
+                "command": "py=$(python3 -c 'import sys;print(sys.executable)' 2>/dev/null); [ -x \"$py\" ] || py=$(python -c 'import sys;print(sys.executable)'); \"$py\" docs/ai-forward-pack/hooks/owner-review-gate.py --host claude --event Stop",
+                "timeout": 10
+              }
+            ]
+          }
+        ],
+        "SubagentStop": [
+          {
+            "hooks": [
+              {
+                "type": "command",
+                "command": "py=$(python3 -c 'import sys;print(sys.executable)' 2>/dev/null); [ -x \"$py\" ] || py=$(python -c 'import sys;print(sys.executable)'); \"$py\" docs/ai-forward-pack/hooks/owner-review-gate.py --host claude --event SubagentStop",
+                "timeout": 10
+              }
+            ]
+          }
+        ]
+      },
+      "status": "observed-only"
+    },
+    "grok.ai-forward-hooks.json": {
+      "path": "hooks",
+      "add": {
+        "Stop": [
+          {
+            "hooks": [
+              {
+                "type": "command",
+                "command": "py=$(python3 -c 'import sys;print(sys.executable)' 2>/dev/null); [ -x \"$py\" ] || py=$(python -c 'import sys;print(sys.executable)'); \"$py\" docs/ai-forward-pack/hooks/owner-review-gate.py --host grok --event Stop",
+                "timeout": 10
+              }
+            ]
+          }
+        ]
+      },
+      "status": "observed-only"
+    },
+    "copilot.ai-forward-hooks.json": {
+      "path": "hooks",
+      "add": {
+        "agentStop": [
+          {
+            "type": "command",
+            "bash": "python3 docs/ai-forward-pack/hooks/owner-review-gate.py --host copilot --event agentStop",
+            "powershell": "python docs/ai-forward-pack/hooks/owner-review-gate.py --host copilot --event agentStop",
+            "timeoutSec": 10
+          }
+        ]
+      },
+      "status": "observed-only",
+      "note": "the gate emits {\"decision\":\"block\",\"reason\":...} with exit 0 on this host (Copilot's own block form, as mail-doorbell.py); subagentStop is handled by the script but not wired until the event is verified"
+    },
+    "agy.ai-forward-hooks.json": {
+      "add": {},
+      "status": "unsupported",
+      "note": "Antigravity documents no stop-class event; the script exits 0 for --host agy"
+    }
+  },
+  "readme": "pack/adapters/hooks/README.md carries the table row and the per-host stop-event table (already written by P5)",
+  "verification": "after applying: `python3 -m pytest -q tests/docs_explorer/test_coord_decide.py -k Gate` stays green; a live Claude Code session with AGENT_SESSION set and an open decision request it sent must see its Stop refused with the reason on stderr - that observation promotes the host to `enforced` in the README table"
+}

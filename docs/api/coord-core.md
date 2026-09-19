@@ -48,13 +48,16 @@ Design: docs/design/coord-core-phase1.md
 | `class` | what class is this artifact? |
 | `classify` | write the artifact registry from what this repo has |
 | `collaborate` | cross-session collaboration checks |
+| `decide` | request | rule <n|next> | list (delegates to coord-decide.py) |
 | `doctor` | is the driver effective? is the registry sane? |
 | `expire` | past the deadline: record the fallback as the outcome - every open one, or <id> |
 | `guard` | refuse to move HEAD over work held in one place |
 | `hook` | PreToolUse adapter: stdin JSON in, decision JSON out |
 | `install` | write the pre-commit hook; print the settings entry |
+| `kick` | _(no help text — coverage gap)_ |
 | `leader` | _(no help text — coverage gap)_ |
 | `list` | list seam requests |
+| `log` | ledger maintenance: `portable <file>...` rewrites the worktree field of existing rows to its label (F-3) |
 | `mail` | send | read | ack | dispatch (delegates to coord-mail.py) |
 | `merge-derived` | the .gitattributes merge driver (always 0) |
 | `merge-register` | union two append-only registers (always 0) |
@@ -67,8 +70,9 @@ Design: docs/design/coord-core-phase1.md
 | `renew` | extend the holder's designation (holder only) |
 | `request` | a typed seam request: add | receive | ack | resolve | expire | list (sent -> received -> acked -> resolved | expired) |
 | `resolve` | resolve a seam request |
-| `session` | one session per working tree |
+| `session` | one session per working tree; `heartbeat` samples progress |
 | `tail` | the merged chronological stream |
+| `track` | the running track: one state per (session, work item) from heartbeats and worktree mtimes - live | stalled | blocked | done; empty corpus is NOT CHECKED |
 | `who` | who leads, as of which epoch, until when |
 | `worktree` | session worktree lifecycle: new | list | cleanup |
 
@@ -79,30 +83,38 @@ Design: docs/design/coord-core-phase1.md
 | `--base` | commit/branch to branch from (default: the INVOKING tree's HEAD) |
 | `--blob` | the blob sha the request was written against |
 | `--branch` | branch to create; name it for the WORK, not the session |
+| `--calls` | heartbeat: tool calls this tick adds |
 | `--contract` | _(no help text — coverage gap)_ |
+| `--deadline-at` | the work item's deadline from the plan row; when passed, a kick is due even on a live track |
 | `--deadline` | _(no help text — coverage gap)_ |
 | `--emit` | _(no help text — coverage gap)_ |
+| `--event` | heartbeat: the host event that fired |
 | `--except` | carve this path out of the lease (repeatable): a directory lease that excludes a peer's owned files (class CTX-R) |
-| `--fallback` | what the requester does at the deadline; omitting it is refused |
+| `--fallback` | rung 2: what the kicker does at the deadline; required |
+| `--file` | heartbeat: a file touched (counted, never stored) |
 | `--fix` | push, the cheapest second copy |
+| `--flush` | _(no help text — coverage gap)_ |
 | `--force` | install from a linked worktree anyway. It overwrites the repository's shared registration with a path that dies with this tree - the recorded exception, never the default |
 | `--from-role` | _(no help text — coverage gap)_ |
-| `--host` | harness name recorded in the blob (default $AGENT_HOST) |
+| `--host` | heartbeat: harness name (default $AGENT_HOST) |
 | `--include-unmerged` | cleanup: also remove a clean tree whose branch has commits NOT on the default branch (a pushed but unmerged branch is HELD by default - DC-142). The count is printed either way. |
 | `--json` | _(no help text — coverage gap)_ |
 | `--long-edit` | the recorded reason for a --ttl above the cap; it is written into the claim event so a queued peer can read why it waits |
+| `--owner` | rung 2: the Owner session (default: the live leader) |
 | `--path` | _(no help text — coverage gap)_ |
-| `--reason` | _(no help text — coverage gap)_ |
+| `--reason` | appended to the mail body |
 | `--reclaim` | the same path as `reclaim`: over an EXPIRED designation, after the quiet period |
 | `--ref` | a mail id (coord mail) this request answers |
 | `--register` | _(no help text — coverage gap)_ |
 | `--remove` | cleanup: actually delete. Off by default - deletion is irreversible |
 | `--resolution` | _(no help text — coverage gap)_ |
+| `--rung` | default: 0 for a blocked track not yet notified, else 1 |
 | `--scheme` | _(no help text — coverage gap)_ |
 | `--session` | session id to register (default: $AGENT_SESSION) |
 | `--status` | open = every non-terminal state (default) |
 | `--timeout` | _(no help text — coverage gap)_ |
 | `--to` | _(no help text — coverage gap)_ |
+| `--tokens` | heartbeat: tokens, when the host knows |
 | `--ttl` | _(no help text — coverage gap)_ |
 | `--wi` | _(no help text — coverage gap)_ |
 | `-n` | _(no help text — coverage gap)_ |
@@ -347,6 +359,16 @@ Staged paths, NUL-separated. Returns (paths, error).
 S8: `--cached` works before the first commit; appending HEAD is FATAL there, so HEAD
 is never passed. The -z form is required - a path containing a space is otherwise
 split, and one containing a quote is otherwise escaped.
+
+### `session_id_error(session)`
+
+Why `session` may not become a file name, or None when it may (seam XP -> P3, PLAT-A).
+
+The id is interpolated into `.agents/log/<session>.jsonl` by append_event and
+append_decision, so `:` is a name NTFS refuses, `/` and `\` change the directory, `..`
+escapes it, and a character outside `[A-Za-z0-9._-]` is a portability bet. The rule
+REFUSES; it never rewrites, because two ids that differ only in a stripped character
+would silently share one log file.
 
 ### `entry_fingerprint(row)`
 
@@ -670,6 +692,68 @@ that flatters us.
 
 **Coverage gap** — no docstring in the source.
 
+### `heartbeat_scratch_path(root, repo, session)`
+
+The machine-local accumulator between samples. It lives in the git COMMON dir (never
+tracked, shared by every worktree of the clone, no .gitignore line to forget); when there
+is no .git at all it falls back beside the ledgers, under the `.agents/*` ignore.
+
+### `heartbeat_tick(root, repo, session, agent, now, files=…, calls=…, tokens=…, host=…, event=…, wi=…, cwd=…, flush=…)`
+
+Accumulate one host event; write ONE `heartbeat` row when the sample window (100 s) has
+passed or on `flush` (a stop-class event). Returns the row written, else None.
+
+The row carries COUNTS: calls and distinct files since the previous row, tokens when a host
+exposed them (`not recorded` otherwise - never a plausible number, IO8), `since` = the
+previous row's instant, and `leader_renewed` (F-1). A zero-delta row is legal and renders
+`stalled` (D7). Paths from the host are relativised, counted, never stored or opened.
+
+### `track_fold(events, now, mtimes=…)`
+
+Pure fold: ledger rows (+ worktree mtimes by label) -> one row per (session, wi).
+
+live     the newest beat carries a progress delta and is younger than STALL_AFTER
+         (or, with no beat at all, the worktree changed within STALL_AFTER)
+stalled  everything else that is neither blocked nor done - a zero-delta ping is stalled
+         however fresh (D7), and unproven liveness (no beat, no worktree) is never live
+blocked  a `blocked` mail twin newer than any `unblocked`; blocked_on = its addressee
+done     a session-end or a `done` twin
+`missed_beats` counts sample windows since the last progress (or the last beat, or the
+start); `kicks` counts rung-1 kicks recorded against (session, wi). Nothing is stored.
+
+### `worktree_mtimes(repo)`
+
+label -> newest change instant per registered worktree: the last commit's time or the
+newest mtime of a modified/untracked file, whichever is later. Read from the world, bounded
+by the changed set (never a walk of the whole tree). A tree git cannot read is absent.
+
+### `cmd_track(root, repo, now, as_json=…)`
+
+**Coverage gap** — no docstring in the source.
+
+### `cmd_kick(root, repo, target, args, session, agent, now)`
+
+The kick ladder (CO17): 0 notify (mail `note`) -> 1 kick (mail `kick`, cap KICK_CAP,
+counted) -> 2 decision request (P1 typed request + mail `decision-request`). Every climb -
+ok or refused - is a `kick-ladder` row in the kicker's ledger carrying the target's state,
+stall age and missed beats at that instant (the SRE's measurement).
+
+### `liveness_metrics(events, now, mtimes=…)`
+
+The P3 measures (proposal §7 row P3): stall-detection latency and the false-kick rate,
+plus the counts they rest on. R4: an empty corpus is a reason, never a zero.
+
+### `heartbeat_doctor_line(root, now)`
+
+(line, is_problem) for `coord doctor` and pack-doctor: who beats, how fresh, how many
+stalled - or `not recorded`, which is not a problem and not a pass (CTX-H).
+
+### `cmd_log_portable(paths)`
+
+F-3 migration: rewrite ONLY the `worktree` field of existing ledger rows to its label.
+Idempotent (a label maps to itself); every other line is copied byte-for-byte, including
+lines that are not JSON; the writer's own dump (sort_keys) is used for the rewritten rows.
+
 ### `cmd_install(repo, root, force=…)`
 
 **Coverage gap** — no docstring in the source.
@@ -746,6 +830,6 @@ follows by printing the settings entry rather than writing it.
 
 ## Coverage
 
-- Public functions: **84** · documented: **61** (**73%**)
-- Undocumented (recorded, not invented): `make_event`, `check`, `read_decisions`, `request_log_path`, `read_request_events`, `cmd_leader`, `regen_command`, `record_regen_owed`, `regen_owed`, `clear_regen_owed`, `detect_harness`, `cmd_precommit`, `cmd_guard`, `session_contract_path`, `owner_rows_for_path`, `cmd_session_list`, `cmd_collaborate`, `cmd_request`, `cmd_worktree`, `cmd_session`, `cmd_metrics`, `cmd_install`, `cmd_doctor`
+- Public functions: **94** · documented: **70** (**74%**)
+- Undocumented (recorded, not invented): `make_event`, `check`, `read_decisions`, `request_log_path`, `read_request_events`, `cmd_leader`, `regen_command`, `record_regen_owed`, `regen_owed`, `clear_regen_owed`, `detect_harness`, `cmd_precommit`, `cmd_guard`, `session_contract_path`, `owner_rows_for_path`, `cmd_session_list`, `cmd_collaborate`, `cmd_request`, `cmd_worktree`, `cmd_session`, `cmd_metrics`, `cmd_track`, `cmd_install`, `cmd_doctor`
 

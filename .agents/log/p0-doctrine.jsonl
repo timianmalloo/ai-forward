@@ -1,0 +1,14 @@
+{"agent": "p0-doctrine", "at": 1789844193.0576, "kind": "session-start", "path": "-", "seq": 1, "session": "p0-doctrine", "tree": "worktree", "wi": "WI-0", "worktree": "ai-forward-impl-p0-doctrine"}
+{"agent": "p0-doctrine", "at": 1789844487.499084, "kind": "claim", "long_edit": "P0 spec authored in one sitting", "path": "docs/specs/agent-coordination-doctrine.md", "seq": 2, "session": "p0-doctrine", "ttl": 900.0, "wi": "p0-doctrine"}
+{"agent": "p0-doctrine", "at": 1789844637.682142, "kind": "release", "path": "docs/specs/agent-coordination-doctrine.md", "seq": 3, "session": "p0-doctrine", "wi": "p0-doctrine"}
+{"agent": "p0-doctrine", "at": 1789844647.076946, "kind": "claim", "long_edit": "P0 design authored in one sitting", "path": "docs/design/agent-coordination-doctrine.md", "seq": 4, "session": "p0-doctrine", "ttl": 900.0, "wi": "p0-doctrine"}
+{"agent": "p0-doctrine", "at": 1789844806.04191, "kind": "release", "path": "docs/design/agent-coordination-doctrine.md", "seq": 5, "session": "p0-doctrine", "wi": "p0-doctrine"}
+{"agent": "p0-doctrine", "at": 1789844807.56052, "kind": "claim", "long_edit": "P0 test module written red-first then made green", "path": "tests/docs_explorer/test_agent_coordination_doctrine.py", "seq": 6, "session": "p0-doctrine", "ttl": 900.0, "wi": "p0-doctrine"}
+{"agent": "p0-doctrine", "at": 1789844918.046504, "kind": "claim", "long_edit": "P0 doctrine doc rewritten around the verbatim CO-S0/CO-L", "path": "pack/knowledge/agent-coordination.md", "seq": 7, "session": "p0-doctrine", "ttl": 900.0, "wi": "p0-doctrine"}
+{"agent": "p0-doctrine", "at": 1789845102.2160609, "kind": "claim", "path": "pack/knowledge/session-worktree-discipline.md", "seq": 8, "session": "p0-doctrine", "ttl": 300.0, "wi": "p0-doctrine"}
+{"agent": "p0-doctrine", "at": 1789845400.155216, "kind": "claim", "path": "docs/notes/note-20260919-doctrine-stages-close-the-document.md", "seq": 9, "session": "p0-doctrine", "ttl": 300.0, "wi": "p0-doctrine"}
+{"agent": "p0-doctrine", "at": 1789845467.5823889, "kind": "release", "path": "tests/docs_explorer/test_agent_coordination_doctrine.py", "seq": 10, "session": "p0-doctrine", "wi": "p0-doctrine"}
+{"agent": "p0-doctrine", "at": 1789845467.8011599, "kind": "release", "path": "pack/knowledge/agent-coordination.md", "seq": 11, "session": "p0-doctrine", "wi": "p0-doctrine"}
+{"agent": "p0-doctrine", "at": 1789845468.022819, "kind": "release", "path": "pack/knowledge/session-worktree-discipline.md", "seq": 12, "session": "p0-doctrine", "wi": "p0-doctrine"}
+{"agent": "p0-doctrine", "at": 1789845468.246738, "kind": "release", "path": "docs/notes/note-20260919-doctrine-stages-close-the-document.md", "seq": 13, "session": "p0-doctrine", "wi": "p0-doctrine"}
+{"agent": "p0-doctrine", "at": 1789846260.561078, "kind": "session-end", "path": "-", "seq": 14, "session": "p0-doctrine", "wi": "WI-0", "worktree": "ai-forward-impl-p0-doctrine"}

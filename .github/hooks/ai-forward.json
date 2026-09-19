@@ -14,6 +14,12 @@
         "bash": "python3 docs/ai-forward-pack/hooks/mail-doorbell.py --host copilot --event preToolUse",
         "powershell": "python docs/ai-forward-pack/hooks/mail-doorbell.py --host copilot --event preToolUse",
         "timeoutSec": 10
+      },
+      {
+        "type": "command",
+        "bash": "python3 docs/ai-forward-pack/hooks/heartbeat.py --host copilot --event preToolUse",
+        "powershell": "python docs/ai-forward-pack/hooks/heartbeat.py --host copilot --event preToolUse",
+        "timeoutSec": 10
       }
     ],
     "userPromptSubmitted": [
@@ -29,6 +35,18 @@
         "type": "command",
         "bash": "python3 docs/ai-forward-pack/hooks/mail-doorbell.py --host copilot --event agentStop",
         "powershell": "python docs/ai-forward-pack/hooks/mail-doorbell.py --host copilot --event agentStop",
+        "timeoutSec": 10
+      },
+      {
+        "type": "command",
+        "bash": "python3 docs/ai-forward-pack/hooks/heartbeat.py --host copilot --event agentStop",
+        "powershell": "python docs/ai-forward-pack/hooks/heartbeat.py --host copilot --event agentStop",
+        "timeoutSec": 10
+      },
+      {
+        "type": "command",
+        "bash": "python3 docs/ai-forward-pack/hooks/owner-review-gate.py --host copilot --event agentStop",
+        "powershell": "python docs/ai-forward-pack/hooks/owner-review-gate.py --host copilot --event agentStop",
         "timeoutSec": 10
       }
     ]

@@ -798,7 +798,32 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "329a0e38673d1373bbb7065e613aaca661a43addb7d84a4feffd6c9827a85d1b"
+      "sourceSha256": "f97a3e86828dcbcf4881b00746083b456c8327e938aa2c14406a24eb1d10e6e6"
+    },
+    {
+      "id": "api-coord-decide",
+      "path": "docs/api/coord-decide.md",
+      "title": "API — coord-decide.py",
+      "type": "api",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-03-03",
+      "reviewSuggested": [],
+      "summary": "coord-decide.py - the Owner seat's mechanism: decision request -> numbered ruling (D6).",
+      "tags": [
+        "api",
+        "scripts",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "api-index",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "58c0d119bfb255e62342c00377b5211afd745501715905bb0a4434a54e5d9795"
     },
     {
       "id": "api-coord-mail",
@@ -985,7 +1010,7 @@ window.DOCS_INDEX = {
       "phase": "",
       "reviewBy": "2027-03-03",
       "reviewSuggested": [],
-      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 474 public functions across 34 modules, 47% carrying a docstring.",
+      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 506 public functions across 37 modules, 48% carrying a docstring.",
       "tags": [
         "api",
         "scripts",
@@ -999,7 +1024,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9102eb95f3ce444a4eb21727a9d473727aeb24adb37894e60e888093c954b2f9"
+      "sourceSha256": "7a976f15e64f78b6524dc3c041500a031c6da7cfef2877d36653a82c5e125152"
     },
     {
       "id": "api-marker-lint",
@@ -1099,7 +1124,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "66dc582f44dd747fdc8a05acb06b6a4953d9cf0249ecdf1ee31eb98a08743285"
+      "sourceSha256": "5ff599c2eb24673c989095087b8cb96997a2e3074578f5883136ecf75626ebc4"
     },
     {
       "id": "api-prompt-compile",
@@ -1302,6 +1327,31 @@ window.DOCS_INDEX = {
       "sourceSha256": "b0efe1b922320259583ae458aa3786f01533f48fe9f864af7a17733a522c851f"
     },
     {
+      "id": "api-verify-documented-commands",
+      "path": "docs/api/verify-documented-commands.md",
+      "title": "API — verify-documented-commands.py",
+      "type": "api",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-03-03",
+      "reviewSuggested": [],
+      "summary": "verify-documented-commands.py - every documented command under pack/ runs in any shell.",
+      "tags": [
+        "api",
+        "scripts",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "api-index",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "c2d8e08f1d0eded94aa69dc299d25557633087f00c7df7605ead5979d5fea9d2"
+    },
+    {
       "id": "api-verify-no-conflict-markers",
       "path": "docs/api/verify-no-conflict-markers.md",
       "title": "API — verify-no-conflict-markers.py",
@@ -1402,6 +1452,31 @@ window.DOCS_INDEX = {
       "sourceSha256": "2abbfe9a815d901d7316e0cd6ab9f50ae700229ed698f4388f64f2d18529983f"
     },
     {
+      "id": "api-verify-ruling-citations",
+      "path": "docs/api/verify-ruling-citations.md",
+      "title": "API — verify-ruling-citations.py",
+      "type": "api",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-03-03",
+      "reviewSuggested": [],
+      "summary": "verify-ruling-citations.py - every ruling cited as authority resolves to exactly one heading that says what it decided.",
+      "tags": [
+        "api",
+        "scripts",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "api-index",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "026bf52d7e1e0dcb73994c98f77077b714b149f9ac2f1be0d80592695ce03d0a"
+    },
+    {
       "id": "api-verify-skill-contracts",
       "path": "docs/api/verify-skill-contracts.md",
       "title": "API — verify-skill-contracts.py",
@@ -1424,7 +1499,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d33c90585fcfbfe128d5d74f1b11566a0c0c55982b3cfdd3a21e9ca35c469914"
+      "sourceSha256": "1c89d7a705b64dde082ad705034ad5f073aec2024714e6bf58d8d59fbbbadbc7"
     },
     {
       "id": "api-verify-subprocess-utf8",
@@ -2016,6 +2091,56 @@ window.DOCS_INDEX = {
       "sourceSha256": "ff7909392f851cd8ffe7a6d58a25463965085d779877c2d04883407898017f16"
     },
     {
+      "id": "note-20260919-cross-harness-smoke-test-readiness",
+      "path": "docs/notes/note-20260919-cross-harness-smoke-test-readiness.md",
+      "title": "Cross-harness smoke-test readiness: what is landed, what each harness channel's status is, and the probe order",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-03-18",
+      "reviewSuggested": [],
+      "summary": "The coordination solution's nine build-plan items are landed (P0–P8) and the layer is ready for a cross-harness smoke test on this machine, subject to the operator's harness logins. Every channel that was not executed live on this machine is recorded `observed-only` (CO12) — that list, not the code, is what the smoke test exists to shrink. This note names the channels, the probe order that promotes each one, the prerequisites, and the residue that is not on the path.",
+      "tags": [
+        "decision-note",
+        "coordination",
+        "smoke-test",
+        "readiness",
+        "harness-status",
+        "p3",
+        "p5",
+        "p8"
+      ],
+      "links": [
+        {
+          "to": "coordination-p3-p5-p8",
+          "rel": "implements"
+        },
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-liveness-and-track",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-owner-review",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-message-layer",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-20260919-coordination-decisions-ratified",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "05dc0153c715f7aa5b2bd1917ab50b358578eedb7dca180a447cd80abb245530"
+    },
+    {
       "id": "note-20260919-doctrine-stages-close-the-document",
       "path": "docs/notes/note-20260919-doctrine-stages-close-the-document.md",
       "title": "The doctrine doc ends with its frozen sections: CO-S0 → CO-S1 → CO-S2 → CO-L close the file, and the ceiling was met by cutting prose, never a rule",
@@ -2121,6 +2246,78 @@ window.DOCS_INDEX = {
       "sourceSha256": "8caab81356b8f554a5435c829a577ddcb3435392d777c58565b18acc694d04a8"
     },
     {
+      "id": "note-20260919-liveness-heartbeat-renews-the-leader",
+      "path": "docs/notes/note-20260919-liveness-heartbeat-renews-the-leader.md",
+      "title": "A sampled heartbeat from the session that holds refs/coord/leader renews the designation; it never reclaims one that lapsed (F-1 accepted)",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "coordination P3",
+      "reviewBy": "2027-03-18",
+      "reviewSuggested": [],
+      "summary": "D13's leader lease (TTL 300 s, renew 100 s) was tuned for a running process; an interactive coordinator lapsed between renews and reclaimed at every join (plan F-1). The heartbeat is sampled into the ledger at most once per 100 s - the same cadence as the renew - so a sampled beat from the holder calls the existing renew path. An expired designation is not reclaimed by a heartbeat: a reclaim advances the epoch and is an explicit act. Blast radius: `heartbeat_tick`, the heartbeat row's `leader_renewed` field, the F-1 row of the plan.",
+      "tags": [
+        "decision-note",
+        "coordination",
+        "liveness",
+        "leader",
+        "heartbeat",
+        "f-1"
+      ],
+      "links": [
+        {
+          "to": "spec-liveness-and-track",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-leader-designation",
+          "rel": "relates-to"
+        },
+        {
+          "to": "coordination-p3-p5-p8",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "b17bd0c458acc8aa1d5aa38111975c991963a1acf9a3edc0479616c999b5d6cb"
+    },
+    {
+      "id": "note-20260919-liveness-worktree-field-is-a-label",
+      "path": "docs/notes/note-20260919-liveness-worktree-field-is-a-label.md",
+      "title": "The ledger's `worktree` field is the worktree's basename (a label), never a path; `tree` was never the carrier (F-3 as found)",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "coordination P3",
+      "reviewBy": "2027-03-18",
+      "reviewSuggested": [],
+      "summary": "Plan finding F-3 names `tree` as the field carrying the absolute worktree path that gate 1b (PLAT-B) refuses. Grep over the primary's ledgers found 26 absolute paths, all in `worktree`, none in `tree` (which holds `primary|worktree`). The writer now records the basename in `worktree`; occupancy and cleanup compare labels (old absolute values are reduced to their basename on read, so no record is orphaned); `coord log portable` rewrites only that field in place, idempotently. Repo-relative was not possible: a linked worktree lies outside the repo.",
+      "tags": [
+        "decision-note",
+        "coordination",
+        "ledger",
+        "plat-b",
+        "worktree",
+        "f-3"
+      ],
+      "links": [
+        {
+          "to": "spec-liveness-and-track",
+          "rel": "relates-to"
+        },
+        {
+          "to": "coordination-p3-p5-p8",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0007-coordination-substrate",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "c78bf7f18d64cff18711fd084edec427467ac2da2d042c0cae56057952114325"
+    },
+    {
       "id": "note-20260919-mail-store-deviations",
       "path": "docs/notes/note-20260919-mail-store-deviations.md",
       "title": "The mail store keeps the fixed contract with three named additions: a broadcast file, prefixed ULIDs, and colocated acks",
@@ -2154,6 +2351,45 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "6f91e6ae708dc7b70e88705d898adb9e0d50fa38b883d824d0e1fb81e0626d8a"
+    },
+    {
+      "id": "note-20260919-owner-review-register-and-scan-scope",
+      "path": "docs/notes/note-20260919-owner-review-register-and-scan-scope.md",
+      "title": "Owner review: the register opens with Ruling 1, the contract is a JSON object, the gate scans prose not records, a mail failure never changes a write's verdict, and the stop gate counts only what the session sent",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-03-19",
+      "reviewSuggested": [],
+      "summary": "Six calls made while building P5: (1) docs/notes/rulings.md is committed carrying Ruling 1 — the decision to create the register — so the file is never an empty allocator and the proposal's pre-existing \"Rulings 1–139\" mention resolves; (2) the five decision fields travel in P1's `contract` as a sorted JSON object; (3) verify-ruling-citations scans prose suffixes only (.md .html .txt) — JSON/JSONL records quote other repos' prose verbatim and a quote is not a citation; (4) after the request row is written, a mail failure is reported in the JSON and never changes the exit; (5) `rule` refuses a non-next number and a self-rule, and accepts the literal `next`; (6) the stop gate blocks only on an open decision request the stopping session itself sent — requests addressed to it, and the plan's exit-evidence clause, are unevaluable here and exit 0.",
+      "tags": [
+        "decision-note",
+        "coordination",
+        "owner-review",
+        "ruling",
+        "register",
+        "gate",
+        "hook",
+        "id-a",
+        "d6"
+      ],
+      "links": [
+        {
+          "to": "spec-owner-review",
+          "rel": "relates-to"
+        },
+        {
+          "to": "design-owner-review",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "3ebb33f0cc9880c1242ad39a40626d8307b5694178c5740415fd6f199c282368"
     },
     {
       "id": "note-20260919-pack-evolution-knowledge-review",
@@ -2275,6 +2511,80 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "56fbbd48bf3ce59783feb9915545558853bc505562321882119069f0843d0e57"
+    },
+    {
+      "id": "note-20260919-skill-evolution-citation-forms-and-budget",
+      "path": "docs/notes/note-20260919-skill-evolution-citation-forms-and-budget.md",
+      "title": "A utility skill cites CO-S0 by naming its own touch-point; the join detail moves to reference/join.md so P5's verbatim sentences fit; every skill now needs the citation, so the lint's older fixtures gained it",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-03-19",
+      "reviewSuggested": [],
+      "summary": "Three decisions below ADR weight taken while landing the P8 skill sweep: (1) the four turn/log utilities cite CO-S0 in one sentence that names what they do with a compiled prompt, not the consumer sentence, which would be false in them; six plan/prose consumers take the reference/co-s0.md pointer; (2) execute-with-coordination's Stage 6 join mechanics move unchanged to reference/join.md (CTX-E) so P5's owner-review sentences land verbatim inside the 2% budget; (3) rule 5 makes CO-S0 mandatory for every skill, so the readers' older lint fixtures gained the token - the directions they assert are unchanged.",
+      "tags": [
+        "decision-note",
+        "coordination",
+        "skills",
+        "co-s0",
+        "context-budget",
+        "lint",
+        "owner-review",
+        "p8"
+      ],
+      "links": [
+        {
+          "to": "spec-skill-evolution",
+          "rel": "relates-to"
+        },
+        {
+          "to": "design-skill-evolution",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-20260919-readers-seat-and-citation-placement",
+          "rel": "refines"
+        },
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "f0aba72c65b55e6cdf938e27fbccce441408c67cbd53d063996400a1120527d8"
+    },
+    {
+      "id": "note-20260919-xp-cross-platform",
+      "path": "docs/notes/note-20260919-xp-cross-platform.md",
+      "title": "XP cross-platform residue: documented commands made shell-neutral, the default-branch tests made honest, the session-id sanitiser cut as a seam patch",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-03-19",
+      "reviewSuggested": [],
+      "summary": "Track XP of coordination-p3-p5-p8 (T1, fan-out 0). Every documented command under pack/ is now a single line, unchained and `python3`; a gate (`verify-documented-commands.py`) and its test pin the shape and were red-first at 26 findings on 24 lines; the three `test_coord_derived.py` tests read the default branch the machine chose and are green under both `init.defaultBranch=main` and `=master`; T-2 and T-3 were found already fixed at a01ed77 and re-proven by execution; the AGENT_SESSION sanitiser travels as docs/coordination/seam-xp-to-p3.patch because P3 owns coord-core.py.",
+      "tags": [
+        "decision-note",
+        "cross-platform",
+        "plat-a",
+        "plat-b",
+        "xp-track",
+        "coordination-p3-p5-p8"
+      ],
+      "links": [
+        {
+          "to": "plan-cross-platform-readiness",
+          "rel": "implements"
+        },
+        {
+          "to": "investigation-cross-platform-readiness",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "ae7f20d985b743f92418bb65d3be1cd4c61f319fc05c8fda536bbe50e35b0c40"
     },
     {
       "id": "note-autopilot-open-questions-decisions",
@@ -2847,6 +3157,60 @@ window.DOCS_INDEX = {
       "sourceSha256": "7c243c54472e049a7af884726d3a758e9402caa2332ccf369d52c2376071c433"
     },
     {
+      "id": "design-liveness-and-track",
+      "path": "docs/design/liveness-and-track.md",
+      "title": "Design — progress liveness, the running track and the kick ladder (heartbeat_tick · track_fold · kick ladder · log portable)",
+      "type": "design",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "coordination P3",
+      "reviewBy": "2027-03-18",
+      "reviewSuggested": [],
+      "summary": "One new fact kind (`heartbeat`) and one new event kind (`kick-ladder`) in the existing session ledger; a machine-local accumulator between samples in the git common dir; a pure fold (`track_fold`) from ledger rows and worktree mtimes to one state per work item; the kick ladder as one verb that refuses, counts and records; the `worktree` field made a label and a one-field in-place migration. No new store, no daemon, no dependency.",
+      "tags": [
+        "coordination",
+        "liveness",
+        "heartbeat",
+        "track",
+        "kick-ladder",
+        "hooks",
+        "p3",
+        "design"
+      ],
+      "links": [
+        {
+          "to": "spec-liveness-and-track",
+          "rel": "implements"
+        },
+        {
+          "to": "design-message-layer",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-typed-seam-requests",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-leader-designation",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0007-coordination-substrate",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-20260919-liveness-heartbeat-renews-the-leader",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-20260919-liveness-worktree-field-is-a-label",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "c8c17b56cfce527665ef017ddb68fc76db88bdb4594e0bdee1a6b907babdefa3"
+    },
+    {
       "id": "design-marker-completeness-lint",
       "path": "docs/design/marker-completeness-lint.md",
       "title": "Marker completeness lint (Tier-1 prose→structure) — Design",
@@ -2967,6 +3331,54 @@ window.DOCS_INDEX = {
       "sourceSha256": "2cb8b5b8647d8755342d669c7347fa49cd3be3c1ca1241cfcd0368ca8152323b"
     },
     {
+      "id": "design-owner-review",
+      "path": "docs/design/owner-review.md",
+      "title": "Design — owner review (coord-decide.py · docs/notes/rulings.md · verify-ruling-citations.py · owner-review-gate.py)",
+      "type": "design",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-03-19",
+      "reviewSuggested": [],
+      "summary": "Detailed design for spec-owner-review. One stdlib CLI (coord-decide.py) that writes a decision request only by running coord-core.py's own `request add` and `request resolve`, sends its two mails only through coord-mail.py's append_mail imported by path, and owns exactly one file: the ruling register docs/notes/rulings.md whose headings are the allocator. One gate (verify-ruling-citations.py) re-homed from ai-de with a self-test. One fail-safe Stop hook (owner-review-gate.py) that reads the P1 store through the P1 reader and blocks only on an open decision request the stopping session itself sent. No new store, no new dependency, no config.",
+      "tags": [
+        "coordination",
+        "owner-review",
+        "decision-request",
+        "ruling",
+        "register",
+        "gate",
+        "hook",
+        "p5",
+        "d6",
+        "id-a"
+      ],
+      "links": [
+        {
+          "to": "spec-owner-review",
+          "rel": "implements"
+        },
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "refines"
+        },
+        {
+          "to": "design-typed-seam-requests",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-message-layer",
+          "rel": "depends-on"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "dd391c3bc785a1b6c73fdf7ff09ac5ccc4f703d9fdbaf9a415aa0822be27149f"
+    },
+    {
       "id": "design-pack-doctor",
       "path": "docs/design/pack-doctor.md",
       "title": "Design — installed-repo doctor (suggestion 2)",
@@ -3080,6 +3492,52 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "eef4e4c8b9bf1ed5a4c6a48e190c199b61c6c4a9cefc7a54fac559edff5d87cb"
+    },
+    {
+      "id": "design-skill-evolution",
+      "path": "docs/design/skill-evolution.md",
+      "title": "Design: skill evolution — per-skill edits under the 2% budget, three lint rules red-first, the seam (b) insertions",
+      "type": "design",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-03-19",
+      "reviewSuggested": [],
+      "summary": "Detailed design for spec-skill-evolution: the exact sentence each of the ten skills gains and where; which six take the reference/co-s0.md pointer; the three new verify-skill-contracts.py rules (compile missing, pointer without reference, dispatch without deadline) with their self-test fixtures and red-first counts; the seam (b) insertions and the compressions that make them fit execute-with-coordination's budget; the tests; the engine seams reported, not built.",
+      "tags": [
+        "coordination",
+        "skills",
+        "co-s0",
+        "lint",
+        "context-budget",
+        "owner-review",
+        "p8",
+        "design"
+      ],
+      "links": [
+        {
+          "to": "spec-skill-evolution",
+          "rel": "implements"
+        },
+        {
+          "to": "design-compile-readers",
+          "rel": "refines"
+        },
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "relates-to"
+        },
+        {
+          "to": "coordination-p3-p5-p8",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-20260919-readers-seat-and-citation-placement",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "6230e266599a25bc52d209a59fdfab99e586edf843fbde49d9cf31d1a4180cca"
     },
     {
       "id": "design-tier2-proof-pack-sections",
@@ -3341,7 +3799,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b3da55da457e75e0b2ef293e5a3da2a6fe83f2514d3955b3fe39248776bd3e0d"
+      "sourceSha256": "e928bc82bb3ffdd65330cd04f62076e4f8e2ba54ab325b04ec142130d2be86d7"
     },
     {
       "id": "docs-index",
@@ -4561,7 +5019,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "19058061c90f324ea0a711804f4355850b2ea7389e01a7a59e1fa643ea6268fa"
+      "sourceSha256": "735dd2277c2bd8f9a2f77a8f65b2ee4ec62edabbf469614f07bdadbbf9fb27ee"
     },
     {
       "id": "proposal-active-multi-harness-coordination",
@@ -4717,7 +5175,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "40218e3dca6290024e5b9e8b86b535fae0ef00d406cc309e005b2206135490ce"
+      "sourceSha256": "0e4cb340d6d69ae9f923f0e4b75a36729a70716c0e082f3352b34f652521c93e"
     },
     {
       "id": "proposal-proactive-multi-harness-coordination",
@@ -4845,6 +5303,74 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "8797e7ae3db7665bfeb5789d1e1cbb761fffc3de9563c5eae1c0557eacbba0df"
+    },
+    {
+      "id": "rulings",
+      "path": "docs/notes/rulings.md",
+      "title": "Rulings — the Owner seat's numbered decisions (the only definition site)",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-03-19",
+      "reviewSuggested": [],
+      "summary": "The ruling register. Each `### Ruling NN — <title>` heading defines exactly one numbered decision of the Owner seat; prose anywhere cites it as `Ruling NN`. Written only by `coord decide rule`; numbering is read from these headings (no allocator elsewhere, class ID-A); `verify-ruling-citations.py` fails a cited number with no heading here and a number defined twice. Merge class `register` (union).",
+      "tags": [
+        "coordination",
+        "owner-review",
+        "rulings",
+        "register",
+        "d6",
+        "id-a"
+      ],
+      "links": [
+        {
+          "to": "spec-owner-review",
+          "rel": "relates-to"
+        },
+        {
+          "to": "design-owner-review",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-agent-coordination-doctrine",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "703ccf8841cf1395a9a355eaa04456b91ec91344ced9277337ac4c8aad43e614"
+    },
+    {
+      "id": "seam-p5-to-coordinator",
+      "path": "docs/coordination/seam-p5-to-coordinator.md",
+      "title": "Seam P5 → coordinator: the `decide` front door, the two skills' contract sentences, the register line, the INSTALL delta, the doctrine sentence",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2026-12-19",
+      "reviewSuggested": [],
+      "summary": "What track P5 needs in files it does not own, delivered as text for the coordinator to apply at the landing: one parser block and one delegation branch in coord-core.py; verbatim contract sentences with insertion points for execute-with-coordination and prepare-for-coordination (land with P8 unless P8 is struck); the .agents/artifacts.yml register line for docs/notes/rulings.md; the INSTALL.md delta paragraph; one doctrine sentence for CO16.",
+      "tags": [
+        "coordination",
+        "seam",
+        "owner-review",
+        "p5",
+        "decide",
+        "rulings"
+      ],
+      "links": [
+        {
+          "to": "design-owner-review",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-owner-review",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "3b10603d7ad4bcec701ce1042144cb36eef8a3741a7aa60c13f11be2e029c0b4"
     },
     {
       "id": "session-profiles",
@@ -6899,11 +7425,59 @@ window.DOCS_INDEX = {
       "sourceSha256": "8f676fb3c5c10e3a76ce3aaa8b27b82914ee305de2b3cca45ff3649422f82bc0"
     },
     {
+      "id": "coordination-p3-p5-p8",
+      "path": "docs/coordination/coordination-p3-p5-p8.md",
+      "title": "Coordination plan - P3 liveness, P5 owner review, the cross-platform residue, then the P8 skill sweep (to cross-harness smoke-test readiness)",
+      "type": "plan",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2026-12-18",
+      "reviewSuggested": [],
+      "summary": "The last three build-plan items of the Owner / Coordinator / Sub-Agent proposal, run as one coordinated session from compiled prompt al-01M2XN5XYFCHE5PWRQ3SSJGMM9: P3 progress liveness with the running track and the kick ladder, P5 owner-review mechanics in a new coord-decide.py, and the cross-platform residue XP in parallel (width 3, disjoint authored sets, three seams), then P8's skill sweep serially once P5 has joined. The KB track of the superseded plan ran first as the red-main fix. Coordinator owns the shared surfaces, the front door for `decide`, INSTALL rev 79 and the linear landing; the close is a written cross-harness smoke-test readiness statement.",
+      "tags": [
+        "coordination",
+        "worktrees",
+        "parallelism",
+        "liveness",
+        "owner-review",
+        "cross-platform",
+        "skills",
+        "p3",
+        "p5",
+        "p8"
+      ],
+      "links": [
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "implements"
+        },
+        {
+          "to": "coordination-p3-xp",
+          "rel": "supersedes"
+        },
+        {
+          "to": "coordination-p2-p8",
+          "rel": "refines"
+        },
+        {
+          "to": "coordination-p0-p1",
+          "rel": "refines"
+        },
+        {
+          "to": "note-20260919-pack-evolution-knowledge-review",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "454f972c536b28dfaeb86ff0bde67c2197a3dd1a5dacc4c152ef41eae3831995"
+    },
+    {
       "id": "coordination-p3-xp",
       "path": "docs/coordination/coordination-p3-xp.md",
       "title": "Coordination plan - P3 liveness, the cross-platform residue, and the stale knowledge review (after P0/P1)",
       "type": "plan",
-      "status": "proposed",
+      "status": "superseded",
       "owner": "@timianmalloo",
       "phase": "coordination",
       "reviewBy": "2026-12-18",
@@ -6933,7 +7507,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "73a479d81358a879b11c1630bd0a2c9bf44813f1dad946f1275da14161b74f33"
+      "sourceSha256": "91ce98d8cc9e1cadc6623525bee9ab8df465e4d142aa6a28bf98ee9a64a7a86f"
     },
     {
       "id": "privacy-review",
@@ -7022,7 +7596,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ceab4b43ce6be09d3d58c46c4669793abaa65477f4184264bc845b915c5e8bf1"
+      "sourceSha256": "ed59b6ed1a18ef6cd54b3db54a80eaccf2f1f85aaec4eb4d43656e257550a3af"
     },
     {
       "id": "forensic-review-rev48-proof",
@@ -7190,6 +7764,39 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "6a07665a54acbfb5d1a5321d494913ee0b3d06af9173d3e47f9d48f25ad4df88"
+    },
+    {
+      "id": "proof-liveness-and-track",
+      "path": "docs/proof/liveness-and-track.md",
+      "title": "Proof Pack — progress liveness, the running track and the kick ladder (P3)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "coordination P3",
+      "reviewBy": "2027-03-18",
+      "reviewSuggested": [],
+      "summary": "Forty-one red-first tests (plus the five of the XP seam) prove the heartbeat sampling, the fold's four states with the 299/301 s boundary, the NOT CHECKED empty corpus, the kick ladder's cap and rung-2 request, the F-1 leader renew, and the F-3 label rule with its migration; the hook was executed against the documented Claude Code payload and against this session's own ledger. The hook costs 29 ms median per call (40 ms max) against a 100 ms NFR; a first 413 ms reading was the shell timing method measuring its own interpreter starts, recorded as a lesson.",
+      "tags": [
+        "coordination",
+        "liveness",
+        "heartbeat",
+        "track",
+        "kick-ladder",
+        "proof-pack",
+        "p3"
+      ],
+      "links": [
+        {
+          "to": "design-liveness-and-track",
+          "rel": "tested-by"
+        },
+        {
+          "to": "spec-liveness-and-track",
+          "rel": "tested-by"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "861feb807c919ca6ff345f6bee8eeafbf494a2739ffe7ec07d817d24f6069890"
     },
     {
       "id": "proof-native-app-ui-skill-extension",
@@ -7748,6 +8355,63 @@ window.DOCS_INDEX = {
       "sourceSha256": "e1d28979d8b96215d05ed8bbc243515717e54850ef0186b6954c514a73b958df"
     },
     {
+      "id": "spec-liveness-and-track",
+      "path": "docs/specs/liveness-and-track.md",
+      "title": "Spec — progress liveness, the running track and the kick ladder (coord session heartbeat · coord track · coord kick)",
+      "type": "spec",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "coordination P3",
+      "reviewBy": "2027-03-18",
+      "reviewSuggested": [],
+      "summary": "A session's liveness is read from the world, never volunteered: each host's tool-boundary hook samples a heartbeat that carries progress deltas into the coord ledger, `coord track` folds heartbeats and worktree mtimes into one state per work item (live · stalled · blocked · done, zero-delta beats never live, empty corpus NOT CHECKED), and `coord kick` climbs the ladder notify → kick (two, counted) → decision request — nothing automatic beyond the record.",
+      "tags": [
+        "coordination",
+        "liveness",
+        "heartbeat",
+        "track",
+        "kick-ladder",
+        "hooks",
+        "p3"
+      ],
+      "links": [
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "refines"
+        },
+        {
+          "to": "coordination-p3-p5-p8",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-message-layer",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-typed-seam-requests",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-leader-designation",
+          "rel": "depends-on"
+        },
+        {
+          "to": "kb-multi-agent-coordination",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-20260919-liveness-heartbeat-renews-the-leader",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-20260919-liveness-worktree-field-is-a-label",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "72b8b245702238decb08da6418c9a8d35be779fe4694006ffb9b9668ca02469d"
+    },
+    {
       "id": "spec-message-layer",
       "path": "docs/specs/message-layer.md",
       "title": "Spec — the local message layer and dispatch (coord mail send/read/ack · dispatch · doorbells)",
@@ -7832,6 +8496,105 @@ window.DOCS_INDEX = {
         }
       ],
       "sourceSha256": "2984ab64343317f5204e12b066d46f95f3ac0e2839209d25eeef307eb8e29fb6"
+    },
+    {
+      "id": "spec-owner-review",
+      "path": "docs/specs/owner-review.md",
+      "title": "Owner review mechanics — decision request → numbered ruling, a heading-defined register, a citation gate and a stop-hook gate",
+      "type": "spec",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-03-19",
+      "reviewSuggested": [],
+      "summary": "Specifies P5 of the coordination proposal (D6): the Owner seat gets a mechanism. A decision request is P1's typed seam request carrying five decision fields (options, evidence, recommendation, reversibility, blast radius) plus a deadline and a fallback, dual-written as a decision-request mail; a ruling is a numbered heading appended to docs/notes/rulings.md (the only definition site) that resolves the request and mails the requester; a citation gate fails a number cited with no heading or defined twice; a Stop hook exits 2 when the stopping session still holds an unresolved decision request it sent, and 0 on every path it cannot evaluate.",
+      "tags": [
+        "coordination",
+        "owner-review",
+        "decision-request",
+        "ruling",
+        "register",
+        "gate",
+        "hook",
+        "p5",
+        "d6",
+        "id-a"
+      ],
+      "links": [
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-typed-seam-requests",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-message-layer",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-agent-coordination-doctrine",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "8a19d2675c4d52c00040d1426eb45069e7c86b54643736e67fd7b23aa2257d79"
+    },
+    {
+      "id": "spec-skill-evolution",
+      "path": "docs/specs/skill-evolution.md",
+      "title": "Skill evolution — the ten remaining skills cite CO-S0, the §7b.3 rows land as text the lint can refuse, and the owner-review sentences reach the two coordination skills",
+      "type": "spec",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-03-19",
+      "reviewSuggested": [],
+      "summary": "Specifies the P8 skill sweep: the ten skills that still cite no CO-S0 carry the citation (a Grounding sentence, or the fixed sentence behind a reference/co-s0.md pointer where the 2% budget cannot hold it); the proposal §7b.3 rows for groups C and D land as skill text that names only landed engine verbs; P5's owner-review contract sentences are inserted verbatim into the two coordination skills; verify-skill-contracts.py gains three red-first rules (compile missing, pointer without reference, dispatch without deadline) so the sweep is a control, not a memoir.",
+      "tags": [
+        "coordination",
+        "skills",
+        "co-s0",
+        "co-s2",
+        "runs-as",
+        "lint",
+        "context-budget",
+        "owner-review",
+        "p8"
+      ],
+      "links": [
+        {
+          "to": "spec-compile-readers",
+          "rel": "refines"
+        },
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "implements"
+        },
+        {
+          "to": "coordination-p3-p5-p8",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-owner-review",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-20260919-readers-seat-and-citation-placement",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "c28d560ea9386242bf497069e6bba8ff6b695533ec4f2ae9e5351af6535c3e52"
     },
     {
       "id": "spec-typed-seam-requests",
@@ -7968,7 +8731,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "1f541bf2c8531c084e8a7ead44ddc7bde2137327c9e9a6d0d26755f8ecfd24ac"
+      "sourceSha256": "7593103fed3e91d5e655959531a276a93ebeedb7dc308afda0a09888f3bfc335"
     }
   ],
   "surfaces": [
@@ -8053,6 +8816,14 @@ window.DOCS_INDEX = {
       "title": "Coordination Framework Tightening",
       "kind": "knowledge-tool",
       "description": "Open an interactive knowledge artifact."
+    },
+    {
+      "id": "surface-coordination-coordination-p3-p5-p8",
+      "path": "docs/coordination/coordination-p3-p5-p8.html",
+      "title": "Coordination plan - P3 liveness, P5 owner review, the cross-platform residue, then the P8 skill sweep (to cross-harness smoke-test readiness)",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "coordination-p3-p5-p8"
     },
     {
       "id": "surface-coordination-coordination-compile-stage",
@@ -8218,5 +8989,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "1e8aa4ccacc2d9fec6ad69a5ef7adffd05ef5d39b82a6b5e2414365e61ffdf0d"
+  "graphSha256": "65f7f25ee100aeab777858226d7a4215e7c574779f1411c86bca2bfdc1852aec"
 };

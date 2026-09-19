@@ -136,8 +136,7 @@ than in a parallel tool (one owner per concern):
 ```bash
 # start a session in its own tree (branch, session registration, the cd, and the BASE
 # commit it used — which is the INVOKING tree's HEAD, not the primary's)
-python3 docs/ai-forward-pack/scripts/coord-core.py worktree new \
-    --branch feature/audit-duration --session "<session-id>"
+python3 docs/ai-forward-pack/scripts/coord-core.py worktree new --branch feature/audit-duration --session "<session-id>"
 
 # what exists, who holds it, how long idle, what is safe to remove
 python3 docs/ai-forward-pack/scripts/coord-core.py worktree list
@@ -149,8 +148,7 @@ python3 docs/ai-forward-pack/scripts/coord-core.py worktree cleanup
 python3 docs/ai-forward-pack/scripts/coord-core.py worktree cleanup --remove
 
 # act on ONE tree only
-python3 docs/ai-forward-pack/scripts/coord-core.py worktree cleanup \
-    --path ../<repo>-<branch-slug> --remove
+python3 docs/ai-forward-pack/scripts/coord-core.py worktree cleanup --path ../<repo>-<branch-slug> --remove
 ```
 
 **WT12 — The tool reports its refusals, not just its actions.** `cleanup` prints every tree it

@@ -65,6 +65,12 @@ REQUEST_RETRY = 20        # s - a waiting requester re-reads at this cadence (D1
 #   ceiling: nothing in P1 reads it.  upgrade trigger: `session heartbeat` (P3) lands.
 REQUEST_TERMINAL = ("resolved", "expired")
 REQUEST_OPEN = ("sent", "received", "acked", "untyped")
+# P3 - progress liveness (spec-liveness-and-track; D7: heartbeats carry progress, the rule is a
+# passed deadline OR three missed beats, no phi; CO17: two kicks per work item, counted).
+HEARTBEAT_SAMPLE = LEADER_RENEW      # s - a beat reaches the ledger at most this often (TTL/3)
+STALL_AFTER = 3 * HEARTBEAT_SAMPLE   # s - three missed beats with no progress -> stalled
+KICK_CAP = 2                         # rung-1 kicks per work item; the third is refused
+TRACK_STATES = ("live", "stalled", "blocked", "done")
 
 
 class CoordError(Exception):
@@ -1076,6 +1082,26 @@ def _identity():
     return session, os.environ.get("AGENT_NAME") or session
 
 
+_SESSION_ID = re.compile(r"[A-Za-z0-9._-]+")   # used with fullmatch: `$` would admit a trailing newline
+
+
+def session_id_error(session):
+    """Why `session` may not become a file name, or None when it may (seam XP -> P3, PLAT-A).
+
+    The id is interpolated into `.agents/log/<session>.jsonl` by append_event and
+    append_decision, so `:` is a name NTFS refuses, `/` and `\\` change the directory, `..`
+    escapes it, and a character outside `[A-Za-z0-9._-]` is a portability bet. The rule
+    REFUSES; it never rewrites, because two ids that differ only in a stripped character
+    would silently share one log file.
+    """
+    if session and _SESSION_ID.fullmatch(session) and session not in (".", ".."):
+        return None
+    return ("COORD-BAD-SESSION-ID  {}\n  because   the session id becomes the file name"
+            " .agents/log/<id>.jsonl; only [A-Za-z0-9._-] is portable across NTFS, APFS and ext4"
+            "\n  remedy    export AGENT_SESSION=<letters, digits, '.', '_' or '-'>"
+            .format(_safe(repr(session), 120)))
+
+
 def _build_parser():
     parser = argparse.ArgumentParser(prog="coord", description=__doc__.splitlines()[0])
     sub = parser.add_subparsers(dest="cmd", required=True)
@@ -1110,9 +1136,44 @@ def _build_parser():
     sub.add_parser("precommit", help="the universal floor: refuse unclaimed staged paths")
     guard = sub.add_parser("guard", help="refuse to move HEAD over work held in one place")
     guard.add_argument("--fix", action="store_true", help="push, the cheapest second copy")
-    ses = sub.add_parser("session", help="one session per working tree")
-    ses.add_argument("action", choices=["start", "end", "list"])
+    ses = sub.add_parser("session", help="one session per working tree; `heartbeat` samples progress")
+    ses.add_argument("action", choices=["start", "end", "list", "heartbeat"])
     ses.add_argument("--json", action="store_true")
+    # P3: `session heartbeat` is what heartbeat.py calls; a human may call it too.
+    ses.add_argument("--flush", action="store_true",
+                     help="heartbeat: write the row now (a stop-class event) even inside the "
+                          "{} s sample window".format(HEARTBEAT_SAMPLE))
+    ses.add_argument("--calls", type=int, default=1, help="heartbeat: tool calls this tick adds")
+    ses.add_argument("--file", dest="files", action="append", default=[], metavar="PATH",
+                     help="heartbeat: a file touched (counted, never stored)")
+    ses.add_argument("--tokens", type=int, default=None, help="heartbeat: tokens, when the host knows")
+    ses.add_argument("--host", default=None, help="heartbeat: harness name (default $AGENT_HOST)")
+    ses.add_argument("--event", default="", help="heartbeat: the host event that fired")
+    ses.add_argument("--wi", default=None, help="heartbeat: work item (default $AGENT_WI or WI-0)")
+    trk = sub.add_parser("track", help="the running track: one state per (session, work item) "
+                                       "from heartbeats and worktree mtimes - live | stalled | "
+                                       "blocked | done; empty corpus is NOT CHECKED")
+    trk.add_argument("--json", action="store_true")
+    kick = sub.add_parser("kick", help="the kick ladder: 0 notify (note) -> 1 kick (cap {}) -> "
+                                       "2 decision request; nothing automatic".format(KICK_CAP))
+    kick.add_argument("kick_target", metavar="session")
+    kick.add_argument("--wi", default=None, help="work item (default: the track row's)")
+    kick.add_argument("--rung", type=int, choices=[0, 1, 2], default=None,
+                      help="default: 0 for a blocked track not yet notified, else 1")
+    kick.add_argument("--reason", default="", help="appended to the mail body")
+    kick.add_argument("--owner", default=None,
+                      help="rung 2: the Owner session (default: the live leader)")
+    kick.add_argument("--deadline", default=None, metavar="SECONDS",
+                      help="rung 2: the decision request's deadline (default {} s)".format(REQUEST_DEADLINE))
+    kick.add_argument("--fallback", default=None, metavar="TEXT",
+                      help="rung 2: what the kicker does at the deadline; required")
+    kick.add_argument("--deadline-at", dest="deadline_at", type=float, default=None, metavar="EPOCH",
+                      help="the work item's deadline from the plan row; when passed, a kick is due "
+                           "even on a live track")
+    lg = sub.add_parser("log", help="ledger maintenance: `portable <file>...` rewrites the "
+                                    "worktree field of existing rows to its label (F-3)")
+    lg.add_argument("action", choices=["portable"])
+    lg.add_argument("files", nargs="+")
     collab = sub.add_parser("collaborate", help="cross-session collaboration checks")
     collab.add_argument("action", choices=["check", "summary"])
     collab.add_argument("--json", action="store_true")
@@ -1219,6 +1280,8 @@ def _build_parser():
     ml.add_argument("mail_args", nargs=argparse.REMAINDER)
     bd = sub.add_parser("board", help="board [--follow] | board post (delegates to coord-board.py)")
     bd.add_argument("board_args", nargs=argparse.REMAINDER)
+    dc = sub.add_parser("decide", help="request | rule <n|next> | list (delegates to coord-decide.py)")
+    dc.add_argument("decide_args", nargs=argparse.REMAINDER)
     rg = sub.add_parser("regen", help="run the regenerations the driver deferred")
     rg.add_argument("--timeout", type=float, default=120)
     sub.add_parser("doctor", help="is the driver effective? is the registry sane?")
@@ -2144,6 +2207,17 @@ def _worktree_key(cwd):
     return str(Path(cwd).resolve()).replace("\\", "/")
 
 
+def _worktree_label(value):
+    """The basename of a worktree path: the value the ledger carries in `worktree` (PLAT-B).
+
+    A linked worktree is a sibling of the primary checkout, so no repo-relative form exists;
+    the basename is what the plans and `coord worktree list` already call the tree. A legacy
+    absolute value reduces to the same label, so nothing recorded before F-3 is orphaned.
+    """
+    text = str(value or "").replace("\\", "/").rstrip("/")
+    return text.rsplit("/", 1)[-1] if text else ""
+
+
 def active_sessions(root, now, stale_seconds=SESSION_STALE_SECONDS):
     """Fold the append-only record into active collaboration sessions.
 
@@ -2668,7 +2742,8 @@ def worktree_safety(record, primary, cwd, live_keys, index, include_unmerged=Fal
         return False, "current working directory - deleting the floor you stand on"
     if record.get("locked"):
         return False, "locked by git"
-    if resolved in live_keys:
+    # live_keys holds LABELS since F-3; a caller still passing resolved paths is honoured too.
+    if resolved in live_keys or _worktree_label(resolved) in live_keys:
         return False, "a live session holds it (coord session start, not ended)"
     if not os.path.isdir(path):
         return True, "directory is gone; only the git metadata remains (prunable)"
@@ -2742,7 +2817,7 @@ def cmd_worktree(root, repo, action, cwd, now, session=None, agent=None,
             # the rate is wrong in the direction that flatters us.
             append_event(root, {"kind": "session-start", "session": session, "tree": "worktree",
                                 "agent": agent or session, "wi": "WI-0", "path": "-",
-                                "at": now, "worktree": _worktree_key(target)})
+                                "at": now, "worktree": _worktree_label(target)})
         print("worktree ready\n  branch    {}\n  path      {}\n  base      {}  ({})"
               "\n  next      cd {}"
               .format(name, target, sha[:12], _safe(base or "HEAD of this tree", 60),
@@ -2762,7 +2837,7 @@ def cmd_worktree(root, repo, action, cwd, now, session=None, agent=None,
         return 4
     live = {}
     for event in events:
-        key = event.get("worktree")
+        key = _worktree_label(event.get("worktree"))
         if event.get("kind") == "session-start":
             live[key] = max(live.get(key, 0.0), event.get("at", 0.0))
         elif event.get("kind") == "session-end":
@@ -2926,13 +3001,16 @@ def cmd_session(root, action, session, agent, cwd, now, repo=None):
     #   upgrade trigger: the first time a human is blocked by a dead session.
     STALE_SECONDS = 8 * 3600
     key = _worktree_key(cwd)
+    # F-3 / PLAT-B: the ledger carries the tree's LABEL (basename), never the path; a legacy
+    # absolute value is reduced to its label on read (note-20260919-liveness-worktree-field-is-a-label).
+    label = _worktree_label(key)
     events, errors, _ = read_events(root)
     if errors:
         print("COORD-NOT-CHECKED-RECORD: {}".format(_safe("; ".join(errors[:2]), 200)))
         return 4
     live = {}
     for event in events:
-        if event.get("worktree") != key:
+        if _worktree_label(event.get("worktree")) != label:
             continue
         if event.get("kind") == "session-start":
             live[event.get("session")] = event.get("at", 0.0)
@@ -2949,14 +3027,14 @@ def cmd_session(root, action, session, agent, cwd, now, repo=None):
                   .format(_safe(key, 300), _safe(holder)))
             return 3
         append_event(root, {"kind": "session-start", "session": session, "agent": agent,
-                            "wi": "WI-0", "path": "-", "at": now, "worktree": key,
+                            "wi": "WI-0", "path": "-", "at": now, "worktree": label,
                             # WT4's exception, recorded where `coord metrics` can count it.
                             "tree": session_tree_kind(repo, cwd)})
         print("session {} registered in {}".format(session, key))
         return 0
 
     append_event(root, {"kind": "session-end", "session": session, "agent": agent,
-                        "wi": "WI-0", "path": "-", "at": now, "worktree": key})
+                        "wi": "WI-0", "path": "-", "at": now, "worktree": label})
     print("session {} released {}".format(session, key))
     return 0
 
@@ -2980,6 +3058,8 @@ def cmd_metrics(root, repo, as_json):
                "reason": "" if total else "no decisions recorded - nothing to rate"}
     payload.update(leader)
     payload.update(requests)
+    liveness = liveness_metrics(read_events(root)[0], time.time(), worktree_mtimes(repo))
+    payload.update(liveness)
     if as_json:
         print(json.dumps(payload))
         return 0
@@ -3024,6 +3104,508 @@ def cmd_metrics(root, repo, as_json):
         if requests["requests_untyped"]:
             print("  untyped        {}   (predate deadline/fallback)".format(
                 requests["requests_untyped"]))
+    if liveness["heartbeat_reason"]:
+        print("heartbeat        {}".format(liveness["heartbeat_reason"]))
+    else:
+        print("heartbeats       {}   ({} zero-delta = stalls observed)".format(
+            liveness["heartbeats"], liveness["stalls_observed"]))
+        print("  tracks now     {} live, {} stalled, {} blocked".format(
+            liveness["tracks_live"], liveness["tracks_stalled"], liveness["tracks_blocked"]))
+        print("kicks            {}   (rung 1, cap {}; {} refused at the cap; {} rung-2 escalations)"
+              .format(liveness["kicks"], KICK_CAP, liveness["kicks_refused_cap"],
+                      liveness["escalations"]))
+        print("  stall detection latency, median   {}".format(
+            "{} s".format(liveness["stall_latency_median_s"])
+            if liveness["stall_latency_median_s"] is not None else "no kick recorded"))
+        print("  false kicks    {}   (a kick followed by the target's progress within {} s)"
+              .format(liveness["false_kicks"], STALL_AFTER))
+    return 0
+
+
+# --- P3: progress liveness, the running track, the kick ladder -----------------------------
+# spec-liveness-and-track / design-liveness-and-track. Two new row kinds in the SAME ledger
+# (`heartbeat` in the beating session's file, `kick-ladder` in the kicker's); the track is a
+# pure fold (pattern: event sourcing, as `fold`/`fold_requests`); the ladder refuses, counts
+# and records (as `cmd_request`/`cmd_leader`). Nothing here acts on its own (WT11, CO17).
+
+def heartbeat_scratch_path(root, repo, session):
+    """The machine-local accumulator between samples. It lives in the git COMMON dir (never
+    tracked, shared by every worktree of the clone, no .gitignore line to forget); when there
+    is no .git at all it falls back beside the ledgers, under the `.agents/*` ignore."""
+    common = Path(repo) / ".git" if repo else None
+    base = (common / "coord" / "heartbeat") if (common is not None and common.is_dir()) \
+        else (Path(root) / "heartbeat")
+    return base / "{}.json".format(session)
+
+
+def _fresh_scratch(now, since):
+    return {"calls": 0, "files": [], "tokens": 0, "tokens_known": False,
+            "window_at": float(now), "since": since}
+
+
+def _read_scratch(path):
+    try:
+        data = json.loads(Path(path).read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
+    return data if isinstance(data, dict) else None
+
+
+def _write_scratch(path, data):
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_name(path.name + ".tmp")
+    tmp.write_text(json.dumps(data, sort_keys=True), encoding="utf-8", newline="\n")
+    os.replace(str(tmp), str(path))
+
+
+def _renew_leader_if_holder(repo, session, now):
+    """F-1 (note-20260919-liveness-heartbeat-renews-the-leader): a SAMPLED beat from the live
+    holder renews; an expired designation is reported, never reclaimed (the epoch is an act)."""
+    if not repo or not session:
+        return None
+    record, oid, err = leader_read(repo)
+    if err or record is None or record.get("leader") != session:
+        return None
+    state = leader_state(record, now)
+    if state == "expired":
+        return "expired"
+    if state != "live":
+        return None
+    new, refusal = leader_decide("renew", record, now, session, session,
+                                 float(record.get("ttl") or LEADER_TTL))
+    if refusal:
+        return None
+    _new_oid, err = leader_write(repo, new, oid)
+    return None if err else True
+
+
+def heartbeat_tick(root, repo, session, agent, now, files=(), calls=1, tokens=None, host="",
+                   event="", wi=None, cwd=None, flush=False):
+    """Accumulate one host event; write ONE `heartbeat` row when the sample window (100 s) has
+    passed or on `flush` (a stop-class event). Returns the row written, else None.
+
+    The row carries COUNTS: calls and distinct files since the previous row, tokens when a host
+    exposed them (`not recorded` otherwise - never a plausible number, IO8), `since` = the
+    previous row's instant, and `leader_renewed` (F-1). A zero-delta row is legal and renders
+    `stalled` (D7). Paths from the host are relativised, counted, never stored or opened.
+    """
+    scratch = heartbeat_scratch_path(root, repo, session)
+    data = _read_scratch(scratch)
+    if data is None:                       # first tick, or a corrupt accumulator: start from zero
+        data = _fresh_scratch(now, None)
+    data["calls"] = int(data.get("calls") or 0) + int(calls)
+    seen = [str(f) for f in (data.get("files") or [])]
+    for path in files or ():
+        rel = _relativise(str(path), repo, cwd) or str(path)
+        if rel not in seen and len(seen) < 64:
+            seen.append(rel)
+    data["files"] = seen
+    if tokens is not None:
+        data["tokens"] = int(data.get("tokens") or 0) + int(tokens)
+        data["tokens_known"] = True
+    window_at = float(data.get("window_at") or now)
+    if not flush and now - window_at < HEARTBEAT_SAMPLE:
+        _write_scratch(scratch, data)
+        return None
+    row = {"kind": "heartbeat", "session": session, "agent": agent or session,
+           "wi": wi or os.environ.get("AGENT_WI") or "WI-0", "path": "-", "at": float(now),
+           "worktree": _worktree_label(_worktree_key(cwd or os.getcwd())),
+           "host": host or os.environ.get("AGENT_HOST") or "unknown", "event": event or "",
+           "calls": int(data["calls"]), "files": len(seen),
+           "tokens": int(data["tokens"]) if data.get("tokens_known") else "not recorded",
+           "since": data.get("since"),
+           "leader_renewed": _renew_leader_if_holder(repo, session, now)}
+    append_event(root, row)
+    _write_scratch(scratch, _fresh_scratch(now, float(now)))
+    return row
+
+
+def _has_progress(row):
+    total = 0
+    for key in ("calls", "files", "tokens"):
+        value = row.get(key)
+        if isinstance(value, (int, float)) and not isinstance(value, bool):
+            total += value
+    return total > 0
+
+
+def track_fold(events, now, mtimes=None):
+    """Pure fold: ledger rows (+ worktree mtimes by label) -> one row per (session, wi).
+
+    live     the newest beat carries a progress delta and is younger than STALL_AFTER
+             (or, with no beat at all, the worktree changed within STALL_AFTER)
+    stalled  everything else that is neither blocked nor done - a zero-delta ping is stalled
+             however fresh (D7), and unproven liveness (no beat, no worktree) is never live
+    blocked  a `blocked` mail twin newer than any `unblocked`; blocked_on = its addressee
+    done     a session-end or a `done` twin
+    `missed_beats` counts sample windows since the last progress (or the last beat, or the
+    start); `kicks` counts rung-1 kicks recorded against (session, wi). Nothing is stored.
+    """
+    mtimes = mtimes or {}
+    tracks, kicks, notified = {}, {}, set()
+    for event in events:
+        session, kind, at = event.get("session"), event.get("kind"), float(event.get("at") or 0.0)
+        if kind == "kick-ladder":
+            key = (event.get("to"), event.get("wi"))
+            if event.get("outcome") == "ok" and event.get("rung") == 1:
+                kicks[key] = kicks.get(key, 0) + 1
+            if event.get("outcome") == "ok" and event.get("rung") == 0:
+                notified.add(key)
+            continue
+        if kind == "session-start":
+            tracks[session] = {"session": session, "agent": event.get("agent", session),
+                               "wi": event.get("wi") or "WI-0",
+                               "worktree": _worktree_label(event.get("worktree")),
+                               "started_at": at, "last_at": at, "last_beat_at": None,
+                               "last_progress_at": None, "calls_last": None, "files_last": None,
+                               "beats": 0, "zero_delta_beats": 0, "ended": False, "done": False,
+                               "blocked_on": None, "deadline_at": None}
+            continue
+        row = tracks.get(session)
+        if row is None:
+            continue
+        row["last_at"] = max(row["last_at"], at)
+        if kind == "session-end":
+            row["ended"] = True
+        elif kind == "heartbeat":
+            row["beats"] += 1
+            row["last_beat_at"] = at
+            row["wi"] = event.get("wi") or row["wi"]
+            row["calls_last"] = event.get("calls")
+            row["files_last"] = event.get("files")
+            if _has_progress(event):
+                row["last_progress_at"] = at
+                row["latest_has_progress"] = True
+            else:
+                row["zero_delta_beats"] += 1
+                row["latest_has_progress"] = False
+        elif event.get("type") == "mail":
+            if kind == "blocked":
+                row["blocked_on"] = event.get("to")
+            elif kind == "unblocked":
+                row["blocked_on"] = None
+            elif kind == "done":
+                row["done"] = True
+
+    rows = []
+    for row in tracks.values():
+        mtime = mtimes.get(row["worktree"])
+        if row["beats"]:
+            row["source"] = "heartbeat"
+        elif mtime is not None:
+            row["source"] = "worktree-mtime"
+            row["last_progress_at"] = float(mtime)
+        else:
+            row["source"] = "none"
+        evidence = max(v for v in (row["last_at"], row["last_progress_at"], mtime) if v is not None)
+        if now - evidence >= SESSION_STALE_SECONDS:
+            continue
+        anchor = row["last_progress_at"] or row["last_beat_at"] or row["started_at"]
+        row["missed_beats"] = max(0, int((now - anchor) // HEARTBEAT_SAMPLE))
+        row["stall_age_s"] = round(now - anchor, 1)
+        if row["ended"] or row["done"]:
+            state = "done"
+        elif row["blocked_on"]:
+            state = "blocked"
+        elif row["source"] == "heartbeat":
+            state = ("live" if row.get("latest_has_progress")
+                     and now - row["last_progress_at"] < STALL_AFTER else "stalled")
+        elif row["source"] == "worktree-mtime":
+            state = "live" if now - float(mtime) < STALL_AFTER else "stalled"
+        else:
+            state = "stalled"
+        row["state"] = state
+        row["kicks"] = kicks.get((row["session"], row["wi"]), 0)
+        row["notified"] = (row["session"], row["wi"]) in notified
+        row.pop("latest_has_progress", None)
+        rows.append(row)
+    order = {s: i for i, s in enumerate(TRACK_STATES)}
+    rows.sort(key=lambda r: (order.get(r["state"], 9), r["session"], r["wi"]))
+    return rows
+
+
+def worktree_mtimes(repo):
+    """label -> newest change instant per registered worktree: the last commit's time or the
+    newest mtime of a modified/untracked file, whichever is later. Read from the world, bounded
+    by the changed set (never a walk of the whole tree). A tree git cannot read is absent."""
+    mtimes = {}
+    if not repo:
+        return mtimes
+    records, err = worktree_inventory(repo)
+    if err:
+        return mtimes
+    for record in records:
+        path = record.get("path") or ""
+        if not os.path.isdir(path):
+            continue
+        code, out, _stderr = _git_status(path, "log", "-1", "--format=%ct")
+        newest = float(out.strip()) if code == 0 and out.strip().isdigit() else None
+        code, out, _stderr = _git_status(path, "status", "--porcelain", "--untracked-files=all")
+        if code == 0:
+            for line in out.splitlines():
+                name = line[3:].split(" -> ")[-1].strip().strip('"')
+                try:
+                    stamp = os.path.getmtime(os.path.join(path, name))
+                except OSError:
+                    continue
+                newest = stamp if newest is None else max(newest, stamp)
+        if newest is not None:
+            mtimes[_worktree_label(path)] = newest
+    return mtimes
+
+
+def _track_render_rows(rows):
+    for row in rows:
+        row["deadline"] = ("not recorded" if row.get("deadline_at") is None
+                           else time.strftime("%H:%M:%S", time.localtime(row["deadline_at"])))
+        row["last_progress"] = ("-" if row.get("last_progress_at") is None else
+                                time.strftime("%H:%M:%S", time.localtime(row["last_progress_at"])))
+    return rows
+
+
+def cmd_track(root, repo, now, as_json=False):
+    events, errors, files = read_events(root)
+    if errors:
+        print("COORD-NOT-CHECKED-RECORD: {}".format(_safe("; ".join(errors[:2]), 200)))
+        return 4
+    if not any(e.get("kind") == "session-start" for e in events):
+        # R4 / invariant 11: an empty fleet view is NOT CHECKED, never "all quiet".
+        print("COORD-TRACK-NOT-CHECKED  {} ledger file(s) scanned, no session-start among them\n"
+              "  because   nothing was established about anyone's liveness\n"
+              "  remedy    sessions register with `coord session start` (or `coord worktree new`);"
+              " hosts beat via heartbeat.py".format(files))
+        return 4
+    rows = _track_render_rows(track_fold(events, now, worktree_mtimes(repo)))
+    if as_json:
+        print(json.dumps({"tracks": rows, "files_scanned": files, "now": now,
+                          "stall_after_s": STALL_AFTER}, sort_keys=True))
+        return 0
+    print("{:<8} {:<24} {:<10} {:<15} {:<9} {:>6} {:>5}  {:<16} {}".format(
+        "state", "session", "wi", "source", "progress", "missed", "kicks", "blocked-on", "deadline"))
+    for row in rows:
+        print("{:<8} {:<24} {:<10} {:<15} {:<9} {:>6} {:>5}  {:<16} {}".format(
+            row["state"], _safe(row["session"], 24), _safe(row["wi"], 10), row["source"],
+            row["last_progress"], row["missed_beats"], row["kicks"],
+            _safe(row.get("blocked_on") or "-", 16), row["deadline"]))
+    print("{} track(s); {} file(s) scanned; stalled = no progress for {} s or a zero-delta beat"
+          " (D7); deadline is not recorded until `coord delegate` lands".format(
+              len(rows), files, STALL_AFTER))
+    return 0
+
+
+def _load_mail():
+    """coord-mail.py beside this file (the only mail writer); None when not installed."""
+    target = os.path.join(_HERE, "coord-mail.py")
+    if not os.path.isfile(target):
+        return None
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("coord_mail_for_kick", target)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def cmd_kick(root, repo, target, args, session, agent, now):
+    """The kick ladder (CO17): 0 notify (mail `note`) -> 1 kick (mail `kick`, cap KICK_CAP,
+    counted) -> 2 decision request (P1 typed request + mail `decision-request`). Every climb -
+    ok or refused - is a `kick-ladder` row in the kicker's ledger carrying the target's state,
+    stall age and missed beats at that instant (the SRE's measurement)."""
+    events, errors, _files = read_events(root)
+    if errors:
+        print("COORD-KICK-NOT-CHECKED  {}".format(_safe("; ".join(errors[:2]), 200)))
+        return 4
+    rows = {r["session"]: r for r in track_fold(events, now, worktree_mtimes(repo))}
+    row = rows.get(target)
+    if row is None:
+        print("COORD-KICK-NOT-CHECKED  {}\n  because   no track row exists for that session"
+              " (no session-start within {} h)\n  remedy    `coord track` lists who can be kicked"
+              .format(_safe(target, 80), SESSION_STALE_SECONDS // 3600))
+        return 4
+    wi = getattr(args, "wi", None) or row["wi"]
+    kicks_before = sum(1 for e in events if e.get("kind") == "kick-ladder" and e.get("rung") == 1
+                       and e.get("outcome") == "ok" and e.get("to") == target and e.get("wi") == wi)
+    notified = any(e.get("kind") == "kick-ladder" and e.get("rung") == 0 and e.get("outcome") == "ok"
+                   and e.get("to") == target and e.get("wi") == wi for e in events)
+    deadline_at = getattr(args, "deadline_at", None)
+    overdue = deadline_at is not None and now >= float(deadline_at)
+    rung = getattr(args, "rung", None)
+    if rung is None:
+        rung = 0 if (row["state"] == "blocked" and not notified) else 1
+    event = {"kind": "kick-ladder", "session": session, "agent": agent or session, "wi": wi,
+             "path": "-", "at": now, "to": target, "rung": int(rung), "kicks_before": kicks_before,
+             "state": row["state"], "stall_age_s": row.get("stall_age_s"),
+             "missed_beats": row.get("missed_beats"), "deadline_at": deadline_at,
+             "mail_id": "", "request_id": ""}
+
+    def refused(code, because, remedy, exit_code=3):
+        event.update({"outcome": "refused", "code": code})
+        append_event(root, event)
+        print("{}  {} {}\n  because   {}\n  remedy    {}".format(
+            code, _safe(target, 80), _safe(wi, 20), _safe(because, 300), _safe(remedy, 300)))
+        return exit_code
+
+    due = overdue or row["state"] == "stalled" or (row["state"] == "blocked"
+                                                    and row["missed_beats"] >= 3)
+    if rung == 0 and row["state"] != "blocked":
+        return refused("COORD-KICK-NOT-DUE", "notify (rung 0) is for a recorded block; the track is {}"
+                       .format(row["state"]), "kick a stalled track (rung 1), or wait")
+    if rung >= 1 and not due:
+        return refused("COORD-KICK-NOT-DUE",
+                       "the track is {} (last progress {} s ago, {} missed beat(s)); a kick needs a"
+                       " passed deadline or three missed beats (CO17)".format(
+                           row["state"], row.get("stall_age_s"), row.get("missed_beats")),
+                       "wait, or pass --deadline-at <epoch> when the plan's deadline has passed")
+    if rung == 1 and kicks_before >= KICK_CAP:
+        return refused("COORD-KICK-CAP", "{} kick(s) already recorded for this work item; the cap is {}"
+                       .format(kicks_before, KICK_CAP),
+                       "escalate: `coord kick {} --wi {} --rung 2 --fallback <what you do at the"
+                       " deadline>` (a decision request to the Owner)".format(target, wi))
+    fallback = (getattr(args, "fallback", None) or "").strip()
+    if rung == 2 and not fallback:
+        print("COORD-KICK-INCOMPLETE  {} {}\n  because   a decision request without a fallback has"
+              " no termination variant\n  remedy    pass --fallback <what the coordinator does at"
+              " the deadline> (and --deadline <s>, default {} s)".format(
+                  _safe(target, 80), _safe(wi, 20), REQUEST_DEADLINE), file=sys.stderr)
+        return 2
+    owner = None
+    if rung == 2:
+        owner = getattr(args, "owner", None)
+        if not owner:
+            record, _oid, err = leader_read(repo)
+            if not err and record is not None and leader_state(record, now) == "live":
+                owner = record.get("leader")
+        if not owner:
+            return refused("COORD-KICK-NO-OWNER", "no --owner given and no live leader in {}".format(LEADER_REF),
+                           "pass --owner <session>, or `coord leader pin <session>` first")
+    mail = _load_mail()
+    if mail is None:
+        return refused("COORD-KICK-NOT-CHECKED", "coord-mail.py is not beside coord-core.py",
+                       "install the message layer (P4)", 4)
+    reason = getattr(args, "reason", None) or ""
+    body = "{} rung {}: {} {} is {} (last progress {} s ago, {} missed beat(s), {} kick(s) before). {}".format(
+        "kick ladder", rung, target, wi, row["state"], row.get("stall_age_s"),
+        row.get("missed_beats"), kicks_before, reason).strip()
+    try:
+        if rung == 0:
+            event["mail_id"] = mail.append_mail(root, session, {"to": target, "kind": "note", "body": body,
+                                                                "ref": None}, now=now)
+        elif rung == 1:
+            event["mail_id"] = mail.append_mail(root, session, {"to": target, "kind": "kick", "body": body,
+                                                                "ref": None}, now=now)
+        else:
+            last_kick = [e for e in events if e.get("type") == "mail" and e.get("kind") == "kick"
+                         and e.get("to") == target and e.get("session") == session]
+            ref = str(last_kick[-1].get("mail_id")) if last_kick else ""
+            ns = argparse.Namespace(text=body, to=owner, deadline=getattr(args, "deadline", None) or "default",
+                                    fallback=fallback, blob="", ref=ref, contract="", reason="kick-ladder",
+                                    from_role="", path="")
+            import contextlib
+            import io
+            captured = io.StringIO()
+            with contextlib.redirect_stdout(captured):
+                code = cmd_request(root, "add", now, session, agent, ns, repo=repo)
+            if code != 0:
+                return refused("COORD-KICK-REQUEST-REFUSED", "coord request add exited {}".format(code),
+                               "see the request refusal above", code)
+            event["request_id"] = json.loads(captured.getvalue().strip().splitlines()[-1])["id"]
+            event["mail_id"] = mail.append_mail(root, session, {"to": owner, "kind": "decision-request",
+                                                                "body": body, "ref": event["request_id"]},
+                                                now=now)
+    except mail.MailError as exc:
+        return refused(exc.code, str(exc), "fix the mail refusal, then kick again", 3)
+    event.update({"outcome": "ok", "code": ""})
+    append_event(root, event)
+    print("kick rung {} -> {} {}  state {}  stall_age {} s  missed {}  kicks {}/{}  mail {}{}  deadline_at={}".format(
+        rung, _safe(target, 80), _safe(wi, 20), row["state"], row.get("stall_age_s"),
+        row.get("missed_beats"), kicks_before + (1 if rung == 1 else 0), KICK_CAP, event["mail_id"],
+        "  request {}".format(event["request_id"]) if event["request_id"] else "",
+        deadline_at if deadline_at is not None else "not-recorded"))
+    return 0
+
+
+def liveness_metrics(events, now, mtimes=None):
+    """The P3 measures (proposal §7 row P3): stall-detection latency and the false-kick rate,
+    plus the counts they rest on. R4: an empty corpus is a reason, never a zero."""
+    beats = [e for e in events if e.get("kind") == "heartbeat"]
+    ladder = [e for e in events if e.get("kind") == "kick-ladder"]
+    if not beats and not ladder:
+        return {"heartbeats": None, "stalls_observed": None, "kicks": None, "kicks_refused_cap": None,
+                "escalations": None, "false_kicks": None, "stall_latency_median_s": None,
+                "tracks_live": None, "tracks_stalled": None, "tracks_blocked": None,
+                "heartbeat_reason": "no heartbeat recorded"}
+    kicks = [e for e in ladder if e.get("rung") == 1 and e.get("outcome") == "ok"]
+    latencies = [float(e["stall_age_s"]) for e in kicks if e.get("stall_age_s") is not None]
+    false_kicks = 0
+    for kick in kicks:
+        at = float(kick.get("at") or 0.0)
+        if any(b.get("session") == kick.get("to") and _has_progress(b)
+               and at < float(b.get("at") or 0.0) <= at + STALL_AFTER for b in beats):
+            false_kicks += 1
+    rows = track_fold(events, now, mtimes)
+    return {"heartbeats": len(beats),
+            "stalls_observed": sum(1 for b in beats if not _has_progress(b)),
+            "kicks": len(kicks),
+            "kicks_refused_cap": sum(1 for e in ladder if e.get("code") == "COORD-KICK-CAP"),
+            "escalations": sum(1 for e in ladder if e.get("rung") == 2 and e.get("outcome") == "ok"),
+            "false_kicks": false_kicks,
+            "stall_latency_median_s": round(statistics.median(latencies), 1) if latencies else None,
+            "tracks_live": sum(1 for r in rows if r["state"] == "live"),
+            "tracks_stalled": sum(1 for r in rows if r["state"] == "stalled"),
+            "tracks_blocked": sum(1 for r in rows if r["state"] == "blocked"),
+            "heartbeat_reason": ""}
+
+
+def heartbeat_doctor_line(root, now):
+    """(line, is_problem) for `coord doctor` and pack-doctor: who beats, how fresh, how many
+    stalled - or `not recorded`, which is not a problem and not a pass (CTX-H)."""
+    events, errors, _files = read_events(root)
+    if errors:
+        return ("heartbeat        NOT CHECKED  the ledger has unreadable rows: {}".format(
+            _safe("; ".join(errors[:2]), 200)), True)
+    beats = [e for e in events if e.get("kind") == "heartbeat"]
+    if not beats:
+        return ("heartbeat        not recorded (no heartbeat in .agents/log; wire heartbeat.py at the"
+                " host's tool seam)", False)
+    rows = track_fold(events, now)
+    sessions = {b.get("session") for b in beats}
+    newest = max(float(b.get("at") or 0.0) for b in beats)
+    counts = {s: sum(1 for r in rows if r["state"] == s) for s in TRACK_STATES}
+    return ("heartbeat        {} session(s) beating; newest beat {} s ago; {} stalled, {} live, {} blocked,"
+            " {} done".format(len(sessions), int(max(0.0, now - newest)), counts["stalled"],
+                              counts["live"], counts["blocked"], counts["done"]), False)
+
+
+def cmd_log_portable(paths):
+    """F-3 migration: rewrite ONLY the `worktree` field of existing ledger rows to its label.
+    Idempotent (a label maps to itself); every other line is copied byte-for-byte, including
+    lines that are not JSON; the writer's own dump (sort_keys) is used for the rewritten rows."""
+    for raw in paths:
+        path = Path(raw)
+        try:
+            text = path.read_text(encoding="utf-8")
+        except OSError as exc:
+            print("{}: NOT CHECKED ({})".format(_safe(raw, 200), exc.__class__.__name__))
+            continue
+        out, rewritten = [], 0
+        for line in text.splitlines(keepends=True):
+            body = line.rstrip("\r\n")
+            ending = line[len(body):]
+            try:
+                row = json.loads(body) if body.strip() else None
+            except ValueError:
+                row = None
+            value = row.get("worktree") if isinstance(row, dict) else None
+            if isinstance(value, str) and ("/" in value or "\\" in value):
+                row["worktree"] = _worktree_label(value)
+                out.append(json.dumps(row, sort_keys=True) + ending)
+                rewritten += 1
+            else:
+                out.append(line)
+        if rewritten:
+            with open(str(path), "wb") as fh:
+                fh.write("".join(out).encode("utf-8"))
+        print("{}: {} row(s) rewritten".format(_safe(raw, 200), rewritten))
     return 0
 
 
@@ -3448,6 +4030,10 @@ def cmd_doctor(root, repo):
     print(line)
     if is_problem:
         problems += 1
+    line, is_problem = heartbeat_doctor_line(root, time.time())
+    print(line)
+    if is_problem:
+        problems += 1
 
     lines, request_problems = request_doctor_lines(root, repo, time.time())
     for line in lines:
@@ -3603,6 +4189,13 @@ def main(argv=None):
         return 4
 
     session, agent = _identity()
+    # BEFORE any command, including `hook`: an id that cannot be a file name never reaches a
+    # writer. An UNSET (or empty) id is not this refusal - the identity gate below renders that.
+    if session:
+        bad = session_id_error(session)
+        if bad:
+            print(bad, file=sys.stderr)
+            return 2
     now = time.time()
 
     repo = repo_root(os.getcwd())
@@ -3695,9 +4288,10 @@ def main(argv=None):
     # BEFORE the identity gate for the same reason: the delegate scripts own their identity
     # rules (read/board are reads; send/post read AGENT_SESSION themselves). The exit code is
     # the child's, never folded (an exit code is a result only when it is read).
-    if args.cmd in ("mail", "board"):
-        target = os.path.join(_HERE, "coord-mail.py" if args.cmd == "mail" else "coord-board.py")
-        passthrough = args.mail_args if args.cmd == "mail" else args.board_args
+    if args.cmd in ("mail", "board", "decide"):
+        script = {"mail": "coord-mail.py", "board": "coord-board.py", "decide": "coord-decide.py"}[args.cmd]
+        target = os.path.join(_HERE, script)
+        passthrough = getattr(args, args.cmd + "_args")
         if not os.path.isfile(target):
             print("COORD-NOT-CHECKED  {} is not beside coord-core.py; the message layer is not installed here".format(os.path.basename(target)))
             return 4
@@ -3709,6 +4303,11 @@ def main(argv=None):
     # would make the orphan check unreachable exactly when it is most needed (WT10).
     if args.cmd == "worktree":
         chosen = getattr(args, "wt_session", None) or session
+        # `--session` bypasses the env var, so it meets the same file-name rule here.
+        bad = session_id_error(chosen) if chosen else None
+        if bad:
+            print(bad, file=sys.stderr)
+            return 2
         return cmd_worktree(root, repo, args.action, os.getcwd(), now,
                             session=chosen, agent=agent or chosen, branch=args.branch,
                             base=args.base, remove=args.remove,
@@ -3717,6 +4316,14 @@ def main(argv=None):
 
     if args.cmd == "session" and args.action == "list":
         return cmd_session_list(root, now, args.json)
+
+    # P3 reads and maintenance, before the identity gate: `track` is the coordinator's and a
+    # human's view; `log portable` runs at a landing with no session of its own.
+    if args.cmd == "track":
+        return cmd_track(root, repo, now, args.json)
+
+    if args.cmd == "log":
+        return cmd_log_portable(args.files)
 
     if args.cmd == "collaborate":
         return cmd_collaborate(root, repo, args.action, now, args.json)
@@ -3799,6 +4406,18 @@ def main(argv=None):
             return 2
         print("released {}".format(args.path))
         return 0
+
+    if args.cmd == "session" and args.action == "heartbeat":
+        row = heartbeat_tick(root, repo, session, agent, now, files=args.files, calls=args.calls,
+                             tokens=args.tokens, host=args.host, event=args.event, wi=args.wi,
+                             cwd=os.getcwd(), flush=args.flush)
+        print("heartbeat {}  calls {} files {} tokens {}  leader_renewed {}".format(
+            "written", row["calls"], row["files"], row["tokens"], row["leader_renewed"])
+              if row else "heartbeat accumulated (sample window {} s open)".format(HEARTBEAT_SAMPLE))
+        return 0
+
+    if args.cmd == "kick":
+        return cmd_kick(root, repo, args.kick_target, args, session, agent, now)
 
     if args.cmd == "session":
         return cmd_session(root, args.action, session, agent, os.getcwd(), now, repo=repo)

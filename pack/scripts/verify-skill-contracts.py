@@ -14,10 +14,17 @@ WHAT IT CHECKS. Every `<skills-root>/<name>/SKILL.md` (plus that skill's `refere
   3. hard stop       a hard-stop stage (`**STOP`, `stop for human`, `never merges`) cites CO-S2
   4. dispatch order  a dispatcher (a Dispatch heading or stage label, `coord dispatch`, or a
                      sentence-initial `spawn`) cites CO-S0 in SKILL.md before that instruction
+  5. compile         every skill cites CO-S0 in SKILL.md - inline, or the one-line pointer to
+                     `reference/co-s0.md` (spec-skill-evolution US-1; measured 10 of 28 without)
+  6. pointer         a SKILL.md that names `reference/co-s0.md` has a reference text carrying CO-S0
+  7. deadline        a dispatcher, or a skill naming a fan-out cap above zero, names a deadline
+                     and a fallback for the dispatch (CO8, CO9; measured: execute-with-coordination
+                     said "fallback" once and "deadline" nowhere)
 
 Refusals, one per line on stdout, in the pack's grammar:  <code>: <skill> — fix: <text>
 Codes are stable (O7): seat missing · seat invalid · fan-out without compile · fan-out without
-contract · hard stop without message · dispatch before compile · skills root missing.
+contract · hard stop without message · dispatch before compile · compile missing · pointer without
+reference · dispatch without deadline · skills root missing.
 
 USAGE
   python3 verify-skill-contracts.py                 check pack/commands (or .claude/skills)
@@ -52,6 +59,9 @@ HARD_STOP = re.compile(r"(\*\*STOP\b|(?i:stop for human)|(?i:never merges))")
 # `coord dispatch` verb, or a sentence-initial "spawn". ("which spawns one sub-agent per
 # track" in an intro paragraph is a description; measured on prepare-for-coordination.)
 DISPATCH = re.compile(r"(?m)^#+ .*\bDispatch\b|\*\*Stage \d+ — Dispatch|coord dispatch|(?:^|[.:;]\s+)[Ss]pawn\b")
+POINTER = "reference/co-s0.md"
+DEADLINE = re.compile(r"deadline", re.I)
+FALLBACK = re.compile(r"fallback", re.I)
 
 
 def _read(path):
@@ -88,6 +98,12 @@ def check_skill(name, skill_md, reference_texts):
         c = body.find("CO-S0")
         if c < 0 or c > d.start():
             out.append("dispatch before compile: {0} — fix: cite CO-S0 in SKILL.md before the first dispatch/spawn instruction (a dispatcher never spawns before the compile stage)".format(name))
+    if "CO-S0" not in body:
+        out.append("compile missing: {0} — fix: cite CO-S0 in SKILL.md — inline in Grounding, or the one-line pointer to reference/co-s0.md (CO-S0, knowledge/agent-coordination.md)".format(name))
+    if POINTER in body and not any("CO-S0" in ref for ref in reference_texts):
+        out.append("pointer without reference: {0} — fix: SKILL.md points at reference/co-s0.md but no reference/*.md carries CO-S0 — add the file with the CO-S0 sentence".format(name))
+    if (d or FAN_OUT_ABOVE_ZERO.search(union)) and not (DEADLINE.search(union) and FALLBACK.search(union)):
+        out.append("dispatch without deadline: {0} — fix: a skill that dispatches names a deadline and a fallback for every dispatch (CO8, CO9)".format(name))
     return out
 
 
@@ -146,6 +162,9 @@ def self_test():
         ("hard stop without message", "---\nname: a\n" + seat + "---\n## Flow\nit **never merges**.\n", []),
         ("dispatch before compile", "---\nname: a\n" + seat + "---\n## Stage 3 — Dispatch\nspawn.\n## Later\nCO-S0.\n", []),
         ("dispatch before compile", "---\nname: a\n" + seat + "---\n## Flow\nspawn the tracks.\n", []),
+        ("compile missing", "---\nname: a\n" + seat + "---\n## Grounding\nplain, no stage cited.\n", []),
+        ("pointer without reference", "---\nname: a\n" + seat + "---\n## Grounding\nCO-S0 applies first — the sentence is `reference/co-s0.md`.\n", ["stage detail without the citation"]),
+        ("dispatch without deadline", "---\nname: a\nruns_as: Coordinator\n---\n## Stage 0\nCO-S0.\n## Stage 3 — Dispatch\nspawn under the five-part contract with a termination condition; fan-out cap: 4.\n", []),
     ]
     for code, text, refs in fixtures:
         got = check_skill("a", text, refs)
@@ -153,9 +172,9 @@ def self_test():
             print("self-test FAILED: expected `{0}` on {1!r}; got {2}".format(code, text, got))
             return 1
     ok = [
-        "---\nname: a\n" + seat + "---\n## Grounding\nCO-S0 first (five-part contract, termination). fan-out cap 2; **STOP for human review** (CO-S2).\n",
-        "---\nname: a\nruns_as: Coordinator\n---\n## Stage 0\nCO-S0.\n## Stage 3 — Dispatch\nspawn under the five-part contract with a termination condition; fan-out cap: 4.\n",
-        "---\nname: a\n" + seat + "---\n## Flow\nfan-out cap 0 → 2 is a raise; tier · fan-out cap · budget.\n",
+        "---\nname: a\n" + seat + "---\n## Grounding\nCO-S0 first (five-part contract, termination, deadline, fallback). fan-out cap 2; **STOP for human review** (CO-S2).\n",
+        "---\nname: a\nruns_as: Coordinator\n---\n## Stage 0\nCO-S0.\n## Stage 3 — Dispatch\nspawn under the five-part contract with a termination condition, a deadline and a fallback; fan-out cap: 4.\n",
+        "---\nname: a\n" + seat + "---\n## Flow\nCO-S0. fan-out cap 0 → 2 is a raise; tier · fan-out cap · budget.\n",
     ]
     for text in ok:
         got = check_skill("a", text, [])
@@ -163,9 +182,14 @@ def self_test():
             print("self-test FAILED: the good skill was refused: {0}".format(got))
             return 1
     # the reference route: the citation may live in reference/*.md
-    got = check_skill("a", "---\nname: a\n" + seat + "---\n## Flow\n**STOP for human approval** (`reference/stop.md`).\n", ["CO-S2 applies."])
+    got = check_skill("a", "---\nname: a\n" + seat + "---\n## Flow\nCO-S0. **STOP for human approval** (`reference/stop.md`).\n", ["CO-S2 applies."])
     if got:
         print("self-test FAILED: a citation in reference/ was not honoured: {0}".format(got))
+        return 1
+    # the pointer route: SKILL.md points, reference/co-s0.md carries the sentence
+    got = check_skill("a", "---\nname: a\n" + seat + "---\n## Grounding\nCO-S0 applies first — the sentence is `reference/co-s0.md`.\n", ["Consume the compiled prompt when one is in hand (CO-S0)."])
+    if got:
+        print("self-test FAILED: the pointer route with its reference was refused: {0}".format(got))
         return 1
     # the CLI end: a temp tree with no skills root exits 2, one with a bad skill exits 1
     tmp = tempfile.mkdtemp()
@@ -179,7 +203,7 @@ def self_test():
     if main(["--root", tmp]) != 1:
         print("self-test FAILED: a seat-less skill must exit 1 through the CLI")
         return 1
-    print("self-test ok: 8 refusal directions fail, 3 good skills and the reference route pass, exit codes 1 and 2 observed")
+    print("self-test ok: 11 refusal directions fail, 3 good skills, the reference route and the pointer route pass, exit codes 1 and 2 observed")
     return 0
 
 

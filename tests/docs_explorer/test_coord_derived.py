@@ -43,6 +43,9 @@ class DerivedCase(unittest.TestCase):
         self.repo = Path(self.tmp.name) / "r"
         self.repo.mkdir(parents=True)
         self.git("init", "-q")
+        # T-1 (cross-platform readiness): the default branch is whatever this machine's
+        # init.defaultBranch made it - read it back rather than assuming `master`.
+        self.main = self.git("symbolic-ref", "--short", "HEAD").stdout.strip()
         self.git("config", "user.email", "t@t")
         self.git("config", "user.name", "t")
         self.root = self.repo / ".agents"
@@ -185,12 +188,12 @@ class MergeDriverTests(DerivedCase):
         self.git("checkout", "-qb", "feature")
         self.write("docs/gen.txt", "gen-feature\n"); self.write("src.txt", "s-feature\n")
         self.git("add", "-A"); self.git("commit", "-qm", "feature")
-        self.git("checkout", "-q", "master")
+        self.git("checkout", "-q", self.main)
         self.write("docs/gen.txt", "gen-master\n"); self.write("src.txt", "s-master\n")
         self.git("add", "-A"); self.git("commit", "-qm", "master")
 
         self.git("checkout", "-q", "feature")
-        self.git("rebase", "master", check=False)
+        self.git("rebase", self.main, check=False)
         unmerged = self.git("diff", "--name-only", "--diff-filter=U", check=False).stdout.split()
         self.assertNotIn("docs/gen.txt", unmerged,
                          "the derived file conflicted under rebase; the driver did not run")
@@ -243,7 +246,7 @@ class RegisterClassTests(DerivedCase):
         self.write("audit.jsonl",
                    base + _json.dumps({"id": "al-0002", "shortname": "feature-work"}) + "\n")
         self.git("add", "-A"); self.git("commit", "-qm", "f")
-        self.git("checkout", "-q", "master")
+        self.git("checkout", "-q", self.main)
         self.write("audit.jsonl",
                    base + _json.dumps({"id": "al-0002", "shortname": "master-work"}) + "\n")
         self.git("add", "-A"); self.git("commit", "-qm", "m")
@@ -368,7 +371,7 @@ class DoctorTests(DerivedCase):
         self.git("add", "-A"); self.git("commit", "-qm", "base")
         self.git("checkout", "-qb", "feature")
         self.write("gen.txt", "feature\n"); self.git("add", "-A"); self.git("commit", "-qm", "f")
-        self.git("checkout", "-q", "master")
+        self.git("checkout", "-q", self.main)
         self.write("gen.txt", "master\n"); self.git("add", "-A"); self.git("commit", "-qm", "m")
 
         self.git("merge", "feature", check=False)
