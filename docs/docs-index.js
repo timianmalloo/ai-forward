@@ -1976,6 +1976,41 @@ window.DOCS_INDEX = {
       "sourceSha256": "8caab81356b8f554a5435c829a577ddcb3435392d777c58565b18acc694d04a8"
     },
     {
+      "id": "note-20260919-mail-store-deviations",
+      "path": "docs/notes/note-20260919-mail-store-deviations.md",
+      "title": "The mail store keeps the fixed contract with three named additions: a broadcast file, prefixed ULIDs, and colocated acks",
+      "type": "decision-note",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "coordination P4",
+      "reviewBy": "2026-12-18",
+      "reviewSuggested": [],
+      "summary": "Three shapes the fixed mail contract left open are settled here and raised to the coordinator and Track P6 as seam requests before any line was written; blast radius is P6's fold (file glob, id ordering, acked? derivation) and nothing else.",
+      "tags": [
+        "decision-note",
+        "coordination",
+        "mail",
+        "p4",
+        "p6"
+      ],
+      "links": [
+        {
+          "to": "spec-message-layer",
+          "rel": "relates-to"
+        },
+        {
+          "to": "design-message-layer",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "6f91e6ae708dc7b70e88705d898adb9e0d50fa38b883d824d0e1fb81e0626d8a"
+    },
+    {
       "id": "note-20260919-readers-seat-and-citation-placement",
       "path": "docs/notes/note-20260919-readers-seat-and-citation-placement.md",
       "title": "The seat key is runs_as, the CO-S0 sentence moves to reference/ where the 2% budget cannot hold it, and a dispatch instruction is a heading, a verb or a sentence-initial spawn",
@@ -2518,6 +2553,56 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "ea314d0fcf650f5815fee5f7da2d777e2da1e7ed195d643ce09480505a5e3558"
+    },
+    {
+      "id": "design-message-layer",
+      "path": "docs/design/message-layer.md",
+      "title": "Design — the local message layer and dispatch (coord-mail.py · mail-doorbell.py · pack-apply ignore rules · pack-doctor checks)",
+      "type": "design",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "coordination P4",
+      "reviewBy": "2027-03-18",
+      "reviewSuggested": [],
+      "summary": "One stdlib script owns the inbox writer (append_mail), the reader, the ack and the bounded dispatch; one hook script rings every host's doorbell with a count and a pointer built from a function that has no body parameter; pack-apply re-includes the ledgers and ignores the mail dir; pack-doctor fails on a tracked mail dir, an ignored ledger, or a state-changing mail with no twin. Delivery is at-least-once with idempotent, colocated acks; ordering is by id.",
+      "tags": [
+        "coordination",
+        "mail",
+        "doorbell",
+        "dispatch",
+        "harness",
+        "pack-apply",
+        "pack-doctor",
+        "p4"
+      ],
+      "links": [
+        {
+          "to": "spec-message-layer",
+          "rel": "implements"
+        },
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "refines"
+        },
+        {
+          "to": "design-coord-core-phase1",
+          "rel": "relates-to"
+        },
+        {
+          "to": "design-coord-federation-phase3",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-multi-agent-coordination",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-20260919-mail-store-deviations",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "67748cdddf2e5cedb9aac6be932e47a80d6a038e884640d1748fa55a4c04b844"
     },
     {
       "id": "design-native-app-ui-skill-extension",
@@ -6477,6 +6562,14 @@ window.DOCS_INDEX = {
           "rel": "documents"
         },
         {
+          "to": "design-compile-readers",
+          "rel": "documents"
+        },
+        {
+          "to": "design-board",
+          "rel": "documents"
+        },
+        {
           "to": "design-compile-stage",
           "rel": "documents"
         },
@@ -6506,7 +6599,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d0bcd103d2c63f6cb7941b415d8b3d015590e9433b02c287c073fca4bfa58d96"
+      "sourceSha256": "8705f0a493b781a44353a4a4026ce88cc3857aeb554a7f2878c53af62cb54b1a"
     },
     {
       "id": "forensic-review-rev48-proof",
@@ -7120,6 +7213,52 @@ window.DOCS_INDEX = {
       "sourceSha256": "3a1b4242dc83c313fbc9b3e14877e875e9e44eb3b5eeb59025efd5abd1b0a13d"
     },
     {
+      "id": "spec-message-layer",
+      "path": "docs/specs/message-layer.md",
+      "title": "Spec — the local message layer and dispatch (coord mail send/read/ack · dispatch · doorbells)",
+      "type": "spec",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "coordination P4",
+      "reviewBy": "2027-03-18",
+      "reviewSuggested": [],
+      "summary": "Sessions in one repository leave each other messages in per-session append-only inbox files; state-changing kinds are twinned into the coord ledger so git carries them; each harness we can reach rings a doorbell that says how many and which, never what; a dispatch verb runs another harness headless under a budget and records what was actually executed here.",
+      "tags": [
+        "coordination",
+        "mail",
+        "doorbell",
+        "dispatch",
+        "harness",
+        "p4"
+      ],
+      "links": [
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "refines"
+        },
+        {
+          "to": "note-20260919-coordination-decisions-ratified",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-multi-agent-coordination",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0007-coordination-substrate",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Part B — UX specification (CLI terms)",
+          "mermaid": "flowchart TD\n  S[send] --> V{valid kind, size, identity?}\n  V -- no --> E2[exit 2, reason]\n  V -- yes --> F{recipient queued < 50?}\n  F -- no --> E3[exit 3 inbox full]\n  F -- yes --> W[append inbox line] --> T{state-changing?}\n  T -- yes --> L[append ledger twin, no body] --> OK[print id, exit 0]\n  T -- no --> OK\n  R[read] --> P{files parse?}\n  P -- no --> E4[exit 4 NOT CHECKED]\n  P -- yes --> H[own inbox + broadcast, minus my acks, since id] --> A{--ack?}\n  A -- yes --> K[one ack line per shown message] --> OUT[render under untrusted heading / --json]\n  A -- no --> OUT\n  D[doorbell at hook seam] --> I{session known and inbox readable?}\n  I -- no --> Q[emit nothing, exit 0]\n  I -- yes --> C{count of unacked within 5 min > 0?}\n  C -- no --> Q\n  C -- yes --> B[host-shaped payload: count + pointer] --> Q"
+        }
+      ],
+      "sourceSha256": "ecae38a312f905e183888d7af4b29483c8e2e29ce130660dba8d0c28e4f21f03"
+    },
+    {
       "id": "spec-native-app-ui-skill-extension",
       "path": "docs/specs/native-app-ui-skill-extension.md",
       "title": "Native app UI skill extension — Specification",
@@ -7188,6 +7327,14 @@ window.DOCS_INDEX = {
           "rel": "documents"
         },
         {
+          "to": "design-compile-readers",
+          "rel": "documents"
+        },
+        {
+          "to": "design-board",
+          "rel": "documents"
+        },
+        {
           "to": "design-compile-stage",
           "rel": "documents"
         },
@@ -7217,7 +7364,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "54d492bf72bb9359ab511d90082418298daa216422443142e473a29f1e6df8cb"
+      "sourceSha256": "07b2e5f71da789395d07b1762c264c86a764b3a598e72f2da72c344189ba2683"
     }
   ],
   "surfaces": [
@@ -7459,5 +7606,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "b1c78e6bfba11361e18ace59a9bb69d1a2d85f6a74bba5306df28d55736e7395"
+  "graphSha256": "a8ab8792de2bbe338b8ab03ae179bc0578797884ff757528ddd5443ee2c05d35"
 };
