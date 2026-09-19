@@ -3397,7 +3397,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b3f6c9a4b08f8c78651e199b23ddcff4626e6188f905079201480717a9a9a513"
+      "sourceSha256": "425657739dec196fbad57317beff75f902d1b6f68367d4b5f91deeeb1ee583ea"
     },
     {
       "id": "plan-optimize-graph-grok-surface",
@@ -6724,5 +6724,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "7b1114974378497e1c7e971d26621eb729059b1228d3d0d8df76e4fbdbef2336"
+  "graphSha256": "6bffd70ba00384aa4c671d26d0bbbfaea4656812b68f4c7426531582e5501b46"
 };
