@@ -282,9 +282,10 @@ class WorktreePointerTests(unittest.TestCase):
         return paras[1:]  # drop the WT12 paragraph itself
 
     def test_exactly_one_new_paragraph_after_wt12(self):
-        base_paras = self._after_wt12(_git_show(WT_REL))
+        # Asserted against the tree, not against origin/main: a diff against the base is true only
+        # until the change lands, then it self-invalidates (CI went red on the landing commit).
         tree_paras = self._after_wt12(_read(WT))
-        new = [p for p in tree_paras if p not in base_paras]
+        new = [p for p in tree_paras if "CTX-Q" in p]
         self.assertEqual(len(new), 1, new)
         para = new[0]
         self.assertIn("CTX-Q", para)

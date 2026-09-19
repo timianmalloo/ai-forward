@@ -288,6 +288,22 @@ representation-contract failure, not a reason to bypass merges for authored file
 - **Control:** `tools/sync-pack.ps1` now **strips** the source frontmatter at the wrap boundary rather than prepending over it (`Get-LoadScope` returns the body separately), so a second block cannot be produced. The generator also throws on a missing or unknown `load:` scope instead of defaulting, so an unparsed source fails loudly. Structural — the shape is no longer expressible.
 - **Status:** `controlled`
 
+### JOIN-A — A linear rebuild by checkout keeps the files the source tree deleted
+- **Signature:** to satisfy a linear-history rule the coordinator rebuilds a merged tree as one commit with `git checkout <integration> -- .` on a branch off `main`. Checkout copies every file the source *has* and touches none the source *lacks*, so a file the integration branch deleted (here a generated copy sync-pack removed when a doc changed load scope) survives into the landing commit. The tree-equality check printed the difference and the script did not stop on it.
+- **Why it survives:** the rebuild "worked" — the commit exists, the push succeeds, the diff line scrolls past; deletions are the one shape checkout cannot express.
+- **Instances:**
+  - `2026-09-19` **ai-forward** — landing commit `2b2cbea` carried `.github/knowledge/agent-coordination.md` (40 lines) that the integration branch had removed; removed in the follow-up commit.
+- **Control:** the rebuild is `git rm -rq . && git checkout <integration> -- . && git add -A`, and the equality check `git diff --quiet <integration>` is a **gate** (exit read, script stops) — landed in the coordinator's landing script; a pack-level `conductor-land.py` (linear landing as a script beside `conductor-join.py`) is the durable home, carried forward.
+- **Status:** `partially-controlled` — script pattern fixed; the pack script is open
+
+### TEST-A — A test that asserts a change by diffing against the branch it will land on
+- **Signature:** a test computes "what is new" as `tree − origin/main` and asserts the count. It is green in the track's tree and red the moment the change lands, because the base now contains it. The assertion was about the *change*, not the *state*.
+- **Why it survives:** red-first discipline rewards a test that fails before and passes after — this one does both, in the track; nobody runs it after the landing until CI does.
+- **Instances:**
+  - `2026-09-19` **ai-forward, track P0** — `test_exactly_one_new_paragraph_after_wt12` compared paragraphs against `git show origin/main:…`; red on all three runners on the landing commit; rewritten to assert the paragraph in the tree.
+- **Control:** the Test Architect's checklist question "would this test still pass after the change is on main?"; `verify-skill-contracts`-style lint over tests for `origin/main` in a `git show` string is the mechanical detector, carried forward. Sweep: the three "seeded-verbatim" tests in the same file also diff against `origin/main` — they cannot go red after landing (they compare equal), so they are weak, not wrong; noted.
+- **Status:** `open` — control named
+
 ### CTX-R — A directory lease is wider than the plan's ownership
 - **Signature:** a track claims a directory (`pack/commands`) with `--long-edit` to cover the many files it owns beneath it, and the lease also covers the few files another track owns there. The other track, honouring the lease, cannot edit its own files for most of its run and either waits or prepares a hand-off. Nothing errors; the plan said "one owner per file" and the lease said "one owner per directory".
 - **Why it survives:** `coord claim` takes one path per call, so a track with 26 files reaches for the directory; the plan's ownership table is per file; the lease has no notion of "except these".
