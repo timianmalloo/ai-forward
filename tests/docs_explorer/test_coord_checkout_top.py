@@ -64,8 +64,8 @@ class CheckoutTopTests(unittest.TestCase):
         self.addCleanup(shutil.rmtree, self.primary, True)
         _git(self.primary, "init", "-q")
         (self.primary / "src").mkdir()
-        (self.primary / "src" / "a.cs").write_text("a\n", encoding="utf-8")
-        (self.primary / "f.txt").write_text("B\n", encoding="utf-8")
+        (self.primary / "src" / "a.cs").write_text("a\n", encoding="utf-8", newline="\n")
+        (self.primary / "f.txt").write_text("B\n", encoding="utf-8", newline="\n")
         _git(self.primary, "add", "-A")
         _git(self.primary, "commit", "-q", "-m", "base")
         self.wt = self.primary.parent / (self.primary.name + "-wt")
@@ -99,10 +99,10 @@ class CheckoutTopTests(unittest.TestCase):
 
     # --- coord-core: the pre-commit floor's index -------------------------------------------
     def test_precommit_reads_the_worktree_index_not_the_primary_index(self):
-        (self.primary / "src" / "c.cs").write_text("c\n", encoding="utf-8")
-        (self.primary / "src" / "d.cs").write_text("d\n", encoding="utf-8")
+        (self.primary / "src" / "c.cs").write_text("c\n", encoding="utf-8", newline="\n")
+        (self.primary / "src" / "d.cs").write_text("d\n", encoding="utf-8", newline="\n")
         _git(self.primary, "add", "src/c.cs", "src/d.cs")               # two staged in the primary
-        (self.wt / "src" / "b.cs").write_text("b\n", encoding="utf-8")
+        (self.wt / "src" / "b.cs").write_text("b\n", encoding="utf-8", newline="\n")
         _git(self.wt, "add", "src/b.cs")                                 # one staged in the worktree
         _core(["claim", "--wi", "WI-1", "--path", "docs/**"], self.primary, "s1")   # a record exists
         result = _core(["precommit"], self.sub, "s2")
@@ -111,7 +111,7 @@ class CheckoutTopTests(unittest.TestCase):
 
     # --- coord-core: the request reader's current blob --------------------------------------
     def test_request_staleness_is_read_against_the_worktree_file(self):
-        (self.wt / "f.txt").write_text("A\n", encoding="utf-8")         # worktree copy differs from the primary's
+        (self.wt / "f.txt").write_text("A\n", encoding="utf-8", newline="\n")         # worktree copy differs from the primary's
         added = _core(["request", "add", "--to", "s2", "--deadline", "600", "--fallback", "x", "--path", "f.txt",
                        "ask"], self.sub, "s1")
         self.assertEqual(added.returncode, 0, added.stdout + added.stderr)

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-20T03:55:33Z",
+  "generated": "2026-09-20T03:58:57Z",
   "audit": [
     {
       "actor": null,
@@ -6833,6 +6833,26 @@ window.AUDIT_DATA = {
       "tags": [],
       "tier": "T1",
       "tool": null
+    },
+    {
+      "id": "al-01M2YFF4XB4AJYMXP9ZYXWNXZK",
+      "shortname": "fix-checkout-top-test-newlines",
+      "datetime": "2026-09-20T03:58:56Z",
+      "session": "fix-plat-test",
+      "prompt": "red pack-consistency on dc1bad5 (windows runner)",
+      "summary": "test_coord_checkout_top.py fixture wrote text with platform newlines and compared a blob hash: red on the Windows runner only. Fixture writes LF explicitly; PLAT-A instance recorded (the LF gate does not cover tests/).",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "main green on all three runners",
+      "done_when": "pack-consistency green on the landing commit",
+      "tier": "T0",
+      "fan_out": 0
     }
   ],
   "changes": [
