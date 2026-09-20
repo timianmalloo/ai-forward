@@ -17,6 +17,10 @@ review-suggested: []
 
 # Local coordination profile qualification
 
+Historical qualification at `a693bb3`. The recommended repair and fresh measurements are
+now recorded in [native coordination repair](native-coordination-repair.md); the observations
+below are preserved as the original red evidence.
+
 **Decision: do not enable unattended coordination.** Qualification is complete as a
 negative readiness assessment. No passing `coord-qualification/1` attestation was
 issued, no unattended job was enabled, and no trust or permission setting was changed.

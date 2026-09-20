@@ -3821,10 +3821,10 @@ window.PACK_INDEX = {
 "cat": "graph",
 "id": "proof-native-coordination-repair",
 "title": "Native coordination repair and profile requalification",
-"summary": "Recorded-wire regressions repair ACP extension notifications and sticky Agy denials; live readiness is decided separately against unchanged local profiles.",
+"summary": "The two transport defects are repaired and all 17 release gates pass. Five fresh live attempts still qualify zero profiles: Grok has an early session update, Claude/Codex lack an effective ownership veto, and Agy denies the allowed-write…",
 "path": "docs/proof/native-coordination-repair.md",
 "kind": "proof-pack",
-"text": "native coordination repair and profile requalification recorded-wire regressions repair acp extension notifications and sticky agy denials; live readiness is decided separately against unchanged local profiles. coordination acp qualification implements plan-native-coordination-repair implements design-multi-harness-runner relates-to proof-local-coordination-profiles"
+"text": "native coordination repair and profile requalification the two transport defects are repaired and all 17 release gates pass. five fresh live attempts still qualify zero profiles: grok has an early session update, claude/codex lack an effective ownership veto, and agy denies the allowed-write canary. coordination acp qualification implements plan-native-coordination-repair implements design-multi-harness-runner relates-to proof-local-coordination-profiles"
 },
 {
 "cat": "graph",

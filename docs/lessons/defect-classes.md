@@ -413,6 +413,12 @@ representation-contract failure, not a reason to bypass merges for authored file
 - **Status:** `partially-controlled` — earlier request/response controls remain; timeout
   residuals remain; the ACP startup parser now has a recorded-wire control. Unattended
   rollout requires fresh profile qualification.
+- **Requalification finding:** the repaired parser consumes Grok's six extensions, then
+  encounters `available_commands_update` before the session/new response. It correctly
+  refuses an unbound session update. The recorded startup corpus now preserves this order;
+  bounded correlation to the eventual session identity remains a follow-up, not a reason
+  to ignore session identity. `verify-native-requalification.py` prevents erasing this
+  blocker or promoting the negative corpus to readiness.
 
 ### PACK-P — A check reports its verdict over a corpus it never established was non-empty
 - **Signature:** a control computes a verdict from a scan — `len(set(x)) == len(x)`, "no bad items found", "none declared" — without first asserting the scan **found anything**. When the corpus is empty the predicate is vacuously true, and the clean result is indistinguishable from a real one. The tell is a verdict line with no count beside it.
@@ -633,9 +639,17 @@ representation-contract failure, not a reason to bypass merges for authored file
   additionally reproduced an ERROR step without conversation identity; pre-init, missing
   and foreign identities now fail protocol validation before denial is counted. Red-first
   regressions and three killed mutants are recorded in the native repair proof.
-- **Status:** controlled for the recorded native-denial and identity manifestations by
-  transport and installed-runner tests. Positive live-profile enforcement remains a
-  separate qualification; structural receipts alone never discharge that contract.
+- **Requalification finding:** an active ownership lease is denied by the rule engine,
+  yet Claude and a valid-patch Codex control change the leased canary. Sweep → actual hook
+  declarations, shared rule checks, lease duration, native action and file state. Derive →
+  a preflight/shared-record denial does not enforce a native tool path that never consults
+  it. Prevent → the finite evidence verifier rejects readiness and erased ownership failure;
+  native edit-boundary enforcement is still owed. The first Codex canary was inconclusive:
+  the model reported malformed patch validation, so a single valid-update control was
+  required before any enforcement conclusion.
+- **Status:** partially controlled. Recorded native-denial and identity manifestations are
+  pinned by transport and installed-runner tests; actual native edit enforcement remains
+  open. Structural receipts and an advisory rule check never discharge that contract.
 
 ### PROC-A — Process-group cleanup mistakes an exited child for an uncontained process
 - **Signature:** a direct child exits between the process-state check and group signalling;

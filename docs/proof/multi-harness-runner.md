@@ -23,6 +23,8 @@ summary: >-
 Live-profile follow-up: [local qualification](local-coordination-profiles.md) found
 ACP startup-notification and Agy denial-envelope blockers after integration. The
 fixture proof below remains scoped to its tested contracts; unattended rollout is blocked.
+The [native repair and requalification](native-coordination-repair.md) fixes those two
+transport defects and records the remaining actual-profile blockers.
 
 Branch: `feat/multi-harness-runner`. Tier T2. Date: 2026-09-20.
 This proof concerns the **opt-in POSIX pilot**. It does not qualify installed pack hooks

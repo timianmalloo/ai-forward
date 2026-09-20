@@ -2,7 +2,7 @@
 id: plan-native-coordination-repair
 title: Repair native coordination transport and requalify profiles
 type: plan
-status: active
+status: accepted
 owner: "@timianmalloo"
 tags: [coordination, acp, verification]
 links:
@@ -88,4 +88,15 @@ code state; later documentation-only closure repeats affected gates.
 
 ## Actual execution
 
-Pending; results and residual qualification gaps go in the repair proof and closing audit.
+Nodes A–F completed. Independent code review raised one missing ERROR-step session binding;
+it was fixed red-first and cleared. All 17 release gates passed (1,146 tests, 12 skips,
+339 subtests). Five serial live attempts at `22a643a` used 128.978436 seconds and 402,030 bytes.
+The sole extra model attempt was a diagnosed Codex control after a malformed patch left
+ownership enforcement untested. All profiles retain failed prerequisites; downstream
+Owner Stop, active-tool cancellation and handback remain unqualified as this plan allows.
+No policy setting or trust override was changed. Node G has independent evidence review
+PASS and local source integration by fast-forward; the evidence closure uses the same
+linear path. Measured skill close was 1,698 seconds against the inferred 45-minute budget;
+parent model cost and exact call count were not recorded. No remote push or worktree deletion.
+Details and next slice:
+[repair proof](../proof/native-coordination-repair.md).

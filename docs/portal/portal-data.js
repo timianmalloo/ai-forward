@@ -3228,7 +3228,7 @@ window.PORTAL_DATA = {
         "id": "proof-native-coordination-repair",
         "type": "proof-pack",
         "title": "Native coordination repair and profile requalification",
-        "summary": "Recorded-wire regressions repair ACP extension notifications and sticky Agy denials; live readiness is decided separately against unchanged local profiles."
+        "summary": "The two transport defects are repaired and all 17 release gates pass. Five fresh live attempts still qualify zero profiles: Grok has an early session update,..."
       },
       {
         "id": "proposal-active-multi-harness-coordination",

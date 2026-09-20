@@ -4143,7 +4143,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0e0dec58427b981c89ee5a220c4a54f8c2f973cc7bbd39eea0519b07f7d54801"
+      "sourceSha256": "b173beb8c78e1970666bc7a60ec0a2801e505e687d704f475aca44762b7fd7b5"
     },
     {
       "id": "docs-index",
@@ -8006,7 +8006,7 @@ window.DOCS_INDEX = {
       "path": "docs/plans/native-coordination-repair.md",
       "title": "Repair native coordination transport and requalify profiles",
       "type": "plan",
-      "status": "active",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2026-12-20",
@@ -8038,7 +8038,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart LR\n A --> B --> C --> D --> E --> F --> G"
         }
       ],
-      "sourceSha256": "22b93ec83a13ffe373f4ae2ff56c3cb28848de289e099558d7d1c6c606f6ce77"
+      "sourceSha256": "077995e785eea5a118a9781d39b71fed751df314e0b0ba233c3ba1cae9149b89"
     },
     {
       "id": "scenario-s1-three-harness-delegation",
@@ -8413,7 +8413,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "6bd2cc4a36a989c3f8f95f25a67f8ca3003cc354a2305f3e657e307893510e36"
+      "sourceSha256": "2fbd58a1c61d6552dc7cd62963f9e3806992e6e6e21bee4509dc1df6588c08cb"
     },
     {
       "id": "proof-multi-harness-runner",
@@ -8442,7 +8442,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "23b5d3080f8420e69e5cdd859eca569209c086cd3524c056e2da6155c9bceb29"
+      "sourceSha256": "82fae3422c78df238f848abff9456f8b9d20e6ab401ec1fdc89ccc9b32144cc1"
     },
     {
       "id": "proof-native-app-ui-skill-extension",
@@ -8480,12 +8480,12 @@ window.DOCS_INDEX = {
       "path": "docs/proof/native-coordination-repair.md",
       "title": "Native coordination repair and profile requalification",
       "type": "proof-pack",
-      "status": "draft",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "coordination",
       "reviewBy": "2026-12-20",
       "reviewSuggested": [],
-      "summary": "Recorded-wire regressions repair ACP extension notifications and sticky Agy denials; live readiness is decided separately against unchanged local profiles.",
+      "summary": "The two transport defects are repaired and all 17 release gates pass. Five fresh live attempts still qualify zero profiles: Grok has an early session update, Claude/Codex lack an effective ownership veto, and Agy denies the allowed-write canary.",
       "tags": [
         "coordination",
         "acp",
@@ -8506,7 +8506,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c84829d96047955560af0c62c208e4a31b2115f6560ee41505b693060b2d2657"
+      "sourceSha256": "39525c4005a713f8d054cf0e6d61da0e01cbf27ec79ac87327f15eaffcc7d038"
     },
     {
       "id": "spec-acp-coordination",
@@ -9791,5 +9791,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "f8f61f767883ee8546ef743eb2d3e0d67643cbb3e346ba2c1cfb8217ce7b0eb1"
+  "graphSha256": "95a6cea503281a4aadc3f030c25eab44dbcb48ab79af45f0e6920f9312839ff6"
 };

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-20T22:57:25Z",
+  "generated": "2026-09-20T23:09:15Z",
   "audit": [
     {
       "actor": null,
@@ -7756,6 +7756,88 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-09-20T22:53:35Z",
       "duration_seconds": 22.0
+    },
+    {
+      "id": "al-01M30H9DRPGBA1G6K95W0DE7PK",
+      "shortname": "native-coordination-runtime-review",
+      "datetime": "2026-09-20T23:07:45Z",
+      "session": "acp-spec-codex",
+      "prompt": "Please independently review final negative runtime qualification in /Users/mallalieut/projects/ai-forward-fix-coordination-native-profiles. Scope evidence only, no new feature work. Five serial attempts all base 22a643a1b3a3d8b6d5ab95014ceb96d022ad1952, private /tmp/native-repair-qualification/requal-*.json; exported docs/knowledge/acp-compatibility/native-requalification.json + verify-native-requalification.py. Check raw hashes, source/install exact commit, unchanged captured settings, extension counts, Agy denial stops at starts[1,2], Grok available_commands_update before new-session response, Claude leased write changed during240s claim/44s attempt, Codex first invalid patch (model reports; no enforcement proof) then valid single-update control changes canary with preflight coord check deny. Claude read-only rule control after its attempt during next claim is separately labeled. Zero readiness, no attestation or setting changes. Hooks/modes/usage limits in export. Final proof being filled now; send discrepancies or PASS. Budget12calls/5min, fanout1, no live probes; audit through own writer. Full repaired release17gates PASS1146tests12skips339subtests122.53sec; standalone evidence verifier and4mutants pass.",
+      "summary": "Imported independent runtime evidence review al-01M30H6NPMRRJ5KS0CE7W6NB25. PASS: independently matched all five private raw hashes, exact checkpoint/source/install/worktree bytes, exported counters/results, captured before/after settings, actual canary hashes and claim/release history spanning every attempt. Grok consumed six extensions then standard available_commands_update before session creation failed; Agy blocked native denial after starts1,2 with no later prompt. Claude44.153s attempt and Codex14.912s valid-update control changed leased canaries while240s claims were active. Original Codex invalid patch is explicitly model-reported and earns no enforcement credit. Separate Claude later rule-control hash/result and its next-claim scope confirmed. Hook markers/heartbeats and session modes match; verifier plus four evidence mutants passed. No unsupported readiness promotion, live probes, parent edits or additional features. Intermediate proof pending paragraph noted for planned finalization; full enforcement/Owner-review/active-tool cancellation/handback remain open.",
+      "kind": "skill",
+      "skill": "native-requalification-review",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Independently verify final negative runtime qualification against raw and local evidence.",
+      "done_when": "Return PASS or material discrepancies after raw hashes, code/profile bindings, refusal and lease-canary behavior are checked.",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-09-20T23:04:51Z",
+      "duration_seconds": 174.0
+    },
+    {
+      "id": "al-01M30H9DWN6N3NRVSN94DQWX6A",
+      "shortname": "native-repair-execution-graph",
+      "datetime": "2026-09-20T23:09:15Z",
+      "session": "coord-transport-repair",
+      "prompt": "do the recommended next action",
+      "summary": "Seven-node bounded plan executed; one independent reviewer at a time and serial native targets. Five native attempts used128.978436s/402030bytes. One diagnosed Codex control replaced an inconclusive malformed-patch trial. Full release gates ran once for final product code; later documentation/evidence gates reuse those results. Wall time is measured by the grounding marker; parent token/call totals were not recorded. Failed live prerequisites stop downstream qualification, not the implementation repair.",
+      "kind": "skill",
+      "skill": "optimize-graph",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/plans/native-coordination-repair.md",
+        "docs/proof/native-coordination-repair.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled_from": "al-01M30FRQ2QQH1CR1DEP13YD1QA",
+      "goal": "Repair ACP startup extension handling and native Agy denial handling, then repeat actual local-profile qualification",
+      "done_when": "Reviewed repairs pass regressions and release gates, local main contains the source repair, and all four profiles have independently reviewed readiness decisions",
+      "tier": "T2",
+      "fan_out": 1,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-20T22:40:57Z",
+      "duration_seconds": 1698.0
+    },
+    {
+      "id": "al-01M30H9DY89JHAXD0MM9E3WBA4",
+      "shortname": "native-coordination-repair-and-requalification",
+      "datetime": "2026-09-20T23:09:15Z",
+      "session": "coord-transport-repair",
+      "prompt": "do the recommended next action",
+      "summary": "Completed the referenced next action: both transport fixes landed with recorded-wire red/green regressions and three killed mutants; reviewer missing-session ERROR finding fixed red-first and cleared. All17 release gates passed:1146tests/12skips/339subtests in122.53s,34Node tests and browser proof. Source22a643a fast-forwarded to local main. Five real attempts on unchanged installed profiles: Grok early unbound update blocks, Claude and valid Codex control cross live ownership leases, Agy correctly blocks first write denial and sends no later prompt. Independent evidence review PASS; finite evidence verifier rejects four contradiction mutations. Zero profiles ready; no unattended attestation, settings change, push or tree deletion. Owner Stop veto, active-tool cancellation and worker handback remain unqualified after failed prerequisites. Next: actual native enforcement path for Claude/Codex, Grok startup ordering, Agy permitted-write policy, then remaining qualification. Final evidence commit is prepared for the same authorized local fast-forward.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/plans/native-coordination-repair.md",
+        "docs/proof/native-coordination-repair.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled_from": "al-01M30FRQ2QQH1CR1DEP13YD1QA",
+      "goal": "Repair ACP startup extension handling and native Agy denial handling, then repeat actual local-profile qualification",
+      "done_when": "Reviewed repairs pass regressions and release gates, local main contains the source repair, and all four profiles have independently reviewed readiness decisions",
+      "tier": "T2",
+      "fan_out": 1,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-20T22:40:57Z",
+      "duration_seconds": 1698.0
     }
   ],
   "changes": [
@@ -9227,6 +9309,31 @@ window.AUDIT_DATA = {
       "summary": "Grok-driven probes establish ACP session control for Grok, Claude SDK adapter and Codex adapter, plus a distinct Agy native-stream path. Effective trust, policy and required hook configuration constrain qualification.",
       "tags": [],
       "title": "Qualify ACP session control by effective harness profile"
+    },
+    {
+      "id": "cl-01M30H9DTYVFZAK2MJAJV98F2D",
+      "datetime": "2026-09-20T23:09:15Z",
+      "session": "coord-transport-repair",
+      "kind": "design",
+      "skill": "implement",
+      "title": "Preserve native denial and consume valid ACP extension notifications",
+      "prompt": "do the recommended next action",
+      "summary": "Clarified and implemented existing transport contracts: well-formed underscore notifications count without payload retention; extension requests remain method-not-found; native Agy denial and bound ERROR steps stop later prompts and cannot promote receipts. Source repair22a643a is integrated in local main; no remote push.",
+      "rationale": "Recorded local wire disproved simplified peer assumptions. The narrow fixes reuse existing bounds and session identity rules; no dependency, approval bypass or new store is needed. Live qualification stays separate and remains negative for all four profiles.",
+      "artifacts": [
+        "docs/design/multi-harness-runner.md",
+        "docs/proof/native-coordination-repair.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "c9e9b3989016bf5cf44070945857981c3c15cb3d",
+        "after": "22a643a1b3a3d8b6d5ab95014ceb96d022ad1952",
+        "branch": "fix/coordination-native-profiles",
+        "pushed": null,
+        "commits": [
+          "22a643a fix(coordination): handle ACP extensions and native Agy denials"
+        ]
+      }
     }
   ],
   "messages": [
