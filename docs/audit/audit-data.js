@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-20T00:47:44Z",
+  "generated": "2026-09-20T03:47:53Z",
   "audit": [
     {
       "actor": null,
@@ -6784,6 +6784,31 @@ window.AUDIT_DATA = {
       "done_when": "dispatch from a worktree works; board from a worktree reads the primary; README and readiness note carry enforced with date and version; verify-bundle green; landed on main",
       "tier": "T1",
       "fan_out": 0
+    },
+    {
+      "id": "al-01M2YETWGYJPT6Q8EA2CGA1FCJ",
+      "shortname": "wt-a-sweep-2-checkout-top",
+      "datetime": "2026-09-20T03:47:52Z",
+      "session": "wt-a-sweep-2",
+      "prompt": "fix the remaining four WT-A sites too",
+      "summary": "WT-A closed: coord-core.checkout_top() plumbed into the hook path base, the pre-commit index and request staleness (doctor/metrics too); _relativise compares resolved paths (macOS /var vs /private/var false grant found by the test); the three script-local _repo_root walks accept a worktree's .git file. test_coord_checkout_top.py from a worktree subdirectory: 3 of 5 red first, 5 green; 489 coordination/prompt tests green; no new ruff findings. INSTALL rev 81.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tests/docs_explorer/test_coord_checkout_top.py",
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "fix the four remaining WT-A sites red-first and land",
+      "done_when": "each site has a real-worktree test; the class reads controlled; verify-bundle green; CI green on main",
+      "tier": "T1",
+      "fan_out": 0,
+      "started_at": "2026-09-20T03:39:11Z",
+      "duration_seconds": 521.0
     }
   ],
   "changes": [

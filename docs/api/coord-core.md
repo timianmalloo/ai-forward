@@ -149,6 +149,19 @@ The layout this reads is git's own:
   primary checkout -> .git is a DIRECTORY; the repo root is its parent
   linked worktree  -> .git is a FILE holding "gitdir: <primary>/.git/worktrees/<name>"
 
+### `checkout_top(cwd)`
+
+The top of the CURRENT checkout - primary or linked worktree - i.e. the first ancestor
+holding a `.git` entry (a directory or a worktree's pointer file).
+
+`repo_root` answers "which repository" and is right for the `.agents` stores and shared
+refs. Three questions in main() are "which tree": the base a hook's absolute path is made
+relative to, the index the pre-commit floor reads, and the file whose blob a request's ack
+is compared with. Asked of the primary from a worktree they answered about the wrong
+tree - the hook could not match a worktree path to its lease (a false grant), `coord
+precommit` run by hand read the primary's index, and a stale-ack check read the primary's
+file (class WT-A). Filesystem only, like repo_root.
+
 ### `resolve_root(cwd, raw)`
 
 Resolve COORD_ROOT, refusing anything outside the repository.
@@ -830,6 +843,6 @@ follows by printing the settings entry rather than writing it.
 
 ## Coverage
 
-- Public functions: **94** · documented: **70** (**74%**)
+- Public functions: **95** · documented: **71** (**75%**)
 - Undocumented (recorded, not invented): `make_event`, `check`, `read_decisions`, `request_log_path`, `read_request_events`, `cmd_leader`, `regen_command`, `record_regen_owed`, `regen_owed`, `clear_regen_owed`, `detect_harness`, `cmd_precommit`, `cmd_guard`, `session_contract_path`, `owner_rows_for_path`, `cmd_session_list`, `cmd_collaborate`, `cmd_request`, `cmd_worktree`, `cmd_session`, `cmd_metrics`, `cmd_track`, `cmd_install`, `cmd_doctor`
 

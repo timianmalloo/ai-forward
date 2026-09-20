@@ -85,7 +85,7 @@ def _empty(value) -> bool:
 def _repo_root(start: str | None = None) -> str:
     d = os.path.abspath(start or os.getcwd())
     while True:
-        if os.path.isdir(os.path.join(d, ".git")):
+        if os.path.exists(os.path.join(d, ".git")):   # a dir, or a linked worktree's pointer FILE (WT-A)
             return d
         parent = os.path.dirname(d)
         if parent == d:

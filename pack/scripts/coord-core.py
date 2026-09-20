@@ -124,6 +124,24 @@ def repo_root(cwd):
     return here     # not a git repo: degrade to the directory, and say nothing false
 
 
+def checkout_top(cwd):
+    """The top of the CURRENT checkout - primary or linked worktree - i.e. the first ancestor
+    holding a `.git` entry (a directory or a worktree's pointer file).
+
+    `repo_root` answers "which repository" and is right for the `.agents` stores and shared
+    refs. Three questions in main() are "which tree": the base a hook's absolute path is made
+    relative to, the index the pre-commit floor reads, and the file whose blob a request's ack
+    is compared with. Asked of the primary from a worktree they answered about the wrong
+    tree - the hook could not match a worktree path to its lease (a false grant), `coord
+    precommit` run by hand read the primary's index, and a stale-ack check read the primary's
+    file (class WT-A). Filesystem only, like repo_root."""
+    here = Path(cwd).resolve()
+    for candidate in (here, *here.parents):
+        if (candidate / ".git").exists():
+            return candidate
+    return here
+
+
 def resolve_root(cwd, raw):
     """Resolve COORD_ROOT, refusing anything outside the repository.
 
@@ -1955,16 +1973,36 @@ def render_harness_capability():
 
 
 def _relativise(path, repo, cwd=None):
-    """An absolute harness path made repo-relative, or left alone if already relative."""
+    """An absolute harness path made repo-relative, or left alone if already relative.
+
+    Both the literal and the RESOLVED form of the path and of each base are compared: on macOS
+    a harness hands `/var/folders/...` while the checkout resolves to `/private/var/...`, and a
+    prefix miss left the path absolute, matched no lease, and allowed the edit (WT-A test)."""
     if not path:
         return None
     text = _norm(path)
+    forms = [text]
+    try:
+        resolved = _norm(str(Path(path).resolve()))
+        if resolved not in forms:
+            forms.append(resolved)
+    except (OSError, ValueError):
+        pass
     for base in (cwd, repo):
         if not base:
             continue
-        prefix = _norm(base).rstrip("/") + "/"
-        if text.lower().startswith(prefix.lower()):
-            return text[len(prefix):]
+        bases = [_norm(base)]
+        try:
+            resolved_base = _norm(str(Path(base).resolve()))
+            if resolved_base not in bases:
+                bases.append(resolved_base)
+        except (OSError, ValueError):
+            pass
+        for candidate in forms:
+            for b in bases:
+                prefix = b.rstrip("/") + "/"
+                if candidate.lower().startswith(prefix.lower()):
+                    return candidate[len(prefix):]
     return text
 
 
@@ -3050,7 +3088,7 @@ def cmd_metrics(root, repo, as_json):
     unique, unique_reason = unique_commits(repo)
     wt4 = wt4_exception_rate(root)
     leader = leader_metrics(read_events(root)[0])
-    requests = request_metrics(root, repo, time.time())
+    requests = request_metrics(root, checkout_top(os.getcwd()), time.time())   # WT-A
     payload = {"decisions": len(decisions), "allowed": allowed, "refused": refused,
                "not_checked": unchecked, "edits_under_lease_pct": pct,
                "unique_commits": unique, "unique_commits_reason": unique_reason,
@@ -4035,7 +4073,7 @@ def cmd_doctor(root, repo):
     if is_problem:
         problems += 1
 
-    lines, request_problems = request_doctor_lines(root, repo, time.time())
+    lines, request_problems = request_doctor_lines(root, checkout_top(os.getcwd()), time.time())   # WT-A
     for line in lines:
         print(line)
     problems += request_problems
@@ -4199,10 +4237,11 @@ def main(argv=None):
     now = time.time()
 
     repo = repo_root(os.getcwd())
+    tree = checkout_top(os.getcwd())   # WT-A: paths, index and blobs are per checkout
 
     if args.cmd == "hook":
         # ALWAYS exit 0: the harness reads the decision in the JSON, not the exit code.
-        print(cmd_hook(root, session, agent, now, sys.stdin.read(), repo=repo))
+        print(cmd_hook(root, session, agent, now, sys.stdin.read(), repo=tree))
         return 0
 
     if args.cmd == "guard":
@@ -4329,7 +4368,7 @@ def main(argv=None):
         return cmd_collaborate(root, repo, args.action, now, args.json)
 
     if args.cmd == "request":
-        return cmd_request(root, args.request_action, now, session, agent, args, repo=repo)
+        return cmd_request(root, args.request_action, now, session, agent, args, repo=tree)
 
     if args.cmd == "check":
         decision = check(root, args.path, session, now)
@@ -4348,7 +4387,7 @@ def main(argv=None):
             print("advisory: AGENT_SESSION is unset, so nothing was checked."
                   "\n  set AGENT_SESSION to make this commit boundary enforcing.")
             return 0
-        return cmd_precommit(root, repo, session, agent, now)
+        return cmd_precommit(root, tree, session, agent, now)
 
     if not session:
         print(render({"decision": "not_checked", "path": "-",
