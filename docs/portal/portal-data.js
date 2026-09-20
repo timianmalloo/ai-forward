@@ -735,6 +735,11 @@ window.PORTAL_DATA = {
         "group": "Specifications",
         "items": [
           {
+            "title": "ACP for multi-harness coordination — capability-qualified sessions",
+            "summary": "Specifies a common Agent Client Protocol session-control boundary below the pack's coordination rules. Grok-driven live probes establish three ACP paths and an Agy native-stream fallback, while separating transport support from effective permissions, project...",
+            "path": "../../docs/specs/acp-coordination.md"
+          },
+          {
             "title": "Spec — the doctrine home: pack/knowledge/agent-coordination.md as the always-loaded Owner / Coordinator / Sub-Agent doctrine under a 3,000-token ceiling",
             "summary": "Specifies P0 of the coordination proposal: pack/knowledge/agent-coordination.md becomes the always-loaded doctrine for the Owner / Coordinator / Sub-Agent model — one CO<n> line per §3.3 invariant naming its measurement or spike, the §4 protocol objects by...",
             "path": "../../docs/specs/agent-coordination-doctrine.md"
@@ -2464,6 +2469,12 @@ window.PORTAL_DATA = {
         "summary": "audit-log.py `suggest` lists every commit since the last change-log entry with no filter, so it surfaces bookkeeping/closeout commits (including the very..."
       },
       {
+        "id": "kb-acp-compatibility",
+        "type": "knowledge",
+        "title": "ACP compatibility spike — Grok-driven evidence",
+        "summary": "Sanitized observations from a Grok-driven, bounded local spike of Grok native ACP, Claude and Codex ACP adapters, and Agy's native stream. Captures exact..."
+      },
+      {
         "id": "kb-agent-autopilot-controls",
         "type": "knowledge",
         "title": "Agent autopilot & autonomous-continuation controls (Copilot CLI ↔ Claude Code)",
@@ -3022,6 +3033,12 @@ window.PORTAL_DATA = {
         "summary": "Track XP of coordination-p3-p5-p8 (T1, fan-out 0). Every documented command under pack/ is now a single line, unchained and `python3`; a gate..."
       },
       {
+        "id": "note-20260920-acp-qualification-is-profile-specific",
+        "type": "decision-note",
+        "title": "ACP qualification belongs to an effective profile, not a harness name",
+        "summary": "The live ACP spike showed that a mode named read-only can allow workspace writes, and that missing local instructions can be a project-trust issue shared with..."
+      },
+      {
         "id": "note-20260920-agy-hooks-loaded-but-not-enabled",
         "type": "decision-note",
         "title": "Antigravity loaded our four hook sections and fired none: the working section is the only one with enabled: true; the s1-agy track hung on its ack command",
@@ -3058,10 +3075,22 @@ window.PORTAL_DATA = {
         "summary": "Decision not to enable required status checks on main, taken while closing FR-062. The control would have prevented the original incident outright, but with..."
       },
       {
+        "id": "plan-acp-compatibility-spike",
+        "type": "doc",
+        "title": "Bounded ACP compatibility specification and spike",
+        "summary": "Bounds a Grok-driven compatibility experiment across Grok, Claude Code, Codex and Antigravity before selecting a shared ACP transport. The independent parent..."
+      },
+      {
         "id": "plan-codex-discovery",
         "type": "doc",
         "title": "Codex pack discovery and grounding",
         "summary": "Verify Codex discovery and document native invocation, explicit grounding, and deployment health."
+      },
+      {
+        "id": "plan-coordination-profile-integration",
+        "type": "doc",
+        "title": "Integrate coordination and qualify local profiles",
+        "summary": "Integrate the reviewed coordination branches, then qualify exact installed harness profiles before unattended use."
       },
       {
         "id": "plan-cross-platform-readiness",
@@ -3236,6 +3265,12 @@ window.PORTAL_DATA = {
         "type": "doc",
         "title": "Session profiles",
         "summary": "Index of /session-profiler runs - each row is one measured pass over the harness telemetry, mined by /dream as findings."
+      },
+      {
+        "id": "spec-acp-coordination",
+        "type": "spec",
+        "title": "ACP for multi-harness coordination — capability-qualified sessions",
+        "summary": "Specifies a common Agent Client Protocol session-control boundary below the pack's coordination rules. Grok-driven live probes establish three ACP paths and an..."
       },
       {
         "id": "spec-agent-coordination",
@@ -4816,6 +4851,16 @@ window.PORTAL_DATA = {
         "rel": "relates-to"
       },
       {
+        "from": "kb-acp-compatibility",
+        "to": "kb-multi-agent-coordination",
+        "rel": "relates-to"
+      },
+      {
+        "from": "kb-acp-compatibility",
+        "to": "spec-acp-coordination",
+        "rel": "documents"
+      },
+      {
         "from": "kb-agent-autopilot-controls",
         "to": "defect-classes",
         "rel": "relates-to"
@@ -5616,6 +5661,16 @@ window.PORTAL_DATA = {
         "rel": "implements"
       },
       {
+        "from": "note-20260920-acp-qualification-is-profile-specific",
+        "to": "kb-acp-compatibility",
+        "rel": "depends-on"
+      },
+      {
+        "from": "note-20260920-acp-qualification-is-profile-specific",
+        "to": "spec-acp-coordination",
+        "rel": "documents"
+      },
+      {
         "from": "note-20260920-agy-hooks-loaded-but-not-enabled",
         "to": "design-message-layer",
         "rel": "relates-to"
@@ -5686,6 +5741,21 @@ window.PORTAL_DATA = {
         "rel": "relates-to"
       },
       {
+        "from": "plan-acp-compatibility-spike",
+        "to": "kb-graph-and-loop-engineering",
+        "rel": "depends-on"
+      },
+      {
+        "from": "plan-acp-compatibility-spike",
+        "to": "spec-acp-coordination",
+        "rel": "relates-to"
+      },
+      {
+        "from": "plan-acp-compatibility-spike",
+        "to": "spec-message-layer",
+        "rel": "depends-on"
+      },
+      {
         "from": "plan-codex-discovery",
         "to": "architecture",
         "rel": "relates-to"
@@ -5694,6 +5764,21 @@ window.PORTAL_DATA = {
         "from": "plan-codex-discovery",
         "to": "kb-graph-and-loop-engineering",
         "rel": "depends-on"
+      },
+      {
+        "from": "plan-coordination-profile-integration",
+        "to": "kb-graph-and-loop-engineering",
+        "rel": "depends-on"
+      },
+      {
+        "from": "plan-coordination-profile-integration",
+        "to": "proof-multi-harness-runner",
+        "rel": "relates-to"
+      },
+      {
+        "from": "plan-coordination-profile-integration",
+        "to": "spec-acp-coordination",
+        "rel": "relates-to"
       },
       {
         "from": "plan-cross-platform-readiness",
@@ -6174,6 +6259,36 @@ window.PORTAL_DATA = {
         "from": "session-profiles",
         "to": "design-session-profiler",
         "rel": "relates-to"
+      },
+      {
+        "from": "spec-acp-coordination",
+        "to": "kb-acp-compatibility",
+        "rel": "depends-on"
+      },
+      {
+        "from": "spec-acp-coordination",
+        "to": "kb-multi-agent-coordination",
+        "rel": "relates-to"
+      },
+      {
+        "from": "spec-acp-coordination",
+        "to": "plan-acp-compatibility-spike",
+        "rel": "relates-to"
+      },
+      {
+        "from": "spec-acp-coordination",
+        "to": "proposal-owner-coordinator-subagent-coordination",
+        "rel": "refines"
+      },
+      {
+        "from": "spec-acp-coordination",
+        "to": "spec-leader-designation",
+        "rel": "depends-on"
+      },
+      {
+        "from": "spec-acp-coordination",
+        "to": "spec-message-layer",
+        "rel": "refines"
       },
       {
         "from": "spec-agent-coordination",

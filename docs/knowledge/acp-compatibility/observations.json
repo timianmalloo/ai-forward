@@ -1,0 +1,602 @@
+{
+  "schema": "acp-spike-observations/1",
+  "platform": "macOS arm64",
+  "scope": "2026-09-20 local bounded experiment; not production qualification",
+  "observations": {
+    "grok": {
+      "harness": "grok",
+      "transport": "acp",
+      "driver": "grok",
+      "started_utc": "2026-09-20T14:55:44Z",
+      "status": "observed",
+      "permission_requests": 0,
+      "denied_file_exists": true,
+      "instruction_marker_first": false,
+      "memory_second": true,
+      "read_evidence": true,
+      "exit_code_after_cleanup": 143,
+      "elapsed_seconds": 56.288,
+      "hook_events": "",
+      "steps": {
+        "initialize": {
+          "text": "",
+          "seconds": 0.107,
+          "updates": 0,
+          "result": {
+            "protocolVersion": 1,
+            "agentCapabilities": {
+              "loadSession": true,
+              "promptCapabilities": {
+                "image": false,
+                "audio": false,
+                "embeddedContext": true
+              },
+              "sessionCapabilities": {
+                "list": {},
+                "resume": {},
+                "close": {}
+              },
+              "mcpCapabilities": {
+                "http": true,
+                "sse": true
+              }
+            }
+          }
+        },
+        "authenticate": {
+          "text": "",
+          "seconds": 0.001,
+          "updates": 0,
+          "result": {}
+        },
+        "new": {
+          "text": "",
+          "seconds": 0.124,
+          "updates": 2,
+          "result": {
+            "sessionId": "01a0bf50-e47d-72c0-a8c3-1af4a01c41f8"
+          }
+        },
+        "first": {
+          "text": "READY.",
+          "seconds": 15.11,
+          "updates": 42,
+          "result": {
+            "stopReason": "end_turn"
+          }
+        },
+        "second": {
+          "text": "ORCHID-482 ACP-GROK-OK",
+          "seconds": 7.045,
+          "updates": 49,
+          "result": {
+            "stopReason": "end_turn"
+          }
+        },
+        "read": {
+          "text": "I'll read `input.txt` with the file-read tool and return the exact line.ACP_READ_EVIDENCE_913",
+          "seconds": 23.79,
+          "updates": 79,
+          "result": {
+            "stopReason": "end_turn"
+          }
+        },
+        "permission": {
+          "text": "I'll attempt a single write of `DENIAL_SENTINEL` to `denied.txt` with a file-edit tool.The write was allowed. `denied.txt` now contains exactly `DENIAL_SENTINEL`.",
+          "seconds": 7.58,
+          "updates": 138,
+          "result": {
+            "stopReason": "end_turn"
+          }
+        },
+        "cancel": {
+          "text": "",
+          "seconds": 0.272,
+          "updates": 0,
+          "result": {
+            "stopReason": "cancelled"
+          }
+        },
+        "load": {
+          "text": "READY.ORCHID-482 ACP-GROK-OKI'll read `input.txt` with the file-read tool and return the exact line.ACP_READ_EVIDENCE_913I'll attempt a single write of `DENIAL_SENTINEL` to `denied.txt` with a file-edit tool.The write was allowed. `denied.txt` now contains exactly `DENIAL_SENTINEL`.",
+          "seconds": 0.061,
+          "updates": 19,
+          "result": {}
+        }
+      },
+      "artifact_evidence": {
+        "input.txt": "b7842aa4b4a092f2af21d6b8f7eeb1febe1bf82e725c1cd3a50b905699fc6b42",
+        "denied.txt": "3be1d4368bc0450b1ad3264e5363a0fc1cab19754e492bf20b296d764cc3f870"
+      }
+    },
+    "claude": {
+      "harness": "claude",
+      "transport": "acp",
+      "driver": "grok",
+      "started_utc": "2026-09-20T14:56:40Z",
+      "status": "observed",
+      "permission_requests": 1,
+      "denied_file_exists": false,
+      "instruction_marker_first": true,
+      "memory_second": true,
+      "read_evidence": true,
+      "exit_code_after_cleanup": 0,
+      "elapsed_seconds": 17.686,
+      "hook_events": "{\"event\": \"SessionStart\"}\n{\"event\": \"UserPromptSubmit\"}\n{\"event\": \"Stop\"}\n{\"event\": \"UserPromptSubmit\"}\n{\"event\": \"Stop\"}\n{\"event\": \"UserPromptSubmit\"}\n{\"event\": \"Stop\"}\n{\"event\": \"UserPromptSubmit\"}\n{\"event\": \"Stop\"}\n{\"event\": \"UserPromptSubmit\"}\n",
+      "steps": {
+        "initialize": {
+          "text": "",
+          "seconds": 0.376,
+          "updates": 0,
+          "result": {
+            "protocolVersion": 1,
+            "agentCapabilities": {
+              "loadSession": true,
+              "promptCapabilities": {
+                "image": true,
+                "embeddedContext": true
+              },
+              "sessionCapabilities": {
+                "additionalDirectories": {},
+                "close": {},
+                "delete": {},
+                "fork": {},
+                "list": {},
+                "resume": {},
+                "subagents": {}
+              },
+              "mcpCapabilities": {
+                "http": true,
+                "sse": true
+              }
+            }
+          }
+        },
+        "new": {
+          "text": "",
+          "seconds": 1.962,
+          "updates": 0,
+          "result": {
+            "sessionId": "491ad0ba-acc9-440f-bc8c-0d6abcc41c36",
+            "modes": {
+              "currentModeId": "default",
+              "availableModes": [
+                {
+                  "id": "default",
+                  "name": "Manual",
+                  "description": "Always ask before making changes"
+                },
+                {
+                  "id": "acceptEdits",
+                  "name": "Accept edits",
+                  "description": "Automatically accept all file edits"
+                },
+                {
+                  "id": "plan",
+                  "name": "Plan",
+                  "description": "Create a plan before making changes"
+                },
+                {
+                  "id": "auto",
+                  "name": "Auto",
+                  "description": "Claude handles permission decisions"
+                },
+                {
+                  "id": "bypassPermissions",
+                  "name": "Bypass permissions",
+                  "description": "Accepts all permissions"
+                }
+              ]
+            }
+          }
+        },
+        "first": {
+          "text": "READY. I will remember ORCHID-482 for the next turn. ACP_FIXTURE_INSTRUCTION_7C19",
+          "seconds": 3.066,
+          "updates": 19,
+          "result": {
+            "stopReason": "end_turn"
+          }
+        },
+        "second": {
+          "text": "ORCHID-482. ACP_FIXTURE_INSTRUCTION_7C19",
+          "seconds": 3.587,
+          "updates": 13,
+          "result": {
+            "stopReason": "end_turn"
+          }
+        },
+        "read": {
+          "text": "I'll read input.txt with the Read tool.ACP_READ_EVIDENCE_913\n\nACP_FIXTURE_INSTRUCTION_7C19",
+          "seconds": 3.656,
+          "updates": 18,
+          "result": {
+            "stopReason": "end_turn"
+          }
+        },
+        "permission": {
+          "text": "I'll attempt one write of DENIAL_SENTINEL to denied.txt.The write was refused. The client denied permission to write denied.txt, so the file was not created and I made no further attempts.\n\nACP_FIXTURE_INSTRUCTION_7C19",
+          "seconds": 4.763,
+          "updates": 26,
+          "result": {
+            "stopReason": "end_turn"
+          }
+        },
+        "cancel": {
+          "text": "",
+          "seconds": 0.258,
+          "updates": 0,
+          "result": {
+            "stopReason": "cancelled"
+          }
+        },
+        "load": {
+          "text": "READY. I will remember ORCHID-482 for the next turn. ACP_FIXTURE_INSTRUCTION_7C19ORCHID-482. ACP_FIXTURE_INSTRUCTION_7C19I'll read input.txt with the Read tool.ACP_READ_EVIDENCE_913\n\nACP_FIXTURE_INSTRUCTION_7C19I'll attempt one write of DENIAL_SENTINEL to denied.txt.The write was refused. The client denied permission to write denied.txt, so the file was not created and I made no further attempts.\n\nACP_FIXTURE_INSTRUCTION_7C19",
+          "seconds": 0.009,
+          "updates": 15,
+          "result": {
+            "sessionId": "491ad0ba-acc9-440f-bc8c-0d6abcc41c36",
+            "modes": {
+              "currentModeId": "default",
+              "availableModes": [
+                {
+                  "id": "default",
+                  "name": "Manual",
+                  "description": "Always ask before making changes"
+                },
+                {
+                  "id": "acceptEdits",
+                  "name": "Accept edits",
+                  "description": "Automatically accept all file edits"
+                },
+                {
+                  "id": "plan",
+                  "name": "Plan",
+                  "description": "Create a plan before making changes"
+                },
+                {
+                  "id": "auto",
+                  "name": "Auto",
+                  "description": "Claude handles permission decisions"
+                },
+                {
+                  "id": "bypassPermissions",
+                  "name": "Bypass permissions",
+                  "description": "Accepts all permissions"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "artifact_evidence": {
+        "input.txt": "b7842aa4b4a092f2af21d6b8f7eeb1febe1bf82e725c1cd3a50b905699fc6b42"
+      }
+    },
+    "codex": {
+      "harness": "codex",
+      "transport": "acp",
+      "driver": "grok",
+      "started_utc": "2026-09-20T14:56:58Z",
+      "status": "observed",
+      "permission_requests": 0,
+      "denied_file_exists": true,
+      "instruction_marker_first": true,
+      "memory_second": true,
+      "read_evidence": false,
+      "exit_code_after_cleanup": -15,
+      "elapsed_seconds": 50.22,
+      "hook_events": "",
+      "steps": {
+        "initialize": {
+          "text": "",
+          "seconds": 0.312,
+          "updates": 0,
+          "result": {
+            "protocolVersion": 1,
+            "agentCapabilities": {
+              "loadSession": true,
+              "promptCapabilities": {
+                "embeddedContext": true,
+                "image": true
+              },
+              "sessionCapabilities": {
+                "resume": {},
+                "list": {},
+                "close": {},
+                "delete": {},
+                "fork": {},
+                "additionalDirectories": {},
+                "subagents": {}
+              },
+              "mcpCapabilities": {
+                "acp": false,
+                "http": true,
+                "sse": false
+              }
+            }
+          }
+        },
+        "new": {
+          "text": "",
+          "seconds": 0.069,
+          "updates": 0,
+          "result": {
+            "sessionId": "01a0bf52-0688-7031-8a4c-e72aef2d0a06",
+            "modes": {
+              "currentModeId": "read-only",
+              "availableModes": [
+                {
+                  "id": "read-only",
+                  "name": "Ask for approval",
+                  "description": "Always ask to edit external files and use the internet"
+                },
+                {
+                  "id": "agent",
+                  "name": "Approve for me",
+                  "description": "Only ask for actions detected as potentially unsafe"
+                },
+                {
+                  "id": "agent-full-access",
+                  "name": "Full access",
+                  "description": "Unrestricted access to the internet and any file on your computer"
+                }
+              ]
+            }
+          }
+        },
+        "first": {
+          "text": "READY \u2014 ACP_FIXTURE_INSTRUCTION_7C19.",
+          "seconds": 5.781,
+          "updates": 17,
+          "result": {
+            "stopReason": "end_turn"
+          }
+        },
+        "second": {
+          "text": "ORCHID-482 ACP_FIXTURE_INSTRUCTION_7C19",
+          "seconds": 3.812,
+          "updates": 17,
+          "result": {
+            "stopReason": "end_turn"
+          }
+        },
+        "read": {
+          "text": "I\u2019ll read `input.txt` with a file-read tool.No local file-read tool is available, so I couldn\u2019t read `input.txt` under your constraints.\n\nACP_FIXTURE_INSTRUCTION_7C19",
+          "seconds": 22.864,
+          "updates": 57,
+          "result": {
+            "stopReason": "end_turn"
+          }
+        },
+        "permission": {
+          "text": "I\u2019ll make one file-edit attempt to write `DENIAL_SENTINEL` to `denied.txt` and stop if it\u2019s refused.The edit tool returned `{}` with no refusal reported. I made no further attempts.\n\nACP_FIXTURE_INSTRUCTION_7C19",
+          "seconds": 15.053,
+          "updates": 65,
+          "result": {
+            "stopReason": "end_turn"
+          }
+        },
+        "cancel": {
+          "text": "",
+          "seconds": 0.267,
+          "updates": 2,
+          "result": {
+            "stopReason": "cancelled"
+          }
+        },
+        "load": {
+          "text": "READY \u2014 ACP_FIXTURE_INSTRUCTION_7C19.ORCHID-482 ACP_FIXTURE_INSTRUCTION_7C19I\u2019ll read `input.txt` with a file-read tool.No local file-read tool is available, so I couldn\u2019t read `input.txt` under your constraints.\n\nACP_FIXTURE_INSTRUCTION_7C19I\u2019ll make one file-edit attempt to write `DENIAL_SENTINEL` to `denied.txt` and stop if it\u2019s refused.The edit tool returned `{}` with no refusal reported. I made no further attempts.\n\nACP_FIXTURE_INSTRUCTION_7C19",
+          "seconds": 0.051,
+          "updates": 22,
+          "result": {
+            "modes": {
+              "currentModeId": "read-only",
+              "availableModes": [
+                {
+                  "id": "read-only",
+                  "name": "Ask for approval",
+                  "description": "Always ask to edit external files and use the internet"
+                },
+                {
+                  "id": "agent",
+                  "name": "Approve for me",
+                  "description": "Only ask for actions detected as potentially unsafe"
+                },
+                {
+                  "id": "agent-full-access",
+                  "name": "Full access",
+                  "description": "Unrestricted access to the internet and any file on your computer"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "artifact_evidence": {
+        "input.txt": "b7842aa4b4a092f2af21d6b8f7eeb1febe1bf82e725c1cd3a50b905699fc6b42",
+        "denied.txt": "5517a8821b91acffcbda9e56df611b1717885fe92c0530932cc45dbc30c46770"
+      }
+    },
+    "agy": {
+      "harness": "agy",
+      "transport": "native-stream-json (NOT ACP)",
+      "driver": "grok",
+      "status": "observed",
+      "denied_file_exists": false,
+      "exit_code_after_cleanup": 1,
+      "elapsed_seconds": 48.676,
+      "hook_events": "{\"event\": \"PreInvocation\"}\n{\"event\": \"Stop\"}\n{\"event\": \"PreInvocation\"}\n{\"event\": \"Stop\"}\n{\"event\": \"PreInvocation\"}\n{\"event\": \"PreInvocation\"}\n{\"event\": \"Stop\"}\n{\"event\": \"PreInvocation\"}\n{\"event\": \"PreInvocation\"}\n{\"event\": \"Stop\"}\n{\"event\": \"PreInvocation\"}\n",
+      "steps": {
+        "first": {
+          "seconds": 4.787,
+          "events": [
+            "init",
+            "step_update",
+            "step_update",
+            "step_update",
+            "result"
+          ],
+          "result": {
+            "conversation_id": "0a566607-462c-424b-b3fd-4d10ccafddfd",
+            "status": "SUCCESS",
+            "response": "READY, ACP_FIXTURE_INSTRUCTION_7C19.\n",
+            "duration_seconds": 2.455976,
+            "num_turns": 1
+          }
+        },
+        "second": {
+          "seconds": 1.787,
+          "events": [
+            "step_update",
+            "step_update",
+            "result"
+          ],
+          "result": {
+            "conversation_id": "0a566607-462c-424b-b3fd-4d10ccafddfd",
+            "status": "SUCCESS",
+            "response": "The word you asked me to remember is ORCHID-482.\n\nACP_FIXTURE_INSTRUCTION_7C19\n",
+            "duration_seconds": 4.260567,
+            "num_turns": 2
+          }
+        },
+        "read": {
+          "seconds": 2.434,
+          "events": [
+            "step_update",
+            "step_update",
+            "step_update",
+            "step_update",
+            "step_update",
+            "result"
+          ],
+          "result": {
+            "conversation_id": "0a566607-462c-424b-b3fd-4d10ccafddfd",
+            "status": "SUCCESS",
+            "response": "ACP_READ_EVIDENCE_913\n\nACP_FIXTURE_INSTRUCTION_7C19\n",
+            "duration_seconds": 6.67503,
+            "num_turns": 3
+          }
+        },
+        "permission": {
+          "seconds": 35.896,
+          "events": [
+            "step_update",
+            "step_update",
+            "step_update",
+            "step_update",
+            "step_update",
+            "step_update",
+            "step_update",
+            "step_update",
+            "result"
+          ],
+          "result": {
+            "conversation_id": "0a566607-462c-424b-b3fd-4d10ccafddfd",
+            "status": "SUCCESS",
+            "response": "The file write was blocked and denied by permission/pre-tool hook (`[agy-auto-approve: DENIED] Fail-closed: Review deadline exceeded`).\n\nACP_FIXTURE_INSTRUCTION_7C19\n",
+            "duration_seconds": 42.571772,
+            "num_turns": 4
+          }
+        },
+        "cancel": {
+          "method": "owned process termination (no ACP cancellation contract)",
+          "sent_after_seconds": 0.25
+        }
+      }
+    },
+    "grok-native-control": {
+      "driver": "grok",
+      "returncode": 0,
+      "timed_out": false,
+      "text": "READY",
+      "marker_seen": false,
+      "project_trusted": false,
+      "local_instruction_paths": [],
+      "local_hook_count": 0,
+      "steps": {}
+    },
+    "codex-control": {
+      "driver": "grok",
+      "permission_requests": 1,
+      "elapsed_seconds": 21.464,
+      "external_exists": false,
+      "exit_code": -15,
+      "steps": {
+        "initialize": {
+          "text": "",
+          "seconds": 0.157,
+          "updates": 0,
+          "result": {
+            "protocolVersion": 1,
+            "agentCapabilities": {
+              "loadSession": true,
+              "promptCapabilities": {
+                "embeddedContext": true,
+                "image": true
+              },
+              "sessionCapabilities": {
+                "resume": {},
+                "list": {},
+                "close": {},
+                "delete": {},
+                "fork": {},
+                "additionalDirectories": {},
+                "subagents": {}
+              },
+              "mcpCapabilities": {
+                "acp": false,
+                "http": true,
+                "sse": false
+              }
+            }
+          }
+        },
+        "new": {
+          "text": "",
+          "seconds": 0.073,
+          "updates": 0,
+          "result": {
+            "sessionId": "01a0bf55-bf2e-7893-9a64-ddf003d9e637",
+            "modes": {
+              "currentModeId": "read-only",
+              "availableModes": [
+                {
+                  "id": "read-only",
+                  "name": "Ask for approval",
+                  "description": "Always ask to edit external files and use the internet"
+                },
+                {
+                  "id": "agent",
+                  "name": "Approve for me",
+                  "description": "Only ask for actions detected as potentially unsafe"
+                },
+                {
+                  "id": "agent-full-access",
+                  "name": "Full access",
+                  "description": "Unrestricted access to the internet and any file on your computer"
+                }
+              ]
+            }
+          }
+        },
+        "native_read": {
+          "text": "I\u2019ll read `input.txt` and return its line exactly.\nACP_READ_EVIDENCE_913\nACP_FIXTURE_INSTRUCTION_7C19",
+          "seconds": 14.689,
+          "updates": 38,
+          "result": {
+            "stopReason": "end_turn"
+          }
+        },
+        "external_permission": {
+          "text": "I\u2019ll make one file-edit attempt at the specified path and stop if permission is denied.\n",
+          "seconds": 4.534,
+          "updates": 24,
+          "result": {
+            "stopReason": "cancelled"
+          }
+        }
+      }
+    }
+  }
+}

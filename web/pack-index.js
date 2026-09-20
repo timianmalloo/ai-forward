@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 267
+"count": 272
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 441,
+"total": 446,
 "items": [
 {
 "cat": "knowledge",
@@ -2244,6 +2244,15 @@ window.PACK_INDEX = {
 },
 {
 "cat": "graph",
+"id": "note-20260920-acp-qualification-is-profile-specific",
+"title": "ACP qualification belongs to an effective profile, not a harness name",
+"summary": "The live ACP spike showed that a mode named read-only can allow workspace writes, and that missing local instructions can be a project-trust issue shared with the native CLI. Qualification therefore binds actual policy, cwd, trust and…",
+"path": "docs/notes/note-20260920-acp-qualification-is-profile-specific.md",
+"kind": "decision-note",
+"text": "acp qualification belongs to an effective profile, not a harness name the live acp spike showed that a mode named read-only can allow workspace writes, and that missing local instructions can be a project-trust issue shared with the native cli. qualification therefore binds actual policy, cwd, trust and required hooks. coordination acp permissions evidence documents spec-acp-coordination depends-on kb-acp-compatibility"
+},
+{
+"cat": "graph",
 "id": "note-20260920-agy-hooks-loaded-but-not-enabled",
 "title": "Antigravity loaded our four hook sections and fired none: the working section is the only one with enabled: true; the s1-agy track hung on its ack command",
 "summary": "Debugged from this machine without the operator. Antigravity's own CLI log for the s1-agy session shows the project hooks file WAS loaded (5 named hooks from 2 files) and the process carried AGENT_SESSION=s1-agy, so identity and loading…",
@@ -2829,12 +2838,30 @@ window.PACK_INDEX = {
 },
 {
 "cat": "graph",
+"id": "plan-acp-compatibility-spike",
+"title": "Bounded ACP compatibility specification and spike",
+"summary": "Bounds a Grok-driven compatibility experiment across Grok, Claude Code, Codex and Antigravity before selecting a shared ACP transport. The independent parent review and honest reporting of blocked capabilities are mandatory exit conditions.",
+"path": "docs/plans/acp-compatibility-spike.md",
+"kind": "doc",
+"text": "bounded acp compatibility specification and spike bounds a grok-driven compatibility experiment across grok, claude code, codex and antigravity before selecting a shared acp transport. the independent parent review and honest reporting of blocked capabilities are mandatory exit conditions. coordination acp spike execution-graph relates-to spec-acp-coordination depends-on kb-graph-and-loop-engineering depends-on spec-message-layer"
+},
+{
+"cat": "graph",
 "id": "plan-codex-discovery",
 "title": "Codex pack discovery and grounding",
 "summary": "Verify Codex discovery and document native invocation, explicit grounding, and deployment health.",
 "path": "docs/plans/codex-discovery.md",
 "kind": "doc",
 "text": "codex pack discovery and grounding verify codex discovery and document native invocation, explicit grounding, and deployment health. codex installation verification depends-on kb-graph-and-loop-engineering relates-to architecture"
+},
+{
+"cat": "graph",
+"id": "plan-coordination-profile-integration",
+"title": "Integrate coordination and qualify local profiles",
+"summary": "Integrate the reviewed coordination branches, then qualify exact installed harness profiles before unattended use.",
+"path": "docs/plans/coordination-profile-integration.md",
+"kind": "doc",
+"text": "integrate coordination and qualify local profiles integrate the reviewed coordination branches, then qualify exact installed harness profiles before unattended use. coordination qualification acp relates-to spec-acp-coordination relates-to proof-multi-harness-runner depends-on kb-graph-and-loop-engineering"
 },
 {
 "cat": "graph",
@@ -3087,6 +3114,15 @@ window.PACK_INDEX = {
 "path": "docs/investigations/cross-platform-readiness.md",
 "kind": "investigation",
 "text": "investigation: does the ai-forward pack — scripts, hooks, tools, skills — work on both windows and macos? read-only cross-platform audit of pack/scripts, pack/adapters/hooks, tools/*.ps1, the hook wiring for five harnesses, ci, and every command the skills and knowledge docs tell an agent to run, with ai-de's windows defect register as the empirical baseline. verdict: the pack is much better than average on encoding and platform branching, but six systemic classes remain — an interpreter word never resolved at one seam, machine state persisted into tracked files, no windows or macos ci so the `nt` branches never execute, subprocess output decoded without an encoding, posix shell syntax in agent-typed commands, and tests that assume the linux ci box. nothing is fixed here; the plan is a sibling document awaiting approval. cross-platform windows macos interpreter encoding newlines hooks ci investigation relates-to defect-classes relates-to architecture-agent-coordination relates-to kb-multi-agent-coordination"
+},
+{
+"cat": "graph",
+"id": "kb-acp-compatibility",
+"title": "ACP compatibility spike — Grok-driven evidence",
+"summary": "Sanitized observations from a Grok-driven, bounded local spike of Grok native ACP, Claude and Codex ACP adapters, and Agy's native stream. Captures exact version and scope limits, project trust, permission discrimination and the…",
+"path": "docs/knowledge/acp-compatibility/index.md",
+"kind": "knowledge",
+"text": "acp compatibility spike — grok-driven evidence sanitized observations from a grok-driven, bounded local spike of grok native acp, claude and codex acp adapters, and agy's native stream. captures exact version and scope limits, project trust, permission discrimination and the reproduction scripts. coordination acp evidence spike documents spec-acp-coordination relates-to kb-multi-agent-coordination"
 },
 {
 "cat": "graph",
@@ -3762,6 +3798,15 @@ window.PACK_INDEX = {
 "path": "docs/proof/native-app-ui-skill-extension.md",
 "kind": "proof-pack",
 "text": "proof pack — native app ui skill extension proof pack for implementing the native app ui skill extension: native ui triggers and guardrails, the reusable native ui proof-pack template, xaml token linter, native archetype rows, generated-interface rejection, and license-aware exemplars. native-ui proof-pack ui-design visualize xaml-token-lint tested-by design-native-app-ui-skill-extension tested-by spec-native-app-ui-skill-extension"
+},
+{
+"cat": "graph",
+"id": "spec-acp-coordination",
+"title": "ACP for multi-harness coordination — capability-qualified sessions",
+"summary": "Specifies a common Agent Client Protocol session-control boundary below the pack's coordination rules. Grok-driven live probes establish three ACP paths and an Agy native-stream fallback, while separating transport support from effective…",
+"path": "docs/specs/acp-coordination.md",
+"kind": "spec",
+"text": "acp for multi-harness coordination — capability-qualified sessions specifies a common agent client protocol session-control boundary below the pack's coordination rules. grok-driven live probes establish three acp paths and an agy native-stream fallback, while separating transport support from effective permissions, project trust, full hook enforcement and verified work completion. coordination acp grok claude codex antigravity refines spec-message-layer depends-on spec-leader-designation refines proposal-owner-coordinator-subagent-coordination relates-to kb-multi-agent-coordination depends-on kb-acp-compatibility relates-to plan-acp-compatibility-spike"
 },
 {
 "cat": "graph",

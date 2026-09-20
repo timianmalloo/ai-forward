@@ -2637,6 +2637,36 @@ window.DOCS_INDEX = {
       "sourceSha256": "ae7f20d985b743f92418bb65d3be1cd4c61f319fc05c8fda536bbe50e35b0c40"
     },
     {
+      "id": "note-20260920-acp-qualification-is-profile-specific",
+      "path": "docs/notes/note-20260920-acp-qualification-is-profile-specific.md",
+      "title": "ACP qualification belongs to an effective profile, not a harness name",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2026-12-20",
+      "reviewSuggested": [],
+      "summary": "The live ACP spike showed that a mode named read-only can allow workspace writes, and that missing local instructions can be a project-trust issue shared with the native CLI. Qualification therefore binds actual policy, cwd, trust and required hooks.",
+      "tags": [
+        "coordination",
+        "acp",
+        "permissions",
+        "evidence"
+      ],
+      "links": [
+        {
+          "to": "spec-acp-coordination",
+          "rel": "documents"
+        },
+        {
+          "to": "kb-acp-compatibility",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "05af9986d39a7e24ee847f69d2855e6afb723c5dcf6f983f5a9c08c8fc13cae5"
+    },
+    {
       "id": "note-20260920-agy-hooks-loaded-but-not-enabled",
       "path": "docs/notes/note-20260920-agy-hooks-loaded-but-not-enabled.md",
       "title": "Antigravity loaded our four hook sections and fired none: the working section is the only one with enabled: true; the s1-agy track hung on its ack command",
@@ -4113,7 +4143,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "993593c5e9e46def9c0be44f541676b900a3e36a852b0b9da6a7913513bd3ec7"
+      "sourceSha256": "c04a7be699f19c88d34d39b12e93b52c0cdc59db96059d82f4c2c18fc25bf00d"
     },
     {
       "id": "docs-index",
@@ -4957,6 +4987,46 @@ window.DOCS_INDEX = {
       "sourceSha256": "5bf8471b858442580beb4f227c56ae44fb370b0ff6185b66ba14d4d0da90ae07"
     },
     {
+      "id": "plan-acp-compatibility-spike",
+      "path": "docs/plans/acp-compatibility-spike.md",
+      "title": "Bounded ACP compatibility specification and spike",
+      "type": "doc",
+      "status": "active",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-03-19",
+      "reviewSuggested": [],
+      "summary": "Bounds a Grok-driven compatibility experiment across Grok, Claude Code, Codex and Antigravity before selecting a shared ACP transport. The independent parent review and honest reporting of blocked capabilities are mandatory exit conditions.",
+      "tags": [
+        "coordination",
+        "acp",
+        "spike",
+        "execution-graph"
+      ],
+      "links": [
+        {
+          "to": "spec-acp-coordination",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-graph-and-loop-engineering",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-message-layer",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Execution graph",
+          "mermaid": "flowchart LR\n G1[Ground contracts] --> G2[Build bounded fixture]\n G2 --> G3[Grok drives four probes]\n G3 --> G4[Reconcile evidence and specify]\n G4 --> G5[Independent parent review]\n G5 --> G6[Render, graph, audit]"
+        }
+      ],
+      "sourceSha256": "109911cd916f53467e2431051c7039b62136417c765306181929376e7f458efd"
+    },
+    {
       "id": "plan-codex-discovery",
       "path": "docs/plans/codex-discovery.md",
       "title": "Codex pack discovery and grounding",
@@ -4990,6 +5060,45 @@ window.DOCS_INDEX = {
         }
       ],
       "sourceSha256": "0dfcc7d9775338ab3e1cfb5e0c1e3f94813a9005e9428755808682019810e12b"
+    },
+    {
+      "id": "plan-coordination-profile-integration",
+      "path": "docs/plans/coordination-profile-integration.md",
+      "title": "Integrate coordination and qualify local profiles",
+      "type": "doc",
+      "status": "active",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-20",
+      "reviewSuggested": [],
+      "summary": "Integrate the reviewed coordination branches, then qualify exact installed harness profiles before unattended use.",
+      "tags": [
+        "coordination",
+        "qualification",
+        "acp"
+      ],
+      "links": [
+        {
+          "to": "spec-acp-coordination",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-multi-harness-runner",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-graph-and-loop-engineering",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Execution graph",
+          "mermaid": "flowchart LR\n A --> B --> C --> D --> E --> F --> G"
+        }
+      ],
+      "sourceSha256": "a77a8a45215014d22790987e0dfabdbdb36a0e53f3ca9d6233fc2c5b4dde2102"
     },
     {
       "id": "plan-cross-platform-readiness",
@@ -5964,6 +6073,36 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "40400c1b4dc0f7cf991a1f5e1cd9fd7c9a5af28c19702dfe2ffdc25ccd8be6ee"
+    },
+    {
+      "id": "kb-acp-compatibility",
+      "path": "docs/knowledge/acp-compatibility/index.md",
+      "title": "ACP compatibility spike — Grok-driven evidence",
+      "type": "knowledge",
+      "status": "active",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2026-12-20",
+      "reviewSuggested": [],
+      "summary": "Sanitized observations from a Grok-driven, bounded local spike of Grok native ACP, Claude and Codex ACP adapters, and Agy's native stream. Captures exact version and scope limits, project trust, permission discrimination and the reproduction scripts.",
+      "tags": [
+        "coordination",
+        "acp",
+        "evidence",
+        "spike"
+      ],
+      "links": [
+        {
+          "to": "spec-acp-coordination",
+          "rel": "documents"
+        },
+        {
+          "to": "kb-multi-agent-coordination",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "a72b8833f7e41c2430224bd2158b31c7705bade417c8856b96ea79b9d3f03f8e"
     },
     {
       "id": "kb-agent-autopilot-controls",
@@ -8265,6 +8404,60 @@ window.DOCS_INDEX = {
       "sourceSha256": "c4f506f4e1410983eb799ea1d9559bcc2fbf670e5a4c276d3d3e2ebbba8bbc9e"
     },
     {
+      "id": "spec-acp-coordination",
+      "path": "docs/specs/acp-coordination.md",
+      "title": "ACP for multi-harness coordination — capability-qualified sessions",
+      "type": "spec",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2026-12-20",
+      "reviewSuggested": [],
+      "summary": "Specifies a common Agent Client Protocol session-control boundary below the pack's coordination rules. Grok-driven live probes establish three ACP paths and an Agy native-stream fallback, while separating transport support from effective permissions, project trust, full hook enforcement and verified work completion.",
+      "tags": [
+        "coordination",
+        "acp",
+        "grok",
+        "claude",
+        "codex",
+        "antigravity"
+      ],
+      "links": [
+        {
+          "to": "spec-message-layer",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-leader-designation",
+          "rel": "depends-on"
+        },
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "refines"
+        },
+        {
+          "to": "kb-multi-agent-coordination",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-acp-compatibility",
+          "rel": "depends-on"
+        },
+        {
+          "to": "plan-acp-compatibility-spike",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Part B — UX specification",
+          "mermaid": "flowchart TD\n A[Ask chosen harness to coordinate] --> B[Resolve Owner, plan and contracts]\n B --> C{Required capability qualified?}\n C -- no --> D[Show prerequisite and manual brief]\n D --> E[Operator satisfies prerequisite or chooses fallback]\n E --> C\n C -- yes --> F[Create isolated worker session]\n F --> G[Send one authorized prompt]\n G --> H[Show progress]\n H --> I{Permission or Owner action?}\n I -- yes --> J[Scoped decision with finite deadline]\n J -- denied or expired --> K[Blocked with retained evidence]\n J -- authorized --> H\n I -- no --> L{Terminal result?}\n L -- no --> H\n L -- yes --> M[Independently verify handback]\n M --> N{Evidence complete?}\n N -- no --> O[Evidence missing; Owner decides next turn]\n O --> G\n N -- yes --> P[Ready for existing review and join]\n H -- cancel or deadline --> Q[Cancel then owned-process cleanup]\n H -- crash or protocol error --> R[Failed; retain brief and evidence]\n Q --> S[Explicit new attempt or manual recovery]\n R --> S\n K --> S\n S --> C"
+        }
+      ],
+      "sourceSha256": "f68c3af7c5d91d89f5160069cdf9388aa90d6231c3e06914df16060d5794eed5"
+    },
+    {
       "id": "spec-agent-coordination",
       "path": "docs/specs/agent-coordination.md",
       "title": "Agent coordination — shared context and explicit coordination across worktrees and agents",
@@ -9254,6 +9447,14 @@ window.DOCS_INDEX = {
       "description": "Inspect a rendered design or design-language preview."
     },
     {
+      "id": "surface-specs-acp-coordination",
+      "path": "docs/specs/acp-coordination.html",
+      "title": "ACP multi-harness coordination specification",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "spec-acp-coordination"
+    },
+    {
       "id": "surface-architecture-agent-coordination",
       "path": "docs/architecture-agent-coordination.html",
       "title": "Agent coordination — architecture",
@@ -9485,5 +9686,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "d796033b77ea8f142d1c62db0ea66b52f998ef04804fad32cc5f52a7c5b83d17"
+  "graphSha256": "c375f387ddd5602a220661a83c04dd601057de3bf6776cff0f75b65c915349e4"
 };

@@ -1,0 +1,32 @@
+{
+  "html_sha256": "48b2b86ed1412ce3263c39d48cd967783db31136c7ec0802df2e14bae0c5a58c",
+  "status": "pass",
+  "viewports": [
+    {
+      "viewport": 1440,
+      "document": 1440,
+      "footer": 1180,
+      "headings": 1,
+      "tables": 6,
+      "overflow": [],
+      "missingAnchors": []
+    },
+    {
+      "viewport": 390,
+      "document": 390,
+      "footer": 390,
+      "headings": 1,
+      "tables": 6,
+      "overflow": [],
+      "missingAnchors": []
+    }
+  ],
+  "renderer": "Playwright 1.61.1 with installed Chrome; screenshots visually inspected by parent",
+  "red_observed": "390px viewport had document/FOOTER scrollWidth509 before footer overflow-wrap:anywhere",
+  "screenshots": [
+    "/tmp/acp-spec-1440.png",
+    "/tmp/acp-spec-390.png",
+    "/tmp/acp-spec-matrix-1440.png",
+    "/tmp/acp-spec-matrix-390.png"
+  ]
+}

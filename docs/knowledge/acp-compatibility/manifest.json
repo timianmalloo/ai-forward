@@ -1,0 +1,43 @@
+{
+  "schema": "acp-spike-manifest/1",
+  "date": "2026-09-20",
+  "versions": {
+    "grok": "1.0.34 (3736acbc8658)",
+    "installed_claude_cli": "2.1.278 (inventoried, not adapter runtime)",
+    "claude_acp": "0.79.0",
+    "claude_agent_sdk": "0.3.274",
+    "codex_acp": "1.12.0",
+    "codex_cli": "0.155.1 via CODEX_PATH",
+    "agy": "1.2.7",
+    "node": "22.22.2"
+  },
+  "files": {
+    "run-driver.py": "175c7686fe3b626b69546e03e7f87cc77b85a2032eaae9676a878628ab83a42d",
+    "protocol-evidence.jsonl": "c7578afe03c03d93190bbdb98c001841def9903c8ea7e66a74f39c8de0fca938",
+    "grok-driver-evidence.json": "ad243fdf7389d72eb0e04d55ef4c820d0e65a8f75a9e6b086fb6d207b6622703",
+    "retry.py": "c394c3f0044c00bef7f78fd35799154423ad2b915878568961d15379cef2949e",
+    "package-lock.json": "cc03a750cf4b930e8b4bddd5507839179ca3414c2ebe062371c2aae662c4252b",
+    "package.json": "c02bb1086df600c3549ea0539c2417f497ef972b53154520febf62af88c4b57b",
+    "index.md": "a72b8833f7e41c2430224bd2158b31c7705bade417c8856b96ea79b9d3f03f8e",
+    "render-spec.py": "7a3ff171f36888bd77c7dbb79b1fee6763ff8afba2c6de54742c074125c31ef2",
+    "probe.py": "91a2e4afba0926e502b2c7de94dcacbcfb3f4ce6676db168ee8eda199740a58f",
+    "observations.json": "9ae2a3b89032d1cafa5f3f785b5676db23b331c2ac2f03991dc544267093e262",
+    "verify-evidence.py": "2709ad17d18a668ab084edeb1b0f146897d48af41e602c4139fd47f7ef84817e",
+    "capture-evidence.py": "64bd104f726dca87de6a679c5f9914c8fa300342ace18909696b9b4d9a41e6d5",
+    "render-qa.json": "0aa85267a057413bf3449f1645e72d59512276a1872debb92aa26f75f385df9d",
+    "observed-package-lock.json": "e3b195f95a6a4cacf90d0ac8378e75cf937c5e9ab89cb1d29d274462da3be9a3"
+  },
+  "limits": {
+    "prompt_seconds": 70,
+    "initialize_seconds": 30,
+    "new_seconds": 40,
+    "load_seconds": 35,
+    "consumed_output_bytes": 2097152,
+    "driver_seconds": 900
+  },
+  "limitations": [
+    "Queue bytes and unterminated input line are not bounded before read: experiment only",
+    "Process-group cleanup on macOS; no descendant or other-platform proof",
+    "Protocol progress/completion is distinct from pack ownership/handback proof"
+  ]
+}

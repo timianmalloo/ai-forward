@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-20T16:11:17Z",
+  "generated": "2026-09-20T22:23:11Z",
   "audit": [
     {
       "actor": null,
@@ -6835,156 +6835,145 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M2YFF4XB4AJYMXP9ZYXWNXZK",
-      "shortname": "fix-checkout-top-test-newlines",
-      "datetime": "2026-09-20T03:58:56Z",
-      "session": "fix-plat-test",
-      "prompt": "red pack-consistency on dc1bad5 (windows runner)",
-      "summary": "test_coord_checkout_top.py fixture wrote text with platform newlines and compared a blob hash: red on the Windows runner only. Fixture writes LF explicitly; PLAT-A instance recorded (the LF gate does not cover tests/).",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
       "actor": null,
       "artifacts": [],
-      "tags": [],
-      "outcome": "success",
       "compiled": false,
-      "goal": "main green on all three runners",
+      "datetime": "2026-09-20T03:58:56Z",
       "done_when": "pack-consistency green on the landing commit",
+      "fan_out": 0,
+      "goal": "main green on all three runners",
+      "id": "al-01M2YFF4XB4AJYMXP9ZYXWNXZK",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "red pack-consistency on dc1bad5 (windows runner)",
+      "session": "fix-plat-test",
+      "shortname": "fix-checkout-top-test-newlines",
+      "skill": "implement",
+      "summary": "test_coord_checkout_top.py fixture wrote text with platform newlines and compared a blob hash: red on the Windows runner only. Fixture writes LF explicitly; PLAT-A instance recorded (the LF gate does not cover tests/).",
+      "tags": [],
       "tier": "T0",
-      "fan_out": 0
+      "tool": null
     },
     {
-      "id": "al-01M2YJ2MXZNKJ18ZKTGKDVCDVK",
-      "shortname": "coordinate-s1-three-harness",
-      "datetime": "2026-09-20T04:44:33Z",
-      "session": "coord-p3-p5-p8",
-      "prompt": "plan a meaningful test to exercise the scenario where the leader, owner and coordinator are in this claude session and you are delegating work to the other three sessions ... when everything is landed attempt to run the multi-harness test",
-      "summary": "S1 three-harness delegation executed live: delegate mails + typed requests to s1-grok, s1-codex, s1-agy (width 3). Grok returned in 8 min (note a19c6bd; host-fired PreToolUse heartbeat row -> Grok heartbeat enforced; doorbell line and refused stop not seen). Codex: codex queue push verified (two pointers quoted verbatim); first pointer produced only the read, kick rung 1 + second pointer completed the track (note 90cc0e9). Antigravity: live 13 min, acked mails, received request, no artifact and no heartbeat row; expired at 1500 s, fallback note by the coordinator. Rulings 3 and 4. Three surface docs updated from the notes; README rows from quoted evidence; INSTALL rev 82. Findings: mail bodies named unminted worktree paths (corrected by note); the pointer must name the action after the read; leader TTL lapsed twice.",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
       "actor": null,
+      "agent_runs": [
+        {
+          "agent": "s1-grok",
+          "duration_seconds": 510.0,
+          "ended_at": "2026-09-20T04:33:30Z",
+          "started_at": "2026-09-20T04:25:00Z"
+        },
+        {
+          "agent": "s1-codex",
+          "duration_seconds": 1397.0,
+          "ended_at": "2026-09-20T04:38:20Z",
+          "started_at": "2026-09-20T04:15:03Z"
+        },
+        {
+          "agent": "s1-agy",
+          "duration_seconds": 818.0,
+          "ended_at": "2026-09-20T04:39:38Z",
+          "started_at": "2026-09-20T04:26:00Z"
+        }
+      ],
       "artifacts": [
         "docs/coordination/scenario-s1-three-harness-delegation.md",
         "docs/notes/note-20260920-s1-agy-hooks-surface-freshness.md"
       ],
-      "tags": [],
-      "outcome": "success",
       "compiled": false,
-      "goal": "exercise Owner/Coordinator/leader in this session delegating real work to live Grok, Codex and Antigravity sessions",
+      "datetime": "2026-09-20T04:44:33Z",
       "done_when": "three delegations sent; every track returned or hit its fallback; rulings issued; notes joined; channel rows updated only from quoted evidence; landed",
-      "tier": "T2",
       "fan_out": 3,
-      "agent_runs": [
-        {
-          "agent": "s1-grok",
-          "started_at": "2026-09-20T04:25:00Z",
-          "ended_at": "2026-09-20T04:33:30Z",
-          "duration_seconds": 510.0
-        },
-        {
-          "agent": "s1-codex",
-          "started_at": "2026-09-20T04:15:03Z",
-          "ended_at": "2026-09-20T04:38:20Z",
-          "duration_seconds": 1397.0
-        },
-        {
-          "agent": "s1-agy",
-          "started_at": "2026-09-20T04:26:00Z",
-          "ended_at": "2026-09-20T04:39:38Z",
-          "duration_seconds": 818.0
-        }
-      ],
+      "goal": "exercise Owner/Coordinator/leader in this session delegating real work to live Grok, Codex and Antigravity sessions",
+      "id": "al-01M2YJ2MXZNKJ18ZKTGKDVCDVK",
+      "kind": "skill",
+      "outcome": "success",
       "parallelism": {
         "agent_seconds": 2725.0,
+        "peak_concurrency": 3,
         "span_seconds": 1475.0,
-        "speedup": 1.85,
-        "peak_concurrency": 3
-      }
+        "speedup": 1.85
+      },
+      "prompt": "plan a meaningful test to exercise the scenario where the leader, owner and coordinator are in this claude session and you are delegating work to the other three sessions ... when everything is landed attempt to run the multi-harness test",
+      "session": "coord-p3-p5-p8",
+      "shortname": "coordinate-s1-three-harness",
+      "skill": "execute-with-coordination",
+      "summary": "S1 three-harness delegation executed live: delegate mails + typed requests to s1-grok, s1-codex, s1-agy (width 3). Grok returned in 8 min (note a19c6bd; host-fired PreToolUse heartbeat row -> Grok heartbeat enforced; doorbell line and refused stop not seen). Codex: codex queue push verified (two pointers quoted verbatim); first pointer produced only the read, kick rung 1 + second pointer completed the track (note 90cc0e9). Antigravity: live 13 min, acked mails, received request, no artifact and no heartbeat row; expired at 1500 s, fallback note by the coordinator. Rulings 3 and 4. Three surface docs updated from the notes; README rows from quoted evidence; INSTALL rev 82. Findings: mail bodies named unminted worktree paths (corrected by note); the pointer must name the action after the read; leader TTL lapsed twice.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
     },
     {
-      "id": "al-01M2ZFZ30P92G4784EBTKRX14K",
-      "shortname": "agy-hooks-loaded-not-enabled",
-      "datetime": "2026-09-20T13:26:53Z",
-      "session": "fix-agy-hooks",
-      "prompt": "you should be able to debug the antigravity session without me",
-      "summary": "Debugged from the host's records: agy process carried AGENT_SESSION=s1-agy; its CLI log shows .agents/hooks.json loaded (5 named hooks from 2 files); over 7 tool calls only the operator's user-level section fired - the only one with enabled: true; binary parses json:enabled. No accumulator/row/marker for ours; a hand-run of our command with the same env wrote the accumulator. Fix: enabled: true on all four sections (red-first test_agy_hooks_enabled.py). Second finding: the track's last step was the ack with a shell substitution, approved and never returned - the session hung there until the deadline; surface doc gives the two-command form. Class HOST-A registered. INSTALL rev 83.",
-      "kind": "skill",
-      "skill": "investigate",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/notes/note-20260920-agy-hooks-loaded-but-not-enabled.md"
       ],
-      "tags": [],
-      "outcome": "success",
       "compiled": false,
-      "goal": "explain why the s1-agy session wrote no heartbeat and produced no artifact, and fix what the pack owns",
+      "datetime": "2026-09-20T13:26:53Z",
       "done_when": "root cause established from evidence or labelled Inferred; config fixed red-first; landed",
+      "fan_out": 0,
+      "goal": "explain why the s1-agy session wrote no heartbeat and produced no artifact, and fix what the pack owns",
+      "id": "al-01M2ZFZ30P92G4784EBTKRX14K",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "you should be able to debug the antigravity session without me",
+      "session": "fix-agy-hooks",
+      "shortname": "agy-hooks-loaded-not-enabled",
+      "skill": "investigate",
+      "summary": "Debugged from the host's records: agy process carried AGENT_SESSION=s1-agy; its CLI log shows .agents/hooks.json loaded (5 named hooks from 2 files); over 7 tool calls only the operator's user-level section fired - the only one with enabled: true; binary parses json:enabled. No accumulator/row/marker for ours; a hand-run of our command with the same env wrote the accumulator. Fix: enabled: true on all four sections (red-first test_agy_hooks_enabled.py). Second finding: the track's last step was the ack with a shell substitution, approved and never returned - the session hung there until the deadline; surface doc gives the two-command form. Class HOST-A registered. INSTALL rev 83.",
+      "tags": [],
       "tier": "T1",
-      "fan_out": 0
+      "tool": null
     },
     {
-      "id": "al-01M2ZHHT3BF9NTBXBK37QPFSPV",
-      "shortname": "agy-channels-enforced",
-      "datetime": "2026-09-20T13:54:35Z",
-      "session": "fix-agy-schema",
-      "prompt": "you should be able to test and validate with the existing agy session / cli",
-      "summary": "Antigravity validated headlessly (agy --add-dir <tree> -p) against the host's hooks docs: PostToolUse handlers need the matcher/hooks wrapper (ours was bare - loaded, never fired), injectSteps items must be objects (string list rejected by protojson), a Stop hook may answer decision continue. Fixes red-first (5 tests). Probes: Stop row calls 2 (heartbeat+PostToolUse), the doorbell's ephemeralMessage quoted verbatim, the stop gate held a stopping session twice with the reason (Ruling 5). Rev 83's enabled diagnosis corrected (flag defaults true). Plain agy -p in an unregistered folder loads only the user hooks file. HOST-A rewritten. INSTALL rev 84.",
-      "kind": "skill",
-      "skill": "investigate",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/notes/note-20260920-agy-hooks-loaded-but-not-enabled.md",
         "docs/notes/rulings.md"
       ],
-      "tags": [],
-      "outcome": "success",
       "compiled": false,
-      "goal": "validate the Antigravity channels with the CLI and fix what the pack owns",
+      "datetime": "2026-09-20T13:54:35Z",
       "done_when": "each Antigravity channel observed live or its cause named from the host docs; fixes red-first; landed",
-      "tier": "T1",
-      "fan_out": 0
-    },
-    {
-      "id": "al-01M2ZMSRGTF7GRXBCM1RMMJXYT",
-      "shortname": "lets extend execute-with-coordination as you suggested : My recommendati…",
-      "datetime": "2026-09-20T14:51:22Z",
-      "session": "prompt-compile",
-      "prompt": "lets extend execute-with-coordination as you suggested : My recommendation is to extend execute-with-coordination with a small, deterministic launch-and-monitor script\n$specify then $design-slice then $implement it",
-      "summary": "raw prompt logged for compilation",
-      "kind": "prompt",
-      "skill": null,
-      "tool": null,
-      "actor": null,
-      "artifacts": [],
-      "tags": [],
-      "outcome": "success"
-    },
-    {
-      "id": "al-01M2ZMVK4J3623WC2FJ6FYYP18",
-      "shortname": "compile-lets extend execute-with-coordination as you suggested : My recommendati…",
-      "datetime": "2026-09-20T14:52:22Z",
-      "session": "launch-monitor-codex",
-      "prompt": "Save the brief between the markers as <brief-file>, then run (one line, the brief read from the file):\ncodex exec --json -o <last-message-file> --output-schema <schema-file> --worktree -C <dir> \"$(cat <brief-file>)\"\n--- brief ---\npython3 docs/ai-forward-pack/scripts/audit-log.py start --session launch-monitor-codex --skill <skill>\nGoal state\nGoal: Extend execute-with-coordination with a small deterministic launch-and-monitor script.\nDone when: Specification, design and implementation are complete and verified.\nNot in scope: Work outside the execute-with-coordination launch-and-monitor extension.\nTier: T2\nFan-out cap: 2\nContext ceiling: 400000\nMain-line budget: 160\nTrace\n| clause | trace |\n|---|---|\n| done_when: Specification, design and implementation are complete and verified. | phrase: $specify then $design-slice then $implement it |\n| not_in_scope: Work outside the execute-with-coordination launch-and-monitor extension. | phrase: extend execute-with-coordination with a small, deterministic launch-and-monitor script |\nReferences\n- none\nAssumptions\n- #1 belief: The request authorizes a scoped feature branch, not unrelated changes or integration into main. · confirm: User wording scopes the change to execute-with-coordination; any wider instruction supersedes this boundary. · breaks: The plan must be expanded if the user requests unrelated changes or integration. · consequential: false\nDecision requests\n- none\nContract slot\nwidth_cap: 2\ntransient_retry: No automatic model retry; diagnose first.\nper_branch_exit: ACP track returns MD, HTML and inspected spike evidence; main track passes required gates.\njoin_rule: Transport selection consumes the ACP spike; blocked results remain unsupported.\ncontainment: Separate worktrees and authored paths; no production changes in ACP track.\ntermination: All requested artifacts and acceptance evidence present; unresolved gates remain open.\ndeadline: 160 main-line tool calls, then re-estimate remaining work without dropping gates.\nfallback: Record missing runtime capability and preserve explicit manual operation.\nRules: absolute paths only; a multi-line program is a file, then a run; a gate's exit status is never behind a pipe.\nProvenance\nraw id: al-01M2ZMSRGTF7GRXBCM1RMMJXYT\nraw sha256: 5c5a77108fd1018702b11091a058552115e5904e158688b5a93b81cfa6ad0fa5\ncompiler model: codex\nengine seconds: 0.001\ntokens: not recorded\ngate: pass\ndispatchable: true\n--- end brief ---\n",
-      "summary": "compiled al-01M2ZMSRGTF7GRXBCM1RMMJXYT for codex v1: 2 clauses, 1 assumptions, 0 decision requests",
-      "kind": "compilation",
-      "skill": null,
-      "tool": null,
-      "actor": null,
-      "artifacts": [],
-      "tags": [],
+      "fan_out": 0,
+      "goal": "validate the Antigravity channels with the CLI and fix what the pack owns",
+      "id": "al-01M2ZHHT3BF9NTBXBK37QPFSPV",
+      "kind": "skill",
       "outcome": "success",
+      "prompt": "you should be able to test and validate with the existing agy session / cli",
+      "session": "fix-agy-schema",
+      "shortname": "agy-channels-enforced",
+      "skill": "investigate",
+      "summary": "Antigravity validated headlessly (agy --add-dir <tree> -p) against the host's hooks docs: PostToolUse handlers need the matcher/hooks wrapper (ours was bare - loaded, never fired), injectSteps items must be objects (string list rejected by protojson), a Stop hook may answer decision continue. Fixes red-first (5 tests). Probes: Stop row calls 2 (heartbeat+PostToolUse), the doorbell's ephemeralMessage quoted verbatim, the stop gate held a stopping session twice with the reason (Ruling 5). Rev 83's enabled diagnosis corrected (flag defaults true). Plain agy -p in an unregistered folder loads only the user hooks file. HOST-A rewritten. INSTALL rev 84.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-20T14:51:22Z",
+      "id": "al-01M2ZMSRGTF7GRXBCM1RMMJXYT",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "lets extend execute-with-coordination as you suggested : My recommendation is to extend execute-with-coordination with a small, deterministic launch-and-monitor script\n$specify then $design-slice then $implement it",
+      "session": "prompt-compile",
+      "shortname": "lets extend execute-with-coordination as you suggested : My recommendati…",
+      "skill": null,
+      "summary": "raw prompt logged for compilation",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
       "compiled": {
         "assumptions": [
           {
-            "id": "#1",
             "belief": "The request authorizes a scoped feature branch, not unrelated changes or integration into main.",
-            "confirm": "User wording scopes the change to execute-with-coordination; any wider instruction supersedes this boundary.",
             "breaks": "The plan must be expanded if the user requests unrelated changes or integration.",
-            "consequential": false
+            "confirm": "User wording scopes the change to execute-with-coordination; any wider instruction supersedes this boundary.",
+            "consequential": false,
+            "id": "#1"
           }
         ],
         "clauses": [
@@ -7006,29 +6995,29 @@ window.AUDIT_DATA = {
           }
         ],
         "contract_slot": {
-          "width_cap": 2,
-          "transient_retry": "No automatic model retry; diagnose first.",
-          "per_branch_exit": "ACP track returns MD, HTML and inspected spike evidence; main track passes required gates.",
-          "join_rule": "Transport selection consumes the ACP spike; blocked results remain unsupported.",
           "containment": "Separate worktrees and authored paths; no production changes in ACP track.",
-          "termination": "All requested artifacts and acceptance evidence present; unresolved gates remain open.",
           "deadline": "160 main-line tool calls, then re-estimate remaining work without dropping gates.",
-          "fallback": "Record missing runtime capability and preserve explicit manual operation."
+          "fallback": "Record missing runtime capability and preserve explicit manual operation.",
+          "join_rule": "Transport selection consumes the ACP spike; blocked results remain unsupported.",
+          "per_branch_exit": "ACP track returns MD, HTML and inspected spike evidence; main track passes required gates.",
+          "termination": "All requested artifacts and acceptance evidence present; unresolved gates remain open.",
+          "transient_retry": "No automatic model retry; diagnose first.",
+          "width_cap": 2
         },
         "decision_requests": [],
         "dispatchable": true,
         "goal_state": {
-          "goal": "Extend execute-with-coordination with a small deterministic launch-and-monitor script.",
+          "context_ceiling": 400000,
           "done_when": [
             "Specification, design and implementation are complete and verified."
           ],
+          "fan_out_cap": 2,
+          "goal": "Extend execute-with-coordination with a small deterministic launch-and-monitor script.",
+          "main_line_budget": 160,
           "not_in_scope": [
             "Work outside the execute-with-coordination launch-and-monitor extension."
           ],
-          "tier": "T2",
-          "fan_out_cap": 2,
-          "context_ceiling": 400000,
-          "main_line_budget": 160
+          "tier": "T2"
         },
         "graph_neighbours": [],
         "harness": "codex",
@@ -7048,167 +7037,474 @@ window.AUDIT_DATA = {
         "template": "codex",
         "template_version": 1
       },
+      "datetime": "2026-09-20T14:52:22Z",
+      "dispatchable": true,
+      "id": "al-01M2ZMVK4J3623WC2FJ6FYYP18",
+      "kind": "compilation",
       "mode": "compiled",
-      "dispatchable": true
+      "outcome": "success",
+      "prompt": "Save the brief between the markers as <brief-file>, then run (one line, the brief read from the file):\ncodex exec --json -o <last-message-file> --output-schema <schema-file> --worktree -C <dir> \"$(cat <brief-file>)\"\n--- brief ---\npython3 docs/ai-forward-pack/scripts/audit-log.py start --session launch-monitor-codex --skill <skill>\nGoal state\nGoal: Extend execute-with-coordination with a small deterministic launch-and-monitor script.\nDone when: Specification, design and implementation are complete and verified.\nNot in scope: Work outside the execute-with-coordination launch-and-monitor extension.\nTier: T2\nFan-out cap: 2\nContext ceiling: 400000\nMain-line budget: 160\nTrace\n| clause | trace |\n|---|---|\n| done_when: Specification, design and implementation are complete and verified. | phrase: $specify then $design-slice then $implement it |\n| not_in_scope: Work outside the execute-with-coordination launch-and-monitor extension. | phrase: extend execute-with-coordination with a small, deterministic launch-and-monitor script |\nReferences\n- none\nAssumptions\n- #1 belief: The request authorizes a scoped feature branch, not unrelated changes or integration into main. · confirm: User wording scopes the change to execute-with-coordination; any wider instruction supersedes this boundary. · breaks: The plan must be expanded if the user requests unrelated changes or integration. · consequential: false\nDecision requests\n- none\nContract slot\nwidth_cap: 2\ntransient_retry: No automatic model retry; diagnose first.\nper_branch_exit: ACP track returns MD, HTML and inspected spike evidence; main track passes required gates.\njoin_rule: Transport selection consumes the ACP spike; blocked results remain unsupported.\ncontainment: Separate worktrees and authored paths; no production changes in ACP track.\ntermination: All requested artifacts and acceptance evidence present; unresolved gates remain open.\ndeadline: 160 main-line tool calls, then re-estimate remaining work without dropping gates.\nfallback: Record missing runtime capability and preserve explicit manual operation.\nRules: absolute paths only; a multi-line program is a file, then a run; a gate's exit status is never behind a pipe.\nProvenance\nraw id: al-01M2ZMSRGTF7GRXBCM1RMMJXYT\nraw sha256: 5c5a77108fd1018702b11091a058552115e5904e158688b5a93b81cfa6ad0fa5\ncompiler model: codex\nengine seconds: 0.001\ntokens: not recorded\ngate: pass\ndispatchable: true\n--- end brief ---\n",
+      "session": "launch-monitor-codex",
+      "shortname": "compile-lets extend execute-with-coordination as you suggested : My recommendati…",
+      "skill": null,
+      "summary": "compiled al-01M2ZMSRGTF7GRXBCM1RMMJXYT for codex v1: 2 clauses, 1 assumptions, 0 decision requests",
+      "tags": [],
+      "tool": null
     },
     {
-      "id": "al-01M2ZR58Z6TAFAXR0GTQ7ERH11",
-      "shortname": "optimize-graph-multi-harness-runner",
-      "datetime": "2026-09-20T15:50:05Z",
-      "session": "launch-monitor-codex",
-      "prompt": "lets extend execute-with-coordination as you suggested : My recommendation is to extend execute-with-coordination with a small, deterministic launch-and-monitor script\n$specify then $design-slice then $implement it",
-      "summary": "Planned two independent tracks: ACP evidence and deterministic launch lifecycle; design waited for transport evidence. Width cap counts Grok driver and target probes.",
-      "kind": "skill",
-      "skill": "optimize-graph",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/plans/multi-harness-runner.md"
       ],
-      "tags": [],
-      "outcome": "success",
       "compiled_from": "al-01M2ZMVK4J3623WC2FJ6FYYP18",
-      "goal": "Extend execute-with-coordination with a deterministic launch-and-monitor script",
+      "datetime": "2026-09-20T15:50:05Z",
       "done_when": "Specified, designed, implemented and verified with ACP findings scoped honestly",
-      "tier": "T2",
+      "duration_seconds": 3484.0,
       "fan_out": 4,
+      "goal": "Extend execute-with-coordination with a deterministic launch-and-monitor script",
+      "id": "al-01M2ZR58Z6TAFAXR0GTQ7ERH11",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "lets extend execute-with-coordination as you suggested : My recommendation is to extend execute-with-coordination with a small, deterministic launch-and-monitor script\n$specify then $design-slice then $implement it",
+      "session": "launch-monitor-codex",
+      "shortname": "optimize-graph-multi-harness-runner",
+      "skill": "optimize-graph",
       "started_at": "2026-09-20T14:52:01Z",
-      "duration_seconds": 3484.0
+      "summary": "Planned two independent tracks: ACP evidence and deterministic launch lifecycle; design waited for transport evidence. Width cap counts Grok driver and target probes.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
     },
     {
-      "id": "al-01M2ZR592VQZ8N43GBHQF0QVC4",
-      "shortname": "specify-multi-harness-runner",
-      "datetime": "2026-09-20T15:50:05Z",
-      "session": "launch-monitor-codex",
-      "prompt": "lets extend execute-with-coordination as you suggested : My recommendation is to extend execute-with-coordination with a small, deterministic launch-and-monitor script\n$specify then $design-slice then $implement it",
-      "summary": "Specified launch validation, separate worktrees/identity, harness-neutral leadership, bounded sessions, independent artifact receipts and recovery. Independent review conditions resolved.",
-      "kind": "skill",
-      "skill": "specify",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/specs/multi-harness-launch-and-monitor.md"
       ],
-      "tags": [],
-      "outcome": "success",
       "compiled_from": "al-01M2ZMVK4J3623WC2FJ6FYYP18",
-      "goal": "Extend execute-with-coordination with a deterministic launch-and-monitor script",
+      "datetime": "2026-09-20T15:50:05Z",
       "done_when": "Specified, designed, implemented and verified with ACP findings scoped honestly",
-      "tier": "T2",
+      "duration_seconds": 3484.0,
       "fan_out": 4,
+      "goal": "Extend execute-with-coordination with a deterministic launch-and-monitor script",
+      "id": "al-01M2ZR592VQZ8N43GBHQF0QVC4",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "lets extend execute-with-coordination as you suggested : My recommendation is to extend execute-with-coordination with a small, deterministic launch-and-monitor script\n$specify then $design-slice then $implement it",
+      "session": "launch-monitor-codex",
+      "shortname": "specify-multi-harness-runner",
+      "skill": "specify",
       "started_at": "2026-09-20T14:52:01Z",
-      "duration_seconds": 3484.0
+      "summary": "Specified launch validation, separate worktrees/identity, harness-neutral leadership, bounded sessions, independent artifact receipts and recovery. Independent review conditions resolved.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
     },
     {
-      "id": "al-01M2ZR596DDMH12XSYJE7ZSXP3",
-      "shortname": "design-slice-multi-harness-runner",
-      "datetime": "2026-09-20T15:50:05Z",
-      "session": "launch-monitor-codex",
-      "prompt": "lets extend execute-with-coordination as you suggested : My recommendation is to extend execute-with-coordination with a small, deterministic launch-and-monitor script\n$specify then $design-slice then $implement it",
-      "summary": "Designed opt-in shared ACP client and explicit Agy stream adapter, preparation/qualification split, bounded lease fences and structured completion receipts. Independent design gate passed.",
-      "kind": "skill",
-      "skill": "design-slice",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/design/multi-harness-runner.md"
       ],
-      "tags": [],
-      "outcome": "success",
       "compiled_from": "al-01M2ZMVK4J3623WC2FJ6FYYP18",
-      "goal": "Extend execute-with-coordination with a deterministic launch-and-monitor script",
+      "datetime": "2026-09-20T15:50:05Z",
       "done_when": "Specified, designed, implemented and verified with ACP findings scoped honestly",
-      "tier": "T2",
+      "duration_seconds": 1910.0,
       "fan_out": 4,
+      "goal": "Extend execute-with-coordination with a deterministic launch-and-monitor script",
+      "id": "al-01M2ZR596DDMH12XSYJE7ZSXP3",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "lets extend execute-with-coordination as you suggested : My recommendation is to extend execute-with-coordination with a small, deterministic launch-and-monitor script\n$specify then $design-slice then $implement it",
+      "session": "launch-monitor-codex",
+      "shortname": "design-slice-multi-harness-runner",
+      "skill": "design-slice",
       "started_at": "2026-09-20T15:18:15Z",
-      "duration_seconds": 1910.0
+      "summary": "Designed opt-in shared ACP client and explicit Agy stream adapter, preparation/qualification split, bounded lease fences and structured completion receipts. Independent design gate passed.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
     },
     {
-      "id": "al-01M2ZRP70YR73P5ZQMMXW2APS1",
-      "shortname": "implement-bounded-coordination-transport",
-      "datetime": "2026-09-20T15:49:18Z",
-      "session": "bounded-transport-codex",
-      "prompt": "Implement ONLY the bounded transport subtask in your PRECREATED own worktree /Users/mallalieut/projects/ai-forward-feat-bounded-coordination-transport branch feat/bounded-coordination-transport. Parent owns runner/skill/docs. Read design /Users/mallalieut/projects/ai-forward-feat-multi-harness-runner/docs/design/multi-harness-runner.md, transport/concurrency details. Independent design review conditions resolved in text; reviewer confirming. Own paths pack/scripts/coord_transport.py, tests/docs_explorer/test_coord_transport.py and uniquely named fixture files. Do not change other production paths or sync generated surfaces (parent joins and syncs once). Implement run_session(transport, argv, cwd, env, prompts, deadline_seconds, output_limit, emit, cancelled, before_prompt) -> dict exactly designed: stdlib bounded nonblocking POSIX stdio, ACP1 initialize/new/auth cached_token/repeated prompt/progress/deny sticky/cancel, Agy native stream adapter, only end_turn / SUCCESS complete, sanitized metadata, no raw output durable, output/unterminated/input/hang finite, own group cleanup<=4s beyond deadline. before_prompt(remaining_seconds) is bounded by caller but charged to attempt, cancelled callback cheap. Unknown Windows blocked before process. Allow before_prompt default optional true for isolated tests if useful. RED-FIRST faults with real subprocesses for stdout+stderr floods, no newline, blocked stdin, malformed/unknown/early EOF, permissions sticky, prompt count, cancellation, cleanup descendants. Verify actual Agy result shape from ACP probe evidence, not memory. Don't promote unsafe probe client. Goal done: module+tests reviewed self-check; send exact test results and source paths for parent to inspect/copy, no commit required until parent review. Audit start/closure under session bounded-transport-codex; no push. Keep scope bounded to this seam; report uncertainties rather than adding features.\n\nParent follow-up: Please coalesce progress notifications (at most one progress event per second per attempt, plus lifecycle/permission/terminal) or expose counts without per-token callback emission. Existing append_event computes sequence from its log, so per-token events are avoidable cost and can flood durable logs/CLI. Byte counters still count every wire byte and deadline still runs. Return progress count if easy; no content.\n\nParent review: Parent source review overall sound. One protocol-correlation edge to check: before sending next Agy prompt, a buffered unsolicited second SUCCESS from the previous turn could be consumed as the next result, since session id is shared and queue() doesn't flush before receive parses buffered lines. Please add a duplicate-result fixture; ensure it cannot mark two prompts complete without two actually written requests. Minimal guard against already-buffered unsolicited result is sufficient; document native lack of per-turn IDs rather than claim arbitrary malicious-provider protection. Also please send audit entry paths for parent integration separate from production files.",
-      "summary": "Integrated delegated transport evidence (source audit al-01M2ZR3VM7CGJ414A0GGSHHTRJ). Implemented the assigned POSIX ACP/Agy bounded transport seam and real subprocess fixtures. Final 23 tests pass; three targeted mutants killed. Red-observed defects corrected: macOS unreaped-zombie signal classification, per-token durable progress, and duplicate buffered Agy SUCCESS completing an unsent prompt. Output bodies and raw exceptions are never returned. Source integration, full composition proof, generated sync and bundle verification remain with parent; no commit or live provider qualification claimed.",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
       "actor": "codex",
       "artifacts": [
         "pack/scripts/coord_transport.py",
         "tests/docs_explorer/test_coord_transport.py",
         "tests/docs_explorer/coord_transport_peer.py"
       ],
-      "tags": [],
-      "outcome": "success",
       "compiled": false,
-      "goal": "Provide the bounded ACP/Agy stdio module and real subprocess failure tests for parent review.",
+      "datetime": "2026-09-20T15:49:18Z",
       "done_when": "Owned module and tests implemented, bounded IO/cancellation/cleanup and sanitized results demonstrated, exact source paths and test evidence delivered to parent.",
-      "tier": "T2",
+      "duration_seconds": 976.0,
       "fan_out": 0,
+      "goal": "Provide the bounded ACP/Agy stdio module and real subprocess failure tests for parent review.",
+      "id": "al-01M2ZRP70YR73P5ZQMMXW2APS1",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Implement ONLY the bounded transport subtask in your PRECREATED own worktree /Users/mallalieut/projects/ai-forward-feat-bounded-coordination-transport branch feat/bounded-coordination-transport. Parent owns runner/skill/docs. Read design /Users/mallalieut/projects/ai-forward-feat-multi-harness-runner/docs/design/multi-harness-runner.md, transport/concurrency details. Independent design review conditions resolved in text; reviewer confirming. Own paths pack/scripts/coord_transport.py, tests/docs_explorer/test_coord_transport.py and uniquely named fixture files. Do not change other production paths or sync generated surfaces (parent joins and syncs once). Implement run_session(transport, argv, cwd, env, prompts, deadline_seconds, output_limit, emit, cancelled, before_prompt) -> dict exactly designed: stdlib bounded nonblocking POSIX stdio, ACP1 initialize/new/auth cached_token/repeated prompt/progress/deny sticky/cancel, Agy native stream adapter, only end_turn / SUCCESS complete, sanitized metadata, no raw output durable, output/unterminated/input/hang finite, own group cleanup<=4s beyond deadline. before_prompt(remaining_seconds) is bounded by caller but charged to attempt, cancelled callback cheap. Unknown Windows blocked before process. Allow before_prompt default optional true for isolated tests if useful. RED-FIRST faults with real subprocesses for stdout+stderr floods, no newline, blocked stdin, malformed/unknown/early EOF, permissions sticky, prompt count, cancellation, cleanup descendants. Verify actual Agy result shape from ACP probe evidence, not memory. Don't promote unsafe probe client. Goal done: module+tests reviewed self-check; send exact test results and source paths for parent to inspect/copy, no commit required until parent review. Audit start/closure under session bounded-transport-codex; no push. Keep scope bounded to this seam; report uncertainties rather than adding features.\n\nParent follow-up: Please coalesce progress notifications (at most one progress event per second per attempt, plus lifecycle/permission/terminal) or expose counts without per-token callback emission. Existing append_event computes sequence from its log, so per-token events are avoidable cost and can flood durable logs/CLI. Byte counters still count every wire byte and deadline still runs. Return progress count if easy; no content.\n\nParent review: Parent source review overall sound. One protocol-correlation edge to check: before sending next Agy prompt, a buffered unsolicited second SUCCESS from the previous turn could be consumed as the next result, since session id is shared and queue() doesn't flush before receive parses buffered lines. Please add a duplicate-result fixture; ensure it cannot mark two prompts complete without two actually written requests. Minimal guard against already-buffered unsolicited result is sufficient; document native lack of per-turn IDs rather than claim arbitrary malicious-provider protection. Also please send audit entry paths for parent integration separate from production files.",
+      "session": "bounded-transport-codex",
+      "shortname": "implement-bounded-coordination-transport",
+      "skill": "implement",
       "started_at": "2026-09-20T15:33:02Z",
-      "duration_seconds": 976.0
+      "summary": "Integrated delegated transport evidence (source audit al-01M2ZR3VM7CGJ414A0GGSHHTRJ). Implemented the assigned POSIX ACP/Agy bounded transport seam and real subprocess fixtures. Final 23 tests pass; three targeted mutants killed. Red-observed defects corrected: macOS unreaped-zombie signal classification, per-token durable progress, and duplicate buffered Agy SUCCESS completing an unsent prompt. Output bodies and raw exceptions are never returned. Source integration, full composition proof, generated sync and bundle verification remain with parent; no commit or live provider qualification claimed.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
     },
     {
-      "id": "al-01M2ZS2KV50QBDQGSYQG8K8P28",
-      "shortname": "implement-multi-harness-runner",
-      "datetime": "2026-09-20T16:06:06Z",
-      "session": "launch-monitor-codex",
-      "prompt": "lets extend execute-with-coordination as you suggested : My recommendation is to extend execute-with-coordination with a small, deterministic launch-and-monitor script\n$specify then $design-slice then $implement it",
-      "summary": "Implemented opt-in POSIX multi-harness launch/monitor with shared bounded ACP transport and explicit Agy stream adapter. Independent review closed eight runner findings; 52 targeted tests and full Python suite (1137 passed, 12 skipped, 321 subtests) passed. Regenerated scripts, skill surfaces, counts, API docs and reading bundle; final metadata gate follows. Native profile qualification remains required.",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
       "actor": null,
+      "agent_runs": [
+        {
+          "agent": "bounded-transport-codex",
+          "duration_seconds": 976.0,
+          "ended_at": "2026-09-20T15:49:18Z",
+          "started_at": "2026-09-20T15:33:02Z"
+        }
+      ],
       "artifacts": [
         "docs/proof/multi-harness-runner.md",
         "pack/scripts/coord-runner.py",
         "pack/scripts/coord_transport.py"
       ],
-      "tags": [],
-      "outcome": "success",
       "compiled_from": "al-01M2ZMVK4J3623WC2FJ6FYYP18",
-      "goal": "Extend execute-with-coordination with a deterministic launch-and-monitor script",
+      "datetime": "2026-09-20T16:06:06Z",
       "done_when": "Specified, designed, implemented and verified with ACP findings scoped honestly",
-      "tier": "T2",
-      "fan_out": 4,
-      "started_at": "2026-09-20T15:29:45Z",
       "duration_seconds": 2181.0,
-      "agent_runs": [
-        {
-          "agent": "bounded-transport-codex",
-          "started_at": "2026-09-20T15:33:02Z",
-          "ended_at": "2026-09-20T15:49:18Z",
-          "duration_seconds": 976.0
-        }
-      ],
+      "fan_out": 4,
+      "goal": "Extend execute-with-coordination with a deterministic launch-and-monitor script",
+      "id": "al-01M2ZS2KV50QBDQGSYQG8K8P28",
+      "kind": "skill",
+      "outcome": "success",
       "parallelism": {
         "agent_seconds": 976.0,
+        "peak_concurrency": 1,
         "span_seconds": 976.0,
-        "speedup": 1.0,
-        "peak_concurrency": 1
-      }
+        "speedup": 1.0
+      },
+      "prompt": "lets extend execute-with-coordination as you suggested : My recommendation is to extend execute-with-coordination with a small, deterministic launch-and-monitor script\n$specify then $design-slice then $implement it",
+      "session": "launch-monitor-codex",
+      "shortname": "implement-multi-harness-runner",
+      "skill": "implement",
+      "started_at": "2026-09-20T15:29:45Z",
+      "summary": "Implemented opt-in POSIX multi-harness launch/monitor with shared bounded ACP transport and explicit Agy stream adapter. Independent review closed eight runner findings; 52 targeted tests and full Python suite (1137 passed, 12 skipped, 321 subtests) passed. Regenerated scripts, skill surfaces, counts, API docs and reading bundle; final metadata gate follows. Native profile qualification remains required.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
     },
     {
-      "id": "al-01M2ZSC38THVDYGCQZAJKEDAYQ",
-      "shortname": "verify-multi-harness-runner",
-      "datetime": "2026-09-20T16:11:17Z",
-      "session": "launch-monitor-codex",
-      "prompt": "lets extend execute-with-coordination as you suggested : My recommendation is to extend execute-with-coordination with a small, deterministic launch-and-monitor script\n$specify then $design-slice then $implement it",
-      "summary": "Final full bundle validation on revision 85: all 17 gates passed; Python 1137 passed, 12 skipped, 321 subtests passed in 117.22 seconds. Independent implementation review passed. Only result/audit records are finalized after this run; no implementation or native-profile enforcement claim is broadened.",
-      "kind": "script",
-      "skill": null,
-      "tool": "verify-bundle.ps1",
       "actor": null,
       "artifacts": [
         "docs/proof/multi-harness-runner.md"
       ],
+      "datetime": "2026-09-20T16:11:17Z",
+      "done_when": "Every required bundle gate is observed passing and final results are durably recorded",
+      "fan_out": 0,
+      "goal": "Verify the completed multi-harness launch-and-monitor extension",
+      "id": "al-01M2ZSC38THVDYGCQZAJKEDAYQ",
+      "kind": "script",
+      "outcome": "success",
+      "prompt": "lets extend execute-with-coordination as you suggested : My recommendation is to extend execute-with-coordination with a small, deterministic launch-and-monitor script\n$specify then $design-slice then $implement it",
+      "session": "launch-monitor-codex",
+      "shortname": "verify-multi-harness-runner",
+      "skill": null,
+      "summary": "Final full bundle validation on revision 85: all 17 gates passed; Python 1137 passed, 12 skipped, 321 subtests passed in 117.22 seconds. Independent implementation review passed. Only result/audit records are finalized after this run; no implementation or native-profile enforcement claim is broadened.",
+      "tags": [],
+      "tier": "T2",
+      "tool": "verify-bundle.ps1"
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-20T14:52:05Z",
+      "id": "al-01M2ZMV2TJ5K094ERDFTJ69H8Z",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "Specify multi-harness/multi-agent coordination using a shared Agent Client Protocol client underneath execute-with-coordination, retaining pack ownership, leadership, decision rulings, audit and completion verification. Spike Grok, Claude Code, Codex and Antigravity from Grok for session creation, two-way prompts, progress, permissions, cancellation, completion evidence and instruction/hook preservation. Deliver Markdown and HTML spec, measured capability matrix and recommendation. No production implementation in this track.",
+      "session": "prompt-compile",
+      "shortname": "Specify multi-harness/multi-agent coordination using a shared Agent Clie…",
+      "skill": null,
+      "summary": "raw prompt logged for compilation",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "compiled": {
+        "assumptions": [],
+        "clauses": [
+          {
+            "section": "done_when",
+            "text": "Deliver Markdown and HTML spec, measured capability matrix and recommendation.",
+            "trace": {
+              "kind": "phrase",
+              "ref": "Deliver Markdown and HTML spec, measured capability matrix and recommendation."
+            }
+          },
+          {
+            "section": "not_in_scope",
+            "text": "No production implementation in this track.",
+            "trace": {
+              "kind": "phrase",
+              "ref": "No production implementation in this track."
+            }
+          }
+        ],
+        "contract_slot": {
+          "containment": "Own worktree; disposable fixtures; no global changes or permission bypass",
+          "deadline": "30 minutes to first complete handback",
+          "fallback": "Report blocked cells and retain native dispatch until qualified",
+          "join_rule": "Parent independently reviews before accepting specification",
+          "per_branch_exit": "Four capability rows, honest blocked cells, MD and HTML spec",
+          "termination": "Finite four-harness matrix; unresolved cells reported",
+          "transient_retry": "One targeted retry only after diagnosing a blocker",
+          "width_cap": 1
+        },
+        "decision_requests": [],
+        "dispatchable": true,
+        "goal_state": {
+          "context_ceiling": 400000,
+          "done_when": [
+            "Deliver Markdown and HTML spec, measured capability matrix and recommendation."
+          ],
+          "fan_out_cap": 1,
+          "goal": "Specify the bounded ACP coordination capability and validate four harnesses from Grok",
+          "main_line_budget": 70,
+          "not_in_scope": [
+            "No production implementation in this track."
+          ],
+          "tier": "T2"
+        },
+        "graph_neighbours": [],
+        "harness": "codex",
+        "mode": "compiled",
+        "provenance": {
+          "compile_tokens": null,
+          "compiler_model": "codex",
+          "engine_seconds": 0.003,
+          "refusals": [],
+          "retries": 0
+        },
+        "raw_id": "al-01M2ZMV2TJ5K094ERDFTJ69H8Z",
+        "raw_sha256": "012822c7339e8082b65f08dcd0038745edda2e44a522e3479d07d2d8a523f2d6",
+        "raw_text_normalised": false,
+        "references": [
+          {
+            "nearest": null,
+            "path": null,
+            "reason": "not found",
+            "sha256": null,
+            "status": "unresolved",
+            "token": "multi-harness/multi-agent"
+          },
+          {
+            "nearest": null,
+            "path": null,
+            "reason": "not found",
+            "sha256": null,
+            "status": "unresolved",
+            "token": "instruction/hook"
+          }
+        ],
+        "schema": "compiled-prompt/1",
+        "template": "codex",
+        "template_version": 1
+      },
+      "datetime": "2026-09-20T14:57:20Z",
+      "dispatchable": true,
+      "id": "al-01M2ZN4P4YEVBHYZRT4QWSD5H5",
+      "kind": "compilation",
+      "mode": "compiled",
+      "outcome": "success",
+      "prompt": "Save the brief between the markers as <brief-file>, then run (one line, the brief read from the file):\ncodex exec --json -o <last-message-file> --output-schema <schema-file> --worktree -C <dir> \"$(cat <brief-file>)\"\n--- brief ---\npython3 docs/ai-forward-pack/scripts/audit-log.py start --session acp-spec-codex --skill specify\nGoal state\nGoal: Specify the bounded ACP coordination capability and validate four harnesses from Grok\nDone when: Deliver Markdown and HTML spec, measured capability matrix and recommendation.\nNot in scope: No production implementation in this track.\nTier: T2\nFan-out cap: 1\nContext ceiling: 400000\nMain-line budget: 70\nTrace\n| clause | trace |\n|---|---|\n| done_when: Deliver Markdown and HTML spec, measured capability matrix and recommendation. | phrase: Deliver Markdown and HTML spec, measured capability matrix and recommendation. |\n| not_in_scope: No production implementation in this track. | phrase: No production implementation in this track. |\nReferences\n- multi-harness/multi-agent: unresolved (not found)\n- instruction/hook: unresolved (not found)\nAssumptions\n- none\nDecision requests\n- none\nContract slot\nwidth_cap: 1\ntransient_retry: One targeted retry only after diagnosing a blocker\nper_branch_exit: Four capability rows, honest blocked cells, MD and HTML spec\njoin_rule: Parent independently reviews before accepting specification\ncontainment: Own worktree; disposable fixtures; no global changes or permission bypass\ntermination: Finite four-harness matrix; unresolved cells reported\ndeadline: 30 minutes to first complete handback\nfallback: Report blocked cells and retain native dispatch until qualified\nRules: absolute paths only; a multi-line program is a file, then a run; a gate's exit status is never behind a pipe.\nProvenance\nraw id: al-01M2ZMV2TJ5K094ERDFTJ69H8Z\nraw sha256: 012822c7339e8082b65f08dcd0038745edda2e44a522e3479d07d2d8a523f2d6\ncompiler model: codex\nengine seconds: 0.003\ntokens: not recorded\ngate: pass\ndispatchable: true\n--- end brief ---\n",
+      "session": "acp-spec-codex",
+      "shortname": "compile-Specify multi-harness/multi-agent coordination using a shared Agent Clie…",
+      "skill": null,
+      "summary": "compiled al-01M2ZMV2TJ5K094ERDFTJ69H8Z for codex v1: 2 clauses, 0 assumptions, 0 decision requests",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/plans/acp-compatibility-spike.md"
+      ],
+      "compiled": false,
+      "datetime": "2026-09-20T15:19:35Z",
+      "done_when": "Grok-driven observations, linked MD/HTML spec and independent gates complete",
+      "fan_out": 1,
+      "goal": "Bound the ACP specification and four-harness compatibility experiment",
+      "id": "al-01M2ZPDEDKKS5RZERB1B4E9MKB",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "in a separate sub-agent:\n$specify  the multi-harness/multi-agent coordination with ACP\n- spike each harness from grok to validate or invalidate the capability\nthen give me the spec in html and md \nand tell me what you think we should do\n\n... specifically for the ACP spec and spike i am referring to your recco here:\n\nMy revised recommendation is to evaluate a shared ACP client underneath execute-with-coordination, with a small Agy transport adapter if needed. Either Claude or Codex could operate that runner. The existing\n  pack would retain worktree ownership, leadership, decision rulings, durable audit records, and verification of completed work.\n\n  ACP would simplify session control and communication. We would still need to implement those repository-specific rules, and verify that adapters preserve the required instructions, hooks, and permissions.\n  Loading an existing session is also an optional capability; ACP does not automatically attach to every already-open terminal.\n\n  The repository’s research already mentions ACP (docs/knowledge/multi-agent-coordination/state-of-the-art.md:83), but the shipped dispatcher does not use it. That is a missed integration opportunity worth\n  testing.\n\n  Best next step: a bounded ACP compatibility spike—session creation, two-way prompts, progress, permissions, cancellation, and completion evidence—before choosing the startup-wrapper design. A2A can be assessed\n  separately if independent agent services become part of the requirement.",
+      "session": "acp-spec-codex",
+      "shortname": "optimize-graph-acp-compatibility",
+      "skill": "optimize-graph",
+      "summary": "Six-node bounded plan completed with serial Grok-driven targets, one diagnosed control pass, independent parent spec/render review, explicit failed follow-up wrapper and retained partial qualification. Peak actual model-session width4; target width1.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/specs/acp-coordination.md",
+        "docs/specs/acp-coordination.html",
+        "docs/knowledge/acp-compatibility/index.md"
+      ],
+      "compiled_from": "al-01M2ZN4P4YEVBHYZRT4QWSD5H5",
+      "datetime": "2026-09-20T15:23:11Z",
+      "done_when": "Markdown and HTML spec, measured capability matrix, reproducible evidence and recommendation have independent review",
+      "duration_seconds": 1939.0,
+      "fan_out": 1,
+      "git": {
+        "branch": "feat/acp-compatibility-spec",
+        "pushed": null,
+        "sha": "58805df0067dd8fd22fa51fbda6f92b1fcfb9d00",
+        "short": "58805df00"
+      },
+      "goal": "Specify multi-harness coordination with ACP and spike each of Grok, Claude Code, Codex and Agy from Grok",
+      "id": "al-01M2ZPM1DA8B03V971BCDWZPRM",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "in a separate sub-agent:\n$specify  the multi-harness/multi-agent coordination with ACP\n- spike each harness from grok to validate or invalidate the capability\nthen give me the spec in html and md \nand tell me what you think we should do\n\n... specifically for the ACP spec and spike i am referring to your recco here:\n\nMy revised recommendation is to evaluate a shared ACP client underneath execute-with-coordination, with a small Agy transport adapter if needed. Either Claude or Codex could operate that runner. The existing\n  pack would retain worktree ownership, leadership, decision rulings, durable audit records, and verification of completed work.\n\n  ACP would simplify session control and communication. We would still need to implement those repository-specific rules, and verify that adapters preserve the required instructions, hooks, and permissions.\n  Loading an existing session is also an optional capability; ACP does not automatically attach to every already-open terminal.\n\n  The repository’s research already mentions ACP (docs/knowledge/multi-agent-coordination/state-of-the-art.md:83), but the shipped dispatcher does not use it. That is a missed integration opportunity worth\n  testing.\n\n  Best next step: a bounded ACP compatibility spike—session creation, two-way prompts, progress, permissions, cancellation, and completion evidence—before choosing the startup-wrapper design. A2A can be assessed\n  separately if independent agent services become part of the requirement.",
+      "session": "acp-spec-codex",
+      "shortname": "specify-acp-coordination",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "specify",
+      "started_at": "2026-09-20T14:50:52Z",
+      "summary": "Delivered full Markdown and offline HTML ACP specification, six sanitized live observations from Grok-driven probes, pinned reproducible adapter locks, recommendation, graph links and independent spec/render PASS. ACP lifecycle verified on Grok/Claude SDK/Codex; Agy native stream distinct. Trust/policy/hooks and full pack handback limits explicit; failed follow-up wrapper preserved. Evidence verifier and false-verdict mutations checked; HTML1440/390 geometry passed.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "id": "al-01M30ECQM5G2T1HBCE83QH4SKV",
+      "shortname": "yes integrate the reviewed branches, then qualify the actual local profi…",
+      "datetime": "2026-09-20T22:18:38Z",
+      "session": "prompt-compile",
+      "prompt": "yes integrate the reviewed branches, then qualify the actual local profiles before enabling unattended coordination\n----\nthen give me the same table with the recommended next action",
+      "summary": "raw prompt logged for compilation",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M30EDX6Q675JWY3NFZ950N0F",
+      "shortname": "compile-yes integrate the reviewed branches, then qualify the actual local profi…",
+      "datetime": "2026-09-20T22:19:16Z",
+      "session": "coord-profile-integration",
+      "prompt": "Save the brief between the markers as <brief-file>, then run (one line, the brief read from the file):\ncodex exec --json -o <last-message-file> --output-schema <schema-file> --worktree -C <dir> \"$(cat <brief-file>)\"\n--- brief ---\npython3 docs/ai-forward-pack/scripts/audit-log.py start --session coord-profile-integration --skill <skill>\nGoal state\nGoal: Integrate reviewed coordination branches locally and qualify actual harness profiles\nDone when: Integrate the reviewed branches and qualify actual local profiles before unattended coordination.; Return the status table and recommended next action.\nNot in scope: Remote push, global permission or trust changes, unrelated feature fixes\nTier: T2\nFan-out cap: 1\nContext ceiling: 400000\nMain-line budget: 120\nTrace\n| clause | trace |\n|---|---|\n| done_when: Integrate the reviewed branches and qualify actual local profiles before unattended coordination. | phrase: integrate the reviewed branches, then qualify the actual local profiles before enabling unattended coordination |\n| done_when: Return the status table and recommended next action. | phrase: then give me the same table with the recommended next action |\nReferences\n- none\nAssumptions\n- none\nDecision requests\n- none\nContract slot\nwidth_cap: 1\ntransient_retry: One diagnosed control per harness; no automatic retry\nper_branch_exit: Four measured readiness decisions; all integrated gates pass\njoin_rule: Independent review before claiming readiness\ncontainment: Own integration tree and separate live worker trees; no global policy changes\ntermination: Finite four-harness matrix completed or explicitly blocked\ndeadline: 45 minutes then diagnose estimate without dropping gates\nfallback: Manual serial workflow for unsupported profiles\nRules: absolute paths only; a multi-line program is a file, then a run; a gate's exit status is never behind a pipe.\nProvenance\nraw id: al-01M30ECQM5G2T1HBCE83QH4SKV\nraw sha256: 29429f1b4d362b90044ccfce27cc0149400757fedcab5276ea7be71e459d078c\ncompiler model: codex\nengine seconds: 0.003\ntokens: not recorded\ngate: pass\ndispatchable: true\n--- end brief ---\n",
+      "summary": "compiled al-01M30ECQM5G2T1HBCE83QH4SKV for codex v1: 2 clauses, 0 assumptions, 0 decision requests",
+      "kind": "compilation",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
       "tags": [],
       "outcome": "success",
-      "goal": "Verify the completed multi-harness launch-and-monitor extension",
-      "done_when": "Every required bundle gate is observed passing and final results are durably recorded",
-      "tier": "T2",
-      "fan_out": 0
+      "compiled": {
+        "assumptions": [],
+        "clauses": [
+          {
+            "section": "done_when",
+            "text": "Integrate the reviewed branches and qualify actual local profiles before unattended coordination.",
+            "trace": {
+              "kind": "phrase",
+              "ref": "integrate the reviewed branches, then qualify the actual local profiles before enabling unattended coordination"
+            }
+          },
+          {
+            "section": "done_when",
+            "text": "Return the status table and recommended next action.",
+            "trace": {
+              "kind": "phrase",
+              "ref": "then give me the same table with the recommended next action"
+            }
+          }
+        ],
+        "contract_slot": {
+          "width_cap": 1,
+          "transient_retry": "One diagnosed control per harness; no automatic retry",
+          "per_branch_exit": "Four measured readiness decisions; all integrated gates pass",
+          "join_rule": "Independent review before claiming readiness",
+          "containment": "Own integration tree and separate live worker trees; no global policy changes",
+          "termination": "Finite four-harness matrix completed or explicitly blocked",
+          "deadline": "45 minutes then diagnose estimate without dropping gates",
+          "fallback": "Manual serial workflow for unsupported profiles"
+        },
+        "decision_requests": [],
+        "dispatchable": true,
+        "goal_state": {
+          "goal": "Integrate reviewed coordination branches locally and qualify actual harness profiles",
+          "done_when": [
+            "Integrate the reviewed branches and qualify actual local profiles before unattended coordination.",
+            "Return the status table and recommended next action."
+          ],
+          "not_in_scope": [
+            "Remote push, global permission or trust changes, unrelated feature fixes"
+          ],
+          "tier": "T2",
+          "fan_out_cap": 1,
+          "context_ceiling": 400000,
+          "main_line_budget": 120
+        },
+        "graph_neighbours": [],
+        "harness": "codex",
+        "mode": "compiled",
+        "provenance": {
+          "compile_tokens": null,
+          "compiler_model": "codex",
+          "engine_seconds": 0.003,
+          "refusals": [],
+          "retries": 0
+        },
+        "raw_id": "al-01M30ECQM5G2T1HBCE83QH4SKV",
+        "raw_sha256": "29429f1b4d362b90044ccfce27cc0149400757fedcab5276ea7be71e459d078c",
+        "raw_text_normalised": false,
+        "references": [],
+        "schema": "compiled-prompt/1",
+        "template": "codex",
+        "template_version": 1
+      },
+      "mode": "compiled",
+      "dispatchable": true
+    },
+    {
+      "id": "al-01M30EN235SE2YYSFP6HSCS9MQ",
+      "shortname": "join-acp-runner-linear",
+      "datetime": "2026-09-20T22:23:10Z",
+      "session": "coord-profile-integration",
+      "prompt": "the join of the resolved merge into feat/coordination-profile-integration",
+      "summary": "Replayed reviewed ACP commit abe0cc0 onto reviewed runner 686af28 to retain linear history; combined Python 1137 passed, 12 skipped, 321 subtests passed, render/a11y passed; corrected staged drift gate passed. Profile qualification follows. recount_seconds=34 (docs_only=False).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/plans/coordination-profile-integration.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Integrate both reviewed coordination branches locally",
+      "done_when": "Combined artifacts and integrated verification gates pass before local main fast-forward",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-20T22:22:34Z",
+      "duration_seconds": 36.0
     }
   ],
   "changes": [
@@ -8638,26 +8934,48 @@ window.AUDIT_DATA = {
       "title": "Liveness is a fold over sampled heartbeat rows in the existing ledger; the kick ladder refuses, counts and records; the worktree field becomes a label"
     },
     {
-      "id": "cl-01M2ZR59AEY3XB6AEZEQ36B285",
-      "datetime": "2026-09-20T15:50:05Z",
-      "session": "launch-monitor-codex",
-      "kind": "design",
-      "skill": "design-slice",
-      "title": "Use a bounded opt-in shared ACP client with explicit Agy stream fallback",
-      "prompt": "lets extend execute-with-coordination as you suggested : My recommendation is to extend execute-with-coordination with a small, deterministic launch-and-monitor script\n$specify then $design-slice then $implement it",
-      "summary": "Separate preparation, observed qualification, bounded execution and artifact receipts; retain existing Owner authority and durable coordination facts.",
-      "rationale": "Live spikes establish session-control contracts but do not establish full pack hook or native permission enforcement. Explicit qualification and manual fallback preserve that distinction.",
       "artifacts": [
         "docs/design/multi-harness-runner.md"
       ],
-      "tags": [],
+      "datetime": "2026-09-20T15:50:05Z",
       "git": {
-        "before": "58805df0067dd8fd22fa51fbda6f92b1fcfb9d00",
         "after": "58805df0067dd8fd22fa51fbda6f92b1fcfb9d00",
+        "before": "58805df0067dd8fd22fa51fbda6f92b1fcfb9d00",
         "branch": "feat/multi-harness-runner",
-        "pushed": null,
-        "commits": []
-      }
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-01M2ZR59AEY3XB6AEZEQ36B285",
+      "kind": "design",
+      "prompt": "lets extend execute-with-coordination as you suggested : My recommendation is to extend execute-with-coordination with a small, deterministic launch-and-monitor script\n$specify then $design-slice then $implement it",
+      "rationale": "Live spikes establish session-control contracts but do not establish full pack hook or native permission enforcement. Explicit qualification and manual fallback preserve that distinction.",
+      "session": "launch-monitor-codex",
+      "skill": "design-slice",
+      "summary": "Separate preparation, observed qualification, bounded execution and artifact receipts; retain existing Owner authority and durable coordination facts.",
+      "tags": [],
+      "title": "Use a bounded opt-in shared ACP client with explicit Agy stream fallback"
+    },
+    {
+      "artifacts": [
+        "docs/specs/acp-coordination.md"
+      ],
+      "datetime": "2026-09-20T15:19:35Z",
+      "git": {
+        "after": "58805df0067dd8fd22fa51fbda6f92b1fcfb9d00",
+        "before": "58805df0067d",
+        "branch": "feat/acp-compatibility-spec",
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-01M2ZPDEBX2ZN4Z039MXGVARHK",
+      "kind": "knowledge",
+      "prompt": "in a separate sub-agent:\n$specify  the multi-harness/multi-agent coordination with ACP\n- spike each harness from grok to validate or invalidate the capability\nthen give me the spec in html and md \nand tell me what you think we should do\n\n... specifically for the ACP spec and spike i am referring to your recco here:\n\nMy revised recommendation is to evaluate a shared ACP client underneath execute-with-coordination, with a small Agy transport adapter if needed. Either Claude or Codex could operate that runner. The existing\n  pack would retain worktree ownership, leadership, decision rulings, durable audit records, and verification of completed work.\n\n  ACP would simplify session control and communication. We would still need to implement those repository-specific rules, and verify that adapters preserve the required instructions, hooks, and permissions.\n  Loading an existing session is also an optional capability; ACP does not automatically attach to every already-open terminal.\n\n  The repository’s research already mentions ACP (docs/knowledge/multi-agent-coordination/state-of-the-art.md:83), but the shipped dispatcher does not use it. That is a missed integration opportunity worth\n  testing.\n\n  Best next step: a bounded ACP compatibility spike—session creation, two-way prompts, progress, permissions, cancellation, and completion evidence—before choosing the startup-wrapper design. A2A can be assessed\n  separately if independent agent services become part of the requirement.",
+      "rationale": "Adopt shared ACP lifecycle only where measured capabilities fit; preserve pack worktree ownership, leader refs, requests/rulings, audit and independent handback verification. Native policy, hook canaries, same-process load and early cancellation do not establish a universal enforcement boundary.",
+      "session": "acp-spec-codex",
+      "skill": "specify",
+      "summary": "Grok-driven probes establish ACP session control for Grok, Claude SDK adapter and Codex adapter, plus a distinct Agy native-stream path. Effective trust, policy and required hook configuration constrain qualification.",
+      "tags": [],
+      "title": "Qualify ACP session control by effective harness profile"
     }
   ],
   "messages": [
