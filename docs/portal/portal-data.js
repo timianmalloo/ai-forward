@@ -2994,6 +2994,12 @@ window.PORTAL_DATA = {
         "summary": "Track XP of coordination-p3-p5-p8 (T1, fan-out 0). Every documented command under pack/ is now a single line, unchained and `python3`; a gate..."
       },
       {
+        "id": "note-20260920-agy-hooks-loaded-but-not-enabled",
+        "type": "decision-note",
+        "title": "Antigravity loaded our four hook sections and fired none: the working section is the only one with enabled: true; the s1-agy track hung on its ack command",
+        "summary": "Debugged from this machine without the operator. Antigravity's own CLI log for the s1-agy session shows the project hooks file WAS loaded (5 named hooks from 2..."
+      },
+      {
         "id": "note-20260920-s1-agy-hooks-surface-freshness",
         "type": "decision-note",
         "title": "S1 track A (Antigravity): the surface doc names two of four hook sections; the Stop event was not observed - written by the coordinator under the track's fallback",
@@ -5537,6 +5543,21 @@ window.PORTAL_DATA = {
         "from": "note-20260919-xp-cross-platform",
         "to": "plan-cross-platform-readiness",
         "rel": "implements"
+      },
+      {
+        "from": "note-20260920-agy-hooks-loaded-but-not-enabled",
+        "to": "design-message-layer",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260920-agy-hooks-loaded-but-not-enabled",
+        "to": "note-20260920-s1-agy-hooks-surface-freshness",
+        "rel": "refines"
+      },
+      {
+        "from": "note-20260920-agy-hooks-loaded-but-not-enabled",
+        "to": "scenario-s1-three-harness-delegation",
+        "rel": "relates-to"
       },
       {
         "from": "note-20260920-s1-agy-hooks-surface-freshness",

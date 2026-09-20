@@ -2587,6 +2587,44 @@ window.DOCS_INDEX = {
       "sourceSha256": "ae7f20d985b743f92418bb65d3be1cd4c61f319fc05c8fda536bbe50e35b0c40"
     },
     {
+      "id": "note-20260920-agy-hooks-loaded-but-not-enabled",
+      "path": "docs/notes/note-20260920-agy-hooks-loaded-but-not-enabled.md",
+      "title": "Antigravity loaded our four hook sections and fired none: the working section is the only one with enabled: true; the s1-agy track hung on its ack command",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-03-20",
+      "reviewSuggested": [],
+      "summary": "Debugged from this machine without the operator. Antigravity's own CLI log for the s1-agy session shows the project hooks file WAS loaded (5 named hooks from 2 files) and the process carried AGENT_SESSION=s1-agy, so identity and loading are not the cause; over seven tool calls only the operator's user-level section (agy-auto-approve, the sole section with \"enabled\": true) produced any effect, and the agy binary parses an enabled field. Our four sections now carry the flag (Inferred cause, pinned by a test, confirmed only by a live row). Separately, the track did not stall from idleness: its last step at 04:27:03Z was the request ack with a $(git hash-object …) substitution, approved at 04:27:07Z, and no tool result ever followed - the session hung inside that command until the deadline.",
+      "tags": [
+        "decision-note",
+        "coordination",
+        "antigravity",
+        "agy",
+        "hooks",
+        "s1",
+        "debugging",
+        "enabled"
+      ],
+      "links": [
+        {
+          "to": "note-20260920-s1-agy-hooks-surface-freshness",
+          "rel": "refines"
+        },
+        {
+          "to": "scenario-s1-three-harness-delegation",
+          "rel": "relates-to"
+        },
+        {
+          "to": "design-message-layer",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "d047848b7dd933df0b428f20cbd4c1dad446e0961e37ce1bde572df4f9b9feb2"
+    },
+    {
       "id": "note-20260920-s1-agy-hooks-surface-freshness",
       "path": "docs/notes/note-20260920-s1-agy-hooks-surface-freshness.md",
       "title": "S1 track A (Antigravity): the surface doc names two of four hook sections; the Stop event was not observed - written by the coordinator under the track's fallback",
@@ -3992,7 +4030,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "34da54d76270c5f3bd524593eef6c7a0cfa1c5d1abf5a8f70173a362d3475788"
+      "sourceSha256": "c4fc2ef5f3fd0394d3bfb4b14802e4699f384021f88a8417bf1f39ada1988df5"
     },
     {
       "id": "docs-index",
@@ -9239,5 +9277,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "b95073e79d882e119a95efaa5960b3358349ea9f2423c77c3b44c76fd1712dbc"
+  "graphSha256": "0b342f924ef92786cab363aaeeeb2f70b4f68bb864095297f9b2cc49640956eb"
 };

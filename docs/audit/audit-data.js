@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-20T04:44:33Z",
+  "generated": "2026-09-20T13:26:53Z",
   "audit": [
     {
       "actor": null,
@@ -6902,6 +6902,28 @@ window.AUDIT_DATA = {
         "speedup": 1.85,
         "peak_concurrency": 3
       }
+    },
+    {
+      "id": "al-01M2ZFZ30P92G4784EBTKRX14K",
+      "shortname": "agy-hooks-loaded-not-enabled",
+      "datetime": "2026-09-20T13:26:53Z",
+      "session": "fix-agy-hooks",
+      "prompt": "you should be able to debug the antigravity session without me",
+      "summary": "Debugged from the host's records: agy process carried AGENT_SESSION=s1-agy; its CLI log shows .agents/hooks.json loaded (5 named hooks from 2 files); over 7 tool calls only the operator's user-level section fired - the only one with enabled: true; binary parses json:enabled. No accumulator/row/marker for ours; a hand-run of our command with the same env wrote the accumulator. Fix: enabled: true on all four sections (red-first test_agy_hooks_enabled.py). Second finding: the track's last step was the ack with a shell substitution, approved and never returned - the session hung there until the deadline; surface doc gives the two-command form. Class HOST-A registered. INSTALL rev 83.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/note-20260920-agy-hooks-loaded-but-not-enabled.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "explain why the s1-agy session wrote no heartbeat and produced no artifact, and fix what the pack owns",
+      "done_when": "root cause established from evidence or labelled Inferred; config fixed red-first; landed",
+      "tier": "T1",
+      "fan_out": 0
     }
   ],
   "changes": [

@@ -11,7 +11,8 @@
           }
         ]
       }
-    ]
+    ],
+    "enabled": true
   },
   "session-start": {
     "PreInvocation": [
@@ -20,7 +21,8 @@
         "command": "py=$(python3 -c 'import sys;print(sys.executable)' 2>/dev/null); [ -x \"$py\" ] || py=$(python -c 'import sys;print(sys.executable)'); \"$py\" \"$(git rev-parse --show-toplevel)/docs/ai-forward-pack/hooks/session-start.py\" --host agy",
         "timeout": 15
       }
-    ]
+    ],
+    "enabled": true
   },
   "mail-doorbell": {
     "PreInvocation": [
@@ -29,7 +31,8 @@
         "command": "py=$(python3 -c 'import sys;print(sys.executable)' 2>/dev/null); [ -x \"$py\" ] || py=$(python -c 'import sys;print(sys.executable)'); \"$py\" \"$(git rev-parse --show-toplevel)/docs/ai-forward-pack/hooks/mail-doorbell.py\" --host agy --event PreInvocation",
         "timeout": 10
       }
-    ]
+    ],
+    "enabled": true
   },
   "heartbeat": {
     "PostToolUse": [
@@ -45,6 +48,7 @@
         "command": "py=$(python3 -c 'import sys;print(sys.executable)' 2>/dev/null); [ -x \"$py\" ] || py=$(python -c 'import sys;print(sys.executable)'); \"$py\" \"$(git rev-parse --show-toplevel)/docs/ai-forward-pack/hooks/heartbeat.py\" --host agy --event Stop",
         "timeout": 10
       }
-    ]
+    ],
+    "enabled": true
   }
 }

@@ -23,7 +23,7 @@ Author in Peer Mode, review in Adversary Mode; the author never clears its own h
 
 ## Hooks
 
-`.agents/hooks.json` wires four sections:
+`.agents/hooks.json` wires four named sections, each carrying `"enabled": true` (Antigravity activates a named section only with the flag — measured 2026-09-20: five sections loaded, the one with the flag fired):
 
 - **re-read guard** (`reread-guard.py --host agy`, CTX-D) on `PreToolUse`, matcher `view_file`
 - **session-start audit marker** (`session-start.py --host agy`, AL4a) on `PreInvocation`
@@ -34,6 +34,8 @@ Every hook reads the session identity from `AGENT_SESSION` in the process enviro
 without it: launch `agy` with `AGENT_SESSION=<id>` exported. On Antigravity the doorbell and heartbeat are
 `observed-only` and the owner review gate is `unsupported` (no stop-class event documented) until a live
 session shows the event fire (CO12; `pack/adapters/hooks/README.md`).
+
+When a brief asks for `coord request ack <id> --blob $(git hash-object <path>)`, run it as two commands on Antigravity — `git hash-object <path>` first, then `request ack <id> --blob <sha>` — because in the S1 test (2026-09-20) the single-line form was approved and never returned a result (`note-20260920-agy-hooks-loaded-but-not-enabled`).
 
 ## Scripts
 

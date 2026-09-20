@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 260
+"count": 261
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 432,
+"total": 433,
 "items": [
 {
 "cat": "knowledge",
@@ -2205,6 +2205,15 @@ window.PACK_INDEX = {
 "path": "docs/notes/note-20260919-xp-cross-platform.md",
 "kind": "decision-note",
 "text": "xp cross-platform residue: documented commands made shell-neutral, the default-branch tests made honest, the session-id sanitiser cut as a seam patch track xp of coordination-p3-p5-p8 (t1, fan-out 0). every documented command under pack/ is now a single line, unchained and `python3`; a gate (`verify-documented-commands.py`) and its test pin the shape and were red-first at 26 findings on 24 lines; the three `test_coord_derived.py` tests read the default branch the machine chose and are green under both `init.defaultbranch=main` and `=master`; t-2 and t-3 were found already fixed at a01ed77 and re-proven by execution; the agent_session sanitiser travels as docs/coordination/seam-xp-to-p3.patch because p3 owns coord-core.py. decision-note cross-platform plat-a plat-b xp-track coordination-p3-p5-p8 implements plan-cross-platform-readiness relates-to investigation-cross-platform-readiness"
+},
+{
+"cat": "graph",
+"id": "note-20260920-agy-hooks-loaded-but-not-enabled",
+"title": "Antigravity loaded our four hook sections and fired none: the working section is the only one with enabled: true; the s1-agy track hung on its ack command",
+"summary": "Debugged from this machine without the operator. Antigravity's own CLI log for the s1-agy session shows the project hooks file WAS loaded (5 named hooks from 2 files) and the process carried AGENT_SESSION=s1-agy, so identity and loading…",
+"path": "docs/notes/note-20260920-agy-hooks-loaded-but-not-enabled.md",
+"kind": "decision-note",
+"text": "antigravity loaded our four hook sections and fired none: the working section is the only one with enabled: true; the s1-agy track hung on its ack command debugged from this machine without the operator. antigravity's own cli log for the s1-agy session shows the project hooks file was loaded (5 named hooks from 2 files) and the process carried agent_session=s1-agy, so identity and loading are not the cause; over seven tool calls only the operator's user-level section (agy-auto-approve, the sole section with \"enabled\": true) produced any effect, and the agy binary parses an enabled field. our four sections now carry the flag (inferred cause, pinned by a test, confirmed only by a live row). separately, the track did not stall from idleness: its last step at 04:27:03z was the request ack with a $(git hash-object …) substitution, approved at 04:27:07z, and no tool result ever followed - the session hung inside that command until the deadline. decision-note coordination antigravity agy hooks s1 debugging enabled refines note-20260920-s1-agy-hooks-surface-freshness relates-to scenario-s1-three-harness-delegation relates-to design-message-layer"
 },
 {
 "cat": "graph",
