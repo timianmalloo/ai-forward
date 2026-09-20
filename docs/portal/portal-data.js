@@ -2994,6 +2994,24 @@ window.PORTAL_DATA = {
         "summary": "Track XP of coordination-p3-p5-p8 (T1, fan-out 0). Every documented command under pack/ is now a single line, unchained and `python3`; a gate..."
       },
       {
+        "id": "note-20260920-s1-agy-hooks-surface-freshness",
+        "type": "decision-note",
+        "title": "S1 track A (Antigravity): the surface doc names two of four hook sections; the Stop event was not observed - written by the coordinator under the track's fallback",
+        "summary": "Track A's request (req-01M2YGBW6BFG82E7CG4E86W1KT) reached its 1500 s deadline at 04:39:38Z with the session live (session-start and request receive recorded)..."
+      },
+      {
+        "id": "note-20260920-s1-codex-coordination-surface",
+        "type": "decision-note",
+        "title": "Codex needs an explicit coordination path",
+        "summary": "Proposes a Coordination section for the Codex adapter, grounded in the installed mail, request and decision command contracts. Records the received prompt and..."
+      },
+      {
+        "id": "note-20260920-s1-grok-hooks-surface-freshness",
+        "type": "decision-note",
+        "title": "Replace the Grok surface Hooks section: five scripts, eight entries, one sentence today",
+        "summary": "Track G of S1: pack/adapters/grok/grok-surface.md §Hooks names two scripts (re-read guard, session-start). The installed .grok/hooks/ai-forward.json..."
+      },
+      {
         "id": "note-autopilot-open-questions-decisions",
         "type": "decision-note",
         "title": "Decisions on PACK-O open questions (logging, class granularity, autopilot caps)",
@@ -5519,6 +5537,41 @@ window.PORTAL_DATA = {
         "from": "note-20260919-xp-cross-platform",
         "to": "plan-cross-platform-readiness",
         "rel": "implements"
+      },
+      {
+        "from": "note-20260920-s1-agy-hooks-surface-freshness",
+        "to": "brief-s1-agy",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260920-s1-agy-hooks-surface-freshness",
+        "to": "design-message-layer",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260920-s1-agy-hooks-surface-freshness",
+        "to": "scenario-s1-three-harness-delegation",
+        "rel": "implements"
+      },
+      {
+        "from": "note-20260920-s1-codex-coordination-surface",
+        "to": "design-message-layer",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260920-s1-codex-coordination-surface",
+        "to": "scenario-s1-three-harness-delegation",
+        "rel": "implements"
+      },
+      {
+        "from": "note-20260920-s1-grok-hooks-surface-freshness",
+        "to": "design-message-layer",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260920-s1-grok-hooks-surface-freshness",
+        "to": "scenario-s1-three-harness-delegation",
+        "rel": "relates-to"
       },
       {
         "from": "note-autopilot-open-questions-decisions",

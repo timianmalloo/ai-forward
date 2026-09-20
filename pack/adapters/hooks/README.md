@@ -23,11 +23,13 @@ stop event is `unsupported`.
 | Host | Event | Block form | Status (2026-09-19) |
 |---|---|---|---|
 | Claude Code | `Stop`, `SubagentStop` | exit 2, reason on stderr | **enforced** — 2026-09-19, Claude Code 2.1.278: a headless `claude -p` session in a linked worktree with an open decision request had its stop refused; the model reported the refusal and touched nothing (Ruling 2 in `docs/notes/rulings.md`) |
-| Grok Build | `Stop` (Claude-format hooks) | exit 2, reason on stderr | observed-only |
+| Grok Build | `Stop` (Claude-format hooks) | exit 2, reason on stderr | observed-only — the S1 Grok session reported "refused stop: not seen" while its decision request was open |
 | Copilot CLI | `agentStop`, `subagentStop` | exit 0 + `{"decision":"block","reason"}` | observed-only |
 | Antigravity | none documented | — | unsupported (the script exits 0 for `--host agy`) |
 
-**Heartbeat per host.** Claude Code **enforced** — 2026-09-19, 2.1.278: host-fired `PostToolUse` and `Stop` rows in the session ledger, the first Stop carrying `calls: 3` for a three-call turn, in an interactive session and again headless. Grok Build, Antigravity and Copilot CLI stay observed-only until a live session shows a row. `coord mail dispatch --harness claude-code` **verified** the same day (`.agents/harness-status.json`, machine-local).
+**Codex push.** `codex queue --thread <id> --message <pointer>` **verified** — 2026-09-20, codex-cli 0.155.1: two pointers queued by the coordinator arrived in the operator's Codex thread as user-role turns and are quoted verbatim in `note-20260920-s1-codex-coordination-surface`; the first ("run mail read --ack") produced exactly that and a stop, the second ("then execute the brief") completed the track — the pointer must name the action after the read.
+
+**Heartbeat per host.** Claude Code **enforced** — 2026-09-19, 2.1.278: host-fired `PostToolUse` and `Stop` rows in the session ledger, the first Stop carrying `calls: 3` for a three-call turn, in an interactive session and again headless. Grok Build **enforced** — 2026-09-20, Grok Build 1.0.34: a host-fired `PreToolUse` heartbeat row with `"host": "grok"` in `.agents/log/s1-grok.jsonl` during the S1 three-harness test (`note-20260920-s1-grok-hooks-surface-freshness`). Antigravity and Copilot CLI stay observed-only until a live session shows a row (the S1 Antigravity session wrote none). `coord mail dispatch --harness claude-code` **verified** the same day (`.agents/harness-status.json`, machine-local).
 
 **Contracts these are written to** (established from the hosts' own documentation and a captured event
 stream, not assumed — class RIG-D): Claude Code hooks receive `{"hook_event_name","session_id",

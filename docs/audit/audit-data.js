@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-20T03:58:57Z",
+  "generated": "2026-09-20T04:44:33Z",
   "audit": [
     {
       "actor": null,
@@ -6853,6 +6853,55 @@ window.AUDIT_DATA = {
       "done_when": "pack-consistency green on the landing commit",
       "tier": "T0",
       "fan_out": 0
+    },
+    {
+      "id": "al-01M2YJ2MXZNKJ18ZKTGKDVCDVK",
+      "shortname": "coordinate-s1-three-harness",
+      "datetime": "2026-09-20T04:44:33Z",
+      "session": "coord-p3-p5-p8",
+      "prompt": "plan a meaningful test to exercise the scenario where the leader, owner and coordinator are in this claude session and you are delegating work to the other three sessions ... when everything is landed attempt to run the multi-harness test",
+      "summary": "S1 three-harness delegation executed live: delegate mails + typed requests to s1-grok, s1-codex, s1-agy (width 3). Grok returned in 8 min (note a19c6bd; host-fired PreToolUse heartbeat row -> Grok heartbeat enforced; doorbell line and refused stop not seen). Codex: codex queue push verified (two pointers quoted verbatim); first pointer produced only the read, kick rung 1 + second pointer completed the track (note 90cc0e9). Antigravity: live 13 min, acked mails, received request, no artifact and no heartbeat row; expired at 1500 s, fallback note by the coordinator. Rulings 3 and 4. Three surface docs updated from the notes; README rows from quoted evidence; INSTALL rev 82. Findings: mail bodies named unminted worktree paths (corrected by note); the pointer must name the action after the read; leader TTL lapsed twice.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/coordination/scenario-s1-three-harness-delegation.md",
+        "docs/notes/note-20260920-s1-agy-hooks-surface-freshness.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "exercise Owner/Coordinator/leader in this session delegating real work to live Grok, Codex and Antigravity sessions",
+      "done_when": "three delegations sent; every track returned or hit its fallback; rulings issued; notes joined; channel rows updated only from quoted evidence; landed",
+      "tier": "T2",
+      "fan_out": 3,
+      "agent_runs": [
+        {
+          "agent": "s1-grok",
+          "started_at": "2026-09-20T04:25:00Z",
+          "ended_at": "2026-09-20T04:33:30Z",
+          "duration_seconds": 510.0
+        },
+        {
+          "agent": "s1-codex",
+          "started_at": "2026-09-20T04:15:03Z",
+          "ended_at": "2026-09-20T04:38:20Z",
+          "duration_seconds": 1397.0
+        },
+        {
+          "agent": "s1-agy",
+          "started_at": "2026-09-20T04:26:00Z",
+          "ended_at": "2026-09-20T04:39:38Z",
+          "duration_seconds": 818.0
+        }
+      ],
+      "parallelism": {
+        "agent_seconds": 2725.0,
+        "span_seconds": 1475.0,
+        "speedup": 1.85,
+        "peak_concurrency": 3
+      }
     }
   ],
   "changes": [
@@ -8300,6 +8349,105 @@ window.AUDIT_DATA = {
       "kind": "ruling",
       "ref": "req-01M2Y374DXAC09F83Q0VXGYSCH",
       "session": "smoke-owner-1"
+    },
+    {
+      "id": "mail-01M2YGBTXK55AXF46Y14SGGN4P",
+      "ts": "2026-09-20T04:14:36Z",
+      "from": "coord-p3-p5-p8",
+      "to": "s1-grok",
+      "kind": "delegate",
+      "ref": "docs/coordination/briefs/s1-grok.md",
+      "session": "coord-p3-p5-p8"
+    },
+    {
+      "id": "mail-01M2YGBV6J5VWXXFHT3QJ59FBC",
+      "ts": "2026-09-20T04:14:37Z",
+      "from": "coord-p3-p5-p8",
+      "to": "s1-codex",
+      "kind": "delegate",
+      "ref": "docs/coordination/briefs/s1-codex.md",
+      "session": "coord-p3-p5-p8"
+    },
+    {
+      "id": "mail-01M2YGBVF9TH6XQDY2GHKAMPG1",
+      "ts": "2026-09-20T04:14:37Z",
+      "from": "coord-p3-p5-p8",
+      "to": "s1-agy",
+      "kind": "delegate",
+      "ref": "docs/coordination/briefs/s1-agy.md",
+      "session": "coord-p3-p5-p8"
+    },
+    {
+      "id": "mail-01M2YH6PR7FB2KW7KXKPFYDDPB",
+      "ts": "2026-09-20T04:29:17Z",
+      "from": "s1-grok",
+      "to": "coord-p3-p5-p8",
+      "kind": "decision-request",
+      "ref": "req-01M2YH6PR3E924YF4RBW2DD275",
+      "session": "s1-grok"
+    },
+    {
+      "id": "mail-01M2YH6ZH3X1AHRB5DGXV6801B",
+      "ts": "2026-09-20T04:29:26Z",
+      "from": "s1-grok",
+      "to": "coord-p3-p5-p8",
+      "kind": "done",
+      "ref": "docs/notes/note-20260920-s1-grok-hooks-surface-freshness.md@a19c6bd",
+      "session": "s1-grok"
+    },
+    {
+      "id": "mail-01M2YH7QH2183XDQETXKS5N68S",
+      "ts": "2026-09-20T04:29:51Z",
+      "from": "coord-p3-p5-p8",
+      "to": "s1-agy",
+      "kind": "kick",
+      "ref": null,
+      "session": "coord-p3-p5-p8"
+    },
+    {
+      "id": "mail-01M2YH9BBN5YM30471FG44F81B",
+      "ts": "2026-09-20T04:30:44Z",
+      "from": "coord-p3-p5-p8",
+      "to": "s1-grok",
+      "kind": "ruling",
+      "ref": "req-01M2YH6PR3E924YF4RBW2DD275",
+      "session": "coord-p3-p5-p8"
+    },
+    {
+      "id": "mail-01M2YHG4MC18HH7G9274WH8E2W",
+      "ts": "2026-09-20T04:34:26Z",
+      "from": "coord-p3-p5-p8",
+      "to": "s1-codex",
+      "kind": "kick",
+      "ref": null,
+      "session": "coord-p3-p5-p8"
+    },
+    {
+      "id": "mail-01M2YHQ24GNF5DV61QMTBW4S7A",
+      "ts": "2026-09-20T04:38:13Z",
+      "from": "s1-codex",
+      "to": "coord-p3-p5-p8",
+      "kind": "decision-request",
+      "ref": "req-01M2YHQ24BQ52GN4VTZ4DER247",
+      "session": "s1-codex"
+    },
+    {
+      "id": "mail-01M2YHQCNDQHMVYFVQZPWDYQAN",
+      "ts": "2026-09-20T04:38:24Z",
+      "from": "s1-codex",
+      "to": "coord-p3-p5-p8",
+      "kind": "done",
+      "ref": "docs/notes/note-20260920-s1-codex-coordination-surface.md@90cc0e9",
+      "session": "s1-codex"
+    },
+    {
+      "id": "mail-01M2YHS4VRG07BFXYH5Z9855JZ",
+      "ts": "2026-09-20T04:39:21Z",
+      "from": "coord-p3-p5-p8",
+      "to": "s1-codex",
+      "kind": "ruling",
+      "ref": "req-01M2YHQ24BQ52GN4VTZ4DER247",
+      "session": "coord-p3-p5-p8"
     }
   ]
 };

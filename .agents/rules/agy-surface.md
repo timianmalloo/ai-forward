@@ -23,7 +23,17 @@ Author in Peer Mode, review in Adversary Mode; the author never clears its own h
 
 ## Hooks
 
-`.agents/hooks.json` wires the re-read guard (`reread-guard.py` on `PreToolUse` for `view_file`, defect class CTX-D) and the session-start audit marker (`session-start.py` on `PreInvocation`, AL4a).
+`.agents/hooks.json` wires four sections:
+
+- **re-read guard** (`reread-guard.py --host agy`, CTX-D) on `PreToolUse`, matcher `view_file`
+- **session-start audit marker** (`session-start.py --host agy`, AL4a) on `PreInvocation`
+- **mail doorbell** (`mail-doorbell.py --host agy`) on `PreInvocation` — the inbox count and a pointer, injected as steps, never a body
+- **heartbeat** (`heartbeat.py --host agy`) on `PostToolUse` and `Stop` — a progress row in `$AGENT_SESSION`'s ledger
+
+Every hook reads the session identity from `AGENT_SESSION` in the process environment and exits silently
+without it: launch `agy` with `AGENT_SESSION=<id>` exported. On Antigravity the doorbell and heartbeat are
+`observed-only` and the owner review gate is `unsupported` (no stop-class event documented) until a live
+session shows the event fire (CO12; `pack/adapters/hooks/README.md`).
 
 ## Scripts
 

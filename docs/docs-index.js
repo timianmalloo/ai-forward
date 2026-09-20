@@ -2138,7 +2138,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a91152829a8c3ecaaf31059f43bba096170cbbf6e762a57db083449302c746f8"
+      "sourceSha256": "754cf567ca3bc2b3331d2c4a0faac6b3764810cfd6cd3350ff59634f2289da1a"
     },
     {
       "id": "note-20260919-doctrine-stages-close-the-document",
@@ -2585,6 +2585,106 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "ae7f20d985b743f92418bb65d3be1cd4c61f319fc05c8fda536bbe50e35b0c40"
+    },
+    {
+      "id": "note-20260920-s1-agy-hooks-surface-freshness",
+      "path": "docs/notes/note-20260920-s1-agy-hooks-surface-freshness.md",
+      "title": "S1 track A (Antigravity): the surface doc names two of four hook sections; the Stop event was not observed - written by the coordinator under the track's fallback",
+      "type": "decision-note",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-03-20",
+      "reviewSuggested": [],
+      "summary": "Track A's request (req-01M2YGBW6BFG82E7CG4E86W1KT) reached its 1500 s deadline at 04:39:38Z with the session live (session-start and request receive recorded) but no artifact; the contract's fallback ran: expired-fallback recorded and this note written by the coordinator from its own read. Finding: pack/adapters/antigravity/agy-surface.md names two of the four hook sections the installed .agents/hooks.json carries (mail-doorbell on PreInvocation and heartbeat on PostToolUse/Stop are unnamed). Stop verdict: the s1-agy ledger holds no heartbeat row at all, so neither PostToolUse nor Stop was observed to fire on Antigravity in this run; every Antigravity channel stays observed-only and the README's \"none documented\" for the stop gate stands as unobserved, not confirmed.",
+      "tags": [
+        "decision-note",
+        "coordination",
+        "s1",
+        "antigravity",
+        "agy",
+        "hooks",
+        "freshness",
+        "fallback"
+      ],
+      "links": [
+        {
+          "to": "design-message-layer",
+          "rel": "relates-to"
+        },
+        {
+          "to": "scenario-s1-three-harness-delegation",
+          "rel": "implements"
+        },
+        {
+          "to": "brief-s1-agy",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "42da232cae87eb1eb3a79cb5111079a02e9c33f9a393c0c0ccf84e111e526060"
+    },
+    {
+      "id": "note-20260920-s1-codex-coordination-surface",
+      "path": "docs/notes/note-20260920-s1-codex-coordination-surface.md",
+      "title": "Codex needs an explicit coordination path",
+      "type": "decision-note",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-03-20",
+      "reviewSuggested": [],
+      "summary": "Proposes a Coordination section for the Codex adapter, grounded in the installed mail, request and decision command contracts. Records the received prompt and separates delivery acknowledgement from accepting and completing a delegation.",
+      "tags": [
+        "coordination",
+        "codex",
+        "message-layer",
+        "s1"
+      ],
+      "links": [
+        {
+          "to": "design-message-layer",
+          "rel": "relates-to"
+        },
+        {
+          "to": "scenario-s1-three-harness-delegation",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "ff3c33c2c43a57b8e139d6521d36dbe848290d70e832d5e89515c2e56e1c920c"
+    },
+    {
+      "id": "note-20260920-s1-grok-hooks-surface-freshness",
+      "path": "docs/notes/note-20260920-s1-grok-hooks-surface-freshness.md",
+      "title": "Replace the Grok surface Hooks section: five scripts, eight entries, one sentence today",
+      "type": "decision-note",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-03-20",
+      "reviewSuggested": [],
+      "summary": "Track G of S1: pack/adapters/grok/grok-surface.md §Hooks names two scripts (re-read guard, session-start). The installed .grok/hooks/ai-forward.json (byte-identical to pack/adapters/hooks/grok.ai-forward-hooks.json) carries eight entries across five scripts. Recommend replacing the section with the text below. No claim in the file is false; three scripts and several events are unnamed.",
+      "tags": [
+        "decision-note",
+        "coordination",
+        "grok",
+        "hooks",
+        "freshness",
+        "s1"
+      ],
+      "links": [
+        {
+          "to": "design-message-layer",
+          "rel": "relates-to"
+        },
+        {
+          "to": "scenario-s1-three-harness-delegation",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "0ae55d405f132c55e823b8a3067b708da05b928970fff3301c930ef2b9314944"
     },
     {
       "id": "note-autopilot-open-questions-decisions",
@@ -5431,7 +5531,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a5abc56d7e7158678d843d59fad18be00f1e1fb54bfe3987918149fdb4887849"
+      "sourceSha256": "a5068371618fde5b723f9fa006e22b9b52a9773f292684e1f23339db89b2c0fe"
     },
     {
       "id": "seam-p5-to-coordinator",
@@ -7649,7 +7749,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "2816eea91fea77d57d7e604cdd8cf86ad6bd758e1a6d4a22543efe31c09f3efe"
+      "sourceSha256": "86b0643f15cd12c6e981db1e6ce7481e5cb86d8aa082da8b60cf8a44b2efde94"
     },
     {
       "id": "privacy-review",
@@ -9139,5 +9239,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "05bfdaa793b6aa93f665ec00b9a91c5a74a8a21c69e1c0cad983c2bde57ad92c"
+  "graphSha256": "b95073e79d882e119a95efaa5960b3358349ea9f2423c77c3b44c76fd1712dbc"
 };

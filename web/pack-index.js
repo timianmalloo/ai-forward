@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 257
+"count": 260
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 429,
+"total": 432,
 "items": [
 {
 "cat": "knowledge",
@@ -2205,6 +2205,33 @@ window.PACK_INDEX = {
 "path": "docs/notes/note-20260919-xp-cross-platform.md",
 "kind": "decision-note",
 "text": "xp cross-platform residue: documented commands made shell-neutral, the default-branch tests made honest, the session-id sanitiser cut as a seam patch track xp of coordination-p3-p5-p8 (t1, fan-out 0). every documented command under pack/ is now a single line, unchained and `python3`; a gate (`verify-documented-commands.py`) and its test pin the shape and were red-first at 26 findings on 24 lines; the three `test_coord_derived.py` tests read the default branch the machine chose and are green under both `init.defaultbranch=main` and `=master`; t-2 and t-3 were found already fixed at a01ed77 and re-proven by execution; the agent_session sanitiser travels as docs/coordination/seam-xp-to-p3.patch because p3 owns coord-core.py. decision-note cross-platform plat-a plat-b xp-track coordination-p3-p5-p8 implements plan-cross-platform-readiness relates-to investigation-cross-platform-readiness"
+},
+{
+"cat": "graph",
+"id": "note-20260920-s1-agy-hooks-surface-freshness",
+"title": "S1 track A (Antigravity): the surface doc names two of four hook sections; the Stop event was not observed - written by the coordinator under the track's fallback",
+"summary": "Track A's request (req-01M2YGBW6BFG82E7CG4E86W1KT) reached its 1500 s deadline at 04:39:38Z with the session live (session-start and request receive recorded) but no artifact; the contract's fallback ran: expired-fallback recorded and this…",
+"path": "docs/notes/note-20260920-s1-agy-hooks-surface-freshness.md",
+"kind": "decision-note",
+"text": "s1 track a (antigravity): the surface doc names two of four hook sections; the stop event was not observed - written by the coordinator under the track's fallback track a's request (req-01m2ygbw6bfg82e7cg4e86w1kt) reached its 1500 s deadline at 04:39:38z with the session live (session-start and request receive recorded) but no artifact; the contract's fallback ran: expired-fallback recorded and this note written by the coordinator from its own read. finding: pack/adapters/antigravity/agy-surface.md names two of the four hook sections the installed .agents/hooks.json carries (mail-doorbell on preinvocation and heartbeat on posttooluse/stop are unnamed). stop verdict: the s1-agy ledger holds no heartbeat row at all, so neither posttooluse nor stop was observed to fire on antigravity in this run; every antigravity channel stays observed-only and the readme's \"none documented\" for the stop gate stands as unobserved, not confirmed. decision-note coordination s1 antigravity agy hooks freshness fallback relates-to design-message-layer implements scenario-s1-three-harness-delegation relates-to brief-s1-agy"
+},
+{
+"cat": "graph",
+"id": "note-20260920-s1-codex-coordination-surface",
+"title": "Codex needs an explicit coordination path",
+"summary": "Proposes a Coordination section for the Codex adapter, grounded in the installed mail, request and decision command contracts. Records the received prompt and separates delivery acknowledgement from accepting and completing a delegation.",
+"path": "docs/notes/note-20260920-s1-codex-coordination-surface.md",
+"kind": "decision-note",
+"text": "codex needs an explicit coordination path proposes a coordination section for the codex adapter, grounded in the installed mail, request and decision command contracts. records the received prompt and separates delivery acknowledgement from accepting and completing a delegation. coordination codex message-layer s1 relates-to design-message-layer implements scenario-s1-three-harness-delegation"
+},
+{
+"cat": "graph",
+"id": "note-20260920-s1-grok-hooks-surface-freshness",
+"title": "Replace the Grok surface Hooks section: five scripts, eight entries, one sentence today",
+"summary": "Track G of S1: pack/adapters/grok/grok-surface.md §Hooks names two scripts (re-read guard, session-start). The installed .grok/hooks/ai-forward.json (byte-identical to pack/adapters/hooks/grok.ai-forward-hooks.json) carries eight entries…",
+"path": "docs/notes/note-20260920-s1-grok-hooks-surface-freshness.md",
+"kind": "decision-note",
+"text": "replace the grok surface hooks section: five scripts, eight entries, one sentence today track g of s1: pack/adapters/grok/grok-surface.md §hooks names two scripts (re-read guard, session-start). the installed .grok/hooks/ai-forward.json (byte-identical to pack/adapters/hooks/grok.ai-forward-hooks.json) carries eight entries across five scripts. recommend replacing the section with the text below. no claim in the file is false; three scripts and several events are unnamed. decision-note coordination grok hooks freshness s1 relates-to design-message-layer relates-to scenario-s1-three-harness-delegation"
 },
 {
 "cat": "graph",

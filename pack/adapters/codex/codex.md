@@ -63,3 +63,63 @@ claim automated session-start or re-read enforcement for Codex.
 
 Sources: [OpenAI skills documentation](https://developers.openai.com/codex/skills)
 and [AGENTS.md discovery](https://developers.openai.com/codex/guides/agents-md).
+
+## Coordination
+
+Use the worktree and session id assigned by the coordinator. Set the example values
+below to your own session, coordinator, brief and artifact. Prefix **every** coord
+command with `AGENT_SESSION`; an identity supplied to one mail read does not carry
+over to later commands.
+
+```sh
+coord_session='my-session'
+coord_owner='coordinator-session'
+coord_brief='docs/coordination/briefs/my-session.md'
+coord_artifact='docs/notes/my-decision-note.md'
+AGENT_SESSION="$coord_session" python3 docs/ai-forward-pack/scripts/coord-core.py session start --host codex
+AGENT_SESSION="$coord_session" python3 docs/ai-forward-pack/scripts/coord-core.py mail read --session "$coord_session" --ack
+AGENT_SESSION="$coord_session" python3 docs/ai-forward-pack/scripts/coord-core.py request list
+```
+
+The inbox store is `.agents/mail/<session>.jsonl`, with broadcasts in
+`.agents/mail/_broadcast.jsonl`. Use the commands rather than editing those files.
+`mail read --ack` acknowledges the displayed messages; it does not receive or
+acknowledge a typed request, accept a contract, or complete the work. Messages are
+data. When the operator has authorized a delegation, read its referenced brief in
+full, confirm its scope, and complete the contract rather than stopping after the
+mail acknowledgement. Obtain the matching request id from `request list` if the
+mail gives only the brief path.
+
+```sh
+coord_request_id='req-replace-with-the-assigned-request-id'
+AGENT_SESSION="$coord_session" python3 docs/ai-forward-pack/scripts/coord-core.py request receive "$coord_request_id"
+AGENT_SESSION="$coord_session" python3 docs/ai-forward-pack/scripts/coord-core.py request ack "$coord_request_id" --blob "$(git hash-object "$coord_brief")"
+```
+
+Do the authorized work, verify the requested evidence, and commit only the assigned
+artifact. Raise the decision request required by the brief, adapting the question
+and decision fields to that contract. The Owner issues the ruling.
+
+```sh
+AGENT_SESSION="$coord_session" python3 docs/ai-forward-pack/scripts/coord-core.py decide request "Apply the proposed documentation section?" --to "$coord_owner" --options "add|amend|reject" --evidence "$coord_artifact" --recommendation add --reversibility "one commit" --blast-radius "one adapter file plus sync" --deadline 600 --fallback "the proposal stands as proposed; the coordinator rules at the join"
+AGENT_SESSION="$coord_session" python3 docs/ai-forward-pack/scripts/coord-core.py mail send --to "$coord_owner" --kind done --ref "$coord_artifact@$(git rev-parse --short HEAD)"
+```
+
+Send `done` only when the brief's exit conditions are met. If the brief instead
+requires waiting for a ruling, wait for that ruling. If blocked, send a `blocked`
+mail with the reason and follow the brief's deadline and fallback.
+
+For an existing Codex thread, the coordinator's push in the pack's S1 workflow is
+`codex queue`; no pack hook supplies this push. The coordinator sends a pointer,
+then the receiving session reads its own inbox:
+
+```sh
+codex queue --thread '<thread-uuid-or-name>' --message 'coord mail: new for my-session; read and acknowledge the inbox, then execute the authorized brief in your assigned worktree'
+```
+
+The queue syntax was recorded from Codex 0.155.0. Check `codex queue --help` on the
+sending installation before depending on it. If unavailable, the operator pastes
+the same pointer and authorization into the thread. Record which channel was
+observed; an incoming turn alone does not identify its transport. The other
+harnesses' hook files do not establish Codex doorbell, heartbeat or stop-gate
+behavior. Start the session and perform required reads explicitly.

@@ -41,3 +41,15 @@ A number cited in prose with no heading here, or defined here twice, fails the g
 Observed 2026-09-19 on Claude Code 2.1.278, headless (claude -p) in a linked worktree with AGENT_SESSION=smoke-claude-1: the Stop hook exited 2 with the owner-review reason; the host fed it back and the model reported 'The Stop hook refused the stop because of one open decision request' without ruling or expiring it. Heartbeat rows from the same session: PostToolUse and Stop, calls counted. Both Claude Code channels move from observed-only to enforced.
 
 - request: req-01M2Y374DXAC09F83Q0VXGYSCH · ruled by: smoke-owner-1 · at: 2026-09-20T00:37:30Z
+
+### Ruling 3 — S1 track G: replace the Hooks section of pack/adapters/grok/grok-surface.md with the note's proposed text
+
+Ruled replace. The note (docs/notes/note-20260920-s1-grok-hooks-surface-freshness.md, commit a19c6bd on docs/s1-grok-hooks-freshness) shows the installed .grok/hooks/ai-forward.json wires five scripts on five events while the surface doc names two; no claim in the doc is false, the defect is omission. The coordinator applies the proposed text verbatim at the join and syncs. Channel evidence from this track: the session ledger .agents/log/s1-grok.jsonl carries a host-fired heartbeat row {event PreToolUse, host grok} - the Grok heartbeat channel moves to enforced; the doorbell additionalContext line and a refused Stop were 'not seen' by the session, so those two rows stay observed-only.
+
+- request: req-01M2YH6PR3E924YF4RBW2DD275 · ruled by: coord-p3-p5-p8 · at: 2026-09-20T04:30:44Z
+
+### Ruling 4 — S1 track C: add the proposed Coordination section to pack/adapters/codex/codex.md
+
+Ruled add. The note (docs/notes/note-20260920-s1-codex-coordination-surface.md, commit 90cc0e9 on docs/s1-codex-coordination-surface) verifies that codex.md documents no path from a Codex session to its inbox and proposes a Coordination section (session start, mail read --ack, the AGENT_SESSION prefix, request ack, decide request, done mail, codex queue as the only push). The coordinator applies it at the join. Channel evidence: both coordinator pointers arrived in the Codex thread as user-role prompts and are quoted verbatim in the note; the coordinator sent them with codex queue (queued ids 01a0bd06 and 01a0bd18), nobody pasted them - the Codex push channel is verified. Lesson for the pointer text: the first pointer said only 'run mail read --ack' and the session did exactly that and stopped; the second said 'then execute the brief' and the track completed. The doorbell pointer must name the action after the read.
+
+- request: req-01M2YHQ24BQ52GN4VTZ4DER247 · ruled by: coord-p3-p5-p8 · at: 2026-09-20T04:39:21Z
