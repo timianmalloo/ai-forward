@@ -851,6 +851,31 @@ window.DOCS_INDEX = {
       "sourceSha256": "e6e0d4850cea3f5b65c5ee6c34b4ce23fde14502d36d80a07ee9c5c31dab5bb7"
     },
     {
+      "id": "api-coord-runner",
+      "path": "docs/api/coord-runner.md",
+      "title": "API — coord-runner.py",
+      "type": "api",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-03-03",
+      "reviewSuggested": [],
+      "summary": "Prepare and run an opt-in, qualified multi-harness coordination contract.",
+      "tags": [
+        "api",
+        "scripts",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "api-index",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "eefe2f5ede2aae3602401e5eaecb8a137657ebf0f09e4216764d1c2cb42e44e3"
+    },
+    {
       "id": "api-coord_ids",
       "path": "docs/api/coord_ids.md",
       "title": "API — coord_ids.py",
@@ -874,6 +899,31 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "f319b24eccefd6b23a2a59cdd2f30353999f1e3dc38e3699b651f874f51dc298"
+    },
+    {
+      "id": "api-coord_transport",
+      "path": "docs/api/coord_transport.md",
+      "title": "API — coord_transport.py",
+      "type": "api",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-03-03",
+      "reviewSuggested": [],
+      "summary": "Bounded POSIX ACP / Agy session IO. Native harness policy remains authoritative.",
+      "tags": [
+        "api",
+        "scripts",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "api-index",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "80ce496b55b5b417203fa6d1bbd653a827942ce0f422687345e28827312d88db"
     },
     {
       "id": "api-design-lint",
@@ -1010,7 +1060,7 @@ window.DOCS_INDEX = {
       "phase": "",
       "reviewBy": "2027-03-03",
       "reviewSuggested": [],
-      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 507 public functions across 37 modules, 48% carrying a docstring.",
+      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 521 public functions across 39 modules, 47% carrying a docstring.",
       "tags": [
         "api",
         "scripts",
@@ -1024,7 +1074,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "5edc035ab2c83b0515591c25e0c405035eed75f4b8180aa2e36d1f5df7ef53c3"
+      "sourceSha256": "aa63de5d8b85aa8104fdf4dc4cff7540e8548d6538f9b562036e833bcfffa483"
     },
     {
       "id": "api-marker-lint",
@@ -3426,6 +3476,39 @@ window.DOCS_INDEX = {
       "sourceSha256": "d173e60f6c138982d151a4580f30a02681b3e288efa17f6540feade19f58e06b"
     },
     {
+      "id": "design-multi-harness-runner",
+      "path": "docs/design/multi-harness-runner.md",
+      "title": "Design: bounded multi-harness runner",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-03-20",
+      "reviewSuggested": [],
+      "summary": "An opt-in foreground runner prepares worktrees and runs admitted compiled prompts through a shared bounded ACP client or an explicit Agy stream adapter. Existing coordination leadership and event writers remain authoritative; qualification and artifact evidence are reported separately from transport completion.",
+      "tags": [
+        "coordination",
+        "acp",
+        "execution"
+      ],
+      "links": [
+        {
+          "to": "spec-multi-harness-launch-and-monitor",
+          "rel": "implements"
+        },
+        {
+          "to": "design-message-layer",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-leader-designation",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "ec36a99af143b0c09d9351607ff38b7a754abbb9b26e25d586621111e5347516"
+    },
+    {
       "id": "design-native-app-ui-skill-extension",
       "path": "docs/design/native-app-ui-skill-extension.md",
       "title": "Native app UI skill extension — Design",
@@ -4030,7 +4113,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "bef138dc35e36f0d75a45058c51c1a613abd4907bf8188a086bc83aeeaadc00c"
+      "sourceSha256": "993593c5e9e46def9c0be44f541676b900a3e36a852b0b9da6a7913513bd3ec7"
     },
     {
       "id": "docs-index",
@@ -4939,6 +5022,45 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "277c03965ae56b5dcb1a3ca6cc87fd6f12da2c61496a2f281812048cf37ed771"
+    },
+    {
+      "id": "plan-multi-harness-runner",
+      "path": "docs/plans/multi-harness-runner.md",
+      "title": "Multi-harness runner: specification, compatibility decision, design and implementation",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-20",
+      "reviewSuggested": [],
+      "summary": "Executes the requested specify, design-slice and implement sequence. An independent, Grok-driven ACP compatibility spike is a decision dependency of transport selection; repository contract review can proceed alongside it.",
+      "tags": [
+        "coordination",
+        "execution-plan",
+        "acp"
+      ],
+      "links": [
+        {
+          "to": "spec-message-layer",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-leader-designation",
+          "rel": "depends-on"
+        },
+        {
+          "to": "kb-graph-and-loop-engineering",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Graph and exit conditions",
+          "mermaid": "flowchart LR\n G --> C --> S --> R1\n G --> A --> R1\n R1 --> D --> T --> I --> R2 --> V --> E\n A --> D"
+        }
+      ],
+      "sourceSha256": "29f085248bbff7034bb4279854f37ae55d1708ffeafebec4015e82a663c555bb"
     },
     {
       "id": "plan-optimize-graph-grok-surface",
@@ -7839,6 +7961,10 @@ window.DOCS_INDEX = {
           "rel": "documents"
         },
         {
+          "to": "design-multi-harness-runner",
+          "rel": "documents"
+        },
+        {
           "to": "design-compile-readers",
           "rel": "documents"
         },
@@ -7876,7 +8002,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ed59b6ed1a18ef6cd54b3db54a80eaccf2f1f85aaec4eb4d43656e257550a3af"
+      "sourceSha256": "ac98168b9a021b7ba9de56455118e3393e0b34e542e40d1c57f65c71098ada65"
     },
     {
       "id": "forensic-review-rev48-proof",
@@ -8077,6 +8203,35 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "861feb807c919ca6ff345f6bee8eeafbf494a2739ffe7ec07d817d24f6069890"
+    },
+    {
+      "id": "proof-multi-harness-runner",
+      "path": "docs/proof/multi-harness-runner.md",
+      "title": "Proof: bounded multi-harness launch and monitoring",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2026-12-20",
+      "reviewSuggested": [],
+      "summary": "Real git repositories and offline subprocess peers prove the deterministic runner's admission, worktree, authority, bounded transport and evidence paths. Independent review closed eight runner findings; live provider/profile qualification remains separate from this implementation proof.",
+      "tags": [
+        "coordination",
+        "acp",
+        "verification"
+      ],
+      "links": [
+        {
+          "to": "design-multi-harness-runner",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-multi-harness-launch-and-monitor",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "b6164a84ba90c5d373d0bb3c829a3d7883b274a6b0d6af9331228bf97c8fe0bc"
     },
     {
       "id": "proof-native-app-ui-skill-extension",
@@ -8738,6 +8893,55 @@ window.DOCS_INDEX = {
       "sourceSha256": "ecae38a312f905e183888d7af4b29483c8e2e29ce130660dba8d0c28e4f21f03"
     },
     {
+      "id": "spec-multi-harness-launch-and-monitor",
+      "path": "docs/specs/multi-harness-launch-and-monitor.md",
+      "title": "Launch and monitor a multi-harness coordination plan",
+      "type": "spec",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2026-12-20",
+      "reviewSuggested": [],
+      "summary": "A deterministic launch-and-monitor extension to execute-with-coordination prepares isolated worker sessions, enforces finite process lifetimes, preserves the designated Owner and reports separate transport and work-completion evidence. Transport selection depends on an independently executed ACP compatibility spike.",
+      "tags": [
+        "coordination",
+        "harness",
+        "launch",
+        "monitor",
+        "acp"
+      ],
+      "links": [
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-message-layer",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-leader-designation",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-liveness-and-track",
+          "rel": "depends-on"
+        },
+        {
+          "to": "plan-multi-harness-runner",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "B. CLI UX specification",
+          "mermaid": "flowchart TD\n S[Invoke skill with task and harnesses] --> P[Prepare plan and contracts]\n P --> V{Contract and capability valid?}\n V -- No --> B[Blocked: reason and manual brief]\n V -- Yes --> W[Create and verify worker checkouts]\n W --> L[Launch workers with distinct identities]\n L --> M[Monitor progress and leader designation]\n L -- Launch error --> X[Record failure and retain brief/checkout]\n M -- Cancel or deadline --> C[Stop owned processes and retain evidence]\n M -- Protocol error or lost designation --> X\n M --> O{Owner or permission action needed?}\n O -- Yes --> A[Report action identity, bounded wait and fallback]\n A -- No decision before deadline --> C\n O -- No --> F{Transport stopped?}\n F -- No --> M\n F -- Yes --> E[Inspect declared evidence]\n E --> R[Ready for review or evidence incomplete]"
+        }
+      ],
+      "sourceSha256": "978d458eb65533b0b4c82c6a52fb85a235ded0669a6d2ba85ce5333928941209"
+    },
+    {
       "id": "spec-native-app-ui-skill-extension",
       "path": "docs/specs/native-app-ui-skill-extension.md",
       "title": "Native app UI skill extension — Specification",
@@ -8974,6 +9178,10 @@ window.DOCS_INDEX = {
           "rel": "documents"
         },
         {
+          "to": "design-multi-harness-runner",
+          "rel": "documents"
+        },
+        {
           "to": "design-compile-readers",
           "rel": "documents"
         },
@@ -9011,7 +9219,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7593103fed3e91d5e655959531a276a93ebeedb7dc308afda0a09888f3bfc335"
+      "sourceSha256": "5dbfda591ed2062f9cd42d230bf34fb64f5fb213239889893469155f92204731"
     }
   ],
   "surfaces": [
@@ -9277,5 +9485,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "50250914a1dd4c818bff7785668871b374e70efd11efd449f6d077c88ddcc46a"
+  "graphSha256": "d796033b77ea8f142d1c62db0ea66b52f998ef04804fad32cc5f52a7c5b83d17"
 };

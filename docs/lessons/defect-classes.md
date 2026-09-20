@@ -576,6 +576,44 @@ representation-contract failure, not a reason to bypass merges for authored file
 - **Control:** landed for Antigravity — `test_agy_hooks_enabled.py` pins the per-event shape from the host docs (tool events wrapped, lifecycle events direct, the gate on `Stop`) and `test_mail_doorbells.py` pins the object reply; the readiness note records **loaded** and **fired** as two facts per channel. The general rule: every host adapter is checked against the host's *published* schema and a *live* run before any row leaves `observed-only`; a diagnosis that names a cause the host docs contradict is itself a finding (the revision-83 case).
 - **Status:** `controlled` for Antigravity; the same two questions are owed for Grok Build and Copilot CLI before their remaining rows move
 
+### RUN-A — Admission checks a different object, authority or lifecycle point from use
+- **Signature:** valid evidence is checked, but a different prompt rendition, executable,
+  checkout, identity, event author or queued configuration is used later. The local check
+  passes while the composed execution violates its stated boundary.
+- **Instances (2026-09-20):** independent multi-harness runner review reproduced seven
+  defects: cross-run identity reuse; unbound rendered prompt; parent-cwd executable hashing;
+  substituted clone acceptance; an admitted manifest larger than its reader bound; partial
+  preparation absent from status; and a worker log supplying the Owner's completion claim.
+  Review also located the queued-worker check/use interval. Parent reproduced partial-status
+  and false-ready failures directly before fixing them. The transport review reproduced an
+  Agy duplicate buffered SUCCESS credited to a prompt the peer had not received.
+- **Class → sweep → derive:** swept preparation, qualification, dispatch, renewal, receipt
+  verification and status. The invariant is identity plus authority plus the actual use seam,
+  rather than a Boolean validated earlier. A renewal check followed by an unconstrained
+  renew was replaced by an admitted-epoch check inside the existing CAS attempt.
+- **Control:** `test_coord_runner.py` pins all seven defects, queued configuration drift,
+  real compiler-finish normalization, same-owner successor epoch and competing launch.
+  `test_coord_transport.py:test_agy_duplicate_result_cannot_complete_an_unsent_prompt`
+  pins turn sequencing; permission and non-success completion mutants are killed.
+  Prompts are rendered from the verified document, executable targets are frozen, checkout
+  registration/common-dir are checked, identities are exclusively reserved, status filters
+  Owner admissions, and partial state is retained as facts. These are automated controls,
+  not merely a review checklist.
+- **Status:** controlled for this runner; existing dispatch remains separately scoped.
+
+### PROC-A — Process-group cleanup mistakes an exited child for an uncontained process
+- **Signature:** a direct child exits between the process-state check and group signalling;
+  macOS reports EPERM for an unreaped zombie. Treating that signal alone as the cleanup
+  outcome either reports failure incorrectly or skips descendant cleanup.
+- **Instance (2026-09-20):** the bounded transport's real early-EOF fixture and injected
+  poll-to-signal exit race exposed both shapes during red-first implementation.
+- **Class → sweep → derive:** inspected success, error, setup failure and cancellation
+  cleanup; all must reap the direct child and still address the owned group.
+- **Control:** bounded reap/recheck around signalling, unconditional descendant group
+  cleanup, and tests for early EOF, exit between poll/signal, setup failure, descendants
+  after successful completion and descendants after parent exit in `test_coord_transport.py`.
+- **Status:** controlled for the POSIX pilot; Windows interactive containment is unsupported.
+
 ## Inherited classes (seeded from the pack)
 
 *Observed in production across independent codebases running the AI-Forward pack (`continuous-improvement.md` §6). Each is **uncontrolled here until this repo builds the control** — that is the work, not the copying.*

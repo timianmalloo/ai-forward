@@ -49,7 +49,8 @@
   "execute-with-coordination": [
     "SKILL.md",
     "reference/co-s0.md",
-    "reference/join.md"
+    "reference/join.md",
+    "reference/launch.md"
   ],
   "extendaibundle": [
     "SKILL.md",

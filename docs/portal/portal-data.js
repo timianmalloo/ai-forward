@@ -5,7 +5,7 @@ window.PORTAL_DATA = {
       "personas": 23,
       "knowledge": 39,
       "templates": 28,
-      "scripts": 38
+      "scripts": 40
     },
     "whatIs": "AI-Forward is a committed Markdown methodology pack that installs into a repo so Claude Code, GitHub Copilot, and Grok Build direct work with a shared reasoning spine, adversarial persona review, and a library of workflow skills - nothing runs as a service; everything is versioned files and stdlib scripts.",
     "skillCount": 28,
@@ -800,6 +800,11 @@ window.PORTAL_DATA = {
             "path": "../../docs/specs/message-layer.md"
           },
           {
+            "title": "Launch and monitor a multi-harness coordination plan",
+            "summary": "A deterministic launch-and-monitor extension to execute-with-coordination prepares isolated worker sessions, enforces finite process lifetimes, preserves the designated Owner and reports separate transport and work-completion evidence. Transport selection...",
+            "path": "../../docs/specs/multi-harness-launch-and-monitor.md"
+          },
+          {
             "title": "Native app UI skill extension — Specification",
             "summary": "Specification for extending the AI-Forward UI skills so WPF, WinUI, Avalonia and other native client applications receive the same rigorous UX/UI reasoning as web surfaces. The spec defines the required native medium declaration, native proof pack,...",
             "path": "../../docs/specs/native-app-ui-skill-extension.md"
@@ -898,6 +903,11 @@ window.PORTAL_DATA = {
             "title": "Design — the local message layer and dispatch (coord-mail.py · mail-doorbell.py · pack-apply ignore rules · pack-doctor checks)",
             "summary": "One stdlib script owns the inbox writer (append_mail), the reader, the ack and the bounded dispatch; one hook script rings every host's doorbell with a count and a pointer built from a function that has no body parameter; pack-apply re-includes the ledgers...",
             "path": "../../docs/design/message-layer.md"
+          },
+          {
+            "title": "Design: bounded multi-harness runner",
+            "summary": "An opt-in foreground runner prepares worktrees and runs admitted compiled prompts through a shared bounded ACP client or an explicit Agy stream adapter. Existing coordination leadership and event writers remain authoritative; qualification and artifact...",
+            "path": "../../docs/design/multi-harness-runner.md"
           },
           {
             "title": "Native app UI skill extension — Design",
@@ -1878,10 +1888,22 @@ window.PORTAL_DATA = {
         "summary": "coord-mail.py - the local message layer: per-session inbox files, ledger twins, bounded dispatch."
       },
       {
+        "id": "api-coord-runner",
+        "type": "api",
+        "title": "API — coord-runner.py",
+        "summary": "Prepare and run an opt-in, qualified multi-harness coordination contract."
+      },
+      {
         "id": "api-coord_ids",
         "type": "api",
         "title": "API — coord_ids.py",
         "summary": "coord_ids.py - collision-proof identifiers, in ONE place."
+      },
+      {
+        "id": "api-coord_transport",
+        "type": "api",
+        "title": "API — coord_transport.py",
+        "summary": "Bounded POSIX ACP / Agy session IO. Native harness policy remains authoritative."
       },
       {
         "id": "api-design-lint",
@@ -1917,7 +1939,7 @@ window.PORTAL_DATA = {
         "id": "api-index",
         "type": "api",
         "title": "API reference — the deployed script bundle",
-        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 507 public functions across 37 modules, 48% carrying a docstring."
+        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 521 public functions across 39 modules, 47% carrying a docstring."
       },
       {
         "id": "api-marker-lint",
@@ -2230,6 +2252,12 @@ window.PORTAL_DATA = {
         "type": "design",
         "title": "Design — the local message layer and dispatch (coord-mail.py · mail-doorbell.py · pack-apply ignore rules · pack-doctor checks)",
         "summary": "One stdlib script owns the inbox writer (append_mail), the reader, the ack and the bounded dispatch; one hook script rings every host's doorbell with a count..."
+      },
+      {
+        "id": "design-multi-harness-runner",
+        "type": "design",
+        "title": "Design: bounded multi-harness runner",
+        "summary": "An opt-in foreground runner prepares worktrees and runs admitted compiled prompts through a shared bounded ACP client or an explicit Agy stream adapter...."
       },
       {
         "id": "design-native-app-ui-skill-extension",
@@ -3042,6 +3070,12 @@ window.PORTAL_DATA = {
         "summary": "Six phases, ranked by benefit ÷ cost, each landing with a control that was observed failing first: one interpreter resolver used everywhere; three lints..."
       },
       {
+        "id": "plan-multi-harness-runner",
+        "type": "doc",
+        "title": "Multi-harness runner: specification, compatibility decision, design and implementation",
+        "summary": "Executes the requested specify, design-slice and implement sequence. An independent, Grok-driven ACP compatibility spike is a decision dependency of transport..."
+      },
+      {
         "id": "plan-optimize-graph-grok-surface",
         "type": "doc",
         "title": "optimize-graph — Grok Build surface for pack-consuming repos",
@@ -3136,6 +3170,12 @@ window.PORTAL_DATA = {
         "type": "proof-pack",
         "title": "Proof Pack — progress liveness, the running track and the kick ladder (P3)",
         "summary": "Forty-one red-first tests (plus the five of the XP seam) prove the heartbeat sampling, the fold's four states with the 299/301 s boundary, the NOT CHECKED..."
+      },
+      {
+        "id": "proof-multi-harness-runner",
+        "type": "proof-pack",
+        "title": "Proof: bounded multi-harness launch and monitoring",
+        "summary": "Real git repositories and offline subprocess peers prove the deterministic runner's admission, worktree, authority, bounded transport and evidence paths...."
       },
       {
         "id": "proof-native-app-ui-skill-extension",
@@ -3274,6 +3314,12 @@ window.PORTAL_DATA = {
         "type": "spec",
         "title": "Spec — the local message layer and dispatch (coord mail send/read/ack · dispatch · doorbells)",
         "summary": "Sessions in one repository leave each other messages in per-session append-only inbox files; state-changing kinds are twinned into the coord ledger so git..."
+      },
+      {
+        "id": "spec-multi-harness-launch-and-monitor",
+        "type": "spec",
+        "title": "Launch and monitor a multi-harness coordination plan",
+        "summary": "A deterministic launch-and-monitor extension to execute-with-coordination prepares isolated worker sessions, enforces finite process lifetimes, preserves the..."
       },
       {
         "id": "spec-native-app-ui-skill-extension",
@@ -3550,7 +3596,17 @@ window.PORTAL_DATA = {
         "rel": "refines"
       },
       {
+        "from": "api-coord-runner",
+        "to": "api-index",
+        "rel": "refines"
+      },
+      {
         "from": "api-coord_ids",
+        "to": "api-index",
+        "rel": "refines"
+      },
+      {
+        "from": "api-coord_transport",
         "to": "api-index",
         "rel": "refines"
       },
@@ -4232,6 +4288,21 @@ window.PORTAL_DATA = {
       {
         "from": "design-message-layer",
         "to": "spec-message-layer",
+        "rel": "implements"
+      },
+      {
+        "from": "design-multi-harness-runner",
+        "to": "design-message-layer",
+        "rel": "refines"
+      },
+      {
+        "from": "design-multi-harness-runner",
+        "to": "spec-leader-designation",
+        "rel": "depends-on"
+      },
+      {
+        "from": "design-multi-harness-runner",
+        "to": "spec-multi-harness-launch-and-monitor",
         "rel": "implements"
       },
       {
@@ -5635,6 +5706,21 @@ window.PORTAL_DATA = {
         "rel": "implements"
       },
       {
+        "from": "plan-multi-harness-runner",
+        "to": "kb-graph-and-loop-engineering",
+        "rel": "depends-on"
+      },
+      {
+        "from": "plan-multi-harness-runner",
+        "to": "spec-leader-designation",
+        "rel": "depends-on"
+      },
+      {
+        "from": "plan-multi-harness-runner",
+        "to": "spec-message-layer",
+        "rel": "refines"
+      },
+      {
         "from": "plan-optimize-graph-grok-surface",
         "to": "kb-graph-and-loop-engineering",
         "rel": "depends-on"
@@ -5722,6 +5808,11 @@ window.PORTAL_DATA = {
       {
         "from": "privacy-review",
         "to": "design-message-layer",
+        "rel": "documents"
+      },
+      {
+        "from": "privacy-review",
+        "to": "design-multi-harness-runner",
         "rel": "documents"
       },
       {
@@ -5853,6 +5944,16 @@ window.PORTAL_DATA = {
         "from": "proof-liveness-and-track",
         "to": "spec-liveness-and-track",
         "rel": "tested-by"
+      },
+      {
+        "from": "proof-multi-harness-runner",
+        "to": "design-multi-harness-runner",
+        "rel": "implements"
+      },
+      {
+        "from": "proof-multi-harness-runner",
+        "to": "spec-multi-harness-launch-and-monitor",
+        "rel": "implements"
       },
       {
         "from": "proof-native-app-ui-skill-extension",
@@ -6350,6 +6451,31 @@ window.PORTAL_DATA = {
         "rel": "refines"
       },
       {
+        "from": "spec-multi-harness-launch-and-monitor",
+        "to": "plan-multi-harness-runner",
+        "rel": "relates-to"
+      },
+      {
+        "from": "spec-multi-harness-launch-and-monitor",
+        "to": "proposal-owner-coordinator-subagent-coordination",
+        "rel": "refines"
+      },
+      {
+        "from": "spec-multi-harness-launch-and-monitor",
+        "to": "spec-leader-designation",
+        "rel": "depends-on"
+      },
+      {
+        "from": "spec-multi-harness-launch-and-monitor",
+        "to": "spec-liveness-and-track",
+        "rel": "depends-on"
+      },
+      {
+        "from": "spec-multi-harness-launch-and-monitor",
+        "to": "spec-message-layer",
+        "rel": "refines"
+      },
+      {
         "from": "spec-native-app-ui-skill-extension",
         "to": "architecture",
         "rel": "relates-to"
@@ -6497,6 +6623,11 @@ window.PORTAL_DATA = {
       {
         "from": "threat-model",
         "to": "design-message-layer",
+        "rel": "documents"
+      },
+      {
+        "from": "threat-model",
+        "to": "design-multi-harness-runner",
         "rel": "documents"
       },
       {

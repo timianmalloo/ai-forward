@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-20T13:54:35Z",
+  "generated": "2026-09-20T16:11:17Z",
   "audit": [
     {
       "actor": null,
@@ -6947,6 +6947,268 @@ window.AUDIT_DATA = {
       "done_when": "each Antigravity channel observed live or its cause named from the host docs; fixes red-first; landed",
       "tier": "T1",
       "fan_out": 0
+    },
+    {
+      "id": "al-01M2ZMSRGTF7GRXBCM1RMMJXYT",
+      "shortname": "lets extend execute-with-coordination as you suggested : My recommendati…",
+      "datetime": "2026-09-20T14:51:22Z",
+      "session": "prompt-compile",
+      "prompt": "lets extend execute-with-coordination as you suggested : My recommendation is to extend execute-with-coordination with a small, deterministic launch-and-monitor script\n$specify then $design-slice then $implement it",
+      "summary": "raw prompt logged for compilation",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2ZMVK4J3623WC2FJ6FYYP18",
+      "shortname": "compile-lets extend execute-with-coordination as you suggested : My recommendati…",
+      "datetime": "2026-09-20T14:52:22Z",
+      "session": "launch-monitor-codex",
+      "prompt": "Save the brief between the markers as <brief-file>, then run (one line, the brief read from the file):\ncodex exec --json -o <last-message-file> --output-schema <schema-file> --worktree -C <dir> \"$(cat <brief-file>)\"\n--- brief ---\npython3 docs/ai-forward-pack/scripts/audit-log.py start --session launch-monitor-codex --skill <skill>\nGoal state\nGoal: Extend execute-with-coordination with a small deterministic launch-and-monitor script.\nDone when: Specification, design and implementation are complete and verified.\nNot in scope: Work outside the execute-with-coordination launch-and-monitor extension.\nTier: T2\nFan-out cap: 2\nContext ceiling: 400000\nMain-line budget: 160\nTrace\n| clause | trace |\n|---|---|\n| done_when: Specification, design and implementation are complete and verified. | phrase: $specify then $design-slice then $implement it |\n| not_in_scope: Work outside the execute-with-coordination launch-and-monitor extension. | phrase: extend execute-with-coordination with a small, deterministic launch-and-monitor script |\nReferences\n- none\nAssumptions\n- #1 belief: The request authorizes a scoped feature branch, not unrelated changes or integration into main. · confirm: User wording scopes the change to execute-with-coordination; any wider instruction supersedes this boundary. · breaks: The plan must be expanded if the user requests unrelated changes or integration. · consequential: false\nDecision requests\n- none\nContract slot\nwidth_cap: 2\ntransient_retry: No automatic model retry; diagnose first.\nper_branch_exit: ACP track returns MD, HTML and inspected spike evidence; main track passes required gates.\njoin_rule: Transport selection consumes the ACP spike; blocked results remain unsupported.\ncontainment: Separate worktrees and authored paths; no production changes in ACP track.\ntermination: All requested artifacts and acceptance evidence present; unresolved gates remain open.\ndeadline: 160 main-line tool calls, then re-estimate remaining work without dropping gates.\nfallback: Record missing runtime capability and preserve explicit manual operation.\nRules: absolute paths only; a multi-line program is a file, then a run; a gate's exit status is never behind a pipe.\nProvenance\nraw id: al-01M2ZMSRGTF7GRXBCM1RMMJXYT\nraw sha256: 5c5a77108fd1018702b11091a058552115e5904e158688b5a93b81cfa6ad0fa5\ncompiler model: codex\nengine seconds: 0.001\ntokens: not recorded\ngate: pass\ndispatchable: true\n--- end brief ---\n",
+      "summary": "compiled al-01M2ZMSRGTF7GRXBCM1RMMJXYT for codex v1: 2 clauses, 1 assumptions, 0 decision requests",
+      "kind": "compilation",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "compiled": {
+        "assumptions": [
+          {
+            "id": "#1",
+            "belief": "The request authorizes a scoped feature branch, not unrelated changes or integration into main.",
+            "confirm": "User wording scopes the change to execute-with-coordination; any wider instruction supersedes this boundary.",
+            "breaks": "The plan must be expanded if the user requests unrelated changes or integration.",
+            "consequential": false
+          }
+        ],
+        "clauses": [
+          {
+            "section": "done_when",
+            "text": "Specification, design and implementation are complete and verified.",
+            "trace": {
+              "kind": "phrase",
+              "ref": "$specify then $design-slice then $implement it"
+            }
+          },
+          {
+            "section": "not_in_scope",
+            "text": "Work outside the execute-with-coordination launch-and-monitor extension.",
+            "trace": {
+              "kind": "phrase",
+              "ref": "extend execute-with-coordination with a small, deterministic launch-and-monitor script"
+            }
+          }
+        ],
+        "contract_slot": {
+          "width_cap": 2,
+          "transient_retry": "No automatic model retry; diagnose first.",
+          "per_branch_exit": "ACP track returns MD, HTML and inspected spike evidence; main track passes required gates.",
+          "join_rule": "Transport selection consumes the ACP spike; blocked results remain unsupported.",
+          "containment": "Separate worktrees and authored paths; no production changes in ACP track.",
+          "termination": "All requested artifacts and acceptance evidence present; unresolved gates remain open.",
+          "deadline": "160 main-line tool calls, then re-estimate remaining work without dropping gates.",
+          "fallback": "Record missing runtime capability and preserve explicit manual operation."
+        },
+        "decision_requests": [],
+        "dispatchable": true,
+        "goal_state": {
+          "goal": "Extend execute-with-coordination with a small deterministic launch-and-monitor script.",
+          "done_when": [
+            "Specification, design and implementation are complete and verified."
+          ],
+          "not_in_scope": [
+            "Work outside the execute-with-coordination launch-and-monitor extension."
+          ],
+          "tier": "T2",
+          "fan_out_cap": 2,
+          "context_ceiling": 400000,
+          "main_line_budget": 160
+        },
+        "graph_neighbours": [],
+        "harness": "codex",
+        "mode": "compiled",
+        "provenance": {
+          "compile_tokens": null,
+          "compiler_model": "codex",
+          "engine_seconds": 0.001,
+          "refusals": [],
+          "retries": 0
+        },
+        "raw_id": "al-01M2ZMSRGTF7GRXBCM1RMMJXYT",
+        "raw_sha256": "5c5a77108fd1018702b11091a058552115e5904e158688b5a93b81cfa6ad0fa5",
+        "raw_text_normalised": false,
+        "references": [],
+        "schema": "compiled-prompt/1",
+        "template": "codex",
+        "template_version": 1
+      },
+      "mode": "compiled",
+      "dispatchable": true
+    },
+    {
+      "id": "al-01M2ZR58Z6TAFAXR0GTQ7ERH11",
+      "shortname": "optimize-graph-multi-harness-runner",
+      "datetime": "2026-09-20T15:50:05Z",
+      "session": "launch-monitor-codex",
+      "prompt": "lets extend execute-with-coordination as you suggested : My recommendation is to extend execute-with-coordination with a small, deterministic launch-and-monitor script\n$specify then $design-slice then $implement it",
+      "summary": "Planned two independent tracks: ACP evidence and deterministic launch lifecycle; design waited for transport evidence. Width cap counts Grok driver and target probes.",
+      "kind": "skill",
+      "skill": "optimize-graph",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/plans/multi-harness-runner.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled_from": "al-01M2ZMVK4J3623WC2FJ6FYYP18",
+      "goal": "Extend execute-with-coordination with a deterministic launch-and-monitor script",
+      "done_when": "Specified, designed, implemented and verified with ACP findings scoped honestly",
+      "tier": "T2",
+      "fan_out": 4,
+      "started_at": "2026-09-20T14:52:01Z",
+      "duration_seconds": 3484.0
+    },
+    {
+      "id": "al-01M2ZR592VQZ8N43GBHQF0QVC4",
+      "shortname": "specify-multi-harness-runner",
+      "datetime": "2026-09-20T15:50:05Z",
+      "session": "launch-monitor-codex",
+      "prompt": "lets extend execute-with-coordination as you suggested : My recommendation is to extend execute-with-coordination with a small, deterministic launch-and-monitor script\n$specify then $design-slice then $implement it",
+      "summary": "Specified launch validation, separate worktrees/identity, harness-neutral leadership, bounded sessions, independent artifact receipts and recovery. Independent review conditions resolved.",
+      "kind": "skill",
+      "skill": "specify",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/specs/multi-harness-launch-and-monitor.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled_from": "al-01M2ZMVK4J3623WC2FJ6FYYP18",
+      "goal": "Extend execute-with-coordination with a deterministic launch-and-monitor script",
+      "done_when": "Specified, designed, implemented and verified with ACP findings scoped honestly",
+      "tier": "T2",
+      "fan_out": 4,
+      "started_at": "2026-09-20T14:52:01Z",
+      "duration_seconds": 3484.0
+    },
+    {
+      "id": "al-01M2ZR596DDMH12XSYJE7ZSXP3",
+      "shortname": "design-slice-multi-harness-runner",
+      "datetime": "2026-09-20T15:50:05Z",
+      "session": "launch-monitor-codex",
+      "prompt": "lets extend execute-with-coordination as you suggested : My recommendation is to extend execute-with-coordination with a small, deterministic launch-and-monitor script\n$specify then $design-slice then $implement it",
+      "summary": "Designed opt-in shared ACP client and explicit Agy stream adapter, preparation/qualification split, bounded lease fences and structured completion receipts. Independent design gate passed.",
+      "kind": "skill",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/design/multi-harness-runner.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled_from": "al-01M2ZMVK4J3623WC2FJ6FYYP18",
+      "goal": "Extend execute-with-coordination with a deterministic launch-and-monitor script",
+      "done_when": "Specified, designed, implemented and verified with ACP findings scoped honestly",
+      "tier": "T2",
+      "fan_out": 4,
+      "started_at": "2026-09-20T15:18:15Z",
+      "duration_seconds": 1910.0
+    },
+    {
+      "id": "al-01M2ZRP70YR73P5ZQMMXW2APS1",
+      "shortname": "implement-bounded-coordination-transport",
+      "datetime": "2026-09-20T15:49:18Z",
+      "session": "bounded-transport-codex",
+      "prompt": "Implement ONLY the bounded transport subtask in your PRECREATED own worktree /Users/mallalieut/projects/ai-forward-feat-bounded-coordination-transport branch feat/bounded-coordination-transport. Parent owns runner/skill/docs. Read design /Users/mallalieut/projects/ai-forward-feat-multi-harness-runner/docs/design/multi-harness-runner.md, transport/concurrency details. Independent design review conditions resolved in text; reviewer confirming. Own paths pack/scripts/coord_transport.py, tests/docs_explorer/test_coord_transport.py and uniquely named fixture files. Do not change other production paths or sync generated surfaces (parent joins and syncs once). Implement run_session(transport, argv, cwd, env, prompts, deadline_seconds, output_limit, emit, cancelled, before_prompt) -> dict exactly designed: stdlib bounded nonblocking POSIX stdio, ACP1 initialize/new/auth cached_token/repeated prompt/progress/deny sticky/cancel, Agy native stream adapter, only end_turn / SUCCESS complete, sanitized metadata, no raw output durable, output/unterminated/input/hang finite, own group cleanup<=4s beyond deadline. before_prompt(remaining_seconds) is bounded by caller but charged to attempt, cancelled callback cheap. Unknown Windows blocked before process. Allow before_prompt default optional true for isolated tests if useful. RED-FIRST faults with real subprocesses for stdout+stderr floods, no newline, blocked stdin, malformed/unknown/early EOF, permissions sticky, prompt count, cancellation, cleanup descendants. Verify actual Agy result shape from ACP probe evidence, not memory. Don't promote unsafe probe client. Goal done: module+tests reviewed self-check; send exact test results and source paths for parent to inspect/copy, no commit required until parent review. Audit start/closure under session bounded-transport-codex; no push. Keep scope bounded to this seam; report uncertainties rather than adding features.\n\nParent follow-up: Please coalesce progress notifications (at most one progress event per second per attempt, plus lifecycle/permission/terminal) or expose counts without per-token callback emission. Existing append_event computes sequence from its log, so per-token events are avoidable cost and can flood durable logs/CLI. Byte counters still count every wire byte and deadline still runs. Return progress count if easy; no content.\n\nParent review: Parent source review overall sound. One protocol-correlation edge to check: before sending next Agy prompt, a buffered unsolicited second SUCCESS from the previous turn could be consumed as the next result, since session id is shared and queue() doesn't flush before receive parses buffered lines. Please add a duplicate-result fixture; ensure it cannot mark two prompts complete without two actually written requests. Minimal guard against already-buffered unsolicited result is sufficient; document native lack of per-turn IDs rather than claim arbitrary malicious-provider protection. Also please send audit entry paths for parent integration separate from production files.",
+      "summary": "Integrated delegated transport evidence (source audit al-01M2ZR3VM7CGJ414A0GGSHHTRJ). Implemented the assigned POSIX ACP/Agy bounded transport seam and real subprocess fixtures. Final 23 tests pass; three targeted mutants killed. Red-observed defects corrected: macOS unreaped-zombie signal classification, per-token durable progress, and duplicate buffered Agy SUCCESS completing an unsent prompt. Output bodies and raw exceptions are never returned. Source integration, full composition proof, generated sync and bundle verification remain with parent; no commit or live provider qualification claimed.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": "codex",
+      "artifacts": [
+        "pack/scripts/coord_transport.py",
+        "tests/docs_explorer/test_coord_transport.py",
+        "tests/docs_explorer/coord_transport_peer.py"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Provide the bounded ACP/Agy stdio module and real subprocess failure tests for parent review.",
+      "done_when": "Owned module and tests implemented, bounded IO/cancellation/cleanup and sanitized results demonstrated, exact source paths and test evidence delivered to parent.",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-09-20T15:33:02Z",
+      "duration_seconds": 976.0
+    },
+    {
+      "id": "al-01M2ZS2KV50QBDQGSYQG8K8P28",
+      "shortname": "implement-multi-harness-runner",
+      "datetime": "2026-09-20T16:06:06Z",
+      "session": "launch-monitor-codex",
+      "prompt": "lets extend execute-with-coordination as you suggested : My recommendation is to extend execute-with-coordination with a small, deterministic launch-and-monitor script\n$specify then $design-slice then $implement it",
+      "summary": "Implemented opt-in POSIX multi-harness launch/monitor with shared bounded ACP transport and explicit Agy stream adapter. Independent review closed eight runner findings; 52 targeted tests and full Python suite (1137 passed, 12 skipped, 321 subtests) passed. Regenerated scripts, skill surfaces, counts, API docs and reading bundle; final metadata gate follows. Native profile qualification remains required.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/multi-harness-runner.md",
+        "pack/scripts/coord-runner.py",
+        "pack/scripts/coord_transport.py"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled_from": "al-01M2ZMVK4J3623WC2FJ6FYYP18",
+      "goal": "Extend execute-with-coordination with a deterministic launch-and-monitor script",
+      "done_when": "Specified, designed, implemented and verified with ACP findings scoped honestly",
+      "tier": "T2",
+      "fan_out": 4,
+      "started_at": "2026-09-20T15:29:45Z",
+      "duration_seconds": 2181.0,
+      "agent_runs": [
+        {
+          "agent": "bounded-transport-codex",
+          "started_at": "2026-09-20T15:33:02Z",
+          "ended_at": "2026-09-20T15:49:18Z",
+          "duration_seconds": 976.0
+        }
+      ],
+      "parallelism": {
+        "agent_seconds": 976.0,
+        "span_seconds": 976.0,
+        "speedup": 1.0,
+        "peak_concurrency": 1
+      }
+    },
+    {
+      "id": "al-01M2ZSC38THVDYGCQZAJKEDAYQ",
+      "shortname": "verify-multi-harness-runner",
+      "datetime": "2026-09-20T16:11:17Z",
+      "session": "launch-monitor-codex",
+      "prompt": "lets extend execute-with-coordination as you suggested : My recommendation is to extend execute-with-coordination with a small, deterministic launch-and-monitor script\n$specify then $design-slice then $implement it",
+      "summary": "Final full bundle validation on revision 85: all 17 gates passed; Python 1137 passed, 12 skipped, 321 subtests passed in 117.22 seconds. Independent implementation review passed. Only result/audit records are finalized after this run; no implementation or native-profile enforcement claim is broadened.",
+      "kind": "script",
+      "skill": null,
+      "tool": "verify-bundle.ps1",
+      "actor": null,
+      "artifacts": [
+        "docs/proof/multi-harness-runner.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Verify the completed multi-harness launch-and-monitor extension",
+      "done_when": "Every required bundle gate is observed passing and final results are durably recorded",
+      "tier": "T2",
+      "fan_out": 0
     }
   ],
   "changes": [
@@ -8374,6 +8636,28 @@ window.AUDIT_DATA = {
       "summary": "No new store: heartbeat and kick-ladder rows in .agents/log; accumulator in the git common dir; leader renewed by the holder's sampled beat (F-1); worktree field basename with an in-place one-field migration (F-3)",
       "tags": [],
       "title": "Liveness is a fold over sampled heartbeat rows in the existing ledger; the kick ladder refuses, counts and records; the worktree field becomes a label"
+    },
+    {
+      "id": "cl-01M2ZR59AEY3XB6AEZEQ36B285",
+      "datetime": "2026-09-20T15:50:05Z",
+      "session": "launch-monitor-codex",
+      "kind": "design",
+      "skill": "design-slice",
+      "title": "Use a bounded opt-in shared ACP client with explicit Agy stream fallback",
+      "prompt": "lets extend execute-with-coordination as you suggested : My recommendation is to extend execute-with-coordination with a small, deterministic launch-and-monitor script\n$specify then $design-slice then $implement it",
+      "summary": "Separate preparation, observed qualification, bounded execution and artifact receipts; retain existing Owner authority and durable coordination facts.",
+      "rationale": "Live spikes establish session-control contracts but do not establish full pack hook or native permission enforcement. Explicit qualification and manual fallback preserve that distinction.",
+      "artifacts": [
+        "docs/design/multi-harness-runner.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "58805df0067dd8fd22fa51fbda6f92b1fcfb9d00",
+        "after": "58805df0067dd8fd22fa51fbda6f92b1fcfb9d00",
+        "branch": "feat/multi-harness-runner",
+        "pushed": null,
+        "commits": []
+      }
     }
   ],
   "messages": [

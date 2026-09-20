@@ -21,7 +21,7 @@ window.PACK_INDEX = {
 {
 "id": "scripts",
 "label": "Scripts",
-"count": 38
+"count": 40
 },
 {
 "id": "personas",
@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 261
+"count": 267
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 433,
+"total": 441,
 "items": [
 {
 "cat": "knowledge",
@@ -993,12 +993,30 @@ window.PACK_INDEX = {
 },
 {
 "cat": "scripts",
+"id": "coord-runner.py",
+"title": "coord-runner.py",
+"summary": "Prepare and run an opt-in, qualified multi-harness coordination contract.",
+"path": "pack/scripts/coord-runner.py",
+"kind": "script",
+"text": "coord-runner.py prepare and run an opt-in, qualified multi-harness coordination contract. run `prepare --contract file`, qualify the resulting checkout-specific fingerprints, then `run --run id --qualification file`. `status --run id` never replays work. the existing coordinator remains responsible for decisions and semantic review. load_module __init__ require encoded digest read_json private_write git identity text integer relative_path child_env file_hash __init__ directory event compiled_prompts validate prepare public_manifest load resolve_executable fingerprint fingerprints leader renew_admitted worker_identity verify status run cancel_signal cancelled fence execute main"
+},
+{
+"cat": "scripts",
 "id": "coord_ids.py",
 "title": "coord_ids.py",
 "summary": "coord_ids.py - collision-proof identifiers, in ONE place.",
 "path": "pack/scripts/coord_ids.py",
 "kind": "script",
 "text": "coord_ids.py coord_ids.py - collision-proof identifiers, in one place. imported by both `coord-core.py` and `audit-log.py`. it exists as its own module rather than as a copy in each because six lines duplicated across two scripts is one-a -- a shared rule with no gate accretes private copies, and the copies only diverge later, when one is edited. the underscore in the filename is deliberate: a hyphen is not importable, which is why `bounded_process.py` is named the way it is. why not `uuid.uuid7()`: absent on the installed 3.12 (it landed in 3.14) and present on the \"3.x\"-pinned ci runner. a stdlib call that exists on the runner and not on the developer's machine is pack-j by construction. established by spike s1, not assumed. why not scanning: the prevention built for kg-b scans every remote branch before allocating. it works, it takes about a second over 22 branches, and it collided again within the hour -- two sessions that mint before either has pushed are invisible to each other. scanning is rejected as a design, not as an implementation. design: docs/design/coord-federation-phase3.md · adr-0008. _next_ms new_id resolve_prefix"
+},
+{
+"cat": "scripts",
+"id": "coord_transport.py",
+"title": "coord_transport.py",
+"summary": "Bounded POSIX ACP / Agy session IO. Native harness policy remains authoritative.",
+"path": "pack/scripts/coord_transport.py",
+"kind": "script",
+"text": "coord_transport.py bounded posix acp / agy session io. native harness policy remains authoritative. this is a lifecycle adapter, not an editor proxy or an approval broker. only locally selected operational fields leave this module; wire bodies are discarded. __init__ _identifier _signal_group __init__ attach check queue pump receive flush_input cleanup __init__ event admit progress permission rpc acp agy run_session"
 },
 {
 "cat": "scripts",
@@ -1704,12 +1722,30 @@ window.PACK_INDEX = {
 },
 {
 "cat": "graph",
+"id": "api-coord-runner",
+"title": "API — coord-runner.py",
+"summary": "Prepare and run an opt-in, qualified multi-harness coordination contract.",
+"path": "docs/api/coord-runner.md",
+"kind": "api",
+"text": "api — coord-runner.py prepare and run an opt-in, qualified multi-harness coordination contract. api scripts generated refines api-index"
+},
+{
+"cat": "graph",
 "id": "api-coord_ids",
 "title": "API — coord_ids.py",
 "summary": "coord_ids.py - collision-proof identifiers, in ONE place.",
 "path": "docs/api/coord_ids.md",
 "kind": "api",
 "text": "api — coord_ids.py coord_ids.py - collision-proof identifiers, in one place. api scripts generated refines api-index"
+},
+{
+"cat": "graph",
+"id": "api-coord_transport",
+"title": "API — coord_transport.py",
+"summary": "Bounded POSIX ACP / Agy session IO. Native harness policy remains authoritative.",
+"path": "docs/api/coord_transport.md",
+"kind": "api",
+"text": "api — coord_transport.py bounded posix acp / agy session io. native harness policy remains authoritative. api scripts generated refines api-index"
 },
 {
 "cat": "graph",
@@ -1760,10 +1796,10 @@ window.PACK_INDEX = {
 "cat": "graph",
 "id": "api-index",
 "title": "API reference — the deployed script bundle",
-"summary": "Generated API reference for the pack's public surface — the deployed script bundle. 507 public functions across 37 modules, 48% carrying a docstring.",
+"summary": "Generated API reference for the pack's public surface — the deployed script bundle. 521 public functions across 39 modules, 47% carrying a docstring.",
 "path": "docs/api/index.md",
 "kind": "api",
-"text": "api reference — the deployed script bundle generated api reference for the pack's public surface — the deployed script bundle. 507 public functions across 37 modules, 48% carrying a docstring. api scripts generated index documents architecture"
+"text": "api reference — the deployed script bundle generated api reference for the pack's public surface — the deployed script bundle. 521 public functions across 39 modules, 47% carrying a docstring. api scripts generated index documents architecture"
 },
 {
 "cat": "graph",
@@ -2397,6 +2433,15 @@ window.PACK_INDEX = {
 },
 {
 "cat": "graph",
+"id": "design-multi-harness-runner",
+"title": "Design: bounded multi-harness runner",
+"summary": "An opt-in foreground runner prepares worktrees and runs admitted compiled prompts through a shared bounded ACP client or an explicit Agy stream adapter. Existing coordination leadership and event writers remain authoritative; qualification…",
+"path": "docs/design/multi-harness-runner.md",
+"kind": "design",
+"text": "design: bounded multi-harness runner an opt-in foreground runner prepares worktrees and runs admitted compiled prompts through a shared bounded acp client or an explicit agy stream adapter. existing coordination leadership and event writers remain authoritative; qualification and artifact evidence are reported separately from transport completion. coordination acp execution implements spec-multi-harness-launch-and-monitor refines design-message-layer depends-on spec-leader-designation"
+},
+{
+"cat": "graph",
 "id": "design-native-app-ui-skill-extension",
 "title": "Native app UI skill extension — Design",
 "summary": "Detailed design for making native client applications first-class in the AI-Forward UI skills. The design updates /ui-design and /visualize, adds a reusable native UI proof-pack template, adds native desktop archetype rows, and introduces…",
@@ -2799,6 +2844,15 @@ window.PACK_INDEX = {
 "path": "docs/plans/cross-platform-readiness.md",
 "kind": "doc",
 "text": "plan: make the pack's scripts, hooks, tools and skills work unchanged on windows and macos six phases, ranked by benefit ÷ cost, each landing with a control that was observed failing first: one interpreter resolver used everywhere; three lints (encoding on subprocess, newline on writers, no machine paths in tracked files) that mechanise the sweeps the pack skipped; a .gitattributes template and a registry-execution check in pack-doctor; skill commands rewritten without bash-only syntax; a windows and a macos ci job so the nt branches and the mac-only test failures are seen; and the five red tests made configuration-independent. awaiting approval before any file is changed. cross-platform windows macos plan controls ci implements investigation-cross-platform-readiness relates-to defect-classes"
+},
+{
+"cat": "graph",
+"id": "plan-multi-harness-runner",
+"title": "Multi-harness runner: specification, compatibility decision, design and implementation",
+"summary": "Executes the requested specify, design-slice and implement sequence. An independent, Grok-driven ACP compatibility spike is a decision dependency of transport selection; repository contract review can proceed alongside it.",
+"path": "docs/plans/multi-harness-runner.md",
+"kind": "doc",
+"text": "multi-harness runner: specification, compatibility decision, design and implementation executes the requested specify, design-slice and implement sequence. an independent, grok-driven acp compatibility spike is a decision dependency of transport selection; repository contract review can proceed alongside it. coordination execution-plan acp refines spec-message-layer depends-on spec-leader-designation depends-on kb-graph-and-loop-engineering"
 },
 {
 "cat": "graph",
@@ -3635,7 +3689,7 @@ window.PACK_INDEX = {
 "summary": "Repo-level privacy posture for the pack-evolution tooling: the CLI and doctor touch no personal data; project memory may incidentally record handles/names (no special-category data, mitigated by the scrub); the scrub is itself a privacy…",
 "path": "docs/security/privacy-review.md",
 "kind": "privacy-review",
-"text": "privacy review repo-level privacy posture for the pack-evolution tooling: the cli and doctor touch no personal data; project memory may incidentally record handles/names (no special-category data, mitigated by the scrub); the scrub is itself a privacy control; docs explorer navigation state remains local. the reviewed model-orchestration experiment was reverted before an executable provider-routing boundary was added. privacy linddun data-governance documents architecture documents forensic-review documents design-aiforward-cli documents design-coord-core-phase1 documents design-agent-coordination-doctrine documents design-typed-seam-requests documents design-leader-designation documents design-message-layer documents design-compile-readers documents design-board documents design-compile-stage documents design-coord-enforcement-phase2 documents design-coord-federation-phase3 documents design-pack-doctor documents design-project-memory documents design-rai-and-scrub documents design-docs-explorer-grounding-spatial-navigation"
+"text": "privacy review repo-level privacy posture for the pack-evolution tooling: the cli and doctor touch no personal data; project memory may incidentally record handles/names (no special-category data, mitigated by the scrub); the scrub is itself a privacy control; docs explorer navigation state remains local. the reviewed model-orchestration experiment was reverted before an executable provider-routing boundary was added. privacy linddun data-governance documents architecture documents forensic-review documents design-aiforward-cli documents design-coord-core-phase1 documents design-agent-coordination-doctrine documents design-typed-seam-requests documents design-leader-designation documents design-message-layer documents design-multi-harness-runner documents design-compile-readers documents design-board documents design-compile-stage documents design-coord-enforcement-phase2 documents design-coord-federation-phase3 documents design-pack-doctor documents design-project-memory documents design-rai-and-scrub documents design-docs-explorer-grounding-spatial-navigation"
 },
 {
 "cat": "graph",
@@ -3690,6 +3744,15 @@ window.PACK_INDEX = {
 "path": "docs/proof/liveness-and-track.md",
 "kind": "proof-pack",
 "text": "proof pack — progress liveness, the running track and the kick ladder (p3) forty-one red-first tests (plus the five of the xp seam) prove the heartbeat sampling, the fold's four states with the 299/301 s boundary, the not checked empty corpus, the kick ladder's cap and rung-2 request, the f-1 leader renew, and the f-3 label rule with its migration; the hook was executed against the documented claude code payload and against this session's own ledger. the hook costs 29 ms median per call (40 ms max) against a 100 ms nfr; a first 413 ms reading was the shell timing method measuring its own interpreter starts, recorded as a lesson. coordination liveness heartbeat track kick-ladder proof-pack p3 tested-by design-liveness-and-track tested-by spec-liveness-and-track"
+},
+{
+"cat": "graph",
+"id": "proof-multi-harness-runner",
+"title": "Proof: bounded multi-harness launch and monitoring",
+"summary": "Real git repositories and offline subprocess peers prove the deterministic runner's admission, worktree, authority, bounded transport and evidence paths. Independent review closed eight runner findings; live provider/profile qualification…",
+"path": "docs/proof/multi-harness-runner.md",
+"kind": "proof-pack",
+"text": "proof: bounded multi-harness launch and monitoring real git repositories and offline subprocess peers prove the deterministic runner's admission, worktree, authority, bounded transport and evidence paths. independent review closed eight runner findings; live provider/profile qualification remains separate from this implementation proof. coordination acp verification implements design-multi-harness-runner implements spec-multi-harness-launch-and-monitor"
 },
 {
 "cat": "graph",
@@ -3819,6 +3882,15 @@ window.PACK_INDEX = {
 },
 {
 "cat": "graph",
+"id": "spec-multi-harness-launch-and-monitor",
+"title": "Launch and monitor a multi-harness coordination plan",
+"summary": "A deterministic launch-and-monitor extension to execute-with-coordination prepares isolated worker sessions, enforces finite process lifetimes, preserves the designated Owner and reports separate transport and work-completion evidence.…",
+"path": "docs/specs/multi-harness-launch-and-monitor.md",
+"kind": "spec",
+"text": "launch and monitor a multi-harness coordination plan a deterministic launch-and-monitor extension to execute-with-coordination prepares isolated worker sessions, enforces finite process lifetimes, preserves the designated owner and reports separate transport and work-completion evidence. transport selection depends on an independently executed acp compatibility spike. coordination harness launch monitor acp refines proposal-owner-coordinator-subagent-coordination refines spec-message-layer depends-on spec-leader-designation depends-on spec-liveness-and-track relates-to plan-multi-harness-runner"
+},
+{
+"cat": "graph",
 "id": "spec-native-app-ui-skill-extension",
 "title": "Native app UI skill extension — Specification",
 "summary": "Specification for extending the AI-Forward UI skills so WPF, WinUI, Avalonia and other native client applications receive the same rigorous UX/UI reasoning as web surfaces. The spec defines the required native medium declaration, native…",
@@ -3860,7 +3932,7 @@ window.PACK_INDEX = {
 "summary": "Repo-level security posture for the pack-evolution tooling. The scrub handles potentially sensitive file content, while the Docs Explorer crosses committed-Markdown, filesystem, browser-rendering, and optional dependency boundaries; the…",
 "path": "docs/security/threat-model.md",
 "kind": "threat-model",
-"text": "threat model repo-level security posture for the pack-evolution tooling. the scrub handles potentially sensitive file content, while the docs explorer crosses committed-markdown, filesystem, browser-rendering, and optional dependency boundaries; the remaining tools are local and read-mostly. security threat-model documents architecture documents design-aiforward-cli documents design-coord-core-phase1 documents design-agent-coordination-doctrine documents design-typed-seam-requests documents design-leader-designation documents design-message-layer documents design-compile-readers documents design-board documents design-compile-stage documents design-coord-enforcement-phase2 documents design-coord-federation-phase3 documents design-pack-doctor documents design-project-memory documents design-rai-and-scrub documents design-docs-explorer-grounding-spatial-navigation"
+"text": "threat model repo-level security posture for the pack-evolution tooling. the scrub handles potentially sensitive file content, while the docs explorer crosses committed-markdown, filesystem, browser-rendering, and optional dependency boundaries; the remaining tools are local and read-mostly. security threat-model documents architecture documents design-aiforward-cli documents design-coord-core-phase1 documents design-agent-coordination-doctrine documents design-typed-seam-requests documents design-leader-designation documents design-message-layer documents design-multi-harness-runner documents design-compile-readers documents design-board documents design-compile-stage documents design-coord-enforcement-phase2 documents design-coord-federation-phase3 documents design-pack-doctor documents design-project-memory documents design-rai-and-scrub documents design-docs-explorer-grounding-spatial-navigation"
 },
 {
 "cat": "guides",

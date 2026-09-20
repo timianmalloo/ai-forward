@@ -14,6 +14,7 @@ links:
   - { to: design-typed-seam-requests, rel: documents }
   - { to: design-leader-designation, rel: documents }
   - { to: design-message-layer, rel: documents }
+  - { to: design-multi-harness-runner, rel: documents }
   - { to: design-compile-readers, rel: documents }
   - { to: design-board, rel: documents }
   - { to: design-compile-stage, rel: documents }
@@ -45,6 +46,10 @@ python3 docs/ai-forward-pack/scripts/docs-graph.py rollup --heading "Adversarial
 The pack-evolution capabilities are **local developer/CI tooling** — no network, no service, no privilege escalation. The trust boundaries that matter:
 
 - **scrub ← file content** (the one real boundary): `scrub.py` reads Markdown that may contain secrets/PII. Threats: leaking the found secret in its own output (I), damaging content on `--write` (T), path-traversal writes (E). All mitigated (see register).
+- **multi-harness-runner ← explicit Owner contract / selected installed process**: local
+  control composes harnesses that may contact their configured providers. Qualification
+  binds the actual checkout/configuration; existing Owner designation remains authoritative.
+  Process groups contain cooperative descendants, not a malicious harness escaping its group.
 - **CLI / doctor ← argv + pack-internal scripts**: no untrusted input (developer's own shell); child processes invoked argv-list, no `shell=True`; read-mostly. No boundary in the security sense.
 - **project-memory ← free-text entries**: information-disclosure risk (PII into git history) — mitigated by authoring guidance + the scrub, transferred to CI secret-scanning.
 - **Docs Explorer ← committed Markdown/frontmatter**: malformed or hostile content must
@@ -128,6 +133,13 @@ The pack-evolution capabilities are **local developer/CI tooling** — no networ
 | [design-leader-designation](design/leader-designation.md) | **I** leaks | **mitigate** — the blob holds session id, harness name, `primary|worktree`; no hostname, path or user; `_safe` strips control chars from output | `test_refusal_lines_are_safe` |
 | [design-leader-designation](design/leader-designation.md) | **D** pin-and-never-release | **mitigate** — TTL bounds the hold to 300 s + 30 s quiet | `test_reclaim_after_quiet_advances_epoch_by_one` |
 | [design-leader-designation](design/leader-designation.md) | **E** leadership as a lease grant | **prevent** — no code path reads the ref in `check`/`claim`; leadership grants nothing | `test_leader_ref_does_not_affect_check` |
+| [design-multi-harness-runner](design/multi-harness-runner.md) | Contract → process | Injection, elevation | Owner-supplied argv array; no shell or automatic installs; no worker-output commands |
+| [design-multi-harness-runner](design/multi-harness-runner.md) | Parent → worker | Identity spoofing | Explicit identity override; inherited leader-env test |
+| [design-multi-harness-runner](design/multi-harness-runner.md) | Lease → dispatch | Stale authority | Exact epoch+holder check with CAS renew; competing leader test |
+| [design-multi-harness-runner](design/multi-harness-runner.md) | Model text → ledger | Disclosure | Whitelisted operational fields only; secret sentinel absent from events |
+| [design-multi-harness-runner](design/multi-harness-runner.md) | Worker checkout → verifier | Substitution | Reject symlinks/traversal, verify actual branch and ancestry |
+| [design-multi-harness-runner](design/multi-harness-runner.md) | Same-user local files | Tampering | Accepted existing coordination trust boundary; hashes detect drift, not malicious same-user forgery |
+| [design-multi-harness-runner](design/multi-harness-runner.md) | Process → host | Escaped descendants | Accepted cooperative-process limitation; not a malicious-harness sandbox |
 | [design-native-app-ui-skill-extension](design/native-app-ui-skill-extension.md) | Generated assets from user input to provider | I: customer screenshots/real likeness leak to provider | mitigate | `/visualize` keeps existing VA9 hard line and adds native-app examples | Prompt fixture with customer screenshot request is blocked |
 | [design-native-app-ui-skill-extension](design/native-app-ui-skill-extension.md) | Public exemplar table to downstream users | T/I: license posture misrepresented | mitigate | Table includes license/reuse posture; GPL/non-standard reference-only | Static test/grep for `GPL-3.0` and `reference-only`; `NOASSERTION` flagged |
 | [design-native-app-ui-skill-extension](design/native-app-ui-skill-extension.md) | Native proof template to review gate | R: reviewer claims proof without evidence | mitigate | Schema requires evidence, red-observed status and confidence | Template fixture lacks evidence -> docs/test failure |
@@ -138,13 +150,14 @@ The pack-evolution capabilities are **local developer/CI tooling** — no networ
 | [design-rai-and-scrub](design/rai-and-scrub.md) | invocation args | **E** (path traversal to write outside repo) | mitigate | resolve + confine to provided paths; argv-list, no `shell=True`; default scope is `docs/`+`pack/` Markdown | `scrub_confined_to_given_paths` |
 | [design-rai-and-scrub](design/rai-and-scrub.md) | RAI doc | **R** (repudiation: no record of the stance) | mitigate | the committed RAI doc *is* the attributable record; linked from governance | n/a (artifact existence) |
 
-<!-- rolled up from 11 artifact(s) by docs-graph.py rollup on 2026-09-19 -->
+<!-- rolled up from 12 artifact(s) by docs-graph.py rollup on 2026-09-20 -->
 <!-- END GENERATED -->
 
 ## 3. Accepted-risk register (maintained by hand)
 
 | Accepted risk | Component | Rationale | Residual |
 |---|---|---|---|
+| Same-user forgery of local qualification or coordination files; deliberately escaped process groups | multi-harness-runner | Opt-in local runner composes existing same-user coordination; qualification is explicitly an Owner attestation and POSIX groups contain cooperative descendants | Never advertise native policy/hook enforcement or a malicious-process sandbox; requalify changed bindings and use manual briefs for unmet boundaries |
 | Regex scrub misses some PII/secrets (false negatives) | rai-and-scrub | stdlib-only constraint; NLP/entropy tools are dependencies the pack forbids | Real enforcement transferred to gitleaks/Presidio in CI (named in the RAI policy) |
 | CLI degrades if `pwsh` absent | aiforward-cli | PowerShell is the canonical sync engine; not all machines have it | Detect-and-print-manual-command; no silent failure |
 | Intermediate docs directory is swapped after admission but before traversal | docs-explorer-grounding-spatial-navigation | Requires concurrent same-user write access to the repository checkout; leaf reads still pin file identity and bytes | No privilege escalation. Revisit with descriptor-relative traversal if less-trusted scan roots are supported |

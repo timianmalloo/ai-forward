@@ -15,6 +15,7 @@ links:
   - { to: design-typed-seam-requests, rel: documents }
   - { to: design-leader-designation, rel: documents }
   - { to: design-message-layer, rel: documents }
+  - { to: design-multi-harness-runner, rel: documents }
   - { to: design-compile-readers, rel: documents }
   - { to: design-board, rel: documents }
   - { to: design-compile-stage, rel: documents }
@@ -50,6 +51,10 @@ python3 docs/ai-forward-pack/scripts/docs-graph.py rollup --heading "Privacy ana
 - **rai-and-scrub** — the scrub is a **privacy control** (redaction); it holds nothing and transmits nothing (purely local).
 - **Docs Explorer** — processes committed project documentation and local/session navigation
   state only; no remote analytics, model egress, or new personal-data category.
+- **multi-harness-runner** — user-authorized delegation sends compiled work to explicitly
+  selected installed harnesses under their existing provider policies. Private prompts stay
+  in common-git run metadata; tracked coordination events contain bounded operational fields,
+  not conversations or credential values. No automatic provider selection is introduced.
 - **model-orchestration (reverted)** — the standard and lookup were removed after review; no
   active pack instruction now routes repository/workspace payloads between providers.
 
@@ -71,8 +76,11 @@ downstream dispatch risk was retired by removing the capability, not by acceptin
 | source | Data flow / category | LINDDUN finding | Disposition | Control / rationale | Retention & rights path |
 |---|---|---|---|---|---|
 | [design-docs-explorer-grounding-spatial-navigation](design/docs-explorer-grounding-and-spatial-navigation.md) | Committed project docs + local search/selection/context state | **L/D** stable artifact IDs and selected context are visible in the same-device URL/history; no new personal-data category is introduced | mitigate | Same-origin local operation only; no analytics, model egress, cross-user store, or remote state. Existing no-secrets/no-PII rules for committed docs still apply. | Navigation state lasts only in browser history/session and is cleared by leaving the page or removing the hash; document retention follows Git governance. |
+| [design-multi-harness-runner](design/multi-harness-runner.md) | Contract and repository work → selected harness | Disclosure follows the selected harness/provider's existing policy | Explicit Owner-selected installed transport; no automatic provider routing or credential copying; bind effective policy |
+| [design-multi-harness-runner](design/multi-harness-runner.md) | Prompt bytes → run metadata | Local retention may contain repository work data | Private common-git directory; no raw prompt/conversation in tracked operational facts |
+| [design-multi-harness-runner](design/multi-harness-runner.md) | Worker metadata → ledger | Session linkability | Accepted for durable audit; only bounded operational fields, hashes and explicit unknown cost |
 
-<!-- rolled up from 1 artifact(s) by docs-graph.py rollup on 2026-09-19 -->
+<!-- rolled up from 2 artifact(s) by docs-graph.py rollup on 2026-09-20 -->
 <!-- END GENERATED -->
 
 ## 4. Accepted-risk register (maintained by hand)

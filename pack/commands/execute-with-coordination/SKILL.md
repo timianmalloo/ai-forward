@@ -22,9 +22,10 @@ CO-S0 applies first — the sentence is `reference/co-s0.md`. `audit-log.py star
 4. `docs/lessons/defect-classes.md` — the **CTX-\*** and **WT** classes.
 
 ## Input
-Optionally a plan id or path, a track subset, and a mode. No input: the newest plan in `docs/coordination/`. Two execution modes, and **the plan does not change between them** — only who reads it:
+Optionally a plan id or path, a track subset, and a mode. No input: the newest plan in `docs/coordination/`. Three execution modes, and **the plan does not change between them** — only who reads it:
 - **`--agents`** (default) — you spawn one sub-agent per track, each in its own worktree.
 - **`--brief`** — you emit one self-contained brief per track for a human to paste into a session they start themselves, possibly on a different harness. You then act as coordinator across those sessions through the plan and the seam log rather than through delegation.
+- **`--launch`** (opt-in POSIX pilot) — prepare isolated tracks and launch installed, explicitly qualified transports through `coord-runner.py`. Claude, Codex or another designated Owner can operate the same runner. Grok/Claude/Codex use a shared Agent Client Protocol client; Agy uses its separately qualified native stream. Read `reference/launch.md` before using this mode. Unknown instructions, hooks, trust or effective permissions stay blocked with a retained manual brief; ACP support alone does not qualify them.
 
 ## Cast
 - **Peers:** Orchestrator (coordinator). Track agents are the personas the plan names — they are *delegates*, not council members.
