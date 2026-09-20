@@ -2082,6 +2082,24 @@ window.PORTAL_DATA = {
         "summary": "Back-test of the /optimize-graph skill against twelve real prompts drawn from 750 committed audit entries across TheTerrace, meridian-finance-planner and..."
       },
       {
+        "id": "brief-s1-agy",
+        "type": "doc",
+        "title": "S1 delegation brief - track A (Antigravity, session s1-agy)",
+        "summary": "The five-part delegation contract (CO8) the coordinator coord-p3-p5-p8 mails to session s1-agy for the three-harness test: review the Antigravity surface doc's..."
+      },
+      {
+        "id": "brief-s1-codex",
+        "type": "doc",
+        "title": "S1 delegation brief - track C (Codex, session s1-codex)",
+        "summary": "The five-part delegation contract (CO8) the coordinator coord-p3-p5-p8 mails to session s1-codex for the three-harness test: review the Codex surface doc's..."
+      },
+      {
+        "id": "brief-s1-grok",
+        "type": "doc",
+        "title": "S1 delegation brief - track G (Grok Build, session s1-grok)",
+        "summary": "The five-part delegation contract (CO8) the coordinator coord-p3-p5-p8 mails to session s1-grok for the three-harness test: review the Grok surface doc's Hooks..."
+      },
+      {
         "id": "coordination-compile-stage",
         "type": "plan",
         "title": "Coordination plan - compile stage (P7): two tracks and a join",
@@ -3726,6 +3744,36 @@ window.PORTAL_DATA = {
         "from": "backtest-optimize-graph",
         "to": "kb-graph-and-loop-engineering",
         "rel": "depends-on"
+      },
+      {
+        "from": "brief-s1-agy",
+        "to": "proposal-owner-coordinator-subagent-coordination",
+        "rel": "relates-to"
+      },
+      {
+        "from": "brief-s1-agy",
+        "to": "scenario-s1-three-harness-delegation",
+        "rel": "implements"
+      },
+      {
+        "from": "brief-s1-codex",
+        "to": "proposal-owner-coordinator-subagent-coordination",
+        "rel": "relates-to"
+      },
+      {
+        "from": "brief-s1-codex",
+        "to": "scenario-s1-three-harness-delegation",
+        "rel": "implements"
+      },
+      {
+        "from": "brief-s1-grok",
+        "to": "proposal-owner-coordinator-subagent-coordination",
+        "rel": "relates-to"
+      },
+      {
+        "from": "brief-s1-grok",
+        "to": "scenario-s1-three-harness-delegation",
+        "rel": "implements"
       },
       {
         "from": "coordination-compile-stage",

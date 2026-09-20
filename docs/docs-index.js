@@ -3773,6 +3773,99 @@ window.DOCS_INDEX = {
       "sourceSha256": "3d52521a4ce7b4f2a93a790acc21f627aff351d577051bf8df8a4cc90c083cb8"
     },
     {
+      "id": "brief-s1-agy",
+      "path": "docs/coordination/briefs/s1-agy.md",
+      "title": "S1 delegation brief - track A (Antigravity, session s1-agy)",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2026-12-20",
+      "reviewSuggested": [],
+      "summary": "The five-part delegation contract (CO8) the coordinator coord-p3-p5-p8 mails to session s1-agy for the three-harness test: review the Antigravity surface doc's Hooks section and the Stop-event contradiction, write one decision note, raise one decision request to the Owner, send the done mail; deadline 1500 s with a named fallback.",
+      "tags": [
+        "coordination",
+        "brief",
+        "delegation",
+        "s1",
+        "agy"
+      ],
+      "links": [
+        {
+          "to": "scenario-s1-three-harness-delegation",
+          "rel": "implements"
+        },
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "12a526381b7af62426a53bc484727a0a35969b8940a7d7c49a45a5cae609a597"
+    },
+    {
+      "id": "brief-s1-codex",
+      "path": "docs/coordination/briefs/s1-codex.md",
+      "title": "S1 delegation brief - track C (Codex, session s1-codex)",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2026-12-20",
+      "reviewSuggested": [],
+      "summary": "The five-part delegation contract (CO8) the coordinator coord-p3-p5-p8 mails to session s1-codex for the three-harness test: review the Codex surface doc's missing path to the message layer, write one decision note, raise one decision request to the Owner, send the done mail; deadline 1500 s with a named fallback.",
+      "tags": [
+        "coordination",
+        "brief",
+        "delegation",
+        "s1",
+        "codex"
+      ],
+      "links": [
+        {
+          "to": "scenario-s1-three-harness-delegation",
+          "rel": "implements"
+        },
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "986edbefe6b469dca0db60c1e79e2b0dc23c335f20879429b79ff32bd4a6949b"
+    },
+    {
+      "id": "brief-s1-grok",
+      "path": "docs/coordination/briefs/s1-grok.md",
+      "title": "S1 delegation brief - track G (Grok Build, session s1-grok)",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2026-12-20",
+      "reviewSuggested": [],
+      "summary": "The five-part delegation contract (CO8) the coordinator coord-p3-p5-p8 mails to session s1-grok for the three-harness test: review the Grok surface doc's Hooks section against the installed hook config, write one decision note, raise one decision request to the Owner, send the done mail; deadline 1500 s with a named fallback.",
+      "tags": [
+        "coordination",
+        "brief",
+        "delegation",
+        "s1",
+        "grok"
+      ],
+      "links": [
+        {
+          "to": "scenario-s1-three-harness-delegation",
+          "rel": "implements"
+        },
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "b3106468ce78b44a6839260e57ad108e1c6638031a62f231f42b54f6c6d9c17c"
+    },
+    {
       "id": "defect-classes",
       "path": "docs/lessons/defect-classes.md",
       "title": "Defect-class register",
@@ -9046,5 +9139,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "aa817119a07a92ed23ca90828c96c0e3fbd0c069a0c26cffc0abe90bc5bcd114"
+  "graphSha256": "05bfdaa793b6aa93f665ec00b9a91c5a74a8a21c69e1c0cad983c2bde57ad92c"
 };

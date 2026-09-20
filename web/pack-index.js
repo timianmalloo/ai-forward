@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 254
+"count": 257
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 426,
+"total": 429,
 "items": [
 {
 "cat": "knowledge",
@@ -2484,6 +2484,33 @@ window.PACK_INDEX = {
 "path": "docs/backtest/optimize-graph/backtest.md",
 "kind": "doc",
 "text": "optimize-graph back-test — twelve real prompts replanned back-test of the /optimize-graph skill against twelve real prompts drawn from 750 committed audit entries across theterrace, meridian-finance-planner and healthwatch. reports modeled time and token indices alongside rubric-scored completeness and rigor, with an explicit measured-vs-modeled integrity split — session timings in those logs span days of human-paced work and are therefore not execution times. headline: completeness +14.8 pts, rigor +9.4 pts, and no case lost either. optimize-graph back-test evaluation execution-graph cost-vs-delivery depends-on kb-graph-and-loop-engineering relates-to audit-log"
+},
+{
+"cat": "graph",
+"id": "brief-s1-agy",
+"title": "S1 delegation brief - track A (Antigravity, session s1-agy)",
+"summary": "The five-part delegation contract (CO8) the coordinator coord-p3-p5-p8 mails to session s1-agy for the three-harness test: review the Antigravity surface doc's Hooks section and the Stop-event contradiction, write one decision note, raise…",
+"path": "docs/coordination/briefs/s1-agy.md",
+"kind": "doc",
+"text": "s1 delegation brief - track a (antigravity, session s1-agy) the five-part delegation contract (co8) the coordinator coord-p3-p5-p8 mails to session s1-agy for the three-harness test: review the antigravity surface doc's hooks section and the stop-event contradiction, write one decision note, raise one decision request to the owner, send the done mail; deadline 1500 s with a named fallback. coordination brief delegation s1 agy implements scenario-s1-three-harness-delegation relates-to proposal-owner-coordinator-subagent-coordination"
+},
+{
+"cat": "graph",
+"id": "brief-s1-codex",
+"title": "S1 delegation brief - track C (Codex, session s1-codex)",
+"summary": "The five-part delegation contract (CO8) the coordinator coord-p3-p5-p8 mails to session s1-codex for the three-harness test: review the Codex surface doc's missing path to the message layer, write one decision note, raise one decision…",
+"path": "docs/coordination/briefs/s1-codex.md",
+"kind": "doc",
+"text": "s1 delegation brief - track c (codex, session s1-codex) the five-part delegation contract (co8) the coordinator coord-p3-p5-p8 mails to session s1-codex for the three-harness test: review the codex surface doc's missing path to the message layer, write one decision note, raise one decision request to the owner, send the done mail; deadline 1500 s with a named fallback. coordination brief delegation s1 codex implements scenario-s1-three-harness-delegation relates-to proposal-owner-coordinator-subagent-coordination"
+},
+{
+"cat": "graph",
+"id": "brief-s1-grok",
+"title": "S1 delegation brief - track G (Grok Build, session s1-grok)",
+"summary": "The five-part delegation contract (CO8) the coordinator coord-p3-p5-p8 mails to session s1-grok for the three-harness test: review the Grok surface doc's Hooks section against the installed hook config, write one decision note, raise one…",
+"path": "docs/coordination/briefs/s1-grok.md",
+"kind": "doc",
+"text": "s1 delegation brief - track g (grok build, session s1-grok) the five-part delegation contract (co8) the coordinator coord-p3-p5-p8 mails to session s1-grok for the three-harness test: review the grok surface doc's hooks section against the installed hook config, write one decision note, raise one decision request to the owner, send the done mail; deadline 1500 s with a named fallback. coordination brief delegation s1 grok implements scenario-s1-three-harness-delegation relates-to proposal-owner-coordinator-subagent-coordination"
 },
 {
 "cat": "graph",
