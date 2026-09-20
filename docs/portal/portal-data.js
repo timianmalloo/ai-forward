@@ -3138,6 +3138,12 @@ window.PORTAL_DATA = {
         "summary": "The ruling register. Each `### Ruling NN — <title>` heading defines exactly one numbered decision of the Owner seat; prose anywhere cites it as `Ruling NN`...."
       },
       {
+        "id": "scenario-s1-three-harness-delegation",
+        "type": "plan",
+        "title": "Coordination plan - scenario S1: three interactive harness sessions (Grok Build, Codex, Antigravity) take real work from the Claude Code coordinator through the landed coordination layer",
+        "summary": "A 25-minute, three-track test in which the Claude Code session (Owner, Coordinator and leader) delegates one real documentation-freshness review each to the..."
+      },
+      {
         "id": "seam-p5-to-coordinator",
         "type": "doc",
         "title": "Seam P5 → coordinator: the `decide` front door, the two skills' contract sentences, the register line, the INSTALL delta, the doctrine sentence",
@@ -5904,6 +5910,31 @@ window.PORTAL_DATA = {
       {
         "from": "rulings",
         "to": "spec-owner-review",
+        "rel": "relates-to"
+      },
+      {
+        "from": "scenario-s1-three-harness-delegation",
+        "to": "coordination-p3-p5-p8",
+        "rel": "refines"
+      },
+      {
+        "from": "scenario-s1-three-harness-delegation",
+        "to": "design-message-layer",
+        "rel": "relates-to"
+      },
+      {
+        "from": "scenario-s1-three-harness-delegation",
+        "to": "note-20260919-cross-harness-smoke-test-readiness",
+        "rel": "relates-to"
+      },
+      {
+        "from": "scenario-s1-three-harness-delegation",
+        "to": "proposal-owner-coordinator-subagent-coordination",
+        "rel": "implements"
+      },
+      {
+        "from": "scenario-s1-three-harness-delegation",
+        "to": "spec-message-layer",
         "rel": "relates-to"
       },
       {

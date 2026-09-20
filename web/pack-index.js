@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 253
+"count": 254
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 425,
+"total": 426,
 "items": [
 {
 "cat": "knowledge",
@@ -3555,6 +3555,15 @@ window.PACK_INDEX = {
 "path": "docs/coordination/coordination-p3-xp.md",
 "kind": "plan",
 "text": "coordination plan - p3 liveness, the cross-platform residue, and the stale knowledge review (after p0/p1) three tracks after the p0/p1 landing: p3 progress liveness and the running track with the kick ladder (coord-core.py, hook adapters — so it waits for p1's coord-core changes); the cross-platform residue (documented commands that run in any shell, the three master-branch tests); and a review of the seven pack-evolution knowledge docs whose review dates passed on 2026-09-12 and have kept the docs workflow red since. disjoint paths; coordinator owns the shared surfaces and the join. coordination worktrees parallelism liveness cross-platform docs-freshness p3 implements proposal-owner-coordinator-subagent-coordination refines coordination-p0-p1 relates-to plan-cross-platform-readiness"
+},
+{
+"cat": "graph",
+"id": "scenario-s1-three-harness-delegation",
+"title": "Coordination plan - scenario S1: three interactive harness sessions (Grok Build, Codex, Antigravity) take real work from the Claude Code coordinator through the landed coordination layer",
+"summary": "A 25-minute, three-track test in which the Claude Code session (Owner, Coordinator and leader) delegates one real documentation-freshness review each to the operator's open Grok Build, Codex and Antigravity sessions through coord mail,…",
+"path": "docs/coordination/scenario-s1-three-harness-delegation.md",
+"kind": "plan",
+"text": "coordination plan - scenario s1: three interactive harness sessions (grok build, codex, antigravity) take real work from the claude code coordinator through the landed coordination layer a 25-minute, three-track test in which the claude code session (owner, coordinator and leader) delegates one real documentation-freshness review each to the operator's open grok build, codex and antigravity sessions through coord mail, typed seam requests, the board, decision requests and the kick ladder. the plan answers the operator's question with evidence: an idle session is not sufficient on any of the three harnesses - no hook fires while a session is idle, the hooks exit silently without agent_session in the harness process environment, and codex has no hooks at all. it names the smallest action per harness (a relaunch in its own worktree with agent_session exported, or one paste-ready prompt), which channels the test can honestly promote from observed-only, and the exact command sequence. coordination worktrees parallelism smoke-test s1 grok codex antigravity doorbell heartbeat harness-status implements proposal-owner-coordinator-subagent-coordination relates-to note-20260919-cross-harness-smoke-test-readiness refines coordination-p3-p5-p8 relates-to spec-message-layer relates-to design-message-layer"
 },
 {
 "cat": "graph",

@@ -7510,6 +7510,55 @@ window.DOCS_INDEX = {
       "sourceSha256": "91ce98d8cc9e1cadc6623525bee9ab8df465e4d142aa6a28bf98ee9a64a7a86f"
     },
     {
+      "id": "scenario-s1-three-harness-delegation",
+      "path": "docs/coordination/scenario-s1-three-harness-delegation.md",
+      "title": "Coordination plan - scenario S1: three interactive harness sessions (Grok Build, Codex, Antigravity) take real work from the Claude Code coordinator through the landed coordination layer",
+      "type": "plan",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2026-12-19",
+      "reviewSuggested": [],
+      "summary": "A 25-minute, three-track test in which the Claude Code session (Owner, Coordinator and leader) delegates one real documentation-freshness review each to the operator's open Grok Build, Codex and Antigravity sessions through coord mail, typed seam requests, the board, decision requests and the kick ladder. The plan answers the operator's question with evidence: an idle session is NOT sufficient on any of the three harnesses - no hook fires while a session is idle, the hooks exit silently without AGENT_SESSION in the harness process environment, and Codex has no hooks at all. It names the smallest action per harness (a relaunch in its own worktree with AGENT_SESSION exported, or one paste-ready prompt), which channels the test can honestly promote from observed-only, and the exact command sequence.",
+      "tags": [
+        "coordination",
+        "worktrees",
+        "parallelism",
+        "smoke-test",
+        "s1",
+        "grok",
+        "codex",
+        "antigravity",
+        "doorbell",
+        "heartbeat",
+        "harness-status"
+      ],
+      "links": [
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "implements"
+        },
+        {
+          "to": "note-20260919-cross-harness-smoke-test-readiness",
+          "rel": "relates-to"
+        },
+        {
+          "to": "coordination-p3-p5-p8",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-message-layer",
+          "rel": "relates-to"
+        },
+        {
+          "to": "design-message-layer",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "2816eea91fea77d57d7e604cdd8cf86ad6bd758e1a6d4a22543efe31c09f3efe"
+    },
+    {
       "id": "privacy-review",
       "path": "docs/security/privacy-review.md",
       "title": "Privacy Review",
@@ -8826,6 +8875,14 @@ window.DOCS_INDEX = {
       "artifactId": "coordination-p3-p5-p8"
     },
     {
+      "id": "surface-coordination-scenario-s1-three-harness-delegation",
+      "path": "docs/coordination/scenario-s1-three-harness-delegation.html",
+      "title": "Coordination plan - scenario S1: three interactive harness sessions (Grok Build, Codex, Antigravity) take real work from the Claude Code coordinator through the landed coordination layer",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "scenario-s1-three-harness-delegation"
+    },
+    {
       "id": "surface-coordination-coordination-compile-stage",
       "path": "docs/coordination/coordination-compile-stage.html",
       "title": "Coordination plan — compile stage (P7)",
@@ -8989,5 +9046,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "dda8296e2b0a75719295408ff71dfb6e278ae1d671e1a2e37adb746b4585c8af"
+  "graphSha256": "b1dffeea4c0245814711a676bf9e38d5f8622cc1ac90ed68ae59e2e8c0d33ef5"
 };
