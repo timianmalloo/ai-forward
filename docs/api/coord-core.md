@@ -213,7 +213,7 @@ Pure fold: events -> live leases. Replaying is idempotent (NFR-R1).
 derive-don't-store (DM7): `expires` is computed here (at + ttl) and never persisted.
 Two stored definitions of one quantity is the defect signature.
 
-### `check(root, path, me, now)`
+### `check(root, path, me, now, covers=…)`
 
 **Coverage gap** — no docstring in the source.
 

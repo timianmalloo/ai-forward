@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 276
+"count": 277
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 450,
+"total": 451,
 "items": [
 {
 "cat": "knowledge",
@@ -971,7 +971,7 @@ window.PACK_INDEX = {
 "summary": "coord-core.py - agent coordination, Phase 1 walking skeleton.",
 "path": "pack/scripts/coord-core.py",
 "kind": "script",
-"text": "coord-core.py coord-core.py - agent coordination, phase 1 walking skeleton. holds the record of intent and answers \"may this session touch this artifact?\" from it. append-only jsonl, one file per session; every piece of state is a fold over it. no daemon, no database, no dependency beyond the standard library (adr-0007). four controls here were observed failing on the un-fixed shape before they were trusted: log-a an append onto a file not ending in a newline fuses two records and loses both r4 a check that scanned nothing must not report \"free\" ctrl-port os.open without o_binary translates newlines on windows -- which also masked the log-a control, because a stray cr still terminates a line f8 a claim over the coordination record itself would lock the substrate design: docs/design/coord-core-phase1.md __init__ repo_root checkout_top resolve_root _norm _literal_segments overlaps excepted lease_covers make_event _next_seq append_event read_events fold check _safe render append_decision read_decisions append_record request_log_path read_request_events fold_requests blob_sha current_blob annotate_requests request_doctor_lines request_metrics lease_overlap_lines _git _git_status leader_validate leader_read leader_state leader_decide refuse leader_write leader_metrics _leader_lines leader_doctor_line cmd_leader refused unique_commits default_branch commits_ahead_of_default staged_paths _identity session_id_error _build_parser entry_fingerprint conservation_lost merge_register _read_jsonl cmd_merge_register load_registry classify regen_command resolve_interpreter _canonical_project pack_defaults _dirty_paths verify_regen_command cmd_classify_init record_regen_owed regen_owed clear_regen_owed _reject_path render_harness_capability _relativise _patch_paths _physical_spelling _native_paths parse_hook_request detect_harness hook_decision_of hook_response_is_valid hook_response _not_checked cmd_hook cmd_precommit cmd_guard _worktree_key _worktree_label active_sessions session_contract_path _role_token _strip_cell contract_ownership infer_session_roles owner_rows_for_path collaboration_findings cmd_session_list cmd_collaborate _parse_deadline _request_twin _deadline_text cmd_request _slug worktree_inventory worktree_is_clean base_commit classify_removals worktree_safety cmd_worktree session_tree_kind wt4_exception_rate cmd_session cmd_metrics heartbeat_scratch_path _fresh_scratch _read_scratch _write_scratch _renew_leader_if_holder heartbeat_tick _has_progress track_fold worktree_mtimes _track_render_rows cmd_track _load_mail cmd_kick refused liveness_metrics heartbeat_doctor_line cmd_log_portable cmd_install _install_merge_driver _write_conflict read cmd_merge_derived cmd_regen driver_status driver_path_status cmd_doctor cmd_plugin_emit _print_settings_entry native_hook_config main"
+"text": "coord-core.py coord-core.py - agent coordination, phase 1 walking skeleton. holds the record of intent and answers \"may this session touch this artifact?\" from it. append-only jsonl, one file per session; every piece of state is a fold over it. no daemon, no database, no dependency beyond the standard library (adr-0007). four controls here were observed failing on the un-fixed shape before they were trusted: log-a an append onto a file not ending in a newline fuses two records and loses both r4 a check that scanned nothing must not report \"free\" ctrl-port os.open without o_binary translates newlines on windows -- which also masked the log-a control, because a stray cr still terminates a line f8 a claim over the coordination record itself would lock the substrate design: docs/design/coord-core-phase1.md __init__ repo_root checkout_top resolve_root _norm _literal_segments overlaps excepted lease_covers make_event _next_seq append_event read_events fold check _safe render append_decision read_decisions append_record request_log_path read_request_events fold_requests blob_sha current_blob annotate_requests request_doctor_lines request_metrics lease_overlap_lines _git _git_status leader_validate leader_read leader_state leader_decide refuse leader_write leader_metrics _leader_lines leader_doctor_line cmd_leader refused unique_commits default_branch commits_ahead_of_default staged_paths _identity session_id_error _build_parser entry_fingerprint conservation_lost merge_register _read_jsonl cmd_merge_register load_registry classify regen_command resolve_interpreter _canonical_project pack_defaults _dirty_paths verify_regen_command cmd_classify_init record_regen_owed regen_owed clear_regen_owed _reject_path render_harness_capability _relativise _patch_paths _physical_spelling _native_paths _native_lease_covers physical parse_hook_request detect_harness hook_decision_of hook_response_is_valid hook_response _not_checked cmd_hook cmd_precommit cmd_guard _worktree_key _worktree_label active_sessions session_contract_path _role_token _strip_cell contract_ownership infer_session_roles owner_rows_for_path collaboration_findings cmd_session_list cmd_collaborate _parse_deadline _request_twin _deadline_text cmd_request _slug worktree_inventory worktree_is_clean base_commit classify_removals worktree_safety cmd_worktree session_tree_kind wt4_exception_rate cmd_session cmd_metrics heartbeat_scratch_path _fresh_scratch _read_scratch _write_scratch _renew_leader_if_holder heartbeat_tick _has_progress track_fold worktree_mtimes _track_render_rows cmd_track _load_mail cmd_kick refused liveness_metrics heartbeat_doctor_line cmd_log_portable cmd_install _install_merge_driver _write_conflict read cmd_merge_derived cmd_regen driver_status driver_path_status cmd_doctor cmd_plugin_emit _print_settings_entry native_hook_config main"
 },
 {
 "cat": "scripts",
@@ -3834,6 +3834,15 @@ window.PACK_INDEX = {
 "path": "docs/proof/native-coordination-repair.md",
 "kind": "proof-pack",
 "text": "native coordination repair and profile requalification the two transport defects are repaired and all 17 release gates pass. five fresh live attempts still qualify zero profiles: grok has an early session update, claude/codex lack an effective ownership veto, and agy denies the allowed-write canary. coordination acp qualification implements plan-native-coordination-repair implements design-multi-harness-runner relates-to proof-local-coordination-profiles"
+},
+{
+"cat": "graph",
+"id": "proof-native-ownership-enforcement",
+"title": "Native ownership guard implementation and actual-profile proof",
+"summary": "Reviewed native file-edit guards are implemented. A fresh Claude profile permits its ordinary Write and refuses an active leased Write; Codex hook discovery remains blocked. No unattended profile is attested.",
+"path": "docs/proof/native-ownership-enforcement.md",
+"kind": "proof-pack",
+"text": "native ownership guard implementation and actual-profile proof reviewed native file-edit guards are implemented. a fresh claude profile permits its ordinary write and refuses an active leased write; codex hook discovery remains blocked. no unattended profile is attested. coordination hooks qualification claude codex implements design-native-ownership-enforcement refines proof-native-coordination-repair implements spec-multi-harness-launch-and-monitor"
 },
 {
 "cat": "graph",

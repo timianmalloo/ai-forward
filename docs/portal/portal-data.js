@@ -3242,6 +3242,12 @@ window.PORTAL_DATA = {
         "summary": "The two transport defects are repaired and all 17 release gates pass. Five fresh live attempts still qualify zero profiles: Grok has an early session update,..."
       },
       {
+        "id": "proof-native-ownership-enforcement",
+        "type": "proof-pack",
+        "title": "Native ownership guard implementation and actual-profile proof",
+        "summary": "Reviewed native file-edit guards are implemented. A fresh Claude profile permits its ordinary Write and refuses an active leased Write; Codex hook discovery..."
+      },
+      {
         "id": "proposal-active-multi-harness-coordination",
         "type": "doc",
         "title": "Proposal: ledger and bus — active multi-harness coordination",
@@ -6143,6 +6149,21 @@ window.PORTAL_DATA = {
         "from": "proof-native-coordination-repair",
         "to": "proof-local-coordination-profiles",
         "rel": "relates-to"
+      },
+      {
+        "from": "proof-native-ownership-enforcement",
+        "to": "design-native-ownership-enforcement",
+        "rel": "implements"
+      },
+      {
+        "from": "proof-native-ownership-enforcement",
+        "to": "proof-native-coordination-repair",
+        "rel": "refines"
+      },
+      {
+        "from": "proof-native-ownership-enforcement",
+        "to": "spec-multi-harness-launch-and-monitor",
+        "rel": "implements"
       },
       {
         "from": "proposal-active-multi-harness-coordination",

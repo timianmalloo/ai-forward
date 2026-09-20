@@ -69,6 +69,10 @@ The surrounding agent remains LOA Tool-Mediated Constructor; this seam is T0 val
    relative paths against actual hook process cwd and then the linked checkout root;
    do not trust payload cwd to redirect the check. Existing Claude/Copilot paths remain
    supported. Reject traversal/absolute paths outside the assigned checkout.
+   Normalize both edit paths and lease patterns/exceptions in the physical namespace.
+   A future filename's case collision uses an actual directory-entry/samefile observation;
+   distinct case-sensitive names are preserved. If an empty directory cannot answer,
+   conservatively refuse only the ambiguous lease collision, not all new files.
 3. `coord hook --config --host claude|codex` emits the small JSON snippet to merge into
    `.claude/settings.json` or `.codex/hooks.json`. It writes no file or trust state. The
    script command locates the deployed core from the current git root, resolves Python

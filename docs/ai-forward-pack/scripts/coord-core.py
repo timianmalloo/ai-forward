@@ -315,7 +315,7 @@ def fold(events, now):
 
 # --- the decision -----------------------------------------------------------
 
-def check(root, path, me, now):
+def check(root, path, me, now, covers=None):
     if not me:
         return {"decision": "not_checked", "path": path, "files_scanned": 0,
                 "events_scanned": 0, "code": "COORD-NOT-CHECKED-IDENTITY",
@@ -337,7 +337,7 @@ def check(root, path, me, now):
                 "reason": "0 files scanned - there is no record here, so nothing was checked"}
 
     for lease in fold(events, now).values():
-        if lease["session"] != me and lease_covers(lease, path):
+        if lease["session"] != me and (covers or lease_covers)(lease, path):
             return {"decision": "deny", "path": path, "files_scanned": files,
                     "events_scanned": len(events), "code": "COORD-REFUSED",
                     "holder": lease["agent"], "session": lease["session"],
@@ -2106,6 +2106,38 @@ def _native_paths(path, repo, cwd):
     return paths
 
 
+def _native_lease_covers(lease, path, repo):
+    """Compare both sides of the native boundary in the checkout's physical namespace.
+
+    Existing lease prefixes may themselves use a symlink or a case alias. For future
+    names, use an observed case probe in the target directory, never a platform guess.
+    An empty directory cannot answer: only a case-ambiguous collision is then refused.
+    """
+    base = Path(repo).resolve()
+    def physical(pattern):
+        return _physical_spelling((base / pattern).resolve()).relative_to(base).as_posix()
+    canonical = dict(lease, path=physical(lease["path"]),
+                     **{"except": [physical(p) for p in lease.get("except", ())]})
+    exact = lease_covers(canonical, path)
+    folded = dict(canonical, path=canonical["path"].casefold(),
+                  **{"except": [p.casefold() for p in canonical["except"]]})
+    insensitive = lease_covers(folded, path.casefold())
+    if exact == insensitive:
+        return exact
+    parent = (base / path).parent
+    while not parent.is_dir() and parent != base:
+        parent = parent.parent
+    entries = list(parent.iterdir())
+    names = {entry.name for entry in entries}
+    for entry in entries:
+        alternate = entry.with_name(entry.name.swapcase())
+        if alternate.name != entry.name:
+            case_sensitive = (alternate.name in names or not alternate.exists()
+                              or not os.path.samefile(entry, alternate))
+            return exact if case_sensitive else insensitive
+    return exact or insensitive
+
+
 def parse_hook_request(event, repo, host=None, cwd=None):
     """Normalise any harness's PreToolUse envelope to [(tool_name, repo_relative_path)].
 
@@ -2252,12 +2284,14 @@ def cmd_hook(root, session, agent, now, stdin_text, repo=None, host=None, cwd=No
         return hook_response("allow", "coordination: no write to a coordinated path")
 
     worst = None
+    native = host is not None or any(str(name).lower() == "apply_patch" for name, _ in calls)
+    covers = (lambda lease, path: _native_lease_covers(lease, path, repo or root)) if native else None
     for path in paths:
         bad = _reject_path(str(path))                   # B4 tampering
         if bad:
             return _not_checked(bad, host)
         # B4 spoofing: identity is the ENVIRONMENT's, never the payload's sessionId.
-        decision = check(root, str(path), session, now)
+        decision = check(root, str(path), session, now, covers=covers)
         append_decision(root, session, agent, path, decision,
                         {"hook_host": host, "hook_cwd": str(Path(cwd or repo or root).resolve())}
                         if host else None)

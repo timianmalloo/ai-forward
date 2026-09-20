@@ -798,7 +798,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "bc0b4c42d702d5f4daaefeb1255d3199984fed63fcd8e678b94674eb5d976bc2"
+      "sourceSha256": "228a9efce9204acf99b198d0e68d3fae18f3d0ee6c768fb8d6e832aedfbe9c97"
     },
     {
       "id": "api-coord-decide",
@@ -3618,7 +3618,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "bd4491293031584a21088c1b3fdf631b49b6270111e44e8cbb30e0c7c6e15a5a"
+      "sourceSha256": "21523a259ff4bfef6577e779eec666dd3cf0ed49e8b2ec617fb5420050b05894"
     },
     {
       "id": "design-owner-review",
@@ -4182,7 +4182,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b1e603181c570edfcb417ae5b3e60d85a005857287826fe617580b24bfe3aed3"
+      "sourceSha256": "86bd6b1dabadbbd790e6ba8292b83173c9db3b8cfaf06dfaebb2eff516a8a488"
     },
     {
       "id": "docs-index",
@@ -8548,6 +8548,41 @@ window.DOCS_INDEX = {
       "sourceSha256": "39525c4005a713f8d054cf0e6d61da0e01cbf27ec79ac87327f15eaffcc7d038"
     },
     {
+      "id": "proof-native-ownership-enforcement",
+      "path": "docs/proof/native-ownership-enforcement.md",
+      "title": "Native ownership guard implementation and actual-profile proof",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2026-12-20",
+      "reviewSuggested": [],
+      "summary": "Reviewed native file-edit guards are implemented. A fresh Claude profile permits its ordinary Write and refuses an active leased Write; Codex hook discovery remains blocked. No unattended profile is attested.",
+      "tags": [
+        "coordination",
+        "hooks",
+        "qualification",
+        "claude",
+        "codex"
+      ],
+      "links": [
+        {
+          "to": "design-native-ownership-enforcement",
+          "rel": "implements"
+        },
+        {
+          "to": "proof-native-coordination-repair",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-multi-harness-launch-and-monitor",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "46b75a71e0dbd8832c8317653544c2f61e4b75e786301aec52603fc6beee1fcf"
+    },
+    {
       "id": "spec-acp-coordination",
       "path": "docs/specs/acp-coordination.md",
       "title": "ACP for multi-harness coordination — capability-qualified sessions",
@@ -9830,5 +9865,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "d5dac1f550d028d31870b83b14c9153a02c294ed305ff5c1e73d1ef4a10293e2"
+  "graphSha256": "0d4aecfaa5b83d947fc0958f76682e971fcfc07e57e5a247e8166f5564005c10"
 };

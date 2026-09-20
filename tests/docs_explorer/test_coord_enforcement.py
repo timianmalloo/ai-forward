@@ -289,6 +289,39 @@ class NativeHookTests(GitCase):
         patch = self.payload("*** Begin Patch\n*** Add File: " + path + "\n+new\n*** End Patch")
         self.assertEqual("deny", self.decision(patch, "codex")["permissionDecision"])
 
+    def test_native_lease_case_alias_is_symmetric_including_future_files(self):
+        insensitive = (self.repo / "HELD.TXT").exists() and os.path.samefile(self.repo / "held.txt", self.repo / "HELD.TXT")
+        self.run_cli("release", "--path", "held.txt", "--wi", "owner-work", session="owner")
+        for lease, target, operation in [("HELD.TXT", "held.txt", "Delete"), ("future.txt", "FUTURE.TXT", "Add")]:
+            with self.subTest(lease=lease):
+                self.run_cli("claim", "--wi", "owner-work", "--path", lease, session="owner")
+                body = "\n+new" if operation == "Add" else ""
+                payload = self.payload("*** Begin Patch\n*** " + operation + " File: " + target + body + "\n*** End Patch")
+                expected = "deny" if insensitive else "allow"
+                self.assertEqual(expected, self.decision(payload, "codex")["permissionDecision"])
+                self.run_cli("release", "--path", lease, "--wi", "owner-work", session="owner")
+
+    def test_native_lease_symlink_alias_is_checked_in_both_directions(self):
+        (self.repo / "alias").symlink_to(self.repo / "held.txt")
+        self.run_cli("release", "--path", "held.txt", "--wi", "owner-work", session="owner")
+        self.run_cli("claim", "--wi", "owner-work", "--path", "alias", session="owner")
+        patch = self.payload("*** Begin Patch\n*** Delete File: held.txt\n*** End Patch")
+        self.assertEqual("deny", self.decision(patch, "codex")["permissionDecision"])
+
+    def test_native_directory_lease_preserves_its_explicit_exception(self):
+        (self.repo / "scope").mkdir()
+        (self.repo / "scope/free.txt").write_text("free")
+        self.run_cli("claim", "--wi", "directory", "--path", "scope/**",
+                     "--except", "scope/free.txt", session="owner")
+        patch = self.payload("*** Begin Patch\n*** Delete File: scope/free.txt\n*** End Patch")
+        self.assertEqual("allow", self.decision(patch, "codex")["permissionDecision"])
+
+    def test_empty_directory_case_ambiguity_refuses_a_possible_lease_collision(self):
+        (self.repo / "empty").mkdir()
+        self.run_cli("claim", "--wi", "owner-work", "--path", "empty/future", session="owner")
+        patch = self.payload("*** Begin Patch\n*** Add File: empty/FUTURE\n+new\n*** End Patch")
+        self.assertEqual("deny", self.decision(patch, "codex")["permissionDecision"])
+
     def test_unreadable_and_non_object_ledger_state_denies_instead_of_crashing(self):
         log = self.repo / ".agents/log/owner.jsonl"
         original = log.read_text()

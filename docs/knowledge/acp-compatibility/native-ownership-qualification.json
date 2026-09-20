@@ -1,0 +1,157 @@
+{
+  "schema": "native-ownership-qualification/1",
+  "base": "cceb3f4474d200c9ab597b6f6e01895281d64abb",
+  "unattended_enabled": false,
+  "guard_sha256": "20be2379a39eb0c951a028e461a18f118f6f10233e3713e88c3c3e2605d40b15",
+  "claude": {
+    "session": "guard-qual-claude",
+    "version": "ACP0.79.0 / SDK0.3.274",
+    "raw_sha256": "d9d5caa498ce1f62f0598242cac584bf5ff7f69ff1e1921e76c5b40b963dd19a",
+    "result": {
+      "outcome": "complete",
+      "code": "complete",
+      "session_id": "142b568a-fdff-4be5-9ba9-67d25dc55fbb",
+      "turns_completed": 3,
+      "stdout_bytes": 150680,
+      "stderr_bytes": 842,
+      "duration_seconds": 31.362866,
+      "permission_requests": 0,
+      "cleanup_error": null,
+      "reported_version": "0.79.0",
+      "progress_updates": 154,
+      "extension_notifications": 3,
+      "native_denials": 0
+    },
+    "profile_unchanged": true,
+    "observer_protocol_changes": false,
+    "configuration_binding": {
+      "local": {
+        "AGENTS.md": "9c0609cfdac0db78669f23e52688cd18e457647d621593a0992fcbb3a544c6b8",
+        "CLAUDE.md": "dab890b2e50c4858bba54be530ec69f57f63ce9faf3e95a9791dc571611740f7",
+        ".claude/settings.json": "f4af1153f3b22929ae6c8dfe8d3e8772d4b2179ab928f9611bde41c29e1294f1",
+        ".claude/settings.local.json": null,
+        ".grok/config.toml": null,
+        ".grok/hooks/ai-forward.json": "e6b4d799887d4603741b2b1d312128751524ba4f7fb14b36ba981aed559f70b3",
+        ".grok/rules/grok-surface.md": "a82fb1c610969a4f3e7a13457c8156a337e5a9a185db86c98b84a8eb6634a823",
+        ".agents/hooks.json": "dc0d3465e1ac6cf68c9a8a4cabcdf478ee9a4a435bf82d8aacc6c33ef53048a0",
+        ".agents/rules/agy-surface.md": "9e62e37b1edcb20323415978cfd7184cd675ae57ee2315cde415b46b888ce92b",
+        "docs/ai-forward-pack/scripts/coord_transport.py": "82e415541ec5efd0ed0cf3ca39a754bff9d2878558803c49c224fc0782cb598d",
+        "docs/ai-forward-pack/scripts/coord-core.py": "20be2379a39eb0c951a028e461a18f118f6f10233e3713e88c3c3e2605d40b15",
+        ".codex/hooks.json": "99387978003d26d7c3324fc16194bdcac44e259c2449f6d5346bf49781063d7d"
+      },
+      "user": {
+        "~/.codex/config.toml": "de28eaa205e27c70d801c0ef258a91e735cfe86a4625d8bd41474df08f6c9e75",
+        "~/.claude/settings.json": "ad80dd66c3b639909cabb16ddcfa629a176a5dfe602c384261f33725d56298a8",
+        "~/.claude/settings.local.json": "30aa991e8836444dff84a69363796573aef57ac5d89223c51d8211abc0b8e40e",
+        "~/.grok/config.toml": "f88564e22221915c3cee296e844d8642cf6aa9fb3b3b53da1692bca2bf386bba",
+        "~/.grok/trusted_folders.toml": "6f443307a21ff57dc27aebde1f6fcee0d06251ef978c838f755788abe60f359a",
+        "~/.gemini/config/config.json": "64248bad492f27b083a853020f0cfff92d8e44b4774b9535da521615f9c605f5",
+        "~/.gemini/config/hooks.json": "90b30a531ca844f320777dc328b65bef9292ac908fa741a4b6ddb09874d997d5",
+        "~/.gemini/antigravity-cli/settings.json": "d3854f337b272d762d0ce5887c9787ac61c480d8438fedb09247bd5d10bf0525"
+      },
+      "executable": "9d73d1f0f121fb96cc8badb28c22d5bff02d8582eb2e40360a81c189e1b9422a"
+    },
+    "prompt_starts": [
+      1,
+      2,
+      3
+    ],
+    "native_edit_outcomes": [
+      {
+        "title": "Write .profile-qualification/receipt.txt",
+        "status": "completed"
+      },
+      {
+        "title": "Write .profile-qualification/leased.txt",
+        "status": "failed",
+        "native_refusal": true
+      }
+    ],
+    "hook_receipts": [
+      {
+        "session": "guard-qual-claude",
+        "hook_host": "claude",
+        "kind": "allowed",
+        "path": ".profile-qualification/receipt.txt",
+        "at": 1789947567.09866,
+        "code": null,
+        "actual_cwd_matches_worker": true
+      },
+      {
+        "session": "guard-qual-claude",
+        "hook_host": "claude",
+        "kind": "refused",
+        "path": ".profile-qualification/leased.txt",
+        "at": 1789947577.530602,
+        "code": "COORD-REFUSED",
+        "actual_cwd_matches_worker": true
+      }
+    ],
+    "workspace_receipt": {
+      "exists": true,
+      "sha256": "1ad5963fbc51c53157c1c1dc1f552b6da9bc0864b03c5d5a68dcc28fadacaa3f"
+    },
+    "lease_canary": {
+      "changed": false,
+      "sha256": "b28345c980414e4a0fe4b0ebbb7afc485f85ffdc32d815e1210aa54969edf8e9",
+      "rule_check": {
+        "decision": "deny",
+        "path": ".profile-qualification/leased.txt",
+        "files_scanned": 52,
+        "events_scanned": 396,
+        "code": "COORD-REFUSED",
+        "holder": "coord-native-enforcement",
+        "session": "coord-native-enforcement",
+        "wi": "native-profile-qualification",
+        "expires_in": 239,
+        "reason": "an unexpired lease overlaps your pattern"
+      },
+      "ttl_seconds": 240,
+      "claim_granted": true,
+      "released": true
+    },
+    "native_write_ownership": "observed-enforcing",
+    "unattended_ready": false,
+    "remaining": [
+      "Owner Stop veto",
+      "active-tool cancellation",
+      "reviewed handback/join",
+      "other native edit-tool runtime counterparts"
+    ]
+  },
+  "codex": {
+    "version": "ACP1.12.0 / CLI0.155.1",
+    "session": "guard-qual-codex",
+    "hook_config_sha256": "99387978003d26d7c3324fc16194bdcac44e259c2449f6d5346bf49781063d7d",
+    "inventory_raw_sha256": "c948916c72d8ac70257696d8ffc1fe7809677c219899790ccfb683b6deb1d7cc",
+    "inventory": {
+      "cwd_matches_worker": true,
+      "hooks": [],
+      "warnings": [],
+      "errors": []
+    },
+    "tui": {
+      "pretooluse_installed": 0,
+      "pretooluse_active": 0,
+      "raw_sha256": "52714f29dc113f9f954747ba4c63e8c18a9bd74a82fd8ac0aa86e6a32a5d586f"
+    },
+    "project_config_control": "empty project config did not change inventory; removed",
+    "adapter_policy_control": {
+      "raw_sha256": "349aff92c131f4b781130db1d698efe54d03bb1a9dc0ad52d14cdb31567cd073",
+      "project_trust_override_requested": true,
+      "effective_equivalence_established": false,
+      "hooks": []
+    },
+    "model_turns_started": 0,
+    "native_hook_trust_changed": false,
+    "native_write_ownership": "unqualified",
+    "unattended_ready": false,
+    "blocker": "expected native hook absent from inventory; discovery cause unresolved"
+  },
+  "cost": {
+    "native_model_duration_seconds": 31.362866,
+    "native_model_output_bytes": 151522,
+    "tokens": "not recorded",
+    "spend": "not recorded"
+  }
+}
