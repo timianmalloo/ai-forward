@@ -1,0 +1,46 @@
+{
+  "driver": {
+    "process": {
+      "returncode": 0,
+      "timed_out": false,
+      "limit_exceeded": null,
+      "contained": true,
+      "containment_error": null,
+      "cleanup_error": null,
+      "containment_mode": "posix-process-group-rlimit-as",
+      "process_limit_enforced": false,
+      "aggregate_memory_limit_enforced": false
+    },
+    "result": {
+      "text": "Running the authorized probe once and waiting for it to finish.The probe is still running. Waiting for it to finish.```\n{\"harness\": \"grok\", \"status\": \"observed\", \"steps\": [\"initialize\", \"authenticate\", \"new\", \"first\", \"second\", \"read\", \"permission\", \"cancel\", \"load\"], \"error\": null, \"seconds\": 56.288}\n{\"harness\": \"claude\", \"status\": \"observed\", \"steps\": [\"initialize\", \"new\", \"first\", \"second\", \"read\", \"permission\", \"cancel\", \"load\"], \"error\": null, \"seconds\": 17.686}\n{\"harness\": \"codex\", \"status\": \"observed\", \"steps\": [\"initialize\", \"new\", \"first\", \"second\", \"read\", \"permission\", \"cancel\", \"load\"], \"error\": null, \"seconds\": 50.22}\n{\"harness\": \"agy\", \"status\": \"observed\", \"steps\": [\"first\", \"second\", \"read\", \"permission\", \"cancel\"], \"error\": null, \"seconds\": 48.676}\n```",
+      "stopReason": "end_turn",
+      "sessionId": "01a0bf50-b1e4-7330-abde-0ba638017c3a",
+      "num_turns": 3,
+      "total_cost_usd": 0.0337688,
+      "usage": {
+        "input_tokens": 28635,
+        "cache_read_input_tokens": 72832,
+        "cache_creation_input_tokens": 0,
+        "output_tokens": 939,
+        "reasoning_tokens": 604,
+        "total_tokens": 102406
+      }
+    }
+  },
+  "retry-driver": {
+    "process": {
+      "returncode": 1,
+      "timed_out": false,
+      "limit_exceeded": null,
+      "contained": true,
+      "containment_error": null,
+      "cleanup_error": null,
+      "containment_mode": "posix-process-group-rlimit-as",
+      "process_limit_enforced": false,
+      "aggregate_memory_limit_enforced": false
+    },
+    "result": {},
+    "diagnostic": "Error: max turns reached",
+    "interpretation": "Driver reached its max-turn cap; target control result files completed and were inspected independently. No successful final driver response is claimed."
+  }
+}

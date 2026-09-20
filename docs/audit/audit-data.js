@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-20T13:54:35Z",
+  "generated": "2026-09-20T15:23:11Z",
   "audit": [
     {
       "actor": null,
@@ -6947,6 +6947,177 @@ window.AUDIT_DATA = {
       "done_when": "each Antigravity channel observed live or its cause named from the host docs; fixes red-first; landed",
       "tier": "T1",
       "fan_out": 0
+    },
+    {
+      "id": "al-01M2ZMV2TJ5K094ERDFTJ69H8Z",
+      "shortname": "Specify multi-harness/multi-agent coordination using a shared Agent Clie…",
+      "datetime": "2026-09-20T14:52:05Z",
+      "session": "prompt-compile",
+      "prompt": "Specify multi-harness/multi-agent coordination using a shared Agent Client Protocol client underneath execute-with-coordination, retaining pack ownership, leadership, decision rulings, audit and completion verification. Spike Grok, Claude Code, Codex and Antigravity from Grok for session creation, two-way prompts, progress, permissions, cancellation, completion evidence and instruction/hook preservation. Deliver Markdown and HTML spec, measured capability matrix and recommendation. No production implementation in this track.",
+      "summary": "raw prompt logged for compilation",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2ZN4P4YEVBHYZRT4QWSD5H5",
+      "shortname": "compile-Specify multi-harness/multi-agent coordination using a shared Agent Clie…",
+      "datetime": "2026-09-20T14:57:20Z",
+      "session": "acp-spec-codex",
+      "prompt": "Save the brief between the markers as <brief-file>, then run (one line, the brief read from the file):\ncodex exec --json -o <last-message-file> --output-schema <schema-file> --worktree -C <dir> \"$(cat <brief-file>)\"\n--- brief ---\npython3 docs/ai-forward-pack/scripts/audit-log.py start --session acp-spec-codex --skill specify\nGoal state\nGoal: Specify the bounded ACP coordination capability and validate four harnesses from Grok\nDone when: Deliver Markdown and HTML spec, measured capability matrix and recommendation.\nNot in scope: No production implementation in this track.\nTier: T2\nFan-out cap: 1\nContext ceiling: 400000\nMain-line budget: 70\nTrace\n| clause | trace |\n|---|---|\n| done_when: Deliver Markdown and HTML spec, measured capability matrix and recommendation. | phrase: Deliver Markdown and HTML spec, measured capability matrix and recommendation. |\n| not_in_scope: No production implementation in this track. | phrase: No production implementation in this track. |\nReferences\n- multi-harness/multi-agent: unresolved (not found)\n- instruction/hook: unresolved (not found)\nAssumptions\n- none\nDecision requests\n- none\nContract slot\nwidth_cap: 1\ntransient_retry: One targeted retry only after diagnosing a blocker\nper_branch_exit: Four capability rows, honest blocked cells, MD and HTML spec\njoin_rule: Parent independently reviews before accepting specification\ncontainment: Own worktree; disposable fixtures; no global changes or permission bypass\ntermination: Finite four-harness matrix; unresolved cells reported\ndeadline: 30 minutes to first complete handback\nfallback: Report blocked cells and retain native dispatch until qualified\nRules: absolute paths only; a multi-line program is a file, then a run; a gate's exit status is never behind a pipe.\nProvenance\nraw id: al-01M2ZMV2TJ5K094ERDFTJ69H8Z\nraw sha256: 012822c7339e8082b65f08dcd0038745edda2e44a522e3479d07d2d8a523f2d6\ncompiler model: codex\nengine seconds: 0.003\ntokens: not recorded\ngate: pass\ndispatchable: true\n--- end brief ---\n",
+      "summary": "compiled al-01M2ZMV2TJ5K094ERDFTJ69H8Z for codex v1: 2 clauses, 0 assumptions, 0 decision requests",
+      "kind": "compilation",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "compiled": {
+        "assumptions": [],
+        "clauses": [
+          {
+            "section": "done_when",
+            "text": "Deliver Markdown and HTML spec, measured capability matrix and recommendation.",
+            "trace": {
+              "kind": "phrase",
+              "ref": "Deliver Markdown and HTML spec, measured capability matrix and recommendation."
+            }
+          },
+          {
+            "section": "not_in_scope",
+            "text": "No production implementation in this track.",
+            "trace": {
+              "kind": "phrase",
+              "ref": "No production implementation in this track."
+            }
+          }
+        ],
+        "contract_slot": {
+          "width_cap": 1,
+          "transient_retry": "One targeted retry only after diagnosing a blocker",
+          "per_branch_exit": "Four capability rows, honest blocked cells, MD and HTML spec",
+          "join_rule": "Parent independently reviews before accepting specification",
+          "containment": "Own worktree; disposable fixtures; no global changes or permission bypass",
+          "termination": "Finite four-harness matrix; unresolved cells reported",
+          "deadline": "30 minutes to first complete handback",
+          "fallback": "Report blocked cells and retain native dispatch until qualified"
+        },
+        "decision_requests": [],
+        "dispatchable": true,
+        "goal_state": {
+          "goal": "Specify the bounded ACP coordination capability and validate four harnesses from Grok",
+          "done_when": [
+            "Deliver Markdown and HTML spec, measured capability matrix and recommendation."
+          ],
+          "not_in_scope": [
+            "No production implementation in this track."
+          ],
+          "tier": "T2",
+          "fan_out_cap": 1,
+          "context_ceiling": 400000,
+          "main_line_budget": 70
+        },
+        "graph_neighbours": [],
+        "harness": "codex",
+        "mode": "compiled",
+        "provenance": {
+          "compile_tokens": null,
+          "compiler_model": "codex",
+          "engine_seconds": 0.003,
+          "refusals": [],
+          "retries": 0
+        },
+        "raw_id": "al-01M2ZMV2TJ5K094ERDFTJ69H8Z",
+        "raw_sha256": "012822c7339e8082b65f08dcd0038745edda2e44a522e3479d07d2d8a523f2d6",
+        "raw_text_normalised": false,
+        "references": [
+          {
+            "nearest": null,
+            "path": null,
+            "reason": "not found",
+            "sha256": null,
+            "status": "unresolved",
+            "token": "multi-harness/multi-agent"
+          },
+          {
+            "nearest": null,
+            "path": null,
+            "reason": "not found",
+            "sha256": null,
+            "status": "unresolved",
+            "token": "instruction/hook"
+          }
+        ],
+        "schema": "compiled-prompt/1",
+        "template": "codex",
+        "template_version": 1
+      },
+      "mode": "compiled",
+      "dispatchable": true
+    },
+    {
+      "id": "al-01M2ZPDEDKKS5RZERB1B4E9MKB",
+      "shortname": "optimize-graph-acp-compatibility",
+      "datetime": "2026-09-20T15:19:35Z",
+      "session": "acp-spec-codex",
+      "prompt": "in a separate sub-agent:\n$specify  the multi-harness/multi-agent coordination with ACP\n- spike each harness from grok to validate or invalidate the capability\nthen give me the spec in html and md \nand tell me what you think we should do\n\n... specifically for the ACP spec and spike i am referring to your recco here:\n\nMy revised recommendation is to evaluate a shared ACP client underneath execute-with-coordination, with a small Agy transport adapter if needed. Either Claude or Codex could operate that runner. The existing\n  pack would retain worktree ownership, leadership, decision rulings, durable audit records, and verification of completed work.\n\n  ACP would simplify session control and communication. We would still need to implement those repository-specific rules, and verify that adapters preserve the required instructions, hooks, and permissions.\n  Loading an existing session is also an optional capability; ACP does not automatically attach to every already-open terminal.\n\n  The repository’s research already mentions ACP (docs/knowledge/multi-agent-coordination/state-of-the-art.md:83), but the shipped dispatcher does not use it. That is a missed integration opportunity worth\n  testing.\n\n  Best next step: a bounded ACP compatibility spike—session creation, two-way prompts, progress, permissions, cancellation, and completion evidence—before choosing the startup-wrapper design. A2A can be assessed\n  separately if independent agent services become part of the requirement.",
+      "summary": "Six-node bounded plan completed with serial Grok-driven targets, one diagnosed control pass, independent parent spec/render review, explicit failed follow-up wrapper and retained partial qualification. Peak actual model-session width4; target width1.",
+      "kind": "skill",
+      "skill": "optimize-graph",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/plans/acp-compatibility-spike.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Bound the ACP specification and four-harness compatibility experiment",
+      "done_when": "Grok-driven observations, linked MD/HTML spec and independent gates complete",
+      "tier": "T2",
+      "fan_out": 1
+    },
+    {
+      "id": "al-01M2ZPM1DA8B03V971BCDWZPRM",
+      "shortname": "specify-acp-coordination",
+      "datetime": "2026-09-20T15:23:11Z",
+      "session": "acp-spec-codex",
+      "prompt": "in a separate sub-agent:\n$specify  the multi-harness/multi-agent coordination with ACP\n- spike each harness from grok to validate or invalidate the capability\nthen give me the spec in html and md \nand tell me what you think we should do\n\n... specifically for the ACP spec and spike i am referring to your recco here:\n\nMy revised recommendation is to evaluate a shared ACP client underneath execute-with-coordination, with a small Agy transport adapter if needed. Either Claude or Codex could operate that runner. The existing\n  pack would retain worktree ownership, leadership, decision rulings, durable audit records, and verification of completed work.\n\n  ACP would simplify session control and communication. We would still need to implement those repository-specific rules, and verify that adapters preserve the required instructions, hooks, and permissions.\n  Loading an existing session is also an optional capability; ACP does not automatically attach to every already-open terminal.\n\n  The repository’s research already mentions ACP (docs/knowledge/multi-agent-coordination/state-of-the-art.md:83), but the shipped dispatcher does not use it. That is a missed integration opportunity worth\n  testing.\n\n  Best next step: a bounded ACP compatibility spike—session creation, two-way prompts, progress, permissions, cancellation, and completion evidence—before choosing the startup-wrapper design. A2A can be assessed\n  separately if independent agent services become part of the requirement.",
+      "summary": "Delivered full Markdown and offline HTML ACP specification, six sanitized live observations from Grok-driven probes, pinned reproducible adapter locks, recommendation, graph links and independent spec/render PASS. ACP lifecycle verified on Grok/Claude SDK/Codex; Agy native stream distinct. Trust/policy/hooks and full pack handback limits explicit; failed follow-up wrapper preserved. Evidence verifier and false-verdict mutations checked; HTML1440/390 geometry passed.",
+      "kind": "skill",
+      "skill": "specify",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/specs/acp-coordination.md",
+        "docs/specs/acp-coordination.html",
+        "docs/knowledge/acp-compatibility/index.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled_from": "al-01M2ZN4P4YEVBHYZRT4QWSD5H5",
+      "goal": "Specify multi-harness coordination with ACP and spike each of Grok, Claude Code, Codex and Agy from Grok",
+      "done_when": "Markdown and HTML spec, measured capability matrix, reproducible evidence and recommendation have independent review",
+      "tier": "T2",
+      "fan_out": 1,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-20T14:50:52Z",
+      "duration_seconds": 1939.0,
+      "git": {
+        "sha": "58805df0067dd8fd22fa51fbda6f92b1fcfb9d00",
+        "short": "58805df00",
+        "branch": "feat/acp-compatibility-spec",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -8374,6 +8545,28 @@ window.AUDIT_DATA = {
       "summary": "No new store: heartbeat and kick-ladder rows in .agents/log; accumulator in the git common dir; leader renewed by the holder's sampled beat (F-1); worktree field basename with an in-place one-field migration (F-3)",
       "tags": [],
       "title": "Liveness is a fold over sampled heartbeat rows in the existing ledger; the kick ladder refuses, counts and records; the worktree field becomes a label"
+    },
+    {
+      "id": "cl-01M2ZPDEBX2ZN4Z039MXGVARHK",
+      "datetime": "2026-09-20T15:19:35Z",
+      "session": "acp-spec-codex",
+      "kind": "knowledge",
+      "skill": "specify",
+      "title": "Qualify ACP session control by effective harness profile",
+      "prompt": "in a separate sub-agent:\n$specify  the multi-harness/multi-agent coordination with ACP\n- spike each harness from grok to validate or invalidate the capability\nthen give me the spec in html and md \nand tell me what you think we should do\n\n... specifically for the ACP spec and spike i am referring to your recco here:\n\nMy revised recommendation is to evaluate a shared ACP client underneath execute-with-coordination, with a small Agy transport adapter if needed. Either Claude or Codex could operate that runner. The existing\n  pack would retain worktree ownership, leadership, decision rulings, durable audit records, and verification of completed work.\n\n  ACP would simplify session control and communication. We would still need to implement those repository-specific rules, and verify that adapters preserve the required instructions, hooks, and permissions.\n  Loading an existing session is also an optional capability; ACP does not automatically attach to every already-open terminal.\n\n  The repository’s research already mentions ACP (docs/knowledge/multi-agent-coordination/state-of-the-art.md:83), but the shipped dispatcher does not use it. That is a missed integration opportunity worth\n  testing.\n\n  Best next step: a bounded ACP compatibility spike—session creation, two-way prompts, progress, permissions, cancellation, and completion evidence—before choosing the startup-wrapper design. A2A can be assessed\n  separately if independent agent services become part of the requirement.",
+      "summary": "Grok-driven probes establish ACP session control for Grok, Claude SDK adapter and Codex adapter, plus a distinct Agy native-stream path. Effective trust, policy and required hook configuration constrain qualification.",
+      "rationale": "Adopt shared ACP lifecycle only where measured capabilities fit; preserve pack worktree ownership, leader refs, requests/rulings, audit and independent handback verification. Native policy, hook canaries, same-process load and early cancellation do not establish a universal enforcement boundary.",
+      "artifacts": [
+        "docs/specs/acp-coordination.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "58805df0067d",
+        "after": "58805df0067dd8fd22fa51fbda6f92b1fcfb9d00",
+        "branch": "feat/acp-compatibility-spec",
+        "pushed": null,
+        "commits": []
+      }
     }
   ],
   "messages": [
