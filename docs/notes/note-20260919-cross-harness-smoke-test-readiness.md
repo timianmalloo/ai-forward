@@ -54,10 +54,10 @@ no such event (CO12). Nothing below was promoted by reasoning.
 | session start marker | executed | — | observed-only | observed-only | observed-only |
 | mail doorbell | executed (native message) | `codex queue` observed-only | observed-only | observed-only | observed-only |
 | dispatch (`coord dispatch --harness`) | **verified** 2026-09-19 (real `claude -p` child) | **verified** 2026-09-19 | unsupported (no headless CLI found) | not probed | not probed |
-| heartbeat (P3) | observed-only (executed against the documented payload: 3× PostToolUse → Stop wrote one row) | — | observed-only | observed-only | observed-only |
-| owner-review stop gate (P5) | observed-only (exit-2 case executed with a captured stdin) | — | observed-only (block form) | observed-only | **unsupported** (no stop-class event) |
+| heartbeat (P3) | **enforced** 2026-09-19 (2.1.278: host-fired PostToolUse/Stop rows, `calls: 3` on the first Stop; interactive and headless) | — | observed-only | observed-only | observed-only |
+| owner-review stop gate (P5) | **enforced** 2026-09-19 (2.1.278: headless stop refused with the reason while `req-01M2Y374DXAC09F83Q0VXGYSCH` was open; Ruling 2) | — | observed-only (block form) | observed-only | **unsupported** (no stop-class event) |
 
-`harness-status.json` does not exist on this machine (finding F-2): `coord dispatch` writes it on
+`harness-status.json` was created on 2026-09-20 by the first `coord mail dispatch --harness claude-code` (finding F-2 closed for Claude Code; the other harnesses are still absent from it): `coord dispatch` writes it on
 its first run per harness, so the table above is assembled from the tracks' reports and the
 hooks README, not from the file the board reads. The first probe below creates it.
 

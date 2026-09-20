@@ -78,7 +78,13 @@ Conventions
 
 ### `repo_root(cwd)`
 
-Walk up from cwd to the checkout that holds .git (a directory, or a worktree's file).
+The PRIMARY checkout, from any worktree - the `.agents` stores are per repository.
+
+Walk up from cwd to the first `.git` entry. A directory is the primary itself. A FILE is a
+linked worktree's pointer (`gitdir: <primary>/.git/worktrees/<name>`), so the primary is
+that path's third parent. Filesystem only, no subprocess (coord-core's reasoning). Before
+this the board resolved the NEAREST checkout and, from a worktree, read the committed ledger
+copies and no inbox at all (class WT-A).
 
 ### `resolve_root(cwd, raw)`
 

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-19T22:01:19Z",
+  "generated": "2026-09-20T00:47:44Z",
   "audit": [
     {
       "actor": null,
@@ -6730,6 +6730,60 @@ window.AUDIT_DATA = {
         "speedup": 1.84,
         "peak_concurrency": 3
       }
+    },
+    {
+      "id": "al-01M2Y4594NDKZBYXEBMX0X03V1",
+      "shortname": "dispatch-claude-code",
+      "datetime": "2026-09-20T00:41:19Z",
+      "session": "coord-smoke",
+      "prompt": "dispatch --harness claude-code",
+      "summary": "dispatch claude-code -> verified (exit 0, timed_out=False, 5.942 s)",
+      "kind": "script",
+      "skill": "coord-mail",
+      "tool": "coord-mail.py",
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "started_at": "2026-09-20T00:41:13Z",
+      "duration_seconds": 6.0,
+      "agent_runs": [
+        {
+          "agent": "claude-code",
+          "started_at": "2026-09-20T00:41:13Z",
+          "ended_at": "2026-09-20T00:41:19Z",
+          "duration_seconds": 5.9
+        }
+      ],
+      "parallelism": {
+        "agent_seconds": 5.9,
+        "span_seconds": 5.9,
+        "speedup": 1.0,
+        "peak_concurrency": 1
+      }
+    },
+    {
+      "id": "al-01M2Y49RRW82K0H2HDRG0GGMZ0",
+      "shortname": "wt-a-sweep-and-claude-code-smoke",
+      "datetime": "2026-09-20T00:43:46Z",
+      "session": "coord-smoke",
+      "prompt": "be precise on the next steps ... also this seems like it could all have been run by you",
+      "summary": "Smoke test, Claude Code 2.1.278: heartbeat enforced (host-fired PostToolUse/Stop rows, calls 3), owner-review stop gate enforced (headless claude -p stop refused while req-01M2Y374DXAC09F83Q0VXGYSCH was open; Ruling 2), dispatch verified (.agents/harness-status.json). The operator's dispatch probe found MAIL-PATH from a worktree: coord-mail.py resolved --brief at the primary (WT-A); coord-board.py had the inverse (its own repo_root at the nearest checkout). Both fixed red-first with a real linked worktree (test_coord_worktree_roots.py, 2 red -> 3 green). Four WT-A sites named, not fixed (isdir('.git') walks in prompt-log/prompt-compile/verify-compiled-prompt; coord-core hook repo). Codex/Grok/Antigravity dispatch probes left to the operator: the harness classifier refused launching other agents headlessly. INSTALL rev 80.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "pack/adapters/hooks/README.md",
+        "docs/notes/rulings.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "close the WT-A defect the smoke test found and record the Claude Code channel promotions",
+      "done_when": "dispatch from a worktree works; board from a worktree reads the primary; README and readiness note carry enforced with date and version; verify-bundle green; landed on main",
+      "tier": "T1",
+      "fan_out": 0
     }
   ],
   "changes": [
@@ -8159,5 +8213,24 @@ window.AUDIT_DATA = {
       "title": "Liveness is a fold over sampled heartbeat rows in the existing ledger; the kick ladder refuses, counts and records; the worktree field becomes a label"
     }
   ],
-  "messages": []
+  "messages": [
+    {
+      "id": "mail-01M2Y374E1DRP8ANQNHA323V5E",
+      "ts": "2026-09-20T00:24:51Z",
+      "from": "smoke-claude-1",
+      "to": "smoke-owner-1",
+      "kind": "decision-request",
+      "ref": "req-01M2Y374DXAC09F83Q0VXGYSCH",
+      "session": "smoke-claude-1"
+    },
+    {
+      "id": "mail-01M2Y3Y9GJ1JQ69YDPCZSN8K27",
+      "ts": "2026-09-20T00:37:30Z",
+      "from": "smoke-owner-1",
+      "to": "smoke-claude-1",
+      "kind": "ruling",
+      "ref": "req-01M2Y374DXAC09F83Q0VXGYSCH",
+      "session": "smoke-owner-1"
+    }
+  ]
 };

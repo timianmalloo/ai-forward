@@ -1,0 +1,3 @@
+{"action": "resolve", "agent": "smoke-owner-1", "at": 1789864650.2545621, "id": "req-01M2Y374DXAC09F83Q0VXGYSCH", "kind": "request", "outcome": "resolution", "path": "-", "seq": 1, "session": "smoke-owner-1", "type": "request", "wi": "WI-0"}
+{"at": 1789864650.2585962, "from": "smoke-owner-1", "kind": "ruling", "mail_id": "mail-01M2Y3Y9GJ1JQ69YDPCZSN8K27", "ref": "req-01M2Y374DXAC09F83Q0VXGYSCH", "session": "smoke-owner-1", "to": "smoke-claude-1", "type": "mail"}
+{"agent": "smoke-owner-1", "at": 1789865035.17329, "kind": "session-end", "path": "-", "seq": 3, "session": "smoke-owner-1", "wi": "WI-0", "worktree": "ai-forward-smoke-claude-code-probe"}

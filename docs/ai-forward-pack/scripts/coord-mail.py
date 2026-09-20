@@ -329,11 +329,23 @@ def append_ack(root: Path, session: str, ref: str, kind: str = "ack", now: Optio
 
 # --- CLI helpers ----------------------------------------------------------------------------
 
+def _checkout_top(cwd: str, fallback: Path) -> Path:
+    """The top of the CURRENT checkout (primary or linked worktree): the first ancestor holding a
+    `.git` entry. Files a session names (--brief, --body-file) live where the session works; the
+    `.agents` stores stay at the primary (`coord_core.repo_root`). Class WT-A."""
+    here = Path(cwd).resolve()
+    for candidate in (here, *here.parents):
+        if (candidate / ".git").exists():
+            return candidate
+    return fallback
+
+
 def _repo_and_root() -> Tuple[Path, Path]:
     root, err = coord_core.resolve_root(os.getcwd(), os.environ.get("COORD_ROOT"))
     if err:
         raise MailError(err["code"], err["reason"], EXIT_NOT_CHECKED)
-    return coord_core.repo_root(os.getcwd()), root
+    primary = Path(coord_core.repo_root(os.getcwd()))
+    return _checkout_top(os.getcwd(), primary), root
 
 
 def _inside_repo(repo: Path, raw: str, what: str) -> Path:

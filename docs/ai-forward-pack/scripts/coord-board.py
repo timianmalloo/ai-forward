@@ -61,10 +61,29 @@ _ULID_ALPHABET = "0123456789ABCDEFGHJKMNPQRSTVWXYZ"
 # --- root ------------------------------------------------------------------------------
 
 def repo_root(cwd):
-    """Walk up from cwd to the checkout that holds .git (a directory, or a worktree's file)."""
+    """The PRIMARY checkout, from any worktree - the `.agents` stores are per repository.
+
+    Walk up from cwd to the first `.git` entry. A directory is the primary itself. A FILE is a
+    linked worktree's pointer (`gitdir: <primary>/.git/worktrees/<name>`), so the primary is
+    that path's third parent. Filesystem only, no subprocess (coord-core's reasoning). Before
+    this the board resolved the NEAREST checkout and, from a worktree, read the committed ledger
+    copies and no inbox at all (class WT-A)."""
     here = Path(cwd).resolve()
     for candidate in (here, *here.parents):
-        if (candidate / ".git").exists():
+        marker = candidate / ".git"
+        if marker.is_dir():
+            return candidate
+        if marker.is_file():
+            try:
+                first = marker.read_text(encoding="utf-8").splitlines()[0]
+            except (OSError, IndexError):
+                return candidate
+            if first.startswith("gitdir:"):
+                gitdir = Path(first.split(":", 1)[1].strip())
+                if not gitdir.is_absolute():
+                    gitdir = (candidate / gitdir).resolve()
+                if gitdir.parent.name == "worktrees" and gitdir.parent.parent.name == ".git":
+                    return gitdir.parent.parent.parent
             return candidate
     return here
 

@@ -35,3 +35,9 @@ appends the next heading here, resolves the request with `Ruling NN`, and mails 
 A number cited in prose with no heading here, or defined here twice, fails the gate.
 
 - request: none (the register's founding decision, made by the coordination plan `coordination-p3-p5-p8`, fixed contracts) · ruled by: coord-p3-p5-p8 · at: 2026-09-19T20:50:00Z
+
+### Ruling 2 — Smoke test: the Claude Code stop gate refuses a stop while a decision request is open
+
+Observed 2026-09-19 on Claude Code 2.1.278, headless (claude -p) in a linked worktree with AGENT_SESSION=smoke-claude-1: the Stop hook exited 2 with the owner-review reason; the host fed it back and the model reported 'The Stop hook refused the stop because of one open decision request' without ruling or expiring it. Heartbeat rows from the same session: PostToolUse and Stop, calls counted. Both Claude Code channels move from observed-only to enforced.
+
+- request: req-01M2Y374DXAC09F83Q0VXGYSCH · ruled by: smoke-owner-1 · at: 2026-09-20T00:37:30Z

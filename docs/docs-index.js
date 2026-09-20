@@ -773,7 +773,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4a4f4e78d1ba8d821231248cb8d75f15b4f5dfaf072b76ee06636dbefb19e3f0"
+      "sourceSha256": "cdd0d0ac53fe90847f09e70dabc53fb581f26207093479983f7ff3518877da2e"
     },
     {
       "id": "api-coord-core",
@@ -2138,7 +2138,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "05dc0153c715f7aa5b2bd1917ab50b358578eedb7dca180a447cd80abb245530"
+      "sourceSha256": "a91152829a8c3ecaaf31059f43bba096170cbbf6e762a57db083449302c746f8"
     },
     {
       "id": "note-20260919-doctrine-stages-close-the-document",
@@ -3799,7 +3799,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e928bc82bb3ffdd65330cd04f62076e4f8e2ba54ab325b04ec142130d2be86d7"
+      "sourceSha256": "3a8d28857073cfd8ae3081c941b1065721c8434546ca5031bd6327b15d1ee6b3"
     },
     {
       "id": "docs-index",
@@ -5338,7 +5338,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "703ccf8841cf1395a9a355eaa04456b91ec91344ced9277337ac4c8aad43e614"
+      "sourceSha256": "a5abc56d7e7158678d843d59fad18be00f1e1fb54bfe3987918149fdb4887849"
     },
     {
       "id": "seam-p5-to-coordinator",
@@ -8989,5 +8989,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "65f7f25ee100aeab777858226d7a4215e7c574779f1411c86bca2bfdc1852aec"
+  "graphSha256": "152963309b2a2d85283ee89954fda1885721457017f151f66ffaeb178fd17c20"
 };
