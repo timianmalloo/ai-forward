@@ -1,0 +1,2 @@
+{"agent": "s3-plan", "at": 1789875807.845112, "kind": "session-start", "path": "-", "seq": 1, "session": "s3-plan", "tree": "worktree", "wi": "WI-0", "worktree": "ai-forward-docs-s3-scenario-plan"}
+{"agent": "s3-plan", "at": 1789876426.774979, "kind": "session-end", "path": "-", "seq": 2, "session": "s3-plan", "wi": "WI-0", "worktree": "ai-forward-docs-s3-scenario-plan"}

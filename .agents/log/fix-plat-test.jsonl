@@ -1,0 +1,2 @@
+{"agent": "fix-plat-test", "at": 1789876702.1293619, "kind": "session-start", "path": "-", "seq": 1, "session": "fix-plat-test", "tree": "worktree", "wi": "WI-0", "worktree": "ai-forward-fix-checkout-top-test-newlines"}
+{"agent": "fix-plat-test", "at": 1789876876.2116501, "kind": "session-end", "path": "-", "seq": 2, "session": "fix-plat-test", "wi": "WI-0", "worktree": "ai-forward-fix-checkout-top-test-newlines"}
