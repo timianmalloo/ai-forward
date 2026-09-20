@@ -84,6 +84,7 @@ Design: docs/design/coord-core-phase1.md
 | `--blob` | the blob sha the request was written against |
 | `--branch` | branch to create; name it for the WORK, not the session |
 | `--calls` | heartbeat: tool calls this tick adds |
+| `--config` | print a project hook entry as JSON; never install or trust it |
 | `--contract` | _(no help text — coverage gap)_ |
 | `--deadline-at` | the work item's deadline from the plan row; when passed, a kick is due even on a live track |
 | `--deadline` | _(no help text — coverage gap)_ |
@@ -96,7 +97,7 @@ Design: docs/design/coord-core-phase1.md
 | `--flush` | _(no help text — coverage gap)_ |
 | `--force` | install from a linked worktree anyway. It overwrites the repository's shared registration with a path that dies with this tree - the recorded exception, never the default |
 | `--from-role` | _(no help text — coverage gap)_ |
-| `--host` | heartbeat: harness name (default $AGENT_HOST) |
+| `--host` | native response contract (Codex indeterminate checks deny) |
 | `--include-unmerged` | cleanup: also remove a clean tree whose branch has commits NOT on the default branch (a pushed but unmerged branch is HELD by default - DC-142). The count is printed either way. |
 | `--json` | _(no help text — coverage gap)_ |
 | `--long-edit` | the recorded reason for a --ttl above the cap; it is written into the claim event so a queued peer can read why it waits |
@@ -225,7 +226,7 @@ code alone. Accessibility and machine-readability are the same requirement here.
 "refused" is never softened to "denied" or "unavailable" - the reader is a model that
 must not read the outcome as a transient failure worth retrying.
 
-### `append_decision(root, session, agent, path, decision)`
+### `append_decision(root, session, agent, path, decision, hook_context=…)`
 
 Record one enforcement decision. Never folded; read by `tail` and `metrics`.
 
@@ -514,7 +515,7 @@ The commit-floor sentence is UNCONDITIONAL. It used to sit behind `if edit_bound
 one sentence that is true in every state printed in none of them. It is not a consolation
 for a weak harness; it is the floor that holds regardless of what the hook does.
 
-### `parse_hook_request(event, repo)`
+### `parse_hook_request(event, repo, host=…, cwd=…)`
 
 Normalise any harness's PreToolUse envelope to [(tool_name, repo_relative_path)].
 
@@ -549,7 +550,7 @@ The PreToolUse envelope. ALWAYS printed, and the caller ALWAYS exits 0 - the
 harness reads the decision in the JSON, not the exit code. Conflating them would make
 a crashed hook indistinguishable from a refusal.
 
-### `cmd_hook(root, session, agent, now, stdin_text, repo=…)`
+### `cmd_hook(root, session, agent, now, stdin_text, repo=…, host=…, cwd=…)`
 
 G1: this must never raise. A hook that crashes on a bad payload blocks every edit.
 
@@ -841,8 +842,15 @@ STRIDE B9: this writes only where it is told and PRINTS what it wrote. It never 
 tool permissions is the elevation it exists to prevent -- the same rule `install`
 follows by printing the settings entry rather than writing it.
 
+### `native_hook_config(host)`
+
+A reviewable project-local entry; no settings, trust, or permission mutation.
+
+Native hooks use a shell command string. Only fixed syntax and the selected enum enter
+it; runtime paths stay in quoted expansions, never eval or interpolated source code.
+
 ## Coverage
 
-- Public functions: **95** · documented: **71** (**75%**)
+- Public functions: **96** · documented: **72** (**75%**)
 - Undocumented (recorded, not invented): `make_event`, `check`, `read_decisions`, `request_log_path`, `read_request_events`, `cmd_leader`, `regen_command`, `record_regen_owed`, `regen_owed`, `clear_regen_owed`, `detect_harness`, `cmd_precommit`, `cmd_guard`, `session_contract_path`, `owner_rows_for_path`, `cmd_session_list`, `cmd_collaborate`, `cmd_request`, `cmd_worktree`, `cmd_session`, `cmd_metrics`, `cmd_track`, `cmd_install`, `cmd_doctor`
 

@@ -920,6 +920,11 @@ window.PORTAL_DATA = {
             "path": "../../docs/design/native-app-ui-skill-extension.md"
           },
           {
+            "title": "Native ownership guards for Claude and Codex workers",
+            "summary": "Reuse the existing lease hook at native edit seams, add Codex patch-envelope support, and install explicit project-local guard entries without weakening native hook trust or claiming shell containment.",
+            "path": "../../docs/design/native-ownership-enforcement.md"
+          },
+          {
             "title": "Design — owner review (coord-decide.py · docs/notes/rulings.md · verify-ruling-citations.py · owner-review-gate.py)",
             "summary": "Detailed design for spec-owner-review. One stdlib CLI (coord-decide.py) that writes a decision request only by running coord-core.py's own `request add` and `request resolve`, sends its two mails only through coord-mail.py's append_mail imported by path, and...",
             "path": "../../docs/design/owner-review.md"
@@ -1944,7 +1949,7 @@ window.PORTAL_DATA = {
         "id": "api-index",
         "type": "api",
         "title": "API reference — the deployed script bundle",
-        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 521 public functions across 39 modules, 47% carrying a docstring."
+        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 522 public functions across 39 modules, 47% carrying a docstring."
       },
       {
         "id": "api-marker-lint",
@@ -2269,6 +2274,12 @@ window.PORTAL_DATA = {
         "type": "design",
         "title": "Native app UI skill extension — Design",
         "summary": "Detailed design for making native client applications first-class in the AI-Forward UI skills. The design updates /ui-design and /visualize, adds a reusable..."
+      },
+      {
+        "id": "design-native-ownership-enforcement",
+        "type": "design",
+        "title": "Native ownership guards for Claude and Codex workers",
+        "summary": "Reuse the existing lease hook at native edit seams, add Codex patch-envelope support, and install explicit project-local guard entries without weakening native..."
       },
       {
         "id": "design-owner-review",
@@ -4376,6 +4387,26 @@ window.PORTAL_DATA = {
       {
         "from": "design-native-app-ui-skill-extension",
         "to": "spec-native-app-ui-skill-extension",
+        "rel": "implements"
+      },
+      {
+        "from": "design-native-ownership-enforcement",
+        "to": "adr-0010-enforcement-topology",
+        "rel": "depends-on"
+      },
+      {
+        "from": "design-native-ownership-enforcement",
+        "to": "design-coord-enforcement-phase2",
+        "rel": "refines"
+      },
+      {
+        "from": "design-native-ownership-enforcement",
+        "to": "proof-native-coordination-repair",
+        "rel": "depends-on"
+      },
+      {
+        "from": "design-native-ownership-enforcement",
+        "to": "spec-multi-harness-launch-and-monitor",
         "rel": "implements"
       },
       {

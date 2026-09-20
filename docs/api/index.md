@@ -9,7 +9,7 @@ links:
   - { to: architecture, rel: documents }
 review-by: "2027-03-03"
 summary: >-
-  Generated API reference for the pack's public surface — the deployed script bundle. 521 public functions across 39 modules, 47% carrying a docstring.
+  Generated API reference for the pack's public surface — the deployed script bundle. 522 public functions across 39 modules, 47% carrying a docstring.
 ---
 
 # API reference — the deployed script bundle
@@ -29,7 +29,7 @@ with no docstring is listed as a **coverage gap** rather than described from gue
 | [`conductor-join.py`](conductor-join.md) | 5 | 3 | — | conductor-join.py - the join, as a script: every step gated by its exit code, none by a |
 | [`context-budget.py`](context-budget.md) | 21 | 12 | 6 | context-budget.py — the always-on context budget, measured (AI-Forward Pack). |
 | [`coord-board.py`](coord-board.md) | 14 | 7 | 2 | coord-board.py — the board: human transparency over agent messages (spec-board, D12). |
-| [`coord-core.py`](coord-core.md) | 95 | 71 | 36 | coord-core.py - agent coordination, Phase 1 walking skeleton. |
+| [`coord-core.py`](coord-core.md) | 96 | 72 | 36 | coord-core.py - agent coordination, Phase 1 walking skeleton. |
 | [`coord-decide.py`](coord-decide.md) | 11 | 2 | 3 | coord-decide.py - the Owner seat's mechanism: decision request -> numbered ruling (D6). |
 | [`coord-mail.py`](coord-mail.md) | 22 | 5 | 4 | coord-mail.py - the local message layer: per-session inbox files, ledger twins, bounded dispatch. |
 | [`coord-runner.py`](coord-runner.md) | 13 | 0 | 1 | Prepare and run an opt-in, qualified multi-harness coordination contract. |
@@ -63,5 +63,5 @@ with no docstring is listed as a **coverage gap** rather than described from gue
 | [`visual-assets-setup.py`](visual-assets-setup.md) | 12 | 5 | — | visual-assets-setup.py - wire up a generation backend for UI visual assets (AI-Forward). |
 | [`xaml-token-lint.py`](xaml-token-lint.md) | 9 | 0 | — | xaml-token-lint.py — first-slice token linter for XAML/native UI markup. |
 
-**Total** — 521 public functions across 39 modules, **243 documented (47%)**.
+**Total** — 522 public functions across 39 modules, **244 documented (47%)**.
 

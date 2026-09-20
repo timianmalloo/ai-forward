@@ -401,7 +401,7 @@ EXIT = {"allow": 0, "deny": 3, "not_checked": 4}
 # within a day. Keeping them out means the fold stays proportional to CLAIMS, not EDITS,
 # and the metric that decides whether this phase worked costs nothing to collect.
 
-def append_decision(root, session, agent, path, decision):
+def append_decision(root, session, agent, path, decision, hook_context=None):
     """Record one enforcement decision. Never folded; read by `tail` and `metrics`.
 
     G14: the verdict is computed BEFORE this is attempted and cannot be changed by it.
@@ -417,6 +417,8 @@ def append_decision(root, session, agent, path, decision):
               "session": session or "anon", "agent": agent or "anon",
               "wi": decision.get("wi", ""), "path": _norm(path),
               "at": time.time(), "code": decision.get("code")}
+    if hook_context:
+        record.update(hook_context)
     try:
         logdir.mkdir(parents=True, exist_ok=True)
         logfile = logdir / "{}.jsonl".format(record["session"])
@@ -1150,7 +1152,11 @@ def _build_parser():
     tail.add_argument("-n", type=int, default=20)
 
     # --- Phase 2: enforcement ---
-    sub.add_parser("hook", help="PreToolUse adapter: stdin JSON in, decision JSON out")
+    hook = sub.add_parser("hook", help="PreToolUse adapter: stdin JSON in, decision JSON out")
+    hook.add_argument("--host", choices=["claude", "codex"],
+                      help="native response contract (Codex indeterminate checks deny)")
+    hook.add_argument("--config", action="store_true",
+                      help="print a project hook entry as JSON; never install or trust it")
     sub.add_parser("precommit", help="the universal floor: refuse unclaimed staged paths")
     guard = sub.add_parser("guard", help="refuse to move HEAD over work held in one place")
     guard.add_argument("--fix", action="store_true", help="push, the cheapest second copy")
@@ -2006,7 +2012,101 @@ def _relativise(path, repo, cwd=None):
     return text
 
 
-def parse_hook_request(event, repo):
+def _patch_paths(command):
+    """Extract every native apply_patch target, refusing unfamiliar syntax as a unit.
+
+    This is a bounded target recognizer, not a patch applier. Body text never becomes a
+    target. A future native grammar extension needs a contract test before it is accepted.
+    """
+    if not isinstance(command, str) or len(command.encode("utf-8")) > 1048576:
+        raise ValueError("missing or oversized patch")
+    # splitlines also splits Unicode filename characters such as U+2028, inventing a
+    # different target. Native patches use LF/CRLF records; preserve every other byte.
+    lines = [line[:-1] if line.endswith("\r") else line for line in command.strip().split("\n")]
+    if len(lines) < 3 or lines[0] != "*** Begin Patch" or lines[-1] != "*** End Patch":
+        raise ValueError("invalid patch envelope")
+    paths, operation, moved, body = [], None, False, False
+    headers = {"*** Add File: ": "add", "*** Delete File: ": "delete",
+               "*** Update File: ": "update"}
+    for line in lines[1:-1]:
+        header = next((prefix for prefix in headers if line.startswith(prefix)), None)
+        if header:
+            path = line[len(header):]
+            if not path or path != path.strip():
+                raise ValueError("invalid patch target")
+            paths.append(path)
+            operation, moved, body = headers[header], False, False
+        elif line.startswith("*** Move to: ") and operation == "update" and not moved and not body:
+            path = line[len("*** Move to: "):]
+            if not path or path != path.strip():
+                raise ValueError("invalid move target")
+            paths.append(path)
+            moved = True
+        elif operation == "add" and line.startswith("+"):
+            body = True
+        elif operation == "update" and (line.startswith(("+", "-", " ", "@@"))
+                                        or line == "*** End of File"):
+            body = True
+        else:
+            raise ValueError("unrecognized patch syntax")
+    if not paths or len(paths) > 256:
+        raise ValueError("patch must have 1..256 targets")
+    return paths
+
+
+def _physical_spelling(path):
+    """Recover existing component case only when samefile proves a physical alias.
+
+    Path.resolve does not fix case on a case-insensitive volume. Never lowercase lease
+    keys globally: two names differing by case may be distinct on another filesystem.
+    """
+    result = Path(path.anchor)
+    for part in path.parts[1:]:
+        candidate = result / part
+        if candidate.exists():
+            for entry in result.iterdir():
+                if entry.name.casefold() == part.casefold() and os.path.samefile(entry, candidate):
+                    part = entry.name
+                    break
+        result = result / part
+    return result
+
+
+def _native_paths(path, repo, cwd):
+    """Check lexical and symlink-resolved targets, relative to the actual process cwd.
+
+    Payload cwd/session fields confer no authority. Outside-checkout paths fail closed,
+    including an in-tree symlink to an outside target. Keep both aliases for lease checks.
+    """
+    if not isinstance(path, str) or not path or len(path) > 4096 or any(ord(c) < 32 for c in path):
+        raise ValueError("invalid native path")
+    base = Path(repo).resolve()
+    candidate = Path(path)
+    if not candidate.is_absolute():
+        candidate = Path(cwd or repo) / candidate
+    lexical = Path(os.path.abspath(candidate))
+    paths = []
+    canonical = _physical_spelling(candidate.resolve())
+    # A resolved outside target is always refused, even if its lexical symlink is inside.
+    canonical.relative_to(base)
+    for target in (lexical, canonical):
+        try:
+            relative = target.relative_to(base).as_posix()
+        except ValueError:
+            # macOS /var -> /private/var and a differently-cased checkout root are real
+            # aliases. Accept only an ancestor proven to be this exact checkout root.
+            alias = next((p for p in target.parents if p.is_dir() and os.path.samefile(p, base)), None)
+            if alias is None:
+                raise
+            relative = target.relative_to(alias).as_posix()
+        if relative == ".":
+            raise ValueError("native target is a directory root")
+        if relative not in paths:
+            paths.append(relative)
+    return paths
+
+
+def parse_hook_request(event, repo, host=None, cwd=None):
     """Normalise any harness's PreToolUse envelope to [(tool_name, repo_relative_path)].
 
     A path of None means "this tool call carries no path" -- a shell command, a search, a
@@ -2040,16 +2140,25 @@ def parse_hook_request(event, repo):
             calls.append((name, path))
         return calls
 
-    # Claude: one call, flat.
+    # Claude and Codex: one call, flat. Codex supplies the entire native patch in command.
     if "tool_name" in event or "tool_input" in event:
         name = str(event.get("tool_name", ""))
         tool_input = event.get("tool_input")
         path = None
+        if name.lower() == "apply_patch":
+            command = tool_input.get("command") if isinstance(tool_input, dict) else None
+            return [(name, target) for path in _patch_paths(command)
+                    for target in _native_paths(path, repo, cwd)]
         if isinstance(tool_input, dict):
             for key in _PATH_KEYS:
                 if tool_input.get(key):
+                    if host:
+                        return [(name, target) for target in
+                                _native_paths(tool_input[key], repo, cwd)]
                     path = _relativise(tool_input[key], repo)
                     break
+        if name.lower() in _WRITE_TOOLS and path is None:
+            raise ValueError("write call has no recognized path")
         return [(name, path)]
 
     return []
@@ -2091,7 +2200,8 @@ def hook_response_is_valid(response, harness):
     if not isinstance(block, dict):
         return False
     return (block.get("hookEventName") == "PreToolUse"
-            and block.get("permissionDecision") in ("allow", "deny", "ask")
+            and block.get("permissionDecision") in
+            (("allow", "deny") if harness == "codex" else ("allow", "deny", "ask"))
             and isinstance(block.get("permissionDecisionReason"), str))
 
 
@@ -2106,14 +2216,14 @@ def hook_response(decision, reason):
         "permissionDecisionReason": reason}})
 
 
-def _not_checked(reason):
-    return hook_response("ask", "NOT CHECKED  -\n  held by   unknown - this check did"
+def _not_checked(reason, host=None):
+    return hook_response("deny" if host == "codex" else "ask", "NOT CHECKED  -\n  held by   unknown - this check did"
                          " not run\n  because   {}\n"
                          "  remedy    fix the condition above; this is not a pass"
                          .format(reason))
 
 
-def cmd_hook(root, session, agent, now, stdin_text, repo=None):
+def cmd_hook(root, session, agent, now, stdin_text, repo=None, host=None, cwd=None):
     """G1: this must never raise. A hook that crashes on a bad payload blocks every edit.
 
     Envelope-agnostic: `parse_hook_request` normalises whichever harness is calling. Copilot
@@ -2125,12 +2235,12 @@ def cmd_hook(root, session, agent, now, stdin_text, repo=None):
         event = json.loads(stdin_text or "")
         if not isinstance(event, dict):
             raise ValueError("payload is not an object")
-        calls = parse_hook_request(event, repo or root)
+        calls = parse_hook_request(event, repo or root, host=host, cwd=cwd)
     except Exception as exc:
-        return _not_checked("unreadable hook payload ({})".format(exc.__class__.__name__))
+        return _not_checked("unreadable hook payload ({})".format(exc.__class__.__name__), host)
 
     if not calls:
-        return _not_checked("the payload matched no known harness envelope")
+        return _not_checked("the payload matched no known harness envelope", host)
 
     # The PARSER normalises the envelope; the POLICY lives here. Reads are parallel and
     # writes serialize, so a `view` of a leased artifact is allowed -- refusing reads would
@@ -2145,10 +2255,12 @@ def cmd_hook(root, session, agent, now, stdin_text, repo=None):
     for path in paths:
         bad = _reject_path(str(path))                   # B4 tampering
         if bad:
-            return _not_checked(bad)
+            return _not_checked(bad, host)
         # B4 spoofing: identity is the ENVIRONMENT's, never the payload's sessionId.
         decision = check(root, str(path), session, now)
-        append_decision(root, session, agent, path, decision)
+        append_decision(root, session, agent, path, decision,
+                        {"hook_host": host, "hook_cwd": str(Path(cwd or repo or root).resolve())}
+                        if host else None)
         if decision["decision"] == "deny":
             worst = decision
             break                                       # the batch is already refused
@@ -2158,7 +2270,7 @@ def cmd_hook(root, session, agent, now, stdin_text, repo=None):
     if worst is None:
         return hook_response("allow", "coordination: {} path(s) free or mine"
                              .format(len(paths)))
-    mapped = {"deny": "deny", "not_checked": "ask"}[worst["decision"]]
+    mapped = {"deny": "deny", "not_checked": "deny" if host == "codex" else "ask"}[worst["decision"]]
     return hook_response(mapped, render(worst))
 
 
@@ -4216,13 +4328,44 @@ def _print_settings_entry(repo):
     print("strictPluginOnlyCustomization. The pre-commit floor cannot.")
 
 
+def native_hook_config(host):
+    """A reviewable project-local entry; no settings, trust, or permission mutation.
+
+    Native hooks use a shell command string. Only fixed syntax and the selected enum enter
+    it; runtime paths stay in quoted expansions, never eval or interpolated source code.
+    """
+    command = ("py=$(python3 -c 'import sys;print(sys.executable)' 2>/dev/null); "
+               "[ -x \"$py\" ] || py=$(python -c 'import sys;print(sys.executable)'); "
+               "root=$(git rev-parse --show-toplevel) || exit 2; "
+               "exec \"$py\" \"$root/docs/ai-forward-pack/scripts/coord-core.py\" hook --host " + host)
+    return {"hooks": {"PreToolUse": [{
+        "matcher": "apply_patch" if host == "codex" else "Write|Edit|MultiEdit|NotebookEdit",
+        "hooks": [{"type": "command", "command": command, "timeout": 5}]}]}}
+
+
 def main(argv=None):
     args = _build_parser().parse_args(argv)
 
-    root, err = resolve_root(os.getcwd(), os.environ.get("COORD_ROOT"))
+    if args.cmd == "hook" and args.config:
+        if not args.host:
+            print("hook --config requires --host claude|codex", file=sys.stderr)
+            return 2
+        print(json.dumps(native_hook_config(args.host), indent=2))
+        return 0
+
+    try:
+        root, err = resolve_root(os.getcwd(), os.environ.get("COORD_ROOT"))
+    except Exception as exc:
+        if args.cmd != "hook":
+            raise
+        print(_not_checked("hook root unavailable ({})".format(type(exc).__name__), args.host))
+        return 0
     if err:
         payload = {"decision": "not_checked", "path": "-"}
         payload.update(err)
+        if args.cmd == "hook":
+            print(_not_checked(render(payload), args.host))
+            return 0
         print(render(payload), file=sys.stderr)
         return 4
 
@@ -4232,6 +4375,9 @@ def main(argv=None):
     if session:
         bad = session_id_error(session)
         if bad:
+            if args.cmd == "hook":
+                print(_not_checked(bad, args.host))
+                return 0
             print(bad, file=sys.stderr)
             return 2
     now = time.time()
@@ -4241,7 +4387,12 @@ def main(argv=None):
 
     if args.cmd == "hook":
         # ALWAYS exit 0: the harness reads the decision in the JSON, not the exit code.
-        print(cmd_hook(root, session, agent, now, sys.stdin.read(), repo=tree))
+        try:
+            output = cmd_hook(root, session, agent, now, sys.stdin.read(), repo=tree,
+                              host=args.host, cwd=os.getcwd())
+        except Exception as exc:
+            output = _not_checked("hook state unavailable ({})".format(type(exc).__name__), args.host)
+        print(output)
         return 0
 
     if args.cmd == "guard":

@@ -650,6 +650,18 @@ representation-contract failure, not a reason to bypass merges for authored file
 - **Status:** partially controlled. Recorded native-denial and identity manifestations are
   pinned by transport and installed-runner tests; actual native edit enforcement remains
   open. Structural receipts and an advisory rule check never discharge that contract.
+- **Native guard refinement (2026-09-20):** class → a recognized tool name without a
+  recognized payload was treated as a read; physical filename aliases and Unicode record
+  splitting could check a different name; malformed ledger records could crash before
+  emitting the required denial. Sweep → Claude/Copilot envelopes, Codex command patches,
+  all patch operations/move destinations, cwd and identity, case/symlink aliases, state
+  read failures, and real generated shell commands. Derive → admission requires the whole
+  target set and a host-supported decision on every failure path. Prevent → NativeHookTests
+  require lease refusal for each manifestation, preserve Unicode target bytes, prove
+  actual samefile case aliases, and run emitted commands from hostile checkout names.
+  The deployed fixture initially omitted imported modules; the complete fixture now tests
+  execution rather than treating JSON generation as evidence. Native profile qualification
+  remains a separate gate; no parser regression can establish that a host loaded the hook.
 
 ### PROC-A — Process-group cleanup mistakes an exited child for an uncontained process
 - **Signature:** a direct child exits between the process-state check and group signalling;

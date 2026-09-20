@@ -57,6 +57,12 @@ instructions). Resolve these settings with the repository owner; the pack does n
 overwrite personal settings or override files. Ask Codex to name the resolved skill
 path and summarize its instructions before using it as runtime confirmation.
 
+The optional native ownership guard is emitted by `coord-core.py hook --config --host codex`.
+Merge it into project `.codex/hooks.json` only for coordination sessions, preserving other
+entries. Native `/hooks` must review its exact definition; the emitter never changes trust.
+Qualify the actual native edit and environment identity before claiming enforcement. See
+the `execute-with-coordination` launch reference for inventory and binding requirements.
+
 The Antigravity/Claude/Copilot/Grok hook files are not Codex hooks. Where no Codex
 hook is installed, follow the skill's explicit audit start/append commands; do not
 claim automated session-start or re-read enforcement for Codex.

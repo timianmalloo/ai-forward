@@ -12,6 +12,7 @@ Two are written to fail first:
 import importlib.util
 import json
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -139,6 +140,171 @@ class GuardTests(GitCase):
 
 
 # --------------------------------------------------------------------------- hook
+
+class NativeHookTests(GitCase):
+    """Native edit boundaries: real CLI, file paths, ledger, and generated hook command."""
+
+    def setUp(self):
+        super().setUp()
+        self.commit("held.txt", "OWNER\n")
+        result = self.run_cli("claim", "--wi", "owner-work", "--path", "held.txt", session="owner")
+        self.assertEqual(0, result.returncode, result.stdout)
+
+    def payload(self, patch):
+        return json.dumps({"tool_name": "apply_patch", "cwd": "/forged", "session_id": "owner",
+                           "tool_input": {"command": patch}})
+
+    def decision(self, payload, host=None, session="worker", cwd=None, extra_env=None):
+        args = ["hook"] + (["--host", host] if host else [])
+        env = dict(os.environ, AGENT_SESSION=session or "", AGENT_NAME=session or "")
+        env.pop("COORD_ROOT", None)
+        env.update(extra_env or {})
+        run = subprocess.run([sys.executable, str(SCRIPT), *args], cwd=cwd or self.repo,
+                             env=env, input=payload, text=True, encoding="utf-8", capture_output=True, timeout=10)
+        self.assertEqual(0, run.returncode, run.stderr)
+        return json.loads(run.stdout)["hookSpecificOutput"]
+
+    def test_native_patch_held_path_is_denied_before_new_host_flag_exists(self):
+        patch = "*** Begin Patch\n*** Update File: held.txt\n@@\n-OWNER\n+SECRET_PATCH\n*** End Patch"
+        response = self.decision(self.payload(patch))
+        self.assertEqual("deny", response["permissionDecision"])
+        self.assertIn("owner-work", response["permissionDecisionReason"])
+
+    def test_native_patch_holder_and_released_path_are_allowed(self):
+        patch = "*** Begin Patch\n*** Update File: held.txt\n@@\n-OWNER\n+NEXT\n*** End Patch"
+        self.assertEqual("allow", self.decision(self.payload(patch), "codex", "owner")["permissionDecision"])
+        self.run_cli("release", "--path", "held.txt", "--wi", "owner-work", session="owner")
+        self.assertEqual("allow", self.decision(self.payload(patch), "codex")["permissionDecision"])
+
+    def test_native_patch_checks_every_file_and_move_destination(self):
+        cases = [
+            "*** Add File: free.txt\n+new\n*** Delete File: held.txt",
+            "*** Update File: free.txt\n*** Move to: held.txt\n@@\n-old\n+new",
+            "*** Update File: held.txt\n*** Move to: free.txt\n@@\n-OWNER\n+new",
+            "*** Add File: held.txt\n+new",
+        ]
+        for operations in cases:
+            with self.subTest(operations=operations):
+                patch = "*** Begin Patch\n" + operations + "\n*** End Patch"
+                self.assertEqual("deny", self.decision(self.payload(patch), "codex")["permissionDecision"])
+
+    def test_native_patch_unknown_or_malformed_syntax_never_partially_allows(self):
+        cases = [None, 42, "", "*** Begin Patch\n*** End Patch",
+                 "*** Begin Patch\n*** Add File: free\n+x\n*** Unknown File: held.txt\n*** End Patch",
+                 "*** Begin Patch\n*** Update File: \n@@\n+x\n*** End Patch",
+                 "*** Begin Patch\n*** Move to: free\n*** End Patch",
+                 "*** Begin Patch\n*** Add File: free\n+" + "x" * 1048576 + "\n*** End Patch"]
+        for patch in cases:
+            with self.subTest(kind=type(patch).__name__, length=len(patch) if isinstance(patch, str) else 0):
+                output = self.decision(self.payload(patch), "codex")
+                self.assertEqual("deny", output["permissionDecision"])
+                self.assertIn("NOT CHECKED", output["permissionDecisionReason"])
+
+    def test_codex_indeterminate_hook_inputs_use_supported_deny(self):
+        for payload in ["not JSON", "[]", "{}", '{"tool_name":"apply_patch","tool_input":{}}']:
+            with self.subTest(payload=payload):
+                self.assertEqual("deny", self.decision(payload, "codex")["permissionDecision"])
+        patch = self.payload("*** Begin Patch\n*** Delete File: held.txt\n*** End Patch")
+        self.assertEqual("deny", self.decision(patch, "codex", session=None)["permissionDecision"])
+        self.assertEqual("deny", self.decision(patch, "codex", extra_env={"COORD_ROOT": str(self.repo.parent)})["permissionDecision"])
+
+    def test_native_paths_use_process_cwd_and_refuse_escape(self):
+        sub = self.repo / "sub"
+        sub.mkdir()
+        self.run_cli("claim", "--wi", "owner-work", "--path", "sub/held.txt", session="owner")
+        patch = self.payload("*** Begin Patch\n*** Delete File: held.txt\n*** End Patch")
+        self.assertEqual("deny", self.decision(patch, "codex", cwd=sub)["permissionDecision"])
+        for path in ["../outside", str(self.repo.parent / "outside")]:
+            payload = self.payload("*** Begin Patch\n*** Delete File: " + path + "\n*** End Patch")
+            self.assertEqual("deny", self.decision(payload, "codex")["permissionDecision"])
+
+    def test_native_symlink_alias_cannot_hide_a_held_or_external_path(self):
+        if os.name != "posix":
+            self.skipTest("POSIX symlink fixture")
+        (self.repo / "alias").symlink_to(self.repo / "held.txt")
+        (self.repo / "outside").symlink_to(self.repo.parent / "elsewhere")
+        for path in ["alias", "outside"]:
+            patch = self.payload("*** Begin Patch\n*** Delete File: " + path + "\n*** End Patch")
+            self.assertEqual("deny", self.decision(patch, "codex")["permissionDecision"])
+
+    def test_generated_native_hook_runs_from_quoted_subdirectory_without_expansion(self):
+        renamed = self.repo.with_name("space ' \" $(touch PWN_DOLLAR) `touch PWN_TICK`")
+        self.repo.rename(renamed)
+        self.repo = renamed
+        unusual = self.repo / "sub"
+        unusual.mkdir()
+        scripts = self.repo / "docs/ai-forward-pack/scripts"
+        scripts.mkdir(parents=True)
+        shutil.copyfile(SCRIPT, scripts / "coord-core.py")
+        shutil.copyfile(SCRIPT.with_name("coord_ids.py"), scripts / "coord_ids.py")
+        shutil.copyfile(SCRIPT.with_name("repo_identity.py"), scripts / "repo_identity.py")
+        for host in ["claude", "codex"]:
+            config = self.run_cli("hook", "--config", "--host", host)
+            self.assertEqual(0, config.returncode, config.stderr)
+            entry = json.loads(config.stdout)["hooks"]["PreToolUse"][0]
+            payload = self.payload("*** Begin Patch\n*** Delete File: ../held.txt\n*** End Patch") if host == "codex" else json.dumps({"tool_name": "Edit", "tool_input": {"file_path": str(self.repo / "held.txt")}})
+            env = dict(os.environ, AGENT_SESSION="worker", AGENT_NAME="worker")
+            env.pop("COORD_ROOT", None)
+            result = subprocess.run(entry["hooks"][0]["command"], shell=True, cwd=unusual, env=env,
+                                    input=payload, capture_output=True, text=True, encoding="utf-8", timeout=10)
+            self.assertEqual(0, result.returncode, result.stderr)
+            self.assertEqual("deny", json.loads(result.stdout)["hookSpecificOutput"]["permissionDecision"])
+            self.assertFalse((unusual / "PWN_DOLLAR").exists())
+            self.assertFalse((unusual / "PWN_TICK").exists())
+
+    def test_native_decision_ledger_does_not_store_patch_content(self):
+        patch = self.payload("*** Begin Patch\n*** Update File: held.txt\n@@\n-OWNER\n+SECRET_PATCH\n*** End Patch")
+        self.decision(patch, "codex")
+        log = self.repo / ".agents/decisions/worker.jsonl"
+        records = log.read_text(encoding="utf-8")
+        self.assertIn("refused", records)
+        self.assertNotIn("SECRET_PATCH", records)
+        receipt = json.loads(records.splitlines()[-1])
+        self.assertEqual("worker", receipt["session"])
+        self.assertEqual("codex", receipt["hook_host"])
+        self.assertEqual(str(self.repo.resolve()), receipt["hook_cwd"])
+
+    def test_patch_body_header_text_is_data_and_free_patch_is_allowed(self):
+        patch = "*** Begin Patch\n*** Add File: free.txt\n+*** Delete File: held.txt\n*** End Patch"
+        self.assertEqual("allow", self.decision(self.payload(patch), "codex")["permissionDecision"])
+
+    def test_native_claude_uses_canonical_path_and_missing_write_is_not_allowed(self):
+        (self.repo / "alias").symlink_to(self.repo / "held.txt")
+        for path in ["held.txt", "alias"]:
+            payload = json.dumps({"tool_name": "Edit", "tool_input": {"file_path": path}})
+            self.assertEqual("deny", self.decision(payload, "claude")["permissionDecision"])
+        payload = json.dumps({"tool_name": "Write", "tool_input": {}})
+        self.assertEqual("ask", self.decision(payload, "claude")["permissionDecision"])
+
+    def test_case_alias_is_checked_on_case_insensitive_filesystem(self):
+        alternate = self.repo / "HELD.TXT"
+        if not alternate.exists() or not os.path.samefile(alternate, self.repo / "held.txt"):
+            self.skipTest("this volume has distinct case-sensitive names")
+        patch = self.payload("*** Begin Patch\n*** Delete File: HELD.TXT\n*** End Patch")
+        self.assertEqual("deny", self.decision(patch, "codex")["permissionDecision"])
+
+    def test_unicode_filename_separator_does_not_shorten_lease_target(self):
+        path = "free\u2028+suffix"
+        self.run_cli("claim", "--wi", "unicode-owner", "--path", path, session="owner")
+        patch = self.payload("*** Begin Patch\n*** Add File: " + path + "\n+new\n*** End Patch")
+        self.assertEqual("deny", self.decision(patch, "codex")["permissionDecision"])
+
+    def test_unreadable_and_non_object_ledger_state_denies_instead_of_crashing(self):
+        log = self.repo / ".agents/log/owner.jsonl"
+        original = log.read_text()
+        patch = self.payload("*** Begin Patch\n*** Delete File: held.txt\n*** End Patch")
+        for corrupt in ["[]\n", None]:
+            with self.subTest(corrupt=corrupt):
+                log.unlink()
+                if corrupt is None:
+                    log.mkdir()
+                else:
+                    log.write_text(corrupt)
+                self.assertEqual("deny", self.decision(patch, "codex")["permissionDecision"])
+                if log.is_dir():
+                    log.rmdir()
+                log.write_text(original)
+
 
 class HookTests(GitCase):
     PAYLOAD = '{{"session_id":"{sid}","tool_name":"Edit","tool_input":{{"file_path":"{p}"}}}}'

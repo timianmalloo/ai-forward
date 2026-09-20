@@ -126,6 +126,31 @@ The result records `extension_notifications` and `native_denials` separately fro
 
 ## Qualification and results
 
+Before preparing Claude/Codex worker bases, emit and review the native ownership entry:
+
+```sh
+python3 docs/ai-forward-pack/scripts/coord-core.py hook --config --host claude
+python3 docs/ai-forward-pack/scripts/coord-core.py hook --config --host codex
+```
+
+Merge the relevant entry into project `.claude/settings.json` or `.codex/hooks.json`,
+preserving other hooks. These commands only print JSON. Bind that file and the deployed
+`coord-core.py` bytes. The hook checks native file tools against existing leases; it does
+not contain arbitrary shell writes. `AGENT_SESSION` must reach the native hook process.
+Opt-in hook decision facts record that environment identity, `hook_host`, and actual
+`hook_cwd`; they never record patch contents. Check those receipts with unchanged leased
+file bytes, and separately prove an unleased edit succeeds. Codex indeterminate checks
+return a supported denial; legacy Claude indeterminate checks request review.
+
+Codex requires native review of each exact non-managed hook definition. Inspect `hooks/list`
+at the assigned cwd: the expected synchronous PreToolUse source/matcher/hash must be present,
+enabled and trusted with no inventory errors. Missing, untrusted, modified, disabled or
+unknown state blocks qualification. Review the concrete entry through native `/hooks`;
+never bypass hook trust or write its trust database. Project trust and hook-definition
+trust are separate. The installed Codex ACP adapter can set session project trust itself,
+so unchanged configuration files do not prove the effective trust policy was preserved.
+Record both states and actual native tool behavior before attesting enforcement.
+
 ```json
 {
   "schema": "coord-qualification/1",

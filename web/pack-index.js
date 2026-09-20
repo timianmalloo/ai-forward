@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 275
+"count": 276
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 449,
+"total": 450,
 "items": [
 {
 "cat": "knowledge",
@@ -971,7 +971,7 @@ window.PACK_INDEX = {
 "summary": "coord-core.py - agent coordination, Phase 1 walking skeleton.",
 "path": "pack/scripts/coord-core.py",
 "kind": "script",
-"text": "coord-core.py coord-core.py - agent coordination, phase 1 walking skeleton. holds the record of intent and answers \"may this session touch this artifact?\" from it. append-only jsonl, one file per session; every piece of state is a fold over it. no daemon, no database, no dependency beyond the standard library (adr-0007). four controls here were observed failing on the un-fixed shape before they were trusted: log-a an append onto a file not ending in a newline fuses two records and loses both r4 a check that scanned nothing must not report \"free\" ctrl-port os.open without o_binary translates newlines on windows -- which also masked the log-a control, because a stray cr still terminates a line f8 a claim over the coordination record itself would lock the substrate design: docs/design/coord-core-phase1.md __init__ repo_root checkout_top resolve_root _norm _literal_segments overlaps excepted lease_covers make_event _next_seq append_event read_events fold check _safe render append_decision read_decisions append_record request_log_path read_request_events fold_requests blob_sha current_blob annotate_requests request_doctor_lines request_metrics lease_overlap_lines _git _git_status leader_validate leader_read leader_state leader_decide refuse leader_write leader_metrics _leader_lines leader_doctor_line cmd_leader refused unique_commits default_branch commits_ahead_of_default staged_paths _identity session_id_error _build_parser entry_fingerprint conservation_lost merge_register _read_jsonl cmd_merge_register load_registry classify regen_command resolve_interpreter _canonical_project pack_defaults _dirty_paths verify_regen_command cmd_classify_init record_regen_owed regen_owed clear_regen_owed _reject_path render_harness_capability _relativise parse_hook_request detect_harness hook_decision_of hook_response_is_valid hook_response _not_checked cmd_hook cmd_precommit cmd_guard _worktree_key _worktree_label active_sessions session_contract_path _role_token _strip_cell contract_ownership infer_session_roles owner_rows_for_path collaboration_findings cmd_session_list cmd_collaborate _parse_deadline _request_twin _deadline_text cmd_request _slug worktree_inventory worktree_is_clean base_commit classify_removals worktree_safety cmd_worktree session_tree_kind wt4_exception_rate cmd_session cmd_metrics heartbeat_scratch_path _fresh_scratch _read_scratch _write_scratch _renew_leader_if_holder heartbeat_tick _has_progress track_fold worktree_mtimes _track_render_rows cmd_track _load_mail cmd_kick refused liveness_metrics heartbeat_doctor_line cmd_log_portable cmd_install _install_merge_driver _write_conflict read cmd_merge_derived cmd_regen driver_status driver_path_status cmd_doctor cmd_plugin_emit _print_settings_entry main"
+"text": "coord-core.py coord-core.py - agent coordination, phase 1 walking skeleton. holds the record of intent and answers \"may this session touch this artifact?\" from it. append-only jsonl, one file per session; every piece of state is a fold over it. no daemon, no database, no dependency beyond the standard library (adr-0007). four controls here were observed failing on the un-fixed shape before they were trusted: log-a an append onto a file not ending in a newline fuses two records and loses both r4 a check that scanned nothing must not report \"free\" ctrl-port os.open without o_binary translates newlines on windows -- which also masked the log-a control, because a stray cr still terminates a line f8 a claim over the coordination record itself would lock the substrate design: docs/design/coord-core-phase1.md __init__ repo_root checkout_top resolve_root _norm _literal_segments overlaps excepted lease_covers make_event _next_seq append_event read_events fold check _safe render append_decision read_decisions append_record request_log_path read_request_events fold_requests blob_sha current_blob annotate_requests request_doctor_lines request_metrics lease_overlap_lines _git _git_status leader_validate leader_read leader_state leader_decide refuse leader_write leader_metrics _leader_lines leader_doctor_line cmd_leader refused unique_commits default_branch commits_ahead_of_default staged_paths _identity session_id_error _build_parser entry_fingerprint conservation_lost merge_register _read_jsonl cmd_merge_register load_registry classify regen_command resolve_interpreter _canonical_project pack_defaults _dirty_paths verify_regen_command cmd_classify_init record_regen_owed regen_owed clear_regen_owed _reject_path render_harness_capability _relativise _patch_paths _physical_spelling _native_paths parse_hook_request detect_harness hook_decision_of hook_response_is_valid hook_response _not_checked cmd_hook cmd_precommit cmd_guard _worktree_key _worktree_label active_sessions session_contract_path _role_token _strip_cell contract_ownership infer_session_roles owner_rows_for_path collaboration_findings cmd_session_list cmd_collaborate _parse_deadline _request_twin _deadline_text cmd_request _slug worktree_inventory worktree_is_clean base_commit classify_removals worktree_safety cmd_worktree session_tree_kind wt4_exception_rate cmd_session cmd_metrics heartbeat_scratch_path _fresh_scratch _read_scratch _write_scratch _renew_leader_if_holder heartbeat_tick _has_progress track_fold worktree_mtimes _track_render_rows cmd_track _load_mail cmd_kick refused liveness_metrics heartbeat_doctor_line cmd_log_portable cmd_install _install_merge_driver _write_conflict read cmd_merge_derived cmd_regen driver_status driver_path_status cmd_doctor cmd_plugin_emit _print_settings_entry native_hook_config main"
 },
 {
 "cat": "scripts",
@@ -1796,10 +1796,10 @@ window.PACK_INDEX = {
 "cat": "graph",
 "id": "api-index",
 "title": "API reference — the deployed script bundle",
-"summary": "Generated API reference for the pack's public surface — the deployed script bundle. 521 public functions across 39 modules, 47% carrying a docstring.",
+"summary": "Generated API reference for the pack's public surface — the deployed script bundle. 522 public functions across 39 modules, 47% carrying a docstring.",
 "path": "docs/api/index.md",
 "kind": "api",
-"text": "api reference — the deployed script bundle generated api reference for the pack's public surface — the deployed script bundle. 521 public functions across 39 modules, 47% carrying a docstring. api scripts generated index documents architecture"
+"text": "api reference — the deployed script bundle generated api reference for the pack's public surface — the deployed script bundle. 522 public functions across 39 modules, 47% carrying a docstring. api scripts generated index documents architecture"
 },
 {
 "cat": "graph",
@@ -2457,6 +2457,15 @@ window.PACK_INDEX = {
 "path": "docs/design/native-app-ui-skill-extension.md",
 "kind": "design",
 "text": "native app ui skill extension — design detailed design for making native client applications first-class in the ai-forward ui skills. the design updates /ui-design and /visualize, adds a reusable native ui proof-pack template, adds native desktop archetype rows, and introduces a deterministic xaml token linter while keeping web ui and generated-asset guardrails intact. ui-design visualize native-ui wpf winui avalonia blazor-hybrid xaml-token-lint templates implements spec-native-app-ui-skill-extension depends-on kb-native-client-ui-design depends-on kb-native-client-ui-design-data depends-on kb-native-client-ui-design-comparables"
+},
+{
+"cat": "graph",
+"id": "design-native-ownership-enforcement",
+"title": "Native ownership guards for Claude and Codex workers",
+"summary": "Reuse the existing lease hook at native edit seams, add Codex patch-envelope support, and install explicit project-local guard entries without weakening native hook trust or claiming shell containment.",
+"path": "docs/design/native-ownership-enforcement.md",
+"kind": "design",
+"text": "native ownership guards for claude and codex workers reuse the existing lease hook at native edit seams, add codex patch-envelope support, and install explicit project-local guard entries without weakening native hook trust or claiming shell containment. coordination hooks ownership codex claude implements spec-multi-harness-launch-and-monitor refines design-coord-enforcement-phase2 depends-on adr-0010-enforcement-topology depends-on proof-native-coordination-repair"
 },
 {
 "cat": "graph",

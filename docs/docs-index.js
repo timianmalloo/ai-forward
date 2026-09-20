@@ -798,7 +798,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "24b6ccdc90bff08916e5d9ba471093411d88ac4974057b651d4d9ab7e7d099bf"
+      "sourceSha256": "bc0b4c42d702d5f4daaefeb1255d3199984fed63fcd8e678b94674eb5d976bc2"
     },
     {
       "id": "api-coord-decide",
@@ -1060,7 +1060,7 @@ window.DOCS_INDEX = {
       "phase": "",
       "reviewBy": "2027-03-03",
       "reviewSuggested": [],
-      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 521 public functions across 39 modules, 47% carrying a docstring.",
+      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 522 public functions across 39 modules, 47% carrying a docstring.",
       "tags": [
         "api",
         "scripts",
@@ -1074,7 +1074,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "aa63de5d8b85aa8104fdf4dc4cff7540e8548d6538f9b562036e833bcfffa483"
+      "sourceSha256": "ecb4d437bbd6b7c476169b56b265e50632e434050956de8c3c1379f572c2b793"
     },
     {
       "id": "api-marker-lint",
@@ -3582,6 +3582,45 @@ window.DOCS_INDEX = {
       "sourceSha256": "2cb8b5b8647d8755342d669c7347fa49cd3be3c1ca1241cfcd0368ca8152323b"
     },
     {
+      "id": "design-native-ownership-enforcement",
+      "path": "docs/design/native-ownership-enforcement.md",
+      "title": "Native ownership guards for Claude and Codex workers",
+      "type": "design",
+      "status": "reviewed",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2026-12-20",
+      "reviewSuggested": [],
+      "summary": "Reuse the existing lease hook at native edit seams, add Codex patch-envelope support, and install explicit project-local guard entries without weakening native hook trust or claiming shell containment.",
+      "tags": [
+        "coordination",
+        "hooks",
+        "ownership",
+        "codex",
+        "claude"
+      ],
+      "links": [
+        {
+          "to": "spec-multi-harness-launch-and-monitor",
+          "rel": "implements"
+        },
+        {
+          "to": "design-coord-enforcement-phase2",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0010-enforcement-topology",
+          "rel": "depends-on"
+        },
+        {
+          "to": "proof-native-coordination-repair",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "bd4491293031584a21088c1b3fdf631b49b6270111e44e8cbb30e0c7c6e15a5a"
+    },
+    {
       "id": "design-owner-review",
       "path": "docs/design/owner-review.md",
       "title": "Design — owner review (coord-decide.py · docs/notes/rulings.md · verify-ruling-citations.py · owner-review-gate.py)",
@@ -4143,7 +4182,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b173beb8c78e1970666bc7a60ec0a2801e505e687d704f475aca44762b7fd7b5"
+      "sourceSha256": "b1e603181c570edfcb417ae5b3e60d85a005857287826fe617580b24bfe3aed3"
     },
     {
       "id": "docs-index",
@@ -9791,5 +9830,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "95a6cea503281a4aadc3f030c25eab44dbcb48ab79af45f0e6920f9312839ff6"
+  "graphSha256": "d5dac1f550d028d31870b83b14c9153a02c294ed305ff5c1e73d1ef4a10293e2"
 };
