@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-20T13:26:53Z",
+  "generated": "2026-09-20T13:54:35Z",
   "audit": [
     {
       "actor": null,
@@ -6924,6 +6924,29 @@ window.AUDIT_DATA = {
       "done_when": "root cause established from evidence or labelled Inferred; config fixed red-first; landed",
       "tier": "T1",
       "fan_out": 0
+    },
+    {
+      "id": "al-01M2ZHHT3BF9NTBXBK37QPFSPV",
+      "shortname": "agy-channels-enforced",
+      "datetime": "2026-09-20T13:54:35Z",
+      "session": "fix-agy-schema",
+      "prompt": "you should be able to test and validate with the existing agy session / cli",
+      "summary": "Antigravity validated headlessly (agy --add-dir <tree> -p) against the host's hooks docs: PostToolUse handlers need the matcher/hooks wrapper (ours was bare - loaded, never fired), injectSteps items must be objects (string list rejected by protojson), a Stop hook may answer decision continue. Fixes red-first (5 tests). Probes: Stop row calls 2 (heartbeat+PostToolUse), the doorbell's ephemeralMessage quoted verbatim, the stop gate held a stopping session twice with the reason (Ruling 5). Rev 83's enabled diagnosis corrected (flag defaults true). Plain agy -p in an unregistered folder loads only the user hooks file. HOST-A rewritten. INSTALL rev 84.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/note-20260920-agy-hooks-loaded-but-not-enabled.md",
+        "docs/notes/rulings.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "validate the Antigravity channels with the CLI and fix what the pack owns",
+      "done_when": "each Antigravity channel observed live or its cause named from the host docs; fixes red-first; landed",
+      "tier": "T1",
+      "fan_out": 0
     }
   ],
   "changes": [
@@ -8469,6 +8492,24 @@ window.AUDIT_DATA = {
       "to": "s1-codex",
       "kind": "ruling",
       "ref": "req-01M2YHQ24BQ52GN4VTZ4DER247",
+      "session": "coord-p3-p5-p8"
+    },
+    {
+      "id": "mail-01M2ZH97186ZRAHPCJ9PYXYVWS",
+      "ts": "2026-09-20T13:49:54Z",
+      "from": "smoke-agy-2",
+      "to": "coord-p3-p5-p8",
+      "kind": "decision-request",
+      "ref": "req-01M2ZH9713A9BT4PWZ894R5BEA",
+      "session": "smoke-agy-2"
+    },
+    {
+      "id": "mail-01M2ZHEKYM1AFZ974BP0K39X3E",
+      "ts": "2026-09-20T13:52:51Z",
+      "from": "coord-p3-p5-p8",
+      "to": "smoke-agy-2",
+      "kind": "ruling",
+      "ref": "req-01M2ZH9713A9BT4PWZ894R5BEA",
       "session": "coord-p3-p5-p8"
     }
   ]

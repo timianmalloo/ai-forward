@@ -31,6 +31,28 @@ class AgyHooksEnabledTests(unittest.TestCase):
         self.assertEqual(events["mail-doorbell"], ["PreInvocation"])
         self.assertEqual(events["session-start"], ["PreInvocation"])
         self.assertEqual(events["reread-guard"], ["PreToolUse"])
+        self.assertEqual(events["owner-review-gate"], ["Stop"], "Antigravity has a Stop event; the gate is wired on it")
+
+    def test_event_shapes_follow_the_host_docs(self):
+        """Tool events (PreToolUse/PostToolUse) take [{matcher, hooks:[handler]}]; lifecycle events
+        (PreInvocation, PostInvocation, Stop) take [handler] directly. A PostToolUse handler in the direct
+        form loaded without complaint and never fired (heartbeat, S1 test and headless probes, 2026-09-20)."""
+        doc = json.loads(CONFIG.read_text(encoding="utf-8"))
+        for name, section in doc.items():
+            for event, entries in section.items():
+                if event == "enabled":
+                    continue
+                for entry in entries:
+                    with self.subTest(section=name, event=event):
+                        if event in ("PreToolUse", "PostToolUse"):
+                            self.assertIn("hooks", entry, f"{name}.{event}: tool events need the matcher/hooks wrapper")
+                            self.assertIn("matcher", entry)
+                            for handler in entry["hooks"]:
+                                self.assertIn("command", handler)
+                        else:
+                            self.assertIn("command", entry, f"{name}.{event}: lifecycle events take handlers directly")
+                            self.assertNotIn("hooks", entry)
+        self.assertTrue(any("owner-review-gate.py" in h.get("command", "") for h in doc["owner-review-gate"]["Stop"]))
 
 
 if __name__ == "__main__":

@@ -52,10 +52,10 @@ no such event (CO12). Nothing below was promoted by reasoning.
 |---|---|---|---|---|---|
 | edit boundary (PreToolUse deny) | **enforcing** (spike S5) | n/a (headless) | **enforcing** (CLI 1.0.80; fails open on a 30 s hook timeout) | observed-only | observed-only |
 | session start marker | executed | — | observed-only | observed-only | observed-only |
-| mail doorbell | executed (native message) | **`codex queue` verified** 2026-09-20 (S1: two queued pointers arrived as turns, quoted in the track's note) | observed-only | observed-only (S1 Grok session: `additionalContext` line not seen) | observed-only (S1 Antigravity session: no injected step seen) |
+| mail doorbell | executed (native message) | **`codex queue` verified** 2026-09-20 (S1: two queued pointers arrived as turns, quoted in the track's note) | observed-only | observed-only (S1 Grok session: `additionalContext` line not seen) | **enforced** 2026-09-20 (1.2.7, headless: the injected `ephemeralMessage` quoted verbatim; needs a registered project or `--add-dir`) |
 | dispatch (`coord dispatch --harness`) | **verified** 2026-09-19 (real `claude -p` child) | **verified** 2026-09-19 | unsupported (no headless CLI found) | not probed | not probed |
-| heartbeat (P3) | **enforced** 2026-09-19 (2.1.278: host-fired PostToolUse/Stop rows, `calls: 3` on the first Stop; interactive and headless) | — | observed-only | **enforced** 2026-09-20 (Grok Build 1.0.34: host-fired `PreToolUse` row in `s1-grok.jsonl`) | observed-only (S1 session wrote no row) |
-| owner-review stop gate (P5) | **enforced** 2026-09-19 (2.1.278: headless stop refused with the reason while `req-01M2Y374DXAC09F83Q0VXGYSCH` was open; Ruling 2) | — | observed-only (block form) | observed-only | **unsupported** (no stop-class event) |
+| heartbeat (P3) | **enforced** 2026-09-19 (2.1.278: host-fired PostToolUse/Stop rows, `calls: 3` on the first Stop; interactive and headless) | — | observed-only | **enforced** 2026-09-20 (Grok Build 1.0.34: host-fired `PreToolUse` row in `s1-grok.jsonl`) | **enforced** 2026-09-20 (1.2.7: `PostToolUse` counted, `Stop` rows) |
+| owner-review stop gate (P5) | **enforced** 2026-09-19 (2.1.278: headless stop refused with the reason while `req-01M2Y374DXAC09F83Q0VXGYSCH` was open; Ruling 2) | — | observed-only (block form) | observed-only | **enforced** 2026-09-20 (1.2.7: `{"decision":"continue"}` held the stop twice with the reason; Ruling 5) |
 
 `harness-status.json` was created on 2026-09-20 by the first `coord mail dispatch --harness claude-code` (finding F-2 closed for Claude Code; the other harnesses are still absent from it): `coord dispatch` writes it on
 its first run per harness, so the table above is assembled from the tracks' reports and the

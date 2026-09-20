@@ -69,3 +69,22 @@ silently ignores the entries that lack the host's activation field; the file is 
 the loader logs success, and nothing fires. Control: every host adapter config is compared against a
 *working* host example for its activation fields, not only for its event names; the S1 promotion table
 records *loaded* and *fired* as two facts.
+
+## Correction (2026-09-20, later the same day)
+
+The `enabled` verdict above was **wrong**: Antigravity's hooks documentation states the flag defaults to
+true. The flag stays (explicit, harmless) but was not the cause. Three headless probes (`agy --add-dir
+<tree> -p …`, session `smoke-agy-2`) against the host's documented schema found the real causes and
+promoted every Antigravity channel:
+
+| channel | before | cause | after (observed) |
+|---|---|---|---|
+| heartbeat `PostToolUse` | never counted | handler written in the direct form; tool events need `[{matcher, hooks:[…]}]` | Stop row `calls 2` after a two-call turn — **enforced** |
+| heartbeat `Stop` | fired | — | rows on every stop — **enforced** |
+| doorbell `PreInvocation` | ran, reply rejected (`failed to unmarshal … via protojson`) | `injectSteps` items must be objects (`{"ephemeralMessage": text}`) | the model quoted the injected line verbatim — **enforced** |
+| owner-review gate | `unsupported` (README: "no stop event") | `Stop` exists and a hook may answer `{"decision": "continue"}` | the session reported "Termination was blocked … unresolved decision request" twice, then stopped (cap 2) — **enforced**, Ruling 5 |
+| project hooks loading | interactive: loaded at +4 s; plain `agy -p` in an unregistered folder: not loaded | the folder must be a registered project (`--new-project`) or passed with `--add-dir` | loaded (`6 named hooks from 2 files`) |
+
+The S1 fallback note's Stop verdict is superseded by this table. What remains open for Antigravity: the
+`$(…)` substitution in a `run_command` that hung the s1-agy ack (the two-command form is documented).
+

@@ -125,7 +125,7 @@ argv: claude-code → [claude, -p, brief, --output-format, json]
 |---|---|---|---|
 | claude | `PreToolUse` (no matcher), `UserPromptSubmit` | `{"hookSpecificOutput":{"hookEventName":<event>,"additionalContext":<text>}}` | nothing |
 | grok | same | same | nothing |
-| agy | `PreInvocation` | `{"injectSteps":[<text>]}` | nothing |
+| agy | `PreInvocation` | `{"injectSteps":[{"ephemeralMessage":<text>}]}` (objects — protojson rejected a string list, observed 2026-09-20) | nothing |
 | copilot | `preToolUse` | `{"additionalContext":<text>}` | nothing |
 | copilot | `agentStop` | `{"decision":"block","reason":<text>}` only if `stop_hook_active` is not true | nothing |
 

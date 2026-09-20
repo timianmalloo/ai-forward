@@ -12,7 +12,7 @@ Hosts and shapes (KB data-and-constants.md "Hook surfaces"; execution status per
 in .agents/harness-status.json, written by coord-mail.py dispatch):
   claude  PreToolUse / UserPromptSubmit -> {"hookSpecificOutput":{"hookEventName":E,"additionalContext":T}}
   grok    same (Claude-format hooks)
-  agy     PreInvocation                 -> {"injectSteps":[T]}
+  agy     PreInvocation                 -> {"injectSteps":[{"ephemeralMessage":T}]}
   copilot preToolUse                    -> {"additionalContext":T}
           agentStop                     -> {"decision":"block","reason":T}  only when count > 0 and
                                            stop_hook_active is not set (the 8-block guard is never approached)
@@ -67,7 +67,7 @@ def payload_for(host: str, event: str, session: str, count: int, pointer: Option
     if host in CLAUDE_FORMAT_HOSTS:
         return {"hookSpecificOutput": {"hookEventName": event or "PreToolUse", "additionalContext": text}}
     if host == "agy":
-        return {"injectSteps": [text]}
+        return {"injectSteps": [{"ephemeralMessage": text}]}   # objects, never strings (protojson; docs/hooks)
     if host == "copilot":
         if event in ("agentStop", "subagentStop"):
             if stop_hook_active:

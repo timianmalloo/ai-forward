@@ -90,8 +90,10 @@ class Builder(Fixture):
                                                  "additionalContext": db.doorbell_text("p6", 2, self.b)}})
         self.assertEqual(db.payload_for("grok", "UserPromptSubmit", "p6", 2, self.b)["hookSpecificOutput"]["hookEventName"],
                          "UserPromptSubmit")
+        # Antigravity parses the reply with protojson: injectSteps items are objects (docs/hooks); a string
+        # list was rejected live on 2026-09-20 ("failed to unmarshal result ... via protojson").
         self.assertEqual(db.payload_for("agy", "PreInvocation", "p6", 2, self.b),
-                         {"injectSteps": [db.doorbell_text("p6", 2, self.b)]})
+                         {"injectSteps": [{"ephemeralMessage": db.doorbell_text("p6", 2, self.b)}]})
         self.assertEqual(db.payload_for("copilot", "preToolUse", "p6", 2, self.b),
                          {"additionalContext": db.doorbell_text("p6", 2, self.b)})
         self.assertEqual(db.payload_for("copilot", "agentStop", "p6", 2, self.b),

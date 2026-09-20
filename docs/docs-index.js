@@ -2138,7 +2138,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "754cf567ca3bc2b3331d2c4a0faac6b3764810cfd6cd3350ff59634f2289da1a"
+      "sourceSha256": "b93756a435ec24742b24de24399041fa374b0c3abafb6fd1d30ea23d9bee3d74"
     },
     {
       "id": "note-20260919-doctrine-stages-close-the-document",
@@ -2622,7 +2622,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d047848b7dd933df0b428f20cbd4c1dad446e0961e37ce1bde572df4f9b9feb2"
+      "sourceSha256": "0d4e72cee1377e9f0a6ccebd5007aebcc27c3737a8d0d8c7a5bdcb9f58a77968"
     },
     {
       "id": "note-20260920-s1-agy-hooks-surface-freshness",
@@ -3423,7 +3423,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "67748cdddf2e5cedb9aac6be932e47a80d6a038e884640d1748fa55a4c04b844"
+      "sourceSha256": "d173e60f6c138982d151a4580f30a02681b3e288efa17f6540feade19f58e06b"
     },
     {
       "id": "design-native-app-ui-skill-extension",
@@ -4030,7 +4030,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c4fc2ef5f3fd0394d3bfb4b14802e4699f384021f88a8417bf1f39ada1988df5"
+      "sourceSha256": "bef138dc35e36f0d75a45058c51c1a613abd4907bf8188a086bc83aeeaadc00c"
     },
     {
       "id": "docs-index",
@@ -5569,7 +5569,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a5068371618fde5b723f9fa006e22b9b52a9773f292684e1f23339db89b2c0fe"
+      "sourceSha256": "0a54c55477898a04bea674739595858d2faee3be3850d145ca33930a80eeb931"
     },
     {
       "id": "seam-p5-to-coordinator",
@@ -9277,5 +9277,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "0b342f924ef92786cab363aaeeeb2f70b4f68bb864095297f9b2cc49640956eb"
+  "graphSha256": "50250914a1dd4c818bff7785668871b374e70efd11efd449f6d077c88ddcc46a"
 };

@@ -12,7 +12,7 @@ Hosts and shapes (pack/adapters/hooks/README.md; per-host status in its table):
   claude  Stop / SubagentStop  -> exit 2, one line on stderr (the host feeds it back as the reason)
   grok    same (Claude-format hooks)                                        observed-only
   copilot agentStop / subagentStop -> exit 0 + {"decision":"block","reason":T} on stdout
-  agy     no stop event -> unsupported: exit 0, always
+  agy     Stop -> exit 0 + {"decision":"continue"} on stdout (at most AGY_MAX_REFUSALS times per stop sequence)
 
 FAIL-SAFE (Security lens: never block on a path you cannot evaluate; the doorbell rule). Exit 0
 and print nothing on: no AGENT_SESSION; stdin not JSON; `stop_hook_active` set (the host's loop
@@ -41,6 +41,7 @@ for _stream in (sys.stdout, sys.stderr):
 
 HERE = Path(__file__).resolve().parent
 REASON = "decision-request"
+AGY_MAX_REFUSALS = 2
 CLAUDE_FORMAT_HOSTS = ("claude", "grok")
 COPILOT_STOP_EVENTS = ("agentStop", "subagentStop")
 TEXT = ("owner-review: {count} unresolved decision request(s) sent by {session} ({ids}); "
@@ -86,8 +87,6 @@ def main(argv=None) -> int:
     parser.add_argument("--session", default=None)
     args = parser.parse_args(argv)
     try:
-        if args.host == "agy":
-            return 0          # no stop event: unsupported, recorded in the README table
         session = args.session or os.environ.get("AGENT_SESSION") or ""
         if not session:
             return 0
@@ -114,6 +113,16 @@ def main(argv=None) -> int:
         text = reason_text(session, ids)
         if args.host == "copilot":
             print(json.dumps({"decision": "block", "reason": text}))
+            return 0
+        if args.host == "agy":
+            # Antigravity Stop: {"decision": "continue"} re-enters the loop (docs/hooks). executionNum counts the
+            # stop attempts in this sequence; after two refusals the stop is allowed and the reason is left on
+            # stderr, so an unruled request can never spin the agent forever.
+            attempts = payload.get("executionNum") or 1
+            print(text, file=sys.stderr)
+            if isinstance(attempts, int) and attempts > AGY_MAX_REFUSALS:
+                return 0
+            print(json.dumps({"decision": "continue"}))
             return 0
         print(text, file=sys.stderr)
         return 2

@@ -364,9 +364,23 @@ class Gate(TempRepo):
         other_event = self.gate("--host", "copilot", "--event", "preToolUse", stdin="{}")
         self.assertEqual((other_event.returncode, other_event.stdout), (0, ""))
 
-    def test_agy_unsupported_exit_0(self):
-        self.make_request()
-        result = self.gate("--host", "agy", stdin=json.dumps({"conversationId": "c"}))
+    def test_agy_stop_answers_continue_while_a_request_is_open_and_stops_refusing_after_two(self):
+        # Antigravity has a Stop event (heartbeat rows on Stop, 2026-09-20) and a Stop hook may answer
+        # {"decision": "continue"} (docs/hooks). The refusal is capped by executionNum so an unruled
+        # request cannot spin the loop forever.
+        rid = self.make_request()["id"]
+        first = self.gate("--host", "agy", "--event", "Stop",
+                          stdin=json.dumps({"conversationId": "c", "executionNum": 1, "terminationReason": "model_stop"}))
+        self.assertEqual(first.returncode, 0, first.stderr)
+        self.assertEqual(json.loads(first.stdout), {"decision": "continue"})
+        self.assertIn(str(rid), first.stderr)
+        third = self.gate("--host", "agy", "--event", "Stop",
+                          stdin=json.dumps({"conversationId": "c", "executionNum": 3}))
+        self.assertEqual((third.returncode, third.stdout), (0, ""), "after two refusals the stop is allowed")
+        self.assertIn(str(rid), third.stderr, "the reason still lands on stderr")
+
+    def test_agy_stop_is_silent_without_an_open_request(self):
+        result = self.gate("--host", "agy", "--event", "Stop", stdin=json.dumps({"conversationId": "c", "executionNum": 1}))
         self.assertEqual((result.returncode, result.stdout, result.stderr), (0, "", ""))
 
 
