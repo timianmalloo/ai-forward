@@ -4143,7 +4143,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c04a7be699f19c88d34d39b12e93b52c0cdc59db96059d82f4c2c18fc25bf00d"
+      "sourceSha256": "7ab76eae7c032cbd41ae0889658ebb889025023a226b84545d219019f16ea343"
     },
     {
       "id": "docs-index",
@@ -5066,7 +5066,7 @@ window.DOCS_INDEX = {
       "path": "docs/plans/coordination-profile-integration.md",
       "title": "Integrate coordination and qualify local profiles",
       "type": "doc",
-      "status": "active",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2026-12-20",
@@ -5098,7 +5098,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart LR\n A --> B --> C --> D --> E --> F --> G"
         }
       ],
-      "sourceSha256": "a77a8a45215014d22790987e0dfabdbdb36a0e53f3ca9d6233fc2c5b4dde2102"
+      "sourceSha256": "4f02c7e875e68f095c6a5c9d12310d87aa96b6f5173a4a1c437ab894e72a0d52"
     },
     {
       "id": "plan-cross-platform-readiness",
@@ -8344,6 +8344,39 @@ window.DOCS_INDEX = {
       "sourceSha256": "861feb807c919ca6ff345f6bee8eeafbf494a2739ffe7ec07d817d24f6069890"
     },
     {
+      "id": "proof-local-coordination-profiles",
+      "path": "docs/proof/local-coordination-profiles.md",
+      "title": "Local coordination profile qualification",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2026-12-20",
+      "reviewSuggested": [],
+      "summary": "The reviewed launcher and ACP spec are integrated locally; live installed-profile probes block unattended rollout because ACP startup notifications and Agy denial evidence are not handled correctly.",
+      "tags": [
+        "coordination",
+        "acp",
+        "qualification"
+      ],
+      "links": [
+        {
+          "to": "plan-coordination-profile-integration",
+          "rel": "implements"
+        },
+        {
+          "to": "proof-multi-harness-runner",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-acp-coordination",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "6bd2cc4a36a989c3f8f95f25a67f8ca3003cc354a2305f3e657e307893510e36"
+    },
+    {
       "id": "proof-multi-harness-runner",
       "path": "docs/proof/multi-harness-runner.md",
       "title": "Proof: bounded multi-harness launch and monitoring",
@@ -8370,7 +8403,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b6164a84ba90c5d373d0bb3c829a3d7883b274a6b0d6af9331228bf97c8fe0bc"
+      "sourceSha256": "23b5d3080f8420e69e5cdd859eca569209c086cd3524c056e2da6155c9bceb29"
     },
     {
       "id": "proof-native-app-ui-skill-extension",
@@ -9686,5 +9719,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "c375f387ddd5602a220661a83c04dd601057de3bf6776cff0f75b65c915349e4"
+  "graphSha256": "9a1dc96004f5fc0856ccb315c7c26963e9dd1d740f9b8a85a0646a5a92ea939e"
 };

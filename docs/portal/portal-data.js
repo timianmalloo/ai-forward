@@ -3201,6 +3201,12 @@ window.PORTAL_DATA = {
         "summary": "Forty-one red-first tests (plus the five of the XP seam) prove the heartbeat sampling, the fold's four states with the 299/301 s boundary, the NOT CHECKED..."
       },
       {
+        "id": "proof-local-coordination-profiles",
+        "type": "proof-pack",
+        "title": "Local coordination profile qualification",
+        "summary": "The reviewed launcher and ACP spec are integrated locally; live installed-profile probes block unattended rollout because ACP startup notifications and Agy..."
+      },
+      {
         "id": "proof-multi-harness-runner",
         "type": "proof-pack",
         "title": "Proof: bounded multi-harness launch and monitoring",
@@ -6029,6 +6035,21 @@ window.PORTAL_DATA = {
         "from": "proof-liveness-and-track",
         "to": "spec-liveness-and-track",
         "rel": "tested-by"
+      },
+      {
+        "from": "proof-local-coordination-profiles",
+        "to": "plan-coordination-profile-integration",
+        "rel": "implements"
+      },
+      {
+        "from": "proof-local-coordination-profiles",
+        "to": "proof-multi-harness-runner",
+        "rel": "relates-to"
+      },
+      {
+        "from": "proof-local-coordination-profiles",
+        "to": "spec-acp-coordination",
+        "rel": "relates-to"
       },
       {
         "from": "proof-multi-harness-runner",

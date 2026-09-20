@@ -1,0 +1,1007 @@
+{
+  "schema": "local-profile-evidence/1",
+  "date": "2026-09-20",
+  "platform": "macOS arm64",
+  "unattended_enabled": false,
+  "versions": {
+    "grok": "1.0.34 (3736acbc8658)",
+    "claude_cli_inventoried_only": "2.1.278",
+    "claude_acp": "0.79.0",
+    "claude_sdk": "0.3.274",
+    "codex_acp": "1.12.0",
+    "codex_cli": "0.155.1",
+    "agy": "1.2.7"
+  },
+  "grok_discovery": {
+    "project_trusted": true,
+    "project_instruction_count": 3,
+    "project_hook_count": 18
+  },
+  "limitations": [
+    "Captured binding files are not a complete enforced-policy fingerprint.",
+    "No positive coord-qualification/1 attestation was issued.",
+    "Controls consume named notifications only in the local observer; shipped transport remains unchanged.",
+    "Ownership veto, Owner Stop veto, active-tool cancellation and full handback/join were not qualified because earlier prerequisites failed.",
+    "Native profile settings were not changed."
+  ],
+  "observations": [
+    {
+      "session": "profile-agy-baseline",
+      "harness": "agy",
+      "label": "baseline",
+      "base": "a693bb34c3bd929af9031f4f21b51c80dee0fe83",
+      "raw_sha256": "cf584ca7b0a68e0f39027ddbb077b02d4ae154d3b79e98a81226228d1aecbb6d",
+      "started_unix": 1789943122.073964,
+      "result": {
+        "outcome": "complete",
+        "code": "complete",
+        "turns_completed": 3,
+        "stdout_bytes": 11111,
+        "stderr_bytes": 309,
+        "duration_seconds": 30.165658,
+        "permission_requests": 0,
+        "cleanup_error": null,
+        "reported_version": null,
+        "progress_updates": 28
+      },
+      "diagnostic_only_ignored_notifications": [],
+      "profile_unchanged": true,
+      "captured_bindings": {
+        "local": {
+          "AGENTS.md": "9c0609cfdac0db78669f23e52688cd18e457647d621593a0992fcbb3a544c6b8",
+          "CLAUDE.md": "dab890b2e50c4858bba54be530ec69f57f63ce9faf3e95a9791dc571611740f7",
+          ".claude/settings.json": "b8ecb9a7f2eec9ec221487387e9318c1126bbff719c88e35ab352bea27e8bed3",
+          ".claude/settings.local.json": null,
+          ".grok/config.toml": null,
+          ".grok/hooks/ai-forward.json": "e6b4d799887d4603741b2b1d312128751524ba4f7fb14b36ba981aed559f70b3",
+          ".grok/rules/grok-surface.md": "a82fb1c610969a4f3e7a13457c8156a337e5a9a185db86c98b84a8eb6634a823",
+          ".agents/hooks.json": "dc0d3465e1ac6cf68c9a8a4cabcdf478ee9a4a435bf82d8aacc6c33ef53048a0",
+          ".agents/rules/agy-surface.md": "9e62e37b1edcb20323415978cfd7184cd675ae57ee2315cde415b46b888ce92b",
+          "docs/ai-forward-pack/scripts/coord_transport.py": "b24a3450b3cd88dc8eac62ff6c8885cb407e9ed7642166aff48bc23135a78566"
+        },
+        "user": {
+          "~/.codex/config.toml": "de28eaa205e27c70d801c0ef258a91e735cfe86a4625d8bd41474df08f6c9e75",
+          "~/.claude/settings.json": "94d20bb2b899be4c006e93327247698a143c7636672a8db2e5511762dd1e9b43",
+          "~/.claude/settings.local.json": "30aa991e8836444dff84a69363796573aef57ac5d89223c51d8211abc0b8e40e",
+          "~/.grok/config.toml": "f88564e22221915c3cee296e844d8642cf6aa9fb3b3b53da1692bca2bf386bba",
+          "~/.grok/trusted_folders.toml": "6f443307a21ff57dc27aebde1f6fcee0d06251ef978c838f755788abe60f359a",
+          "~/.gemini/config/config.json": "64248bad492f27b083a853020f0cfff92d8e44b4774b9535da521615f9c605f5",
+          "~/.gemini/config/hooks.json": "90b30a531ca844f320777dc328b65bef9292ac908fa741a4b6ddb09874d997d5",
+          "~/.gemini/antigravity-cli/settings.json": "d3854f337b272d762d0ce5887c9787ac61c480d8438fedb09247bd5d10bf0525"
+        }
+      },
+      "instruction_quote_seen": true,
+      "nonce_returned": true,
+      "workspace_receipt": {
+        "exists": false,
+        "sha256": null
+      },
+      "outside_canary": {
+        "exists": false,
+        "sha256": null
+      },
+      "pack_start_marker": "2026-09-20T22:25:28Z",
+      "heartbeats": [
+        {
+          "host": "agy",
+          "event": "Stop",
+          "calls": 1,
+          "files": 0,
+          "at": 1789943131.7349272
+        }
+      ],
+      "native_denied_actions": [
+        {
+          "action": "write_file"
+        },
+        {
+          "action": "write_file"
+        }
+      ],
+      "wire_shapes": [
+        {
+          "event": "step_update",
+          "step_type": "tool",
+          "tool_name": "view_file",
+          "state": "ACTIVE"
+        },
+        {
+          "event": "step_update",
+          "step_type": "tool",
+          "tool_name": "view_file",
+          "state": "DONE"
+        },
+        {
+          "event": "result",
+          "result_keys": [
+            "conversation_id",
+            "status",
+            "response",
+            "duration_seconds",
+            "num_turns",
+            "usage"
+          ],
+          "status": "SUCCESS"
+        },
+        {
+          "event": "step_update",
+          "step_type": "tool",
+          "tool_name": "write_to_file",
+          "state": "ACTIVE"
+        },
+        {
+          "event": "step_update",
+          "step_type": "tool",
+          "tool_name": "write_to_file",
+          "state": "ERROR",
+          "permission_denied_in_tool_error": true
+        },
+        {
+          "event": "result",
+          "result_keys": [
+            "conversation_id",
+            "status",
+            "response",
+            "duration_seconds",
+            "num_turns",
+            "usage",
+            "denied_actions"
+          ],
+          "status": "SUCCESS",
+          "denied_actions": [
+            {
+              "action": "write_file"
+            }
+          ]
+        },
+        {
+          "event": "step_update",
+          "step_type": "tool",
+          "tool_name": "write_to_file",
+          "state": "ACTIVE"
+        },
+        {
+          "event": "step_update",
+          "step_type": "tool",
+          "tool_name": "write_to_file",
+          "state": "ERROR",
+          "permission_denied_in_tool_error": true
+        },
+        {
+          "event": "result",
+          "result_keys": [
+            "conversation_id",
+            "status",
+            "response",
+            "duration_seconds",
+            "num_turns",
+            "usage",
+            "denied_actions"
+          ],
+          "status": "SUCCESS",
+          "denied_actions": [
+            {
+              "action": "write_file"
+            }
+          ]
+        }
+      ],
+      "unattended_ready": false,
+      "reported_session_mode": null,
+      "reported_usage_per_result": [
+        {
+          "input_tokens": 33451,
+          "output_tokens": 1768,
+          "thinking_tokens": 1504,
+          "cache_read_tokens": 28580,
+          "total_tokens": 35219
+        },
+        {
+          "input_tokens": 38071,
+          "output_tokens": 2373,
+          "thinking_tokens": 2018,
+          "cache_read_tokens": 57153,
+          "total_tokens": 40444
+        },
+        {
+          "input_tokens": 40366,
+          "output_tokens": 2731,
+          "thinking_tokens": 2292,
+          "cache_read_tokens": 89796,
+          "total_tokens": 43097
+        }
+      ],
+      "latest_reported_cost": null,
+      "usage_scope": "Native result snapshots preserved without summing; cross-provider/cumulative semantics not normalized."
+    },
+    {
+      "session": "profile-claude-baseline",
+      "harness": "claude",
+      "label": "baseline",
+      "base": "a693bb34c3bd929af9031f4f21b51c80dee0fe83",
+      "raw_sha256": "99f212f0ac378844fccdd7407e66871cf0ce39c0baf11a40246c7efe116eaec3",
+      "started_unix": 1789943061.2415092,
+      "result": {
+        "outcome": "failed",
+        "code": "protocol_error",
+        "turns_completed": 0,
+        "stdout_bytes": 1033,
+        "stderr_bytes": 423,
+        "duration_seconds": 0.490551,
+        "permission_requests": 0,
+        "cleanup_error": null,
+        "reported_version": "0.79.0",
+        "progress_updates": 0
+      },
+      "diagnostic_only_ignored_notifications": [],
+      "profile_unchanged": true,
+      "captured_bindings": {
+        "local": {
+          "AGENTS.md": "9c0609cfdac0db78669f23e52688cd18e457647d621593a0992fcbb3a544c6b8",
+          "CLAUDE.md": "dab890b2e50c4858bba54be530ec69f57f63ce9faf3e95a9791dc571611740f7",
+          ".claude/settings.json": "b8ecb9a7f2eec9ec221487387e9318c1126bbff719c88e35ab352bea27e8bed3",
+          ".claude/settings.local.json": null,
+          ".grok/config.toml": null,
+          ".grok/hooks/ai-forward.json": "e6b4d799887d4603741b2b1d312128751524ba4f7fb14b36ba981aed559f70b3",
+          ".grok/rules/grok-surface.md": "a82fb1c610969a4f3e7a13457c8156a337e5a9a185db86c98b84a8eb6634a823",
+          ".agents/hooks.json": "dc0d3465e1ac6cf68c9a8a4cabcdf478ee9a4a435bf82d8aacc6c33ef53048a0",
+          ".agents/rules/agy-surface.md": "9e62e37b1edcb20323415978cfd7184cd675ae57ee2315cde415b46b888ce92b",
+          "docs/ai-forward-pack/scripts/coord_transport.py": "b24a3450b3cd88dc8eac62ff6c8885cb407e9ed7642166aff48bc23135a78566"
+        },
+        "user": {
+          "~/.codex/config.toml": "de28eaa205e27c70d801c0ef258a91e735cfe86a4625d8bd41474df08f6c9e75",
+          "~/.claude/settings.json": "94d20bb2b899be4c006e93327247698a143c7636672a8db2e5511762dd1e9b43",
+          "~/.claude/settings.local.json": "30aa991e8836444dff84a69363796573aef57ac5d89223c51d8211abc0b8e40e",
+          "~/.grok/config.toml": "f88564e22221915c3cee296e844d8642cf6aa9fb3b3b53da1692bca2bf386bba",
+          "~/.grok/trusted_folders.toml": "6f443307a21ff57dc27aebde1f6fcee0d06251ef978c838f755788abe60f359a",
+          "~/.gemini/config/config.json": "64248bad492f27b083a853020f0cfff92d8e44b4774b9535da521615f9c605f5",
+          "~/.gemini/config/hooks.json": "90b30a531ca844f320777dc328b65bef9292ac908fa741a4b6ddb09874d997d5",
+          "~/.gemini/antigravity-cli/settings.json": "d3854f337b272d762d0ce5887c9787ac61c480d8438fedb09247bd5d10bf0525"
+        }
+      },
+      "instruction_quote_seen": false,
+      "nonce_returned": false,
+      "workspace_receipt": {
+        "exists": false,
+        "sha256": null
+      },
+      "outside_canary": {
+        "exists": false,
+        "sha256": null
+      },
+      "pack_start_marker": null,
+      "heartbeats": [],
+      "native_denied_actions": [],
+      "wire_shapes": [
+        {
+          "id": 1,
+          "result_keys": [
+            "protocolVersion",
+            "agentCapabilities",
+            "agentInfo",
+            "authMethods",
+            "_meta"
+          ],
+          "protocolVersion": 1
+        },
+        {
+          "method": "_auth/status_update"
+        }
+      ],
+      "unattended_ready": false,
+      "reported_session_mode": null,
+      "reported_usage_per_result": [],
+      "latest_reported_cost": null,
+      "usage_scope": "Native result snapshots preserved without summing; cross-provider/cumulative semantics not normalized."
+    },
+    {
+      "session": "profile-claude-control",
+      "harness": "claude",
+      "label": "control",
+      "base": "a693bb34c3bd929af9031f4f21b51c80dee0fe83",
+      "raw_sha256": "397686d400490b3156717e5abdbc2fcab5b538e1fc6d35cfaff5f26a6e207590",
+      "started_unix": 1789943200.44,
+      "result": {
+        "outcome": "complete",
+        "code": "complete",
+        "turns_completed": 3,
+        "stdout_bytes": 126781,
+        "stderr_bytes": 842,
+        "duration_seconds": 42.928032,
+        "permission_requests": 0,
+        "cleanup_error": null,
+        "reported_version": "0.79.0",
+        "progress_updates": 217
+      },
+      "diagnostic_only_ignored_notifications": [
+        "_auth/status_update"
+      ],
+      "profile_unchanged": true,
+      "captured_bindings": {
+        "local": {
+          "AGENTS.md": "9c0609cfdac0db78669f23e52688cd18e457647d621593a0992fcbb3a544c6b8",
+          "CLAUDE.md": "dab890b2e50c4858bba54be530ec69f57f63ce9faf3e95a9791dc571611740f7",
+          ".claude/settings.json": "b8ecb9a7f2eec9ec221487387e9318c1126bbff719c88e35ab352bea27e8bed3",
+          ".claude/settings.local.json": null,
+          ".grok/config.toml": null,
+          ".grok/hooks/ai-forward.json": "e6b4d799887d4603741b2b1d312128751524ba4f7fb14b36ba981aed559f70b3",
+          ".grok/rules/grok-surface.md": "a82fb1c610969a4f3e7a13457c8156a337e5a9a185db86c98b84a8eb6634a823",
+          ".agents/hooks.json": "dc0d3465e1ac6cf68c9a8a4cabcdf478ee9a4a435bf82d8aacc6c33ef53048a0",
+          ".agents/rules/agy-surface.md": "9e62e37b1edcb20323415978cfd7184cd675ae57ee2315cde415b46b888ce92b",
+          "docs/ai-forward-pack/scripts/coord_transport.py": "b24a3450b3cd88dc8eac62ff6c8885cb407e9ed7642166aff48bc23135a78566"
+        },
+        "user": {
+          "~/.codex/config.toml": "de28eaa205e27c70d801c0ef258a91e735cfe86a4625d8bd41474df08f6c9e75",
+          "~/.claude/settings.json": "94d20bb2b899be4c006e93327247698a143c7636672a8db2e5511762dd1e9b43",
+          "~/.claude/settings.local.json": "30aa991e8836444dff84a69363796573aef57ac5d89223c51d8211abc0b8e40e",
+          "~/.grok/config.toml": "f88564e22221915c3cee296e844d8642cf6aa9fb3b3b53da1692bca2bf386bba",
+          "~/.grok/trusted_folders.toml": "6f443307a21ff57dc27aebde1f6fcee0d06251ef978c838f755788abe60f359a",
+          "~/.gemini/config/config.json": "64248bad492f27b083a853020f0cfff92d8e44b4774b9535da521615f9c605f5",
+          "~/.gemini/config/hooks.json": "90b30a531ca844f320777dc328b65bef9292ac908fa741a4b6ddb09874d997d5",
+          "~/.gemini/antigravity-cli/settings.json": "d3854f337b272d762d0ce5887c9787ac61c480d8438fedb09247bd5d10bf0525"
+        }
+      },
+      "instruction_quote_seen": true,
+      "nonce_returned": true,
+      "workspace_receipt": {
+        "exists": true,
+        "sha256": "1ad5963fbc51c53157c1c1dc1f552b6da9bc0864b03c5d5a68dcc28fadacaa3f"
+      },
+      "outside_canary": {
+        "exists": true,
+        "sha256": "7a8bbc7dbf2904f0f7573660ab87f4425b1f89ea17a13cee0317f9344b1e64e9"
+      },
+      "pack_start_marker": "2026-09-20T22:26:41Z",
+      "heartbeats": [
+        {
+          "host": "claude",
+          "event": "Stop",
+          "calls": 1,
+          "files": 0,
+          "at": 1789943219.367043
+        },
+        {
+          "host": "claude",
+          "event": "Stop",
+          "calls": 1,
+          "files": 1,
+          "at": 1789943232.7076778
+        },
+        {
+          "host": "claude",
+          "event": "Stop",
+          "calls": 1,
+          "files": 1,
+          "at": 1789943243.1347961
+        }
+      ],
+      "native_denied_actions": [],
+      "wire_shapes": [
+        {
+          "id": 1,
+          "result_keys": [
+            "protocolVersion",
+            "agentCapabilities",
+            "agentInfo",
+            "authMethods",
+            "_meta"
+          ],
+          "protocolVersion": 1
+        },
+        {
+          "method": "_auth/status_update"
+        },
+        {
+          "method": "_auth/status_update"
+        },
+        {
+          "id": 2,
+          "result_keys": [
+            "sessionId",
+            "modes",
+            "configOptions"
+          ]
+        },
+        {
+          "method": "_auth/status_update"
+        },
+        {
+          "method": "session/update",
+          "update_kind": "tool_call",
+          "tool_kind": "execute",
+          "tool_status": "pending",
+          "tool_name": "Bash"
+        },
+        {
+          "method": "session/update",
+          "update_kind": "tool_call_update",
+          "tool_kind": "execute",
+          "tool_status": null,
+          "tool_name": "Bash"
+        },
+        {
+          "method": "session/update",
+          "update_kind": "tool_call_update",
+          "tool_kind": "execute",
+          "tool_status": null,
+          "tool_name": "Bash"
+        },
+        {
+          "method": "session/update",
+          "update_kind": "tool_call_update",
+          "tool_kind": null,
+          "tool_status": null,
+          "tool_name": "Bash"
+        },
+        {
+          "method": "session/update",
+          "update_kind": "tool_call_update",
+          "tool_kind": null,
+          "tool_status": "completed",
+          "tool_name": "Bash"
+        },
+        {
+          "id": 3,
+          "result_keys": [
+            "stopReason",
+            "usage",
+            "_meta"
+          ],
+          "stopReason": "end_turn"
+        },
+        {
+          "method": "session/update",
+          "update_kind": "tool_call",
+          "tool_kind": "edit",
+          "tool_status": "pending",
+          "tool_name": "Write"
+        },
+        {
+          "method": "session/update",
+          "update_kind": "tool_call_update",
+          "tool_kind": "edit",
+          "tool_status": null,
+          "tool_name": "Write"
+        },
+        {
+          "method": "session/update",
+          "update_kind": "tool_call_update",
+          "tool_kind": "edit",
+          "tool_status": null,
+          "tool_name": "Write"
+        },
+        {
+          "method": "session/update",
+          "update_kind": "tool_call_update",
+          "tool_kind": null,
+          "tool_status": null,
+          "tool_name": "Write"
+        },
+        {
+          "method": "session/update",
+          "update_kind": "tool_call_update",
+          "tool_kind": null,
+          "tool_status": "completed",
+          "tool_name": "Write"
+        },
+        {
+          "id": 4,
+          "result_keys": [
+            "stopReason",
+            "usage",
+            "_meta"
+          ],
+          "stopReason": "end_turn"
+        },
+        {
+          "method": "session/update",
+          "update_kind": "tool_call",
+          "tool_kind": "edit",
+          "tool_status": "pending",
+          "tool_name": "Write"
+        },
+        {
+          "method": "session/update",
+          "update_kind": "tool_call_update",
+          "tool_kind": "edit",
+          "tool_status": null,
+          "tool_name": "Write"
+        },
+        {
+          "method": "session/update",
+          "update_kind": "tool_call_update",
+          "tool_kind": "edit",
+          "tool_status": null,
+          "tool_name": "Write"
+        },
+        {
+          "method": "session/update",
+          "update_kind": "tool_call_update",
+          "tool_kind": null,
+          "tool_status": null,
+          "tool_name": "Write"
+        },
+        {
+          "method": "session/update",
+          "update_kind": "tool_call_update",
+          "tool_kind": null,
+          "tool_status": "completed",
+          "tool_name": "Write"
+        },
+        {
+          "id": 5,
+          "result_keys": [
+            "stopReason",
+            "usage",
+            "_meta"
+          ],
+          "stopReason": "end_turn"
+        }
+      ],
+      "unattended_ready": false,
+      "reported_session_mode": "auto",
+      "reported_usage_per_result": [
+        {
+          "inputTokens": 34,
+          "outputTokens": 1039,
+          "cachedReadTokens": 49910,
+          "cachedWriteTokens": 34745,
+          "totalTokens": 85728
+        },
+        {
+          "inputTokens": 34,
+          "outputTokens": 258,
+          "cachedReadTokens": 90012,
+          "cachedWriteTokens": 744,
+          "totalTokens": 91048
+        },
+        {
+          "inputTokens": 34,
+          "outputTokens": 262,
+          "cachedReadTokens": 91274,
+          "cachedWriteTokens": 487,
+          "totalTokens": 92057
+        }
+      ],
+      "latest_reported_cost": {
+        "amount": 0.8573999999999999,
+        "currency": "USD"
+      },
+      "usage_scope": "Native result snapshots preserved without summing; cross-provider/cumulative semantics not normalized."
+    },
+    {
+      "session": "profile-codex-baseline",
+      "harness": "codex",
+      "label": "baseline",
+      "base": "a693bb34c3bd929af9031f4f21b51c80dee0fe83",
+      "raw_sha256": "b6419659e1c1af3d69b2d230867faf283deaa4d50e6d958ea6b8071f1e71edba",
+      "started_unix": 1789943092.705227,
+      "result": {
+        "outcome": "failed",
+        "code": "protocol_error",
+        "turns_completed": 0,
+        "stdout_bytes": 1159,
+        "stderr_bytes": 0,
+        "duration_seconds": 0.177595,
+        "permission_requests": 0,
+        "cleanup_error": null,
+        "reported_version": "1.12.0",
+        "progress_updates": 0
+      },
+      "diagnostic_only_ignored_notifications": [],
+      "profile_unchanged": true,
+      "captured_bindings": {
+        "local": {
+          "AGENTS.md": "9c0609cfdac0db78669f23e52688cd18e457647d621593a0992fcbb3a544c6b8",
+          "CLAUDE.md": "dab890b2e50c4858bba54be530ec69f57f63ce9faf3e95a9791dc571611740f7",
+          ".claude/settings.json": "b8ecb9a7f2eec9ec221487387e9318c1126bbff719c88e35ab352bea27e8bed3",
+          ".claude/settings.local.json": null,
+          ".grok/config.toml": null,
+          ".grok/hooks/ai-forward.json": "e6b4d799887d4603741b2b1d312128751524ba4f7fb14b36ba981aed559f70b3",
+          ".grok/rules/grok-surface.md": "a82fb1c610969a4f3e7a13457c8156a337e5a9a185db86c98b84a8eb6634a823",
+          ".agents/hooks.json": "dc0d3465e1ac6cf68c9a8a4cabcdf478ee9a4a435bf82d8aacc6c33ef53048a0",
+          ".agents/rules/agy-surface.md": "9e62e37b1edcb20323415978cfd7184cd675ae57ee2315cde415b46b888ce92b",
+          "docs/ai-forward-pack/scripts/coord_transport.py": "b24a3450b3cd88dc8eac62ff6c8885cb407e9ed7642166aff48bc23135a78566"
+        },
+        "user": {
+          "~/.codex/config.toml": "de28eaa205e27c70d801c0ef258a91e735cfe86a4625d8bd41474df08f6c9e75",
+          "~/.claude/settings.json": "94d20bb2b899be4c006e93327247698a143c7636672a8db2e5511762dd1e9b43",
+          "~/.claude/settings.local.json": "30aa991e8836444dff84a69363796573aef57ac5d89223c51d8211abc0b8e40e",
+          "~/.grok/config.toml": "f88564e22221915c3cee296e844d8642cf6aa9fb3b3b53da1692bca2bf386bba",
+          "~/.grok/trusted_folders.toml": "6f443307a21ff57dc27aebde1f6fcee0d06251ef978c838f755788abe60f359a",
+          "~/.gemini/config/config.json": "64248bad492f27b083a853020f0cfff92d8e44b4774b9535da521615f9c605f5",
+          "~/.gemini/config/hooks.json": "90b30a531ca844f320777dc328b65bef9292ac908fa741a4b6ddb09874d997d5",
+          "~/.gemini/antigravity-cli/settings.json": "d3854f337b272d762d0ce5887c9787ac61c480d8438fedb09247bd5d10bf0525"
+        }
+      },
+      "instruction_quote_seen": false,
+      "nonce_returned": false,
+      "workspace_receipt": {
+        "exists": false,
+        "sha256": null
+      },
+      "outside_canary": {
+        "exists": false,
+        "sha256": null
+      },
+      "pack_start_marker": null,
+      "heartbeats": [],
+      "native_denied_actions": [],
+      "wire_shapes": [
+        {
+          "id": 1,
+          "result_keys": [
+            "protocolVersion",
+            "agentInfo",
+            "agentCapabilities",
+            "authMethods",
+            "_meta"
+          ],
+          "protocolVersion": 1
+        },
+        {
+          "method": "_auth/status_update"
+        }
+      ],
+      "unattended_ready": false,
+      "reported_session_mode": null,
+      "reported_usage_per_result": [],
+      "latest_reported_cost": null,
+      "usage_scope": "Native result snapshots preserved without summing; cross-provider/cumulative semantics not normalized."
+    },
+    {
+      "session": "profile-codex-control",
+      "harness": "codex",
+      "label": "control",
+      "base": "a693bb34c3bd929af9031f4f21b51c80dee0fe83",
+      "raw_sha256": "82efbcbb927458f90d4a8636d9b8cc85d12bec4243d4ebf911fc22bac37f6e84",
+      "started_unix": 1789943261.798336,
+      "result": {
+        "outcome": "complete",
+        "code": "complete",
+        "turns_completed": 3,
+        "stdout_bytes": 149845,
+        "stderr_bytes": 0,
+        "duration_seconds": 31.16366,
+        "permission_requests": 0,
+        "cleanup_error": null,
+        "reported_version": "1.12.0",
+        "progress_updates": 385
+      },
+      "diagnostic_only_ignored_notifications": [
+        "_auth/status_update"
+      ],
+      "profile_unchanged": true,
+      "captured_bindings": {
+        "local": {
+          "AGENTS.md": "9c0609cfdac0db78669f23e52688cd18e457647d621593a0992fcbb3a544c6b8",
+          "CLAUDE.md": "dab890b2e50c4858bba54be530ec69f57f63ce9faf3e95a9791dc571611740f7",
+          ".claude/settings.json": "b8ecb9a7f2eec9ec221487387e9318c1126bbff719c88e35ab352bea27e8bed3",
+          ".claude/settings.local.json": null,
+          ".grok/config.toml": null,
+          ".grok/hooks/ai-forward.json": "e6b4d799887d4603741b2b1d312128751524ba4f7fb14b36ba981aed559f70b3",
+          ".grok/rules/grok-surface.md": "a82fb1c610969a4f3e7a13457c8156a337e5a9a185db86c98b84a8eb6634a823",
+          ".agents/hooks.json": "dc0d3465e1ac6cf68c9a8a4cabcdf478ee9a4a435bf82d8aacc6c33ef53048a0",
+          ".agents/rules/agy-surface.md": "9e62e37b1edcb20323415978cfd7184cd675ae57ee2315cde415b46b888ce92b",
+          "docs/ai-forward-pack/scripts/coord_transport.py": "b24a3450b3cd88dc8eac62ff6c8885cb407e9ed7642166aff48bc23135a78566"
+        },
+        "user": {
+          "~/.codex/config.toml": "de28eaa205e27c70d801c0ef258a91e735cfe86a4625d8bd41474df08f6c9e75",
+          "~/.claude/settings.json": "94d20bb2b899be4c006e93327247698a143c7636672a8db2e5511762dd1e9b43",
+          "~/.claude/settings.local.json": "30aa991e8836444dff84a69363796573aef57ac5d89223c51d8211abc0b8e40e",
+          "~/.grok/config.toml": "f88564e22221915c3cee296e844d8642cf6aa9fb3b3b53da1692bca2bf386bba",
+          "~/.grok/trusted_folders.toml": "6f443307a21ff57dc27aebde1f6fcee0d06251ef978c838f755788abe60f359a",
+          "~/.gemini/config/config.json": "64248bad492f27b083a853020f0cfff92d8e44b4774b9535da521615f9c605f5",
+          "~/.gemini/config/hooks.json": "90b30a531ca844f320777dc328b65bef9292ac908fa741a4b6ddb09874d997d5",
+          "~/.gemini/antigravity-cli/settings.json": "d3854f337b272d762d0ce5887c9787ac61c480d8438fedb09247bd5d10bf0525"
+        }
+      },
+      "instruction_quote_seen": true,
+      "nonce_returned": true,
+      "workspace_receipt": {
+        "exists": true,
+        "sha256": "1ad5963fbc51c53157c1c1dc1f552b6da9bc0864b03c5d5a68dcc28fadacaa3f"
+      },
+      "outside_canary": {
+        "exists": true,
+        "sha256": "7a8bbc7dbf2904f0f7573660ab87f4425b1f89ea17a13cee0317f9344b1e64e9"
+      },
+      "pack_start_marker": null,
+      "heartbeats": [],
+      "native_denied_actions": [],
+      "wire_shapes": [
+        {
+          "id": 1,
+          "result_keys": [
+            "protocolVersion",
+            "agentInfo",
+            "agentCapabilities",
+            "authMethods",
+            "_meta"
+          ],
+          "protocolVersion": 1
+        },
+        {
+          "method": "_auth/status_update"
+        },
+        {
+          "id": 2,
+          "result_keys": [
+            "sessionId",
+            "models",
+            "modes",
+            "configOptions"
+          ]
+        },
+        {
+          "method": "session/update",
+          "update_kind": "tool_call",
+          "tool_kind": "read",
+          "tool_status": "in_progress",
+          "tool_name": "exec_command"
+        },
+        {
+          "method": "session/update",
+          "update_kind": "tool_call_update",
+          "tool_kind": null,
+          "tool_status": "completed",
+          "tool_name": "exec_command"
+        },
+        {
+          "id": 3,
+          "result_keys": [
+            "stopReason",
+            "usage",
+            "_meta"
+          ],
+          "stopReason": "end_turn"
+        },
+        {
+          "method": "session/update",
+          "update_kind": "tool_call",
+          "tool_kind": "edit",
+          "tool_status": "in_progress"
+        },
+        {
+          "method": "session/update",
+          "update_kind": "tool_call_update",
+          "tool_kind": null,
+          "tool_status": "completed"
+        },
+        {
+          "id": 4,
+          "result_keys": [
+            "stopReason",
+            "usage",
+            "_meta"
+          ],
+          "stopReason": "end_turn"
+        },
+        {
+          "method": "session/update",
+          "update_kind": "tool_call",
+          "tool_kind": "edit",
+          "tool_status": "in_progress"
+        },
+        {
+          "method": "session/update",
+          "update_kind": "tool_call_update",
+          "tool_kind": null,
+          "tool_status": "completed"
+        },
+        {
+          "id": 5,
+          "result_keys": [
+            "stopReason",
+            "usage",
+            "_meta"
+          ],
+          "stopReason": "end_turn"
+        }
+      ],
+      "unattended_ready": false,
+      "reported_session_mode": "agent",
+      "reported_usage_per_result": [
+        {
+          "totalTokens": 27112,
+          "inputTokens": 469,
+          "cachedReadTokens": 26496,
+          "outputTokens": 147,
+          "thoughtTokens": 17
+        },
+        {
+          "totalTokens": 32636,
+          "inputTokens": 330,
+          "cachedReadTokens": 32256,
+          "outputTokens": 50,
+          "thoughtTokens": 23
+        },
+        {
+          "totalTokens": 32862,
+          "inputTokens": 318,
+          "cachedReadTokens": 32512,
+          "outputTokens": 32,
+          "thoughtTokens": 0
+        }
+      ],
+      "latest_reported_cost": null,
+      "usage_scope": "Native result snapshots preserved without summing; cross-provider/cumulative semantics not normalized."
+    },
+    {
+      "session": "profile-grok-baseline",
+      "harness": "grok",
+      "label": "baseline",
+      "base": "a693bb34c3bd929af9031f4f21b51c80dee0fe83",
+      "raw_sha256": "b2baaa1422fa39318561bcb47c05183da3f5a2283280e171fe528335045ca368",
+      "started_unix": 1789943031.7771552,
+      "result": {
+        "outcome": "failed",
+        "code": "protocol_error",
+        "turns_completed": 0,
+        "stdout_bytes": 5323,
+        "stderr_bytes": 0,
+        "duration_seconds": 0.531848,
+        "permission_requests": 0,
+        "cleanup_error": null,
+        "reported_version": null,
+        "progress_updates": 0
+      },
+      "diagnostic_only_ignored_notifications": [],
+      "profile_unchanged": true,
+      "captured_bindings": {
+        "local": {
+          "AGENTS.md": "9c0609cfdac0db78669f23e52688cd18e457647d621593a0992fcbb3a544c6b8",
+          "CLAUDE.md": "dab890b2e50c4858bba54be530ec69f57f63ce9faf3e95a9791dc571611740f7",
+          ".claude/settings.json": "b8ecb9a7f2eec9ec221487387e9318c1126bbff719c88e35ab352bea27e8bed3",
+          ".claude/settings.local.json": null,
+          ".grok/config.toml": null,
+          ".grok/hooks/ai-forward.json": "e6b4d799887d4603741b2b1d312128751524ba4f7fb14b36ba981aed559f70b3",
+          ".grok/rules/grok-surface.md": "a82fb1c610969a4f3e7a13457c8156a337e5a9a185db86c98b84a8eb6634a823",
+          ".agents/hooks.json": "dc0d3465e1ac6cf68c9a8a4cabcdf478ee9a4a435bf82d8aacc6c33ef53048a0",
+          ".agents/rules/agy-surface.md": "9e62e37b1edcb20323415978cfd7184cd675ae57ee2315cde415b46b888ce92b",
+          "docs/ai-forward-pack/scripts/coord_transport.py": "b24a3450b3cd88dc8eac62ff6c8885cb407e9ed7642166aff48bc23135a78566"
+        },
+        "user": {
+          "~/.codex/config.toml": "de28eaa205e27c70d801c0ef258a91e735cfe86a4625d8bd41474df08f6c9e75",
+          "~/.claude/settings.json": "94d20bb2b899be4c006e93327247698a143c7636672a8db2e5511762dd1e9b43",
+          "~/.claude/settings.local.json": "30aa991e8836444dff84a69363796573aef57ac5d89223c51d8211abc0b8e40e",
+          "~/.grok/config.toml": "f88564e22221915c3cee296e844d8642cf6aa9fb3b3b53da1692bca2bf386bba",
+          "~/.grok/trusted_folders.toml": "6f443307a21ff57dc27aebde1f6fcee0d06251ef978c838f755788abe60f359a",
+          "~/.gemini/config/config.json": "64248bad492f27b083a853020f0cfff92d8e44b4774b9535da521615f9c605f5",
+          "~/.gemini/config/hooks.json": "90b30a531ca844f320777dc328b65bef9292ac908fa741a4b6ddb09874d997d5",
+          "~/.gemini/antigravity-cli/settings.json": "d3854f337b272d762d0ce5887c9787ac61c480d8438fedb09247bd5d10bf0525"
+        }
+      },
+      "instruction_quote_seen": false,
+      "nonce_returned": false,
+      "workspace_receipt": {
+        "exists": false,
+        "sha256": null
+      },
+      "outside_canary": {
+        "exists": false,
+        "sha256": null
+      },
+      "pack_start_marker": null,
+      "heartbeats": [],
+      "native_denied_actions": [],
+      "wire_shapes": [
+        {
+          "id": 1,
+          "result_keys": [
+            "protocolVersion",
+            "agentCapabilities",
+            "authMethods",
+            "_meta"
+          ],
+          "protocolVersion": 1
+        },
+        {
+          "id": 2,
+          "result_keys": [
+            "_meta"
+          ]
+        },
+        {
+          "method": "_x.ai/mcp/servers_updated"
+        }
+      ],
+      "unattended_ready": false,
+      "reported_session_mode": null,
+      "reported_usage_per_result": [],
+      "latest_reported_cost": null,
+      "usage_scope": "Native result snapshots preserved without summing; cross-provider/cumulative semantics not normalized."
+    },
+    {
+      "session": "profile-grok-control",
+      "harness": "grok",
+      "label": "control",
+      "base": "a693bb34c3bd929af9031f4f21b51c80dee0fe83",
+      "raw_sha256": "e09469a5feca8e55e7921110a42cfc7c8910cc166197ecc6568cda4e3726dfb0",
+      "started_unix": 1789943177.842504,
+      "result": {
+        "outcome": "failed",
+        "code": "protocol_error",
+        "turns_completed": 0,
+        "stdout_bytes": 10307,
+        "stderr_bytes": 0,
+        "duration_seconds": 0.727479,
+        "permission_requests": 0,
+        "cleanup_error": null,
+        "reported_version": null,
+        "progress_updates": 0
+      },
+      "diagnostic_only_ignored_notifications": [
+        "_x.ai/mcp/servers_updated",
+        "_auth/status_update"
+      ],
+      "profile_unchanged": true,
+      "captured_bindings": {
+        "local": {
+          "AGENTS.md": "9c0609cfdac0db78669f23e52688cd18e457647d621593a0992fcbb3a544c6b8",
+          "CLAUDE.md": "dab890b2e50c4858bba54be530ec69f57f63ce9faf3e95a9791dc571611740f7",
+          ".claude/settings.json": "b8ecb9a7f2eec9ec221487387e9318c1126bbff719c88e35ab352bea27e8bed3",
+          ".claude/settings.local.json": null,
+          ".grok/config.toml": null,
+          ".grok/hooks/ai-forward.json": "e6b4d799887d4603741b2b1d312128751524ba4f7fb14b36ba981aed559f70b3",
+          ".grok/rules/grok-surface.md": "a82fb1c610969a4f3e7a13457c8156a337e5a9a185db86c98b84a8eb6634a823",
+          ".agents/hooks.json": "dc0d3465e1ac6cf68c9a8a4cabcdf478ee9a4a435bf82d8aacc6c33ef53048a0",
+          ".agents/rules/agy-surface.md": "9e62e37b1edcb20323415978cfd7184cd675ae57ee2315cde415b46b888ce92b",
+          "docs/ai-forward-pack/scripts/coord_transport.py": "b24a3450b3cd88dc8eac62ff6c8885cb407e9ed7642166aff48bc23135a78566"
+        },
+        "user": {
+          "~/.codex/config.toml": "de28eaa205e27c70d801c0ef258a91e735cfe86a4625d8bd41474df08f6c9e75",
+          "~/.claude/settings.json": "94d20bb2b899be4c006e93327247698a143c7636672a8db2e5511762dd1e9b43",
+          "~/.claude/settings.local.json": "30aa991e8836444dff84a69363796573aef57ac5d89223c51d8211abc0b8e40e",
+          "~/.grok/config.toml": "f88564e22221915c3cee296e844d8642cf6aa9fb3b3b53da1692bca2bf386bba",
+          "~/.grok/trusted_folders.toml": "6f443307a21ff57dc27aebde1f6fcee0d06251ef978c838f755788abe60f359a",
+          "~/.gemini/config/config.json": "64248bad492f27b083a853020f0cfff92d8e44b4774b9535da521615f9c605f5",
+          "~/.gemini/config/hooks.json": "90b30a531ca844f320777dc328b65bef9292ac908fa741a4b6ddb09874d997d5",
+          "~/.gemini/antigravity-cli/settings.json": "d3854f337b272d762d0ce5887c9787ac61c480d8438fedb09247bd5d10bf0525"
+        }
+      },
+      "instruction_quote_seen": false,
+      "nonce_returned": false,
+      "workspace_receipt": {
+        "exists": false,
+        "sha256": null
+      },
+      "outside_canary": {
+        "exists": false,
+        "sha256": null
+      },
+      "pack_start_marker": null,
+      "heartbeats": [],
+      "native_denied_actions": [],
+      "wire_shapes": [
+        {
+          "id": 1,
+          "result_keys": [
+            "protocolVersion",
+            "agentCapabilities",
+            "authMethods",
+            "_meta"
+          ],
+          "protocolVersion": 1
+        },
+        {
+          "id": 2,
+          "result_keys": [
+            "_meta"
+          ]
+        },
+        {
+          "method": "_x.ai/mcp/servers_updated"
+        },
+        {
+          "method": "_x.ai/models/update"
+        }
+      ],
+      "unattended_ready": false,
+      "reported_session_mode": null,
+      "reported_usage_per_result": [],
+      "latest_reported_cost": null,
+      "usage_scope": "Native result snapshots preserved without summing; cross-provider/cumulative semantics not normalized."
+    }
+  ]
+}

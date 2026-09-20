@@ -2,7 +2,7 @@
 id: plan-coordination-profile-integration
 title: Integrate coordination and qualify local profiles
 type: doc
-status: active
+status: accepted
 summary: Integrate the reviewed coordination branches, then qualify exact installed harness profiles before unattended use.
 owner: "@timianmalloo"
 tags: [coordination, qualification, acp]
@@ -11,6 +11,7 @@ links:
   - { to: proof-multi-harness-runner, rel: relates-to }
   - { to: kb-graph-and-loop-engineering, rel: depends-on }
 review-by: "2026-12-20"
+review-suggested: []
 ---
 
 # Integrate coordination and qualify local profiles
@@ -83,4 +84,20 @@ integration conflict, failed release gate, native trust refusal, missing hook me
 
 ## Planned versus actual
 
-Pending execution. Record measured duration and results in the closing audit and proof.
+Completed seven logical nodes. Integration landed linearly in local main at `a693bb3`;
+no push. Seven serial live attempts measured four baseline profiles and three diagnosed
+controls. All four readiness rows are blocked; no positive attestation or unattended job
+was enabled. Actual native attempt durations and byte counts are in
+`docs/knowledge/acp-compatibility/local-profile-observations.json`; total turn duration
+is measured in the closing audit. Parent model tokens/spend and exact tool-call count
+were not recorded, so the 120-call estimate is not scored as a measured success.
+
+One integration rework pass corrected missing plan metadata and staged regenerated
+artifacts for the drift gate. The unchanged full test results were retained; only the
+affected metadata gates were repeated. These are existing metadata/drift failure shapes,
+detected by their existing gates. The qualification controls were planned diagnosis,
+not retries that qualified the unmodified runner. Independent Test Architect/Security
+plan review passed before live probes. Findings and final evidence review are recorded
+in `docs/proof/local-coordination-profiles.md`. No live target overlapped another target
+or an independent reviewer. Full workflow/hook enforcement remains a release prerequisite,
+not a passed floor: the task's exit was a measured readiness decision, not forced readiness.

@@ -20,6 +20,10 @@ summary: >-
 
 # Proof: bounded multi-harness launch and monitoring
 
+Live-profile follow-up: [local qualification](local-coordination-profiles.md) found
+ACP startup-notification and Agy denial-envelope blockers after integration. The
+fixture proof below remains scoped to its tested contracts; unattended rollout is blocked.
+
 Branch: `feat/multi-harness-runner`. Tier T2. Date: 2026-09-20.
 This proof concerns the **opt-in POSIX pilot**. It does not qualify installed pack hooks
 or an arbitrary user's provider policy. The independent live ACP specification/spike is

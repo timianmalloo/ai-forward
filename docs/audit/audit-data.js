@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-20T22:23:11Z",
+  "generated": "2026-09-20T22:36:08Z",
   "audit": [
     {
       "actor": null,
@@ -7505,6 +7505,104 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-20T22:22:34Z",
       "duration_seconds": 36.0
+    },
+    {
+      "id": "al-01M30FCSQ44H4DT5JBBG2KZS0K",
+      "shortname": "coordination-profile-plan-review",
+      "datetime": "2026-09-20T22:21:26Z",
+      "session": "acp-spec-codex",
+      "prompt": "Read-only independent review for newly authorized integration/qualification. Start timing via audit-log.py start --session acp-spec-codex --skill profile-review in your own existing worktree. Parent tree /Users/mallalieut/projects/ai-forward-feat-coordination-profile-integration. Read docs/plans/coordination-profile-integration.md, the integrated runner guide, and known spike limitations. As Test Architect + Security adversary review the PLAN only now: does real-profile qualification with bounded serial live targets, no permission/trust changes and no unsupported promotion satisfy user intent? Return PASS/BLOCK with bounded changes. No edits to parent, no live sessions, no new probes, no new subagents. Fan-out0, budget10 calls /5min, context400k. Stop after concrete verdict; leave no request waiting. Parent is continuing linear integration in parallel. Also flag exact observations required before claiming unattended readiness per harness. Do not ask for permission already authorized.",
+      "summary": "Imported independent review al-01M30EHWFTCBRCC3TMVK1ZAJRV. PASS for the qualification plan, not unattended readiness. Serial bounded probes with unchanged policy/trust can produce either an exact-profile pass or a completed blocked finding. Required readiness oracles: actual checkout/identity and selected runtime/profile, hidden instruction and named installed-hook canaries, allowed action plus observed policy denial and absent forbidden artifact, pack ownership and Owner-review veto semantics, native tool-in-flight cleanup, independent handback verification and existing join. Grok trust discovery, Claude SDK hooks, Codex actual sandbox policy and missing pack hook mechanism, and Agy native stream/local reviewer distinction remain explicit. No live probes or parent edits. Reviewed plan, launch guide, integrated API reference and committed ACP evidence.",
+      "kind": "skill",
+      "skill": "profile-review",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Independently review the integration and local-profile qualification plan against actual ACP limitations.",
+      "done_when": "Return a concrete plan verdict and exact observations needed for unattended readiness, without probing or changing parent files.",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-09-20T22:19:23Z",
+      "duration_seconds": 123.0
+    },
+    {
+      "id": "al-01M30FCSRQMH6SF27REFFHR50F",
+      "shortname": "local-profile-evidence-review",
+      "datetime": "2026-09-20T22:35:09Z",
+      "session": "acp-spec-codex",
+      "prompt": "Final bounded read-only qualification evidence review. Start audit-log.py start --session acp-spec-codex --skill profile-evidence-review in your own tree. Parent /Users/mallalieut/projects/ai-forward-feat-coordination-profile-integration now has docs/proof/local-coordination-profiles.md, docs/knowledge/acp-compatibility/local-profile-observations.json and verify-local-profiles.py. Review the report against actual private raw files /tmp/coord-profile-qualification/profile-{grok,claude,codex,agy}-{baseline,control}.json (only seven actual attempts), exact unchanged pack/scripts/coord_transport.py, and local hook/nonce/canary artifacts as needed. Main already fast-forwarded to linear a693bb3; no push. Question: does evidence justify negative readiness and proposed next fixes without overclaiming? Especially Agy SUCCESS + denied_actions followed by another prompt, ACP startup notifications, no attribution of Agy denial to timeout, no inference of Codex effective policy from user config. Run evidence verifier and independently spot-check raw SHA + key claims. Return PASS/BLOCK with only material corrections, no parent edits/product fixes/new live probes/agents. Budget12 tool calls,5min,fan-out0,context400k. Parent will finalize audits/docs while you review. Do not ask for new permission.",
+      "summary": "Imported independent review al-01M30FAZGE2DZBRT6VH6F5AX6H. PASS: negative readiness and two bounded transport repairs justified. Independently matched seven raw hashes, exported results, unchanged captured bindings, source/install transport hash and unchanged source since a693bb3; read actual protocol branches. Verified canary file existence/hashes, nonce artifacts, start markers and Stop heartbeats. Confirmed valid startup notifications without IDs, Claude auto and Codex agent session modes, Agy SUCCESS/denied_actions followed by turn3 with absent canaries and native permission errors but no timeout attribution. Diagnostic controls remain distinct from unchanged production transport. Verifier and two false-readiness mutations passed. No material correction, new live probe or parent edit; full ownership/Owner-review/cancellation/handback qualification remains open.",
+      "kind": "skill",
+      "skill": "profile-evidence-review",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Independently check the local-profile report against private observed evidence and unchanged transport.",
+      "done_when": "Return PASS or only material corrections, with raw hashes and key claims spot-checked and evidence verifier executed.",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-09-20T22:31:53Z",
+      "duration_seconds": 196.0
+    },
+    {
+      "id": "al-01M30FCST9DG8VSMNPB3X5THTQ",
+      "shortname": "optimize-graph-profile-integration",
+      "datetime": "2026-09-20T22:36:08Z",
+      "session": "coord-profile-integration",
+      "prompt": "yes integrate the reviewed branches, then qualify the actual local profiles before enabling unattended coordination\n----\nthen give me the same table with the recommended next action",
+      "summary": "Seven-node serial plan completed; linear local integration, seven bounded live attempts, independent plan/evidence reviews. One generated-metadata/staging correction; full test results preserved and affected gates repeated. All four profiles block unattended rollout; no global changes or remote push. Native process time106.185s and307133bytes observed. Parent token/spend and exact tool-call count not recorded.",
+      "kind": "skill",
+      "skill": "optimize-graph",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/plans/coordination-profile-integration.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled_from": "al-01M30EDX6Q675JWY3NFZ950N0F",
+      "goal": "Integrate reviewed coordination branches and qualify actual local profiles before unattended operation",
+      "done_when": "Reviewed branches integrated locally and four measured readiness rows with recommended next action",
+      "tier": "T2",
+      "fan_out": 1,
+      "started_at": "2026-09-20T22:17:48Z",
+      "duration_seconds": 1100.0
+    },
+    {
+      "id": "al-01M30FCSVSNN327ZVSKKD23FAP",
+      "shortname": "qualify-local-coordination-profiles",
+      "datetime": "2026-09-20T22:36:08Z",
+      "session": "coord-profile-integration",
+      "prompt": "yes integrate the reviewed branches, then qualify the actual local profiles before enabling unattended coordination\n----\nthen give me the same table with the recommended next action",
+      "summary": "Completed negative qualification of actual Grok/Claude/Codex/Agy profiles. All ACP baselines fail on extension notifications before session creation. Diagnostic Claude/Codex controls pass three turns but do not qualify unchanged runner. Agy native SUCCESS includes denied_actions; runner sends later prompts despite denial. No passing attestation or unattended job enabled. Independent evidence review PASS; seven raw hashes, unchanged profiles, canary and hook receipts verified; evidence guard rejects false-ready and disguised-control mutations. Recommended next action: scoped ACP notification and Agy denial repairs, then full fresh enforcement/cancellation/handback qualification.",
+      "kind": "skill",
+      "skill": "profile-qualification",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/local-coordination-profiles.md",
+        "docs/knowledge/acp-compatibility/local-profile-observations.json"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled_from": "al-01M30EDX6Q675JWY3NFZ950N0F",
+      "goal": "Integrate reviewed coordination branches and qualify actual local profiles before unattended operation",
+      "done_when": "Reviewed branches integrated locally and four measured readiness rows with recommended next action",
+      "tier": "T2",
+      "fan_out": 1,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-20T22:23:51Z",
+      "duration_seconds": 736.2
     }
   ],
   "changes": [

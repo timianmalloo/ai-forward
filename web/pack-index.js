@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 272
+"count": 273
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 446,
+"total": 447,
 "items": [
 {
 "cat": "knowledge",
@@ -3780,6 +3780,15 @@ window.PACK_INDEX = {
 "path": "docs/proof/liveness-and-track.md",
 "kind": "proof-pack",
 "text": "proof pack — progress liveness, the running track and the kick ladder (p3) forty-one red-first tests (plus the five of the xp seam) prove the heartbeat sampling, the fold's four states with the 299/301 s boundary, the not checked empty corpus, the kick ladder's cap and rung-2 request, the f-1 leader renew, and the f-3 label rule with its migration; the hook was executed against the documented claude code payload and against this session's own ledger. the hook costs 29 ms median per call (40 ms max) against a 100 ms nfr; a first 413 ms reading was the shell timing method measuring its own interpreter starts, recorded as a lesson. coordination liveness heartbeat track kick-ladder proof-pack p3 tested-by design-liveness-and-track tested-by spec-liveness-and-track"
+},
+{
+"cat": "graph",
+"id": "proof-local-coordination-profiles",
+"title": "Local coordination profile qualification",
+"summary": "The reviewed launcher and ACP spec are integrated locally; live installed-profile probes block unattended rollout because ACP startup notifications and Agy denial evidence are not handled correctly.",
+"path": "docs/proof/local-coordination-profiles.md",
+"kind": "proof-pack",
+"text": "local coordination profile qualification the reviewed launcher and acp spec are integrated locally; live installed-profile probes block unattended rollout because acp startup notifications and agy denial evidence are not handled correctly. coordination acp qualification implements plan-coordination-profile-integration relates-to proof-multi-harness-runner relates-to spec-acp-coordination"
 },
 {
 "cat": "graph",

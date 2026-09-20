@@ -398,7 +398,18 @@ representation-contract failure, not a reason to bypass merges for authored file
 - **Control:** `tests/docs_explorer/test_harness_conformance.py`, fixture-driven, one committed fixture per harness taken verbatim in shape from the recorded corpus (`tests/docs_explorer/fixtures/harness/`). Every adapter must pass the same suite: parse the real envelope, deny a leased path, allow the holder, allow reads, fail safe on malformed input, always exit 0. **Adding a harness is adding a fixture.** Proven red on the un-fixed adapter — the Copilot cases failed with `allow` before the envelope parser existed.
 - **The residual, now closed for both harnesses:** the suite proves our adapter *speaks* each envelope; a **live session** (2026-08-24) proved Copilot *honours* the decision — read allowed, leased write refused, file unmodified, our reason verbatim in its transcript. `HARNESS_STATUS` records `enforcing` for both, and a test refuses that status to any harness whose `why` does not cite an executed session.
 - **What is still not controlled:** Copilot **fails open on a 30s hook timeout** (`H12`), so a hung hook allows. Measured headroom is 63 ms p95 against 30 s, and the commit floor backs it — but it is not zero, and a test keeps the residual stated so it cannot disappear alongside the good news.
-- **Status:** `partially-controlled` — request and response halves are both controlled and executed for the two harnesses in use; the timeout residual and any third harness remain.
+- **New measured manifestation (2026-09-20, local profile qualification):** all three ACP
+  workers fail before a prompt because the bounded runner's peer fixtures omitted real
+  startup extension notifications: `_auth/status_update` (Claude/Codex),
+  `_x.ai/mcp/servers_updated` and `_x.ai/models/update` (Grok). Class → recorded envelope
+  omitted from the conformance corpus. Sweep → four real installed profiles, seven serial
+  attempts. Derive → passing simplified peers cannot qualify a configured live adapter.
+  Prevent → `docs/knowledge/acp-compatibility/verify-local-profiles.py` rejects promotion of
+  those measured failures or modified diagnostic controls to readiness. Product replay
+  regressions and protocol-conformant notification handling remain open; see
+  `docs/proof/local-coordination-profiles.md`.
+- **Status:** `partially-controlled` — earlier request/response controls remain; timeout
+  residuals and the new ACP startup manifestation remain open. Unattended rollout blocked.
 
 ### PACK-P — A check reports its verdict over a corpus it never established was non-empty
 - **Signature:** a control computes a verdict from a scan — `len(set(x)) == len(x)`, "no bad items found", "none declared" — without first asserting the scan **found anything**. When the corpus is empty the predicate is vacuously true, and the clean result is indistinguishable from a real one. The tell is a verdict line with no count beside it.
@@ -607,7 +618,17 @@ representation-contract failure, not a reason to bypass merges for authored file
   registration/common-dir are checked, identities are exclusively reserved, status filters
   Owner admissions, and partial state is retained as facts. These are automated controls,
   not merely a review checklist.
-- **Status:** controlled for this runner; existing dispatch remains separately scoped.
+- **New measured manifestation (2026-09-20, local profile qualification):** Agy emits
+  `SUCCESS` with nonempty `denied_actions` after a native write denial. The runner reads
+  the outer status, counts the turn complete and sends the next prompt. Class → completion
+  is attributed to a coarser object than the required action. Sweep → compared raw results,
+  native tool errors, both absent canaries and all three admitted prompts. Derive → denial
+  must remain sticky across the entire session, including native transports. Prevent →
+  the local-profile evidence verifier preserves the denial/continuation contradiction and
+  rejects ready promotion; product tests requiring blocked state and no next prompt are
+  owed before rollout. Existing structural receipt checks do not discharge that contract.
+- **Status:** partially controlled; earlier runner defects remain pinned, while the native
+  Agy denial manifestation is open. Unattended rollout blocked.
 
 ### PROC-A — Process-group cleanup mistakes an exited child for an uncontained process
 - **Signature:** a direct child exits between the process-state check and group signalling;
