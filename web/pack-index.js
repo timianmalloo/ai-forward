@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 273
+"count": 275
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 447,
+"total": 449,
 "items": [
 {
 "cat": "knowledge",
@@ -1016,7 +1016,7 @@ window.PACK_INDEX = {
 "summary": "Bounded POSIX ACP / Agy session IO. Native harness policy remains authoritative.",
 "path": "pack/scripts/coord_transport.py",
 "kind": "script",
-"text": "coord_transport.py bounded posix acp / agy session io. native harness policy remains authoritative. this is a lifecycle adapter, not an editor proxy or an approval broker. only locally selected operational fields leave this module; wire bodies are discarded. __init__ _identifier _signal_group __init__ attach check queue pump receive flush_input cleanup __init__ event admit progress permission rpc acp agy run_session"
+"text": "coord_transport.py bounded posix acp / agy session io. native harness policy remains authoritative. this is a lifecycle adapter, not an editor proxy or an approval broker. only locally selected operational fields leave this module; wire bodies are discarded. __init__ _identifier _signal_group __init__ attach check queue pump receive flush_input cleanup __init__ event admit progress permission rpc acp native_denial agy run_session"
 },
 {
 "cat": "scripts",
@@ -3711,6 +3711,15 @@ window.PACK_INDEX = {
 },
 {
 "cat": "graph",
+"id": "plan-native-coordination-repair",
+"title": "Repair native coordination transport and requalify profiles",
+"summary": "Red-first repairs for ACP extension notifications and native Agy refusal, followed by bounded real-profile qualification without changing trust or permission settings.",
+"path": "docs/plans/native-coordination-repair.md",
+"kind": "plan",
+"text": "repair native coordination transport and requalify profiles red-first repairs for acp extension notifications and native agy refusal, followed by bounded real-profile qualification without changing trust or permission settings. coordination acp verification depends-on proof-local-coordination-profiles implements design-multi-harness-runner depends-on kb-graph-and-loop-engineering"
+},
+{
+"cat": "graph",
 "id": "scenario-s1-three-harness-delegation",
 "title": "Coordination plan - scenario S1: three interactive harness sessions (Grok Build, Codex, Antigravity) take real work from the Claude Code coordinator through the landed coordination layer",
 "summary": "A 25-minute, three-track test in which the Claude Code session (Owner, Coordinator and leader) delegates one real documentation-freshness review each to the operator's open Grok Build, Codex and Antigravity sessions through coord mail,…",
@@ -3807,6 +3816,15 @@ window.PACK_INDEX = {
 "path": "docs/proof/native-app-ui-skill-extension.md",
 "kind": "proof-pack",
 "text": "proof pack — native app ui skill extension proof pack for implementing the native app ui skill extension: native ui triggers and guardrails, the reusable native ui proof-pack template, xaml token linter, native archetype rows, generated-interface rejection, and license-aware exemplars. native-ui proof-pack ui-design visualize xaml-token-lint tested-by design-native-app-ui-skill-extension tested-by spec-native-app-ui-skill-extension"
+},
+{
+"cat": "graph",
+"id": "proof-native-coordination-repair",
+"title": "Native coordination repair and profile requalification",
+"summary": "Recorded-wire regressions repair ACP extension notifications and sticky Agy denials; live readiness is decided separately against unchanged local profiles.",
+"path": "docs/proof/native-coordination-repair.md",
+"kind": "proof-pack",
+"text": "native coordination repair and profile requalification recorded-wire regressions repair acp extension notifications and sticky agy denials; live readiness is decided separately against unchanged local profiles. coordination acp qualification implements plan-native-coordination-repair implements design-multi-harness-runner relates-to proof-local-coordination-profiles"
 },
 {
 "cat": "graph",

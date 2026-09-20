@@ -233,7 +233,8 @@ class _Session:
             if message.get("jsonrpc") != "2.0":
                 raise _Failure("protocol_error")
             if "method" in message:
-                if not isinstance(message["method"], str):
+                if (not isinstance(message["method"], str) or "result" in message or "error" in message
+                        or ("params" in message and not isinstance(message["params"], (dict, list)))):
                     raise _Failure("protocol_error")
                 if "id" in message:
                     if type(message["id"]) not in (str, int):
@@ -249,6 +250,11 @@ class _Session:
                             or update.get("sessionId") != self.result["session_id"]):
                         raise _Failure("protocol_error")
                     self.progress()
+                elif message["method"].startswith("_"):
+                    # ACP v1 extension notifications are optional, one-way data.
+                    # Count without retaining names/payloads or emitting per-item events;
+                    # the same wire deadline and byte limit still bound every receive.
+                    self.result["extension_notifications"] += 1
                 else:
                     raise _Failure("protocol_error")
                 continue
@@ -296,6 +302,12 @@ class _Session:
             self.result["turns_completed"] += 1
             self.event("turn_completed", turn=self.turn)
 
+    def native_denial(self, count):
+        self.result["native_denials"] += count
+        self.event("native_permission_denied", native_denials=self.result["native_denials"],
+                   action_id="native-denial-" + str(self.result["native_denials"]))
+        raise _Failure("permission_denied", "blocked")
+
     def agy(self, prompts):
         # Observed Agy 1.2.7 wire: init.conversation_id; result.result.status.
         for prompt in prompts:
@@ -319,14 +331,36 @@ class _Session:
                     self.result["session_id"] = session_id
                     self.event("session_created")
                 elif message.get("event") == "step_update":
-                    if not isinstance(message.get("step_update"), dict):
+                    step = message.get("step_update")
+                    if (not isinstance(step, dict) or ("conversation_id" in step
+                            and (not self.result["session_id"] or step["conversation_id"] != self.result["session_id"]))):
                         raise _Failure("protocol_error")
                     self.progress()
+                    if step.get("state") == "ERROR":
+                        if not self.result["session_id"] or step.get("conversation_id") != self.result["session_id"]:
+                            raise _Failure("protocol_error")
+                        info = step.get("tool_info", {})
+                        if not isinstance(info, dict) or not isinstance(info.get("error", {}), dict):
+                            raise _Failure("protocol_error")
+                        error = info.get("error", {})
+                        detail = error.get("message", "")
+                        # This narrow signature is from Agy 1.2.7's native TOOL_ERROR,
+                        # not assistant prose. Other error steps also stop dispatch.
+                        if (step.get("step_type") == "tool" and error.get("type") == "TOOL_ERROR"
+                                and isinstance(detail, str) and detail.startswith("permission check failed for ")):
+                            self.native_denial(1)
+                        raise _Failure("native_tool_error")
                 elif message.get("event") == "result":
                     response = message.get("result")
                     if (not isinstance(response, dict) or not self.result["session_id"]
                             or response.get("conversation_id") != self.result["session_id"]):
                         raise _Failure("protocol_error")
+                    denied = response.get("denied_actions", [])
+                    if (not isinstance(denied, list) or any(not isinstance(item, dict)
+                            or not _identifier(item.get("action")) for item in denied)):
+                        raise _Failure("protocol_error")
+                    if denied:
+                        self.native_denial(len(denied))
                     if response.get("status") != "SUCCESS":
                         raise _Failure("incomplete")
                     self.result["turns_completed"] += 1
@@ -349,6 +383,7 @@ def run_session(transport, argv, cwd, env, prompts, deadline_seconds, output_lim
               "turns_completed": 0, "stdout_bytes": 0, "stderr_bytes": 0,
               "duration_seconds": 0.0, "permission_requests": 0,
               "cleanup_error": None, "reported_version": None, "progress_updates": 0}
+    result.update(extension_notifications=0, native_denials=0)
     wire = None
     try:
         if os.name != "posix":
@@ -388,7 +423,7 @@ def run_session(transport, argv, cwd, env, prompts, deadline_seconds, output_lim
         if wire is not None:
             result["cleanup_error"] = wire.cleanup(result["session_id"], transport == "acp" and result["code"] != "complete")
         # A rejected request cannot become success or a less informative timeout.
-        if result["permission_requests"]:
+        if result["permission_requests"] or result["native_denials"]:
             result.update(outcome="blocked", code="permission_denied")
         if result["cleanup_error"] and result["outcome"] == "complete":
             result.update(outcome="failed", code="cleanup_failed")

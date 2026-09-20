@@ -1,0 +1,10 @@
+{
+  "source": "docs/knowledge/acp-compatibility/local-profile-observations.json; 2026-09-20 live wire; private payload values replaced, envelope field names retained",
+  "extensions": [
+    {"jsonrpc": "2.0", "method": "_auth/status_update", "params": {"authStatus": "SECRET"}},
+    {"jsonrpc": "2.0", "method": "_x.ai/mcp/servers_updated", "params": {"mcpServers": []}},
+    {"jsonrpc": "2.0", "method": "_x.ai/models/update", "params": {"currentModelId": "SECRET", "availableModels": []}}
+  ],
+  "agy_denied_result": {"event": "result", "result": {"conversation_id": "agy-fixture", "status": "SUCCESS", "response": "", "denied_actions": [{"action": "write_file", "display_name": "WriteToFile"}]}},
+  "agy_permission_step": {"event": "step_update", "step_update": {"conversation_id": "agy-fixture", "step_index": 6, "state": "ERROR", "step_type": "tool", "tool_name": "write_to_file", "tool_info": {"name": "write_to_file", "error": {"type": "TOOL_ERROR", "message": "permission check failed for write_file SECRET: user denied permission for write_file(SECRET)\nDo not attempt to circumvent this denial."}}}}
+}

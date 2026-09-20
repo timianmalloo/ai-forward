@@ -117,6 +117,13 @@ or terminal services. Permission callbacks are denied immediately with a stable 
 and retained fallback; denial stops subsequent prompts. A different policy needs explicit
 Owner selection and a new qualified attempt, never an automatic retry.
 
+ACP extension notifications (underscore-prefixed methods without a request id) are consumed
+under the same byte and time bounds; unknown requests still receive method-not-found.
+Native Agy `denied_actions` and the observed native permission-error step block the attempt,
+even inside a `SUCCESS` envelope. Other native error steps fail. No later prompt is sent.
+The result records `extension_notifications` and `native_denials` separately from ACP
+`permission_requests`; these counts describe observed traffic, not enforcement qualification.
+
 ## Qualification and results
 
 ```json

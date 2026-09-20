@@ -15,7 +15,21 @@ def send(message):
 
 for line in sys.stdin:
     message = json.loads(line)
+    if message.get("event") == "user":
+        marker = Path("prompt-count")
+        count = int(marker.read_text()) + 1 if marker.exists() else 1
+        marker.write_text(str(count))
+        send({"event": "init", "conversation_id": "fixture-session"})
+        if mode == "agy-error":
+            send({"event": "step_update", "step_update": {"conversation_id": "fixture-session",
+                "state": "ERROR", "step_type": "tool", "tool_info": {"error": {
+                    "type": "TOOL_ERROR", "message": "permission check failed for write_file SECRET_DO_NOT_LOG"}}}})
+        send({"event": "result", "result": {"conversation_id": "fixture-session", "status": "SUCCESS",
+            "denied_actions": [{"action": "write_file", "display_name": "SECRET_DO_NOT_LOG"}]}})
+        continue
     method = message.get("method")
+    if mode == "extensions":
+        send({"jsonrpc": "2.0", "method": "_auth/status_update", "params": {"authStatus": "SECRET_DO_NOT_LOG"}})
     if method == "initialize":
         result = {"protocolVersion": 1, "agentCapabilities": {},
                   "agentInfo": {"name": "offline-peer", "version": "1"}}

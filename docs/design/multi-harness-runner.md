@@ -142,7 +142,9 @@ output_limit, emit, cancelled, before_prompt) -> dict` is the only process seam.
 metadata only; `cancelled()` is checked at least every 100 ms during IO. Each transport
 implements creation, finite ordered prompts, progress, terminal reason and cleanup. Return
 contains `outcome`, `code`, `session_id`, `turns_completed`, `stdout_bytes`, `stderr_bytes`,
-`duration_seconds`, `permission_requests`, `cleanup_error`, `reported_version`.
+`duration_seconds`, `permission_requests`, `cleanup_error`, `reported_version`,
+`extension_notifications`, `native_denials`. The two new counters are one attempt's
+observed messages/denial entries, additive within that attempt; no capability is inferred.
 `before_prompt(remaining_seconds)` returns whether the live exact holder/epoch still admits
 dispatch; its execution is included in the attempt deadline. Only ACP `end_turn` and Agy
 `SUCCESS` qualify as complete. A max-token/max-turn stop, cancellation, protocol error or
@@ -160,6 +162,13 @@ Denial is sticky and stops the remaining prompt list. This first version waits z
 for permission approval and retains the stated fallback.
 No raw server error/message/tool fields are copied into the durable event stream.
 
+ACP v1 extension handling follows the [extensibility contract](https://agentclientprotocol.com/protocol/v1/extensibility):
+underscore-prefixed notifications without an id are ignored and counted. JSON-RPC version,
+method type, absence of response-only fields, and params object/array shape remain checked.
+Unknown requests still receive -32601. Standard notifications remain explicitly supported
+or refused; session updates retain identity validation. Every receive retains the original
+attempt-wide byte/deadline/cancellation checks, and no per-extension durable event is emitted.
+
 Agy: caller supplies documented argv including `--add-dir {worktree}` and stream-json input
 and output. Send `{"event":"user","message":{"content":text}}`; observe init `conversation_id`,
 step_update progress and per-turn `result.conversation_id` / `result.status`.
@@ -171,6 +180,17 @@ fabricating a later result. Agy has no
 qualified external permission callback; native policy/hook qualification is a prerequisite,
 not something the runner infers from the absence of a callback. Cancellation terminates the
 owned process group; no graceful per-turn cancel or undo is claimed.
+
+Native refusal is checked before SUCCESS: a nonempty `denied_actions` list with valid action
+identifiers emits sanitized `native_permission_denied` with a stable action id, increments
+`native_denials`, and blocks. Malformed lists/items fail closed. Error steps also stop the
+attempt immediately after requiring an established, matching conversation identity. A tool step with
+`state=ERROR`, `tool_info.error.type=TOOL_ERROR` and the recorded Agy 1.2.7 message prefix
+`permission check failed for ` is a native denial; all other ERROR steps fail with
+`native_tool_error`. Arbitrary assistant/response prose is never permission evidence. No
+raw denial action or error text is retained. The original refusal remains terminal through
+cleanup, and existing receipts cannot promote it to ready. Product regressions are derived
+from the recorded local-profile envelopes, not only simplified peers.
 
 ## Concurrency and resource bounds
 

@@ -3536,7 +3536,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ec36a99af143b0c09d9351607ff38b7a754abbb9b26e25d586621111e5347516"
+      "sourceSha256": "2c36100dad334fc20921d90cfb7a08a1d9b027f722787d783e7c952405e970dc"
     },
     {
       "id": "design-native-app-ui-skill-extension",
@@ -4143,7 +4143,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7ab76eae7c032cbd41ae0889658ebb889025023a226b84545d219019f16ea343"
+      "sourceSha256": "0e0dec58427b981c89ee5a220c4a54f8c2f973cc7bbd39eea0519b07f7d54801"
     },
     {
       "id": "docs-index",
@@ -8002,6 +8002,45 @@ window.DOCS_INDEX = {
       "sourceSha256": "91ce98d8cc9e1cadc6623525bee9ab8df465e4d142aa6a28bf98ee9a64a7a86f"
     },
     {
+      "id": "plan-native-coordination-repair",
+      "path": "docs/plans/native-coordination-repair.md",
+      "title": "Repair native coordination transport and requalify profiles",
+      "type": "plan",
+      "status": "active",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-20",
+      "reviewSuggested": [],
+      "summary": "Red-first repairs for ACP extension notifications and native Agy refusal, followed by bounded real-profile qualification without changing trust or permission settings.",
+      "tags": [
+        "coordination",
+        "acp",
+        "verification"
+      ],
+      "links": [
+        {
+          "to": "proof-local-coordination-profiles",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-multi-harness-runner",
+          "rel": "implements"
+        },
+        {
+          "to": "kb-graph-and-loop-engineering",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Execution graph and oracles",
+          "mermaid": "flowchart LR\n A --> B --> C --> D --> E --> F --> G"
+        }
+      ],
+      "sourceSha256": "22b93ec83a13ffe373f4ae2ff56c3cb28848de289e099558d7d1c6c606f6ce77"
+    },
+    {
       "id": "scenario-s1-three-harness-delegation",
       "path": "docs/coordination/scenario-s1-three-harness-delegation.md",
       "title": "Coordination plan - scenario S1: three interactive harness sessions (Grok Build, Codex, Antigravity) take real work from the Claude Code coordinator through the landed coordination layer",
@@ -8435,6 +8474,39 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "c4f506f4e1410983eb799ea1d9559bcc2fbf670e5a4c276d3d3e2ebbba8bbc9e"
+    },
+    {
+      "id": "proof-native-coordination-repair",
+      "path": "docs/proof/native-coordination-repair.md",
+      "title": "Native coordination repair and profile requalification",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2026-12-20",
+      "reviewSuggested": [],
+      "summary": "Recorded-wire regressions repair ACP extension notifications and sticky Agy denials; live readiness is decided separately against unchanged local profiles.",
+      "tags": [
+        "coordination",
+        "acp",
+        "qualification"
+      ],
+      "links": [
+        {
+          "to": "plan-native-coordination-repair",
+          "rel": "implements"
+        },
+        {
+          "to": "design-multi-harness-runner",
+          "rel": "implements"
+        },
+        {
+          "to": "proof-local-coordination-profiles",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "c84829d96047955560af0c62c208e4a31b2115f6560ee41505b693060b2d2657"
     },
     {
       "id": "spec-acp-coordination",
@@ -9719,5 +9791,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "9a1dc96004f5fc0856ccb315c7c26963e9dd1d740f9b8a85a0646a5a92ea939e"
+  "graphSha256": "f8f61f767883ee8546ef743eb2d3e0d67643cbb3e346ba2c1cfb8217ce7b0eb1"
 };

@@ -73,6 +73,57 @@ class TransportTests(unittest.TestCase):
         self.assertEqual(("protocol_error", 1), (result["code"], result["turns_completed"]))
         self.assertEqual(1, len(self.requests()))
 
+    def test_recorded_acp_extensions_do_not_replace_responses_or_leak(self):
+        result = self.run_peer("extensions")
+        self.assertEqual(("complete", 2, 12), (result["code"], result["turns_completed"], result["extension_notifications"]))
+        self.assertEqual(["initialize", "session/new", "session/prompt", "session/prompt"],
+                         [r.get("method") for r in self.requests()])
+        self.assertNotIn("SECRET", json.dumps([result, self.events]))
+
+    def test_extension_requests_still_receive_method_not_found(self):
+        result = self.run_peer("extension_request", prompts=["first"])
+        self.assertEqual("complete", result["code"])
+        reply = next(r for r in self.requests() if r.get("id") == "unknown-request")
+        self.assertEqual(-32601, reply["error"]["code"])
+        result = self.run_peer("extension_params", prompts=["first"])
+        self.assertEqual(("complete", 9), (result["code"], result["extension_notifications"]))
+
+    def test_extension_envelopes_and_session_updates_remain_validated(self):
+        for mode in ("bad_extension_params", "bad_extension_null", "bad_extension_result", "bad_extension_error",
+                     "bad_extension_id", "bad_extension_standard", "foreign_update"):
+            with self.subTest(mode=mode):
+                self.assertEqual("protocol_error", self.run_peer(mode)["code"])
+
+    def test_extension_flood_retains_output_and_cancellation_bounds(self):
+        self.assertEqual("output_limit_exceeded", self.run_peer("extension_flood", output_limit=2048)["code"])
+        started = time.monotonic()
+        result = self.run_peer("extension_flood", output_limit=16 * 1024 * 1024,
+                               cancelled=lambda: time.monotonic() - started > .08)
+        self.assertEqual("cancelled", result["code"])
+
+    def test_native_agy_denial_blocks_all_later_prompts(self):
+        for mode in ("agy_denied", "agy_permission_step"):
+            with self.subTest(mode=mode):
+                (self.root / "requests.jsonl").unlink(missing_ok=True)
+                result = self.run_peer(mode, transport="agy")
+                self.assertEqual(("blocked", "permission_denied", 1, 0, 0),
+                    (result["outcome"], result["code"], result["native_denials"], result["permission_requests"], result["turns_completed"]))
+                self.assertEqual(1, len(self.requests()))
+                self.assertTrue(any(e["event"] == "native_permission_denied" and e.get("action_id") for e in self.events))
+                self.assertNotIn("SECRET", json.dumps([result, self.events]))
+
+    def test_native_agy_errors_and_malformed_denials_cannot_complete(self):
+        for mode, code in [("agy_error_step", "native_tool_error"), ("agy_foreign_step", "protocol_error"),
+                           ("agy_missing_error_id", "protocol_error"), ("agy_preinit_error", "protocol_error")] + [
+                ("agy_malformed_denials_" + str(i), "protocol_error") for i in range(5)]:
+            with self.subTest(mode=mode):
+                (self.root / "requests.jsonl").unlink(missing_ok=True)
+                result = self.run_peer(mode, transport="agy")
+                self.assertEqual((code, 0), (result["code"], result["turns_completed"]))
+                self.assertEqual(1, len(self.requests()))
+                self.assertEqual(0, result["native_denials"])
+        self.assertEqual("complete", self.run_peer("agy_empty_denials", transport="agy")["code"])
+
     def test_progress_is_counted_but_durable_events_are_coalesced(self):
         result = self.run_peer("progress_flood", prompts=["first"])
         self.assertEqual("complete", result["code"])

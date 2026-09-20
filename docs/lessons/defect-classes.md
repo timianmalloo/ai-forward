@@ -405,11 +405,14 @@ representation-contract failure, not a reason to bypass merges for authored file
   omitted from the conformance corpus. Sweep → four real installed profiles, seven serial
   attempts. Derive → passing simplified peers cannot qualify a configured live adapter.
   Prevent → `docs/knowledge/acp-compatibility/verify-local-profiles.py` rejects promotion of
-  those measured failures or modified diagnostic controls to readiness. Product replay
-  regressions and protocol-conformant notification handling remain open; see
-  `docs/proof/local-coordination-profiles.md`.
+  those measured failures or modified diagnostic controls to readiness. Recorded-envelope
+  replay now covers all three extensions before every response, unknown extension requests,
+  malformed envelopes, floods and cancellation in `test_coord_transport.py`. Removing the
+  extension branch is killed. The installed runner test also checks the persisted counter.
+  See `docs/proof/native-coordination-repair.md`; live readiness remains separate.
 - **Status:** `partially-controlled` — earlier request/response controls remain; timeout
-  residuals and the new ACP startup manifestation remain open. Unattended rollout blocked.
+  residuals remain; the ACP startup parser now has a recorded-wire control. Unattended
+  rollout requires fresh profile qualification.
 
 ### PACK-P — A check reports its verdict over a corpus it never established was non-empty
 - **Signature:** a control computes a verdict from a scan — `len(set(x)) == len(x)`, "no bad items found", "none declared" — without first asserting the scan **found anything**. When the corpus is empty the predicate is vacuously true, and the clean result is indistinguishable from a real one. The tell is a verdict line with no count beside it.
@@ -625,10 +628,14 @@ representation-contract failure, not a reason to bypass merges for authored file
   native tool errors, both absent canaries and all three admitted prompts. Derive → denial
   must remain sticky across the entire session, including native transports. Prevent →
   the local-profile evidence verifier preserves the denial/continuation contradiction and
-  rejects ready promotion; product tests requiring blocked state and no next prompt are
-  owed before rollout. Existing structural receipt checks do not discharge that contract.
-- **Status:** partially controlled; earlier runner defects remain pinned, while the native
-  Agy denial manifestation is open. Unattended rollout blocked.
+  rejects ready promotion. Product tests now require blocked state and no next prompt for
+  native result denials and ERROR steps, including pre-existing receipt evidence. A reviewer
+  additionally reproduced an ERROR step without conversation identity; pre-init, missing
+  and foreign identities now fail protocol validation before denial is counted. Red-first
+  regressions and three killed mutants are recorded in the native repair proof.
+- **Status:** controlled for the recorded native-denial and identity manifestations by
+  transport and installed-runner tests. Positive live-profile enforcement remains a
+  separate qualification; structural receipts alone never discharge that contract.
 
 ### PROC-A — Process-group cleanup mistakes an exited child for an uncontained process
 - **Signature:** a direct child exits between the process-state check and group signalling;

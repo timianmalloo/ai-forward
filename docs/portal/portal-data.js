@@ -3105,6 +3105,12 @@ window.PORTAL_DATA = {
         "summary": "Executes the requested specify, design-slice and implement sequence. An independent, Grok-driven ACP compatibility spike is a decision dependency of transport..."
       },
       {
+        "id": "plan-native-coordination-repair",
+        "type": "plan",
+        "title": "Repair native coordination transport and requalify profiles",
+        "summary": "Red-first repairs for ACP extension notifications and native Agy refusal, followed by bounded real-profile qualification without changing trust or permission..."
+      },
+      {
         "id": "plan-optimize-graph-grok-surface",
         "type": "doc",
         "title": "optimize-graph — Grok Build surface for pack-consuming repos",
@@ -3217,6 +3223,12 @@ window.PORTAL_DATA = {
         "type": "proof-pack",
         "title": "Proof Pack — Native app UI skill extension",
         "summary": "Proof pack for implementing the native app UI skill extension: native UI triggers and guardrails, the reusable native UI proof-pack template, XAML token..."
+      },
+      {
+        "id": "proof-native-coordination-repair",
+        "type": "proof-pack",
+        "title": "Native coordination repair and profile requalification",
+        "summary": "Recorded-wire regressions repair ACP extension notifications and sticky Agy denials; live readiness is decided separately against unchanged local profiles."
       },
       {
         "id": "proposal-active-multi-harness-coordination",
@@ -5812,6 +5824,21 @@ window.PORTAL_DATA = {
         "rel": "refines"
       },
       {
+        "from": "plan-native-coordination-repair",
+        "to": "design-multi-harness-runner",
+        "rel": "implements"
+      },
+      {
+        "from": "plan-native-coordination-repair",
+        "to": "kb-graph-and-loop-engineering",
+        "rel": "depends-on"
+      },
+      {
+        "from": "plan-native-coordination-repair",
+        "to": "proof-local-coordination-profiles",
+        "rel": "depends-on"
+      },
+      {
         "from": "plan-optimize-graph-grok-surface",
         "to": "kb-graph-and-loop-engineering",
         "rel": "depends-on"
@@ -6070,6 +6097,21 @@ window.PORTAL_DATA = {
         "from": "proof-native-app-ui-skill-extension",
         "to": "spec-native-app-ui-skill-extension",
         "rel": "tested-by"
+      },
+      {
+        "from": "proof-native-coordination-repair",
+        "to": "design-multi-harness-runner",
+        "rel": "implements"
+      },
+      {
+        "from": "proof-native-coordination-repair",
+        "to": "plan-native-coordination-repair",
+        "rel": "implements"
+      },
+      {
+        "from": "proof-native-coordination-repair",
+        "to": "proof-local-coordination-profiles",
+        "rel": "relates-to"
       },
       {
         "from": "proposal-active-multi-harness-coordination",

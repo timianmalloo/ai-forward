@@ -150,6 +150,39 @@ class RunnerTests(unittest.TestCase):
         self.assertEqual(result["workers"][0]["state"], "evidence_incomplete")
         self.assertEqual(result["workers"][0]["transport"]["outcome"], "complete")
 
+    def test_native_denial_never_promotes_existing_artifact_to_ready(self):
+        self.assert_native_denial_blocks("agy-denied")
+
+    def test_native_error_step_never_promotes_existing_artifact_to_ready(self):
+        self.assert_native_denial_blocks("agy-error")
+
+    def assert_native_denial_blocks(self, mode):
+        self.contract["workers"][0].update(harness="agy", transport="agy", prompts=["compiled-1", "compiled-1"])
+        self.contract["workers"][0]["argv"][-1] = mode
+        self.contract["workers"][0]["argv"] += ["--add-dir", "{worktree}", "--input-format", "stream-json", "--output-format", "stream-json"]
+        prepared = self.prepare()
+        tree = Path(prepared["workers"][0]["worktree"])
+        (tree / "receipt.json").write_text('{"preexisting":true}', encoding="utf-8")
+        result = self.run_prepared(expected=3)
+        worker = result["workers"][0]
+        self.assertEqual(("blocked", "permission_denied", 1),
+                         (worker["state"], worker["transport"]["code"], worker["transport"]["native_denials"]))
+        self.assertEqual("1", (tree / "prompt-count").read_text())
+        self.assertNotIn("receipts", worker)
+        status = self.cli("status", "--run", "test-run")
+        self.assertEqual(result["workers"], status["workers"])
+        self.assertNotIn("SECRET_DO_NOT_LOG", json.dumps(status))
+
+    def test_extension_counter_reaches_persisted_status(self):
+        self.contract["workers"][0]["argv"][-1] = "extensions"
+        self.prepare()
+        result = self.run_prepared()
+        self.assertEqual("ready_for_review", result["state"])
+        self.assertEqual(3, result["workers"][0]["transport"]["extension_notifications"])
+        status = self.cli("status", "--run", "test-run")
+        self.assertEqual(result["workers"], status["workers"])
+        self.assertNotIn("SECRET_DO_NOT_LOG", json.dumps(status))
+
     def test_commit_evidence_requires_a_new_descendant(self):
         self.contract["workers"][0]["evidence"] = [{"kind": "commit"}]
         self.prepare()

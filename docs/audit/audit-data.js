@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-20T22:36:08Z",
+  "generated": "2026-09-20T22:57:25Z",
   "audit": [
     {
       "actor": null,
@@ -7603,6 +7603,159 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-20T22:23:51Z",
       "duration_seconds": 736.2
+    },
+    {
+      "id": "al-01M30FNKEKEDWST6E3YGKPJ7JC",
+      "shortname": "do the recommended next action: implement ACP startup-notification and A…",
+      "datetime": "2026-09-20T22:40:57Z",
+      "session": "prompt-compile",
+      "prompt": "do the recommended next action: implement ACP startup-notification and Agy denial repairs, add regressions from recorded messages, then repeat actual local-profile qualification including hook enforcement, permissions, cancellation and verified handback; preserve trust and permissions and keep changes local",
+      "summary": "raw prompt logged for compilation",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M30FRQ2QQH1CR1DEP13YD1QA",
+      "shortname": "compile-do the recommended next action: implement ACP startup-notification and A…",
+      "datetime": "2026-09-20T22:42:39Z",
+      "session": "coord-transport-repair",
+      "prompt": "Save the brief between the markers as <brief-file>, then run (one line, the brief read from the file):\ncodex exec --json -o <last-message-file> --output-schema <schema-file> --worktree -C <dir> \"$(cat <brief-file>)\"\n--- brief ---\npython3 docs/ai-forward-pack/scripts/audit-log.py start --session coord-transport-repair --skill <skill>\nGoal state\nGoal: Repair native coordination transport and requalify local profiles\nDone when: Repair both transport defects and repeat actual local-profile qualification.\nNot in scope: Remote push, global trust/permission changes, unrelated hook-platform implementation\nTier: T2\nFan-out cap: 1\nContext ceiling: 400000\nMain-line budget: 100\nTrace\n| clause | trace |\n|---|---|\n| done_when: Repair both transport defects and repeat actual local-profile qualification. | phrase: implement ACP startup-notification and Agy denial repairs, add regressions from recorded messages, then repeat actual local-profile qualification |\nReferences\n- none\nAssumptions\n- none\nDecision requests\n- none\nContract slot\nwidth_cap: 1\ntransient_retry: At most one diagnosed control per harness; no automatic retry\nper_branch_exit: Red-first repaired boundaries and four measured readiness decisions\njoin_rule: Independent review and integrated gates before local linear integration\ncontainment: Separate fresh worktrees, installed profiles unchanged, bounded native processes\ntermination: Finite tests and four-profile matrix complete or explicitly blocked\ndeadline: 45 minutes then diagnose estimate without dropping floors\nfallback: Retain manual serial operation for profiles with missing required capabilities\nRules: absolute paths only; a multi-line program is a file, then a run; a gate's exit status is never behind a pipe.\nProvenance\nraw id: al-01M30FNKEKEDWST6E3YGKPJ7JC\nraw sha256: 8bb1a706b6194b92266b18527d3a6255d7f31b6c6ec7343e6268a6dc919e5d68\ncompiler model: codex\nengine seconds: 0.003\ntokens: not recorded\ngate: pass\ndispatchable: true\n--- end brief ---\n",
+      "summary": "compiled al-01M30FNKEKEDWST6E3YGKPJ7JC for codex v1: 1 clauses, 0 assumptions, 0 decision requests",
+      "kind": "compilation",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "compiled": {
+        "assumptions": [],
+        "clauses": [
+          {
+            "section": "done_when",
+            "text": "Repair both transport defects and repeat actual local-profile qualification.",
+            "trace": {
+              "kind": "phrase",
+              "ref": "implement ACP startup-notification and Agy denial repairs, add regressions from recorded messages, then repeat actual local-profile qualification"
+            }
+          }
+        ],
+        "contract_slot": {
+          "width_cap": 1,
+          "transient_retry": "At most one diagnosed control per harness; no automatic retry",
+          "per_branch_exit": "Red-first repaired boundaries and four measured readiness decisions",
+          "join_rule": "Independent review and integrated gates before local linear integration",
+          "containment": "Separate fresh worktrees, installed profiles unchanged, bounded native processes",
+          "termination": "Finite tests and four-profile matrix complete or explicitly blocked",
+          "deadline": "45 minutes then diagnose estimate without dropping floors",
+          "fallback": "Retain manual serial operation for profiles with missing required capabilities"
+        },
+        "decision_requests": [],
+        "dispatchable": true,
+        "goal_state": {
+          "goal": "Repair native coordination transport and requalify local profiles",
+          "done_when": [
+            "Repair both transport defects and repeat actual local-profile qualification."
+          ],
+          "not_in_scope": [
+            "Remote push, global trust/permission changes, unrelated hook-platform implementation"
+          ],
+          "tier": "T2",
+          "fan_out_cap": 1,
+          "context_ceiling": 400000,
+          "main_line_budget": 100
+        },
+        "graph_neighbours": [],
+        "harness": "codex",
+        "mode": "compiled",
+        "provenance": {
+          "compile_tokens": null,
+          "compiler_model": "codex",
+          "engine_seconds": 0.003,
+          "refusals": [],
+          "retries": 0
+        },
+        "raw_id": "al-01M30FNKEKEDWST6E3YGKPJ7JC",
+        "raw_sha256": "8bb1a706b6194b92266b18527d3a6255d7f31b6c6ec7343e6268a6dc919e5d68",
+        "raw_text_normalised": false,
+        "references": [],
+        "schema": "compiled-prompt/1",
+        "template": "codex",
+        "template_version": 1
+      },
+      "mode": "compiled",
+      "dispatchable": true
+    },
+    {
+      "id": "al-01M30GKRKJTFT5PW478WJR2YWJ",
+      "shortname": "native-coordination-repair-plan-review",
+      "datetime": "2026-09-20T22:43:57Z",
+      "session": "acp-spec-codex",
+      "prompt": "User authorized recommended two repairs and repeat qualification. Read-only bounded plan/design review as Test Architect/Security. Start audit-log.py start --session acp-spec-codex --skill native-repair-plan-review in your own tree. Parent tree /Users/mallalieut/projects/ai-forward-fix-coordination-native-profiles. Read docs/plans/native-coordination-repair.md and unchanged transport. ACP official v1 extensibility https://agentclientprotocol.com/protocol/v1/extensibility says underscore extension notifications should be ignored, unknown requests method-not-found. Proposal: validate notification envelope (no id, JSONRPC2.0, underscore method, params absent/object/array), count sanitized extension_notifications; retain response/session checks and total byte/time caps. Agy nonempty valid denied_actions => native denial blocked before SUCCESS; observed native permission-error step => blocked, generic ERROR=>native_tool_error failure, no next prompt either case. Add native_denials counter distinct from permission_requests, sanitized event. Test malformed shapes, flood/cancel, wrong-session, no false-ready existing evidence. Review before production code; return PASS/BLOCK only material conditions. No parent edits/live probes/subagents. Budget12calls/5min/context400k/fanout0. Parent writing red tests in parallel. Overall live qualification stays negative if exact installed hooks/permissions fail; do not fix unrelated enforcement platforms in this slice.",
+      "summary": "Imported independent review al-01M30FV3C00ECTAC9SGVYWP0XM. PASS: scope and design match official ACP v1 extension semantics and observed native denial evidence. Read unchanged transport and repair plan; verified authoritative protocol page. Acceptance details: reject mixed notification/response envelopes and malformed params, keep extension telemetry aggregated/rate-limited, validate Agy conversation before classifying/counting denial, allow absent/empty valid denial lists only, reject malformed lists/items, classify refusal only from the observed structured tool-error envelope; generic native error also halts. Preserve independent native_denials versus ACP permission_requests and prove no false readiness or subsequent dispatch with a preexisting artifact. No new transport features, policy changes, live probes, parent edits or agents. Implementation and exact-profile qualification remain separate gates.",
+      "kind": "skill",
+      "skill": "native-repair-plan-review",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Review the two authorized native transport repairs before implementation.",
+      "done_when": "Return a concrete plan/design verdict with only material parser and safety acceptance details.",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-09-20T22:42:24Z",
+      "duration_seconds": 93.0
+    },
+    {
+      "id": "al-01M30GKRN4ZV0PM6TJT4KPJ7HR",
+      "shortname": "native-coordination-repair-code-review",
+      "datetime": "2026-09-20T22:50:47Z",
+      "session": "acp-spec-codex",
+      "prompt": "Independent implementation review now. Start audit-log.py start --session acp-spec-codex --skill native-repair-code-review in your own tree. Parent /Users/mallalieut/projects/ai-forward-fix-coordination-native-profiles. Diff pack/scripts/coord_transport.py plus tests/docs_explorer/{test_coord_transport.py,coord_transport_peer.py,test_coord_runner.py,fixtures/coord_runner_peer.py,fixtures/coord_native_envelopes.json}. Review state-machine/security/sanitized telemetry, trace fields to runner status, bound preservation, and malformed/foreign/denial cases. No parent edits/live probes/subagents. Budget12calls/5min/fanout0/context400k. Return concrete PASS/BLOCK and minimal findings, no unrelated features.",
+      "summary": "Imported independent review al-01M30G7KTCSYH132EBY7F558AR. BLOCK on one concrete binding defect: Agy ERROR-step conversation_id validation is optional. Independent real-process reproducer /tmp/review-native-denial-binding.py showed before-init and after-init missing-id permission-error steps produce permission_denied/native_denials1; before-init session_id is null. Require initialized matching conversation_id before classifying/counting ERROR; malformed/missing/foreign cases must stay protocol_error/native_denials0 and stop subsequent prompts. Other reviewed extension/denial state transitions, aggregated sanitized counters and persisted status projections match the plan. Independently ran29 transport tests PASS in6.335s; parent focused log60PASS31.141s. No parent edits or live probes. Minimal fix and regression requested, no additional feature scope.",
+      "kind": "skill",
+      "skill": "native-repair-code-review",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Independently review the two native transport repairs and focused regression evidence.",
+      "done_when": "Return PASS or a concrete minimal blocking defect after source and focused test review.",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-09-20T22:48:00Z",
+      "duration_seconds": 167.0
+    },
+    {
+      "id": "al-01M30GKRPNTM1JZF6XGZTJ2RZ7",
+      "shortname": "native-coordination-binding-review-clear",
+      "datetime": "2026-09-20T22:53:57Z",
+      "session": "acp-spec-codex",
+      "prompt": "I fixed your only blocker in /Users/mallalieut/projects/ai-forward-fix-coordination-native-profiles: ERROR steps now require self.session and matching conversation_id before classification. Added agy_missing_error_id and agy_preinit_error cases, observed red in /tmp/native-binding-red.log, then targeted method passed. Mutation checks also passed (/tmp/native-repair-mutations.py). Please independently rerun your two-case reproducer against current source and return final review clearance/audit. Scope only binding fix; no wider work.",
+      "summary": "Imported independent review al-01M30GDDCBZV4TDNGCESTZEFA0. PASS: sole implementation review blocker closed. Read the current ERROR-step guard and independently reran /tmp/review-native-denial-binding.py: before-init and after-init missing conversation IDs both produce protocol_error/native_denials0 with only first prompt admitted and no denial event. Inspected original red log (two failures) and independently reran the targeted malformed/error/foreign binding test, PASS in0.210s. Earlier implementation review remains valid for the unchanged remainder. No parent edits, live probes, wider tests or new scope. Release gates and exact-profile readiness remain separate.",
+      "kind": "skill",
+      "skill": "native-repair-binding-review",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Verify the sole Agy ERROR-step session-binding correction.",
+      "done_when": "The independent two-case reproduction and targeted regression pass, with final implementation review clearance recorded.",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-09-20T22:53:35Z",
+      "duration_seconds": 22.0
     }
   ],
   "changes": [

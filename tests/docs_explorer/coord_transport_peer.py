@@ -11,6 +11,7 @@ import time
 MODE = sys.argv[1]
 ROOT = Path(sys.argv[2])
 SECRET = "SECRET-MODEL-TOOL-ARGUMENT"
+RECORDED = json.loads(Path(__file__).with_name("fixtures").joinpath("coord_native_envelopes.json").read_text())
 
 
 def send(value):
@@ -78,12 +79,27 @@ while True:
         turn += 1
         if MODE == "hang":
             continue
-        if turn == 1:
+        if turn == 1 and MODE != "agy_preinit_error":
             send({"event": "init", "conversation_id": "agy-fixture", "init": {"cwd": SECRET}})
+        if MODE in ("agy_permission_step", "agy_error_step", "agy_foreign_step", "agy_missing_error_id", "agy_preinit_error"):
+            step = RECORDED["agy_permission_step"]
+            if MODE == "agy_error_step":
+                step["step_update"]["tool_info"]["error"]["message"] = "unrelated SECRET tool failure"
+            if MODE == "agy_foreign_step":
+                step["step_update"]["conversation_id"] = "another-session"
+            if MODE in ("agy_missing_error_id", "agy_preinit_error"):
+                step["step_update"].pop("conversation_id")
+            send(step)
         send({"event": "step_update", "step_update": {"response": SECRET}})
         result = {"event": "result", "result": {
             "conversation_id": "agy-fixture", "status": "FAILURE" if MODE == "agy_failure" else "SUCCESS",
             "response": SECRET}}
+        if MODE == "agy_denied":
+            result = RECORDED["agy_denied_result"]
+        if MODE == "agy_empty_denials":
+            result["result"]["denied_actions"] = []
+        if MODE.startswith("agy_malformed_denials_"):
+            result["result"]["denied_actions"] = [None, {}, [None], [{}], [{"action": 1}]][int(MODE.rsplit("_", 1)[1])]
         if MODE == "agy_duplicate":
             # One atomic write makes the unsolicited second completion buffered
             # before another prompt can have reached this real subprocess.
@@ -93,6 +109,32 @@ while True:
             send(result)
         continue
     method = msg.get("method")
+    if MODE == "extensions":
+        for notification in RECORDED["extensions"]:
+            send(notification)
+    if MODE == "extension_params":
+        for params in ([], {}):
+            send({"jsonrpc": "2.0", "method": "_optional", "params": params})
+        send({"jsonrpc": "2.0", "method": "_optional"})
+    if MODE == "extension_flood":
+        while True:
+            send(RECORDED["extensions"][0])
+    if MODE.startswith("bad_extension_"):
+        notification = RECORDED["extensions"][0]
+        case = MODE.removeprefix("bad_extension_")
+        if case == "params":
+            notification["params"] = "SECRET"
+        elif case == "null":
+            notification["params"] = None
+        elif case == "result":
+            notification["result"] = {"sessionId": "fake"}
+        elif case == "error":
+            notification["error"] = {"code": -1}
+        elif case == "id":
+            notification["id"] = None
+        elif case == "standard":
+            notification["method"] = "unrecognized/standard"
+        send(notification)
     if method == "initialize":
         methods = ([{"id": "cached_token"}] if MODE == "auth" else
                    [{"id": "interactive"}] if MODE == "auth_required" else [])
@@ -126,9 +168,11 @@ while True:
             send({"jsonrpc": "2.0", "id": "permission-request", "method": "session/request_permission", "params": {
                 "sessionId": "acp-fixture", "options": options, "toolCall": {"rawInput": SECRET}}})
             receive()
-        if MODE == "unknown_request":
-            send({"jsonrpc": "2.0", "id": "unknown-request", "method": "fs/read_text_file", "params": {"path": SECRET}})
+        if MODE in ("unknown_request", "extension_request"):
+            send({"jsonrpc": "2.0", "id": "unknown-request", "method": "_custom/request" if MODE == "extension_request" else "fs/read_text_file", "params": {"path": SECRET}})
             receive()
+        if MODE == "foreign_update":
+            send({"jsonrpc": "2.0", "method": "session/update", "params": {"sessionId": "other-session", "update": {"sessionUpdate": "agent_message_chunk"}}})
         if MODE == "wrong_id":
             send({"jsonrpc": "2.0", "id": 99999, "result": {"stopReason": "end_turn"}})
             continue
