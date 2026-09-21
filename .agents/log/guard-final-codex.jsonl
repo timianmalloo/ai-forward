@@ -1,0 +1,3 @@
+{"agent": "coord-native-enforcement", "at": 1789948330.392908, "kind": "session-start", "path": "-", "seq": 1, "session": "guard-final-codex", "tree": "worktree", "wi": "WI-0", "worktree": "ai-forward-verify-native-guard-codex-final"}
+{"agent": "guard-final-codex", "at": 1789949089.873166, "kind": "session-end", "path": "-", "seq": 2, "session": "guard-final-codex", "wi": "WI-0", "worktree": "ai-forward-fix-native-coordination-enforcement"}
+{"agent": "guard-final-codex", "at": 1789949153.655253, "kind": "session-end", "path": "-", "seq": 3, "session": "guard-final-codex", "wi": "WI-0", "worktree": "ai-forward-verify-native-guard-codex-final"}

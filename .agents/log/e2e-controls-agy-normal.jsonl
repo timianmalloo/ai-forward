@@ -1,0 +1,2 @@
+{"agent": "e2e-controls", "at": 1789951076.7246451, "kind": "session-start", "path": "-", "seq": 1, "session": "e2e-controls-agy-normal", "tree": "worktree", "wi": "WI-0", "worktree": "ai-forward-test-e2e-controls-agy-normal"}
+{"agent": "e2e-controls-agy-normal", "at": 1789959363.5297432, "kind": "session-end", "path": "-", "seq": 2, "session": "e2e-controls-agy-normal", "wi": "WI-0", "worktree": "ai-forward-test-e2e-controls-agy-normal"}

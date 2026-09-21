@@ -1,0 +1,2 @@
+{"agent": "profile-claude-baseline", "at": 1789943032.95739, "kind": "session-start", "path": "-", "seq": 1, "session": "profile-claude-baseline", "tree": "worktree", "wi": "WI-0", "worktree": "ai-forward-test-profile-claude"}
+{"agent": "profile-claude-baseline", "at": 1789943612.65796, "kind": "session-end", "path": "-", "seq": 2, "session": "profile-claude-baseline", "wi": "WI-0", "worktree": "ai-forward-test-profile-claude"}

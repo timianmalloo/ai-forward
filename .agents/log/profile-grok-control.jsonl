@@ -1,0 +1,2 @@
+{"agent": "profile-grok-control", "at": 1789943161.150075, "kind": "session-start", "path": "-", "seq": 1, "session": "profile-grok-control", "tree": "worktree", "wi": "WI-0", "worktree": "ai-forward-test-profile-grok-control"}
+{"agent": "profile-grok-control", "at": 1789943616.395351, "kind": "session-end", "path": "-", "seq": 2, "session": "profile-grok-control", "wi": "WI-0", "worktree": "ai-forward-test-profile-grok-control"}

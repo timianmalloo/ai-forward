@@ -1,0 +1,20 @@
+{"agent": "coord-e2e", "at": 1789953263.5041559, "kind": "session-start", "path": "-", "seq": 1, "session": "e2e-grok-tools", "tree": "worktree", "wi": "WI-0", "worktree": "ai-forward-fix-grok-native-search-replace"}
+{"agent": "e2e-grok-tools", "at": 1789953559.123866, "kind": "claim", "path": "pack/scripts/coord-core.py", "seq": 2, "session": "e2e-grok-tools", "ttl": 300.0, "wi": "WI-e2e-grok-tools"}
+{"agent": "e2e-grok-tools", "at": 1789953559.195582, "kind": "claim", "path": "tests/docs_explorer/test_coord_enforcement.py", "seq": 3, "session": "e2e-grok-tools", "ttl": 300.0, "wi": "WI-e2e-grok-tools"}
+{"agent": "e2e-grok-tools", "at": 1789953559.271716, "kind": "claim", "path": "tests/docs_explorer/fixtures/grok_search_replace_hook.json", "seq": 4, "session": "e2e-grok-tools", "ttl": 300.0, "wi": "WI-e2e-grok-tools"}
+{"agent": "e2e-grok-tools", "at": 1789953559.349555, "kind": "claim", "path": ".grok/hooks/coord-ownership.json", "seq": 5, "session": "e2e-grok-tools", "ttl": 300.0, "wi": "WI-e2e-grok-tools"}
+{"agent": "e2e-grok-tools", "at": 1789953559.4205172, "kind": "claim", "path": "docs/notes/note-20260921-grok-native-search-replace.md", "seq": 6, "session": "e2e-grok-tools", "ttl": 300.0, "wi": "WI-e2e-grok-tools"}
+{"agent": "e2e-grok-tools", "at": 1789953726.079693, "kind": "claim", "path": "pack/scripts/coord-core.py", "seq": 7, "session": "e2e-grok-tools", "ttl": 300.0, "wi": "WI-e2e-grok-tools"}
+{"agent": "e2e-grok-tools", "at": 1789953726.1587021, "kind": "claim", "path": "tests/docs_explorer/test_coord_enforcement.py", "seq": 8, "session": "e2e-grok-tools", "ttl": 300.0, "wi": "WI-e2e-grok-tools"}
+{"agent": "e2e-grok-tools", "at": 1789953726.229907, "kind": "claim", "path": "tests/docs_explorer/fixtures/grok_search_replace_hook.json", "seq": 9, "session": "e2e-grok-tools", "ttl": 300.0, "wi": "WI-e2e-grok-tools"}
+{"agent": "e2e-grok-tools", "at": 1789953726.3074481, "kind": "claim", "path": ".grok/hooks/coord-ownership.json", "seq": 10, "session": "e2e-grok-tools", "ttl": 300.0, "wi": "WI-e2e-grok-tools"}
+{"agent": "e2e-grok-tools", "at": 1789953726.385456, "kind": "claim", "path": "docs/notes/note-20260921-grok-native-search-replace.md", "seq": 11, "session": "e2e-grok-tools", "ttl": 300.0, "wi": "WI-e2e-grok-tools"}
+{"agent": "e2e-grok-tools", "at": 1789953726.528034, "kind": "release", "path": "pack/scripts/coord-core.py", "seq": 12, "session": "e2e-grok-tools", "wi": "WI-e2e-grok-tools"}
+{"agent": "e2e-grok-tools", "at": 1789953726.603673, "kind": "release", "path": "tests/docs_explorer/test_coord_enforcement.py", "seq": 13, "session": "e2e-grok-tools", "wi": "WI-e2e-grok-tools"}
+{"agent": "e2e-grok-tools", "at": 1789953726.680299, "kind": "release", "path": "tests/docs_explorer/fixtures/grok_search_replace_hook.json", "seq": 14, "session": "e2e-grok-tools", "wi": "WI-e2e-grok-tools"}
+{"agent": "e2e-grok-tools", "at": 1789953726.760649, "kind": "release", "path": ".grok/hooks/coord-ownership.json", "seq": 15, "session": "e2e-grok-tools", "wi": "WI-e2e-grok-tools"}
+{"agent": "e2e-grok-tools", "at": 1789953726.832841, "kind": "release", "path": "docs/notes/note-20260921-grok-native-search-replace.md", "seq": 16, "session": "e2e-grok-tools", "wi": "WI-e2e-grok-tools"}
+{"agent": "e2e-grok-tools", "at": 1789953986.521604, "kind": "claim", "path": "docs/notes/note-20260921-grok-native-search-replace.md", "seq": 17, "session": "e2e-grok-tools", "ttl": 300.0, "wi": "WI-e2e-grok-tools"}
+{"agent": "e2e-grok-tools", "at": 1789954088.283009, "kind": "release", "path": "docs/notes/note-20260921-grok-native-search-replace.md", "seq": 18, "session": "e2e-grok-tools", "wi": "WI-e2e-grok-tools"}
+{"at": 1789954127.960732, "from": "e2e-grok-tools", "kind": "done", "mail_id": "mail-01M30S8Y2RVH42TH2DE61GFAKN", "ref": "docs/notes/note-20260921-grok-native-search-replace.md@0922b303f241c94752c38a6a602a814972c46178", "session": "e2e-grok-tools", "to": "coord-e2e", "type": "mail"}
+{"agent": "e2e-grok-tools", "at": 1789959363.404709, "kind": "session-end", "path": "-", "seq": 20, "session": "e2e-grok-tools", "wi": "WI-0", "worktree": "ai-forward-fix-grok-native-search-replace"}

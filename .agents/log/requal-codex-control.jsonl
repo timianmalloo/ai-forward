@@ -1,0 +1,2 @@
+{"agent": "coord-transport-repair", "at": 1789945368.3624058, "kind": "session-start", "path": "-", "seq": 1, "session": "requal-codex-control", "tree": "worktree", "wi": "WI-0", "worktree": "ai-forward-test-native-requal-codex-control"}
+{"agent": "requal-codex-control", "at": 1789945667.0136828, "kind": "session-end", "path": "-", "seq": 2, "session": "requal-codex-control", "wi": "WI-0", "worktree": "ai-forward-test-native-requal-codex-control"}

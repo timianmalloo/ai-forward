@@ -1,0 +1,36 @@
+{"agent": "coord-e2e", "at": 1789949678.3912199, "kind": "session-start", "path": "-", "seq": 1, "session": "e2e-grok", "tree": "worktree", "wi": "WI-0", "worktree": "ai-forward-fix-grok-session-bootstrap"}
+{"agent": "e2e-grok", "at": 1789950103.108832, "kind": "claim", "path": "docs/notes/note-20260921-grok-bootstrap.md", "seq": 2, "session": "e2e-grok", "ttl": 300.0, "wi": "WI-e2e-grok"}
+{"agent": "e2e-grok", "at": 1789950158.588463, "kind": "release", "path": "docs/notes/note-20260921-grok-bootstrap.md", "seq": 3, "session": "e2e-grok", "wi": "WI-e2e-grok"}
+{"action": "add", "agent": "e2e-grok", "at": 1789950158.824234, "deadline_at": 1789950758.824234, "id": "req-01M30NFSZ8ARJA2WHSRNQCPVVN", "kind": "request", "path": "-", "seq": 4, "session": "e2e-grok", "to": "coord-e2e", "type": "request", "wi": "WI-0"}
+{"at": 1789950158.82962, "from": "e2e-grok", "kind": "decision-request", "mail_id": "mail-01M30NFSZD3M3TECGBNBMPKTZ6", "ref": "req-01M30NFSZ8ARJA2WHSRNQCPVVN", "session": "e2e-grok", "to": "coord-e2e", "type": "mail"}
+{"agent": "e2e-grok", "at": 1789950187.382498, "kind": "claim", "path": "tests/docs_explorer/test_coord_transport.py", "seq": 6, "session": "e2e-grok", "ttl": 300.0, "wi": "WI-e2e-grok"}
+{"agent": "e2e-grok", "at": 1789950187.508009, "kind": "claim", "path": "tests/docs_explorer/coord_transport_peer.py", "seq": 7, "session": "e2e-grok", "ttl": 300.0, "wi": "WI-e2e-grok"}
+{"agent": "e2e-grok", "at": 1789950187.634201, "kind": "claim", "path": "tests/docs_explorer/fixtures/coord_native_envelopes.json", "seq": 8, "session": "e2e-grok", "ttl": 300.0, "wi": "WI-e2e-grok"}
+{"agent": "e2e-grok", "at": 1789950287.9045818, "kind": "claim", "path": "pack/scripts/coord_transport.py", "seq": 9, "session": "e2e-grok", "ttl": 300.0, "wi": "WI-e2e-grok"}
+{"agent": "e2e-grok", "at": 1789950584.167016, "kind": "release", "path": "pack/scripts/coord_transport.py", "seq": 10, "session": "e2e-grok", "wi": "WI-e2e-grok"}
+{"agent": "e2e-grok", "at": 1789950584.291141, "kind": "release", "path": "tests/docs_explorer/test_coord_transport.py", "seq": 11, "session": "e2e-grok", "wi": "WI-e2e-grok"}
+{"agent": "e2e-grok", "at": 1789950584.4148538, "kind": "release", "path": "tests/docs_explorer/coord_transport_peer.py", "seq": 12, "session": "e2e-grok", "wi": "WI-e2e-grok"}
+{"agent": "e2e-grok", "at": 1789950584.535418, "kind": "release", "path": "tests/docs_explorer/fixtures/coord_native_envelopes.json", "seq": 13, "session": "e2e-grok", "wi": "WI-e2e-grok"}
+{"agent": "e2e-grok", "at": 1789950584.658575, "kind": "claim", "path": "docs/notes/note-20260921-grok-bootstrap.md", "seq": 14, "session": "e2e-grok", "ttl": 300.0, "wi": "WI-e2e-grok"}
+{"agent": "e2e-grok", "at": 1789950584.786653, "kind": "release", "path": "docs/notes/note-20260921-grok-bootstrap.md", "seq": 15, "session": "e2e-grok", "wi": "WI-e2e-grok"}
+{"agent": "e2e-grok", "at": 1789950724.509732, "kind": "claim", "path": "docs/notes/note-20260921-grok-bootstrap.md", "seq": 16, "session": "e2e-grok", "ttl": 300.0, "wi": "WI-e2e-grok"}
+{"action": "add", "agent": "e2e-grok", "at": 1789950724.7318242, "deadline_at": 1789951324.7318242, "id": "req-01M30P12KWPRP2J9CGCY2PGFVA", "kind": "request", "path": "-", "seq": 17, "session": "e2e-grok", "to": "coord-e2e", "type": "request", "wi": "WI-0"}
+{"at": 1789950724.736877, "from": "e2e-grok", "kind": "decision-request", "mail_id": "mail-01M30P12M0JFCN3V5F57J8AC2W", "ref": "req-01M30P12KWPRP2J9CGCY2PGFVA", "session": "e2e-grok", "to": "coord-e2e", "type": "mail"}
+{"agent": "e2e-grok", "at": 1789950724.844098, "kind": "release", "path": "docs/notes/note-20260921-grok-bootstrap.md", "seq": 19, "session": "e2e-grok", "wi": "WI-e2e-grok"}
+{"agent": "e2e-grok", "at": 1789950824.075511, "kind": "claim", "path": "tests/docs_explorer/test_coord_transport.py", "seq": 20, "session": "e2e-grok", "ttl": 300.0, "wi": "WI-e2e-grok"}
+{"agent": "e2e-grok", "at": 1789950824.210596, "kind": "claim", "path": "tests/docs_explorer/coord_transport_peer.py", "seq": 21, "session": "e2e-grok", "ttl": 300.0, "wi": "WI-e2e-grok"}
+{"agent": "e2e-grok", "at": 1789950824.3466282, "kind": "claim", "path": "tests/docs_explorer/fixtures/coord_native_envelopes.json", "seq": 22, "session": "e2e-grok", "ttl": 300.0, "wi": "WI-e2e-grok"}
+{"agent": "e2e-grok", "at": 1789950899.828993, "kind": "claim", "path": "pack/scripts/coord_transport.py", "seq": 23, "session": "e2e-grok", "ttl": 300.0, "wi": "WI-e2e-grok"}
+{"agent": "e2e-grok", "at": 1789951061.681802, "kind": "claim", "path": "docs/notes/note-20260921-grok-bootstrap.md", "seq": 24, "session": "e2e-grok", "ttl": 300.0, "wi": "WI-e2e-grok"}
+{"agent": "e2e-grok", "at": 1789951497.223325, "kind": "claim", "path": "pack/scripts/coord_transport.py", "seq": 25, "session": "e2e-grok", "ttl": 300.0, "wi": "WI-e2e-grok"}
+{"agent": "e2e-grok", "at": 1789951497.301684, "kind": "claim", "path": "tests/docs_explorer/test_coord_transport.py", "seq": 26, "session": "e2e-grok", "ttl": 300.0, "wi": "WI-e2e-grok"}
+{"agent": "e2e-grok", "at": 1789951497.372365, "kind": "claim", "path": "tests/docs_explorer/coord_transport_peer.py", "seq": 27, "session": "e2e-grok", "ttl": 300.0, "wi": "WI-e2e-grok"}
+{"agent": "e2e-grok", "at": 1789951497.441625, "kind": "claim", "path": "tests/docs_explorer/fixtures/coord_native_envelopes.json", "seq": 28, "session": "e2e-grok", "ttl": 300.0, "wi": "WI-e2e-grok"}
+{"agent": "e2e-grok", "at": 1789951497.516045, "kind": "claim", "path": "docs/notes/note-20260921-grok-bootstrap.md", "seq": 29, "session": "e2e-grok", "ttl": 300.0, "wi": "WI-e2e-grok"}
+{"agent": "e2e-grok", "at": 1789951686.907723, "kind": "release", "path": "pack/scripts/coord_transport.py", "seq": 30, "session": "e2e-grok", "wi": "WI-e2e-grok"}
+{"agent": "e2e-grok", "at": 1789951686.9988868, "kind": "release", "path": "tests/docs_explorer/test_coord_transport.py", "seq": 31, "session": "e2e-grok", "wi": "WI-e2e-grok"}
+{"agent": "e2e-grok", "at": 1789951687.082282, "kind": "release", "path": "tests/docs_explorer/coord_transport_peer.py", "seq": 32, "session": "e2e-grok", "wi": "WI-e2e-grok"}
+{"agent": "e2e-grok", "at": 1789951687.172072, "kind": "release", "path": "tests/docs_explorer/fixtures/coord_native_envelopes.json", "seq": 33, "session": "e2e-grok", "wi": "WI-e2e-grok"}
+{"agent": "e2e-grok", "at": 1789951687.262594, "kind": "release", "path": "docs/notes/note-20260921-grok-bootstrap.md", "seq": 34, "session": "e2e-grok", "wi": "WI-e2e-grok"}
+{"at": 1789951698.238422, "from": "e2e-grok", "kind": "done", "mail_id": "mail-01M30PYS9YKHY9EZTF8FGX1SZW", "ref": "docs/notes/note-20260921-grok-bootstrap.md@fbdc42d46777aa166e8ebc12e38062b35b912988", "session": "e2e-grok", "to": "coord-e2e", "type": "mail"}
+{"agent": "e2e-grok", "at": 1789959363.467659, "kind": "session-end", "path": "-", "seq": 36, "session": "e2e-grok", "wi": "WI-0", "worktree": "ai-forward-fix-grok-session-bootstrap"}

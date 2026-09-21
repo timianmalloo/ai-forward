@@ -1,0 +1,41 @@
+{"agent": "coord-e2e", "at": 1789949678.620634, "kind": "session-start", "path": "-", "seq": 1, "session": "e2e-controls", "tree": "worktree", "wi": "WI-0", "worktree": "ai-forward-feat-native-profile-controls"}
+{"agent": "e2e-controls", "at": 1789950471.8249621, "kind": "claim", "path": "docs/design/native-profile-controls.md", "seq": 2, "session": "e2e-controls", "ttl": 300.0, "wi": "native-profile-controls"}
+{"agent": "e2e-controls", "at": 1789950471.954207, "kind": "release", "path": "docs/design/native-profile-controls.md", "seq": 3, "session": "e2e-controls", "wi": "WI-0"}
+{"agent": "e2e-controls", "at": 1789950620.196685, "kind": "claim", "path": "tests/docs_explorer/test_coord_enforcement.py", "seq": 4, "session": "e2e-controls", "ttl": 300.0, "wi": "native-profile-controls"}
+{"agent": "e2e-controls", "at": 1789950620.323252, "kind": "claim", "path": "tests/docs_explorer/test_coord_decide.py", "seq": 5, "session": "e2e-controls", "ttl": 300.0, "wi": "native-profile-controls"}
+{"agent": "e2e-controls", "at": 1789950620.446926, "kind": "claim", "path": "tests/docs_explorer/test_coord_runner.py", "seq": 6, "session": "e2e-controls", "ttl": 300.0, "wi": "native-profile-controls"}
+{"action": "add", "agent": "e2e-controls", "at": 1789950661.601656, "deadline_at": 1789952461.601656, "id": "req-01M30NZ4Z1VQHG9SBMNZRKK2DK", "kind": "request", "path": "-", "seq": 7, "session": "e2e-controls", "to": "coord-e2e", "type": "request", "wi": "WI-0"}
+{"at": 1789950661.6069891, "from": "e2e-controls", "kind": "decision-request", "mail_id": "mail-01M30NZ4Z6X01THMSNJ3VGABNA", "ref": "req-01M30NZ4Z1VQHG9SBMNZRKK2DK", "session": "e2e-controls", "to": "coord-e2e", "type": "mail"}
+{"agent": "e2e-controls", "at": 1789950661.863254, "kind": "claim", "path": "pack/scripts/coord-core.py", "seq": 9, "session": "e2e-controls", "ttl": 600.0, "wi": "native-profile-controls"}
+{"agent": "e2e-controls", "at": 1789950661.9930298, "kind": "claim", "path": "pack/adapters/hooks/owner-review-gate.py", "seq": 10, "session": "e2e-controls", "ttl": 600.0, "wi": "native-profile-controls"}
+{"agent": "e2e-controls", "at": 1789950662.1207411, "kind": "claim", "path": "pack/scripts/coord-runner.py", "seq": 11, "session": "e2e-controls", "ttl": 600.0, "wi": "native-profile-controls"}
+{"agent": "e2e-controls", "at": 1789950874.647259, "kind": "claim", "path": ".codex/hooks.json", "seq": 12, "session": "e2e-controls", "ttl": 300.0, "wi": "native-profile-controls"}
+{"agent": "e2e-controls", "at": 1789950874.780234, "kind": "claim", "path": ".grok/hooks/ai-forward.json", "seq": 13, "session": "e2e-controls", "ttl": 300.0, "wi": "native-profile-controls"}
+{"agent": "e2e-controls", "at": 1789950875.047853, "kind": "claim", "path": "docs/design/native-profile-controls.md", "seq": 14, "session": "e2e-controls", "ttl": 300.0, "wi": "native-profile-controls"}
+{"agent": "e2e-controls", "at": 1789950875.177184, "kind": "claim", "path": "docs/design/multi-harness-runner.md", "seq": 15, "session": "e2e-controls", "ttl": 300.0, "wi": "native-profile-controls"}
+{"agent": "e2e-controls", "at": 1789951134.807791, "kind": "claim", "path": "tools/sync-pack.ps1", "seq": 16, "session": "e2e-controls", "ttl": 600.0, "wi": "native-profile-controls"}
+{"agent": "e2e-controls", "at": 1789951134.933575, "kind": "claim", "path": "pack/scripts/pack-apply.py", "seq": 17, "session": "e2e-controls", "ttl": 600.0, "wi": "native-profile-controls"}
+{"agent": "e2e-controls", "at": 1789951135.060158, "kind": "claim", "path": "pack/scripts/named_hook_bundles.py", "seq": 18, "session": "e2e-controls", "ttl": 600.0, "wi": "native-profile-controls"}
+{"agent": "e2e-controls", "at": 1789951135.189782, "kind": "claim", "path": "tests/docs_explorer/test_pack_apply.py", "seq": 19, "session": "e2e-controls", "ttl": 600.0, "wi": "native-profile-controls"}
+{"agent": "e2e-controls", "at": 1789951135.321043, "kind": "claim", "path": "tests/docs_explorer/test_named_hook_bundles.py", "seq": 20, "session": "e2e-controls", "ttl": 600.0, "wi": "native-profile-controls"}
+{"agent": "e2e-controls", "at": 1789951135.450548, "kind": "claim", "path": ".grok/hooks/coord-ownership.json", "seq": 21, "session": "e2e-controls", "ttl": 600.0, "wi": "native-profile-controls"}
+{"agent": "e2e-controls", "at": 1789951459.199626, "kind": "claim", "path": ".profile-e2e-controls-edit/leased.txt", "seq": 22, "session": "e2e-controls", "ttl": 240.0, "wi": "agy-edit-diagnostic"}
+{"agent": "e2e-controls", "at": 1789951484.333496, "kind": "release", "path": ".profile-e2e-controls-edit/leased.txt", "seq": 23, "session": "e2e-controls", "wi": "agy-edit-diagnostic"}
+{"agent": "e2e-controls", "at": 1789952280.2789361, "kind": "release", "path": "pack/scripts/coord-core.py", "seq": 24, "session": "e2e-controls", "wi": "native-profile-controls"}
+{"agent": "e2e-controls", "at": 1789952280.3374012, "kind": "release", "path": "pack/scripts/coord-runner.py", "seq": 25, "session": "e2e-controls", "wi": "native-profile-controls"}
+{"agent": "e2e-controls", "at": 1789952280.3957062, "kind": "release", "path": "pack/adapters/hooks/owner-review-gate.py", "seq": 26, "session": "e2e-controls", "wi": "native-profile-controls"}
+{"agent": "e2e-controls", "at": 1789952280.4553971, "kind": "release", "path": "tests/docs_explorer/test_coord_enforcement.py", "seq": 27, "session": "e2e-controls", "wi": "native-profile-controls"}
+{"agent": "e2e-controls", "at": 1789952280.515386, "kind": "release", "path": "tests/docs_explorer/test_coord_decide.py", "seq": 28, "session": "e2e-controls", "wi": "native-profile-controls"}
+{"agent": "e2e-controls", "at": 1789952280.577426, "kind": "release", "path": "tests/docs_explorer/test_coord_runner.py", "seq": 29, "session": "e2e-controls", "wi": "native-profile-controls"}
+{"agent": "e2e-controls", "at": 1789952280.638914, "kind": "release", "path": ".codex/hooks.json", "seq": 30, "session": "e2e-controls", "wi": "native-profile-controls"}
+{"agent": "e2e-controls", "at": 1789952280.699477, "kind": "release", "path": ".grok/hooks/ai-forward.json", "seq": 31, "session": "e2e-controls", "wi": "native-profile-controls"}
+{"agent": "e2e-controls", "at": 1789952280.75876, "kind": "release", "path": ".grok/hooks/coord-ownership.json", "seq": 32, "session": "e2e-controls", "wi": "native-profile-controls"}
+{"agent": "e2e-controls", "at": 1789952280.8188212, "kind": "release", "path": "docs/design/native-profile-controls.md", "seq": 33, "session": "e2e-controls", "wi": "native-profile-controls"}
+{"agent": "e2e-controls", "at": 1789952280.879116, "kind": "release", "path": "docs/design/multi-harness-runner.md", "seq": 34, "session": "e2e-controls", "wi": "native-profile-controls"}
+{"agent": "e2e-controls", "at": 1789952280.939593, "kind": "release", "path": "tools/sync-pack.ps1", "seq": 35, "session": "e2e-controls", "wi": "native-profile-controls"}
+{"agent": "e2e-controls", "at": 1789952280.999258, "kind": "release", "path": "pack/scripts/pack-apply.py", "seq": 36, "session": "e2e-controls", "wi": "native-profile-controls"}
+{"agent": "e2e-controls", "at": 1789952281.058928, "kind": "release", "path": "pack/scripts/named_hook_bundles.py", "seq": 37, "session": "e2e-controls", "wi": "native-profile-controls"}
+{"agent": "e2e-controls", "at": 1789952281.1202729, "kind": "release", "path": "tests/docs_explorer/test_pack_apply.py", "seq": 38, "session": "e2e-controls", "wi": "native-profile-controls"}
+{"agent": "e2e-controls", "at": 1789952281.181275, "kind": "release", "path": "tests/docs_explorer/test_named_hook_bundles.py", "seq": 39, "session": "e2e-controls", "wi": "native-profile-controls"}
+{"at": 1789952326.793654, "from": "e2e-controls", "kind": "done", "mail_id": "mail-01M30QHZ49QE5W72SW6F5RC9T4", "ref": "docs/proof/native-profile-controls.md", "session": "e2e-controls", "to": "coord-e2e", "type": "mail"}
+{"agent": "e2e-controls", "at": 1789959363.2784681, "kind": "session-end", "path": "-", "seq": 41, "session": "e2e-controls", "wi": "WI-0", "worktree": "ai-forward-feat-native-profile-controls"}

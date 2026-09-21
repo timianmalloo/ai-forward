@@ -1,0 +1,21 @@
+{"agent": "coord-e2e", "at": 1789954919.442375, "kind": "session-start", "path": "-", "seq": 1, "session": "e2e-codex-roots", "tree": "worktree", "wi": "WI-0", "worktree": "ai-forward-fix-codex-coordination-file-roots"}
+{"agent": "e2e-codex-roots", "at": 1789955283.0450392, "kind": "claim", "path": "pack/scripts/coord-runner.py", "seq": 2, "session": "e2e-codex-roots", "ttl": 300.0, "wi": "e2e-codex-roots"}
+{"agent": "e2e-codex-roots", "at": 1789955283.172541, "kind": "claim", "path": "pack/scripts/coord_transport.py", "seq": 3, "session": "e2e-codex-roots", "ttl": 300.0, "wi": "e2e-codex-roots"}
+{"agent": "e2e-codex-roots", "at": 1789955283.299099, "kind": "claim", "path": "pack/commands/execute-with-coordination/reference/launch.md", "seq": 4, "session": "e2e-codex-roots", "ttl": 300.0, "wi": "e2e-codex-roots"}
+{"agent": "e2e-codex-roots", "at": 1789955283.426678, "kind": "claim", "path": "tests/docs_explorer/test_coord_runner.py", "seq": 5, "session": "e2e-codex-roots", "ttl": 300.0, "wi": "e2e-codex-roots"}
+{"agent": "e2e-codex-roots", "at": 1789955283.553694, "kind": "claim", "path": "tests/docs_explorer/test_coord_transport.py", "seq": 6, "session": "e2e-codex-roots", "ttl": 300.0, "wi": "e2e-codex-roots"}
+{"agent": "e2e-codex-roots", "at": 1789955283.681178, "kind": "claim", "path": "tests/docs_explorer/coord_transport_peer.py", "seq": 7, "session": "e2e-codex-roots", "ttl": 300.0, "wi": "e2e-codex-roots"}
+{"agent": "e2e-codex-roots", "at": 1789955283.8109992, "kind": "claim", "path": "tests/docs_explorer/fixtures/coord_runner_peer.py", "seq": 8, "session": "e2e-codex-roots", "ttl": 300.0, "wi": "e2e-codex-roots"}
+{"agent": "e2e-codex-roots", "at": 1789955283.93962, "kind": "claim", "path": "docs/design/multi-harness-runner.md", "seq": 9, "session": "e2e-codex-roots", "ttl": 300.0, "wi": "e2e-codex-roots"}
+{"agent": "e2e-codex-roots", "at": 1789955284.069414, "kind": "claim", "path": "docs/notes/note-20260921-codex-coordination-file-roots.md", "seq": 10, "session": "e2e-codex-roots", "ttl": 300.0, "wi": "e2e-codex-roots"}
+{"agent": "e2e-codex-roots", "at": 1789955767.9818041, "kind": "release", "path": "pack/scripts/coord-runner.py", "seq": 11, "session": "e2e-codex-roots", "wi": "e2e-codex-roots"}
+{"agent": "e2e-codex-roots", "at": 1789955768.116391, "kind": "release", "path": "pack/scripts/coord_transport.py", "seq": 12, "session": "e2e-codex-roots", "wi": "e2e-codex-roots"}
+{"agent": "e2e-codex-roots", "at": 1789955768.247833, "kind": "release", "path": "pack/commands/execute-with-coordination/reference/launch.md", "seq": 13, "session": "e2e-codex-roots", "wi": "e2e-codex-roots"}
+{"agent": "e2e-codex-roots", "at": 1789955768.381356, "kind": "release", "path": "tests/docs_explorer/test_coord_runner.py", "seq": 14, "session": "e2e-codex-roots", "wi": "e2e-codex-roots"}
+{"agent": "e2e-codex-roots", "at": 1789955768.513729, "kind": "release", "path": "tests/docs_explorer/test_coord_transport.py", "seq": 15, "session": "e2e-codex-roots", "wi": "e2e-codex-roots"}
+{"agent": "e2e-codex-roots", "at": 1789955768.645139, "kind": "release", "path": "tests/docs_explorer/coord_transport_peer.py", "seq": 16, "session": "e2e-codex-roots", "wi": "e2e-codex-roots"}
+{"agent": "e2e-codex-roots", "at": 1789955768.776437, "kind": "release", "path": "tests/docs_explorer/fixtures/coord_runner_peer.py", "seq": 17, "session": "e2e-codex-roots", "wi": "e2e-codex-roots"}
+{"agent": "e2e-codex-roots", "at": 1789955768.908449, "kind": "release", "path": "docs/design/multi-harness-runner.md", "seq": 18, "session": "e2e-codex-roots", "wi": "e2e-codex-roots"}
+{"agent": "e2e-codex-roots", "at": 1789955769.045577, "kind": "release", "path": "docs/notes/note-20260921-codex-coordination-file-roots.md", "seq": 19, "session": "e2e-codex-roots", "wi": "e2e-codex-roots"}
+{"at": 1789956076.336854, "from": "e2e-codex-roots", "kind": "done", "mail_id": "mail-01M30V4CSGH5XT5G5RM67G4CC0", "ref": "al-01M30V2HV0RB2B9TRE3C7TF8VS", "session": "e2e-codex-roots", "to": "coord-e2e", "type": "mail"}
+{"agent": "e2e-codex-roots", "at": 1789959363.3406432, "kind": "session-end", "path": "-", "seq": 21, "session": "e2e-codex-roots", "wi": "WI-0", "worktree": "ai-forward-fix-codex-coordination-file-roots"}

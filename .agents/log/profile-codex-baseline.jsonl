@@ -1,0 +1,2 @@
+{"agent": "profile-codex-baseline", "at": 1789943033.1864479, "kind": "session-start", "path": "-", "seq": 1, "session": "profile-codex-baseline", "tree": "worktree", "wi": "WI-0", "worktree": "ai-forward-test-profile-codex"}
+{"agent": "profile-codex-baseline", "at": 1789943613.8627641, "kind": "session-end", "path": "-", "seq": 2, "session": "profile-codex-baseline", "wi": "WI-0", "worktree": "ai-forward-test-profile-codex"}
