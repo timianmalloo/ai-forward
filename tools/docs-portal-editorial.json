@@ -690,11 +690,18 @@
           "limit": "Owner/worker runtime proved; profile qualification stays binding-specific"
         },
         {
-          "harness": "Codex ACP 1.12.0",
-          "followup": "Dynamic follow-up prompts: verified",
-          "permission": "Exact one-time approval observed in explicit read-only mode",
+          "harness": "Copilot ACP / Windows",
+          "followup": "Qualified GPT-only worker path: verified",
+          "permission": "Exact one-time approval observed; separate explicit denial and true lease refusal proved",
+          "attach": "Arbitrary terminal attach remains unsupported",
+          "limit": "Requires explicit model pin, emitted local plugin bundle, exact-ID model policy and actual post-run model evidence; first 8 GPT-labelled/Claude-backed runs remain invalid"
+        },
+        {
+          "harness": "Codex ACP 1.12.0 / Windows Job path",
+          "followup": "Read-only GPT-5.5 handoff: verified",
+          "permission": "Matching JSON acknowledgement and bounded Windows Job launch proved",
           "attach": "Verified through app-server socket/UUID",
-          "limit": "Operational file access had to be explicitly scoped; no blanket shared roots"
+          "limit": "Not full Windows write-hook/trust qualification; file-root access stays narrow and identity-bound"
         },
         {
           "harness": "Grok 1.0.34",
@@ -711,7 +718,7 @@
           "limit": "Headless stream is real; interactive approval is not"
         }
       ],
-      "note": "Copilot is documented on this branch at the edit/commit boundary and as an execution target, but the newer Windows/GPT-pinned runtime evidence remains pending integration rather than published here as landed."
+      "note": "A seeded open Owner decision now proves the negative fence as well: native Stop refuses, an unapproved out-of-scope ledger-expiry attempt never becomes ready, and timeout expiry is not mislabeled as `RUN-DECISION-OPEN`. The first eight Copilot runs stay invalid evidence because the displayed GPT label hid an actual Claude backend."
     },
     "negativeProofs": [
       {

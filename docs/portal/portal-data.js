@@ -655,9 +655,19 @@ window.PORTAL_DATA = {
         "group": "Architecture of record",
         "items": [
           {
+            "title": "Agent coordination — architecture",
+            "summary": "The architecture for the agent-coordination layer: a git-tracked append-only record of intent, folded on demand with no daemon and no database, enforced at each harness's edit boundary and at the universal commit boundary, with a non-coordinating identifier...",
+            "path": "../../docs/architecture-agent-coordination.md"
+          },
+          {
             "title": "Dreaming subsystem — architecture",
             "summary": "Subsystem architecture for AI-Forward's dreaming capability — the offline consolidation pipeline (light/REM/deep) over the committed corpus, the HTML review/approval surface, the promotion oracle, the safe instance→class abstraction, the fleet learnings...",
             "path": "../../docs/architecture-dreaming.md"
+          },
+          {
+            "title": "AI-Forward - multi-harness coordination evolution",
+            "summary": "The deep architecture and history of AI-Forward's multi-agent, multi-harness coordination: why shared checkouts and prompt-only relays failed, how worktree isolation and the Owner / Coordinator / Sub-Agent doctrine replaced them, what...",
+            "path": "../../docs/architecture-multi-harness-coordination.md"
           },
           {
             "title": "AI-Forward — Architecture Overview",
@@ -1500,6 +1510,163 @@ window.PORTAL_DATA = {
     ],
     "language": "One label is deliberately blunt: refused — never denied, blocked, or unavailable. The reader is a model that must not be able to read the outcome as a transient failure worth retrying. And in every surface the order is fixed: what must I not do, then what is waiting on me, then what happened. Never chronological-first.",
     "verbs": "claim · check · release · tail · guard · session · collaborate · request · worktree · allocate · resolve · merge-register · merge-derived · regen · class · metrics · doctor · install · plugin · hook · precommit",
+    "timeline": [
+      {
+        "h": "Manual relays and shared-checkout near misses",
+        "p": "The starting point was ai-de's session contracts, rulings and one join script. It proved the value of explicit rulings and seams, but also produced ACK loops, shared-checkout risk, and no machine-held leader or push channel."
+      },
+      {
+        "h": "Repo-local coordination substrate",
+        "p": "The next step was not a broker. It was append-only per-session ledgers, artifact classes, worktree discipline, collision-proof allocation and a join fence. The structure moved first; the runtime came later."
+      },
+      {
+        "h": "Owner / Coordinator / Sub-Agent doctrine",
+        "p": "Authority, decomposition and execution were separated into seats. Compile stage, typed seam requests, human rulings, the board and the message layer all followed from that split."
+      },
+      {
+        "h": "execute-with-coordination became the front door",
+        "p": "The coordinator skill stopped being only a same-harness fan-out helper. It now has three modes: native sub-agents (`--agents`), portable manual contracts (`--brief`) and an opt-in bounded launcher (`--launch`)."
+      },
+      {
+        "h": "Bounded runtime and qualification",
+        "p": "Prepare, fingerprint, run, status, permission decisions and live attach were added only where the proof packs could state exactly what was and was not qualified. Transport completion and real acceptance were split."
+      }
+    ],
+    "workflow": [
+      {
+        "h": "Compile the human ask",
+        "p": "A raw request becomes a finished, dispatchable compilation before planning or launch. If the compilation still carries an unanswered decision request, dispatch stops there."
+      },
+      {
+        "h": "Plan owned paths and seams",
+        "p": "The coordinator assigns authored paths, exit evidence and the serial spine. Shared generated artifacts stay generated; shared hotspots stay integrator-owned."
+      },
+      {
+        "h": "Choose the execution mode",
+        "p": "`--agents` for same-harness workers, `--brief` for portable human-started sessions, `--launch` for a qualified bounded runtime. The plan does not change when the mode changes."
+      },
+      {
+        "h": "Run bounded work, then rule",
+        "p": "Workers receive an explicit identity, checkout, compilation, budget and fallback. The Owner answers exact decision requests with numbered rulings rather than ambient chat."
+      },
+      {
+        "h": "Verify receipts, then join",
+        "p": "A completed transport is never enough. Receipt verification, zero open Owner decisions, live leader state and the integrated gate set all have to pass before the join."
+      }
+    ],
+    "modes": [
+      {
+        "h": "`--agents`",
+        "p": "Lowest-friction same-harness delegation. It uses native worker behavior but does not prove anything about another harness's hook or transport surface."
+      },
+      {
+        "h": "`--brief`",
+        "p": "The smallest correct fallback. It carries the exact contract across harnesses when automation is unsupported or unqualified, without pretending the other side enforced anything."
+      },
+      {
+        "h": "`--launch`",
+        "p": "Opt-in bounded prepare/fingerprint/run/status over a qualified runtime. It adds automation, not semantic approval, and remains explicit about unsupported capabilities."
+      }
+    ],
+    "axes": [
+      {
+        "change": "Same harness, different model",
+        "matters": "Changes reasoning profile, cost and sometimes context window.",
+        "not": "Does not change hooks, transport, trust or file sandbox."
+      },
+      {
+        "change": "Different harness, same model family",
+        "matters": "Changes the adapter, queue/socket path, hook surface and qualification burden.",
+        "not": "Does not prove semantic diversity by itself."
+      },
+      {
+        "change": "Different harness, different model",
+        "matters": "Changes both the reasoning profile and the control surface.",
+        "not": "Still does not remove Owner review, receipts or the join fence."
+      }
+    ],
+    "qualification": {
+      "intro": "The runtime proof distinguishes what the transport can do from what the installed profile actually qualified. 'Observed' and 'qualified' are different claims.",
+      "rows": [
+        {
+          "harness": "Claude ACP 0.79.0",
+          "followup": "Dynamic follow-up prompts: verified",
+          "permission": "Exact one-time approval observed",
+          "attach": "No qualified shared-terminal attach in this branch",
+          "limit": "Owner/worker runtime proved; profile qualification stays binding-specific"
+        },
+        {
+          "harness": "Copilot ACP / Windows",
+          "followup": "Qualified GPT-only worker path: verified",
+          "permission": "Exact one-time approval observed; separate explicit denial and true lease refusal proved",
+          "attach": "Arbitrary terminal attach remains unsupported",
+          "limit": "Requires explicit model pin, emitted local plugin bundle, exact-ID model policy and actual post-run model evidence; first 8 GPT-labelled/Claude-backed runs remain invalid"
+        },
+        {
+          "harness": "Codex ACP 1.12.0 / Windows Job path",
+          "followup": "Read-only GPT-5.5 handoff: verified",
+          "permission": "Matching JSON acknowledgement and bounded Windows Job launch proved",
+          "attach": "Verified through app-server socket/UUID",
+          "limit": "Not full Windows write-hook/trust qualification; file-root access stays narrow and identity-bound"
+        },
+        {
+          "harness": "Grok 1.0.34",
+          "followup": "Dynamic follow-up prompts: verified",
+          "permission": "Current installed profile auto-approved the canary; ask is not qualified",
+          "attach": "Verified against an explicit leader socket",
+          "limit": "Live input exists; permission qualification remains profile-specific"
+        },
+        {
+          "harness": "Agy 1.2.7",
+          "followup": "Dynamic follow-up prompts: verified",
+          "permission": "Interactive ask rejected; denial path proved",
+          "attach": "No qualified live attach path",
+          "limit": "Headless stream is real; interactive approval is not"
+        }
+      ],
+      "note": "A seeded open Owner decision now proves the negative fence as well: native Stop refuses, an unapproved out-of-scope ledger-expiry attempt never becomes ready, and timeout expiry is not mislabeled as `RUN-DECISION-OPEN`. The first eight Copilot runs stay invalid evidence because the displayed GPT label hid an actual Claude backend."
+    },
+    "negativeProofs": [
+      {
+        "h": "A union-merged ledger cannot elect a leader",
+        "p": "Two leader-claim rows can both survive a union merge. Leadership therefore moved to a git ref with compare-and-swap, epoch and a join fence."
+      },
+      {
+        "h": "Transport completion is not review readiness",
+        "p": "A worker can complete a turn while still holding an open Owner decision or missing evidence. Final handback now re-reads decision state after receipt verification."
+      },
+      {
+        "h": "Discovery is not enforcement",
+        "p": "A native hook or trust entry can exist without proving it fired. Qualification only promotes a hook after the actual refusal is observed."
+      },
+      {
+        "h": "Silence is not a permission model",
+        "p": "Zero permission callbacks can mean a profile auto-approved the action. That is a missing proof, not a successful ask flow."
+      }
+    ],
+    "links": [
+      {
+        "name": "Deep architecture and evolution",
+        "path": "../architecture-multi-harness-coordination.md"
+      },
+      {
+        "name": "Owner / Coordinator / Sub-Agent proposal",
+        "path": "../proposals/owner-coordinator-subagent-coordination.md"
+      },
+      {
+        "name": "Agent coordination architecture",
+        "path": "../architecture-agent-coordination.md"
+      },
+      {
+        "name": "Launch and monitor specification",
+        "path": "../specs/multi-harness-launch-and-monitor.md"
+      },
+      {
+        "name": "Bounded runtime proof",
+        "path": "../proof/coordination-runtime-v2.md"
+      }
+    ],
+    "pending": "A separate 2026-09-21 implementation branch is hardening Windows and Copilot runtime evidence. Until that proof lands in this tree, the portal treats it as pending, not shipped.",
     "learnings": {
       "intro": "The specification describes the design. These are what a month of Claude Code and Copilot sessions working one repository actually taught — consolidated from AI-DE's coordination record and promoted to the shared fleet store, so every repo inherits them.",
       "measured": "273 coordination events over five days, two harnesses, 22 worktrees: 131 claims against 117 releases with 33 (25%) never released; 24 session-start events against 1 session-end; 55 guard decisions of which 50 allowed, 3 not-checked and 2 refused.",
@@ -2145,6 +2312,12 @@ window.PORTAL_DATA = {
         "type": "architecture",
         "title": "Dreaming subsystem — architecture",
         "summary": "Subsystem architecture for AI-Forward's dreaming capability — the offline consolidation pipeline (light/REM/deep) over the committed corpus, the HTML..."
+      },
+      {
+        "id": "architecture-multi-harness-coordination",
+        "type": "architecture",
+        "title": "AI-Forward - multi-harness coordination evolution",
+        "summary": "The deep architecture and history of AI-Forward's multi-agent, multi-harness coordination: why shared checkouts and prompt-only relays failed, how worktree..."
       },
       {
         "id": "audit-log",
@@ -4052,6 +4225,46 @@ window.PORTAL_DATA = {
         "from": "architecture-dreaming",
         "to": "spec-dreaming",
         "rel": "implements"
+      },
+      {
+        "from": "architecture-multi-harness-coordination",
+        "to": "architecture-agent-coordination",
+        "rel": "refines"
+      },
+      {
+        "from": "architecture-multi-harness-coordination",
+        "to": "coordination-end-to-end",
+        "rel": "documents"
+      },
+      {
+        "from": "architecture-multi-harness-coordination",
+        "to": "design-multi-harness-runner",
+        "rel": "documents"
+      },
+      {
+        "from": "architecture-multi-harness-coordination",
+        "to": "note-20260919-coordination-decisions-ratified",
+        "rel": "relates-to"
+      },
+      {
+        "from": "architecture-multi-harness-coordination",
+        "to": "proof-coordination-runtime-v2",
+        "rel": "documents"
+      },
+      {
+        "from": "architecture-multi-harness-coordination",
+        "to": "proposal-owner-coordinator-subagent-coordination",
+        "rel": "documents"
+      },
+      {
+        "from": "architecture-multi-harness-coordination",
+        "to": "spec-agent-coordination",
+        "rel": "documents"
+      },
+      {
+        "from": "architecture-multi-harness-coordination",
+        "to": "spec-multi-harness-launch-and-monitor",
+        "rel": "documents"
       },
       {
         "from": "audit-log",

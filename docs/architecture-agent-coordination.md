@@ -155,7 +155,7 @@ Three things the spike surfaced that the design now depends on:
 
 **The limit, stated rather than implied.** `disableAllHooks`, `allowManagedHooksOnly`, and `strictPluginOnlyCustomization` can each switch hook enforcement off from a settings source the layer does not control — and an agent with shell access can bypass the tool boundary entirely. **Edit-time enforcement is an integrity control, never a security control** (NFR-S2). The layer detects that hooks are inactive and *says* it is advisory rather than reporting an enforcement it is not performing.
 
-**Therefore the commit boundary is the floor, not the fallback.** Every harness has one; none can be configured away by a settings key. Spec condition **F1 is closed for Claude Code** (contract read + program executed) and **remains open for Copilot and any third harness** — those are Phase 3 spikes, and until each is executed those agents are advisory at the edit boundary and enforced at commit.
+**Therefore the commit boundary is the floor, not the fallback.** Every harness has one; none can be configured away by a settings key. Spec condition **F1 is closed for Claude Code and for Copilot's qualified emitted-plugin path** (contract read + program executed). Other third-harness edit boundaries remain profile-specific until each surface is executed rather than only read, and any unsupported path still degrades to commit-floor enforcement.
 
 Detail: [ADR-0010](adr/0010-enforcement-topology.md).
 
@@ -304,7 +304,7 @@ The last two rows are the finding that most changes the build: **two of the four
 **Conditions of pass:**
 
 1. **§7-E** gets concrete rendering rules and an adversarial corpus in `/design` **before** any projection ships (Phase-4 gate).
-2. **F1 stays open** for Copilot and any third harness until each hook surface is *executed*, not read. Those agents are advisory-at-edit and enforced-at-commit until then.
+2. **F1 stays execution-scoped.** Claude Code and Copilot's qualified emitted-plugin path are closed by executed evidence; every other third-harness path stays advisory-at-edit and enforced-at-commit until that exact surface is executed rather than only read.
 3. **Every control is proven red on the un-fixed shape** before it is trusted — explicitly including `rev-list HEAD --not --all` returning SAFE, and a dedupe-by-id resolution losing an entry.
 4. **R4: no control reports a pass without asserting its corpus was the size it assumed.** Written because this document's own spike violated it.
 

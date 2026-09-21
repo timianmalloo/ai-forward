@@ -34,9 +34,9 @@ stack and to the landed skills and scripts.
 
 - **Verified** - proposals, specs, designs, proof packs, API docs, and the git history in this
   repository; every shipped claim below is backed by a committed artifact in this tree.
-- **Flagged** - the separate 2026-09-21 implementation branch the maintainer asked this
-  documentation branch to read as evidence. That work is called out explicitly as pending
-  integration and is **not** described here as landed or released.
+- **Flagged** - profile-scoped residual limits that the landed proofs still leave open
+  (for example full Windows Codex write-hook trust, Copilot arbitrary terminal attach,
+  Copilot `additional_roots`, and arbitrary Claude/Agy live-terminal attachment).
 
 ## 1. Where it started
 
@@ -345,7 +345,8 @@ The best summary is simple: **no implied distributed service if the code does no
 | Harness | Dynamic follow-up | Permission qualification | Live attach | Current limit |
 |---|---|---|---|---|
 | **Claude ACP 0.79.0** | Verified | Real inspected `allow_once` on a file edit | No qualified shared-terminal attach in this branch | Owner and worker runtime proven, but profile-specific qualification still required |
-| **Codex ACP 1.12.0** | Verified | Real inspected `allow_once` in explicit read-only mode | Verified via app-server socket/UUID | Operational file access had to be explicitly scoped; no blanket shared-root grant |
+| **Copilot ACP / Windows** | Verified | Exact one-time approval observed; separate explicit denial produced no file; a held lease refusal left bytes unchanged | Arbitrary terminal attach remains unsupported | Qualified profile requires native `--model`, an emitted local plugin bundle, the exact-ID model policy and actual post-run model evidence. The first eight GPT-labelled runs were withdrawn as invalid because the backend was really Claude. |
+| **Codex ACP 1.12.0 / Windows Job path** | Verified | Read-only GPT-5.5 handoff returned the matching JSON acknowledgement; the bounded Windows Job path survived the closed-pipe stdin fix | Verified via app-server socket/UUID | Not full Windows write-hook/trust qualification; explicit file-root scope remains narrow and identity-bound |
 | **Grok 1.0.34** | Verified | Current installed profile auto-approved the canary; `ask` remains unqualified | Verified against an explicit leader socket | Live input exists; permission qualification remains profile-specific |
 | **Agy 1.2.7** | Verified | `ask` rejected; denied native actions treated as blocked | No qualified live attach path | Headless stream is real; interactive approval is not |
 
@@ -380,20 +381,29 @@ docstring level. That is visible in the generated API reference:
 and `platform_process.py`, but those modules are not present in this branch's generated API
 reference and are therefore **not** described here as part of the landed surface.
 
-## 10. Pending integration evidence (not landed in this branch)
+## 10. 2026-09-21 landed qualification scope
 
-The maintainer asked this documentation branch to read a separate implementation branch while
-keeping the story honest. These observations are therefore recorded as **pending integration**:
+The 2026-09-21 rebase onto `04db4f07015277b811e82bed51f9230162b7a134` moved the Copilot and
+Windows runtime work out of the "pending" category and into committed source. The operator-facing
+contract is now split between the general runtime proof, the Copilot profile reference, and the
+public sanitized fixture at `pack/evals/fixtures/copilot-windows-qualification.json`.
 
-| Pending evidence | Status in this branch |
-|---|---|
-| Windows-specific runtime hardening in `coord_files.py` and `platform_process.py` | **Flagged** - observed in the sibling implementation branch; not landed here |
-| Copilot runtime qualification that proved one-time approval, receipt hashes, and `ready_for_review` under a GPT-pinned worker | **Flagged** - the maintainer supplied measured evidence and explicitly withdrew eight invalid runs where the displayed model label did not match the actual backend |
-| Codex read-only handoff with matching JSON acknowledgement and explicit file-root binding | **Flagged** - measured in the sibling branch; not yet part of this branch's source-of-truth |
-| Remaining unsupported items: full Windows Codex write-hook trust, Copilot arbitrary terminal attach, Copilot additional_roots, POSIX-only existing attach flows | **Flagged** - these remain limits even in the sibling branch summary |
+| Landed evidence | What is now established | What is still explicitly limited |
+|---|---|---|
+| **Copilot GPT-5.4 worker qualification** | The qualified Windows path prepares and runs an isolated Copilot worker, inspects one exact native permission request, approves it once through the immutable queue, verifies actual GPT usage/assistant-model evidence, reaches `ready_for_review` with zero open decisions, and reviews / fast-forward joins fixture commit `31879118`. | The qualified path is the explicit GPT-only worker profile documented in `reference/copilot.md`; it is not a blanket Copilot profile and not an arbitrary saved-terminal attach path. |
+| **Copilot negative controls** | Separate proofs now exist for an explicit denial with no file written, a true lease refusal with a specific holder and unchanged bytes, instruction-marker read/write, and active cancellation after a concrete marker write with `cleanup_error: null`. | Cancellation can omit usage, so cancellation is never readiness evidence. The historical `sourcecontrolscanary` field-misroute from the first eight runs remains invalid proof, not a tolerated edge case. |
+| **Codex GPT-5.5 cross-harness handoff** | The committed runtime now proves a matching read-only JSON acknowledgement and the bounded Windows Job path after the closed-pipe stdin fix; actual `turn_context` shows `gpt-5.5` / `provider=openai`. | This is not full Windows Codex write-hook trust qualification. The file-root grant remains narrow and identity-bound. |
+| **Open Owner-decision fence** | A seeded open Owner decision causes native Stop refusal; the model's attempted out-of-scope fabricated local-ledger expiry is not approved; the bounded attempt expires and never becomes ready. | That expiry is not mislabeled `RUN-DECISION-OPEN`. The completed-transport decision fence is proved separately by the real-Git offline integration path. |
 
-This is the important documentation rule: **an observed branch in progress may influence the
-roadmap, but it does not get rewritten into the accepted architecture until its own proof lands.**
+Two documentation rules follow from this landed scope:
+
+1. **Invalid proof stays invalid.** The first eight Copilot attempts supplied `--model gpt-5.4`
+   but actually ran Claude in the backend. They are retained as negative evidence and excluded
+   from qualification.
+2. **Requested configuration is not effective configuration.** Copilot's landed profile binds the
+   explicit native model setter, the required exact-ID policy (`fallback: gpt-5.4` then
+   `gpt-5.4`), the emitted plugin bundle, and the post-run actual-model check. The profile is
+   therefore proved by the effective model and usage evidence, not by argv alone.
 
 ## 11. Operator workflow end to end
 

@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 300
+"count": 301
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 479,
+"total": 480,
 "items": [
 {
 "cat": "knowledge",
@@ -2115,6 +2115,15 @@ window.PACK_INDEX = {
 "path": "docs/architecture-dreaming.md",
 "kind": "architecture",
 "text": "dreaming subsystem — architecture subsystem architecture for ai-forward's dreaming capability — the offline consolidation pipeline (light/rem/deep) over the committed corpus, the html review/approval surface, the promotion oracle, the safe instance→class abstraction, the fleet learnings store, and the /apply-learnings federation path — as an loa continuous sentinel with determinism at the floor and a human gate before any durable write. refines the pack's top-level architecture; it is a subsystem, not a new system. dreaming architecture consolidation federation oracle loa-continuous-sentinel implements spec-dreaming refines architecture depends-on adr-0002-fleet-learnings-store depends-on adr-0003-promotion-oracle depends-on adr-0004-instance-to-class-abstraction depends-on adr-0005-harness-runner-boundary"
+},
+{
+"cat": "graph",
+"id": "architecture-multi-harness-coordination",
+"title": "AI-Forward - multi-harness coordination evolution",
+"summary": "The deep architecture and history of AI-Forward's multi-agent, multi-harness coordination: why shared checkouts and prompt-only relays failed, how worktree isolation and the Owner / Coordinator / Sub-Agent doctrine replaced them, what…",
+"path": "docs/architecture-multi-harness-coordination.md",
+"kind": "architecture",
+"text": "ai-forward - multi-harness coordination evolution the deep architecture and history of ai-forward's multi-agent, multi-harness coordination: why shared checkouts and prompt-only relays failed, how worktree isolation and the owner / coordinator / sub-agent doctrine replaced them, what execute-with-coordination grew into, what the bounded runtime actually ships, what was deliberately not shipped, and which qualifications remain profile-specific. coordination multi-harness multi-agent worktrees launch runtime qualification refines architecture-agent-coordination documents proposal-owner-coordinator-subagent-coordination documents spec-agent-coordination documents spec-multi-harness-launch-and-monitor documents design-multi-harness-runner documents proof-coordination-runtime-v2 documents coordination-end-to-end relates-to note-20260919-coordination-decisions-ratified"
 },
 {
 "cat": "graph",

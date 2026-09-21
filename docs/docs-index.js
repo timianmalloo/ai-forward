@@ -1796,7 +1796,7 @@ window.DOCS_INDEX = {
           "mermaid": "classDiagram\n  class Signature {\n    +Name name\n    +FacetList facets\n    +StyleHints? hints\n    +validate() conflicts\n    +roundTrip() bool  %% G10: identify AND generate\n  }\n  class Facet {\n    <<abstract>>\n    +String key\n  }\n  class SingleValuedFacet {\n    +Value value  %% Type, Arch, Layout, Density, Pacing, ...\n  }\n  class MultiValuedFacet {\n    +Value[] values  %% Nav, Input, Feedback, Motion, A11y (joined with +)\n  }\n  class StyleHints {\n    +String[] hints  %% bounded NL decoration, applied last\n  }\n  class Archetype {\n    +String id          %% A1..F2\n    +String name\n    +Exemplar[] exemplars\n    +Signature canonical\n    +String codegenDescriptor\n  }\n  Signature \"1\" o-- \"4..*\" Facet : composes\n  Facet <|-- SingleValuedFacet\n  Facet <|-- MultiValuedFacet\n  Signature \"0..1\" *-- \"1\" StyleHints : decorated by\n  Archetype \"1\" *-- \"1\" Signature : canonical\n  Archetype \"1\" o-- \"1..*\" Exemplar\n  note for Signature \"G4: MUST carry Type, Arch, Layout, Pacing.\\nG1: always composed with a concrete U1–U20 / S1–S10 spec.\""
         }
       ],
-      "sourceSha256": "24dccded4f140042ce508802f15529c2263e78f22b3681f33927092ae41827c7"
+      "sourceSha256": "a0f30f4ec87df22849af2f9dcd68c6d4984b3a39149cecfda3d1775b328d2174"
     },
     {
       "id": "architecture-agent-coordination",
@@ -1844,7 +1844,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart TB\n  subgraph H[\"Harness edge — per agent, per worktree\"]\n    HK[\"PreToolUse hook<br/>exec-form args, no shell\"]\n    PC[\"pre-commit hook<br/>THE UNIVERSAL FLOOR\"]\n  end\n  subgraph CORE[\"coord core — stdlib, no deps, no daemon\"]\n    REC[\"Record<br/>append-only JSONL<br/>one file per session\"]\n    FOLD[\"Fold<br/>leases · work items · decisions<br/>pure function, replay-idempotent\"]\n    ALLOC[\"Allocator<br/>non-coordinating id\"]\n    CLASS[\"Artifact-class registry<br/>authored · derived · register · hotspot\"]\n  end\n  subgraph GIT[\"git — where structure beats policy\"]\n    MD[\".gitattributes merge driver<br/>derived → regenerate\"]\n    RL[\"reachability<br/>peers = for-each-ref minus HEAD's branch\"]\n  end\n  subgraph OUT[\"Surfaces\"]\n    PROJ[\"Projection ≤ 2k tokens<br/>UNTRUSTED DATA\"]\n    STAT[\"Operator status<br/>unique-work first\"]\n    STREAM[\"Stream\"]\n  end\n  HK -->|check| FOLD\n  PC -->|check + stage-by-name| FOLD\n  HK & PC -->|append| REC\n  REC --> FOLD\n  CLASS --> FOLD\n  ALLOC --> REC\n  ALLOC -.serves.-> EXT[\"EXISTING registers<br/>audit-log · change-log · findings\"]\n  FOLD --> PROJ & STAT & STREAM\n  CLASS --> MD\n  RL --> STAT\n  PROJ -.->|\"trust boundary<br/>additionalContext\"| H"
         }
       ],
-      "sourceSha256": "af4c58efedd6655ac22bfcdd816c5a34cec5364c8f1d2bb97f4631fa2aba1807"
+      "sourceSha256": "d99d3a7e9721afe442ccc717a628eb831d39218f58a033c036e4a82abe0303ca"
     },
     {
       "id": "architecture-dreaming",
@@ -1899,6 +1899,89 @@ window.DOCS_INDEX = {
         }
       ],
       "sourceSha256": "a3975ab26cb8083b799bfb77026c6bf0ddaf8da812fe0cbbd5a5bc492d1c8987"
+    },
+    {
+      "id": "architecture-multi-harness-coordination",
+      "path": "docs/architecture-multi-harness-coordination.md",
+      "title": "AI-Forward - multi-harness coordination evolution",
+      "type": "architecture",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2027-03-21",
+      "reviewSuggested": [],
+      "summary": "The deep architecture and history of AI-Forward's multi-agent, multi-harness coordination: why shared checkouts and prompt-only relays failed, how worktree isolation and the Owner / Coordinator / Sub-Agent doctrine replaced them, what execute-with-coordination grew into, what the bounded runtime actually ships, what was deliberately not shipped, and which qualifications remain profile-specific.",
+      "tags": [
+        "coordination",
+        "multi-harness",
+        "multi-agent",
+        "worktrees",
+        "launch",
+        "runtime",
+        "qualification"
+      ],
+      "links": [
+        {
+          "to": "architecture-agent-coordination",
+          "rel": "refines"
+        },
+        {
+          "to": "proposal-owner-coordinator-subagent-coordination",
+          "rel": "documents"
+        },
+        {
+          "to": "spec-agent-coordination",
+          "rel": "documents"
+        },
+        {
+          "to": "spec-multi-harness-launch-and-monitor",
+          "rel": "documents"
+        },
+        {
+          "to": "design-multi-harness-runner",
+          "rel": "documents"
+        },
+        {
+          "to": "proof-coordination-runtime-v2",
+          "rel": "documents"
+        },
+        {
+          "to": "coordination-end-to-end",
+          "rel": "documents"
+        },
+        {
+          "to": "note-20260919-coordination-decisions-ratified",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "4. Current architecture in one picture",
+          "mermaid": "flowchart TB\n  Human[\"Human operator / repo owner\"]\n  Owner[\"Owner seat<br/>reviews requests and evidence\"]\n  Coord[\"Coordinator seat<br/>decomposes, dispatches, joins\"]\n  Compile[\"compile stage<br/>finished, dispatchable prompt\"]\n  Plan[\"prepare-for-coordination<br/>plan + owned paths + seams\"]\n  Skill[\"execute-with-coordination<br/>--agents | --brief | --launch\"]\n\n  subgraph Core[\"Repo-local coordination core\"]\n    Leader[\"leader ref + epoch fence\"]\n    Ledger[\"append-only ledgers<br/>claims, events, decisions\"]\n    Mail[\"mailboxes + doorbells\"]\n    Track[\"heartbeat / track / kick\"]\n    Requests[\"typed seam and decision requests\"]\n    Trees[\"worktree lifecycle\"]\n  end\n\n  subgraph Runtime[\"Opt-in bounded runtime\"]\n    Runner[\"coord-runner.py\"]\n    Transport[\"coord_transport.py\"]\n    Native[\"qualified native/ACP adapters\"]\n  end\n\n  subgraph Workers[\"Per-track worker sessions\"]\n    A[\"same-harness worker\"]\n    B[\"cross-harness worker\"]\n    C[\"live-attached worker\"]\n  end\n\n  Proof[\"proof packs + receipts + API docs\"]\n  Join[\"conductor-join.py + verify gates\"]\n\n  Human --> Owner\n  Owner --> Compile --> Plan --> Skill\n  Skill --> Trees\n  Skill --> Requests\n  Skill --> Leader\n  Skill --> Runner\n  Trees --> A\n  Runner --> Transport --> Native --> B\n  Runner --> Native --> C\n  Mail --> Owner\n  Track --> Owner\n  A --> Ledger\n  B --> Ledger\n  C --> Ledger\n  A --> Proof\n  B --> Proof\n  C --> Proof\n  Proof --> Owner --> Join\n  Ledger --> Join\n  Leader --> Join"
+        },
+        {
+          "kind": "sequence",
+          "title": "5.1 Sequence - the operator workflow today",
+          "mermaid": "sequenceDiagram\n  actor Human as Human\n  participant Owner as Owner / Coordinator\n  participant Compile as prompt-compile.py\n  participant Plan as /prepare-for-coordination\n  participant Exec as /execute-with-coordination\n  participant Runner as coord-runner.py\n  participant Worker as Worker session\n  participant Decide as coord-decide.py\n  participant Join as conductor-join.py\n\n  Human->>Owner: request multi-track or multi-harness work\n  Owner->>Compile: compile raw prose into a dispatchable contract\n  Compile-->>Owner: finished compilation ids\n  Owner->>Plan: allocate tracks, owned paths, seams, exit evidence\n  Plan-->>Owner: canonical plan\n  Owner->>Exec: run plan in --agents, --brief or --launch mode\n  alt --agents\n    Exec->>Worker: same-harness delegated track\n  else --brief\n    Exec-->>Human: one brief per track for a separately started session\n  else --launch\n    Exec->>Runner: prepare / fingerprint / run\n    Runner->>Worker: bounded transport session with exact identity\n  end\n  Worker-->>Owner: seam request or decision request when needed\n  Owner->>Decide: rule by numbered ruling / exact request id\n  Decide-->>Worker: ruling and resolved request\n  Worker-->>Owner: receipt + declared evidence\n  Owner->>Join: verify evidence, epoch, gates, then integrate"
+        },
+        {
+          "kind": "class",
+          "title": "5.2 Class - the protocol objects that survived",
+          "mermaid": "classDiagram\n  class Compilation {\n    +auditId\n    +dispatchable\n    +render_sections()\n  }\n  class CoordinationPlan {\n    +tracks[]\n    +ownedPaths[]\n    +exitEvidence[]\n  }\n  class LaunchContract {\n    +run_id\n    +owner\n    +workers[]\n    +parallelism\n  }\n  class WorkerAttempt {\n    +session\n    +branch\n    +harness\n    +transport\n  }\n  class Qualification {\n    +fingerprint\n    +effective_policy\n    +capabilities\n  }\n  class DecisionRequest {\n    +request_id\n    +deadline\n    +fallback\n  }\n  class Ruling {\n    +number\n    +request_id\n    +text\n  }\n  class Receipt {\n    +artifact hashes\n    +checkout proof\n    +review state\n  }\n  class LeaderDesignation {\n    +session\n    +epoch\n    +expires_at\n  }\n\n  CoordinationPlan --> Compilation : consumes\n  LaunchContract *-- WorkerAttempt\n  WorkerAttempt --> Qualification : requires\n  WorkerAttempt --> DecisionRequest : may raise\n  DecisionRequest --> Ruling : resolved by\n  WorkerAttempt --> Receipt : returns\n  LaunchContract --> LeaderDesignation : fenced by"
+        },
+        {
+          "kind": "flowchart",
+          "title": "5.3 Layered architecture - what is deterministic vs profile-specific",
+          "mermaid": "flowchart TB\n  subgraph L4[\"Human and review layer\"]\n    H[\"Human operator\"] --> O[\"Owner rulings and receipt review\"]\n  end\n  subgraph L3[\"Harness/runtime layer\"]\n    CC[\"Claude ACP / native hooks\"]\n    CX[\"Codex ACP / app-server\"]\n    GK[\"Grok ACP / leader socket\"]\n    AG[\"Agy native stream\"]\n    CP[\"Copilot hooks / native CLI\"]\n  end\n  subgraph L2[\"Coordination protocol layer\"]\n    C1[\"compile stage\"]\n    C2[\"plans, seams, decisions\"]\n    C3[\"mail, doorbells, liveness\"]\n    C4[\"leader ref + join fence\"]\n  end\n  subgraph L1[\"Deterministic core layer\"]\n    D1[\"coord-core.py\"]\n    D2[\"coord-runner.py\"]\n    D3[\"coord_transport.py\"]\n    D4[\"bounded_process.py\"]\n    D5[\"proof packs and tests\"]\n  end\n  L1 --> L2 --> L3 --> L4"
+        },
+        {
+          "kind": "flowchart",
+          "title": "5.4 Component - what execute-with-coordination grew into",
+          "mermaid": "flowchart LR\n  EWC[\"/execute-with-coordination\"]\n  Agents[\"--agents<br/>same-harness sub-agents\"]\n  Brief[\"--brief<br/>manual cross-harness briefs\"]\n  Launch[\"--launch<br/>bounded multi-harness runtime\"]\n  Compile[\"compiled prompts only\"]\n  Review[\"Owner review + rulings\"]\n  Join[\"conductor-join.py\"]\n\n  EWC --> Agents\n  EWC --> Brief\n  EWC --> Launch\n  Launch --> Compile\n  Agents --> Review\n  Brief --> Review\n  Launch --> Review\n  Review --> Join"
+        }
+      ],
+      "sourceSha256": "7d8d9896d8907e881e9d211b66ae417bc282584fe9c5aff4a2e3f0165ab3cb6d"
     },
     {
       "id": "note-20260712-model-orchestration-policy",
@@ -4617,7 +4700,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "6e3137ed1939efcc09ae648c2c2076172b280362f5ef0b1c4cea56288221b8fd"
+      "sourceSha256": "a1731edf8d0c33667101acab7884540af39ae59e7eb01b7b0559e4414917ed58"
     },
     {
       "id": "dream-diary",
@@ -10602,5 +10685,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "9a6e2213b762fdb5936e57dd963c7138ca51b027a8c0e2c261a48ef81dc96407"
+  "graphSha256": "be372daec19fc93aab2d15d13502b6a03e489c17679ecb560b48905ec80256dc"
 };
