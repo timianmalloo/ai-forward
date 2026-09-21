@@ -2,13 +2,14 @@
 id: coordination-end-to-end
 title: "Coordination plan - local end-to-end profiles"
 type: plan
-status: proposed
+status: accepted
 owner: "@timianmalloo"
 tags: [coordination, worktrees, qualification]
 links:
   - { to: spec-multi-harness-launch-and-monitor, rel: implements }
   - { to: design-multi-harness-runner, rel: depends-on }
   - { to: kb-graph-and-loop-engineering, rel: depends-on }
+  - { to: proof-coordination-end-to-end, rel: relates-to }
 review-by: "2026-12-21"
 summary: Repair measured startup gaps, qualify native controls, then exercise reviewed handback across all four installed harnesses with Codex or Claude holding the Owner seat.
 ---
@@ -17,7 +18,7 @@ summary: Repair measured startup gaps, qualify native controls, then exercise re
 
 Goal: make installed Claude, Codex, Grok and Agy coordination work end to end. Done when the actual profiles produce permitted work, refuse coordinator-owned edits, respect unresolved Owner decisions, cancel active work, and return independently reviewed evidence through the runner and join. Missing proof stays blocked. No remote push or blanket permission changes. Tier T2; two delegates maximum; 400k context ceiling with compaction/handoff before the ceiling.
 
-## Layer state
+## Initial layer state
 
 | check | result | meaning |
 |---|---|---|
@@ -192,3 +193,48 @@ The previous estimate was exceeded by measured source repair and native qualific
 remaining duration is 10–20 minutes (Inferred), with a 02:44Z review point. Model tokens,
 spend and total tool calls are not recorded. The same width-two, no-replay and no-push
 bounds remain. No missing proof is waived and no general unattended profile is enabled.
+
+### Actual Owner checkpoint and budget review, 2026-09-21 02:44Z
+
+All four Codex-owned receipt joins passed their nine configured local gates. The identical
+reviewed tree landed on local main as `5a856ef1ff67`, with merge ancestry retained at
+`archive/coord-e2e-native-proof-joins`. No push occurred.
+
+The first actual Claude Owner stopped before worker launch when a private qualification
+helper confused runtime host `claude` with compiler template `claude-code`. A real installed
+compiler regression reproduced the error; both Owner mappings passed after the narrow fix
+and independent review. Its failed record and audit remain retained, without replay.
+The native report's later renewal attribution was corrected from actual PostToolUse/Stop
+heartbeat facts: those hooks renew the same live holder and report `leader_renewed`.
+
+A fresh Claude Owner checkout at epoch 12 has completed Agy preparation, ownership and
+active cancellation controls, finite attestation and positive ruling. Its actual native
+session has separately read and matched the 581-byte receipt to the admitted contract.
+Direct acceptance, selective commit and join are still pending at this checkpoint. The
+remaining variant is that final native review/join plus the finite corpus, report and local
+integration. Remaining duration is 5–10 minutes (Inferred); reassess by 02:54Z if needed.
+The native session retains its original 580-second transport and 20-second cleanup ceiling.
+
+### Final runtime checkpoint, 2026-09-21 02:54Z
+
+Every runtime exit cell is now proven. Actual Claude session
+`df14fa70-9062-4728-af57-c2744807fc9e` independently accepted its Agy receipt,
+committed only that receipt as `38a2d0b64f9c`, and completed its own conductor join
+at `bb059d980d12`, with nine configured gates passing. The native session completed
+in 438.034842 measured seconds, with no surviving observed descendants. Its heartbeat
+hooks renewed the same epoch-12 holder; the finite driver stopped its own renewer.
+After native termination, Claude's designation was released and Codex was pinned
+at epoch 13 for final integration. Both successful and failed-attempt audit branches
+passed their configured local integration gates.
+
+The raw checker regenerated all eight original profiles plus the Claude-owned Agy
+profile. The public consistency checker verified five distinct real Git receipt
+commits and rejected 20 false claims. The durable proof is
+`docs/proof/coordination-end-to-end.md` with an HTML view and hash-bound sanitized
+corpus. Remaining work at this checkpoint is final artifact review, metadata/render
+checks, local linear landing and session closure; no native model run remains.
+The final packaging estimate is 5–10 minutes (Inferred), with a 03:04Z review point
+if necessary. The earlier estimates excluded the observed private-helper defect
+repairs and proof-review corrections; they are retained rather than rewritten.
+No push, general unattended enablement or blanket permission change is authorized
+by this finite qualification.

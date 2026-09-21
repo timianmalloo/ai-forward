@@ -1,0 +1,608 @@
+{
+  "schema": "finite-coordination-end-to-end/1",
+  "unattended_enabled": false,
+  "scope": "Measured POSIX local profiles, finite worker prompts and independent Owner review; no global permission change or arbitrary-shell containment claim.",
+  "profiles": [
+    {
+      "schema": "finite-profile-proof/1",
+      "scenario": "negative",
+      "worker": "e2e-neg-claude",
+      "harness": "claude",
+      "source_base": "ac35d759e24eea89892ac2ede27391f2e307dab4",
+      "fingerprint": "aa119200f6d0b75555e80be636af976da940154608de469a20f533dbeeeffcc5",
+      "epoch": 8,
+      "cancel_to_return_seconds": 0.4136852090014145,
+      "receipt": {
+        "bytes": 548,
+        "kind": "file",
+        "path": "docs/notes/note-e2e-neg-claude.md",
+        "sha256": "1923ed91e0b4bade800b86f1bfb89202ca547c843a891a80f4a71d8fd2bab163"
+      },
+      "terminal_state": "blocked",
+      "native_stop_hosts": [
+        "claude"
+      ],
+      "evidence": {
+        "ownership": {
+          "file": "coord-e2e-neg-claude-ownership.json",
+          "sha256": "71085bf5d39b45365db5d04be399041cd5f55ee53f227c3bdb7fe3c2d9c8a2b6"
+        },
+        "cancel": {
+          "file": "coord-e2e-neg-claude-cancel.json",
+          "sha256": "ac94109957247b6a821f5a09d3b10ed95a36fcd336e4ba7c9e2260ad346c199e"
+        },
+        "qualification": {
+          "file": "coord-e2e-neg-claude-qualification.json",
+          "sha256": "dd0d23cb06c24ce1d3cac14796291434453f2491178b36853d0be9df70d22cf5"
+        },
+        "handback": {
+          "file": "coord-e2e-neg-claude-handback-observation.json",
+          "sha256": "10e766d1528f96e5c1a0a04e01e4d6ce2594344fecbd0ed7a8122d514730ad26"
+        }
+      }
+    },
+    {
+      "schema": "finite-profile-proof/1",
+      "scenario": "negative",
+      "worker": "e2e-negroots-codex",
+      "harness": "codex",
+      "source_base": "1453059de5c16fce95cdecc178ade426d11cc601",
+      "fingerprint": "c853f4950485b307b274c48b13088fee3a678fb5601961b7de72e1767afacb4b",
+      "epoch": 9,
+      "cancel_to_return_seconds": 0.2062214170000516,
+      "receipt": {
+        "bytes": 554,
+        "kind": "file",
+        "path": "docs/notes/note-e2e-negroots-codex.md",
+        "sha256": "b78c6e64152d0bcb949d4f5895bd5ff3c9818361b8f11eb1d43345aab4f143cb"
+      },
+      "terminal_state": "blocked",
+      "native_stop_hosts": [
+        "codex"
+      ],
+      "evidence": {
+        "ownership": {
+          "file": "coord-e2e-negroots-codex-ownership.json",
+          "sha256": "6a3502371a4b297f52a6275d028c8c67baa3db35745871b1e43fa0a228d091dd"
+        },
+        "cancel": {
+          "file": "coord-e2e-negroots-codex-cancel.json",
+          "sha256": "2e14b5d55cb3d5bd0fe565bead94c8646180fb1d851ca615d172a8a260068177"
+        },
+        "qualification": {
+          "file": "coord-e2e-negroots-codex-qualification.json",
+          "sha256": "c880bef2421041a9203a620945de7a936111a6b106b258f93e1e5fb27915403a"
+        },
+        "handback": {
+          "file": "coord-e2e-negroots-codex-handback-observation.json",
+          "sha256": "b3f61145dc385908df1f964213f2a307ae17c5ac323aeaf519e6d9898941f76f"
+        }
+      }
+    },
+    {
+      "schema": "finite-profile-proof/1",
+      "scenario": "negative",
+      "worker": "e2e-negfix-grok",
+      "harness": "grok",
+      "source_base": "6790f557a67f61ac8d447ee1bbb522c325cb121e",
+      "fingerprint": "4298d60c2f27f43550f627d7a5c3a4fc6c2c6fe93bdb1e179d46d731473efb16",
+      "epoch": 9,
+      "cancel_to_return_seconds": 0.3822815419989638,
+      "receipt": {
+        "bytes": 546,
+        "kind": "file",
+        "path": "docs/notes/note-e2e-negfix-grok.md",
+        "sha256": "cfbc61018125cb28960b15604d41e804640328c787720526f11cbf6af290e4aa"
+      },
+      "terminal_state": "blocked",
+      "native_stop_hosts": [
+        "claude",
+        "grok"
+      ],
+      "evidence": {
+        "ownership": {
+          "file": "coord-e2e-negfix-grok-ownership.json",
+          "sha256": "13182152bf5058edf7a9ecac73135edc2094d2e3bbd5bb3efb24de9be5082a4c"
+        },
+        "cancel": {
+          "file": "coord-e2e-negfix-grok-cancel.json",
+          "sha256": "9c0a68aa3a6a1ac2f0210e042cedf8d388c508b407887b9971a01561d8964ede"
+        },
+        "qualification": {
+          "file": "coord-e2e-negfix-grok-qualification.json",
+          "sha256": "b7f61f937f4c21241442fd80246313e49abd354e66392df1a59830cc3b692a17"
+        },
+        "handback": {
+          "file": "coord-e2e-negfix-grok-handback-observation.json",
+          "sha256": "ee33f68485ba7dfff2a4c78abe2c1ffc2fcebc8ccead537c70ffcbff53a8ad58"
+        }
+      }
+    },
+    {
+      "schema": "finite-profile-proof/1",
+      "scenario": "negative",
+      "worker": "e2e-neg-agy",
+      "harness": "agy",
+      "source_base": "ac35d759e24eea89892ac2ede27391f2e307dab4",
+      "fingerprint": "ad92d3e1bff391c1689b2ee435f2e1df75c84cf53375a8df3c1c68309d20dd22",
+      "epoch": 8,
+      "cancel_to_return_seconds": 0.21333358300034888,
+      "receipt": {
+        "bytes": 536,
+        "kind": "file",
+        "path": "docs/notes/note-e2e-neg-agy.md",
+        "sha256": "0a3507921a762f37e18b89119ca4b481760166cddac31378255c93c6f86726c7"
+      },
+      "terminal_state": "blocked",
+      "native_stop_hosts": [
+        "agy"
+      ],
+      "evidence": {
+        "ownership": {
+          "file": "coord-e2e-neg-agy-ownership.json",
+          "sha256": "152b947227447f54bc5c32c885fd5489612dfeecb7628afdfd0109ff9c93d440"
+        },
+        "cancel": {
+          "file": "coord-e2e-neg-agy-cancel.json",
+          "sha256": "b283426371baeb240b9c5594e2129227047c8fe8e1091bb7dcf52a6cc3084b55"
+        },
+        "qualification": {
+          "file": "coord-e2e-neg-agy-qualification.json",
+          "sha256": "d2915b0c789334c3b85ef729bbf38202e129ddc000b68d04ceb7ff920f336456"
+        },
+        "handback": {
+          "file": "coord-e2e-neg-agy-handback-reviewed.json",
+          "sha256": "a61dfe3094bab598f769ded0607f4e81319f1468d904ca41ba546eb9f7a74798"
+        }
+      }
+    },
+    {
+      "schema": "finite-profile-proof/1",
+      "scenario": "positive",
+      "worker": "e2e-pos-claude",
+      "harness": "claude",
+      "source_base": "1453059de5c16fce95cdecc178ade426d11cc601",
+      "fingerprint": "34e1f9fdc8fe601fa87bb38ad6bea894f7860bb8e36964f830d73e1d1ff1d12b",
+      "epoch": 9,
+      "cancel_to_return_seconds": 0.4062623329809867,
+      "receipt": {
+        "bytes": 548,
+        "kind": "file",
+        "path": "docs/notes/note-e2e-pos-claude.md",
+        "sha256": "30b7a8b4010ea4884bb6edbf76ca74bdd58e937a3a2ce90a7f5fc1668f8c0522"
+      },
+      "terminal_state": "ready_for_review",
+      "native_stop_hosts": [
+        "claude"
+      ],
+      "evidence": {
+        "ownership": {
+          "file": "coord-e2e-pos-claude-ownership.json",
+          "sha256": "5415bbcc60c59b31ee57e0d4ed4db57d2315c7a6c774114e1db1e97964789334"
+        },
+        "cancel": {
+          "file": "coord-e2e-pos-claude-cancel.json",
+          "sha256": "009bd28f640126afe80cedc888901fc87ee8815f0c325d600a59a449069d7d33"
+        },
+        "qualification": {
+          "file": "coord-e2e-pos-claude-qualification.json",
+          "sha256": "fb1aa76ec00c2dcfb93a293a3ae653b701f9b0dac7c1e3baec928089d9f49824"
+        },
+        "handback": {
+          "file": "coord-e2e-pos-claude-handback-observation.json",
+          "sha256": "12548b9a3d2037518b8e48aa8279245acf9bbc5dc677f51d216e71a678a877f3"
+        },
+        "positive_review": {
+          "file": "coord-e2e-pos-claude-positive-review.json",
+          "sha256": "2308f42d33c80aca669e68aa78db9d987ccae9d9775240b4fdaf79e62eca2be6"
+        }
+      }
+    },
+    {
+      "schema": "finite-profile-proof/1",
+      "scenario": "positive",
+      "worker": "e2e-pos-codex",
+      "harness": "codex",
+      "source_base": "1453059de5c16fce95cdecc178ade426d11cc601",
+      "fingerprint": "06cd0f2d4f582be21edccb188a3cdbf38f9958def9137eb08856a669e37f9043",
+      "epoch": 9,
+      "cancel_to_return_seconds": 0.20496520900633186,
+      "receipt": {
+        "bytes": 544,
+        "kind": "file",
+        "path": "docs/notes/note-e2e-pos-codex.md",
+        "sha256": "39275d697cba0827b1d7cd66bdbd7c4bf04c12a770d87942d66194147b18c2d1"
+      },
+      "terminal_state": "ready_for_review",
+      "native_stop_hosts": [
+        "codex"
+      ],
+      "evidence": {
+        "ownership": {
+          "file": "coord-e2e-pos-codex-ownership.json",
+          "sha256": "e48fd3e7a113886caafc4ea32140a21169646a3928d2ca0dddd27d9ad09e3c6c"
+        },
+        "cancel": {
+          "file": "coord-e2e-pos-codex-cancel.json",
+          "sha256": "5495bea51120125a125bc5caecb16ecfa83e6e131783ce9dfc9c5339e1cc7737"
+        },
+        "qualification": {
+          "file": "coord-e2e-pos-codex-qualification.json",
+          "sha256": "968bb2e611b1c9d37d603f4ef4a22d37ebad3ce3e10744d31f22fd22f97cfae5"
+        },
+        "handback": {
+          "file": "coord-e2e-pos-codex-handback-observation.json",
+          "sha256": "8ce8b944a3809f9996e1d2f7e6d947d2ac315c1fc1fb964c1d60b4e212f01db6"
+        },
+        "positive_review": {
+          "file": "coord-e2e-pos-codex-positive-review.json",
+          "sha256": "b5e4e67978e0690231319e86947bfa38400f87fa2daa6ae4903d6cae7e02bf68"
+        }
+      }
+    },
+    {
+      "schema": "finite-profile-proof/1",
+      "scenario": "positive",
+      "worker": "e2e-pos-grok",
+      "harness": "grok",
+      "source_base": "1453059de5c16fce95cdecc178ade426d11cc601",
+      "fingerprint": "defe329874c4a43c17058be01b45ad85c663cf3d4410696905f97142fa39a5eb",
+      "epoch": 9,
+      "cancel_to_return_seconds": 0.32742841698927805,
+      "receipt": {
+        "bytes": 540,
+        "kind": "file",
+        "path": "docs/notes/note-e2e-pos-grok.md",
+        "sha256": "0b4ea0286c9cd98f48c7298d9dac26e8099a889e9fe44f5522db888b1d0b7b88"
+      },
+      "terminal_state": "ready_for_review",
+      "native_stop_hosts": [
+        "claude",
+        "grok"
+      ],
+      "evidence": {
+        "ownership": {
+          "file": "coord-e2e-pos-grok-ownership.json",
+          "sha256": "ec4dce9078a18a3f0c549ccb0795d0a6f300a58e3846a5f582275fbde962ef18"
+        },
+        "cancel": {
+          "file": "coord-e2e-pos-grok-cancel.json",
+          "sha256": "5dc177a7ce041c00a0ab2d8c9b26a042aeb018e13e6e3f8c3d351b58bc144e85"
+        },
+        "qualification": {
+          "file": "coord-e2e-pos-grok-qualification.json",
+          "sha256": "1b13162e3f5ad1c905fe1c67db5e77123550581ecddd58b99017a99b849c7d55"
+        },
+        "handback": {
+          "file": "coord-e2e-pos-grok-handback-observation.json",
+          "sha256": "1f93f374802efd4293f1d2310bb9b093cc41d9713afc9fcf00aab6673c29a748"
+        },
+        "positive_review": {
+          "file": "coord-e2e-pos-grok-positive-review.json",
+          "sha256": "e5df97b82b6ace125aa101a0d3cef955be1e1068c3e3c84a4bcea4c47300dce7"
+        }
+      }
+    },
+    {
+      "schema": "finite-profile-proof/1",
+      "scenario": "positive",
+      "worker": "e2e-pos-agy",
+      "harness": "agy",
+      "source_base": "1453059de5c16fce95cdecc178ade426d11cc601",
+      "fingerprint": "0e21dcc8bc487fa6ffbe8c415c7df5666d36d264b9b5aca422c37b10897615a9",
+      "epoch": 9,
+      "cancel_to_return_seconds": 0.21091495800646953,
+      "receipt": {
+        "bytes": 536,
+        "kind": "file",
+        "path": "docs/notes/note-e2e-pos-agy.md",
+        "sha256": "58432f5c94a615a143f60ca8e1edabec974c9679a8a02f50e61523c0402f68d6"
+      },
+      "terminal_state": "ready_for_review",
+      "native_stop_hosts": [
+        "agy"
+      ],
+      "evidence": {
+        "ownership": {
+          "file": "coord-e2e-pos-agy-ownership.json",
+          "sha256": "79a0c12b19771ad42490b885230df3cd0ab949d649807597a5718b0f60423413"
+        },
+        "cancel": {
+          "file": "coord-e2e-pos-agy-cancel.json",
+          "sha256": "516bc3e59df6ad45758282362d968545c40ae3f906237a3f82a3f4d4cfbf2867"
+        },
+        "qualification": {
+          "file": "coord-e2e-pos-agy-qualification.json",
+          "sha256": "fcc58cc809ca10fca101714a1150f1cb269ce0340dd6ee88a571d1c2b58b033a"
+        },
+        "handback": {
+          "file": "coord-e2e-pos-agy-handback-observation.json",
+          "sha256": "8039caf0fba115cf1341222e4c4d6f0a3c4015b11db2b2baea0e1b30ed990c37"
+        },
+        "positive_review": {
+          "file": "coord-e2e-pos-agy-positive-review.json",
+          "sha256": "274190b9c189a951e129ee0398db48727eb25892967abff493c5035d63981b9b"
+        }
+      }
+    }
+  ],
+  "codex_owner_joins": [
+    {
+      "harness": "grok",
+      "worker": "e2e-pos-grok",
+      "worker_branch": "verify/e2e-pos-grok",
+      "worker_commit": "598e2f9362c8c9960387251fdd79f4a3a63f972c",
+      "join_commit": "1d4f242d937bf6919d09e8962ec5bcb15958aa44",
+      "returncode": 0,
+      "timed_out": false,
+      "limit_exceeded": null,
+      "contained": true,
+      "cleanup_error": null,
+      "source_base": "1453059de5c16fce95cdecc178ade426d11cc601",
+      "receipt": {
+        "bytes": 540,
+        "kind": "file",
+        "path": "docs/notes/note-e2e-pos-grok.md",
+        "sha256": "0b4ea0286c9cd98f48c7298d9dac26e8099a889e9fe44f5522db888b1d0b7b88"
+      },
+      "log": "coord-e2e-join-pos-grok.log",
+      "log_sha256": "97187d7810cb2a4e4315d0effe26a9b9b768f7ad68d22666caacf1b9aed09045"
+    },
+    {
+      "harness": "codex",
+      "worker": "e2e-pos-codex",
+      "worker_branch": "verify/e2e-pos-codex",
+      "worker_commit": "a010a253a910530790b8a0507e8ef3e8074eaeb3",
+      "join_commit": "e252f6eb6400ea21924bf9364a3d8650bb350a17",
+      "returncode": 0,
+      "timed_out": false,
+      "limit_exceeded": null,
+      "contained": true,
+      "cleanup_error": null,
+      "source_base": "1453059de5c16fce95cdecc178ade426d11cc601",
+      "receipt": {
+        "bytes": 544,
+        "kind": "file",
+        "path": "docs/notes/note-e2e-pos-codex.md",
+        "sha256": "39275d697cba0827b1d7cd66bdbd7c4bf04c12a770d87942d66194147b18c2d1"
+      },
+      "log": "coord-e2e-join-pos-codex.log",
+      "log_sha256": "d806ff63fe02d3ce3ddd9e919064424d6abfe3108e907e6b89ef6ad05d1ad565"
+    },
+    {
+      "harness": "claude",
+      "worker": "e2e-pos-claude",
+      "worker_branch": "verify/e2e-pos-claude",
+      "worker_commit": "5252dbf8f53a9c2b7c3a13e616a444ea0c51a81e",
+      "join_commit": "155682a685414f776a9cce92ef62995e306a76ea",
+      "returncode": 0,
+      "timed_out": false,
+      "limit_exceeded": null,
+      "contained": true,
+      "cleanup_error": null,
+      "source_base": "1453059de5c16fce95cdecc178ade426d11cc601",
+      "receipt": {
+        "bytes": 548,
+        "kind": "file",
+        "path": "docs/notes/note-e2e-pos-claude.md",
+        "sha256": "30b7a8b4010ea4884bb6edbf76ca74bdd58e937a3a2ce90a7f5fc1668f8c0522"
+      },
+      "log": "coord-e2e-join-pos-claude.log",
+      "log_sha256": "c3631980449e05760b2c45d8f0acd243ea05014b248ccedf23a3f0da57cb1d6e"
+    },
+    {
+      "harness": "agy",
+      "worker": "e2e-pos-agy",
+      "worker_branch": "verify/e2e-pos-agy",
+      "worker_commit": "f9ec4dd1ca72fca042b0ef20b7f14315d1b90b63",
+      "join_commit": "733079f94d427aa9ed6e8e516ae6b7d142795a35",
+      "returncode": 0,
+      "timed_out": false,
+      "limit_exceeded": null,
+      "contained": true,
+      "cleanup_error": null,
+      "source_base": "1453059de5c16fce95cdecc178ade426d11cc601",
+      "receipt": {
+        "bytes": 536,
+        "kind": "file",
+        "path": "docs/notes/note-e2e-pos-agy.md",
+        "sha256": "58432f5c94a615a143f60ca8e1edabec974c9679a8a02f50e61523c0402f68d6"
+      },
+      "log": "coord-e2e-join-pos-agy.log",
+      "log_sha256": "7c8839fe8c40dfb6da246bfe645c6d69f07be39cbac9735d195dbb5b263191c8"
+    }
+  ],
+  "claude_owner": {
+    "actual_native_owner": true,
+    "host": "claude",
+    "owner": "coord-e2e-claude-owner-2",
+    "epoch": 12,
+    "source_base": "5a856ef1ff6789894237e21eec070affb0287fce",
+    "native_session_id": "df14fa70-9062-4728-af57-c2744807fc9e",
+    "independent_review_accepted": true,
+    "joined": true,
+    "native_actions": [
+      {
+        "kind": "driver",
+        "tool_call_id": "toolu_014nkBxki5bwoSaJy8aqP38c",
+        "success": true,
+        "input_sha256": "d17f56c63707a52d7bda87d4bdc11c033c3dbbd44b7e7ca3514338cc973d2a99",
+        "output_sha256": "f9f21ee80c5889af0d1265d21c35ac8daaba6f4594aa7d56449b74af5fc75c9a"
+      },
+      {
+        "kind": "receipt_read",
+        "tool_call_id": "toolu_01EY4k5f37zEEwsNFXSvdGif",
+        "success": true,
+        "input_sha256": "764ac9bac593c29b147e1003c43b932fb78fa003af286b506b7f4dfb619239d1",
+        "output_sha256": "1affe22de913aa8457b574dfbeca8ba6a8e9446818b26ab62f7b748fa5a8de83"
+      },
+      {
+        "kind": "commit",
+        "tool_call_id": "toolu_01Sjd2Yu8bapcKwXoYiKjhch",
+        "success": true,
+        "input_sha256": "24a8f3216c6ba92d3329618adf9a360eda32cc750fc4d9677ffd996c0d38b7ae",
+        "output_sha256": "8a0c91fd00c9e45faf141eca6660a2060bb4a72b18bdaba98ff9dc1e41a2ac89"
+      },
+      {
+        "kind": "join",
+        "tool_call_id": "toolu_01BKoGgi2utKWcffgKmQGdvG",
+        "success": true,
+        "input_sha256": "140652d5935c00652181502bbdf7e3e6a7f4b59cef0cbcd997048fe877f31a15",
+        "output_sha256": "1747120e0df2fe3514dbed16a66512e974ba3a22ccc7663fa9c63062ee5d6ad5"
+      }
+    ],
+    "raw_evidence": {
+      "file": "coord-e2e-native-claude-owner-2-observation.json",
+      "sha256": "7938c0a60f391ab9b06fece384fbc06970864f4167e92fb7d270728a3da3f3db"
+    },
+    "driver_report": {
+      "file": "report.json",
+      "sha256": "c05f1d1d69497e70b14062f6a170d29c2f2f4e8d4589b0980d812bd4be543a56"
+    },
+    "native_history": {
+      "file": "df14fa70-9062-4728-af57-c2744807fc9e.jsonl",
+      "sha256": "4245a000b3278f9a5a6c838213c5d6cd074ae85ea74344fce4d806bf79adbd29"
+    },
+    "action_digest_encoding": "UTF-8 JSON with sorted keys; default separators",
+    "worker_proof": {
+      "schema": "finite-profile-proof/1",
+      "scenario": "positive",
+      "worker": "e2e-pos-claude-owner-2-agy",
+      "harness": "agy",
+      "source_base": "5a856ef1ff6789894237e21eec070affb0287fce",
+      "fingerprint": "9396c39a35f4f9915ed8957858d7a4fcacd848c00a4cba82d111148a42a71b2e",
+      "epoch": 12,
+      "cancel_to_return_seconds": 0.1295795000041835,
+      "receipt": {
+        "bytes": 581,
+        "kind": "file",
+        "path": "docs/notes/note-e2e-pos-claude-owner-2-agy.md",
+        "sha256": "e1ce9db6b44653252a54712fcf04bcb75e2efbe0c90d6aff62284bfbe2c589e9"
+      },
+      "terminal_state": "ready_for_review",
+      "native_stop_hosts": [
+        "agy"
+      ],
+      "evidence": {
+        "ownership": {
+          "file": "ownership.json",
+          "sha256": "e7a194762d2f11a4eab849827cc1e07ba1a0e92e091c4c3ccb8a69b04ac223b3"
+        },
+        "cancel": {
+          "file": "cancel.json",
+          "sha256": "97bd94d62b2625387eee470926d39d8497dba7995b8bf20b13ba8624d4ba045c"
+        },
+        "qualification": {
+          "file": "qualification.json",
+          "sha256": "19b960991aff8bdb19d57dd5c0b07b534e2212b17e528c2f6d0b4e6a2a640dbe"
+        },
+        "handback": {
+          "file": "coord-e2e-pos-claude-owner-2-agy-handback-observation.json",
+          "sha256": "7baeaf68d62245113c3391806c152f19a9434393ce5667906548c40bee6119d5"
+        },
+        "positive_review": {
+          "file": "positive-review.json",
+          "sha256": "64a5d5b695e8cd32547ba5a881d7b5c4bcebb96c17caedbf3f5a1050c1da5d1f"
+        }
+      }
+    },
+    "worker_commit": "38a2d0b64f9cca6206c849d965be119c40e8b829",
+    "owner_join_commit": "bb059d980d1295f7929329e434b0d34bcd9fb5a7",
+    "join_gates_passed": 9,
+    "source_unchanged": true,
+    "duration_seconds": 438.034842,
+    "cleanup_checked": true,
+    "surviving_observed_processes": 0
+  },
+  "codex_native_hooks": [
+    {
+      "eventName": "preToolUse",
+      "matcher": "apply_patch",
+      "enabled": true,
+      "currentHash": "sha256:2a61e11f3c15ee291fb8820452f81f09d4924a2aa35654ee5059cb8f33f9be33",
+      "trustStatus": "trusted"
+    },
+    {
+      "eventName": "stop",
+      "matcher": null,
+      "enabled": true,
+      "currentHash": "sha256:06a60eceeece9b9c70f5ecdabdd8372477e1d947757558eac9f3c01789866698",
+      "trustStatus": "trusted"
+    }
+  ],
+  "source_landing": {
+    "source_archive": "archive/coord-e2e-native-proof-joins",
+    "reviewed_merge_head": "733079f94d427aa9ed6e8e516ae6b7d142795a35",
+    "linear_head": "5a856ef1ff6789894237e21eec070affb0287fce",
+    "identical_tree": "d06737be86919baf4c2d6692c1ef4d5dc96e7944",
+    "previous_main": "ac35d759e24eea89892ac2ede27391f2e307dab4",
+    "push": false
+  },
+  "release_verification": {
+    "python_passed": 1201,
+    "python_skipped": 12,
+    "python_subtests": 440,
+    "node_passed": 34,
+    "gates_covered": 17,
+    "single_all_green_full_run": false,
+    "correction": "Reviewed preparation audit was unstaged at the drift check; metadata/browser rerun passed after staging, with source and test bytes unchanged.",
+    "full_run": {
+      "file": "coord-e2e-final-source-bundle.log",
+      "sha256": "4b50e6ae78fb422e268832e6caef357610216818d9c3161ed9649fba7327cd3e"
+    },
+    "metadata_correction": {
+      "file": "coord-e2e-final-source-metadata.log",
+      "sha256": "d8e828d9acd88ff72e773c901e0ed813505920035f7a4bb17f5e1d3efd340373"
+    }
+  },
+  "retained_failures": [
+    {
+      "worker": "e2e-neg-codex",
+      "result": "RUN-EVIDENCE",
+      "cause": "Workspace sandbox refused the shared requests ledger; no acknowledgement or artifact.",
+      "evidence": {
+        "file": "coord-e2e-neg-codex-handback-observation.json",
+        "sha256": "c710e4bcf9b7bb27988a5e331deb5e6a42a2cae35068d51bc8d8b37df100ed49"
+      },
+      "joined": false
+    },
+    {
+      "worker": "e2e-neg-grok",
+      "result": "ownership_not_qualified",
+      "cause": "Native search_replace was absent from the ownership tool vocabulary; repaired with native fixtures.",
+      "evidence": {
+        "file": "coord-e2e-neg-grok-ownership.json",
+        "sha256": "95f27b52d425b2febb41ba917a1d237af0c2606919c283d1ccaf425b9119b8be"
+      },
+      "joined": false
+    },
+    {
+      "owner": "coord-e2e-claude-owner",
+      "result": "prepare_template_missing",
+      "cause": "Private test helper reused runtime host claude as compiler template; fixed to the measured claude-code template with real compiler regressions before a fresh attempt.",
+      "evidence": {
+        "file": "report.json",
+        "sha256": "185c3afeff48642a30474add23e3183babb435fb2da1df335282310673e197fd"
+      },
+      "joined": false,
+      "attribution_correction": "Post-driver lease renewal came from native PostToolUse and Stop heartbeat facts with leader_renewed true; the failed native report wrongly inferred the outer launcher from a process listing."
+    }
+  ],
+  "raw_checker": {
+    "file": "coord-e2e-verify-profile.py",
+    "sha256": "ea361cf82daa00db944a0fd697deae05c128794f6d4481d5dc84941f69d3d48c"
+  },
+  "usage": {
+    "tokens": "not recorded",
+    "spend": "not recorded",
+    "total_tool_calls": "not recorded"
+  },
+  "usage_scope": "Aggregate whole-qualification totals were not computed; individual native records may contain provider-reported usage. These fields do not claim absence of per-session telemetry.",
+  "limitations": [
+    "Qualification binds the actual checkout, executable, instructions, hooks, configuration and effective environment; a changed binding needs fresh evidence.",
+    "Native Stop loop guards are finite. The separate strict runner decision fence prevents readiness while an Owner decision is unresolved or unreadable.",
+    "The pilot does not attach to arbitrary existing terminals, dynamically prompt mailboxes, approve interactive permissions, retry started attempts or support Windows.",
+    "Per-file native hooks do not contain arbitrary shell writes. Existing local Grok/Agy permission settings are observed, not replaced.",
+    "Negative attempts and diagnostic canaries are retained unjoined. No remote push or general unattended enablement occurred."
+  ]
+}

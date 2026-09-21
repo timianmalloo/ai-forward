@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 284
+"count": 290
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 459,
+"total": 465,
 "items": [
 {
 "cat": "knowledge",
@@ -2343,6 +2343,51 @@ window.PACK_INDEX = {
 },
 {
 "cat": "graph",
+"id": "note-e2e-pos-agy",
+"title": "Native coordination receipt: agy",
+"summary": "A bounded local worker receipt for independent Owner inspection.",
+"path": "docs/notes/note-e2e-pos-agy.md",
+"kind": "decision-note",
+"text": "native coordination receipt: agy a bounded local worker receipt for independent owner inspection. coordination qualification relates-to spec-multi-harness-launch-and-monitor"
+},
+{
+"cat": "graph",
+"id": "note-e2e-pos-claude",
+"title": "Native coordination receipt: claude",
+"summary": "A bounded local worker receipt for independent Owner inspection.",
+"path": "docs/notes/note-e2e-pos-claude.md",
+"kind": "decision-note",
+"text": "native coordination receipt: claude a bounded local worker receipt for independent owner inspection. coordination qualification relates-to spec-multi-harness-launch-and-monitor"
+},
+{
+"cat": "graph",
+"id": "note-e2e-pos-claude-owner-2-agy",
+"title": "Native coordination receipt: agy",
+"summary": "A bounded local worker receipt for independent Owner inspection.",
+"path": "docs/notes/note-e2e-pos-claude-owner-2-agy.md",
+"kind": "decision-note",
+"text": "native coordination receipt: agy a bounded local worker receipt for independent owner inspection. coordination qualification relates-to spec-multi-harness-launch-and-monitor"
+},
+{
+"cat": "graph",
+"id": "note-e2e-pos-codex",
+"title": "Native coordination receipt: codex",
+"summary": "A bounded local worker receipt for independent Owner inspection.",
+"path": "docs/notes/note-e2e-pos-codex.md",
+"kind": "decision-note",
+"text": "native coordination receipt: codex a bounded local worker receipt for independent owner inspection. coordination qualification relates-to spec-multi-harness-launch-and-monitor"
+},
+{
+"cat": "graph",
+"id": "note-e2e-pos-grok",
+"title": "Native coordination receipt: grok",
+"summary": "A bounded local worker receipt for independent Owner inspection.",
+"path": "docs/notes/note-e2e-pos-grok.md",
+"kind": "decision-note",
+"text": "native coordination receipt: grok a bounded local worker receipt for independent owner inspection. coordination qualification relates-to spec-multi-harness-launch-and-monitor"
+},
+{
+"cat": "graph",
 "id": "note-required-status-checks",
 "title": "Decision — do not make pack-consistency a required status check on main",
 "summary": "Decision not to enable required status checks on main, taken while closing FR-062. The control would have prevented the original incident outright, but with enforce_admins already true it also blocks direct pushes and forces a PR workflow…",
@@ -3743,7 +3788,7 @@ window.PACK_INDEX = {
 "summary": "Repair measured startup gaps, qualify native controls, then exercise reviewed handback across all four installed harnesses with Codex or Claude holding the Owner seat.",
 "path": "docs/coordination/coordination-end-to-end.md",
 "kind": "plan",
-"text": "coordination plan - local end-to-end profiles repair measured startup gaps, qualify native controls, then exercise reviewed handback across all four installed harnesses with codex or claude holding the owner seat. coordination worktrees qualification implements spec-multi-harness-launch-and-monitor depends-on design-multi-harness-runner depends-on kb-graph-and-loop-engineering"
+"text": "coordination plan - local end-to-end profiles repair measured startup gaps, qualify native controls, then exercise reviewed handback across all four installed harnesses with codex or claude holding the owner seat. coordination worktrees qualification implements spec-multi-harness-launch-and-monitor depends-on design-multi-harness-runner depends-on kb-graph-and-loop-engineering relates-to proof-coordination-end-to-end"
 },
 {
 "cat": "graph",
@@ -3834,6 +3879,15 @@ window.PACK_INDEX = {
 "path": "docs/proof/coord-collaboration-phase4.md",
 "kind": "proof-pack",
 "text": "proof pack - coord collaboration mode, phase 4 proof pack for coord collaboration mode: active-session projection, collaboration health checks, owner-aware claim warnings, seam-request workflow, collaboration summary, and the session-contract template. records the red-first evidence, test oracles, commands, and residual risks for the shippable cross-session collaboration slice. coordination collaboration proof implements design-coord-collaboration-phase4 implements spec-agent-coordination"
+},
+{
+"cat": "graph",
+"id": "proof-coordination-end-to-end",
+"title": "End-to-end coordination qualification",
+"summary": "Actual local worker controls, negative handback fences, four reviewed Codex-owned joins and one directly inspected native Claude-owned join; bounded POSIX profile evidence, not blanket unattended authorization.",
+"path": "docs/proof/coordination-end-to-end.md",
+"kind": "proof-pack",
+"text": "end-to-end coordination qualification actual local worker controls, negative handback fences, four reviewed codex-owned joins and one directly inspected native claude-owned join; bounded posix profile evidence, not blanket unattended authorization. coordination qualification acp proof implements coordination-end-to-end implements design-multi-harness-runner implements spec-multi-harness-launch-and-monitor relates-to proof-native-profile-controls relates-to proof-native-ownership-enforcement"
 },
 {
 "cat": "graph",

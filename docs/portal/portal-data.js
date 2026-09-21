@@ -3121,6 +3121,36 @@ window.PORTAL_DATA = {
         "summary": "The user's answers to the three open questions from the task-discipline / front-matter proposal (revision 3), which gate the next change: making PACK-O..."
       },
       {
+        "id": "note-e2e-pos-agy",
+        "type": "decision-note",
+        "title": "Native coordination receipt: agy",
+        "summary": "A bounded local worker receipt for independent Owner inspection."
+      },
+      {
+        "id": "note-e2e-pos-claude",
+        "type": "decision-note",
+        "title": "Native coordination receipt: claude",
+        "summary": "A bounded local worker receipt for independent Owner inspection."
+      },
+      {
+        "id": "note-e2e-pos-claude-owner-2-agy",
+        "type": "decision-note",
+        "title": "Native coordination receipt: agy",
+        "summary": "A bounded local worker receipt for independent Owner inspection."
+      },
+      {
+        "id": "note-e2e-pos-codex",
+        "type": "decision-note",
+        "title": "Native coordination receipt: codex",
+        "summary": "A bounded local worker receipt for independent Owner inspection."
+      },
+      {
+        "id": "note-e2e-pos-grok",
+        "type": "decision-note",
+        "title": "Native coordination receipt: grok",
+        "summary": "A bounded local worker receipt for independent Owner inspection."
+      },
+      {
         "id": "note-required-status-checks",
         "type": "decision-note",
         "title": "Decision — do not make pack-consistency a required status check on main",
@@ -3239,6 +3269,12 @@ window.PORTAL_DATA = {
         "type": "proof-pack",
         "title": "Proof Pack - coord collaboration mode, Phase 4",
         "summary": "Proof pack for coord collaboration mode: active-session projection, collaboration health checks, owner-aware claim warnings, seam-request workflow,..."
+      },
+      {
+        "id": "proof-coordination-end-to-end",
+        "type": "proof-pack",
+        "title": "End-to-end coordination qualification",
+        "summary": "Actual local worker controls, negative handback fences, four reviewed Codex-owned joins and one directly inspected native Claude-owned join; bounded POSIX..."
       },
       {
         "id": "proof-docs-explorer-redesign",
@@ -4001,6 +4037,11 @@ window.PORTAL_DATA = {
         "from": "coordination-end-to-end",
         "to": "kb-graph-and-loop-engineering",
         "rel": "depends-on"
+      },
+      {
+        "from": "coordination-end-to-end",
+        "to": "proof-coordination-end-to-end",
+        "rel": "relates-to"
       },
       {
         "from": "coordination-end-to-end",
@@ -5913,6 +5954,31 @@ window.PORTAL_DATA = {
         "rel": "relates-to"
       },
       {
+        "from": "note-e2e-pos-agy",
+        "to": "spec-multi-harness-launch-and-monitor",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-e2e-pos-claude",
+        "to": "spec-multi-harness-launch-and-monitor",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-e2e-pos-claude-owner-2-agy",
+        "to": "spec-multi-harness-launch-and-monitor",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-e2e-pos-codex",
+        "to": "spec-multi-harness-launch-and-monitor",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-e2e-pos-grok",
+        "to": "spec-multi-harness-launch-and-monitor",
+        "rel": "relates-to"
+      },
+      {
         "from": "note-required-status-checks",
         "to": "architecture",
         "rel": "relates-to"
@@ -6185,6 +6251,31 @@ window.PORTAL_DATA = {
       {
         "from": "proof-coord-collaboration-phase4",
         "to": "spec-agent-coordination",
+        "rel": "implements"
+      },
+      {
+        "from": "proof-coordination-end-to-end",
+        "to": "coordination-end-to-end",
+        "rel": "implements"
+      },
+      {
+        "from": "proof-coordination-end-to-end",
+        "to": "design-multi-harness-runner",
+        "rel": "implements"
+      },
+      {
+        "from": "proof-coordination-end-to-end",
+        "to": "proof-native-ownership-enforcement",
+        "rel": "relates-to"
+      },
+      {
+        "from": "proof-coordination-end-to-end",
+        "to": "proof-native-profile-controls",
+        "rel": "relates-to"
+      },
+      {
+        "from": "proof-coordination-end-to-end",
+        "to": "spec-multi-harness-launch-and-monitor",
         "rel": "implements"
       },
       {

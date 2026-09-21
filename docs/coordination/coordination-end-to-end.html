@@ -1,6 +1,6 @@
 <!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>End-to-end local coordination</title><style>:root{color-scheme:light dark}body{font:16px/1.55 system-ui,sans-serif;max-width:1200px;margin:3rem auto;padding:0 1.5rem}h1,h2{line-height:1.2}h2{margin-top:2rem}.table{overflow:auto}table{border-collapse:collapse;width:100%;font-size:.92rem}td,th{border:1px solid GrayText;padding:.65rem;text-align:left;vertical-align:top}pre{overflow:auto;padding:1rem;border:1px solid GrayText}code{overflow-wrap:anywhere}a{color:LinkText}@media print{body{margin:0;font-size:11pt}.table{overflow:visible}}</style><main><p><a href="coordination-end-to-end.md">Canonical Markdown</a></p><h1>End-to-end local coordination</h1>
 <p>Goal: make installed Claude, Codex, Grok and Agy coordination work end to end. Done when the actual profiles produce permitted work, refuse coordinator-owned edits, respect unresolved Owner decisions, cancel active work, and return independently reviewed evidence through the runner and join. Missing proof stays blocked. No remote push or blanket permission changes. Tier T2; two delegates maximum; 400k context ceiling with compaction/handoff before the ceiling.</p>
-<h2>Layer state</h2>
+<h2>Initial layer state</h2>
 <div class="table"><table><thead><tr><th scope="col">check</th><th scope="col">result</th><th scope="col">meaning</th></tr></thead><tbody><tr><td>Invoking base</td><td><code>6711dba</code></td><td>Prior ownership guard and finite proof integrated locally</td></tr><tr><td>Registry / merge drivers</td><td>11 patterns; both effective</td><td>Install inherited from primary; never reinstall in a linked tree</td></tr><tr><td>Requests / leases</td><td>12 terminal, zero open; zero live leases</td><td>No prior active authority to overtake</td></tr><tr><td>Regeneration</td><td>Six owed artifacts regenerated successfully</td><td>Audit-derived state is refreshed before joins</td></tr><tr><td>Profiles</td><td>Claude/Codex native ownership qualified; Grok bootstrap and Agy permitted write blocked</td><td>Transport support is not profile qualification</td></tr></tbody></table></div>
 <h2>Artifact classes</h2>
 <div class="table"><table><thead><tr><th scope="col">path / pattern</th><th scope="col">class</th><th scope="col">mechanism</th><th scope="col">coordination needed</th></tr></thead><tbody><tr><td><code>pack/scripts/coord_transport.py</code>, transport tests</td><td>authored</td><td>Grok track only</td><td>Yes, short claims</td></tr><tr><td><code>pack/scripts/coord-core.py</code>, <code>pack/adapters/hooks/**</code>, native config and tests</td><td>authored</td><td>Native-controls track only</td><td>Yes, short claims</td></tr><tr><td><code>pack/scripts/coord-runner.py</code>, runner acceptance tests, runner design</td><td>authored</td><td>Native-controls track owns final decision fence</td><td>Yes, short claims</td></tr><tr><td>Launch reference, evidence/proof, this plan</td><td>authored</td><td>Coordinator integrates reviewer-approved contracts</td><td>Serial shared seam</td></tr><tr><td>Audit, rulings, health history</td><td>register</td><td>Existing append/union writers</td><td>No claims</td></tr><tr><td>Generated installs, API/docs views/index</td><td>derived</td><td>Source sync and official generators</td><td>Regenerate at integration; no manual editing</td></tr></tbody></table></div>
@@ -101,4 +101,42 @@
 <p>The previous estimate was exceeded by measured source repair and native qualification;</p>
 <p>remaining duration is 10–20 minutes (Inferred), with a 02:44Z review point. Model tokens,</p>
 <p>spend and total tool calls are not recorded. The same width-two, no-replay and no-push</p>
-<p>bounds remain. No missing proof is waived and no general unattended profile is enabled.</p></main></html>
+<p>bounds remain. No missing proof is waived and no general unattended profile is enabled.</p>
+<h3>Actual Owner checkpoint and budget review, 2026-09-21 02:44Z</h3>
+<p>All four Codex-owned receipt joins passed their nine configured local gates. The identical</p>
+<p>reviewed tree landed on local main as <code>5a856ef1ff67</code>, with merge ancestry retained at</p>
+<p><code>archive/coord-e2e-native-proof-joins</code>. No push occurred.</p>
+<p>The first actual Claude Owner stopped before worker launch when a private qualification</p>
+<p>helper confused runtime host <code>claude</code> with compiler template <code>claude-code</code>. A real installed</p>
+<p>compiler regression reproduced the error; both Owner mappings passed after the narrow fix</p>
+<p>and independent review. Its failed record and audit remain retained, without replay.</p>
+<p>The native report&#x27;s later renewal attribution was corrected from actual PostToolUse/Stop</p>
+<p>heartbeat facts: those hooks renew the same live holder and report <code>leader_renewed</code>.</p>
+<p>A fresh Claude Owner checkout at epoch 12 has completed Agy preparation, ownership and</p>
+<p>active cancellation controls, finite attestation and positive ruling. Its actual native</p>
+<p>session has separately read and matched the 581-byte receipt to the admitted contract.</p>
+<p>Direct acceptance, selective commit and join are still pending at this checkpoint. The</p>
+<p>remaining variant is that final native review/join plus the finite corpus, report and local</p>
+<p>integration. Remaining duration is 5–10 minutes (Inferred); reassess by 02:54Z if needed.</p>
+<p>The native session retains its original 580-second transport and 20-second cleanup ceiling.</p>
+<h3>Final runtime checkpoint, 2026-09-21 02:54Z</h3>
+<p>Every runtime exit cell is now proven. Actual Claude session</p>
+<p><code>df14fa70-9062-4728-af57-c2744807fc9e</code> independently accepted its Agy receipt,</p>
+<p>committed only that receipt as <code>38a2d0b64f9c</code>, and completed its own conductor join</p>
+<p>at <code>bb059d980d12</code>, with nine configured gates passing. The native session completed</p>
+<p>in 438.034842 measured seconds, with no surviving observed descendants. Its heartbeat</p>
+<p>hooks renewed the same epoch-12 holder; the finite driver stopped its own renewer.</p>
+<p>After native termination, Claude&#x27;s designation was released and Codex was pinned</p>
+<p>at epoch 13 for final integration. Both successful and failed-attempt audit branches</p>
+<p>passed their configured local integration gates.</p>
+<p>The raw checker regenerated all eight original profiles plus the Claude-owned Agy</p>
+<p>profile. The public consistency checker verified five distinct real Git receipt</p>
+<p>commits and rejected 20 false claims. The durable proof is</p>
+<p><code>docs/proof/coordination-end-to-end.md</code> with an HTML view and hash-bound sanitized</p>
+<p>corpus. Remaining work at this checkpoint is final artifact review, metadata/render</p>
+<p>checks, local linear landing and session closure; no native model run remains.</p>
+<p>The final packaging estimate is 5–10 minutes (Inferred), with a 03:04Z review point</p>
+<p>if necessary. The earlier estimates excluded the observed private-helper defect</p>
+<p>repairs and proof-review corrections; they are retained rather than rewritten.</p>
+<p>No push, general unattended enablement or blanket permission change is authorized</p>
+<p>by this finite qualification.</p></main></html>

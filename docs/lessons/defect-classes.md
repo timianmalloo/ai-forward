@@ -711,6 +711,20 @@ representation-contract failure, not a reason to bypass merges for authored file
   done mail; native Stop and the final runner both refused its unresolved decision.
   These observations establish the measured profile, not arbitrary shell containment.
 
+- **Native Owner qualification closure (2026-09-21):** the measured file-edit and
+  decision boundaries now pass in all four actual local profiles; full arbitrary-shell
+  containment remains outside this control. Class → a runtime host identifier is not
+  a compiler-template identifier, and a nearby process is not the author of an event.
+  Sweep → both Owner template mappings, actual native actions, renewal facts, and
+  worker/Owner commit ancestry. Derive → validate each namespace at its real consumer
+  and attribute renewal only to emitted heartbeat facts. Prevent → two real installed
+  compiler regressions reject the failed `claude` template mapping and preserve Codex;
+  the finite corpus verifier requires a distinct Claude-owned receipt, ordered actual
+  action records, exact worker parent/delta/ancestry, and retained failed attempts.
+  Private export rechecks the raw evidence before publication. A process listing alone
+  is never renewal evidence; native `leader_renewed` facts corrected the failed report.
+  See `docs/proof/coordination-end-to-end.md` for the finite boundary and reproduction.
+
 ### PROC-A — Process-group cleanup mistakes an exited child for an uncontained process
 - **Signature:** a direct child exits between the process-state check and group signalling;
   macOS reports EPERM for an unreaped zombie. Treating that signal alone as the cleanup

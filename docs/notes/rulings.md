@@ -125,3 +125,9 @@ Approve only this discardable canary after exact admitted receipt, instruction a
 Approve only this discardable canary after exact admitted receipt, instruction acknowledgement, done mail and request-specific native Stop inspection. Artifact docs/notes/note-e2e-pos-agy.md; SHA256 58432f5c94a615a143f60ca8e1edabec974c9679a8a02f50e61523c0402f68d6. No general unattended approval or production-work permission.
 
 - request: req-01M30W9KCRZXMJH896250EMEBK · ruled by: coord-e2e · at: 2026-09-21T02:21:50Z
+
+### Ruling 17 — Accept finite native receipt e2e-pos-claude-owner-2-agy
+
+Approve only this discardable canary after exact admitted receipt, instruction acknowledgement, done mail and request-specific native Stop inspection. Artifact docs/notes/note-e2e-pos-claude-owner-2-agy.md; SHA256 e1ce9db6b44653252a54712fcf04bcb75e2efbe0c90d6aff62284bfbe2c589e9. No general unattended approval or production-work permission.
+
+- request: req-01M30XEC6GNE294W2YNT1CD271 · ruled by: coord-e2e-claude-owner-2 · at: 2026-09-21T02:41:52Z

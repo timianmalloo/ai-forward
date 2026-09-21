@@ -3005,6 +3005,30 @@ window.DOCS_INDEX = {
       "sourceSha256": "30b7a8b4010ea4884bb6edbf76ca74bdd58e937a3a2ce90a7f5fc1668f8c0522"
     },
     {
+      "id": "note-e2e-pos-claude-owner-2-agy",
+      "path": "docs/notes/note-e2e-pos-claude-owner-2-agy.md",
+      "title": "Native coordination receipt: agy",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-21",
+      "reviewSuggested": [],
+      "summary": "A bounded local worker receipt for independent Owner inspection.",
+      "tags": [
+        "coordination",
+        "qualification"
+      ],
+      "links": [
+        {
+          "to": "spec-multi-harness-launch-and-monitor",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "e1ce9db6b44653252a54712fcf04bcb75e2efbe0c90d6aff62284bfbe2c589e9"
+    },
+    {
       "id": "note-e2e-pos-codex",
       "path": "docs/notes/note-e2e-pos-codex.md",
       "title": "Native coordination receipt: codex",
@@ -4438,7 +4462,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0499f39429ea75e1bce9a016a15a3e533c404996286ecde1f698de4b0ef03da5"
+      "sourceSha256": "22035e3621fc2bb848f6ea0ccfa9058e6221c5103b4453071d95b98afd36bbd6"
     },
     {
       "id": "docs-index",
@@ -6095,7 +6119,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9e5ecb6f4a9bb7f98e86dd66c9ae8bb1e316a01fd7d01469c489708f6b07eae4"
+      "sourceSha256": "9801d29163b7b32c8a4d69d408c471b5a783e76ea001561721cdd4da5b29326e"
     },
     {
       "id": "seam-p5-to-coordinator",
@@ -8138,7 +8162,7 @@ window.DOCS_INDEX = {
       "path": "docs/coordination/coordination-end-to-end.md",
       "title": "Coordination plan - local end-to-end profiles",
       "type": "plan",
-      "status": "proposed",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2026-12-21",
@@ -8161,6 +8185,10 @@ window.DOCS_INDEX = {
         {
           "to": "kb-graph-and-loop-engineering",
           "rel": "depends-on"
+        },
+        {
+          "to": "proof-coordination-end-to-end",
+          "rel": "relates-to"
         }
       ],
       "diagrams": [
@@ -8170,7 +8198,7 @@ window.DOCS_INDEX = {
           "mermaid": "graph TD\n  A[Ground and compile] --> B[Independent plan review]\n  B --> C[Grok bootstrap]\n  B --> D[Native controls and Agy policy]\n  C --> E[Independent source review and integration]\n  D --> E\n  E --> F[Actual profile control matrix]\n  F --> G[Runner handback and reviewed join]\n  G --> H[Release proof and audit]"
         }
       ],
-      "sourceSha256": "2ecb894c40934b3b42ae153d7c5731332884a79a27cd9a9a9a04f1a11d39b9b3"
+      "sourceSha256": "c49dfbe61fb7841184e993ae356754c4088b255ee7576686c15ead734b86fa8d"
     },
     {
       "id": "coordination-p0-p1",
@@ -8619,6 +8647,48 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "5c7ef8f2963868ec2053fded934ab8e42cd80d6ca0af1eb13a405aeab1229eae"
+    },
+    {
+      "id": "proof-coordination-end-to-end",
+      "path": "docs/proof/coordination-end-to-end.md",
+      "title": "End-to-end coordination qualification",
+      "type": "proof-pack",
+      "status": "reviewed",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2026-12-21",
+      "reviewSuggested": [],
+      "summary": "Actual local worker controls, negative handback fences, four reviewed Codex-owned joins and one directly inspected native Claude-owned join; bounded POSIX profile evidence, not blanket unattended authorization.",
+      "tags": [
+        "coordination",
+        "qualification",
+        "acp",
+        "proof"
+      ],
+      "links": [
+        {
+          "to": "coordination-end-to-end",
+          "rel": "implements"
+        },
+        {
+          "to": "design-multi-harness-runner",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-multi-harness-launch-and-monitor",
+          "rel": "implements"
+        },
+        {
+          "to": "proof-native-profile-controls",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-native-ownership-enforcement",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "b8d9819e74366ffde8fc8a409586d611df1176ab86b400f14fc2dd05a91407b6"
     },
     {
       "id": "proof-docs-explorer-redesign",
@@ -10156,6 +10226,14 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-dream-review"
     },
     {
+      "id": "surface-proof-coordination-end-to-end",
+      "path": "docs/proof/coordination-end-to-end.html",
+      "title": "End-to-end coordination qualification",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "proof-coordination-end-to-end"
+    },
+    {
       "id": "surface-coordination-coordination-end-to-end",
       "path": "docs/coordination/coordination-end-to-end.html",
       "title": "End-to-end local coordination",
@@ -10224,5 +10302,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "488e0df6ba46c6fa1000f5c44607d61ed816083acb1d9c764b58f8fea6418236"
+  "graphSha256": "ba9bad55d2ad1cd8b64ed07157905b456efec1b42ab6b90e784fe79d16837126"
 };
