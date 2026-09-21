@@ -5,7 +5,7 @@ window.PORTAL_DATA = {
       "personas": 23,
       "knowledge": 39,
       "templates": 28,
-      "scripts": 40
+      "scripts": 41
     },
     "whatIs": "AI-Forward is a committed Markdown methodology pack that installs into a repo so Claude Code, GitHub Copilot, and Grok Build direct work with a shared reasoning spine, adversarial persona review, and a library of workflow skills - nothing runs as a service; everything is versioned files and stdlib scripts.",
     "skillCount": 28,
@@ -923,6 +923,11 @@ window.PORTAL_DATA = {
             "title": "Native ownership guards for Claude and Codex workers",
             "summary": "Reuse the existing lease hook at native edit seams, add Codex patch-envelope support, and install explicit project-local guard entries without weakening native hook trust or claiming shell containment.",
             "path": "../../docs/design/native-ownership-enforcement.md"
+          },
+          {
+            "title": "Native profile controls and final decision handback",
+            "summary": "Reuse the native ownership guard for Grok and Agy, add a separately trusted Codex Stop hook, and enforce a final worker decision-state fence independently of bounded native Stop behavior.",
+            "path": "../../docs/design/native-profile-controls.md"
           },
           {
             "title": "Design — owner review (coord-decide.py · docs/notes/rulings.md · verify-ruling-citations.py · owner-review-gate.py)",
@@ -1949,13 +1954,19 @@ window.PORTAL_DATA = {
         "id": "api-index",
         "type": "api",
         "title": "API reference — the deployed script bundle",
-        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 522 public functions across 39 modules, 47% carrying a docstring."
+        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 524 public functions across 40 modules, 47% carrying a docstring."
       },
       {
         "id": "api-marker-lint",
         "type": "api",
         "title": "API — marker-lint.py",
         "summary": "marker-lint.py - completeness check for the pack's inline decision markers."
+      },
+      {
+        "id": "api-named_hook_bundles",
+        "type": "api",
+        "title": "API — named_hook_bundles.py",
+        "summary": "Merge source-owned hook bundles while preserving project-owned bundle names."
       },
       {
         "id": "api-obsidian-setup",
@@ -2280,6 +2291,12 @@ window.PORTAL_DATA = {
         "type": "design",
         "title": "Native ownership guards for Claude and Codex workers",
         "summary": "Reuse the existing lease hook at native edit seams, add Codex patch-envelope support, and install explicit project-local guard entries without weakening native..."
+      },
+      {
+        "id": "design-native-profile-controls",
+        "type": "design",
+        "title": "Native profile controls and final decision handback",
+        "summary": "Reuse the native ownership guard for Grok and Agy, add a separately trusted Codex Stop hook, and enforce a final worker decision-state fence independently of..."
       },
       {
         "id": "design-owner-review",
@@ -3248,6 +3265,12 @@ window.PORTAL_DATA = {
         "summary": "Reviewed native file-edit guards are integrated locally. Corrected-base Claude Write and Codex apply_patch allow ordinary work and refuse active leased edits...."
       },
       {
+        "id": "proof-native-profile-controls",
+        "type": "proof-pack",
+        "title": "Native profile control source and Agy diagnostic evidence",
+        "summary": "Red-first source evidence for native ownership adapters, observable bounded Stop and final Owner-decision handback, plus two finite Agy profile diagnostics...."
+      },
+      {
         "id": "proposal-active-multi-harness-coordination",
         "type": "doc",
         "title": "Proposal: ledger and bus — active multi-harness coordination",
@@ -3712,6 +3735,11 @@ window.PORTAL_DATA = {
       },
       {
         "from": "api-marker-lint",
+        "to": "api-index",
+        "rel": "refines"
+      },
+      {
+        "from": "api-named_hook_bundles",
         "to": "api-index",
         "rel": "refines"
       },
@@ -4412,6 +4440,26 @@ window.PORTAL_DATA = {
       },
       {
         "from": "design-native-ownership-enforcement",
+        "to": "spec-multi-harness-launch-and-monitor",
+        "rel": "implements"
+      },
+      {
+        "from": "design-native-profile-controls",
+        "to": "adr-0010-enforcement-topology",
+        "rel": "depends-on"
+      },
+      {
+        "from": "design-native-profile-controls",
+        "to": "design-multi-harness-runner",
+        "rel": "refines"
+      },
+      {
+        "from": "design-native-profile-controls",
+        "to": "design-native-ownership-enforcement",
+        "rel": "refines"
+      },
+      {
+        "from": "design-native-profile-controls",
         "to": "spec-multi-harness-launch-and-monitor",
         "rel": "implements"
       },
@@ -6168,6 +6216,16 @@ window.PORTAL_DATA = {
       {
         "from": "proof-native-ownership-enforcement",
         "to": "spec-multi-harness-launch-and-monitor",
+        "rel": "implements"
+      },
+      {
+        "from": "proof-native-profile-controls",
+        "to": "design-multi-harness-runner",
+        "rel": "implements"
+      },
+      {
+        "from": "proof-native-profile-controls",
+        "to": "design-native-profile-controls",
         "rel": "implements"
       },
       {

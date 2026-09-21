@@ -76,7 +76,7 @@ The pack-evolution capabilities are **local developer/CI tooling** — no networ
 ## 2. Generated register (STRIDE-lite, rolled up from the designs)
 
 <!-- BEGIN GENERATED: docs-graph.py rollup -->
-<!-- run: python3 docs/ai-forward-pack/scripts/docs-graph.py rollup --heading "Adversarial analysis (STRIDE-lite)" --type design -->
+
 | source | Boundary | Threat | Disposition |
 |---|---|---|---|
 | [design-agent-coordination-doctrine](design/agent-coordination-doctrine.md) | Knowledge doc → every model prefix | **Tampering / injection**: a repo write that turns a doctrine line into an instruction to the model (the doc *is* instruction text by design) | **Transfer** — repo write access is the trust boundary (branch protection on `main`, `required_conversation_resolution`); the doc carries no external content and cites by id, so no untrusted text is inlined. **Accept** the residual: the pack's own text is trusted by construction (ADR-0011's untrusted-heading rule applies to *messages*, not to committed doctrine). |
@@ -154,12 +154,17 @@ The pack-evolution capabilities are **local developer/CI tooling** — no networ
 | [design-native-ownership-enforcement](design/native-ownership-enforcement.md) | Config emitter → project settings | T: overwritten settings or injected command | Mitigate: JSON-only emitter, explicit merge, fixed quoted command; hostile-checkout execution test. No global/trust writes. |
 | [design-native-ownership-enforcement](design/native-ownership-enforcement.md) | Patch → local decision facts | I: content retention | Mitigate: path/verdict/context metadata only; patch sentinel must be absent from logs. |
 | [design-native-ownership-enforcement](design/native-ownership-enforcement.md) | Check → subsequent mutation | E: check/use race or shell bypass | Accept ADR-0010 cooperative integrity scope; no malicious-process/arbitrary-shell containment claim. Commit floor retained. |
+| [design-native-profile-controls](design/native-profile-controls.md) | Native arguments → target | T/E: generic aliases hide actual native target | Mitigate: Agy uses absolute TargetFile only; Grok checks all recognized target spellings. Nested-cwd and misleading-field tests. |
+| [design-native-profile-controls](design/native-profile-controls.md) | Decision facts → final readiness | T/E: malformed or self-resolved terminal hides open decision | Mitigate: strict bounded projection validates terminal shape and rejects decision requester self-resolution; historical untyped remains open. |
+| [design-native-profile-controls](design/native-profile-controls.md) | Config source → installed named hooks | T/E: regeneration removes local guard | Mitigate: shared named-bundle merge and actual sync/installer regression. Malformed input leaves target unchanged. |
+| [design-native-profile-controls](design/native-profile-controls.md) | Native Stop → host control | E: emitted refusal mistaken for enforcement | Detect through native runtime control. Script receipt proves emission only; runner independently blocks final readiness. |
 | [design-rai-and-scrub](design/rai-and-scrub.md) | file content → scrub | **I** (the scrub's own output leaks the secret it found) | mitigate | output prints only the **redacted** form; never the raw match | `scrub_check_output_has_no_raw_secret` |
 | [design-rai-and-scrub](design/rai-and-scrub.md) | file content → scrub | **T** (`--write` damages content beyond the match) | mitigate | atomic temp+replace; sub only the matched span | `scrub_write_preserves_nonmatching` |
 | [design-rai-and-scrub](design/rai-and-scrub.md) | invocation args | **E** (path traversal to write outside repo) | mitigate | resolve + confine to provided paths; argv-list, no `shell=True`; default scope is `docs/`+`pack/` Markdown | `scrub_confined_to_given_paths` |
 | [design-rai-and-scrub](design/rai-and-scrub.md) | RAI doc | **R** (repudiation: no record of the stance) | mitigate | the committed RAI doc *is* the attributable record; linked from governance | n/a (artifact existence) |
 
-<!-- rolled up from 13 artifact(s) by docs-graph.py rollup on 2026-09-20 -->
+<!-- rolled up from 14 artifact(s) by docs-graph.py rollup on 2026-09-20 -->
+
 <!-- END GENERATED -->
 
 ## 3. Accepted-risk register (maintained by hand)

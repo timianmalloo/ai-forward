@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-21T00:06:54Z",
+  "generated": "2026-09-21T00:57:27Z",
   "audit": [
     {
       "actor": null,
@@ -8289,6 +8289,105 @@ window.AUDIT_DATA = {
       ],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-01M30N8FCP45NYHR9C56QGNZTC",
+      "shortname": "coordination-e2e-plan-review",
+      "datetime": "2026-09-21T00:18:38Z",
+      "session": "e2e-controls",
+      "prompt": "Read-only independent plan review of docs/coordination/coordination-end-to-end.md as Test Architect, Simplifier and Orchestrator before implementation dispatch. Review compiled dispatchable scope al-01M30N3C64S3MB10CZDXC6GRG8, current native proofs and runner design. No product edits, live models, claims or additional agents. Budget15calls/8k tokens/10min, fanout0.",
+      "summary": "BLOCK pending binding plan corrections. Existing runner complete+receipt promotes ready_for_review without final pending Owner-decision fence. Assign runner source/tests/design acceptance seam to native-controls track with one authored owner; require open or unreadable worker decision state to block readiness, Owner-issued ruling and existing new-attempt/manual continuation. Enumerate finite four-harness evidence matrix for permitted work, leased edit refusal, pending-decision no-ready, active cancellation/cleanup and independent handback/join; separate bounded native Stop from runner acceptance. One representative composed run under each actual Claude/Codex Owner suffices, no4x2 Cartesian matrix. Record actual assigned absolute tree and leader epoch before dispatch. Run code sync/release checks before fresh live source-bound claims. Two tracks are otherwise justified by disjoint transport/native responsibility; no broker or permission UI expansion.",
+      "kind": "skill",
+      "skill": "prepare-for-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Clear or identify binding defects in the end-to-end coordination plan before implementation.",
+      "done_when": "Return evidence-driven plan verdict with bounded corrections and no product edits.",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-09-21T00:16:27Z",
+      "duration_seconds": 131.0
+    },
+    {
+      "id": "al-01M30NA6HVC7DGQK4JRJ9KRPJJ",
+      "shortname": "coordination-e2e-plan-pass",
+      "datetime": "2026-09-21T00:19:35Z",
+      "session": "e2e-controls",
+      "prompt": "Recheck only the amended end-to-end coordination plan for both binding corrections, assigned checkout paths and epoch8; send final plan clearance, then wait for implementation contract. No code changes.",
+      "summary": "PASS plan gate. Native-controls now owns runner acceptance source/tests/design; finite matrix separates bounded native Stop from fail-closed pending/unreadable Owner-decision readiness fence and requires actual Owner ruling. Explicit four-profile controls include active cancellation/cleanup and reviewed join, with one representative composed run under each actual Codex/Claude Owner. Source gates and sync precede fresh profile claims; absolute assigned worktrees and initial leader coord-e2e epoch8 are recorded. Independent review complete; no implementation started.",
+      "kind": "skill",
+      "skill": "prepare-for-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Confirm closure of the binding end-to-end plan review conditions.",
+      "done_when": "Return plan clearance and await the implementation contract.",
+      "tier": "T1",
+      "fan_out": 0,
+      "started_at": "2026-09-21T00:19:17Z",
+      "duration_seconds": 18.0
+    },
+    {
+      "id": "al-01M30NZ51WYH0VMZ3HP6DWBFN3",
+      "shortname": "native-profile-controls-design",
+      "datetime": "2026-09-21T00:31:01Z",
+      "session": "e2e-controls",
+      "prompt": "Design missing native ownership and bounded Owner decision controls plus fail-closed runner handback and narrow Agy permitted-write diagnostic; parent independently reviews before implementation.",
+      "summary": "Parent Security/Test/Simplifier review passed; strict bounded request projection, explicit native contracts, passive Grok Stop, preserved Codex apply_patch hash, Agy neutral permission behavior pending diagnostic. Six regressions observed red before source implementation.",
+      "kind": "skill",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/design/native-profile-controls.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled_from": "al-01M30N3C64S3MB10CZDXC6GRG8",
+      "goal": "Complete missing native control seams for four-harness E2E",
+      "done_when": "Reviewed design specifies adapters, acceptance fence, observable Stop and finite Agy diagnostic",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-09-21T00:20:41Z",
+      "duration_seconds": 620.0
+    },
+    {
+      "id": "al-01M30QFJ429JPWQ7JACCYR1GR4",
+      "shortname": "native-profile-controls-implemented",
+      "datetime": "2026-09-21T00:57:27Z",
+      "session": "e2e-controls",
+      "prompt": "Implementation contract after plan PASS: qualify native ownership and Owner-decision controls plus Agy permitted-write policy for full E2E. Provide reviewed source/tests for missing adapters, fail-closed final runner handback on open or unreadable worker decisions, and a documented Agy harmless-write profile without blanket approval changes. Own core/hooks/native settings/tests/runner/design; do not alter transport. Preserve approved Codex apply_patch definition, obtain separate native Stop approval through parent. Read contracts, design before code, red-first implementation, no global trust writes, no new dependencies, no remote push, bounded diagnostics and finite handback.",
+      "summary": "Implemented native Grok/Agy ownership adapters; separate Codex Stop plus sanitized bounded receipts; strict request-state and exact final leader fence prevent false readiness. Preserved local named Agy opt-ins in sync and standalone installer; Grok separate drop-in. Parent independent review PASS after terminal-state and bootstrap corrections. Full test gate1181 passed12skipped375subtests147.53s, Node/render checks passed; meaningful direct merge CLI test and consistency gate then passed. Three targeted mutants killed. Two finite Agy diagnostics show normal mode denied, per-process accept-edits permitted ordinary file and refused leased edit with unchanged captured configs; no final unattended attestation. Final metadata gates and local commit follow.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/native-profile-controls.md",
+        "docs/design/native-profile-controls.md",
+        "docs/knowledge/acp-compatibility/agy-native-controls-diagnostic.json"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled_from": "al-01M30N3C64S3MB10CZDXC6GRG8",
+      "goal": "Complete reviewed native control source and finite Agy profile diagnostic for parent E2E qualification",
+      "done_when": "Adapters, strict final decision fence, deployment preservation and tests are reviewed; diagnostic profile measured or bounded blocker reported; artifacts and audit handed back",
+      "tier": "T2",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true
+      },
+      "started_at": "2026-09-21T00:31:01Z",
+      "duration_seconds": 1586.0,
+      "change": "cl-01M30QE8XZ8GYB3E71RBFKTKT6"
     }
   ],
   "changes": [
@@ -9811,6 +9910,30 @@ window.AUDIT_DATA = {
           "cceb3f4 Enforce native file-edit leases for Claude and Codex hooks"
         ]
       }
+    },
+    {
+      "id": "cl-01M30QE8XZ8GYB3E71RBFKTKT6",
+      "datetime": "2026-09-21T00:56:45Z",
+      "session": "e2e-controls",
+      "kind": "design",
+      "skill": "design-slice",
+      "title": "Native control adapters and final Owner decision acceptance",
+      "prompt": "Complete the native ownership and Owner decision control seams plus narrow Agy permitted-write profile for four-harness E2E.",
+      "summary": "Reuse native policy adapters and a bounded strict request projection; final runner readiness depends on checked decisions and exact leader fence. Preserve local Agy named-bundle opt-ins with shared sync/installer merge; Grok uses a separate project drop-in.",
+      "rationale": "Native Stop continuation is bounded and cannot stand in for final handback acceptance. Native policy layers and approved hook definitions remain distinct; deployment must not erase local opt-ins.",
+      "artifacts": [
+        "docs/design/native-profile-controls.md",
+        "docs/design/multi-harness-runner.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "6711dba872e1",
+        "after": "6711dba872e1c875d337a6100ed27134ec3eec2f",
+        "branch": "feat/native-profile-controls",
+        "pushed": null,
+        "commits": []
+      },
+      "audit_ref": "al-01M30NZ51WYH0VMZ3HP6DWBFN3"
     }
   ],
   "messages": [

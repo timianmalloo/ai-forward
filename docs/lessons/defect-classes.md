@@ -17,6 +17,17 @@ summary: >-
 
 # Defect-class register
 
+**RIG-D / PACK-D / E7 instance, 2026-09-21 — native control acceptance seams.**
+Class: accepting a generic shape or a successful earlier phase as proof of a later
+invariant. Sweep: Agy TargetFile could be hidden by a generic file_path, a malformed
+terminal request or requester self-resolution could erase pending Owner review, and
+wholesale hook deployment could erase a repo-owned guard. Derive: validate each native
+schema's authoritative field, validate terminal authority/shape at final readiness,
+and preserve ownership at deployment. Prevent: red-first native misleading-field/nested
+cwd tests, strict decision-state and installed-runner false-readiness regressions, and
+real sync plus installer named-bundle preservation/no-destruction tests. Script Stop
+receipts prove requested output only; independent native qualification remains required.
+
 **PACK-C / RIG-E instance, 2026-09-19 — Codex host contract.** The existing
 Antigravity `.agents/skills/` deployment was discoverable by Codex, but the pack
 documented slash invocation and did not define Codex constitution grounding or a

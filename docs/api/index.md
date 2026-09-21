@@ -9,7 +9,7 @@ links:
   - { to: architecture, rel: documents }
 review-by: "2027-03-03"
 summary: >-
-  Generated API reference for the pack's public surface — the deployed script bundle. 522 public functions across 39 modules, 47% carrying a docstring.
+  Generated API reference for the pack's public surface — the deployed script bundle. 524 public functions across 40 modules, 47% carrying a docstring.
 ---
 
 # API reference — the deployed script bundle
@@ -29,7 +29,7 @@ with no docstring is listed as a **coverage gap** rather than described from gue
 | [`conductor-join.py`](conductor-join.md) | 5 | 3 | — | conductor-join.py - the join, as a script: every step gated by its exit code, none by a |
 | [`context-budget.py`](context-budget.md) | 21 | 12 | 6 | context-budget.py — the always-on context budget, measured (AI-Forward Pack). |
 | [`coord-board.py`](coord-board.md) | 14 | 7 | 2 | coord-board.py — the board: human transparency over agent messages (spec-board, D12). |
-| [`coord-core.py`](coord-core.md) | 96 | 72 | 36 | coord-core.py - agent coordination, Phase 1 walking skeleton. |
+| [`coord-core.py`](coord-core.md) | 97 | 73 | 36 | coord-core.py - agent coordination, Phase 1 walking skeleton. |
 | [`coord-decide.py`](coord-decide.md) | 11 | 2 | 3 | coord-decide.py - the Owner seat's mechanism: decision request -> numbered ruling (D6). |
 | [`coord-mail.py`](coord-mail.md) | 22 | 5 | 4 | coord-mail.py - the local message layer: per-session inbox files, ledger twins, bounded dispatch. |
 | [`coord-runner.py`](coord-runner.md) | 13 | 0 | 1 | Prepare and run an opt-in, qualified multi-harness coordination contract. |
@@ -41,8 +41,9 @@ with no docstring is listed as a **coverage gap** rather than described from gue
 | [`foundation-check.py`](foundation-check.md) | 2 | 0 | — | foundation-check.py — vendored-foundation drift detection (AI-Forward Pack). |
 | [`graphify-setup.py`](graphify-setup.md) | 11 | 4 | — | graphify-setup.py - stand up the CODE knowledge graph and join it to the docs graph. |
 | [`marker-lint.py`](marker-lint.md) | 1 | 0 | — | marker-lint.py - completeness check for the pack's inline decision markers. |
+| [`named_hook_bundles.py`](named_hook_bundles.md) | 0 | 0 | — | Merge source-owned hook bundles while preserving project-owned bundle names. |
 | [`obsidian-setup.py`](obsidian-setup.md) | 17 | 7 | — | obsidian-setup.py - stand up (and analyze) the Obsidian lens over an AI-Forward docs graph. |
-| [`pack-apply.py`](pack-apply.md) | 15 | 8 | — | pack-apply.py — apply the AI-Forward deployment map to a repo, mechanically and reversibly. |
+| [`pack-apply.py`](pack-apply.md) | 16 | 9 | — | pack-apply.py — apply the AI-Forward deployment map to a repo, mechanically and reversibly. |
 | [`pack-doctor.py`](pack-doctor.md) | 16 | 11 | — | pack-doctor.py — AI-Forward install-health check (deployable; runs in a TARGET repo). |
 | [`prompt-compile.py`](prompt-compile.md) | 22 | 7 | 4 | prompt-compile.py - the compile stage: a logged raw prompt -> a gated, harness-rendered prompt. |
 | [`prompt-log.py`](prompt-log.md) | 18 | 7 | 8 | prompt-log.py — the fast prompt-reuse lens over the project's audit log. |
@@ -63,5 +64,5 @@ with no docstring is listed as a **coverage gap** rather than described from gue
 | [`visual-assets-setup.py`](visual-assets-setup.md) | 12 | 5 | — | visual-assets-setup.py - wire up a generation backend for UI visual assets (AI-Forward). |
 | [`xaml-token-lint.py`](xaml-token-lint.md) | 9 | 0 | — | xaml-token-lint.py — first-slice token linter for XAML/native UI markup. |
 
-**Total** — 522 public functions across 39 modules, **244 documented (47%)**.
+**Total** — 524 public functions across 40 modules, **246 documented (47%)**.
 

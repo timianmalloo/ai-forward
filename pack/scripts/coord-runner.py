@@ -556,9 +556,19 @@ class Runner:
                     if transport["outcome"] == "complete" and not cancelled():
                         try:
                             result["receipts"] = self.verify(manifest, worker)
-                            result["state"] = "ready_for_review"
                         except (Refused, OSError, subprocess.SubprocessError):
                             result.update(state="evidence_incomplete", code="RUN-EVIDENCE")
+                        else:
+                            state = core.decision_request_state(self.root, worker["session"])
+                            result["decision_state"] = state
+                            if not state["checked"]:
+                                result.update(state="blocked", code="RUN-DECISION-NOT-CHECKED")
+                            elif state["open_count"]:
+                                result.update(state="blocked", code="RUN-DECISION-OPEN")
+                            elif not fence(2):
+                                result.update(state="cancelled", code=lease["reason"])
+                            else:
+                                result["state"] = "ready_for_review"
                 except Refused as exc:
                     result = {"session": worker["session"], "state": "blocked", "code": exc.code,
                               "manual_brief": str(directory / (worker["session"] + ".brief.json"))}

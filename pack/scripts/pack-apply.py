@@ -62,6 +62,18 @@ for _stream in (sys.stdout, sys.stderr):
             pass
 
 MANIFEST = "FOUNDATION.md"
+
+
+def merge_named_hook_bundles(source_text, current_text=None):
+    """Refresh source-owned names and retain project-owned names; reject invalid JSON."""
+    source = json.loads(source_text)
+    current = json.loads(current_text) if current_text is not None else {}
+    for value in (source, current):
+        if not isinstance(value, dict) or any(not isinstance(section, dict) for section in value.values()):
+            raise ValueError("Named hook bundles must be objects of objects")
+    current.update(source)
+    return json.dumps(current, indent=2) + "\n"
+
 BEGIN = "<!-- AI-FORWARD-PACK:BEGIN"
 END = "<!-- AI-FORWARD-PACK:END -->"
 IMPORT_LINE = "@AGENTS.md"
@@ -532,9 +544,17 @@ class Applier(object):
         self.place("hooks", "adapters/hooks/grok.ai-forward-hooks.json",
                    os.path.join(self.target, ".grok", "hooks", "ai-forward.json"),
                    read(os.path.join(hooks, "grok.ai-forward-hooks.json")))
-        self.place("hooks", "adapters/hooks/agy.ai-forward-hooks.json",
-                   os.path.join(self.target, ".agents", "hooks.json"),
-                   read(os.path.join(hooks, "agy.ai-forward-hooks.json")))
+        agy_target = os.path.join(self.target, ".agents", "hooks.json")
+        try:
+            current_hooks = read(agy_target)
+            if os.path.islink(agy_target):
+                raise ValueError("symlink hook target")
+            merged_hooks = merge_named_hook_bundles(read(os.path.join(hooks, "agy.ai-forward-hooks.json")), current_hooks)
+            if merged_hooks != current_hooks:
+                self._write(agy_target, merged_hooks)
+            self.row("hooks", ".agents/hooks.json", "UNCHANGED" if merged_hooks == current_hooks else "MERGE", "ok")
+        except (OSError, ValueError):
+            self.row("hooks", ".agents/hooks.json", "CONFLICT", "fail", "invalid named bundles; existing file retained")
         self.place("hooks", "adapters/grok/grok-surface.md",
                    os.path.join(self.target, ".grok", "rules", "grok-surface.md"),
                    read(os.path.join(self.pack, "adapters", "grok", "grok-surface.md")))

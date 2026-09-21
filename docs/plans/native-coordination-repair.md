@@ -11,7 +11,8 @@ links:
   - { to: kb-graph-and-loop-engineering, rel: depends-on }
 review-by: "2026-12-20"
 summary: Red-first repairs for ACP extension notifications and native Agy refusal, followed by bounded real-profile qualification without changing trust or permission settings.
-review-suggested: []
+review-suggested:
+  - { by: design-multi-harness-runner, on: 2026-09-20, reason: "Final handback now checks worker Owner decisions independently of native Stop" }
 ---
 
 # Repair native coordination transport and requalify profiles

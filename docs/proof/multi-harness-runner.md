@@ -10,7 +10,8 @@ links:
   - { to: design-multi-harness-runner, rel: implements }
   - { to: spec-multi-harness-launch-and-monitor, rel: implements }
 review-by: "2026-12-20"
-review-suggested: []
+review-suggested:
+  - { by: design-multi-harness-runner, on: 2026-09-20, reason: "Final handback now checks worker Owner decisions independently of native Stop" }
 summary: >-
   Real git repositories and offline subprocess peers prove the deterministic runner's
   admission, worktree, authority, bounded transport and evidence paths. Independent
