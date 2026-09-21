@@ -437,6 +437,7 @@ class Runner:
             return self.attach_owned(args, stop)
 
     def attach_owned(self, args, stop):
+        require(os.name == "posix", "RUN-PLATFORM", "Native attachment is qualified only for the POSIX pilot.")
         owner = os.environ.get("AGENT_SESSION", "")
         identity(owner)
         identity(args.worker)

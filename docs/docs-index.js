@@ -4542,7 +4542,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "81088b671ad880972a44650753516d20835cfbe72b0ab1644411c8fa959f3874"
+      "sourceSha256": "751b0300660a02649f1e1b41dc50d20d4e559cb76a406ea16da8c79c7c4db8db"
     },
     {
       "id": "docs-index",
@@ -8908,7 +8908,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "70eb4977f93ce2bafd76dc26ef4c35f01570bed2b718443c14d01fcec4eb9140"
+      "sourceSha256": "84d3bcc0c26071b70e9b8196afb1a0b10ffab9b1b0b597c5bdf0e20e7fdcd16d"
     },
     {
       "id": "proof-docs-explorer-redesign",
@@ -10552,5 +10552,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "9b902fa879bd10ec0f6d8ee38729b68e3af698bd1f93e03b4a8a44b141f121e8"
+  "graphSha256": "ac0e355176d34b84c32dcbec0aca5aa49d9d5c35f0ee320fe9ecb709ac31e1aa"
 };

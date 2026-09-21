@@ -17,6 +17,20 @@ summary: >-
 
 # Defect-class register
 
+**PLAT-B / RUN-A follow-up, 2026-09-21 — platform fallback changes a security verdict.**
+Class → treating `open`'s missing-target error as proof that a ledger is absent
+accepts a dangling link when `O_NOFOLLOW` is unavailable. Sweep → the strict
+decision projection, normalized hook receipts, native socket fixtures and attach
+admission. Derive → distinguish initial absence from disappearance after observing
+a file, and compare the observed path and opened-file identities. Prevent → three
+red-first regressions reject dangling links, deletion during open and replacement
+by a link to an empty ledger, including with native no-follow disabled. The attach
+boundary now explicitly rejects unsupported platforms before reading identity.
+POSIX shell/socket fixtures declare that runtime floor; portable security tests
+remain enabled on Windows. Diagnostic-path assertions compare resolved meaning,
+including home-relative receipts. These observations do not claim an atomic
+Windows no-follow primitive or qualify the Windows native runtime.
+
 Coordination runtime follow-up (2026-09-21): **PLAT-B** also covered newly nested
 diagnostic metadata. The release gate found 102 historical rows carrying home paths
 in `hook_cwd`, `manual_brief` and nested worker summaries after the original migration

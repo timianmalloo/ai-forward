@@ -1,4 +1,5 @@
 import importlib.util
+import os
 from pathlib import Path
 import time
 import unittest
@@ -11,6 +12,7 @@ native = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(native)
 
 
+@unittest.skipUnless(os.name == "posix", "native Unix-socket attachment is a POSIX pilot")
 class NativeMetadataTests(unittest.TestCase):
     def peer(self, mode="ok"):
         peer = NativeMetadataPeer(Path.cwd(), mode)

@@ -141,8 +141,8 @@ is not completion. Native versions and profile settings can change and invalidat
 
 ## Status & next action
 
-Implementation, independent review and all 17 release gates passed for the declared
-supported paths. Use an explicitly enabled manifest and current profile qualification
+Implementation, independent review and all 17 local release gates passed for the declared
+supported paths. The subsequent Windows CI repair is recorded below. Use an explicitly enabled manifest and current profile qualification
 for the next unattended run. Unsupported native capability rows remain explicit.
 The final delivery verifies remote synchronization and executes the fresh-clone command.
 
@@ -155,4 +155,24 @@ liveness tests also passed. The public helper now includes those added boundarie
 Independent final status review confirmed that missing, changed or ambiguous inventory
 cannot produce a fabricated retained-worktree path. No hook definitions changed.
 
-Fresh-clone execution on source commit `277d545b7d6bb115018ec6fb99584ab915897712`: **PASS**, 202 tests and five explicit platform skips. The clone used `--no-local --single-branch`, had only its selected branch and no alternates, and all four historical worker commits were absent from its Git object database. Original receipt verification still passed through the isolated pinned fixture. Subsequent integration changes contain audit/lifecycle records and this proof result, with no runtime or test-code changes.
+Fresh-clone execution on source commit `277d545b7d6bb115018ec6fb99584ab915897712`: **PASS**, 202 tests and five explicit platform skips. The clone used `--no-local --single-branch`, had only its selected branch and no alternates, and all four historical worker commits were absent from its Git object database. Original receipt verification still passed through the isolated pinned fixture. Integration through `83fe1b9448df77bcd06e9f79420f752d40ef0649` changed records and documentation only.
+
+## Windows CI repair
+
+CI on `83fe1b9` passed Linux and macOS but failed Windows. The strict decision
+reader mistook a dangling link for an absent ledger without `O_NOFOLLOW`. Three
+new regressions reproduced acceptance of a dangling link, deletion during open,
+and replacement by a link to an empty file. The reader now distinguishes initial
+absence and compares pre-open, opened and post-open file identities. This detects
+observed replacement; it does not provide atomic no-follow protection on Windows.
+A fourth red-first regression pins explicit unsupported-platform refusal before
+native attachment reads identity or contacts an endpoint. The shell-quoting and
+Unix-socket fixtures explicitly require POSIX; portable security tests remain active.
+The hook receipt assertion now checks the path's meaning after home expansion.
+These changes do not expand the native runtime's qualified platform floor.
+
+Repair verification: independent review **PASS**; 145 focused tests and 69 subtests
+**PASS**; all 17 local release gates **PASS**, including 1,267 Python tests, 508
+subtests, 12 explicit skips, 28 Node contracts and rendered checks. Strict document
+freshness reports zero findings. A remote Windows rerun remains the platform-specific
+confirmation; local macOS evidence alone does not establish its outcome.

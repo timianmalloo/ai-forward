@@ -321,6 +321,7 @@ class NativeHookTests(GitCase):
             patch = self.payload("*** Begin Patch\n*** Delete File: " + path + "\n*** End Patch")
             self.assertEqual("deny", self.decision(patch, "codex")["permissionDecision"])
 
+    @unittest.skipUnless(os.name == "posix", "native shell hooks are a POSIX pilot")
     def test_generated_native_hook_runs_from_quoted_subdirectory_without_expansion(self):
         renamed = self.repo.with_name("space ' \" $(touch PWN_DOLLAR) `touch PWN_TICK`")
         self.repo.rename(renamed)

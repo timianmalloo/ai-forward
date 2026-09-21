@@ -1,5 +1,6 @@
 """AC1–10: deployed entry point, real git/ref/worktrees, offline wire subprocesses."""
 import hashlib
+import importlib.util
 import json
 import os
 import signal
@@ -10,12 +11,26 @@ import sys
 import tempfile
 import time
 import unittest
+from types import SimpleNamespace
+from unittest import mock
 from coord_native_peer import NativeMetadataPeer
 
 REPO = Path(__file__).resolve().parents[2]
 SOURCE = REPO / "pack/scripts"
 PEER = Path(__file__).parent / "fixtures/coord_runner_peer.py"
 CAPS = dict.fromkeys(("worktree_isolation", "instructions", "hooks", "permissions"), "observed-only")
+
+
+class PlatformAdmissionTests(unittest.TestCase):
+    def test_native_attach_refuses_unsupported_platform_before_reading_identity(self):
+        with mock.patch.object(sys, "path", [str(SOURCE), *sys.path]):
+            spec = importlib.util.spec_from_file_location("runner_platform_test", SOURCE / "coord-runner.py")
+            runner = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(runner)
+        with mock.patch.object(runner, "os", SimpleNamespace(name="nt")):
+            with self.assertRaises(runner.Refused) as raised:
+                runner.Runner.attach_owned(None, None, None)
+        self.assertEqual("RUN-PLATFORM", raised.exception.code)
 
 
 @unittest.skipUnless(os.name == "posix", "initial interactive runner is a POSIX pilot")

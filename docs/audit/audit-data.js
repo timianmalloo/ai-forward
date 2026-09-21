@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-21T15:03:06Z",
+  "generated": "2026-09-21T15:21:46Z",
   "audit": [
     {
       "actor": null,
@@ -12902,6 +12902,42 @@ window.AUDIT_DATA = {
         "sha": "2b935cc7f6de39e8254f91e247e044e0988adf26",
         "short": "2b935cc7f",
         "branch": "docs/coordination-runtime-review-closeout",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M328Y4VBVA4BHK4NT0ADFPK3",
+      "shortname": "coordination-windows-ci-repair",
+      "datetime": "2026-09-21T15:21:46Z",
+      "session": "coord-runtime-v2",
+      "prompt": "merge the pushed feature branches and make sure main and origin are all up to date\n----\nenable unattended coordination\n----\nmake the proof reproducible from a flesh clone\n----\nExpand platform/runtime support : specifically we should be able to attach to already-open terminals, dynamic mailbox prompting, automatic retry and interactive permission approval",
+      "summary": "Windows CI on 83fe1b9 exposed fail-open dangling-ledger handling without O_NOFOLLOW and POSIX-only fixture assumptions. Four regressions failed first; strict reader now distinguishes initial absence and checks observed identities, and native attach rejects unsupported platforms before identity reads. Windows portable security tests remain enabled. Independent adversary review passed; 145 focused tests/69 subtests and all 17 local gates passed (1267 Python tests, 508 subtests, 12 explicit skips, 28 Node contracts and render checks). No atomic Windows no-follow or Windows native runtime qualification claimed. Remote CI and fresh-clone replay remain pending at this record.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": "codex",
+      "artifacts": [
+        "docs/proof/coordination-runtime-v2.md",
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "compiled_from": "al-01M322Y2TSQYCSSF2ZZ8F0R3FQ",
+      "goal": "Complete the requested coordination release, including repair of the observed Windows CI failure.",
+      "done_when": "Reviewed runtime repair is synchronized, all local gates pass, remote CI confirms supported platforms, and main/origin are clean and synchronized.",
+      "tier": "T2",
+      "fan_out": 1,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-21T15:15:48Z",
+      "duration_seconds": 358.0,
+      "git": {
+        "sha": "83fe1b9448df77bcd06e9f79420f752d40ef0649",
+        "short": "83fe1b944",
+        "branch": "fix/coordination-windows-ci",
         "pushed": null
       }
     }

@@ -537,14 +537,24 @@ def decision_request_state(root, session):
         root = Path(root)
         if not session or not root.is_dir() or not (root / "log").is_dir():
             return failed
+        path = request_log_path(root)
         try:
-            fd = os.open(str(request_log_path(root)), os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0)
-                         | getattr(os, "O_NONBLOCK", 0) | getattr(os, "O_BINARY", 0))
+            before = path.lstat()
         except FileNotFoundError:
             return {"checked": True, "open_ids": [], "open_count": 0, "truncated": False}
+        if not stat.S_ISREG(before.st_mode):
+            return failed
+        fd = os.open(str(path), os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0)
+                     | getattr(os, "O_NONBLOCK", 0) | getattr(os, "O_BINARY", 0))
         with os.fdopen(fd, "rb") as handle:
             info = os.fstat(handle.fileno())
-            if not stat.S_ISREG(info.st_mode) or info.st_size > 8 * 1024 * 1024:
+            after = path.lstat()
+            # Identity observations also reject detected replacement where O_NOFOLLOW
+            # is unavailable; they are not an atomic Windows no-follow primitive.
+            if (not stat.S_ISREG(info.st_mode) or not stat.S_ISREG(after.st_mode)
+                    or (before.st_dev, before.st_ino) != (info.st_dev, info.st_ino)
+                    or (after.st_dev, after.st_ino) != (info.st_dev, info.st_ino)
+                    or info.st_size > 8 * 1024 * 1024):
                 return failed
             raw = handle.read(8 * 1024 * 1024 + 1)
         if len(raw) > 8 * 1024 * 1024:

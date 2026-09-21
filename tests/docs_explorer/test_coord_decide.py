@@ -15,6 +15,7 @@ import sys
 import tempfile
 import time
 import unittest
+from unittest import mock
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
@@ -310,7 +311,7 @@ class Gate(TempRepo):
         receipts = [r for r in _rows(self.root / "log/p5.jsonl") if r.get("kind") == "owner-review-stop"]
         self.assertEqual("refused", receipts[-1]["result"])
         self.assertEqual([rid], receipts[-1]["open_ids"])
-        self.assertEqual(str(self.tmp), receipts[-1]["hook_cwd"])
+        self.assertEqual(self.tmp.resolve(), Path(receipts[-1]["hook_cwd"]).expanduser().resolve())
         self.assertNotIn(QUESTION, json.dumps(receipts))
         guarded = self.gate("--host", "codex", stdin=json.dumps(dict(self.STOP, stop_hook_active=True)))
         self.assertEqual({}, json.loads(guarded.stdout))
@@ -365,6 +366,36 @@ class Gate(TempRepo):
         self.assertEqual(40, state["open_count"])
         self.assertEqual(32, len(state["open_ids"]))
         self.assertTrue(state["truncated"])
+
+    def test_projection_rejects_dangling_link_without_native_nofollow(self):
+        core = _load("decision_no_nofollow", CORE)
+        self.store.symlink_to(self.tmp / "missing-ledger")
+        with mock.patch.object(core.os, "O_NOFOLLOW", 0, create=True):
+            self.assertFalse(core.decision_request_state(self.root, "p5")["checked"])
+
+    def test_projection_rejects_ledger_disappearance_during_open(self):
+        core = _load("decision_disappearance", CORE)
+        self.store.write_text("", encoding="utf-8")
+        original_open = os.open
+        def remove_then_open(path, flags):
+            self.store.unlink()
+            return original_open(path, flags)
+        with mock.patch.object(core.os, "open", side_effect=remove_then_open):
+            self.assertFalse(core.decision_request_state(self.root, "p5")["checked"])
+
+    def test_projection_rejects_replacement_with_empty_link_during_open(self):
+        core = _load("decision_replacement", CORE)
+        self.store.write_text("", encoding="utf-8")
+        target = self.tmp / "empty-ledger"
+        target.write_text("", encoding="utf-8")
+        original_open = os.open
+        def replace_then_open(path, flags):
+            self.store.unlink()
+            self.store.symlink_to(target)
+            return original_open(path, flags)
+        with mock.patch.object(core.os, "O_NOFOLLOW", 0, create=True), \
+                mock.patch.object(core.os, "open", side_effect=replace_then_open):
+            self.assertFalse(core.decision_request_state(self.root, "p5")["checked"])
 
     def test_stop_invalid_identity_cannot_escape_receipt_directory(self):
         result = self.gate("--host", "codex", session="../../escaped")
