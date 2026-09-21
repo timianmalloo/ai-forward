@@ -166,8 +166,15 @@ function render(){
 }
 function errorBody(){return `<div class="ph err"><span class="big">Documentation data is missing</span><p><code>portal-data.js</code> did not load.</p><p>Regenerate with <code>python tools/build-docs-portal.py</code>, then reopen this page.</p></div>`;}
 function secStart(){
+  const J=(D.coordination&&D.coordination.journey)||{};
+  const steps=J.steps||[];
   return `<h1 class="lede-h">Get started in ${D.gettingStarted.length} steps</h1><p class="lede">${esc(D.meta.whatIs)}</p>
-    <ol class="steps">${D.gettingStarted.map(s=>`<li><h4>${esc(s.h)}</h4><p>${esc(s.p)}</p>${s.cmd?`<code class="cmd">${esc(s.cmd)}</code>`:""}</li>`).join("")}</ol>`;
+    <ol class="steps">${D.gettingStarted.map(s=>`<li><h4>${esc(s.h)}</h4><p>${esc(s.p)}</p>${s.cmd?`<code class="cmd">${esc(s.cmd)}</code>`:""}</li>`).join("")}</ol>
+    ${steps.length?`<div class="group-band" id="from-prompt-to-coordinated-execution"><span class="gt">From prompt to coordinated execution</span><span class="gl"></span><span class="gc">${steps.length}</span></div>
+    <p>${esc(J.intro||"")}</p>
+    <table><thead><tr><th scope="col">Step</th><th scope="col">Skill / seat</th><th scope="col">What it outputs</th><th scope="col">Underlying machinery</th><th scope="col">Human decision</th></tr></thead>
+      <tbody>${steps.map(s=>`<tr><td><strong>${esc(s.h)}</strong></td><td>${s.skillPath?`<a href="${esc(s.skillPath)}">${esc(s.skill)}</a>`:esc(s.skill)}</td><td>${esc(s.output)}</td><td>${esc(s.machine)}</td><td>${esc(s.human)}</td></tr>`).join("")}</tbody></table>
+    ${J.note?`<p class="lensrow" style="margin-top:10px">${esc(J.note)}</p>`:""}`:""}`;
 }
 function secCaps(){
   const c=D.meta.counts;
@@ -269,6 +276,12 @@ function secCoord(){
     <div class="group-band"><span class="gt">Words chosen to be unambiguous to a model</span><span class="gl"></span></div>
     <p>${esc(K.language||"")}</p>
     <p class="lensrow" style="margin-top:14px"><strong>Verbs:</strong> ${esc(K.verbs||"")}</p>
+    ${(function(){const J=K.journey||{};const rows=J.steps||[]; if(!rows.length)return ""; return `
+    <div class="group-band" id="coord-prompt-to-execution"><span class="gt">From prompt to coordinated execution</span><span class="gl"></span><span class="gc">${rows.length}</span></div>
+    <p>${esc(J.intro||"")}</p>
+    <table><thead><tr><th scope="col">Step</th><th scope="col">Skill / seat</th><th scope="col">What it outputs</th><th scope="col">Underlying machinery</th><th scope="col">Human decision</th></tr></thead>
+      <tbody>${rows.map(r=>`<tr><td><strong>${esc(r.h)}</strong></td><td>${r.skillPath?`<a href="${esc(r.skillPath)}">${esc(r.skill)}</a>`:esc(r.skill)}</td><td>${esc(r.output)}</td><td>${esc(r.machine)}</td><td>${esc(r.human)}</td></tr>`).join("")}</tbody></table>
+    ${J.note?`<p class="lensrow" style="margin-top:10px">${esc(J.note)}</p>`:""}`;})()}
     ${(function(){const T=K.timeline||[]; if(!T.length)return ""; return `
     <div class="group-band"><span class="gt">How the design changed</span><span class="gl"></span><span class="gc">${T.length}</span></div>
     <div class="grid">${T.map(t=>`<div class="cap"><h4>${esc(t.h)}</h4><p>${esc(t.p)}</p></div>`).join("")}</div>`;})()}

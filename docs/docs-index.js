@@ -1981,7 +1981,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart LR\n  EWC[\"/execute-with-coordination\"]\n  Agents[\"--agents<br/>same-harness sub-agents\"]\n  Brief[\"--brief<br/>manual cross-harness briefs\"]\n  Launch[\"--launch<br/>bounded multi-harness runtime\"]\n  Compile[\"compiled prompts only\"]\n  Review[\"Owner review + rulings\"]\n  Join[\"conductor-join.py\"]\n\n  EWC --> Agents\n  EWC --> Brief\n  EWC --> Launch\n  Launch --> Compile\n  Agents --> Review\n  Brief --> Review\n  Launch --> Review\n  Review --> Join"
         }
       ],
-      "sourceSha256": "7d8d9896d8907e881e9d211b66ae417bc282584fe9c5aff4a2e3f0165ab3cb6d"
+      "sourceSha256": "856eb2da1864f64d8d6d044660038dd33a5c62c3d30865e04b9e6d940e594ba9"
     },
     {
       "id": "note-20260712-model-orchestration-policy",
@@ -10685,5 +10685,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "be372daec19fc93aab2d15d13502b6a03e489c17679ecb560b48905ec80256dc"
+  "graphSha256": "1dc0524465a05c4fc32cb47a5bbcb01446eaba0a934718cd55b9116f6547add6"
 };

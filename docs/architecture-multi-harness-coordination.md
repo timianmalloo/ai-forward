@@ -405,7 +405,87 @@ Two documentation rules follow from this landed scope:
    `gpt-5.4`), the emitted plugin bundle, and the post-run actual-model check. The profile is
    therefore proved by the effective model and usage evidence, not by argv alone.
 
-## 11. Operator workflow end to end
+<a id="from-prompt-to-coordinated-execution"></a>
+
+## 11. From prompt to coordinated execution
+
+The missing visible bridge was the workflow between the skills and the lower-level coordination
+machinery. The pack now makes that bridge explicit.
+
+| Stage | Operator-visible skill or seat | What it takes in | What it outputs | Underlying machinery | Human decision point |
+|---|---|---|---|---|---|
+| 1 | **Raw prompt** | ordinary prose | unstructured ask | none yet | the operator states the job |
+| 2 | **[`/compile`](../pack/commands/compile/SKILL.md)** | raw prompt text or a prior prompt audit id | one compiled prompt, one compilation audit id, traced goal state, assumptions, `DR-n` requests, `dispatchable` flag | `prompt-compile.py` + `verify-compiled-prompt.py` | the operator may edit the compiled prompt; compile grants no permission, no worktree and no lease |
+| 3 | **[`/prepare-for-coordination`](../pack/commands/prepare-for-coordination/SKILL.md)** | either raw intent or a compiled prompt already in hand | `docs/coordination/<plan-id>.md` + `.html` with tracks, owned paths, dependencies, budgets, exit evidence | `coord-core.py classify/install/doctor`, docs graph grounding | the coordinator decides boundaries, ownership and harness targets |
+| 4 | **[`/execute-with-coordination`](../pack/commands/execute-with-coordination/SKILL.md)** | a parsed plan | worktrees (`--agents`), human briefs (`--brief`) or launched runtime sessions (`--launch`), plus receipts, rulings and a join | `coord-core.py`, `coord-mail.py`, `coord-runner.py`, `conductor-join.py` | the Owner rules on decisions, reviews receipts and approves integration |
+| 5 | **[`/document`](../pack/commands/document/SKILL.md)** | landed code + proof + doc deltas | regenerated docs bundle, portal/front door, graph index, API docs, Pages bundle | `docs-graph.py`, `build-doc-site.py`, `build-docs-portal.py`, `build-web-index.py`, `build-pages-bundle.py` | the documentation steward decides whether the docs match the shipped code |
+
+Two sequencing rules matter and are easy to overstate:
+
+1. **`/compile` is the explicit utility.** Its source says it is the operator-facing CO-S0 stage
+   and that the operator hands the compiled prompt on to `/optimize-graph`,
+   `/prepare-for-coordination`, or another prose-input skill.
+2. **The coordination skills consume a compiled prompt when one is already in hand.**
+   `prepare-for-coordination` opens with *"Consume the compiled prompt when one is in hand"*;
+   `execute-with-coordination` refuses dispatch when the compiled prompt is not dispatchable or
+   still carries an unanswered `DR-n`. That is narrower than "every request auto-compiles", and
+   the docs now say the narrower thing.
+
+### Worked example
+
+**Input (operator prose)**
+
+> Add a deadline and a fallback to seam requests. The join should refuse an expired one. Do not
+> touch the lease rules.
+
+**After `/compile`**
+
+- a `kind: prompt` audit entry for the raw text
+- a `kind: compilation` audit entry with:
+  - Goal / Done when / Not in scope / Tier / Fan-out cap / Context ceiling / Main-line budget
+  - traced clauses
+  - marked assumptions
+  - any unresolved `DR-n` request
+  - `dispatchable: true|false`
+
+**After `/prepare-for-coordination`**
+
+- `docs/coordination/<plan-id>.md`
+- `docs/coordination/<plan-id>.html`
+- declared track ownership
+- dependency order
+- budgets and exit evidence
+
+**After `/execute-with-coordination`**
+
+- one worktree per track or one external brief per track or one bounded runtime session per track
+- seam requests and Owner decision requests where needed
+- receipts and review evidence
+- one `conductor-join.py` integration path
+
+**After `/document`**
+
+- updated source docs
+- regenerated portal/front door and close-up bundle
+- regenerated Docs Explorer index
+- publishable `_site` bundle for Pages
+
+### Skills vs machinery
+
+The skills are the guided workflow; the Python scripts are the mechanisms that make the workflow
+true:
+
+| Workflow surface | Lower-level mechanism |
+|---|---|
+| `/compile` | `prompt-compile.py`, `verify-compiled-prompt.py`, audit-log append |
+| `/prepare-for-coordination` | `coord-core.py classify/install/doctor`, artifact classes, plan emission |
+| `/execute-with-coordination` | `coord-core.py`, `coord-mail.py`, `coord-runner.py`, `owner-review-gate.py`, `conductor-join.py` |
+| `/document` | `docs-graph.py`, `build-doc-site.py`, `build-docs-portal.py`, `build-web-index.py`, `build-pages-bundle.py` |
+
+That distinction matters operationally: **a skill can explain and sequence, but the proof lives in
+the lower-level mechanism and its tests.**
+
+## 12. Operator workflow end to end
 
 1. **Compile the request.** The raw human ask becomes a finished, dispatchable compilation.
 2. **Plan the tracks.** `/prepare-for-coordination` assigns owned paths, seams, and exit evidence.

@@ -1667,6 +1667,52 @@ window.PORTAL_DATA = {
       }
     ],
     "pending": "A separate 2026-09-21 implementation branch is hardening Windows and Copilot runtime evidence. Until that proof lands in this tree, the portal treats it as pending, not shipped.",
+    "journey": {
+      "intro": "This is the operator-visible path from a human request to coordinated delivery. It is intentionally explicit: compile can be run first as a utility, coordination skills consume a compiled prompt when one is already in hand, and dispatch stops on unresolved decision requests.",
+      "steps": [
+        {
+          "h": "Raw prompt",
+          "skill": "Operator input",
+          "skillPath": "",
+          "output": "Verbatim prose request, still unconstrained",
+          "machine": "No coordination machinery yet",
+          "human": "The operator states the goal in ordinary language"
+        },
+        {
+          "h": "/compile",
+          "skill": "/compile",
+          "skillPath": "../../pack/commands/compile/SKILL.md",
+          "output": "One compiled prompt + audit compilation ID + traced goal state + marked assumptions + unresolved decision requests",
+          "machine": "prompt-compile.py + verify-compiled-prompt.py",
+          "human": "The operator can edit the compiled prompt before any work starts. Compile does not create a permission, a worktree or a claim."
+        },
+        {
+          "h": "/prepare-for-coordination",
+          "skill": "/prepare-for-coordination",
+          "skillPath": "../../pack/commands/prepare-for-coordination/SKILL.md",
+          "output": "docs/coordination/<plan-id>.md + .html with ownership, dependencies, serial spine, budgets and exit evidence",
+          "machine": "coord-core.py classify/install/doctor + docs graph grounding",
+          "human": "The coordinator or operator chooses the division of work and the harness targets."
+        },
+        {
+          "h": "/execute-with-coordination",
+          "skill": "/execute-with-coordination",
+          "skillPath": "../../pack/commands/execute-with-coordination/SKILL.md",
+          "output": "Track worktrees or briefs or launched runtime sessions, plus receipts, decision requests, rulings and joined results",
+          "machine": "coord-core.py + coord-mail.py + coord-runner.py + conductor-join.py",
+          "human": "The Owner rules on decisions and reviews receipts. The coordinator joins only after evidence, rulings and gates are satisfied."
+        },
+        {
+          "h": "/document",
+          "skill": "/document",
+          "skillPath": "../../pack/commands/document/SKILL.md",
+          "output": "Updated bundle, Pages data, graph index and proof-linked docs",
+          "machine": "docs-graph.py + build-doc-site.py + build-docs-portal.py + build-web-index.py",
+          "human": "The documentation steward verifies what actually shipped and republishes the front door."
+        }
+      ],
+      "note": "The coordination skills do not imply that every request auto-compiles. What the source guarantees today is narrower: `/compile` is the explicit utility; `/prepare-for-coordination` consumes a compiled prompt when one is already in hand; `/execute-with-coordination` refuses dispatch when the compiled prompt is not dispatchable or still carries an unanswered `DR-n`."
+    },
     "learnings": {
       "intro": "The specification describes the design. These are what a month of Claude Code and Copilot sessions working one repository actually taught — consolidated from AI-DE's coordination record and promoted to the shared fleet store, so every repo inherits them.",
       "measured": "273 coordination events over five days, two harnesses, 22 worktrees: 131 claims against 117 releases with 33 (25%) never released; 24 session-start events against 1 session-end; 55 guard decisions of which 50 allowed, 3 not-checked and 2 refused.",
