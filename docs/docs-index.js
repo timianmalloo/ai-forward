@@ -8488,7 +8488,7 @@ window.DOCS_INDEX = {
       "path": "docs/plans/coordination-runtime-v2.md",
       "title": "Coordination runtime expansion and portable proof",
       "type": "plan",
-      "status": "active",
+      "status": "reviewed",
       "owner": "@timianmalloo",
       "phase": "coordination",
       "reviewBy": "2026-12-21",
@@ -8510,7 +8510,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b22d8168a41be579e3a3c31eaf6ec589e297d49c7cd42cfdcbe51f61ce4f048d"
+      "sourceSha256": "edc4a07a7d0d511c4309b5e85cf87fca9a6ba28166fe921929811c1668dad849"
     },
     {
       "id": "plan-native-coordination-repair",
@@ -8914,7 +8914,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "cc0d5e8f97f077e15fd13ce3ac175e61976c620ee4f505182ec632c698bcc9cc"
+      "sourceSha256": "70eb4977f93ce2bafd76dc26ef4c35f01570bed2b718443c14d01fcec4eb9140"
     },
     {
       "id": "proof-docs-explorer-redesign",
@@ -10562,5 +10562,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "bca3fc4c08d400d0fedaaefa8b1e91c5945a2862b7ad85c936c304cae3f662f9"
+  "graphSha256": "5950d80da16dc4cf0bc4bbf7180bfdc77e681426c358a0b9723a4691b680fd9b"
 };

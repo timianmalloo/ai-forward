@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-21T14:51:28Z",
+  "generated": "2026-09-21T14:59:48Z",
   "audit": [
     {
       "actor": null,
@@ -12852,6 +12852,33 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-21T13:48:35Z",
       "duration_seconds": 3773.0
+    },
+    {
+      "id": "al-01M327NYCPWYR4ZQQ8AEKJ82M5",
+      "shortname": "coord-runtime-linear-integration",
+      "datetime": "2026-09-21T14:59:48Z",
+      "session": "coord-runtime-v2",
+      "prompt": "merge the pushed feature branches and make sure main and origin are all up to date\n----\nenable unattended coordination\n----\nmake the proof reproducible from a flesh clone\n----\nExpand platform/runtime support : specifically we should be able to attach to already-open terminals, dynamic mailbox prompting, automatic retry and interactive permission approval",
+      "summary": "Reconciled three pushed feature tips listed in the plan through an explicit squash after retaining newer main repairs and unioning unique audit facts. Source277d545 passed all17 gates and fresh single-branch/no-local proof202tests,5platformskips; hidden historical worker commits absent and no alternate object store. No runtime/test changes after that proof. Retain final lifecycle logs; sessions ended and leader released. The source commit hook reported advisory because AGENT_SESSION was unset; do not claim that boundary was enforcing. The final integration commit supplies explicit coord-runtime-v2 identity. Main fast-forward/push and safe task-worktree cleanup are the remaining delivery steps.",
+      "kind": "commit",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/coordination-runtime-v2.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Deliver the reviewed coordination runtime and all reconciled feature content on current main.",
+      "done_when": "Main equals origin/main and all task worktrees are safely removed after proof preservation.",
+      "tier": "T2",
+      "fan_out": 2,
+      "git": {
+        "sha": "277d545b7d6bb115018ec6fb99584ab915897712",
+        "short": "277d545b7",
+        "branch": "feat/coordination-runtime-v2",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -14958,6 +14985,24 @@ window.AUDIT_DATA = {
       "kind": "ruling",
       "ref": "req-01M30XEC6GNE294W2YNT1CD271",
       "session": "coord-e2e-claude-owner-2"
+    },
+    {
+      "id": "mail-01M326MSAENZ84C5DKY8DVX2CT",
+      "ts": "2026-09-21T14:41:42Z",
+      "from": "coord-proof-fresh",
+      "to": "coord-runtime-v2",
+      "kind": "done",
+      "ref": "al-01M326G73ZNK9SHN6DW7NEHN7T",
+      "session": "coord-proof-fresh"
+    },
+    {
+      "id": "mail-01M326N03WSVM1TC9D3HWKJP9X",
+      "ts": "2026-09-21T14:41:49Z",
+      "from": "coord-runtime-spike",
+      "to": "coord-runtime-v2",
+      "kind": "done",
+      "ref": "al-01M3267CB253Z7F1M8QNCR2D9Y",
+      "session": "coord-runtime-spike"
     }
   ]
 };

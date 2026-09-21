@@ -1,0 +1,3 @@
+{"agent": "coord-runtime-v2", "at": 1789997770.8368158, "kind": "session-start", "path": "-", "seq": 1, "session": "coord-proof-fresh", "tree": "worktree", "wi": "WI-0", "worktree": "ai-forward-fix-coord-proof-fresh-clone"}
+{"agent": "coord-proof-fresh", "at": 1790001678.31246, "kind": "session-end", "path": "-", "seq": 2, "session": "coord-proof-fresh", "wi": "WI-0", "worktree": "ai-forward-fix-coord-proof-fresh-clone"}
+{"at": 1790001702.222922, "from": "coord-proof-fresh", "kind": "done", "mail_id": "mail-01M326MSAENZ84C5DKY8DVX2CT", "ref": "al-01M326G73ZNK9SHN6DW7NEHN7T", "session": "coord-proof-fresh", "to": "coord-runtime-v2", "type": "mail"}

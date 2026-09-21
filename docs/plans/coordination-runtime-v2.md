@@ -2,7 +2,7 @@
 id: plan-coordination-runtime-v2
 title: "Coordination runtime expansion and portable proof"
 type: plan
-status: active
+status: reviewed
 owner: "@timianmalloo"
 phase: coordination
 tags: [coordination, runtime, proof]
@@ -81,3 +81,5 @@ Reconciled remote tips: ACP `bb1e6c610f976a6ebf180a985c64bf75e82cf41a`, native c
 `193fb9baee2e8b72e3536d2d2be023aa45f37ca3`. Their functional snapshots were already
 integrated before newer main repairs. Retain those newer repairs and union all late
 append-only audit facts; squash reconciliation preserves protected-main linear history.
+
+Final source join: all 17 release gates passed twice after the runtime reader repair; the packaged source was committed as `277d545`. The public proof command then passed 202 tests in a fresh single-branch clone without alternate object sharing. The three pushed feature tips were squash-reconciled with strategy `ours` only after their functional contents and late audit records had been explicitly reconciled into the newer reviewed tree. No merge commit or force push is used. All three coordination sessions ended and the finite leader keeper stopped; final Git synchronization and removal use preserved-content checks.

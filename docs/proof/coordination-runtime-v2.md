@@ -154,3 +154,5 @@ Full bundle: all 17 gates PASS; 1,263 Python tests, 508 subtests, 12 explicit sk
 liveness tests also passed. The public helper now includes those added boundaries.
 Independent final status review confirmed that missing, changed or ambiguous inventory
 cannot produce a fabricated retained-worktree path. No hook definitions changed.
+
+Fresh-clone execution on source commit `277d545b7d6bb115018ec6fb99584ab915897712`: **PASS**, 202 tests and five explicit platform skips. The clone used `--no-local --single-branch`, had only its selected branch and no alternates, and all four historical worker commits were absent from its Git object database. Original receipt verification still passed through the isolated pinned fixture. Subsequent integration changes contain audit/lifecycle records and this proof result, with no runtime or test-code changes.
