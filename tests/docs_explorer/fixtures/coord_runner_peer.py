@@ -8,6 +8,14 @@ import time
 
 mode = sys.argv[1] if len(sys.argv) > 1 else "ok"
 additional_roots = None
+if mode in ("startup-retry", "dirty-startup-retry"):
+    marker = Path(__file__).parent / "startup-attempt"
+    attempts = int(marker.read_text()) if marker.exists() else 0
+    marker.write_text(str(attempts + 1))
+    if attempts == 0:
+        if mode == "dirty-startup-retry":
+            Path("unexpected-change").write_text("inspect before retry")
+        raise SystemExit(1)
 
 
 def send(message):
@@ -43,6 +51,18 @@ for line in sys.stdin:
         result = {"sessionId": "fixture-session"}
     elif method == "session/prompt":
         Path("prompt-started").write_text(str(os.getpid()), encoding="utf-8")
+        if mode == "post-dispatch-eof":
+            raise SystemExit(1)
+        if mode == "permission":
+            send({"jsonrpc": "2.0", "id": "permission-1", "method": "session/request_permission", "params": {
+                "sessionId": "fixture-session", "toolCall": {"title": "SECRET harmless fixture receipt"},
+                "options": [{"optionId": "yes", "kind": "allow_once", "name": "Allow once"},
+                            {"optionId": "no", "kind": "reject_once", "name": "Reject"}]}})
+            response = json.loads(sys.stdin.readline())
+            assert response["id"] == "permission-1"
+            if response["result"]["outcome"].get("optionId") != "yes":
+                send({"jsonrpc": "2.0", "id": message["id"], "result": {"stopReason": "end_turn"}})
+                continue
         if mode == "hang":
             time.sleep(30)
         if mode == "delay":

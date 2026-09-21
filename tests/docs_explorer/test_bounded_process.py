@@ -57,6 +57,17 @@ class BoundedProcessTests(unittest.TestCase):
         self.assertEqual(os.name == "nt", result.process_limit_enforced)
         self.assertEqual(os.name == "nt", result.aggregate_memory_limit_enforced)
 
+    def test_cancellation_terminates_owned_process_and_discards_partial_output(self):
+        with tempfile.TemporaryDirectory() as directory:
+            marker = Path(directory) / "started"
+            source = "import os,pathlib,time; pathlib.Path(" + repr(str(marker)) + ").write_text(str(os.getpid())); print('partial',flush=True); time.sleep(30)"
+            started = time.monotonic()
+            result = self.run_python(source, timeout_seconds=10, cancelled=marker.exists)
+            self.assertTrue(result.cancelled)
+            self.assertEqual("", result.stdout)
+            self.assertIsNone(result.cleanup_error)
+            self.assertLess(time.monotonic() - started, 3)
+
     def test_exact_stdout_limit_succeeds(self):
         limit = 1024 * 1024
 

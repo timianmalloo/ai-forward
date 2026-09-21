@@ -57,7 +57,7 @@ Design: docs/design/coord-core-phase1.md
 | `kick` | _(no help text — coverage gap)_ |
 | `leader` | _(no help text — coverage gap)_ |
 | `list` | list seam requests |
-| `log` | ledger maintenance: `portable <file>...` rewrites the worktree field of existing rows to its label (F-3) |
+| `log` | ledger maintenance: `portable <file>...` normalizes diagnostic paths in existing rows (F-3) |
 | `mail` | send | read | ack | dispatch (delegates to coord-mail.py) |
 | `merge-derived` | the .gitattributes merge driver (always 0) |
 | `merge-register` | union two append-only registers (always 0) |
@@ -772,7 +772,7 @@ stalled - or `not recorded`, which is not a problem and not a pass (CTX-H).
 
 ### `cmd_log_portable(paths)`
 
-F-3 migration: rewrite ONLY the `worktree` field of existing ledger rows to its label.
+F-3 migration: normalize only the diagnostic fields handled by the event writer.
 Idempotent (a label maps to itself); every other line is copied byte-for-byte, including
 lines that are not JSON; the writer's own dump (sort_keys) is used for the rewritten rows.
 

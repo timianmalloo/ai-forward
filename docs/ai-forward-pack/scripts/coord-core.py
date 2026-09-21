@@ -234,6 +234,36 @@ def _next_seq(logfile):
     return n + 1
 
 
+def _portable_event(event):
+    """Copy only diagnostic paths; runtime inputs and free text keep their exact bytes."""
+    def home_path(value):
+        if not isinstance(value, str):
+            return value
+        normalized = value.replace("\\", "/")
+        home = str(Path.home()).replace("\\", "/").rstrip("/")
+        if home and (normalized == home or normalized.startswith(home + "/")):
+            return "~" + normalized[len(home):]
+        # Legacy ledgers can originate on another machine or platform.
+        return re.sub(r"^(?:[A-Za-z]:)?/(?:Users|home)/[^/]+(?=/|$)", "~", normalized) if re.match(
+            r"^(?:[A-Za-z]:)?/(?:Users|home)/", normalized) else value
+
+    row = dict(event)
+    if isinstance(row.get("worktree"), str):
+        row["worktree"] = _worktree_label(row["worktree"])
+    for name in ("manual_brief", "hook_cwd", "detail_path"):
+        if name in row:
+            row[name] = home_path(row[name])
+    if isinstance(row.get("result"), dict):
+        result = row["result"] = dict(row["result"])
+        if "manual_brief" in result:
+            result["manual_brief"] = home_path(result["manual_brief"])
+        if isinstance(result.get("workers"), list):
+            result["workers"] = [dict(worker, manual_brief=home_path(worker["manual_brief"]))
+                if isinstance(worker, dict) and "manual_brief" in worker else worker
+                for worker in result["workers"]]
+    return row
+
+
 def append_event(root, event):
     """Append one event as exactly one write() - atomic under O_APPEND (spike S3)."""
     logdir = Path(root) / "log"
@@ -241,7 +271,7 @@ def append_event(root, event):
     logfile = logdir / "{}.jsonl".format(event["session"])
     if "seq" not in event:
         event["seq"] = _next_seq(logfile)
-    payload = json.dumps(event, sort_keys=True) + "\n"
+    payload = json.dumps(_portable_event(event), sort_keys=True) + "\n"
 
     # LOG-A: emit a LEADING newline when the file does not already end in one, so a fused
     # record is impossible to express rather than merely detectable (control ladder rung 1).
@@ -1264,8 +1294,8 @@ def _build_parser():
     kick.add_argument("--deadline-at", dest="deadline_at", type=float, default=None, metavar="EPOCH",
                       help="the work item's deadline from the plan row; when passed, a kick is due "
                            "even on a live track")
-    lg = sub.add_parser("log", help="ledger maintenance: `portable <file>...` rewrites the "
-                                    "worktree field of existing rows to its label (F-3)")
+    lg = sub.add_parser("log", help="ledger maintenance: `portable <file>...` normalizes "
+                                    "diagnostic paths in existing rows (F-3)")
     lg.add_argument("action", choices=["portable"])
     lg.add_argument("files", nargs="+")
     collab = sub.add_parser("collaborate", help="cross-session collaboration checks")
@@ -3863,7 +3893,7 @@ def heartbeat_doctor_line(root, now):
 
 
 def cmd_log_portable(paths):
-    """F-3 migration: rewrite ONLY the `worktree` field of existing ledger rows to its label.
+    """F-3 migration: normalize only the diagnostic fields handled by the event writer.
     Idempotent (a label maps to itself); every other line is copied byte-for-byte, including
     lines that are not JSON; the writer's own dump (sort_keys) is used for the rewritten rows."""
     for raw in paths:
@@ -3881,10 +3911,9 @@ def cmd_log_portable(paths):
                 row = json.loads(body) if body.strip() else None
             except ValueError:
                 row = None
-            value = row.get("worktree") if isinstance(row, dict) else None
-            if isinstance(value, str) and ("/" in value or "\\" in value):
-                row["worktree"] = _worktree_label(value)
-                out.append(json.dumps(row, sort_keys=True) + ending)
+            portable = _portable_event(row) if isinstance(row, dict) else row
+            if portable != row:
+                out.append(json.dumps(portable, sort_keys=True) + ending)
                 rewritten += 1
             else:
                 out.append(line)

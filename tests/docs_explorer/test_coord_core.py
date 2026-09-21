@@ -592,7 +592,7 @@ class CollaborationTests(CoordTestCase):
         self.assertEqual(2, files)
         design = next(s for s in sessions if s["session"] == "design")
         self.assertEqual("copilot", design["agent"])
-        self.assertEqual("C:/repo-design", design["worktree"])
+        self.assertEqual("repo-design", design["worktree"])
         self.assertEqual(["docs/mockups/*"], [c["path"] for c in design["claims"]])
 
     def test_session_end_removes_the_active_session(self):

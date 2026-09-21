@@ -124,9 +124,11 @@ both Owner roles and retained failures. Export also rechecks private raw hashes 
 the independently reviewed raw-evidence checker. The public verifier does not launch models
 or issue a reusable qualification attestation.
 
-Git checks require the retained local archive branches: `archive/coord-e2e-native-proof-joins`
-and `archive/coord-e2e-final-owner-proof-joins`. A fresh clone containing only linear main
-will not contain all original worker/join objects. The archive is local; no branch was pushed.
+Git checks now use a pinned original-object fixture imported into an isolated temporary
+object store. A fresh single-branch clone needs no local archive refs or private files.
+The [portable-proof note](coordination-fresh-clone.md) records provenance, unchanged Git
+predicates and corruption controls. This portability change does not alter the historical
+profile claims or enable a new profile by itself.
 
 Run from the repository:
 

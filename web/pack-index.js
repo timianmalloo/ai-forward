@@ -21,7 +21,7 @@ window.PACK_INDEX = {
 {
 "id": "scripts",
 "label": "Scripts",
-"count": 41
+"count": 43
 },
 {
 "id": "personas",
@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 290
+"count": 298
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 465,
+"total": 475,
 "items": [
 {
 "cat": "knowledge",
@@ -971,7 +971,7 @@ window.PACK_INDEX = {
 "summary": "coord-core.py - agent coordination, Phase 1 walking skeleton.",
 "path": "pack/scripts/coord-core.py",
 "kind": "script",
-"text": "coord-core.py coord-core.py - agent coordination, phase 1 walking skeleton. holds the record of intent and answers \"may this session touch this artifact?\" from it. append-only jsonl, one file per session; every piece of state is a fold over it. no daemon, no database, no dependency beyond the standard library (adr-0007). four controls here were observed failing on the un-fixed shape before they were trusted: log-a an append onto a file not ending in a newline fuses two records and loses both r4 a check that scanned nothing must not report \"free\" ctrl-port os.open without o_binary translates newlines on windows -- which also masked the log-a control, because a stray cr still terminates a line f8 a claim over the coordination record itself would lock the substrate design: docs/design/coord-core-phase1.md __init__ repo_root checkout_top resolve_root _norm _literal_segments overlaps excepted lease_covers make_event _next_seq append_event read_events fold check _safe render append_decision read_decisions append_record request_log_path read_request_events decision_request_state fold_requests blob_sha current_blob annotate_requests request_doctor_lines request_metrics lease_overlap_lines _git _git_status leader_validate leader_read leader_state leader_decide refuse leader_write leader_metrics _leader_lines leader_doctor_line cmd_leader refused unique_commits default_branch commits_ahead_of_default staged_paths _identity session_id_error _build_parser entry_fingerprint conservation_lost merge_register _read_jsonl cmd_merge_register load_registry classify regen_command resolve_interpreter _canonical_project pack_defaults _dirty_paths verify_regen_command cmd_classify_init record_regen_owed regen_owed clear_regen_owed _reject_path render_harness_capability _relativise _patch_paths _physical_spelling _native_paths _native_lease_covers physical parse_hook_request detect_harness hook_decision_of hook_response_is_valid hook_response _not_checked cmd_hook cmd_precommit cmd_guard _worktree_key _worktree_label active_sessions session_contract_path _role_token _strip_cell contract_ownership infer_session_roles owner_rows_for_path collaboration_findings cmd_session_list cmd_collaborate _parse_deadline _request_twin _deadline_text cmd_request _slug worktree_inventory worktree_is_clean base_commit classify_removals worktree_safety cmd_worktree session_tree_kind wt4_exception_rate cmd_session cmd_metrics heartbeat_scratch_path _fresh_scratch _read_scratch _write_scratch _renew_leader_if_holder heartbeat_tick _has_progress track_fold worktree_mtimes _track_render_rows cmd_track _load_mail cmd_kick refused liveness_metrics heartbeat_doctor_line cmd_log_portable cmd_install _install_merge_driver _write_conflict read cmd_merge_derived cmd_regen driver_status driver_path_status cmd_doctor cmd_plugin_emit _print_settings_entry native_hook_config main"
+"text": "coord-core.py coord-core.py - agent coordination, phase 1 walking skeleton. holds the record of intent and answers \"may this session touch this artifact?\" from it. append-only jsonl, one file per session; every piece of state is a fold over it. no daemon, no database, no dependency beyond the standard library (adr-0007). four controls here were observed failing on the un-fixed shape before they were trusted: log-a an append onto a file not ending in a newline fuses two records and loses both r4 a check that scanned nothing must not report \"free\" ctrl-port os.open without o_binary translates newlines on windows -- which also masked the log-a control, because a stray cr still terminates a line f8 a claim over the coordination record itself would lock the substrate design: docs/design/coord-core-phase1.md __init__ repo_root checkout_top resolve_root _norm _literal_segments overlaps excepted lease_covers make_event _next_seq _portable_event home_path append_event read_events fold check _safe render append_decision read_decisions append_record request_log_path read_request_events decision_request_state fold_requests blob_sha current_blob annotate_requests request_doctor_lines request_metrics lease_overlap_lines _git _git_status leader_validate leader_read leader_state leader_decide refuse leader_write leader_metrics _leader_lines leader_doctor_line cmd_leader refused unique_commits default_branch commits_ahead_of_default staged_paths _identity session_id_error _build_parser entry_fingerprint conservation_lost merge_register _read_jsonl cmd_merge_register load_registry classify regen_command resolve_interpreter _canonical_project pack_defaults _dirty_paths verify_regen_command cmd_classify_init record_regen_owed regen_owed clear_regen_owed _reject_path render_harness_capability _relativise _patch_paths _physical_spelling _native_paths _native_lease_covers physical parse_hook_request detect_harness hook_decision_of hook_response_is_valid hook_response _not_checked cmd_hook cmd_precommit cmd_guard _worktree_key _worktree_label active_sessions session_contract_path _role_token _strip_cell contract_ownership infer_session_roles owner_rows_for_path collaboration_findings cmd_session_list cmd_collaborate _parse_deadline _request_twin _deadline_text cmd_request _slug worktree_inventory worktree_is_clean base_commit classify_removals worktree_safety cmd_worktree session_tree_kind wt4_exception_rate cmd_session cmd_metrics heartbeat_scratch_path _fresh_scratch _read_scratch _write_scratch _renew_leader_if_holder heartbeat_tick _has_progress track_fold worktree_mtimes _track_render_rows cmd_track _load_mail cmd_kick refused liveness_metrics heartbeat_doctor_line cmd_log_portable cmd_install _install_merge_driver _write_conflict read cmd_merge_derived cmd_regen driver_status driver_path_status cmd_doctor cmd_plugin_emit _print_settings_entry native_hook_config main"
 },
 {
 "cat": "scripts",
@@ -998,7 +998,7 @@ window.PACK_INDEX = {
 "summary": "Prepare and run an opt-in, qualified multi-harness coordination contract.",
 "path": "pack/scripts/coord-runner.py",
 "kind": "script",
-"text": "coord-runner.py prepare and run an opt-in, qualified multi-harness coordination contract. run `prepare --contract file`, qualify the resulting checkout-specific fingerprints, then `run --run id --qualification file`. `status --run id` never replays work. the existing coordinator remains responsible for decisions and semantic review. load_module __init__ require encoded digest read_json private_write git identity text integer relative_path child_env file_hash __init__ directory event compiled_prompts access_roots validate prepare public_manifest load resolve_executable fingerprint fingerprints leader renew_admitted worker_identity verify status run cancel_signal cancelled fence execute worker_fence main"
+"text": "coord-runner.py prepare and run an opt-in, qualified multi-harness coordination contract. run `prepare --contract file`, qualify the resulting checkout-specific fingerprints, then `run --run id --qualification file`. `status --run id` never replays work. the existing coordinator remains responsible for decisions and semantic review. load_module __init__ require encoded digest interruption read_json private_write git identity text integer relative_path child_env file_hash __init__ directory event compiled_prompts access_roots validate prepare public_manifest load controls control attach attach_owned checkout_identity admitted resolve_executable fingerprint fingerprints bounded_profile bounded_prompt leader renew_admitted worker_identity verify status retained_tree run cancel_signal cancelled fence execute worker_fence next_prompt permission_handler main"
 },
 {
 "cat": "scripts",
@@ -1011,12 +1011,30 @@ window.PACK_INDEX = {
 },
 {
 "cat": "scripts",
+"id": "coord_native.py",
+"title": "coord_native.py",
+"summary": "Read-only Codex thread metadata over its measured local WebSocket endpoint.",
+"path": "pack/scripts/coord_native.py",
+"kind": "script",
+"text": "coord_native.py read-only codex thread metadata over its measured local websocket endpoint. this deliberately small client handles unfragmented native json frames and ping. unknown framing fails closed. it never resumes, prompts, approves or cancels a thread. thread_metadata check read send message receive rpc"
+},
+{
+"cat": "scripts",
+"id": "coord_runtime.py",
+"title": "coord_runtime.py",
+"summary": "Private, bounded, append-only runtime controls for an already admitted run.",
+"path": "pack/scripts/coord_runtime.py",
+"kind": "script",
+"text": "coord_runtime.py private, bounded, append-only runtime controls for an already admitted run. one record is one input or decision fact. filesystem ownership is the authority boundary; this does not isolate mutually hostile programs running as the same user. encoded digest require __init__ locked _records records _append enqueue finish next_prompt dispatched permission decide answer pending"
+},
+{
+"cat": "scripts",
 "id": "coord_transport.py",
 "title": "coord_transport.py",
 "summary": "Bounded POSIX ACP / Agy session IO. Native harness policy remains authoritative.",
 "path": "pack/scripts/coord_transport.py",
 "kind": "script",
-"text": "coord_transport.py bounded posix acp / agy session io. native harness policy remains authoritative. this is a lifecycle adapter, not an editor proxy or an approval broker. only locally selected operational fields leave this module; wire bodies are discarded. file_root_identities __init__ _identifier _signal_group __init__ attach check queue pump receive flush_input cleanup __init__ event admit progress permission rpc acp native_denial agy run_session"
+"text": "coord_transport.py bounded posix acp / agy session io. native harness policy remains authoritative. this is a lifecycle adapter, not an editor proxy or an approval broker. only locally selected operational fields leave this module; wire bodies are discarded. file_root_identities __init__ _identifier _signal_group __init__ attach check queue pump receive flush_input cleanup __init__ event admit callback wait prompts progress permission rpc acp native_denial agy run_session"
 },
 {
 "cat": "scripts",
@@ -1749,6 +1767,24 @@ window.PACK_INDEX = {
 },
 {
 "cat": "graph",
+"id": "api-coord_native",
+"title": "API — coord_native.py",
+"summary": "Read-only Codex thread metadata over its measured local WebSocket endpoint.",
+"path": "docs/api/coord_native.md",
+"kind": "api",
+"text": "api — coord_native.py read-only codex thread metadata over its measured local websocket endpoint. api scripts generated refines api-index"
+},
+{
+"cat": "graph",
+"id": "api-coord_runtime",
+"title": "API — coord_runtime.py",
+"summary": "Private, bounded, append-only runtime controls for an already admitted run.",
+"path": "docs/api/coord_runtime.md",
+"kind": "api",
+"text": "api — coord_runtime.py private, bounded, append-only runtime controls for an already admitted run. api scripts generated refines api-index"
+},
+{
+"cat": "graph",
 "id": "api-coord_transport",
 "title": "API — coord_transport.py",
 "summary": "Bounded POSIX ACP / Agy session IO. Native harness policy remains authoritative.",
@@ -1805,10 +1841,10 @@ window.PACK_INDEX = {
 "cat": "graph",
 "id": "api-index",
 "title": "API reference — the deployed script bundle",
-"summary": "Generated API reference for the pack's public surface — the deployed script bundle. 525 public functions across 40 modules, 47% carrying a docstring.",
+"summary": "Generated API reference for the pack's public surface — the deployed script bundle. 530 public functions across 42 modules, 47% carrying a docstring.",
 "path": "docs/api/index.md",
 "kind": "api",
-"text": "api reference — the deployed script bundle generated api reference for the pack's public surface — the deployed script bundle. 525 public functions across 40 modules, 47% carrying a docstring. api scripts generated index documents architecture"
+"text": "api reference — the deployed script bundle generated api reference for the pack's public surface — the deployed script bundle. 530 public functions across 42 modules, 47% carrying a docstring. api scripts generated index documents architecture"
 },
 {
 "cat": "graph",
@@ -2484,6 +2520,15 @@ window.PACK_INDEX = {
 "path": "docs/design/coord-federation-phase3.md",
 "kind": "design",
 "text": "design — coord phase 3 (collision-proof allocator · artifact-class registry & derived merge driver · harness adapters) phase 3 closes the two structural failure modes — allocation collision and derived-artifact conflict — and turns the harness adapter from an assumption into a contract. six spikes ran; one closed the f1 condition open since the architecture (copilot cli does invoke pretooluse, in the claude plugin format, and fails open on a 30 s timeout), and one corrected adr-0009's own framing of what an unregistered merge driver costs. coordination allocator kg-b merge-driver gitattributes copilot harness-adapter spikes implements architecture-agent-coordination implements adr-0008-non-coordinating-allocation implements adr-0009-artifact-class-and-derived-merge refines design-coord-enforcement-phase2 relates-to defect-classes"
+},
+{
+"cat": "graph",
+"id": "design-coordination-runtime-v2",
+"title": "Coordination runtime control contracts",
+"summary": "Private append-only controls around the existing bounded ACP/native runtime.",
+"path": "docs/design/coordination-runtime-v2.md",
+"kind": "design",
+"text": "coordination runtime control contracts private append-only controls around the existing bounded acp/native runtime. coordination runtime permissions audit implements spec-coordination-runtime-v2 relates-to plan-coordination-runtime-v2"
 },
 {
 "cat": "graph",
@@ -3423,6 +3468,15 @@ window.PACK_INDEX = {
 },
 {
 "cat": "graph",
+"id": "kb-coordination-runtime-capabilities",
+"title": "Installed runtime control capabilities",
+"summary": "Measured local session creation/loading and a native permission callback, plus installed live-input interfaces and their remaining qualification boundaries.",
+"path": "docs/knowledge/acp-compatibility/runtime-capabilities.md",
+"kind": "knowledge",
+"text": "installed runtime control capabilities measured local session creation/loading and a native permission callback, plus installed live-input interfaces and their remaining qualification boundaries. coordination acp permissions sessions relates-to spec-coordination-runtime-v2 relates-to design-coordination-runtime-v2 relates-to spec-acp-coordination"
+},
+{
+"cat": "graph",
 "id": "kb-ddm-comparables",
 "title": "Domain & Data Modelling — Comparables",
 "summary": "How other approaches frame and solve \"a durable model that keeps history and an audit trail without a shadow schema\" — CQRS, event sourcing, Data Vault, anchor modelling, temporal tables, and the two in-repo precedents (Meridian ADR-0022,…",
@@ -3828,6 +3882,15 @@ window.PACK_INDEX = {
 },
 {
 "cat": "graph",
+"id": "plan-coordination-runtime-v2",
+"title": "Coordination runtime expansion and portable proof",
+"summary": "Bounded integration, portable historical evidence, and runtime control work.",
+"path": "docs/plans/coordination-runtime-v2.md",
+"kind": "plan",
+"text": "coordination runtime expansion and portable proof bounded integration, portable historical evidence, and runtime control work. coordination runtime proof implements spec-coordination-runtime-v2 depends-on design-coordination-runtime-v2"
+},
+{
+"cat": "graph",
 "id": "plan-native-coordination-repair",
 "title": "Repair native coordination transport and requalify profiles",
 "summary": "Red-first repairs for ACP extension notifications and native Agy refusal, followed by bounded real-profile qualification without changing trust or permission settings.",
@@ -3888,6 +3951,24 @@ window.PACK_INDEX = {
 "path": "docs/proof/coordination-end-to-end.md",
 "kind": "proof-pack",
 "text": "end-to-end coordination qualification actual local worker controls, negative handback fences, four reviewed codex-owned joins and one directly inspected native claude-owned join; bounded posix profile evidence, not blanket unattended authorization. coordination qualification acp proof implements coordination-end-to-end implements design-multi-harness-runner implements spec-multi-harness-launch-and-monitor relates-to proof-native-profile-controls relates-to proof-native-ownership-enforcement"
+},
+{
+"cat": "graph",
+"id": "proof-coordination-fresh-clone",
+"title": "Portable historical coordination Git proof",
+"summary": "Original coordination receipt histories retained as a compact pinned Git object fixture let a fresh single-branch clone verify parent, path, ancestry and content invariants without archive refs or private logs.",
+"path": "docs/proof/coordination-fresh-clone.md",
+"kind": "proof-pack",
+"text": "portable historical coordination git proof original coordination receipt histories retained as a compact pinned git object fixture let a fresh single-branch clone verify parent, path, ancestry and content invariants without archive refs or private logs. coordination proof git reproducibility refines proof-coordination-end-to-end relates-to design-multi-harness-runner relates-to spec-multi-harness-launch-and-monitor"
+},
+{
+"cat": "graph",
+"id": "proof-coordination-runtime-v2",
+"title": "Bounded coordination runtime: proof and operating limits",
+"summary": "Reproducible offline proof, native observations and explicit unsupported runtime capabilities.",
+"path": "docs/proof/coordination-runtime-v2.md",
+"kind": "proof-pack",
+"text": "bounded coordination runtime: proof and operating limits reproducible offline proof, native observations and explicit unsupported runtime capabilities. coordination proof runtime implements spec-coordination-runtime-v2 implements design-coordination-runtime-v2 depends-on proof-coordination-fresh-clone relates-to kb-coordination-runtime-capabilities"
 },
 {
 "cat": "graph",
@@ -4041,6 +4122,15 @@ window.PACK_INDEX = {
 "path": "docs/specs/compile-stage.md",
 "kind": "spec",
 "text": "compile stage — from the operator's prose to the harness- and model-specific starting prompt specifies p7 of the coordination proposal: a compile stage that turns the operator's prose into the harness- and model-specific prompt a workflow starts from — goal state, resolved references, assume: markers, harness idiom and an empty contract slot — before /optimize-graph or /prepare-for-coordination plan anything. the one invariant is that compilation never adds scope: every done-when clause traces to a raw phrase or a marked assumption, and a gate refuses the rest. raw and compiled prompts are logged together so the compiler's quality is measured by the edit distance to what the human actually ran. coordination compile prompt goal-state no-guessing harness skills p7 refines proposal-owner-coordinator-subagent-coordination relates-to spec-agent-coordination relates-to note-20260919-coordination-decisions-ratified relates-to kb-multi-agent-coordination relates-to audit-log relates-to defect-classes"
+},
+{
+"cat": "graph",
+"id": "spec-coordination-runtime-v2",
+"title": "Bounded unattended coordination and interactive control",
+"summary": "Runtime control for qualified workers, explicit permission decisions and native live session attachment.",
+"path": "docs/specs/coordination-runtime-v2.md",
+"kind": "spec",
+"text": "bounded unattended coordination and interactive control runtime control for qualified workers, explicit permission decisions and native live session attachment. coordination runtime permissions sessions refines spec-multi-harness-launch-and-monitor refines spec-acp-coordination relates-to plan-coordination-runtime-v2"
 },
 {
 "cat": "graph",

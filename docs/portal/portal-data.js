@@ -5,7 +5,7 @@ window.PORTAL_DATA = {
       "personas": 23,
       "knowledge": 39,
       "templates": 28,
-      "scripts": 41
+      "scripts": 43
     },
     "whatIs": "AI-Forward is a committed Markdown methodology pack that installs into a repo so Claude Code, GitHub Copilot, and Grok Build direct work with a shared reasoning spine, adversarial persona review, and a library of workflow skills - nothing runs as a service; everything is versioned files and stdlib scripts.",
     "skillCount": 28,
@@ -775,6 +775,11 @@ window.PORTAL_DATA = {
             "path": "../../docs/specs/compile-stage.md"
           },
           {
+            "title": "Bounded unattended coordination and interactive control",
+            "summary": "\"Runtime control for qualified workers, explicit permission decisions and native live session attachment.\"",
+            "path": "../../docs/specs/coordination-runtime-v2.md"
+          },
+          {
             "title": "Rename /design to /design-slice — Specification",
             "summary": "Specification for renaming AI-Forward's detailed component-design workflow from /design to /design-slice. The rename avoids a generic skill-name collision while preserving the workflow's meaning and updating generated Claude/Copilot pack surfaces.",
             "path": "../../docs/specs/design-slice-rename.md"
@@ -883,6 +888,11 @@ window.PORTAL_DATA = {
             "title": "Design — coord Phase 3 (collision-proof allocator · artifact-class registry & derived merge driver · harness adapters)",
             "summary": "Phase 3 closes the two structural failure modes — allocation collision and derived-artifact conflict — and turns the harness adapter from an assumption into a contract. Six spikes ran; one closed the F1 condition open since the architecture (Copilot CLI does...",
             "path": "../../docs/design/coord-federation-phase3.md"
+          },
+          {
+            "title": "Coordination runtime control contracts",
+            "summary": "\"Private append-only controls around the existing bounded ACP/native runtime.\"",
+            "path": "../../docs/design/coordination-runtime-v2.md"
           },
           {
             "title": "Docs Explorer — Grounding and Spatial Navigation Design",
@@ -1915,6 +1925,18 @@ window.PORTAL_DATA = {
         "summary": "coord_ids.py - collision-proof identifiers, in ONE place."
       },
       {
+        "id": "api-coord_native",
+        "type": "api",
+        "title": "API — coord_native.py",
+        "summary": "Read-only Codex thread metadata over its measured local WebSocket endpoint."
+      },
+      {
+        "id": "api-coord_runtime",
+        "type": "api",
+        "title": "API — coord_runtime.py",
+        "summary": "Private, bounded, append-only runtime controls for an already admitted run."
+      },
+      {
         "id": "api-coord_transport",
         "type": "api",
         "title": "API — coord_transport.py",
@@ -1954,7 +1976,7 @@ window.PORTAL_DATA = {
         "id": "api-index",
         "type": "api",
         "title": "API reference — the deployed script bundle",
-        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 525 public functions across 40 modules, 47% carrying a docstring."
+        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 530 public functions across 42 modules, 47% carrying a docstring."
       },
       {
         "id": "api-marker-lint",
@@ -2243,6 +2265,12 @@ window.PORTAL_DATA = {
         "type": "design",
         "title": "Design — coord Phase 3 (collision-proof allocator · artifact-class registry & derived merge driver · harness adapters)",
         "summary": "Phase 3 closes the two structural failure modes — allocation collision and derived-artifact conflict — and turns the harness adapter from an assumption into a..."
+      },
+      {
+        "id": "design-coordination-runtime-v2",
+        "type": "design",
+        "title": "Coordination runtime control contracts",
+        "summary": "Private append-only controls around the existing bounded ACP/native runtime."
       },
       {
         "id": "design-docs-explorer-grounding-spatial-navigation",
@@ -2639,6 +2667,12 @@ window.PORTAL_DATA = {
         "type": "knowledge",
         "title": "Continuous Improvement & Dreaming — Sources",
         "summary": "Full source list with access dates and confidence labels — primary product/platform docs (Claude Dreams, OpenClaw), seminal papers, SRE/NASA practice, and the..."
+      },
+      {
+        "id": "kb-coordination-runtime-capabilities",
+        "type": "knowledge",
+        "title": "Installed runtime control capabilities",
+        "summary": "Measured local session creation/loading and a native permission callback, plus installed live-input interfaces and their remaining qualification boundaries."
       },
       {
         "id": "kb-ddm-comparables",
@@ -3175,6 +3209,12 @@ window.PORTAL_DATA = {
         "summary": "Integrate the reviewed coordination branches, then qualify exact installed harness profiles before unattended use."
       },
       {
+        "id": "plan-coordination-runtime-v2",
+        "type": "plan",
+        "title": "Coordination runtime expansion and portable proof",
+        "summary": "Bounded integration, portable historical evidence, and runtime control work."
+      },
+      {
         "id": "plan-cross-platform-readiness",
         "type": "doc",
         "title": "Plan: make the pack's scripts, hooks, tools and skills work unchanged on Windows and macOS",
@@ -3275,6 +3315,18 @@ window.PORTAL_DATA = {
         "type": "proof-pack",
         "title": "End-to-end coordination qualification",
         "summary": "Actual local worker controls, negative handback fences, four reviewed Codex-owned joins and one directly inspected native Claude-owned join; bounded POSIX..."
+      },
+      {
+        "id": "proof-coordination-fresh-clone",
+        "type": "proof-pack",
+        "title": "Portable historical coordination Git proof",
+        "summary": "Original coordination receipt histories retained as a compact pinned Git object fixture let a fresh single-branch clone verify parent, path, ancestry and..."
+      },
+      {
+        "id": "proof-coordination-runtime-v2",
+        "type": "proof-pack",
+        "title": "Bounded coordination runtime: proof and operating limits",
+        "summary": "Reproducible offline proof, native observations and explicit unsupported runtime capabilities."
       },
       {
         "id": "proof-docs-explorer-redesign",
@@ -3431,6 +3483,12 @@ window.PORTAL_DATA = {
         "type": "spec",
         "title": "Compile stage — from the operator's prose to the harness- and model-specific starting prompt",
         "summary": "Specifies P7 of the coordination proposal: a compile stage that turns the operator's prose into the harness- and model-specific prompt a workflow starts from —..."
+      },
+      {
+        "id": "spec-coordination-runtime-v2",
+        "type": "spec",
+        "title": "Bounded unattended coordination and interactive control",
+        "summary": "Runtime control for qualified workers, explicit permission decisions and native live session attachment."
       },
       {
         "id": "spec-design-slice-rename",
@@ -3755,6 +3813,16 @@ window.PORTAL_DATA = {
       },
       {
         "from": "api-coord_ids",
+        "to": "api-index",
+        "rel": "refines"
+      },
+      {
+        "from": "api-coord_native",
+        "to": "api-index",
+        "rel": "refines"
+      },
+      {
+        "from": "api-coord_runtime",
         "to": "api-index",
         "rel": "refines"
       },
@@ -4327,6 +4395,16 @@ window.PORTAL_DATA = {
         "from": "design-coord-federation-phase3",
         "to": "design-coord-enforcement-phase2",
         "rel": "refines"
+      },
+      {
+        "from": "design-coordination-runtime-v2",
+        "to": "plan-coordination-runtime-v2",
+        "rel": "relates-to"
+      },
+      {
+        "from": "design-coordination-runtime-v2",
+        "to": "spec-coordination-runtime-v2",
+        "rel": "implements"
       },
       {
         "from": "design-docs-explorer-grounding-spatial-navigation",
@@ -5179,6 +5257,21 @@ window.PORTAL_DATA = {
         "rel": "refines"
       },
       {
+        "from": "kb-coordination-runtime-capabilities",
+        "to": "design-coordination-runtime-v2",
+        "rel": "relates-to"
+      },
+      {
+        "from": "kb-coordination-runtime-capabilities",
+        "to": "spec-acp-coordination",
+        "rel": "relates-to"
+      },
+      {
+        "from": "kb-coordination-runtime-capabilities",
+        "to": "spec-coordination-runtime-v2",
+        "rel": "relates-to"
+      },
+      {
         "from": "kb-ddm-comparables",
         "to": "kb-domain-and-data-modelling",
         "rel": "refines"
@@ -6029,6 +6122,16 @@ window.PORTAL_DATA = {
         "rel": "relates-to"
       },
       {
+        "from": "plan-coordination-runtime-v2",
+        "to": "design-coordination-runtime-v2",
+        "rel": "depends-on"
+      },
+      {
+        "from": "plan-coordination-runtime-v2",
+        "to": "spec-coordination-runtime-v2",
+        "rel": "implements"
+      },
+      {
         "from": "plan-cross-platform-readiness",
         "to": "defect-classes",
         "rel": "relates-to"
@@ -6276,6 +6379,41 @@ window.PORTAL_DATA = {
       {
         "from": "proof-coordination-end-to-end",
         "to": "spec-multi-harness-launch-and-monitor",
+        "rel": "implements"
+      },
+      {
+        "from": "proof-coordination-fresh-clone",
+        "to": "design-multi-harness-runner",
+        "rel": "relates-to"
+      },
+      {
+        "from": "proof-coordination-fresh-clone",
+        "to": "proof-coordination-end-to-end",
+        "rel": "refines"
+      },
+      {
+        "from": "proof-coordination-fresh-clone",
+        "to": "spec-multi-harness-launch-and-monitor",
+        "rel": "relates-to"
+      },
+      {
+        "from": "proof-coordination-runtime-v2",
+        "to": "design-coordination-runtime-v2",
+        "rel": "implements"
+      },
+      {
+        "from": "proof-coordination-runtime-v2",
+        "to": "kb-coordination-runtime-capabilities",
+        "rel": "relates-to"
+      },
+      {
+        "from": "proof-coordination-runtime-v2",
+        "to": "proof-coordination-fresh-clone",
+        "rel": "depends-on"
+      },
+      {
+        "from": "proof-coordination-runtime-v2",
+        "to": "spec-coordination-runtime-v2",
         "rel": "implements"
       },
       {
@@ -6787,6 +6925,21 @@ window.PORTAL_DATA = {
         "from": "spec-compile-stage",
         "to": "spec-agent-coordination",
         "rel": "relates-to"
+      },
+      {
+        "from": "spec-coordination-runtime-v2",
+        "to": "plan-coordination-runtime-v2",
+        "rel": "relates-to"
+      },
+      {
+        "from": "spec-coordination-runtime-v2",
+        "to": "spec-acp-coordination",
+        "rel": "refines"
+      },
+      {
+        "from": "spec-coordination-runtime-v2",
+        "to": "spec-multi-harness-launch-and-monitor",
+        "rel": "refines"
       },
       {
         "from": "spec-design-slice-rename",

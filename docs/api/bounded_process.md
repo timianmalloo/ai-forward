@@ -30,7 +30,7 @@ _(no docstring — coverage gap)_
 
 ## Functions
 
-### `run_bounded(command, cwd=…, env=…, timeout_seconds=…, stdout_limit=…, stderr_limit=…, memory_limit=…, process_limit=…)`
+### `run_bounded(command, cwd=…, env=…, timeout_seconds=…, stdout_limit=…, stderr_limit=…, memory_limit=…, process_limit=…, cancelled=…)`
 
 Run one process with concurrent draining, hard output caps, and tree cleanup.
 

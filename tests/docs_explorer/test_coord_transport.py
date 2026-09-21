@@ -48,6 +48,248 @@ class TransportTests(unittest.TestCase):
         path = self.root / "requests.jsonl"
         return [json.loads(line) for line in path.read_text().splitlines()] if path.exists() else []
 
+    def test_runtime_mode_selects_only_advertised_fresh_mode_before_prompt(self):
+        result = self.run_peer("mode_advertised", mode_id="read-only")
+        self.assertEqual("complete", result["code"])
+        requests = self.requests()
+        methods = [r.get("method") for r in requests]
+        self.assertLess(methods.index("session/set_mode"), methods.index("session/prompt"))
+        self.assertEqual(1, methods.count("session/set_mode"))
+        request = requests[methods.index("session/set_mode")]
+        self.assertEqual({"sessionId": "acp-fixture", "modeId": "read-only"}, request["params"])
+        self.assertIn("session_mode_selected", [event["event"] for event in self.events])
+
+    def test_runtime_mode_unknown_unadvertised_malformed_and_error_do_not_prompt(self):
+        for mode, code in (("normal", "unsupported_session_mode"), ("mode_unknown", "unsupported_session_mode"),
+                           ("mode_duplicate", "unsupported_session_mode"), ("mode_malformed", "unsupported_session_mode"),
+                           ("mode_error", "remote_error")):
+            with self.subTest(mode=mode):
+                (self.root / "requests.jsonl").unlink(missing_ok=True)
+                result = self.run_peer(mode, mode_id="read-only")
+                self.assertEqual((code, 0), (result["code"], result["prompts_started"]))
+                self.assertFalse(any(r.get("method") == "session/prompt" for r in self.requests()))
+
+    def test_runtime_mode_default_omitted_and_incompatible_input(self):
+        self.assertEqual("complete", self.run_peer("mode_advertised")["code"])
+        self.assertFalse(any(r.get("method") == "session/set_mode" for r in self.requests()))
+        for options in ({"mode_id": True}, {"mode_id": ""}, {"mode_id": "read-only", "transport": "agy"},
+                        {"mode_id": "read-only", "session_id": "acp-fixture"}):
+            with self.subTest(options=options), mock.patch.object(self.module.subprocess, "Popen") as spawn:
+                self.assertEqual("invalid_input", self.run_peer(**options)["code"])
+                spawn.assert_not_called()
+
+    def test_runtime_load_existing_session_preserves_identity_without_creation(self):
+        for mode in ("load_matching", "load_omitted", "load_meta"):
+            with self.subTest(mode=mode):
+                (self.root / "requests.jsonl").unlink(missing_ok=True)
+                result = self.run_peer(mode, session_id="acp-fixture", permission_handler=lambda *args: "once")
+                self.assertEqual(("complete", 2, "acp-fixture"),
+                                 (result["code"], result["turns_completed"], result["session_id"]))
+                methods = [r.get("method") for r in self.requests()]
+                self.assertNotIn("session/new", methods)
+                request = next(r for r in self.requests() if r.get("method") == "session/load")
+                self.assertEqual({"sessionId": "acp-fixture", "cwd": str(self.root), "mcpServers": []}, request["params"])
+                self.assertIn("session_loaded", [e["event"] for e in self.events])
+
+    def test_loaded_shared_session_is_never_cancelled_by_client_timeout(self):
+        result = self.run_peer("load_prompt_hang", session_id="acp-fixture", deadline_seconds=.2)
+        self.assertEqual(("deadline_exceeded", 1), (result["code"], result["prompts_started"]))
+        self.assertNotIn("session/cancel", [r.get("method") for r in self.requests()])
+
+    def test_runtime_load_rejects_capability_response_and_foreign_update(self):
+        for mode, code in (("load_no_capability", "unsupported_session_load"),
+                           ("load_false_capability", "unsupported_session_load"),
+                           ("load_truthy_capability", "unsupported_session_load"),
+                           ("load_mismatch", "protocol_error"), ("load_null", "protocol_error"),
+                           ("load_error", "remote_error"), ("load_foreign_update", "protocol_error"),
+                           ("load_meta_mismatch", "protocol_error"), ("load_permission", "protocol_error")):
+            with self.subTest(mode=mode):
+                (self.root / "requests.jsonl").unlink(missing_ok=True)
+                result = self.run_peer(mode, session_id="acp-fixture", permission_handler=lambda *args: "once")
+                self.assertEqual((code, 0), (result["code"], result["prompts_started"]))
+                self.assertFalse(any(r.get("method") in ("session/new", "session/prompt") for r in self.requests()))
+                self.assertEqual(0, result["permission_allowed"])
+
+    def test_runtime_load_metadata_cwd_must_match_requested_directory(self):
+        for mode, code in (("load_cwd_matching", "complete"), ("load_cwd_foreign", "protocol_error"),
+                           ("load_cwd_null", "protocol_error")):
+            with self.subTest(mode=mode):
+                result = self.run_peer(mode, session_id="acp-fixture")
+                self.assertEqual(code, result["code"])
+
+    def test_runtime_load_timeout_never_cancels_existing_session_turn(self):
+        result = self.run_peer("load_hang", session_id="acp-fixture", deadline_seconds=.15)
+        self.assertEqual(("deadline_exceeded", 0), (result["code"], result["prompts_started"]))
+        self.assertFalse((self.root / "cancel.received").exists())
+        self.assertFalse(any(r.get("method") == "session/cancel" for r in self.requests()))
+
+    def test_runtime_live_load_requires_verified_identity_and_cwd(self):
+        for mode, code in (("load_cwd_matching", "complete"), ("load_omitted", "unverified_session_cwd"),
+                           ("load_cwd_no_identity", "unverified_session_cwd")):
+            with self.subTest(mode=mode):
+                result = self.run_peer(mode, session_id="acp-fixture", require_loaded_cwd=True)
+                self.assertEqual(code, result["code"])
+                self.assertEqual(code == "complete", result["loaded_cwd_verified"])
+        for options in ({"require_loaded_cwd": True}, {"require_loaded_cwd": 1},
+                        {"require_loaded_cwd": True, "session_id": "valid", "transport": "agy"}):
+            with self.subTest(options=options), mock.patch.object(self.module.subprocess, "Popen") as spawn:
+                self.assertEqual("invalid_input", self.run_peer(**options)["code"])
+                spawn.assert_not_called()
+
+    def test_runtime_load_input_and_agy_and_roots_reject_before_spawn(self):
+        for options, code in (({"session_id": ""}, "invalid_input"), ({"session_id": True}, "invalid_input"),
+                              ({"session_id": "bad id"}, "invalid_input"),
+                              ({"session_id": "valid", "transport": "agy"}, "unsupported_session_load"),
+                              ({"session_id": "valid", "additional_roots": []}, "unsupported_file_roots")):
+            with self.subTest(options=options), mock.patch.object(self.module.subprocess, "Popen") as spawn:
+                result = self.run_peer(**options)
+                self.assertEqual(code, result["code"])
+                spawn.assert_not_called()
+
+    def test_runtime_dynamic_prompts_wait_then_close_and_recheck_authority(self):
+        for transport in ("acp", "agy"):
+            with self.subTest(transport=transport):
+                (self.root / "requests.jsonl").unlink(missing_ok=True)
+                choices = iter([None, "dynamic SECRET", False])
+                fences = []
+                result = self.run_peer(transport=transport, prompts=["first"], next_prompt=lambda remaining: next(choices),
+                    before_prompt=lambda remaining: fences.append(remaining) or True)
+                self.assertEqual(("complete", 2, 2), (result["code"], result["turns_completed"], result["prompts_started"]))
+                self.assertEqual(2, len(fences))
+                self.assertNotIn("SECRET", json.dumps([result, self.events]))
+
+    def test_runtime_dynamic_refusal_never_sends_the_followup(self):
+        fences = []
+        result = self.run_peer(prompts=["first"], next_prompt=lambda remaining: "second",
+            before_prompt=lambda remaining: fences.append(remaining) or len(fences) == 1)
+        self.assertEqual(("dispatch_refused", 1), (result["code"], result["prompts_started"]))
+        self.assertEqual(1, sum(r.get("method") == "session/prompt" for r in self.requests()))
+
+    def test_runtime_mailbox_deadline_cancel_and_turn_limit(self):
+        start = time.monotonic()
+        result = self.run_peer(prompts=["first"], next_prompt=lambda remaining: None,
+                               cancelled=lambda: time.monotonic() - start > .15)
+        self.assertEqual(("cancelled", 1), (result["code"], result["turns_completed"]))
+        result = self.run_peer(prompts=["first"], next_prompt=lambda remaining: None, deadline_seconds=.15)
+        self.assertEqual("deadline_exceeded", result["code"])
+        result = self.run_peer(prompts=["first"], next_prompt=lambda remaining: "extra", max_turns=1)
+        self.assertEqual(("turn_limit_exceeded", 1), (result["code"], result["prompts_started"]))
+
+    def test_runtime_once_approval_reaches_completion_and_preserves_private_identity(self):
+        polls = []
+        def decide(request, remaining):
+            polls.append(request)
+            return None if len(polls) < 3 else "once"
+        result = self.run_peer("runtime_permission", prompts=["first"], permission_handler=decide)
+        self.assertEqual(("complete", 1, 1, 0), (result["code"], result["permission_requests"],
+                         result["permission_allowed"], result["permission_denials"]))
+        self.assertEqual(3, len(polls))
+        self.assertEqual(polls[0], polls[1])
+        self.assertEqual({"sessionId", "requestId", "requestSequence", "options", "toolCall"}, set(polls[0]))
+        self.assertEqual("permission-request", polls[0]["requestId"])
+        self.assertNotIn("SECRET", json.dumps([result, self.events]))
+
+    def test_runtime_reused_native_permission_id_gets_new_request_sequence(self):
+        requests = []
+        def decide(request, remaining):
+            requests.append(request)
+            return "once" if request["requestSequence"] == 1 else "reject"
+        result = self.run_peer("runtime_permission", permission_handler=decide)
+        self.assertEqual(("permission_denied", 1, 1, 1), (result["code"], result["turns_completed"],
+                         result["permission_allowed"], result["permission_denials"]))
+        self.assertEqual([1, 2], [r["requestSequence"] for r in requests])
+        self.assertEqual(requests[0]["requestId"], requests[1]["requestId"])
+
+    def test_runtime_permission_reject_unknown_persistent_and_mutated_options(self):
+        for decision, code in (("reject", "permission_denied"), ("allow", "permission_decision_invalid"),
+                               ("unknown", "permission_decision_invalid"), (True, "permission_decision_invalid")):
+            with self.subTest(decision=decision):
+                result = self.run_peer("runtime_permission", permission_handler=lambda request, remaining: decision)
+                self.assertEqual((code, 0), (result["code"], result["turns_completed"]))
+        def tamper(request, remaining):
+            request["options"].append({"optionId": "injected", "kind": "allow_once"})
+            return "injected"
+        self.assertEqual("permission_decision_invalid", self.run_peer("runtime_permission", permission_handler=tamper)["code"])
+        calls = []
+        result = self.run_peer("runtime_permission_duplicate", permission_handler=lambda *args: calls.append(args))
+        self.assertEqual(("protocol_error", []), (result["code"], calls))
+
+    def test_runtime_permission_wait_retains_deadline_cancel_and_output_bound(self):
+        result = self.run_peer("runtime_permission", permission_handler=lambda *args: None, deadline_seconds=.15)
+        self.assertEqual("deadline_exceeded", result["code"])
+        start = time.monotonic()
+        result = self.run_peer("runtime_permission", permission_handler=lambda *args: None,
+                               cancelled=lambda: time.monotonic() - start > .15)
+        self.assertEqual("cancelled", result["code"])
+        replies = [r for r in self.requests() if r.get("id") == "permission-request" and "result" in r]
+        self.assertTrue(any(r["result"]["outcome"] == {"outcome": "cancelled"} for r in replies))
+        result = self.run_peer("runtime_permission_flood", permission_handler=lambda *args: None, output_limit=4096)
+        self.assertEqual("output_limit_exceeded", result["code"])
+
+    def test_runtime_callback_failure_and_prompt_started_retry_floor(self):
+        def broken(*args):
+            raise RuntimeError("SECRET")
+        for options in ({"next_prompt": broken}, {"permission_handler": broken}):
+            with self.subTest(options=options):
+                mode = "runtime_permission" if "permission_handler" in options else "normal"
+                result = self.run_peer(mode, prompts=["first"], **options)
+                self.assertEqual(("callback_failed", 1), (result["code"], result["prompts_started"]))
+                self.assertNotIn("SECRET", json.dumps(result))
+        def broken_event(event):
+            if event["event"] == "prompt_started":
+                raise RuntimeError("SECRET")
+        result = self.run_peer(emit=broken_event)
+        self.assertEqual(("callback_failed", 1), (result["code"], result["prompts_started"]))
+
+    def test_runtime_agy_ask_and_invalid_callbacks_refuse_before_spawn(self):
+        for options, code in (({"transport": "agy", "permission_handler": lambda *a: None}, "unsupported_permission_handler"),
+                              ({"next_prompt": 1}, "invalid_input"), ({"permission_handler": 1}, "invalid_input"),
+                              ({"max_turns": True}, "invalid_input"), ({"max_turns": 9}, "invalid_input")):
+            with self.subTest(options=options), mock.patch.object(self.module.subprocess, "Popen") as spawn:
+                result = self.run_peer(**options)
+                self.assertEqual(code, result["code"])
+                spawn.assert_not_called()
+
+    def test_runtime_dynamic_input_schema_size_and_slow_callback(self):
+        for value, code in ((True, "invalid_dynamic_prompt"), ("", "invalid_dynamic_prompt"),
+                            ({}, "invalid_dynamic_prompt"), ("x" * (self.module.MAX_INPUT_BYTES + 1), "input_limit_exceeded")):
+            with self.subTest(code=code, kind=type(value).__name__):
+                result = self.run_peer(prompts=["first"], next_prompt=lambda remaining: value)
+                self.assertEqual((code, 1), (result["code"], result["prompts_started"]))
+        def slow(remaining):
+            time.sleep(.2)
+            return "late"
+        result = self.run_peer(prompts=["first"], deadline_seconds=.15, next_prompt=slow)
+        self.assertEqual(("deadline_exceeded", 1), (result["code"], result["prompts_started"]))
+
+    def test_runtime_pending_event_failure_cancels_native_request(self):
+        def fail(event):
+            if event["event"] == "permission_pending":
+                raise RuntimeError("SECRET")
+        result = self.run_peer("runtime_permission", prompts=["first"], emit=fail, permission_handler=lambda *args: "once")
+        self.assertEqual(("callback_failed", 1, 0), (result["code"], result["prompts_started"], result["permission_allowed"]))
+        reply = next(r for r in self.requests() if r.get("id") == "permission-request" and "result" in r)
+        self.assertEqual({"outcome": "cancelled"}, reply["result"]["outcome"])
+
+    def test_runtime_cleanup_never_flushes_queued_prompt(self):
+        pending = []
+        original = self.module._Wire.queue
+        def queue_then_cancel(wire, message):
+            original(wire, message)
+            if message.get("method") == "session/prompt":
+                pending.append(True)
+        with mock.patch.object(self.module._Wire, "queue", queue_then_cancel):
+            result = self.run_peer(prompts=["first"], cancelled=lambda: bool(pending))
+        self.assertEqual(("cancelled", 1), (result["code"], result["prompts_started"]))
+        self.assertFalse(any(r.get("method") == "session/prompt" for r in self.requests()))
+    def test_runtime_cleanup_never_flushes_queued_approval(self):
+        def broken_observer(event):
+            if event["event"] == "permission_allowed":
+                raise RuntimeError("SECRET")
+        result = self.run_peer("runtime_permission", prompts=["first"], permission_handler=lambda *a: "once", emit=broken_observer)
+        self.assertEqual("callback_failed", result["code"])
+        self.assertFalse(any(r.get("result", {}).get("outcome", {}).get("optionId") == "once" for r in self.requests()))
+
     def test_acp_two_turns_progress_and_no_raw_output(self):
         result = self.run_peer()
         self.assertEqual(("complete", "complete", 2),

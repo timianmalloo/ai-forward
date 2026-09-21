@@ -12,6 +12,8 @@ links:
   - { to: proof-coordination-end-to-end, rel: relates-to }
 review-by: "2026-12-21"
 summary: Repair measured startup gaps, qualify native controls, then exercise reviewed handback across all four installed harnesses with Codex or Claude holding the Owner seat.
+review-suggested:
+  - { by: proof-coordination-end-to-end, on: 2026-09-21, reason: "Portable original-object proof replaces local archive-ref prerequisite; runtime-v2 supplies bounded opt-in controls." }
 ---
 
 # End-to-end local coordination

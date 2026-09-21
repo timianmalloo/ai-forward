@@ -22,6 +22,7 @@
 *.gif  binary
 *.zip  binary
 *.ico  binary
+*.pack binary
 docs/docs-index.js merge=coord-regen
 docs/audit/audit-data.js merge=coord-regen
 docs/audit/index.html merge=coord-regen

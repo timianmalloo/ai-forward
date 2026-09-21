@@ -698,7 +698,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b6e7b8152a3e6fccbaca2e5109140c762632ffd18b379de93a1da1f9ccb80041"
+      "sourceSha256": "c6e345ea376641275027bf60f7a239b6d442cc14b5e2cbd3ac71ef22353289c9"
     },
     {
       "id": "api-conductor-join",
@@ -798,7 +798,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "49067e728df5822f23c5afd1709610e99bab20b0c830f4c0eb1e623909e82bfa"
+      "sourceSha256": "a79ca50064d5c26f4d53714fc03d8323ad53fd89d741fc1206e0ddeafeab29c2"
     },
     {
       "id": "api-coord-decide",
@@ -873,7 +873,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "eefe2f5ede2aae3602401e5eaecb8a137657ebf0f09e4216764d1c2cb42e44e3"
+      "sourceSha256": "1510d8a14be71b0aa0e3f316479fa6e3249c4d5ff47b63244c6c841ceca3243f"
     },
     {
       "id": "api-coord_ids",
@@ -901,6 +901,56 @@ window.DOCS_INDEX = {
       "sourceSha256": "f319b24eccefd6b23a2a59cdd2f30353999f1e3dc38e3699b651f874f51dc298"
     },
     {
+      "id": "api-coord_native",
+      "path": "docs/api/coord_native.md",
+      "title": "API — coord_native.py",
+      "type": "api",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-03-03",
+      "reviewSuggested": [],
+      "summary": "Read-only Codex thread metadata over its measured local WebSocket endpoint.",
+      "tags": [
+        "api",
+        "scripts",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "api-index",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "a742f43a708a2b42100a2652947211038760bb9034dee4e22a372ded9afba65b"
+    },
+    {
+      "id": "api-coord_runtime",
+      "path": "docs/api/coord_runtime.md",
+      "title": "API — coord_runtime.py",
+      "type": "api",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-03-03",
+      "reviewSuggested": [],
+      "summary": "Private, bounded, append-only runtime controls for an already admitted run.",
+      "tags": [
+        "api",
+        "scripts",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "api-index",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "f87b38c21936265f818e87797f3236b44fb956072f7c5064ac1ddb35e1dc9b8b"
+    },
+    {
       "id": "api-coord_transport",
       "path": "docs/api/coord_transport.md",
       "title": "API — coord_transport.py",
@@ -923,7 +973,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "18bb13b6886148d3d85c81069e69e983dd44278fa1a4f49d9b19ac69e04de05d"
+      "sourceSha256": "9535123676d9b99ffeb0f2e0de77df7b132f0a5800f43df095678a019933a4bb"
     },
     {
       "id": "api-design-lint",
@@ -1060,7 +1110,7 @@ window.DOCS_INDEX = {
       "phase": "",
       "reviewBy": "2027-03-03",
       "reviewSuggested": [],
-      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 525 public functions across 40 modules, 47% carrying a docstring.",
+      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 530 public functions across 42 modules, 47% carrying a docstring.",
       "tags": [
         "api",
         "scripts",
@@ -1074,7 +1124,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "3f6c4c7bda6587753bbc49f2d24256d40e419ecc45af32da6d7feb35a7ba4488"
+      "sourceSha256": "7fcd71c76b3f6132f4dde6e288d7dd05346dc8809ed8c0c80e783227cfc2678f"
     },
     {
       "id": "api-marker-lint",
@@ -3519,6 +3569,36 @@ window.DOCS_INDEX = {
       "sourceSha256": "3d142e7b197b63da277a714b02619b95280aae86d9e0430b6fcd74039b02a86b"
     },
     {
+      "id": "design-coordination-runtime-v2",
+      "path": "docs/design/coordination-runtime-v2.md",
+      "title": "Coordination runtime control contracts",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2026-12-21",
+      "reviewSuggested": [],
+      "summary": "Private append-only controls around the existing bounded ACP/native runtime.",
+      "tags": [
+        "coordination",
+        "runtime",
+        "permissions",
+        "audit"
+      ],
+      "links": [
+        {
+          "to": "spec-coordination-runtime-v2",
+          "rel": "implements"
+        },
+        {
+          "to": "plan-coordination-runtime-v2",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "cded507d6fb993439ca8903900bbc0fd1c5bf1a97351d76468e6524a2ed5f3df"
+    },
+    {
       "id": "design-docs-explorer-grounding-spatial-navigation",
       "path": "docs/design/docs-explorer-grounding-and-spatial-navigation.md",
       "title": "Docs Explorer — Grounding and Spatial Navigation Design",
@@ -4462,7 +4542,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "22035e3621fc2bb848f6ea0ccfa9058e6221c5103b4453071d95b98afd36bbd6"
+      "sourceSha256": "81088b671ad880972a44650753516d20835cfbe72b0ab1644411c8fa959f3874"
     },
     {
       "id": "docs-index",
@@ -7002,6 +7082,40 @@ window.DOCS_INDEX = {
       "sourceSha256": "bb27d016b82e07af7bd4a1dd442aef75611c794638d7b7c2b1da04bf4009d26a"
     },
     {
+      "id": "kb-coordination-runtime-capabilities",
+      "path": "docs/knowledge/acp-compatibility/runtime-capabilities.md",
+      "title": "Installed runtime control capabilities",
+      "type": "knowledge",
+      "status": "reviewed",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2026-12-21",
+      "reviewSuggested": [],
+      "summary": "Measured local session creation/loading and a native permission callback, plus installed live-input interfaces and their remaining qualification boundaries.",
+      "tags": [
+        "coordination",
+        "acp",
+        "permissions",
+        "sessions"
+      ],
+      "links": [
+        {
+          "to": "spec-coordination-runtime-v2",
+          "rel": "relates-to"
+        },
+        {
+          "to": "design-coordination-runtime-v2",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-acp-coordination",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "f402e9d6d4b1e907447e2efe4e8818a0984f2538286bef125a45047c16a3095b"
+    },
+    {
       "id": "kb-ddm-comparables",
       "path": "docs/knowledge/domain-and-data-modelling/comparables.md",
       "title": "Domain & Data Modelling — Comparables",
@@ -8166,7 +8280,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2026-12-21",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "proof-coordination-end-to-end",
+          "on": "2026-09-21",
+          "reason": "Portable original-object proof replaces local archive-ref prerequisite; runtime-v2 supplies bounded opt-in controls."
+        }
+      ],
       "summary": "Repair measured startup gaps, qualify native controls, then exercise reviewed handback across all four installed harnesses with Codex or Claude holding the Owner seat.",
       "tags": [
         "coordination",
@@ -8198,7 +8318,7 @@ window.DOCS_INDEX = {
           "mermaid": "graph TD\n  A[Ground and compile] --> B[Independent plan review]\n  B --> C[Grok bootstrap]\n  B --> D[Native controls and Agy policy]\n  C --> E[Independent source review and integration]\n  D --> E\n  E --> F[Actual profile control matrix]\n  F --> G[Runner handback and reviewed join]\n  G --> H[Release proof and audit]"
         }
       ],
-      "sourceSha256": "c49dfbe61fb7841184e993ae356754c4088b255ee7576686c15ead734b86fa8d"
+      "sourceSha256": "8876a176689e71b07415039de1d070a020c904265d85f93cabe3c94d4922b239"
     },
     {
       "id": "coordination-p0-p1",
@@ -8362,6 +8482,35 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "91ce98d8cc9e1cadc6623525bee9ab8df465e4d142aa6a28bf98ee9a64a7a86f"
+    },
+    {
+      "id": "plan-coordination-runtime-v2",
+      "path": "docs/plans/coordination-runtime-v2.md",
+      "title": "Coordination runtime expansion and portable proof",
+      "type": "plan",
+      "status": "active",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2026-12-21",
+      "reviewSuggested": [],
+      "summary": "Bounded integration, portable historical evidence, and runtime control work.",
+      "tags": [
+        "coordination",
+        "runtime",
+        "proof"
+      ],
+      "links": [
+        {
+          "to": "spec-coordination-runtime-v2",
+          "rel": "implements"
+        },
+        {
+          "to": "design-coordination-runtime-v2",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "b22d8168a41be579e3a3c31eaf6ec589e297d49c7cd42cfdcbe51f61ce4f048d"
     },
     {
       "id": "plan-native-coordination-repair",
@@ -8552,7 +8701,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0b4f8e5e1a0f02c9397dacc3d5883f36f9f87d9b609e4169a305985fb9b89b74"
+      "sourceSha256": "f0b7c618121b80ed5bda7ed28855030567aa967d431031e4e9a5ea5a46e96b3d"
     },
     {
       "id": "forensic-review-rev48-proof",
@@ -8688,7 +8837,84 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b8d9819e74366ffde8fc8a409586d611df1176ab86b400f14fc2dd05a91407b6"
+      "sourceSha256": "1f2e4119e9026801d034b9a23d433622aa390d0215bb16e78a6a3b8ad472fb16"
+    },
+    {
+      "id": "proof-coordination-fresh-clone",
+      "path": "docs/proof/coordination-fresh-clone.md",
+      "title": "Portable historical coordination Git proof",
+      "type": "proof-pack",
+      "status": "reviewed",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2026-12-21",
+      "reviewSuggested": [
+        {
+          "by": "proof-coordination-end-to-end",
+          "on": "2026-09-21",
+          "reason": "Portable original-object proof replaces local archive-ref prerequisite; runtime-v2 supplies bounded opt-in controls."
+        }
+      ],
+      "summary": "Original coordination receipt histories retained as a compact pinned Git object fixture let a fresh single-branch clone verify parent, path, ancestry and content invariants without archive refs or private logs.",
+      "tags": [
+        "coordination",
+        "proof",
+        "git",
+        "reproducibility"
+      ],
+      "links": [
+        {
+          "to": "proof-coordination-end-to-end",
+          "rel": "refines"
+        },
+        {
+          "to": "design-multi-harness-runner",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-multi-harness-launch-and-monitor",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "0e65fe38700220206673e68f98c48234f43eb050b30c2ea6257f87113943d001"
+    },
+    {
+      "id": "proof-coordination-runtime-v2",
+      "path": "docs/proof/coordination-runtime-v2.md",
+      "title": "Bounded coordination runtime: proof and operating limits",
+      "type": "proof-pack",
+      "status": "reviewed",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2026-12-21",
+      "reviewSuggested": [],
+      "summary": "Reproducible offline proof, native observations and explicit unsupported runtime capabilities.",
+      "tags": [
+        "coordination",
+        "proof",
+        "runtime"
+      ],
+      "links": [
+        {
+          "to": "spec-coordination-runtime-v2",
+          "rel": "implements"
+        },
+        {
+          "to": "design-coordination-runtime-v2",
+          "rel": "implements"
+        },
+        {
+          "to": "proof-coordination-fresh-clone",
+          "rel": "depends-on"
+        },
+        {
+          "to": "kb-coordination-runtime-capabilities",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "cc0d5e8f97f077e15fd13ce3ac175e61976c620ee4f505182ec632c698bcc9cc"
     },
     {
       "id": "proof-docs-explorer-redesign",
@@ -9396,6 +9622,40 @@ window.DOCS_INDEX = {
       "sourceSha256": "0b9b1afd2f95b563a0f940af93dbc5aa6d0ca90c71b7ea5531369fcc29396c3f"
     },
     {
+      "id": "spec-coordination-runtime-v2",
+      "path": "docs/specs/coordination-runtime-v2.md",
+      "title": "Bounded unattended coordination and interactive control",
+      "type": "spec",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2026-12-21",
+      "reviewSuggested": [],
+      "summary": "Runtime control for qualified workers, explicit permission decisions and native live session attachment.",
+      "tags": [
+        "coordination",
+        "runtime",
+        "permissions",
+        "sessions"
+      ],
+      "links": [
+        {
+          "to": "spec-multi-harness-launch-and-monitor",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-acp-coordination",
+          "rel": "refines"
+        },
+        {
+          "to": "plan-coordination-runtime-v2",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "6ac864798f7a484206531f7a488b99b8a72b4c068d4548e77c1a96fa6b6113ee"
+    },
+    {
       "id": "spec-design-slice-rename",
       "path": "docs/specs/design-slice-rename.md",
       "title": "Rename /design to /design-slice — Specification",
@@ -10012,7 +10272,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7df05d2e2efacc553c2afd290abd70fca6344cc247e93280edfe4fc581966466"
+      "sourceSha256": "f4a551dc2a894effe9d5d4c8df55a3bc57559df44b6ad1eae792470c3fdb597a"
     }
   ],
   "surfaces": [
@@ -10302,5 +10562,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "ba9bad55d2ad1cd8b64ed07157905b456efec1b42ab6b90e784fe79d16837126"
+  "graphSha256": "bca3fc4c08d400d0fedaaefa8b1e91c5945a2862b7ad85c936c304cae3f662f9"
 };

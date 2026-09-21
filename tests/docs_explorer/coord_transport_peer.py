@@ -199,6 +199,14 @@ while True:
         methods = ([{"id": "cached_token"}] if MODE == "auth" or MODE.startswith("grok_") else
                    [{"id": "interactive"}] if MODE == "auth_required" else [])
         result = {"protocolVersion": 1, "authMethods": methods, "agentInfo": {"version": "1.2.3"}}
+        if MODE.startswith("load_"):
+            result["agentCapabilities"] = {"loadSession": True}
+            if MODE == "load_no_capability":
+                result.pop("agentCapabilities")
+            elif MODE == "load_false_capability":
+                result["agentCapabilities"]["loadSession"] = False
+            elif MODE == "load_truthy_capability":
+                result["agentCapabilities"]["loadSession"] = 1
         if MODE.startswith("roots_"):
             result["agentInfo"]["name"] = "@agentclientprotocol/codex-acp"
             result["agentCapabilities"] = {"sessionCapabilities": {"additionalDirectories": {}}}
@@ -218,19 +226,62 @@ while True:
                 result["agentInfo"] = {"version": "1.0.34"}
     elif method == "authenticate":
         result = {}
+    elif method == "session/load":
+        if MODE == "load_hang":
+            continue
+        if MODE == "load_permission":
+            send({"jsonrpc": "2.0", "id": "early-permission", "method": "session/request_permission",
+                  "params": {"sessionId": "acp-fixture", "toolCall": {},
+                             "options": [{"optionId": "once", "kind": "allow_once"}]}})
+            receive()
+        # Recorded Grok live load replays history before returning its response.
+        send({"jsonrpc": "2.0", "method": "session/update", "params": {
+            "sessionId": "foreign" if MODE == "load_foreign_update" else "acp-fixture",
+            "update": {"sessionUpdate": "agent_message_chunk", "content": {"type": "text", "text": SECRET}}}})
+        if MODE == "load_error":
+            send({"jsonrpc": "2.0", "id": msg["id"], "error": {"code": -32603, "message": SECRET}})
+            continue
+        result = {} if MODE == "load_omitted" else {"sessionId": "acp-fixture"}
+        if MODE == "load_mismatch":
+            result["sessionId"] = "foreign"
+        elif MODE == "load_null":
+            result["sessionId"] = None
+        elif MODE.startswith("load_meta"):
+            result = {"_meta": {"sessionId": "foreign" if MODE == "load_meta_mismatch" else "acp-fixture"}}
+        elif MODE.startswith("load_cwd_"):
+            cwd = str(ROOT) if MODE == "load_cwd_matching" else "/foreign" if MODE == "load_cwd_foreign" else None
+            if MODE == "load_cwd_no_identity":
+                cwd = str(ROOT)
+            detail = {"cwd": cwd}
+            if MODE != "load_cwd_no_identity":
+                detail["sessionId"] = "acp-fixture"
+            result = {"_meta": {"sessionId": "acp-fixture", "x.ai/sessionDetail": detail}}
     elif method == "session/new":
         if MODE == "auth_required":
             send({"jsonrpc": "2.0", "id": msg["id"], "error": {"code": -32000, "message": SECRET}})
             continue
         result = {"sessionId": "acp-fixture"}
+        if MODE.startswith("mode_"):
+            result["modes"] = {"currentModeId": "agent", "availableModes": [{"id": "read-only", "name": "Ask for approval"}]}
+            if MODE == "mode_unknown":
+                result["modes"]["availableModes"] = [{"id": "agent"}]
+            elif MODE == "mode_duplicate":
+                result["modes"]["availableModes"] *= 2
+            elif MODE == "mode_malformed":
+                result["modes"]["availableModes"] = {"id": "read-only"}
         if MODE == "grok_mismatch":
             result["sessionId"] = "foreign-session"
+    elif method == "session/set_mode":
+        if MODE == "mode_error":
+            send({"jsonrpc": "2.0", "id": msg["id"], "error": {"code": -32603, "message": SECRET}})
+            continue
+        result = {}
     elif method == "session/cancel":
         (ROOT / "cancel.received").touch()
         continue
     elif method == "session/prompt":
         turn += 1
-        if MODE in ("hang", "descendant"):
+        if MODE in ("hang", "descendant", "load_prompt_hang"):
             continue
         if MODE == "slow_turn":
             time.sleep(.15)
@@ -240,12 +291,18 @@ while True:
                     "sessionId": "acp-fixture", "update": {"sessionUpdate": "agent_message_chunk", "content": {"text": SECRET}}}})
         send({"jsonrpc": "2.0", "method": "session/update", "params": {
             "sessionId": "acp-fixture", "update": {"sessionUpdate": "agent_message_chunk", "content": {"text": SECRET}}}})
-        if MODE in ("permission", "permission_no_reject", "roots_permission"):
+        if MODE in ("permission", "permission_no_reject", "roots_permission") or MODE.startswith("runtime_permission"):
             options = [{"kind": "allow_always", "optionId": "allow"}]
-            if MODE in ("permission", "roots_permission"):
+            if MODE in ("permission", "roots_permission") or MODE.startswith("runtime_permission"):
                 options.append({"kind": "reject_once", "optionId": "reject"})
+            if MODE.startswith("runtime_permission"):
+                options.append({"kind": "allow_once", "optionId": "once"})
+            if MODE == "runtime_permission_duplicate":
+                options.append({"kind": "allow_once", "optionId": "reject"})
             send({"jsonrpc": "2.0", "id": "permission-request", "method": "session/request_permission", "params": {
                 "sessionId": "acp-fixture", "options": options, "toolCall": {"rawInput": SECRET}}})
+            if MODE == "runtime_permission_flood":
+                flood(2)
             receive()
         if MODE in ("unknown_request", "extension_request"):
             send({"jsonrpc": "2.0", "id": "unknown-request", "method": "_custom/request" if MODE == "extension_request" else "fs/read_text_file", "params": {"path": SECRET}})

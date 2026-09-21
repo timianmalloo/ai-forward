@@ -33,13 +33,19 @@ Validate explicit file access; content may append without changing identity.
 
 Only preparation may defer its exact future session log until worktree registration.
 
-### `run_session(transport, argv, cwd, env, prompts, deadline_seconds, output_limit, emit, cancelled, before_prompt=…, additional_roots=…)`
+### `run_session(transport, argv, cwd, env, prompts, deadline_seconds, output_limit, emit, cancelled, before_prompt=…, additional_roots=…, next_prompt=…, permission_handler=…, max_turns=…, session_id=…, require_loaded_cwd=…, mode_id=…)`
 
 Run admitted turns in one owned process group; return metadata, never bodies.
 
 Callbacks are caller-owned, fast/bounded functions. Admission is charged to the
 same attempt deadline. The caller must bind native permissions and trust before
-launch. No capabilities or instructions are inferred from a successful result.
+launch. next_prompt returns text, None (wait), or False (close). A permission
+handler returns an offered once/reject option ID or None (wait), after checking
+current authority. It receives a stable requestSequence across polls; native
+request IDs alone may be reused. Arbitrary blocking callbacks cannot be preempted.
+No capabilities or instructions are inferred from a successful result.
+session_id requests negotiated ACP loading, not generic live-terminal attach.
+mode_id selects a literal advertised fresh-session mode before any prompt.
 
 ## Coverage
 

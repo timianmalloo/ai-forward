@@ -23,6 +23,7 @@ import subprocess
 import sys
 import threading
 import time
+import uuid
 
 from bounded_process import run_bounded
 from coord_transport import file_root_identities
@@ -66,6 +67,20 @@ def encoded(value):
 
 def digest(value):
     return hashlib.sha256(encoded(value)).hexdigest()
+
+
+@contextlib.contextmanager
+def interruption():
+    """An owned child gets a cleanup opportunity when the attachment CLI is stopped."""
+    stop = threading.Event()
+    previous = {}
+    for signum in (signal.SIGINT, signal.SIGTERM):
+        previous[signum] = signal.signal(signum, lambda _signum, _frame: stop.set())
+    try:
+        yield stop
+    finally:
+        for signum, handler in previous.items():
+            signal.signal(signum, handler)
 
 
 def read_json(path):
@@ -228,6 +243,19 @@ class Runner:
         for original in workers:
             require(isinstance(original, dict), "RUN-CONTRACT", "Each worker must be an object.")
             worker = dict(original)
+            if "runtime" in worker:
+                policy = worker["runtime"]
+                require(isinstance(policy, dict) and set(policy) - {"mode_id"} == {
+                    "unattended", "mailbox", "max_turns", "max_retries", "permissions"}
+                    and policy["unattended"] is True and type(policy["mailbox"]) is bool
+                    and integer(policy["max_turns"], 1, 8) and integer(policy["max_retries"], 0, 2)
+                    and policy["permissions"] in ("deny", "ask"), "RUN-RUNTIME",
+                    "Explicitly enable unattended:true, declare mailbox, 1–8 total turns, 0–2 startup retries and deny/ask permissions.")
+                require(not (original.get("harness") == "agy" and policy["permissions"] == "ask"),
+                        "RUN-PERMISSION-UNSUPPORTED", "Agy headless has no interactive approval response; use native interactive approval or deny mode.")
+                require("mode_id" not in policy or (original.get("transport") == "acp"
+                        and text(policy["mode_id"]) and len(policy["mode_id"]) <= 256),
+                        "RUN-RUNTIME", "Select a literal advertised ACP fresh-session mode.")
             require("additional_root_identities" not in worker, "RUN-ROOTS",
                     "Access identities are derived during preparation, never supplied by the caller.")
             identity(worker.get("session"))
@@ -280,6 +308,8 @@ class Runner:
             require(isinstance(ids, list) and 1 <= len(ids) <= 8 and all(text(i) for i in ids),
                     "RUN-COMPILE", "Supply 1–8 completed compilation audit IDs.")
             worker["prompt_texts"] = self.compiled_prompts(ids, worker["session"])
+            require("runtime" not in worker or worker["runtime"]["max_turns"] >= len(ids),
+                    "RUN-RUNTIME", "The total turn bound must include all initial prompts.")
             prepared.append(worker)
         # Headroom accommodates actual checkout/executable paths and immutable metadata.
         require(len(encoded(prepared)) <= 512 * 1024, "RUN-INPUT",
@@ -355,6 +385,145 @@ class Runner:
                 "RUN-STORE", "Prepared manifest must match its recorded admission hash.")
         return manifest
 
+    def controls(self, manifest, session):
+        from coord_runtime import Controls
+        require(any(w["session"] == session for w in manifest["workers"]),
+                "RUN-IDENTITY", "Select an admitted worker identity.")
+        return Controls(self.directory(manifest["run_id"]) / (session + ".controls"))
+
+    def control(self, manifest, command, session, compilation=None, request=None, option=None):
+        owner = manifest["owner"]
+        require(os.environ.get("AGENT_SESSION") == owner, "RUN-OWNER", "Invoke from the admitted Owner session.")
+        worker = next((w for w in manifest["workers"] if w["session"] == session), None)
+        require(worker is not None and "runtime" in worker, "RUN-RUNTIME", "Select a worker with an explicit runtime policy.")
+        box = self.controls(manifest, session)
+        if command == "permissions":
+            return {"run_id": manifest["run_id"], "worker": session, "requests": [
+                {"id": r["id"], "state": r["state"], "expires_at": r["expires_at"],
+                 "detail_path": str(box.directory / (r["id"] + ".json"))} for r in box.pending()]}
+        if command == "permission-show":
+            rows = [r for r in box.records() if r["kind"] == "permission" and r["id"] == request]
+            require(len(rows) == 1, "RUN-PERMISSION", "Select an exact pending permission request ID.")
+            return rows[0]
+        leader = self.leader(owner)
+        started = self.directory(manifest["run_id"]) / "started.json"
+        if started.exists():
+            require(read_json(started).get("epoch") == leader["epoch"], "RUN-LEADER", "The original leader epoch no longer owns this run.")
+        require(self.status(manifest)["state"] in ("prepared", "interrupted_or_running"),
+                "RUN-FINISHED", "The run has finished; retain its controls as history.")
+        events, errors, _ = core.read_events(self.root)
+        require(not errors and not any(e.get("kind") == "runner" and e.get("run_id") == manifest["run_id"]
+                and e.get("session") == owner and e.get("worker") == session and e.get("state") == "worker_finished"
+                for e in events), "RUN-FINISHED", "This worker has finished; its controls are retained as history.")
+        if command == "enqueue":
+            require(worker["runtime"]["mailbox"], "RUN-MAILBOX", "Mailbox input was not admitted in this manifest.")
+            prompt = self.compiled_prompts([compilation], session)[0]
+            require(compilation not in worker["prompts"], "RUN-COMPILE", "A prompt already present in the initial contract cannot be replayed.")
+            record = box.enqueue(compilation, digest(prompt), worker["runtime"]["max_turns"] - len(worker["prompts"]))
+        elif command == "finish":
+            require(worker["runtime"]["mailbox"], "RUN-MAILBOX", "Mailbox input was not admitted in this manifest.")
+            record = box.finish()
+        else:
+            require(command == "permission-decide" and worker["runtime"]["permissions"] == "ask"
+                    and started.exists(), "RUN-PERMISSION", "Interactive approval requires an active ask-mode worker.")
+            record = box.decide(request, option)
+        self.event(manifest, "control_admitted", worker=session, control_id=record["id"],
+                   control_kind=record["kind"], control_sha256=record["sha256"])
+        return {"state": "queued", "control_id": record["id"], "kind": record["kind"]}
+
+    def attach(self, args):
+        """Send one compiled input through a native, already addressable live backend."""
+        with interruption() as stop:
+            return self.attach_owned(args, stop)
+
+    def attach_owned(self, args, stop):
+        owner = os.environ.get("AGENT_SESSION", "")
+        identity(owner)
+        identity(args.worker)
+        identity(args.delivery_id)
+        require(args.harness in ("codex", "grok"), "RUN-ATTACH-UNSUPPORTED",
+                "Live input is qualified for addressable Codex app-server and Grok leader sessions; use native interactive control for this harness.")
+        require(str(uuid.UUID(args.native_session)) == args.native_session, "RUN-ATTACH-IDENTITY",
+                "Supply the exact canonical native session UUID, never a display name.")
+        admission = self.leader(owner)
+        cwd = Path(args.cwd).resolve()
+        inventory, error = core.worktree_inventory(self.repo)
+        sessions, errors, _ = core.active_sessions(self.root, time.time())
+        require(not error and not errors and cwd != self.repo and any(Path(r["path"]).resolve() == cwd for r in inventory or [])
+                and any(s["session"] == args.worker and s["worktree"] == cwd.name for s in sessions),
+                "RUN-ATTACH-WORKTREE", "Register the existing worker in its own repository worktree before attachment.")
+        matches = [r for r in inventory if Path(r["path"]).resolve() == cwd]
+        require(len(matches) == 1 and text(matches[0].get("branch")), "RUN-ATTACH-WORKTREE", "The registered checkout must have a branch.")
+        worker = {"session": args.worker, "harness": args.harness, "worktree": str(cwd),
+                  "branch": matches[0]["branch"], "argv": [args.executable]}
+        def checkout_identity(remaining):
+            result = run_bounded([sys.executable, str(HERE / "coord-runner.py"), "_attach_identity",
+                "--worker", args.worker, "--cwd", str(cwd), "--branch", worker["branch"]],
+                cwd=self.cwd, env=dict(os.environ), timeout_seconds=min(2, max(.001, remaining)),
+                stdout_limit=8192, stderr_limit=2048, cancelled=stop.is_set)
+            require(result.returncode == 0 and result.contained and not result.timed_out
+                    and not result.limit_exceeded and not result.cancelled, "RUN-ATTACH-WORKTREE",
+                    "The actual checkout no longer matches its registered repository and branch.")
+        checkout_identity(2)
+        socket = Path(args.socket)
+        require(socket.is_absolute() and str(socket.resolve()) == str(socket), "RUN-ATTACH-SOCKET",
+                "Supply the canonical path of an already-running local native socket.")
+        info = socket.lstat()
+        require(stat.S_ISSOCK(info.st_mode) and info.st_uid == os.getuid(), "RUN-ATTACH-SOCKET",
+                "Use an existing native socket owned by the current OS user.")
+        socket_identity = (info.st_dev, info.st_ino)
+        executable = self.resolve_executable(worker)
+        prompt = self.compiled_prompts([args.compilation], args.worker)[0]
+        manifest = {"owner": owner, "run_id": "attach-" + args.delivery_id}
+        directory = self.directory(manifest["run_id"])
+        directory.parent.mkdir(mode=0o700, exist_ok=True)
+        require(not directory.exists(), "RUN-ATTACH-REPLAY", "This delivery ID was already attempted; inspect native state, never replay blindly.")
+        directory.mkdir(mode=0o700)
+        private_write(directory / "attachment.json", {"owner": owner, "epoch": admission["epoch"],
+            "worker": args.worker, "native_session": args.native_session, "cwd": str(cwd),
+            "harness": args.harness, "socket": str(socket), "socket_identity": socket_identity,
+            "compilation": args.compilation, "prompt_sha256": digest(prompt)})
+
+        def admitted(remaining):
+            if stop.is_set():
+                return False
+            started_check = time.monotonic()
+            checkout_identity(remaining)
+            row = self.leader(owner, timeout=min(2, remaining - (time.monotonic() - started_check)))
+            current = socket.lstat()
+            return row["epoch"] == admission["epoch"] and time.time() < row["expires_at"] and (
+                current.st_dev, current.st_ino) == socket_identity and stat.S_ISSOCK(current.st_mode)
+
+        require(admitted(2), "RUN-LEADER", "Live authority and socket identity must remain unchanged.")
+        self.event(manifest, "attachment_started", worker=args.worker, harness=args.harness)
+        try:
+            if args.harness == "codex":
+                from coord_native import thread_metadata
+                native = thread_metadata(socket, args.native_session, timeout=5, cancelled=stop.is_set)
+                require(Path(native["cwd"]).resolve() == cwd, "RUN-ATTACH-CWD",
+                        "The native thread belongs to a different checkout; do not queue this delegation.")
+                require(admitted(5), "RUN-LEADER", "Authority, checkout or endpoint changed before native queue admission.")
+                result = run_bounded([executable, "queue", "--remote", "unix://" + str(socket),
+                    "--thread", args.native_session, "--message", prompt], cwd=cwd, env=child_env(worker),
+                    timeout_seconds=30, stdout_limit=8192, stderr_limit=2048, cancelled=stop.is_set)
+                accepted = result.returncode == 0 and not result.timed_out and not result.limit_exceeded and not result.cleanup_error and result.contained and not stop.is_set()
+                public = {"state": "queued" if accepted else "indeterminate", "code": "RUN-ATTACH-QUEUED" if accepted else "RUN-ATTACH-FAILED"}
+            else:
+                from coord_transport import run_session
+                result = run_session("acp", [executable, "agent", "--leader", "--leader-socket", str(socket), "stdio"],
+                    str(cwd), child_env(worker), [prompt], 120, 4 * 1024 * 1024,
+                    lambda event: self.event(manifest, "progress", worker=args.worker, observation=event),
+                    stop.is_set, admitted, session_id=args.native_session, max_turns=1, require_loaded_cwd=True)
+                public = {"state": "turn_complete" if result["outcome"] == "complete" else "indeterminate",
+                          "code": result["code"], "transport": result}
+        except (OSError, ValueError, Refused) as exc:
+            public = {"state": "indeterminate", "code": exc.code if isinstance(exc, Refused) else "RUN-ATTACH-METADATA"}
+        public.update(delivery_id=args.delivery_id, worker=args.worker, completion="Native lifecycle only; inspect work evidence separately",
+                      qualification="Attachment does not qualify or transfer ownership of the existing session")
+        private_write(directory / "result.json", public)
+        self.event(manifest, "attachment_finished", worker=args.worker, result=public)
+        return public
+
     def resolve_executable(self, worker):
         """Resolve using the child's cwd, including relative executable/PATH entries."""
         cwd = Path(worker["worktree"])
@@ -390,6 +559,30 @@ class Runner:
     def fingerprints(self, manifest):
         return {"run_id": manifest["run_id"], "qualification": "not performed",
                 "fingerprints": {w["session"]: self.fingerprint(manifest, w) for w in manifest["workers"]}}
+
+    def bounded_profile(self, manifest, worker, remaining, retry=False):
+        require(remaining > 0, "RUN-BOUNDS", "The original attempt deadline expired.")
+        command = [sys.executable, str(HERE / "coord-runner.py"), "_profile", "--run", manifest["run_id"],
+                   "--worker", worker["session"]]
+        if retry:
+            command.append("--clean")
+        result = run_bounded(command, cwd=self.cwd, env=dict(os.environ),
+                             timeout_seconds=min(2, remaining), stdout_limit=8192, stderr_limit=2048)
+        require(result.returncode == 0 and not result.timed_out and not result.limit_exceeded
+                and not result.cleanup_error and result.contained, "RUN-QUALIFICATION",
+                "Profile or clean-retry check failed within its bound; inspect the retained attempt.")
+        return json.loads(result.stdout)["fingerprint"]
+
+    def bounded_prompt(self, manifest, worker, compilation, remaining):
+        require(remaining > 0, "RUN-BOUNDS", "The original attempt deadline expired.")
+        result = run_bounded([sys.executable, str(HERE / "coord-runner.py"), "_prompt", "--run", manifest["run_id"],
+                              "--worker", worker["session"], "--compilation", compilation],
+                             cwd=self.cwd, env=dict(os.environ), timeout_seconds=min(2, remaining),
+                             stdout_limit=MAX_DOCUMENT, stderr_limit=2048)
+        require(result.returncode == 0 and not result.timed_out and not result.limit_exceeded
+                and not result.cleanup_error and result.contained, "RUN-COMPILE",
+                "Queued compilation could not be verified within its budget.")
+        return json.loads(result.stdout)["prompt"]
 
     def leader(self, owner, timeout=2, renew_run=None):
         require(timeout > 0, "RUN-LEADER", "Lease or attempt deadline expired; retain the worker evidence.")
@@ -485,11 +678,19 @@ class Runner:
                   and r.get("session") == manifest["owner"]]
         if manifest["schema"] == "coord-partial/1":
             retained = {e["worker"]: e for e in events if e.get("state") == "worker_prepared"}
+            inventory, error = core.worktree_inventory(self.repo)
+            require(not error, "RUN-WORKTREE", "Read the actual inventory before reporting retained partial worktrees.")
+            def retained_tree(worker):
+                event = retained.get(worker["session"], {})
+                matches = [r["path"] for r in inventory if r.get("branch") == worker["branch"]
+                           and core._worktree_label(r["path"]) == core._worktree_label(event.get("worktree", ""))]
+                return matches[0] if len(matches) == 1 else None
             return {"run_id": manifest["run_id"], "state": "prepare_failed" if any(
                     e.get("state") == "prepare_failed" for e in events) else "preparation_interrupted",
                     "workers": [{"session": w["session"], "branch": w["branch"],
-                                 "worktree": retained.get(w["session"], {}).get("worktree"),
-                                 "manual_brief": retained.get(w["session"], {}).get("manual_brief")}
+                                 "worktree": retained_tree(w),
+                                 "manual_brief": str(self.directory(manifest["run_id"]) / (w["session"] + ".brief.json"))
+                                     if w["session"] in retained else None}
                                 for w in manifest["workers"]],
                     "remedy": "Retain the reported trees and contract; prepare a new explicit attempt, never resume partially by guessing."}
         terminal = next((e for e in reversed(events) if e.get("state") == "finished"), None)
@@ -521,6 +722,9 @@ class Runner:
             require(isinstance(caps, dict) and all(RANK.get(caps.get(k), 0) >= RANK[v]
                     for k, v in worker["required_capabilities"].items()), "RUN-QUALIFICATION",
                     "Qualify every declared capability at the required strength or use the manual brief.")
+            require(worker.get("runtime", {}).get("permissions") != "ask"
+                    or RANK.get(caps.get("interactive_permissions"), 0) >= 1,
+                    "RUN-QUALIFICATION", "Ask mode requires a non-vacuous native callback/once-approval observation for this fingerprint.")
             self.worker_identity(manifest, worker, initial=True)
         admission = self.leader(owner)
         directory = self.directory(manifest["run_id"])
@@ -571,14 +775,78 @@ class Runner:
                     require(self.fingerprint(manifest, worker) == qualification["workers"][worker["session"]]["fingerprint"],
                             "RUN-QUALIFICATION", "The queued worker changed before launch; requalify a new explicit attempt.")
                     self.event(manifest, "worker_started", worker=worker["session"], harness=worker["harness"])
-                    def worker_fence(remaining):
+                    def worker_fence(remaining, retry=False):
+                        if cancelled():
+                            return False
+                        started_check = time.monotonic()
                         require(self.access_roots(worker, owner) == worker.get("additional_root_identities", []),
                                 "RUN-ROOTS", "An admitted operational file changed before the next prompt.")
-                        return fence(remaining)
-                    transport = run_session(worker["transport"], worker["argv"], worker["worktree"], child_env(worker),
-                        worker["prompt_texts"], worker["deadline_seconds"], worker["output_limit"],
-                        lambda event: self.event(manifest, "progress", worker=worker["session"], observation=event),
-                        cancelled, worker_fence, worker.get("additional_roots"))
+                        require(self.bounded_profile(manifest, worker, remaining, retry) == qualification["workers"][worker["session"]]["fingerprint"],
+                                "RUN-QUALIFICATION", "The admitted profile changed; stop and requalify a new attempt.")
+                        return fence(remaining - (time.monotonic() - started_check))
+                    policy = worker.get("runtime", {})
+                    box = self.controls(manifest, worker["session"]) if policy else None
+                    pending_permissions = {}
+
+                    def next_prompt(remaining):
+                        started_check = time.monotonic()
+                        row = box.next_prompt()
+                        if row is None or row is False:
+                            return row
+                        prompt = self.bounded_prompt(manifest, worker, row["compilation_id"], remaining - (time.monotonic() - started_check))
+                        require(digest(prompt) == row["prompt_sha256"], "RUN-COMPILE", "Queued compilation changed after admission.")
+                        require(worker_fence(remaining - (time.monotonic() - started_check)), "RUN-LEADER", "The original live leader is required before mailbox dispatch.")
+                        box.dispatched(row["id"])
+                        self.event(manifest, "prompt_admitted", worker=worker["session"], control_id=row["id"])
+                        return prompt
+
+                    def permission_handler(request, remaining):
+                        started_check = time.monotonic()
+                        key = request["requestSequence"]
+                        if key not in pending_permissions:
+                            require(worker_fence(remaining), "RUN-LEADER", "The original live leader is required for approval.")
+                            row = box.permission(request, expires_at=time.time() + remaining - (time.monotonic() - started_check))
+                            pending_permissions[key] = row
+                            self.event(manifest, "permission_pending", worker=worker["session"],
+                                       request_id=row["id"], detail_path=str(box.directory / (row["id"] + ".json")))
+                        row = pending_permissions[key]
+                        require(row["request"] == request, "RUN-PERMISSION", "Native permission identity changed during approval.")
+                        answer = box.answer(row["id"])
+                        if answer is not None:
+                            require(worker_fence(remaining - (time.monotonic() - started_check)), "RUN-LEADER", "The original live leader is required to select an approval.")
+                            self.event(manifest, "permission_decided", worker=worker["session"], request_id=row["id"])
+                        return answer
+
+                    options = {}
+                    if policy:
+                        options = {"max_turns": policy["max_turns"],
+                                   "next_prompt": next_prompt if policy["mailbox"] else None,
+                                   "permission_handler": permission_handler if policy["permissions"] == "ask" else None,
+                                   "mode_id": policy.get("mode_id")}
+                    deadline = time.monotonic() + worker["deadline_seconds"]
+                    attempts = []
+                    bytes_used = 0
+                    for attempt in range(policy.get("max_retries", 0) + 1):
+                        remaining = deadline - time.monotonic()
+                        require(remaining > 0 and worker["output_limit"] - bytes_used >= 1024,
+                                "RUN-BOUNDS", "The original attempt budget is exhausted.")
+                        transport = run_session(worker["transport"], worker["argv"], worker["worktree"], child_env(worker),
+                            worker["prompt_texts"], remaining, worker["output_limit"] - bytes_used,
+                            lambda event: self.event(manifest, "progress", worker=worker["session"], observation=event),
+                            cancelled, worker_fence, worker.get("additional_roots"), **options)
+                        attempts.append({"code": transport["code"], "prompts_started": transport.get("prompts_started", 0),
+                                         "duration_seconds": transport["duration_seconds"]})
+                        bytes_used += transport["stdout_bytes"] + transport["stderr_bytes"]
+                        if not (attempt < policy.get("max_retries", 0) and transport["code"] in
+                                ("spawn_failed", "early_eof", "io_error") and transport.get("prompts_started") == 0
+                                and transport["cleanup_error"] is None and not cancelled()):
+                            break
+                        require(worker_fence(deadline - time.monotonic(), retry=True), "RUN-LEADER", "Retry requires unchanged live authority.")
+                        self.event(manifest, "retry_started", worker=worker["session"], attempt=attempt + 2,
+                                   reason=transport["code"], remaining_seconds=max(0, deadline - time.monotonic()))
+                        stop.wait(min(.2 * (attempt + 1), max(0, deadline - time.monotonic())))
+                    transport["attempts"] = attempts
+                    transport["total_output_bytes"] = bytes_used
                     transport_state = {"blocked": "blocked", "cancelled": "cancelled"}.get(transport["outcome"], "failed")
                     result = {"session": worker["session"], "state": transport_state, "transport": transport,
                               "manual_brief": str(directory / (worker["session"] + ".brief.json"))}
@@ -641,16 +909,47 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("prepare").add_argument("--contract", required=True)
+    attach = sub.add_parser("attach")
+    attach.add_argument("--harness", choices=("codex", "grok", "claude", "agy"), required=True)
+    for name in ("worker", "delivery-id", "native-session", "socket", "cwd", "compilation", "executable"):
+        attach.add_argument("--" + name, required=True)
+    attachment_identity = sub.add_parser("_attach_identity")
+    for name in ("worker", "cwd", "branch"):
+        attachment_identity.add_argument("--" + name, required=True)
     for command in ("run", "status", "fingerprint", "_renew"):
         item = sub.add_parser(command)
         item.add_argument("--run", required=True)
         if command == "run":
             item.add_argument("--qualification", required=True)
+    profile = sub.add_parser("_profile")
+    profile.add_argument("--run", required=True)
+    profile.add_argument("--worker", required=True)
+    profile.add_argument("--clean", action="store_true")
+    prompt = sub.add_parser("_prompt")
+    prompt.add_argument("--run", required=True)
+    prompt.add_argument("--worker", required=True)
+    prompt.add_argument("--compilation", required=True)
+    for command in ("enqueue", "finish", "permissions", "permission-show", "permission-decide"):
+        item = sub.add_parser(command)
+        item.add_argument("--run", required=True)
+        item.add_argument("--worker", required=True)
+        if command == "enqueue":
+            item.add_argument("--compilation", required=True)
+        if command in ("permission-show", "permission-decide"):
+            item.add_argument("--request", required=True)
+        if command == "permission-decide":
+            item.add_argument("--option", required=True)
     args = parser.parse_args(argv)
     try:
         runner = Runner(Path.cwd())
         if args.command == "prepare":
             result = runner.prepare(read_json(args.contract))
+        elif args.command == "attach":
+            result = runner.attach(args)
+        elif args.command == "_attach_identity":
+            runner.worker_identity({}, {"worktree": str(Path(args.cwd).resolve()), "session": args.worker,
+                                        "branch": args.branch})
+            result = {"state": "checked"}
         else:
             manifest = runner.load(args.run, allow_partial=args.command == "status")
             if args.command == "fingerprint":
@@ -659,10 +958,26 @@ def main(argv=None):
                 result = runner.status(manifest)
             elif args.command == "_renew":
                 result = runner.renew_admitted(manifest)
+            elif args.command == "_profile":
+                worker = next(w for w in manifest["workers"] if w["session"] == args.worker)
+                if args.clean:
+                    runner.worker_identity(manifest, worker, initial=True)
+                    require(not git(Path(worker["worktree"]), "status", "--porcelain", "--untracked-files=all"),
+                            "RUN-RETRY-DIRTY", "Startup changed the checkout; inspect instead of replaying.")
+                result = {"fingerprint": runner.fingerprint(manifest, worker)}
+            elif args.command == "_prompt":
+                require(any(w["session"] == args.worker for w in manifest["workers"]),
+                        "RUN-IDENTITY", "Select an admitted worker.")
+                result = {"prompt": runner.compiled_prompts([args.compilation], args.worker)[0]}
+            elif args.command in ("enqueue", "finish", "permissions", "permission-show", "permission-decide"):
+                result = runner.control(manifest, args.command, args.worker,
+                                        getattr(args, "compilation", None), getattr(args, "request", None),
+                                        getattr(args, "option", None))
             else:
                 result = runner.run(manifest, read_json(args.qualification))
         print(json.dumps(result, sort_keys=True))
-        return 3 if args.command == "run" and result["state"] != "ready_for_review" else 0
+        return 3 if ((args.command == "run" and result["state"] != "ready_for_review")
+                     or (args.command == "attach" and result["state"] == "indeterminate")) else 0
     except Refused as exc:
         print(json.dumps({"state": "blocked", "code": exc.code, "remedy": exc.remedy}))
         return 2

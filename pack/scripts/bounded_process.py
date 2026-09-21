@@ -41,7 +41,9 @@ class ProcessResult:
         containment_mode=None,
         process_limit_enforced=False,
         aggregate_memory_limit_enforced=False,
+        cancelled=False,
     ):
+        self.cancelled = cancelled
         self.returncode = returncode
         self.stdout = stdout
         self.stderr = stderr
@@ -213,6 +215,7 @@ def run_bounded(
     stderr_limit=64 * 1024,
     memory_limit=512 * 1024 * 1024,
     process_limit=64,
+    cancelled=None,
 ):
     """Run one process with concurrent draining, hard output caps, and tree cleanup.
 
@@ -345,8 +348,18 @@ def run_bounded(
 
     deadline = time.monotonic() + timeout_seconds
     timed_out = False
+    was_cancelled = False
     cleanup_error = None
     while not stop.is_set():
+        if cancelled is not None:
+            try:
+                was_cancelled = bool(cancelled())
+            except Exception:
+                was_cancelled = True
+            if was_cancelled:
+                stop.set()
+                terminate_once()
+                break
         process_running = process.poll() is None
         readers_running = any(reader.is_alive() for reader in readers)
         if not process_running and not readers_running:
@@ -378,7 +391,7 @@ def run_bounded(
         stderr = f"{stderr}\nPROCESS_CLEANUP_FAILED: {cleanup_error}".strip()
     limit_exceeded = exceeded_names[0] if exceeded_names else None
     # Failed commands may emit untrusted partial data; callers consume stderr diagnostics only.
-    if timed_out or limit_exceeded or returncode != 0:
+    if was_cancelled or timed_out or limit_exceeded or returncode != 0:
         stdout = ""
     return ProcessResult(
         returncode,
@@ -392,4 +405,5 @@ def run_bounded(
         containment_mode=containment_mode,
         process_limit_enforced=os.name == "nt",
         aggregate_memory_limit_enforced=os.name == "nt",
+        cancelled=was_cancelled,
     )

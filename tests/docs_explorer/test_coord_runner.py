@@ -10,6 +10,7 @@ import sys
 import tempfile
 import time
 import unittest
+from coord_native_peer import NativeMetadataPeer
 
 REPO = Path(__file__).resolve().parents[2]
 SOURCE = REPO / "pack/scripts"
@@ -89,7 +90,7 @@ class RunnerTests(unittest.TestCase):
         q = {"schema": "coord-qualification/1", "workers": {s: {
             "fingerprint": fp, "version": "offline-peer-1", "evidence": "Offline protocol fixture only",
             "effective_policy": "Offline peer writes its fixed receipt only", "trust": "Disposable fixture",
-            "capabilities": CAPS} for s, fp in current["fingerprints"].items()}}
+            "capabilities": dict(CAPS, interactive_permissions="observed-only")} for s, fp in current["fingerprints"].items()}}
         path = self.repo / "qualification.json"
         path.write_text(json.dumps(q), encoding="utf-8")
         return path
@@ -457,6 +458,10 @@ class RunnerTests(unittest.TestCase):
         self.assertTrue(Path(result["workers"][0]["worktree"]).is_dir())
         self.assertTrue(Path(result["workers"][0]["manual_brief"]).is_file())
         self.assertIsNone(result["workers"][1]["worktree"])
+        self.git("worktree", "remove", result["workers"][0]["worktree"])
+        missing = self.cli("status", "--run", "test-run")
+        self.assertIsNone(missing["workers"][0]["worktree"])
+        self.assertTrue(Path(missing["workers"][0]["manual_brief"]).is_file())
 
     def test_worker_log_cannot_supply_owner_completion(self):
         self.prepare()
@@ -561,6 +566,232 @@ class RunnerTests(unittest.TestCase):
         self.assertNotIn("codex exec", brief)
         self.assertIn("Track fixture contract", brief)
         self.assertEqual(self.run_prepared()["state"], "ready_for_review")
+
+
+    def runtime_policy(self, **changes):
+        policy = dict(unattended=True, mailbox=False, max_turns=3, max_retries=1, permissions="deny")
+        policy.update(changes)
+        self.contract["workers"][0]["runtime"] = policy
+        self.contract["workers"][0]["deadline_seconds"] = 10
+
+    def test_dynamic_compiled_mailbox_reaches_same_native_session_and_closes(self):
+        self.runtime_policy(mailbox=True)
+        followup = json.loads(json.dumps(self.entries[-1]))
+        followup["id"] = "compiled-2"
+        self.entries.append(followup)
+        self.write_audit()
+        process, marker = self.running()
+        self.cli("enqueue", "--run", "test-run", "--worker", "worker-1", "--compilation", "compiled-2")
+        self.cli("finish", "--run", "test-run", "--worker", "worker-1")
+        stdout, stderr = process.communicate(timeout=12)
+        self.assertEqual(0, process.returncode, stdout + stderr)
+        result = json.loads(stdout.splitlines()[-1])
+        self.assertEqual("ready_for_review", result["state"])
+        self.assertEqual(2, result["workers"][0]["transport"]["turns_completed"])
+        self.assertEqual(2, json.loads((marker.parent / "receipt.json").read_text())["turns"])
+        self.assertNotIn("SECRET", stdout)
+        self.cli("enqueue", "--run", "test-run", "--worker", "worker-1", "--compilation", "compiled-2", expected=2)
+
+    def test_interactive_permission_requires_exact_explicit_once_option(self):
+        self.runtime_policy(permissions="ask")
+        self.contract["workers"][0]["argv"][-1] = "permission"
+        process, marker = self.running()
+        deadline = time.monotonic() + 4
+        pending = []
+        while not pending and time.monotonic() < deadline:
+            pending = self.cli("permissions", "--run", "test-run", "--worker", "worker-1")["requests"]
+        self.assertEqual(1, len(pending))
+        request = pending[0]["id"]
+        detail = self.cli("permission-show", "--run", "test-run", "--worker", "worker-1", "--request", request)
+        self.assertIn("SECRET", detail["request"]["toolCall"]["title"])
+        self.cli("permission-decide", "--run", "test-run", "--worker", "worker-1", "--request", request,
+                 "--option", "always", expected=2)
+        self.assertFalse((marker.parent / "receipt.json").exists())
+        self.cli("permission-decide", "--run", "test-run", "--worker", "worker-1", "--request", request, "--option", "yes")
+        stdout, stderr = process.communicate(timeout=12)
+        self.assertEqual(0, process.returncode, stdout + stderr)
+        result = json.loads(stdout.splitlines()[-1])
+        self.assertEqual(1, result["workers"][0]["transport"]["permission_allowed"])
+        self.assertNotIn("SECRET", stdout)
+        self.assertTrue((marker.parent / "receipt.json").exists())
+
+    def test_ask_mode_requires_separate_observed_callback_capability(self):
+        self.runtime_policy(permissions="ask")
+        prepared = self.prepare()
+        q_path = self.qualify()
+        q = json.loads(q_path.read_text())
+        q["workers"]["worker-1"]["capabilities"].pop("interactive_permissions")
+        q_path.write_text(json.dumps(q))
+        self.pin()
+        result = self.cli("run", "--run", "test-run", "--qualification", str(q_path), expected=2)
+        self.assertEqual("RUN-QUALIFICATION", result["code"])
+        self.assertFalse((Path(prepared["workers"][0]["worktree"]) / "prompt-started").exists())
+
+    def test_clean_pre_prompt_eof_retries_once_within_original_budget(self):
+        self.runtime_policy()
+        self.contract["workers"][0]["argv"][-1] = "startup-retry"
+        self.prepare()
+        result = self.run_prepared()
+        attempts = result["workers"][0]["transport"]["attempts"]
+        self.assertEqual(["early_eof", "complete"], [a["code"] for a in attempts])
+        self.assertEqual([0, 1], [a["prompts_started"] for a in attempts])
+        self.assertEqual("2", (self.repo / "startup-attempt").read_text())
+
+    def test_dirty_startup_is_not_retried(self):
+        self.runtime_policy()
+        self.contract["workers"][0]["argv"][-1] = "dirty-startup-retry"
+        self.prepare()
+        result = self.run_prepared(expected=3)
+        self.assertEqual("blocked", result["workers"][0]["state"])
+        self.assertEqual("1", (self.repo / "startup-attempt").read_text())
+
+    def test_eof_after_prompt_is_not_retried(self):
+        self.runtime_policy()
+        self.contract["workers"][0]["argv"][-1] = "post-dispatch-eof"
+        self.prepare()
+        result = self.run_prepared(expected=3)
+        self.assertEqual(1, len(result["workers"][0]["transport"]["attempts"]))
+        self.assertEqual(1, result["workers"][0]["transport"]["prompts_started"])
+
+    def test_agy_ask_is_refused_before_preparation(self):
+        self.runtime_policy(permissions="ask")
+        self.contract["workers"][0]["harness"] = "agy"
+        self.contract_path.write_text(json.dumps(self.contract))
+        result = self.cli("prepare", "--contract", str(self.contract_path), expected=2)
+        self.assertEqual("RUN-PERMISSION-UNSUPPORTED", result["code"])
+
+    def test_runtime_controls_require_explicit_unattended_enablement(self):
+        self.runtime_policy(unattended=False)
+        self.contract_path.write_text(json.dumps(self.contract))
+        self.assertEqual("RUN-RUNTIME", self.cli("prepare", "--contract", str(self.contract_path), expected=2)["code"])
+
+    def test_unadvertised_runtime_mode_blocks_before_any_prompt(self):
+        self.runtime_policy(mode_id="read-only")
+        prepared = self.prepare()
+        result = self.run_prepared(expected=3)
+        self.assertEqual("unsupported_session_mode", result["workers"][0]["transport"]["code"])
+        self.assertEqual(0, result["workers"][0]["transport"]["prompts_started"])
+        self.assertFalse((Path(prepared["workers"][0]["worktree"]) / "prompt-started").exists())
+
+    def test_completed_worker_refuses_input_while_other_worker_runs(self):
+        self.runtime_policy(mailbox=True)
+        self.contract["workers"].append(self.worker("worker-2", "work-two", "hang"))
+        followup = json.loads(json.dumps(self.entries[-1]))
+        followup["id"] = "compiled-2"
+        self.entries.append(followup)
+        self.write_audit()
+        process, marker = self.running()
+        self.cli("finish", "--run", "test-run", "--worker", "worker-1")
+        # The completed first worker can be observed through its final transport
+        # event while the second keeps the aggregate run active.
+        deadline = time.monotonic() + 3
+        response = None
+        while time.monotonic() < deadline:
+            result = subprocess.run([sys.executable, str(self.scripts / "coord-runner.py"), "finish",
+                "--run", "test-run", "--worker", "worker-1"], cwd=self.repo, env=self.env,
+                capture_output=True, text=True, timeout=3)
+            response = json.loads(result.stdout.splitlines()[-1])
+            if response.get("code") == "RUN-FINISHED":
+                break
+        self.assertEqual("RUN-FINISHED", response.get("code"), response)
+        self.assertIsNone(process.poll())
+        process.terminate()
+        process.communicate(timeout=8)
+
+    def test_profile_helper_hang_cannot_dispatch_after_deadline(self):
+        self.runtime_policy()
+        self.contract["workers"][0]["deadline_seconds"] = 1
+        script = self.scripts / "coord-runner.py"
+        script.write_text(script.read_text().replace('elif args.command == "_profile":',
+                         'elif args.command == "_profile":\n                time.sleep(30)'))
+        prepared = self.prepare()
+        started = time.monotonic()
+        result = self.run_prepared(expected=3)
+        self.assertLess(time.monotonic() - started, 6)
+        self.assertNotEqual("ready_for_review", result["state"])
+        self.assertFalse((Path(prepared["workers"][0]["worktree"]) / "prompt-started").exists())
+
+    def test_large_unicode_compilation_fits_private_helper_serialization(self):
+        self.runtime_policy(mailbox=True)
+        raw = "é" * 90000
+        followup = json.loads(json.dumps(self.entries[-1]))
+        followup.update(id="compiled-2", prompt=raw)
+        followup["compiled"].update(raw_id="raw-2", raw_sha256=hashlib.sha256(raw.encode()).hexdigest())
+        self.entries.extend([{"id": "raw-2", "kind": "prompt", "prompt": raw}, followup])
+        self.write_audit()
+        process, marker = self.running()
+        self.cli("enqueue", "--run", "test-run", "--worker", "worker-1", "--compilation", "compiled-2")
+        self.cli("finish", "--run", "test-run", "--worker", "worker-1")
+        stdout, stderr = process.communicate(timeout=12)
+        self.assertEqual(0, process.returncode, stdout + stderr)
+        self.assertEqual(2, json.loads((marker.parent / "receipt.json").read_text())["turns"])
+
+    def attachment(self, *, hang=False, peer_mode="ok"):
+        prepared = self.prepare()
+        self.pin()
+        cwd = Path(prepared["workers"][0]["worktree"])
+        peer = NativeMetadataPeer(cwd, peer_mode)
+        self.addCleanup(peer.close)
+        executable = self.repo / "native-queue"
+        executable.write_text("#!" + sys.executable + "\nimport json,os,sys,time\nfrom pathlib import Path\n"
+            "Path('queue-receipt.json').write_text(json.dumps({'argv':sys.argv[1:],'session':os.environ['AGENT_SESSION'],'pid':os.getpid()}))\n"
+            + ("time.sleep(30)\n" if hang else "print('SECRET NATIVE OUTPUT')\n"))
+        executable.chmod(0o700)
+        args = ["attach", "--harness", "codex", "--worker", "worker-1", "--delivery-id", "live-one",
+                "--native-session", "11111111-1111-4111-8111-111111111111", "--socket", str(peer.path),
+                "--cwd", str(cwd), "--compilation", "compiled-1", "--executable", str(executable)]
+        return args, cwd, peer
+
+    def test_native_attachment_checks_thread_then_queues_once_as_worker(self):
+        args, cwd, peer = self.attachment()
+        result = self.cli(*args)
+        self.assertEqual("queued", result["state"])
+        receipt = json.loads((cwd / "queue-receipt.json").read_text())
+        self.assertEqual("worker-1", receipt["session"])
+        self.assertEqual(["queue", "--remote", "unix://" + str(peer.path), "--thread",
+                          "11111111-1111-4111-8111-111111111111", "--message"], receipt["argv"][:6])
+        self.assertNotIn("SECRET", json.dumps(result))
+        self.assertEqual("RUN-ATTACH-REPLAY", self.cli(*args, expected=2)["code"])
+
+    def test_foreign_native_cwd_cannot_receive_delegation(self):
+        args, cwd, peer = self.attachment()
+        peer.cwd = "/foreign"
+        result = self.cli(*args, expected=3)
+        self.assertEqual("RUN-ATTACH-CWD", result["code"])
+        self.assertFalse((cwd / "queue-receipt.json").exists())
+
+    def test_substituted_registered_directory_cannot_receive_attachment(self):
+        args, cwd, peer = self.attachment()
+        cwd.rename(cwd.with_name(cwd.name + "-retained"))
+        cwd.mkdir()
+        self.git("init", "-q", "-b", "work-one", cwd=cwd)
+        result = self.cli(*args, expected=2)
+        self.assertEqual("RUN-ATTACH-WORKTREE", result["code"])
+        self.assertFalse((cwd / "queue-receipt.json").exists())
+
+    def test_interrupting_attachment_reaps_owned_queue_child_and_keeps_backend(self):
+        args, cwd, peer = self.attachment(hang=True)
+        process = subprocess.Popen([sys.executable, str(self.scripts / "coord-runner.py"), *args],
+            cwd=self.repo, env=self.env, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        try:
+            marker = cwd / "queue-receipt.json"
+            deadline = time.monotonic() + 4
+            while not marker.exists() and process.poll() is None and time.monotonic() < deadline:
+                time.sleep(.02)
+            self.assertTrue(marker.exists())
+            child_pid = json.loads(marker.read_text())["pid"]
+            process.terminate()
+            stdout, stderr = process.communicate(timeout=4)
+            self.assertEqual(3, process.returncode, stdout + stderr)
+            self.assertEqual("indeterminate", json.loads(stdout.splitlines()[-1])["state"])
+            with self.assertRaises(ProcessLookupError):
+                os.kill(child_pid, 0)
+            self.assertTrue(peer.thread.is_alive())
+            self.assertTrue(peer.path.exists())
+        finally:
+            if process.poll() is None:
+                process.terminate()
+                process.communicate(timeout=5)
 
 
 if __name__ == "__main__":

@@ -17,6 +17,43 @@ summary: >-
 
 # Defect-class register
 
+Coordination runtime follow-up (2026-09-21): **PLAT-B** also covered newly nested
+diagnostic metadata. The release gate found 102 historical rows carrying home paths
+in `hook_cwd`, `manual_brief` and nested worker summaries after the original migration
+handled only `worktree`. Sweep: inspected every matching field, including the new
+permission `detail_path`. Control: `_portable_event` normalizes only these explicit
+diagnostic fields at the central writer; `coord log portable` applies the same mapping
+to history. Two red-first liveness regressions cover foreign homes, idempotence and
+nonmutation of private runtime objects and arbitrary prompt/action text. No lint
+exemption or rewrite of pinned native proof was used.
+
+The runtime review also generalized **RUN-A** to admission boundaries: an existing
+directory label did not prove the same Git worktree; a metadata read could complete
+after cancellation; an owned queue process could survive interruption. Controls now
+check actual Git common directory/branch and native UUID/cwd, recheck cancellation on
+the final read, and reap only owned clients. Real socket/process negatives reproduced
+each failure before the repair; loaded shared backends are deliberately never cancelled.
+
+**RIG-D / E7 instance, 2026-09-21 — proof depends on undistributed history.**
+Class → a committed proof reader relies on Git objects reachable only through local
+archive refs after linear integration. Sweep → the finite coordination verifier's five
+join receipts. Derive → preserve original object identity separately from branch layout.
+Prevent → pinned compact native Git pack imported into an isolated object store; real
+single-branch clone tests prove missing archive objects before and after verification,
+and corruption/missing fixture/wrong ancestry/current-content failures remain rejected.
+See `docs/proof/coordination-fresh-clone.md`.
+
+**RUN-A / RIG-D instance, 2026-09-21 — bounded callbacks contain unbounded I/O.**
+Class → an outer deadline cannot interrupt a blocking local lock, FIFO open, Git child
+or profile hash inside its callback. Sweep → private controls, profile/compile checks,
+retry checks and transport cleanup. Prevent → bounded nonblocking locks, nonblocking
+regular-file validation, contained deadline-bound helper processes, elapsed-budget
+recalculation, and real subprocess FIFO/held-lock regressions. Cleanup may flush only a
+tagged cancellation response, never a pending prompt or approval; two native-pipe
+regressions observed unwanted dispatch before the fix and no dispatch afterwards.
+Initial fixture corrections also enforce canonical macOS temporary paths and the actual
+eight-turn bound; passing tests cannot substitute for these executed boundary controls.
+
 **RIG-D / PACK-D instance, 2026-09-21 — selected native tool missing from policy vocabulary.**
 Class: a host matcher selects a real edit tool whose name is absent from the shared
 write classifier. Sweep: an actual Grok `search_replace` envelope reached both the

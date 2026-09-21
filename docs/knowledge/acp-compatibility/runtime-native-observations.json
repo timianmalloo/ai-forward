@@ -1,0 +1,365 @@
+{
+  "schema": "coord-runtime-observations/1",
+  "observed_on": "2026-09-21",
+  "scope": "Disposable native lifecycle canaries, not current profile attestations",
+  "observations": [
+    {
+      "schema": "native-runtime-canary/1",
+      "harness": "claude",
+      "scope": "native lifecycle; not ownership/trust qualification",
+      "transport": {
+        "outcome": "complete",
+        "code": "complete",
+        "session_id": "db3e88cf-741f-47ed-83c4-89cc9a6caf9d",
+        "turns_completed": 2,
+        "stdout_bytes": 54135,
+        "stderr_bytes": 842,
+        "duration_seconds": 71.932258,
+        "permission_requests": 1,
+        "cleanup_error": null,
+        "reported_version": "0.79.0",
+        "progress_updates": 42,
+        "reported_version_source": "agentInfo.version",
+        "compatibility_responses": 0,
+        "extension_notifications": 3,
+        "native_denials": 0,
+        "prompts_started": 2,
+        "permission_allowed": 1,
+        "permission_denials": 0
+      },
+      "dynamic_prompt_delivered": true,
+      "events": [
+        {
+          "event": "session_created"
+        },
+        {
+          "event": "prompt_started",
+          "turn": 1
+        },
+        {
+          "event": "progress",
+          "turn": 1,
+          "progress_updates": 1
+        },
+        {
+          "event": "progress",
+          "turn": 1,
+          "progress_updates": 3
+        },
+        {
+          "event": "progress",
+          "turn": 1,
+          "progress_updates": 14
+        },
+        {
+          "event": "permission_pending",
+          "action_id": "permission-1"
+        },
+        {
+          "event": "permission_allowed",
+          "permission_requests": 1,
+          "action_id": "permission-1"
+        },
+        {
+          "event": "progress",
+          "turn": 1,
+          "progress_updates": 16
+        },
+        {
+          "event": "progress",
+          "turn": 1,
+          "progress_updates": 20
+        },
+        {
+          "event": "turn_completed",
+          "turn": 1
+        },
+        {
+          "event": "waiting"
+        },
+        {
+          "event": "prompt_started",
+          "turn": 2
+        },
+        {
+          "event": "progress",
+          "turn": 2,
+          "progress_updates": 40
+        },
+        {
+          "event": "turn_completed",
+          "turn": 2
+        },
+        {
+          "event": "waiting"
+        },
+        {
+          "event": "input_closed"
+        }
+      ],
+      "canary_file_written": true,
+      "usage": "not recorded",
+      "existing_session_contacted": false,
+      "canary_content_matches": true
+    },
+    {
+      "schema": "native-runtime-canary/1",
+      "harness": "codex",
+      "scope": "native lifecycle; not ownership/trust qualification",
+      "transport": {
+        "outcome": "complete",
+        "code": "complete",
+        "session_id": "01a0c448-4e46-7f50-baca-3a750957a92d",
+        "turns_completed": 2,
+        "stdout_bytes": 22204,
+        "stderr_bytes": 0,
+        "duration_seconds": 6.563573,
+        "permission_requests": 0,
+        "cleanup_error": null,
+        "reported_version": "1.12.0",
+        "progress_updates": 10,
+        "reported_version_source": "agentInfo.version",
+        "compatibility_responses": 0,
+        "extension_notifications": 1,
+        "native_denials": 0,
+        "prompts_started": 2,
+        "permission_allowed": 0,
+        "permission_denials": 0
+      },
+      "dynamic_prompt_delivered": true,
+      "events": [
+        {
+          "event": "session_created"
+        },
+        {
+          "event": "prompt_started",
+          "turn": 1
+        },
+        {
+          "event": "progress",
+          "turn": 1,
+          "progress_updates": 1
+        },
+        {
+          "event": "progress",
+          "turn": 1,
+          "progress_updates": 3
+        },
+        {
+          "event": "turn_completed",
+          "turn": 1
+        },
+        {
+          "event": "waiting"
+        },
+        {
+          "event": "prompt_started",
+          "turn": 2
+        },
+        {
+          "event": "progress",
+          "turn": 2,
+          "progress_updates": 8
+        },
+        {
+          "event": "turn_completed",
+          "turn": 2
+        },
+        {
+          "event": "waiting"
+        },
+        {
+          "event": "input_closed"
+        }
+      ],
+      "canary_file_written": false,
+      "usage": "not recorded",
+      "existing_session_contacted": false
+    },
+    {
+      "schema": "native-runtime-canary/1",
+      "harness": "grok",
+      "scope": "native lifecycle; not ownership/trust qualification",
+      "transport": {
+        "outcome": "complete",
+        "code": "complete",
+        "session_id": "01a0c449-bacf-7a42-a694-9a3d4bf3ba9e",
+        "turns_completed": 2,
+        "stdout_bytes": 162191,
+        "stderr_bytes": 0,
+        "duration_seconds": 15.426334,
+        "permission_requests": 0,
+        "cleanup_error": null,
+        "reported_version": "1.0.34",
+        "progress_updates": 84,
+        "reported_version_source": "grok._meta.agentVersion",
+        "compatibility_responses": 0,
+        "extension_notifications": 40,
+        "native_denials": 0,
+        "prompts_started": 2,
+        "permission_allowed": 0,
+        "permission_denials": 0
+      },
+      "dynamic_prompt_delivered": true,
+      "events": [
+        {
+          "event": "session_created"
+        },
+        {
+          "event": "progress",
+          "turn": 0,
+          "progress_updates": 2
+        },
+        {
+          "event": "prompt_started",
+          "turn": 1
+        },
+        {
+          "event": "progress",
+          "turn": 1,
+          "progress_updates": 3
+        },
+        {
+          "event": "progress",
+          "turn": 1,
+          "progress_updates": 33
+        },
+        {
+          "event": "turn_completed",
+          "turn": 1
+        },
+        {
+          "event": "waiting"
+        },
+        {
+          "event": "prompt_started",
+          "turn": 2
+        },
+        {
+          "event": "progress",
+          "turn": 2,
+          "progress_updates": 36
+        },
+        {
+          "event": "turn_completed",
+          "turn": 2
+        },
+        {
+          "event": "waiting"
+        },
+        {
+          "event": "input_closed"
+        }
+      ],
+      "canary_file_written": false,
+      "usage": "not recorded",
+      "existing_session_contacted": false
+    },
+    {
+      "schema": "native-runtime-canary/1",
+      "harness": "agy",
+      "scope": "native lifecycle; not ownership/trust qualification",
+      "transport": {
+        "outcome": "complete",
+        "code": "complete",
+        "session_id": "0336861e-fdcb-48ea-8316-915ac1433af7",
+        "turns_completed": 2,
+        "stdout_bytes": 3028,
+        "stderr_bytes": 0,
+        "duration_seconds": 6.096607,
+        "permission_requests": 0,
+        "cleanup_error": null,
+        "reported_version": null,
+        "progress_updates": 5,
+        "reported_version_source": null,
+        "compatibility_responses": 0,
+        "extension_notifications": 0,
+        "native_denials": 0,
+        "prompts_started": 2,
+        "permission_allowed": 0,
+        "permission_denials": 0
+      },
+      "dynamic_prompt_delivered": true,
+      "events": [
+        {
+          "event": "prompt_started",
+          "turn": 1
+        },
+        {
+          "event": "session_created"
+        },
+        {
+          "event": "progress",
+          "turn": 1,
+          "progress_updates": 1
+        },
+        {
+          "event": "progress",
+          "turn": 1,
+          "progress_updates": 2
+        },
+        {
+          "event": "turn_completed",
+          "turn": 1
+        },
+        {
+          "event": "waiting"
+        },
+        {
+          "event": "prompt_started",
+          "turn": 2
+        },
+        {
+          "event": "progress",
+          "turn": 2,
+          "progress_updates": 4
+        },
+        {
+          "event": "turn_completed",
+          "turn": 2
+        },
+        {
+          "event": "waiting"
+        },
+        {
+          "event": "input_closed"
+        }
+      ],
+      "canary_file_written": false,
+      "usage": "not recorded",
+      "existing_session_contacted": false
+    }
+  ],
+  "interactive_codex": {
+    "harness": "codex",
+    "source_sha256": "add1f4e2b923638063b0f0a817e15e4e5873f474bd1d2dc4b31d3fbd265f35e4",
+    "wire_sha256": "ec77aa9fdc5cfddedd85080111509a4e60fb328af7d5716adda53d26d427ede5",
+    "transport": {
+      "outcome": "complete",
+      "code": "complete",
+      "session_id": "01a0c460-94a4-7612-a994-5be68b4af920",
+      "turns_completed": 1,
+      "stdout_bytes": 37255,
+      "stderr_bytes": 0,
+      "duration_seconds": 62.591083,
+      "permission_requests": 1,
+      "cleanup_error": null,
+      "reported_version": "1.12.0",
+      "progress_updates": 56,
+      "reported_version_source": "agentInfo.version",
+      "compatibility_responses": 0,
+      "extension_notifications": 1,
+      "native_denials": 0,
+      "prompts_started": 1,
+      "permission_allowed": 1,
+      "permission_denials": 0,
+      "loaded_cwd_verified": false
+    },
+    "diagnostic_mode_injection": false,
+    "exact_readback": true,
+    "canary_removed": true,
+    "existing_user_session_contacted": false,
+    "mode_id": "read-only",
+    "decision": "inspected exact native edit diff; allow_once"
+  }
+}

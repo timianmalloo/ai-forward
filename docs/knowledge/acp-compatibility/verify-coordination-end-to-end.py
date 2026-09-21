@@ -2,18 +2,51 @@
 """Check sanitized finite-corpus consistency, not native truth or reusable attestation.
 
 Raw-source validation happens privately before export. This checker binds the
-sanitized claims to each other and, when a repository is supplied, to Git receipts.
+sanitized claims to each other and, when a repository is supplied, to original
+Git receipt objects retained in a pinned portable fixture and current file bytes.
 """
+from contextlib import contextmanager
 import copy
 import hashlib
 import json
+import os
 from pathlib import Path
 import re
 import subprocess
 import sys
+import tempfile
 
 if not __debug__:
     raise SystemExit('Run without -O; this finite verifier uses assertions.')
+
+GIT_FIXTURE = 'docs/knowledge/acp-compatibility/coordination-receipts.pack'
+GIT_FIXTURE_BYTES = 230630
+GIT_FIXTURE_SHA256 = 'eca0df6c4df2532921c6ee6a91e829ab8fed16682ff26cee869000876bb5d654'
+
+def git_environment():
+    """Do not inherit object stores, replacement refs, config injection or indexes."""
+    env = {key: value for key, value in os.environ.items() if not key.startswith('GIT_')}
+    env.update(GIT_CONFIG_NOSYSTEM='1', GIT_CONFIG_GLOBAL=os.devnull, GIT_NO_REPLACE_OBJECTS='1')
+    return env
+
+@contextmanager
+def git_fixture(repo):
+    """Import only the pinned original-object projection into a disposable bare repo."""
+    path = repo / GIT_FIXTURE
+    assert path.is_file() and not path.is_symlink(), 'GIT-FIXTURE-MISSING: original-object fixture required'
+    assert path.stat().st_size == GIT_FIXTURE_BYTES, 'GIT-FIXTURE-SIZE: unexpected fixture size'
+    with path.open('rb') as stream:
+        payload = stream.read(GIT_FIXTURE_BYTES + 1)
+    assert len(payload) == GIT_FIXTURE_BYTES and hashlib.sha256(payload).hexdigest() == GIT_FIXTURE_SHA256, \
+        'GIT-FIXTURE-HASH: original-object fixture changed'
+    with tempfile.TemporaryDirectory(prefix='coord-proof-git-') as directory:
+        isolated = Path(directory)
+        for args, input_bytes in ((['init', '--bare', '--quiet', '--template=', str(isolated)], None),
+                                  (['-C', str(isolated), 'index-pack', '--stdin'], payload)):
+            result = subprocess.run(['git', *args], input=input_bytes, capture_output=True,
+                                    env=git_environment(), timeout=10)
+            assert result.returncode == 0, 'GIT-FIXTURE-IMPORT: Git rejected isolated evidence'
+        yield isolated
 
 def digest(value, length=64):
     assert isinstance(value, str) and re.fullmatch('[0-9a-f]{' + str(length) + '}', value)
@@ -25,7 +58,8 @@ def file_evidence(row):
 def git_receipt(repo, source, worker, joined, receipt):
     """Require one receipt commit based exactly on source, retained in its join."""
     def git(*args):
-        result = subprocess.run(['git', '-C', str(repo), *args], capture_output=True, timeout=10)
+        result = subprocess.run(['git', '-C', str(repo), *args], capture_output=True,
+                                env=git_environment(), timeout=10)
         assert result.returncode == 0, 'Git evidence unavailable or inconsistent'
         return result.stdout
     for commit in (source, worker, joined):
@@ -132,9 +166,10 @@ def verify(data, repo=None):
     assert all(v == 'not recorded' for v in data['usage'].values()) and data['limitations']
     assert '/Users/' not in json.dumps(data) and '/home/' not in json.dumps(data)
     if repo:
-        for row in joins:
-            git_receipt(repo, row['source_base'], row['worker_commit'], row['join_commit'], row['receipt'])
-        git_receipt(repo, owner['source_base'], owner['worker_commit'], owner['owner_join_commit'], owner['worker_proof']['receipt'])
+        with git_fixture(repo) as objects:
+            for row in joins:
+                git_receipt(objects, row['source_base'], row['worker_commit'], row['join_commit'], row['receipt'])
+            git_receipt(objects, owner['source_base'], owner['worker_commit'], owner['owner_join_commit'], owner['worker_proof']['receipt'])
         for row in [*positive.values(), owner['worker_proof']]:
             receipt = row['receipt']
             content = (repo / receipt['path']).read_bytes()
@@ -175,7 +210,7 @@ def main():
         except (AssertionError, KeyError, ValueError, subprocess.TimeoutExpired):
             continue
         raise AssertionError('False claim accepted: ' + str(index))
-    print(f'Sanitized finite corpus consistent: eight worker profiles, five distinct Git receipts, both Owner claim records; {len(mutations)} false claims rejected. Native evidence was checked privately before export; no reusable attestation emitted.')
+    print(f'Sanitized finite corpus consistent: eight worker profiles, five distinct Git receipts from the pinned portable original-object fixture, both Owner claim records; {len(mutations)} false claims rejected. Native evidence was checked privately before export; no reusable attestation emitted.')
 
 if __name__ == '__main__':
     main()

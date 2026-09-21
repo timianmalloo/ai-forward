@@ -4,6 +4,7 @@
 This is a lifecycle adapter, not an editor proxy or an approval broker. Only
 locally selected operational fields leave this module; wire bodies are discarded.
 """
+import copy
 import json
 import math
 import os
@@ -92,6 +93,7 @@ class _Wire:
         self.incoming = bytearray()
         self.outgoing = bytearray()
         self.stdout_eof = False
+        self.safe_shutdown_output = False
 
     def attach(self, process):
         self.process = process
@@ -111,6 +113,7 @@ class _Wire:
             raise _Failure("cancelled", "cancelled")
 
     def queue(self, message):
+        self.safe_shutdown_output = False
         payload = (json.dumps(message, ensure_ascii=False, separators=(",", ":")) + "\n").encode("utf-8")
         if len(payload) + len(self.outgoing) > MAX_INPUT_BYTES:
             raise _Failure("input_limit_exceeded")
@@ -179,7 +182,7 @@ class _Wire:
             return None
         cleanup_end = min(time.monotonic() + CLEANUP_SECONDS, self.deadline + CLEANUP_SECONDS)
         error = None
-        if graceful and session_id and not self.outgoing:
+        if graceful and session_id and (not self.outgoing or self.safe_shutdown_output):
             try:
                 self.queue({"jsonrpc": "2.0", "method": "session/cancel", "params": {"sessionId": session_id}})
                 grace_end = min(cleanup_end, time.monotonic() + .2)
@@ -205,7 +208,8 @@ class _Wire:
 
 
 class _Session:
-    def __init__(self, wire, result, emit, before_prompt, roots):
+    def __init__(self, wire, result, emit, before_prompt, roots, next_prompt=None,
+                 permission_handler=None, max_turns=8):
         self.wire = wire
         self.result = result
         self.emit = emit
@@ -217,6 +221,9 @@ class _Session:
         self.creating_session_id = None
         self.creating_updates = 0
         self.grok_reload_compat = False
+        self.next_prompt = next_prompt
+        self.permission_handler = permission_handler
+        self.max_turns = max_turns
 
     def event(self, event, **fields):
         try:
@@ -241,7 +248,48 @@ class _Session:
         if not admitted:
             raise _Failure("dispatch_refused", "cancelled")
         self.turn += 1
+        # Conservative retry floor: even a failed observer after this point
+        # cannot claim that a prompt was never admitted for dispatch.
+        self.result["prompts_started"] += 1
         self.event("prompt_started", turn=self.turn)
+
+    def callback(self, callback, *args):
+        self.wire.check()
+        try:
+            value = callback(*args, max(0, self.wire.deadline - time.monotonic()))
+        except Exception:
+            raise _Failure("callback_failed") from None
+        self.wire.check()
+        return value
+
+    def wait(self):
+        self.wire.check()
+        self.wire.pump(min(POLL_SECONDS, max(0, self.wire.deadline - time.monotonic())))
+        self.wire.check()
+        if self.wire.stdout_eof:
+            raise _Failure("early_eof")
+
+    def prompts(self, initial):
+        yield from initial
+        if self.next_prompt is None:
+            return
+        self.event("waiting")
+        while True:
+            prompt = self.callback(self.next_prompt)
+            if prompt is False:
+                self.event("input_closed")
+                return
+            if self.turn >= self.max_turns:
+                raise _Failure("turn_limit_exceeded", "blocked")
+            if prompt is None:
+                self.wait()
+                continue
+            if not isinstance(prompt, str) or not prompt:
+                raise _Failure("invalid_dynamic_prompt", "blocked")
+            if len(prompt) > MAX_INPUT_BYTES:
+                raise _Failure("input_limit_exceeded", "blocked")
+            yield prompt
+            self.event("waiting")
 
     def progress(self, count=1):
         self.result["progress_updates"] += count
@@ -256,15 +304,50 @@ class _Session:
                 or params.get("sessionId") != self.result["session_id"]):
             raise _Failure("protocol_error")
         options = params.get("options", [])
-        if not isinstance(options, list):
+        tool_call = params.get("toolCall")
+        if not isinstance(options, list) or not isinstance(tool_call, dict):
             raise _Failure("protocol_error")
-        selected = next((option.get("optionId") for option in options if isinstance(option, dict)
-                         and option.get("kind") == "reject_once" and isinstance(option.get("optionId"), str)), None)
+        choices = {}
+        for option in options:
+            if (not isinstance(option, dict) or not _identifier(option.get("optionId"))
+                    or option.get("kind") not in ("allow_once", "allow_always", "reject_once", "reject_always")
+                    or option["optionId"] in choices):
+                raise _Failure("protocol_error")
+            choices[option["optionId"]] = option["kind"]
+        self.result["permission_requests"] += 1
+        action_id = "permission-" + str(self.result["permission_requests"])
+        if self.permission_handler is None or self.result["permission_denials"]:
+            selected = next((key for key, kind in choices.items() if kind == "reject_once"), None)
+        else:
+            request = {"sessionId": params["sessionId"], "requestId": message["id"],
+                       "requestSequence": self.result["permission_requests"],
+                       "toolCall": tool_call, "options": options}
+            try:
+                self.event("permission_pending", action_id=action_id)
+                while True:
+                    selected = self.callback(self.permission_handler, copy.deepcopy(request))
+                    if selected is not None:
+                        if (not isinstance(selected, str) or choices.get(selected) not in
+                                ("allow_once", "reject_once", "reject_always")):
+                            raise _Failure("permission_decision_invalid", "blocked")
+                        break
+                    self.wait()
+            except _Failure:
+                # The pending native request must not inherit an approval if
+                # cancellation, deadline, callback or protocol handling fails.
+                if not self.wire.outgoing:
+                    self.wire.queue({"jsonrpc": "2.0", "id": message["id"],
+                                     "result": {"outcome": {"outcome": "cancelled"}}})
+                    # Cleanup may flush only this rejection, never a prompt or
+                    # approval left queued when authority/callback handling failed.
+                    self.wire.safe_shutdown_output = True
+                raise
         outcome = {"outcome": "selected", "optionId": selected} if selected is not None else {"outcome": "cancelled"}
         self.wire.queue({"jsonrpc": "2.0", "id": message["id"], "result": {"outcome": outcome}})
-        self.result["permission_requests"] += 1
-        self.event("permission_denied", permission_requests=self.result["permission_requests"],
-                   action_id="permission-" + str(self.result["permission_requests"]))
+        allowed = selected is not None and choices[selected] == "allow_once"
+        self.result["permission_allowed" if allowed else "permission_denials"] += 1
+        self.event("permission_allowed" if allowed else "permission_denied",
+                   permission_requests=self.result["permission_requests"], action_id=action_id)
 
     def rpc(self, method, params):
         self.sequence += 1
@@ -282,6 +365,10 @@ class _Session:
                     if type(message["id"]) not in (str, int):
                         raise _Failure("protocol_error")
                     if message["method"] == "session/request_permission":
+                        if method == "session/load":
+                            # Replay identity is not yet a successfully loaded
+                            # session; do not expose an approval callback here.
+                            raise _Failure("protocol_error")
                         self.permission(message)
                     else:
                         self.wire.queue({"jsonrpc": "2.0", "id": message["id"], "error": {
@@ -331,11 +418,15 @@ class _Session:
                 raise _Failure("protocol_error")
             return message["result"]
 
-    def acp(self, cwd, prompts, additional_roots):
+    def acp(self, cwd, prompts, additional_roots, session_id, require_loaded_cwd, mode_id):
         info = self.rpc("initialize", {"protocolVersion": 1, "clientCapabilities": {},
                                       "clientInfo": {"name": "ai-forward-coordination", "version": "1"}})
         if type(info.get("protocolVersion")) is not int or info["protocolVersion"] != 1:
             raise _Failure("protocol_error")
+        if session_id is not None:
+            capabilities = info.get("agentCapabilities", {})
+            if not isinstance(capabilities, dict) or capabilities.get("loadSession") is not True:
+                raise _Failure("unsupported_session_load", "blocked")
         agent = info.get("agentInfo", {})
         if additional_roots:
             capabilities = info.get("agentCapabilities", {})
@@ -362,23 +453,53 @@ class _Session:
         params = {"cwd": os.fspath(cwd), "mcpServers": []}
         if additional_roots:
             params["additionalDirectories"] = additional_roots
-        created = self.rpc("session/new", params)
-        if (not _identifier(created.get("sessionId"))
-                or self.creating_session_id not in (None, created["sessionId"])):
-            raise _Failure("protocol_error")
-        self.result["session_id"] = created["sessionId"]
-        self.event("session_created")
+        if session_id is None:
+            created = self.rpc("session/new", params)
+            if (not _identifier(created.get("sessionId"))
+                    or self.creating_session_id not in (None, created["sessionId"])):
+                raise _Failure("protocol_error")
+            self.result["session_id"] = created["sessionId"]
+            self.event("session_created")
+            if mode_id is not None:
+                modes = created.get("modes", {})
+                available = modes.get("availableModes") if isinstance(modes, dict) else None
+                if (not isinstance(available, list) or sum(isinstance(mode, dict)
+                        and mode.get("id") == mode_id for mode in available) != 1):
+                    raise _Failure("unsupported_session_mode", "blocked")
+                self.rpc("session/set_mode", {"sessionId": created["sessionId"], "modeId": mode_id})
+                self.event("session_mode_selected")
+        else:
+            # Known identity correlates replay updates; loading is not ownership
+            # transfer or proof of attaching an arbitrary terminal process.
+            self.result["session_id"] = session_id
+            params["sessionId"] = session_id
+            loaded = self.rpc("session/load", params)
+            metadata = loaded.get("_meta", {})
+            if (("sessionId" in loaded and loaded["sessionId"] != session_id)
+                    or not isinstance(metadata, dict)
+                    or ("sessionId" in metadata and metadata["sessionId"] != session_id)):
+                raise _Failure("protocol_error")
+            detail = metadata.get("x.ai/sessionDetail", {})
+            if (not isinstance(detail, dict)
+                    or ("sessionId" in detail and detail["sessionId"] != session_id)
+                    or ("cwd" in detail and detail["cwd"] != os.fspath(cwd))):
+                raise _Failure("protocol_error")
+            self.result["loaded_cwd_verified"] = (detail.get("sessionId") == session_id
+                                                   and detail.get("cwd") == os.fspath(cwd))
+            if require_loaded_cwd and not self.result["loaded_cwd_verified"]:
+                raise _Failure("unverified_session_cwd", "blocked")
+            self.event("session_loaded", loaded_cwd_verified=self.result["loaded_cwd_verified"])
         if self.creating_updates:
             self.progress(self.creating_updates)
         self.creating_session_id = None
         self.creating_updates = 0
-        for prompt in prompts:
-            if self.result["permission_requests"]:
+        for prompt in self.prompts(prompts):
+            if self.result["permission_denials"]:
                 raise _Failure("permission_denied", "blocked")
             self.admit()
             response = self.rpc("session/prompt", {"sessionId": self.result["session_id"],
                                                     "prompt": [{"type": "text", "text": prompt}]})
-            if self.result["permission_requests"]:
+            if self.result["permission_denials"]:
                 raise _Failure("permission_denied", "blocked")
             if response.get("stopReason") != "end_turn":
                 raise _Failure("incomplete")
@@ -393,7 +514,7 @@ class _Session:
 
     def agy(self, prompts):
         # Observed Agy 1.2.7 wire: init.conversation_id; result.result.status.
-        for prompt in prompts:
+        for prompt in self.prompts(prompts):
             if self.turn:
                 # Native results have no observed per-turn id. Reject output
                 # already waiting at the boundary; it cannot answer an unsent
@@ -454,12 +575,20 @@ class _Session:
 
 
 def run_session(transport, argv, cwd, env, prompts, deadline_seconds, output_limit,
-                emit, cancelled, before_prompt=None, additional_roots=None):
+                emit, cancelled, before_prompt=None, additional_roots=None, *,
+                next_prompt=None, permission_handler=None, max_turns=8, session_id=None,
+                require_loaded_cwd=False, mode_id=None):
     """Run admitted turns in one owned process group; return metadata, never bodies.
 
     Callbacks are caller-owned, fast/bounded functions. Admission is charged to the
     same attempt deadline. The caller must bind native permissions and trust before
-    launch. No capabilities or instructions are inferred from a successful result.
+    launch. next_prompt returns text, None (wait), or False (close). A permission
+    handler returns an offered once/reject option ID or None (wait), after checking
+    current authority. It receives a stable requestSequence across polls; native
+    request IDs alone may be reused. Arbitrary blocking callbacks cannot be preempted.
+    No capabilities or instructions are inferred from a successful result.
+    session_id requests negotiated ACP loading, not generic live-terminal attach.
+    mode_id selects a literal advertised fresh-session mode before any prompt.
     """
     started = time.monotonic()
     result = {"outcome": "failed", "code": "invalid_input", "session_id": None,
@@ -467,7 +596,8 @@ def run_session(transport, argv, cwd, env, prompts, deadline_seconds, output_lim
               "duration_seconds": 0.0, "permission_requests": 0,
               "cleanup_error": None, "reported_version": None, "progress_updates": 0,
               "reported_version_source": None, "compatibility_responses": 0}
-    result.update(extension_notifications=0, native_denials=0)
+    result.update(extension_notifications=0, native_denials=0, prompts_started=0,
+                  permission_allowed=0, permission_denials=0, loaded_cwd_verified=False)
     wire = None
     try:
         if os.name != "posix":
@@ -475,11 +605,25 @@ def run_session(transport, argv, cwd, env, prompts, deadline_seconds, output_lim
         if (transport not in ("acp", "agy") or not isinstance(argv, (list, tuple)) or not argv
                 or any(not isinstance(arg, str) or "\0" in arg for arg in argv)
                 or not isinstance(prompts, (list, tuple)) or not 1 <= len(prompts) <= 8
+                or type(max_turns) is not int or not 1 <= max_turns <= 8 or len(prompts) > max_turns
+                or (next_prompt is not None and not callable(next_prompt))
+                or (permission_handler is not None and not callable(permission_handler))
+                or (session_id is not None and not _identifier(session_id))
+                or (mode_id is not None and (not _identifier(mode_id) or session_id is not None or transport != "acp"))
+                or type(require_loaded_cwd) is not bool
+                or (require_loaded_cwd and (session_id is None or transport != "acp"))
                 or any(not isinstance(prompt, str) or not prompt for prompt in prompts)
                 or type(deadline_seconds) not in (int, float) or not math.isfinite(deadline_seconds)
                 or not 0 < deadline_seconds <= 3600 or type(output_limit) is not int
                 or not 0 < output_limit <= MAX_INPUT_BYTES):
             raise _Failure("invalid_input", "blocked")
+        if transport == "agy" and permission_handler is not None:
+            raise _Failure("unsupported_permission_handler", "blocked")
+        if session_id is not None:
+            if transport != "acp":
+                raise _Failure("unsupported_session_load", "blocked")
+            if additional_roots is not None:
+                raise _Failure("unsupported_file_roots", "blocked")
         if any(len(prompt) > MAX_INPUT_BYTES for prompt in prompts):
             raise _Failure("input_limit_exceeded", "blocked")
         try:
@@ -498,9 +642,10 @@ def run_session(transport, argv, cwd, env, prompts, deadline_seconds, output_lim
         except (OSError, ValueError, TypeError):
             raise _Failure("spawn_failed") from None
         wire.attach(process)
-        session = _Session(wire, result, emit, before_prompt or (lambda remaining: True), roots)
+        session = _Session(wire, result, emit, before_prompt or (lambda remaining: True), roots,
+                           next_prompt, permission_handler, max_turns)
         if transport == "acp":
-            session.acp(cwd, prompts, additional_roots)
+            session.acp(cwd, prompts, additional_roots, session_id, require_loaded_cwd, mode_id)
         else:
             session.agy(prompts)
         wire.check()
@@ -511,9 +656,12 @@ def run_session(transport, argv, cwd, env, prompts, deadline_seconds, output_lim
         result.update(outcome="failed", code="io_error")
     finally:
         if wire is not None:
-            result["cleanup_error"] = wire.cleanup(result["session_id"], transport == "acp" and result["code"] != "complete")
+            # A loaded backend is shared, and session/cancel has no turn identity.
+            # Detach our client; never cancel another live client's current turn.
+            graceful = transport == "acp" and result["code"] != "complete" and session_id is None
+            result["cleanup_error"] = wire.cleanup(result["session_id"], graceful)
         # A rejected request cannot become success or a less informative timeout.
-        if result["permission_requests"] or result["native_denials"]:
+        if result["permission_denials"] or result["native_denials"]:
             result.update(outcome="blocked", code="permission_denied")
         if result["cleanup_error"] and result["outcome"] == "complete":
             result.update(outcome="failed", code="cleanup_failed")

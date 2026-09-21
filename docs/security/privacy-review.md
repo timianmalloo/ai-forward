@@ -74,8 +74,12 @@ downstream dispatch risk was retired by removing the capability, not by acceptin
 
 <!-- BEGIN GENERATED: docs-graph.py rollup -->
 
-| source | Data flow / category | LINDDUN finding | Disposition | Control / rationale | Retention & rights path |
-|---|---|---|---|---|---|
+| source | Threat | Data and disposition | Verification |
+|---|---|---|---|
+| [design-coordination-runtime-v2](design/coordination-runtime-v2.md) | Linkability and identifiability | Run/worker IDs intentionally link execution; raw prompts and native action details remain private local files. | Sentinel-secret output tests; sanitized native observation records. |
+| [design-coordination-runtime-v2](design/coordination-runtime-v2.md) | Disclosure | Permission details and compiled bodies are owner-only mode0600 records in mode0700 directories. | Permissions, symlink, tamper and size negatives. |
+| [design-coordination-runtime-v2](design/coordination-runtime-v2.md) | Detectability and unawareness | Pending approval is explicit; no background approval or hidden mailbox input. | Pending/decision events and exact-option CLI tests. |
+| [design-coordination-runtime-v2](design/coordination-runtime-v2.md) | Retention | Operator retains completed private run directories until explicitly removed. No new analytics recipient. | Public launch guide documents the local deletion boundary. |
 | [design-docs-explorer-grounding-spatial-navigation](design/docs-explorer-grounding-and-spatial-navigation.md) | Committed project docs + local search/selection/context state | **L/D** stable artifact IDs and selected context are visible in the same-device URL/history; no new personal-data category is introduced | mitigate | Same-origin local operation only; no analytics, model egress, cross-user store, or remote state. Existing no-secrets/no-PII rules for committed docs still apply. | Navigation state lasts only in browser history/session and is cleared by leaving the page or removing the hash; document retention follows Git governance. |
 | [design-multi-harness-runner](design/multi-harness-runner.md) | Contract and repository work → selected harness | Disclosure follows the selected harness/provider's existing policy | Explicit Owner-selected installed transport; no automatic provider routing or credential copying; bind effective policy |
 | [design-multi-harness-runner](design/multi-harness-runner.md) | Prompt bytes → run metadata | Local retention may contain repository work data | Private common-git directory; no raw prompt/conversation in tracked operational facts |
@@ -83,7 +87,7 @@ downstream dispatch risk was retired by removing the capability, not by acceptin
 | [design-native-ownership-enforcement](design/native-ownership-enforcement.md) | Hook input/environment → local decision facts | L/I: session/path/cwd can identify the local workspace or account directory | mitigate | Existing decision grain with host/cwd metadata; no raw patches or credentials. Export only allowlisted shapes/hashes and cwd-match booleans. | Existing local ledger lifecycle; raw diagnostics remain private and can be removed locally. Committed sanitized proof follows Git retention. |
 | [design-native-profile-controls](design/native-profile-controls.md) | Stop and decision projection → local facts/status | Linkability of session/cwd/request IDs | Existing local ledger retention; validated IDs capped32 plus count; no question/body/prompt/config contents. Tests assert sentinel absence. |
 
-<!-- rolled up from 4 artifact(s) by docs-graph.py rollup on 2026-09-20 -->
+<!-- rolled up from 5 artifact(s) by docs-graph.py rollup on 2026-09-21 -->
 
 <!-- END GENERATED -->
 

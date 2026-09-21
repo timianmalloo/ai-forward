@@ -5,9 +5,12 @@ routine setup and bounded process monitoring beneath the existing coordination w
 The designated Owner can be Claude or Codex; a new Grok or Agy session can invoke these
 same scripts. A worker's harness never determines who leads.
 
-This first release is a **POSIX pilot**. Windows, arbitrary attachment to an already-open
-terminal, dynamic mailbox prompting, automatic retry and interactive permission approval
-are unsupported. The existing `--agents` and `--brief` modes retain their meaning.
+Execution is qualified on **POSIX**. Explicit runtime policy enables bounded unattended
+work, dynamic compiled mailbox input, pre-dispatch retries and ACP once-only permission
+decisions. Agy headless supports dynamic turns but has no interactive permission response;
+`ask` is refused before launch. Native attachment capabilities are harness-specific and
+must not be confused with loading saved history. Windows process containment remains
+unqualified. The existing `--agents` and `--brief` modes retain their meaning.
 
 ## Owner workflow
 
@@ -46,10 +49,11 @@ are unsupported. The existing `--agents` and `--brief` modes retain their meanin
    python3 docs/ai-forward-pack/scripts/coord-runner.py status --run example-run
    ```
 
-7. Respond to decision requests through the existing request/ruling workflow. The runner
-   admits only the finite prompt list in the contract; a later ruling requiring another
-   prompt needs an explicit new attempt or the manual workflow. Never replay an interrupted
-   run automatically. Each new attempt needs a new run id, worker identities and branches.
+7. Respond to Owner decision requests through the existing request/ruling workflow.
+   With runtime mailbox enabled, compile a follow-up and use `enqueue` below. Close the
+   mailbox with `finish` when no further work is authorized. Never replay an interrupted
+   run automatically. A new run requires new identities and branches. Safe automatic
+   retries are limited to a clean pre-prompt startup failure within the original budget.
 8. Read returned artifacts and review their semantics. `ready_for_review` means declared
    structural evidence was inspected, not that the work was accepted. Use the existing
    verification and `conductor-join.py` path to integrate. No automatic merge or push occurs.
@@ -77,6 +81,13 @@ and cwd, overriding the initiating harness's identity.
     "deadline_seconds": 600,
     "output_limit": 4194304,
     "fallback": "Continue from the retained brief after Owner review",
+    "runtime": {
+      "unattended": true,
+      "mailbox": true,
+      "max_turns": 8,
+      "max_retries": 1,
+      "permissions": "deny"
+    },
     "required_capabilities": {
       "worktree_isolation": "observed-only",
       "instructions": "observed-only",
@@ -88,6 +99,89 @@ and cwd, overriding the initiating harness's identity.
   }]
 }
 ```
+
+## Runtime controls
+
+`runtime.unattended` must be explicitly true to admit these controls. Omit `runtime`
+for the original finite, denial-only workflow. Qualification still binds the complete
+manifest and effective local profile; enabling the mode does not qualify a profile.
+Time and byte limits cover all attempts; `max_turns` includes initial and queued prompts.
+The maximum is eight. Finish input before the last admitted turn completes. Input left
+open at the turn/time limit stops as blocked/expired, never as completed work.
+
+From another terminal with the same admitted Owner identity:
+
+```sh
+python3 docs/ai-forward-pack/scripts/coord-runner.py enqueue --run example-run --worker worker-grok-1 --compilation FINISHED_AUDIT_ID
+python3 docs/ai-forward-pack/scripts/coord-runner.py finish --run example-run --worker worker-grok-1
+python3 docs/ai-forward-pack/scripts/coord-runner.py permissions --run example-run --worker worker-grok-1
+python3 docs/ai-forward-pack/scripts/coord-runner.py permission-show --run example-run --worker worker-grok-1 --request REQUEST_ID
+python3 docs/ai-forward-pack/scripts/coord-runner.py permission-decide --run example-run --worker worker-grok-1 --request REQUEST_ID --option OFFERED_OPTION_ID
+```
+
+Select `permissions: "ask"` only for a qualified ACP profile. Inspect the exact native
+action in `permission-show` before deciding. Choose only the offered once-only approval
+for the concretely authorized action, or reject; persistent approvals are refused.
+Some native permission requests omit the edit diff. If the displayed request does not
+establish the intended action, inspect it through the original native surface or reject;
+an omitted detail is not evidence that the proposed operation is safe.
+Unattended mode never supplies a decision. No answer, cancellation, stale leadership,
+profile drift or expiration cannot grant access. Native policy/trust may still deny.
+The CLI records a decision; it is not a replacement for the host's project-hook trust UI.
+Qualification must separately record `interactive_permissions` as observed-only or
+enforced, backed by a non-vacuous native callback and once-approval observation. An
+ordinary allowed edit with zero requests does not qualify interactive approval.
+
+Controls are private, immutable records under the common Git directory's `coord-runs`.
+Public events retain IDs, hashes and counts; `permission-show` deliberately reveals the
+private action details only on request. These files remain until the operator removes
+the completed run directory. They are protected by local OS ownership, not from other
+programs with the same user authority. A queued prompt is an at-most-once admission,
+not a guarantee of execution after a crash. `status` never replays it.
+
+Automatic retry covers only spawn/EOF/I/O startup failures with zero prompts started,
+successful cleanup, unchanged profile/leader and a clean checkout. Authentication,
+protocol, permission, cancellation and post-dispatch failures require inspection.
+Counts and reasons appear as `retry_started` and in the final attempt summaries.
+
+## Attach to an addressable live session
+
+Codex requires an already-running app-server endpoint used by the live session. Grok
+requires an already-running shared leader socket. A standalone terminal that exposes
+neither interface is unsupported; saved-session resume is not a substitute. Claude Remote
+Control and Agy interactive control remain native workflows, not this attachment API.
+
+Register the existing worker in its own worktree first. Select its exact native UUID,
+canonical local socket path and a finished compilation. This is an explicit operator
+binding of coordination identity to native UUID; the existing backend keeps its original
+environment, trust and permissions. The wrapper verifies actual Git checkout identity,
+native UUID/cwd, local socket identity and live leadership; it does not qualify that
+existing profile or transfer its ownership.
+
+```sh
+python3 docs/ai-forward-pack/scripts/coord-runner.py attach --harness codex --worker worker-codex-1 --delivery-id followup-1 --native-session NATIVE_UUID --socket /canonical/native.sock --cwd /canonical/worker-worktree --compilation FINISHED_AUDIT_ID --executable codex
+```
+
+Use `--harness grok --executable grok` for an existing Grok leader/session. Each delivery
+ID is reserved before dispatch, so interruption cannot silently replay it. Codex reports
+`queued`; Grok reports `turn_complete` only after a correlated response. Neither means
+reviewed work. Timeout/cancellation reaps only the owned client. A shared backend may
+continue its work; loaded-session cleanup never sends session-wide cancellation that
+could stop another client's turn. Inspect native state before any new delivery attempt.
+
+## Reproduce the proof
+
+From a fresh single-branch clone, with Python and Git installed:
+
+```sh
+python3 tools/verify-coordination-runtime.py
+```
+
+This runs historical original-object checks and real offline process/CLI/protocol tests.
+It needs no private archive refs, temporary evidence, provider credentials or npm install.
+Native lifecycle checks are separately opt-in via
+`docs/knowledge/acp-compatibility/qualify-runtime-controls.py --help`; they do not emit a
+reusable profile attestation or modify trust settings.
 
 The example's configuration list is not a complete profile: inspect the actual harness's
 effective files. Relative configuration paths resolve in the assigned worker checkout;
@@ -244,3 +338,23 @@ Private manifests/briefs live in the common git directory; operational facts use
 coordination ledger. Status, bytes and durations come from those facts; tokens/spend remain
 `not recorded`. No raw conversations, permission arguments or environment values enter the
 durable events. Missing terminal evidence means `interrupted_or_running`, never success.
+
+For ACP profiles that need an explicit native mode, add `runtime.mode_id` to the
+manifest. The runner requires that exact mode in the new session's advertised modes
+and selects it before the first prompt. An unknown mode stops without prompting.
+Qualify the selected mode, not merely the adapter executable. Codex ACP's installed
+`read-only` mode requests user approvals; its name alone does not prove a read-only
+sandbox. Grok's installed auto-approve profile has not passed interactive approval
+qualification; a successful file write with zero callbacks does not qualify `ask`.
+
+### macOS Terminal.app
+
+Terminal.app is the first terminal host for this workflow. Keep the native backend
+and its controlling harness open in that terminal. Run the `attach` command from a
+second tab with the exact registered worker, checkout, native UUID and local socket.
+The runner communicates with that backend, so changing terminal focus cannot redirect
+the prompt. It does not type into a shell or need Terminal.app Automation permission.
+An already-open standalone harness without a native socket cannot be retroactively
+converted into a shared backend: start an addressable native session and register it
+before using this attachment path. Claude Remote Control and Agy interactive sessions
+remain their own native workflows; this runner does not claim attachment to them.

@@ -551,6 +551,54 @@ class MetricsAndDoctorTests(LivenessCase):
 
 class WorktreeLabelTests(LivenessCase):
 
+    def diagnostic_event(self, home):
+        brief = home + "/repo/.git/coord-runs/example/worker.brief.json"
+        return {"session": "portable", "kind": "runner", "seq": 1,
+                "worktree": home + "/repo-worker", "hook_cwd": home + "/repo-worker/.agents",
+                "manual_brief": brief, "detail_path": home + "/repo/.git/coord-runs/example/action.json",
+                "prompt": home + "/unchanged action text",
+                "result": {"manual_brief": brief, "body": home + "/unchanged body",
+                           "workers": [{"manual_brief": brief, "path": home + "/unchanged path"}, None]}}
+
+    def test_writer_normalizes_only_diagnostic_paths_without_mutating_private_result(self):
+        """Fails if public event paths leak homes or normalization changes private runtime data."""
+        for home in ("/Users/fixture", "/home/fixture", "C:/Users/fixture"):  # machine-path-ok: portability fixtures
+            with self.subTest(home=home):
+                event = self.diagnostic_event(home)
+                original = json.loads(json.dumps(event))
+                self.m.append_event(self.root, event)
+                actual = self.ledger("portable")[-1]
+                self.assertEqual("repo-worker", actual["worktree"])
+                self.assertEqual("~/repo-worker/.agents", actual["hook_cwd"])
+                self.assertEqual("~/repo/.git/coord-runs/example/action.json", actual["detail_path"])
+                for value in (actual["manual_brief"], actual["result"]["manual_brief"],
+                              actual["result"]["workers"][0]["manual_brief"]):
+                    self.assertEqual("~/repo/.git/coord-runs/example/worker.brief.json", value)
+                self.assertEqual(original, event)
+                self.assertEqual(original["prompt"], actual["prompt"])
+                self.assertEqual(original["result"]["body"], actual["result"]["body"])
+                self.assertEqual(original["result"]["workers"][0]["path"], actual["result"]["workers"][0]["path"])
+
+    def test_log_portable_covers_nested_diagnostics_and_preserves_other_bytes(self):
+        """Fails if migration misses a result brief, rewrites arbitrary text, or is not idempotent."""
+        path = self.root / "log" / "legacy.jsonl"
+        event = self.diagnostic_event("C:\\Users\\fixture")  # machine-path-ok: foreign platform fixture
+        untouched = '{"result":null,"manual_brief":null,"z":2,"a":1}\n{bad json}\n'
+        path.write_text(json.dumps(event) + "\n" + untouched, encoding="utf-8")
+        done = self.run_cli("log", "portable", str(path))
+        self.assertEqual(0, done.returncode, done.stderr)
+        self.assertIn("1 row(s) rewritten", done.stdout)
+        first = path.read_text(encoding="utf-8")
+        actual = json.loads(first.splitlines()[0])
+        self.assertEqual("~/repo-worker/.agents", actual["hook_cwd"])
+        self.assertEqual("~/repo/.git/coord-runs/example/action.json", actual["detail_path"])
+        self.assertEqual("~/repo/.git/coord-runs/example/worker.brief.json", actual["result"]["workers"][0]["manual_brief"])
+        self.assertEqual(event["prompt"], actual["prompt"])
+        self.assertTrue(first.endswith(untouched))
+        again = self.run_cli("log", "portable", str(path))
+        self.assertIn("0 row(s) rewritten", again.stdout)
+        self.assertEqual(first, path.read_text(encoding="utf-8"))
+
     def test_session_start_from_a_linked_worktree_carries_no_absolute_path(self):
         """Fails if the session-start row's worktree field is the path (what gate 1b refused)."""
         tree = Path(self.tmp.name) / "wt-a"
