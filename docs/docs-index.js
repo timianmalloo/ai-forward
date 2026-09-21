@@ -798,7 +798,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a79ca50064d5c26f4d53714fc03d8323ad53fd89d741fc1206e0ddeafeab29c2"
+      "sourceSha256": "454397b81a0febe8f151b72898d0ce145bd604f06f069e94ca7892d41fba0624"
     },
     {
       "id": "api-coord-decide",
@@ -873,7 +873,32 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "1510d8a14be71b0aa0e3f316479fa6e3249c4d5ff47b63244c6c841ceca3243f"
+      "sourceSha256": "645dcc7b9120c1f665255a0f66ff123352e63a1c17e78efcdc09ba2c444605aa"
+    },
+    {
+      "id": "api-coord_files",
+      "path": "docs/api/coord_files.md",
+      "title": "API — coord_files.py",
+      "type": "api",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-03-03",
+      "reviewSuggested": [],
+      "summary": "Bounded regular-file reads with pinned, non-reparse Windows ancestors.",
+      "tags": [
+        "api",
+        "scripts",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "api-index",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "ff461533c874856a8c9a949552ab00377961a6c6f45077814902cfde6e003b9b"
     },
     {
       "id": "api-coord_ids",
@@ -973,7 +998,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9535123676d9b99ffeb0f2e0de77df7b132f0a5800f43df095678a019933a4bb"
+      "sourceSha256": "d4411acebc7b51494869adec43262d6e9461c071ec920abb469e3c792001d9a8"
     },
     {
       "id": "api-design-lint",
@@ -1110,7 +1135,7 @@ window.DOCS_INDEX = {
       "phase": "",
       "reviewBy": "2027-03-03",
       "reviewSuggested": [],
-      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 530 public functions across 42 modules, 47% carrying a docstring.",
+      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 541 public functions across 44 modules, 47% carrying a docstring.",
       "tags": [
         "api",
         "scripts",
@@ -1124,7 +1149,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7fcd71c76b3f6132f4dde6e288d7dd05346dc8809ed8c0c80e783227cfc2678f"
+      "sourceSha256": "0990f4b48cca387805473057ec79c94067e293efab33307e0b8b3b953ac3d4d8"
     },
     {
       "id": "api-marker-lint",
@@ -1250,6 +1275,31 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "5ff599c2eb24673c989095087b8cb96997a2e3074578f5883136ecf75626ebc4"
+    },
+    {
+      "id": "api-platform_process",
+      "path": "docs/api/platform_process.md",
+      "title": "API — platform_process.py",
+      "type": "api",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-03-03",
+      "reviewSuggested": [],
+      "summary": "Cross-platform owned-process helpers for bounded local subprocesses.",
+      "tags": [
+        "api",
+        "scripts",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "api-index",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "81e9ba0662b681c2ab31e2546e25908a6c2e4a8eaf4fac972a11332ff380b7ad"
     },
     {
       "id": "api-prompt-compile",
@@ -10552,5 +10602,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "b30a816296350df4f28fb90a02988455942f992b4e94b8a0e5c20d73e0ad3a43"
+  "graphSha256": "9a6e2213b762fdb5936e57dd963c7138ca51b027a8c0e2c261a48ef81dc96407"
 };

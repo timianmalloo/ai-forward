@@ -836,7 +836,7 @@ Returns one row per registered `merge.coord-*.driver`:
 
 **Coverage gap** — no docstring in the source.
 
-### `cmd_plugin_emit(out_dir)`
+### `cmd_plugin_emit(out_dir, host=…)`
 
 Write the plugin bundle BOTH harnesses read. It never installs anything.
 

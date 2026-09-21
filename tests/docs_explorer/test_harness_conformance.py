@@ -102,11 +102,11 @@ class EnvelopeParsingTests(HarnessCase):
         calls = self.m.parse_hook_request(fixture("copilot-pretooluse-shell.json"), self.repo)
         self.assertEqual([c[1] for c in calls], [None])
 
-    def test_args_that_are_not_json_do_not_raise(self):
+    def test_malformed_write_args_fail_closed(self):
         payload = fixture("copilot-pretooluse.json")
         payload["input"]["toolCalls"][0]["args"] = "not json at all"
-        calls = self.m.parse_hook_request(payload, self.repo)
-        self.assertEqual([c[1] for c in calls], [None])
+        with self.assertRaises(ValueError):
+            self.m.parse_hook_request(payload, self.repo)
 
 
 # ------------------------------------------------------- the conformance suite
@@ -312,15 +312,15 @@ class OpenConditionTests(unittest.TestCase):
         """
         module = load_module()
         for name, status in module.HARNESS_STATUS.items():
-            self.assertIn(status["edit_boundary"], ("enforcing", "advisory"), name)
+            self.assertIn(status["edit_boundary"], ("enforcing", "advisory", "historical"), name)
             if status["edit_boundary"] == "enforcing":
                 self.assertRegex(
                     status["why"].lower(), r"live|execut|spike|session",
                     "{}: marked enforcing with no executed evidence cited".format(name))
         self.assertEqual(module.HARNESS_STATUS["claude"]["edit_boundary"], "enforcing")
-        self.assertEqual(module.HARNESS_STATUS["copilot"]["edit_boundary"], "enforcing")
-        self.assertIn("fails open", module.HARNESS_STATUS["copilot"]["why"].lower(),
-                      "the timeout residual must stay stated, not disappear with the fix")
+        self.assertEqual(module.HARNESS_STATUS["copilot"]["edit_boundary"], "historical")
+        self.assertIn("historical proof only", module.HARNESS_STATUS["copilot"]["why"].lower())
+        self.assertIn("requires a fresh", module.HARNESS_STATUS["copilot"]["why"].lower())
 
 
 if __name__ == "__main__":

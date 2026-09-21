@@ -106,6 +106,18 @@ An owned child gets a cleanup opportunity when the attachment CLI is stopped.
 
 **Coverage gap** — no docstring in the source.
 
+### `copilot_model(argv)`
+
+**Coverage gap** — no docstring in the source.
+
+### `copilot_model_evidence(session_id, env, expected)`
+
+Check actual native inference events, never the advertised ACP model list.
+
+### `copilot_policy(cwd, model)`
+
+Require the native exact-ID policy before preparation and fingerprinting.
+
 ### `relative_path(value)`
 
 **Coverage gap** — no docstring in the source.
@@ -120,6 +132,6 @@ An owned child gets a cleanup opportunity when the attachment CLI is stopped.
 
 ## Coverage
 
-- Public functions: **14** · documented: **1** (**7%**)
-- Undocumented (recorded, not invented): `load_module`, `require`, `encoded`, `digest`, `read_json`, `private_write`, `git`, `identity`, `text`, `integer`, `relative_path`, `child_env`, `file_hash`
+- Public functions: **17** · documented: **3** (**18%**)
+- Undocumented (recorded, not invented): `load_module`, `require`, `encoded`, `digest`, `read_json`, `private_write`, `git`, `identity`, `text`, `integer`, `copilot_model`, `relative_path`, `child_env`, `file_hash`
 

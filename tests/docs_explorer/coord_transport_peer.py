@@ -12,9 +12,12 @@ MODE = sys.argv[1]
 ROOT = Path(sys.argv[2])
 SECRET = "SECRET-MODEL-TOOL-ARGUMENT"
 RECORDED = json.loads(Path(__file__).with_name("fixtures").joinpath("coord_native_envelopes.json").read_text())
+MODEL_SWITCHED = False
 
 
 def send(value):
+    if MODE == "stderr_interleaved":
+        os.write(2, b"warn:interleaved\n")
     print(json.dumps(value), flush=True)
 
 
@@ -261,6 +264,12 @@ while True:
             send({"jsonrpc": "2.0", "id": msg["id"], "error": {"code": -32000, "message": SECRET}})
             continue
         result = {"sessionId": "acp-fixture"}
+        if MODE == "model_match":
+            result["models"] = {"currentModelId": "gpt-5.4"}
+        elif MODE == "model_mismatch":
+            result["models"] = {"currentModelId": "gpt-5.5"}
+        elif MODE == "model_missing":
+            result["models"] = {}
         if MODE.startswith("mode_"):
             result["modes"] = {"currentModeId": "agent", "availableModes": [{"id": "read-only", "name": "Ask for approval"}]}
             if MODE == "mode_unknown":
@@ -271,6 +280,12 @@ while True:
                 result["modes"]["availableModes"] = {"id": "read-only"}
         if MODE == "grok_mismatch":
             result["sessionId"] = "foreign-session"
+    elif method == "session/set_model":
+        if MODE == "model_set_error":
+            send({"jsonrpc": "2.0", "id": msg["id"], "error": {"code": -32603, "message": SECRET}})
+            continue
+        MODEL_SWITCHED = True
+        result = {}
     elif method == "session/set_mode":
         if MODE == "mode_error":
             send({"jsonrpc": "2.0", "id": msg["id"], "error": {"code": -32603, "message": SECRET}})
@@ -283,6 +298,9 @@ while True:
         turn += 1
         if MODE in ("hang", "descendant", "load_prompt_hang"):
             continue
+        if MODE in ("model_match", "model_missing", "model_mismatch", "model_set_error") and not MODEL_SWITCHED:
+            send({"jsonrpc": "2.0", "id": msg["id"], "error": {"code": -32603, "message": SECRET}})
+            continue
         if MODE == "slow_turn" and turn > 1:
             time.sleep(.35)
         if MODE == "progress_flood":
@@ -291,6 +309,8 @@ while True:
                     "sessionId": "acp-fixture", "update": {"sessionUpdate": "agent_message_chunk", "content": {"text": SECRET}}}})
         send({"jsonrpc": "2.0", "method": "session/update", "params": {
             "sessionId": "acp-fixture", "update": {"sessionUpdate": "agent_message_chunk", "content": {"text": SECRET}}}})
+        if MODE == "post_prompt_eof":
+            raise SystemExit(0)
         if MODE in ("permission", "permission_no_reject", "roots_permission") or MODE.startswith("runtime_permission"):
             options = [{"kind": "allow_always", "optionId": "allow"}]
             if MODE in ("permission", "roots_permission") or MODE.startswith("runtime_permission"):

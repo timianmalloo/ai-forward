@@ -16,6 +16,7 @@ import io
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import signal
 import stat
@@ -84,8 +85,12 @@ def interruption():
 
 
 def read_json(path):
-    with open(path, "rb") as handle:
-        data = handle.read(MAX_DOCUMENT + 1)
+    if os.name == "nt":
+        from coord_files import read_regular
+        data = read_regular(path, MAX_DOCUMENT)
+    else:
+        with open(path, "rb") as handle:
+            data = handle.read(MAX_DOCUMENT + 1)
     require(len(data) <= MAX_DOCUMENT, "RUN-INPUT", "Use a JSON document below 2 MiB.")
     value = json.loads(data)
     require(isinstance(value, dict), "RUN-INPUT", "Use a JSON object.")
@@ -93,11 +98,16 @@ def read_json(path):
 
 
 def private_write(path, value):
-    with open(os.open(str(path), os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600),
-              "w", encoding="utf-8", newline="\n") as handle:
-        handle.write(encoded(value).decode("utf-8") + "\n")
-        handle.flush()
-        os.fsync(handle.fileno())
+    with contextlib.ExitStack() as stack:
+        if os.name == "nt":
+            from coord_files import pinned_directory, protect_private_directory
+            stack.enter_context(pinned_directory(path.parent))
+            protect_private_directory(path.parent)
+        with open(os.open(str(path), os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600),
+                  "w", encoding="utf-8", newline="\n") as handle:
+            handle.write(encoded(value).decode("utf-8") + "\n")
+            handle.flush()
+            os.fsync(handle.fileno())
 
 
 def git(cwd, *args):
@@ -120,6 +130,67 @@ def integer(value, minimum, maximum):
     return type(value) is int and minimum <= value <= maximum
 
 
+def copilot_model(argv):
+    forbidden = {"--allow-all", "--allow-all-tools", "--allow-all-paths", "--allow-all-urls",
+                 "--yolo", "--assisted-approval", "--resume", "--continue", "--connect"}
+    require("--acp" in argv and not any(arg.split("=", 1)[0] in forbidden for arg in argv),
+            "RUN-COPILOT-PROFILE", "Use a fresh native --acp profile without approval bypass or implicit resume.")
+    models = [arg.split("=", 1)[1] for arg in argv if arg.startswith("--model=")]
+    for index, arg in enumerate(argv):
+        if arg == "--model":
+            require(index + 1 < len(argv), "RUN-COPILOT-MODEL", "Pin one explicit model.")
+            models.append(argv[index + 1])
+    require(len(models) == 1 and text(models[0]) and models[0] != "auto"
+            and not models[0].startswith("-"), "RUN-COPILOT-MODEL",
+            "Pin one explicit model; defaults and automatic routing are not qualified.")
+    return models[0]
+
+
+def copilot_model_evidence(session_id, env, expected):
+    """Check actual native inference events, never the advertised ACP model list."""
+    from coord_files import read_regular
+    try:
+        require(str(uuid.UUID(session_id)) == session_id, "RUN-COPILOT-MODEL",
+                "Native model evidence requires the exact Copilot session UUID.")
+        home = Path(env.get("COPILOT_HOME") or Path.home() / ".copilot")
+        require(home.is_absolute(), "RUN-COPILOT-MODEL", "Use an absolute native state directory.")
+        data = read_regular(home / "session-state" / session_id / "events.jsonl", 16 * 1024 * 1024)
+        rows = [json.loads(line) for line in data.splitlines() if line.strip()]
+        require(all(isinstance(row, dict) and isinstance(row.get("data"), dict) for row in rows),
+                "RUN-COPILOT-MODEL", "Native inference records are malformed.")
+        messages = [row["data"].get("model") for row in rows if row.get("type") == "assistant.message"]
+        usage = set()
+        for row in rows:
+            if row.get("type") == "session.usage_checkpoint":
+                for checkpoint in row["data"].get("promptCacheBreakState", []):
+                    usage.update(checkpoint.get("models", {}))
+        require(bool(messages) and set(messages) == {expected} and usage == {expected},
+                "RUN-COPILOT-MODEL",
+                "Actual assistant and usage models must both match the admitted model; metadata/cache state is insufficient.")
+        return {"actual_models": sorted(usage), "source": "native-assistant-and-usage-events",
+                "messages": len(messages), "sha256": hashlib.sha256(data).hexdigest()}
+    except (OSError, ValueError, TypeError, AttributeError):
+        raise Refused("RUN-COPILOT-MODEL", "Actual native model evidence is missing or invalid; do not qualify this attempt.") from None
+
+
+def copilot_policy(cwd, model):
+    """Require the native exact-ID policy before preparation and fingerprinting."""
+    from coord_files import read_regular
+    policy = Path(cwd) / ".github" / "allowed_models.txt"
+    try:
+        policy.resolve().relative_to(Path(cwd).resolve())
+        lines = [line.strip() for line in read_regular(policy, 8192).decode("utf-8").splitlines()
+                 if line.strip()]
+    except (OSError, ValueError):
+        raise Refused("RUN-COPILOT-POLICY",
+                      "Commit a local .github/allowed_models.txt exact-ID policy with a fallback before preparing Copilot.") from None
+    fallback = [line.partition(":")[2].strip() for line in lines if line.startswith("fallback:")]
+    models = {line for line in lines if not line.startswith("fallback:")}
+    require(len(fallback) == 1 and fallback[0] in models and model in models and "auto" not in models
+            and all(re.fullmatch(r"[A-Za-z0-9_.-]+", item) for item in models),
+            "RUN-COPILOT-POLICY", "Use exact native model IDs plus one allowed fallback; provider overrides are not this profile.")
+
+
 def relative_path(value):
     return (text(value) and not Path(value).is_absolute() and "\\" not in value
             and not any(part in ("..", ".git") for part in Path(value).parts)
@@ -132,6 +203,8 @@ def child_env(worker):
     # The external Claude adapter is its own session, not a nested native CLI turn.
     env.pop("CLAUDECODE", None)
     env.pop("AGENT_NAME", None)
+    if worker["harness"] == "copilot":
+        env["COPILOT_MODEL"] = copilot_model(worker["argv"])
     return env
 
 
@@ -199,7 +272,8 @@ class Runner:
             # A compilation's rendered `prompt` may include native launcher instructions
             # (Codex's template does). Dispatch only deterministically rendered verified
             # sections, never a separately mutable rendition or a nested launch command.
-            prompt = ("python3 docs/ai-forward-pack/scripts/audit-log.py start --session "
+            prompt = (("python" if os.name == "nt" else "python3")
+                      + " docs/ai-forward-pack/scripts/audit-log.py start --session "
                       + session + " --skill coordination-worker\n"
                       + "\n\n".join(compiler.render_sections(doc).values())
                       + "\nWork only in your assigned cwd. Follow the plan's owned paths and return evidence to the Owner.\n")
@@ -271,15 +345,17 @@ class Runner:
             branches.add(branch.casefold())
             require(not git(self.cwd, "for-each-ref", "--format=%(refname)", "refs/heads/" + branch),
                     "RUN-BRANCH", "Select a new branch; existing worker branches are never reused.")
-            require(worker.get("harness") in ("claude", "codex", "grok", "agy") and
+            require(worker.get("harness") in ("claude", "codex", "grok", "agy", "copilot") and
                     worker.get("transport") == ("agy" if worker.get("harness") == "agy" else "acp"),
-                    "RUN-TRANSPORT", "Select ACP for Claude/Codex/Grok or the explicit Agy native transport.")
+                    "RUN-TRANSPORT", "Select ACP for Claude/Codex/Grok/Copilot or the explicit Agy native transport.")
             self.access_roots(worker, contract["owner"], preparing=True)
             argv = worker.get("argv")
             require(isinstance(argv, list) and 1 <= len(argv) <= 32
                     and all(text(v) and "\x00" not in v and ("{worktree}" not in v or v == "{worktree}") for v in argv)
                     and argv.count("{worktree}") <= 1 and len(encoded(argv)) <= 65536,
                     "RUN-ARGV", "Supply an installed executable and an explicit argument array, without a shell.")
+            if worker["harness"] == "copilot":
+                copilot_policy(self.cwd, copilot_model(argv))
             if worker["transport"] == "agy":
                 require(all(flag in argv for flag in ("--add-dir", "--input-format", "--output-format"))
                         and argv[argv.index("--add-dir") + 1:][:1] == ["{worktree}"]
@@ -296,6 +372,8 @@ class Runner:
             bindings = worker.get("binding_files")
             require(isinstance(bindings, list) and bindings and all(text(p) for p in bindings),
                     "RUN-BINDING", "List all effective instruction, hook, trust, permission and adapter configuration files.")
+            if worker["harness"] == "copilot" and ".github/allowed_models.txt" not in bindings:
+                worker["binding_files"] = [*bindings, ".github/allowed_models.txt"]
             evidence = worker.get("evidence")
             require(isinstance(evidence, list) and 1 <= len(evidence) <= 32,
                     "RUN-EVIDENCE", "Declare 1–32 file and/or commit evidence items.")
@@ -542,6 +620,8 @@ class Runner:
         return str(Path(executable).resolve())
 
     def fingerprint(self, manifest, worker):
+        if worker["harness"] == "copilot":
+            copilot_policy(worker["worktree"], copilot_model(worker["argv"]))
         require(self.access_roots(worker, manifest["owner"]) == worker.get("additional_root_identities", []),
                 "RUN-ROOTS", "An admitted operational file was replaced; prepare and qualify a new attempt.")
         env = child_env(worker)
@@ -649,6 +729,13 @@ class Runner:
                 git(cwd, "merge-base", "--is-ancestor", manifest["base"], head)
                 receipts.append({"kind": "commit", "commit": head})
             else:
+                if os.name == "nt":
+                    from coord_files import read_regular
+                    data = read_regular(cwd / expected["path"], expected["max_bytes"])
+                    require(bool(data), "RUN-EVIDENCE", "Return a stable nonempty artifact within its byte bound.")
+                    receipts.append({"kind": "file", "path": expected["path"], "bytes": len(data),
+                                     "sha256": hashlib.sha256(data).hexdigest()})
+                    continue
                 # Each component is opened relative to an already-open directory, so a
                 # renamed parent cannot substitute an outside artifact after a path check.
                 parts = Path(expected["path"]).parts
@@ -709,7 +796,7 @@ class Runner:
                 "remedy": "Inspect retained evidence; never replay an interrupted run automatically."}
 
     def run(self, manifest, qualification):
-        require(os.name == "posix", "RUN-PLATFORM", "Use manual briefs until interactive containment is qualified on this platform.")
+        require(os.name in ("posix", "nt"), "RUN-PLATFORM", "Use manual briefs on unsupported process platforms.")
         owner = manifest["owner"]
         require(os.environ.get("AGENT_SESSION") == owner, "RUN-OWNER", "Invoke from the admitted Owner session.")
         require(qualification.get("schema") == "coord-qualification/1" and isinstance(qualification.get("workers"), dict),
@@ -719,6 +806,9 @@ class Runner:
             require(isinstance(q, dict) and all(text(q.get(k)) for k in
                     ("version", "evidence", "effective_policy", "trust")) and q.get("fingerprint") == self.fingerprint(manifest, worker),
                     "RUN-QUALIFICATION", "Reobserve effective policy, trust and required hooks for this fingerprint; mode labels are not evidence.")
+            if worker["harness"] == "copilot":
+                require(q.get("effective_model") == copilot_model(worker["argv"]),
+                        "RUN-COPILOT-MODEL", "Observe and attest the effective native model for this exact profile.")
             caps = q.get("capabilities", {})
             require(isinstance(caps, dict) and all(RANK.get(caps.get(k), 0) >= RANK[v]
                     for k, v in worker["required_capabilities"].items()), "RUN-QUALIFICATION",
@@ -824,6 +914,8 @@ class Runner:
                                    "next_prompt": next_prompt if policy["mailbox"] else None,
                                    "permission_handler": permission_handler if policy["permissions"] == "ask" else None,
                                    "mode_id": policy.get("mode_id")}
+                    if worker["harness"] == "copilot":
+                        options["expected_model"] = copilot_model(worker["argv"])
                     deadline = time.monotonic() + worker["deadline_seconds"]
                     attempts = []
                     bytes_used = 0
@@ -852,6 +944,9 @@ class Runner:
                     result = {"session": worker["session"], "state": transport_state, "transport": transport,
                               "manual_brief": str(directory / (worker["session"] + ".brief.json"))}
                     if transport["outcome"] == "complete" and not cancelled():
+                        if worker["harness"] == "copilot":
+                            result["model_evidence"] = copilot_model_evidence(
+                                transport.get("session_id"), child_env(worker), copilot_model(worker["argv"]))
                         try:
                             result["receipts"] = self.verify(manifest, worker)
                         except (Refused, OSError, subprocess.SubprocessError):

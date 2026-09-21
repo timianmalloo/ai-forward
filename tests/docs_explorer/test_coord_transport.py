@@ -59,6 +59,30 @@ class TransportTests(unittest.TestCase):
         self.assertEqual({"sessionId": "acp-fixture", "modeId": "read-only"}, request["params"])
         self.assertIn("session_mode_selected", [event["event"] for event in self.events])
 
+    def test_expected_model_match_mismatch_and_missing_gate_fresh_session(self):
+        result = self.run_peer("model_match", expected_model="gpt-5.4")
+        self.assertEqual(("complete", "gpt-5.4", True), (result["code"], result["selected_model"], result["selected_model_set"]))
+        self.assertEqual(["initialize", "session/new", "session/set_model", "session/prompt", "session/prompt"],
+                         [r.get("method") for r in self.requests()])
+        created = next(event for event in self.events if event["event"] == "session_created")
+        self.assertEqual("gpt-5.4", created["selected_model"])
+        selected = next(event for event in self.events if event["event"] == "session_model_selected")
+        self.assertEqual("gpt-5.4", selected["requested_model"])
+        for mode in ("model_missing", "model_mismatch", "model_set_error"):
+            with self.subTest(mode=mode):
+                self.events.clear()
+                (self.root / "requests.jsonl").unlink(missing_ok=True)
+                result = self.run_peer(mode, expected_model="gpt-5.4")
+                self.assertEqual(("remote_error", 0, True), (result["code"], result["prompts_started"], result["selected_model_set"]))
+                self.assertFalse(any(r.get("method") == "session/prompt" for r in self.requests()))
+
+    def test_expected_model_invalid_or_incompatible_input_refuses_before_spawn(self):
+        for options in ({"expected_model": True}, {"expected_model": ""}, {"expected_model": "gpt-5.4", "transport": "agy"},
+                        {"expected_model": "gpt-5.4", "session_id": "acp-fixture"}):
+            with self.subTest(options=options), mock.patch.object(self.module.subprocess, "Popen") as spawn:
+                self.assertEqual("invalid_input", self.run_peer(**options)["code"])
+                spawn.assert_not_called()
+
     def test_runtime_mode_unknown_unadvertised_malformed_and_error_do_not_prompt(self):
         for mode, code in (("normal", "unsupported_session_mode"), ("mode_unknown", "unsupported_session_mode"),
                            ("mode_duplicate", "unsupported_session_mode"), ("mode_malformed", "unsupported_session_mode"),
@@ -663,8 +687,8 @@ class TransportTests(unittest.TestCase):
         result = self.run_peer(transport="agy", prompts=["\U0001f600" * (self.module.MAX_INPUT_BYTES // 4)])
         self.assertEqual("input_limit_exceeded", result["code"])
 
-    def test_windows_refuses_before_subprocess(self):
-        with mock.patch.object(self.module.os, "name", "nt"), mock.patch.object(self.module.subprocess, "Popen") as spawn:
+    def test_unknown_platform_refuses_before_subprocess(self):
+        with mock.patch.object(self.module.os, "name", "java"), mock.patch.object(self.module.subprocess, "Popen") as spawn:
             result = self.run_peer()
         self.assertEqual("unsupported_platform", result["code"])
         spawn.assert_not_called()
@@ -672,3 +696,91 @@ class TransportTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+@unittest.skipUnless(os.name == "nt", "Windows transport proof")
+class TestWindowsTransport(unittest.TestCase):
+    def setUp(self):
+        self.module = load_module()
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name)
+        self.events = []
+
+    def run_peer(self, mode="normal", **overrides):
+        options = dict(transport="acp", argv=[sys.executable, str(PEER), mode, str(self.root)],
+                       cwd=str(self.root), env=dict(os.environ), prompts=["first", "second"],
+                       deadline_seconds=2, output_limit=64 * 1024, emit=self.events.append,
+                       cancelled=lambda: False, before_prompt=lambda remaining: True)
+        options.update(overrides)
+        started = time.monotonic()
+        result = self.module.run_session(**options)
+        budget = options["deadline_seconds"] if 0 < options["deadline_seconds"] <= 3600 else 2
+        self.assertLess(time.monotonic() - started, budget + 4.2)
+        self.assertIsNone(result["cleanup_error"], result)
+        return result
+
+    def requests(self):
+        path = self.root / "requests.jsonl"
+        return [json.loads(line) for line in path.read_text().splitlines()] if path.exists() else []
+
+    def test_windows_blocked_input_and_hung_response_share_finite_deadline(self):
+        for mode, transport, prompts in (("blocked_stdin", "agy", ["x" * 1024 * 1024]), ("hang", "acp", ["first"])):
+            with self.subTest(mode=mode):
+                result = self.run_peer(mode, transport=transport, prompts=prompts, deadline_seconds=.2)
+                self.assertEqual("deadline_exceeded", result["code"])
+
+    def test_windows_pending_permission_cancel_emits_cancelled_reply(self):
+        start = time.monotonic()
+        result = self.run_peer("runtime_permission", permission_handler=lambda *args: None,
+                               cancelled=lambda: time.monotonic() - start > .15)
+        self.assertEqual("cancelled", result["code"])
+        replies = [r for r in self.requests() if r.get("id") == "permission-request" and "result" in r]
+        self.assertTrue(any(r["result"]["outcome"] == {"outcome": "cancelled"} for r in replies))
+
+    def test_windows_pre_and_post_prompt_eof_do_not_replay(self):
+        early = self.run_peer("early_eof")
+        self.assertEqual(("early_eof", 0), (early["code"], early["prompts_started"]))
+        result = self.run_peer("post_prompt_eof", prompts=["first"])
+        self.assertEqual(("early_eof", 1, 0), (result["code"], result["prompts_started"], result["turns_completed"]))
+        self.assertEqual(1, sum(r.get("method") == "session/prompt" for r in self.requests()))
+
+    def test_windows_interleaved_stdout_and_stderr_remain_protocol_safe(self):
+        result = self.run_peer("stderr_interleaved")
+        self.assertEqual(("complete", 2), (result["code"], result["turns_completed"]))
+        self.assertGreater(result["stderr_bytes"], 0)
+
+    def test_windows_owned_descendant_is_killed_even_when_parent_exits(self):
+        for mode, code in (("descendant", "deadline_exceeded"), ("exited_parent", "early_eof"),
+                           ("complete_descendant", "complete")):
+            with self.subTest(mode=mode):
+                (self.root / "child.ready").unlink(missing_ok=True)
+                result = self.run_peer(mode, deadline_seconds=.4)
+                self.assertEqual(code, result["code"])
+                self.assertTrue((self.root / "child.ready").exists())
+                pid = int((self.root / "child.pid").read_text())
+                deadline = time.monotonic() + 3
+                while time.monotonic() < deadline and self._process_exists(pid):
+                    time.sleep(0.05)
+                self.assertFalse(self._process_exists(pid))
+
+    def test_windows_expected_model_requires_setter_before_prompt(self):
+        result = self.run_peer("model_match", expected_model="gpt-5.4")
+        self.assertEqual(("complete", "gpt-5.4", True), (result["code"], result["selected_model"], result["selected_model_set"]))
+        self.assertEqual(["initialize", "session/new", "session/set_model", "session/prompt", "session/prompt"],
+                         [r.get("method") for r in self.requests()])
+
+    @staticmethod
+    def _process_exists(pid):
+        result = subprocess.run(
+            [
+                "powershell",
+                "-NoProfile",
+                "-Command",
+                f"if (Get-Process -Id {pid} -ErrorAction SilentlyContinue) {{ exit 0 }} else {{ exit 1 }}",
+            ],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            check=False,
+        )
+        return result.returncode == 0

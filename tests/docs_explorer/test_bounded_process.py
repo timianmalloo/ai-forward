@@ -12,6 +12,7 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
 SCRIPT = REPO / "pack" / "scripts" / "bounded_process.py"
+PLATFORM_SCRIPT = REPO / "pack" / "scripts" / "platform_process.py"
 
 
 def load_module():
@@ -21,9 +22,17 @@ def load_module():
     return module
 
 
+def load_platform_module():
+    spec = importlib.util.spec_from_file_location("platform_process", PLATFORM_SCRIPT)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
 class BoundedProcessTests(unittest.TestCase):
     def setUp(self):
         self.module = load_module()
+        self.platform_module = load_platform_module()
 
     def run_python(self, source, **kwargs):
         return self.module.run_bounded([sys.executable, "-c", source], **kwargs)
@@ -108,6 +117,51 @@ class BoundedProcessTests(unittest.TestCase):
         self.assertEqual("Windows launch gate failed (BrokenPipeError)", error)
         process.stdin.close.assert_called()
 
+    def test_read_chunk_falls_back_to_read_when_read1_is_absent(self):
+        class RawLikeStream:
+            def __init__(self):
+                self.calls = []
+
+            def read(self, size):
+                self.calls.append(size)
+                return b"xyz"
+
+        stream = RawLikeStream()
+        self.assertEqual(b"xyz", self.module._read_chunk(stream, 7))
+        self.assertEqual([7], stream.calls)
+
+    def test_platform_process_release_gate_reports_and_closes_on_broken_pipe(self):
+        process = mock.Mock()
+        process.stdin.write.side_effect = BrokenPipeError()
+
+        error = self.platform_module.release_windows_gate(process)
+
+        self.assertEqual("Windows launch gate failed (BrokenPipeError)", error)
+        process.stdin.close.assert_called()
+
+    @unittest.skipUnless(os.name == "nt", "Windows Job Object setup contract")
+    def test_platform_process_windows_job_reports_setup_failure(self):
+        module = self.platform_module
+
+        class Kernel32:
+            def __init__(self):
+                self.CreateJobObjectW = mock.Mock(return_value=0)
+                self.SetInformationJobObject = mock.Mock()
+                self.AssignProcessToJobObject = mock.Mock()
+                self.TerminateJobObject = mock.Mock()
+                self.CloseHandle = mock.Mock()
+
+        kernel32 = Kernel32()
+        process = mock.Mock(_handle=123)
+        with mock.patch.object(module.ctypes, "WinDLL", return_value=kernel32), \
+             mock.patch.object(module.os, "name", "nt"), \
+             mock.patch.object(module.ctypes, "get_last_error", return_value=5):
+            job = module.WindowsJob(process, memory_limit=1024, process_limit=2)
+
+        self.assertIsNone(job.handle)
+        self.assertEqual("CreateJobObjectW failed (5)", job.error)
+        kernel32.SetInformationJobObject.assert_not_called()
+
     def test_stderr_limit_failure_discards_stdout(self):
         result = self.run_python(
             "import sys; "
@@ -165,17 +219,16 @@ class BoundedProcessTests(unittest.TestCase):
         self.assertEqual(-9, returncode)
         self.assertIn("did not terminate", error)
 
-    def test_windows_taskkill_fallback_has_a_cleanup_deadline(self):
+    def test_windows_missing_job_terminates_gate_process_without_taskkill(self):
         process = mock.Mock(pid=123)
         with mock.patch.object(self.module.os, "name", "nt"), mock.patch.object(
-            self.module.subprocess,
-            "run",
-            side_effect=subprocess.TimeoutExpired("taskkill", 2),
+            self.module.subprocess, "run"
         ) as run:
-            error = self.module._terminate_tree(process)
+            error = self.module._terminate_tree(process, windows_job=mock.Mock(handle=None))
 
-        self.assertIn("2-second cleanup deadline", error)
-        self.assertEqual(2, run.call_args.kwargs["timeout"])
+        self.assertIsNone(error)
+        process.kill.assert_called_once()
+        run.assert_not_called()
 
     def test_cleanup_failure_is_classified_and_invalidates_containment(self):
         with mock.patch.object(
@@ -333,6 +386,20 @@ class BoundedProcessTests(unittest.TestCase):
         self.assertIsNone(result.containment_error)
         self.assertIsNone(result.cleanup_error)
         self.assertIn("Not enough quota", result.stderr)
+
+    @unittest.skipUnless(os.name == "nt", "Windows stdin pipe contract")
+    def test_windows_child_stdin_is_immediately_closed_pipe(self):
+        result = self.run_python(
+            "import ctypes,sys; "
+            "k=ctypes.WinDLL('kernel32', use_last_error=True); "
+            "h=k.GetStdHandle(-10); "
+            "t=k.GetFileType(h); "
+            "data=sys.stdin.buffer.read(); "
+            "print(f'{t}:{len(data)}')"
+        )
+
+        self.assertEqual(0, result.returncode, result.stderr)
+        self.assertEqual("3:0", result.stdout.strip())
 
     @staticmethod
     def _process_exists(pid):

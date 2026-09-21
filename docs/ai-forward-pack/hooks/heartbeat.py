@@ -35,6 +35,12 @@ import time
 from pathlib import Path
 from typing import Any, Dict, List
 
+HERE = Path(__file__).resolve().parent
+if str(HERE) not in sys.path:
+    sys.path.insert(0, str(HERE))
+
+from coord_identity import copilot_child_identity_from_payload, parent_session
+
 for _stream in (sys.stdout, sys.stderr):
     if hasattr(_stream, "reconfigure"):
         try:
@@ -42,7 +48,6 @@ for _stream in (sys.stdout, sys.stderr):
         except (ValueError, OSError):
             pass
 
-HERE = Path(__file__).resolve().parent
 STOP_EVENTS = frozenset({"Stop", "SubagentStop", "TaskCompleted", "agentStop", "subagentStop",
                          "PostInvocation"})
 
@@ -59,20 +64,15 @@ def _load_core():
     return None
 
 
-def touched_files(core, payload: Dict[str, Any]) -> List[str]:
+def touched_files(core, payload: Dict[str, Any], host: str) -> List[str]:
     """Paths a WRITE-class tool named, as strings; the caller counts them and never opens them."""
-    tool = str(payload.get("tool_name") or payload.get("toolName") or "").lower()
-    if tool not in core._WRITE_TOOLS:
-        return []
-    args = payload.get("tool_input") or payload.get("toolArgs") or {}
-    if isinstance(args, str):
-        try:
-            args = json.loads(args)
-        except ValueError:
-            return []
-    if not isinstance(args, dict):
-        return []
-    return [str(args[key]) for key in core._PATH_KEYS if args.get(key)]
+    cwd = payload.get("cwd") or payload.get("workspaceRoot") or os.getcwd()
+    try:
+        calls = core.parse_hook_request(payload, core.repo_root(cwd), host=host, cwd=cwd)
+    except (OSError, ValueError):
+        tool = str(payload.get("tool_name") or payload.get("toolName") or "").lower()
+        return ["."] if tool in core._WRITE_TOOLS else []
+    return [path for tool, path in calls if path and str(tool).lower() in core._WRITE_TOOLS]
 
 
 def main(argv=None) -> int:
@@ -82,8 +82,10 @@ def main(argv=None) -> int:
     parser.add_argument("--session", default=None)
     args = parser.parse_args(argv)
     try:
-        session = args.session or os.environ.get("AGENT_SESSION") or ""
-        if not session:
+        if args.host == "claude" and os.environ.get("AGENT_HOST") == "copilot":
+            return 0
+        env_session = parent_session(os.environ.get("AGENT_SESSION"))
+        if os.environ.get("AGENT_SESSION") and not env_session:
             return 0
         raw = sys.stdin.read() if not sys.stdin.isatty() else ""
         try:
@@ -92,6 +94,12 @@ def main(argv=None) -> int:
             payload = {}
         if not isinstance(payload, dict):
             payload = {}
+        native_child = copilot_child_identity_from_payload(payload) if args.host == "copilot" else None
+        if args.host == "copilot" and (payload.get("agentId") or payload.get("agent_id")) and not native_child:
+            return 0
+        session = args.session or native_child or env_session or ""
+        if not session:
+            return 0
         event = str(args.event or payload.get("hook_event_name") or payload.get("hookEventName")
                     or payload.get("event") or "")
         workspaces = payload.get("workspacePaths") or []
@@ -105,8 +113,10 @@ def main(argv=None) -> int:
             return 0
         repo = core.repo_root(cwd)
         stop = event in STOP_EVENTS
-        core.heartbeat_tick(root, repo, session, os.environ.get("AGENT_NAME") or session, time.time(),
-                            files=touched_files(core, payload), calls=0 if stop else 1,
+        agent = (str(payload.get("agentId") or payload.get("agent_id") or "").strip()
+                 or os.environ.get("AGENT_NAME") or session)
+        core.heartbeat_tick(root, repo, session, agent, time.time(),
+                            files=touched_files(core, payload, args.host), calls=0 if stop else 1,
                             host=args.host, event=event, cwd=cwd, flush=stop)
     except Exception:  # noqa: BLE001 - a heartbeat must never cost the session a tool call
         return 0

@@ -1,0 +1,265 @@
+{
+  "schema": "copilot-qualification-evidence/1",
+  "recorded_on": "2026-09-21",
+  "platform": "Windows",
+  "copilot_version": "1.0.88-0",
+  "profile": "explicit coordination plugin; native exact GPT allowlist; env pin; ACP setter; actual-model verification",
+  "policy": "fallback: gpt-5.4\ngpt-5.4\n",
+  "cases": {
+    "positive": {
+      "outcome": "complete",
+      "code": "complete",
+      "duration_seconds": 14.218,
+      "permission_requests": 1,
+      "permission_allowed": 1,
+      "permission_denials": 0,
+      "cleanup_error": null,
+      "selected_model_set": true,
+      "assistant_models": [
+        "gpt-5.4"
+      ],
+      "usage_models": [
+        "gpt-5.4"
+      ],
+      "lease_refused": false,
+      "trace_sha256": "5022c741a5eaf04bd0122c6d78b646dc24dd5b1e0aaee53bf840dc60446afdf6",
+      "receipt": "COPILOT_RECEIPT_742\n",
+      "instruction": null,
+      "leased_unchanged": true,
+      "denied_file_absent": true
+    },
+    "denial": {
+      "outcome": "blocked",
+      "code": "permission_denied",
+      "duration_seconds": 7.781,
+      "permission_requests": 1,
+      "permission_allowed": 0,
+      "permission_denials": 1,
+      "cleanup_error": null,
+      "selected_model_set": true,
+      "assistant_models": [
+        "gpt-5.4"
+      ],
+      "usage_models": [
+        "gpt-5.4"
+      ],
+      "lease_refused": false,
+      "trace_sha256": "44d7ded9c8e67a18ff4a12d89db04561a68c8e48081bdcd95b6e7bef99756fa0",
+      "receipt": "COPILOT_RECEIPT_742\n",
+      "instruction": null,
+      "leased_unchanged": true,
+      "denied_file_absent": true
+    },
+    "lease": {
+      "outcome": "complete",
+      "code": "complete",
+      "duration_seconds": 12.469,
+      "permission_requests": 0,
+      "permission_allowed": 0,
+      "permission_denials": 0,
+      "cleanup_error": null,
+      "selected_model_set": true,
+      "assistant_models": [
+        "gpt-5.4"
+      ],
+      "usage_models": [
+        "gpt-5.4"
+      ],
+      "lease_refused": true,
+      "trace_sha256": "53ff47e7251e4e043910ca5de5ce5ff592790bbb7d96623a4f9c2c4b1c084f65",
+      "receipt": "COPILOT_RECEIPT_742\n",
+      "instruction": null,
+      "leased_unchanged": true,
+      "denied_file_absent": true
+    },
+    "instructions": {
+      "outcome": "complete",
+      "code": "complete",
+      "duration_seconds": 12.953,
+      "permission_requests": 1,
+      "permission_allowed": 1,
+      "permission_denials": 0,
+      "cleanup_error": null,
+      "selected_model_set": true,
+      "assistant_models": [
+        "gpt-5.4"
+      ],
+      "usage_models": [
+        "gpt-5.4"
+      ],
+      "lease_refused": false,
+      "trace_sha256": "7549f6d0a3beb29c22d599f9ee7a6ea6b0443a068a86ef51b628abd22f9708c9",
+      "receipt": "COPILOT_RECEIPT_742\n",
+      "instruction": "COPILOT_INSTRUCTION_742\n",
+      "leased_unchanged": true,
+      "denied_file_absent": true
+    },
+    "cancel": {
+      "outcome": "cancelled",
+      "code": "cancelled",
+      "duration_seconds": 10.641,
+      "permission_requests": 1,
+      "permission_allowed": 1,
+      "permission_denials": 0,
+      "cleanup_error": null,
+      "selected_model_set": true,
+      "assistant_models": [
+        "gpt-5.4"
+      ],
+      "usage_models": [],
+      "lease_refused": false,
+      "trace_sha256": "60e4534c7710699f3ee17e2dd07e92464e5e82063f2c0566d98d0e9b28e24516",
+      "receipt": "COPILOT_RECEIPT_742\n",
+      "instruction": "COPILOT_INSTRUCTION_742\n",
+      "leased_unchanged": true,
+      "denied_file_absent": true,
+      "work_marker": "READY"
+    },
+    "owner_worker": {
+      "state": "ready_for_review",
+      "epoch": 1,
+      "permission_allowed": 1,
+      "open_decisions": 0,
+      "receipts": [
+        {
+          "kind": "file",
+          "path": "result.txt",
+          "bytes": 25,
+          "sha256": "2897fe997318061a3b5451181aeb347fb599ee228791b8d952f159ec257dbf0b"
+        }
+      ],
+      "model_evidence": {
+        "actual_models": [
+          "gpt-5.4"
+        ],
+        "source": "native-assistant-and-usage-events",
+        "messages": 3,
+        "sha256": "2f66c80e15f1b8874ed0aad90ea4a9d4d6c992619fa482c3291a5b04f3a52431"
+      },
+      "joined_fixture_commit": "31879118fbe617502af17b3f6980442a1caef39b"
+    },
+    "owner_decision": {
+      "state": "incomplete",
+      "epoch": 2,
+      "transport_code": "deadline_exceeded",
+      "native_stop_refusals": 1,
+      "scope": "Seeded request; native stop refused. Attempt expired waiting for an unapproved out-of-scope ledger edit.",
+      "final_decision_fence": "Covered separately by real-Git offline integration; not mislabelled as this live exit reason."
+    },
+    "codex_handoff": {
+      "acknowledged": true,
+      "actual_models": [
+        "gpt-5.5"
+      ],
+      "mode": "read-only",
+      "containment": "windows-job",
+      "cleanup_error": null,
+      "scope": "Bounded native CLI handoff, not full Codex Windows write-hook qualification."
+    }
+  },
+  "invalid_initial_runs": [
+    {
+      "requested_model": "gpt-5.4",
+      "status": "INVALID",
+      "assistant_models": [
+        "claude-opus-4.8"
+      ],
+      "usage_models": [
+        "claude-opus-4.8"
+      ],
+      "lease_refused": false,
+      "trace_sha256": "b7f4ebea50917e3905f366db899e8b070bfeb7b6a2bab114aa06f86cc837eb9d"
+    },
+    {
+      "requested_model": "gpt-5.4",
+      "status": "INVALID",
+      "assistant_models": [
+        "claude-opus-4.8"
+      ],
+      "usage_models": [
+        "claude-opus-4.8"
+      ],
+      "lease_refused": false,
+      "trace_sha256": "957e16bc570ca599e2bcd4fe61f1b8b889331378596c2740e6292a2ef5a4d71b"
+    },
+    {
+      "requested_model": "gpt-5.4",
+      "status": "INVALID",
+      "assistant_models": [
+        "claude-opus-4.8"
+      ],
+      "usage_models": [
+        "claude-opus-4.8"
+      ],
+      "lease_refused": false,
+      "trace_sha256": "195f018f1e50eea6c4c6314e1556b28d63a76e4687ad0e9baedcbf59fad81b1f"
+    },
+    {
+      "requested_model": "gpt-5.4",
+      "status": "INVALID",
+      "assistant_models": [
+        "claude-opus-4.8"
+      ],
+      "usage_models": [
+        "claude-opus-4.8"
+      ],
+      "lease_refused": false,
+      "trace_sha256": "4e331f23d12a6ed9bf34b1540091c078f64eda12dbe0454b8093d7a09d49b55d"
+    },
+    {
+      "requested_model": "gpt-5.4",
+      "status": "INVALID",
+      "assistant_models": [
+        "claude-opus-4.8"
+      ],
+      "usage_models": [
+        "claude-opus-4.8"
+      ],
+      "lease_refused": false,
+      "trace_sha256": "16e07ac42391280246470a769f5b1b602135d77bc5053e828f88edfaf34f5242"
+    },
+    {
+      "requested_model": "gpt-5.4",
+      "status": "INVALID",
+      "assistant_models": [
+        "claude-opus-4.8"
+      ],
+      "usage_models": [
+        "claude-opus-4.8"
+      ],
+      "lease_refused": false,
+      "trace_sha256": "feb1a880773e90381e4b25fd7236c133f29e25fd7bd44e4302e9dc42dcfe0420"
+    },
+    {
+      "requested_model": "gpt-5.4",
+      "status": "INVALID",
+      "assistant_models": [
+        "claude-opus-4.8"
+      ],
+      "usage_models": [
+        "claude-opus-4.8"
+      ],
+      "lease_refused": false,
+      "trace_sha256": "6088838b948b070aa59b4c1105cc57983ae685f279d5f2d31b8181b01ac07a60"
+    },
+    {
+      "requested_model": "gpt-5.4",
+      "status": "INVALID",
+      "assistant_models": [
+        "claude-opus-4.8"
+      ],
+      "usage_models": [
+        "claude-opus-4.8"
+      ],
+      "lease_refused": true,
+      "trace_sha256": "6832f6f8b8a0c8980a3cc0ae06c54aa095608895f6a2bcccc7ec86bc0486b822"
+    }
+  ],
+  "limitations": [
+    "Repository-hook-only ACP is not qualified.",
+    "Native arbitrary terminal attachment and Copilot additional_roots remain unsupported.",
+    "Unattributed subagentStart is ignored; it never overwrites a parent marker.",
+    "Active cancellation may not record usage; it cannot produce readiness.",
+    "Earlier non-GPT runs remain invalid and are not rehabilitated by later successes."
+  ]
+}

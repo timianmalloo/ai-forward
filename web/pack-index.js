@@ -21,7 +21,7 @@ window.PACK_INDEX = {
 {
 "id": "scripts",
 "label": "Scripts",
-"count": 43
+"count": 45
 },
 {
 "id": "personas",
@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 298
+"count": 300
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 475,
+"total": 479,
 "items": [
 {
 "cat": "knowledge",
@@ -935,7 +935,7 @@ window.PACK_INDEX = {
 "summary": "Bounded subprocess execution for pack-owned tool invocations.",
 "path": "pack/scripts/bounded_process.py",
 "kind": "script",
-"text": "bounded_process.py bounded subprocess execution for pack-owned tool invocations. __init__ __init__ terminate close _terminate_tree _wait_after_termination _merge_errors _release_windows_gate run_bounded terminate_once drain"
+"text": "bounded_process.py bounded subprocess execution for pack-owned tool invocations. __init__ _merge_errors _read_chunk run_bounded terminate_once drain"
 },
 {
 "cat": "scripts",
@@ -998,7 +998,16 @@ window.PACK_INDEX = {
 "summary": "Prepare and run an opt-in, qualified multi-harness coordination contract.",
 "path": "pack/scripts/coord-runner.py",
 "kind": "script",
-"text": "coord-runner.py prepare and run an opt-in, qualified multi-harness coordination contract. run `prepare --contract file`, qualify the resulting checkout-specific fingerprints, then `run --run id --qualification file`. `status --run id` never replays work. the existing coordinator remains responsible for decisions and semantic review. load_module __init__ require encoded digest interruption read_json private_write git identity text integer relative_path child_env file_hash __init__ directory event compiled_prompts access_roots validate prepare public_manifest load controls control attach attach_owned checkout_identity admitted resolve_executable fingerprint fingerprints bounded_profile bounded_prompt leader renew_admitted worker_identity verify status retained_tree run cancel_signal cancelled fence execute worker_fence next_prompt permission_handler main"
+"text": "coord-runner.py prepare and run an opt-in, qualified multi-harness coordination contract. run `prepare --contract file`, qualify the resulting checkout-specific fingerprints, then `run --run id --qualification file`. `status --run id` never replays work. the existing coordinator remains responsible for decisions and semantic review. load_module __init__ require encoded digest interruption read_json private_write git identity text integer copilot_model copilot_model_evidence copilot_policy relative_path child_env file_hash __init__ directory event compiled_prompts access_roots validate prepare public_manifest load controls control attach attach_owned checkout_identity admitted resolve_executable fingerprint fingerprints bounded_profile bounded_prompt leader renew_admitted worker_identity verify status retained_tree run cancel_signal cancelled fence execute worker_fence next_prompt permission_handler main"
+},
+{
+"cat": "scripts",
+"id": "coord_files.py",
+"title": "coord_files.py",
+"summary": "Bounded regular-file reads with pinned, non-reparse Windows ancestors.",
+"path": "pack/scripts/coord_files.py",
+"kind": "script",
+"text": "coord_files.py bounded regular-file reads with pinned, non-reparse windows ancestors. the windows handles deny delete sharing until the read ends. this protects the path-to-handle transition; it is not isolation from hostile code as the same user. protect_private_directory pinned_directory open_regular read_regular"
 },
 {
 "cat": "scripts",
@@ -1034,7 +1043,7 @@ window.PACK_INDEX = {
 "summary": "Bounded POSIX ACP / Agy session IO. Native harness policy remains authoritative.",
 "path": "pack/scripts/coord_transport.py",
 "kind": "script",
-"text": "coord_transport.py bounded posix acp / agy session io. native harness policy remains authoritative. this is a lifecycle adapter, not an editor proxy or an approval broker. only locally selected operational fields leave this module; wire bodies are discarded. file_root_identities __init__ _identifier _signal_group __init__ attach check queue pump receive flush_input cleanup __init__ event admit callback wait prompts progress permission rpc acp native_denial agy run_session"
+"text": "coord_transport.py bounded posix acp / agy session io. native harness policy remains authoritative. this is a lifecycle adapter, not an editor proxy or an approval broker. only locally selected operational fields leave this module; wire bodies are discarded. file_root_identities __init__ _identifier _signal_group __init__ attach check queue pump receive flush_input cleanup __init__ attach _consume_budget _read_stdout _read_stderr _write_stdin check queue pump receive flush_input cleanup __init__ event admit callback wait prompts progress permission rpc acp native_denial agy run_session"
 },
 {
 "cat": "scripts",
@@ -1134,6 +1143,15 @@ window.PACK_INDEX = {
 "path": "pack/scripts/pack-doctor.py",
 "kind": "script",
 "text": "pack-doctor.py pack-doctor.py — ai-forward install-health check (deployable; runs in a target repo). reports whether this repo has the pack installed and healthy: the installed revision, both tool surfaces present, the managed blocks intact, and the knowledge graph valid + fresh. one pass/warn/fail line per check with a suggested fix; exit 1 if any fail, or if any warn is present under --strict. distinct from tools/check-consistency.py (which validates the pack source — pack/ == docs). a target repo has no pack/, so this checks install health, not source consistency. design: docs/design/pack-doctor.md. stdlib only; composes docs-graph.py for the graph half. usage pack-doctor.py [--root <repo>] [--json] [--strict] exit: 0 all pass/warn (or all pass under --strict) · 1 any fail/strict warn. _result check_installed check_surface _read check_codex check_claude_md_import check_copilot_settings check_claude_settings check_hooks check_block check_graph _git_lines _jsonl_rows check_mail check_requests check_heartbeat _command_head check_coordination check_node_runner _works check_interpreter run main"
+},
+{
+"cat": "scripts",
+"id": "platform_process.py",
+"title": "platform_process.py",
+"summary": "Cross-platform owned-process helpers for bounded local subprocesses.",
+"path": "pack/scripts/platform_process.py",
+"kind": "script",
+"text": "platform_process.py cross-platform owned-process helpers for bounded local subprocesses. __init__ terminate close spawn_windows_gate release_windows_gate terminate_owned_process wait_after_termination"
 },
 {
 "cat": "scripts",
@@ -1758,6 +1776,15 @@ window.PACK_INDEX = {
 },
 {
 "cat": "graph",
+"id": "api-coord_files",
+"title": "API — coord_files.py",
+"summary": "Bounded regular-file reads with pinned, non-reparse Windows ancestors.",
+"path": "docs/api/coord_files.md",
+"kind": "api",
+"text": "api — coord_files.py bounded regular-file reads with pinned, non-reparse windows ancestors. api scripts generated refines api-index"
+},
+{
+"cat": "graph",
 "id": "api-coord_ids",
 "title": "API — coord_ids.py",
 "summary": "coord_ids.py - collision-proof identifiers, in ONE place.",
@@ -1841,10 +1868,10 @@ window.PACK_INDEX = {
 "cat": "graph",
 "id": "api-index",
 "title": "API reference — the deployed script bundle",
-"summary": "Generated API reference for the pack's public surface — the deployed script bundle. 530 public functions across 42 modules, 47% carrying a docstring.",
+"summary": "Generated API reference for the pack's public surface — the deployed script bundle. 541 public functions across 44 modules, 47% carrying a docstring.",
 "path": "docs/api/index.md",
 "kind": "api",
-"text": "api reference — the deployed script bundle generated api reference for the pack's public surface — the deployed script bundle. 530 public functions across 42 modules, 47% carrying a docstring. api scripts generated index documents architecture"
+"text": "api reference — the deployed script bundle generated api reference for the pack's public surface — the deployed script bundle. 541 public functions across 44 modules, 47% carrying a docstring. api scripts generated index documents architecture"
 },
 {
 "cat": "graph",
@@ -1890,6 +1917,15 @@ window.PACK_INDEX = {
 "path": "docs/api/pack-doctor.md",
 "kind": "api",
 "text": "api — pack-doctor.py pack-doctor.py — ai-forward install-health check (deployable; runs in a target repo). api scripts generated refines api-index"
+},
+{
+"cat": "graph",
+"id": "api-platform_process",
+"title": "API — platform_process.py",
+"summary": "Cross-platform owned-process helpers for bounded local subprocesses.",
+"path": "docs/api/platform_process.md",
+"kind": "api",
+"text": "api — platform_process.py cross-platform owned-process helpers for bounded local subprocesses. api scripts generated refines api-index"
 },
 {
 "cat": "graph",

@@ -2,15 +2,18 @@
 
 Use this opt-in mode when the human asks for a multi-harness session. It supplies the
 routine setup and bounded process monitoring beneath the existing coordination workflow.
-The designated Owner can be Claude or Codex; a new Grok or Agy session can invoke these
+The designated Owner can be Claude, Codex or Copilot; a new Grok or Agy session can invoke these
 same scripts. A worker's harness never determines who leads.
 
-Execution is qualified on **POSIX**. Explicit runtime policy enables bounded unattended
+Execution has separate **POSIX and Windows** process paths; qualification remains bound
+to the actual executable and profile on that machine. Explicit runtime policy enables bounded unattended
 work, dynamic compiled mailbox input, pre-dispatch retries and ACP once-only permission
 decisions. Agy headless supports dynamic turns but has no interactive permission response;
 `ask` is refused before launch. Native attachment capabilities are harness-specific and
-must not be confused with loading saved history. Windows process containment remains
-unqualified. The existing `--agents` and `--brief` modes retain their meaning.
+must not be confused with loading saved history. Windows uses assign-before-release Job
+Objects and bounded stdio; a failed containment setup refuses execution. The existing
+`--agents` and `--brief` modes retain their meaning. Read `copilot.md` for the Copilot
+profile, lifecycle identity, model binding and current qualification evidence.
 
 ## Owner workflow
 

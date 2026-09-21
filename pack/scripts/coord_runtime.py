@@ -39,7 +39,32 @@ class Controls:
 
     @contextlib.contextmanager
     def locked(self):
-        import fcntl  # Only reached by the POSIX-qualified runner.
+        if os.name == "nt":
+            import msvcrt
+            from coord_files import open_regular, pinned_directory, protect_private_directory
+            self.directory.mkdir(parents=True, exist_ok=True)
+            with pinned_directory(self.directory):
+                protect_private_directory(self.directory)
+                with open_regular(self.directory / ".lock", writable=True, create=True) as stream:
+                    deadline = time.monotonic() + .05
+                    acquired = False
+                    try:
+                        while True:
+                            try:
+                                stream.seek(0)
+                                msvcrt.locking(stream.fileno(), msvcrt.LK_NBLCK, 1)
+                                acquired = True
+                                break
+                            except OSError:
+                                require(time.monotonic() < deadline)
+                                time.sleep(.005)
+                        yield
+                    finally:
+                        if acquired:
+                            stream.seek(0)
+                            msvcrt.locking(stream.fileno(), msvcrt.LK_UNLCK, 1)
+            return
+        import fcntl
         require(str(self.directory.absolute()) == str(self.directory.resolve()))
         self.directory.mkdir(mode=0o700, parents=True, exist_ok=True)
         info = self.directory.lstat()
@@ -67,12 +92,16 @@ class Controls:
         previous = ""
         for sequence, path in enumerate(paths, 1):
             require(path.name == f"{sequence:06d}.json")
-            fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
-            with os.fdopen(fd, "rb") as stream:
-                info = os.fstat(stream.fileno())
-                require(stat.S_ISREG(info.st_mode) and info.st_size <= MAX_RECORD_BYTES
-                        and info.st_uid == os.getuid() and info.st_mode & 0o077 == 0)
-                row = json.loads(stream.read(MAX_RECORD_BYTES + 1))
+            if os.name == "nt":
+                from coord_files import read_regular
+                row = json.loads(read_regular(path, MAX_RECORD_BYTES))
+            else:
+                fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+                with os.fdopen(fd, "rb") as stream:
+                    info = os.fstat(stream.fileno())
+                    require(stat.S_ISREG(info.st_mode) and info.st_size <= MAX_RECORD_BYTES
+                            and info.st_uid == os.getuid() and info.st_mode & 0o077 == 0)
+                    row = json.loads(stream.read(MAX_RECORD_BYTES + 1))
             require(isinstance(row, dict) and row.get("sequence") == sequence
                     and row.get("id") == f"{sequence:06d}" and row.get("previous") == previous)
             checksum = row.get("sha256")
@@ -102,11 +131,12 @@ class Controls:
                 os.fsync(stream.fileno())
             # Atomic no-replace publication; a half-written record is never visible.
             os.link(name, self.directory / (row["id"] + ".json"))
-            directory_fd = os.open(self.directory, os.O_RDONLY)
-            try:
-                os.fsync(directory_fd)
-            finally:
-                os.close(directory_fd)
+            if os.name != "nt":
+                directory_fd = os.open(self.directory, os.O_RDONLY)
+                try:
+                    os.fsync(directory_fd)
+                finally:
+                    os.close(directory_fd)
         finally:
             os.unlink(name)
         return row

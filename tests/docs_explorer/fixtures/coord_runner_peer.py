@@ -8,6 +8,7 @@ import time
 
 mode = sys.argv[1] if len(sys.argv) > 1 else "ok"
 additional_roots = None
+native_session = "4d6e86b8-8568-42f2-aedc-382babbe513e" if "--model" in sys.argv else "fixture-session"
 if mode in ("startup-retry", "dirty-startup-retry"):
     marker = Path(__file__).parent / "startup-attempt"
     attempts = int(marker.read_text()) if marker.exists() else 0
@@ -48,14 +49,16 @@ for line in sys.stdin:
     elif method == "session/new":
         assert message["params"]["cwd"] == str(Path.cwd())
         additional_roots = message["params"].get("additionalDirectories")
-        result = {"sessionId": "fixture-session"}
+        result = {"sessionId": native_session}
+        if "--model" in sys.argv:
+            result["models"] = {"currentModelId": sys.argv[sys.argv.index("--model") + 1]}
     elif method == "session/prompt":
         Path("prompt-started").write_text(str(os.getpid()), encoding="utf-8")
         if mode == "post-dispatch-eof":
             raise SystemExit(1)
         if mode == "permission":
             send({"jsonrpc": "2.0", "id": "permission-1", "method": "session/request_permission", "params": {
-                "sessionId": "fixture-session", "toolCall": {"title": "SECRET harmless fixture receipt"},
+                "sessionId": native_session, "toolCall": {"title": "SECRET harmless fixture receipt"},
                 "options": [{"optionId": "yes", "kind": "allow_once", "name": "Allow once"},
                             {"optionId": "no", "kind": "reject_once", "name": "Reject"}]}})
             response = json.loads(sys.stdin.readline())
@@ -68,7 +71,7 @@ for line in sys.stdin:
         if mode == "delay":
             time.sleep(0.8)
         send({"jsonrpc": "2.0", "method": "session/update", "params": {
-            "sessionId": "fixture-session", "update": {"sessionUpdate": "agent_message_chunk",
+            "sessionId": native_session, "update": {"sessionUpdate": "agent_message_chunk",
                 "content": {"type": "text", "text": "SECRET_DO_NOT_LOG"}}}})
         if mode != "missing":
             path = Path("receipt.json")
@@ -81,6 +84,14 @@ for line in sys.stdin:
                 subprocess.run(["git", "add", "receipt.json"], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                 subprocess.run(["git", "commit", "-qm", "worker receipt"], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         result = {"stopReason": "end_turn"}
+        if "--model" in sys.argv:
+            model = sys.argv[sys.argv.index("--model") + 1]
+            events = Path(os.environ["COPILOT_HOME"]) / "session-state" / native_session / "events.jsonl"
+            events.parent.mkdir(parents=True, exist_ok=True)
+            rows = [{"type": "assistant.message", "data": {"model": model}},
+                    {"type": "session.usage_checkpoint", "data": {
+                        "promptCacheBreakState": [{"models": {model: {"model": model}}}]}}]
+            events.write_text("\n".join(map(json.dumps, rows)), encoding="utf-8", newline="\n")
     elif method == "session/cancel":
         continue
     else:

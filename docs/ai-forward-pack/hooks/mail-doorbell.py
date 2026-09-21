@@ -30,6 +30,12 @@ import sys
 from pathlib import Path
 from typing import Any, Dict, Optional
 
+HERE = Path(__file__).resolve().parent
+if str(HERE) not in sys.path:
+    sys.path.insert(0, str(HERE))
+
+from coord_identity import copilot_child_identity_from_payload, parent_session
+
 for _stream in (sys.stdout, sys.stderr):
     if hasattr(_stream, "reconfigure"):
         try:
@@ -37,7 +43,6 @@ for _stream in (sys.stdout, sys.stderr):
         except (ValueError, OSError):
             pass
 
-HERE = Path(__file__).resolve().parent
 TEXT = "coord mail: {count} new for {session}; newest {pointer}; run coord mail read"
 CLAUDE_FORMAT_HOSTS = ("claude", "grok")
 
@@ -89,8 +94,10 @@ def main(argv=None) -> int:
     parser.add_argument("--session", default=None)
     args = parser.parse_args(argv)
     try:
-        session = args.session or os.environ.get("AGENT_SESSION") or ""
-        if not session:
+        if args.host == "claude" and os.environ.get("AGENT_HOST") == "copilot":
+            return 0
+        env_session = parent_session(os.environ.get("AGENT_SESSION"))
+        if os.environ.get("AGENT_SESSION") and not env_session:
             return 0
         raw = sys.stdin.read() if not sys.stdin.isatty() else ""
         try:
@@ -99,6 +106,12 @@ def main(argv=None) -> int:
             payload = {}
         if not isinstance(payload, dict):
             payload = {}
+        native_child = copilot_child_identity_from_payload(payload) if args.host == "copilot" else None
+        if args.host == "copilot" and (payload.get("agentId") or payload.get("agent_id")) and not native_child:
+            return 0
+        session = args.session or native_child or env_session or ""
+        if not session:
+            return 0
         mail = _load_mail()
         if mail is None:
             return 0

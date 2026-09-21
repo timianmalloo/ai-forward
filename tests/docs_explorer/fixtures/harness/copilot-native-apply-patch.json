@@ -1,0 +1,11 @@
+{
+  "sessionId": "7d3f10b9-lease-fixture",
+  "cwd": "C:\\repo-fixture",
+  "toolCalls": [
+    {
+      "id": "custom_call_apply_patch",
+      "name": "apply_patch",
+      "args": "*** Begin Patch\n*** Update File: leased.txt\n@@\n-LEASE_SENTINEL\n+CHANGED\n*** End Patch\n"
+    }
+  ]
+}

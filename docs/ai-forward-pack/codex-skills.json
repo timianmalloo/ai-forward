@@ -49,6 +49,7 @@
   "execute-with-coordination": [
     "SKILL.md",
     "reference/co-s0.md",
+    "reference/copilot.md",
     "reference/join.md",
     "reference/launch.md"
   ],

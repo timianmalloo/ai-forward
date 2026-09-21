@@ -1263,7 +1263,7 @@ def _build_parser():
 
     # --- Phase 2: enforcement ---
     hook = sub.add_parser("hook", help="PreToolUse adapter: stdin JSON in, decision JSON out")
-    hook.add_argument("--host", choices=["claude", "codex", "grok", "agy"],
+    hook.add_argument("--host", choices=["claude", "codex", "copilot", "grok", "agy"],
                       help="native response contract (Codex indeterminate checks deny)")
     hook.add_argument("--config", action="store_true",
                       help="print a project hook entry as JSON; never install or trust it")
@@ -1428,6 +1428,8 @@ def _build_parser():
     mr.add_argument("theirs"); mr.add_argument("realpath")
     pl = sub.add_parser("plugin", help="emit the bundle both harnesses read; never installs")
     pl.add_argument("--emit", required=True, metavar="DIR")
+    pl.add_argument("--host", choices=["copilot"], default=None,
+                    help="emit the explicit Copilot lifecycle plugin; default keeps the shared edit guard")
     return parser
 
 
@@ -2050,16 +2052,17 @@ HARNESS_STATUS = {
                "honoured (spike S5, five cases incl. both fail-safe paths).",
     },
     "copilot": {
-        # The architecture's condition 2, CLOSED by a live session rather than assumed
-        # either way.
-        "edit_boundary": "enforcing",
+        # Historical proof retained honestly rather than promoted to a current qualification.
+        "edit_boundary": "historical",
         "established": "2026-08-24",
         "harness_version": "Copilot CLI 1.0.80",
-        "why": "A live session honoured a deny: a read of an unleased file succeeded, a "
-               "write to a leased one was refused with our reason rendered verbatim into "
-               "the transcript, and the file was unmodified. RESIDUAL, unchanged: Copilot "
-               "fails OPEN on a 30s hook timeout, so a hung hook allows. Our measured check "
-               "is 63ms p95, and the commit floor backs it.",
+        "why": "Historical proof only: on Copilot CLI 1.0.80 a live session honoured a "
+               "deny (read of an unleased file succeeded; write to a leased file was "
+               "refused with our reason rendered verbatim; held bytes were unchanged). The "
+               "runtime has moved since, so current enforcement requires a fresh version-"
+               "bound qualification. RESIDUAL from the historical proof: Copilot fails OPEN "
+               "on a 30s hook timeout, so a hung hook allows; the measured historical check "
+               "was 63ms p95 and the commit floor backs it.",
     },
 }
 
@@ -2285,9 +2288,41 @@ def parse_hook_request(event, repo, host=None, cwd=None):
         if not paths:
             raise ValueError("native write has no recognized target")
         return [(event["tool_name"], target) for target in paths]
+    if host == "copilot" and any(k in event for k in ("toolName", "tool_name", "toolArgs", "tool_input")):
+        tool = str(event.get("toolName") or event.get("tool_name") or "")
+        args = event.get("toolArgs") or event.get("tool_input") or {}
+        patch_tool = tool.lower() == "apply_patch" or (
+            tool == "Edit" and isinstance(args, str)
+            and event.get("hook_event_name") in ("PreToolUse", "PostToolUse"))
+        raw_patch = args if isinstance(args, str) and patch_tool else None
+        if isinstance(args, str):
+            try:
+                args = json.loads(args)
+            except (ValueError, TypeError):
+                if raw_patch is not None:
+                    args = raw_patch
+                else:
+                    args = None
+        if patch_tool:
+            command = args if isinstance(args, str) else (args.get("command") if isinstance(args, dict) else None)
+            return [(tool, target) for path in _patch_paths(command)
+                    for target in _native_paths(path, repo, cwd)]
+        path = None
+        if isinstance(args, dict):
+            for key in _PATH_KEYS:
+                if args.get(key):
+                    path = args[key]
+                    break
+        if tool.lower() in _WRITE_TOOLS:
+            if path is None:
+                raise ValueError("write call has no recognized path")
+            return [(tool, target) for target in _native_paths(path, repo, cwd)]
+        return [(tool, _relativise(path, repo, cwd) if path else None)]
 
     # Copilot: a batch, under input.toolCalls, with args as a JSON string.
     payload = event.get("input")
+    if host == "copilot" and not isinstance(payload, dict) and isinstance(event.get("toolCalls"), list):
+        payload = event
     if isinstance(payload, dict) and isinstance(payload.get("toolCalls"), list):
         cwd = payload.get("cwd")
         calls = []
@@ -2295,18 +2330,42 @@ def parse_hook_request(event, repo, host=None, cwd=None):
             if not isinstance(call, dict):
                 continue
             name = str(call.get("name", ""))
+            tool = name.lower()
             args = call.get("args")
+            raw_patch = args if isinstance(args, str) and tool == "apply_patch" else None
             if isinstance(args, str):
                 try:
                     args = json.loads(args)
                 except (ValueError, TypeError):
-                    args = None
+                    if raw_patch is not None:
+                        args = raw_patch
+                    elif tool in _WRITE_TOOLS:
+                        raise ValueError("malformed write args")
+                    else:
+                        args = None
+            if tool == "apply_patch":
+                command = args if isinstance(args, str) else (args.get("command") if isinstance(args, dict) else None)
+                if not isinstance(command, str):
+                    raise ValueError("write call has no recognized path")
+                for patch_path in _patch_paths(command):
+                    if host == "copilot":
+                        for target in _native_paths(patch_path, repo, cwd):
+                            calls.append((name, target))
+                    else:
+                        calls.append((name, _relativise(patch_path, repo, cwd)))
+                continue
             path = None
             if isinstance(args, dict):
                 for key in _PATH_KEYS:
                     if args.get(key):
-                        path = _relativise(args[key], repo, cwd)
+                        if tool in _WRITE_TOOLS and host == "copilot":
+                            targets = _native_paths(args[key], repo, cwd)
+                            path = targets[0] if targets else None
+                        else:
+                            path = _relativise(args[key], repo, cwd)
                         break
+            if tool in _WRITE_TOOLS and path is None:
+                raise ValueError("write call has no recognized path")
             calls.append((name, path))
         return calls
 
@@ -2350,6 +2409,8 @@ def hook_decision_of(response):
     """
     if not isinstance(response, dict):
         return None
+    if not response:
+        return "allow"  # No ownership refusal; native permission policy still decides.
     block = response.get("hookSpecificOutput")
     if isinstance(block, dict) and block.get("permissionDecision"):
         return block["permissionDecision"]
@@ -2366,6 +2427,8 @@ def hook_response_is_valid(response, harness):
     """
     if not isinstance(response, dict):
         return False
+    if harness == "copilot" and not response:
+        return True
     block = response.get("hookSpecificOutput")
     if not isinstance(block, dict):
         return False
@@ -2382,6 +2445,8 @@ def hook_response(decision, reason, host=None):
     """
     if host == "agy" and decision == "allow":
         return ""  # Neutral success: ownership is not permission to autoapprove a tool.
+    if host == "copilot" and decision == "allow":
+        return "{}"
     if host in ("grok", "agy"):
         return json.dumps({"decision": decision, "reason": reason})
     return json.dumps({"hookSpecificOutput": {
@@ -2391,7 +2456,7 @@ def hook_response(decision, reason, host=None):
 
 
 def _not_checked(reason, host=None):
-    return hook_response("deny" if host in ("codex", "grok", "agy") else "ask", "NOT CHECKED  -\n  held by   unknown - this check did"
+    return hook_response("deny" if host in ("codex", "grok", "agy", "copilot") else "ask", "NOT CHECKED  -\n  held by   unknown - this check did"
                          " not run\n  because   {}\n"
                          "  remedy    fix the condition above; this is not a pass"
                          .format(reason), host)
@@ -2409,6 +2474,16 @@ def cmd_hook(root, session, agent, now, stdin_text, repo=None, host=None, cwd=No
         event = json.loads(stdin_text or "")
         if not isinstance(event, dict):
             raise ValueError("payload is not an object")
+        if host == "copilot":
+            payload = event.get("input") if isinstance(event.get("input"), dict) else event
+            tool_cwd = payload.get("cwd")
+            if tool_cwd is not None:
+                origin = repo_root(cwd or repo or root)
+                target = repo_root(tool_cwd) if isinstance(tool_cwd, str) else None
+                if not origin or not target or Path(origin).resolve() != Path(target).resolve():
+                    raise ValueError("tool cwd is not a checkout of the bound repository")
+                cwd = tool_cwd
+                repo = checkout_top(tool_cwd)
         calls = parse_hook_request(event, repo or root, host=host, cwd=cwd)
     except Exception as exc:
         return _not_checked("unreadable hook payload ({})".format(exc.__class__.__name__), host)
@@ -2446,7 +2521,7 @@ def cmd_hook(root, session, agent, now, stdin_text, repo=None, host=None, cwd=No
     if worst is None:
         return hook_response("allow", "coordination: {} path(s) free or mine"
                              .format(len(paths)), host)
-    mapped = {"deny": "deny", "not_checked": "deny" if host in ("codex", "grok", "agy") else "ask"}[worst["decision"]]
+    mapped = {"deny": "deny", "not_checked": "deny" if host in ("codex", "grok", "agy", "copilot") else "ask"}[worst["decision"]]
     return hook_response(mapped, render(worst), host)
 
 
@@ -4381,7 +4456,7 @@ def cmd_doctor(root, repo):
 PLUGIN_NAME = "coord-agent-coordination"
 
 
-def cmd_plugin_emit(out_dir):
+def cmd_plugin_emit(out_dir, host=None):
     """Write the plugin bundle BOTH harnesses read. It never installs anything.
 
     S14 established that Copilot CLI consumes the Claude plugin format verbatim --
@@ -4449,11 +4524,49 @@ def cmd_plugin_emit(out_dir):
                        "python" if os.name == "nt" else "python3"),
                    "timeout": 10}]}]}}
 
+    lifecycle = None
+    if host == "copilot":
+        launcher = launcher.replace('[COORD, "hook"]', '[COORD, "hook", "--host", "copilot"]')
+        here = Path(__file__).resolve().parent
+        hook_dir = next((p for p in (here.parent / "adapters" / "hooks", here.parent / "hooks")
+                         if (p / "copilot.ai-forward-hooks.json").is_file()), None)
+        if hook_dir is None:
+            print("COORD-PLUGIN-HOOKS  install the native Copilot hook bundle before emitting this profile")
+            return 2
+        source = json.loads((hook_dir / "copilot.ai-forward-hooks.json").read_text(encoding="utf-8"))
+        events = {"preToolUse": "PreToolUse", "postToolUse": "PostToolUse",
+                  "sessionStart": "SessionStart", "subagentStart": "SubagentStart",
+                  "agentStop": "Stop", "subagentStop": "SubagentStop",
+                  "userPromptSubmitted": "UserPromptSubmit"}
+        scripts = {}
+        for event, entries in source["hooks"].items():
+            for entry in entries:
+                match = re.search(r"hooks/([A-Za-z_-]+\.py)(.*)$", entry["bash"])
+                if not match:
+                    raise ValueError("Unsupported source-managed Copilot hook command")
+                name, arguments = match.groups()
+                scripts[name] = str(hook_dir / name)
+                command = '{} "${{CLAUDE_PLUGIN_ROOT}}/hooks/lifecycle.py" {}{}'.format(
+                    "python" if os.name == "nt" else "python3", name, arguments)
+                native = {"hooks": [{"type": "command", "command": command,
+                                      "timeout": entry.get("timeoutSec", 10)}]}
+                if event == "preToolUse" and "matcher" in entry:
+                    # Copilot's native view tool is named Read in the PascalCase envelope.
+                    native["matcher"] = "Read" if entry["matcher"] == "^view$" else entry["matcher"]
+                hooks["hooks"].setdefault(events[event], []).append(native)
+        lifecycle = ("import runpy, sys\n"
+                     "SCRIPTS = " + repr(scripts) + "\n"
+                     "script = SCRIPTS[sys.argv.pop(1)]\n"
+                     "sys.argv[0] = script\n"
+                     "runpy.run_path(script, run_name='__main__')\n")
+
     (out / ".claude-plugin").mkdir(parents=True, exist_ok=True)
     (out / "hooks").mkdir(parents=True, exist_ok=True)
     manifest_path.write_text(json.dumps(manifest, indent=2) + "\n",
                              encoding="utf-8", newline="\n")
     (out / "hooks" / "hook.py").write_text(launcher, encoding="utf-8", newline="\n")
+    if lifecycle is not None:
+        (out / "hooks" / "lifecycle.py").write_text(lifecycle, encoding="utf-8", newline="\n")
     (out / "hooks" / "hooks.json").write_text(json.dumps(hooks, indent=2) + "\n",
                                               encoding="utf-8", newline="\n")
 
@@ -4509,6 +4622,14 @@ def native_hook_config(host):
     Native hooks use a shell command string. Only fixed syntax and the selected enum enter
     it; runtime paths stay in quoted expansions, never eval or interpolated source code.
     """
+    if host == "copilot":
+        return {"version": 1, "hooks": {"preToolUse": [{
+            "type": "command",
+            "bash": "python3 docs/ai-forward-pack/scripts/coord-core.py hook --host copilot",
+            "powershell": "python docs/ai-forward-pack/scripts/coord-core.py hook --host copilot",
+            "timeoutSec": 10,
+            "matcher": "^(edit|create|write|apply_patch|str_replace|search_replace|multiedit|notebookedit|edit_file|write_file|write_to_file|replace_file_content|multi_replace_file_content)$",
+        }]}}
     command = ("py=$(python3 -c 'import sys;print(sys.executable)' 2>/dev/null); "
                "[ -x \"$py\" ] || py=$(python -c 'import sys;print(sys.executable)'); "
                "root=$(git rev-parse --show-toplevel) || exit 2; "
@@ -4527,7 +4648,7 @@ def main(argv=None):
 
     if args.cmd == "hook" and args.config:
         if not args.host:
-            print("hook --config requires --host claude|codex", file=sys.stderr)
+            print("hook --config requires --host claude|codex|copilot|grok|agy", file=sys.stderr)
             return 2
         print(json.dumps(native_hook_config(args.host), indent=2))
         return 0
@@ -4617,7 +4738,7 @@ def main(argv=None):
         return 0
 
     if args.cmd == "plugin":
-        return cmd_plugin_emit(args.emit)
+        return cmd_plugin_emit(args.emit, args.host)
 
     if args.cmd == "merge-register":
         return cmd_merge_register(args.result, args.base, args.theirs, args.realpath)

@@ -5,7 +5,7 @@ window.PORTAL_DATA = {
       "personas": 23,
       "knowledge": 39,
       "templates": 28,
-      "scripts": 43
+      "scripts": 45
     },
     "whatIs": "AI-Forward is a committed Markdown methodology pack that installs into a repo so Claude Code, GitHub Copilot, and Grok Build direct work with a shared reasoning spine, adversarial persona review, and a library of workflow skills - nothing runs as a service; everything is versioned files and stdlib scripts.",
     "skillCount": 28,
@@ -1919,6 +1919,12 @@ window.PORTAL_DATA = {
         "summary": "Prepare and run an opt-in, qualified multi-harness coordination contract."
       },
       {
+        "id": "api-coord_files",
+        "type": "api",
+        "title": "API — coord_files.py",
+        "summary": "Bounded regular-file reads with pinned, non-reparse Windows ancestors."
+      },
+      {
         "id": "api-coord_ids",
         "type": "api",
         "title": "API — coord_ids.py",
@@ -1976,7 +1982,7 @@ window.PORTAL_DATA = {
         "id": "api-index",
         "type": "api",
         "title": "API reference — the deployed script bundle",
-        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 530 public functions across 42 modules, 47% carrying a docstring."
+        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 541 public functions across 44 modules, 47% carrying a docstring."
       },
       {
         "id": "api-marker-lint",
@@ -2007,6 +2013,12 @@ window.PORTAL_DATA = {
         "type": "api",
         "title": "API — pack-doctor.py",
         "summary": "pack-doctor.py — AI-Forward install-health check (deployable; runs in a TARGET repo)."
+      },
+      {
+        "id": "api-platform_process",
+        "type": "api",
+        "title": "API — platform_process.py",
+        "summary": "Cross-platform owned-process helpers for bounded local subprocesses."
       },
       {
         "id": "api-prompt-compile",
@@ -3812,6 +3824,11 @@ window.PORTAL_DATA = {
         "rel": "refines"
       },
       {
+        "from": "api-coord_files",
+        "to": "api-index",
+        "rel": "refines"
+      },
+      {
         "from": "api-coord_ids",
         "to": "api-index",
         "rel": "refines"
@@ -3883,6 +3900,11 @@ window.PORTAL_DATA = {
       },
       {
         "from": "api-pack-doctor",
+        "to": "api-index",
+        "rel": "refines"
+      },
+      {
+        "from": "api-platform_process",
         "to": "api-index",
         "rel": "refines"
       },

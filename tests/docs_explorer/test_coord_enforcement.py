@@ -20,6 +20,7 @@ import tempfile
 import time
 import unittest
 from pathlib import Path
+from windows_links import create_directory_alias
 
 REPO = Path(__file__).resolve().parents[2]
 SCRIPT = REPO / "pack" / "scripts" / "coord-core.py"
@@ -313,11 +314,19 @@ class NativeHookTests(GitCase):
             self.assertEqual("deny", self.decision(payload, "codex")["permissionDecision"])
 
     def test_native_symlink_alias_cannot_hide_a_held_or_external_path(self):
-        if os.name != "posix":
-            self.skipTest("POSIX symlink fixture")
-        (self.repo / "alias").symlink_to(self.repo / "held.txt")
-        (self.repo / "outside").symlink_to(self.repo.parent / "elsewhere")
-        for path in ["alias", "outside"]:
+        if os.name == "nt":
+            create_directory_alias(self.repo / "alias", self.repo)
+            self.addCleanup((self.repo / "alias").rmdir)
+            elsewhere = self.repo.parent / "elsewhere"
+            create_directory_alias(self.repo / "outside", elsewhere)
+            self.addCleanup((self.repo / "outside").rmdir)
+            (elsewhere / "secret.txt").write_text("secret", encoding="utf-8")
+            paths = ["alias/held.txt", "outside/secret.txt"]
+        else:
+            (self.repo / "alias").symlink_to(self.repo / "held.txt")
+            (self.repo / "outside").symlink_to(self.repo.parent / "elsewhere")
+            paths = ["alias", "outside"]
+        for path in paths:
             patch = self.payload("*** Begin Patch\n*** Delete File: " + path + "\n*** End Patch")
             self.assertEqual("deny", self.decision(patch, "codex")["permissionDecision"])
 
@@ -364,8 +373,14 @@ class NativeHookTests(GitCase):
         self.assertEqual("allow", self.decision(self.payload(patch), "codex")["permissionDecision"])
 
     def test_native_claude_uses_canonical_path_and_missing_write_is_not_allowed(self):
-        (self.repo / "alias").symlink_to(self.repo / "held.txt")
-        for path in ["held.txt", "alias"]:
+        if os.name == "nt":
+            create_directory_alias(self.repo / "alias", self.repo)
+            self.addCleanup((self.repo / "alias").rmdir)
+            paths = ["held.txt", "alias/held.txt"]
+        else:
+            (self.repo / "alias").symlink_to(self.repo / "held.txt")
+            paths = ["held.txt", "alias"]
+        for path in paths:
             payload = json.dumps({"tool_name": "Edit", "tool_input": {"file_path": path}})
             self.assertEqual("deny", self.decision(payload, "claude")["permissionDecision"])
         payload = json.dumps({"tool_name": "Write", "tool_input": {}})
@@ -397,9 +412,15 @@ class NativeHookTests(GitCase):
                 self.run_cli("release", "--path", lease, "--wi", "owner-work", session="owner")
 
     def test_native_lease_symlink_alias_is_checked_in_both_directions(self):
-        (self.repo / "alias").symlink_to(self.repo / "held.txt")
+        if os.name == "nt":
+            create_directory_alias(self.repo / "alias", self.repo)
+            self.addCleanup((self.repo / "alias").rmdir)
+            lease = "alias/held.txt"
+        else:
+            (self.repo / "alias").symlink_to(self.repo / "held.txt")
+            lease = "alias"
         self.run_cli("release", "--path", "held.txt", "--wi", "owner-work", session="owner")
-        self.run_cli("claim", "--wi", "owner-work", "--path", "alias", session="owner")
+        self.run_cli("claim", "--wi", "owner-work", "--path", lease, session="owner")
         patch = self.payload("*** Begin Patch\n*** Delete File: held.txt\n*** End Patch")
         self.assertEqual("deny", self.decision(patch, "codex")["permissionDecision"])
 

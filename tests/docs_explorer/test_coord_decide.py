@@ -17,6 +17,7 @@ import time
 import unittest
 from unittest import mock
 from pathlib import Path
+from windows_links import create_directory_alias, remove_test_path
 
 REPO = Path(__file__).resolve().parents[2]
 SCRIPTS = REPO / "pack" / "scripts"
@@ -352,7 +353,12 @@ class Gate(TempRepo):
             self.store.write_text(bad, encoding="utf-8")
             self.assertFalse(core.decision_request_state(self.root, "p5")["checked"])
         self.store.unlink()
-        self.store.symlink_to(self.tmp / "missing-ledger")
+        if os.name == "nt":
+            target = self.tmp / "missing-ledger"
+            create_directory_alias(self.store, target, dangling=True)
+            self.addCleanup(remove_test_path, self.store)
+        else:
+            self.store.symlink_to(self.tmp / "missing-ledger")
         self.assertFalse(core.decision_request_state(self.root, "p5")["checked"])
         self.store.unlink()
         if hasattr(os, "mkfifo"):
@@ -369,7 +375,12 @@ class Gate(TempRepo):
 
     def test_projection_rejects_dangling_link_without_native_nofollow(self):
         core = _load("decision_no_nofollow", CORE)
-        self.store.symlink_to(self.tmp / "missing-ledger")
+        if os.name == "nt":
+            target = self.tmp / "missing-ledger"
+            create_directory_alias(self.store, target, dangling=True)
+            self.addCleanup(remove_test_path, self.store)
+        else:
+            self.store.symlink_to(self.tmp / "missing-ledger")
         with mock.patch.object(core.os, "O_NOFOLLOW", 0, create=True):
             self.assertFalse(core.decision_request_state(self.root, "p5")["checked"])
 

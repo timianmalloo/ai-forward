@@ -37,6 +37,12 @@ import time
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+HERE = Path(__file__).resolve().parent
+if str(HERE) not in sys.path:
+    sys.path.insert(0, str(HERE))
+
+from coord_identity import copilot_child_identity_from_payload, parent_session
+
 for _stream in (sys.stdout, sys.stderr):
     if hasattr(_stream, "reconfigure"):
         try:
@@ -44,7 +50,6 @@ for _stream in (sys.stdout, sys.stderr):
         except (ValueError, OSError):
             pass
 
-HERE = Path(__file__).resolve().parent
 AGY_MAX_REFUSALS = 2
 COPILOT_STOP_EVENTS = ("agentStop", "subagentStop")
 TEXT = ("owner-review: {count} unresolved decision request(s) sent by {session} ({ids}); "
@@ -86,8 +91,10 @@ def main(argv=None) -> int:
         return 0
 
     try:
-        session = args.session or os.environ.get("AGENT_SESSION") or ""
-        if not re.fullmatch(r"[A-Za-z0-9_.-]{1,160}", session):
+        if args.host == "claude" and os.environ.get("AGENT_HOST") == "copilot":
+            return allow()
+        env_session = parent_session(os.environ.get("AGENT_SESSION"))
+        if os.environ.get("AGENT_SESSION") and not env_session:
             return allow()
         raw = sys.stdin.read() if not sys.stdin.isatty() else ""
         try:
@@ -95,6 +102,12 @@ def main(argv=None) -> int:
         except ValueError:
             return allow()
         if not isinstance(payload, dict):
+            return allow()
+        native_child = copilot_child_identity_from_payload(payload) if args.host == "copilot" else None
+        if args.host == "copilot" and (payload.get("agentId") or payload.get("agent_id")) and not native_child:
+            return allow()
+        session = args.session or native_child or env_session or ""
+        if not re.fullmatch(r"[A-Za-z0-9_.-]{1,160}", session):
             return allow()
         if args.host == "copilot" and _event_of(args.event, payload) not in COPILOT_STOP_EVENTS:
             return 0
@@ -118,7 +131,8 @@ def main(argv=None) -> int:
             try:
                 # This records our requested native decision, not proof the host enforced it.
                 core.append_event(root, {"kind": "owner-review-stop", "session": session,
-                    "agent": os.environ.get("AGENT_HOST") or args.host, "at": time.time(),
+                    "agent": (str(payload.get("agentId") or payload.get("agent_id") or "").strip()
+                              or os.environ.get("AGENT_HOST") or args.host), "at": time.time(),
                     "hook_host": args.host, "hook_cwd": str(Path.cwd().resolve()),
                     "event": observed_event, "result": result, **state})
             except (OSError, ValueError):

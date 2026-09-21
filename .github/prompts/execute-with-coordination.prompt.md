@@ -10,13 +10,20 @@ A sub-agent's report is **evidence, not authority**: a track saying "done", "saf
 
 Ground: read the plan; run `coord doctor` (a plan is not proof the layer is on); `coord worktree list` and `coord session list`; the CTX-* and WT classes.
 
-MODE: keep native `--agents` and manual `--brief` behavior. The opt-in `--launch` POSIX pilot
+MODE: keep native `--agents` and manual `--brief` behavior. The opt-in, profile-qualified `--launch`
 uses `python3 docs/ai-forward-pack/scripts/coord-runner.py`: `prepare --contract FILE`,
 `fingerprint --run ID`, `run --run ID --qualification FILE`, and `status --run ID`.
-Claude or Codex can hold the Owner seat; Grok/Agy can invoke the same runner. It never pins
-or steals leadership. A shared Agent Client Protocol client handles Claude/Codex/Grok;
+Claude, Codex or Copilot can hold the Owner seat; Grok/Agy can invoke the same runner. It never pins
+or steals leadership. A shared Agent Client Protocol client handles Claude/Codex/Grok/Copilot;
 Agy uses a separately qualified native stream. No arbitrary TUI attachment, implicit
-adapter install, automatic approval/retry, Windows interactive launch or automatic join.
+adapter install, automatic approval or automatic join. POSIX and Windows use separate
+bounded owned-process paths. Startup-only retries require explicit runtime policy.
+Copilot requires native `--acp --model <explicit-model>` and a matching `effective_model`
+qualification and a bound native exact-ID model policy. Setter failure blocks prompting;
+actual inference-model mismatch blocks readiness. Set the launch
+identity (`AGENT_SESSION`, `AGENT_HOST=copilot`), qualify native hooks, and do not inherit
+historical plugin proof or Codex-only operational roots. Read the installed
+`execute-with-coordination/reference/copilot.md` for the exact profile and evidence limits.
 
 The `coord-run/1` contract has run_id, owner, parallelism (1–4), workers (1–8). Each worker
 has a new session/branch, harness, transport (acp or agy), argv array, prompts (finished

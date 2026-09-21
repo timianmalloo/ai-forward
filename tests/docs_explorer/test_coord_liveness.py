@@ -347,6 +347,21 @@ class HookTests(LivenessCase):
         self.assertEqual((rows[0]["calls"], rows[0]["files"], rows[0]["host"], rows[0]["event"]),
                          (1, 1, "claude", "Stop"))
 
+    def test_copilot_config_wires_post_tool_use_and_subagent_stop(self):
+        config = json.loads(HOOK_JSONS["copilot"].read_text(encoding="utf-8"))["hooks"]
+        self.assertIn("sessionStart", config)
+        self.assertIn("subagentStart", config)
+        self.assertIn("postToolUse", config)
+        self.assertIn("subagentStop", config)
+        self.assertTrue(any("session-start.py --host copilot" in entry.get("bash", "")
+                            for entry in config["sessionStart"]))
+        self.assertTrue(any("heartbeat.py --host copilot --event postToolUse" in entry.get("bash", "")
+                            for entry in config["postToolUse"]))
+        sub_stop = "\n".join(entry.get("bash", "") for entry in config["subagentStop"])
+        self.assertIn("mail-doorbell.py --host copilot --event subagentStop", sub_stop)
+        self.assertIn("heartbeat.py --host copilot --event subagentStop", sub_stop)
+        self.assertIn("owner-review-gate.py --host copilot --event subagentStop", sub_stop)
+
     def test_malformed_stdin_exits_0_prints_nothing_and_counts_the_call(self):
         """Fails if garbage on stdin denies the tool call (Copilot semantics) or is not counted."""
         done = self.run_hook(None, raw="{not json")
@@ -385,7 +400,7 @@ class HookTests(LivenessCase):
                             for event in ("PostToolUse", "Stop") for entry in agy[event]
                             for h in (entry["hooks"] if "hooks" in entry else [entry])))
         copilot = json.loads(HOOK_JSONS["copilot"].read_text(encoding="utf-8"))["hooks"]
-        for event in ("preToolUse", "agentStop"):
+        for event in ("postToolUse", "agentStop", "subagentStop"):
             self.assertTrue(any("heartbeat.py --host copilot" in h["bash"] for h in copilot[event]), event)
         for path in HOOK_JSONS.values():
             self.assertNotIn("/Users/", path.read_text(encoding="utf-8"))

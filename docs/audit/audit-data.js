@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-21T17:26:19Z",
+  "generated": "2026-09-21T22:42:31Z",
   "audit": [
     {
       "actor": null,
@@ -13008,6 +13008,46 @@ window.AUDIT_DATA = {
         "branch": "test/stabilize-transport-deadline",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M32TR9J800WZESN0DDXC3ZAR",
+      "shortname": "do all items P1-P6 now",
+      "datetime": "2026-09-21T20:33:08Z",
+      "session": "copilot-parity-20260921",
+      "prompt": "do all items P1-P6 now",
+      "summary": "Implement Copilot worker and leader parity including Windows under GPT-only model restriction",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M33256E2DJ9Y41M4287R0P67",
+      "shortname": "implement-copilot-coordination",
+      "datetime": "2026-09-21T22:42:31Z",
+      "session": "copilot-parity-20260921",
+      "prompt": "do all items P1-P6 now",
+      "summary": "Implemented Copilot explicit plugin-backed ACP model/identity/ownership profile and Windows Job/stdio/private-file support. Recorded actual worker, Owner, cross-harness read-only handoff, permission and cancellation evidence. Eight initial model-routing violations remain INVALID. Source controls independently reviewed; final bundle verification follows.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "pack/commands/execute-with-coordination/reference/copilot.md",
+        "pack/evals/fixtures/copilot-windows-qualification.json"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "compiled": false,
+      "goal": "Complete P1-P6 Copilot worker and leader/coordinator support including Windows without a second framework.",
+      "done_when": "Qualified scoped live behavior, generated installs, independent reviews and full bundle gates are complete.",
+      "tier": "T2",
+      "fan_out": 4,
+      "started_at": "2026-09-21T20:33:08Z",
+      "duration_seconds": 7763.0
     }
   ],
   "changes": [

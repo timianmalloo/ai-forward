@@ -33,7 +33,7 @@ Validate explicit file access; content may append without changing identity.
 
 Only preparation may defer its exact future session log until worktree registration.
 
-### `run_session(transport, argv, cwd, env, prompts, deadline_seconds, output_limit, emit, cancelled, before_prompt=…, additional_roots=…, next_prompt=…, permission_handler=…, max_turns=…, session_id=…, require_loaded_cwd=…, mode_id=…)`
+### `run_session(transport, argv, cwd, env, prompts, deadline_seconds, output_limit, emit, cancelled, before_prompt=…, additional_roots=…, next_prompt=…, permission_handler=…, max_turns=…, session_id=…, require_loaded_cwd=…, mode_id=…, expected_model=…)`
 
 Run admitted turns in one owned process group; return metadata, never bodies.
 

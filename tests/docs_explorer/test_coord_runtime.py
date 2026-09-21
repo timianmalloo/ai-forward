@@ -11,6 +11,7 @@ import time
 import unittest
 
 SCRIPT = Path(__file__).resolve().parents[2] / "pack/scripts/coord_runtime.py"
+sys.path.insert(0, str(SCRIPT.parent))
 
 
 def module():
@@ -20,7 +21,6 @@ def module():
     return result
 
 
-@unittest.skipUnless(os.name == "posix", "The runtime uses POSIX containment and locking")
 class RuntimeControls(unittest.TestCase):
     def setUp(self):
         self.api = module()
@@ -75,6 +75,7 @@ class RuntimeControls(unittest.TestCase):
             self.box.decide(other["id"], "yes", now=201)
         self.assertEqual("expired", self.box.pending(now=201)[0]["state"])
 
+    @unittest.skipUnless(os.name == "posix", "Symlink primitive; Windows junctions have a separate oracle")
     def test_tampered_missing_symlink_and_oversize_records_fail_closed(self):
         self.box.enqueue("al-first", "abc", 2)
         path = next(self.path.glob("*.json"))
@@ -108,6 +109,7 @@ class RuntimeControls(unittest.TestCase):
         self.assertEqual(8, len({r["id"] for r in result}))
         self.assertEqual(list(range(1, 9)), [r["sequence"] for r in self.box.records()])
 
+    @unittest.skipUnless(os.name == "posix", "POSIX mode bits; Windows uses a protected DACL")
     def test_private_files_and_no_replace_of_preexisting_symlink_directory(self):
         self.box.enqueue("al-first", "abc", 2)
         self.assertEqual(0o700, self.path.stat().st_mode & 0o777)
@@ -118,6 +120,7 @@ class RuntimeControls(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.api.Controls(link).records()
 
+    @unittest.skipUnless(os.name == "posix", "POSIX FIFO primitive")
     def test_fifo_record_is_rejected_without_waiting_for_a_writer(self):
         self.box.records()
         os.mkfifo(self.path / "000001.json", 0o600)
@@ -131,7 +134,7 @@ class RuntimeControls(unittest.TestCase):
                                     "--hold-lock", str(self.path)], stdout=subprocess.PIPE,
                                    stdin=subprocess.PIPE, stderr=subprocess.PIPE)
         try:
-            self.assertEqual(b"locked\n", process.stdout.readline())
+            self.assertEqual(b"locked", process.stdout.readline().rstrip(b"\r\n"))
             started = time.monotonic()
             with self.assertRaises(ValueError):
                 self.box.records()

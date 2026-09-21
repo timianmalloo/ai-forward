@@ -19,6 +19,8 @@ import sys
 import tempfile
 import unittest
 from unittest import mock
+from pathlib import Path
+from windows_links import create_directory_alias
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
@@ -194,13 +196,19 @@ class SkeletonTests(unittest.TestCase):
                 fh.write("SENTINEL\n")
             root = os.path.join(tmp, "repo")
             os.makedirs(root)
+            link_token = "pack/link.txt"
+            if os.name == "nt":
+                link_token = "pack/linkdir/secret.txt"
             raw = ("Read foo.py and also readme.md and ../outside/secret.txt and " + sentinel +
-                   " and the link pack/link.txt\n")
+                   " and the link " + link_token + "\n")
             repo = make_repo(root, raw=raw)
             os.makedirs(os.path.join(root, "other"))
             with open(os.path.join(root, "other", "foo.py"), "w", encoding="utf-8", newline="\n") as fh:
                 fh.write("x = 2\n")
-            os.symlink(sentinel, os.path.join(root, "pack", "link.txt"))
+            if os.name == "nt":
+                create_directory_alias(Path(root) / "pack" / "linkdir", Path(outside))
+            else:
+                os.symlink(sentinel, os.path.join(root, "pack", "link.txt"))
             opened = []
             real_open = open
 
@@ -218,8 +226,8 @@ class SkeletonTests(unittest.TestCase):
             self.assertEqual(refs["readme.md"]["nearest"], "README.md")
             self.assertEqual(refs["../outside/secret.txt"]["reason"], "outside repo")
             self.assertEqual(refs[sentinel]["reason"], "outside repo")
-            self.assertEqual(refs["pack/link.txt"]["reason"], "outside repo")
-            for tok in ("../outside/secret.txt", sentinel, "pack/link.txt"):
+            self.assertEqual(refs[link_token]["reason"], "outside repo")
+            for tok in ("../outside/secret.txt", sentinel, link_token):
                 self.assertIsNone(refs[tok]["sha256"])
 
     def test_pass_through_passes_gate_and_prose_goal_colon_is_not_pass_through(self):

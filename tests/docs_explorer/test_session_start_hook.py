@@ -21,6 +21,7 @@ import unittest
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 HOOK = ROOT / "pack" / "adapters" / "hooks" / "session-start.py"
+IDENTITY = ROOT / "pack" / "adapters" / "hooks" / "coord_identity.py"
 AUDIT = ROOT / "pack" / "scripts" / "audit-log.py"
 
 
@@ -35,15 +36,16 @@ class SessionStartHookTests(unittest.TestCase):
         (pack / "hooks").mkdir(parents=True)
         (pack / "scripts").mkdir(parents=True)
         shutil.copy(HOOK, pack / "hooks" / "session-start.py")
+        shutil.copy(IDENTITY, pack / "hooks" / "coord_identity.py")
         shutil.copy(AUDIT, pack / "scripts" / "audit-log.py")
         self.hook = pack / "hooks" / "session-start.py"
         self.audit = pack / "scripts" / "audit-log.py"
 
-    def _run_hook(self, payload, env_extra=None):
+    def _run_hook(self, payload, env_extra=None, host="claude"):
         env = dict(os.environ)
         env.pop("AGENT_SESSION", None)
         env.update(env_extra or {})
-        return subprocess.run([sys.executable, str(self.hook), "--host", "claude"], cwd=str(self.repo),
+        return subprocess.run([sys.executable, str(self.hook), "--host", host], cwd=str(self.repo),
                               input=json.dumps(payload), capture_output=True, text=True, env=env, timeout=30)
 
     def _starts(self):
@@ -161,6 +163,33 @@ class SessionStartHookTests(unittest.TestCase):
         self.assertTrue(any("session-start.py" in c for c in pre_inv))
         pre_tool = [h["command"] for entry in config["reread-guard"]["PreToolUse"] for h in entry.get("hooks", [])]
         self.assertTrue(any("reread-guard.py" in c for c in pre_tool))
+
+    def test_copilot_session_start_uses_the_explicit_env_identity(self):
+        r = self._run_hook({"hookEventName": "sessionStart", "sessionId": "cp-top", "cwd": str(self.repo)},
+                           env_extra={"AGENT_SESSION": "worker-copilot"}, host="copilot")
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertIn("worker-copilot", self._starts())
+
+    def test_copilot_subagent_start_without_documented_child_id_is_a_noop(self):
+        r = self._run_hook({"hookEventName": "subagentStart", "sessionId": "cp-top",
+                            "agentName": "general-purpose", "agentDisplayName": "General Purpose",
+                            "cwd": str(self.repo)},
+                           env_extra={"AGENT_SESSION": "worker-copilot"}, host="copilot")
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertEqual(self._starts(), {})
+
+    def test_claude_form_hook_is_skipped_when_copilot_loads_claude_settings_too(self):
+        r = self._run_hook({"hook_event_name": "SessionStart", "session_id": "dup", "cwd": str(self.repo)},
+                           env_extra={"AGENT_SESSION": "worker-copilot", "AGENT_HOST": "copilot"}, host="claude")
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertEqual(self._starts(), {})
+
+    def test_invalid_copilot_child_identity_writes_nothing(self):
+        r = self._run_hook({"hookEventName": "subagentStart", "sessionId": "../bad", "agentId": "agent-7",
+                            "cwd": str(self.repo)},
+                           env_extra={"AGENT_SESSION": "worker-copilot"}, host="copilot")
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertEqual(self._starts(), {})
 
 
 if __name__ == "__main__":

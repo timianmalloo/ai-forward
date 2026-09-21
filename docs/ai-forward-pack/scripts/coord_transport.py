@@ -14,7 +14,20 @@ import selectors
 import signal
 import stat
 import subprocess
+import sys
+import threading
 import time
+
+HERE = Path(__file__).resolve().parent
+if str(HERE) not in sys.path:
+    sys.path.insert(0, str(HERE))
+from platform_process import (  # noqa: E402
+    WindowsJob as _WindowsJob,
+    release_windows_gate,
+    spawn_windows_gate,
+    terminate_owned_process,
+    wait_after_termination,
+)
 
 
 MAX_INPUT_BYTES = 16 * 1024 * 1024
@@ -204,6 +217,203 @@ class _Wire:
             self.selector.close()
             for stream in (self.process.stdin, self.process.stdout, self.process.stderr):
                 stream.close()
+        return error
+
+
+class _ThreadedWire:
+    def __init__(self, deadline, output_limit, cancelled, result):
+        self.process = None
+        self.deadline = deadline
+        self.output_limit = output_limit
+        self.cancelled = cancelled
+        self.result = result
+        self.incoming = bytearray()
+        self.outgoing = bytearray()
+        self.stdout_eof = False
+        self.safe_shutdown_output = False
+        self._closed = False
+        self._writer_broken = False
+        self._output_error = None
+        self._condition = threading.Condition()
+        self._threads = []
+
+    def attach(self, process):
+        self.process = process
+        self._threads = [
+            threading.Thread(target=self._read_stdout, daemon=True),
+            threading.Thread(target=self._read_stderr, daemon=True),
+            threading.Thread(target=self._write_stdin, daemon=True),
+        ]
+        for thread in self._threads:
+            thread.start()
+
+    def _consume_budget(self, label, data):
+        with self._condition:
+            remaining = self.output_limit - self.result["stdout_bytes"] - self.result["stderr_bytes"]
+            self.result[label + "_bytes"] += len(data)
+            if len(data) > remaining:
+                self._output_error = "output_limit_exceeded"
+                self._condition.notify_all()
+                return False
+            if label == "stdout":
+                self.incoming.extend(data)
+            self._condition.notify_all()
+            return True
+
+    def _read_stdout(self):
+        while True:
+            with self._condition:
+                if self._closed:
+                    return
+                remaining = self.output_limit - self.result["stdout_bytes"] - self.result["stderr_bytes"]
+                size = min(65536, max(1, remaining + 1))
+            try:
+                data = self.process.stdout.read(size)
+            except OSError:
+                data = b""
+            if not data:
+                with self._condition:
+                    self.stdout_eof = True
+                    self._condition.notify_all()
+                return
+            if not self._consume_budget("stdout", data):
+                return
+
+    def _read_stderr(self):
+        while True:
+            with self._condition:
+                if self._closed:
+                    return
+                remaining = self.output_limit - self.result["stdout_bytes"] - self.result["stderr_bytes"]
+                size = min(65536, max(1, remaining + 1))
+            try:
+                data = self.process.stderr.read(size)
+            except OSError:
+                return
+            if not data:
+                with self._condition:
+                    self._condition.notify_all()
+                return
+            if not self._consume_budget("stderr", data):
+                return
+
+    def _write_stdin(self):
+        while True:
+            with self._condition:
+                while not self.outgoing and not self._closed:
+                    self._condition.wait()
+                if self._closed:
+                    return
+                chunk = bytes(memoryview(self.outgoing)[:65536])
+            try:
+                count = self.process.stdin.write(chunk)
+                self.process.stdin.flush()
+                if count is None:
+                    count = len(chunk)
+            except (BrokenPipeError, OSError):
+                with self._condition:
+                    self._writer_broken = True
+                    self._condition.notify_all()
+                return
+            with self._condition:
+                del self.outgoing[:count]
+                if not self.outgoing:
+                    self._condition.notify_all()
+
+    def check(self):
+        if time.monotonic() >= self.deadline:
+            raise _Failure("deadline_exceeded")
+        with self._condition:
+            if self._output_error is not None:
+                raise _Failure(self._output_error)
+            if self._writer_broken:
+                raise _Failure("early_eof")
+        try:
+            cancelled = self.cancelled()
+        except Exception:
+            raise _Failure("callback_failed") from None
+        if cancelled:
+            raise _Failure("cancelled", "cancelled")
+
+    def queue(self, message):
+        self.safe_shutdown_output = False
+        payload = (json.dumps(message, ensure_ascii=False, separators=(",", ":")) + "\n").encode("utf-8")
+        with self._condition:
+            if len(payload) + len(self.outgoing) > MAX_INPUT_BYTES:
+                raise _Failure("input_limit_exceeded")
+            self.outgoing.extend(payload)
+            self._condition.notify_all()
+
+    def pump(self, timeout):
+        with self._condition:
+            self._condition.wait(timeout)
+
+    def receive(self):
+        while True:
+            self.check()
+            with self._condition:
+                newline = self.incoming.find(b"\n")
+                if newline >= 0:
+                    line = bytes(self.incoming[:newline])
+                    del self.incoming[:newline + 1]
+                elif self.stdout_eof:
+                    raise _Failure("protocol_error" if self.incoming else "early_eof")
+                else:
+                    line = None
+            if line is None:
+                self.pump(min(POLL_SECONDS, max(0, self.deadline - time.monotonic())))
+                continue
+            try:
+                value = json.loads(line.decode("utf-8"))
+            except (ValueError, UnicodeError, RecursionError):
+                raise _Failure("protocol_error") from None
+            if not isinstance(value, dict):
+                raise _Failure("protocol_error")
+            return value
+
+    def flush_input(self):
+        while True:
+            self.check()
+            with self._condition:
+                if not self.outgoing:
+                    return
+            self.pump(min(POLL_SECONDS, max(0, self.deadline - time.monotonic())))
+
+    def cleanup(self, session_id, graceful):
+        if self.process is None:
+            return None
+        cleanup_end = min(time.monotonic() + CLEANUP_SECONDS, self.deadline + CLEANUP_SECONDS)
+        error = None
+        if graceful and session_id and (not self.outgoing or self.safe_shutdown_output):
+            try:
+                self.queue({"jsonrpc": "2.0", "method": "session/cancel", "params": {"sessionId": session_id}})
+                grace_end = min(cleanup_end, time.monotonic() + .2)
+                while time.monotonic() < grace_end:
+                    with self._condition:
+                        if self._writer_broken:
+                            break
+                        if self.process.poll() is not None and not self.outgoing:
+                            break
+                    self.pump(min(.05, max(0, grace_end - time.monotonic())))
+            except _Failure:
+                pass
+        error = terminate_owned_process(self.process, self.windows_job)
+        returncode, waited_error = wait_after_termination(
+            self.process, self.windows_job, lambda: terminate_owned_process(self.process, self.windows_job)
+        )
+        _ = returncode
+        error = waited_error or error
+        with self._condition:
+            self._closed = True
+            self._condition.notify_all()
+        for stream in (self.process.stdin, self.process.stdout, self.process.stderr):
+            try:
+                stream.close()
+            except OSError:
+                pass
+        for thread in self._threads:
+            thread.join(timeout=max(0, cleanup_end - time.monotonic()))
+        self.windows_job.close()
         return error
 
 
@@ -418,7 +628,7 @@ class _Session:
                 raise _Failure("protocol_error")
             return message["result"]
 
-    def acp(self, cwd, prompts, additional_roots, session_id, require_loaded_cwd, mode_id):
+    def acp(self, cwd, prompts, additional_roots, session_id, require_loaded_cwd, mode_id, expected_model):
         info = self.rpc("initialize", {"protocolVersion": 1, "clientCapabilities": {},
                                       "clientInfo": {"name": "ai-forward-coordination", "version": "1"}})
         if type(info.get("protocolVersion")) is not int or info["protocolVersion"] != 1:
@@ -459,7 +669,14 @@ class _Session:
                     or self.creating_session_id not in (None, created["sessionId"])):
                 raise _Failure("protocol_error")
             self.result["session_id"] = created["sessionId"]
-            self.event("session_created")
+            models = created.get("models", {})
+            current_model = models.get("currentModelId") if isinstance(models, dict) else None
+            self.result["selected_model"] = current_model if _identifier(current_model) else None
+            if expected_model is not None:
+                self.rpc("session/set_model", {"sessionId": created["sessionId"], "modelId": expected_model})
+                self.result["selected_model_set"] = True
+                self.event("session_model_selected", requested_model=expected_model)
+            self.event("session_created", selected_model=self.result["selected_model"])
             if mode_id is not None:
                 modes = created.get("modes", {})
                 available = modes.get("availableModes") if isinstance(modes, dict) else None
@@ -577,7 +794,7 @@ class _Session:
 def run_session(transport, argv, cwd, env, prompts, deadline_seconds, output_limit,
                 emit, cancelled, before_prompt=None, additional_roots=None, *,
                 next_prompt=None, permission_handler=None, max_turns=8, session_id=None,
-                require_loaded_cwd=False, mode_id=None):
+                require_loaded_cwd=False, mode_id=None, expected_model=None):
     """Run admitted turns in one owned process group; return metadata, never bodies.
 
     Callbacks are caller-owned, fast/bounded functions. Admission is charged to the
@@ -597,10 +814,11 @@ def run_session(transport, argv, cwd, env, prompts, deadline_seconds, output_lim
               "cleanup_error": None, "reported_version": None, "progress_updates": 0,
               "reported_version_source": None, "compatibility_responses": 0}
     result.update(extension_notifications=0, native_denials=0, prompts_started=0,
-                  permission_allowed=0, permission_denials=0, loaded_cwd_verified=False)
+                  permission_allowed=0, permission_denials=0, loaded_cwd_verified=False,
+                  selected_model=None, selected_model_set=False)
     wire = None
     try:
-        if os.name != "posix":
+        if os.name not in ("posix", "nt"):
             raise _Failure("unsupported_platform", "blocked")
         if (transport not in ("acp", "agy") or not isinstance(argv, (list, tuple)) or not argv
                 or any(not isinstance(arg, str) or "\0" in arg for arg in argv)
@@ -610,6 +828,7 @@ def run_session(transport, argv, cwd, env, prompts, deadline_seconds, output_lim
                 or (permission_handler is not None and not callable(permission_handler))
                 or (session_id is not None and not _identifier(session_id))
                 or (mode_id is not None and (not _identifier(mode_id) or session_id is not None or transport != "acp"))
+                or (expected_model is not None and (transport != "acp" or session_id is not None or not _identifier(expected_model)))
                 or type(require_loaded_cwd) is not bool
                 or (require_loaded_cwd and (session_id is None or transport != "acp"))
                 or any(not isinstance(prompt, str) or not prompt for prompt in prompts)
@@ -633,19 +852,39 @@ def run_session(transport, argv, cwd, env, prompts, deadline_seconds, output_lim
         except (OSError, ValueError):
             raise _Failure("invalid_file_roots", "blocked") from None
         deadline = started + deadline_seconds
-        wire = _Wire(deadline, output_limit, cancelled, result)
+        wire = (_ThreadedWire if os.name == "nt" else _Wire)(deadline, output_limit, cancelled, result)
         wire.check()
         try:
-            process = subprocess.Popen(argv, cwd=cwd, env=env, stdin=subprocess.PIPE,
-                                       stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                                       bufsize=0, start_new_session=True)
+            if os.name == "nt":
+                process = spawn_windows_gate(argv, cwd=cwd, env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                wire.windows_job = _WindowsJob(process)
+                if not wire.windows_job.handle:
+                    error = wire.windows_job.error or "Windows Job Object containment is unavailable"
+                    terminate_owned_process(process, wire.windows_job)
+                    wait_after_termination(process, wire.windows_job)
+                    for stream in (process.stdin, process.stdout, process.stderr):
+                        stream.close()
+                    wire.windows_job.close()
+                    raise _Failure("spawn_failed")
+                gate_error = release_windows_gate(process)
+                if gate_error:
+                    terminate_owned_process(process, wire.windows_job)
+                    wait_after_termination(process, wire.windows_job)
+                    for stream in (process.stdin, process.stdout, process.stderr):
+                        stream.close()
+                    wire.windows_job.close()
+                    raise _Failure("spawn_failed")
+            else:
+                process = subprocess.Popen(argv, cwd=cwd, env=env, stdin=subprocess.PIPE,
+                                           stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                           bufsize=0, start_new_session=True)
         except (OSError, ValueError, TypeError):
             raise _Failure("spawn_failed") from None
         wire.attach(process)
         session = _Session(wire, result, emit, before_prompt or (lambda remaining: True), roots,
                            next_prompt, permission_handler, max_turns)
         if transport == "acp":
-            session.acp(cwd, prompts, additional_roots, session_id, require_loaded_cwd, mode_id)
+            session.acp(cwd, prompts, additional_roots, session_id, require_loaded_cwd, mode_id, expected_model)
         else:
             session.agy(prompts)
         wire.check()
