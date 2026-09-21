@@ -6,16 +6,18 @@ status: accepted
 owner: "@timianmalloo"
 tags: [coordination, acp, verification]
 links:
+  - { to: proof-coordination-runtime-v2, rel: relates-to }
   - { to: proof-local-coordination-profiles, rel: depends-on }
   - { to: design-multi-harness-runner, rel: implements }
   - { to: kb-graph-and-loop-engineering, rel: depends-on }
 review-by: "2026-12-20"
 summary: Red-first repairs for ACP extension notifications and native Agy refusal, followed by bounded real-profile qualification without changing trust or permission settings.
-review-suggested:
-  - { by: design-multi-harness-runner, on: 2026-09-20, reason: "Final handback now checks worker Owner decisions independently of native Stop" }
+review-suggested: []
 ---
 
 # Repair native coordination transport and requalify profiles
+
+> Reviewed 2026-09-21: this document retains its original observation/plan scope. Current controls and qualification limits are in the [runtime proof](../proof/coordination-runtime-v2.md). Final handback now independently requires a checked worker Owner-decision state with zero open requests and a live leader, after receipt verification. Native Stop or transport completion alone cannot establish readiness. The historical negative profile observations below remain historical; they are not a current deployment verdict.
 
 Goal: implement the two recommended transport repairs and repeat actual local-profile
 qualification. Done when the fixes have red-first, independent and integrated proof,

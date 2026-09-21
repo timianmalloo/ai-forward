@@ -4113,6 +4113,11 @@ window.PORTAL_DATA = {
       },
       {
         "from": "coordination-end-to-end",
+        "to": "proof-coordination-runtime-v2",
+        "rel": "relates-to"
+      },
+      {
+        "from": "coordination-end-to-end",
         "to": "spec-multi-harness-launch-and-monitor",
         "rel": "implements"
       },
@@ -6168,6 +6173,11 @@ window.PORTAL_DATA = {
       },
       {
         "from": "plan-native-coordination-repair",
+        "to": "proof-coordination-runtime-v2",
+        "rel": "relates-to"
+      },
+      {
+        "from": "plan-native-coordination-repair",
         "to": "proof-local-coordination-profiles",
         "rel": "depends-on"
       },
@@ -6393,6 +6403,11 @@ window.PORTAL_DATA = {
       },
       {
         "from": "proof-coordination-fresh-clone",
+        "to": "proof-coordination-runtime-v2",
+        "rel": "relates-to"
+      },
+      {
+        "from": "proof-coordination-fresh-clone",
         "to": "spec-multi-harness-launch-and-monitor",
         "rel": "relates-to"
       },
@@ -6483,6 +6498,11 @@ window.PORTAL_DATA = {
       },
       {
         "from": "proof-multi-harness-runner",
+        "to": "proof-coordination-runtime-v2",
+        "rel": "relates-to"
+      },
+      {
+        "from": "proof-multi-harness-runner",
         "to": "spec-multi-harness-launch-and-monitor",
         "rel": "implements"
       },
@@ -6505,6 +6525,11 @@ window.PORTAL_DATA = {
         "from": "proof-native-coordination-repair",
         "to": "plan-native-coordination-repair",
         "rel": "implements"
+      },
+      {
+        "from": "proof-native-coordination-repair",
+        "to": "proof-coordination-runtime-v2",
+        "rel": "relates-to"
       },
       {
         "from": "proof-native-coordination-repair",

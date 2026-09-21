@@ -7,11 +7,11 @@ owner: "@timianmalloo"
 phase: coordination
 tags: [coordination, acp, verification]
 links:
+  - { to: proof-coordination-runtime-v2, rel: relates-to }
   - { to: design-multi-harness-runner, rel: implements }
   - { to: spec-multi-harness-launch-and-monitor, rel: implements }
 review-by: "2026-12-20"
-review-suggested:
-  - { by: design-multi-harness-runner, on: 2026-09-20, reason: "Final handback now checks worker Owner decisions independently of native Stop" }
+review-suggested: []
 summary: >-
   Real git repositories and offline subprocess peers prove the deterministic runner's
   admission, worktree, authority, bounded transport and evidence paths. Independent
@@ -20,6 +20,8 @@ summary: >-
 ---
 
 # Proof: bounded multi-harness launch and monitoring
+
+> Reviewed 2026-09-21: this document retains its original observation/plan scope. Current controls and qualification limits are in the [runtime proof](../proof/coordination-runtime-v2.md). Final handback now independently requires a checked worker Owner-decision state with zero open requests and a live leader, after receipt verification. Native Stop or transport completion alone cannot establish readiness. The historical negative profile observations below remain historical; they are not a current deployment verdict.
 
 Live-profile follow-up: [local qualification](local-coordination-profiles.md) found
 ACP startup-notification and Agy denial-envelope blockers after integration. The

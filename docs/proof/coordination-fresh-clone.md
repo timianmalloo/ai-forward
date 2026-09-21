@@ -7,16 +7,18 @@ owner: "@timianmalloo"
 phase: coordination
 tags: [coordination, proof, git, reproducibility]
 links:
+  - { to: proof-coordination-runtime-v2, rel: relates-to }
   - { to: proof-coordination-end-to-end, rel: refines }
   - { to: design-multi-harness-runner, rel: relates-to }
   - { to: spec-multi-harness-launch-and-monitor, rel: relates-to }
 review-by: "2026-12-21"
 summary: Original coordination receipt histories retained as a compact pinned Git object fixture let a fresh single-branch clone verify parent, path, ancestry and content invariants without archive refs or private logs.
-review-suggested:
-  - { by: proof-coordination-end-to-end, on: 2026-09-21, reason: "Portable original-object proof replaces local archive-ref prerequisite; runtime-v2 supplies bounded opt-in controls." }
+review-suggested: []
 ---
 
 # Portable historical coordination Git proof
+
+> Reviewed 2026-09-21: this document retains its original observation/plan scope. Current controls and qualification limits are in the [runtime proof](../proof/coordination-runtime-v2.md). The historical Git proof now uses the pinned original-object fixture, without local archive refs. A fresh single-branch clone passed the public runtime proof command (202 tests). The historical qualification snapshot is unchanged; bounded unattended controls require separate current-profile qualification.
 
 Run from a fresh single-branch clone:
 

@@ -6,17 +6,19 @@ status: accepted
 owner: "@timianmalloo"
 tags: [coordination, worktrees, qualification]
 links:
+  - { to: proof-coordination-runtime-v2, rel: relates-to }
   - { to: spec-multi-harness-launch-and-monitor, rel: implements }
   - { to: design-multi-harness-runner, rel: depends-on }
   - { to: kb-graph-and-loop-engineering, rel: depends-on }
   - { to: proof-coordination-end-to-end, rel: relates-to }
 review-by: "2026-12-21"
 summary: Repair measured startup gaps, qualify native controls, then exercise reviewed handback across all four installed harnesses with Codex or Claude holding the Owner seat.
-review-suggested:
-  - { by: proof-coordination-end-to-end, on: 2026-09-21, reason: "Portable original-object proof replaces local archive-ref prerequisite; runtime-v2 supplies bounded opt-in controls." }
+review-suggested: []
 ---
 
 # End-to-end local coordination
+
+> Reviewed 2026-09-21: this document retains its original observation/plan scope. Current controls and qualification limits are in the [runtime proof](../proof/coordination-runtime-v2.md). The historical Git proof now uses the pinned original-object fixture, without local archive refs. A fresh single-branch clone passed the public runtime proof command (202 tests). The historical qualification snapshot is unchanged; bounded unattended controls require separate current-profile qualification.
 
 Goal: make installed Claude, Codex, Grok and Agy coordination work end to end. Done when the actual profiles produce permitted work, refuse coordinator-owned edits, respect unresolved Owner decisions, cancel active work, and return independently reviewed evidence through the runner and join. Missing proof stays blocked. No remote push or blanket permission changes. Tier T2; two delegates maximum; 400k context ceiling with compaction/handoff before the ceiling.
 

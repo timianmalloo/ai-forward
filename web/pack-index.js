@@ -3842,7 +3842,7 @@ window.PACK_INDEX = {
 "summary": "Repair measured startup gaps, qualify native controls, then exercise reviewed handback across all four installed harnesses with Codex or Claude holding the Owner seat.",
 "path": "docs/coordination/coordination-end-to-end.md",
 "kind": "plan",
-"text": "coordination plan - local end-to-end profiles repair measured startup gaps, qualify native controls, then exercise reviewed handback across all four installed harnesses with codex or claude holding the owner seat. coordination worktrees qualification implements spec-multi-harness-launch-and-monitor depends-on design-multi-harness-runner depends-on kb-graph-and-loop-engineering relates-to proof-coordination-end-to-end"
+"text": "coordination plan - local end-to-end profiles repair measured startup gaps, qualify native controls, then exercise reviewed handback across all four installed harnesses with codex or claude holding the owner seat. coordination worktrees qualification relates-to proof-coordination-runtime-v2 implements spec-multi-harness-launch-and-monitor depends-on design-multi-harness-runner depends-on kb-graph-and-loop-engineering relates-to proof-coordination-end-to-end"
 },
 {
 "cat": "graph",
@@ -3896,7 +3896,7 @@ window.PACK_INDEX = {
 "summary": "Red-first repairs for ACP extension notifications and native Agy refusal, followed by bounded real-profile qualification without changing trust or permission settings.",
 "path": "docs/plans/native-coordination-repair.md",
 "kind": "plan",
-"text": "repair native coordination transport and requalify profiles red-first repairs for acp extension notifications and native agy refusal, followed by bounded real-profile qualification without changing trust or permission settings. coordination acp verification depends-on proof-local-coordination-profiles implements design-multi-harness-runner depends-on kb-graph-and-loop-engineering"
+"text": "repair native coordination transport and requalify profiles red-first repairs for acp extension notifications and native agy refusal, followed by bounded real-profile qualification without changing trust or permission settings. coordination acp verification relates-to proof-coordination-runtime-v2 depends-on proof-local-coordination-profiles implements design-multi-harness-runner depends-on kb-graph-and-loop-engineering"
 },
 {
 "cat": "graph",
@@ -3959,7 +3959,7 @@ window.PACK_INDEX = {
 "summary": "Original coordination receipt histories retained as a compact pinned Git object fixture let a fresh single-branch clone verify parent, path, ancestry and content invariants without archive refs or private logs.",
 "path": "docs/proof/coordination-fresh-clone.md",
 "kind": "proof-pack",
-"text": "portable historical coordination git proof original coordination receipt histories retained as a compact pinned git object fixture let a fresh single-branch clone verify parent, path, ancestry and content invariants without archive refs or private logs. coordination proof git reproducibility refines proof-coordination-end-to-end relates-to design-multi-harness-runner relates-to spec-multi-harness-launch-and-monitor"
+"text": "portable historical coordination git proof original coordination receipt histories retained as a compact pinned git object fixture let a fresh single-branch clone verify parent, path, ancestry and content invariants without archive refs or private logs. coordination proof git reproducibility relates-to proof-coordination-runtime-v2 refines proof-coordination-end-to-end relates-to design-multi-harness-runner relates-to spec-multi-harness-launch-and-monitor"
 },
 {
 "cat": "graph",
@@ -4013,7 +4013,7 @@ window.PACK_INDEX = {
 "summary": "Real git repositories and offline subprocess peers prove the deterministic runner's admission, worktree, authority, bounded transport and evidence paths. Independent review closed eight runner findings; live provider/profile qualification…",
 "path": "docs/proof/multi-harness-runner.md",
 "kind": "proof-pack",
-"text": "proof: bounded multi-harness launch and monitoring real git repositories and offline subprocess peers prove the deterministic runner's admission, worktree, authority, bounded transport and evidence paths. independent review closed eight runner findings; live provider/profile qualification remains separate from this implementation proof. coordination acp verification implements design-multi-harness-runner implements spec-multi-harness-launch-and-monitor"
+"text": "proof: bounded multi-harness launch and monitoring real git repositories and offline subprocess peers prove the deterministic runner's admission, worktree, authority, bounded transport and evidence paths. independent review closed eight runner findings; live provider/profile qualification remains separate from this implementation proof. coordination acp verification relates-to proof-coordination-runtime-v2 implements design-multi-harness-runner implements spec-multi-harness-launch-and-monitor"
 },
 {
 "cat": "graph",
@@ -4031,7 +4031,7 @@ window.PACK_INDEX = {
 "summary": "The two transport defects are repaired and all 17 release gates pass. Five fresh live attempts still qualify zero profiles: Grok has an early session update, Claude/Codex lack an effective ownership veto, and Agy denies the allowed-write…",
 "path": "docs/proof/native-coordination-repair.md",
 "kind": "proof-pack",
-"text": "native coordination repair and profile requalification the two transport defects are repaired and all 17 release gates pass. five fresh live attempts still qualify zero profiles: grok has an early session update, claude/codex lack an effective ownership veto, and agy denies the allowed-write canary. coordination acp qualification implements plan-native-coordination-repair implements design-multi-harness-runner relates-to proof-local-coordination-profiles"
+"text": "native coordination repair and profile requalification the two transport defects are repaired and all 17 release gates pass. five fresh live attempts still qualify zero profiles: grok has an early session update, claude/codex lack an effective ownership veto, and agy denies the allowed-write canary. coordination acp qualification relates-to proof-coordination-runtime-v2 implements plan-native-coordination-repair implements design-multi-harness-runner relates-to proof-local-coordination-profiles"
 },
 {
 "cat": "graph",

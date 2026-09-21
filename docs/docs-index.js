@@ -8280,13 +8280,7 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2026-12-21",
-      "reviewSuggested": [
-        {
-          "by": "proof-coordination-end-to-end",
-          "on": "2026-09-21",
-          "reason": "Portable original-object proof replaces local archive-ref prerequisite; runtime-v2 supplies bounded opt-in controls."
-        }
-      ],
+      "reviewSuggested": [],
       "summary": "Repair measured startup gaps, qualify native controls, then exercise reviewed handback across all four installed harnesses with Codex or Claude holding the Owner seat.",
       "tags": [
         "coordination",
@@ -8294,6 +8288,10 @@ window.DOCS_INDEX = {
         "qualification"
       ],
       "links": [
+        {
+          "to": "proof-coordination-runtime-v2",
+          "rel": "relates-to"
+        },
         {
           "to": "spec-multi-harness-launch-and-monitor",
           "rel": "implements"
@@ -8318,7 +8316,7 @@ window.DOCS_INDEX = {
           "mermaid": "graph TD\n  A[Ground and compile] --> B[Independent plan review]\n  B --> C[Grok bootstrap]\n  B --> D[Native controls and Agy policy]\n  C --> E[Independent source review and integration]\n  D --> E\n  E --> F[Actual profile control matrix]\n  F --> G[Runner handback and reviewed join]\n  G --> H[Release proof and audit]"
         }
       ],
-      "sourceSha256": "8876a176689e71b07415039de1d070a020c904265d85f93cabe3c94d4922b239"
+      "sourceSha256": "06a64b1e722738bc53c16a021ae106171bed9ad88a89a78f2f208d0e764ece4b"
     },
     {
       "id": "coordination-p0-p1",
@@ -8521,13 +8519,7 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2026-12-20",
-      "reviewSuggested": [
-        {
-          "by": "design-multi-harness-runner",
-          "on": "2026-09-20",
-          "reason": "Final handback now checks worker Owner decisions independently of native Stop"
-        }
-      ],
+      "reviewSuggested": [],
       "summary": "Red-first repairs for ACP extension notifications and native Agy refusal, followed by bounded real-profile qualification without changing trust or permission settings.",
       "tags": [
         "coordination",
@@ -8535,6 +8527,10 @@ window.DOCS_INDEX = {
         "verification"
       ],
       "links": [
+        {
+          "to": "proof-coordination-runtime-v2",
+          "rel": "relates-to"
+        },
         {
           "to": "proof-local-coordination-profiles",
           "rel": "depends-on"
@@ -8555,7 +8551,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart LR\n A --> B --> C --> D --> E --> F --> G"
         }
       ],
-      "sourceSha256": "937926cbf1ce09381dd110b9bf59201a156c40dfff39db5d2dc6147d7557db48"
+      "sourceSha256": "fc1e30cdb276456dbb492a6719a20eaa116dbbc8dc59bfcb790455a0df56896c"
     },
     {
       "id": "scenario-s1-three-harness-delegation",
@@ -8848,13 +8844,7 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "coordination",
       "reviewBy": "2026-12-21",
-      "reviewSuggested": [
-        {
-          "by": "proof-coordination-end-to-end",
-          "on": "2026-09-21",
-          "reason": "Portable original-object proof replaces local archive-ref prerequisite; runtime-v2 supplies bounded opt-in controls."
-        }
-      ],
+      "reviewSuggested": [],
       "summary": "Original coordination receipt histories retained as a compact pinned Git object fixture let a fresh single-branch clone verify parent, path, ancestry and content invariants without archive refs or private logs.",
       "tags": [
         "coordination",
@@ -8863,6 +8853,10 @@ window.DOCS_INDEX = {
         "reproducibility"
       ],
       "links": [
+        {
+          "to": "proof-coordination-runtime-v2",
+          "rel": "relates-to"
+        },
         {
           "to": "proof-coordination-end-to-end",
           "rel": "refines"
@@ -8877,7 +8871,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0e65fe38700220206673e68f98c48234f43eb050b30c2ea6257f87113943d001"
+      "sourceSha256": "00be4b82b1061cd21b42b7ad89831b937f3eda334ef435ae47846231452fb5f0"
     },
     {
       "id": "proof-coordination-runtime-v2",
@@ -9064,13 +9058,7 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "coordination",
       "reviewBy": "2026-12-20",
-      "reviewSuggested": [
-        {
-          "by": "design-multi-harness-runner",
-          "on": "2026-09-20",
-          "reason": "Final handback now checks worker Owner decisions independently of native Stop"
-        }
-      ],
+      "reviewSuggested": [],
       "summary": "Real git repositories and offline subprocess peers prove the deterministic runner's admission, worktree, authority, bounded transport and evidence paths. Independent review closed eight runner findings; live provider/profile qualification remains separate from this implementation proof.",
       "tags": [
         "coordination",
@@ -9078,6 +9066,10 @@ window.DOCS_INDEX = {
         "verification"
       ],
       "links": [
+        {
+          "to": "proof-coordination-runtime-v2",
+          "rel": "relates-to"
+        },
         {
           "to": "design-multi-harness-runner",
           "rel": "implements"
@@ -9088,7 +9080,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "91cc7131c12e39ef59a11752401a7844c6d2bd6eb6b3ee735694d80cb99f0502"
+      "sourceSha256": "31e606b7df04e1b4e7f3cbfaa68c241897bea677345874ddaecacf9f3745da09"
     },
     {
       "id": "proof-native-app-ui-skill-extension",
@@ -9130,13 +9122,7 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "coordination",
       "reviewBy": "2026-12-20",
-      "reviewSuggested": [
-        {
-          "by": "design-multi-harness-runner",
-          "on": "2026-09-20",
-          "reason": "Final handback now checks worker Owner decisions independently of native Stop"
-        }
-      ],
+      "reviewSuggested": [],
       "summary": "The two transport defects are repaired and all 17 release gates pass. Five fresh live attempts still qualify zero profiles: Grok has an early session update, Claude/Codex lack an effective ownership veto, and Agy denies the allowed-write canary.",
       "tags": [
         "coordination",
@@ -9144,6 +9130,10 @@ window.DOCS_INDEX = {
         "qualification"
       ],
       "links": [
+        {
+          "to": "proof-coordination-runtime-v2",
+          "rel": "relates-to"
+        },
         {
           "to": "plan-native-coordination-repair",
           "rel": "implements"
@@ -9158,7 +9148,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "afceb3f6b02ef0ca7ec92ba94fb477233fd88b8cc4bdaf5d81b8dde1a77a8f3a"
+      "sourceSha256": "abe794f2d86e7e936045054a3bce38b1af8a73082db19997fea136c2a86d72b1"
     },
     {
       "id": "proof-native-ownership-enforcement",
@@ -10562,5 +10552,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "5950d80da16dc4cf0bc4bbf7180bfdc77e681426c358a0b9723a4691b680fd9b"
+  "graphSha256": "9b902fa879bd10ec0f6d8ee38729b68e3af698bd1f93e03b4a8a44b141f121e8"
 };

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-21T14:59:48Z",
+  "generated": "2026-09-21T15:03:06Z",
   "audit": [
     {
       "actor": null,
@@ -12877,6 +12877,31 @@ window.AUDIT_DATA = {
         "sha": "277d545b7d6bb115018ec6fb99584ab915897712",
         "short": "277d545b7",
         "branch": "feat/coordination-runtime-v2",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M327VZEJ84R04P30PD9HHSCB",
+      "shortname": "coord-runtime-doc-review-closeout",
+      "datetime": "2026-09-21T15:03:06Z",
+      "session": "coord-runtime-v2",
+      "prompt": "Finish the requested main integration: GitHub docs freshness rejected five pending V16 review flags.",
+      "summary": "Reviewed all five affected historical documents against current runner receipt/Owner-decision/leader fences and the executed portable proof. Added explicit historical-scope notices and typed links to current runtime proof, preserving old measurements and negative outcomes. Cleared only those reviewed flags through docs-graph. Local bundle permits flags as warnings; separate docs CI rejects them. Existing strict freshness gate is retained and run explicitly before this documentation-only push; no runtime code or qualification claims changed.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Resolve the concrete documentation review flags that block the requested integration.",
+      "done_when": "All five affected reviews are explicit and strict docs freshness passes without weakening the gate.",
+      "tier": "T0",
+      "fan_out": 0,
+      "git": {
+        "sha": "2b935cc7f6de39e8254f91e247e044e0988adf26",
+        "short": "2b935cc7f",
+        "branch": "docs/coordination-runtime-review-closeout",
         "pushed": null
       }
     }

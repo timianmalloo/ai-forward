@@ -7,16 +7,18 @@ owner: "@timianmalloo"
 phase: coordination
 tags: [coordination, acp, qualification]
 links:
+  - { to: proof-coordination-runtime-v2, rel: relates-to }
   - { to: plan-native-coordination-repair, rel: implements }
   - { to: design-multi-harness-runner, rel: implements }
   - { to: proof-local-coordination-profiles, rel: relates-to }
 review-by: "2026-12-20"
 summary: The two transport defects are repaired and all 17 release gates pass. Five fresh live attempts still qualify zero profiles: Grok has an early session update, Claude/Codex lack an effective ownership veto, and Agy denies the allowed-write canary.
-review-suggested:
-  - { by: design-multi-harness-runner, on: 2026-09-20, reason: "Final handback now checks worker Owner decisions independently of native Stop" }
+review-suggested: []
 ---
 
 # Native coordination repair and profile requalification
+
+> Reviewed 2026-09-21: this document retains its original observation/plan scope. Current controls and qualification limits are in the [runtime proof](../proof/coordination-runtime-v2.md). Final handback now independently requires a checked worker Owner-decision state with zero open requests and a live leader, after receipt verification. Native Stop or transport completion alone cannot establish readiness. The historical negative profile observations below remain historical; they are not a current deployment verdict.
 
 **Result: both recommended transport repairs are implemented; unattended coordination
 remains disabled.** Five fresh attempts give a negative readiness decision for all four
