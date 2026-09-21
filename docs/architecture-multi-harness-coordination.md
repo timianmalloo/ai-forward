@@ -151,8 +151,9 @@ flowchart TB
 sequenceDiagram
   actor Human as Human
   participant Owner as Owner / Coordinator
-  participant Compile as prompt-compile.py
+  participant Compile as /compile
   participant Plan as /prepare-for-coordination
+  participant TrackCompile as per-track compile handoff
   participant Exec as /execute-with-coordination
   participant Runner as coord-runner.py
   participant Worker as Worker session
@@ -160,8 +161,10 @@ sequenceDiagram
   participant Join as conductor-join.py
 
   Human->>Owner: request multi-track or multi-harness work
-  Owner->>Compile: compile raw prose into a dispatchable contract
-  Compile-->>Owner: finished compilation ids
+  opt explicit compile framing
+    Owner->>Compile: compile raw prose into a traced goal-state frame
+    Compile-->>Owner: one compiled prompt + compilation audit id
+  end
   Owner->>Plan: allocate tracks, owned paths, seams, exit evidence
   Plan-->>Owner: canonical plan
   Owner->>Exec: run plan in --agents, --brief or --launch mode
@@ -170,6 +173,8 @@ sequenceDiagram
   else --brief
     Exec-->>Human: one brief per track for a separately started session
   else --launch
+    Owner->>TrackCompile: compile one finished prompt per track after paths/budgets are fixed
+    TrackCompile-->>Owner: per-track finished compilation ids
     Exec->>Runner: prepare / fingerprint / run
     Runner->>Worker: bounded transport session with exact identity
   end
@@ -183,14 +188,19 @@ sequenceDiagram
 This is the important change from the early approach: the worker does **not** hand back a free-form
 "done". It hands back a bounded receipt plus evidence, and the Owner seat still holds the decision.
 
-### 5.2 Class - the protocol objects that survived
+### 5.2 Class - conceptual coordination schema
+
+This is the **conceptual JSON/schema layer**, not a claim about Python classes or methods.
+The earlier version incorrectly showed `render_sections()` as though it were a method on a
+Compilation object; in code it is a module function, not an instance method.
 
 ```mermaid
 classDiagram
-  class Compilation {
+  class CompiledPrompt {
     +auditId
     +dispatchable
-    +render_sections()
+    +goalState
+    +decisionRequests[]
   }
   class CoordinationPlan {
     +tracks[]
@@ -203,13 +213,13 @@ classDiagram
     +workers[]
     +parallelism
   }
-  class WorkerAttempt {
+  class WorkerSpec {
     +session
     +branch
     +harness
     +transport
   }
-  class Qualification {
+  class QualificationRecord {
     +fingerprint
     +effective_policy
     +capabilities
@@ -235,12 +245,12 @@ classDiagram
     +expires_at
   }
 
-  CoordinationPlan --> Compilation : consumes
-  LaunchContract *-- WorkerAttempt
-  WorkerAttempt --> Qualification : requires
-  WorkerAttempt --> DecisionRequest : may raise
+  CoordinationPlan --> CompiledPrompt : may consume
+  LaunchContract *-- WorkerSpec
+  WorkerSpec --> QualificationRecord : requires
+  WorkerSpec --> DecisionRequest : may raise
   DecisionRequest --> Ruling : resolved by
-  WorkerAttempt --> Receipt : returns
+  WorkerSpec --> Receipt : returns
   LaunchContract --> LeaderDesignation : fenced by
 ```
 
@@ -415,10 +425,12 @@ machinery. The pack now makes that bridge explicit.
 | Stage | Operator-visible skill or seat | What it takes in | What it outputs | Underlying machinery | Human decision point |
 |---|---|---|---|---|---|
 | 1 | **Raw prompt** | ordinary prose | unstructured ask | none yet | the operator states the job |
-| 2 | **[`/compile`](../pack/commands/compile/SKILL.md)** | raw prompt text or a prior prompt audit id | one compiled prompt, one compilation audit id, traced goal state, assumptions, `DR-n` requests, `dispatchable` flag | `prompt-compile.py` + `verify-compiled-prompt.py` | the operator may edit the compiled prompt; compile grants no permission, no worktree and no lease |
-| 3 | **[`/prepare-for-coordination`](../pack/commands/prepare-for-coordination/SKILL.md)** | either raw intent or a compiled prompt already in hand | `docs/coordination/<plan-id>.md` + `.html` with tracks, owned paths, dependencies, budgets, exit evidence | `coord-core.py classify/install/doctor`, docs graph grounding | the coordinator decides boundaries, ownership and harness targets |
-| 4 | **[`/execute-with-coordination`](../pack/commands/execute-with-coordination/SKILL.md)** | a parsed plan | worktrees (`--agents`), human briefs (`--brief`) or launched runtime sessions (`--launch`), plus receipts, rulings and a join | `coord-core.py`, `coord-mail.py`, `coord-runner.py`, `conductor-join.py` | the Owner rules on decisions, reviews receipts and approves integration |
-| 5 | **[`/document`](../pack/commands/document/SKILL.md)** | landed code + proof + doc deltas | regenerated docs bundle, portal/front door, graph index, API docs, Pages bundle | `docs-graph.py`, `build-doc-site.py`, `build-docs-portal.py`, `build-web-index.py`, `build-pages-bundle.py` | the documentation steward decides whether the docs match the shipped code |
+| 1 | **Raw prompt** | ordinary prose | unstructured ask | none yet | the operator states the job |
+| 2 | **[`/compile` (Markdown)](../pack/commands/compile/SKILL.md)** | raw prompt text or a prior prompt audit id | one compiled prompt, one compilation audit id, traced goal state, assumptions, `DR-n` requests, `dispatchable` flag | `prompt-compile.py` + `verify-compiled-prompt.py` | the operator may edit the compiled prompt; compile grants no permission, no worktree and no lease |
+| 3 | **[`/prepare-for-coordination` (Markdown)](../pack/commands/prepare-for-coordination/SKILL.md)** | raw intent, or a compiled prompt already in hand | `docs/coordination/<plan-id>.md` + `.html` with tracks, owned paths, dependencies, budgets and exit evidence | `coord-core.py classify/install/doctor`, docs graph grounding | the coordinator decides boundaries, ownership and harness targets |
+| 4 | **Per-track compile handoff (launch only)** | a finished coordination plan | one finished compiled prompt id per launched track, now bound to that track's owned paths, budgets and fallback | the same `/compile` utility, now used after planning rather than before it | the coordinator chooses which launched tracks need a finished id and which same-harness/manual tracks do not |
+| 5 | **[`/execute-with-coordination` (Markdown)](../pack/commands/execute-with-coordination/SKILL.md)** | a parsed plan | worktrees (`--agents`), human briefs (`--brief`) or launched runtime sessions (`--launch`), plus receipts, rulings and a join | `coord-core.py`, `coord-mail.py`, `coord-runner.py`, `conductor-join.py` | the Owner rules on decisions, reviews receipts and approves integration |
+| 6 | **[`/document` (Markdown)](../pack/commands/document/SKILL.md)** | landed code + proof + doc deltas | regenerated docs bundle, portal/front door, graph index, API docs, Pages bundle | `docs-graph.py`, `build-doc-site.py`, `build-docs-portal.py`, `build-web-index.py`, `build-pages-bundle.py` | the documentation steward decides whether the docs match the shipped code |
 
 Two sequencing rules matter and are easy to overstate:
 
@@ -426,10 +438,12 @@ Two sequencing rules matter and are easy to overstate:
    and that the operator hands the compiled prompt on to `/optimize-graph`,
    `/prepare-for-coordination`, or another prose-input skill.
 2. **The coordination skills consume a compiled prompt when one is already in hand.**
-   `prepare-for-coordination` opens with *"Consume the compiled prompt when one is in hand"*;
-   `execute-with-coordination` refuses dispatch when the compiled prompt is not dispatchable or
-   still carries an unanswered `DR-n`. That is narrower than "every request auto-compiles", and
-   the docs now say the narrower thing.
+   `prepare-for-coordination` opens with *"Consume the compiled prompt when one is in hand"*.
+3. **Finished per-track compilation ids are a narrower launch-time gate.**
+   `execute-with-coordination` refuses dispatch when a compiled prompt is not dispatchable or
+   still carries an unanswered `DR-n`, but that gate exists to support the executable `--launch`
+   path and its per-track runtime contract. `--agents` and `--brief` remain different surfaces.
+   That is narrower than "every request auto-compiles", and the docs now say the narrower thing.
 
 ### Worked example
 
@@ -455,6 +469,12 @@ Two sequencing rules matter and are easy to overstate:
 - declared track ownership
 - dependency order
 - budgets and exit evidence
+
+**Before `/execute-with-coordination --launch`**
+
+- one finished compilation id per launched track
+- each id now bound to that track's owned paths, bounds and fallback
+- unresolved `DR-n` still refuse dispatch
 
 **After `/execute-with-coordination`**
 

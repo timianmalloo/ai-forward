@@ -1680,23 +1680,31 @@ window.PORTAL_DATA = {
         },
         {
           "h": "/compile",
-          "skill": "/compile",
+          "skill": "/compile (Markdown)",
           "skillPath": "../../pack/commands/compile/SKILL.md",
           "output": "One compiled prompt + audit compilation ID + traced goal state + marked assumptions + unresolved decision requests",
           "machine": "prompt-compile.py + verify-compiled-prompt.py",
-          "human": "The operator can edit the compiled prompt before any work starts. Compile does not create a permission, a worktree or a claim."
+          "human": "Optional framing step. The operator can edit the compiled prompt before any work starts. Compile does not create a permission, a worktree or a claim."
         },
         {
           "h": "/prepare-for-coordination",
-          "skill": "/prepare-for-coordination",
+          "skill": "/prepare-for-coordination (Markdown)",
           "skillPath": "../../pack/commands/prepare-for-coordination/SKILL.md",
           "output": "docs/coordination/<plan-id>.md + .html with ownership, dependencies, serial spine, budgets and exit evidence",
           "machine": "coord-core.py classify/install/doctor + docs graph grounding",
           "human": "The coordinator or operator chooses the division of work and the harness targets."
         },
         {
+          "h": "Per-track compile handoff for `--launch`",
+          "skill": "/compile (Markdown)",
+          "skillPath": "../../pack/commands/compile/SKILL.md",
+          "output": "One finished compilation ID per launched track, now bound to owned paths, budgets and fallback",
+          "machine": "The same compile utility, rerun after planning for executable runtime dispatch",
+          "human": "The coordinator chooses which launched tracks need a finished ID. `--agents` and `--brief` do not imply the same gate."
+        },
+        {
           "h": "/execute-with-coordination",
-          "skill": "/execute-with-coordination",
+          "skill": "/execute-with-coordination (Markdown)",
           "skillPath": "../../pack/commands/execute-with-coordination/SKILL.md",
           "output": "Track worktrees or briefs or launched runtime sessions, plus receipts, decision requests, rulings and joined results",
           "machine": "coord-core.py + coord-mail.py + coord-runner.py + conductor-join.py",
@@ -1704,14 +1712,14 @@ window.PORTAL_DATA = {
         },
         {
           "h": "/document",
-          "skill": "/document",
+          "skill": "/document (Markdown)",
           "skillPath": "../../pack/commands/document/SKILL.md",
           "output": "Updated bundle, Pages data, graph index and proof-linked docs",
           "machine": "docs-graph.py + build-doc-site.py + build-docs-portal.py + build-web-index.py",
           "human": "The documentation steward verifies what actually shipped and republishes the front door."
         }
       ],
-      "note": "The coordination skills do not imply that every request auto-compiles. What the source guarantees today is narrower: `/compile` is the explicit utility; `/prepare-for-coordination` consumes a compiled prompt when one is already in hand; `/execute-with-coordination` refuses dispatch when the compiled prompt is not dispatchable or still carries an unanswered `DR-n`."
+      "note": "The coordination skills do not imply that every request auto-compiles. What the source guarantees today is narrower: `/compile` is the explicit utility; `/prepare-for-coordination` consumes a compiled prompt when one is already in hand; and the executable `--launch` path in `/execute-with-coordination` is the place where per-track finished compilation IDs are gate-checked for dispatchability and unanswered `DR-n` requests."
     },
     "learnings": {
       "intro": "The specification describes the design. These are what a month of Claude Code and Copilot sessions working one repository actually taught — consolidated from AI-DE's coordination record and promoted to the shared fleet store, so every repo inherits them.",
