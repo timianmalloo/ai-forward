@@ -283,8 +283,8 @@ while True:
         turn += 1
         if MODE in ("hang", "descendant", "load_prompt_hang"):
             continue
-        if MODE == "slow_turn":
-            time.sleep(.15)
+        if MODE == "slow_turn" and turn > 1:
+            time.sleep(.35)
         if MODE == "progress_flood":
             for _ in range(100):
                 send({"jsonrpc": "2.0", "method": "session/update", "params": {

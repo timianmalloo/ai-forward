@@ -17,6 +17,14 @@ summary: >-
 
 # Defect-class register
 
+**TEST-TIME-A / 2026-09-21 — timing floor measured from process startup.**
+Class → a deadline test required a fixed first turn to finish before a small budget,
+so hosted-runner startup jitter changed the observed turn count and failed the test.
+Sweep → transport deadline tests on Linux and macOS. Derive → make the fixture's first
+turn immediate and delay only the second turn beyond the shared budget. Prevent → the
+fixture now proves one deadline across turns without coupling the assertion to process
+startup latency; the transport deadline contract is unchanged.
+
 **PLAT-B / RUN-A follow-up, 2026-09-21 — platform fallback changes a security verdict.**
 Class → treating `open`'s missing-target error as proof that a ledger is absent
 accepts a dangling link when `O_NOFOLLOW` is unavailable. Sweep → the strict

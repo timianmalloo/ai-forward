@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-21T16:51:57Z",
+  "generated": "2026-09-21T17:26:19Z",
   "audit": [
     {
       "actor": null,
@@ -12972,6 +12972,40 @@ window.AUDIT_DATA = {
         "sha": "d45cbb76d5e512d8ac530aa8b56b924b643d9ee2",
         "short": "d45cbb76d",
         "branch": "docs/grok-permission-probe",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M32G27948SDB7PEEWBCJ2Z30",
+      "shortname": "stabilize-transport-deadline-fixture",
+      "datetime": "2026-09-21T17:26:19Z",
+      "session": "coord-runtime-v2",
+      "prompt": "Keep going: repair the macOS CI timing failure without widening runtime semantics.",
+      "summary": "CI reproduced a 270ms deadline test failure because the first 150ms fixture turn sometimes missed the budget under hosted macOS startup load. The fixture now makes turn one immediate and delays only turn two by 350ms, preserving the one shared deadline assertion. No production timeout or lock semantics changed.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": "codex",
+      "artifacts": [
+        "tests/docs_explorer/coord_transport_peer.py",
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Make the transport deadline test deterministic under hosted runner startup jitter.",
+      "done_when": "The red CI test is deterministic, focused and full gates pass.",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "git": {
+        "sha": "27ceddafd7d1a74e070b17b77ce3e012463fdde5",
+        "short": "27ceddafd",
+        "branch": "test/stabilize-transport-deadline",
         "pushed": null
       }
     }
