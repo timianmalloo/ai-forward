@@ -183,6 +183,9 @@ class _Session:
         self.sequence = 0
         self.turn = 0
         self.last_progress = float("-inf")
+        self.creating_session_id = None
+        self.creating_updates = 0
+        self.grok_reload_compat = False
 
     def event(self, event, **fields):
         try:
@@ -202,8 +205,8 @@ class _Session:
         self.turn += 1
         self.event("prompt_started", turn=self.turn)
 
-    def progress(self):
-        self.result["progress_updates"] += 1
+    def progress(self, count=1):
+        self.result["progress_updates"] += count
         now = time.monotonic()
         if now - self.last_progress >= 1:
             self.last_progress = now
@@ -211,7 +214,8 @@ class _Session:
 
     def permission(self, message):
         params = message.get("params")
-        if not isinstance(params, dict) or params.get("sessionId") != self.result["session_id"]:
+        if (not self.result["session_id"] or not isinstance(params, dict)
+                or params.get("sessionId") != self.result["session_id"]):
             raise _Failure("protocol_error")
         options = params.get("options", [])
         if not isinstance(options, list):
@@ -247,9 +251,20 @@ class _Session:
                 elif message["method"] == "session/update":
                     update = message.get("params")
                     if (not isinstance(update, dict) or not isinstance(update.get("update"), dict)
-                            or update.get("sessionId") != self.result["session_id"]):
+                            or not _identifier(update.get("sessionId"))
+                            or not _identifier(update["update"].get("sessionUpdate"))):
                         raise _Failure("protocol_error")
-                    self.progress()
+                    if method == "session/new" and self.result["session_id"] is None:
+                        # Grok 1.0.34 emits updates before the creation response.
+                        # Retain identity/count only; the response grants authority.
+                        if self.creating_session_id not in (None, update["sessionId"]):
+                            raise _Failure("protocol_error")
+                        self.creating_session_id = update["sessionId"]
+                        self.creating_updates += 1
+                    elif self.result["session_id"] and update["sessionId"] == self.result["session_id"]:
+                        self.progress()
+                    else:
+                        raise _Failure("protocol_error")
                 elif message["method"].startswith("_"):
                     # ACP v1 extension notifications are optional, one-way data.
                     # Count without retaining names/payloads or emitting per-item events;
@@ -257,6 +272,13 @@ class _Session:
                     self.result["extension_notifications"] += 1
                 else:
                     raise _Failure("protocol_error")
+                continue
+            # Grok 1.0.34 injects its own skills watcher acknowledgement into ACP.
+            # This exact, measured exception never completes our pending request.
+            if (self.grok_reload_compat and method == "session/prompt" and self.result["session_id"]
+                    and message == {"jsonrpc": "2.0", "id": "skills-reload", "result": {"result": {"reloaded": 1}}}
+                    and type(message["result"]["result"]["reloaded"]) is int):
+                self.result["compatibility_responses"] += 1
                 continue
             if type(message.get("id")) is not int or message["id"] != request_id:
                 raise _Failure("protocol_error")
@@ -279,16 +301,30 @@ class _Session:
         agent = info.get("agentInfo", {})
         version = agent.get("version") if isinstance(agent, dict) else None
         self.result["reported_version"] = version if _identifier(version) else None
+        if self.result["reported_version"]:
+            self.result["reported_version_source"] = "agentInfo.version"
+        metadata = info.get("_meta", {})
+        if isinstance(metadata, dict) and metadata.get("grokShell") is True:
+            if self.result["reported_version"] is None and _identifier(metadata.get("agentVersion")):
+                self.result["reported_version"] = metadata["agentVersion"]
+                self.result["reported_version_source"] = "grok._meta.agentVersion"
+            self.grok_reload_compat = (metadata.get("agentVersion") == "1.0.34"
+                                       and self.result["reported_version"] == "1.0.34")
         auth = info.get("authMethods", [])
         if not isinstance(auth, list):
             raise _Failure("protocol_error")
         if any(isinstance(item, dict) and item.get("id") == "cached_token" for item in auth):
             self.rpc("authenticate", {"methodId": "cached_token", "_meta": {"headless": True}})
         created = self.rpc("session/new", {"cwd": os.fspath(cwd), "mcpServers": []})
-        if not _identifier(created.get("sessionId")):
+        if (not _identifier(created.get("sessionId"))
+                or self.creating_session_id not in (None, created["sessionId"])):
             raise _Failure("protocol_error")
         self.result["session_id"] = created["sessionId"]
         self.event("session_created")
+        if self.creating_updates:
+            self.progress(self.creating_updates)
+        self.creating_session_id = None
+        self.creating_updates = 0
         for prompt in prompts:
             if self.result["permission_requests"]:
                 raise _Failure("permission_denied", "blocked")
@@ -382,7 +418,8 @@ def run_session(transport, argv, cwd, env, prompts, deadline_seconds, output_lim
     result = {"outcome": "failed", "code": "invalid_input", "session_id": None,
               "turns_completed": 0, "stdout_bytes": 0, "stderr_bytes": 0,
               "duration_seconds": 0.0, "permission_requests": 0,
-              "cleanup_error": None, "reported_version": None, "progress_updates": 0}
+              "cleanup_error": None, "reported_version": None, "progress_updates": 0,
+              "reported_version_source": None, "compatibility_responses": 0}
     result.update(extension_notifications=0, native_denials=0)
     wire = None
     try:

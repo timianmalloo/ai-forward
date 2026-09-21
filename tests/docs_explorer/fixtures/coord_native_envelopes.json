@@ -1,5 +1,17 @@
 {
   "source": "docs/knowledge/acp-compatibility/local-profile-observations.json; 2026-09-20 live wire; private payload values replaced, envelope field names retained",
+  "grok_bootstrap_source": "Grok 1.0.34 private requal-grok.json sha256 cfad9f7bb2587f7573fe1d2f7df60f7d948ee9d6f83a8fcdc2fbc56656696f58; notifications observed after authenticate response and before session/new response; values sanitized. The creation response in the peer is synthetic protocol evidence, not part of the truncated original observation.",
+  "grok_bootstrap": [
+    {"jsonrpc": "2.0", "method": "_x.ai/mcp/servers_updated", "params": {"mcpServers": []}},
+    {"jsonrpc": "2.0", "method": "_x.ai/models/update", "params": {"currentModelId": "SECRET"}},
+    {"jsonrpc": "2.0", "method": "_x.ai/models/update", "params": {"currentModelId": "SECRET"}},
+    {"jsonrpc": "2.0", "method": "_x.ai/settings/update", "params": {}},
+    {"jsonrpc": "2.0", "method": "_x.ai/announcements/update", "params": {}},
+    {"jsonrpc": "2.0", "method": "_x.ai/mcp/init_progress", "params": {"sessionId": "acp-fixture"}},
+    {"jsonrpc": "2.0", "method": "session/update", "params": {"sessionId": "acp-fixture", "update": {"sessionUpdate": "available_commands_update", "availableCommands": [{"name": "fixture", "description": "SECRET"}]}}}
+  ],
+  "grok_reload_source": "Grok 1.0.34 diagnostic private raw sha256 0ebb03d73d6ad7729e7ecef9a9ceb21046b413f10a14af8a0f2be79a8b9c30b9; exact observed unsolicited watcher response, no private payload",
+  "grok_reload": {"jsonrpc": "2.0", "id": "skills-reload", "result": {"result": {"reloaded": 1}}},
   "extensions": [
     {"jsonrpc": "2.0", "method": "_auth/status_update", "params": {"authStatus": "SECRET"}},
     {"jsonrpc": "2.0", "method": "_x.ai/mcp/servers_updated", "params": {"mcpServers": []}},

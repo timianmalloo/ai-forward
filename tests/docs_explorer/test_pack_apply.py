@@ -95,6 +95,29 @@ class InstalledRepoTests(unittest.TestCase):
         app = pa.Applier(str(ROOT), self.tmp, dry=dry, force=True, baselines=False, **kw)
         return app.run()
 
+    def test_agy_named_hooks_preserve_local_opt_in_and_refresh_managed_sections(self):
+        custom = {"enabled": True, "PreToolUse": [{"matcher": "write_to_file", "hooks": [{"command": "local-guard"}]}]}
+        _w(self.tmp, ".agents/hooks.json", json.dumps({"ownership-guard": custom, "heartbeat": {"enabled": False}}))
+        self._apply()
+        result = json.loads(_r(self.tmp, ".agents/hooks.json"))
+        managed = json.loads((ROOT / "pack/adapters/hooks/agy.ai-forward-hooks.json").read_text())
+        self.assertEqual(custom, result["ownership-guard"])
+        self.assertEqual(managed["heartbeat"], result["heartbeat"])
+        before = _r(self.tmp, ".agents/hooks.json")
+        self._apply()
+        self.assertEqual(before, _r(self.tmp, ".agents/hooks.json"))
+
+    def test_agy_bad_existing_named_hooks_fail_without_overwrite(self):
+        for body in ("not JSON", "[]", "null"):
+            _w(self.tmp, ".agents/hooks.json", body)
+            rows = self._apply()
+            self.assertEqual(body, _r(self.tmp, ".agents/hooks.json"))
+            self.assertTrue(any(r["status"] == "fail" and r["path"] == ".agents/hooks.json" for r in rows))
+
+    def test_fresh_agy_install_does_not_enable_ownership(self):
+        self._apply()
+        self.assertNotIn("ownership-guard", json.loads(_r(self.tmp, ".agents/hooks.json")))
+
     def test_plan_writes_nothing(self):
         before = {}
         for base, _d, files in os.walk(self.tmp):

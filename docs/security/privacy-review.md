@@ -73,7 +73,7 @@ downstream dispatch risk was retired by removing the capability, not by acceptin
 ## 3. Generated register (LINDDUN-lite, rolled up from the designs)
 
 <!-- BEGIN GENERATED: docs-graph.py rollup -->
-<!-- run: python3 docs/ai-forward-pack/scripts/docs-graph.py rollup --heading "Privacy analysis (LINDDUN-lite)" --type design -->
+
 | source | Data flow / category | LINDDUN finding | Disposition | Control / rationale | Retention & rights path |
 |---|---|---|---|---|---|
 | [design-docs-explorer-grounding-spatial-navigation](design/docs-explorer-grounding-and-spatial-navigation.md) | Committed project docs + local search/selection/context state | **L/D** stable artifact IDs and selected context are visible in the same-device URL/history; no new personal-data category is introduced | mitigate | Same-origin local operation only; no analytics, model egress, cross-user store, or remote state. Existing no-secrets/no-PII rules for committed docs still apply. | Navigation state lasts only in browser history/session and is cleared by leaving the page or removing the hash; document retention follows Git governance. |
@@ -81,8 +81,10 @@ downstream dispatch risk was retired by removing the capability, not by acceptin
 | [design-multi-harness-runner](design/multi-harness-runner.md) | Prompt bytes → run metadata | Local retention may contain repository work data | Private common-git directory; no raw prompt/conversation in tracked operational facts |
 | [design-multi-harness-runner](design/multi-harness-runner.md) | Worker metadata → ledger | Session linkability | Accepted for durable audit; only bounded operational fields, hashes and explicit unknown cost |
 | [design-native-ownership-enforcement](design/native-ownership-enforcement.md) | Hook input/environment → local decision facts | L/I: session/path/cwd can identify the local workspace or account directory | mitigate | Existing decision grain with host/cwd metadata; no raw patches or credentials. Export only allowlisted shapes/hashes and cwd-match booleans. | Existing local ledger lifecycle; raw diagnostics remain private and can be removed locally. Committed sanitized proof follows Git retention. |
+| [design-native-profile-controls](design/native-profile-controls.md) | Stop and decision projection → local facts/status | Linkability of session/cwd/request IDs | Existing local ledger retention; validated IDs capped32 plus count; no question/body/prompt/config contents. Tests assert sentinel absence. |
 
-<!-- rolled up from 3 artifact(s) by docs-graph.py rollup on 2026-09-20 -->
+<!-- rolled up from 4 artifact(s) by docs-graph.py rollup on 2026-09-20 -->
+
 <!-- END GENERATED -->
 
 ## 4. Accepted-risk register (maintained by hand)

@@ -249,6 +249,14 @@ Append one JSONL row to a small operator ledger.
 
 **Coverage gap** — no docstring in the source.
 
+### `decision_request_state(root, session)`
+
+Bounded, fail-closed acceptance projection; the historical writer/fold is unchanged.
+
+One checked observation, not a ruling or new store. Missing requests are empty only
+inside an initialized coordination root. Native Stop may remain bounded/fail-open;
+the runner must refuse readiness on checked=False.
+
 ### `fold_requests(events)`
 
 Pure fold: request-* rows -> one state per request id (spec-typed-seam-requests).
@@ -544,7 +552,7 @@ response shape -- so both adapters emit the Claude envelope and this returns Tru
 both. That is a DELIBERATE, RECORDED assumption, not a verified fact: it is exactly
 what a live Copilot deny would confirm or refute (H13).
 
-### `hook_response(decision, reason)`
+### `hook_response(decision, reason, host=…)`
 
 The PreToolUse envelope. ALWAYS printed, and the caller ALWAYS exits 0 - the
 harness reads the decision in the JSON, not the exit code. Conflating them would make
@@ -851,6 +859,6 @@ it; runtime paths stay in quoted expansions, never eval or interpolated source c
 
 ## Coverage
 
-- Public functions: **96** · documented: **72** (**75%**)
+- Public functions: **97** · documented: **73** (**75%**)
 - Undocumented (recorded, not invented): `make_event`, `check`, `read_decisions`, `request_log_path`, `read_request_events`, `cmd_leader`, `regen_command`, `record_regen_owed`, `regen_owed`, `clear_regen_owed`, `detect_harness`, `cmd_precommit`, `cmd_guard`, `session_contract_path`, `owner_rows_for_path`, `cmd_session_list`, `cmd_collaborate`, `cmd_request`, `cmd_worktree`, `cmd_session`, `cmd_metrics`, `cmd_track`, `cmd_install`, `cmd_doctor`
 

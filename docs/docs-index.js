@@ -798,7 +798,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "228a9efce9204acf99b198d0e68d3fae18f3d0ee6c768fb8d6e832aedfbe9c97"
+      "sourceSha256": "49067e728df5822f23c5afd1709610e99bab20b0c830f4c0eb1e623909e82bfa"
     },
     {
       "id": "api-coord-decide",
@@ -1060,7 +1060,7 @@ window.DOCS_INDEX = {
       "phase": "",
       "reviewBy": "2027-03-03",
       "reviewSuggested": [],
-      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 522 public functions across 39 modules, 47% carrying a docstring.",
+      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 524 public functions across 40 modules, 47% carrying a docstring.",
       "tags": [
         "api",
         "scripts",
@@ -1074,7 +1074,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ecb4d437bbd6b7c476169b56b265e50632e434050956de8c3c1379f572c2b793"
+      "sourceSha256": "8b0cebf4267f08fad1db88ce945a01a200f28f248c7ac3f8b954cb56ac38ce3e"
     },
     {
       "id": "api-marker-lint",
@@ -1100,6 +1100,31 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "99a62cdcf340b631a020ba5b67fa87a9943f9b8c21a35c5ed2b1121e69c0f9c2"
+    },
+    {
+      "id": "api-named_hook_bundles",
+      "path": "docs/api/named_hook_bundles.md",
+      "title": "API — named_hook_bundles.py",
+      "type": "api",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-03-03",
+      "reviewSuggested": [],
+      "summary": "Merge source-owned hook bundles while preserving project-owned bundle names.",
+      "tags": [
+        "api",
+        "scripts",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "api-index",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "88945e189bba21894324eb2e4605de3e33c9a333de30d705c71295f40a77fb6c"
     },
     {
       "id": "api-obsidian-setup",
@@ -1149,7 +1174,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "fc73a669c797889c4505aeb1f4221e8a22a6daac40a517b5aa79bf4cd66b4105"
+      "sourceSha256": "187c206c4a27119555087cd11dfe59ea69a59f0a9fba69b1b4b04ed0fe9567de"
     },
     {
       "id": "api-pack-doctor",
@@ -2805,6 +2830,35 @@ window.DOCS_INDEX = {
       "sourceSha256": "0ae55d405f132c55e823b8a3067b708da05b928970fff3301c930ef2b9314944"
     },
     {
+      "id": "note-20260921-grok-bootstrap",
+      "path": "docs/notes/note-20260921-grok-bootstrap.md",
+      "title": "Bind early ACP updates to the completed session creation",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2026-12-21",
+      "reviewSuggested": [],
+      "summary": "Grok 1.0.34 sends a session update before its session/new response. Retain only a bounded candidate identity and count during creation, require the response to confirm that identity, and dispatch no prompt before correlation succeeds.",
+      "tags": [
+        "coordination",
+        "acp",
+        "grok"
+      ],
+      "links": [
+        {
+          "to": "design-multi-harness-runner",
+          "rel": "refines"
+        },
+        {
+          "to": "proof-native-coordination-repair",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "279aecf18bd627128132564f4766a42f0e0b6ada0fc37a875fb50c208f79d9b2"
+    },
+    {
       "id": "note-autopilot-open-questions-decisions",
       "path": "docs/notes/autopilot-open-questions-decisions.md",
       "title": "Decisions on PACK-O open questions (logging, class granularity, autopilot caps)",
@@ -3536,7 +3590,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "2c36100dad334fc20921d90cfb7a08a1d9b027f722787d783e7c952405e970dc"
+      "sourceSha256": "4fa088220a1c727f27e11b45e9bcf995f4df3468bdb493f61334a599a2d4a958"
     },
     {
       "id": "design-native-app-ui-skill-extension",
@@ -3619,6 +3673,44 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "b1b45c43df7ff97204fb488fe360837e2e20ac11707f6adecbe4f82ee2a7c2b6"
+    },
+    {
+      "id": "design-native-profile-controls",
+      "path": "docs/design/native-profile-controls.md",
+      "title": "Native profile controls and final decision handback",
+      "type": "design",
+      "status": "reviewed",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2026-12-21",
+      "reviewSuggested": [],
+      "summary": "Reuse the native ownership guard for Grok and Agy, add a separately trusted Codex Stop hook, and enforce a final worker decision-state fence independently of bounded native Stop behavior.",
+      "tags": [
+        "coordination",
+        "hooks",
+        "ownership",
+        "acceptance"
+      ],
+      "links": [
+        {
+          "to": "design-multi-harness-runner",
+          "rel": "refines"
+        },
+        {
+          "to": "design-native-ownership-enforcement",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-multi-harness-launch-and-monitor",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0010-enforcement-topology",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "907c5fe45879f2b6e5b387fac5f996b895415b747cf27964399a74dca77bdd3c"
     },
     {
       "id": "design-owner-review",
@@ -4182,7 +4274,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e6db0276ce10f6ed8a89f4ff360843ed3f622adef91a1163767e54f9e10692be"
+      "sourceSha256": "8f4cccfcd9b274e10c2f5463ac8f0a627ad1ebf0a55a9661837e708a22b9b8b7"
     },
     {
       "id": "docs-index",
@@ -5839,7 +5931,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0a54c55477898a04bea674739595858d2faee3be3850d145ca33930a80eeb931"
+      "sourceSha256": "4fcc03b29d4684a5d1bb08974810eff95dea8284ae4536c540a9a381194e7e01"
     },
     {
       "id": "seam-p5-to-coordinator",
@@ -7878,6 +7970,45 @@ window.DOCS_INDEX = {
       "sourceSha256": "1bed7709eab8db69824da6af228d34c9935c1664cc0d0607753415426d859bd2"
     },
     {
+      "id": "coordination-end-to-end",
+      "path": "docs/coordination/coordination-end-to-end.md",
+      "title": "Coordination plan - local end-to-end profiles",
+      "type": "plan",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-21",
+      "reviewSuggested": [],
+      "summary": "Repair measured startup gaps, qualify native controls, then exercise reviewed handback across all four installed harnesses with Codex or Claude holding the Owner seat.",
+      "tags": [
+        "coordination",
+        "worktrees",
+        "qualification"
+      ],
+      "links": [
+        {
+          "to": "spec-multi-harness-launch-and-monitor",
+          "rel": "implements"
+        },
+        {
+          "to": "design-multi-harness-runner",
+          "rel": "depends-on"
+        },
+        {
+          "to": "kb-graph-and-loop-engineering",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Order of operations",
+          "mermaid": "graph TD\n  A[Ground and compile] --> B[Independent plan review]\n  B --> C[Grok bootstrap]\n  B --> D[Native controls and Agy policy]\n  C --> E[Independent source review and integration]\n  D --> E\n  E --> F[Actual profile control matrix]\n  F --> G[Runner handback and reviewed join]\n  G --> H[Release proof and audit]"
+        }
+      ],
+      "sourceSha256": "27279ee53bb466e8542372f61d34155947c201f187d49df4f1fb29b2ceef4cc0"
+    },
+    {
       "id": "coordination-p0-p1",
       "path": "docs/coordination/coordination-p0-p1.md",
       "title": "Coordination plan - P0 doctrine home and P1 typed seam requests, two full loops after the P2/P4/P6/P8 joins",
@@ -8049,7 +8180,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2026-12-20",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "design-multi-harness-runner",
+          "on": "2026-09-20",
+          "reason": "Final handback now checks worker Owner decisions independently of native Stop"
+        }
+      ],
       "summary": "Red-first repairs for ACP extension notifications and native Agy refusal, followed by bounded real-profile qualification without changing trust or permission settings.",
       "tags": [
         "coordination",
@@ -8077,7 +8214,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart LR\n A --> B --> C --> D --> E --> F --> G"
         }
       ],
-      "sourceSha256": "077995e785eea5a118a9781d39b71fed751df314e0b0ba233c3ba1cae9149b89"
+      "sourceSha256": "937926cbf1ce09381dd110b9bf59201a156c40dfff39db5d2dc6147d7557db48"
     },
     {
       "id": "scenario-s1-three-harness-delegation",
@@ -8223,7 +8360,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b587575abdedf78c4b885a8d19994ed2b4de4249eebcfc230210da9d396e509c"
+      "sourceSha256": "0b4f8e5e1a0f02c9397dacc3d5883f36f9f87d9b609e4169a305985fb9b89b74"
     },
     {
       "id": "forensic-review-rev48-proof",
@@ -8467,7 +8604,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "coordination",
       "reviewBy": "2026-12-20",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "design-multi-harness-runner",
+          "on": "2026-09-20",
+          "reason": "Final handback now checks worker Owner decisions independently of native Stop"
+        }
+      ],
       "summary": "Real git repositories and offline subprocess peers prove the deterministic runner's admission, worktree, authority, bounded transport and evidence paths. Independent review closed eight runner findings; live provider/profile qualification remains separate from this implementation proof.",
       "tags": [
         "coordination",
@@ -8485,7 +8628,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "82fae3422c78df238f848abff9456f8b9d20e6ab401ec1fdc89ccc9b32144cc1"
+      "sourceSha256": "91cc7131c12e39ef59a11752401a7844c6d2bd6eb6b3ee735694d80cb99f0502"
     },
     {
       "id": "proof-native-app-ui-skill-extension",
@@ -8527,7 +8670,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "coordination",
       "reviewBy": "2026-12-20",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "design-multi-harness-runner",
+          "on": "2026-09-20",
+          "reason": "Final handback now checks worker Owner decisions independently of native Stop"
+        }
+      ],
       "summary": "The two transport defects are repaired and all 17 release gates pass. Five fresh live attempts still qualify zero profiles: Grok has an early session update, Claude/Codex lack an effective ownership veto, and Agy denies the allowed-write canary.",
       "tags": [
         "coordination",
@@ -8549,7 +8698,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "39525c4005a713f8d054cf0e6d61da0e01cbf27ec79ac87327f15eaffcc7d038"
+      "sourceSha256": "afceb3f6b02ef0ca7ec92ba94fb477233fd88b8cc4bdaf5d81b8dde1a77a8f3a"
     },
     {
       "id": "proof-native-ownership-enforcement",
@@ -8584,7 +8733,37 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b4d73470582f1ef9350c747a36e370719e7dd371efe34b9551ea7f3e8d685fe0"
+      "sourceSha256": "33f8bdaf02d0f7f7ded4ae9ddc8c7e178e85f6259282c74ad0b0061e1edd3102"
+    },
+    {
+      "id": "proof-native-profile-controls",
+      "path": "docs/proof/native-profile-controls.md",
+      "title": "Native profile control source and Agy diagnostic evidence",
+      "type": "proof-pack",
+      "status": "reviewed",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2026-12-21",
+      "reviewSuggested": [],
+      "summary": "Red-first source evidence for native ownership adapters, observable bounded Stop and final Owner-decision handback, plus two finite Agy profile diagnostics. Final integrated four-harness qualification remains separate.",
+      "tags": [
+        "coordination",
+        "hooks",
+        "proof",
+        "agy"
+      ],
+      "links": [
+        {
+          "to": "design-native-profile-controls",
+          "rel": "implements"
+        },
+        {
+          "to": "design-multi-harness-runner",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "149cd8d530ebaecbd89ef18524390291b0f13627afa3f90a354cdcae20b0e841"
     },
     {
       "id": "spec-acp-coordination",
@@ -9599,7 +9778,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "119d5256ccfa921379505e0b4e3f4264abb5da148eff759cfed0541977134bbe"
+      "sourceSha256": "7df05d2e2efacc553c2afd290abd70fca6344cc247e93280edfe4fc581966466"
     }
   ],
   "surfaces": [
@@ -9813,6 +9992,14 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-dream-review"
     },
     {
+      "id": "surface-coordination-coordination-end-to-end",
+      "path": "docs/coordination/coordination-end-to-end.html",
+      "title": "End-to-end local coordination",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "coordination-end-to-end"
+    },
+    {
       "id": "surface-proposals-active-multi-harness-coordination",
       "path": "docs/proposals/active-multi-harness-coordination.html",
       "title": "Ledger and bus — active multi-harness coordination",
@@ -9873,5 +10060,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "1f525fbd358f0a59fa7067f2819cb946681d9449272b864d274fb63f2e4d748a"
+  "graphSha256": "b4ad6eb2add1cabd0ee4f8ea648a1d364be3ce939e8d9205fbbf32e637418578"
 };

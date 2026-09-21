@@ -302,6 +302,92 @@ class Gate(TempRepo):
         return self.run_script(GATE, *args, session=session, stdin=json.dumps(self.STOP) if stdin is None else stdin,
                                env=env)
 
+    def test_codex_stop_and_sanitized_native_receipts(self):
+        rid = self.make_request()["id"]
+        result = self.gate("--host", "codex")
+        self.assertEqual(0, result.returncode, result.stderr)
+        self.assertEqual("block", json.loads(result.stdout)["decision"])
+        receipts = [r for r in _rows(self.root / "log/p5.jsonl") if r.get("kind") == "owner-review-stop"]
+        self.assertEqual("refused", receipts[-1]["result"])
+        self.assertEqual([rid], receipts[-1]["open_ids"])
+        self.assertEqual(str(self.tmp), receipts[-1]["hook_cwd"])
+        self.assertNotIn(QUESTION, json.dumps(receipts))
+        guarded = self.gate("--host", "codex", stdin=json.dumps(dict(self.STOP, stop_hook_active=True)))
+        self.assertEqual({}, json.loads(guarded.stdout))
+        self.assertEqual(Rule.rule(self, 1, rid).returncode, 0)
+        self.assertEqual({}, json.loads(self.gate("--host", "codex").stdout))
+        final = _rows(self.root / "log/p5.jsonl")[-1]
+        self.assertEqual("allowed", final["result"])
+        self.assertEqual([], final["open_ids"])
+
+    def test_grok_stop_records_requested_refusal_separate_from_host_enforcement(self):
+        self.make_request()
+        result = self.gate("--host", "grok")
+        self.assertEqual((2, ""), (result.returncode, result.stdout))
+        self.assertEqual("refused", _rows(self.root / "log/p5.jsonl")[-1]["result"])
+        self.gate("--host", "grok", "--event", "SubagentStop")
+        self.assertEqual("SubagentStop", _rows(self.root / "log/p5.jsonl")[-1]["event"])
+        self.gate("--host", "grok", "--event", "SECRET_EVENT")
+        self.assertEqual("unknown", _rows(self.root / "log/p5.jsonl")[-1]["event"])
+
+    def test_unreadable_decision_state_records_not_checked_without_native_loop(self):
+        self.make_request()
+        self.store.write_text("[]\n", encoding="utf-8")
+        result = self.gate("--host", "claude")
+        self.assertEqual(0, result.returncode)
+        receipt = _rows(self.root / "log/p5.jsonl")[-1]
+        self.assertEqual("not_checked", receipt["result"])
+        self.assertFalse(receipt["checked"])
+
+    def test_strict_decision_projection_bounds_state_and_rejects_unknowns(self):
+        core = _load("decision_projection", CORE)
+        self.assertTrue(core.decision_request_state(self.root, "p5")["checked"])
+        self.assertFalse(core.decision_request_state(self.tmp / "absent", "p5")["checked"])
+        rid = self.make_request()["id"]
+        valid = self.store.read_text(encoding="utf-8")
+        failures = ["{bad\n", "null\n", "[]\n", valid + json.dumps({"kind": "request-new-terminal",
+            "session": "coord", "id": rid, "at": time.time()}) + "\n", " " * (8 * 1024 * 1024 + 1)]
+        for bad in failures:
+            self.store.write_text(bad, encoding="utf-8")
+            self.assertFalse(core.decision_request_state(self.root, "p5")["checked"])
+        self.store.unlink()
+        self.store.symlink_to(self.tmp / "missing-ledger")
+        self.assertFalse(core.decision_request_state(self.root, "p5")["checked"])
+        self.store.unlink()
+        if hasattr(os, "mkfifo"):
+            os.mkfifo(self.store)
+            self.assertFalse(core.decision_request_state(self.root, "p5")["checked"])
+            self.store.unlink()
+        base = json.loads(valid.splitlines()[0])
+        for i in range(40):
+            core.append_record(self.store, dict(base, id="req-" + str(i)))
+        state = core.decision_request_state(self.root, "p5")
+        self.assertEqual(40, state["open_count"])
+        self.assertEqual(32, len(state["open_ids"]))
+        self.assertTrue(state["truncated"])
+
+    def test_stop_invalid_identity_cannot_escape_receipt_directory(self):
+        result = self.gate("--host", "codex", session="../../escaped")
+        self.assertEqual({}, json.loads(result.stdout))
+        self.assertFalse((self.tmp / "escaped.jsonl").exists())
+
+    def test_malformed_transitions_and_self_resolution_never_clear_owner_decision(self):
+        core = _load("decision_shapes", CORE)
+        rid = self.make_request()["id"]
+        original = self.store.read_text(encoding="utf-8")
+        add = json.loads(original.splitlines()[0])
+        cases = [original + json.dumps({"kind": "request-resolve", "id": rid, "at": time.time(), "session": "coord"}),
+                 original + json.dumps({"kind": "request-ack", "id": rid, "at": time.time(), "session": "coord"}),
+                 original + json.dumps({"kind": "request-resolve", "id": rid, "at": time.time(), "session": "p5", "resolution": "self approved"}),
+                 json.dumps(dict(add, deadline_at=float("inf"))), "[" * 1500 + "]" * 1500]
+        for body in cases:
+            self.store.write_text(body, encoding="utf-8")
+            self.assertFalse(core.decision_request_state(self.root, "p5")["checked"])
+        self.store.write_text(json.dumps({k:v for k,v in add.items() if k != "deadline_at"}))
+        legacy = core.decision_request_state(self.root, "p5")
+        self.assertTrue(legacy["checked"])
+        self.assertEqual([rid], legacy["open_ids"])
+
     def test_exit_2_with_reason_on_own_open_decision_request(self):
         rid = self.make_request()["id"]
         result = self.gate("--host", "claude")

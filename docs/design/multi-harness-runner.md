@@ -228,6 +228,14 @@ verification is an observation at inspection time; commit verification binds imm
 objects. Neither verifies semantic acceptance. Missing/escaped/substituted evidence reports
 `evidence_incomplete`. Owner review and existing conductor join remain mandatory.
 
+After receipts, read the bounded strict decision projection for the assigned worker.
+Open Owner decisions yield `blocked / RUN-DECISION-OPEN`; unreadable or malformed state
+yields `blocked / RUN-DECISION-NOT-CHECKED`. Preserve receipts and manual brief. Report
+at most 32 validated IDs with total/truncation, never request bodies. Missing ledger is
+known empty only inside the initialized coordination root. A final exact holder/epoch
+and cancellation fence runs after this read before readiness. Native Stop's bounded
+continuation does not replace this acceptance check. See `design-native-profile-controls`.
+
 ## Patterns and selection ladder
 
 Reuse core worktree/leader/event APIs and compiler gate; stdlib selector and bounded executor.

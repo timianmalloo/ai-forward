@@ -11,6 +11,17 @@
           }
         ]
       }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "py=$(python3 -c 'import sys;print(sys.executable)' 2>/dev/null); [ -x \"$py\" ] || py=$(python -c 'import sys;print(sys.executable)'); root=$(git rev-parse --show-toplevel) || exit 2; exec \"$py\" \"$root/docs/ai-forward-pack/hooks/owner-review-gate.py\" --host codex --event Stop",
+            "timeout": 5
+          }
+        ]
+      }
     ]
   }
 }

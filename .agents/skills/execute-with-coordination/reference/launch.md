@@ -108,10 +108,14 @@ version and bind the adapter lock/configuration as well as the underlying runtim
 Agy select `"transport":"agy"` and supply its native arguments:
 
 ```json
-["agy", "--add-dir", "{worktree}", "--mode", "plan", "--input-format", "stream-json", "--output-format", "stream-json"]
+["agy", "--add-dir", "{worktree}", "--mode", "accept-edits", "--input-format", "stream-json", "--output-format", "stream-json"]
 ```
 
-`plan` alone is not a permission guarantee. Agy cancellation terminates its owned process;
+Select this file-edit profile explicitly and qualify it in the actual checkout. `plan`
+is a planning profile; it did not permit the ordinary write required by the local worker
+probe. The observed `accept-edits` invocation permitted that write while the native
+ownership hook refused a leased replacement. Agy still reported `request-review` in
+its init envelope, so neither mode label establishes effective policy. Agy cancellation terminates its owned process;
 no graceful per-turn cancellation contract is claimed. ACP exposes no editor filesystem
 or terminal services. Permission callbacks are denied immediately with a stable action id
 and retained fallback; denial stops subsequent prompts. A different policy needs explicit
@@ -123,6 +127,16 @@ Native Agy `denied_actions` and the observed native permission-error step block 
 even inside a `SUCCESS` envelope. Other native error steps fail. No later prompt is sent.
 The result records `extension_notifications` and `native_denials` separately from ACP
 `permission_requests`; these counts describe observed traffic, not enforcement qualification.
+An Agy pre-tool hook refusal can instead appear as `native_tool_error`; correlate the
+native error with the ownership decision record and unchanged held bytes. That failed
+attempt is never a completed handback.
+
+Grok can emit session updates before its `session/new` reply. The transport retains one
+candidate identity and a bounded count; the reply must confirm it before prompts or
+permissions gain session authority. A narrowly selected Grok 1.0.34 compatibility path
+accepts only its recorded `skills-reload` response during an established prompt. Its
+`compatibility_responses` counter is separate from turn completion. Other unexpected
+responses still fail. The reported version includes its metadata provenance.
 
 ## Qualification and results
 
@@ -131,6 +145,8 @@ Before preparing Claude/Codex worker bases, emit and review the native ownership
 ```sh
 python3 docs/ai-forward-pack/scripts/coord-core.py hook --config --host claude
 python3 docs/ai-forward-pack/scripts/coord-core.py hook --config --host codex
+python3 docs/ai-forward-pack/scripts/coord-core.py hook --config --host grok
+python3 docs/ai-forward-pack/scripts/coord-core.py hook --config --host agy
 ```
 
 Merge the relevant entry into project `.claude/settings.json` or `.codex/hooks.json`,
@@ -141,6 +157,13 @@ Opt-in hook decision facts record that environment identity, `hook_host`, and ac
 `hook_cwd`; they never record patch contents. Check those receipts with unchanged leased
 file bytes, and separately prove an unleased edit succeeds. Codex indeterminate checks
 return a supported denial; legacy Claude indeterminate checks request review.
+For Grok keep project ownership in `.grok/hooks/coord-ownership.json`, separate from the
+pack-managed hook file. For Agy merge the named `ownership-guard` bundle into
+`.agents/hooks.json`; sync and the installer refresh source-owned bundle names while
+preserving project-owned names. Fresh installs do not silently opt into these guards.
+Malformed existing bundle JSON is a conflict, never an empty configuration to overwrite.
+Agy successful ownership checks emit no permission grant; ordinary permission policy
+still decides whether the tool may run.
 
 Codex requires native review of each exact non-managed hook definition. Inspect `hooks/list`
 at the assigned cwd: the expected synchronous PreToolUse source/matcher/hash must be present,
@@ -155,6 +178,10 @@ In the CLI 0.155.1 linked-worktree probe, Codex discovered project hooks from th
 checkout only after that checkout contained the entry. The worker's copied JSON alone
 did not establish discovery. Inspect and bind that primary source plus the worker's
 deployed guard bytes; a new or changed definition still requires native trust review.
+The Codex Stop definition is separate from the `apply_patch` ownership definition and
+needs its own exact native review. Record native Stop behavior for every harness:
+the script's refusal receipt proves what it requested, not that the harness honored it.
+Loop guards deliberately bound repeated native Stop feedback.
 
 ```json
 {
@@ -185,6 +212,11 @@ Output states distinguish preparation, partial preparation, running/interrupted,
 failed, incomplete evidence and ready for review. A successful ACP `end_turn` or matching
 Agy `SUCCESS` is transport completion only. Every admitted turn must succeed. A pre-existing
 artifact cannot turn cancellation, truncation, denial or unknown terminal output into success.
+After inspecting receipts the runner reads a bounded, strict Owner-decision projection.
+Open requests yield `RUN-DECISION-OPEN`; unreadable or malformed state yields
+`RUN-DECISION-NOT-CHECKED`. It then rechecks the current Owner epoch before readiness.
+Native Stop limits never override this final fence. A real Owner ruling closes the
+request; a subsequent run requires a fresh explicit attempt, not replay of a started run.
 The file verifier rejects symlinks and records exact inspected bytes/hash. The commit verifier
 requires a new descendant of the admitted base. Neither executes a worker-supplied command.
 

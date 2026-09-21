@@ -21,7 +21,7 @@ window.PACK_INDEX = {
 {
 "id": "scripts",
 "label": "Scripts",
-"count": 40
+"count": 41
 },
 {
 "id": "personas",
@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 277
+"count": 282
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 451,
+"total": 457,
 "items": [
 {
 "cat": "knowledge",
@@ -971,7 +971,7 @@ window.PACK_INDEX = {
 "summary": "coord-core.py - agent coordination, Phase 1 walking skeleton.",
 "path": "pack/scripts/coord-core.py",
 "kind": "script",
-"text": "coord-core.py coord-core.py - agent coordination, phase 1 walking skeleton. holds the record of intent and answers \"may this session touch this artifact?\" from it. append-only jsonl, one file per session; every piece of state is a fold over it. no daemon, no database, no dependency beyond the standard library (adr-0007). four controls here were observed failing on the un-fixed shape before they were trusted: log-a an append onto a file not ending in a newline fuses two records and loses both r4 a check that scanned nothing must not report \"free\" ctrl-port os.open without o_binary translates newlines on windows -- which also masked the log-a control, because a stray cr still terminates a line f8 a claim over the coordination record itself would lock the substrate design: docs/design/coord-core-phase1.md __init__ repo_root checkout_top resolve_root _norm _literal_segments overlaps excepted lease_covers make_event _next_seq append_event read_events fold check _safe render append_decision read_decisions append_record request_log_path read_request_events fold_requests blob_sha current_blob annotate_requests request_doctor_lines request_metrics lease_overlap_lines _git _git_status leader_validate leader_read leader_state leader_decide refuse leader_write leader_metrics _leader_lines leader_doctor_line cmd_leader refused unique_commits default_branch commits_ahead_of_default staged_paths _identity session_id_error _build_parser entry_fingerprint conservation_lost merge_register _read_jsonl cmd_merge_register load_registry classify regen_command resolve_interpreter _canonical_project pack_defaults _dirty_paths verify_regen_command cmd_classify_init record_regen_owed regen_owed clear_regen_owed _reject_path render_harness_capability _relativise _patch_paths _physical_spelling _native_paths _native_lease_covers physical parse_hook_request detect_harness hook_decision_of hook_response_is_valid hook_response _not_checked cmd_hook cmd_precommit cmd_guard _worktree_key _worktree_label active_sessions session_contract_path _role_token _strip_cell contract_ownership infer_session_roles owner_rows_for_path collaboration_findings cmd_session_list cmd_collaborate _parse_deadline _request_twin _deadline_text cmd_request _slug worktree_inventory worktree_is_clean base_commit classify_removals worktree_safety cmd_worktree session_tree_kind wt4_exception_rate cmd_session cmd_metrics heartbeat_scratch_path _fresh_scratch _read_scratch _write_scratch _renew_leader_if_holder heartbeat_tick _has_progress track_fold worktree_mtimes _track_render_rows cmd_track _load_mail cmd_kick refused liveness_metrics heartbeat_doctor_line cmd_log_portable cmd_install _install_merge_driver _write_conflict read cmd_merge_derived cmd_regen driver_status driver_path_status cmd_doctor cmd_plugin_emit _print_settings_entry native_hook_config main"
+"text": "coord-core.py coord-core.py - agent coordination, phase 1 walking skeleton. holds the record of intent and answers \"may this session touch this artifact?\" from it. append-only jsonl, one file per session; every piece of state is a fold over it. no daemon, no database, no dependency beyond the standard library (adr-0007). four controls here were observed failing on the un-fixed shape before they were trusted: log-a an append onto a file not ending in a newline fuses two records and loses both r4 a check that scanned nothing must not report \"free\" ctrl-port os.open without o_binary translates newlines on windows -- which also masked the log-a control, because a stray cr still terminates a line f8 a claim over the coordination record itself would lock the substrate design: docs/design/coord-core-phase1.md __init__ repo_root checkout_top resolve_root _norm _literal_segments overlaps excepted lease_covers make_event _next_seq append_event read_events fold check _safe render append_decision read_decisions append_record request_log_path read_request_events decision_request_state fold_requests blob_sha current_blob annotate_requests request_doctor_lines request_metrics lease_overlap_lines _git _git_status leader_validate leader_read leader_state leader_decide refuse leader_write leader_metrics _leader_lines leader_doctor_line cmd_leader refused unique_commits default_branch commits_ahead_of_default staged_paths _identity session_id_error _build_parser entry_fingerprint conservation_lost merge_register _read_jsonl cmd_merge_register load_registry classify regen_command resolve_interpreter _canonical_project pack_defaults _dirty_paths verify_regen_command cmd_classify_init record_regen_owed regen_owed clear_regen_owed _reject_path render_harness_capability _relativise _patch_paths _physical_spelling _native_paths _native_lease_covers physical parse_hook_request detect_harness hook_decision_of hook_response_is_valid hook_response _not_checked cmd_hook cmd_precommit cmd_guard _worktree_key _worktree_label active_sessions session_contract_path _role_token _strip_cell contract_ownership infer_session_roles owner_rows_for_path collaboration_findings cmd_session_list cmd_collaborate _parse_deadline _request_twin _deadline_text cmd_request _slug worktree_inventory worktree_is_clean base_commit classify_removals worktree_safety cmd_worktree session_tree_kind wt4_exception_rate cmd_session cmd_metrics heartbeat_scratch_path _fresh_scratch _read_scratch _write_scratch _renew_leader_if_holder heartbeat_tick _has_progress track_fold worktree_mtimes _track_render_rows cmd_track _load_mail cmd_kick refused liveness_metrics heartbeat_doctor_line cmd_log_portable cmd_install _install_merge_driver _write_conflict read cmd_merge_derived cmd_regen driver_status driver_path_status cmd_doctor cmd_plugin_emit _print_settings_entry native_hook_config main"
 },
 {
 "cat": "scripts",
@@ -1083,6 +1083,15 @@ window.PACK_INDEX = {
 },
 {
 "cat": "scripts",
+"id": "named_hook_bundles.py",
+"title": "named_hook_bundles.py",
+"summary": "Merge source-owned hook bundles while preserving project-owned bundle names.",
+"path": "pack/scripts/named_hook_bundles.py",
+"kind": "script",
+"text": "named_hook_bundles.py merge source-owned hook bundles while preserving project-owned bundle names. main"
+},
+{
+"cat": "scripts",
 "id": "obsidian-setup.py",
 "title": "obsidian-setup.py",
 "summary": "obsidian-setup.py - stand up (and analyze) the Obsidian lens over an AI-Forward docs graph.",
@@ -1097,7 +1106,7 @@ window.PACK_INDEX = {
 "summary": "pack-apply.py — apply the AI-Forward deployment map to a repo, mechanically and reversibly.",
 "path": "pack/scripts/pack-apply.py",
 "kind": "script",
-"text": "pack-apply.py pack-apply.py — apply the ai-forward deployment map to a repo, mechanically and reversibly. `/updatepack` and `/addpacktorepo` used to hand-apply install.md's deployment map, so every step a person could forget - re-pasting a managed block, deleting the wrapped copy of a doc whose load scope moved, converting claude.md to the `@agents.md` import, retiring a parity control that encoded the old invariant - was remembered or it was not. this script is the deployment map (install.md 1), run from the pack source against a target repo: pack-apply.py plan --source <ai-forward clone> --target <repo> # every action, no writes pack-apply.py apply --source <ai-forward clone> --target <repo> # do it, idempotently what it does, per artifact family (pack-owned names only - repo-local files are never touched): knowledge -> .claude/knowledge/<name>.md verbatim; .github/instructions/<name>.instructions.md (applyto-wrapped) for load: always|glob; .github/knowledge/<name>.md for load: skill|reference; the stale copy in the other copilot location is removed (ctx-e: a doc re-scoped to on-demand must stop attaching). skills -> .claude/skills/<name>/ (the whole directory: skill.md + reference/*.md); .github/prompts/<name>.prompt.md; .grok/skills/<name>/ (same files; grok build native, wins over claude-compat scan) agents -> .claude/agents/ (both sets); .github/agents/<name>.agent.md (renamed, `tools:` stripped); .grok/agents/<name>.md (`_agent` suffix stripped, `tools:` stripped) bundle -> docs/ai-forward-pack/{templates,scripts,hooks,readme,overview,research-synthesis, install,context-budget.json}; .github/hooks/ai-forward.json; .claude/settings.json (hooks merged, showthinkingsummaries set); .grok/hooks/ai-forward.json; .grok/rules/grok-surface.md (path map only — not knowledge docs); .gitignore lines; docs/index.html only if absent; docs/docs-index.js never (v10) front doors -> agents.md: the managed block replaced wholesale between markers (appended if absent). claude.md: converted to `@agents.md` + the addendum block (ctx-b); the old file is backed up under docs/ai-forward-pack/retired/, and every paragraph that is not in agents.md (after toolchain-path normalisation) is kept above the addendum. controls -> a repo-local parity test that asserts claude.md carries the standing-method block (the old invariant) is rewritten into a shim asserting the new invariant through pack-doctor, its other assertions carried over where they can be read; the original is backed up beside the claude.md backup. repo-local deviations are honoured, not reverted: a destination that differs from the version the repo received at its installed revision is three-way merged (`git merge-file`) against the pack's old and new text; a clean merge lands as merge, a conflicting one is left untouched with the new pack text written under docs/ai-forward-pack/conflicts/ and reported as conflict for the skill to reconcile. the installed revision advances only in `apply`. re-running is a no-op. python 3.8+, stdlib only. exit 0 = applied/clean, 1 = conflicts or errors reported, 2 = usage. gitignore_negations read norm_nl same frontmatter git default_source __init__ _project_name _stale_applier row rel _source_revision _target_revision _old_pack_text _write _remove place _transform_like _merge knowledge skills agents bundle _settings _tracked_under _gitignore_withhold _gitignore _gitattributes _editorconfig front_doors _retire_parity_controls advance run_baselines run grok_agent_filename strip_tools replace_block normalise _outside_block unique_paragraphs parity_shim render_table summarize main"
+"text": "pack-apply.py pack-apply.py — apply the ai-forward deployment map to a repo, mechanically and reversibly. `/updatepack` and `/addpacktorepo` used to hand-apply install.md's deployment map, so every step a person could forget - re-pasting a managed block, deleting the wrapped copy of a doc whose load scope moved, converting claude.md to the `@agents.md` import, retiring a parity control that encoded the old invariant - was remembered or it was not. this script is the deployment map (install.md 1), run from the pack source against a target repo: pack-apply.py plan --source <ai-forward clone> --target <repo> # every action, no writes pack-apply.py apply --source <ai-forward clone> --target <repo> # do it, idempotently what it does, per artifact family (pack-owned names only - repo-local files are never touched): knowledge -> .claude/knowledge/<name>.md verbatim; .github/instructions/<name>.instructions.md (applyto-wrapped) for load: always|glob; .github/knowledge/<name>.md for load: skill|reference; the stale copy in the other copilot location is removed (ctx-e: a doc re-scoped to on-demand must stop attaching). skills -> .claude/skills/<name>/ (the whole directory: skill.md + reference/*.md); .github/prompts/<name>.prompt.md; .grok/skills/<name>/ (same files; grok build native, wins over claude-compat scan) agents -> .claude/agents/ (both sets); .github/agents/<name>.agent.md (renamed, `tools:` stripped); .grok/agents/<name>.md (`_agent` suffix stripped, `tools:` stripped) bundle -> docs/ai-forward-pack/{templates,scripts,hooks,readme,overview,research-synthesis, install,context-budget.json}; .github/hooks/ai-forward.json; .claude/settings.json (hooks merged, showthinkingsummaries set); .grok/hooks/ai-forward.json; .grok/rules/grok-surface.md (path map only — not knowledge docs); .gitignore lines; docs/index.html only if absent; docs/docs-index.js never (v10) front doors -> agents.md: the managed block replaced wholesale between markers (appended if absent). claude.md: converted to `@agents.md` + the addendum block (ctx-b); the old file is backed up under docs/ai-forward-pack/retired/, and every paragraph that is not in agents.md (after toolchain-path normalisation) is kept above the addendum. controls -> a repo-local parity test that asserts claude.md carries the standing-method block (the old invariant) is rewritten into a shim asserting the new invariant through pack-doctor, its other assertions carried over where they can be read; the original is backed up beside the claude.md backup. repo-local deviations are honoured, not reverted: a destination that differs from the version the repo received at its installed revision is three-way merged (`git merge-file`) against the pack's old and new text; a clean merge lands as merge, a conflicting one is left untouched with the new pack text written under docs/ai-forward-pack/conflicts/ and reported as conflict for the skill to reconcile. the installed revision advances only in `apply`. re-running is a no-op. python 3.8+, stdlib only. exit 0 = applied/clean, 1 = conflicts or errors reported, 2 = usage. merge_named_hook_bundles gitignore_negations read norm_nl same frontmatter git default_source __init__ _project_name _stale_applier row rel _source_revision _target_revision _old_pack_text _write _remove place _transform_like _merge knowledge skills agents bundle _settings _tracked_under _gitignore_withhold _gitignore _gitattributes _editorconfig front_doors _retire_parity_controls advance run_baselines run grok_agent_filename strip_tools replace_block normalise _outside_block unique_paragraphs parity_shim render_table summarize main"
 },
 {
 "cat": "scripts",
@@ -1796,10 +1805,10 @@ window.PACK_INDEX = {
 "cat": "graph",
 "id": "api-index",
 "title": "API reference — the deployed script bundle",
-"summary": "Generated API reference for the pack's public surface — the deployed script bundle. 522 public functions across 39 modules, 47% carrying a docstring.",
+"summary": "Generated API reference for the pack's public surface — the deployed script bundle. 524 public functions across 40 modules, 47% carrying a docstring.",
 "path": "docs/api/index.md",
 "kind": "api",
-"text": "api reference — the deployed script bundle generated api reference for the pack's public surface — the deployed script bundle. 522 public functions across 39 modules, 47% carrying a docstring. api scripts generated index documents architecture"
+"text": "api reference — the deployed script bundle generated api reference for the pack's public surface — the deployed script bundle. 524 public functions across 40 modules, 47% carrying a docstring. api scripts generated index documents architecture"
 },
 {
 "cat": "graph",
@@ -1809,6 +1818,15 @@ window.PACK_INDEX = {
 "path": "docs/api/marker-lint.md",
 "kind": "api",
 "text": "api — marker-lint.py marker-lint.py - completeness check for the pack's inline decision markers. api scripts generated refines api-index"
+},
+{
+"cat": "graph",
+"id": "api-named_hook_bundles",
+"title": "API — named_hook_bundles.py",
+"summary": "Merge source-owned hook bundles while preserving project-owned bundle names.",
+"path": "docs/api/named_hook_bundles.md",
+"kind": "api",
+"text": "api — named_hook_bundles.py merge source-owned hook bundles while preserving project-owned bundle names. api scripts generated refines api-index"
 },
 {
 "cat": "graph",
@@ -2289,6 +2307,15 @@ window.PACK_INDEX = {
 },
 {
 "cat": "graph",
+"id": "note-20260921-grok-bootstrap",
+"title": "Bind early ACP updates to the completed session creation",
+"summary": "Grok 1.0.34 sends a session update before its session/new response. Retain only a bounded candidate identity and count during creation, require the response to confirm that identity, and dispatch no prompt before correlation succeeds.",
+"path": "docs/notes/note-20260921-grok-bootstrap.md",
+"kind": "decision-note",
+"text": "bind early acp updates to the completed session creation grok 1.0.34 sends a session update before its session/new response. retain only a bounded candidate identity and count during creation, require the response to confirm that identity, and dispatch no prompt before correlation succeeds. coordination acp grok refines design-multi-harness-runner relates-to proof-native-coordination-repair"
+},
+{
+"cat": "graph",
 "id": "note-autopilot-open-questions-decisions",
 "title": "Decisions on PACK-O open questions (logging, class granularity, autopilot caps)",
 "summary": "The user's answers to the three open questions from the task-discipline / front-matter proposal (revision 3), which gate the next change: making PACK-O controllable.",
@@ -2466,6 +2493,15 @@ window.PACK_INDEX = {
 "path": "docs/design/native-ownership-enforcement.md",
 "kind": "design",
 "text": "native ownership guards for claude and codex workers reuse the existing lease hook at native edit seams, add codex patch-envelope support, and install explicit project-local guard entries without weakening native hook trust or claiming shell containment. coordination hooks ownership codex claude implements spec-multi-harness-launch-and-monitor refines design-coord-enforcement-phase2 depends-on adr-0010-enforcement-topology depends-on proof-native-coordination-repair"
+},
+{
+"cat": "graph",
+"id": "design-native-profile-controls",
+"title": "Native profile controls and final decision handback",
+"summary": "Reuse the native ownership guard for Grok and Agy, add a separately trusted Codex Stop hook, and enforce a final worker decision-state fence independently of bounded native Stop behavior.",
+"path": "docs/design/native-profile-controls.md",
+"kind": "design",
+"text": "native profile controls and final decision handback reuse the native ownership guard for grok and agy, add a separately trusted codex stop hook, and enforce a final worker decision-state fence independently of bounded native stop behavior. coordination hooks ownership acceptance refines design-multi-harness-runner refines design-native-ownership-enforcement implements spec-multi-harness-launch-and-monitor depends-on adr-0010-enforcement-topology"
 },
 {
 "cat": "graph",
@@ -3684,6 +3720,15 @@ window.PACK_INDEX = {
 },
 {
 "cat": "graph",
+"id": "coordination-end-to-end",
+"title": "Coordination plan - local end-to-end profiles",
+"summary": "Repair measured startup gaps, qualify native controls, then exercise reviewed handback across all four installed harnesses with Codex or Claude holding the Owner seat.",
+"path": "docs/coordination/coordination-end-to-end.md",
+"kind": "plan",
+"text": "coordination plan - local end-to-end profiles repair measured startup gaps, qualify native controls, then exercise reviewed handback across all four installed harnesses with codex or claude holding the owner seat. coordination worktrees qualification implements spec-multi-harness-launch-and-monitor depends-on design-multi-harness-runner depends-on kb-graph-and-loop-engineering"
+},
+{
+"cat": "graph",
 "id": "coordination-p0-p1",
 "title": "Coordination plan - P0 doctrine home and P1 typed seam requests, two full loops after the P2/P4/P6/P8 joins",
 "summary": "Two Sub-Agent tracks dispatched after the four P2/P4/P6/P8 joins land, because both touch files those tracks own: P0 turns agent-coordination.md into the always-loaded doctrine home (CO1–COn from the proposal's §3, with the seeded CO-S0…",
@@ -3843,6 +3888,15 @@ window.PACK_INDEX = {
 "path": "docs/proof/native-ownership-enforcement.md",
 "kind": "proof-pack",
 "text": "native ownership guard implementation and actual-profile proof reviewed native file-edit guards are integrated locally. corrected-base claude write and codex apply_patch allow ordinary work and refuse active leased edits. the user approved exact-definition codex trust through native review. no unattended profile is attested. coordination hooks qualification claude codex implements design-native-ownership-enforcement refines proof-native-coordination-repair implements spec-multi-harness-launch-and-monitor"
+},
+{
+"cat": "graph",
+"id": "proof-native-profile-controls",
+"title": "Native profile control source and Agy diagnostic evidence",
+"summary": "Red-first source evidence for native ownership adapters, observable bounded Stop and final Owner-decision handback, plus two finite Agy profile diagnostics. Final integrated four-harness qualification remains separate.",
+"path": "docs/proof/native-profile-controls.md",
+"kind": "proof-pack",
+"text": "native profile control source and agy diagnostic evidence red-first source evidence for native ownership adapters, observable bounded stop and final owner-decision handback, plus two finite agy profile diagnostics. final integrated four-harness qualification remains separate. coordination hooks proof agy implements design-native-profile-controls implements design-multi-harness-runner"
 },
 {
 "cat": "graph",

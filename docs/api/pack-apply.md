@@ -86,6 +86,10 @@ _(no docstring — coverage gap)_
 
 ## Functions
 
+### `merge_named_hook_bundles(source_text, current_text=…)`
+
+Refresh source-owned names and retain project-owned names; reject invalid JSON.
+
 ### `gitignore_negations(pattern)`
 
 The literal forms a repo writes to re-include a pattern this block would ignore.
@@ -161,6 +165,6 @@ original's skill-surface needles and required-phrase checks where they can be re
 
 ## Coverage
 
-- Public functions: **15** · documented: **8** (**53%**)
+- Public functions: **16** · documented: **9** (**56%**)
 - Undocumented (recorded, not invented): `read`, `norm_nl`, `frontmatter`, `git`, `normalise`, `render_table`, `summarize`
 

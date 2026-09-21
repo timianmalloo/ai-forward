@@ -21,6 +21,7 @@ import json
 import math
 import os
 import re
+import stat
 import statistics
 import subprocess
 import sys
@@ -492,6 +493,75 @@ def read_request_events(root):
                 errors.append("{}:{}: {}".format(path.name, lineno, exc.msg))
     events.sort(key=lambda e: e.get("at", 0.0))
     return events, errors
+
+
+def decision_request_state(root, session):
+    """Bounded, fail-closed acceptance projection; the historical writer/fold is unchanged.
+
+    One checked observation, not a ruling or new store. Missing requests are empty only
+    inside an initialized coordination root. Native Stop may remain bounded/fail-open;
+    the runner must refuse readiness on checked=False.
+    """
+    failed = {"checked": False, "open_ids": [], "open_count": None, "truncated": False}
+    try:
+        root = Path(root)
+        if not session or not root.is_dir() or not (root / "log").is_dir():
+            return failed
+        try:
+            fd = os.open(str(request_log_path(root)), os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0)
+                         | getattr(os, "O_NONBLOCK", 0) | getattr(os, "O_BINARY", 0))
+        except FileNotFoundError:
+            return {"checked": True, "open_ids": [], "open_count": 0, "truncated": False}
+        with os.fdopen(fd, "rb") as handle:
+            info = os.fstat(handle.fileno())
+            if not stat.S_ISREG(info.st_mode) or info.st_size > 8 * 1024 * 1024:
+                return failed
+            raw = handle.read(8 * 1024 * 1024 + 1)
+        if len(raw) > 8 * 1024 * 1024:
+            return failed
+        events = [json.loads(line) for line in raw.decode("utf-8").splitlines() if line.strip()]
+        kinds = {"request-add", "request-receive", "request-ack", "request-resolve", "request-expire"}
+        for row in events:
+            if (not isinstance(row, dict) or row.get("kind") not in kinds
+                    or not isinstance(row.get("id"), str)
+                    or not re.fullmatch(r"[A-Za-z0-9_.:-]{1,160}", row["id"])
+                    or isinstance(row.get("at"), bool) or not isinstance(row.get("at"), (float, int))
+                    or not math.isfinite(row["at"])
+                    or not isinstance(row.get("session"), str) or not row["session"]):
+                return failed
+            if row["kind"] == "request-add":
+                if (not isinstance(row.get("reason", ""), str)
+                        or not isinstance(row.get("from", row["session"]), str)
+                        or not (row.get("from") or row["session"])):
+                    return failed
+                deadline = row.get("deadline_at")
+                if deadline is not None and (isinstance(deadline, bool)
+                        or not isinstance(deadline, (int, float)) or not math.isfinite(deadline)):
+                    return failed
+            field = {"request-resolve": "resolution", "request-ack": "blob", "request-expire": "fallback"}.get(row["kind"])
+            if field and (not isinstance(row.get(field), str) or not row[field].strip()):
+                return failed
+        events.sort(key=lambda row: row["at"])
+        added = {}
+        for row in events:
+            if row["kind"] == "request-add":
+                if row["id"] in added:
+                    return failed
+                added[row["id"]] = row
+            elif row["id"] not in added:
+                return failed
+            elif row["kind"] == "request-resolve":
+                original = added[row["id"]]
+                if (original.get("reason") == "decision-request"
+                        and row["session"] == (original.get("from") or original.get("session"))):
+                    return failed  # A worker's generic resolve is not an independent ruling.
+        ids = [row["id"] for row in fold_requests(events)
+               if row.get("reason") == "decision-request"
+               and (row.get("from") or row.get("session")) == session
+               and row.get("status") in REQUEST_OPEN]
+        return {"checked": True, "open_ids": ids[:32], "open_count": len(ids), "truncated": len(ids) > 32}
+    except (OSError, ValueError, TypeError, UnicodeError, RecursionError):
+        return failed
 
 
 def fold_requests(events):
@@ -1153,7 +1223,7 @@ def _build_parser():
 
     # --- Phase 2: enforcement ---
     hook = sub.add_parser("hook", help="PreToolUse adapter: stdin JSON in, decision JSON out")
-    hook.add_argument("--host", choices=["claude", "codex"],
+    hook.add_argument("--host", choices=["claude", "codex", "grok", "agy"],
                       help="native response contract (Codex indeterminate checks deny)")
     hook.add_argument("--config", action="store_true",
                       help="print a project hook entry as JSON; never install or trust it")
@@ -1914,8 +1984,9 @@ def _reject_path(path):
 # Tools that WRITE. Everything else carries no path we care about, and one that carries no
 # path must never have one invented for it.
 _WRITE_TOOLS = {"edit", "create", "write", "apply_patch", "str_replace", "multiedit",
-                "notebookedit"}
-_PATH_KEYS = ("file_path", "path", "filePath", "notebook_path")
+                "notebookedit", "edit_file", "write_file", "write_to_file",
+                "replace_file_content", "multi_replace_file_content"}
+_PATH_KEYS = ("file_path", "path", "filePath", "notebook_path", "target_file", "TargetFile")
 
 # CAPABILITY, NOT MEASUREMENT (class CTX-H, proposal P3).
 #
@@ -2148,6 +2219,33 @@ def parse_hook_request(event, repo, host=None, cwd=None):
     if not isinstance(event, dict):
         return []
 
+    if host == "grok":
+        event = {"tool_name": event.get("toolName"), "tool_input": event.get("toolInput")}
+    elif host == "agy":
+        call = event.get("toolCall")
+        if not isinstance(call, dict):
+            raise ValueError("missing native tool call")
+        args = call.get("args")
+        if not isinstance(args, dict):
+            raise ValueError("invalid native arguments")
+        if call.get("name") in ("write_to_file", "replace_file_content", "multi_replace_file_content"):
+            if not isinstance(args.get("TargetFile"), str) or not Path(args["TargetFile"]).is_absolute():
+                raise ValueError("native TargetFile must be absolute; hook cwd is not the tool resolver")
+        # Native tool schemas, not generic aliases, choose the authoritative path.
+        event = {"tool_name": call.get("name"), "tool_input": {"file_path": args.get("TargetFile")}}
+    if host in ("grok", "agy") and (not isinstance(event.get("tool_name"), str)
+            or not event["tool_name"] or not isinstance(event.get("tool_input"), dict)):
+        raise ValueError("invalid native tool call")
+    if host in ("grok", "agy") and event["tool_name"].lower() not in _WRITE_TOOLS:
+        raise ValueError("unsupported tool at native ownership write seam")
+    if host == "grok" and event["tool_name"].lower() != "apply_patch":
+        args = event["tool_input"]
+        paths = [target for key in _PATH_KEYS if args.get(key)
+                 for target in _native_paths(args[key], repo, cwd)]
+        if not paths:
+            raise ValueError("native write has no recognized target")
+        return [(event["tool_name"], target) for target in paths]
+
     # Copilot: a batch, under input.toolCalls, with args as a JSON string.
     payload = event.get("input")
     if isinstance(payload, dict) and isinstance(payload.get("toolCalls"), list):
@@ -2237,11 +2335,15 @@ def hook_response_is_valid(response, harness):
             and isinstance(block.get("permissionDecisionReason"), str))
 
 
-def hook_response(decision, reason):
+def hook_response(decision, reason, host=None):
     """The PreToolUse envelope. ALWAYS printed, and the caller ALWAYS exits 0 - the
     harness reads the decision in the JSON, not the exit code. Conflating them would make
     a crashed hook indistinguishable from a refusal.
     """
+    if host == "agy" and decision == "allow":
+        return ""  # Neutral success: ownership is not permission to autoapprove a tool.
+    if host in ("grok", "agy"):
+        return json.dumps({"decision": decision, "reason": reason})
     return json.dumps({"hookSpecificOutput": {
         "hookEventName": "PreToolUse",
         "permissionDecision": decision,
@@ -2249,10 +2351,10 @@ def hook_response(decision, reason):
 
 
 def _not_checked(reason, host=None):
-    return hook_response("deny" if host == "codex" else "ask", "NOT CHECKED  -\n  held by   unknown - this check did"
+    return hook_response("deny" if host in ("codex", "grok", "agy") else "ask", "NOT CHECKED  -\n  held by   unknown - this check did"
                          " not run\n  because   {}\n"
                          "  remedy    fix the condition above; this is not a pass"
-                         .format(reason))
+                         .format(reason), host)
 
 
 def cmd_hook(root, session, agent, now, stdin_text, repo=None, host=None, cwd=None):
@@ -2281,7 +2383,7 @@ def cmd_hook(root, session, agent, now, stdin_text, repo=None, host=None, cwd=No
     if not paths:
         # G2: powershell, view, grep -- 26,210 of the recorded Copilot invocations are
         # `powershell` alone. A call that carries no path, or only reads one, is allowed.
-        return hook_response("allow", "coordination: no write to a coordinated path")
+        return hook_response("allow", "coordination: no write to a coordinated path", host)
 
     worst = None
     native = host is not None or any(str(name).lower() == "apply_patch" for name, _ in calls)
@@ -2303,9 +2405,9 @@ def cmd_hook(root, session, agent, now, stdin_text, repo=None, host=None, cwd=No
 
     if worst is None:
         return hook_response("allow", "coordination: {} path(s) free or mine"
-                             .format(len(paths)))
-    mapped = {"deny": "deny", "not_checked": "deny" if host == "codex" else "ask"}[worst["decision"]]
-    return hook_response(mapped, render(worst))
+                             .format(len(paths)), host)
+    mapped = {"deny": "deny", "not_checked": "deny" if host in ("codex", "grok", "agy") else "ask"}[worst["decision"]]
+    return hook_response(mapped, render(worst), host)
 
 
 def cmd_precommit(root, repo, session, agent, now):
@@ -4372,9 +4474,13 @@ def native_hook_config(host):
                "[ -x \"$py\" ] || py=$(python -c 'import sys;print(sys.executable)'); "
                "root=$(git rev-parse --show-toplevel) || exit 2; "
                "exec \"$py\" \"$root/docs/ai-forward-pack/scripts/coord-core.py\" hook --host " + host)
-    return {"hooks": {"PreToolUse": [{
-        "matcher": "apply_patch" if host == "codex" else "Write|Edit|MultiEdit|NotebookEdit",
-        "hooks": [{"type": "command", "command": command, "timeout": 5}]}]}}
+    matcher = {"codex": "apply_patch", "claude": "Write|Edit|MultiEdit|NotebookEdit",
+               "grok": "Write|Edit|MultiEdit|NotebookEdit|write_file|edit_file",
+               "agy": "write_to_file|replace_file_content|multi_replace_file_content"}[host]
+    entries = [{"matcher": matcher, "hooks": [{"type": "command", "command": command, "timeout": 5}]}]
+    if host == "agy":
+        return {"ownership-guard": {"enabled": True, "PreToolUse": entries}}
+    return {"hooks": {"PreToolUse": entries}}
 
 
 def main(argv=None):
@@ -4426,7 +4532,8 @@ def main(argv=None):
                               host=args.host, cwd=os.getcwd())
         except Exception as exc:
             output = _not_checked("hook state unavailable ({})".format(type(exc).__name__), args.host)
-        print(output)
+        if output:
+            print(output)
         return 0
 
     if args.cmd == "guard":

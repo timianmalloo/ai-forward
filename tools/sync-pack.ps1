@@ -294,7 +294,8 @@ Copy-Item (Join-Path $pack "adapters\antigravity\agy-surface.md") (Join-Path $ag
 Write-Host "  .agents/rules: agy-surface.md (path map only)"
 
 $agyHooksDst = Join-Path $repo ".agents\hooks.json"
-Copy-Item (Join-Path $pack "adapters\hooks\agy.ai-forward-hooks.json") $agyHooksDst -Force
+& $pyExe @pyArgs (Join-Path $pack "scripts\named_hook_bundles.py") (Join-Path $pack "adapters\hooks\agy.ai-forward-hooks.json") $agyHooksDst
+if ($LASTEXITCODE -ne 0) { throw "Antigravity named hook merge failed; current hooks were retained." }
 
 $agySkillsJson = "{`n  `"entries`": [`n    { `"path`": `".agents/skills`" },`n    { `"path`": `".claude/skills`" }`n  ]`n}"
 Set-Content (Join-Path $repo ".agents\skills.json") -Value $agySkillsJson -Encoding UTF8

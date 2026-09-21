@@ -59,3 +59,21 @@ Ruled add. The note (docs/notes/note-20260920-s1-codex-coordination-surface.md, 
 Ruled yes, observed 2026-09-20 13:50Z on Antigravity 1.2.7, headless (agy --add-dir <tree> -p) with AGENT_SESSION=smoke-agy-2 and this request open: the session's final output read 'Termination was blocked by the stop hook because there is unread coordination mail for session smoke-agy-2.' and then 'Termination was blocked because session smoke-agy-2 has an unresolved decision request that must be ruled or expired before stopping.' - two refusals (AGY_MAX_REFUSALS), then the stop was allowed with the reason on stderr. In the same probe series the PreInvocation doorbell injected its ephemeralMessage (quoted verbatim by the model) and PostToolUse counted calls (Stop row calls=2). All three Antigravity channels move from observed-only to enforced; the S1 fallback note's Stop verdict is superseded.
 
 - request: req-01M2ZH9713A9BT4PWZ894R5BEA · ruled by: coord-p3-p5-p8 · at: 2026-09-20T13:52:51Z
+
+### Ruling 6 — Bound early Grok updates to the confirmed session
+
+Approved bounded single-candidate identity plus count during session/new, matching response required before creation/prompt authority. Keep existing deadline/output/cancellation bounds. Native permission requests must require an already established nonempty session identity; a null or missing ID must not match the pre-creation None state. Prove early permission refusal, foreign/malformed/EOF/flood/cancellation cases and killed correlation/phase mutations. No raw update retention, policy changes, new schema or prompt replay.
+
+- request: req-01M30NFSZ8ARJA2WHSRNQCPVVN · ruled by: coord-e2e · at: 2026-09-21T00:23:32Z
+
+### Ruling 7 — Separate native Stop behavior from final decision handback
+
+Approve the native-profile-controls design with strict bounded decision-ledger validation, known-empty initialization check, bounded IDs plus total/truncation, and final exact leader/cancellation fence before readiness. Preserve receipts and distinguish RUN-DECISION-OPEN from RUN-DECISION-NOT-CHECKED. Keep Agy ownership success neutral rather than granting permission; observe ordinary write under documented normal mode before selecting policy. Preserve Codex approved apply_patch hash; separate Stop definition awaits native user trust review. Grok1.0.34 advertises blocking Stop contrary to current web documentation: preserve requested refusal and label only observed runtime enforcement, never infer it from either source. No new broker, replay, dynamic prompt loop or permission bypass.
+
+- request: req-01M30NZ4Z1VQHG9SBMNZRKK2DK · ruled by: coord-e2e · at: 2026-09-21T00:31:49Z
+
+### Ruling 8 — Contain the measured Grok skills-reload response defect
+
+Approve only the documented workaround selected by initialize metadata grokShell true and exact agentVersion 1.0.34, after confirmed session creation and during a pending session/prompt. Consume only the exact JSON-RPC skills-reload nested result with integer reloaded equal to one; count separately without granting authority, acknowledging permissions, or completing the pending RPC. Wrong versions, IDs, fields, types and phases still fail. Preserve existing time, bytes, cancellation and cleanup bounds. Record reported version provenance. Kill selector/envelope/response-authority mutants and run a fresh two-turn diagnostic. This workaround expires at a changed runtime binding and does not weaken generic ACP response correlation.
+
+- request: req-01M30P12KWPRP2J9CGCY2PGFVA · ruled by: coord-e2e · at: 2026-09-21T00:32:51Z

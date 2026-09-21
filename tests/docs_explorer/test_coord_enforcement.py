@@ -154,6 +154,43 @@ class NativeHookTests(GitCase):
         return json.dumps({"tool_name": "apply_patch", "cwd": "/forged", "session_id": "owner",
                            "tool_input": {"command": patch}})
 
+    def test_grok_and_agy_native_write_envelopes_enforce_lease_without_granting_policy(self):
+        for host, make in (
+            ("grok", lambda p: {"toolName": "edit_file", "toolInput": {"target_file": p}}),
+            ("agy", lambda p: {"toolCall": {"name": "write_to_file", "args": {"TargetFile": str(self.repo / p) if p else p}}}),
+        ):
+            for path, session, deny in (("held.txt", "worker", True), ("held.txt", "owner", False),
+                                         ("free.txt", "worker", False), ("../escape", "worker", True)):
+                with self.subTest(host=host, path=path, session=session):
+                    payload = dict(make(path), sessionId="owner", cwd="/forged")
+                    result = self.run_cli("hook", "--host", host, stdin=json.dumps(payload), session=session)
+                    self.assertEqual(0, result.returncode, result.stderr)
+                    if deny:
+                        self.assertEqual("deny", json.loads(result.stdout)["decision"])
+                    elif host == "agy":
+                        self.assertEqual("", result.stdout.strip(), "ownership alone must not autoapprove Agy policy")
+                    else:
+                        self.assertNotEqual("deny", json.loads(result.stdout).get("decision"))
+            for payload in (make(None), {}, {"toolCall": []}, {"toolName": "edit_file", "toolInput": []}):
+                with self.subTest(host=host, malformed=payload):
+                    result = self.run_cli("hook", "--host", host, stdin=json.dumps(payload), session="worker")
+                    self.assertEqual(0, result.returncode, result.stderr)
+                    self.assertEqual("deny", json.loads(result.stdout)["decision"])
+
+    def test_agy_uses_native_target_not_unrelated_generic_path(self):
+        payload = {"toolCall": {"name": "write_to_file", "args": {"TargetFile": str(self.repo / "held.txt"), "file_path": "free.txt"}}}
+        result = self.run_cli("hook", "--host", "agy", stdin=json.dumps(payload), session="worker")
+        self.assertEqual(0, result.returncode, result.stderr)
+        self.assertEqual("deny", json.loads(result.stdout)["decision"])
+
+    def test_agy_nested_hook_cwd_uses_absolute_native_target_and_refuses_relative(self):
+        for path in (str(self.repo / "held.txt"), "held.txt"):
+            result = subprocess.run([sys.executable, str(SCRIPT), "hook", "--host", "agy"], cwd=self.repo / ".agents",
+                env=dict(os.environ, AGENT_SESSION="worker"), capture_output=True, text=True, encoding="utf-8",
+                input=json.dumps({"toolCall": {"name": "write_to_file", "args": {"TargetFile": path}}}))
+            self.assertEqual("deny", json.loads(result.stdout)["decision"])
+
+
     def decision(self, payload, host=None, session="worker", cwd=None, extra_env=None):
         args = ["hook"] + (["--host", host] if host else [])
         env = dict(os.environ, AGENT_SESSION=session or "", AGENT_NAME=session or "")

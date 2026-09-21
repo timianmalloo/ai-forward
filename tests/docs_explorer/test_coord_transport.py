@@ -80,6 +80,87 @@ class TransportTests(unittest.TestCase):
                          [r.get("method") for r in self.requests()])
         self.assertNotIn("SECRET", json.dumps([result, self.events]))
 
+    def test_grok_recorded_early_updates_bind_before_ordered_prompts(self):
+        for mode, progress in (("grok_early", 3), ("grok_multiple", 5)):
+            with self.subTest(mode=mode):
+                self.events.clear()
+                (self.root / "requests.jsonl").unlink(missing_ok=True)
+                result = self.run_peer(mode)
+                self.assertEqual(("complete", "acp-fixture", 2, progress, 6), (
+                    result["code"], result["session_id"], result["turns_completed"],
+                    result["progress_updates"], result["extension_notifications"]))
+                self.assertEqual(["initialize", "authenticate", "session/new", "session/prompt", "session/prompt"],
+                                 [row.get("method") for row in self.requests()])
+                self.assertEqual("session_created", self.events[0]["event"])
+                self.assertEqual("progress", self.events[1]["event"])
+                self.assertNotIn("SECRET", json.dumps([result, self.events]))
+
+    def test_grok_early_updates_require_one_valid_identity_and_phase(self):
+        for mode in ("grok_initialize", "grok_authenticate", "grok_missing_id", "grok_empty_id", "grok_long_id",
+                     "grok_bad_update", "grok_missing_discriminator", "grok_bad_discriminator", "grok_changed", "grok_mismatch"):
+            with self.subTest(mode=mode):
+                self.events.clear()
+                (self.root / "requests.jsonl").unlink(missing_ok=True)
+                result = self.run_peer(mode)
+                self.assertEqual(("protocol_error", None, 0, 0), (result["code"], result["session_id"],
+                                  result["turns_completed"], result["progress_updates"]))
+                self.assertFalse(any(row.get("method") == "session/prompt" for row in self.requests()))
+                self.assertFalse(any(row["event"] == "session_created" for row in self.events))
+
+    def test_grok_early_updates_never_replace_creation_response(self):
+        for mode, code in (("grok_eof", "early_eof"), ("grok_error", "remote_error"), ("grok_hang", "deadline_exceeded")):
+            with self.subTest(mode=mode):
+                (self.root / "requests.jsonl").unlink(missing_ok=True)
+                result = self.run_peer(mode, deadline_seconds=.25)
+                self.assertEqual((code, None, 0), (result["code"], result["session_id"], result["progress_updates"]))
+                self.assertFalse(any(row.get("method") == "session/prompt" for row in self.requests()))
+
+    def test_grok_candidate_or_missing_identity_never_authorizes_permissions(self):
+        for mode in ("grok_permission_missing", "grok_permission_null", "grok_permission_candidate"):
+            with self.subTest(mode=mode):
+                self.events.clear()
+                result = self.run_peer(mode)
+                self.assertEqual(("protocol_error", 0, 0), (result["code"], result["permission_requests"], result["turns_completed"]))
+                self.assertFalse(any(row["event"] == "permission_denied" for row in self.events))
+
+    def test_grok_early_flood_retains_byte_deadline_and_cancel_limits(self):
+        self.assertEqual("output_limit_exceeded", self.run_peer("grok_flood", output_limit=2048)["code"])
+        start = time.monotonic()
+        result = self.run_peer("grok_flood", output_limit=16 * 1024 * 1024,
+                               cancelled=lambda: time.monotonic() - start > .1)
+        self.assertEqual("cancelled", result["code"])
+        self.assertEqual((None, 0), (result["session_id"], result["progress_updates"]))
+
+    def test_watcher_exact_grok_response_never_completes_the_pending_prompt(self):
+        result = self.run_peer("watcher_match")
+        self.assertEqual(("complete", 2, 2, "1.0.34", "grok._meta.agentVersion"), (
+            result["code"], result["turns_completed"], result["compatibility_responses"],
+            result["reported_version"], result["reported_version_source"]))
+        self.assertEqual(2, sum(row.get("method") == "session/prompt" for row in self.requests()))
+
+    def test_watcher_other_profile_phase_shape_and_ids_remain_rejected(self):
+        for suffix in ("early", "other_version", "no_shell", "string_shell", "agentinfo_only",
+                       "extra", "inner_extra", "bool", "float", "other_id", "bad_result"):
+            with self.subTest(suffix=suffix):
+                result = self.run_peer("watcher_" + suffix)
+                self.assertEqual(("protocol_error", 0, 0), (
+                    result["code"], result["turns_completed"], result["compatibility_responses"]))
+                self.assertNotIn("SECRET", json.dumps([result, self.events]))
+
+    def test_watcher_acknowledgement_alone_cannot_credit_a_turn(self):
+        result = self.run_peer("watcher_hang", deadline_seconds=.25)
+        self.assertEqual(("deadline_exceeded", 0, 1), (
+            result["code"], result["turns_completed"], result["compatibility_responses"]))
+
+    def test_watcher_compatibility_responses_share_attempt_resource_limits(self):
+        result = self.run_peer("watcher_flood", output_limit=2048)
+        self.assertEqual("output_limit_exceeded", result["code"])
+        self.assertGreater(result["compatibility_responses"], 0)
+        start = time.monotonic()
+        result = self.run_peer("watcher_flood", output_limit=16 * 1024 * 1024,
+                               cancelled=lambda: time.monotonic() - start > .1)
+        self.assertEqual("cancelled", result["code"])
+
     def test_extension_requests_still_receive_method_not_found(self):
         result = self.run_peer("extension_request", prompts=["first"])
         self.assertEqual("complete", result["code"])

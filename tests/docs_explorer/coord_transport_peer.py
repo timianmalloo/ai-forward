@@ -109,6 +109,66 @@ while True:
             send(result)
         continue
     method = msg.get("method")
+    if MODE.startswith("watcher_") and method == ("session/new" if MODE == "watcher_early" else "session/prompt"):
+        reload_response = RECORDED["grok_reload"]
+        if MODE == "watcher_extra":
+            reload_response["extra"] = SECRET
+        elif MODE == "watcher_inner_extra":
+            reload_response["result"]["result"]["extra"] = SECRET
+        elif MODE == "watcher_bool":
+            reload_response["result"]["result"]["reloaded"] = True
+        elif MODE == "watcher_float":
+            reload_response["result"]["result"]["reloaded"] = 1.0
+        elif MODE == "watcher_other_id":
+            reload_response["id"] = "foreign-response"
+        elif MODE == "watcher_bad_result":
+            reload_response["result"] = []
+        send(reload_response)
+        if MODE == "watcher_hang":
+            continue
+        if MODE == "watcher_flood":
+            while True:
+                send(reload_response)
+    if MODE.startswith("grok_") and method == {
+            "grok_initialize": "initialize", "grok_authenticate": "authenticate"}.get(MODE, "session/new"):
+        if MODE.startswith("grok_permission_"):
+            permission_params = {"options": [{"kind": "reject_once", "optionId": "reject"}]}
+            if MODE != "grok_permission_missing":
+                permission_params["sessionId"] = "acp-fixture" if MODE == "grok_permission_candidate" else None
+            send({"jsonrpc": "2.0", "id": "early-permission", "method": "session/request_permission", "params": permission_params})
+            receive()
+        for notification in RECORDED["grok_bootstrap"][:-1]:
+            send(notification)
+        early = RECORDED["grok_bootstrap"][-1]
+        if MODE == "grok_missing_id":
+            early["params"].pop("sessionId")
+        elif MODE == "grok_empty_id":
+            early["params"]["sessionId"] = ""
+        elif MODE == "grok_long_id":
+            early["params"]["sessionId"] = "x" * 257
+        elif MODE == "grok_bad_update":
+            early["params"]["update"] = []
+        elif MODE == "grok_missing_discriminator":
+            early["params"]["update"].pop("sessionUpdate")
+        elif MODE == "grok_bad_discriminator":
+            early["params"]["update"]["sessionUpdate"] = None
+        send(early)
+        if MODE == "grok_multiple":
+            send(early)
+            send(early)
+        if MODE == "grok_changed":
+            early["params"]["sessionId"] = "foreign-session"
+            send(early)
+        if MODE == "grok_flood":
+            while True:
+                send(early)
+        if MODE == "grok_hang":
+            time.sleep(30)
+        if MODE == "grok_eof":
+            raise SystemExit(0)
+        if MODE == "grok_error":
+            send({"jsonrpc": "2.0", "id": msg["id"], "error": {"code": -32603, "message": SECRET}})
+            continue
     if MODE == "extensions":
         for notification in RECORDED["extensions"]:
             send(notification)
@@ -136,9 +196,21 @@ while True:
             notification["method"] = "unrecognized/standard"
         send(notification)
     if method == "initialize":
-        methods = ([{"id": "cached_token"}] if MODE == "auth" else
+        methods = ([{"id": "cached_token"}] if MODE == "auth" or MODE.startswith("grok_") else
                    [{"id": "interactive"}] if MODE == "auth_required" else [])
         result = {"protocolVersion": 1, "authMethods": methods, "agentInfo": {"version": "1.2.3"}}
+        if MODE.startswith("watcher_"):
+            result.pop("agentInfo")
+            result["_meta"] = {"grokShell": True, "agentVersion": "1.0.34"}
+            if MODE == "watcher_other_version":
+                result["_meta"]["agentVersion"] = "1.0.35"
+            elif MODE == "watcher_no_shell":
+                result["_meta"].pop("grokShell")
+            elif MODE == "watcher_string_shell":
+                result["_meta"]["grokShell"] = "true"
+            elif MODE == "watcher_agentinfo_only":
+                result.pop("_meta")
+                result["agentInfo"] = {"version": "1.0.34"}
     elif method == "authenticate":
         result = {}
     elif method == "session/new":
@@ -146,6 +218,8 @@ while True:
             send({"jsonrpc": "2.0", "id": msg["id"], "error": {"code": -32000, "message": SECRET}})
             continue
         result = {"sessionId": "acp-fixture"}
+        if MODE == "grok_mismatch":
+            result["sessionId"] = "foreign-session"
     elif method == "session/cancel":
         (ROOT / "cancel.received").touch()
         continue

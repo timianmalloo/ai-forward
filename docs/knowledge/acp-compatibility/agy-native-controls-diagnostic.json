@@ -1,0 +1,91 @@
+{
+  "schema": "agy-native-controls-diagnostic/1",
+  "qualification": false,
+  "attempts": [
+    {
+      "attempt": "normal",
+      "raw_sha256": "dc0dece8f227033c4e1ba520996e2a3a1d9bff160f5adddb2628995542b8b9e8",
+      "base": "6711dba872e1c875d337a6100ed27134ec3eec2f",
+      "diagnostic_source_uncommitted": true,
+      "argv_mode": "omitted",
+      "native_reported_permission_mode": [
+        "request-review"
+      ],
+      "result": {
+        "outcome": "blocked",
+        "code": "permission_denied",
+        "session_id": "4854b137-0bb9-41b8-811e-5a9008b23ea5",
+        "turns_completed": 0,
+        "stdout_bytes": 2985,
+        "stderr_bytes": 0,
+        "duration_seconds": 14.396644,
+        "permission_requests": 0,
+        "cleanup_error": null,
+        "reported_version": null,
+        "progress_updates": 4,
+        "extension_notifications": 0,
+        "native_denials": 1
+      },
+      "receipt_exists": false,
+      "receipt_matches": false,
+      "leased_unchanged": null,
+      "bindings_unchanged": true,
+      "native_hook_decisions": [
+        {
+          "kind": "allowed",
+          "code": null,
+          "host": "agy",
+          "session_matches": true,
+          "cwd_relative": ".agents"
+        }
+      ],
+      "core_sha256": "3eb758434e33e24d795645446adaf32e7604f1330e6a3815a052cbcf2c349fd9"
+    },
+    {
+      "attempt": "edit",
+      "raw_sha256": "5959aad2c109721a17b93f6a346fe0c66f4edf933ac4aef15cd923a1d3ded578",
+      "base": "6711dba872e1c875d337a6100ed27134ec3eec2f",
+      "diagnostic_source_uncommitted": true,
+      "argv_mode": "accept-edits",
+      "native_reported_permission_mode": [
+        "request-review"
+      ],
+      "result": {
+        "outcome": "failed",
+        "code": "native_tool_error",
+        "session_id": "58a052ce-f17b-4252-886d-9b9f0859949a",
+        "turns_completed": 1,
+        "stdout_bytes": 5312,
+        "stderr_bytes": 0,
+        "duration_seconds": 25.071701,
+        "permission_requests": 0,
+        "cleanup_error": null,
+        "reported_version": null,
+        "progress_updates": 11,
+        "extension_notifications": 0,
+        "native_denials": 0
+      },
+      "receipt_exists": true,
+      "receipt_matches": true,
+      "leased_unchanged": true,
+      "bindings_unchanged": true,
+      "native_hook_decisions": [
+        {
+          "kind": "allowed",
+          "code": null,
+          "host": "agy",
+          "session_matches": true,
+          "cwd_relative": ".agents"
+        },
+        {
+          "kind": "refused",
+          "code": "COORD-REFUSED",
+          "host": "agy",
+          "session_matches": true,
+          "cwd_relative": ".agents"
+        }
+      ],
+      "core_sha256": "bd1d9db576e6dc35df1f19b5efc9f687b3bbd4da838fb02e1a4cba5e1ef63957"
+    }
+  ]
+}

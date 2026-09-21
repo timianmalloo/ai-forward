@@ -1,5 +1,24 @@
 # Hooks — the controls that run at the tool seam
 
+Native ownership is an explicit project opt-in. `coord hook --config --host
+claude|codex|grok|agy` emits a reviewable entry; it changes no settings or trust.
+Grok can keep it in a separate `.grok/hooks/coord-ownership.json`. Agy uses a local
+`ownership-guard` named section; both sync and installer refresh source-managed names
+while preserving project-owned names, and reject malformed current JSON without overwrite.
+Fresh pack installations do not enable ownership guards automatically.
+
+The separate Codex Stop entry requires its own native review; approving apply_patch
+does not approve Stop. Stop facts in the existing coordination log record the script's
+requested refusal, allowed closure or bounded loop guard, with no request bodies.
+They do not alone prove the host honored that response. Grok1.0.34 advertises blocking
+Stop metadata although its current web documentation calls Stop passive; qualify the
+actual host. Regardless of native continuation limits, the runner refuses final readiness
+for open or unreadable worker Owner decisions after verifying independent work receipts.
+
+Agy ownership success returns no permission override. Its `TargetFile` must be absolute:
+the observed hook cwd is the workspace's `.agents` directory. Relative targets fail closed.
+The native file-edit mode and the ownership guard are separate policy layers.
+
 Prose that says "check whether you already have it" is a memoir (`continuous-improvement.md` CI6). The
 hooks here are the same rule as a **control**: a host runs them at a fixed lifecycle point regardless
 of what the model decides.

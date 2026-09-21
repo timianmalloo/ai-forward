@@ -99,6 +99,51 @@ class RunnerTests(unittest.TestCase):
         self.pin()
         return self.cli("run", "--run", "test-run", "--qualification", str(q), expected=expected)
 
+    def add_decision(self, session="worker-1"):
+        result = subprocess.run([sys.executable, str(self.scripts / "coord-core.py"), "request", "add",
+            "--to", "owner", "--from", session, "--reason", "decision-request", "--deadline", "300",
+            "--fallback", "wait", "SECRET_DECISION_BODY"], cwd=self.repo,
+            env=dict(self.env, AGENT_SESSION=session), capture_output=True, text=True, encoding="utf-8")
+        self.assertEqual(0, result.returncode, result.stderr)
+        return json.loads(result.stdout)["id"]
+
+    def test_open_owner_decision_blocks_ready_even_with_verified_receipt(self):
+        self.prepare()
+        rid = self.add_decision()
+        result = self.run_prepared(expected=3)
+        worker = result["workers"][0]
+        self.assertEqual("blocked", worker["state"])
+        self.assertEqual("RUN-DECISION-OPEN", worker["code"])
+        self.assertEqual([rid], worker["decision_state"]["open_ids"])
+        self.assertTrue(worker["receipts"])
+        self.assertNotIn("SECRET_DECISION_BODY", json.dumps(result))
+
+    def test_other_worker_decision_does_not_block_ready(self):
+        self.prepare()
+        self.add_decision("other-worker")
+        result = self.run_prepared()
+        self.assertEqual("ready_for_review", result["workers"][0]["state"])
+
+    def test_actual_independent_owner_ruling_allows_final_readiness(self):
+        self.prepare()
+        rid = self.add_decision()
+        ruled = subprocess.run([sys.executable, str(self.scripts / "coord-decide.py"), "rule", "next",
+            "--request", rid, "--title", "Allow controlled handback", "--text", "Owner reviewed the bounded fixture"],
+            cwd=self.repo, env=self.env, capture_output=True, text=True, encoding="utf-8")
+        self.assertEqual(0, ruled.returncode, ruled.stdout + ruled.stderr)
+        result = self.run_prepared()
+        self.assertEqual("ready_for_review", result["workers"][0]["state"])
+        self.assertEqual(0, result["workers"][0]["decision_state"]["open_count"])
+
+    def test_malformed_decision_state_never_looks_empty(self):
+        self.prepare()
+        (self.repo / ".agents/requests.jsonl").write_text("[]\n", encoding="utf-8")
+        result = self.run_prepared(expected=3)
+        worker = result["workers"][0]
+        self.assertEqual("blocked", worker["state"])
+        self.assertEqual("RUN-DECISION-NOT-CHECKED", worker["code"])
+
+
     def test_invalid_contract_never_creates_worker(self):
         for change in ({"deadline_seconds": 0}, {"output_limit": -1}, {"fallback": ""},
                        {"evidence": [{"kind": "file", "path": "../escape", "max_bytes": 10}]}):

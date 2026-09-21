@@ -12,7 +12,8 @@ links:
   - { to: proof-local-coordination-profiles, rel: relates-to }
 review-by: "2026-12-20"
 summary: The two transport defects are repaired and all 17 release gates pass. Five fresh live attempts still qualify zero profiles: Grok has an early session update, Claude/Codex lack an effective ownership veto, and Agy denies the allowed-write canary.
-review-suggested: []
+review-suggested:
+  - { by: design-multi-harness-runner, on: 2026-09-20, reason: "Final handback now checks worker Owner decisions independently of native Stop" }
 ---
 
 # Native coordination repair and profile requalification
