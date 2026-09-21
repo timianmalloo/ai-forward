@@ -505,6 +505,19 @@ test("portal front door shows the prompt-to-coordination journey with markdown s
   await expect(journey).toContainText("unanswered `DR-n` requests");
 });
 
+test("coordination tab repeats the prompt-to-coordination journey", async ({ page }) => {
+  const portalUrl = pathToFileURL(path.join(process.cwd(), "docs", "portal", "index.html")).href;
+  await page.goto(portalUrl);
+
+  await page.locator('button.sec[data-sec="coord"]').click();
+  const journey = page.locator("#coord-prompt-to-execution").locator("..");
+  await expect(page.locator("#coord-prompt-to-execution")).toBeVisible();
+  await expect(journey.getByRole("row", { name: /\/compile \/compile \(Markdown\)/ })).toBeVisible();
+  await expect(journey.getByRole("row", { name: /\/prepare-for-coordination .*Markdown/ })).toBeVisible();
+  await expect(journey.getByRole("row", { name: /\/execute-with-coordination .*Markdown/ })).toBeVisible();
+  await expect(journey.getByRole("cell", { name: "Per-track compile handoff for `--launch`" })).toBeVisible();
+});
+
 test("knowledge surfaces escape titles and reject traversal paths", async ({ page }) => {
   const index = fixtureIndex({
     surfaces: [
