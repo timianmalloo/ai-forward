@@ -60,6 +60,56 @@ class TransportTests(unittest.TestCase):
         self.assertEqual({}, self.requests()[0]["params"]["clientCapabilities"])
         self.assertTrue(any(row["event"] == "progress" for row in self.events))
         self.assertNotIn("SECRET", json.dumps([result, self.events]))
+        self.assertNotIn("additionalDirectories", self.requests()[1]["params"])
+
+    def test_explicit_file_roots_forwarded_and_permission_denial_preserved(self):
+        path = self.root.resolve() / "ledger.jsonl"
+        path.touch()
+        for mode, code, turns in (("roots_ok", "complete", 2), ("roots_permission", "permission_denied", 0)):
+            with self.subTest(mode=mode):
+                (self.root / "requests.jsonl").unlink(missing_ok=True)
+                result = self.run_peer(mode, additional_roots=[str(path)])
+                self.assertEqual((code, turns), (result["code"], result["turns_completed"]))
+                self.assertEqual([str(path)], self.requests()[1]["params"]["additionalDirectories"])
+
+    def test_file_roots_require_codex_identity_and_advertised_capability(self):
+        path = self.root.resolve() / "ledger.jsonl"
+        path.touch()
+        for mode in ("normal", "roots_no_capability"):
+            with self.subTest(mode=mode):
+                (self.root / "requests.jsonl").unlink(missing_ok=True)
+                result = self.run_peer(mode, additional_roots=[str(path)])
+                self.assertEqual("unsupported_file_roots", result["code"])
+                self.assertEqual(["initialize"], [r["method"] for r in self.requests()])
+
+    def test_file_replacement_during_admission_prevents_prompt(self):
+        path = self.root.resolve() / "ledger.jsonl"
+        for phase in (1, 2):
+            (self.root / "requests.jsonl").unlink(missing_ok=True)
+            path.touch()
+            calls = []
+            def replace(remaining):
+                calls.append(remaining)
+                if len(calls) == phase:
+                    path.rename(path.with_suffix(".old"))
+                    path.touch()
+                return True
+            with self.subTest(phase=phase):
+                result = self.run_peer("roots_ok", additional_roots=[str(path)], before_prompt=replace)
+                self.assertEqual(("file_roots_changed", phase - 1), (result["code"], result["turns_completed"]))
+                self.assertEqual(phase - 1, sum(r.get("method") == "session/prompt" for r in self.requests()))
+
+    def test_invalid_file_roots_refuse_before_spawn(self):
+        path = self.root.resolve() / "ledger.jsonl"
+        path.touch()
+        link = path.with_suffix(".link")
+        link.symlink_to(path)
+        for value in (False, "bad", [str(path.parent)], [str(link)], [str(path)] * 4,
+                      [str(path), str(path)], [str(path.parent / "missing")], ["relative"]):
+            with self.subTest(value=value):
+                result = self.run_peer("roots_ok", additional_roots=value)
+                self.assertEqual("invalid_file_roots", result["code"])
+                self.assertEqual([], self.requests())
 
     def test_agy_observed_snake_case_wire_shape_and_two_turns(self):
         result = self.run_peer(transport="agy")

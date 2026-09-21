@@ -77,3 +77,51 @@ Approve the native-profile-controls design with strict bounded decision-ledger v
 Approve only the documented workaround selected by initialize metadata grokShell true and exact agentVersion 1.0.34, after confirmed session creation and during a pending session/prompt. Consume only the exact JSON-RPC skills-reload nested result with integer reloaded equal to one; count separately without granting authority, acknowledging permissions, or completing the pending RPC. Wrong versions, IDs, fields, types and phases still fail. Preserve existing time, bytes, cancellation and cleanup bounds. Record reported version provenance. Kill selector/envelope/response-authority mutants and run a fresh two-turn diagnostic. This workaround expires at a changed runtime binding and does not weaken generic ACP response correlation.
 
 - request: req-01M30P12KWPRP2J9CGCY2PGFVA · ruled by: coord-e2e · at: 2026-09-21T00:32:51Z
+
+### Ruling 9 — Retain Agy negative handback as blocked evidence
+
+The exact 536-byte canary receipt matches the declared content. Native Stop requested refusal and the actual runner correctly withheld readiness with RUN-DECISION-OPEN despite completed transport. Close this decision for the experiment, retain its immutable incomplete result and dirty tree, and never integrate this negative-attempt receipt. Continue only through a fresh positive attempt with its own observed binding and independent review. This ruling does not approve general unattended coordination.
+
+- request: req-01M30RKM2M17HPTDQNA7ATYTP3 · ruled by: coord-e2e · at: 2026-09-21T01:19:11Z
+
+### Ruling 10 — Retain Claude negative handback as blocked evidence
+
+Independent inspection verified the exact admitted 548-byte canary and native Stop refusal followed by bounded loop guard. The actual runner retained receipts but withheld readiness with RUN-DECISION-OPEN. Close this experiment decision, preserve the immutable incomplete result and dirty worker tree, and never integrate this negative-attempt receipt. Continue only with a fresh positive binding and independent review. No general unattended coordination is approved by this ruling.
+
+- request: req-01M30RQCWT80A0W20TT0JYXP3S · ruled by: coord-e2e · at: 2026-09-21T01:25:15Z
+
+### Ruling 11 — Retain Grok negative qualification evidence
+
+The assigned Grok worker produced exactly the 546-byte admitted receipt, SHA256 cfbc61018125cb28960b15604d41e804640328c787720526f11cbf6af290e4aa. Native inherited and Grok Stop hooks both requested refusal, then bounded loop guards fired. The runner correctly remained blocked RUN-DECISION-OPEN at epoch9. Retain run-e2e-negfix-grok as an immutable negative attempt; do not join its receipt or treat this ruling as unattended approval. A new positive identity and independently inspected handback are required.
+
+- request: req-01M30T7JX6SQSVZJB3J43WHSPS · ruled by: coord-e2e · at: 2026-09-21T01:47:03Z
+
+### Ruling 12 — Retain scoped Codex negative handback evidence
+
+The exact 554-byte receipt matches its admitted contract and the scoped shared-ledger writes succeeded. Native Codex Stop refused this still-open request, and the runner preserved RUN-DECISION-OPEN. Close this canary request only after capturing that negative evidence. The blocked attempt remains blocked and must never be joined or replayed.
+
+- request: req-01M30VRZK1W8TVAHMAVNSDW8E9 · ruled by: coord-e2e · at: 2026-09-21T02:13:53Z
+
+### Ruling 13 — Accept finite native receipt e2e-pos-grok
+
+Approve only this discardable canary after exact admitted receipt, instruction acknowledgement, done mail and request-specific native Stop inspection. Artifact docs/notes/note-e2e-pos-grok.md; SHA256 0b4ea0286c9cd98f48c7298d9dac26e8099a889e9fe44f5522db888b1d0b7b88. No general unattended approval or production-work permission.
+
+- request: req-01M30VXVDMMQFE8P1EGDTE8JY8 · ruled by: coord-e2e · at: 2026-09-21T02:15:34Z
+
+### Ruling 14 — Accept finite native receipt e2e-pos-codex
+
+Approve only this discardable canary after exact admitted receipt, instruction acknowledgement, done mail and request-specific native Stop inspection. Artifact docs/notes/note-e2e-pos-codex.md; SHA256 39275d697cba0827b1d7cd66bdbd7c4bf04c12a770d87942d66194147b18c2d1. No general unattended approval or production-work permission.
+
+- request: req-01M30W1NSFFRBM6XVTWV4K1SSQ · ruled by: coord-e2e · at: 2026-09-21T02:17:28Z
+
+### Ruling 15 — Accept finite native receipt e2e-pos-claude
+
+Approve only this discardable canary after exact admitted receipt, instruction acknowledgement, done mail and request-specific native Stop inspection. Artifact docs/notes/note-e2e-pos-claude.md; SHA256 30b7a8b4010ea4884bb6edbf76ca74bdd58e937a3a2ce90a7f5fc1668f8c0522. No general unattended approval or production-work permission.
+
+- request: req-01M30W3X88VBSVR51SP0QFJ74N · ruled by: coord-e2e · at: 2026-09-21T02:18:40Z
+
+### Ruling 16 — Accept finite native receipt e2e-pos-agy
+
+Approve only this discardable canary after exact admitted receipt, instruction acknowledgement, done mail and request-specific native Stop inspection. Artifact docs/notes/note-e2e-pos-agy.md; SHA256 58432f5c94a615a143f60ca8e1edabec974c9679a8a02f50e61523c0402f68d6. No general unattended approval or production-work permission.
+
+- request: req-01M30W9KCRZXMJH896250EMEBK · ruled by: coord-e2e · at: 2026-09-21T02:21:50Z

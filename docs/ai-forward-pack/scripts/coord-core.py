@@ -1983,7 +1983,7 @@ def _reject_path(path):
 
 # Tools that WRITE. Everything else carries no path we care about, and one that carries no
 # path must never have one invented for it.
-_WRITE_TOOLS = {"edit", "create", "write", "apply_patch", "str_replace", "multiedit",
+_WRITE_TOOLS = {"edit", "create", "write", "apply_patch", "str_replace", "search_replace", "multiedit",
                 "notebookedit", "edit_file", "write_file", "write_to_file",
                 "replace_file_content", "multi_replace_file_content"}
 _PATH_KEYS = ("file_path", "path", "filePath", "notebook_path", "target_file", "TargetFile")
@@ -4475,7 +4475,7 @@ def native_hook_config(host):
                "root=$(git rev-parse --show-toplevel) || exit 2; "
                "exec \"$py\" \"$root/docs/ai-forward-pack/scripts/coord-core.py\" hook --host " + host)
     matcher = {"codex": "apply_patch", "claude": "Write|Edit|MultiEdit|NotebookEdit",
-               "grok": "Write|Edit|MultiEdit|NotebookEdit|write_file|edit_file",
+               "grok": "Write|Edit|MultiEdit|NotebookEdit|write_file|edit_file|search_replace",
                "agy": "write_to_file|replace_file_content|multi_replace_file_content"}[host]
     entries = [{"matcher": matcher, "hooks": [{"type": "command", "command": command, "timeout": 5}]}]
     if host == "agy":

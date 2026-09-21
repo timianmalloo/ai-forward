@@ -923,7 +923,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "80ce496b55b5b417203fa6d1bbd653a827942ce0f422687345e28827312d88db"
+      "sourceSha256": "18bb13b6886148d3d85c81069e69e983dd44278fa1a4f49d9b19ac69e04de05d"
     },
     {
       "id": "api-design-lint",
@@ -1060,7 +1060,7 @@ window.DOCS_INDEX = {
       "phase": "",
       "reviewBy": "2027-03-03",
       "reviewSuggested": [],
-      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 524 public functions across 40 modules, 47% carrying a docstring.",
+      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 525 public functions across 40 modules, 47% carrying a docstring.",
       "tags": [
         "api",
         "scripts",
@@ -1074,7 +1074,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "8b0cebf4267f08fad1db88ce945a01a200f28f248c7ac3f8b954cb56ac38ce3e"
+      "sourceSha256": "3f6c4c7bda6587753bbc49f2d24256d40e419ecc45af32da6d7feb35a7ba4488"
     },
     {
       "id": "api-marker-lint",
@@ -2830,6 +2830,40 @@ window.DOCS_INDEX = {
       "sourceSha256": "0ae55d405f132c55e823b8a3067b708da05b928970fff3301c930ef2b9314944"
     },
     {
+      "id": "note-20260921-codex-coordination-file-roots",
+      "path": "docs/notes/note-20260921-codex-coordination-file-roots.md",
+      "title": "Explicit Codex coordination file access",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2026-12-21",
+      "reviewSuggested": [],
+      "summary": "Native sandbox and ACP creation measurements support explicit access to individual operational ledgers, with identity-bound admission and no directory grant.",
+      "tags": [
+        "coordination",
+        "codex",
+        "acp",
+        "sandbox"
+      ],
+      "links": [
+        {
+          "to": "design-multi-harness-runner",
+          "rel": "refines"
+        },
+        {
+          "to": "design-native-profile-controls",
+          "rel": "relates-to"
+        },
+        {
+          "to": "coordination-end-to-end",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "09a80da48efed4a64c9640e4145ca73b2d8e44c758c2a814e7739f6378e27be6"
+    },
+    {
       "id": "note-20260921-grok-bootstrap",
       "path": "docs/notes/note-20260921-grok-bootstrap.md",
       "title": "Bind early ACP updates to the completed session creation",
@@ -2857,6 +2891,40 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "279aecf18bd627128132564f4766a42f0e0b6ada0fc37a875fb50c208f79d9b2"
+    },
+    {
+      "id": "note-20260921-grok-native-search-replace",
+      "path": "docs/notes/note-20260921-grok-native-search-replace.md",
+      "title": "Grok search_replace reaches the ownership policy",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "coordination",
+      "reviewBy": "2026-12-21",
+      "reviewSuggested": [],
+      "summary": "An actual Grok search_replace call exposed a missing supported tool name in both native and inherited ownership guards. One instrumented diagnostic captures the exact input; replay tests require real lease decisions rather than an indeterminate denial.",
+      "tags": [
+        "coordination",
+        "grok",
+        "hooks",
+        "qualification"
+      ],
+      "links": [
+        {
+          "to": "design-native-profile-controls",
+          "rel": "refines"
+        },
+        {
+          "to": "design-native-ownership-enforcement",
+          "rel": "depends-on"
+        },
+        {
+          "to": "coordination-end-to-end",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "ed3cd648dfa2331a84706731b9f3285393c47a30235adc4ea75ce60505d6b432"
     },
     {
       "id": "note-autopilot-open-questions-decisions",
@@ -2887,6 +2955,102 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "a03a4d07731e5e681d1662fb8a683c96ce491c39c711844cbf4d4e104095b6de"
+    },
+    {
+      "id": "note-e2e-pos-agy",
+      "path": "docs/notes/note-e2e-pos-agy.md",
+      "title": "Native coordination receipt: agy",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-21",
+      "reviewSuggested": [],
+      "summary": "A bounded local worker receipt for independent Owner inspection.",
+      "tags": [
+        "coordination",
+        "qualification"
+      ],
+      "links": [
+        {
+          "to": "spec-multi-harness-launch-and-monitor",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "58432f5c94a615a143f60ca8e1edabec974c9679a8a02f50e61523c0402f68d6"
+    },
+    {
+      "id": "note-e2e-pos-claude",
+      "path": "docs/notes/note-e2e-pos-claude.md",
+      "title": "Native coordination receipt: claude",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-21",
+      "reviewSuggested": [],
+      "summary": "A bounded local worker receipt for independent Owner inspection.",
+      "tags": [
+        "coordination",
+        "qualification"
+      ],
+      "links": [
+        {
+          "to": "spec-multi-harness-launch-and-monitor",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "30b7a8b4010ea4884bb6edbf76ca74bdd58e937a3a2ce90a7f5fc1668f8c0522"
+    },
+    {
+      "id": "note-e2e-pos-codex",
+      "path": "docs/notes/note-e2e-pos-codex.md",
+      "title": "Native coordination receipt: codex",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-21",
+      "reviewSuggested": [],
+      "summary": "A bounded local worker receipt for independent Owner inspection.",
+      "tags": [
+        "coordination",
+        "qualification"
+      ],
+      "links": [
+        {
+          "to": "spec-multi-harness-launch-and-monitor",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "39275d697cba0827b1d7cd66bdbd7c4bf04c12a770d87942d66194147b18c2d1"
+    },
+    {
+      "id": "note-e2e-pos-grok",
+      "path": "docs/notes/note-e2e-pos-grok.md",
+      "title": "Native coordination receipt: grok",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-21",
+      "reviewSuggested": [],
+      "summary": "A bounded local worker receipt for independent Owner inspection.",
+      "tags": [
+        "coordination",
+        "qualification"
+      ],
+      "links": [
+        {
+          "to": "spec-multi-harness-launch-and-monitor",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "0b4ea0286c9cd98f48c7298d9dac26e8099a889e9fe44f5522db888b1d0b7b88"
     },
     {
       "id": "note-required-status-checks",
@@ -3590,7 +3754,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4fa088220a1c727f27e11b45e9bcf995f4df3468bdb493f61334a599a2d4a958"
+      "sourceSha256": "dd13c90573a9d956693f23188ae252ac5a4134831da3c2bed646417d97c47622"
     },
     {
       "id": "design-native-app-ui-skill-extension",
@@ -4274,7 +4438,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "8f4cccfcd9b274e10c2f5463ac8f0a627ad1ebf0a55a9661837e708a22b9b8b7"
+      "sourceSha256": "0499f39429ea75e1bce9a016a15a3e533c404996286ecde1f698de4b0ef03da5"
     },
     {
       "id": "docs-index",
@@ -5931,7 +6095,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4fcc03b29d4684a5d1bb08974810eff95dea8284ae4536c540a9a381194e7e01"
+      "sourceSha256": "9e5ecb6f4a9bb7f98e86dd66c9ae8bb1e316a01fd7d01469c489708f6b07eae4"
     },
     {
       "id": "seam-p5-to-coordinator",
@@ -8006,7 +8170,7 @@ window.DOCS_INDEX = {
           "mermaid": "graph TD\n  A[Ground and compile] --> B[Independent plan review]\n  B --> C[Grok bootstrap]\n  B --> D[Native controls and Agy policy]\n  C --> E[Independent source review and integration]\n  D --> E\n  E --> F[Actual profile control matrix]\n  F --> G[Runner handback and reviewed join]\n  G --> H[Release proof and audit]"
         }
       ],
-      "sourceSha256": "27279ee53bb466e8542372f61d34155947c201f187d49df4f1fb29b2ceef4cc0"
+      "sourceSha256": "2ecb894c40934b3b42ae153d7c5731332884a79a27cd9a9a9a04f1a11d39b9b3"
     },
     {
       "id": "coordination-p0-p1",
@@ -10060,5 +10224,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "b4ad6eb2add1cabd0ee4f8ea648a1d364be3ce939e8d9205fbbf32e637418578"
+  "graphSha256": "488e0df6ba46c6fa1000f5c44607d61ed816083acb1d9c764b58f8fea6418236"
 };

@@ -7,9 +7,11 @@ locally selected operational fields leave this module; wire bodies are discarded
 import json
 import math
 import os
+from pathlib import Path
 import re
 import selectors
 import signal
+import stat
 import subprocess
 import time
 
@@ -17,6 +19,34 @@ import time
 MAX_INPUT_BYTES = 16 * 1024 * 1024
 POLL_SECONDS = 0.1
 CLEANUP_SECONDS = 4.0
+
+
+def file_root_identities(paths, missing_path=None):
+    """Validate explicit file access; content may append without changing identity.
+
+    Only preparation may defer its exact future session log until worktree registration.
+    """
+    if not isinstance(paths, list) or len(paths) > 3:
+        raise ValueError("invalid_file_roots")
+    identities = []
+    seen = set()
+    for value in paths:
+        if not isinstance(value, str) or not value or len(value) > 4096 or "\0" in value or value in seen:
+            raise ValueError("invalid_file_roots")
+        seen.add(value)
+        path = Path(value)
+        if not path.is_absolute() or str(path.resolve()) != value:
+            raise ValueError("invalid_file_roots")
+        try:
+            info = path.lstat()
+        except FileNotFoundError:
+            if value == missing_path and path.parent.is_dir():
+                continue
+            raise ValueError("invalid_file_roots") from None
+        if not stat.S_ISREG(info.st_mode):
+            raise ValueError("invalid_file_roots")
+        identities.append({"path": value, "device": info.st_dev, "inode": info.st_ino})
+    return identities
 
 
 class _Failure(Exception):
@@ -175,11 +205,12 @@ class _Wire:
 
 
 class _Session:
-    def __init__(self, wire, result, emit, before_prompt):
+    def __init__(self, wire, result, emit, before_prompt, roots):
         self.wire = wire
         self.result = result
         self.emit = emit
         self.before_prompt = before_prompt
+        self.roots = roots
         self.sequence = 0
         self.turn = 0
         self.last_progress = float("-inf")
@@ -199,6 +230,13 @@ class _Session:
             admitted = self.before_prompt(max(0, self.wire.deadline - time.monotonic()))
         except Exception:
             raise _Failure("callback_failed") from None
+        if self.roots:
+            try:
+                unchanged = file_root_identities([row["path"] for row in self.roots]) == self.roots
+            except (OSError, ValueError):
+                unchanged = False
+            if not unchanged:
+                raise _Failure("file_roots_changed", "blocked")
         self.wire.check()  # A slow admission check is charged to this attempt.
         if not admitted:
             raise _Failure("dispatch_refused", "cancelled")
@@ -293,12 +331,18 @@ class _Session:
                 raise _Failure("protocol_error")
             return message["result"]
 
-    def acp(self, cwd, prompts):
+    def acp(self, cwd, prompts, additional_roots):
         info = self.rpc("initialize", {"protocolVersion": 1, "clientCapabilities": {},
                                       "clientInfo": {"name": "ai-forward-coordination", "version": "1"}})
         if type(info.get("protocolVersion")) is not int or info["protocolVersion"] != 1:
             raise _Failure("protocol_error")
         agent = info.get("agentInfo", {})
+        if additional_roots:
+            capabilities = info.get("agentCapabilities", {})
+            sessions = capabilities.get("sessionCapabilities", {}) if isinstance(capabilities, dict) else {}
+            if (not isinstance(agent, dict) or agent.get("name") != "@agentclientprotocol/codex-acp"
+                    or not isinstance(sessions, dict) or not isinstance(sessions.get("additionalDirectories"), dict)):
+                raise _Failure("unsupported_file_roots", "blocked")
         version = agent.get("version") if isinstance(agent, dict) else None
         self.result["reported_version"] = version if _identifier(version) else None
         if self.result["reported_version"]:
@@ -315,7 +359,10 @@ class _Session:
             raise _Failure("protocol_error")
         if any(isinstance(item, dict) and item.get("id") == "cached_token" for item in auth):
             self.rpc("authenticate", {"methodId": "cached_token", "_meta": {"headless": True}})
-        created = self.rpc("session/new", {"cwd": os.fspath(cwd), "mcpServers": []})
+        params = {"cwd": os.fspath(cwd), "mcpServers": []}
+        if additional_roots:
+            params["additionalDirectories"] = additional_roots
+        created = self.rpc("session/new", params)
         if (not _identifier(created.get("sessionId"))
                 or self.creating_session_id not in (None, created["sessionId"])):
             raise _Failure("protocol_error")
@@ -407,7 +454,7 @@ class _Session:
 
 
 def run_session(transport, argv, cwd, env, prompts, deadline_seconds, output_limit,
-                emit, cancelled, before_prompt=None):
+                emit, cancelled, before_prompt=None, additional_roots=None):
     """Run admitted turns in one owned process group; return metadata, never bodies.
 
     Callbacks are caller-owned, fast/bounded functions. Admission is charged to the
@@ -435,6 +482,12 @@ def run_session(transport, argv, cwd, env, prompts, deadline_seconds, output_lim
             raise _Failure("invalid_input", "blocked")
         if any(len(prompt) > MAX_INPUT_BYTES for prompt in prompts):
             raise _Failure("input_limit_exceeded", "blocked")
+        try:
+            roots = file_root_identities(additional_roots) if additional_roots is not None else []
+            if additional_roots is not None and transport != "acp":
+                raise ValueError("invalid_file_roots")
+        except (OSError, ValueError):
+            raise _Failure("invalid_file_roots", "blocked") from None
         deadline = started + deadline_seconds
         wire = _Wire(deadline, output_limit, cancelled, result)
         wire.check()
@@ -445,9 +498,9 @@ def run_session(transport, argv, cwd, env, prompts, deadline_seconds, output_lim
         except (OSError, ValueError, TypeError):
             raise _Failure("spawn_failed") from None
         wire.attach(process)
-        session = _Session(wire, result, emit, before_prompt or (lambda remaining: True))
+        session = _Session(wire, result, emit, before_prompt or (lambda remaining: True), roots)
         if transport == "acp":
-            session.acp(cwd, prompts)
+            session.acp(cwd, prompts, additional_roots)
         else:
             session.agy(prompts)
         wire.check()

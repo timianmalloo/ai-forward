@@ -1954,7 +1954,7 @@ window.PORTAL_DATA = {
         "id": "api-index",
         "type": "api",
         "title": "API reference — the deployed script bundle",
-        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 524 public functions across 40 modules, 47% carrying a docstring."
+        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 525 public functions across 40 modules, 47% carrying a docstring."
       },
       {
         "id": "api-marker-lint",
@@ -3097,10 +3097,22 @@ window.PORTAL_DATA = {
         "summary": "Track G of S1: pack/adapters/grok/grok-surface.md §Hooks names two scripts (re-read guard, session-start). The installed .grok/hooks/ai-forward.json..."
       },
       {
+        "id": "note-20260921-codex-coordination-file-roots",
+        "type": "decision-note",
+        "title": "Explicit Codex coordination file access",
+        "summary": "Native sandbox and ACP creation measurements support explicit access to individual operational ledgers, with identity-bound admission and no directory grant."
+      },
+      {
         "id": "note-20260921-grok-bootstrap",
         "type": "decision-note",
         "title": "Bind early ACP updates to the completed session creation",
         "summary": "Grok 1.0.34 sends a session update before its session/new response. Retain only a bounded candidate identity and count during creation, require the response to..."
+      },
+      {
+        "id": "note-20260921-grok-native-search-replace",
+        "type": "decision-note",
+        "title": "Grok search_replace reaches the ownership policy",
+        "summary": "An actual Grok search_replace call exposed a missing supported tool name in both native and inherited ownership guards. One instrumented diagnostic captures..."
       },
       {
         "id": "note-autopilot-open-questions-decisions",
@@ -5851,6 +5863,21 @@ window.PORTAL_DATA = {
         "rel": "relates-to"
       },
       {
+        "from": "note-20260921-codex-coordination-file-roots",
+        "to": "coordination-end-to-end",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260921-codex-coordination-file-roots",
+        "to": "design-multi-harness-runner",
+        "rel": "refines"
+      },
+      {
+        "from": "note-20260921-codex-coordination-file-roots",
+        "to": "design-native-profile-controls",
+        "rel": "relates-to"
+      },
+      {
         "from": "note-20260921-grok-bootstrap",
         "to": "design-multi-harness-runner",
         "rel": "refines"
@@ -5859,6 +5886,21 @@ window.PORTAL_DATA = {
         "from": "note-20260921-grok-bootstrap",
         "to": "proof-native-coordination-repair",
         "rel": "relates-to"
+      },
+      {
+        "from": "note-20260921-grok-native-search-replace",
+        "to": "coordination-end-to-end",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260921-grok-native-search-replace",
+        "to": "design-native-ownership-enforcement",
+        "rel": "depends-on"
+      },
+      {
+        "from": "note-20260921-grok-native-search-replace",
+        "to": "design-native-profile-controls",
+        "rel": "refines"
       },
       {
         "from": "note-autopilot-open-questions-decisions",

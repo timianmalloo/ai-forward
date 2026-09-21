@@ -25,6 +25,7 @@ import threading
 import time
 
 from bounded_process import run_bounded
+from coord_transport import file_root_identities
 
 for _stream in (sys.stdout, sys.stderr):
     if hasattr(_stream, "reconfigure"):
@@ -192,6 +193,23 @@ class Runner:
             prompts.append(prompt)
         return prompts
 
+    def access_roots(self, worker, owner, preparing=False):
+        if "additional_roots" not in worker:
+            return []
+        require(worker.get("harness") == "codex" and worker.get("transport") == "acp", "RUN-ROOTS",
+                "Explicit operational file roots are supported only by the qualified Codex ACP profile.")
+        paths = worker["additional_roots"]
+        expected_log = str(self.root / "log" / (worker["session"] + ".jsonl"))
+        allowed = {str(self.root / "requests.jsonl"), expected_log,
+                   str(self.root / "mail" / (owner + ".jsonl"))}
+        try:
+            identities = file_root_identities(paths, expected_log if preparing else None)
+        except (OSError, ValueError):
+            raise Refused("RUN-ROOTS", "Use up to three unique canonical existing regular operational files; no symlinks.") from None
+        require(set(paths) <= allowed, "RUN-ROOTS",
+                "Allow only the primary request ledger, this worker log and this Owner inbox.")
+        return identities
+
     def validate(self, contract):
         require(contract.get("schema") == "coord-run/1", "RUN-CONTRACT", "Use schema coord-run/1.")
         identity(contract.get("run_id"))
@@ -210,6 +228,8 @@ class Runner:
         for original in workers:
             require(isinstance(original, dict), "RUN-CONTRACT", "Each worker must be an object.")
             worker = dict(original)
+            require("additional_root_identities" not in worker, "RUN-ROOTS",
+                    "Access identities are derived during preparation, never supplied by the caller.")
             identity(worker.get("session"))
             require(worker["session"].casefold() not in used_sessions, "RUN-IDENTITY",
                     "Each new worker attempt needs a new session identity, including after a prior run stopped.")
@@ -226,6 +246,7 @@ class Runner:
             require(worker.get("harness") in ("claude", "codex", "grok", "agy") and
                     worker.get("transport") == ("agy" if worker.get("harness") == "agy" else "acp"),
                     "RUN-TRANSPORT", "Select ACP for Claude/Codex/Grok or the explicit Agy native transport.")
+            self.access_roots(worker, contract["owner"], preparing=True)
             argv = worker.get("argv")
             require(isinstance(argv, list) and 1 <= len(argv) <= 32
                     and all(text(v) and "\x00" not in v and ("{worktree}" not in v or v == "{worktree}") for v in argv)
@@ -291,6 +312,8 @@ class Runner:
                     result = core.cmd_worktree(self.root, self.repo, "new", self.cwd, time.time(),
                         session=worker["session"], agent=worker["session"], branch=worker["branch"], base=manifest["base"])
                 require(result == 0, "RUN-WORKTREE", "Inspect the actual git worktree inventory; retain partial work and use a new run id.")
+                if "additional_roots" in worker:
+                    worker["additional_root_identities"] = self.access_roots(worker, manifest["owner"])
                 inventory, error = core.worktree_inventory(self.repo)
                 rows = [r for r in inventory or [] if r.get("branch") == worker["branch"]]
                 require(not error and len(rows) == 1, "RUN-WORKTREE", "Resolve the worker's unique branch/worktree mapping.")
@@ -349,6 +372,8 @@ class Runner:
         return str(Path(executable).resolve())
 
     def fingerprint(self, manifest, worker):
+        require(self.access_roots(worker, manifest["owner"]) == worker.get("additional_root_identities", []),
+                "RUN-ROOTS", "An admitted operational file was replaced; prepare and qualify a new attempt.")
         env = child_env(worker)
         self.worker_identity(manifest, worker)
         executable = self.resolve_executable(worker)
@@ -546,10 +571,14 @@ class Runner:
                     require(self.fingerprint(manifest, worker) == qualification["workers"][worker["session"]]["fingerprint"],
                             "RUN-QUALIFICATION", "The queued worker changed before launch; requalify a new explicit attempt.")
                     self.event(manifest, "worker_started", worker=worker["session"], harness=worker["harness"])
+                    def worker_fence(remaining):
+                        require(self.access_roots(worker, owner) == worker.get("additional_root_identities", []),
+                                "RUN-ROOTS", "An admitted operational file changed before the next prompt.")
+                        return fence(remaining)
                     transport = run_session(worker["transport"], worker["argv"], worker["worktree"], child_env(worker),
                         worker["prompt_texts"], worker["deadline_seconds"], worker["output_limit"],
                         lambda event: self.event(manifest, "progress", worker=worker["session"], observation=event),
-                        cancelled, fence)
+                        cancelled, worker_fence, worker.get("additional_roots"))
                     transport_state = {"blocked": "blocked", "cancelled": "cancelled"}.get(transport["outcome"], "failed")
                     result = {"session": worker["session"], "state": transport_state, "transport": transport,
                               "manual_brief": str(directory / (worker["session"] + ".brief.json"))}

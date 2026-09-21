@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 282
+"count": 284
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 457,
+"total": 459,
 "items": [
 {
 "cat": "knowledge",
@@ -998,7 +998,7 @@ window.PACK_INDEX = {
 "summary": "Prepare and run an opt-in, qualified multi-harness coordination contract.",
 "path": "pack/scripts/coord-runner.py",
 "kind": "script",
-"text": "coord-runner.py prepare and run an opt-in, qualified multi-harness coordination contract. run `prepare --contract file`, qualify the resulting checkout-specific fingerprints, then `run --run id --qualification file`. `status --run id` never replays work. the existing coordinator remains responsible for decisions and semantic review. load_module __init__ require encoded digest read_json private_write git identity text integer relative_path child_env file_hash __init__ directory event compiled_prompts validate prepare public_manifest load resolve_executable fingerprint fingerprints leader renew_admitted worker_identity verify status run cancel_signal cancelled fence execute main"
+"text": "coord-runner.py prepare and run an opt-in, qualified multi-harness coordination contract. run `prepare --contract file`, qualify the resulting checkout-specific fingerprints, then `run --run id --qualification file`. `status --run id` never replays work. the existing coordinator remains responsible for decisions and semantic review. load_module __init__ require encoded digest read_json private_write git identity text integer relative_path child_env file_hash __init__ directory event compiled_prompts access_roots validate prepare public_manifest load resolve_executable fingerprint fingerprints leader renew_admitted worker_identity verify status run cancel_signal cancelled fence execute worker_fence main"
 },
 {
 "cat": "scripts",
@@ -1016,7 +1016,7 @@ window.PACK_INDEX = {
 "summary": "Bounded POSIX ACP / Agy session IO. Native harness policy remains authoritative.",
 "path": "pack/scripts/coord_transport.py",
 "kind": "script",
-"text": "coord_transport.py bounded posix acp / agy session io. native harness policy remains authoritative. this is a lifecycle adapter, not an editor proxy or an approval broker. only locally selected operational fields leave this module; wire bodies are discarded. __init__ _identifier _signal_group __init__ attach check queue pump receive flush_input cleanup __init__ event admit progress permission rpc acp native_denial agy run_session"
+"text": "coord_transport.py bounded posix acp / agy session io. native harness policy remains authoritative. this is a lifecycle adapter, not an editor proxy or an approval broker. only locally selected operational fields leave this module; wire bodies are discarded. file_root_identities __init__ _identifier _signal_group __init__ attach check queue pump receive flush_input cleanup __init__ event admit progress permission rpc acp native_denial agy run_session"
 },
 {
 "cat": "scripts",
@@ -1805,10 +1805,10 @@ window.PACK_INDEX = {
 "cat": "graph",
 "id": "api-index",
 "title": "API reference — the deployed script bundle",
-"summary": "Generated API reference for the pack's public surface — the deployed script bundle. 524 public functions across 40 modules, 47% carrying a docstring.",
+"summary": "Generated API reference for the pack's public surface — the deployed script bundle. 525 public functions across 40 modules, 47% carrying a docstring.",
 "path": "docs/api/index.md",
 "kind": "api",
-"text": "api reference — the deployed script bundle generated api reference for the pack's public surface — the deployed script bundle. 524 public functions across 40 modules, 47% carrying a docstring. api scripts generated index documents architecture"
+"text": "api reference — the deployed script bundle generated api reference for the pack's public surface — the deployed script bundle. 525 public functions across 40 modules, 47% carrying a docstring. api scripts generated index documents architecture"
 },
 {
 "cat": "graph",
@@ -2307,12 +2307,30 @@ window.PACK_INDEX = {
 },
 {
 "cat": "graph",
+"id": "note-20260921-codex-coordination-file-roots",
+"title": "Explicit Codex coordination file access",
+"summary": "Native sandbox and ACP creation measurements support explicit access to individual operational ledgers, with identity-bound admission and no directory grant.",
+"path": "docs/notes/note-20260921-codex-coordination-file-roots.md",
+"kind": "decision-note",
+"text": "explicit codex coordination file access native sandbox and acp creation measurements support explicit access to individual operational ledgers, with identity-bound admission and no directory grant. coordination codex acp sandbox refines design-multi-harness-runner relates-to design-native-profile-controls relates-to coordination-end-to-end"
+},
+{
+"cat": "graph",
 "id": "note-20260921-grok-bootstrap",
 "title": "Bind early ACP updates to the completed session creation",
 "summary": "Grok 1.0.34 sends a session update before its session/new response. Retain only a bounded candidate identity and count during creation, require the response to confirm that identity, and dispatch no prompt before correlation succeeds.",
 "path": "docs/notes/note-20260921-grok-bootstrap.md",
 "kind": "decision-note",
 "text": "bind early acp updates to the completed session creation grok 1.0.34 sends a session update before its session/new response. retain only a bounded candidate identity and count during creation, require the response to confirm that identity, and dispatch no prompt before correlation succeeds. coordination acp grok refines design-multi-harness-runner relates-to proof-native-coordination-repair"
+},
+{
+"cat": "graph",
+"id": "note-20260921-grok-native-search-replace",
+"title": "Grok search_replace reaches the ownership policy",
+"summary": "An actual Grok search_replace call exposed a missing supported tool name in both native and inherited ownership guards. One instrumented diagnostic captures the exact input; replay tests require real lease decisions rather than an…",
+"path": "docs/notes/note-20260921-grok-native-search-replace.md",
+"kind": "decision-note",
+"text": "grok search_replace reaches the ownership policy an actual grok search_replace call exposed a missing supported tool name in both native and inherited ownership guards. one instrumented diagnostic captures the exact input; replay tests require real lease decisions rather than an indeterminate denial. coordination grok hooks qualification refines design-native-profile-controls depends-on design-native-ownership-enforcement relates-to coordination-end-to-end"
 },
 {
 "cat": "graph",

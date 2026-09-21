@@ -96,6 +96,26 @@ bytes, resolved cwd/base, argument list, admitted prompts and effective environm
 bind the observation. Environment values are never printed. A changed binding requires a
 fresh observation. The runner checks again immediately before a queued worker launches.
 
+Codex ACP workers that must send coordination requests/mail can explicitly add
+`"additional_roots": ["/canonical/primary/.agents/requests.jsonl",
+"/canonical/primary/.agents/log/worker-id.jsonl",
+"/canonical/primary/.agents/mail/owner-id.jsonl"]`. Select only needed files. This optional
+list allows at most those three paths for the declared worker/Owner; directories, aliases,
+symlinks, duplicate paths and other harnesses refuse. Existing request and Owner inbox
+files must come from legitimate store operations before preparation. Only the new worker
+log may be absent: its parent must exist, and normal worktree registration creates it.
+The runner never creates a store file to widen access. It binds file device/inode identity,
+so appends remain valid while replacement requires a new attempt. Identity is rechecked
+at launch and before every prompt. Omission grants nothing. Bind instruction/configuration
+contents separately in `binding_files`; never add the whole `.agents` directory.
+
+The installed Codex adapter must identify itself as `@agentclientprotocol/codex-acp` and
+advertise `sessionCapabilities.additionalDirectories`; otherwise creation blocks. This
+option forwards the explicit files through ACP `session/new.additionalDirectories` into
+the adapter's per-turn workspace sandbox. Native hooks and permission refusals still apply.
+The measured native file sandbox and session-creation spike support this contract; each
+real worker still needs its own qualification, including actual decision/mail side effects.
+
 Bounds: 1–8 workers; width 1–4; 1–8 prompts each; 1–3600 seconds for a whole session;
 1024–16777216 combined output bytes; 1–32 evidence items; aggregate admitted contract/brief
 data at most 512 KiB. A stopped stdin reader, output flood or unterminated JSON line cannot

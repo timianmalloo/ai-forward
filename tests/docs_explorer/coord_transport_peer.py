@@ -199,6 +199,11 @@ while True:
         methods = ([{"id": "cached_token"}] if MODE == "auth" or MODE.startswith("grok_") else
                    [{"id": "interactive"}] if MODE == "auth_required" else [])
         result = {"protocolVersion": 1, "authMethods": methods, "agentInfo": {"version": "1.2.3"}}
+        if MODE.startswith("roots_"):
+            result["agentInfo"]["name"] = "@agentclientprotocol/codex-acp"
+            result["agentCapabilities"] = {"sessionCapabilities": {"additionalDirectories": {}}}
+            if MODE == "roots_no_capability":
+                result["agentCapabilities"] = {}
         if MODE.startswith("watcher_"):
             result.pop("agentInfo")
             result["_meta"] = {"grokShell": True, "agentVersion": "1.0.34"}
@@ -235,9 +240,9 @@ while True:
                     "sessionId": "acp-fixture", "update": {"sessionUpdate": "agent_message_chunk", "content": {"text": SECRET}}}})
         send({"jsonrpc": "2.0", "method": "session/update", "params": {
             "sessionId": "acp-fixture", "update": {"sessionUpdate": "agent_message_chunk", "content": {"text": SECRET}}}})
-        if MODE in ("permission", "permission_no_reject"):
+        if MODE in ("permission", "permission_no_reject", "roots_permission"):
             options = [{"kind": "allow_always", "optionId": "allow"}]
-            if MODE == "permission":
+            if MODE in ("permission", "roots_permission"):
                 options.append({"kind": "reject_once", "optionId": "reject"})
             send({"jsonrpc": "2.0", "id": "permission-request", "method": "session/request_permission", "params": {
                 "sessionId": "acp-fixture", "options": options, "toolCall": {"rawInput": SECRET}}})

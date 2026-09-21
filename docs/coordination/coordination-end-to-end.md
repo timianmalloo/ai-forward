@@ -109,4 +109,86 @@ Fan-out contract: width two; one diagnosed transient retry per profile, fresh id
 
 ## Planned versus actual
 
-Pending execution. Parent tokens/spend are not recorded. Audit markers measure duration. The compiler rejected a wrong clause key and an empty exclusion list before dispatch; corrected against its actual schema, with no bypass.
+The reviewed source was integrated locally as linear commit `ac35d759e24e`, preserving
+the reviewed merge history at `archive/coord-e2e-reviewed-joins`. All 17 integrated release
+gates passed: 1,191 Python tests, 12 explicit skips, 404 subtests, plus Node and rendered
+surface checks. No remote push occurred. Parent tokens/spend and tool-call count are not
+recorded; audit markers measure individual runs, not an inferred total.
+
+At the 01:24Z budget review, Claude and Agy each passed fresh instruction discovery,
+permitted native write, correlated leased refusal, active cancellation and native
+pending-decision handback refusal. Their actual completed transports and inspected
+receipts remained blocked by `RUN-DECISION-OPEN`. Negative attempts are retained and
+never joined. Codex's separately approved Stop definition is now trusted through native
+individual-hook review; its fresh native preflight is running. Grok exposed a supported
+native `search_replace` name missing from the ownership vocabulary. An exact passive
+capture established both inherited and native hook envelopes; the two-line source fix
+and red-first controls passed independent review, with release gates in progress.
+
+The extra source repair and strict fresh-binding negative/positive sequence lengthen the
+original estimate. Re-estimated remaining work is 35–60 minutes (Inferred), bounded by
+the unproven matrix cells: Grok fix/qualification, Codex completion, fresh positive
+handbacks for all four, actual Claude Owner operation, reviewed joins and finite proof.
+Keep the delegate cap at two and actual runner attempts serial to avoid lease-renewal
+races. Reassess by 02:24Z or on two non-decreasing passes; neither cap permits dropping a
+control or declaring the goal complete. A failed actual profile gets one diagnosed
+repair/requalification path, not automatic replay.
+
+Observer corrections are retained in the audit: prepare emits JSONL plus final JSON;
+full child-environment bindings include caller `CODEX_THREAD_ID` and final-command
+`SHLVL`; and exact artifact comparison uses the immutable admitted prompt, retaining
+the precompile text separately. The native Agy negative run produced three Stop refusal
+receipts followed by its loop guard; this is the measured run count, not a claim that the
+script's execution-number ceiling equals the number of native invocations.
+
+The compiler initially rejected a wrong clause key and an empty exclusion list before
+dispatch; both were corrected against its actual schema, with no bypass.
+
+### Qualification checkpoint, 2026-09-21 01:40Z
+
+Grok's native vocabulary repair is joined at `6790f557a67f`; the combined tree passed
+all 17 bundle gates. The separately approved Codex Stop definition was individually
+trusted through native `/hooks`; native inventory in the assigned worker shows both
+Stop and the unchanged ownership guard enabled and trusted. Stop definition hash:
+`sha256:06a60eceeece9b9c70f5ecdabdd8372477e1d947757558eac9f3c01789866698`.
+
+Codex's fresh ownership and active cancellation observations passed, but its actual
+negative handback stopped at `request receive`: the workspace sandbox refused the
+shared primary `.agents/requests.jsonl`. Native transport completion is therefore
+retained as `RUN-EVIDENCE`, with no artifact, acknowledgement, decision request or done
+mail. It is not a pending-decision qualification. The next repair must use explicitly
+bound operational file access and prove adjacent instruction/configuration files stay
+protected; blanket access remains out of scope.
+
+Epoch 8 expired during diagnosis after its bounded runner stopped. Renewal correctly
+refused the expired designation. The same Owner reclaimed epoch 9 and restarted its
+finite renewal helper. Existing completed observations keep their original epoch;
+new probes and attempts record epoch 9. Actual runners remain serial, with the separate
+renewal helper stopped before admission and restarted after terminal evidence.
+
+### Qualification checkpoint and budget review, 2026-09-21 02:24Z
+
+All four negative controls now have correlated native Stop refusals and final
+`RUN-DECISION-OPEN` results. The fresh scoped Codex attempt also proved real shared-ledger
+receive/ack, receipt creation, decision and done mail. Its earlier sandbox failure remains
+retained separately. The reviewed three-file access repair is integrated at `1453059`.
+The combined source proof covers all 17 gates: 1,201 Python tests, 12 skips, 440 subtests,
+34 Node tests and rendered checks. The first integrated run's only failure was unstaged
+reviewed preparation-audit drift; staging and the metadata/browser rerun corrected it
+without source or test changes. This is combined evidence, not one all-green full run.
+
+Fresh positive attempts on that source passed for Claude, Codex, Grok and Agy. Rulings
+13–16 followed exact native Stop requests, instruction acknowledgements, done mail and
+byte-for-byte receipt inspection. Each finished `ready_for_review` with checked zero open
+decisions and stopped review monitor. Active cancellation took 0.4063, 0.2050, 0.3274 and
+0.2109 seconds respectively. Only each accepted receipt was committed in its worker;
+diagnostic canaries and all negative attempts remain outside integration.
+
+The remaining variant is four configured local joins, one actual native Claude Owner
+dispatch/review/join, and the final finite evidence package. Independent review found
+exception-path process cleanup and incomplete authority/active-work correlation in the
+private Claude test driver; red-first controls and peer re-review precede its use.
+The previous estimate was exceeded by measured source repair and native qualification;
+remaining duration is 10–20 minutes (Inferred), with a 02:44Z review point. Model tokens,
+spend and total tool calls are not recorded. The same width-two, no-replay and no-push
+bounds remain. No missing proof is waived and no general unattended profile is enabled.

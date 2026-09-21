@@ -97,6 +97,7 @@ worker: session, branch, harness (claude|codex|grok|agy), transport (acp|agy),
         output_limit (1024..16777216 total bytes), fallback (nonempty text),
         required_capabilities ({name: enforced|observed-only}),
         binding_files (absolute or checkout-relative paths),
+        additional_roots (optional Codex ACP operational file paths, 0..3),
         evidence ([{kind: file, path, max_bytes} | {kind: commit}])
 ```
 
@@ -127,6 +128,19 @@ effective inherited environment digest (values never printed). The Owner must li
 load-bearing configuration and adapter lockfiles in `binding_files`. Hashing detects drift;
 it cannot prove that the listed files are complete or that a hook ran.
 
+An explicit Codex ACP `additional_roots` list admits only canonical absolute regular files
+from the primary coordination store: `requests.jsonl`, `log/<worker>.jsonl`, and
+`mail/<owner>.jsonl`. Duplicates, directories, symlinks (including parent aliases), malformed
+values and other harnesses refuse with `RUN-ROOTS`. No default grant or file creation is
+added. The expected new worker log alone may be missing during validation; its existing
+parent directory must exist, and normal worktree registration creates the log before final
+validation. Request and Owner inbox files must already exist through legitimate store use.
+Preparation derives path/device/inode identities in the immutable manifest; caller-supplied
+identity fields refuse. Fingerprinting, launch and each prompt recheck them. Content hashes
+are deliberately excluded for these appendable operational files. This guards replacement
+at admission boundaries, not hostile concurrent replacement during an active native turn.
+See [the measured file-root contract](../notes/note-20260921-codex-coordination-file-roots.md).
+
 Qualification schema `coord-qualification/1`: `workers` maps session to `{fingerprint,
 version, evidence, effective_policy, trust, capabilities}`. Policy and trust describe the
 measured effective settings; an adapter mode name alone is insufficient. Evidence is a nonempty explanation/reference to measured
@@ -138,7 +152,7 @@ be weakened implicitly. A manual brief and remediation remain available on a blo
 ## Transport contract and protocol
 
 `coord_transport.run_session(transport, argv, cwd, env, prompts, deadline_seconds,
-output_limit, emit, cancelled, before_prompt) -> dict` is the only process seam. `emit` receives sanitized
+output_limit, emit, cancelled, before_prompt, additional_roots=None) -> dict` is the only process seam. `emit` receives sanitized
 metadata only; `cancelled()` is checked at least every 100 ms during IO. Each transport
 implements creation, finite ordered prompts, progress, terminal reason and cleanup. Return
 contains `outcome`, `code`, `session_id`, `turns_completed`, `stdout_bytes`, `stderr_bytes`,
@@ -153,6 +167,11 @@ permission refusal is not complete, even if its response parses successfully.
 ACP JSON-RPC 2.0 over newline-delimited UTF-8: initialize protocolVersion 1 with empty
 clientCapabilities; session/new with cwd and empty mcpServers; session/prompt with text
 blocks; session/update notifications; session/cancel notification for bounded cancellation.
+Explicit file roots add `additionalDirectories` only after initialize identifies
+`@agentclientprotocol/codex-acp` and advertises `sessionCapabilities.additionalDirectories`.
+An absent option preserves the original creation envelope. Unsupported adapters block
+before creation; malformed roots block before process launch; changed files block before
+the next prompt. File access does not grant a permission callback or bypass a native hook.
 Grok authentication selects advertised `cached_token` only; unsupported authentication is a
 named failure requiring native login. No editor filesystem/terminal capabilities are exposed.
 All unsolicited server requests receive method-not-found except `session/request_permission`:

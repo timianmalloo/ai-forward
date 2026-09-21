@@ -17,6 +17,17 @@ summary: >-
 
 # Defect-class register
 
+**RIG-D / PACK-D instance, 2026-09-21 — selected native tool missing from policy vocabulary.**
+Class: a host matcher selects a real edit tool whose name is absent from the shared
+write classifier. Sweep: an actual Grok `search_replace` envelope reached both the
+inherited Claude-shaped guard (no-op allow) and native Grok guard (unchecked denial).
+Derive: selection, parsing and lease adjudication must agree on the recorded native
+name. Prevent: the exact sanitized envelope now exercises held/free/own paths in both
+guards; a matcher test names the actual tool, and name-removal, matcher-removal and
+unknown-tool acceptance mutations are killed. Evidence and control names are in
+`docs/notes/note-20260921-grok-native-search-replace.md`. A denial before lease parsing
+does not qualify ownership enforcement.
+
 **RIG-D / PACK-D / E7 instance, 2026-09-21 — native control acceptance seams.**
 Class: accepting a generic shape or a successful earlier phase as proof of a later
 invariant. Sweep: Agy TargetFile could be hidden by a generic file_path, a malformed
@@ -684,6 +695,21 @@ representation-contract failure, not a reason to bypass merges for authored file
   normalizes lease patterns/exceptions too, measures directory case behavior, and refuses
   an ambiguous empty-directory collision. Both directions, future names, exceptions and
   lease-side symlinks are pinned by real filesystem regressions.
+
+- **Shared-store scope manifestation (2026-09-21):** Codex passed native workspace
+  ownership and cancellation checks, then its real `request receive` failed because the
+  coordination ledger is in the primary checkout. Class → a workspace-only canary omitted
+  the workflow's shared durable side effects. Sweep → receive/ack, worker log, Owner inbox,
+  adapter per-turn sandbox policy, adjacent files, and file replacement between prompts.
+  Derive → qualify the complete durable handback and bind the exact operational file
+  identities, without granting their parent directory. Prevent → `test_coord_runner.py`
+  and `test_coord_transport.py` reject unknown roots, directories, aliases, symlinks,
+  caller-supplied identities, and replacement at both prompt boundaries; forwarding and
+  unchanged default policy have red-first controls and three killed mutants. Native
+  sandbox/ACP spikes proved exact-file access and adjacent-file refusal. A fresh Codex
+  handback then produced the exact receipt, instruction acknowledgement, decision and
+  done mail; native Stop and the final runner both refused its unresolved decision.
+  These observations establish the measured profile, not arbitrary shell containment.
 
 ### PROC-A — Process-group cleanup mistakes an exited child for an uncontained process
 - **Signature:** a direct child exits between the process-state check and group signalling;

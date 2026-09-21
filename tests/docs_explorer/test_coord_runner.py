@@ -155,6 +155,68 @@ class RunnerTests(unittest.TestCase):
                 self.cli("prepare", "--contract", str(self.contract_path), expected=2)
                 self.assertFalse((self.repo.parent / "repo-work-one").exists())
 
+    def file_roots(self):
+        root = (self.repo / ".agents").resolve()
+        (root / "mail").mkdir(parents=True, exist_ok=True)
+        (root / "log").mkdir(exist_ok=True)
+        paths = [root / "requests.jsonl", root / "log/worker-1.jsonl", root / "mail/owner.jsonl"]
+        paths[0].touch()
+        paths[2].touch()
+        self.contract["workers"][0]["argv"][-1] = "file-roots"
+        self.contract["workers"][0]["additional_roots"] = list(map(str, paths))
+        return paths
+
+    def test_file_roots_forwarding_and_append_stable_fingerprint(self):
+        paths = self.file_roots()
+        self.assertFalse(paths[1].exists())
+        prepared = self.prepare()
+        self.assertTrue(paths[1].is_file())
+        before = self.cli("fingerprint", "--run", "test-run")["fingerprints"]
+        with paths[2].open("a") as handle:
+            handle.write("{}\n")
+        self.assertEqual(before, self.cli("fingerprint", "--run", "test-run")["fingerprints"])
+        result = self.run_prepared()
+        self.assertEqual("ready_for_review", result["workers"][0]["state"])
+        receipt = json.loads((Path(prepared["workers"][0]["worktree"]) / "receipt.json").read_text())
+        self.assertEqual(list(map(str, paths)), receipt["additional_roots"])
+
+    def test_file_roots_replacement_or_symlink_blocks_dispatch(self):
+        paths = self.file_roots()
+        prepared = self.prepare()
+        q = self.qualify()
+        self.pin()
+        moved = paths[2].with_suffix(".old")
+        paths[2].rename(moved)
+        paths[2].touch()
+        for symlink in (False, True):
+            with self.subTest(symlink=symlink):
+                if symlink:
+                    paths[2].unlink()
+                    paths[2].symlink_to(moved)
+                failure = self.cli("run", "--run", "test-run", "--qualification", str(q), expected=2)
+                self.assertEqual("RUN-ROOTS", failure["code"])
+                self.assertFalse((Path(prepared["workers"][0]["worktree"]) / "prompt-started").exists())
+
+    def test_file_roots_reject_malformed_out_of_scope_and_other_harnesses(self):
+        paths = self.file_roots()
+        valid = list(map(str, paths))
+        for delta in ({"additional_roots": False}, {"additional_roots": None},
+                      {"additional_roots": [str(self.repo.resolve() / "AGENTS.md")]},
+                      {"additional_roots": valid * 2}, {"additional_roots": [valid[0], valid[0]]},
+                      {"additional_roots": [str(paths[0].parent)]},
+                      {"additional_roots": [str(paths[0].parent / "x/../requests.jsonl")]},
+                      {"additional_roots": [], "harness": "grok"},
+                      {"additional_root_identities": []}):
+            with self.subTest(delta=delta):
+                worker = self.worker("worker-1", "work-one", "file-roots")
+                worker["additional_roots"] = valid
+                worker.update(delta)
+                self.contract["workers"] = [worker]
+                self.contract_path.write_text(json.dumps(self.contract))
+                failure = self.cli("prepare", "--contract", str(self.contract_path), expected=2)
+                self.assertEqual("RUN-ROOTS", failure["code"])
+                self.assertFalse((self.repo.parent / "repo-work-one").exists())
+
     def test_duplicate_or_parent_identity_refuses(self):
         self.contract["workers"].append(self.worker("worker-1", "work-two"))
         self.contract_path.write_text(json.dumps(self.contract), encoding="utf-8")

@@ -12,6 +12,7 @@ Two are written to fail first:
 import importlib.util
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -153,6 +154,62 @@ class NativeHookTests(GitCase):
     def payload(self, patch):
         return json.dumps({"tool_name": "apply_patch", "cwd": "/forged", "session_id": "owner",
                            "tool_input": {"command": patch}})
+
+    def grok_search_replace(self, path):
+        fixture = Path(__file__).with_name("fixtures") / "grok_search_replace_hook.json"
+        event = json.loads(fixture.read_text(encoding="utf-8"))["event"]
+        # Only the real process cwd/environment can confer path/identity authority.
+        event.update(sessionId="owner", session_id="owner", cwd="/forged", workspaceRoot="/forged")
+        for key in ("toolInput", "tool_input"):
+            event[key]["file_path"] = str(self.repo / path)
+        return event
+
+    def test_grok_recorded_search_replace_reaches_lease_policy_in_both_guards(self):
+        for host in ("claude", "grok"):
+            for path, session, expected in (("held.txt", "worker", "deny"),
+                                             ("held.txt", "owner", "allow"),
+                                             ("free.txt", "worker", "allow")):
+                with self.subTest(host=host, path=path, session=session):
+                    event = self.grok_search_replace(path)
+                    result = self.run_cli("hook", "--host", host, stdin=json.dumps(event), session=session)
+                    self.assertEqual(0, result.returncode, result.stderr)
+                    output = json.loads(result.stdout)
+                    decision = output["decision"] if host == "grok" else output["hookSpecificOutput"]["permissionDecision"]
+                    self.assertEqual(expected, decision)
+                    if expected == "deny":
+                        self.assertIn("owner-work", result.stdout)
+                    self.assertNotIn("NOT CHECKED", result.stdout)
+                    ledger = self.repo / ".agents/decisions" / (session + ".jsonl")
+                    self.assertTrue(ledger.exists(), "a no-op allow is not a lease check")
+                    records = ledger.read_text(encoding="utf-8")
+                    row = json.loads(records.splitlines()[-1])
+                    self.assertEqual((path, host, session), (row["path"], row["hook_host"], row["session"]))
+                    self.assertEqual("refused" if expected == "deny" else "allowed", row["kind"])
+                    self.assertNotIn("PRIVATE_BEFORE", records)
+                    self.assertNotIn("PRIVATE_AFTER", records)
+
+    def test_grok_recorded_search_replace_malformed_and_unknown_stay_unchecked(self):
+        cases = [("missing", None), ("empty", ""), ("typed", []),
+                 ("outside", str(self.repo.parent / "outside")), ("unknown", "held.txt")]
+        for kind, path in cases:
+            with self.subTest(kind=kind):
+                event = self.grok_search_replace("held.txt")
+                if kind == "unknown":
+                    event.update(toolName="future_write_tool", tool_name="future_write_tool")
+                else:
+                    event["toolInput"]["file_path"] = path
+                    event["tool_input"]["file_path"] = path
+                result = self.run_cli("hook", "--host", "grok", stdin=json.dumps(event), session="worker")
+                self.assertEqual(0, result.returncode, result.stderr)
+                self.assertEqual("deny", json.loads(result.stdout)["decision"])
+                self.assertIn("NOT CHECKED", result.stdout)
+                self.assertFalse((self.repo / ".agents/decisions/worker.jsonl").exists())
+
+    def test_grok_generated_matcher_selects_recorded_native_tool_without_aliases(self):
+        result = self.run_cli("hook", "--config", "--host", "grok")
+        self.assertEqual(0, result.returncode, result.stderr)
+        entry = json.loads(result.stdout)["hooks"]["PreToolUse"][0]
+        self.assertIsNotNone(re.fullmatch(entry["matcher"], self.grok_search_replace("held.txt")["toolName"]))
 
     def test_grok_and_agy_native_write_envelopes_enforce_lease_without_granting_policy(self):
         for host, make in (

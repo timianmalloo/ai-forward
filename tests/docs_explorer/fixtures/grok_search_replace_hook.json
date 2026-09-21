@@ -1,0 +1,37 @@
+{
+  "provenance": {
+    "provider": "Grok Build 1.0.34",
+    "source_base": "ac35d759e24eea89892ac2ede27391f2e307dab4",
+    "capture": "One native search_replace; both unchanged ownership commands received identical stdin through passive wrappers. Paths, identities, timestamps and edit contents sanitized; all observed keys retained.",
+    "inherited_claude_capture_sha256": "9d1876edeb1f81b52656b82639355b9ca781a572b98923ba25376042392c8879",
+    "native_grok_capture_sha256": "8ee8e19e1013a700f16f9c967bd41ccd49ed708e492c20ce4f5dd0573170a75d"
+  },
+  "event": {
+    "hookEventName": "pre_tool_use",
+    "sessionId": "recorded-session",
+    "cwd": "/recorded-repo",
+    "workspaceRoot": "/recorded-repo/",
+    "timestamp": "2026-09-21T01:17:24Z",
+    "transcriptPath": "/recorded-transcript/updates.jsonl",
+    "permissionMode": "bypassPermissions",
+    "toolName": "search_replace",
+    "toolUseId": "recorded-call",
+    "toolInput": {
+      "file_path": "/recorded-repo/held.txt",
+      "old_string": "PRIVATE_BEFORE",
+      "new_string": "PRIVATE_AFTER"
+    },
+    "toolInputTruncated": false,
+    "hook_event_name": "PreToolUse",
+    "session_id": "recorded-session",
+    "transcript_path": "/recorded-transcript/updates.jsonl",
+    "permission_mode": "bypassPermissions",
+    "tool_name": "search_replace",
+    "tool_input": {
+      "file_path": "/recorded-repo/held.txt",
+      "old_string": "PRIVATE_BEFORE",
+      "new_string": "PRIVATE_AFTER"
+    },
+    "tool_use_id": "recorded-call"
+  }
+}

@@ -27,7 +27,13 @@ locally selected operational fields leave this module; wire bodies are discarded
 
 ## Functions
 
-### `run_session(transport, argv, cwd, env, prompts, deadline_seconds, output_limit, emit, cancelled, before_prompt=…)`
+### `file_root_identities(paths, missing_path=…)`
+
+Validate explicit file access; content may append without changing identity.
+
+Only preparation may defer its exact future session log until worktree registration.
+
+### `run_session(transport, argv, cwd, env, prompts, deadline_seconds, output_limit, emit, cancelled, before_prompt=…, additional_roots=…)`
 
 Run admitted turns in one owned process group; return metadata, never bodies.
 
@@ -37,5 +43,5 @@ launch. No capabilities or instructions are inferred from a successful result.
 
 ## Coverage
 
-- Public functions: **1** · documented: **1** (**100%**)
+- Public functions: **2** · documented: **2** (**100%**)
 
