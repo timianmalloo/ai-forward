@@ -62,14 +62,19 @@ def title_of(text, fallback):
 
 
 def pages():
-    """The bundle, in reading order: entry point, architecture, then the API reference."""
+    """The bundle, in reading order: entry point, root architecture docs, then the API reference."""
     out = []
-    for rel, pid in (("docs/index.md", "index"), ("docs/architecture.md", "architecture")):
-        path = os.path.join(ROOT, rel)
-        if os.path.isfile(path):
-            raw = read(path)
-            out.append({"id": pid, "title": title_of(raw, pid),
-                        "markdown": strip_frontmatter(raw)})
+    path = os.path.join(ROOT, "docs", "index.md")
+    if os.path.isfile(path):
+        raw = read(path)
+        out.append({"id": "index", "title": title_of(raw, "index"),
+                    "markdown": strip_frontmatter(raw)})
+    arch_dir = os.path.join(ROOT, "docs")
+    for name in sorted((n for n in os.listdir(arch_dir) if re.fullmatch(r"architecture.*\.md", n)),
+                       key=lambda n: (n != "architecture.md", n)):
+        raw = read(os.path.join(arch_dir, name))
+        out.append({"id": name[:-3], "title": title_of(raw, name),
+                    "markdown": strip_frontmatter(raw)})
     api_dir = os.path.join(ROOT, "docs", "api")
     if os.path.isdir(api_dir):
         names = sorted(os.listdir(api_dir))

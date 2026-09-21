@@ -269,6 +269,28 @@ function secCoord(){
     <div class="group-band"><span class="gt">Words chosen to be unambiguous to a model</span><span class="gl"></span></div>
     <p>${esc(K.language||"")}</p>
     <p class="lensrow" style="margin-top:14px"><strong>Verbs:</strong> ${esc(K.verbs||"")}</p>
+    ${(function(){const T=K.timeline||[]; if(!T.length)return ""; return `
+    <div class="group-band"><span class="gt">How the design changed</span><span class="gl"></span><span class="gc">${T.length}</span></div>
+    <div class="grid">${T.map(t=>`<div class="cap"><h4>${esc(t.h)}</h4><p>${esc(t.p)}</p></div>`).join("")}</div>`;})()}
+    ${(function(){const M=K.modes||[]; if(!M.length)return ""; return `
+    <div class="group-band"><span class="gt">How execute-with-coordination evolved</span><span class="gl"></span><span class="gc">${M.length}</span></div>
+    <div class="grid">${M.map(m=>`<div class="cap"><h4>${esc(m.h)}</h4><p>${esc(m.p)}</p></div>`).join("")}</div>`;})()}
+    ${(function(){const W=K.workflow||[]; if(!W.length)return ""; return `
+    <div class="group-band"><span class="gt">Operator workflow today</span><span class="gl"></span><span class="gc">${W.length}</span></div>
+    <ol class="steps">${W.map(s=>`<li><h4>${esc(s.h)}</h4><p>${esc(s.p)}</p></li>`).join("")}</ol>`;})()}
+    ${(function(){const A=K.axes||[]; if(!A.length)return ""; return `
+    <div class="group-band"><span class="gt">Models and harnesses are different levers</span><span class="gl"></span><span class="gc">${A.length}</span></div>
+    <table><thead><tr><th scope="col">Change</th><th scope="col">What changes</th><th scope="col">What does not</th></tr></thead>
+      <tbody>${A.map(a=>`<tr><td><strong>${esc(a.change)}</strong></td><td>${esc(a.matters)}</td><td>${esc(a.not)}</td></tr>`).join("")}</tbody></table>`;})()}
+    ${(function(){const Q=K.qualification||{}; const rows=Q.rows||[]; if(!rows.length)return ""; return `
+    <div class="group-band"><span class="gt">Runtime qualification, harness by harness</span><span class="gl"></span><span class="gc">${rows.length}</span></div>
+    <p>${esc(Q.intro||"")}</p>
+    <table><thead><tr><th scope="col">Harness</th><th scope="col">Dynamic follow-up</th><th scope="col">Permission evidence</th><th scope="col">Live attach</th><th scope="col">Current limit</th></tr></thead>
+      <tbody>${rows.map(r=>`<tr><td><strong>${esc(r.harness)}</strong></td><td>${esc(r.followup)}</td><td>${esc(r.permission)}</td><td>${esc(r.attach)}</td><td>${esc(r.limit)}</td></tr>`).join("")}</tbody></table>
+    ${Q.note?`<p class="lensrow" style="margin-top:10px">${esc(Q.note)}</p>`:""}`;})()}
+    ${(function(){const N=K.negativeProofs||[]; if(!N.length)return ""; return `
+    <div class="group-band"><span class="gt">Negative proofs that changed the design</span><span class="gl"></span><span class="gc">${N.length}</span></div>
+    <div class="stack">${N.map(n=>`<div class="std"><div class="sn">${esc(n.h)}</div><div><p class="sd">${esc(n.p)}</p></div></div>`).join("")}</div>`;})()}
     ${(function(){const N=K.learnings;if(!N)return "";return `
     <div class="group-band"><span class="gt">What a month of two harnesses actually taught</span><span class="gl"></span><span class="gc">${(N.rows||[]).length}</span></div>
     <p>${esc(N.intro||"")}</p>
@@ -276,7 +298,11 @@ function secCoord(){
     <div class="callout-note"><p><strong>One number was withdrawn.</strong> ${esc(N.correction||"")}</p></div>
     <table><thead><tr><th scope="col">Class</th><th scope="col">The shape</th><th scope="col">What was observed</th></tr></thead>
       <tbody>${(N.rows||[]).map(r=>`<tr><td><span class="mono">${esc(r.id)}</span></td><td><strong>${esc(r.h)}</strong></td><td>${esc(r.p)}</td></tr>`).join("")}</tbody></table>
-    <div class="callout-note"><p><strong>Distributing them found one more.</strong> ${esc(N.federation||"")}</p></div>`;})()}`;
+    <div class="callout-note"><p><strong>Distributing them found one more.</strong> ${esc(N.federation||"")}</p></div>`;})()}
+    ${(function(){const L=K.links||[]; if(!L.length)return ""; return `
+    <div class="group-band"><span class="gt">Read the deep artifacts</span><span class="gl"></span><span class="gc">${L.length}</span></div>
+    ${L.map(l=>`<div class="linkout"><span class="lname">${esc(l.name)}</span><a href="${esc(l.path)}">${esc(l.path)}</a></div>`).join("")}
+    ${K.pending?`<div class="callout-note"><p><strong>Pending integration.</strong> ${esc(K.pending)}</p></div>`:""}`;})()}`;
 }
 function secBudget(){
   const B=D.contextBudget||{};const L=B.live||{};const T=B.tiers||{};const R=B.ratchet||{};const A=B.agents||{};

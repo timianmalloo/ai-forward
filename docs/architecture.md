@@ -177,6 +177,15 @@ Orchestrator remains a process/persona facilitator only. The historical evidence
 findings remain in `docs/reviews/forensic-review.md`,
 `docs/backlog/forensic-review.md`, and the superseded/accepted decision-note pair.
 
+## Multi-harness coordination deep dive
+
+The repo's multi-agent surface now has its own architecture/proof stack: worktree isolation,
+artifact classes, Owner / Coordinator / Sub-Agent doctrine, the compile stage, `execute-with-coordination`
+and the bounded runtime are documented in
+[`architecture-multi-harness-coordination.md`](architecture-multi-harness-coordination.md).
+That document is the deep narrative: where the design started, what was rejected, what shipped,
+what remains profile-specific, and which negative proofs changed the design.
+
 ## Layered view (source → consumer)
 
 The repo's own layering (distinct from the LOA *capability* tiers it ships as payload):

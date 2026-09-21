@@ -22,7 +22,7 @@ There is NO timestamp in the output, so regeneration over identical sources is B
 is what lets check-consistency.py drift-gate it. Repo dev-tooling (like build-web-index.py); re-run
 by sync-pack.ps1 on every pack change. Stdlib only.
 """
-import json, os, re, sys
+import glob, json, os, re, sys
 
 # Windows consoles default to cp1252, which cannot encode the box/arrow glyphs this tool
 # prints - `prompt-log.py --help` crashed outright with UnicodeEncodeError (FR-047). The guard
@@ -172,8 +172,10 @@ def _glob(dsub, pat):
 
 
 def architecture():
-    arch = [os.path.join(ROOT, "docs", f) for f in ("architecture.md", "architecture-dreaming.md")
-            if os.path.isfile(os.path.join(ROOT, "docs", f))]
+    arch = sorted(
+        glob.glob(os.path.join(ROOT, "docs", "architecture*.md")),
+        key=lambda p: (os.path.basename(p) != "architecture.md", os.path.basename(p)),
+    )
     groups = [
         {"group": "Architecture of record", "items": _doc_items(arch, "../../")},
         {"group": "Decisions (ADRs)", "items": _doc_items(_glob("docs/adr", r".*\.md$"), "../../")},

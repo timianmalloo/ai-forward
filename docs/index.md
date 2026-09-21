@@ -38,6 +38,7 @@ repository — the development home of the **AI-Forward Pack** and a live instal
 ## Architecture of record
 
 - **[Architecture Overview](architecture.md)** — the source→build→install→consumer structure, the four diagram families (component · sequence · layered · class), and the tool/CLI reference.
+- **[Multi-harness coordination evolution](architecture-multi-harness-coordination.md)** — the deep history of how coordination moved from shared checkouts and prompt-only relays to worktree isolation, the Owner / Coordinator / Sub-Agent doctrine, `execute-with-coordination`, and the bounded runtime with explicit qualification limits.
 - **[API reference](api/index.md)** — the public surface, module by module, with computed coverage.
 - **[Forensic Review](reviews/forensic-review.md)** · **[Proposed Remediation Backlog](backlog/forensic-review.md)** — evidence-based review of the repository, focused on commit `5d7b952` and model/task orchestration.
 
