@@ -576,6 +576,15 @@ class _TitleParser(HTMLParser):
 
 
 def _surface_title(path, relative_to_root):
+    normalized = relative_to_root.replace("\\", "/").lower()
+    explicit = {
+        "_site/index.html": "AI-Forward Documentation",
+        "_site/bundle.html": "AI-Forward Bundle View",
+        "portal/index.html": "AI-Forward Portal",
+        "mockups/documentation-portal.html": "Portal Mockup",
+    }
+    if normalized in explicit:
+        return explicit[normalized]
     try:
         source, opened = _open_verified_binary(path)
         with source:

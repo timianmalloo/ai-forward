@@ -10456,24 +10456,16 @@ window.DOCS_INDEX = {
     {
       "id": "surface-site-bundle",
       "path": "docs/_site/bundle.html",
-      "title": "AI-Forward — Documentation",
+      "title": "AI-Forward Bundle View",
       "kind": "knowledge-tool",
       "description": "Open an interactive knowledge artifact."
     },
     {
       "id": "surface-portal-index",
       "path": "docs/portal/index.html",
-      "title": "AI-Forward — Documentation",
+      "title": "AI-Forward Portal",
       "kind": "knowledge-tool",
       "description": "Open an interactive knowledge artifact."
-    },
-    {
-      "id": "surface-mockups-documentation-portal",
-      "path": "docs/mockups/documentation-portal.html",
-      "title": "AI-Forward — Documentation Portal (mockup)",
-      "kind": "knowledge-tool",
-      "description": "Open an interactive knowledge artifact.",
-      "artifactId": "mockup-documentation-portal"
     },
     {
       "id": "surface-knowledge-continuous-improvement-and-dreaming-overview",
@@ -10647,6 +10639,14 @@ window.DOCS_INDEX = {
       "kind": "knowledge-tool",
       "description": "Open an interactive knowledge artifact.",
       "artifactId": "proposal-owner-coordinator-subagent-coordination"
+    },
+    {
+      "id": "surface-mockups-documentation-portal",
+      "path": "docs/mockups/documentation-portal.html",
+      "title": "Portal Mockup",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "mockup-documentation-portal"
     },
     {
       "id": "surface-proposals-context-prefix-budget",
