@@ -139,6 +139,12 @@ attachment boundary; the runner does not automate terminal focus or type into sh
 Loaded shared sessions can continue work after this client disconnects; queue acceptance
 is not completion. Native versions and profile settings can change and invalidate proof.
 
+A fresh 2026-09-21 disposable probe also passed `--permission-mode default` before
+`agent --no-leader stdio`: one turn completed in 7.786403 seconds, the requested
+canary was written and removed, and the transport emitted zero permission callbacks.
+This confirms the current installed profile still auto-approves that operation; it does
+not qualify Grok for interactive approval or unattended permission work.
+
 ## Status & next action
 
 Implementation, independent review and all 17 local release gates passed for the declared

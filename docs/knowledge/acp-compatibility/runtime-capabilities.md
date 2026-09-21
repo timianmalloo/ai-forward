@@ -261,3 +261,10 @@ profile. The ignored-overlay evidence hash is
 `d72f83dd62837f08531d16ab1ff09e9f92e155d213684b8e58cbb673f389adfd`.
 No global configuration or alternate home/profile was changed. Grok interactive approval
 remains gated pending a separately established native permission-profile contract.
+
+On 2026-09-21, a fresh disposable probe placed `--permission-mode default` before the
+`agent --no-leader stdio` subcommand, which is the CLI's documented option position. The
+transport completed one turn in 7.786403 seconds, reported Grok 1.0.34, emitted zero
+permission callbacks and zero native denials, and wrote the requested `PROBE` canary.
+The canary was read back and removed. This rules out an argument-order mistake for the
+current installed profile; it still does not qualify interactive approval.

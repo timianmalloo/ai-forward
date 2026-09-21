@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-21T15:21:46Z",
+  "generated": "2026-09-21T16:51:57Z",
   "audit": [
     {
       "actor": null,
@@ -12938,6 +12938,40 @@ window.AUDIT_DATA = {
         "sha": "83fe1b9448df77bcd06e9f79420f752d40ef0649",
         "short": "83fe1b944",
         "branch": "fix/coordination-windows-ci",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M32E39CBMJYTVQR9MCJQ14T6",
+      "shortname": "grok-permission-mode-probe",
+      "datetime": "2026-09-21T16:51:57Z",
+      "session": "coord-runtime-v2",
+      "prompt": "Keep going: qualify the remaining Grok permission path without changing global settings.",
+      "summary": "A disposable Grok ACP probe placed --permission-mode default before agent --no-leader stdio. One turn completed in 7.786403 seconds, reported Grok 1.0.34, wrote and removed the PROBE canary, and emitted zero permission callbacks and zero native denials. This rules out argument ordering as the current blocker; ask remains unqualified.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": "codex",
+      "artifacts": [
+        "docs/knowledge/acp-compatibility/runtime-capabilities.md",
+        "docs/proof/coordination-runtime-v2.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Determine whether Grok explicit per-process permission mode produces an interactive approval callback.",
+      "done_when": "The disposable probe is recorded durably with its evidence and the qualification verdict remains honest.",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "git": {
+        "sha": "d45cbb76d5e512d8ac530aa8b56b924b643d9ee2",
+        "short": "d45cbb76d",
+        "branch": "docs/grok-permission-probe",
         "pushed": null
       }
     }
