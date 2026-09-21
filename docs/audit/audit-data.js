@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-20T13:54:35Z",
+  "generated": "2026-09-20T15:49:18Z",
   "audit": [
     {
       "actor": null,
@@ -6947,6 +6947,38 @@ window.AUDIT_DATA = {
       "done_when": "each Antigravity channel observed live or its cause named from the host docs; fixes red-first; landed",
       "tier": "T1",
       "fan_out": 0
+    },
+    {
+      "id": "al-01M2ZR3VM7CGJ414A0GGSHHTRJ",
+      "shortname": "implement-bounded-coordination-transport",
+      "datetime": "2026-09-20T15:49:18Z",
+      "session": "bounded-transport-codex",
+      "prompt": "Implement ONLY the bounded transport subtask in your PRECREATED own worktree /Users/mallalieut/projects/ai-forward-feat-bounded-coordination-transport branch feat/bounded-coordination-transport. Parent owns runner/skill/docs. Read design /Users/mallalieut/projects/ai-forward-feat-multi-harness-runner/docs/design/multi-harness-runner.md, transport/concurrency details. Independent design review conditions resolved in text; reviewer confirming. Own paths pack/scripts/coord_transport.py, tests/docs_explorer/test_coord_transport.py and uniquely named fixture files. Do not change other production paths or sync generated surfaces (parent joins and syncs once). Implement run_session(transport, argv, cwd, env, prompts, deadline_seconds, output_limit, emit, cancelled, before_prompt) -> dict exactly designed: stdlib bounded nonblocking POSIX stdio, ACP1 initialize/new/auth cached_token/repeated prompt/progress/deny sticky/cancel, Agy native stream adapter, only end_turn / SUCCESS complete, sanitized metadata, no raw output durable, output/unterminated/input/hang finite, own group cleanup<=4s beyond deadline. before_prompt(remaining_seconds) is bounded by caller but charged to attempt, cancelled callback cheap. Unknown Windows blocked before process. Allow before_prompt default optional true for isolated tests if useful. RED-FIRST faults with real subprocesses for stdout+stderr floods, no newline, blocked stdin, malformed/unknown/early EOF, permissions sticky, prompt count, cancellation, cleanup descendants. Verify actual Agy result shape from ACP probe evidence, not memory. Don't promote unsafe probe client. Goal done: module+tests reviewed self-check; send exact test results and source paths for parent to inspect/copy, no commit required until parent review. Audit start/closure under session bounded-transport-codex; no push. Keep scope bounded to this seam; report uncertainties rather than adding features.\n\nParent follow-up: Please coalesce progress notifications (at most one progress event per second per attempt, plus lifecycle/permission/terminal) or expose counts without per-token callback emission. Existing append_event computes sequence from its log, so per-token events are avoidable cost and can flood durable logs/CLI. Byte counters still count every wire byte and deadline still runs. Return progress count if easy; no content.\n\nParent review: Parent source review overall sound. One protocol-correlation edge to check: before sending next Agy prompt, a buffered unsolicited second SUCCESS from the previous turn could be consumed as the next result, since session id is shared and queue() doesn't flush before receive parses buffered lines. Please add a duplicate-result fixture; ensure it cannot mark two prompts complete without two actually written requests. Minimal guard against already-buffered unsolicited result is sufficient; document native lack of per-turn IDs rather than claim arbitrary malicious-provider protection. Also please send audit entry paths for parent integration separate from production files.",
+      "summary": "Implemented the assigned POSIX ACP/Agy bounded transport seam and real subprocess fixtures. Final 23 tests pass; three targeted mutants killed. Red-observed defects corrected: macOS unreaped-zombie signal classification, per-token durable progress, and duplicate buffered Agy SUCCESS completing an unsent prompt. Output bodies and raw exceptions are never returned. Source integration, full composition proof, generated sync and bundle verification remain with parent; no commit or live provider qualification claimed.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": "codex",
+      "artifacts": [
+        "pack/scripts/coord_transport.py",
+        "tests/docs_explorer/test_coord_transport.py",
+        "tests/docs_explorer/coord_transport_peer.py"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Provide the bounded ACP/Agy stdio module and real subprocess failure tests for parent review.",
+      "done_when": "Owned module and tests implemented, bounded IO/cancellation/cleanup and sanitized results demonstrated, exact source paths and test evidence delivered to parent.",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-09-20T15:33:02Z",
+      "duration_seconds": 976.0,
+      "git": {
+        "sha": "58805df0067dd8fd22fa51fbda6f92b1fcfb9d00",
+        "short": "58805df00",
+        "branch": "feat/bounded-coordination-transport",
+        "pushed": null
+      }
     }
   ],
   "changes": [
