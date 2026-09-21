@@ -3618,7 +3618,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "21523a259ff4bfef6577e779eec666dd3cf0ed49e8b2ec617fb5420050b05894"
+      "sourceSha256": "b1b45c43df7ff97204fb488fe360837e2e20ac11707f6adecbe4f82ee2a7c2b6"
     },
     {
       "id": "design-owner-review",
@@ -4182,7 +4182,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "86bd6b1dabadbbd790e6ba8292b83173c9db3b8cfaf06dfaebb2eff516a8a488"
+      "sourceSha256": "e6db0276ce10f6ed8a89f4ff360843ed3f622adef91a1163767e54f9e10692be"
     },
     {
       "id": "docs-index",
@@ -8182,6 +8182,10 @@ window.DOCS_INDEX = {
           "rel": "documents"
         },
         {
+          "to": "design-native-ownership-enforcement",
+          "rel": "documents"
+        },
+        {
           "to": "design-compile-readers",
           "rel": "documents"
         },
@@ -8219,7 +8223,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ac98168b9a021b7ba9de56455118e3393e0b34e542e40d1c57f65c71098ada65"
+      "sourceSha256": "b587575abdedf78c4b885a8d19994ed2b4de4249eebcfc230210da9d396e509c"
     },
     {
       "id": "forensic-review-rev48-proof",
@@ -8552,12 +8556,12 @@ window.DOCS_INDEX = {
       "path": "docs/proof/native-ownership-enforcement.md",
       "title": "Native ownership guard implementation and actual-profile proof",
       "type": "proof-pack",
-      "status": "draft",
+      "status": "reviewed",
       "owner": "@timianmalloo",
       "phase": "coordination",
       "reviewBy": "2026-12-20",
       "reviewSuggested": [],
-      "summary": "Reviewed native file-edit guards are implemented. A fresh Claude profile permits its ordinary Write and refuses an active leased Write; Codex hook discovery remains blocked. No unattended profile is attested.",
+      "summary": "Reviewed native file-edit guards are integrated locally. Corrected-base Claude Write and Codex apply_patch allow ordinary work and refuse active leased edits. The user approved exact-definition Codex trust through native review. No unattended profile is attested.",
       "tags": [
         "coordination",
         "hooks",
@@ -8580,7 +8584,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "46b75a71e0dbd8832c8317653544c2f61e4b75e786301aec52603fc6beee1fcf"
+      "sourceSha256": "b4d73470582f1ef9350c747a36e370719e7dd371efe34b9551ea7f3e8d685fe0"
     },
     {
       "id": "spec-acp-coordination",
@@ -9554,6 +9558,10 @@ window.DOCS_INDEX = {
           "rel": "documents"
         },
         {
+          "to": "design-native-ownership-enforcement",
+          "rel": "documents"
+        },
+        {
           "to": "design-compile-readers",
           "rel": "documents"
         },
@@ -9591,7 +9599,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "5dbfda591ed2062f9cd42d230bf34fb64f5fb213239889893469155f92204731"
+      "sourceSha256": "119d5256ccfa921379505e0b4e3f4264abb5da148eff759cfed0541977134bbe"
     }
   ],
   "surfaces": [
@@ -9865,5 +9873,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "0d4aecfaa5b83d947fc0958f76682e971fcfc07e57e5a247e8166f5564005c10"
+  "graphSha256": "1f525fbd358f0a59fa7067f2819cb946681d9449272b864d274fb63f2e4d748a"
 };

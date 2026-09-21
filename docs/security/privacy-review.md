@@ -16,6 +16,7 @@ links:
   - { to: design-leader-designation, rel: documents }
   - { to: design-message-layer, rel: documents }
   - { to: design-multi-harness-runner, rel: documents }
+  - { to: design-native-ownership-enforcement, rel: documents }
   - { to: design-compile-readers, rel: documents }
   - { to: design-board, rel: documents }
   - { to: design-compile-stage, rel: documents }
@@ -79,8 +80,9 @@ downstream dispatch risk was retired by removing the capability, not by acceptin
 | [design-multi-harness-runner](design/multi-harness-runner.md) | Contract and repository work → selected harness | Disclosure follows the selected harness/provider's existing policy | Explicit Owner-selected installed transport; no automatic provider routing or credential copying; bind effective policy |
 | [design-multi-harness-runner](design/multi-harness-runner.md) | Prompt bytes → run metadata | Local retention may contain repository work data | Private common-git directory; no raw prompt/conversation in tracked operational facts |
 | [design-multi-harness-runner](design/multi-harness-runner.md) | Worker metadata → ledger | Session linkability | Accepted for durable audit; only bounded operational fields, hashes and explicit unknown cost |
+| [design-native-ownership-enforcement](design/native-ownership-enforcement.md) | Hook input/environment → local decision facts | L/I: session/path/cwd can identify the local workspace or account directory | mitigate | Existing decision grain with host/cwd metadata; no raw patches or credentials. Export only allowlisted shapes/hashes and cwd-match booleans. | Existing local ledger lifecycle; raw diagnostics remain private and can be removed locally. Committed sanitized proof follows Git retention. |
 
-<!-- rolled up from 2 artifact(s) by docs-graph.py rollup on 2026-09-20 -->
+<!-- rolled up from 3 artifact(s) by docs-graph.py rollup on 2026-09-20 -->
 <!-- END GENERATED -->
 
 ## 4. Accepted-risk register (maintained by hand)

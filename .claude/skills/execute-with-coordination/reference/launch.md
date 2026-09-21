@@ -150,6 +150,11 @@ never bypass hook trust or write its trust database. Project trust and hook-defi
 trust are separate. The installed Codex ACP adapter can set session project trust itself,
 so unchanged configuration files do not prove the effective trust policy was preserved.
 Record both states and actual native tool behavior before attesting enforcement.
+Bind the inventory's actual `sourcePath`, not merely a same-named file in the worker.
+In the CLI 0.155.1 linked-worktree probe, Codex discovered project hooks from the primary
+checkout only after that checkout contained the entry. The worker's copied JSON alone
+did not establish discovery. Inspect and bind that primary source plus the worker's
+deployed guard bytes; a new or changed definition still requires native trust review.
 
 ```json
 {

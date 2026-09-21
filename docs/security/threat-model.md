@@ -15,6 +15,7 @@ links:
   - { to: design-leader-designation, rel: documents }
   - { to: design-message-layer, rel: documents }
   - { to: design-multi-harness-runner, rel: documents }
+  - { to: design-native-ownership-enforcement, rel: documents }
   - { to: design-compile-readers, rel: documents }
   - { to: design-board, rel: documents }
   - { to: design-compile-stage, rel: documents }
@@ -145,12 +146,20 @@ The pack-evolution capabilities are **local developer/CI tooling** — no networ
 | [design-native-app-ui-skill-extension](design/native-app-ui-skill-extension.md) | Native proof template to review gate | R: reviewer claims proof without evidence | mitigate | Schema requires evidence, red-observed status and confidence | Template fixture lacks evidence -> docs/test failure |
 | [design-native-app-ui-skill-extension](design/native-app-ui-skill-extension.md) | Native distribution trust | S/T/R/E: spoofed publisher, tampered artifact, unsigned update, unverifiable release provenance, SmartScreen/Gatekeeper/notarization bypass | mitigate | Signed artifacts, cert/key custody outside repo, timestamping where applicable, Store/MSIX/AuthentiCode/SmartScreen posture or macOS notarization recheck before release PASS | Unsigned/unnotarized fixture/check cannot clear release proof row |
 | [design-native-app-ui-skill-extension](design/native-app-ui-skill-extension.md) | XAML linter input | T/I/D: hostile PR XAML/path causes parser abuse, path escape, terminal/log injection, or secret-like source disclosure | mitigate | Repo-root path normalization, no network/includes, text/XML scanning only, escaped JSON/text output, no raw source snippets or secret expansion | Malicious path/XAML fixture returns controlled error/finding without reading outside root or echoing unsafe content |
+| [design-native-ownership-enforcement](design/native-ownership-enforcement.md) | Payload → native hook | S/E: spoofed session/cwd | Mitigate: environment identity and actual process cwd win; forged fields do not clear leases in subprocess tests. |
+| [design-native-ownership-enforcement](design/native-ownership-enforcement.md) | Native patch → target list | T/E: omitted file or move target | Mitigate: check every source/destination; any refusal denies the whole invocation. Mixed-file and move tests. |
+| [design-native-ownership-enforcement](design/native-ownership-enforcement.md) | Payload / ledger → decision | T/D: malformed, oversized, absent or unreadable input/state | Mitigate: bounded parse and explicit NOT CHECKED; Codex denies instead of unsupported ask. Negative type, bound and filesystem-error tests. |
+| [design-native-ownership-enforcement](design/native-ownership-enforcement.md) | Path / lease → physical checkout | T/E: traversal, symlink, case or Unicode alias | Mitigate: normalize both sides in actual checkout; preserve filename bytes, observe case behavior, conservatively refuse ambiguous collisions. Alias and escape tests. |
+| [design-native-ownership-enforcement](design/native-ownership-enforcement.md) | Native host → configured guard | E/D: missing trust, disabled/error/timed-out hook | Detect and refuse qualification. Accept host fail-open limitations only as named blockers; a payload adapter cannot repair host admission. |
+| [design-native-ownership-enforcement](design/native-ownership-enforcement.md) | Config emitter → project settings | T: overwritten settings or injected command | Mitigate: JSON-only emitter, explicit merge, fixed quoted command; hostile-checkout execution test. No global/trust writes. |
+| [design-native-ownership-enforcement](design/native-ownership-enforcement.md) | Patch → local decision facts | I: content retention | Mitigate: path/verdict/context metadata only; patch sentinel must be absent from logs. |
+| [design-native-ownership-enforcement](design/native-ownership-enforcement.md) | Check → subsequent mutation | E: check/use race or shell bypass | Accept ADR-0010 cooperative integrity scope; no malicious-process/arbitrary-shell containment claim. Commit floor retained. |
 | [design-rai-and-scrub](design/rai-and-scrub.md) | file content → scrub | **I** (the scrub's own output leaks the secret it found) | mitigate | output prints only the **redacted** form; never the raw match | `scrub_check_output_has_no_raw_secret` |
 | [design-rai-and-scrub](design/rai-and-scrub.md) | file content → scrub | **T** (`--write` damages content beyond the match) | mitigate | atomic temp+replace; sub only the matched span | `scrub_write_preserves_nonmatching` |
 | [design-rai-and-scrub](design/rai-and-scrub.md) | invocation args | **E** (path traversal to write outside repo) | mitigate | resolve + confine to provided paths; argv-list, no `shell=True`; default scope is `docs/`+`pack/` Markdown | `scrub_confined_to_given_paths` |
 | [design-rai-and-scrub](design/rai-and-scrub.md) | RAI doc | **R** (repudiation: no record of the stance) | mitigate | the committed RAI doc *is* the attributable record; linked from governance | n/a (artifact existence) |
 
-<!-- rolled up from 12 artifact(s) by docs-graph.py rollup on 2026-09-20 -->
+<!-- rolled up from 13 artifact(s) by docs-graph.py rollup on 2026-09-20 -->
 <!-- END GENERATED -->
 
 ## 3. Accepted-risk register (maintained by hand)

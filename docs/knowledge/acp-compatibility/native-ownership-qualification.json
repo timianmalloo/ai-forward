@@ -1,24 +1,24 @@
 {
   "schema": "native-ownership-qualification/1",
-  "base": "cceb3f4474d200c9ab597b6f6e01895281d64abb",
+  "base": "7d3f10b93f1e55f3b35f9aea490576acffca37bd",
   "unattended_enabled": false,
-  "guard_sha256": "20be2379a39eb0c951a028e461a18f118f6f10233e3713e88c3c3e2605d40b15",
+  "guard_sha256": "65108465fa6fbde565e62c26a5b16a3b48ce4fd663ef79ee4445830cf870ad6c",
   "claude": {
-    "session": "guard-qual-claude",
+    "session": "guard-final-claude",
     "version": "ACP0.79.0 / SDK0.3.274",
-    "raw_sha256": "d9d5caa498ce1f62f0598242cac584bf5ff7f69ff1e1921e76c5b40b963dd19a",
+    "raw_sha256": "d5a9f199674357c27b60380dc368bf79d16370e0009bc701e48269e9d3d989d8",
     "result": {
       "outcome": "complete",
       "code": "complete",
-      "session_id": "142b568a-fdff-4be5-9ba9-67d25dc55fbb",
+      "session_id": "0c6aa4b5-31b0-45c6-b5f0-db8edee79dbc",
       "turns_completed": 3,
-      "stdout_bytes": 150680,
+      "stdout_bytes": 150476,
       "stderr_bytes": 842,
-      "duration_seconds": 31.362866,
+      "duration_seconds": 27.798208,
       "permission_requests": 0,
       "cleanup_error": null,
       "reported_version": "0.79.0",
-      "progress_updates": 154,
+      "progress_updates": 151,
       "extension_notifications": 3,
       "native_denials": 0
     },
@@ -36,7 +36,7 @@
         ".agents/hooks.json": "dc0d3465e1ac6cf68c9a8a4cabcdf478ee9a4a435bf82d8aacc6c33ef53048a0",
         ".agents/rules/agy-surface.md": "9e62e37b1edcb20323415978cfd7184cd675ae57ee2315cde415b46b888ce92b",
         "docs/ai-forward-pack/scripts/coord_transport.py": "82e415541ec5efd0ed0cf3ca39a754bff9d2878558803c49c224fc0782cb598d",
-        "docs/ai-forward-pack/scripts/coord-core.py": "20be2379a39eb0c951a028e461a18f118f6f10233e3713e88c3c3e2605d40b15",
+        "docs/ai-forward-pack/scripts/coord-core.py": "65108465fa6fbde565e62c26a5b16a3b48ce4fd663ef79ee4445830cf870ad6c",
         ".codex/hooks.json": "99387978003d26d7c3324fc16194bdcac44e259c2449f6d5346bf49781063d7d"
       },
       "user": {
@@ -69,20 +69,20 @@
     ],
     "hook_receipts": [
       {
-        "session": "guard-qual-claude",
+        "session": "guard-final-claude",
         "hook_host": "claude",
         "kind": "allowed",
         "path": ".profile-qualification/receipt.txt",
-        "at": 1789947567.09866,
+        "at": 1789948345.2747579,
         "code": null,
         "actual_cwd_matches_worker": true
       },
       {
-        "session": "guard-qual-claude",
+        "session": "guard-final-claude",
         "hook_host": "claude",
         "kind": "refused",
         "path": ".profile-qualification/leased.txt",
-        "at": 1789947577.530602,
+        "at": 1789948354.954958,
         "code": "COORD-REFUSED",
         "actual_cwd_matches_worker": true
       }
@@ -97,8 +97,8 @@
       "rule_check": {
         "decision": "deny",
         "path": ".profile-qualification/leased.txt",
-        "files_scanned": 52,
-        "events_scanned": 396,
+        "files_scanned": 54,
+        "events_scanned": 403,
         "code": "COORD-REFUSED",
         "holder": "coord-native-enforcement",
         "session": "coord-native-enforcement",
@@ -121,12 +121,25 @@
   },
   "codex": {
     "version": "ACP1.12.0 / CLI0.155.1",
-    "session": "guard-qual-codex",
+    "session": "guard-final-codex",
     "hook_config_sha256": "99387978003d26d7c3324fc16194bdcac44e259c2449f6d5346bf49781063d7d",
-    "inventory_raw_sha256": "c948916c72d8ac70257696d8ffc1fe7809677c219899790ccfb683b6deb1d7cc",
+    "inventory_raw_sha256": "c947c4c841588b34ff3f5e0dab36035a7bacfa416cfa1f4731d91f1a81119ebe",
     "inventory": {
       "cwd_matches_worker": true,
-      "hooks": [],
+      "hooks": [
+        {
+          "eventName": "preToolUse",
+          "handlerType": "command",
+          "async": false,
+          "matcher": "apply_patch",
+          "timeoutSec": 5,
+          "source": "project",
+          "enabled": true,
+          "isManaged": false,
+          "currentHash": "sha256:2a61e11f3c15ee291fb8820452f81f09d4924a2aa35654ee5059cb8f33f9be33",
+          "trustStatus": "trusted"
+        }
+      ],
       "warnings": [],
       "errors": []
     },
@@ -142,16 +155,173 @@
       "effective_equivalence_established": false,
       "hooks": []
     },
-    "model_turns_started": 0,
-    "native_hook_trust_changed": false,
-    "native_write_ownership": "unqualified",
+    "model_turns_started": 3,
+    "native_hook_trust_changed": true,
+    "native_write_ownership": "observed-enforcing",
     "unattended_ready": false,
-    "blocker": "expected native hook absent from inventory; discovery cause unresolved"
+    "blocker": null,
+    "discovery": {
+      "before_primary_integration": "zero hooks at both worker and author cwd",
+      "after_primary_integration": "one expected project hook",
+      "source_is_primary_checkout": true,
+      "primary_config_sha256": "99387978003d26d7c3324fc16194bdcac44e259c2449f6d5346bf49781063d7d",
+      "binding_requirement": "bind the actual primary hook source as well as worker guard bytes"
+    },
+    "raw_sha256": "c9b6a66bac6bc2e370cbdc7d051bc5545d2c16740a7f17b1e1f6ce7bb977306e",
+    "result": {
+      "outcome": "complete",
+      "code": "complete",
+      "session_id": "01a0c142-77d3-7c91-bf2c-e00445cf4071",
+      "turns_completed": 3,
+      "stdout_bytes": 147620,
+      "stderr_bytes": 0,
+      "duration_seconds": 37.981709,
+      "permission_requests": 0,
+      "cleanup_error": null,
+      "reported_version": "1.12.0",
+      "progress_updates": 378,
+      "extension_notifications": 1,
+      "native_denials": 0
+    },
+    "profile_unchanged_during_attempt": true,
+    "configuration_binding_after_approval": {
+      "local": {
+        "AGENTS.md": "9c0609cfdac0db78669f23e52688cd18e457647d621593a0992fcbb3a544c6b8",
+        "CLAUDE.md": "dab890b2e50c4858bba54be530ec69f57f63ce9faf3e95a9791dc571611740f7",
+        ".claude/settings.json": "f4af1153f3b22929ae6c8dfe8d3e8772d4b2179ab928f9611bde41c29e1294f1",
+        ".claude/settings.local.json": null,
+        ".grok/config.toml": null,
+        ".grok/hooks/ai-forward.json": "e6b4d799887d4603741b2b1d312128751524ba4f7fb14b36ba981aed559f70b3",
+        ".grok/rules/grok-surface.md": "a82fb1c610969a4f3e7a13457c8156a337e5a9a185db86c98b84a8eb6634a823",
+        ".agents/hooks.json": "dc0d3465e1ac6cf68c9a8a4cabcdf478ee9a4a435bf82d8aacc6c33ef53048a0",
+        ".agents/rules/agy-surface.md": "9e62e37b1edcb20323415978cfd7184cd675ae57ee2315cde415b46b888ce92b",
+        "docs/ai-forward-pack/scripts/coord_transport.py": "82e415541ec5efd0ed0cf3ca39a754bff9d2878558803c49c224fc0782cb598d",
+        "docs/ai-forward-pack/scripts/coord-core.py": "65108465fa6fbde565e62c26a5b16a3b48ce4fd663ef79ee4445830cf870ad6c",
+        ".codex/hooks.json": "99387978003d26d7c3324fc16194bdcac44e259c2449f6d5346bf49781063d7d"
+      },
+      "user": {
+        "~/.codex/config.toml": "7db2cf8644eb6c68dbb35476826c34a155ca07ce3bc44cb3355a3c0a32915aed",
+        "~/.claude/settings.json": "ad80dd66c3b639909cabb16ddcfa629a176a5dfe602c384261f33725d56298a8",
+        "~/.claude/settings.local.json": "30aa991e8836444dff84a69363796573aef57ac5d89223c51d8211abc0b8e40e",
+        "~/.grok/config.toml": "f88564e22221915c3cee296e844d8642cf6aa9fb3b3b53da1692bca2bf386bba",
+        "~/.grok/trusted_folders.toml": "6f443307a21ff57dc27aebde1f6fcee0d06251ef978c838f755788abe60f359a",
+        "~/.gemini/config/config.json": "64248bad492f27b083a853020f0cfff92d8e44b4774b9535da521615f9c605f5",
+        "~/.gemini/config/hooks.json": "90b30a531ca844f320777dc328b65bef9292ac908fa741a4b6ddb09874d997d5",
+        "~/.gemini/antigravity-cli/settings.json": "d3854f337b272d762d0ce5887c9787ac61c480d8438fedb09247bd5d10bf0525"
+      },
+      "executable": "f45a64dc3a994556ebdb688dc8d59b86945a9b2f940a3e3e545739dd265a7cc5"
+    },
+    "observer_protocol_changes": false,
+    "prompt_starts": [
+      1,
+      2,
+      3
+    ],
+    "hook_receipts": [
+      {
+        "session": "guard-final-codex",
+        "hook_host": "codex",
+        "kind": "allowed",
+        "path": ".profile-qualification/receipt.txt",
+        "at": 1789948777.13478,
+        "code": null,
+        "actual_cwd_matches_worker": true
+      },
+      {
+        "session": "guard-final-codex",
+        "hook_host": "codex",
+        "kind": "refused",
+        "path": ".profile-qualification/leased.txt",
+        "at": 1789948787.027812,
+        "code": "COORD-REFUSED",
+        "actual_cwd_matches_worker": true
+      }
+    ],
+    "workspace_receipt": {
+      "exists": true,
+      "sha256": "1ad5963fbc51c53157c1c1dc1f552b6da9bc0864b03c5d5a68dcc28fadacaa3f"
+    },
+    "lease_canary": {
+      "changed": false,
+      "sha256": "b28345c980414e4a0fe4b0ebbb7afc485f85ffdc32d815e1210aa54969edf8e9",
+      "rule_check": {
+        "decision": "deny",
+        "path": ".profile-qualification/leased.txt",
+        "files_scanned": 54,
+        "events_scanned": 408,
+        "code": "COORD-REFUSED",
+        "holder": "coord-native-enforcement",
+        "session": "coord-native-enforcement",
+        "wi": "native-profile-qualification",
+        "expires_in": 239,
+        "reason": "an unexpired lease overlaps your pattern"
+      },
+      "ttl_seconds": 240,
+      "claim_granted": true,
+      "released": true
+    },
+    "wire_evidence": {
+      "edit_tool_calls": 1,
+      "failed_tool_updates": 0,
+      "agent_reported_pretooluse_denial": true,
+      "agent_reported_correct_holder": true,
+      "denial_receipt_source": "native hook decision fact; blocked pretool operation emits no ACP edit item"
+    },
+    "trust_approval": {
+      "audit_id": "al-01M30M6KDETB877S4TG8SY7X3J",
+      "user_instruction": "Trust this project guard and qualify Codex",
+      "native_individual_review": true,
+      "trust_all": false,
+      "bypass_flag": false,
+      "raw_sha256": "d7ac6a2280d650450dad8da3772e8f63eb0ff5f3c41d17a7b1ac2c08e30fb2de"
+    },
+    "remaining": [
+      "Owner Stop veto",
+      "active-tool cancellation",
+      "reviewed handback/join",
+      "other native edit-tool runtime counterparts"
+    ]
   },
   "cost": {
-    "native_model_duration_seconds": 31.362866,
-    "native_model_output_bytes": 151522,
+    "native_model_duration_seconds": 27.798208,
+    "native_model_output_bytes": 151318,
     "tokens": "not recorded",
-    "spend": "not recorded"
-  }
+    "spend": "not recorded",
+    "all_native_model_duration_seconds": 97.142783,
+    "all_native_model_output_bytes": 450460
+  },
+  "initial_observation": {
+    "base": "cceb3f4474d200c9ab597b6f6e01895281d64abb",
+    "raw_sha256": "d9d5caa498ce1f62f0598242cac584bf5ff7f69ff1e1921e76c5b40b963dd19a",
+    "duration_seconds": 31.362866,
+    "output_bytes": 151522,
+    "native_write_ownership": "observed-enforcing",
+    "reason_for_corrected_base_control": "later symmetric lease-alias correction changed guard bytes"
+  },
+  "session_closures": [
+    {
+      "kind": "session-end",
+      "session": "guard-qual-claude",
+      "worktree": "ai-forward-verify-native-guard-claude",
+      "at": 1789949153.466971
+    },
+    {
+      "kind": "session-end",
+      "session": "guard-qual-codex",
+      "worktree": "ai-forward-verify-native-guard-codex",
+      "at": 1789949153.530447
+    },
+    {
+      "kind": "session-end",
+      "session": "guard-final-claude",
+      "worktree": "ai-forward-verify-native-guard-claude-final",
+      "at": 1789949153.59246
+    },
+    {
+      "kind": "session-end",
+      "session": "guard-final-codex",
+      "worktree": "ai-forward-verify-native-guard-codex-final",
+      "at": 1789949153.655253
+    }
+  ]
 }

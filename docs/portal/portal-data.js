@@ -3245,7 +3245,7 @@ window.PORTAL_DATA = {
         "id": "proof-native-ownership-enforcement",
         "type": "proof-pack",
         "title": "Native ownership guard implementation and actual-profile proof",
-        "summary": "Reviewed native file-edit guards are implemented. A fresh Claude profile permits its ordinary Write and refuses an active leased Write; Codex hook discovery..."
+        "summary": "Reviewed native file-edit guards are integrated locally. Corrected-base Claude Write and Codex apply_patch allow ordinary work and refuse active leased edits...."
       },
       {
         "id": "proposal-active-multi-harness-coordination",
@@ -5972,6 +5972,11 @@ window.PORTAL_DATA = {
       },
       {
         "from": "privacy-review",
+        "to": "design-native-ownership-enforcement",
+        "rel": "documents"
+      },
+      {
+        "from": "privacy-review",
         "to": "design-pack-doctor",
         "rel": "documents"
       },
@@ -6858,6 +6863,11 @@ window.PORTAL_DATA = {
       {
         "from": "threat-model",
         "to": "design-multi-harness-runner",
+        "rel": "documents"
+      },
+      {
+        "from": "threat-model",
+        "to": "design-native-ownership-enforcement",
         "rel": "documents"
       },
       {

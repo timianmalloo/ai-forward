@@ -50,7 +50,9 @@ Surface list: native input envelope → path normalization → existing lease ch
 denial response and existing decision facts → project hook entry → skill/Codex guide →
 real worker edit/file-state evidence. Pack source and deployed script are synchronized.
 The settings entries are explicit repo-owned opt-ins, not new defaults for every pack
-consumer. No personal config or Codex trust database is written.
+consumer. The emitter writes no personal config or Codex trust database. Later explicit
+user approval authorizes native UI trust for the one reviewed definition; no direct trust
+database edit, project-trust change or permission-mode change is allowed.
 
 ## Smallest correct implementation
 
@@ -105,24 +107,26 @@ envelopes or an explicitly blocked trust observation must accompany the implemen
 Claude's existing envelope and response are established in the Phase-2 conformance suite;
 the actual SDK adapter must still show a refusal after this entry is installed.
 
-## Failure modes and adversarial analysis (STRIDE-lite)
+## Adversarial analysis (STRIDE-lite)
 
-| Boundary / threat | Disposition and proof |
-|---|---|
-| Payload spoofs session or cwd (S/E) | Environment identity and actual process cwd win; forged fields do not clear a lease in subprocess tests. |
-| Patch contains several files or a rename (T/E) | Check every source and move destination; one denied path denies the entire native invocation. Mixed-file/move tests. |
-| Malformed/oversize known write or missing record/identity (T/D) | Bounded parse, explicit NOT CHECKED; Codex denies instead of unsupported ask. Negative tests include empty command and wrong types. |
-| Relative path from a subdirectory, traversal or symlink alias (T/E) | Normalize to the actual linked root; test subdirectory and path aliases; paths outside root do not silently pass. |
-| Hook trust absent, disabled hooks, native error/timeout (E/D) | Detect in actual profile qualification and refuse readiness. Host fail-open behavior remains a stated limitation, not something a payload adapter can repair. |
-| Guard install overwrites user settings (T) | Generator only emits JSON. Repo installation preserves existing settings and hooks; no global files or trust records changed. |
-| Patch content appears in durable facts (I) | Existing decision records receive path/verdict metadata, not patch bodies. Sentinel content must be absent from generated logs. |
-| Check/use race and shell bypass (E) | Existing cooperative integrity boundary accepted by ADR-0010; no malicious-process or arbitrary-shell containment claim. Commit floor retained. |
+Failure modes cover input, dependency, state, concurrency, resource and time boundaries.
+
+| Boundary | Threat | Disposition |
+|---|---|---|
+| Payload → native hook | S/E: spoofed session/cwd | Mitigate: environment identity and actual process cwd win; forged fields do not clear leases in subprocess tests. |
+| Native patch → target list | T/E: omitted file or move target | Mitigate: check every source/destination; any refusal denies the whole invocation. Mixed-file and move tests. |
+| Payload / ledger → decision | T/D: malformed, oversized, absent or unreadable input/state | Mitigate: bounded parse and explicit NOT CHECKED; Codex denies instead of unsupported ask. Negative type, bound and filesystem-error tests. |
+| Path / lease → physical checkout | T/E: traversal, symlink, case or Unicode alias | Mitigate: normalize both sides in actual checkout; preserve filename bytes, observe case behavior, conservatively refuse ambiguous collisions. Alias and escape tests. |
+| Native host → configured guard | E/D: missing trust, disabled/error/timed-out hook | Detect and refuse qualification. Accept host fail-open limitations only as named blockers; a payload adapter cannot repair host admission. |
+| Config emitter → project settings | T: overwritten settings or injected command | Mitigate: JSON-only emitter, explicit merge, fixed quoted command; hostile-checkout execution test. No global/trust writes. |
+| Patch → local decision facts | I: content retention | Mitigate: path/verdict/context metadata only; patch sentinel must be absent from logs. |
+| Check → subsequent mutation | E: check/use race or shell bypass | Accept ADR-0010 cooperative integrity scope; no malicious-process/arbitrary-shell containment claim. Commit floor retained. |
 
 ## Privacy analysis (LINDDUN-lite)
 
-| Data flow | Finding / disposition | Retention / rights |
-|---|---|---|
-| Hook input → decision facts | Existing session/path linkability; retain only existing bounded decision metadata, never raw patch content or credentials | Existing local ledger lifecycle; diagnostic raw hooks remain private and are exported only as allowlisted shapes/hashes |
+| Data flow / category | LINDDUN finding | Disposition | Control / rationale | Retention & rights path |
+|---|---|---|---|---|
+| Hook input/environment → local decision facts | L/I: session/path/cwd can identify the local workspace or account directory | mitigate | Existing decision grain with host/cwd metadata; no raw patches or credentials. Export only allowlisted shapes/hashes and cwd-match booleans. | Existing local ledger lifecycle; raw diagnostics remain private and can be removed locally. Committed sanitized proof follows Git retention. |
 
 No new personal-data category or egress. UI is existing plain JSON and native refusal text;
 no new visual surface. Unknown inspection state is never rendered as enforcing. Telemetry
@@ -168,8 +172,8 @@ required hooks/permissions/Owner-veto/cancel/handback capabilities are actually 
 | Independent design gate | `al-01M30J3RMQPHATZN93FJFM62SD` clears trust inventory and command-string conditions | Verified review; implementation is separate |
 | Independent code gate | `al-01M30JP6RNV51Q1RVB9DN1BQ9T` clears three reproduced alias/state/Unicode defects | Verified review and real CLI regressions |
 | Hook normalization and quoting | 46 focused tests, 21 subtests; three killed mutants | Verified locally; not native host admission |
-| Codex configured entry | JSON emitted and merged, no trust database written | Verified file; native inventory currently empty, cause unresolved |
-| Native enforcement | Fresh committed worker probes follow release gates | Not yet qualified |
+| Codex configured entry | Primary-source discovery, explicit user approval `al-01M30M6KDETB877S4TG8SY7X3J`, native individual-hook review and same-hash trusted read-back | Verified; no trust-all, bypass flag or permission-mode change |
+| Native enforcement | Corrected-base Claude and Codex at `7d3f10b`, independently cleared by `al-01M30KTQCPZAFSDXXWN6E0BDY0` and `al-01M30MAQS9W0NBE5J85VWXYMF3` | Verified Write/apply_patch boundaries only; full profiles unqualified |
 
 Design DoD: existing spec/ADR trace, domain grain/history, surface contract, failure modes,
 STRIDE/privacy, selection ladder, bounded graph and testing union are above. No new visual
