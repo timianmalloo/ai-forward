@@ -1,0 +1,53 @@
+# Consolidate recurring lessons for human review
+
+Use this skill to run an offline consolidation pass over committed history, defect classes, mitigations and markers. It proposes learnings; humans approve, edit, reject or defer before anything is promoted.
+
+## When to use it
+
+Use `dream` periodically, after substantial work, or after profiling reveals repeated patterns. It is for learning from the corpus, not for fixing a live bug directly.
+
+## What you need
+
+You need committed audit history and registers. Promotion requires a human review of the generated HTML and a decisions file.
+
+## Try it
+
+Slash-command harnesses:
+
+```text
+/dream --days 30 Focus on repeated coordination and prompt-scope problems.
+```
+
+Codex equivalent:
+
+```text
+$dream --days 30 Focus on repeated coordination and prompt-scope problems.
+```
+
+## What happens
+
+The deterministic pass stages and deduplicates signals, excludes tainted or sensitive material, optionally lets the running agent propose abstractions, then renders a review view. Promotion happens only through the explicit decisions application step.
+
+## What you get
+
+Illustrative artifact shape:
+
+```text
+docs/dreams/drm-20260922/dream.json
+docs/dreams/drm-20260922/index.html
+Proposals: class, evidence, proposed control, federation scope
+```
+
+The dream run itself does not silently rewrite the learning store.
+
+## Review before continuing
+
+Open the review view and inspect evidence, boundary and control for each proposal. Promote only items with falsifiable controls. Reject vague lessons that cannot fire when the problem recurs.
+
+## Tips and recovery
+
+If the corpus has no valid signals, a valid empty dream is better than fabricated insight. If a proposal contains repo-specific names that should not cross boundaries, keep it local or reject it.
+
+## Where to go next
+
+Use [apply-learnings](#skill-apply-learnings) to push approved general learnings to target repos, or [extendaibundle](#skill-extendaibundle) when a learning belongs in the pack itself.

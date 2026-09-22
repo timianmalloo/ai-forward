@@ -1,0 +1,52 @@
+# Prepare a safe multi-session work plan
+
+Use this skill before assigning work to several agents or humans. It classifies artifacts, identifies what must stay serial, and writes the coordination plan that execution will follow.
+
+## When to use it
+
+Use `prepare-for-coordination` when a feature may split into independent tracks. It is the planning half of coordination. If the honest answer is one session, the skill should say so.
+
+## What you need
+
+Bring a scope, spec, architecture doc or milestone. The repository should have the coordination scripts installed. You need authority to decide ownership boundaries.
+
+## Try it
+
+Slash-command harnesses:
+
+```text
+/prepare-for-coordination Plan HarborTasks CSV export. Test whether backend
+export and UI affordance can run independently after the shared schema decision.
+```
+
+Codex equivalent:
+
+```text
+$prepare-for-coordination Plan HarborTasks CSV export coordination.
+```
+
+## What happens
+
+The skill checks the coordination layer, classifies files as authored, derived or append-only, names the serial spine, and assigns tracks only where independence is real. It records budgets, exit evidence and harness qualification.
+
+## What you get
+
+Illustrative artifact shape:
+
+```text
+docs/coordination/harbortasks-export.md
+docs/coordination/harbortasks-export.html
+Sections: layer state, artifact classes, tracks, serial spine, seams, struck tracks
+```
+
+## Review before continuing
+
+Check that every track has one owner, owned authored paths, a budget and concrete exit evidence. Shared schemas, vocabulary and unsettled product decisions usually stay serial.
+
+## Tips and recovery
+
+If two tracks edit the same authored file, change the boundary instead of adding process around the collision. If harness capability is unverified, use brief mode.
+
+## Where to go next
+
+Use [execute-with-coordination](#skill-execute-with-coordination) to run the plan, or [optimize-graph](#skill-optimize-graph) for a single track's internal work shape.

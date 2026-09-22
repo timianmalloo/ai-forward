@@ -1,0 +1,54 @@
+# Run a coordination plan without taking over the tracks
+
+Use this skill to execute a prepared coordination plan. The coordinator opens or briefs workers, watches seams, verifies returned evidence and joins the work.
+
+## When to use it
+
+Use `execute-with-coordination` only after a plan exists. Without a plan, run [prepare-for-coordination](#skill-prepare-for-coordination) first. The coordinator should not start authoring track work.
+
+## What you need
+
+You need a plan path or plan id, the coordination layer in a clean state, qualified harness behavior or manual brief fallback, and authority to rule on decisions.
+
+## Try it
+
+Slash-command harnesses:
+
+```text
+/execute-with-coordination --brief docs/coordination/harbortasks-export.md
+```
+
+Codex equivalent:
+
+```text
+$execute-with-coordination --brief docs/coordination/harbortasks-export.md
+```
+
+Use `--agents` only when the current harness can spawn workers safely. Use `--launch` only for a qualified native runner profile.
+
+## What happens
+
+The skill checks the plan and layer, opens one worktree per worker or emits briefs, dispatches each track with owned paths, budget and exit evidence, manages seam requests, and joins in dependency order.
+
+## What you get
+
+Illustrative output shape:
+
+```text
+Track export-backend: returned commit and test evidence
+Track export-ui: returned mockup/state evidence
+Seams: filename rule resolved by backend owner
+Join: integrated after evidence review
+```
+
+## Review before continuing
+
+Verify track evidence yourself. A worker saying “done” is not acceptance. Confirm no worker edited outside its owned authored paths and no join hides stale generated files.
+
+## Tips and recovery
+
+If a worker stalls, use the plan's deadline and fallback. If tracks collide, fix ownership; never delete a worktree to resolve a conflict.
+
+## Where to go next
+
+Use [session-profiler](#skill-session-profiler) after a coordinated run to learn whether the split paid off, or [dream](#skill-dream) if repeated boundary problems became a learning.

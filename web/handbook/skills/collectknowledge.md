@@ -1,0 +1,56 @@
+# Build a sourced knowledge base before design
+
+Use this skill when a project needs domain understanding before it can safely specify or design. It gathers external and internal knowledge into structured Markdown that later workflows can cite.
+
+## When to use it
+
+Use `collectknowledge` at the start of work in an unfamiliar, regulated or high-stakes domain. It is especially useful before product specification, architecture, or adding domain experts.
+
+## What you need
+
+Bring the topic, intended decision and any trusted starting sources. The skill may use web or repository research where available, but each claim must remain source-backed and confidence-labeled.
+
+## Try it
+
+Slash-command harnesses:
+
+```text
+/collectknowledge Research CSV export safety for task-management data:
+spreadsheet injection, authorization boundaries, and empty export conventions.
+```
+
+Codex equivalent:
+
+```text
+$collectknowledge Research CSV export safety for task-management data.
+```
+
+## What happens
+
+The skill frames the domain questions, gathers sources, separates established facts from open assumptions, and writes a knowledge base under `docs/knowledge/`. It is not a substitute for a product decision; it supplies evidence for one.
+
+## What you get
+
+Illustrative artifact shape:
+
+```text
+docs/knowledge/csv-export-safety/
+  overview.md
+  findings.md
+  references.md
+  glossary.md
+```
+
+The useful output is not volume. It is sourced findings, confidence labels, and terms the team can reuse consistently.
+
+## Review before continuing
+
+Check that primary sources are preferred, claims are not copied without context, and uncertain areas remain marked. If research affects safety, privacy or compliance, have the relevant human owner review it.
+
+## Tips and recovery
+
+If the agent drifts into designing the feature, stop it and return to the evidence questions. If a source cannot be checked, keep the claim out of the verified findings.
+
+## Where to go next
+
+Use [specify](#skill-specify) to turn the evidence into acceptance criteria, or [adddomainexperts](#skill-adddomainexperts) if the repository needs recurring subject-matter review.

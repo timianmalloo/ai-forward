@@ -1,0 +1,55 @@
+# Change dependencies or architecture without losing behavior
+
+Use this skill for dependency upgrades, framework migrations and large refactors. It characterizes current behavior first, migrates in small vertical increments, and records intentional differences.
+
+## When to use it
+
+Use `migrate` for SDK or major-version upgrades, library swaps, platform moves, schema-affecting refactors, or cross-cutting architecture changes. Do not use it for a small local cleanup.
+
+## What you need
+
+Bring the source and target versions, scope, constraints, rollback needs and the behavior that must remain equivalent. Existing tests help, but missing characterization is itself work.
+
+## Try it
+
+Slash-command harnesses:
+
+```text
+/migrate Plan HarborTasks' CSV library upgrade from CsvA to CsvB. Preserve
+headers, escaping, authorization behavior and empty export output.
+```
+
+Codex equivalent:
+
+```text
+$migrate Plan HarborTasks CSV library upgrade from CsvA to CsvB.
+```
+
+## What happens
+
+The skill pins current behavior with golden or characterization tests, computes blast radius, migrates in increments and compares old and new behavior. It treats rollback and intentional differences as first-class outputs.
+
+## What you get
+
+Illustrative artifact shape:
+
+```text
+docs/migrations/csv-library-upgrade.md
+  baseline behavior
+  migration increments
+  intentional differences
+  rollback plan
+  validation matrix
+```
+
+## Review before continuing
+
+Check that current behavior was measured before change, not reconstructed from memory. Destructive or irreversible changes need a backward-compatible path and exercised rollback.
+
+## Tips and recovery
+
+If the first increment touches too many surfaces, shrink to a walking skeleton. If a library behavior is unknown, run a small spike before building the migration on it.
+
+## Where to go next
+
+Use [design-slice](#skill-design-slice) when a migration changes contracts, or [document](#skill-document) after public surfaces shift.

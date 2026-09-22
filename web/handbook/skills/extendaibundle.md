@@ -1,0 +1,54 @@
+# Extend the AI-Forward Pack consistently
+
+Use this skill when you want to add or change the pack itself: a new skill, knowledge doc, template, script or adapter behavior. It runs the pack-change loop so every surface stays in sync.
+
+## When to use it
+
+Use `extendaibundle` from the AI-Forward repository for pack capabilities, not for product features in a consuming repo. Use [apply-learnings](#skill-apply-learnings) or [updatepack](#skill-updatepack) when distributing existing learnings.
+
+## What you need
+
+Bring the capability you want, why it belongs in the pack, and any evidence or learning behind it. Pack work must update source, generated installs and verification gates together.
+
+## Try it
+
+Slash-command harnesses:
+
+```text
+/extendaibundle Add a handbook skill page coverage check for canonical pack skills.
+```
+
+Codex equivalent:
+
+```text
+$extendaibundle Add a handbook skill page coverage check for canonical pack skills.
+```
+
+## What happens
+
+The skill compresses collect, specify, design and implement for pack work. It scaffolds through pack tools, updates every required surface, adds evaluation or verification where needed, and runs bundle checks.
+
+## What you get
+
+Illustrative artifact shape:
+
+```text
+pack/commands/<new-skill>/SKILL.md
+pack/adapters/copilot/prompts/<new-skill>.prompt.md
+pack/evals/cases/<case>.json
+updated generated .claude/.github/.grok/.agents/docs surfaces after sync
+```
+
+Exact outputs depend on the capability type.
+
+## Review before continuing
+
+Check that the change belongs in the pack, not only one repo. Verify no surface was missed and no generated copy drifted from source. Pack verification must pass before commit.
+
+## Tips and recovery
+
+If the change is only documentation website content, do not force a pack revision. If a new capability has no evaluation or control, narrow it until it is verifiable.
+
+## Where to go next
+
+Run affected evals and bundle verification, then use [updatepack](#skill-updatepack) in consuming repos after the pack change lands.
