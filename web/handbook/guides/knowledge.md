@@ -23,6 +23,14 @@ For HarborTasks, preserve the decision that export includes all matching tasks r
 than only the 20 visible rows. The next engineer should not need to read a long chat
 to discover why the query traverses multiple pages.
 
+```diagram
+cycle | How project knowledge compounds
+01 | Capture the decision | Preserve the outcome, reason, constraints, and unresolved questions in the artifact that owns them.
+02 | Connect the evidence | Link specifications, designs, code-facing documentation, and checks through typed relationships.
+03 | Recheck after change | Flag dependent artifacts when a contract or assumption moves, then inspect the affected claims.
+04 | Improve the control | Turn recurring failures into tests, gates, or always-loaded guidance that prevents the class from returning.
+```
+
 ## Maintain a map rather than a folder maze
 
 The **Docs Explorer** is a navigable map of repository artifacts. Documents carry

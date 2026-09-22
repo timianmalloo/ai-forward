@@ -37,6 +37,10 @@ class HandbookTests(unittest.TestCase):
         self.assertEqual(len(expected) + len(guides), report["pages"])
         self.assertIn("Build with AI agents", outputs["docs/portal/index.html"])
         self.assertNotIn('src="https://', outputs["docs/portal/index.html"])
+        self.assertEqual(
+            outputs["docs/portal/index.html"],
+            outputs["docs/mockups/github-pages-handbook.html"],
+        )
         self.assertEqual(outputs, self.api.build(self.root)[0])
 
     def test_missing_skill_guide_fails_instead_of_creating_an_empty_card(self):

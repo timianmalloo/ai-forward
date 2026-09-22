@@ -645,6 +645,11 @@ window.PORTAL_DATA = {
         "title": "Dream Review — mockup",
         "summary": "Self-contained, dependency-free high-fidelity mockup of the Dream Review view — the Master-Detail approval queue the maintainer uses to review a dream's proposals (evidence, provenance, confidence, proposed control, federation scope) and...",
         "path": "../mockups/dream-review.html"
+      },
+      {
+        "title": "AI-Forward GitHub Pages handbook — reviewable build",
+        "summary": "Self-contained review build of the public AI-Forward handbook after its visual elevation. It exercises the same canonical sources and generated HTML as the Pages front door, including the path, cycle, and branch relationship diagrams. review-suggested: []",
+        "path": "../mockups/github-pages-handbook.html"
       }
     ]
   },
@@ -3471,6 +3476,12 @@ window.PORTAL_DATA = {
         "summary": "Self-contained, dependency-free high-fidelity mockup of the Dream Review view — the Master-Detail approval queue the maintainer uses to review a dream's..."
       },
       {
+        "id": "mockup-github-pages-handbook",
+        "type": "design",
+        "title": "AI-Forward GitHub Pages handbook — reviewable build",
+        "summary": "Self-contained review build of the public AI-Forward handbook after its visual elevation. It exercises the same canonical sources and generated HTML as the..."
+      },
+      {
         "id": "note-20260712-model-orchestration-policy",
         "type": "decision-note",
         "title": "Model-orchestration routing policy for AI-Forward skills",
@@ -3663,6 +3674,12 @@ window.PORTAL_DATA = {
         "summary": "An actual Grok search_replace call exposed a missing supported tool name in both native and inherited ownership guards. One instrumented diagnostic captures..."
       },
       {
+        "id": "note-20260922-semantic-diagrams-in-reader-first-handbook",
+        "type": "decision-note",
+        "title": "The public handbook uses semantic HTML diagrams for selected relationships",
+        "summary": "The public handbook renders selected multi-step, loop, and branch relationships as labelled HTML figures backed by ordered lists. The decision affects handbook..."
+      },
+      {
         "id": "note-autopilot-open-questions-decisions",
         "type": "decision-note",
         "title": "Decisions on PACK-O open questions (logging, class granularity, autopilot caps)",
@@ -3733,6 +3750,12 @@ window.PORTAL_DATA = {
         "type": "doc",
         "title": "Plan: make the pack's scripts, hooks, tools and skills work unchanged on Windows and macOS",
         "summary": "Six phases, ranked by benefit ÷ cost, each landing with a control that was observed failing first: one interpreter resolver used everywhere; three lints..."
+      },
+      {
+        "id": "plan-github-pages-ui-elevation",
+        "type": "doc",
+        "title": "GitHub Pages UI elevation execution graph",
+        "summary": "Bounded execution graph for elevating the public AI-Forward handbook. It keeps the canonical web sources, generated Pages surface, UI proof, accessibility..."
       },
       {
         "id": "plan-multi-harness-runner",
@@ -3853,6 +3876,12 @@ window.PORTAL_DATA = {
         "type": "proof-pack",
         "title": "Docs Explorer Redesign - Proof Pack",
         "summary": "Accepted implementation evidence for the deterministic, local-first Docs Explorer, native Spatial 3D knowledge portal, and bounded grounding packet..."
+      },
+      {
+        "id": "proof-github-pages-handbook-ui",
+        "type": "proof-pack",
+        "title": "GitHub Pages handbook UI proof",
+        "summary": "Browser, generator, security, accessibility, and mutation evidence for the elevated AI-Forward Pages handbook. It records the red-before-green observations for..."
       },
       {
         "id": "proof-grok-build-surface",
@@ -4087,6 +4116,12 @@ window.PORTAL_DATA = {
         "type": "doc",
         "title": "UI & UX Capability Guide",
         "summary": "The how-to layer over this repository's seven UI standards: the layer stack and what each one decides, a job-to-path picker, the /ui-design loop, the command..."
+      },
+      {
+        "id": "ui-review-github-pages-handbook",
+        "type": "doc",
+        "title": "UI review — AI-Forward GitHub Pages handbook",
+        "summary": "Adversarial review of the elevated public handbook across structure, responsive diagrams, hard states, accessibility, token discipline, and visual craft. The..."
       },
       {
         "id": "ui-review-pack-explainer",
@@ -6387,6 +6422,26 @@ window.PORTAL_DATA = {
         "rel": "implements"
       },
       {
+        "from": "mockup-github-pages-handbook",
+        "to": "design-reader-first-handbook",
+        "rel": "implements"
+      },
+      {
+        "from": "mockup-github-pages-handbook",
+        "to": "proof-github-pages-handbook-ui",
+        "rel": "tested-by"
+      },
+      {
+        "from": "mockup-github-pages-handbook",
+        "to": "spec-documentation-portal",
+        "rel": "implements"
+      },
+      {
+        "from": "mockup-github-pages-handbook",
+        "to": "ui-review-github-pages-handbook",
+        "rel": "relates-to"
+      },
+      {
         "from": "note-20260712-model-orchestration-policy",
         "to": "architecture",
         "rel": "relates-to"
@@ -6847,6 +6902,16 @@ window.PORTAL_DATA = {
         "rel": "refines"
       },
       {
+        "from": "note-20260922-semantic-diagrams-in-reader-first-handbook",
+        "to": "design-reader-first-handbook",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20260922-semantic-diagrams-in-reader-first-handbook",
+        "to": "mockup-github-pages-handbook",
+        "rel": "relates-to"
+      },
+      {
         "from": "note-autopilot-open-questions-decisions",
         "to": "defect-classes",
         "rel": "relates-to"
@@ -6950,6 +7015,21 @@ window.PORTAL_DATA = {
         "from": "plan-cross-platform-readiness",
         "to": "investigation-cross-platform-readiness",
         "rel": "implements"
+      },
+      {
+        "from": "plan-github-pages-ui-elevation",
+        "to": "design-reader-first-handbook",
+        "rel": "relates-to"
+      },
+      {
+        "from": "plan-github-pages-ui-elevation",
+        "to": "kb-graph-and-loop-engineering",
+        "rel": "depends-on"
+      },
+      {
+        "from": "plan-github-pages-ui-elevation",
+        "to": "spec-documentation-portal",
+        "rel": "relates-to"
       },
       {
         "from": "plan-multi-harness-runner",
@@ -7269,6 +7349,16 @@ window.PORTAL_DATA = {
       {
         "from": "proof-docs-explorer-redesign",
         "to": "threat-model",
+        "rel": "relates-to"
+      },
+      {
+        "from": "proof-github-pages-handbook-ui",
+        "to": "design-reader-first-handbook",
+        "rel": "relates-to"
+      },
+      {
+        "from": "proof-github-pages-handbook-ui",
+        "to": "mockup-github-pages-handbook",
         "rel": "relates-to"
       },
       {
@@ -8124,6 +8214,21 @@ window.PORTAL_DATA = {
       {
         "from": "ui-capability-guide",
         "to": "docs-index",
+        "rel": "relates-to"
+      },
+      {
+        "from": "ui-review-github-pages-handbook",
+        "to": "design-reader-first-handbook",
+        "rel": "documents"
+      },
+      {
+        "from": "ui-review-github-pages-handbook",
+        "to": "mockup-github-pages-handbook",
+        "rel": "relates-to"
+      },
+      {
+        "from": "ui-review-github-pages-handbook",
+        "to": "proof-github-pages-handbook-ui",
         "rel": "relates-to"
       },
       {
