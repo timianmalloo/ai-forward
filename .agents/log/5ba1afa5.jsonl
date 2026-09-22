@@ -1,0 +1,4 @@
+{"agent": "5ba1afa5", "at": 1788626233.370545, "kind": "session-start", "path": "-", "seq": 1, "session": "5ba1afa5", "wi": "WI-0", "worktree": "C:/Projects/ai-forward-session-profiler"}
+{"agent": "5ba1afa5", "at": 1788641382.8643932, "kind": "session-end", "path": "-", "seq": 2, "session": "5ba1afa5", "wi": "WI-0", "worktree": "C:/Projects/ai-forward-session-profiler"}
+{"agent": "5ba1afa5", "at": 1788641623.4447496, "kind": "session-start", "path": "-", "seq": 3, "session": "5ba1afa5", "wi": "WI-0", "worktree": "C:/Projects/ai-forward-pack-apply"}
+{"agent": "5ba1afa5", "at": 1788642631.7923431, "kind": "session-end", "path": "-", "seq": 4, "session": "5ba1afa5", "wi": "WI-0", "worktree": "C:/Projects/ai-forward-pack-apply"}

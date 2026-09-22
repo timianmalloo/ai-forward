@@ -1,0 +1,2 @@
+{"agent": "coord-ci-parity-20260922", "at": 1790036142.9627078, "kind": "session-start", "path": "-", "seq": 1, "session": "coord-ci-parity-20260922", "tree": "worktree", "wi": "WI-0", "worktree": "ai-forward-fix-coordination-ci-parity"}
+{"agent": "coord-ci-parity-20260922", "at": 1790040332.9393728, "kind": "session-end", "path": "-", "seq": 2, "session": "coord-ci-parity-20260922", "wi": "WI-0", "worktree": "ai-forward-fix-coordination-ci-parity"}
