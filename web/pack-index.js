@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 301
+"count": 302
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 480,
+"total": 481,
 "items": [
 {
 "cat": "knowledge",
@@ -1034,7 +1034,7 @@ window.PACK_INDEX = {
 "summary": "Private, bounded, append-only runtime controls for an already admitted run.",
 "path": "pack/scripts/coord_runtime.py",
 "kind": "script",
-"text": "coord_runtime.py private, bounded, append-only runtime controls for an already admitted run. one record is one input or decision fact. filesystem ownership is the authority boundary; this does not isolate mutually hostile programs running as the same user. encoded digest require __init__ locked _records records _append enqueue finish next_prompt dispatched permission decide answer pending"
+"text": "coord_runtime.py private, bounded, append-only runtime controls for an already admitted run. one record is one input or decision fact. filesystem ownership is the authority boundary; this does not isolate mutually hostile programs running as the same user. encoded digest require _busy __init__ locked _retry_busy _records records action _append enqueue action finish action next_prompt dispatched action permission action decide action answer pending"
 },
 {
 "cat": "scripts",
@@ -3987,6 +3987,15 @@ window.PACK_INDEX = {
 "path": "docs/proof/coord-collaboration-phase4.md",
 "kind": "proof-pack",
 "text": "proof pack - coord collaboration mode, phase 4 proof pack for coord collaboration mode: active-session projection, collaboration health checks, owner-aware claim warnings, seam-request workflow, collaboration summary, and the session-contract template. records the red-first evidence, test oracles, commands, and residual risks for the shippable cross-session collaboration slice. coordination collaboration proof implements design-coord-collaboration-phase4 implements spec-agent-coordination"
+},
+{
+"cat": "graph",
+"id": "proof-coordination-ci-parity-regressions",
+"title": "Proof Pack - coordination CI parity regressions",
+"summary": "Proof for the CI-only regressions caused by the approved P1-P6 coordination implementation. It covers bounded-process termination seams, explicit ACP model-setting authority, and Windows runtime-control lock contention.",
+"path": "docs/proof/coordination-ci-parity-regressions.md",
+"kind": "proof-pack",
+"text": "proof pack - coordination ci parity regressions proof for the ci-only regressions caused by the approved p1-p6 coordination implementation. it covers bounded-process termination seams, explicit acp model-setting authority, and windows runtime-control lock contention. coordination ci regression proof documents api-coord_runtime"
 },
 {
 "cat": "graph",

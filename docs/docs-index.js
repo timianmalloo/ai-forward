@@ -8932,6 +8932,32 @@ window.DOCS_INDEX = {
       "sourceSha256": "5c7ef8f2963868ec2053fded934ab8e42cd80d6ca0af1eb13a405aeab1229eae"
     },
     {
+      "id": "proof-coordination-ci-parity-regressions",
+      "path": "docs/proof/coordination-ci-parity-regressions.md",
+      "title": "Proof Pack - coordination CI parity regressions",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "coordination CI parity regression repair",
+      "reviewBy": "2026-12-22",
+      "reviewSuggested": [],
+      "summary": "Proof for the CI-only regressions caused by the approved P1-P6 coordination implementation. It covers bounded-process termination seams, explicit ACP model-setting authority, and Windows runtime-control lock contention.",
+      "tags": [
+        "coordination",
+        "ci",
+        "regression",
+        "proof"
+      ],
+      "links": [
+        {
+          "to": "api-coord_runtime",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "2421651b87ad5bc699686c80ead9ff60a48a8e0f543225688c2fca320d939ca1"
+    },
+    {
       "id": "proof-coordination-end-to-end",
       "path": "docs/proof/coordination-end-to-end.md",
       "title": "End-to-end coordination qualification",
@@ -10690,5 +10716,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "fd1f07b607ce8a22a3aadff0c618030644d87022f467e200a8953fa3c78ed9b7"
+  "graphSha256": "5bfeb13088e6b59469b5cc2f4e1c6ca0007e0947650d5e00a4685a606fa73fba"
 };

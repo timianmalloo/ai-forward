@@ -136,9 +136,22 @@ class RuntimeControls(unittest.TestCase):
         try:
             self.assertEqual(b"locked", process.stdout.readline().rstrip(b"\r\n"))
             started = time.monotonic()
-            with self.assertRaises(ValueError):
+            with self.assertRaisesRegex(ValueError, "runtime_control_busy"):
                 self.box.records()
             self.assertLess(time.monotonic() - started, .5)
+            self.assertEqual([], list(self.path.glob("*.json")))
+        finally:
+            process.communicate(input=b"release", timeout=2)
+
+    def test_enqueue_while_another_process_holds_lock_fails_busy_without_writing(self):
+        process = subprocess.Popen([sys.executable, str(Path(__file__).resolve()),
+                                    "--hold-lock", str(self.path)], stdout=subprocess.PIPE,
+                                   stdin=subprocess.PIPE, stderr=subprocess.PIPE)
+        try:
+            self.assertEqual(b"locked", process.stdout.readline().rstrip(b"\r\n"))
+            with self.assertRaisesRegex(ValueError, "runtime_control_busy"):
+                self.box.enqueue("al-busy", "abc", 1)
+            self.assertEqual([], list(self.path.glob("*.json")))
         finally:
             process.communicate(input=b"release", timeout=2)
 

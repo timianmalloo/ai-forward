@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-21T22:42:31Z",
+  "generated": "2026-09-22T00:40:27Z",
   "audit": [
     {
       "actor": null,
@@ -13048,6 +13048,35 @@ window.AUDIT_DATA = {
       "fan_out": 4,
       "started_at": "2026-09-21T20:33:08Z",
       "duration_seconds": 7763.0
+    },
+    {
+      "id": "al-01M338X4WTENCGX9CRT8S3Z0SQ",
+      "shortname": "implement-coord-ci-parity",
+      "datetime": "2026-09-22T00:40:27Z",
+      "session": "coord-ci-parity-20260922",
+      "prompt": "Finish regressions caused by approved P1-P6 implementation; fix CI failures for bounded_process, coord_transport expected model, and coord_runtime Windows locking; no live harness or delegates.",
+      "summary": "Fixed caused CI regressions: explicit runtime_control_busy retry semantics, stale transport/process test oracles, revision 91 install entry, proof pack, generated sync. Targeted tests and full verify-bundle passed.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "pack/scripts/coord_runtime.py",
+        "tests/docs_explorer/test_coord_runtime.py",
+        "tests/docs_explorer/test_coord_transport.py",
+        "tests/docs_explorer/test_bounded_process.py",
+        "docs/proof/coordination-ci-parity-regressions.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-22T00:16:31Z",
+      "duration_seconds": 1436.0
     }
   ],
   "changes": [

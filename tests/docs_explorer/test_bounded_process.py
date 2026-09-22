@@ -212,12 +212,13 @@ class BoundedProcessTests(unittest.TestCase):
             subprocess.TimeoutExpired("fixture", 2),
             subprocess.TimeoutExpired("fixture", 2),
         ]
+        terminate = mock.Mock(return_value=None)
 
-        with mock.patch.object(self.module, "_terminate_tree"):
-            returncode, error = self.module._wait_after_termination(process)
+        returncode, error = self.module._wait_after_termination(process, terminate=terminate)
 
         self.assertEqual(-9, returncode)
         self.assertIn("did not terminate", error)
+        terminate.assert_called_once_with()
 
     def test_windows_missing_job_terminates_gate_process_without_taskkill(self):
         process = mock.Mock(pid=123)

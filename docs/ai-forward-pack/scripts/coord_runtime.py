@@ -15,6 +15,12 @@ import time
 
 MAX_RECORDS = 128
 MAX_RECORD_BYTES = 256 * 1024
+LOCK_ATTEMPT_SECONDS = .05
+OPERATION_ATTEMPT_SECONDS = .35
+
+
+class _RuntimeControlBusy(ValueError):
+    pass
 
 
 def encoded(value):
@@ -29,6 +35,10 @@ def digest(value):
 def require(condition):
     if not condition:
         raise ValueError("invalid_runtime_control")
+
+
+def _busy():
+    raise _RuntimeControlBusy("runtime_control_busy")
 
 
 class Controls:
@@ -46,7 +56,7 @@ class Controls:
             with pinned_directory(self.directory):
                 protect_private_directory(self.directory)
                 with open_regular(self.directory / ".lock", writable=True, create=True) as stream:
-                    deadline = time.monotonic() + .05
+                    deadline = time.monotonic() + LOCK_ATTEMPT_SECONDS
                     acquired = False
                     try:
                         while True:
@@ -56,7 +66,8 @@ class Controls:
                                 acquired = True
                                 break
                             except OSError:
-                                require(time.monotonic() < deadline)
+                                if time.monotonic() >= deadline:
+                                    _busy()
                                 time.sleep(.005)
                         yield
                     finally:
@@ -73,17 +84,28 @@ class Controls:
         fd = os.open(self.directory / ".lock", os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW, 0o600)
         try:
             require(stat.S_ISREG(os.fstat(fd).st_mode))
-            deadline = time.monotonic() + .05
+            deadline = time.monotonic() + LOCK_ATTEMPT_SECONDS
             while True:
                 try:
                     fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
                     break
                 except BlockingIOError:
-                    require(time.monotonic() < deadline)
+                    if time.monotonic() >= deadline:
+                        _busy()
                     time.sleep(.005)
             yield
         finally:
             os.close(fd)
+
+    def _retry_busy(self, action):
+        deadline = time.monotonic() + OPERATION_ATTEMPT_SECONDS
+        while True:
+            try:
+                return action()
+            except _RuntimeControlBusy:
+                if time.monotonic() >= deadline:
+                    raise
+                time.sleep(.01)
 
     def _records(self):
         paths = sorted(itertools.islice(self.directory.glob("*.json"), MAX_RECORDS + 1))
@@ -112,8 +134,10 @@ class Controls:
         return rows
 
     def records(self):
-        with self.locked():
-            return self._records()
+        def action():
+            with self.locked():
+                return self._records()
+        return self._retry_busy(action)
 
     def _append(self, rows, kind, **fields):
         require(len(rows) < MAX_RECORDS)
@@ -145,19 +169,23 @@ class Controls:
         require(isinstance(compilation_id, str) and 0 < len(compilation_id) <= 256
                 and isinstance(prompt_sha256, str) and 0 < len(prompt_sha256) <= 64
                 and type(capacity) is int and 0 <= capacity <= 8)
-        with self.locked():
-            rows = self._records()
-            prompts = [r for r in rows if r["kind"] == "prompt"]
-            require(len(prompts) < capacity and not any(r["kind"] == "finish" for r in rows)
-                    and not any(r["compilation_id"] == compilation_id for r in prompts))
-            return self._append(rows, "prompt", compilation_id=compilation_id,
-                                prompt_sha256=prompt_sha256)
+        def action():
+            with self.locked():
+                rows = self._records()
+                prompts = [r for r in rows if r["kind"] == "prompt"]
+                require(len(prompts) < capacity and not any(r["kind"] == "finish" for r in rows)
+                        and not any(r["compilation_id"] == compilation_id for r in prompts))
+                return self._append(rows, "prompt", compilation_id=compilation_id,
+                                    prompt_sha256=prompt_sha256)
+        return self._retry_busy(action)
 
     def finish(self):
-        with self.locked():
-            rows = self._records()
-            require(not any(r["kind"] == "finish" for r in rows))
-            return self._append(rows, "finish")
+        def action():
+            with self.locked():
+                rows = self._records()
+                require(not any(r["kind"] == "finish" for r in rows))
+                return self._append(rows, "finish")
+        return self._retry_busy(action)
 
     def next_prompt(self):
         rows = self.records()
@@ -168,12 +196,14 @@ class Controls:
         return False if any(r["kind"] == "finish" for r in rows) else None
 
     def dispatched(self, prompt_id):
-        with self.locked():
-            rows = self._records()
-            sent = {r["prompt_id"] for r in rows if r["kind"] == "dispatch"}
-            pending = [r for r in rows if r["kind"] == "prompt" and r["id"] not in sent]
-            require(bool(pending) and pending[0]["id"] == prompt_id)
-            return self._append(rows, "dispatch", prompt_id=prompt_id)
+        def action():
+            with self.locked():
+                rows = self._records()
+                sent = {r["prompt_id"] for r in rows if r["kind"] == "dispatch"}
+                pending = [r for r in rows if r["kind"] == "prompt" and r["id"] not in sent]
+                require(bool(pending) and pending[0]["id"] == prompt_id)
+                return self._append(rows, "dispatch", prompt_id=prompt_id)
+        return self._retry_busy(action)
 
     def permission(self, request, expires_at):
         require(isinstance(request, dict) and isinstance(request.get("sessionId"), str)
@@ -187,22 +217,26 @@ class Controls:
                     and 0 < len(option["optionId"]) <= 256 and option["optionId"] not in ids
                     and option.get("kind") in ("allow_once", "allow_always", "reject_once", "reject_always"))
             ids.add(option["optionId"])
-        with self.locked():
-            return self._append(self._records(), "permission", request=request, expires_at=expires_at)
+        def action():
+            with self.locked():
+                return self._append(self._records(), "permission", request=request, expires_at=expires_at)
+        return self._retry_busy(action)
 
     def decide(self, request_id, option_id, now=None):
         now = time.time() if now is None else now
-        with self.locked():
-            rows = self._records()
-            matches = [r for r in rows if r["kind"] == "permission" and r["id"] == request_id]
-            require(len(matches) == 1)
-            request = matches[0]
-            require(now < request["expires_at"] and not any(
-                r["kind"] == "decision" and r["request_id"] == request_id for r in rows))
-            options = [o for o in request["request"]["options"] if o["optionId"] == option_id]
-            require(len(options) == 1 and options[0]["kind"] in ("allow_once", "reject_once", "reject_always"))
-            return self._append(rows, "decision", request_id=request_id,
-                                request_sha256=request["sha256"], option_id=option_id)
+        def action():
+            with self.locked():
+                rows = self._records()
+                matches = [r for r in rows if r["kind"] == "permission" and r["id"] == request_id]
+                require(len(matches) == 1)
+                request = matches[0]
+                require(now < request["expires_at"] and not any(
+                    r["kind"] == "decision" and r["request_id"] == request_id for r in rows))
+                options = [o for o in request["request"]["options"] if o["optionId"] == option_id]
+                require(len(options) == 1 and options[0]["kind"] in ("allow_once", "reject_once", "reject_always"))
+                return self._append(rows, "decision", request_id=request_id,
+                                    request_sha256=request["sha256"], option_id=option_id)
+        return self._retry_busy(action)
 
     def answer(self, request_id, now=None):
         now = time.time() if now is None else now

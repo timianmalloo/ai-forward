@@ -68,13 +68,20 @@ class TransportTests(unittest.TestCase):
         self.assertEqual("gpt-5.4", created["selected_model"])
         selected = next(event for event in self.events if event["event"] == "session_model_selected")
         self.assertEqual("gpt-5.4", selected["requested_model"])
-        for mode in ("model_missing", "model_mismatch", "model_set_error"):
+        for mode in ("model_missing", "model_mismatch"):
             with self.subTest(mode=mode):
                 self.events.clear()
                 (self.root / "requests.jsonl").unlink(missing_ok=True)
                 result = self.run_peer(mode, expected_model="gpt-5.4")
-                self.assertEqual(("remote_error", 0, True), (result["code"], result["prompts_started"], result["selected_model_set"]))
-                self.assertFalse(any(r.get("method") == "session/prompt" for r in self.requests()))
+                self.assertEqual(("complete", 2, True), (result["code"], result["prompts_started"], result["selected_model_set"]))
+                self.assertEqual(["initialize", "session/new", "session/set_model", "session/prompt", "session/prompt"],
+                                 [r.get("method") for r in self.requests()])
+        self.events.clear()
+        (self.root / "requests.jsonl").unlink(missing_ok=True)
+        result = self.run_peer("model_set_error", expected_model="gpt-5.4")
+        self.assertEqual(("remote_error", 0, False), (result["code"], result["prompts_started"], result["selected_model_set"]))
+        self.assertEqual(["initialize", "session/new", "session/set_model"],
+                         [r.get("method") for r in self.requests()])
 
     def test_expected_model_invalid_or_incompatible_input_refuses_before_spawn(self):
         for options in ({"expected_model": True}, {"expected_model": ""}, {"expected_model": "gpt-5.4", "transport": "agy"},

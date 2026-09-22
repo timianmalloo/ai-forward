@@ -3550,6 +3550,12 @@ window.PORTAL_DATA = {
         "summary": "Proof pack for coord collaboration mode: active-session projection, collaboration health checks, owner-aware claim warnings, seam-request workflow,..."
       },
       {
+        "id": "proof-coordination-ci-parity-regressions",
+        "type": "proof-pack",
+        "title": "Proof Pack - coordination CI parity regressions",
+        "summary": "Proof for the CI-only regressions caused by the approved P1-P6 coordination implementation. It covers bounded-process termination seams, explicit ACP..."
+      },
+      {
         "id": "proof-coordination-end-to-end",
         "type": "proof-pack",
         "title": "End-to-end coordination qualification",
@@ -6654,6 +6660,11 @@ window.PORTAL_DATA = {
         "from": "proof-coord-collaboration-phase4",
         "to": "spec-agent-coordination",
         "rel": "implements"
+      },
+      {
+        "from": "proof-coordination-ci-parity-regressions",
+        "to": "api-coord_runtime",
+        "rel": "documents"
       },
       {
         "from": "proof-coordination-end-to-end",
