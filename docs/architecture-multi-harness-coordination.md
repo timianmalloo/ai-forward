@@ -188,9 +188,39 @@ sequenceDiagram
 This is the important change from the early approach: the worker does **not** hand back a free-form
 "done". It hands back a bounded receipt plus evidence, and the Owner seat still holds the decision.
 
-### 5.2 Class - conceptual coordination schema
+### 5.2 Class - runtime types and conceptual schema
 
-This is the **conceptual JSON/schema layer**, not a claim about Python classes or methods.
+These runtime classes are present in the implementation. `Runner.controls()` creates
+the per-worker `Controls` store; its bounded subprocess helpers return `ProcessResult`.
+Protocol records below are a separate conceptual model, not invented Python classes.
+
+```mermaid
+classDiagram
+  class Runner {
+    +prepare(contract)
+    +run(manifest, qualification)
+    +control(manifest, command, session)
+    +verify(manifest, worker)
+  }
+  class Controls {
+    +enqueue(compilation_id, prompt_sha256, capacity)
+    +permission(request, expires_at)
+    +decide(request_id, option_id)
+    +answer(request_id)
+    +finish()
+  }
+  class ProcessResult {
+    +returncode
+    +stdout
+    +stderr
+    +contained
+    +cleanup_error
+  }
+  Runner ..> Controls : creates per-worker control store
+  Runner ..> ProcessResult : reads bounded helper results
+```
+
+The following is the **conceptual domain layer**, not literal JSON keys or Python classes.
 The earlier version incorrectly showed `render_sections()` as though it were a method on a
 Compilation object; in code it is a module function, not an instance method.
 
@@ -269,7 +299,7 @@ flowchart TB
     CX["Codex ACP / app-server"]
     GK["Grok ACP / leader socket"]
     AG["Agy native stream"]
-    CP["Copilot hooks / native CLI"]
+    CP["Copilot ACP / explicit plugin"]
   end
   subgraph L2["Coordination protocol layer"]
     C1["compile stage"]
@@ -288,8 +318,10 @@ flowchart TB
 ```
 
 The boundary to remember is that **models live inside harnesses, and harnesses live above the
-deterministic core**. Changing the model does not change the hook/transport boundary. Changing the
-harness does.
+deterministic core**. The harness owns transport and lifecycle contracts, but model selection can
+also change exposed tools and payloads: GPT's freeform `apply_patch` is not Claude's JSON edit
+shape, and Copilot's plugin envelope aliases that patch tool to `Edit`. Qualify the combination,
+not the model name or harness name in isolation.
 
 ### 5.4 Component - what execute-with-coordination grew into
 
