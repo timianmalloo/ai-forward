@@ -1,0 +1,55 @@
+# Design or review a user-facing surface
+
+Use this skill when the interface itself needs craft: direction, information architecture fit, visual language, states, accessibility and a reviewable mockup.
+
+## When to use it
+
+Use `ui-design` to create a new surface, review an existing one, or elevate a working UI. It is different from [design-slice](#skill-design-slice): that decides component contracts; this decides how users experience the surface.
+
+## What you need
+
+Bring the surface, task, users, existing spec or UX notes, and any design language. A settled UX layer is required before high-fidelity UI work.
+
+## Try it
+
+Slash-command harnesses:
+
+```text
+/ui-design Review the HarborTasks export interaction: button placement, loading,
+empty export, permission error and completed download states.
+```
+
+Codex equivalent:
+
+```text
+$ui-design Review the HarborTasks export interaction and hard states.
+```
+
+## What happens
+
+The skill chooses create, review or elevate mode. It establishes direction in words, checks the task archetype, measures the existing surface where present, and produces mockups or a rubric-based review.
+
+## What you get
+
+Illustrative artifact shape:
+
+```text
+docs/mockups/export-flow.html
+docs/mockups/export-flow.md
+DESIGN.md updates
+docs/reviews/ui-export-flow.md
+```
+
+Mockups are hand-authored review surfaces, not generated screenshots.
+
+## Review before continuing
+
+Review hard states, keyboard access, mobile behavior, copy, contrast and whether the archetype fits the task. Accessibility findings are not style preferences.
+
+## Tips and recovery
+
+If the output tries to fix hierarchy with imagery, route imagery to [visualize](#skill-visualize) only after the interface design is sound. If UX flows are unsettled, return to [specify](#skill-specify).
+
+## Where to go next
+
+Use [visualize](#skill-visualize) for assets the interface shows, [design-slice](#skill-design-slice) for implementation contracts, or [implement](#skill-implement) to build the approved surface.
