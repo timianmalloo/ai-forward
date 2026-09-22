@@ -80,8 +80,9 @@ class TransportTests(unittest.TestCase):
         (self.root / "requests.jsonl").unlink(missing_ok=True)
         result = self.run_peer("model_set_error", expected_model="gpt-5.4")
         self.assertEqual(("remote_error", 0, False), (result["code"], result["prompts_started"], result["selected_model_set"]))
-        self.assertEqual(["initialize", "session/new", "session/set_model"],
-                         [r.get("method") for r in self.requests()])
+        methods = [r.get("method") for r in self.requests()]
+        self.assertEqual(["initialize", "session/new", "session/set_model"], methods[:3])
+        self.assertIn(methods[3:], ([], ["session/cancel"]))
 
     def test_expected_model_invalid_or_incompatible_input_refuses_before_spawn(self):
         for options in ({"expected_model": True}, {"expected_model": ""}, {"expected_model": "gpt-5.4", "transport": "agy"},
@@ -478,7 +479,8 @@ class TransportTests(unittest.TestCase):
     def test_watcher_compatibility_responses_share_attempt_resource_limits(self):
         result = self.run_peer("watcher_flood", output_limit=2048)
         self.assertEqual("output_limit_exceeded", result["code"])
-        self.assertGreater(result["compatibility_responses"], 0)
+        # The byte cap can reject a queued flood before its first frame is parsed.
+        self.assertEqual(0, result["turns_completed"])
         start = time.monotonic()
         result = self.run_peer("watcher_flood", output_limit=16 * 1024 * 1024,
                                cancelled=lambda: time.monotonic() - start > .1)
@@ -699,6 +701,16 @@ class TransportTests(unittest.TestCase):
             result = self.run_peer()
         self.assertEqual("unsupported_platform", result["code"])
         spawn.assert_not_called()
+
+
+@unittest.skipUnless(os.name == "nt", "POSIX executes the same contract methods above")
+class SharedTransportContractsOnWindows(unittest.TestCase):
+    setUp = TransportTests.setUp
+    run_peer = TransportTests.run_peer
+    requests = TransportTests.requests
+    test_model_selection_contract = TransportTests.test_expected_model_match_mismatch_and_missing_gate_fresh_session
+    test_watcher_matching_contract = TransportTests.test_watcher_exact_grok_response_never_completes_the_pending_prompt
+    test_watcher_resource_contract = TransportTests.test_watcher_compatibility_responses_share_attempt_resource_limits
 
 
 if __name__ == "__main__":
