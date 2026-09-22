@@ -117,11 +117,60 @@ class MarkerLintTests(unittest.TestCase):
         r = self._run(self.tmp, "--json")
         self.assertEqual(json.loads(r.stdout)["markers"], 0)
 
+    # ---- FR-077: a marker is a comment, not a string that looks like one ----
+    def test_marker_inside_string_literal_is_not_a_marker(self):
+        self._write(self.tmp, "fixture.py",
+                    'bad = "# simplify: hardcoded\\n"\n'
+                    'also = "x = 1\\n# assume: no fields at all"\n'
+                    "js = '// simplify: hardcoded'\n")
+        r = self._run(self.tmp, "--json")
+        data = json.loads(r.stdout)
+        self.assertEqual(data["markers"], 0, data)
+
+    def test_trailing_comment_marker_still_counts(self):
+        # \x23 is the comment leader, escaped: written literally after a space inside this
+        # string it is the residual LINT-A names, and this file would fail the repository scan.
+        self._write(self.tmp, "t.py", "x = 1  \x23 simplify: hardcoded\n")
+        r = self._run(self.tmp, "--json")
+        codes = [f["code"] for f in json.loads(r.stdout)["findings"]]
+        self.assertEqual(codes, ["simplify-no-trigger"])
+
+    def test_one_bad_pack_marker_beside_test_fixtures_is_exactly_one_finding(self):
+        (self.tmp / "pack").mkdir()
+        (self.tmp / "tests").mkdir()
+        self._write(self.tmp, "pack/tool.py", "# simplify: hardcoded\nx = 1\n")
+        self._write(self.tmp, "tests/test_tool.py",
+                    'self._write(tmp, "a.py", "# simplify: hardcoded\\n")\n'
+                    '    "# assume: the id is unique.\\n"\n')
+        r = self._run(self.tmp, "--json", "--gate")
+        data = json.loads(r.stdout)
+        self.assertEqual([f["src"] for f in data["findings"]], ["pack/tool.py#L1"], data)
+        self.assertNotEqual(r.returncode, 0)
+
     # ---- .md is excluded by default (directive examples are not scanned) ----
     def test_md_excluded_by_default(self):
         self._write(self.tmp, "doc.md", "# simplify: a bad example with no trigger\n")
         r = self._run(self.tmp, "--json")
         self.assertEqual(json.loads(r.stdout)["markers"], 0, ".md not scanned unless --include-md")
+
+
+class DreamMarkerHarvestTests(unittest.TestCase):
+    """FR-077 sweep: dream.py harvests markers with the same grammar, so a test fixture's string
+    literal entered the dream corpus as an owner marker. One grammar, two readers, one rule."""
+
+    def test_harvest_skips_string_literals_and_keeps_comments(self):
+        import importlib.util
+        import tempfile
+        spec = importlib.util.spec_from_file_location(
+            "dream_mod", ROOT / "docs" / "ai-forward-pack" / "scripts" / "dream.py")
+        dream = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(dream)
+        with tempfile.TemporaryDirectory() as td:
+            (pathlib.Path(td) / "a.py").write_text(
+                'fixture = "# simplify: hardcoded\\n"\n'
+                "# simplify: naive scan - index it when n grows\n", encoding="utf-8")
+            srcs = [m["src"] for m in dream.grep_markers(td)]
+        self.assertEqual(srcs, ["a.py#L2"])
 
 
 if __name__ == "__main__":

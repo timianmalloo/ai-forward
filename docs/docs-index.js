@@ -4714,7 +4714,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c7d12b0c9b3bfe81ec927ea1348d7f68de7c2a1c1b9b048c6649354c6239966f"
+      "sourceSha256": "801349fdb394a2c4e9d864e5f91fffbb66cfe08c5a87524cfdec7e480e284cc2"
     },
     {
       "id": "docs-index",
@@ -5334,7 +5334,7 @@ window.DOCS_INDEX = {
       "phase": "assessment",
       "reviewBy": "2027-03-04",
       "reviewSuggested": [],
-      "summary": "Ten proposed backlog items from the revision-59 forensic review, FR-076 to FR-085, each with evidence, falsifiable acceptance criteria and a recommended next skill. No P0 or P1; the work is governance and documentation debt. Status proposed — nothing here is implemented, and the review stopped for human triage.",
+      "summary": "Ten proposed backlog items from the revision-59 forensic review, FR-076 to FR-085, each with evidence, falsifiable acceptance criteria and a recommended next skill. No P0 or P1; the work is governance and documentation debt. FR-076 and FR-077 were resolved on 2026-09-22; the other eight are still proposed and await human triage.",
       "tags": [
         "forensic-review",
         "backlog",
@@ -5356,7 +5356,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "370b789e084c94e7fcae12efaec55012bd974e5bbfc5fef76871f1bc9dcbfe1a"
+      "sourceSha256": "c937919173582879b36877f112bf68f769bb8b63183887732e4908aca9dce7c6"
     },
     {
       "id": "handbook-coordination",
@@ -11821,5 +11821,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "0895f8dcd978068089cf6b4cabf13303ab76d9973b6ef2f18286c3236769cbdc"
+  "graphSha256": "cfa035a55e31a14e39071f837d7e6e4f22f44310d948f51d56dfd280f242830c"
 };

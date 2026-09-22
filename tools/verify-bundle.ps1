@@ -11,6 +11,9 @@
         1c. Subprocess decodes state utf-8     pack/scripts/verify-subprocess-utf8.py (PLAT-A)
         1d. Text writes/consoles portable      pack/scripts/verify-portable-text-io.py (PLAT-A)
         1e. Skill contracts (seat, CO-S0, CO-S2)  pack/scripts/verify-skill-contracts.py (P8)
+        1f. Documented commands, any shell     pack/scripts/verify-documented-commands.py (PLAT-A)
+        1g. Ruling citations resolve           pack/scripts/verify-ruling-citations.py (ID-A)
+        1h. Inline markers complete            pack/scripts/marker-lint.py --gate (LINT-A)
         2.  Source<->install drift             sync-pack.ps1 THEN git diff --exit-code
         3.  Python test suite                  pytest tests
         4.  Docs Explorer core contracts       node --test (see the gate-4 note)
@@ -116,6 +119,11 @@ try {
     # ai-de measured eight numbers that defined nothing. Self-test proves the gate can fail.
     Gate "1g. ruling citations resolve to one heading each" {
         & $pyExe @pyArgs (Join-Path $repo "pack/scripts/verify-ruling-citations.py") --root $repo
+    }
+    # FR-077 (LINT-A): every finding was the linter's own test fixtures; with string literals
+    # excluded the scan is empty, which is what makes gating it safe.
+    Gate "1h. inline markers carry their required fields" {
+        & $pyExe @pyArgs (Join-Path $repo "pack/scripts/marker-lint.py") --root $repo --gate
     }
 
     # FR-057: sync AND compare. The comparison is the gate; the sync alone is only a repair.

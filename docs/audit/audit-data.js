@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-22T16:58:24Z",
+  "generated": "2026-09-22T22:31:01Z",
   "audit": [
     {
       "actor": null,
@@ -13104,6 +13104,61 @@ window.AUDIT_DATA = {
       "fan_out": 4,
       "started_at": "2026-09-22T15:22:50Z",
       "duration_seconds": 5734.0
+    },
+    {
+      "id": "al-01M35H0RA2M0WC9JFNYNJGRNB2",
+      "shortname": "do FR-076 and FR-077",
+      "datetime": "2026-09-22T21:40:43Z",
+      "session": "prompt-log",
+      "prompt": "do FR-076 and FR-077",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M35KWVY1Q8JP3G12J49344YG",
+      "shortname": "fr-076-077-instrument-trust",
+      "datetime": "2026-09-22T22:31:01Z",
+      "session": "claude-fr076-077",
+      "prompt": "do FR-076 and FR-077",
+      "summary": "FR-076: tests/docs_explorer/test_defect_register_counts.py tallies each register entry's leading status in both regions and fails with the corrected line; the struck count line replaced by the derived two-region line (34/21/8; 11/4/22); six off-schema 'open' statuses normalized to 'uncontrolled'; REC-A partially-controlled. FR-077 (new class LINT-A): marker-lint.py and dream.py treat a marker as a comment only (leader opens the line or follows whitespace), so string-literal fixtures no longer match; repo scan 0 findings; marker-lint --gate added as verify-bundle gate 1h, a CI step on all three runners, and a CANONICAL_GATES entry. Red first: 5 tests failed on the unfixed tree. rev-59 backlog items marked resolved. Finding (not fixed): sync-pack.ps1 on Windows rewrites ~40 generated agent/skill files with CRLF (content-identical after normalization).",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": "claude-code",
+      "artifacts": [
+        "docs/lessons/defect-classes.md",
+        "pack/scripts/marker-lint.py",
+        "pack/scripts/dream.py",
+        "tests/docs_explorer/test_defect_register_counts.py",
+        "tests/docs_explorer/test_marker_lint.py",
+        "tools/verify-bundle.ps1",
+        ".github/workflows/pack-consistency.yml",
+        "docs/backlog/forensic-review-rev59.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Close FR-076 (register counts line checked against its entries) and FR-077 (marker-lint stops flagging its own fixtures, then gates in CI), red first, meeting each item's acceptance criteria.",
+      "done_when": "Both new tests observed failing on the unfixed tree and passing after; verify-bundle green; committed on its own branch.",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-22T21:40:43Z",
+      "duration_seconds": 3018.0,
+      "git": {
+        "sha": "61746e0d29f2cdb88918edd86324abdfc16bbea8",
+        "short": "61746e0d2",
+        "branch": "fix/fr-076-077-instrument-trust",
+        "pushed": null
+      }
     }
   ],
   "changes": [

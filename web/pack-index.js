@@ -2975,10 +2975,10 @@ window.PACK_INDEX = {
 "cat": "graph",
 "id": "forensic-review-rev59-backlog",
 "title": "Forensic review backlog — ai-forward revision 59 (FR-076 … FR-085)",
-"summary": "Ten proposed backlog items from the revision-59 forensic review, FR-076 to FR-085, each with evidence, falsifiable acceptance criteria and a recommended next skill. No P0 or P1; the work is governance and documentation debt. Status…",
+"summary": "Ten proposed backlog items from the revision-59 forensic review, FR-076 to FR-085, each with evidence, falsifiable acceptance criteria and a recommended next skill. No P0 or P1; the work is governance and documentation debt. FR-076 and…",
 "path": "docs/backlog/forensic-review-rev59.md",
 "kind": "doc",
-"text": "forensic review backlog — ai-forward revision 59 (fr-076 … fr-085) ten proposed backlog items from the revision-59 forensic review, fr-076 to fr-085, each with evidence, falsifiable acceptance criteria and a recommended next skill. no p0 or p1; the work is governance and documentation debt. status proposed — nothing here is implemented, and the review stopped for human triage. forensic-review backlog rev59 governance relates-to forensic-review-rev59 relates-to defect-classes relates-to architecture"
+"text": "forensic review backlog — ai-forward revision 59 (fr-076 … fr-085) ten proposed backlog items from the revision-59 forensic review, fr-076 to fr-085, each with evidence, falsifiable acceptance criteria and a recommended next skill. no p0 or p1; the work is governance and documentation debt. fr-076 and fr-077 were resolved on 2026-09-22; the other eight are still proposed and await human triage. forensic-review backlog rev59 governance relates-to forensic-review-rev59 relates-to defect-classes relates-to architecture"
 },
 {
 "cat": "graph",

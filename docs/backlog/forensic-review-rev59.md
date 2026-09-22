@@ -14,13 +14,14 @@ review-by: "2027-03-04"
 summary: >-
   Ten proposed backlog items from the revision-59 forensic review, FR-076 to FR-085, each with
   evidence, falsifiable acceptance criteria and a recommended next skill. No P0 or P1; the work
-  is governance and documentation debt. Status proposed — nothing here is implemented, and the
-  review stopped for human triage.
+  is governance and documentation debt. FR-076 and FR-077 were resolved on 2026-09-22; the
+  other eight are still proposed and await human triage.
 ---
 
 # Forensic review backlog — revision 59
 
-**Status: `proposed`.** Nothing below is implemented. Every item awaits triage.
+**Status: `proposed`.** FR-076 and FR-077 are **resolved** (2026-09-22, marked on each item).
+The other eight are not implemented and await triage.
 
 Priorities: **P0** exploitable / data-loss / irreversible · **P1** high-likelihood correctness,
 security or migration risk · **P2** material maintainability, operability or governance debt ·
@@ -59,6 +60,12 @@ reader to distrust a control. A control nobody believes is worse than no control
 - **Validation:** run the new test against the pre-fix file — it must fail — then against the
   corrected file.
 - **Dependencies:** none. **Owner:** Documentation Steward. **Next skill:** `/implement`.
+- **Resolved 2026-09-22.** The line now states both regions (project classes 34 / 21 / 8,
+  inherited table 11 / 4 / 22). `tests/docs_explorer/test_defect_register_counts.py` (gate 3)
+  tallies each entry's leading status, fails with the corrected line when they diverge, and
+  was observed failing on the struck line first. Six `open` statuses outside the schema were
+  normalized to `uncontrolled`. Entry and row totals (63 / 37) were cross-checked by a
+  separate count.
 
 ### FR-077 · issue · P2 — The marker linter's entire output is noise from its own test fixtures
 - **Location:** `pack/scripts/marker-lint.py`; findings all in `tests/docs_explorer/test_marker_lint.py`
@@ -79,6 +86,13 @@ reader to distrust a control. A control nobody believes is worse than no control
   malformed marker in `pack/` produces exactly one, **observed**; (c) the linter runs gating in
   `pack-consistency.yml`.
 - **Dependencies:** none. **Owner:** Test Architect. **Next skill:** `/implement`.
+- **Resolved 2026-09-22 (class LINT-A).** The fix is narrower than excluding `tests/`, which
+  holds a real marker: a marker must be a comment (its leader opens the line or follows
+  whitespace), so string-literal fixtures no longer match. `dream.py`'s harvest had the same
+  grammar and got the same rule. The repository scan is now `all 6 marker(s) complete`;
+  one bad `pack/` marker beside test fixtures gives exactly one finding (observed); and
+  `marker-lint.py --gate` runs as `verify-bundle` gate 1h and in `pack-consistency.yml` on
+  all three runners.
 
 ---
 

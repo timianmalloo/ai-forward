@@ -33,6 +33,7 @@ CANONICAL_GATES = [
     ("skill-contracts", "1e. skill contracts: seat, CO-S0 before dispatch, CO-S2 on hard stops", "Skill contracts: seat, CO-S0 before dispatch, CO-S2 on hard stops"),
     ("documented-commands", "1f. documented commands run in any shell", "Documented commands run in any shell"),
     ("ruling-citations", "1g. ruling citations resolve to one heading each", "Ruling citations resolve to one heading each"),
+    ("markers",       "1h. inline markers carry their required fields", "Inline markers carry their required fields"),
     ("drift",         "2. source<->install drift",           "Source↔install drift"),
     ("pytest",        "3. python test suite",                "Python test suite"),
     ("docs-explorer", "4. docs explorer core contracts",     "Docs Explorer core contracts"),

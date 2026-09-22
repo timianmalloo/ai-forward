@@ -126,7 +126,8 @@ representation-contract failure, not a reason to bypass merges for authored file
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** ~~controlled `12` · partially-controlled `16` · uncontrolled `22`~~ — **stale, and stale before the 2026-09-07 edit below touched anything** (reported from ai-de, not caused by it). Counted from the file: the full sections hold controlled `22` · partially-controlled `17` · uncontrolled `2`, and the cross-codebase table holds controlled `7` · partially-controlled `3` · uncontrolled `24` (`8`/`2`/`24` before PACK-C moved off `controlled`). The published triple matches neither region nor their total, so it was not merely one edit behind. Left struck rather than silently corrected, because a hand-maintained count over a file that is appended to on every defect is class **REC-A** in this very register — the durable fix is to derive the line, or drop it and let readers count.
+**Status counts:** project classes: controlled `34` · partially-controlled `21` · uncontrolled `8`; inherited table: controlled `11` · partially-controlled `4` · uncontrolled `22`
+*Checked, not trusted: `tests/docs_explorer/test_defect_register_counts.py` tallies each entry's leading status and fails when this line disagrees, printing the corrected line (FR-076, class REC-A). Change a status, change this line. A status is one of the three schema values; a qualifier after it does not change the count.*
 **Recurrence since last review:** `0` — *a second occurrence of a known class means the control was wrong, not that someone was careless (CI4).*
 
 ---
@@ -150,6 +151,14 @@ representation-contract failure, not a reason to bypass merges for authored file
 ## Project classes
 
 *Classes discovered in this repository. Newest first.*
+
+### LINT-A — A scanner matches its pattern inside string data, so its own fixtures drown the signal
+- **Signature:** a regex linter or harvester searches every line for a comment-marker pattern without asking whether the match is a comment. The linter's own tests write malformed markers as string literals, so every run reports those fixtures, and a real finding would be one more line in a list everyone has learned to skip.
+- **Why it survives:** the tool runs in warn mode, so nothing fails; each reported line really is a malformed marker, so the output looks correct; and the tool's tests pass because they scan temporary trees, never the repository.
+- **Instances:**
+  - `2026-09-22` **ai-forward, FR-077** — `marker-lint.py` reported 10 findings across 17 markers, all 10 in string literals in `tests/docs_explorer/test_marker_lint.py`; genuine findings 0. Sweep: `dream.py`'s `grep_markers` used the same grammar and harvested the same fixtures into the dream corpus as owner markers. Excluding `tests/` was rejected because `tests/docs_explorer/test_agent_coordination_doctrine.py:34` carries a real marker.
+- **Control:** both regexes require the comment leader to open the line or follow whitespace. `test_marker_lint.py` pins string-literal exclusion, trailing-comment retention, one bad `pack/` marker beside test fixtures giving exactly one finding, and the dream harvest; three of those were observed failing on the unfixed scripts (2026-09-22). With the scan empty, `marker-lint.py --gate` runs as `verify-bundle` gate 1h and as a CI step on all three runners. Residual: a marker-shaped string whose comment leader follows a space still matches; the gate caught one in this fix's own test on its first repository run, and the fixture now escapes the leader as `\x23`.
+- **Status:** `controlled`
 
 ### DOC-U — Machine metadata forces a document wider than its viewport
 - **Signature:** a long hash, identifier, URL or other unbroken metadata string has no wrapping rule; the content reads correctly on desktop while a narrow viewport gains page-level horizontal overflow.
@@ -390,7 +399,7 @@ representation-contract failure, not a reason to bypass merges for authored file
 - **Instances:**
   - `2026-09-19` **ai-forward, track P0** — `test_exactly_one_new_paragraph_after_wt12` compared paragraphs against `git show origin/main:…`; red on all three runners on the landing commit; rewritten to assert the paragraph in the tree.
 - **Control:** the Test Architect's checklist question "would this test still pass after the change is on main?"; `verify-skill-contracts`-style lint over tests for `origin/main` in a `git show` string is the mechanical detector, carried forward. Sweep: the three "seeded-verbatim" tests in the same file also diff against `origin/main` — they cannot go red after landing (they compare equal), so they are weak, not wrong; noted.
-- **Status:** `open` — control named
+- **Status:** `uncontrolled` — control named
 
 ### CTX-R — A directory lease is wider than the plan's ownership
 - **Signature:** a track claims a directory (`pack/commands`) with `--long-edit` to cover the many files it owns beneath it, and the lease also covers the few files another track owns there. The other track, honouring the lease, cannot edit its own files for most of its run and either waits or prepares a hand-off. Nothing errors; the plan said "one owner per file" and the lease said "one owner per directory".
@@ -398,7 +407,7 @@ representation-contract failure, not a reason to bypass merges for authored file
 - **Instances:**
   - `2026-09-19` **ai-forward, coordination-p2-p8** — P8 leased `pack/commands` for ~40 min; P2's two owned skills sat under it; P2 raised `req-01M2XEERW07PGWMJVSTPKY2NC0` and landed its edits after the lease lapsed. No lost work; ~15 min of P2's wall spent waiting.
 - **Control:** the plan's per-file ownership becomes the lease's shape: `execute-with-coordination`'s brief says *claim your owned files individually or with a pattern that excludes a peer's paths*; `coord claim` gains `--except <path>` (P1's track, with the typed requests) and `coord doctor` warns when a live lease covers a path another live session has claimed. Until then: the profiler's SP-15 family and the seam request are the detectors.
-- **Status:** `open` — control named, not yet built (P1)
+- **Status:** `uncontrolled` — control named, not yet built (P1)
 
 ### CTX-S — The Edit tool refuses a file the agent read through the shell
 - **Signature:** an agent reads a file with `cat`/`sed` in Bash, then calls the harness Edit tool, which requires a prior Read-tool view of that file in the same conversation and refuses; the agent re-reads with the Read tool and retries. Each occurrence costs two calls and re-injects the file.
@@ -406,7 +415,7 @@ representation-contract failure, not a reason to bypass merges for authored file
 - **Instances:**
   - `2026-09-19` **ai-forward, track P2** — 15 of 113 tool calls lost to this shape (self-reported in the track's planned-vs-actual).
 - **Control:** the brief's line "read with the Read tool any file you will Edit; use Bash reads only for files you will not edit" (added to `execute-with-coordination`'s brief template at the next revision); the profiler counts Edit refusals followed by a Read of the same path (SP candidate).
-- **Status:** `open`
+- **Status:** `uncontrolled`
 
 ### ID-A — A time-ordered id is not a total order within one tick
 - **Signature:** ids are minted from a timestamp plus random bits; two ids minted in the same millisecond sort by their random part, so "newest id" and `--since <id>` are non-deterministic inside a tick. Tests that mint quickly flake.
@@ -650,7 +659,7 @@ representation-contract failure, not a reason to bypass merges for authored file
 - **Instances:**
   - `2026-09-19` **ai-forward, track P5** — `test_coord_decide.py` red-first run: `43 failed, 3 passed` where the 3 "passes" were subTest-only methods asserting against the absent `coord-decide.py`; rewritten without `subTest`. The coordination suites report `34 subtests passed` (`join.json` recount), so the shape exists elsewhere — a sweep is owed.
 - **Control:** named, not landed — a lint over `tests/` that fails a test method whose every assertion is inside a `subTest` block (or an `assert`-count check at method level), plus the Test Architect's checklist line "does the method fail with the subject deleted?". Sweep the 34 subtest sites before landing the lint.
-- **Status:** `open` — control named
+- **Status:** `uncontrolled` — control named
 
 ### GATE-A — A pre-commit gate that scans only tracked files passes the untracked file it is about to admit
 - **Signature:** a gate enumerates `git ls-files` (tracked) and runs at pre-commit. A *new* file is untracked at that moment, so the gate never reads it; the file passes, is committed, and the same gate fails on the next run — post-commit, on the landing, or in CI. The gate was correct about every file it looked at; it looked at the wrong set.
@@ -658,7 +667,7 @@ representation-contract failure, not a reason to bypass merges for authored file
 - **Instances:**
   - `2026-09-19` **ai-forward, track P3** — `verify-no-machine-paths.py` (gate 1b) passed pre-commit on an untracked `test_coord_liveness.py` carrying an absolute-path fixture literal and failed after the commit; fixed with the gate's own `machine-path-ok` marker and one amend. The eleven session logs in the red-main fix took the same path a few hours earlier (untracked → committed → gate 1b red → dropped from the commit).
 - **Control:** named, not landed — every `verify-*.py` that enumerates files scans `git ls-files --cached --others --exclude-standard` (index plus untracked, minus ignored), or the pre-commit floor stages before it gates. Sweep: every gate under `pack/scripts/verify-*.py` and `tools/verify-*.py` that calls `git ls-files`.
-- **Status:** `open` — control named
+- **Status:** `uncontrolled` — control named
 
 ### MEAS-A — A ruler whose cost is the order of the thing measured
 - **Signature:** a timing method pays a cost comparable to the thing it times — here two `python3 -c` interpreter starts (through a pyenv shim) bracketing a 29 ms hook — and reports the sum as the measurement. The number is real, reproducible and wrong by an order of magnitude.
@@ -666,7 +675,7 @@ representation-contract failure, not a reason to bypass merges for authored file
 - **Instances:**
   - `2026-09-19` **ai-forward, track P3** — `heartbeat.py` read 413 ms by `s=$(python3 -c …)` on both sides; re-measured in one process at 29 ms median / 40 ms max (n = 5) with the `python3 -c pass` baseline (9 ms) printed beside it.
 - **Control:** named — every timing in a Proof Pack prints the empty-ruler baseline (`python3 -c pass`, an empty subprocess, an empty request) beside the reading, and a reading within 3× of its baseline is reported as `not resolvable at this ruler`, never as a number. The `time_hook.py` shape P3 left is the template.
-- **Status:** `open` — control named
+- **Status:** `uncontrolled` — control named
 
 ### WT-A — A per-checkout artifact resolved at the primary from a linked worktree
 - **Signature:** the coordination stores (`.agents/**`) are per *repository* by design, so `coord-core.repo_root()` returns the primary checkout from any worktree. A script then reuses that root for a **tracked document** — which is per *checkout* — and a session working in a worktree reads or writes the primary's copy: an edit that lands in a tree nobody is committing from (WT1), or a read that reports the wrong state. `PACK-P`'s sibling: identity inferred from the filesystem, applied to the wrong kind of artifact.
@@ -829,7 +838,7 @@ representation-contract failure, not a reason to bypass merges for authored file
 | **RIG-A** | Own-code shape asserted from memory | "This type has that member" — written in a design, never opened | Designs aren't compiled | Read the file or label Inferred (E15); review opens the cited file | `uncontrolled` |
 | **RIG-B** | Delegated inventory cited as fact | A sub-agent's counts/listings enter an artifact unverified | Sub-agent output is fluent and specific | Spot-check before citing (E16) | `uncontrolled` |
 | **RIG-C** | Sweep stopped at the instance | The fix works; the sibling ships the same bug days later | The reported symptom is gone | class → sweep → derive → prevent (CI2) | **`uncontrolled` - THIRD occurrence at the revision-33 review (FR-044 PACK-E in the very file FR-043 fixed; FR-045 a second unreconciled deployment map; FR-047 a console guard applied to 1 of 7 scripts). This is now the project's DOMINANT defect signature: four of five findings in that review were the same shape. As of revision 34 the sweep IS enforced for its highest-frequency shape: `check_promised_paths()` fails any pack artifact naming a path that does not exist and is not created-at-runtime, and `test_help_exits_zero_under_cp1252` asserts the encoding invariant across every deployed script rather than the one that crashed.** | `partially-controlled` |
-| **REC-A** | Stale record / overstated claim | A comment, status table or doc asserts something that was true once | Documentation isn't executed | Re-verify records you touch (E17); correct overstatements in their own change | `uncontrolled` |
+| **REC-A** | Stale record / overstated claim | A comment, status table or doc asserts something that was true once | Documentation isn't executed | Re-verify records you touch (E17); correct overstatements in their own change. **One record is now executed (FR-076, 2026-09-22):** this register's **Status counts** line is checked against its entries by `tests/docs_explorer/test_defect_register_counts.py` (gate 3), observed failing first on the struck, stale line; six `open` statuses outside the schema were normalized to `uncontrolled` so every entry counts. Other records are still unexecuted | `partially-controlled` |
 | **HYG-A** | Commented-out or dead code left in the tree | Commented-out blocks, an unreferenced method/field, an unreachable branch, an unused import — often the residue of code an agent commented out while working and never removed | It compiles and every test passes; a comment executes nothing, so nothing fails. It just rots: stale, misleading, and clutter to every tool that reasons about the tree (a code-graph builder, a linter, a `grep`) | Delete it — version control is the archive, not the working tree; the turn does not close with it (CT18a). A commented-out-code / unused-symbol detector as a CI gate + the Simplifier's `delete:` sweep (L9), IDE0051/IDE0052/CS0219 for compiled code; sweep the class, not the line (CI2). Provenance: raised after the AI-DE code-graph builder surfaced large volumes of commented-out code across a tree | `uncontrolled` |
 | **OPS-A** | Migration compiles but is never applied | The migration builds; the deployer doesn't run it | The build is green | Migrate-before-publish enforcement; exercise the down path (DM16) | `uncontrolled` |
 | **UX-A** | Archetype mismatched to the task | A dashboard archetype on a data-entry task: everything visible, nothing sequenced | Each component is individually fine | Verify archetype vs JTBD on changes to *existing* screens too | `uncontrolled` |

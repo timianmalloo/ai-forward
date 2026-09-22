@@ -66,6 +66,10 @@ jobs:
         run: python3 pack/scripts/verify-documented-commands.py
       - name: Ruling citations resolve to one heading each
         run: python3 pack/scripts/verify-ruling-citations.py
+      # FR-077 (LINT-A): gating is safe only because the scan is empty; a marker missing its
+      # trigger, confirm route or consequence now fails here instead of scrolling past.
+      - name: Inline markers carry their required fields
+        run: python3 pack/scripts/marker-lint.py --gate
 
       # FR-033. The repository's foundational invariant: pack/ is source, .claude/ and
       # .github/ are generated. verify-bundle.ps1 has always checked this locally and CI
@@ -211,6 +215,9 @@ jobs:
       - name: Ruling citations resolve to one heading each (Windows)
         shell: pwsh
         run: python pack/scripts/verify-ruling-citations.py
+      - name: Inline markers carry their required fields (Windows)
+        shell: pwsh
+        run: python pack/scripts/marker-lint.py --gate
 
       - name: Source↔install drift (pwsh on Windows)
         shell: pwsh
@@ -326,6 +333,10 @@ jobs:
         run: python3 pack/scripts/verify-documented-commands.py
       - name: Ruling citations resolve to one heading each
         run: python3 pack/scripts/verify-ruling-citations.py
+      # FR-077 (LINT-A): gating is safe only because the scan is empty; a marker missing its
+      # trigger, confirm route or consequence now fails here instead of scrolling past.
+      - name: Inline markers carry their required fields
+        run: python3 pack/scripts/marker-lint.py --gate
 
       - name: Source↔install drift (pwsh on macOS)
         shell: pwsh
