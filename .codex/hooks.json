@@ -1,0 +1,57 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$(git rev-parse --show-toplevel)/docs/ai-forward-pack/hooks/reread-guard.py\" --host codex",
+            "commandWindows": "pwsh -NoProfile -Command \"python (Join-Path (git rev-parse --show-toplevel) 'docs/ai-forward-pack/hooks/reread-guard.py') --host codex\"",
+            "timeout": 10,
+            "statusMessage": "AI-Forward Codex PreToolUse reread guard"
+          }
+        ],
+        "matcher": "^Bash$"
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$(git rev-parse --show-toplevel)/docs/ai-forward-pack/hooks/reread-guard.py\" --host codex",
+            "commandWindows": "pwsh -NoProfile -Command \"python (Join-Path (git rev-parse --show-toplevel) 'docs/ai-forward-pack/hooks/reread-guard.py') --host codex\"",
+            "timeout": 10,
+            "statusMessage": "AI-Forward Codex UserPromptSubmit reread guard"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$(git rev-parse --show-toplevel)/docs/ai-forward-pack/hooks/session-start.py\" --host codex",
+            "commandWindows": "pwsh -NoProfile -Command \"python (Join-Path (git rev-parse --show-toplevel) 'docs/ai-forward-pack/hooks/session-start.py') --host codex\"",
+            "timeout": 20,
+            "statusMessage": "AI-Forward Codex SessionStart audit marker"
+          }
+        ]
+      }
+    ],
+    "SubagentStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$(git rev-parse --show-toplevel)/docs/ai-forward-pack/hooks/session-start.py\" --host codex",
+            "commandWindows": "pwsh -NoProfile -Command \"python (Join-Path (git rev-parse --show-toplevel) 'docs/ai-forward-pack/hooks/session-start.py') --host codex\"",
+            "timeout": 20,
+            "statusMessage": "AI-Forward Codex SubagentStart audit marker"
+          }
+        ]
+      }
+    ]
+  }
+}

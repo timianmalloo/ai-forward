@@ -9,7 +9,7 @@ links:
   - { to: architecture, rel: documents }
 review-by: "2027-03-03"
 summary: >-
-  Generated API reference for the pack's public surface — the deployed script bundle. 364 public functions across 26 modules, 46% carrying a docstring.
+  Generated API reference for the pack's public surface — the deployed script bundle. 365 public functions across 26 modules, 46% carrying a docstring.
 ---
 
 # API reference — the deployed script bundle
@@ -38,7 +38,7 @@ with no docstring is listed as a **coverage gap** rather than described from gue
 | [`marker-lint.py`](marker-lint.md) | 1 | 0 | — | marker-lint.py - completeness check for the pack's inline decision markers. |
 | [`obsidian-setup.py`](obsidian-setup.md) | 17 | 7 | — | obsidian-setup.py - stand up (and analyze) the Obsidian lens over an AI-Forward docs graph. |
 | [`pack-apply.py`](pack-apply.md) | 15 | 8 | — | pack-apply.py — apply the AI-Forward deployment map to a repo, mechanically and reversibly. |
-| [`pack-doctor.py`](pack-doctor.md) | 12 | 7 | — | pack-doctor.py — AI-Forward install-health check (deployable; runs in a TARGET repo). |
+| [`pack-doctor.py`](pack-doctor.md) | 13 | 8 | — | pack-doctor.py — AI-Forward install-health check (deployable; runs in a TARGET repo). |
 | [`prompt-log.py`](prompt-log.md) | 16 | 5 | 8 | prompt-log.py — the fast prompt-reuse lens over the project's audit log. |
 | [`repo_identity.py`](repo_identity.md) | 1 | 1 | — | repo_identity.py - the canonical project name, in ONE place (class PACK-P). |
 | [`run-verify-gates.py`](run-verify-gates.md) | 5 | 3 | — | run-verify-gates.py - every verify-*.py gate, one exit status, no pipe. |
@@ -50,5 +50,5 @@ with no docstring is listed as a **coverage gap** rather than described from gue
 | [`visual-assets-setup.py`](visual-assets-setup.md) | 12 | 5 | — | visual-assets-setup.py - wire up a generation backend for UI visual assets (AI-Forward). |
 | [`xaml-token-lint.py`](xaml-token-lint.md) | 9 | 0 | — | xaml-token-lint.py — first-slice token linter for XAML/native UI markup. |
 
-**Total** — 364 public functions across 26 modules, **167 documented (46%)**.
+**Total** — 365 public functions across 26 modules, **168 documented (46%)**.
 

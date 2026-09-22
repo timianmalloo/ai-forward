@@ -46,6 +46,7 @@ Python 3.8+, stdlib only. Exit 0 = applied/clean, 1 = conflicts or errors report
 import argparse
 import datetime as _dt
 import io
+import importlib.util
 import json
 import os
 import re
@@ -78,7 +79,7 @@ IMPORT_LINE = "@AGENTS.md"
 # counts, so it exits 0 for a re-included path and inverts the answer (measured).
 GITIGNORE_LINES = ["*.jsonl.lock", "spikes/", "docs/audit/.run-starts.json",
                    "docs/audit/.run-starts.json.tmp",
-                   ".agents/*", "!.agents/artifacts.yml"]
+                   ".agents/*", "!.agents/artifacts.yml", "!.agents/skills/"]
 
 # A .gitignore is LAST-MATCH-WINS, so a blanket appended below an existing rule silently
 # reverses it. Measured 2026-09-09 in a consuming repo: line 495 recorded "spikes/ is NOT
@@ -114,7 +115,7 @@ CONDITIONAL_GITIGNORE = {
 # A `!` line exists only to punch through its blanket. Withhold the blanket and the
 # exception is a negation with nothing to negate -- inert, and it tells a reader the
 # opposite of the KEEP row that withheld the blanket.
-GITIGNORE_DEPENDENTS = {".agents/*": ("!.agents/artifacts.yml",)}
+GITIGNORE_DEPENDENTS = {".agents/*": ("!.agents/artifacts.yml", "!.agents/skills/")}
 
 DECLINE_MARKER = "# pack-apply: decline "
 
@@ -361,6 +362,14 @@ class Applier(object):
     def _transform_like(self, rel_src, old_text, dest):
         """Apply the same deploy transform to the old pack text that `text` received (wrap / strip)."""
         drel = self.rel(dest)
+        if drel.startswith(".codex/agents/") or (drel.startswith(".agents/skills/") and drel.endswith("/SKILL.md")):
+            adapter = self._codex_adapter()
+            guidance = self._old_pack_text("adapters/codex/surface.md")
+            if guidance is None:
+                return old_text  # no prior Codex projection: let place report a conflict
+            if drel.startswith(".codex/agents/"):
+                return adapter.agent_text(old_text, guidance)[1]
+            return adapter.skill_text(old_text, guidance)
         if drel.startswith(".github/instructions/") and not drel.endswith(MANIFEST):
             meta, body = frontmatter(old_text)
             pattern = "**" if meta.get("load", "always") == "always" else meta.get("applyTo", "**")
@@ -478,6 +487,12 @@ class Applier(object):
                     self.place("bundle", "{0}/{1}".format(sub, rel.replace("\\", "/")), os.path.join(dp, sub, rel), read(src))
         for f in ("README.md", "OVERVIEW.md", "research-synthesis.md", "context-budget.json"):
             self.place("bundle", f, os.path.join(dp, f), read(os.path.join(self.pack, f)))
+        history = os.path.join(self.pack, "adapters", "history")
+        if os.path.isdir(history):
+            for name in sorted(os.listdir(history)):
+                if name.endswith(".yaml"):
+                    self.place("bundle", "adapters/history/" + name,
+                               os.path.join(dp, "history", name), read(os.path.join(history, name)))
         hooks = os.path.join(self.pack, "adapters", "hooks")
         for f in ("reread-guard.py", "session-start.py", "README.md"):
             self.place("hooks", "adapters/hooks/" + f, os.path.join(dp, "hooks", f), read(os.path.join(hooks, f)))
@@ -570,7 +585,8 @@ class Applier(object):
             tracked = self._tracked_under(probe)
             if tracked is not None:
                 # The pack's own re-includes do not count as the repo contradicting it.
-                answered = [f for f in tracked if f not in already_kept]
+                answered = [f for f in tracked if f not in already_kept
+                            and not (line == ".agents/*" and f.startswith(".agents/skills/"))]
                 if answered:
                     return template.format(n=len(answered))
         return ""
@@ -713,6 +729,32 @@ class Applier(object):
             except (OSError, subprocess.SubprocessError) as exc:
                 self.row("meta", "context-budget {0}".format(args[0]), "BASELINE", "fail", str(exc)[:120])
 
+    def _codex_adapter(self):
+        spec = importlib.util.spec_from_file_location("ai_forward_codex", os.path.join(self.pack, "adapters", "codex", "render.py"))
+        adapter = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(adapter)
+        return adapter
+
+    def codex(self):
+        adapter = self._codex_adapter()
+        for relative, (source, text) in adapter.projections(self.pack).items():
+            self.place("codex", source, os.path.join(self.target, *relative.split("/")), text)
+        dest = os.path.join(self.target, ".codex", "hooks.json")
+        current_text = read(dest)
+        try:
+            current = json.loads(current_text) if current_text else {}
+            snippet = json.loads(read(os.path.join(self.pack, "adapters", "hooks", "codex.hooks.json")))
+            merged = adapter.merge_hooks(current, snippet)
+        except (ValueError, TypeError) as exc:
+            self.row("hooks", ".codex/hooks.json", "CONFLICT", "fail", str(exc))
+            return
+        if current == merged:
+            self.row("hooks", ".codex/hooks.json", "UNCHANGED", "ok")
+        else:
+            self._write(dest, json.dumps(merged, indent=2) + "\n")
+            self.row("hooks", ".codex/hooks.json", "MERGE" if current_text else "ADD", "ok",
+                     "pack hooks merged; review new definitions with /hooks; config.toml preserved")
+
     def run(self):
         if self.source_rev is None:
             self.row("meta", "pack/adapters/INSTALL.md", "ERROR", "fail", "source revision unreadable - is --source an ai-forward clone?")
@@ -740,6 +782,7 @@ class Applier(object):
         self.knowledge()
         self.skills()
         self.agents()
+        self.codex()
         self.bundle()
         self.front_doors()
         self.advance()

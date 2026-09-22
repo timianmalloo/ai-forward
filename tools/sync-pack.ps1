@@ -241,6 +241,10 @@ foreach ($cop in Get-ChildItem (Join-Path $pack "adapters\copilot\agents") -Filt
 $grokAgentsCount = (Get-ChildItem $grokAgents -File).Count
 Write-Host "  .grok/agents: $grokAgentsCount"
 
+# Shared Codex projection also used by the consumer installer.
+python (Join-Path $pack "adapters\codex\render.py") --root $repo
+if ($LASTEXITCODE -ne 0) { throw "Codex surface generation failed" }
+
 $grokRules = Join-Path $repo ".grok\rules"
 Reset-Dir $grokRules
 Copy-Item (Join-Path $pack "adapters\grok\grok-surface.md") (Join-Path $grokRules "grok-surface.md") -Force
@@ -256,6 +260,9 @@ Copy-Item (Join-Path $pack "README.md")              $docPack -Force
 Copy-Item (Join-Path $pack "OVERVIEW.md")            $docPack -Force
 Copy-Item (Join-Path $pack "research-synthesis.md")  $docPack -Force
 Copy-Item (Join-Path $pack "adapters\INSTALL.md")    $docPack -Force
+$historyDst = Join-Path $docPack "history"
+New-Item -ItemType Directory -Force -Path $historyDst | Out-Null
+Copy-Item (Join-Path $pack "adapters\history\*.yaml") $historyDst -Force
 # The always-on budget baseline travels with the scripts: context-budget.py resolves it from
 # pack/ here and from docs/ai-forward-pack/ in an installed repo. Without it a consuming repo
 # finds no baseline and the ratchet silently degrades to backstop-only.

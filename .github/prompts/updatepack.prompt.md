@@ -20,4 +20,6 @@ You are running the **updatepack** workflow (`knowledge/rigor-protocol.md` appli
 
 After every hand-reconciled CONFLICT, run `python3 docs/ai-forward-pack/scripts/verify-no-conflict-markers.py` on its own line before anything else reads the tree (DC-136; a derived file is regenerated, never resolved), and again at the gate.
 
+**Codex verification (INSTALL 1.8):** confirm whole `.agents/skills/` directories, `.codex/agents/` TOML personas, merged `.codex/hooks.json`, and shared `AGENTS.md` guidance. Keep skills trackable. Preserve unrelated config and hooks; report modified pack-hook conflicts. Hook trust remains a host/user setting. Stage Codex outputs with the other pack surfaces.
+
 ${input}

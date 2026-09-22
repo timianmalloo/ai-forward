@@ -4,7 +4,7 @@ The development home of the **AI-Forward Pack** — a repository-droppable exten
 the Agent Knowledge Pack's adversarial reviewer council into a working swarm: collaborating
 peers that *author*, adversarial personas that *attack*, and a staged reasoning discipline (the
 **Rigor Protocol**) that slows the rush to a plausible answer and replaces it with evidence at
-every step. It works with **Claude Code**, **GitHub Copilot**, **Grok Build**, or any combination.
+every step. It works with **Claude Code**, **GitHub Copilot**, **Grok Build**, **Codex**, or any combination.
 
 This repo is two things at once:
 
@@ -15,6 +15,8 @@ This repo is two things at once:
 
 For the pack's own story — why it exists, what's inside, how to use the twenty-seven skills — read
 [`pack/README.md`](pack/README.md) and [`pack/OVERVIEW.md`](pack/OVERVIEW.md).
+
+**Codex:** the shared constitution is `AGENTS.md`; generated skills live in `.agents/skills/`, personas in `.codex/agents/`, and hooks in `.codex/hooks.json`. See INSTALL section 1.8 for discovery, hook trust and host mappings.
 
 ## Layout
 

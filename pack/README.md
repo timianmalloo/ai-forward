@@ -2,9 +2,11 @@
 
 *A repository-droppable extension that turns the **Agent Knowledge Pack** into a working swarm: collaborating peers that author, adversarial personas that review, and a staged reasoning discipline that slows the rush to a plausible answer and replaces it with evidence at every step.*
 
-Works with **Claude Code**, **GitHub Copilot**, **Grok Build**, or any combination. Install into any GitHub repo.
+Works with **Claude Code**, **GitHub Copilot**, **Grok Build**, **Codex**, or any combination. Install into any GitHub repo.
 
 ---
+
+**Codex:** the shared constitution is `AGENTS.md`; generated skills live in `.agents/skills/`, personas in `.codex/agents/`, and hooks in `.codex/hooks.json`. See INSTALL section 1.8 for discovery, hook trust and host mappings.
 
 ## Why this pack exists
 

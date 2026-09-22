@@ -1008,6 +1008,35 @@ def check_docs_portal(findings):
                             "build-doc-site.py", "docs/_site/index.html")
 
 
+def check_codex_surface(findings):
+    """Compare complete generated content, not only directory presence/counts."""
+    import importlib.util
+    from pathlib import Path
+    spec = importlib.util.spec_from_file_location("codex_projection_check", os.path.join(PACK, "adapters", "codex", "render.py"))
+    adapter = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(adapter)
+    expected = adapter.projections(PACK)
+    for relative, (_, text) in expected.items():
+        actual = _read(os.path.join(ROOT, *relative.split("/")))
+        if actual != text:
+            findings.append("Codex missing or drifted: " + relative)
+    for relative in (".agents/skills", ".codex/agents"):
+        folder = Path(ROOT) / relative
+        for path in folder.rglob("*") if folder.exists() else ():
+            if path.is_file() and path.relative_to(ROOT).as_posix() not in expected:
+                findings.append("Codex stale generated file: " + path.relative_to(ROOT).as_posix())
+    try:
+        current = json.loads(_read(os.path.join(ROOT, ".codex", "hooks.json")) or "{}")
+        snippet = json.loads(_read(os.path.join(PACK, "adapters", "hooks", "codex.hooks.json")))
+        if adapter.merge_hooks(current, snippet) != current:
+            findings.append("Codex hooks missing pack definitions")
+    except (ValueError, TypeError) as exc:
+        findings.append("Codex hooks invalid or drifted: " + str(exc))
+    ignore = _read(os.path.join(ROOT, ".gitignore")) or ""
+    if ".agents/*" in ignore.splitlines() and "!.agents/skills/" not in ignore.splitlines():
+        findings.append("Codex skills hidden by .gitignore; add !.agents/skills/")
+
+
 def main():
     truth = filesystem_truth()
     findings = []
@@ -1016,6 +1045,7 @@ def main():
     check_skill_prompt_parity(truth, findings)
     check_frontmatter_yaml(truth, findings)
     check_deployed_agent_parity(truth, findings)
+    check_codex_surface(findings)
     check_proof_coverage(truth, findings)
     check_directive_ranges(findings)
     check_static_page_links(findings)

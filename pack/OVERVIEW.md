@@ -2,9 +2,11 @@
 
 The practical orientation to the bundle: **how to install it, what it contains, and how to use the skills.** For *why* each piece exists, see `README.md`; for the evidence and design decisions behind it, `research-synthesis.md`.
 
-The pack is a repository-droppable extension to the **Agent Knowledge Pack**. It turns that pack's adversarial reviewer council into a working swarm — collaborating peers that *author*, adversarial personas that *attack*, and a staged reasoning discipline that slows the rush to a plausible answer and replaces it with evidence. It works with **Claude Code**, **GitHub Copilot**, **Grok Build**, or any combination.
+The pack is a repository-droppable extension to the **Agent Knowledge Pack**. It turns that pack's adversarial reviewer council into a working swarm — collaborating peers that *author*, adversarial personas that *attack*, and a staged reasoning discipline that slows the rush to a plausible answer and replaces it with evidence. It works with **Claude Code**, **GitHub Copilot**, **Grok Build**, **Codex**, or any combination.
 
 ---
+
+**Codex:** the shared constitution is `AGENTS.md`; generated skills live in `.agents/skills/`, personas in `.codex/agents/`, and hooks in `.codex/hooks.json`. See INSTALL section 1.8 for discovery, hook trust and host mappings.
 
 ## 1. How to install
 

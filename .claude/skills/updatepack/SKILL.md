@@ -69,3 +69,7 @@ A pack-lifecycle skill: it operates on the installation, not the product, so it 
 **Audit (last action).** `python3 docs/ai-forward-pack/scripts/audit-log.py append --shortname "updatepack-r<to>" --session "<id>" --skill updatepack --kind command --prompt "<verbatim>" --summary "<from → to; N rows; conflicts reconciled>" --goal "<goal>" --done-when "<done when>" --tier T1 --fan-out 0`.
 
 **Handoff:** if the update added skills or knowledge docs, name them; if it converted `CLAUDE.md`, say where the retained paragraphs went; if `pack-doctor` warned on `copilot settings`, say it is the user's per-phase choice (WT1a).
+
+## Codex installation verification (INSTALL 1.8)
+
+Confirm whole skill directories in `.agents/skills/`, TOML personas in `.codex/agents/`, merged `.codex/hooks.json`, and the shared `AGENTS.md` path map. Keep `!.agents/skills/` trackable. Preserve unrelated Codex config and hooks; report modified pack-hook conflicts. Direct the user to `/hooks` for trust review, never grant trust or enable disabled hooks. Stage the new Codex surfaces with the other pack outputs.

@@ -3,6 +3,8 @@
 
 *Knowledge docs are cited below by their Copilot path (`.github/instructions/<name>.instructions.md`). In Claude Code the same document is `.claude/knowledge/<name>.md` — `CLAUDE.md` is `@AGENTS.md` plus a short addendum that says so (INSTALL 1.1). In Grok Build the same document is `.claude/knowledge/<name>.md` (shared; do not wrap it into `.grok/rules/`). Skills are `.grok/skills/<name>/SKILL.md`; personas are `.grok/agents/<name>.md`, spawned with `spawn_subagent` using the persona `name` as `subagent_type`. The Grok path map is `.grok/rules/grok-surface.md` (INSTALL 1.7).*
 
+**Codex:** use the same `AGENTS.md` constitution. Read `docs/ai-forward-pack/codex-surface.md` for native skills at `.agents/skills/`, personas at `.codex/agents/`, hook trust, and tool mappings. Keep host permissions and model choices unchanged.
+
 This repository uses the **Agent Knowledge Pack** and the **AI-Forward Pack**. Honor them on
 every non-trivial task.
 

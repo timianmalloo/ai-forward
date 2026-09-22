@@ -1786,7 +1786,7 @@ window.PORTAL_DATA = {
         "id": "api-index",
         "type": "api",
         "title": "API reference — the deployed script bundle",
-        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 364 public functions across 26 modules, 46% carrying a docstring."
+        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 365 public functions across 26 modules, 46% carrying a docstring."
       },
       {
         "id": "api-marker-lint",
@@ -2569,6 +2569,12 @@ window.PORTAL_DATA = {
         "summary": "Decision not to enable required status checks on main, taken while closing FR-062. The control would have prevented the original incident outright, but with..."
       },
       {
+        "id": "plan-optimize-graph-codex-adapter",
+        "type": "doc",
+        "title": "Codex adapter execution plan",
+        "summary": "Generate native Codex surfaces from the shared pack, with consumer-install and drift proof."
+      },
+      {
         "id": "plan-optimize-graph-grok-surface",
         "type": "doc",
         "title": "optimize-graph — Grok Build surface for pack-consuming repos",
@@ -2633,6 +2639,12 @@ window.PORTAL_DATA = {
         "type": "doc",
         "title": "Project Memory",
         "summary": "The durable, append-only record of what this project has learned and decided — read at every skill's grounding and appended to at every skill's convergence...."
+      },
+      {
+        "id": "proof-codex-adapter",
+        "type": "doc",
+        "title": "Codex adapter verification",
+        "summary": "Consumer installation, native discovery, preservation and drift evidence for revision 72."
       },
       {
         "id": "proof-coord-collaboration-phase4",
@@ -4184,6 +4196,16 @@ window.PORTAL_DATA = {
         "rel": "relates-to"
       },
       {
+        "from": "plan-optimize-graph-codex-adapter",
+        "to": "kb-graph-and-loop-engineering",
+        "rel": "depends-on"
+      },
+      {
+        "from": "plan-optimize-graph-codex-adapter",
+        "to": "plan-optimize-graph-grok-surface",
+        "rel": "relates-to"
+      },
+      {
         "from": "plan-optimize-graph-grok-surface",
         "to": "kb-graph-and-loop-engineering",
         "rel": "depends-on"
@@ -4307,6 +4329,11 @@ window.PORTAL_DATA = {
         "from": "project-memory",
         "to": "design-project-memory",
         "rel": "implements"
+      },
+      {
+        "from": "proof-codex-adapter",
+        "to": "plan-optimize-graph-codex-adapter",
+        "rel": "relates-to"
       },
       {
         "from": "proof-coord-collaboration-phase4",

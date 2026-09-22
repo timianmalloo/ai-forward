@@ -24,3 +24,7 @@ config carries both forms; edit the Claude Code command to the interpreter your 
 
 Measured origin: the profiled TheTerrace session viewed `public.html` four times in three minutes,
 a 43 KB paged output whole twice, and one sub-agent read the same mockup six times — none of it errored.
+
+## Codex
+
+Merge `codex.hooks.json` into `.codex/hooks.json`. Review definitions with Codex `/hooks`; project trust and hook trust are both required. Preserve `config.toml` and disabled-hook choices. SessionStart/SubagentStart record audit markers; UserPromptSubmit resets reread state; PreToolUse matches `Bash`. Supported reads are single-file `cat [--] PATH` and `Get-Content [-Path|-LiteralPath] PATH [-Raw]`; other shell forms are ignored. Windows requires Python and PowerShell 7. These hooks never grant permissions or block a tool. See INSTALL 1.8.

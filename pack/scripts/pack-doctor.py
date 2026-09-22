@@ -80,6 +80,33 @@ def _read(path):
         return None
 
 
+def check_codex_surface(root):
+    """Codex discovery files are separate from its shared constitution."""
+    missing = [p for p in (".agents/skills", ".codex/agents")
+               if not os.path.isdir(os.path.join(root, p))]
+    if not os.path.isfile(os.path.join(root, ".codex", "hooks.json")):
+        missing.append(".codex/hooks.json")
+    if missing:
+        return _result("Codex surface", FAIL, "missing: " + ", ".join(missing),
+                       "run /updatepack; Codex uses .agents/skills and .codex/agents")
+    skills = [p for p in os.listdir(os.path.join(root, ".agents", "skills"))
+              if os.path.isfile(os.path.join(root, ".agents", "skills", p, "SKILL.md"))]
+    agents = [p for p in os.listdir(os.path.join(root, ".codex", "agents")) if p.endswith(".toml")]
+    if not skills or not agents:
+        return _result("Codex surface", FAIL, "empty skill or persona inventory", "run /updatepack")
+    try:
+        hooks = json.loads(_read(os.path.join(root, ".codex", "hooks.json")))["hooks"]
+        if not isinstance(hooks, dict):
+            raise ValueError("hooks must be an object")
+        if not all(hooks.get(event) for event in ("SessionStart", "SubagentStart", "PreToolUse", "UserPromptSubmit")):
+            raise ValueError("required hook event absent")
+    except (ValueError, TypeError, KeyError) as exc:
+        return _result("Codex surface", FAIL, "invalid hooks: " + str(exc), "reconcile .codex/hooks.json")
+    return _result("Codex surface", PASS,
+                   str(len(skills)) + " skills, " + str(len(agents)) + " personas; hook definitions present (runtime trust not measured)",
+                   "review project hook definitions in Codex /hooks; config can disable hooks")
+
+
 def check_claude_md_import(root):
     """CTX-B / F-01. Copilot CLI loads BOTH AGENTS.md and CLAUDE.md as custom instructions
     (measured: two ~58 KB <custom_instruction> blocks in one captured prefix), while Claude
@@ -456,6 +483,7 @@ def run(root):
         check_block(root, "CLAUDE.md"),
         check_block(root, "AGENTS.md"),
         check_claude_md_import(root),
+        check_codex_surface(root),
         check_hooks(root),
         check_claude_settings(root),
         check_copilot_settings(),

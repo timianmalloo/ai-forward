@@ -171,3 +171,7 @@ Unlike the workflow skills, this is a **pack-lifecycle skill**: it installs the 
 **Audit (last action).** Append an audit-log entry to the **target repo's** log recording the install — `python3 docs/ai-forward-pack/scripts/audit-log.py append --shortname "addpacktorepo-<target>" --session "<id>" --skill addpacktorepo --kind command --prompt "<the prompt, verbatim>" --summary "<pack revision installed + what landed>"` — per the Audit Mandate (`knowledge/audit-and-change-log.md`, AL5), so the target repo records that the pack was installed and when.
 
 **Handoff:** direct the user to `/adopt` as the immediate next step — it recovers the existing architecture into the knowledge graph and sets the Docs Explorer baseline.
+
+## Codex installation verification (INSTALL 1.8)
+
+Confirm whole skill directories in `.agents/skills/`, TOML personas in `.codex/agents/`, merged `.codex/hooks.json`, and the shared `AGENTS.md` path map. Keep `!.agents/skills/` trackable. Preserve unrelated Codex config and hooks; report modified pack-hook conflicts. Direct the user to `/hooks` for trust review, never grant trust or enable disabled hooks. Stage the new Codex surfaces with the other pack outputs.

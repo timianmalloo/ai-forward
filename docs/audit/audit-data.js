@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-15T00:40:59Z",
+  "generated": "2026-09-15T02:02:44Z",
   "audit": [
     {
       "id": "al-0001",
@@ -4017,6 +4017,67 @@ window.AUDIT_DATA = {
         "branch": "main",
         "pushed": true
       }
+    },
+    {
+      "id": "al-01M2H9C1S9K89PGRBVV82AE76X",
+      "shortname": "keep pack/ as the shared source and add a Codex adapter to your existing…",
+      "datetime": "2026-09-15T01:02:16Z",
+      "session": "prompt-log",
+      "prompt": "keep pack/ as the shared source and add a Codex adapter to your existing generation process: Generate Codex skills into .agents/skills/. Keep the shared constitution in AGENTS.md. Adapt tool names, persona invocation, and hook wiring where required. Extend the existing consistency checks to cover that output. work in a unique work tree and then we can push and merge after",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2HCT9G4SGCNCAMC96C9HN8N",
+      "shortname": "optimize-graph-codex-adapter",
+      "datetime": "2026-09-15T02:02:28Z",
+      "session": "codex-adapter-20260914",
+      "prompt": "keep pack/ as the shared source and add a Codex adapter to your existing generation process",
+      "summary": "Seven-node plan completed; native clean-consumer discovery separates adapter correctness from existing worktree activation. See proof for measured checks and unrecorded cost dimensions.",
+      "kind": "skill",
+      "skill": "optimize-graph",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/plans/optimize-graph-codex-adapter.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Generate Codex surfaces from shared pack",
+      "done_when": "Consumer, drift, native discovery and bundle evidence recorded",
+      "tier": "T2",
+      "fan_out": 3
+    },
+    {
+      "id": "al-01M2HCTRHQ9S9G9R18KJ80ZMEP",
+      "shortname": "extendaibundle-codex-adapter",
+      "datetime": "2026-09-15T02:02:44Z",
+      "session": "codex-adapter-20260914",
+      "prompt": "keep pack/ as the shared source and add a Codex adapter to your existing generation process: Generate Codex skills into .agents/skills/. Keep the shared constitution in AGENTS.md. Adapt tool names, persona invocation, and hook wiring where required. Extend the existing consistency checks to cover that output. work in a unique work tree and then we can push and merge after",
+      "summary": "Revision 72 Codex adapter implemented and independently reviewed. All 11 bundle gates passed; 720 Python tests, 208 subtests, 28 Node tests, 36 evals. Native CLI discovers 27 skills and four generated hooks in a clean consumer. Host activation and Windows symlink limitations documented in proof. Push and merge deferred.",
+      "kind": "skill",
+      "skill": "extendaibundle",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/codex-adapter.md",
+        "pack/adapters/codex/render.py"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Generate Codex skills, shared constitution mapping, tool/persona/hook adaptation and consistency checks from pack/",
+      "done_when": "All four adapter requirements have consumer, preservation, native discovery and full bundle proof",
+      "tier": "T2",
+      "fan_out": 3,
+      "started_at": "2026-09-15T00:58:53Z",
+      "duration_seconds": 3831.0,
+      "change": "cl-01M2HCT9M3E4J5AF3NRSZ2Z44X"
     }
   ],
   "changes": [
@@ -5153,6 +5214,28 @@ window.AUDIT_DATA = {
         "commits": []
       },
       "audit_ref": "al-01M2H84E4NSPQQNGJM8SK3YRM9"
+    },
+    {
+      "id": "cl-01M2HCT9M3E4J5AF3NRSZ2Z44X",
+      "datetime": "2026-09-15T02:02:28Z",
+      "session": "codex-adapter-20260914",
+      "kind": "decision",
+      "skill": "extendaibundle",
+      "title": "Add generated Codex adapter, revision 72",
+      "prompt": "keep pack/ as the shared source and add a Codex adapter to your existing generation process: Generate Codex skills into .agents/skills/. Keep the shared constitution in AGENTS.md. Adapt tool names, persona invocation, and hook wiring where required. Extend the existing consistency checks to cover that output. work in a unique work tree and then we can push and merge after",
+      "summary": "Shared renderer feeds source sync and consumer installation; native skills, TOML personas and merged hooks; configuration preservation and full drift checks.",
+      "rationale": "Reuse canonical pack content while adapting native discovery and tool contracts; preserve user runtime settings.",
+      "artifacts": [
+        "docs/proof/codex-adapter.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "21dbfeeec3de",
+        "after": "21dbfeeec3de9825bbdbe8d143a590d35d665981",
+        "branch": "feature/codex-adapter",
+        "pushed": null,
+        "commits": []
+      }
     }
   ]
 };

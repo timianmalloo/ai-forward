@@ -934,7 +934,7 @@ window.DOCS_INDEX = {
       "phase": "",
       "reviewBy": "2027-03-03",
       "reviewSuggested": [],
-      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 364 public functions across 26 modules, 46% carrying a docstring.",
+      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 365 public functions across 26 modules, 46% carrying a docstring.",
       "tags": [
         "api",
         "scripts",
@@ -948,7 +948,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "14893fec2bd1fbfff66f459181cf73cb6f446be7b88a4dfa98ae8395062b9c32"
+      "sourceSha256": "0efec58cc7d59ff9cdd8a40ece357f81f35fa2a2cba18db9a9608e26e852e5be"
     },
     {
       "id": "api-marker-lint",
@@ -1048,7 +1048,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c28d7334e8331ad23c432fdff119c7f6cf511981a71901976a0f619b629b3c73"
+      "sourceSha256": "0d38bc4f96f55e9b47bcb16522d7e1bb81ced66310679da74858b1fc55fb30aa"
     },
     {
       "id": "api-prompt-log",
@@ -2429,7 +2429,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ecd2048b5c52760fa398d1584e7026fe439a4ae4119eb983805b77d92fdd72ff"
+      "sourceSha256": "4b726092cf2491fae92bfe81ca3c127201ce47b4ff9c0cfc7027af1b4e9e69c7"
     },
     {
       "id": "docs-index",
@@ -3273,6 +3273,41 @@ window.DOCS_INDEX = {
       "sourceSha256": "5bf8471b858442580beb4f227c56ae44fb370b0ff6185b66ba14d4d0da90ae07"
     },
     {
+      "id": "plan-optimize-graph-codex-adapter",
+      "path": "docs/plans/optimize-graph-codex-adapter.md",
+      "title": "Codex adapter execution plan",
+      "type": "doc",
+      "status": "active",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-03-14",
+      "reviewSuggested": [],
+      "summary": "Generate native Codex surfaces from the shared pack, with consumer-install and drift proof.",
+      "tags": [
+        "plan",
+        "codex",
+        "adapters"
+      ],
+      "links": [
+        {
+          "to": "kb-graph-and-loop-engineering",
+          "rel": "depends-on"
+        },
+        {
+          "to": "plan-optimize-graph-grok-surface",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Execution graph",
+          "mermaid": "graph TD\n  A[Repository grounding] --> C[Design review]\n  B[Codex contract spike] --> C\n  C --> D[Red proof]\n  D --> E[Implementation]\n  E --> F[Verification and adversarial review]\n  F --> G[Proof and audit]"
+        }
+      ],
+      "sourceSha256": "a5d7f07dac2f696c091adda4f5cbc14d2cdda37f891ad069d1107b3cfd9ae4a2"
+    },
+    {
       "id": "plan-optimize-graph-grok-surface",
       "path": "docs/plans/optimize-graph-grok-surface.md",
       "title": "optimize-graph — Grok Build surface for pack-consuming repos",
@@ -3557,6 +3592,31 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "f01822ddf3158a68349ab584ebea4bc7c2d2f28abcea7995f267ca9e32bf9ae5"
+    },
+    {
+      "id": "proof-codex-adapter",
+      "path": "docs/proof/codex-adapter.md",
+      "title": "Codex adapter verification",
+      "type": "doc",
+      "status": "active",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-03-14",
+      "reviewSuggested": [],
+      "summary": "Consumer installation, native discovery, preservation and drift evidence for revision 72.",
+      "tags": [
+        "proof",
+        "codex",
+        "adapters"
+      ],
+      "links": [
+        {
+          "to": "plan-optimize-graph-codex-adapter",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "312a3985768e1c737ca59b2903cd94a3b978f2979a959f86a874212dbafea73d"
     },
     {
       "id": "proposal-hosting-and-dream-manifest",
@@ -6105,5 +6165,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "76f5e731c5083e02b7f4a8719db12db58e3525b12e9d66acd44d2e5566216e69"
+  "graphSha256": "d4b8b35cd85490837d9284366b1983e0bfafe54cfa3e9cc7895d481c4d427114"
 };

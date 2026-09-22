@@ -12,4 +12,6 @@ OPEN: read the target repo path from the user's input; validate it is an accessi
 
 **Audit (last action):** append an audit-log entry to the **target repo's** log via `python3 docs/ai-forward-pack/scripts/audit-log.py append --shortname "addpacktorepo-<target>" --session "<id>" --skill addpacktorepo --kind command --prompt "<verbatim>" --summary "<revision installed>"` (the Audit Mandate, `knowledge/audit-and-change-log.md`, AL5), so the target repo records the install.
 
+**Codex verification (INSTALL 1.8):** confirm whole `.agents/skills/` directories, `.codex/agents/` TOML personas, merged `.codex/hooks.json`, and shared `AGENTS.md` guidance. Keep skills trackable. Preserve unrelated config and hooks; report modified pack-hook conflicts. Hook trust remains a host/user setting. Stage Codex outputs with the other pack surfaces.
+
 ${input}

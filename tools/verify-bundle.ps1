@@ -72,7 +72,7 @@ try {
     Gate "2. source<->install drift (pack/ is the only source of truth)" {
         pwsh (Join-Path $repo "tools\sync-pack.ps1") | Out-Null
         $paths = @(".claude", ".github/instructions", ".github/knowledge", ".github/prompts",
-                   ".github/agents", ".grok", "docs", "web", "CLAUDE.md", "AGENTS.md")
+                   ".github/agents", ".grok", ".agents/skills", ".codex", "docs", "web", "CLAUDE.md", "AGENTS.md")
         git --no-pager diff --stat -- $paths
         git diff --exit-code -- $paths
         if ($LASTEXITCODE -ne 0) {

@@ -23,7 +23,7 @@ resets the counter. State lives in a per-session file under the OS temp dir. Eve
 path is fail-OPEN: a broken guard must never cost a tool call (a hook that blocks by accident
 is worse than no hook).
 
-Usage (from the host's hook config):  reread-guard.py --host claude|copilot|grok [--threshold 3]
+Usage (from the host's hook config):  reread-guard.py --host claude|copilot|grok|codex [--threshold 3]
 """
 import argparse
 import json
@@ -33,7 +33,29 @@ import sys
 import tempfile
 
 PAGED_OUTPUT_RX = re.compile(r"copilot-tool-output-[0-9a-f-]+\.txt$", re.I)
-READ_TOOLS = {"claude": {"Read"}, "copilot": {"view"}, "grok": {"read_file", "Read"}}
+READ_TOOLS = {"claude": {"Read"}, "copilot": {"view"}, "grok": {"read_file", "Read"}, "codex": {"Bash"}}
+
+
+
+def codex_read_path(command):
+    """Recognize single-file reads, never a general shell program.
+
+    simplify: cat [--] PATH or Get-Content [-Path|-LiteralPath] PATH [-Raw].
+    Ignore expansions, pipelines, other options and multiple files. Extend only
+    for measured missed reads, with positive and ambiguity tests.
+    """
+    if not isinstance(command, str) or re.search(r"[\r\n;|&<>$`*?{}\[\]()]", command):
+        return ""
+    path = r'''(?P<path>"[^"\r\n]+"|'[^'\r\n]+'|[^\s'",]+)'''
+    match = re.fullmatch(r"\s*cat\s+(?:--\s+)?" + path + r"\s*", command)
+    if match is None:
+        match = re.fullmatch(r"\s*Get-Content\s+(?:(?:-LiteralPath|-Path)\s+)?" + path + r"(?:\s+-Raw)?\s*",
+                             command, flags=re.I)
+    if match is None:
+        return ""
+    value = match.group("path")
+    value = value[1:-1] if value.startswith(('"', "'")) else value
+    return value if value and not value.startswith(("-", "~")) else ""
 
 
 def state_path(session):
@@ -67,7 +89,16 @@ def normalize(p):
 def evaluate(host, payload, threshold=3, state=None):
     """Pure decision: returns (new_state, warning_or_None). Exercised directly by the tests."""
     state = dict(state or {})
-    if host == "claude":
+    if host == "codex":
+        if payload.get("hook_event_name") == "UserPromptSubmit":
+            return {}, None
+        tool = payload.get("tool_name") or ""
+        args = payload.get("tool_input") or {}
+        path = codex_read_path(args.get("command")) if isinstance(args, dict) else ""
+        if path and payload.get("cwd"):
+            path = os.path.join(payload["cwd"], path)
+        ranged = False
+    elif host == "claude":
         event = payload.get("hook_event_name") or ""
         if event == "UserPromptSubmit":
             return {}, None
@@ -114,7 +145,7 @@ def emit(host, warning):
         return
     if host == "claude":
         print(json.dumps({"hookSpecificOutput": {"hookEventName": "PreToolUse", "systemMessage": warning}}))
-    elif host == "grok":
+    elif host in ("grok", "codex"):
         print(json.dumps({"hookSpecificOutput": {"hookEventName": "PreToolUse", "additionalContext": warning}}))
     else:
         print(json.dumps({"additionalContext": warning}))
@@ -122,7 +153,7 @@ def emit(host, warning):
 
 def main(argv=None):
     ap = argparse.ArgumentParser()
-    ap.add_argument("--host", choices=["claude", "copilot", "grok"], required=True)
+    ap.add_argument("--host", choices=["claude", "copilot", "grok", "codex"], required=True)
     ap.add_argument("--threshold", type=int, default=3)
     args = ap.parse_args(argv)
     try:

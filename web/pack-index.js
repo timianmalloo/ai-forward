@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 183
+"count": 185
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 342,
+"total": 344,
 "items": [
 {
 "cat": "knowledge",
@@ -413,7 +413,7 @@ window.PACK_INDEX = {
 "summary": "Add the AI-Forward Pack to a local repository from a given path — reason over the target repo's language, tooling, and existing docs before writing anything, apply the full pack deployment map, produce a tabular summary of every artifact…",
 "path": "pack/commands/addpacktorepo/SKILL.md",
 "kind": "skill",
-"text": "/addpacktorepo add the ai-forward pack to a local repository from a given path — reason over the target repo's language, tooling, and existing docs before writing anything, apply the full pack deployment map, produce a tabular summary of every artifact installed and what it does, point to the pack explainer and docs, and offer to commit and push. run this from the ai-forward repo. /addpacktorepo — install the ai-forward pack into a local repository grounding (first action) locating the pack source input modes — dry-run & idempotency stages documentation & discoverability (note) definition of done"
+"text": "/addpacktorepo add the ai-forward pack to a local repository from a given path — reason over the target repo's language, tooling, and existing docs before writing anything, apply the full pack deployment map, produce a tabular summary of every artifact installed and what it does, point to the pack explainer and docs, and offer to commit and push. run this from the ai-forward repo. /addpacktorepo — install the ai-forward pack into a local repository grounding (first action) locating the pack source input modes — dry-run & idempotency stages documentation & discoverability (note) definition of done codex installation verification (install 1.8)"
 },
 {
 "cat": "skills",
@@ -629,7 +629,7 @@ window.PACK_INDEX = {
 "summary": "Update an installed AI-Forward Pack to the latest revision — reads the pack source INSTALL.md from a local ai-forward clone, diffs the installed vs source revision, applies the deployment map mechanically with pack-apply.py (managed-block…",
 "path": "pack/commands/updatepack/SKILL.md",
 "kind": "skill",
-"text": "/updatepack update an installed ai-forward pack to the latest revision — reads the pack source install.md from a local ai-forward clone, diffs the installed vs source revision, applies the deployment map mechanically with pack-apply.py (managed-block re-paste, stale-copy removal, the claude.md import conversion, parity-control retirement, three-way merges over repo-local deviations), and produces a tabular action summary before offering to commit and push. run this from the repo that already has the pack installed. /updatepack — pull the latest ai-forward pack into an installed repo grounding (first action) input modes — dry-run & idempotency stages documentation & discoverability (note) definition of done"
+"text": "/updatepack update an installed ai-forward pack to the latest revision — reads the pack source install.md from a local ai-forward clone, diffs the installed vs source revision, applies the deployment map mechanically with pack-apply.py (managed-block re-paste, stale-copy removal, the claude.md import conversion, parity-control retirement, three-way merges over repo-local deviations), and produces a tabular action summary before offering to commit and push. run this from the repo that already has the pack installed. /updatepack — pull the latest ai-forward pack into an installed repo grounding (first action) input modes — dry-run & idempotency stages documentation & discoverability (note) definition of done codex installation verification (install 1.8)"
 },
 {
 "cat": "skills",
@@ -1034,7 +1034,7 @@ window.PACK_INDEX = {
 "summary": "pack-apply.py — apply the AI-Forward deployment map to a repo, mechanically and reversibly.",
 "path": "pack/scripts/pack-apply.py",
 "kind": "script",
-"text": "pack-apply.py pack-apply.py — apply the ai-forward deployment map to a repo, mechanically and reversibly. `/updatepack` and `/addpacktorepo` used to hand-apply install.md's deployment map, so every step a person could forget - re-pasting a managed block, deleting the wrapped copy of a doc whose load scope moved, converting claude.md to the `@agents.md` import, retiring a parity control that encoded the old invariant - was remembered or it was not. this script is the deployment map (install.md 1), run from the pack source against a target repo: pack-apply.py plan --source <ai-forward clone> --target <repo> # every action, no writes pack-apply.py apply --source <ai-forward clone> --target <repo> # do it, idempotently what it does, per artifact family (pack-owned names only - repo-local files are never touched): knowledge -> .claude/knowledge/<name>.md verbatim; .github/instructions/<name>.instructions.md (applyto-wrapped) for load: always|glob; .github/knowledge/<name>.md for load: skill|reference; the stale copy in the other copilot location is removed (ctx-e: a doc re-scoped to on-demand must stop attaching). skills -> .claude/skills/<name>/ (the whole directory: skill.md + reference/*.md); .github/prompts/<name>.prompt.md; .grok/skills/<name>/ (same files; grok build native, wins over claude-compat scan) agents -> .claude/agents/ (both sets); .github/agents/<name>.agent.md (renamed, `tools:` stripped); .grok/agents/<name>.md (`_agent` suffix stripped, `tools:` stripped) bundle -> docs/ai-forward-pack/{templates,scripts,hooks,readme,overview,research-synthesis, install,context-budget.json}; .github/hooks/ai-forward.json; .claude/settings.json (hooks merged, showthinkingsummaries set); .grok/hooks/ai-forward.json; .grok/rules/grok-surface.md (path map only — not knowledge docs); .gitignore lines; docs/index.html only if absent; docs/docs-index.js never (v10) front doors -> agents.md: the managed block replaced wholesale between markers (appended if absent). claude.md: converted to `@agents.md` + the addendum block (ctx-b); the old file is backed up under docs/ai-forward-pack/retired/, and every paragraph that is not in agents.md (after toolchain-path normalisation) is kept above the addendum. controls -> a repo-local parity test that asserts claude.md carries the standing-method block (the old invariant) is rewritten into a shim asserting the new invariant through pack-doctor, its other assertions carried over where they can be read; the original is backed up beside the claude.md backup. repo-local deviations are honoured, not reverted: a destination that differs from the version the repo received at its installed revision is three-way merged (`git merge-file`) against the pack's old and new text; a clean merge lands as merge, a conflicting one is left untouched with the new pack text written under docs/ai-forward-pack/conflicts/ and reported as conflict for the skill to reconcile. the installed revision advances only in `apply`. re-running is a no-op. python 3.8+, stdlib only. exit 0 = applied/clean, 1 = conflicts or errors reported, 2 = usage. gitignore_negations read norm_nl same frontmatter git default_source __init__ _project_name _stale_applier row rel _source_revision _target_revision _old_pack_text _write _remove place _transform_like _merge knowledge skills agents bundle _settings _tracked_under _gitignore_withhold _gitignore front_doors _retire_parity_controls advance run_baselines run grok_agent_filename strip_tools replace_block normalise _outside_block unique_paragraphs parity_shim render_table summarize main"
+"text": "pack-apply.py pack-apply.py — apply the ai-forward deployment map to a repo, mechanically and reversibly. `/updatepack` and `/addpacktorepo` used to hand-apply install.md's deployment map, so every step a person could forget - re-pasting a managed block, deleting the wrapped copy of a doc whose load scope moved, converting claude.md to the `@agents.md` import, retiring a parity control that encoded the old invariant - was remembered or it was not. this script is the deployment map (install.md 1), run from the pack source against a target repo: pack-apply.py plan --source <ai-forward clone> --target <repo> # every action, no writes pack-apply.py apply --source <ai-forward clone> --target <repo> # do it, idempotently what it does, per artifact family (pack-owned names only - repo-local files are never touched): knowledge -> .claude/knowledge/<name>.md verbatim; .github/instructions/<name>.instructions.md (applyto-wrapped) for load: always|glob; .github/knowledge/<name>.md for load: skill|reference; the stale copy in the other copilot location is removed (ctx-e: a doc re-scoped to on-demand must stop attaching). skills -> .claude/skills/<name>/ (the whole directory: skill.md + reference/*.md); .github/prompts/<name>.prompt.md; .grok/skills/<name>/ (same files; grok build native, wins over claude-compat scan) agents -> .claude/agents/ (both sets); .github/agents/<name>.agent.md (renamed, `tools:` stripped); .grok/agents/<name>.md (`_agent` suffix stripped, `tools:` stripped) bundle -> docs/ai-forward-pack/{templates,scripts,hooks,readme,overview,research-synthesis, install,context-budget.json}; .github/hooks/ai-forward.json; .claude/settings.json (hooks merged, showthinkingsummaries set); .grok/hooks/ai-forward.json; .grok/rules/grok-surface.md (path map only — not knowledge docs); .gitignore lines; docs/index.html only if absent; docs/docs-index.js never (v10) front doors -> agents.md: the managed block replaced wholesale between markers (appended if absent). claude.md: converted to `@agents.md` + the addendum block (ctx-b); the old file is backed up under docs/ai-forward-pack/retired/, and every paragraph that is not in agents.md (after toolchain-path normalisation) is kept above the addendum. controls -> a repo-local parity test that asserts claude.md carries the standing-method block (the old invariant) is rewritten into a shim asserting the new invariant through pack-doctor, its other assertions carried over where they can be read; the original is backed up beside the claude.md backup. repo-local deviations are honoured, not reverted: a destination that differs from the version the repo received at its installed revision is three-way merged (`git merge-file`) against the pack's old and new text; a clean merge lands as merge, a conflicting one is left untouched with the new pack text written under docs/ai-forward-pack/conflicts/ and reported as conflict for the skill to reconcile. the installed revision advances only in `apply`. re-running is a no-op. python 3.8+, stdlib only. exit 0 = applied/clean, 1 = conflicts or errors reported, 2 = usage. gitignore_negations read norm_nl same frontmatter git default_source __init__ _project_name _stale_applier row rel _source_revision _target_revision _old_pack_text _write _remove place _transform_like _merge knowledge skills agents bundle _settings _tracked_under _gitignore_withhold _gitignore front_doors _retire_parity_controls advance run_baselines _codex_adapter codex run grok_agent_filename strip_tools replace_block normalise _outside_block unique_paragraphs parity_shim render_table summarize main"
 },
 {
 "cat": "scripts",
@@ -1043,7 +1043,7 @@ window.PACK_INDEX = {
 "summary": "pack-doctor.py — AI-Forward install-health check (deployable; runs in a TARGET repo).",
 "path": "pack/scripts/pack-doctor.py",
 "kind": "script",
-"text": "pack-doctor.py pack-doctor.py — ai-forward install-health check (deployable; runs in a target repo). reports whether this repo has the pack installed and healthy: the installed revision, both tool surfaces present, the managed blocks intact, and the knowledge graph valid + fresh. one pass/warn/fail line per check with a suggested fix; exit 1 if any fail, or if any warn is present under --strict. distinct from tools/check-consistency.py (which validates the pack source — pack/ == docs). a target repo has no pack/, so this checks install health, not source consistency. design: docs/design/pack-doctor.md. stdlib only; composes docs-graph.py for the graph half. usage pack-doctor.py [--root <repo>] [--json] [--strict] exit: 0 all pass/warn (or all pass under --strict) · 1 any fail/strict warn. _result check_installed check_surface _read check_claude_md_import check_copilot_settings check_claude_settings check_hooks check_block check_graph check_coordination check_node_runner _works check_interpreter run main"
+"text": "pack-doctor.py pack-doctor.py — ai-forward install-health check (deployable; runs in a target repo). reports whether this repo has the pack installed and healthy: the installed revision, both tool surfaces present, the managed blocks intact, and the knowledge graph valid + fresh. one pass/warn/fail line per check with a suggested fix; exit 1 if any fail, or if any warn is present under --strict. distinct from tools/check-consistency.py (which validates the pack source — pack/ == docs). a target repo has no pack/, so this checks install health, not source consistency. design: docs/design/pack-doctor.md. stdlib only; composes docs-graph.py for the graph half. usage pack-doctor.py [--root <repo>] [--json] [--strict] exit: 0 all pass/warn (or all pass under --strict) · 1 any fail/strict warn. _result check_installed check_surface _read check_codex_surface check_claude_md_import check_copilot_settings check_claude_settings check_hooks check_block check_graph check_coordination check_node_runner _works check_interpreter run main"
 },
 {
 "cat": "scripts",
@@ -1616,10 +1616,10 @@ window.PACK_INDEX = {
 "cat": "graph",
 "id": "api-index",
 "title": "API reference — the deployed script bundle",
-"summary": "Generated API reference for the pack's public surface — the deployed script bundle. 364 public functions across 26 modules, 46% carrying a docstring.",
+"summary": "Generated API reference for the pack's public surface — the deployed script bundle. 365 public functions across 26 modules, 46% carrying a docstring.",
 "path": "docs/api/index.md",
 "kind": "api",
-"text": "api reference — the deployed script bundle generated api reference for the pack's public surface — the deployed script bundle. 364 public functions across 26 modules, 46% carrying a docstring. api scripts generated index documents architecture"
+"text": "api reference — the deployed script bundle generated api reference for the pack's public surface — the deployed script bundle. 365 public functions across 26 modules, 46% carrying a docstring. api scripts generated index documents architecture"
 },
 {
 "cat": "graph",
@@ -2271,6 +2271,15 @@ window.PACK_INDEX = {
 },
 {
 "cat": "graph",
+"id": "plan-optimize-graph-codex-adapter",
+"title": "Codex adapter execution plan",
+"summary": "Generate native Codex surfaces from the shared pack, with consumer-install and drift proof.",
+"path": "docs/plans/optimize-graph-codex-adapter.md",
+"kind": "doc",
+"text": "codex adapter execution plan generate native codex surfaces from the shared pack, with consumer-install and drift proof. plan codex adapters depends-on kb-graph-and-loop-engineering relates-to plan-optimize-graph-grok-surface"
+},
+{
+"cat": "graph",
 "id": "plan-optimize-graph-grok-surface",
 "title": "optimize-graph — Grok Build surface for pack-consuming repos",
 "summary": "Approved execution graph for adding a native Grok Build surface to the AI-Forward Pack so /addpacktorepo and pack-apply configure consuming repos the same way Claude Code and Copilot already are. Span shortened; floors early; no knowledge…",
@@ -2358,6 +2367,15 @@ window.PACK_INDEX = {
 "path": "docs/project-memory.md",
 "kind": "doc",
 "text": "project memory the durable, append-only record of what this project has learned and decided — read at every skill's grounding and appended to at every skill's convergence. frontmatter/graph is authority; this ledger is narrative. memory continuity relates-to architecture implements design-project-memory"
+},
+{
+"cat": "graph",
+"id": "proof-codex-adapter",
+"title": "Codex adapter verification",
+"summary": "Consumer installation, native discovery, preservation and drift evidence for revision 72.",
+"path": "docs/proof/codex-adapter.md",
+"kind": "doc",
+"text": "codex adapter verification consumer installation, native discovery, preservation and drift evidence for revision 72. proof codex adapters relates-to plan-optimize-graph-codex-adapter"
 },
 {
 "cat": "graph",

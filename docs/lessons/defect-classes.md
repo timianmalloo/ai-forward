@@ -51,6 +51,15 @@ summary: >-
 
 *Classes discovered in this repository. Newest first.*
 
+### HOST-A — A host adapter passes serialization checks but changes lifecycle meaning
+- **Signature:** generated files parse and initial installation passes, but refresh, shell execution, or native discovery interprets them differently.
+- **Why it survives:** same-version replay and explicit-interpreter fixtures never exercise the old representation or the host boundary.
+- **Instances:** 2026-09-14 Codex adapter: reconstructing the old merge base with new guidance preserved outdated instructions; independent review reproduced it. A Windows fixture passed a list to cmd /c and printed script text rather than executing the configured hook. Moving historical changelog text into the current instruction body also revived superseded advice under active-source gates.
+- **Class → sweep → derive → prevent:** reviewed skill and persona projections, refresh bases, hook interpreter selection, drift checks and changelog scans. Historical guidance now reconstructs the merge base; commandWindows explicitly selects pwsh; the exact configured command executes through both cmd and PowerShell and must create actual parent/subagent markers. Historical changelog entries remain in a linked YAML archive. Serialization is only one boundary.
+- **Control:** test_codex_surface.py covers historical-guidance refresh with preserved local edits, complete persona bodies parsed as TOML, and missing/changed/extra drift. test_codex_hooks.py executes configured commands from nested paths with spaces and checks emitted marker state. Existing test_coord_worktree_config.py and test_pack_apply.py detected archived obsolete instructions in the active body (observed red 2026-09-14).
+- **Status:** controlled
+
+
 ### BOOT-A — A fix to a mechanism that propagates changes cannot propagate itself
 - **Signature:** the thing being changed *is* the thing that carries changes — a deployment script, an installer, a migration runner, a schema-migration tool, an auto-updater, a linter that lints its own config. The new version ships **as cargo of the old version**, so the fix is inert on exactly the hop that matters: the first one. The tell is a green source repo, a green gate, and a consumer whose next refresh still does the old wrong thing.
 - **Why it survives:** every test runs the *new* code, because that is the code in the repo. The consumer's copy is never the subject of any test, and there is no failing signal anywhere — the source is correct, the gate is honest, and the defect lives entirely in the gap between them. It also hides behind the reasonable-sounding surrender *"you cannot make an old program warn about itself"*, which is true and yet not the end of the analysis: the old program is rarely the only thing in the loop.
