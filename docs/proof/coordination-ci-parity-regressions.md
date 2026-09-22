@@ -54,6 +54,13 @@ summary: >-
 - **Confidence:** Verified on Windows locally.
 - **Residual risk:** Windows CI has slower runner timing than local Windows; the operation remains finite and CI is the final environment proof.
 
+### Claim 4: Runtime-control retries cannot approve an expired request or hide non-contention lock errors
+- **Evidence:** `test_decide_and_answer_use_time_after_retry_and_record_read` advances mocked wall time across the real lock/record-read boundary and proves no decision is published and no answer is granted after expiry. `test_windows_lock_noncontention_error_is_not_retried_as_busy` proves Windows `EBADF` propagates immediately instead of being retried as contention.
+- **Oracle:** The expiry test fails if `decide()` or `answer()` captures default wall time before retry/record-read. The Windows error test fails if all `OSError` values are treated as retryable busy.
+- **Red observed before green:** review finding identified the stale-time path; the tests were added with the fix as deterministic fault-injection controls.
+- **Confidence:** Expiry behavior verified on Windows locally; non-contention Windows errno test is Windows-only and skipped off Windows.
+- **Residual risk:** POSIX has no `msvcrt` path; Linux/macOS remain covered by CI for the rest of the runtime suite.
+
 ## Test coverage of the boundary set
 
 | Boundary | Covered by |
@@ -62,6 +69,8 @@ summary: >-
 | Failed ACP model setter | `test_expected_model_match_mismatch_and_missing_gate_fresh_session` |
 | Missing/mismatched ACP startup metadata | `test_expected_model_match_mismatch_and_missing_gate_fresh_session` |
 | Final process wait timeout | `test_second_wait_timeout_returns_bounded_failure` |
+| Expiry while contending for runtime-control lock | `test_decide_and_answer_use_time_after_retry_and_record_read` |
+| Non-contention Windows lock error | `test_windows_lock_noncontention_error_is_not_retried_as_busy` |
 
 ## Testing Strategy directives applied
 
@@ -87,7 +96,7 @@ pwsh tools\verify-bundle.ps1
 
 ## Results
 
-- Targeted regression suite: `36 passed, 70 skipped, 9 subtests passed in 35.10s`.
+- Targeted regression suite: `36 passed, 70 skipped, 9 subtests passed in 35.10s`; follow-up runtime suite: `9 passed, 3 skipped, 4 subtests passed in 1.07s`.
 - Full bundle verification: `BUNDLE CONSISTENT - all 17 gates passed`.
 
 ## Status & next action

@@ -8955,7 +8955,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "2421651b87ad5bc699686c80ead9ff60a48a8e0f543225688c2fca320d939ca1"
+      "sourceSha256": "2f56ed541435c002203b382fd4bb4a7d6445ac6dd96d508531df19d8ec30862c"
     },
     {
       "id": "proof-coordination-end-to-end",
@@ -10716,5 +10716,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "5bfeb13088e6b59469b5cc2f4e1c6ca0007e0947650d5e00a4685a606fa73fba"
+  "graphSha256": "782f6abaabf52c7de6d4bf8f71b75c407853c3a9918fdafc3be5b5ce184afae2"
 };

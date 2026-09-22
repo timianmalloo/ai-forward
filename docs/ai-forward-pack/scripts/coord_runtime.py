@@ -4,6 +4,7 @@ One record is one input or decision fact. Filesystem ownership is the authority
 boundary; this does not isolate mutually hostile programs running as the same user.
 """
 import contextlib
+import errno
 import hashlib
 import itertools
 import json
@@ -65,7 +66,9 @@ class Controls:
                                 msvcrt.locking(stream.fileno(), msvcrt.LK_NBLCK, 1)
                                 acquired = True
                                 break
-                            except OSError:
+                            except OSError as exc:
+                                if exc.errno not in (errno.EACCES, errno.EAGAIN, errno.EDEADLK):
+                                    raise
                                 if time.monotonic() >= deadline:
                                     _busy()
                                 time.sleep(.005)
@@ -223,14 +226,14 @@ class Controls:
         return self._retry_busy(action)
 
     def decide(self, request_id, option_id, now=None):
-        now = time.time() if now is None else now
         def action():
             with self.locked():
                 rows = self._records()
+                effective_now = time.time() if now is None else now
                 matches = [r for r in rows if r["kind"] == "permission" and r["id"] == request_id]
                 require(len(matches) == 1)
                 request = matches[0]
-                require(now < request["expires_at"] and not any(
+                require(effective_now < request["expires_at"] and not any(
                     r["kind"] == "decision" and r["request_id"] == request_id for r in rows))
                 options = [o for o in request["request"]["options"] if o["optionId"] == option_id]
                 require(len(options) == 1 and options[0]["kind"] in ("allow_once", "reject_once", "reject_always"))
@@ -239,12 +242,12 @@ class Controls:
         return self._retry_busy(action)
 
     def answer(self, request_id, now=None):
-        now = time.time() if now is None else now
         rows = self.records()
+        effective_now = time.time() if now is None else now
         requests = [r for r in rows if r["kind"] == "permission" and r["id"] == request_id]
         require(len(requests) == 1)
         request = requests[0]
-        require(now < request["expires_at"])
+        require(effective_now < request["expires_at"])
         decisions = [r for r in rows if r["kind"] == "decision" and r["request_id"] == request_id]
         require(len(decisions) <= 1)
         if not decisions:

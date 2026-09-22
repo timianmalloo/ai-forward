@@ -9,6 +9,7 @@ import tempfile
 import subprocess
 import time
 import unittest
+from unittest import mock
 
 SCRIPT = Path(__file__).resolve().parents[2] / "pack/scripts/coord_runtime.py"
 sys.path.insert(0, str(SCRIPT.parent))
@@ -154,6 +155,38 @@ class RuntimeControls(unittest.TestCase):
             self.assertEqual([], list(self.path.glob("*.json")))
         finally:
             process.communicate(input=b"release", timeout=2)
+
+    def test_decide_and_answer_use_time_after_retry_and_record_read(self):
+        request = self.box.permission(self.request(), expires_at=10)
+        original_locked = self.box.locked
+
+        class DelayedLock:
+            def __enter__(_self):
+                self.api.time.time()
+                _self.inner = original_locked()
+                return _self.inner.__enter__()
+
+            def __exit__(_self, exc_type, exc, traceback):
+                return _self.inner.__exit__(exc_type, exc, traceback)
+
+        with mock.patch.object(self.api.time, "time", side_effect=[1, 11]):
+            with mock.patch.object(self.box, "locked", return_value=DelayedLock()):
+                with self.assertRaises(ValueError):
+                    self.box.decide(request["id"], "yes")
+        self.assertFalse(any(row["kind"] == "decision" for row in self.box.records()))
+
+        with mock.patch.object(self.api.time, "time", side_effect=[1, 11]):
+            with mock.patch.object(self.box, "locked", return_value=DelayedLock()):
+                with self.assertRaises(ValueError):
+                    self.box.answer(request["id"])
+
+    @unittest.skipUnless(os.name == "nt", "Windows msvcrt error classification")
+    def test_windows_lock_noncontention_error_is_not_retried_as_busy(self):
+        self.path.mkdir(parents=True, exist_ok=True)
+        with mock.patch("msvcrt.locking", side_effect=OSError(9, "bad file descriptor")):
+            with self.assertRaises(OSError):
+                with self.box.locked():
+                    pass
 
 
 if __name__ == "__main__":
