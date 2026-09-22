@@ -512,6 +512,8 @@ test("coordination tab repeats the prompt-to-coordination journey", async ({ pag
   await page.locator('button.sec[data-sec="coord"]').click();
   const journey = page.locator("#coord-prompt-to-execution").locator("..");
   await expect(page.locator("#coord-prompt-to-execution")).toBeVisible();
+  await expect(page.locator(".linkout").filter({ hasText: "Deep architecture and evolution" }).getByRole("link"))
+    .toHaveAttribute("href", "../_site/bundle.html#architecture-multi-harness-coordination");
   await expect(journey.getByRole("row", { name: /\/compile \/compile \(Markdown\)/ })).toBeVisible();
   await expect(journey.getByRole("row", { name: /\/prepare-for-coordination .*Markdown/ })).toBeVisible();
   await expect(journey.getByRole("row", { name: /\/execute-with-coordination .*Markdown/ })).toBeVisible();
