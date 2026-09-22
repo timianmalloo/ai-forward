@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 347
+"count": 352
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 526,
+"total": 531,
 "items": [
 {
 "cat": "knowledge",
@@ -2415,6 +2415,15 @@ window.PACK_INDEX = {
 },
 {
 "cat": "graph",
+"id": "note-20260922-semantic-diagrams-in-reader-first-handbook",
+"title": "The public handbook uses semantic HTML diagrams for selected relationships",
+"summary": "The public handbook renders selected multi-step, loop, and branch relationships as labelled HTML figures backed by ordered lists. The decision affects handbook source syntax, rendering, responsive behavior, and accessibility proof.",
+"path": "docs/notes/semantic-diagrams-in-reader-first-handbook.md",
+"kind": "decision-note",
+"text": "the public handbook uses semantic html diagrams for selected relationships the public handbook renders selected multi-step, loop, and branch relationships as labelled html figures backed by ordered lists. the decision affects handbook source syntax, rendering, responsive behavior, and accessibility proof. decision-note handbook diagrams accessibility relates-to design-reader-first-handbook relates-to mockup-github-pages-handbook"
+},
+{
+"cat": "graph",
 "id": "note-autopilot-open-questions-decisions",
 "title": "Decisions on PACK-O open questions (logging, class granularity, autopilot caps)",
 "summary": "The user's answers to the three open questions from the task-discipline / front-matter proposal (revision 3), which gate the next change: making PACK-O controllable.",
@@ -2754,6 +2763,15 @@ window.PACK_INDEX = {
 "path": "docs/mockups/dream-review.md",
 "kind": "design",
 "text": "dream review — mockup self-contained, dependency-free high-fidelity mockup of the dream review view — the master-detail approval queue the maintainer uses to review a dream's proposals (evidence, provenance, confidence, proposed control, federation scope) and approve/edit/reject/defer each, then export decisions. renders the hard states (empty/loading/error/overflow) via a review harness (theme · viewport · state · motion) and reuses docs/design.md's aa-audited knowledge-surface tokens. dreaming mockup review-view master-detail ui implements spec-dreaming refines design-language-docs-explorer"
+},
+{
+"cat": "graph",
+"id": "mockup-github-pages-handbook",
+"title": "AI-Forward GitHub Pages handbook — reviewable build",
+"summary": "Self-contained review build of the public AI-Forward handbook after its visual elevation. It exercises the same canonical sources and generated HTML as the Pages front door, including the path, cycle, and branch relationship diagrams.",
+"path": "docs/mockups/github-pages-handbook.md",
+"kind": "design",
+"text": "ai-forward github pages handbook — reviewable build self-contained review build of the public ai-forward handbook after its visual elevation. it exercises the same canonical sources and generated html as the pages front door, including the path, cycle, and branch relationship diagrams. handbook github-pages mockup ui-design accessibility implements design-reader-first-handbook implements spec-documentation-portal relates-to ui-review-github-pages-handbook tested-by proof-github-pages-handbook-ui"
 },
 {
 "cat": "graph",
@@ -3477,6 +3495,15 @@ window.PACK_INDEX = {
 },
 {
 "cat": "graph",
+"id": "plan-github-pages-ui-elevation",
+"title": "GitHub Pages UI elevation execution graph",
+"summary": "Bounded execution graph for elevating the public AI-Forward handbook. It keeps the canonical web sources, generated Pages surface, UI proof, accessibility review, and repository gates on one traced path while parallelising only independent…",
+"path": "docs/plans/github-pages-ui-elevation.md",
+"kind": "doc",
+"text": "github pages ui elevation execution graph bounded execution graph for elevating the public ai-forward handbook. it keeps the canonical web sources, generated pages surface, ui proof, accessibility review, and repository gates on one traced path while parallelising only independent reviews. plan ui-design github-pages handbook relates-to design-reader-first-handbook relates-to spec-documentation-portal depends-on kb-graph-and-loop-engineering"
+},
+{
+"cat": "graph",
 "id": "plan-multi-harness-runner",
 "title": "Multi-harness runner: specification, compatibility decision, design and implementation",
 "summary": "Executes the requested specify, design-slice and implement sequence. An independent, Grok-driven ACP compatibility spike is a decision dependency of transport selection; repository contract review can proceed alongside it.",
@@ -3663,6 +3690,15 @@ window.PACK_INDEX = {
 "path": "docs/ui-guide.md",
 "kind": "doc",
 "text": "ui & ux capability guide the how-to layer over this repository's seven ui standards: the layer stack and what each one decides, a job-to-path picker, the /ui-design loop, the command cheat sheet, an archetype picker, the veto table, the anti-pattern tells, and where artifacts land. the browsable surface is ui-guide.html; this node is its place in the graph. ui ux guide design accessibility docs-explorer relates-to design-language-docs-explorer relates-to docs-index"
+},
+{
+"cat": "graph",
+"id": "ui-review-github-pages-handbook",
+"title": "UI review — AI-Forward GitHub Pages handbook",
+"summary": "Adversarial review of the elevated public handbook across structure, responsive diagrams, hard states, accessibility, token discipline, and visual craft. The final artifact passes the independent accessibility veto with no Blocker or Major…",
+"path": "docs/reviews/ui-github-pages-handbook.md",
+"kind": "doc",
+"text": "ui review — ai-forward github pages handbook adversarial review of the elevated public handbook across structure, responsive diagrams, hard states, accessibility, token discipline, and visual craft. the final artifact passes the independent accessibility veto with no blocker or major finding. ui-review handbook github-pages ux accessibility documents design-reader-first-handbook relates-to mockup-github-pages-handbook relates-to proof-github-pages-handbook-ui"
 },
 {
 "cat": "graph",
@@ -4437,6 +4473,15 @@ window.PACK_INDEX = {
 "path": "docs/proof/docs-explorer-redesign.md",
 "kind": "proof-pack",
 "text": "docs explorer redesign - proof pack accepted implementation evidence for the deterministic, local-first docs explorer, native spatial 3d knowledge portal, and bounded grounding packet implementation. the p0/p1 contract is covered by python, node, and three-engine browser suites; phase-attributed benchmark evidence separates graph work from process/host overhead. revision 17 remains intentionally unreleased pending pinned-reference performance proof or a human-approved deviation. docs-explorer grounding accessibility performance verification relates-to design-docs-explorer-grounding-spatial-navigation depends-on adr-0001-grounding-source-corpus-registry depends-on design-language-docs-explorer relates-to threat-model relates-to privacy-review"
+},
+{
+"cat": "graph",
+"id": "proof-github-pages-handbook-ui",
+"title": "GitHub Pages handbook UI proof",
+"summary": "Browser, generator, security, accessibility, and mutation evidence for the elevated AI-Forward Pages handbook. It records the red-before-green observations for semantic diagram rendering and diagram contrast, then ties them to the…",
+"path": "docs/proof/github-pages-handbook-ui.md",
+"kind": "proof-pack",
+"text": "github pages handbook ui proof browser, generator, security, accessibility, and mutation evidence for the elevated ai-forward pages handbook. it records the red-before-green observations for semantic diagram rendering and diagram contrast, then ties them to the integrated gate results. proof handbook ui accessibility browser relates-to mockup-github-pages-handbook relates-to design-reader-first-handbook"
 },
 {
 "cat": "graph",

@@ -49,6 +49,14 @@ For HarborTasks, a sensible plan might keep the shared export schema serial, the
 
 The shared schema is not edited by both tracks. The backend owns it first; the UI depends on it. If the UI needs another column, it sends a seam request rather than editing the backend contract.
 
+```diagram
+branch | Split only after the shared contract is settled
+01 | Settle the export contract | Fix row scope, fields, authorization, empty output, and the seam each track will consume.
+02 | Backend track | Own the query, authorization, serialization, and service evidence without editing the interface files.
+03 | Interface track | Own the trigger, progress, recovery, and download experience against the agreed contract.
+04 | Review one joined result | Integrate in dependency order, regenerate shared outputs, and test the complete query-to-download route.
+```
+
 ## Prepare the plan before launching workers
 
 Use the preparation skill to classify artifacts and write the contract:

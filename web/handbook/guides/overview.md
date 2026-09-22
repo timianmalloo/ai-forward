@@ -15,6 +15,15 @@ AI-Forward is not a new AI model or a hosted agent service. It does not make an 
 infallible. It helps you ask better questions, keep useful context, and make the
 important checks visible.
 
+```diagram
+path | From intent to a change you can trust
+01 | Frame the outcome | State what should change, how completion will be checked, and what stays outside the task.
+02 | Choose the work | Match the next workflow to what is still unknown instead of forcing every task through the same sequence.
+03 | Build with evidence | Inspect the real system, make the bounded change, and keep checks close to the claim they prove.
+04 | Review the result | Attack assumptions, unhappy paths, accessibility, and the full user-visible route before accepting the work.
+05 | Leave a trail | Record the useful decision, evidence, and next action where the next session can find them.
+```
+
 ## Start with the problem you have
 
 **“It produces plausible code, but I do not trust the result.”** Start with

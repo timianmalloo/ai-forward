@@ -157,7 +157,10 @@ def build(root):
         require(template.count(token) == 1, "HANDBOOK-TEMPLATE", f"missing or duplicate slot {token}")
         template = template.replace(token, value)
     require(len(template.encode("utf-8")) < 1024 * 1024, "HANDBOOK-PAYLOAD", "embedded page exceeds 1 MiB")
-    outputs = {"docs/portal/index.html": template}
+    outputs = {
+        "docs/portal/index.html": template,
+        "docs/mockups/github-pages-handbook.html": template,
+    }
     for page in pages:
         outputs[f"docs/handbook/{page['id']}.md"] = graph_markdown(page, manifest)
     coverage = {"schema": "handbook-coverage/1", "skills": skill_coverage,

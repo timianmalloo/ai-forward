@@ -11,19 +11,27 @@
 <body>
 <a class="skip" href="#content" tabindex="0">Skip to the guide</a>
 <header class="site-header">
-  <a class="brand" href="#overview" aria-label="AI-Forward handbook home">AI-Forward<span>Handbook</span></a>
-  <a class="reference-link" href="#maintainer">Technical reference</a>
+  <a class="brand" href="#overview" aria-label="AI-Forward handbook home">
+    <span class="brand-mark" aria-hidden="true">A→</span>
+    <span class="brand-copy">AI-Forward<small>A field guide for dependable agentic engineering</small></span>
+  </a>
+  <nav class="top-routes" aria-label="Primary">
+    <a href="#get-started">Start</a>
+    <a href="#skills">Workflows</a>
+    <a href="#rigor">Principles</a>
+    <a href="#maintainer">Reference</a>
+  </nav>
 </header>
 <div class="layout">
   <aside class="sidebar">
-    <form role="search" id="search-form">
-      <label for="search">Find a guide or workflow</label>
-      <div class="search-box"><input id="search" type="search" autocomplete="off" placeholder="Try “bug” or “parallel work”" aria-controls="search-results"><button id="clear-search" type="button" hidden>Clear</button></div>
-    </form>
-    <p id="search-status" role="status" aria-live="polite"></p>
-    <div id="search-results" hidden></div>
     <details id="navigation" open>
       <summary>Browse all guides and skills</summary>
+      <form role="search" id="search-form">
+        <label for="search">Find a guide or workflow</label>
+        <div class="search-box"><input id="search" type="search" autocomplete="off" placeholder="Try “bug” or “parallel work”" aria-controls="search-results"><button id="clear-search" type="button" hidden>Clear</button></div>
+      </form>
+      <p id="search-status" role="status" aria-live="polite"></p>
+      <div id="search-results" hidden></div>
       <nav id="chapters" aria-label="Handbook chapters"></nav>
       <nav id="skill-nav" aria-label="Skill reference"></nav>
     </details>

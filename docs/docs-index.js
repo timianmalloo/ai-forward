@@ -3115,6 +3115,36 @@ window.DOCS_INDEX = {
       "sourceSha256": "ed3cd648dfa2331a84706731b9f3285393c47a30235adc4ea75ce60505d6b432"
     },
     {
+      "id": "note-20260922-semantic-diagrams-in-reader-first-handbook",
+      "path": "docs/notes/semantic-diagrams-in-reader-first-handbook.md",
+      "title": "The public handbook uses semantic HTML diagrams for selected relationships",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "documentation",
+      "reviewBy": "2027-03-22",
+      "reviewSuggested": [],
+      "summary": "The public handbook renders selected multi-step, loop, and branch relationships as labelled HTML figures backed by ordered lists. The decision affects handbook source syntax, rendering, responsive behavior, and accessibility proof.",
+      "tags": [
+        "decision-note",
+        "handbook",
+        "diagrams",
+        "accessibility"
+      ],
+      "links": [
+        {
+          "to": "design-reader-first-handbook",
+          "rel": "relates-to"
+        },
+        {
+          "to": "mockup-github-pages-handbook",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "ecd9dff8a74bafc0123c214cf2e7c685aaba7df8148599f0404b5a47a3bd0cf0"
+    },
+    {
       "id": "note-autopilot-open-questions-decisions",
       "path": "docs/notes/autopilot-open-questions-decisions.md",
       "title": "Decisions on PACK-O open questions (logging, class granularity, autopilot caps)",
@@ -4502,6 +4532,45 @@ window.DOCS_INDEX = {
       "sourceSha256": "47760a4a638e2b08e5acf59575b589ef336fa6651e8aa331b60e388d5b25d654"
     },
     {
+      "id": "mockup-github-pages-handbook",
+      "path": "docs/mockups/github-pages-handbook.md",
+      "title": "AI-Forward GitHub Pages handbook — reviewable build",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "documentation",
+      "reviewBy": "2026-12-22",
+      "reviewSuggested": [],
+      "summary": "Self-contained review build of the public AI-Forward handbook after its visual elevation. It exercises the same canonical sources and generated HTML as the Pages front door, including the path, cycle, and branch relationship diagrams.",
+      "tags": [
+        "handbook",
+        "github-pages",
+        "mockup",
+        "ui-design",
+        "accessibility"
+      ],
+      "links": [
+        {
+          "to": "design-reader-first-handbook",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-documentation-portal",
+          "rel": "implements"
+        },
+        {
+          "to": "ui-review-github-pages-handbook",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-github-pages-handbook-ui",
+          "rel": "tested-by"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "d75b827429ecfce9e4fe9a9e2e3c65c9e4466a48b10f80c663b5a248a0d30944"
+    },
+    {
       "id": "design-language-docs-explorer",
       "path": "docs/DESIGN.md",
       "title": "Docs Explorer — Design Language",
@@ -4714,7 +4783,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c7d12b0c9b3bfe81ec927ea1348d7f68de7c2a1c1b9b048c6649354c6239966f"
+      "sourceSha256": "6766ccb45ad50f8119bdcfb4bca13d9680dbe7e07ccd30fe2bfdae2654e957cb"
     },
     {
       "id": "docs-index",
@@ -5380,7 +5449,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "1e38bf8602323be20f8d8bf27734c0f7e624d85c7891c97970ddd2b9934e6713"
+      "sourceSha256": "ed0a57b6c9d8bea7b54b44f728a957ed1c3cc06202ea65e371a850af277ae389"
     },
     {
       "id": "handbook-coverage",
@@ -5572,7 +5641,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "3f09a15eac7b65d5d03792db6bf9640e278d42753c4cd4bdceb3168ddfd35175"
+      "sourceSha256": "31ee685c4f2b5481343a53810423a974014fc1ddaee416fb91dceac98293b29c"
     },
     {
       "id": "handbook-maintain",
@@ -5644,7 +5713,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "58ffdca71798aa04561f9a54e30439816da8b79b3a73a88eae9c678110422a62"
+      "sourceSha256": "22f8f83438f4b99e08924e0dc4f3c64bbf57328c565b73e6eb4aa5b2e046b15a"
     },
     {
       "id": "handbook-rigor",
@@ -6760,6 +6829,46 @@ window.DOCS_INDEX = {
       "sourceSha256": "277c03965ae56b5dcb1a3ca6cc87fd6f12da2c61496a2f281812048cf37ed771"
     },
     {
+      "id": "plan-github-pages-ui-elevation",
+      "path": "docs/plans/github-pages-ui-elevation.md",
+      "title": "GitHub Pages UI elevation execution graph",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "documentation",
+      "reviewBy": "2026-12-22",
+      "reviewSuggested": [],
+      "summary": "Bounded execution graph for elevating the public AI-Forward handbook. It keeps the canonical web sources, generated Pages surface, UI proof, accessibility review, and repository gates on one traced path while parallelising only independent reviews.",
+      "tags": [
+        "plan",
+        "ui-design",
+        "github-pages",
+        "handbook"
+      ],
+      "links": [
+        {
+          "to": "design-reader-first-handbook",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-documentation-portal",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-graph-and-loop-engineering",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Optimized graph",
+          "mermaid": "flowchart LR\n  N0[Compile] --> N1[Measure and direct]\n  N1 --> N2[Implement canonical source]\n  N2 --> N3a[Deterministic checks]\n  N2 --> N3b[UX and accessibility review]\n  N2 --> N3c[Simplifier and proof review]\n  N3a --> N4[Bounded repair]\n  N3b --> N4\n  N3c --> N4\n  N4 --> N5[Regenerate, audit, verify]"
+        }
+      ],
+      "sourceSha256": "ecdcf99264da5971669fdff51a4d3ed3504b665ff424c564461305e41b2820f8"
+    },
+    {
       "id": "plan-multi-harness-runner",
       "path": "docs/plans/multi-harness-runner.md",
       "title": "Multi-harness runner: specification, compatibility decision, design and implementation",
@@ -7517,6 +7626,41 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "38c9f5f6595c4765e66b42a121ef6c7fce9708cb988bcfa21388f8e15829db98"
+    },
+    {
+      "id": "ui-review-github-pages-handbook",
+      "path": "docs/reviews/ui-github-pages-handbook.md",
+      "title": "UI review — AI-Forward GitHub Pages handbook",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "documentation",
+      "reviewBy": "2026-12-22",
+      "reviewSuggested": [],
+      "summary": "Adversarial review of the elevated public handbook across structure, responsive diagrams, hard states, accessibility, token discipline, and visual craft. The final artifact passes the independent accessibility veto with no Blocker or Major finding.",
+      "tags": [
+        "ui-review",
+        "handbook",
+        "github-pages",
+        "ux",
+        "accessibility"
+      ],
+      "links": [
+        {
+          "to": "design-reader-first-handbook",
+          "rel": "documents"
+        },
+        {
+          "to": "mockup-github-pages-handbook",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-github-pages-handbook-ui",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "8b235b80fc0c210f1c100c730a38c578ebc83ebe583e421f7a3e356c48d81598"
     },
     {
       "id": "ui-review-pack-explainer",
@@ -10212,6 +10356,37 @@ window.DOCS_INDEX = {
       "sourceSha256": "8596cd2175507a7b8da9f922cf7db6bee84be7eec6622235bc51964b5f370675"
     },
     {
+      "id": "proof-github-pages-handbook-ui",
+      "path": "docs/proof/github-pages-handbook-ui.md",
+      "title": "GitHub Pages handbook UI proof",
+      "type": "proof-pack",
+      "status": "verified",
+      "owner": "@timianmalloo",
+      "phase": "documentation",
+      "reviewBy": "2026-12-22",
+      "reviewSuggested": [],
+      "summary": "Browser, generator, security, accessibility, and mutation evidence for the elevated AI-Forward Pages handbook. It records the red-before-green observations for semantic diagram rendering and diagram contrast, then ties them to the integrated gate results.",
+      "tags": [
+        "proof",
+        "handbook",
+        "ui",
+        "accessibility",
+        "browser"
+      ],
+      "links": [
+        {
+          "to": "mockup-github-pages-handbook",
+          "rel": "relates-to"
+        },
+        {
+          "to": "design-reader-first-handbook",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "7925882acac094b56c505b0baccabdf77f9d47ae1627ed582dac900bb4548afc"
+    },
+    {
       "id": "proof-grok-build-surface",
       "path": "docs/proof/grok-build-surface.md",
       "title": "Proof Pack — Grok Build surface (revision 71)",
@@ -11590,6 +11765,14 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     },
     {
+      "id": "surface-mockups-github-pages-handbook",
+      "path": "docs/mockups/github-pages-handbook.html",
+      "title": "AI-Forward handbook",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "mockup-github-pages-handbook"
+    },
+    {
       "id": "surface-portal-index",
       "path": "docs/portal/index.html",
       "title": "AI-Forward Portal",
@@ -11821,5 +12004,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "0895f8dcd978068089cf6b4cabf13303ab76d9973b6ef2f18286c3236769cbdc"
+  "graphSha256": "75c1f005f7fe2b26287dc8ca09b278b128683cd8dfe1d4d7cec83fb8f65aa790"
 };

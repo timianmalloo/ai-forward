@@ -42,6 +42,29 @@
   let parser = null;
   if (window.marked && window.marked.Marked) {
     const renderer = new window.marked.Renderer();
+    const codeBlock = (text, language) => {
+      const safeLanguage = String(language || "").match(/^[A-Za-z0-9_-]+/)?.[0];
+      const className = safeLanguage ? ` class="language-${escape(safeLanguage)}"` : "";
+      return `<pre><code${className}>${escape(text)}</code></pre>`;
+    };
+    const diagram = text => {
+      const lines = String(text).split(/\r?\n/).map(line => line.trim()).filter(Boolean);
+      const header = (lines.shift() || "").split("|").map(part => part.trim());
+      const kind = header[0];
+      const title = header.slice(1).join(" | ");
+      if (!["path", "cycle", "branch"].includes(kind) || !title || lines.length < 3) return null;
+      const steps = lines.map(line => {
+        const parts = line.split("|").map(part => part.trim());
+        return parts.length >= 3 && parts[0] && parts[1] && parts[2]
+          ? { label: parts[0], heading: parts[1], detail: parts.slice(2).join(" | ") }
+          : null;
+      });
+      if (steps.some(step => !step)) return null;
+      const items = steps.map(step => `<li><span class="diagram-label">${escape(step.label)}</span>`
+        + `<strong class="diagram-heading">${escape(step.heading)}</strong><p>${escape(step.detail)}</p></li>`).join("");
+      return `<figure class="diagram diagram--${kind}" aria-label="${escape(title)}">`
+        + `<figcaption>${escape(title)}</figcaption><ol>${items}</ol></figure>`;
+    };
     renderer.html = ({ text }) => escape(text);
     renderer.link = function ({ href, title, tokens }) {
       const text = this.parser.parseInline(tokens);
@@ -49,6 +72,10 @@
       return target ? `<a href="${escape(target)}"${title ? ` title="${escape(title)}"` : ""}>${text}</a>` : text;
     };
     renderer.image = ({ text }) => `<span>[Image not embedded: ${escape(text)}]</span>`;
+    renderer.code = ({ text, lang }) => {
+      if (String(lang || "").trim() !== "diagram") return codeBlock(text, lang);
+      return diagram(text) || codeBlock(text, lang);
+    };
     parser = new window.marked.Marked({ renderer, gfm: true, breaks: false });
   }
   function anchor(id, label) {

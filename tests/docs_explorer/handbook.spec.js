@@ -26,6 +26,64 @@ test("a newcomer finds purpose, a first task and the next workflow without histo
   expect(external).toEqual([]);
 });
 
+test("relationship diagrams remain readable, semantic and responsive", async ({ page }) => {
+  await page.goto(url);
+  const overview = page.getByRole("figure", { name: "From intent to a change you can trust" });
+  await expect(overview).toBeVisible();
+  await expect(overview.getByRole("listitem")).toHaveCount(5);
+  await expect(overview).toContainText("Frame the outcome");
+  const pathGeometry = await overview.evaluate(figure => ({
+    figure: figure.getBoundingClientRect().toJSON(),
+    items: [...figure.querySelectorAll("li")].map(item => item.getBoundingClientRect().toJSON()),
+  }));
+  expect(pathGeometry.items.every((box, index) =>
+    box.left >= pathGeometry.figure.left && box.right <= pathGeometry.figure.right
+      && (index === 0 || box.top > pathGeometry.items[index - 1].top))).toBeTruthy();
+
+  await page.goto(url + "#knowledge");
+  const loop = page.getByRole("figure", { name: "How project knowledge compounds" });
+  await expect(loop).toBeVisible();
+  await expect(loop.getByRole("listitem")).toHaveCount(4);
+
+  await page.goto(url + "#coordination");
+  const branch = page.getByRole("figure", { name: "Split only after the shared contract is settled" });
+  await expect(branch).toBeVisible();
+  await expect(branch.getByRole("listitem")).toHaveCount(4);
+  const desktopBoxes = await branch.getByRole("listitem").evaluateAll(items =>
+    items.map(item => ({ left: item.getBoundingClientRect().left, width: item.getBoundingClientRect().width })));
+  expect(desktopBoxes[0].width).toBeGreaterThan(desktopBoxes[1].width * 1.8);
+  expect(Math.abs(desktopBoxes[1].left - desktopBoxes[2].left)).toBeGreaterThan(desktopBoxes[1].width * .8);
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(url);
+  const mobilePath = page.getByRole("figure", { name: "From intent to a change you can trust" });
+  const mobilePathGeometry = await mobilePath.evaluate(figure => ({
+    figure: figure.getBoundingClientRect().toJSON(),
+    items: [...figure.querySelectorAll("li")].map(item => item.getBoundingClientRect().toJSON()),
+  }));
+  expect(mobilePathGeometry.items.every((box, index) =>
+    box.left >= mobilePathGeometry.figure.left && box.right <= mobilePathGeometry.figure.right
+      && (index === 0 || box.top > mobilePathGeometry.items[index - 1].top))).toBeTruthy();
+
+  await page.goto(url + "#coordination");
+  const mobileBranch = page.getByRole("figure", { name: "Split only after the shared contract is settled" });
+  await expect(mobileBranch).toBeVisible();
+  const mobileBoxes = await mobileBranch.getByRole("listitem").evaluateAll(items =>
+    items.map(item => ({ left: item.getBoundingClientRect().left, top: item.getBoundingClientRect().top })));
+  expect(Math.max(...mobileBoxes.map(box => box.left)) - Math.min(...mobileBoxes.map(box => box.left))).toBeLessThan(1);
+  expect(mobileBoxes.every((box, index) => index === 0 || box.top > mobileBoxes[index - 1].top)).toBeTruthy();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBeTruthy();
+});
+
+test("malformed relationship diagrams fall back to readable source", async ({ page }) => {
+  await page.setContent(fixture(data => {
+    data.pages[0].markdown = "# Diagram fallback\n\n```diagram\npath | Too short\n1 | One | Only\n2 | Two | Only\n```";
+  }));
+  await expect(page.getByRole("heading", { name: "Diagram fallback" })).toBeVisible();
+  await expect(page.getByRole("figure")).toHaveCount(0);
+  await expect(page.locator("pre code.language-diagram")).toContainText("path | Too short");
+});
+
 test("problem search finds a workflow and handles empty results without hiding navigation", async ({ page }) => {
   await page.goto(url);
   await page.getByLabel("Find a guide or workflow").fill("defect");
@@ -69,7 +127,12 @@ test("keyboard and mobile navigation keep reading usable", async ({ page }) => {
   await page.keyboard.press("Enter");
   await expect(page.locator("#content")).toBeFocused();
   await expect(page.locator("#article h1")).not.toContainText("could not find");
+  await expect(page.locator("#search-form")).toBeHidden();
+  for (const route of await page.locator(".top-routes a").all()) {
+    expect((await route.boundingBox()).height).toBeGreaterThanOrEqual(44);
+  }
   await page.locator("#navigation > summary").click();
+  await expect(page.locator("#search-form")).toBeVisible();
   await page.locator("#chapters").getByRole("link", { name: "Make plausible answers earn your trust" }).click();
   await expect(page.locator("#article h1")).toHaveText("Make plausible answers earn your trust");
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBeTruthy();
@@ -94,7 +157,11 @@ test("hostile source data remains text and cannot execute or make asset requests
   const hostile = '</script><script>window.handbookInjected=true</script>\n\n'
     + '<img src=x onerror="window.handbookInjected=true">\n\n'
     + '[Unsafe](javascript:alert(1))\n\n[Data](data:text/html,test)\n\n'
-    + '![external](https://example.invalid/tracker.png)\n\nQuotes " \\\\ \u2028 \u2029';
+    + '![external](https://example.invalid/tracker.png)\n\n'
+    + '```diagram\npath | <img src=x onerror="window.handbookInjected=true">\n'
+    + '1 | First | <script>window.handbookInjected=true</script>\n'
+    + '2 | Second | Still text\n3 | Third | Still text\n```\n\n'
+    + 'Quotes " \\\\ \u2028 \u2029';
   await page.setContent(fixture(data => { data.pages[0].markdown = "# Safety sample\n\n" + hostile; }));
   await expect(page.locator("#article h1")).toHaveText("Safety sample");
   expect(await page.evaluate(() => window.handbookInjected)).toBeUndefined();
@@ -118,14 +185,24 @@ test("light and dark reading palettes preserve normal text contrast", async ({ p
   for (const colorScheme of ["light", "dark"]) {
     await page.emulateMedia({ colorScheme, reducedMotion: "reduce" });
     await page.goto(url);
-    const colors = await page.evaluate(() => ({
-      background: getComputedStyle(document.body).backgroundColor,
-      text: getComputedStyle(document.body).color,
-      muted: getComputedStyle(document.getElementById("page-context")).color,
-      link: getComputedStyle(document.querySelector("#article a")).color,
-    }));
-    for (const color of [colors.text, colors.muted, colors.link]) {
-      expect(ratio(color, colors.background)).toBeGreaterThanOrEqual(4.5);
+    const pairs = await page.evaluate(() => {
+      const pair = (foreground, surface) => ({
+        foreground: getComputedStyle(document.querySelector(foreground)).color,
+        background: getComputedStyle(document.querySelector(surface)).backgroundColor,
+      });
+      return {
+        body: pair("body", "body"),
+        eyebrow: pair("#page-context", "body"),
+        articleLink: pair("#article a", "body"),
+        brandMark: pair(".brand-mark", ".brand-mark"),
+        diagramLabel: pair(".diagram-label", ".diagram li"),
+        diagramBody: pair(".diagram li p", ".diagram li"),
+        activeNavigation: pair('#navigation a[aria-current="page"]', '#navigation a[aria-current="page"]'),
+        sidebarLabel: pair(".sidebar label", ".sidebar"),
+      };
+    });
+    for (const [name, colors] of Object.entries(pairs)) {
+      expect(ratio(colors.foreground, colors.background), `${colorScheme} ${name}`).toBeGreaterThanOrEqual(4.5);
     }
   }
 });

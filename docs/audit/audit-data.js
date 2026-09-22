@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-22T16:58:24Z",
+  "generated": "2026-09-22T21:05:22Z",
   "audit": [
     {
       "actor": null,
@@ -13104,6 +13104,215 @@ window.AUDIT_DATA = {
       "fan_out": 4,
       "started_at": "2026-09-22T15:22:50Z",
       "duration_seconds": 5734.0
+    },
+    {
+      "id": "al-01M35BH4W71DY5F65Q5NTMAH8A",
+      "shortname": "$ui-design elevate the aiforward github pages, look at opportunities to …",
+      "datetime": "2026-09-22T20:04:49Z",
+      "session": "prompt-compile",
+      "prompt": "$ui-design elevate the aiforward github pages, look at opportunities to add diagrams or to beautify the pages",
+      "summary": "raw prompt logged for compilation",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M35BMGTMD56PG2ZNANVPW5H8",
+      "shortname": "compile-$ui-design elevate the aiforward github pages, look at opportunities to …",
+      "datetime": "2026-09-22T20:06:39Z",
+      "session": "codex-ui-github-pages-20260922",
+      "prompt": "Save the brief between the markers as <brief-file>, then run (one line, the brief read from the file):\ncodex exec --json -o <last-message-file> --output-schema <schema-file> --worktree -C <dir> \"$(cat <brief-file>)\"\n--- brief ---\npython3 docs/ai-forward-pack/scripts/audit-log.py start --session codex-ui-github-pages-20260922 --skill <skill>\nGoal state\nGoal: Elevate the aiforward github pages.\nDone when: The aiforward github pages are elevated and opportunities for useful diagrams and visual refinement are addressed.\nNot in scope: Surfaces outside the aiforward github pages.\nTier: T2\nFan-out cap: 3\nContext ceiling: Keep primary context to source, deterministic measurements, and reviewer findings; visual captures stay with the review branch.\nMain-line budget: One evidence pass, one implementation pass, and one bounded repair pass after the gates.\nTrace\n| clause | trace |\n|---|---|\n| done_when: Elevate the aiforward github pages and address opportunities to add diagrams or beautify the pages. | phrase: elevate the aiforward github pages, look at opportunities to add diagrams or to beautify the pages |\n| not_in_scope: Surfaces outside the aiforward github pages are not in scope. | phrase: aiforward github pages |\nReferences\n- none\nAssumptions\n- none\nDecision requests\n- none\nContract slot\nwidth_cap: 3\ntransient_retry: Retry a transient tool failure once, then use the inline fallback.\nper_branch_exit: Each reviewer returns ranked findings with location, evidence, fix, and confidence.\njoin_rule: Integrate only findings supported by file or rendered-surface evidence; unresolved hard vetoes block completion.\ncontainment: Keep each review branch read-only; implementation writes only in the session worktree.\ntermination: All planned artifacts and page changes pass their declared gates, or a named hard veto is reported.\ndeadline: Complete within this skill run.\nfallback: If parallel review cannot complete, retain all gates and run the same review inline.\nRules: absolute paths only; a multi-line program is a file, then a run; a gate's exit status is never behind a pipe.\nProvenance\nraw id: al-01M35BH4W71DY5F65Q5NTMAH8A\nraw sha256: a0ba7cb413b53156b2b9dd12f54ece99522a8fc79be08ceca41cc445ba798c18\ncompiler model: gpt-6\nengine seconds: 0.003\ntokens: not recorded\ngate: pass\ndispatchable: true\n--- end brief ---\n",
+      "summary": "compiled al-01M35BH4W71DY5F65Q5NTMAH8A for codex v1: 2 clauses, 0 assumptions, 0 decision requests",
+      "kind": "compilation",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "compiled": {
+        "assumptions": [],
+        "clauses": [
+          {
+            "text": "Elevate the aiforward github pages and address opportunities to add diagrams or beautify the pages.",
+            "section": "done_when",
+            "trace": {
+              "kind": "phrase",
+              "ref": "elevate the aiforward github pages, look at opportunities to add diagrams or to beautify the pages"
+            }
+          },
+          {
+            "text": "Surfaces outside the aiforward github pages are not in scope.",
+            "section": "not_in_scope",
+            "trace": {
+              "kind": "phrase",
+              "ref": "aiforward github pages"
+            }
+          }
+        ],
+        "contract_slot": {
+          "containment": "Keep each review branch read-only; implementation writes only in the session worktree.",
+          "deadline": "Complete within this skill run.",
+          "fallback": "If parallel review cannot complete, retain all gates and run the same review inline.",
+          "join_rule": "Integrate only findings supported by file or rendered-surface evidence; unresolved hard vetoes block completion.",
+          "per_branch_exit": "Each reviewer returns ranked findings with location, evidence, fix, and confidence.",
+          "termination": "All planned artifacts and page changes pass their declared gates, or a named hard veto is reported.",
+          "transient_retry": "Retry a transient tool failure once, then use the inline fallback.",
+          "width_cap": 3
+        },
+        "decision_requests": [],
+        "dispatchable": true,
+        "goal_state": {
+          "context_ceiling": "Keep primary context to source, deterministic measurements, and reviewer findings; visual captures stay with the review branch.",
+          "done_when": "The aiforward github pages are elevated and opportunities for useful diagrams and visual refinement are addressed.",
+          "fan_out_cap": 3,
+          "goal": "Elevate the aiforward github pages.",
+          "main_line_budget": "One evidence pass, one implementation pass, and one bounded repair pass after the gates.",
+          "not_in_scope": "Surfaces outside the aiforward github pages.",
+          "tier": "T2"
+        },
+        "graph_neighbours": [],
+        "harness": "codex",
+        "mode": "compiled",
+        "provenance": {
+          "compile_tokens": null,
+          "compiler_model": "gpt-6",
+          "engine_seconds": 0.003,
+          "refusals": [],
+          "retries": 0
+        },
+        "raw_id": "al-01M35BH4W71DY5F65Q5NTMAH8A",
+        "raw_sha256": "a0ba7cb413b53156b2b9dd12f54ece99522a8fc79be08ceca41cc445ba798c18",
+        "raw_text_normalised": false,
+        "references": [],
+        "schema": "compiled-prompt/1",
+        "template": "codex",
+        "template_version": 1
+      },
+      "mode": "compiled",
+      "dispatchable": true
+    },
+    {
+      "id": "al-01M35EB7YA25B28TSBX8E5QV8K",
+      "shortname": "optimize-graph-github-pages-ui-elevation",
+      "datetime": "2026-09-22T20:54:01Z",
+      "session": "codex-ui-github-pages-20260922",
+      "prompt": "$ui-design elevate the aiforward github pages, look at opportunities to add diagrams or to beautify the pages",
+      "summary": "Compiled an eight-node dependency graph, parallelised the deterministic, UX/accessibility, and simplification/proof reviews at width three, and completed two bounded repair passes.",
+      "kind": "skill",
+      "skill": "optimize-graph",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/plans/github-pages-ui-elevation.md"
+      ],
+      "tags": [
+        "github-pages",
+        "ui-design"
+      ],
+      "outcome": "success",
+      "compiled_from": "al-01M35BMGTMD56PG2ZNANVPW5H8",
+      "goal": "Elevate the AI-Forward GitHub Pages handbook with useful diagrams and a polished reading experience.",
+      "done_when": "Canonical source, generated surface, review proof, independent accessibility verdict, and repository validation agree.",
+      "tier": "T2",
+      "fan_out": 3,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "started_at": "2026-09-22T20:04:48Z",
+      "duration_seconds": 2953.0,
+      "persona_yield": [
+        {
+          "persona": "UX & Accessibility",
+          "raised": 3,
+          "accepted": 3
+        },
+        {
+          "persona": "The Simplifier",
+          "raised": 0,
+          "accepted": 0
+        },
+        {
+          "persona": "Test Architect",
+          "raised": 0,
+          "accepted": 0
+        }
+      ],
+      "git": {
+        "sha": "61746e0d29f2cdb88918edd86324abdfc16bbea8",
+        "short": "61746e0d2",
+        "branch": "feature/github-pages-ui-elevation",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M35F00Q15K3CA3QCV3H4TX2W",
+      "shortname": "ui-design-github-pages-handbook",
+      "datetime": "2026-09-22T21:05:22Z",
+      "session": "codex-ui-github-pages-20260922",
+      "prompt": "$ui-design elevate the aiforward github pages, look at opportunities to add diagrams or to beautify the pages",
+      "summary": "Elevated the public reader-first handbook with a cohesive editorial system, semantic path/cycle/branch diagrams, compact mobile discovery, complete review artifacts, and an independently cleared accessibility veto. All 17 bundle gates passed.",
+      "kind": "skill",
+      "skill": "ui-design",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "web/handbook/DESIGN.md",
+        "docs/mockups/github-pages-handbook.html",
+        "docs/reviews/ui-github-pages-handbook.md",
+        "docs/proof/github-pages-handbook-ui.md",
+        "docs/notes/semantic-diagrams-in-reader-first-handbook.md"
+      ],
+      "tags": [
+        "github-pages",
+        "handbook",
+        "ui-design"
+      ],
+      "outcome": "success",
+      "compiled_from": "al-01M35BMGTMD56PG2ZNANVPW5H8",
+      "goal": "Elevate the AI-Forward GitHub Pages handbook with useful diagrams and a polished reading experience.",
+      "done_when": "Canonical source, generated surface, review proof, independent accessibility verdict, and all repository gates agree.",
+      "tier": "T2",
+      "fan_out": 3,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "started_at": "2026-09-22T20:04:48Z",
+      "duration_seconds": 3634.0,
+      "persona_yield": [
+        {
+          "persona": "UX & Accessibility",
+          "raised": 3,
+          "accepted": 3
+        },
+        {
+          "persona": "The Simplifier",
+          "raised": 0,
+          "accepted": 0
+        },
+        {
+          "persona": "Test Architect",
+          "raised": 0,
+          "accepted": 0
+        }
+      ],
+      "change": "cl-01M35EAQXJ5WYBWXF4WTXSMG2G",
+      "git": {
+        "sha": "61746e0d29f2cdb88918edd86324abdfc16bbea8",
+        "short": "61746e0d2",
+        "branch": "feature/github-pages-ui-elevation",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -14737,6 +14946,34 @@ window.AUDIT_DATA = {
         "before": "b728a345a57de64c97870faf4df603fee56742e8",
         "after": "b728a345a57de64c97870faf4df603fee56742e8",
         "branch": "feat/coordination-runtime-v2",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M35EAQXJ5WYBWXF4WTXSMG2G",
+      "datetime": "2026-09-22T20:53:45Z",
+      "session": "codex-ui-github-pages-20260922",
+      "kind": "design",
+      "skill": "ui-design",
+      "title": "Elevate the public GitHub Pages handbook",
+      "prompt": "$ui-design elevate the aiforward github pages, look at opportunities to add diagrams or to beautify the pages",
+      "summary": "Raised the reader-first handbook visual system, added semantic path/cycle/branch diagrams, tightened mobile navigation, and made the public and review artifacts byte-identical.",
+      "rationale": "The accepted reader-first contract needed stronger hierarchy and visual explanations without adding external assets, runtime dependencies, or review chrome to the published page.",
+      "artifacts": [
+        "web/handbook/DESIGN.md",
+        "docs/notes/semantic-diagrams-in-reader-first-handbook.md",
+        "docs/reviews/ui-github-pages-handbook.md"
+      ],
+      "tags": [
+        "github-pages",
+        "handbook",
+        "ui-design"
+      ],
+      "git": {
+        "before": "61746e0",
+        "after": "61746e0d29f2cdb88918edd86324abdfc16bbea8",
+        "branch": "feature/github-pages-ui-elevation",
         "pushed": null,
         "commits": []
       }
