@@ -377,6 +377,11 @@ Update-ManagedBlock (Join-Path $repo "AGENTS.md")  (Join-Path $pack "adapters\ma
 # made for web/pack-index.js), so the ordering fix is now safe and gate 2 stays green.
 # Detection remains too: check-consistency.py drift-gates BOTH dependents, so a hand-run that
 # skips sync still cannot ship a stale pair.
+$buildHandbook = Join-Path $repo "tools/build-handbook.py"
+if (Test-Path $buildHandbook) {
+    & $pyExe @pyArgs $buildHandbook
+    if ($LASTEXITCODE -ne 0) { throw "build-handbook failed (exit $LASTEXITCODE)" }
+}
 $deriveGraph = Join-Path $repo "docs/ai-forward-pack/scripts/docs-graph.py"
 if (Test-Path $deriveGraph) {
     & $pyExe @pyArgs $deriveGraph derive | ForEach-Object { Write-Host "  $_" }

@@ -4246,6 +4246,40 @@ window.DOCS_INDEX = {
       "sourceSha256": "56b1c7e87d28bcfdac3906cb30b403c4a586fe6901d74c5b86960805a5bdc698"
     },
     {
+      "id": "design-reader-first-handbook",
+      "path": "docs/design/reader-first-handbook.md",
+      "title": "Reader-first handbook: content and publishing contract",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "documentation",
+      "reviewBy": "2027-03-22",
+      "reviewSuggested": [],
+      "summary": "A problem-led public handbook replaces the retrospective portal as the default reading path. Canonical website Markdown produces a self-contained reader and graph-indexed mirrors, with exact skill/capability coverage and independent newcomer review.",
+      "tags": [
+        "handbook",
+        "documentation",
+        "accessibility",
+        "publishing"
+      ],
+      "links": [
+        {
+          "to": "handbook-overview",
+          "rel": "documents"
+        },
+        {
+          "to": "spec-documentation-portal",
+          "rel": "refines"
+        },
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "22986dbfaa6679d04ff712ed8047ae9fe8bb78d482924a8a0aa2f5a32fd5ca62"
+    },
+    {
       "id": "design-session-profiler",
       "path": "docs/design/session-profiler.md",
       "title": "Design — session profiler (the measured half of tuning)",
@@ -5323,6 +5357,1062 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "370b789e084c94e7fcae12efaec55012bd974e5bbfc5fef76871f1bc9dcbfe1a"
+    },
+    {
+      "id": "handbook-coordination",
+      "path": "docs/handbook/coordination.md",
+      "title": "Coordinate work without losing ownership",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "documentation",
+      "reviewBy": "2027-03-22",
+      "reviewSuggested": [],
+      "summary": "Several agents can finish independent work faster, but they can also make a repository less trustworthy. Two sessions can edit the same file, regenerate the same derived output, answer each other's questions in private, or report “done” without returning the evidence the owner needed. AI-Forward coordination is the method for dividing work while keeping one accountable owner, one visible plan and one reviewed join.",
+      "tags": [
+        "handbook",
+        "reader-guide"
+      ],
+      "links": [
+        {
+          "to": "handbook-overview",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "1e38bf8602323be20f8d8bf27734c0f7e624d85c7891c97970ddd2b9934e6713"
+    },
+    {
+      "id": "handbook-coverage",
+      "path": "docs/handbook/coverage.md",
+      "title": "Handbook coverage",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "documentation",
+      "reviewBy": "2027-03-22",
+      "reviewSuggested": [],
+      "summary": "Reader-oriented coverage of every current skill and knowledge area.",
+      "tags": [
+        "handbook",
+        "reader-guide"
+      ],
+      "links": [
+        {
+          "to": "handbook-overview",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "eab075a61fc75e30a2c7ca4da17022c72857a1d0c67dc83b59e2499987172938"
+    },
+    {
+      "id": "handbook-design",
+      "path": "docs/handbook/design.md",
+      "title": "Make the important decisions before they become expensive",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "documentation",
+      "reviewBy": "2027-03-22",
+      "reviewSuggested": [],
+      "summary": "A small code change can hide a large decision. Adding a field may change what a record means. Splitting a service may introduce a consistency boundary. Choosing an AI model may affect cost, privacy and what can be reproduced.",
+      "tags": [
+        "handbook",
+        "reader-guide"
+      ],
+      "links": [
+        {
+          "to": "handbook-overview",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "1027cb63cee70655371a0ebe803af4c02ba093e8068934d2ccb0c3f649cf1683"
+    },
+    {
+      "id": "handbook-get-started",
+      "path": "docs/handbook/get-started.md",
+      "title": "Try AI-Forward on one small task",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "documentation",
+      "reviewBy": "2027-03-22",
+      "reviewSuggested": [],
+      "summary": "Start with a repository you understand and a change you can review. The first useful result is not a large plan or a swarm of agents. It is seeing whether the pack helps you frame a small request, inspect the output, and keep a reliable next step.",
+      "tags": [
+        "handbook",
+        "reader-guide"
+      ],
+      "links": [
+        {
+          "to": "handbook-overview",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "6f99e060131250876a21140b4760be2d968c0407dbb3bae5984e65432d739e9e"
+    },
+    {
+      "id": "handbook-glossary",
+      "path": "docs/handbook/glossary.md",
+      "title": "A small vocabulary for working together",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "documentation",
+      "reviewBy": "2027-03-22",
+      "reviewSuggested": [],
+      "summary": "The pack uses a few terms repeatedly. They are useful when they make a decision or boundary clearer; they should not become a language you must decode before starting.",
+      "tags": [
+        "handbook",
+        "reader-guide"
+      ],
+      "links": [
+        {
+          "to": "handbook-overview",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "df959b510f38fc72aab6836ba222f88559887b123612d6da7deefb9abacc0495"
+    },
+    {
+      "id": "handbook-harnesses",
+      "path": "docs/handbook/harnesses.md",
+      "title": "Choose the right AI harness for the work",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "documentation",
+      "reviewBy": "2027-03-22",
+      "reviewSuggested": [],
+      "summary": "AI-Forward is installed into several agent harnesses. A harness is the application that gives a model instructions, tools, a workspace and interaction controls. The pack tries to present the same workflows across them, but the hosts are not identical. Treat a harness as qualified only for the behavior you have checked on the current machine and repository.",
+      "tags": [
+        "handbook",
+        "reader-guide"
+      ],
+      "links": [
+        {
+          "to": "handbook-overview",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "c82c3612e351d1c803a551bd81509af714bcb927fd6f8fd50803af84f34a0162"
+    },
+    {
+      "id": "handbook-improvement",
+      "path": "docs/handbook/improvement.md",
+      "title": "Improve the way the work is done",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "documentation",
+      "reviewBy": "2027-03-22",
+      "reviewSuggested": [],
+      "summary": "It is easy to finish a task and repeat the same costly mistake on the next one. AI-Forward treats improvement as a loop: observe what happened, identify the recurring shape, propose a useful change, review it, and turn it into a control that will matter when the situation recurs.",
+      "tags": [
+        "handbook",
+        "reader-guide"
+      ],
+      "links": [
+        {
+          "to": "handbook-overview",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "78ed220005bc6adf1420c7698ae6b09899faae63377c97a5b69ae981f36d99a1"
+    },
+    {
+      "id": "handbook-interfaces",
+      "path": "docs/handbook/interfaces.md",
+      "title": "Design an experience people can actually use",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "documentation",
+      "reviewBy": "2027-03-22",
+      "reviewSuggested": [],
+      "summary": "An interface can look finished while leaving the user unable to complete the task. The empty state may be missing, a keyboard user may not reach an action, or a screen may expose every option at once when the work needs a sequence.",
+      "tags": [
+        "handbook",
+        "reader-guide"
+      ],
+      "links": [
+        {
+          "to": "handbook-overview",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "d0dea6d5cbfae44b0051fb09c31b3c4b51a71233edf5c9656b227cec41e024d8"
+    },
+    {
+      "id": "handbook-knowledge",
+      "path": "docs/handbook/knowledge.md",
+      "title": "Keep project knowledge useful after the session ends",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "documentation",
+      "reviewBy": "2027-03-22",
+      "reviewSuggested": [],
+      "summary": "A productive session can still leave a project harder to continue. The reasoning is buried in chat, a design no longer matches the code, and the next person has to rediscover which assumptions were checked. AI-Forward keeps useful knowledge in the repository so that future work has a starting point.",
+      "tags": [
+        "handbook",
+        "reader-guide"
+      ],
+      "links": [
+        {
+          "to": "handbook-overview",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "3f09a15eac7b65d5d03792db6bf9640e278d42753c4cd4bdceb3168ddfd35175"
+    },
+    {
+      "id": "handbook-maintain",
+      "path": "docs/handbook/maintain.md",
+      "title": "Maintain the pack without losing local intent",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "documentation",
+      "reviewBy": "2027-03-22",
+      "reviewSuggested": [],
+      "summary": "There are two maintenance jobs: keeping an installed pack current in an application, and changing AI-Forward itself. They use related files but are not the same workflow. Choose the correct starting repository before asking an agent to make changes.",
+      "tags": [
+        "handbook",
+        "reader-guide"
+      ],
+      "links": [
+        {
+          "to": "handbook-overview",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "8090da083d5075ca43f72c51c76957b55f6c2f2a23e53d5a71e040803bcf9861"
+    },
+    {
+      "id": "handbook-maintainer",
+      "path": "docs/handbook/maintainer.md",
+      "title": "Technical reference when you need the machinery",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "documentation",
+      "reviewBy": "2027-03-22",
+      "reviewSuggested": [],
+      "summary": "The handbook teaches how to use AI-Forward. Sometimes you need the underlying contracts, source, detailed architecture or history instead. Those records remain available; they should not be prerequisites for a first useful task.",
+      "tags": [
+        "handbook",
+        "reader-guide"
+      ],
+      "links": [
+        {
+          "to": "handbook-overview",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "523e677c70c5557a8ae16d87a2a2c7e80fdd5d331cce04c4a66bb25467adb8ef"
+    },
+    {
+      "id": "handbook-overview",
+      "path": "docs/handbook/overview.md",
+      "title": "Build with AI agents without losing engineering discipline",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "documentation",
+      "reviewBy": "2027-03-22",
+      "reviewSuggested": [],
+      "summary": "AI coding agents can turn a short request into a lot of work. The harder part is deciding whether they understood the problem, made sound choices, and produced something you can safely keep. AI-Forward gives that work a repeatable engineering method.",
+      "tags": [
+        "handbook",
+        "reader-guide"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "58ffdca71798aa04561f9a54e30439816da8b79b3a73a88eae9c678110422a62"
+    },
+    {
+      "id": "handbook-rigor",
+      "path": "docs/handbook/rigor.md",
+      "title": "Make plausible answers earn your trust",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "documentation",
+      "reviewBy": "2027-03-22",
+      "reviewSuggested": [],
+      "summary": "An agent can give a fluent answer before it has established what the question means. It can also write a test that agrees with its own implementation while missing what the user actually needs. The Rigor Protocol is AI-Forward's method for slowing down those decisions without turning every task into a research project.",
+      "tags": [
+        "handbook",
+        "reader-guide"
+      ],
+      "links": [
+        {
+          "to": "handbook-overview",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "c19971a722f4af3f7ede819eb8e63b69f438169ea411aac69278adddfba80aa1"
+    },
+    {
+      "id": "handbook-skill-adddomainexperts",
+      "path": "docs/handbook/skill-adddomainexperts.md",
+      "title": "Add project-specific domain reviewers",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "documentation",
+      "reviewBy": "2027-03-22",
+      "reviewSuggested": [],
+      "summary": "Use this skill when general engineering personas are not enough. It identifies the project's subject domain and adds local expert personas, such as accounting, clinical, geospatial or numerical-methods reviewers, with clear peer and adversary roles.",
+      "tags": [
+        "handbook",
+        "reader-guide"
+      ],
+      "links": [
+        {
+          "to": "handbook-design",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "827d5411222c75a1b41c05c8be3add3ccfe2524ff0db6a4ae8c33c6ac8f8b8d7"
+    },
+    {
+      "id": "handbook-skill-addpacktorepo",
+      "path": "docs/handbook/skill-addpacktorepo.md",
+      "title": "Install AI-Forward into a local repository",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "documentation",
+      "reviewBy": "2027-03-22",
+      "reviewSuggested": [],
+      "summary": "Use this skill when a project does not yet have the AI-Forward Pack and you want the first install to respect the repository that already exists. It reads the target before writing, applies the pack deployment map, and reports what landed.",
+      "tags": [
+        "handbook",
+        "reader-guide"
+      ],
+      "links": [
+        {
+          "to": "handbook-get-started",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "845bda34d0dcb8901e641bafc85b8bdd71ed8caf572178dfc2c0553d9fc04106"
+    },
+    {
+      "id": "handbook-skill-adopt",
+      "path": "docs/handbook/skill-adopt.md",
+      "title": "Bring an existing repository into the knowledge graph",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "documentation",
+      "reviewBy": "2027-03-22",
+      "reviewSuggested": [],
+      "summary": "Use this skill after the pack is installed in a project that already has code and docs. It inventories what exists, recovers the architecture, adds graph frontmatter to worthwhile documents, and creates an adoption plan for gaps.",
+      "tags": [
+        "handbook",
+        "reader-guide"
+      ],
+      "links": [
+        {
+          "to": "handbook-get-started",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "50b6ce0191186b86a9de6384790f05b011e9084b27b025991df3769131810719"
+    },
+    {
+      "id": "handbook-skill-also",
+      "path": "docs/handbook/skill-also.md",
+      "title": "Add a late thought without derailing the current work",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "documentation",
+      "reviewBy": "2027-03-22",
+      "reviewSuggested": [],
+      "summary": "Use this utility when you remember an important addition after a task has started. It captures the addition and folds it into the current work only where it belongs.",
+      "tags": [
+        "handbook",
+        "reader-guide"
+      ],
+      "links": [
+        {
+          "to": "handbook-workflow",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "52c0346daa2de732f9d771e9ac86f2e5301db338e224cf1ec67b5903f4f268e9"
+    },
+    {
+      "id": "handbook-skill-apply-learnings",
+      "path": "docs/handbook/skill-apply-learnings.md",
+      "title": "Propose approved learnings for other repositories",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "documentation",
+      "reviewBy": "2027-03-22",
+      "reviewSuggested": [],
+      "summary": "Use this skill after dream has promoted general, control-bearing learnings. It reconciles those learnings into target repositories and writes reviewable plans. It never merges or executes changes in the targets.",
+      "tags": [
+        "handbook",
+        "reader-guide"
+      ],
+      "links": [
+        {
+          "to": "handbook-improvement",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "e14a6bed54fbc92a18c275881e097626558e221266c1da3a615c97cbb40471dd"
+    },
+    {
+      "id": "handbook-skill-auditlog",
+      "path": "docs/handbook/skill-auditlog.md",
+      "title": "Read the project history without guessing",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "documentation",
+      "reviewBy": "2027-03-22",
+      "reviewSuggested": [],
+      "summary": "Use this utility to inspect the committed audit and change log: recent work, decisions, searches, exact past prompts and the local timeline viewer.",
+      "tags": [
+        "handbook",
+        "reader-guide"
+      ],
+      "links": [
+        {
+          "to": "handbook-knowledge",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "ab1086c512f6281c615749ac22eee3cc1eaf55df450fe72a01f61e23d979de12"
+    },
+    {
+      "id": "handbook-skill-code-hygiene",
+      "path": "docs/handbook/skill-code-hygiene.md",
+      "title": "Find and fix code hygiene problems safely",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "documentation",
+      "reviewBy": "2027-03-22",
+      "reviewSuggested": [],
+      "summary": "Use this skill to identify dead code, commented-out code and recurring anti-patterns, then plan or execute cleanup without turning hygiene into risky churn.",
+      "tags": [
+        "handbook",
+        "reader-guide"
+      ],
+      "links": [
+        {
+          "to": "handbook-workflow",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "795fb5ec2d360eae82f592a6ab6d030d308aea82636984933346406f5434ab6e"
+    },
+    {
+      "id": "handbook-skill-collectknowledge",
+      "path": "docs/handbook/skill-collectknowledge.md",
+      "title": "Build a sourced knowledge base before design",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "documentation",
+      "reviewBy": "2027-03-22",
+      "reviewSuggested": [],
+      "summary": "Use this skill when a project needs domain understanding before it can safely specify or design. It gathers external and internal knowledge into structured Markdown that later workflows can cite.",
+      "tags": [
+        "handbook",
+        "reader-guide"
+      ],
+      "links": [
+        {
+          "to": "handbook-design",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "4623fb83d3783a61e498fac3764755c4015f3414c76d34db135572793b0c9ea1"
+    },
+    {
+      "id": "handbook-skill-compile",
+      "path": "docs/handbook/skill-compile.md",
+      "title": "Compile a rough request into a dispatchable prompt",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "documentation",
+      "reviewBy": "2027-03-22",
+      "reviewSuggested": [],
+      "summary": "Use this utility when a prose request is too ambiguous to hand directly to a workflow or worker. It turns the request into a goal state, traced clauses, assumptions and decision requests without adding scope.",
+      "tags": [
+        "handbook",
+        "reader-guide"
+      ],
+      "links": [
+        {
+          "to": "handbook-workflow",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "293818b019e8104d55bdf17eb866dd4b1032d387759eec67221dd377a03a1de9"
+    },
+    {
+      "id": "handbook-skill-define-architecture",
+      "path": "docs/handbook/skill-define-architecture.md",
+      "title": "Decide the system shape before building",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "documentation",
+      "reviewBy": "2027-03-22",
+      "reviewSuggested": [],
+      "summary": "Use this skill when a project or major capability needs a top-level architecture: components, boundaries, data representation, integration contracts, AI tiering and durable decisions.",
+      "tags": [
+        "handbook",
+        "reader-guide"
+      ],
+      "links": [
+        {
+          "to": "handbook-design",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "9a758779106340e237ba08444a960421cb51399edd599d0baf38d84c5c2c3864"
+    },
+    {
+      "id": "handbook-skill-design-slice",
+      "path": "docs/handbook/skill-design-slice.md",
+      "title": "Design one implementable feature slice",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "documentation",
+      "reviewBy": "2027-03-22",
+      "reviewSuggested": [],
+      "summary": "Use this skill to turn a specification or architecture decision into a technical blueprint for one feature or component. It names contracts, data shapes, patterns, errors, concurrency, telemetry and tests before implementation begins.",
+      "tags": [
+        "handbook",
+        "reader-guide"
+      ],
+      "links": [
+        {
+          "to": "handbook-design",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "bb1ce58ff6bc171c47caf1682d6ea8e82815e95df8a8854ddf5a84ad1221517f"
+    },
+    {
+      "id": "handbook-skill-document",
+      "path": "docs/handbook/skill-document.md",
+      "title": "Keep documentation true to the code",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "documentation",
+      "reviewBy": "2027-03-22",
+      "reviewSuggested": [],
+      "summary": "Use this skill to generate or refresh the documentation bundle: API reference, diagrams, architecture overview, Docs Explorer index and browsable documentation view.",
+      "tags": [
+        "handbook",
+        "reader-guide"
+      ],
+      "links": [
+        {
+          "to": "handbook-knowledge",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "ecf6b5cf7bd3e34aa578c6a015bc1c2133cbd1eaa6dd81812495d807df0559e9"
+    },
+    {
+      "id": "handbook-skill-dream",
+      "path": "docs/handbook/skill-dream.md",
+      "title": "Consolidate recurring lessons for human review",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "documentation",
+      "reviewBy": "2027-03-22",
+      "reviewSuggested": [],
+      "summary": "Use this skill to run an offline consolidation pass over committed history, defect classes, mitigations and markers. It proposes learnings; humans approve, edit, reject or defer before anything is promoted.",
+      "tags": [
+        "handbook",
+        "reader-guide"
+      ],
+      "links": [
+        {
+          "to": "handbook-improvement",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "8b150d51b55febcb69e7fb5c682f84dc2a9a95b8472040a44343c73fbd95549d"
+    },
+    {
+      "id": "handbook-skill-execute-with-coordination",
+      "path": "docs/handbook/skill-execute-with-coordination.md",
+      "title": "Run a coordination plan without taking over the tracks",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "documentation",
+      "reviewBy": "2027-03-22",
+      "reviewSuggested": [],
+      "summary": "Use this skill to execute a prepared coordination plan. The coordinator opens or briefs workers, watches seams, verifies returned evidence and joins the work.",
+      "tags": [
+        "handbook",
+        "reader-guide"
+      ],
+      "links": [
+        {
+          "to": "handbook-coordination",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "a5a1e29b9ebb2701a1bcbfdcd68e88e3b18c03f357660c0906ce9df252fadf47"
+    },
+    {
+      "id": "handbook-skill-extendaibundle",
+      "path": "docs/handbook/skill-extendaibundle.md",
+      "title": "Extend the AI-Forward Pack consistently",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "documentation",
+      "reviewBy": "2027-03-22",
+      "reviewSuggested": [],
+      "summary": "Use this skill when you want to add or change the pack itself: a new skill, knowledge doc, template, script or adapter behavior. It runs the pack-change loop so every surface stays in sync.",
+      "tags": [
+        "handbook",
+        "reader-guide"
+      ],
+      "links": [
+        {
+          "to": "handbook-improvement",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "04df360d732ed6fca5d1ac7e7b503990490b594efe2172f36ada819be55e5c63"
+    },
+    {
+      "id": "handbook-skill-forensicreview",
+      "path": "docs/handbook/skill-forensicreview.md",
+      "title": "Review an existing repository for evidence-backed risk",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "documentation",
+      "reviewBy": "2027-03-22",
+      "reviewSuggested": [],
+      "summary": "Use this skill for a deep review of an existing codebase. It rebuilds the picture from code and docs, checks architecture, design, implementation and documentation, and produces a prioritized remediation backlog.",
+      "tags": [
+        "handbook",
+        "reader-guide"
+      ],
+      "links": [
+        {
+          "to": "handbook-workflow",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "b54d91d1b0f23ac1f12632fd004770647de8771e956a0fa1c311da82ce0c1616"
+    },
+    {
+      "id": "handbook-skill-implement",
+      "path": "docs/handbook/skill-implement.md",
+      "title": "Build the approved change with tests",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "documentation",
+      "reviewBy": "2027-03-22",
+      "reviewSuggested": [],
+      "summary": "Use this skill after the requirement and design are clear enough to code. It implements through test-first increments, verifies the real behavior and produces evidence for review.",
+      "tags": [
+        "handbook",
+        "reader-guide"
+      ],
+      "links": [
+        {
+          "to": "handbook-workflow",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "735f67f2cfe888f209bf871ccea14dd255285ce255bb637814560a6e55f07687"
+    },
+    {
+      "id": "handbook-skill-investigate",
+      "path": "docs/handbook/skill-investigate.md",
+      "title": "Find the verified cause before fixing a defect",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "documentation",
+      "reviewBy": "2027-03-22",
+      "reviewSuggested": [],
+      "summary": "Use this skill when something is broken, slow, inconsistent or surprising. It reproduces or characterizes the symptom, proves the root cause, sweeps for siblings, proposes repair phases and then stops for human review.",
+      "tags": [
+        "handbook",
+        "reader-guide"
+      ],
+      "links": [
+        {
+          "to": "handbook-workflow",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "33849652bbc5bf5284d9be99614537a773fdaf886a266def936257f255f63312"
+    },
+    {
+      "id": "handbook-skill-migrate",
+      "path": "docs/handbook/skill-migrate.md",
+      "title": "Change dependencies or architecture without losing behavior",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "documentation",
+      "reviewBy": "2027-03-22",
+      "reviewSuggested": [],
+      "summary": "Use this skill for dependency upgrades, framework migrations and large refactors. It characterizes current behavior first, migrates in small vertical increments, and records intentional differences.",
+      "tags": [
+        "handbook",
+        "reader-guide"
+      ],
+      "links": [
+        {
+          "to": "handbook-workflow",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "c6d28ad58bae88ace6f640f21c33c39642126d9e99f195f3493b39b50d87ed8b"
+    },
+    {
+      "id": "handbook-skill-optimize-graph",
+      "path": "docs/handbook/skill-optimize-graph.md",
+      "title": "Plan the work shape before spending effort",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "documentation",
+      "reviewBy": "2027-03-22",
+      "reviewSuggested": [],
+      "summary": "Use this skill to turn a multi-step request into an execution graph: real dependencies, serial work, possible parallelism, budgets, loop exits and checkpoints. It optimizes for completeness and rigor before speed.",
+      "tags": [
+        "handbook",
+        "reader-guide"
+      ],
+      "links": [
+        {
+          "to": "handbook-workflow",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "7e2cfa916fe433f0a0fd90c7c83765807f44d509cc86fdfb470f3b9193081362"
+    },
+    {
+      "id": "handbook-skill-prepare-for-coordination",
+      "path": "docs/handbook/skill-prepare-for-coordination.md",
+      "title": "Prepare a safe multi-session work plan",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "documentation",
+      "reviewBy": "2027-03-22",
+      "reviewSuggested": [],
+      "summary": "Use this skill before assigning work to several agents or humans. It classifies artifacts, identifies what must stay serial, and writes the coordination plan that execution will follow.",
+      "tags": [
+        "handbook",
+        "reader-guide"
+      ],
+      "links": [
+        {
+          "to": "handbook-coordination",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "f8c03390cba2517c76243f77af93a06a92e61ced0c910df701344b1fe9c710f4"
+    },
+    {
+      "id": "handbook-skill-prompts",
+      "path": "docs/handbook/skill-prompts.md",
+      "title": "Reuse a past prompt from the project log",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "documentation",
+      "reviewBy": "2027-03-22",
+      "reviewSuggested": [],
+      "summary": "Use this utility to browse logged prompts newest-first and copy one for paste-and-edit. It is a reuse lens over the audit log, not a command that reruns work automatically.",
+      "tags": [
+        "handbook",
+        "reader-guide"
+      ],
+      "links": [
+        {
+          "to": "handbook-knowledge",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "72512b99fc10e010768db6e47f68b9a6904d1616d37c5d4d7c294843e666ee3b"
+    },
+    {
+      "id": "handbook-skill-searchprompts",
+      "path": "docs/handbook/skill-searchprompts.md",
+      "title": "Search past prompts by terms",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "documentation",
+      "reviewBy": "2027-03-22",
+      "reviewSuggested": [],
+      "summary": "Use this utility when you remember words from a previous prompt and want to reuse the exact text. It is the filtered companion to prompts.",
+      "tags": [
+        "handbook",
+        "reader-guide"
+      ],
+      "links": [
+        {
+          "to": "handbook-knowledge",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "c5bf53050bf6ed44709c33b03545471bff47b95e1e69bdb55f63ea835682981d"
+    },
+    {
+      "id": "handbook-skill-session-profiler",
+      "path": "docs/handbook/skill-session-profiler.md",
+      "title": "Measure how agent sessions actually behaved",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "documentation",
+      "reviewBy": "2027-03-22",
+      "reviewSuggested": [],
+      "summary": "Use this skill to profile local harness telemetry and turn it into findings and fixes for cost, context growth, re-reads, task drift, fan-out and cross-harness coordination.",
+      "tags": [
+        "handbook",
+        "reader-guide"
+      ],
+      "links": [
+        {
+          "to": "handbook-improvement",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "29c0bf4ec8f87996fe228af5176ac31101998a5ddd667aa2a1d3904675c3ae81"
+    },
+    {
+      "id": "handbook-skill-specify",
+      "path": "docs/handbook/skill-specify.md",
+      "title": "Turn a request into a testable product specification",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "documentation",
+      "reviewBy": "2027-03-22",
+      "reviewSuggested": [],
+      "summary": "Use this skill when you need the “what” and “why” of a change before anyone designs or implements it. It turns a prompt into a specification with functional, UX and UI layers, explicit non-goals and acceptance criteria.",
+      "tags": [
+        "handbook",
+        "reader-guide"
+      ],
+      "links": [
+        {
+          "to": "handbook-design",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "7010824b6586f875d91be139d9a356eed00225a3751fe929ed7f598b3091882d"
+    },
+    {
+      "id": "handbook-skill-ui-design",
+      "path": "docs/handbook/skill-ui-design.md",
+      "title": "Design or review a user-facing surface",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "documentation",
+      "reviewBy": "2027-03-22",
+      "reviewSuggested": [],
+      "summary": "Use this skill when the interface itself needs craft: direction, information architecture fit, visual language, states, accessibility and a reviewable mockup.",
+      "tags": [
+        "handbook",
+        "reader-guide"
+      ],
+      "links": [
+        {
+          "to": "handbook-interfaces",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "e5251a8b80028c45c0a64af0de68967eedf1079f848399b10ea92d80f1da75bd"
+    },
+    {
+      "id": "handbook-skill-updatepack",
+      "path": "docs/handbook/skill-updatepack.md",
+      "title": "Update an installed AI-Forward Pack",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "documentation",
+      "reviewBy": "2027-03-22",
+      "reviewSuggested": [],
+      "summary": "Use this skill when a repository already has AI-Forward and you want to refresh it to a newer local pack revision without hand-copying files or losing local deviations.",
+      "tags": [
+        "handbook",
+        "reader-guide"
+      ],
+      "links": [
+        {
+          "to": "handbook-get-started",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "36decdbf4ed811b56e4134ca1fd318c3c88a5e776aed4c740da111234d441a15"
+    },
+    {
+      "id": "handbook-skill-visualize",
+      "path": "docs/handbook/skill-visualize.md",
+      "title": "Create committed visual assets, not generated interfaces",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "documentation",
+      "reviewBy": "2027-03-22",
+      "reviewSuggested": [],
+      "summary": "Use this skill to produce imagery, fictional personas, direction boards or motion that a surface displays. It never generates the interface itself.",
+      "tags": [
+        "handbook",
+        "reader-guide"
+      ],
+      "links": [
+        {
+          "to": "handbook-interfaces",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "d45af9d0019ded3a0e270f600976d52a6dec02736a9405645d5ea7effa00faa7"
+    },
+    {
+      "id": "handbook-skills",
+      "path": "docs/handbook/skills.md",
+      "title": "Choose a workflow from the problem",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "documentation",
+      "reviewBy": "2027-03-22",
+      "reviewSuggested": [],
+      "summary": "You do not need to memorize the skill names. Start with what you are trying to establish or change, then open the reference for the workflow that fits.",
+      "tags": [
+        "handbook",
+        "reader-guide"
+      ],
+      "links": [
+        {
+          "to": "handbook-overview",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "968df9418a0a93462ae83cbe80f0880fb3ea8a63555ece7cb70ce9ce2b4ab653"
+    },
+    {
+      "id": "handbook-troubleshooting",
+      "path": "docs/handbook/troubleshooting.md",
+      "title": "Recover without making the situation less safe",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "documentation",
+      "reviewBy": "2027-03-22",
+      "reviewSuggested": [],
+      "summary": "When a workflow stops or an expected capability is absent, first identify which layer is failing: skill discovery, the request, a local script, a harness permission, or the behavior being built. A fix at the wrong layer can hide the symptom while weakening the safeguard that exposed it.",
+      "tags": [
+        "handbook",
+        "reader-guide"
+      ],
+      "links": [
+        {
+          "to": "handbook-overview",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "20096cf44a284ec3d13f490ec55e158ea3f3d9cf2f9f831c71b8db502c80c0c8"
+    },
+    {
+      "id": "handbook-workflow",
+      "path": "docs/handbook/workflow.md",
+      "title": "From request to reviewed change",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "documentation",
+      "reviewBy": "2027-03-22",
+      "reviewSuggested": [],
+      "summary": "A useful request tells the agent what should be different when the work is finished. It does not have to prescribe the implementation. AI-Forward's workflows help turn that intent into decisions, actions and a handback you can review.",
+      "tags": [
+        "handbook",
+        "reader-guide"
+      ],
+      "links": [
+        {
+          "to": "handbook-overview",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "bf298febde9e4529a37a780e444f3311056927b0c02b2984b9ebb2d6a801246f"
     },
     {
       "id": "hygiene-backlog",
@@ -8758,6 +9848,10 @@ window.DOCS_INDEX = {
       ],
       "links": [
         {
+          "to": "design-reader-first-handbook",
+          "rel": "documents"
+        },
+        {
           "to": "architecture",
           "rel": "documents"
         },
@@ -8835,7 +9929,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f0b7c618121b80ed5bda7ed28855030567aa967d431031e4e9a5ea5a46e96b3d"
+      "sourceSha256": "80ddde518e4c324248a18f249f1aadad41f589a19ba11f271675de6a53cd6f2c"
     },
     {
       "id": "forensic-review-rev48-proof",
@@ -10353,6 +11447,10 @@ window.DOCS_INDEX = {
       ],
       "links": [
         {
+          "to": "design-reader-first-handbook",
+          "rel": "documents"
+        },
+        {
           "to": "architecture",
           "rel": "documents"
         },
@@ -10426,7 +11524,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f4a551dc2a894effe9d5d4c8df55a3bc57559df44b6ad1eae792470c3fdb597a"
+      "sourceSha256": "93d9ee9c71540085ea2cc024fae791646d5c525057a1e491e6e3a0c5c1804b9a"
     }
   ],
   "surfaces": [
@@ -10495,6 +11593,13 @@ window.DOCS_INDEX = {
       "id": "surface-portal-index",
       "path": "docs/portal/index.html",
       "title": "AI-Forward Portal",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact."
+    },
+    {
+      "id": "surface-portal-maintainer",
+      "path": "docs/portal/maintainer.html",
+      "title": "AI-Forward — Engineering reference",
       "kind": "knowledge-tool",
       "description": "Open an interactive knowledge artifact."
     },
@@ -10716,5 +11821,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "d0f9d49a25da818e305d062ca809a990afaa84a431c15039d352ecb14a4fbd1c"
+  "graphSha256": "0895f8dcd978068089cf6b4cabf13303ab76d9973b6ef2f18286c3236769cbdc"
 };

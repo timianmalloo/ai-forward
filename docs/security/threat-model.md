@@ -7,6 +7,7 @@ owner: "@timianmalloo"
 phase: "pack-evolution"
 tags: [security, threat-model]
 links:
+  - { to: design-reader-first-handbook, rel: documents }
   - { to: architecture, rel: documents }
   - { to: design-aiforward-cli, rel: documents }
   - { to: design-coord-core-phase1, rel: documents }
@@ -43,6 +44,12 @@ python3 docs/ai-forward-pack/scripts/docs-graph.py rollup --heading "Adversarial
 ```
 
 ## 1. System trust-boundary map
+
+The reader handbook accepts only curated website Markdown. Its generator validates
+the corpus and escapes embedded JSON; its locally vendored renderer treats raw HTML
+as text and refuses executable URL schemes. It performs no runtime provider or
+third-party asset requests. Technical history remains secondary reference rather
+than becoming the default learning narrative.
 
 The pack-evolution capabilities are **local developer/CI tooling** — no network, no service, no privilege escalation. The trust boundaries that matter:
 
@@ -174,8 +181,14 @@ The pack-evolution capabilities are **local developer/CI tooling** — no networ
 | [design-rai-and-scrub](design/rai-and-scrub.md) | file content → scrub | **T** (`--write` damages content beyond the match) | mitigate | atomic temp+replace; sub only the matched span | `scrub_write_preserves_nonmatching` |
 | [design-rai-and-scrub](design/rai-and-scrub.md) | invocation args | **E** (path traversal to write outside repo) | mitigate | resolve + confine to provided paths; argv-list, no `shell=True`; default scope is `docs/`+`pack/` Markdown | `scrub_confined_to_given_paths` |
 | [design-rai-and-scrub](design/rai-and-scrub.md) | RAI doc | **R** (repudiation: no record of the stance) | mitigate | the committed RAI doc *is* the attributable record; linked from governance | n/a (artifact existence) |
+| [design-reader-first-handbook](design/reader-first-handbook.md) | Markdown raw HTML or dangerous links execute in the reader | Prevent | Escape raw HTML; permit only safe URL forms; hostile-source browser fixture proves no script, event handler, unsafe href or remote image request. |
+| [design-reader-first-handbook](design/reader-first-handbook.md) | A JSON string closes its script element | Prevent | Encode less-than signs in embedded JSON; producer test and real-browser fixture cover script breakout, quotes, backslashes and Unicode separators. |
+| [design-reader-first-handbook](design/reader-first-handbook.md) | A source alias admits another local content tree | Prevent | Exact guides/skills roots, nonrecursive scans and canonical path checks; generated outputs are owned and checks are read-only. |
+| [design-reader-first-handbook](design/reader-first-handbook.md) | A stale or empty catalogue appears complete | Detect | Reconcile every canonical skill and knowledge source with authored pages and guide homes; reject missing sections, routes and coverage. |
+| [design-reader-first-handbook](design/reader-first-handbook.md) | A dependency changes silently | Prevent/detect | Pinned local marked 18.0.14, retained MIT license/provenance, SHA-256 guard; no runtime CDN. |
+| [design-reader-first-handbook](design/reader-first-handbook.md) | Unknown page or damaged data strands the reader | Recover | Visible recovery, overview/source link and working navigation; browser checks cover both states. |
 
-<!-- rolled up from 15 artifact(s) by docs-graph.py rollup on 2026-09-21 -->
+<!-- rolled up from 16 artifact(s) by docs-graph.py rollup on 2026-09-22 -->
 
 <!-- END GENERATED -->
 

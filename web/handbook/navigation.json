@@ -1,0 +1,51 @@
+{
+  "schema": "ai-forward-handbook/1",
+  "owner": "@timianmalloo",
+  "review_by": "2027-03-22",
+  "groups": [
+    {"title": "Start here", "pages": ["overview", "get-started", "workflow"]},
+    {"title": "Work with confidence", "pages": ["rigor", "design", "interfaces"]},
+    {"title": "Coordinate work", "pages": ["coordination", "harnesses"]},
+    {"title": "Keep improving", "pages": ["knowledge", "improvement", "maintain"]},
+    {"title": "Find an answer", "pages": ["skills", "troubleshooting", "glossary", "maintainer"]}
+  ],
+  "skill_groups": [
+    {"title": "Set up the pack", "reader": "Repository maintainer or first-time adopter", "guide": "get-started", "skills": ["addpacktorepo", "updatepack", "adopt"]},
+    {"title": "Understand and plan", "reader": "Engineer or technical lead shaping a change", "guide": "design", "skills": ["collectknowledge", "adddomainexperts", "specify", "define-architecture", "design-slice"]},
+    {"title": "Shape the request", "reader": "Person directing an agent's work", "guide": "workflow", "skills": ["compile", "optimize-graph", "also"]},
+    {"title": "Build and improve software", "reader": "Engineer implementing or repairing an existing system", "guide": "workflow", "skills": ["implement", "investigate", "forensicreview", "code-hygiene", "migrate"]},
+    {"title": "Design an experience", "reader": "Engineer or designer responsible for a user-facing surface", "guide": "interfaces", "skills": ["ui-design", "visualize"]},
+    {"title": "Coordinate parallel work", "reader": "Owner or coordinator of multiple tracks", "guide": "coordination", "skills": ["prepare-for-coordination", "execute-with-coordination"]},
+    {"title": "Keep useful knowledge", "reader": "Engineer continuing or handing over a project", "guide": "knowledge", "skills": ["document", "auditlog", "prompts", "searchprompts"]},
+    {"title": "Learn and extend", "reader": "Team or pack maintainer improving the working method", "guide": "improvement", "skills": ["session-profiler", "dream", "apply-learnings", "extendaibundle"]}
+  ],
+  "aliases": {
+    "start": "overview",
+    "from-prompt-to-coordinated-execution": "workflow",
+    "coord-prompt-to-execution": "coordination",
+    "coord": "coordination",
+    "caps": "overview",
+    "agents": "design",
+    "loop": "improvement",
+    "budget": "improvement",
+    "foundations": "rigor",
+    "ui": "interfaces",
+    "architecture": "design",
+    "systems": "maintainer",
+    "graph": "knowledge",
+    "ref": "skills"
+  },
+  "capabilities": [
+    {"name": "Engineering method and proportionate effort", "guide": "overview", "sources": ["agent-body-of-knowledge", "agent-rules-of-the-road"]},
+    {"name": "Rigor, assumptions and unfamiliar contracts", "guide": "rigor", "sources": ["rigor-protocol", "no-guessing-protocol", "spike-protocol", "solution-selection-ladder"]},
+    {"name": "Verification across real user paths", "guide": "rigor", "sources": ["testing-strategy", "end-to-end-integrity"]},
+    {"name": "Problem framing and layered specifications", "guide": "workflow", "sources": ["specification-standards", "communication-and-task-discipline", "execution-graph-optimization"]},
+    {"name": "Domain, data and AI-integrated architecture", "guide": "design", "sources": ["domain-and-data-modelling", "layered-optimized-architecture", "csharp-style-guide"]},
+    {"name": "Specialist collaboration and independent review", "guide": "design", "sources": ["agent-persona-catalog", "persona-audit", "persona-cards", "collaborative-personas"]},
+    {"name": "Coordination and worktree isolation", "guide": "coordination", "sources": ["agent-coordination", "session-worktree-discipline"]},
+    {"name": "Security, privacy and responsible oversight", "guide": "design", "sources": ["engineering-governance", "responsible-ai-policy"]},
+    {"name": "Usable interfaces and generated visual assets", "guide": "interfaces", "sources": ["ui-interaction-design", "ui-design-craft", "ui-archetype-grammar", "ui-archetype-catalog", "ui-craft-detection", "technical-ui-design", "ui-visual-assets"]},
+    {"name": "Project knowledge, graphs and optional lenses", "guide": "knowledge", "sources": ["knowledge-visualization", "project-memory-and-obsidian", "code-knowledge-graph", "obsidian-lens", "audit-and-change-log"]},
+    {"name": "Measured improvement, context, cost and operation", "guide": "improvement", "sources": ["continuous-improvement", "instrumentation-over-inference", "observability-and-instrumentation", "ci-and-test-efficiency", "ai-commercial-models"]}
+  ]
+}

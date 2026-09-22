@@ -1,0 +1,99 @@
+# Design an experience people can actually use
+
+An interface can look finished while leaving the user unable to complete the task.
+The empty state may be missing, a keyboard user may not reach an action, or a screen
+may expose every option at once when the work needs a sequence.
+
+AI-Forward treats interface design as part of the engineering problem. Start with
+the person's task, decide how the experience should work, then choose the visual
+language and implementation. Generated polish cannot repair a confused journey.
+
+## Separate the decisions
+
+**User experience** is how someone gets from a starting situation to a useful outcome.
+It includes structure, navigation, labels, decisions and recovery.
+
+**User interface** is how that experience is presented and operated: layout, typography,
+controls, feedback, visual hierarchy and interaction states.
+
+**Visual assets** are what a surface contains, such as a photograph or illustration.
+They are not the interface itself.
+
+The [ui-design workflow](#skill-ui-design) helps create, review or improve a surface.
+[Visualize](#skill-visualize) concerns assets. Using an image generator to draw a
+supposedly finished settings screen does not produce usable controls, accessible
+text or a valid interaction model.
+
+## Choose a shape that fits the work
+
+The pack calls a recurring interface shape an **archetype**. A sequential setup flow,
+a reading/reference surface, a comparison view and a monitoring dashboard organize
+attention differently.
+
+Choose that shape from the task. A dashboard that displays everything is not
+automatically a good data-entry form. A technical workbench may need dense information,
+but density still needs a clear hierarchy.
+
+For HarborTasks, exporting the current filter is a short action within an existing
+workflow. It does not need a new full-screen reporting dashboard just because a
+dashboard would look impressive in a screenshot.
+
+## Make the hard states part of the design
+
+Consider the export action before drawing its success state:
+
+- Can the person tell what the current filter includes?
+- What happens while the file is being prepared?
+- Does an empty result still produce the agreed header?
+- How are authorization or generation failures explained?
+- Can the person cancel or retry without duplicating an action?
+- Can a keyboard or assistive-technology user operate the same path?
+
+Write the real words for those states. “Something went wrong” gives the user no
+useful next step. “The export could not be prepared. Your filter has not changed;
+try again or contact the project administrator” explains more—but must still match
+the application's actual behavior.
+
+## Use a design system rather than arbitrary choices
+
+A design system gives shared names and values to colors, type, spacing, controls
+and their states. The pack records that language in a `DESIGN.md` where applicable.
+Use an existing product system before inventing another.
+
+Check contrast, focus visibility, target sizes, responsive behavior and reduced
+motion. For numerical or scientific interfaces, also preserve units, meaningful
+precision and uncertainty. A visually appealing chart can still be technically wrong.
+
+The deterministic craft checks can find off-token values and recurring implementation
+problems. They cannot decide whether the interface fits the user's task or whether
+an omitted error state should have existed. Use them as a floor, not as a verdict.
+
+## Try a focused review
+
+```text
+/ui-design Review HarborTasks' export flow. The person must understand that
+all matching tasks are exported, including those not on the current page.
+Cover keyboard operation, narrow screens, empty results, progress and failure.
+Prefer a small addition to the existing task list over a separate dashboard.
+```
+
+In Codex, use `$ui-design`. Ask for findings tied to a location and a user consequence,
+then a prioritized correction—not a collection of personal visual preferences.
+
+A useful illustrative handback might identify ambiguous button copy, an inaccessible
+focus order and a missing retry state, then show a reviewable prototype that includes
+those conditions. Inspect that prototype with representative content, not only the
+ideal populated screen.
+
+## Use imagery when it serves the experience
+
+If a surface needs generated imagery, establish direction in words first. Keep
+prompts and asset metadata, provide alt text and disclosure where needed, and commit
+optimized local assets rather than depending on expiring provider URLs.
+
+Do not upload a real person's likeness or customer material merely to produce a
+mockup. Respect the user's provider/model restrictions. This handbook explains the
+visual workflow without requiring a live generation call.
+
+**Next:** [ui-design reference](#skill-ui-design), [visual asset workflow](#skill-visualize),
+or [implementation with meaningful checks](#skill-implement).

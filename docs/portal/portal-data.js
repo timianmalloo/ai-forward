@@ -970,6 +970,11 @@ window.PORTAL_DATA = {
             "path": "../../docs/design/rai-and-scrub.md"
           },
           {
+            "title": "Reader-first handbook: content and publishing contract",
+            "summary": "\"A problem-led public handbook replaces the retrospective portal as the default reading path. Canonical website Markdown produces a self-contained reader and graph-indexed mirrors, with exact skill/capability coverage and independent newcomer review.\"",
+            "path": "../../docs/design/reader-first-handbook.md"
+          },
+          {
             "title": "Design — session profiler (the measured half of tuning)",
             "summary": "A deployable, stdlib-only session-profile.py that reads the telemetry Claude Code and GitHub Copilot CLI already write to disk for one or more pack-consuming repos and emits a findings table (SP-01..SP-16, with per-turn evidence), a fixes table (F-01..F-11,...",
             "path": "../../docs/design/session-profiler.md"
@@ -2596,6 +2601,12 @@ window.PORTAL_DATA = {
         "summary": "A committed Responsible-AI policy knowledge doc mapping Microsoft RAI principles + NIST AI RMF functions to the pack's EXISTING personas/templates, plus a..."
       },
       {
+        "id": "design-reader-first-handbook",
+        "type": "design",
+        "title": "Reader-first handbook: content and publishing contract",
+        "summary": "A problem-led public handbook replaces the retrospective portal as the default reading path. Canonical website Markdown produces a self-contained reader and..."
+      },
+      {
         "id": "design-session-profiler",
         "type": "design",
         "title": "Design — session profiler (the measured half of tuning)",
@@ -2738,6 +2749,270 @@ window.PORTAL_DATA = {
         "type": "doc",
         "title": "Forensic review backlog — ai-forward revision 59 (FR-076 … FR-085)",
         "summary": "Ten proposed backlog items from the revision-59 forensic review, FR-076 to FR-085, each with evidence, falsifiable acceptance criteria and a recommended next..."
+      },
+      {
+        "id": "handbook-coordination",
+        "type": "doc",
+        "title": "Coordinate work without losing ownership",
+        "summary": "Several agents can finish independent work faster, but they can also make a repository less trustworthy. Two sessions can edit the same file, regenerate the..."
+      },
+      {
+        "id": "handbook-coverage",
+        "type": "doc",
+        "title": "Handbook coverage",
+        "summary": "Reader-oriented coverage of every current skill and knowledge area."
+      },
+      {
+        "id": "handbook-design",
+        "type": "doc",
+        "title": "Make the important decisions before they become expensive",
+        "summary": "A small code change can hide a large decision. Adding a field may change what a record means. Splitting a service may introduce a consistency boundary...."
+      },
+      {
+        "id": "handbook-get-started",
+        "type": "doc",
+        "title": "Try AI-Forward on one small task",
+        "summary": "Start with a repository you understand and a change you can review. The first useful result is not a large plan or a swarm of agents. It is seeing whether the..."
+      },
+      {
+        "id": "handbook-glossary",
+        "type": "doc",
+        "title": "A small vocabulary for working together",
+        "summary": "The pack uses a few terms repeatedly. They are useful when they make a decision or boundary clearer; they should not become a language you must decode before..."
+      },
+      {
+        "id": "handbook-harnesses",
+        "type": "doc",
+        "title": "Choose the right AI harness for the work",
+        "summary": "AI-Forward is installed into several agent harnesses. A harness is the application that gives a model instructions, tools, a workspace and interaction..."
+      },
+      {
+        "id": "handbook-improvement",
+        "type": "doc",
+        "title": "Improve the way the work is done",
+        "summary": "It is easy to finish a task and repeat the same costly mistake on the next one. AI-Forward treats improvement as a loop: observe what happened, identify the..."
+      },
+      {
+        "id": "handbook-interfaces",
+        "type": "doc",
+        "title": "Design an experience people can actually use",
+        "summary": "An interface can look finished while leaving the user unable to complete the task. The empty state may be missing, a keyboard user may not reach an action, or..."
+      },
+      {
+        "id": "handbook-knowledge",
+        "type": "doc",
+        "title": "Keep project knowledge useful after the session ends",
+        "summary": "A productive session can still leave a project harder to continue. The reasoning is buried in chat, a design no longer matches the code, and the next person..."
+      },
+      {
+        "id": "handbook-maintain",
+        "type": "doc",
+        "title": "Maintain the pack without losing local intent",
+        "summary": "There are two maintenance jobs: keeping an installed pack current in an application, and changing AI-Forward itself. They use related files but are not the..."
+      },
+      {
+        "id": "handbook-maintainer",
+        "type": "doc",
+        "title": "Technical reference when you need the machinery",
+        "summary": "The handbook teaches how to use AI-Forward. Sometimes you need the underlying contracts, source, detailed architecture or history instead. Those records remain..."
+      },
+      {
+        "id": "handbook-overview",
+        "type": "doc",
+        "title": "Build with AI agents without losing engineering discipline",
+        "summary": "AI coding agents can turn a short request into a lot of work. The harder part is deciding whether they understood the problem, made sound choices, and produced..."
+      },
+      {
+        "id": "handbook-rigor",
+        "type": "doc",
+        "title": "Make plausible answers earn your trust",
+        "summary": "An agent can give a fluent answer before it has established what the question means. It can also write a test that agrees with its own implementation while..."
+      },
+      {
+        "id": "handbook-skill-adddomainexperts",
+        "type": "doc",
+        "title": "Add project-specific domain reviewers",
+        "summary": "Use this skill when general engineering personas are not enough. It identifies the project's subject domain and adds local expert personas, such as accounting,..."
+      },
+      {
+        "id": "handbook-skill-addpacktorepo",
+        "type": "doc",
+        "title": "Install AI-Forward into a local repository",
+        "summary": "Use this skill when a project does not yet have the AI-Forward Pack and you want the first install to respect the repository that already exists. It reads the..."
+      },
+      {
+        "id": "handbook-skill-adopt",
+        "type": "doc",
+        "title": "Bring an existing repository into the knowledge graph",
+        "summary": "Use this skill after the pack is installed in a project that already has code and docs. It inventories what exists, recovers the architecture, adds graph..."
+      },
+      {
+        "id": "handbook-skill-also",
+        "type": "doc",
+        "title": "Add a late thought without derailing the current work",
+        "summary": "Use this utility when you remember an important addition after a task has started. It captures the addition and folds it into the current work only where it..."
+      },
+      {
+        "id": "handbook-skill-apply-learnings",
+        "type": "doc",
+        "title": "Propose approved learnings for other repositories",
+        "summary": "Use this skill after dream has promoted general, control-bearing learnings. It reconciles those learnings into target repositories and writes reviewable plans...."
+      },
+      {
+        "id": "handbook-skill-auditlog",
+        "type": "doc",
+        "title": "Read the project history without guessing",
+        "summary": "Use this utility to inspect the committed audit and change log: recent work, decisions, searches, exact past prompts and the local timeline viewer."
+      },
+      {
+        "id": "handbook-skill-code-hygiene",
+        "type": "doc",
+        "title": "Find and fix code hygiene problems safely",
+        "summary": "Use this skill to identify dead code, commented-out code and recurring anti-patterns, then plan or execute cleanup without turning hygiene into risky churn."
+      },
+      {
+        "id": "handbook-skill-collectknowledge",
+        "type": "doc",
+        "title": "Build a sourced knowledge base before design",
+        "summary": "Use this skill when a project needs domain understanding before it can safely specify or design. It gathers external and internal knowledge into structured..."
+      },
+      {
+        "id": "handbook-skill-compile",
+        "type": "doc",
+        "title": "Compile a rough request into a dispatchable prompt",
+        "summary": "Use this utility when a prose request is too ambiguous to hand directly to a workflow or worker. It turns the request into a goal state, traced clauses,..."
+      },
+      {
+        "id": "handbook-skill-define-architecture",
+        "type": "doc",
+        "title": "Decide the system shape before building",
+        "summary": "Use this skill when a project or major capability needs a top-level architecture: components, boundaries, data representation, integration contracts, AI..."
+      },
+      {
+        "id": "handbook-skill-design-slice",
+        "type": "doc",
+        "title": "Design one implementable feature slice",
+        "summary": "Use this skill to turn a specification or architecture decision into a technical blueprint for one feature or component. It names contracts, data shapes,..."
+      },
+      {
+        "id": "handbook-skill-document",
+        "type": "doc",
+        "title": "Keep documentation true to the code",
+        "summary": "Use this skill to generate or refresh the documentation bundle: API reference, diagrams, architecture overview, Docs Explorer index and browsable documentation..."
+      },
+      {
+        "id": "handbook-skill-dream",
+        "type": "doc",
+        "title": "Consolidate recurring lessons for human review",
+        "summary": "Use this skill to run an offline consolidation pass over committed history, defect classes, mitigations and markers. It proposes learnings; humans approve,..."
+      },
+      {
+        "id": "handbook-skill-execute-with-coordination",
+        "type": "doc",
+        "title": "Run a coordination plan without taking over the tracks",
+        "summary": "Use this skill to execute a prepared coordination plan. The coordinator opens or briefs workers, watches seams, verifies returned evidence and joins the work."
+      },
+      {
+        "id": "handbook-skill-extendaibundle",
+        "type": "doc",
+        "title": "Extend the AI-Forward Pack consistently",
+        "summary": "Use this skill when you want to add or change the pack itself: a new skill, knowledge doc, template, script or adapter behavior. It runs the pack-change loop..."
+      },
+      {
+        "id": "handbook-skill-forensicreview",
+        "type": "doc",
+        "title": "Review an existing repository for evidence-backed risk",
+        "summary": "Use this skill for a deep review of an existing codebase. It rebuilds the picture from code and docs, checks architecture, design, implementation and..."
+      },
+      {
+        "id": "handbook-skill-implement",
+        "type": "doc",
+        "title": "Build the approved change with tests",
+        "summary": "Use this skill after the requirement and design are clear enough to code. It implements through test-first increments, verifies the real behavior and produces..."
+      },
+      {
+        "id": "handbook-skill-investigate",
+        "type": "doc",
+        "title": "Find the verified cause before fixing a defect",
+        "summary": "Use this skill when something is broken, slow, inconsistent or surprising. It reproduces or characterizes the symptom, proves the root cause, sweeps for..."
+      },
+      {
+        "id": "handbook-skill-migrate",
+        "type": "doc",
+        "title": "Change dependencies or architecture without losing behavior",
+        "summary": "Use this skill for dependency upgrades, framework migrations and large refactors. It characterizes current behavior first, migrates in small vertical..."
+      },
+      {
+        "id": "handbook-skill-optimize-graph",
+        "type": "doc",
+        "title": "Plan the work shape before spending effort",
+        "summary": "Use this skill to turn a multi-step request into an execution graph: real dependencies, serial work, possible parallelism, budgets, loop exits and checkpoints...."
+      },
+      {
+        "id": "handbook-skill-prepare-for-coordination",
+        "type": "doc",
+        "title": "Prepare a safe multi-session work plan",
+        "summary": "Use this skill before assigning work to several agents or humans. It classifies artifacts, identifies what must stay serial, and writes the coordination plan..."
+      },
+      {
+        "id": "handbook-skill-prompts",
+        "type": "doc",
+        "title": "Reuse a past prompt from the project log",
+        "summary": "Use this utility to browse logged prompts newest-first and copy one for paste-and-edit. It is a reuse lens over the audit log, not a command that reruns work..."
+      },
+      {
+        "id": "handbook-skill-searchprompts",
+        "type": "doc",
+        "title": "Search past prompts by terms",
+        "summary": "Use this utility when you remember words from a previous prompt and want to reuse the exact text. It is the filtered companion to prompts."
+      },
+      {
+        "id": "handbook-skill-session-profiler",
+        "type": "doc",
+        "title": "Measure how agent sessions actually behaved",
+        "summary": "Use this skill to profile local harness telemetry and turn it into findings and fixes for cost, context growth, re-reads, task drift, fan-out and cross-harness..."
+      },
+      {
+        "id": "handbook-skill-specify",
+        "type": "doc",
+        "title": "Turn a request into a testable product specification",
+        "summary": "Use this skill when you need the “what” and “why” of a change before anyone designs or implements it. It turns a prompt into a specification with functional,..."
+      },
+      {
+        "id": "handbook-skill-ui-design",
+        "type": "doc",
+        "title": "Design or review a user-facing surface",
+        "summary": "Use this skill when the interface itself needs craft: direction, information architecture fit, visual language, states, accessibility and a reviewable mockup."
+      },
+      {
+        "id": "handbook-skill-updatepack",
+        "type": "doc",
+        "title": "Update an installed AI-Forward Pack",
+        "summary": "Use this skill when a repository already has AI-Forward and you want to refresh it to a newer local pack revision without hand-copying files or losing local..."
+      },
+      {
+        "id": "handbook-skill-visualize",
+        "type": "doc",
+        "title": "Create committed visual assets, not generated interfaces",
+        "summary": "Use this skill to produce imagery, fictional personas, direction boards or motion that a surface displays. It never generates the interface itself."
+      },
+      {
+        "id": "handbook-skills",
+        "type": "doc",
+        "title": "Choose a workflow from the problem",
+        "summary": "You do not need to memorize the skill names. Start with what you are trying to establish or change, then open the reference for the workflow that fits."
+      },
+      {
+        "id": "handbook-troubleshooting",
+        "type": "doc",
+        "title": "Recover without making the situation less safe",
+        "summary": "When a workflow stops or an expected capability is absent, first identify which layer is failing: skill discovery, the request, a local script, a harness..."
+      },
+      {
+        "id": "handbook-workflow",
+        "type": "doc",
+        "title": "From request to reviewed change",
+        "summary": "A useful request tells the agent what should be different when the work is finished. It does not have to prescribe the implementation. AI-Forward's workflows..."
       },
       {
         "id": "hygiene-backlog",
@@ -4962,6 +5237,21 @@ window.PORTAL_DATA = {
         "rel": "implements"
       },
       {
+        "from": "design-reader-first-handbook",
+        "to": "architecture",
+        "rel": "relates-to"
+      },
+      {
+        "from": "design-reader-first-handbook",
+        "to": "handbook-overview",
+        "rel": "documents"
+      },
+      {
+        "from": "design-reader-first-handbook",
+        "to": "spec-documentation-portal",
+        "rel": "refines"
+      },
+      {
         "from": "design-session-profiler",
         "to": "defect-classes",
         "rel": "relates-to"
@@ -5349,6 +5639,226 @@ window.PORTAL_DATA = {
       {
         "from": "forensic-review-rev59-backlog",
         "to": "forensic-review-rev59",
+        "rel": "relates-to"
+      },
+      {
+        "from": "handbook-coordination",
+        "to": "handbook-overview",
+        "rel": "relates-to"
+      },
+      {
+        "from": "handbook-coverage",
+        "to": "handbook-overview",
+        "rel": "relates-to"
+      },
+      {
+        "from": "handbook-design",
+        "to": "handbook-overview",
+        "rel": "relates-to"
+      },
+      {
+        "from": "handbook-get-started",
+        "to": "handbook-overview",
+        "rel": "relates-to"
+      },
+      {
+        "from": "handbook-glossary",
+        "to": "handbook-overview",
+        "rel": "relates-to"
+      },
+      {
+        "from": "handbook-harnesses",
+        "to": "handbook-overview",
+        "rel": "relates-to"
+      },
+      {
+        "from": "handbook-improvement",
+        "to": "handbook-overview",
+        "rel": "relates-to"
+      },
+      {
+        "from": "handbook-interfaces",
+        "to": "handbook-overview",
+        "rel": "relates-to"
+      },
+      {
+        "from": "handbook-knowledge",
+        "to": "handbook-overview",
+        "rel": "relates-to"
+      },
+      {
+        "from": "handbook-maintain",
+        "to": "handbook-overview",
+        "rel": "relates-to"
+      },
+      {
+        "from": "handbook-maintainer",
+        "to": "handbook-overview",
+        "rel": "relates-to"
+      },
+      {
+        "from": "handbook-overview",
+        "to": "architecture",
+        "rel": "relates-to"
+      },
+      {
+        "from": "handbook-rigor",
+        "to": "handbook-overview",
+        "rel": "relates-to"
+      },
+      {
+        "from": "handbook-skill-adddomainexperts",
+        "to": "handbook-design",
+        "rel": "relates-to"
+      },
+      {
+        "from": "handbook-skill-addpacktorepo",
+        "to": "handbook-get-started",
+        "rel": "relates-to"
+      },
+      {
+        "from": "handbook-skill-adopt",
+        "to": "handbook-get-started",
+        "rel": "relates-to"
+      },
+      {
+        "from": "handbook-skill-also",
+        "to": "handbook-workflow",
+        "rel": "relates-to"
+      },
+      {
+        "from": "handbook-skill-apply-learnings",
+        "to": "handbook-improvement",
+        "rel": "relates-to"
+      },
+      {
+        "from": "handbook-skill-auditlog",
+        "to": "handbook-knowledge",
+        "rel": "relates-to"
+      },
+      {
+        "from": "handbook-skill-code-hygiene",
+        "to": "handbook-workflow",
+        "rel": "relates-to"
+      },
+      {
+        "from": "handbook-skill-collectknowledge",
+        "to": "handbook-design",
+        "rel": "relates-to"
+      },
+      {
+        "from": "handbook-skill-compile",
+        "to": "handbook-workflow",
+        "rel": "relates-to"
+      },
+      {
+        "from": "handbook-skill-define-architecture",
+        "to": "handbook-design",
+        "rel": "relates-to"
+      },
+      {
+        "from": "handbook-skill-design-slice",
+        "to": "handbook-design",
+        "rel": "relates-to"
+      },
+      {
+        "from": "handbook-skill-document",
+        "to": "handbook-knowledge",
+        "rel": "relates-to"
+      },
+      {
+        "from": "handbook-skill-dream",
+        "to": "handbook-improvement",
+        "rel": "relates-to"
+      },
+      {
+        "from": "handbook-skill-execute-with-coordination",
+        "to": "handbook-coordination",
+        "rel": "relates-to"
+      },
+      {
+        "from": "handbook-skill-extendaibundle",
+        "to": "handbook-improvement",
+        "rel": "relates-to"
+      },
+      {
+        "from": "handbook-skill-forensicreview",
+        "to": "handbook-workflow",
+        "rel": "relates-to"
+      },
+      {
+        "from": "handbook-skill-implement",
+        "to": "handbook-workflow",
+        "rel": "relates-to"
+      },
+      {
+        "from": "handbook-skill-investigate",
+        "to": "handbook-workflow",
+        "rel": "relates-to"
+      },
+      {
+        "from": "handbook-skill-migrate",
+        "to": "handbook-workflow",
+        "rel": "relates-to"
+      },
+      {
+        "from": "handbook-skill-optimize-graph",
+        "to": "handbook-workflow",
+        "rel": "relates-to"
+      },
+      {
+        "from": "handbook-skill-prepare-for-coordination",
+        "to": "handbook-coordination",
+        "rel": "relates-to"
+      },
+      {
+        "from": "handbook-skill-prompts",
+        "to": "handbook-knowledge",
+        "rel": "relates-to"
+      },
+      {
+        "from": "handbook-skill-searchprompts",
+        "to": "handbook-knowledge",
+        "rel": "relates-to"
+      },
+      {
+        "from": "handbook-skill-session-profiler",
+        "to": "handbook-improvement",
+        "rel": "relates-to"
+      },
+      {
+        "from": "handbook-skill-specify",
+        "to": "handbook-design",
+        "rel": "relates-to"
+      },
+      {
+        "from": "handbook-skill-ui-design",
+        "to": "handbook-interfaces",
+        "rel": "relates-to"
+      },
+      {
+        "from": "handbook-skill-updatepack",
+        "to": "handbook-get-started",
+        "rel": "relates-to"
+      },
+      {
+        "from": "handbook-skill-visualize",
+        "to": "handbook-interfaces",
+        "rel": "relates-to"
+      },
+      {
+        "from": "handbook-skills",
+        "to": "handbook-overview",
+        "rel": "relates-to"
+      },
+      {
+        "from": "handbook-troubleshooting",
+        "to": "handbook-overview",
+        "rel": "relates-to"
+      },
+      {
+        "from": "handbook-workflow",
+        "to": "handbook-overview",
         "rel": "relates-to"
       },
       {
@@ -6593,6 +7103,11 @@ window.PORTAL_DATA = {
       },
       {
         "from": "privacy-review",
+        "to": "design-reader-first-handbook",
+        "rel": "documents"
+      },
+      {
+        "from": "privacy-review",
         "to": "design-typed-seam-requests",
         "rel": "documents"
       },
@@ -7589,6 +8104,11 @@ window.PORTAL_DATA = {
       {
         "from": "threat-model",
         "to": "design-rai-and-scrub",
+        "rel": "documents"
+      },
+      {
+        "from": "threat-model",
+        "to": "design-reader-first-handbook",
         "rel": "documents"
       },
       {

@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 302
+"count": 347
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 481,
+"total": 526,
 "items": [
 {
 "cat": "knowledge",
@@ -2694,6 +2694,15 @@ window.PACK_INDEX = {
 },
 {
 "cat": "graph",
+"id": "design-reader-first-handbook",
+"title": "Reader-first handbook: content and publishing contract",
+"summary": "A problem-led public handbook replaces the retrospective portal as the default reading path. Canonical website Markdown produces a self-contained reader and graph-indexed mirrors, with exact skill/capability coverage and independent…",
+"path": "docs/design/reader-first-handbook.md",
+"kind": "design",
+"text": "reader-first handbook: content and publishing contract a problem-led public handbook replaces the retrospective portal as the default reading path. canonical website markdown produces a self-contained reader and graph-indexed mirrors, with exact skill/capability coverage and independent newcomer review. handbook documentation accessibility publishing documents handbook-overview refines spec-documentation-portal relates-to architecture"
+},
+{
+"cat": "graph",
 "id": "design-session-profiler",
 "title": "Design — session profiler (the measured half of tuning)",
 "summary": "A deployable, stdlib-only session-profile.py that reads the telemetry Claude Code and GitHub Copilot CLI already write to disk for one or more pack-consuming repos and emits a findings table (SP-01..SP-16, with per-turn evidence), a fixes…",
@@ -2970,6 +2979,402 @@ window.PACK_INDEX = {
 "path": "docs/backlog/forensic-review-rev59.md",
 "kind": "doc",
 "text": "forensic review backlog — ai-forward revision 59 (fr-076 … fr-085) ten proposed backlog items from the revision-59 forensic review, fr-076 to fr-085, each with evidence, falsifiable acceptance criteria and a recommended next skill. no p0 or p1; the work is governance and documentation debt. status proposed — nothing here is implemented, and the review stopped for human triage. forensic-review backlog rev59 governance relates-to forensic-review-rev59 relates-to defect-classes relates-to architecture"
+},
+{
+"cat": "graph",
+"id": "handbook-coordination",
+"title": "Coordinate work without losing ownership",
+"summary": "Several agents can finish independent work faster, but they can also make a repository less trustworthy. Two sessions can edit the same file, regenerate the same derived output, answer each other's questions in private, or report “done”…",
+"path": "docs/handbook/coordination.md",
+"kind": "doc",
+"text": "coordinate work without losing ownership several agents can finish independent work faster, but they can also make a repository less trustworthy. two sessions can edit the same file, regenerate the same derived output, answer each other's questions in private, or report “done” without returning the evidence the owner needed. ai-forward coordination is the method for dividing work while keeping one accountable owner, one visible plan and one reviewed join. handbook reader-guide relates-to handbook-overview"
+},
+{
+"cat": "graph",
+"id": "handbook-coverage",
+"title": "Handbook coverage",
+"summary": "Reader-oriented coverage of every current skill and knowledge area.",
+"path": "docs/handbook/coverage.md",
+"kind": "doc",
+"text": "handbook coverage reader-oriented coverage of every current skill and knowledge area. handbook reader-guide relates-to handbook-overview"
+},
+{
+"cat": "graph",
+"id": "handbook-design",
+"title": "Make the important decisions before they become expensive",
+"summary": "A small code change can hide a large decision. Adding a field may change what a record means. Splitting a service may introduce a consistency boundary. Choosing an AI model may affect cost, privacy and what can be reproduced.",
+"path": "docs/handbook/design.md",
+"kind": "doc",
+"text": "make the important decisions before they become expensive a small code change can hide a large decision. adding a field may change what a record means. splitting a service may introduce a consistency boundary. choosing an ai model may affect cost, privacy and what can be reproduced. handbook reader-guide relates-to handbook-overview"
+},
+{
+"cat": "graph",
+"id": "handbook-get-started",
+"title": "Try AI-Forward on one small task",
+"summary": "Start with a repository you understand and a change you can review. The first useful result is not a large plan or a swarm of agents. It is seeing whether the pack helps you frame a small request, inspect the output, and keep a reliable…",
+"path": "docs/handbook/get-started.md",
+"kind": "doc",
+"text": "try ai-forward on one small task start with a repository you understand and a change you can review. the first useful result is not a large plan or a swarm of agents. it is seeing whether the pack helps you frame a small request, inspect the output, and keep a reliable next step. handbook reader-guide relates-to handbook-overview"
+},
+{
+"cat": "graph",
+"id": "handbook-glossary",
+"title": "A small vocabulary for working together",
+"summary": "The pack uses a few terms repeatedly. They are useful when they make a decision or boundary clearer; they should not become a language you must decode before starting.",
+"path": "docs/handbook/glossary.md",
+"kind": "doc",
+"text": "a small vocabulary for working together the pack uses a few terms repeatedly. they are useful when they make a decision or boundary clearer; they should not become a language you must decode before starting. handbook reader-guide relates-to handbook-overview"
+},
+{
+"cat": "graph",
+"id": "handbook-harnesses",
+"title": "Choose the right AI harness for the work",
+"summary": "AI-Forward is installed into several agent harnesses. A harness is the application that gives a model instructions, tools, a workspace and interaction controls. The pack tries to present the same workflows across them, but the hosts are…",
+"path": "docs/handbook/harnesses.md",
+"kind": "doc",
+"text": "choose the right ai harness for the work ai-forward is installed into several agent harnesses. a harness is the application that gives a model instructions, tools, a workspace and interaction controls. the pack tries to present the same workflows across them, but the hosts are not identical. treat a harness as qualified only for the behavior you have checked on the current machine and repository. handbook reader-guide relates-to handbook-overview"
+},
+{
+"cat": "graph",
+"id": "handbook-improvement",
+"title": "Improve the way the work is done",
+"summary": "It is easy to finish a task and repeat the same costly mistake on the next one. AI-Forward treats improvement as a loop: observe what happened, identify the recurring shape, propose a useful change, review it, and turn it into a control…",
+"path": "docs/handbook/improvement.md",
+"kind": "doc",
+"text": "improve the way the work is done it is easy to finish a task and repeat the same costly mistake on the next one. ai-forward treats improvement as a loop: observe what happened, identify the recurring shape, propose a useful change, review it, and turn it into a control that will matter when the situation recurs. handbook reader-guide relates-to handbook-overview"
+},
+{
+"cat": "graph",
+"id": "handbook-interfaces",
+"title": "Design an experience people can actually use",
+"summary": "An interface can look finished while leaving the user unable to complete the task. The empty state may be missing, a keyboard user may not reach an action, or a screen may expose every option at once when the work needs a sequence.",
+"path": "docs/handbook/interfaces.md",
+"kind": "doc",
+"text": "design an experience people can actually use an interface can look finished while leaving the user unable to complete the task. the empty state may be missing, a keyboard user may not reach an action, or a screen may expose every option at once when the work needs a sequence. handbook reader-guide relates-to handbook-overview"
+},
+{
+"cat": "graph",
+"id": "handbook-knowledge",
+"title": "Keep project knowledge useful after the session ends",
+"summary": "A productive session can still leave a project harder to continue. The reasoning is buried in chat, a design no longer matches the code, and the next person has to rediscover which assumptions were checked. AI-Forward keeps useful…",
+"path": "docs/handbook/knowledge.md",
+"kind": "doc",
+"text": "keep project knowledge useful after the session ends a productive session can still leave a project harder to continue. the reasoning is buried in chat, a design no longer matches the code, and the next person has to rediscover which assumptions were checked. ai-forward keeps useful knowledge in the repository so that future work has a starting point. handbook reader-guide relates-to handbook-overview"
+},
+{
+"cat": "graph",
+"id": "handbook-maintain",
+"title": "Maintain the pack without losing local intent",
+"summary": "There are two maintenance jobs: keeping an installed pack current in an application, and changing AI-Forward itself. They use related files but are not the same workflow. Choose the correct starting repository before asking an agent to…",
+"path": "docs/handbook/maintain.md",
+"kind": "doc",
+"text": "maintain the pack without losing local intent there are two maintenance jobs: keeping an installed pack current in an application, and changing ai-forward itself. they use related files but are not the same workflow. choose the correct starting repository before asking an agent to make changes. handbook reader-guide relates-to handbook-overview"
+},
+{
+"cat": "graph",
+"id": "handbook-maintainer",
+"title": "Technical reference when you need the machinery",
+"summary": "The handbook teaches how to use AI-Forward. Sometimes you need the underlying contracts, source, detailed architecture or history instead. Those records remain available; they should not be prerequisites for a first useful task.",
+"path": "docs/handbook/maintainer.md",
+"kind": "doc",
+"text": "technical reference when you need the machinery the handbook teaches how to use ai-forward. sometimes you need the underlying contracts, source, detailed architecture or history instead. those records remain available; they should not be prerequisites for a first useful task. handbook reader-guide relates-to handbook-overview"
+},
+{
+"cat": "graph",
+"id": "handbook-overview",
+"title": "Build with AI agents without losing engineering discipline",
+"summary": "AI coding agents can turn a short request into a lot of work. The harder part is deciding whether they understood the problem, made sound choices, and produced something you can safely keep. AI-Forward gives that work a repeatable…",
+"path": "docs/handbook/overview.md",
+"kind": "doc",
+"text": "build with ai agents without losing engineering discipline ai coding agents can turn a short request into a lot of work. the harder part is deciding whether they understood the problem, made sound choices, and produced something you can safely keep. ai-forward gives that work a repeatable engineering method. handbook reader-guide relates-to architecture"
+},
+{
+"cat": "graph",
+"id": "handbook-rigor",
+"title": "Make plausible answers earn your trust",
+"summary": "An agent can give a fluent answer before it has established what the question means. It can also write a test that agrees with its own implementation while missing what the user actually needs. The Rigor Protocol is AI-Forward's method for…",
+"path": "docs/handbook/rigor.md",
+"kind": "doc",
+"text": "make plausible answers earn your trust an agent can give a fluent answer before it has established what the question means. it can also write a test that agrees with its own implementation while missing what the user actually needs. the rigor protocol is ai-forward's method for slowing down those decisions without turning every task into a research project. handbook reader-guide relates-to handbook-overview"
+},
+{
+"cat": "graph",
+"id": "handbook-skill-adddomainexperts",
+"title": "Add project-specific domain reviewers",
+"summary": "Use this skill when general engineering personas are not enough. It identifies the project's subject domain and adds local expert personas, such as accounting, clinical, geospatial or numerical-methods reviewers, with clear peer and…",
+"path": "docs/handbook/skill-adddomainexperts.md",
+"kind": "doc",
+"text": "add project-specific domain reviewers use this skill when general engineering personas are not enough. it identifies the project's subject domain and adds local expert personas, such as accounting, clinical, geospatial or numerical-methods reviewers, with clear peer and adversary roles. handbook reader-guide relates-to handbook-design"
+},
+{
+"cat": "graph",
+"id": "handbook-skill-addpacktorepo",
+"title": "Install AI-Forward into a local repository",
+"summary": "Use this skill when a project does not yet have the AI-Forward Pack and you want the first install to respect the repository that already exists. It reads the target before writing, applies the pack deployment map, and reports what landed.",
+"path": "docs/handbook/skill-addpacktorepo.md",
+"kind": "doc",
+"text": "install ai-forward into a local repository use this skill when a project does not yet have the ai-forward pack and you want the first install to respect the repository that already exists. it reads the target before writing, applies the pack deployment map, and reports what landed. handbook reader-guide relates-to handbook-get-started"
+},
+{
+"cat": "graph",
+"id": "handbook-skill-adopt",
+"title": "Bring an existing repository into the knowledge graph",
+"summary": "Use this skill after the pack is installed in a project that already has code and docs. It inventories what exists, recovers the architecture, adds graph frontmatter to worthwhile documents, and creates an adoption plan for gaps.",
+"path": "docs/handbook/skill-adopt.md",
+"kind": "doc",
+"text": "bring an existing repository into the knowledge graph use this skill after the pack is installed in a project that already has code and docs. it inventories what exists, recovers the architecture, adds graph frontmatter to worthwhile documents, and creates an adoption plan for gaps. handbook reader-guide relates-to handbook-get-started"
+},
+{
+"cat": "graph",
+"id": "handbook-skill-also",
+"title": "Add a late thought without derailing the current work",
+"summary": "Use this utility when you remember an important addition after a task has started. It captures the addition and folds it into the current work only where it belongs.",
+"path": "docs/handbook/skill-also.md",
+"kind": "doc",
+"text": "add a late thought without derailing the current work use this utility when you remember an important addition after a task has started. it captures the addition and folds it into the current work only where it belongs. handbook reader-guide relates-to handbook-workflow"
+},
+{
+"cat": "graph",
+"id": "handbook-skill-apply-learnings",
+"title": "Propose approved learnings for other repositories",
+"summary": "Use this skill after dream has promoted general, control-bearing learnings. It reconciles those learnings into target repositories and writes reviewable plans. It never merges or executes changes in the targets.",
+"path": "docs/handbook/skill-apply-learnings.md",
+"kind": "doc",
+"text": "propose approved learnings for other repositories use this skill after dream has promoted general, control-bearing learnings. it reconciles those learnings into target repositories and writes reviewable plans. it never merges or executes changes in the targets. handbook reader-guide relates-to handbook-improvement"
+},
+{
+"cat": "graph",
+"id": "handbook-skill-auditlog",
+"title": "Read the project history without guessing",
+"summary": "Use this utility to inspect the committed audit and change log: recent work, decisions, searches, exact past prompts and the local timeline viewer.",
+"path": "docs/handbook/skill-auditlog.md",
+"kind": "doc",
+"text": "read the project history without guessing use this utility to inspect the committed audit and change log: recent work, decisions, searches, exact past prompts and the local timeline viewer. handbook reader-guide relates-to handbook-knowledge"
+},
+{
+"cat": "graph",
+"id": "handbook-skill-code-hygiene",
+"title": "Find and fix code hygiene problems safely",
+"summary": "Use this skill to identify dead code, commented-out code and recurring anti-patterns, then plan or execute cleanup without turning hygiene into risky churn.",
+"path": "docs/handbook/skill-code-hygiene.md",
+"kind": "doc",
+"text": "find and fix code hygiene problems safely use this skill to identify dead code, commented-out code and recurring anti-patterns, then plan or execute cleanup without turning hygiene into risky churn. handbook reader-guide relates-to handbook-workflow"
+},
+{
+"cat": "graph",
+"id": "handbook-skill-collectknowledge",
+"title": "Build a sourced knowledge base before design",
+"summary": "Use this skill when a project needs domain understanding before it can safely specify or design. It gathers external and internal knowledge into structured Markdown that later workflows can cite.",
+"path": "docs/handbook/skill-collectknowledge.md",
+"kind": "doc",
+"text": "build a sourced knowledge base before design use this skill when a project needs domain understanding before it can safely specify or design. it gathers external and internal knowledge into structured markdown that later workflows can cite. handbook reader-guide relates-to handbook-design"
+},
+{
+"cat": "graph",
+"id": "handbook-skill-compile",
+"title": "Compile a rough request into a dispatchable prompt",
+"summary": "Use this utility when a prose request is too ambiguous to hand directly to a workflow or worker. It turns the request into a goal state, traced clauses, assumptions and decision requests without adding scope.",
+"path": "docs/handbook/skill-compile.md",
+"kind": "doc",
+"text": "compile a rough request into a dispatchable prompt use this utility when a prose request is too ambiguous to hand directly to a workflow or worker. it turns the request into a goal state, traced clauses, assumptions and decision requests without adding scope. handbook reader-guide relates-to handbook-workflow"
+},
+{
+"cat": "graph",
+"id": "handbook-skill-define-architecture",
+"title": "Decide the system shape before building",
+"summary": "Use this skill when a project or major capability needs a top-level architecture: components, boundaries, data representation, integration contracts, AI tiering and durable decisions.",
+"path": "docs/handbook/skill-define-architecture.md",
+"kind": "doc",
+"text": "decide the system shape before building use this skill when a project or major capability needs a top-level architecture: components, boundaries, data representation, integration contracts, ai tiering and durable decisions. handbook reader-guide relates-to handbook-design"
+},
+{
+"cat": "graph",
+"id": "handbook-skill-design-slice",
+"title": "Design one implementable feature slice",
+"summary": "Use this skill to turn a specification or architecture decision into a technical blueprint for one feature or component. It names contracts, data shapes, patterns, errors, concurrency, telemetry and tests before implementation begins.",
+"path": "docs/handbook/skill-design-slice.md",
+"kind": "doc",
+"text": "design one implementable feature slice use this skill to turn a specification or architecture decision into a technical blueprint for one feature or component. it names contracts, data shapes, patterns, errors, concurrency, telemetry and tests before implementation begins. handbook reader-guide relates-to handbook-design"
+},
+{
+"cat": "graph",
+"id": "handbook-skill-document",
+"title": "Keep documentation true to the code",
+"summary": "Use this skill to generate or refresh the documentation bundle: API reference, diagrams, architecture overview, Docs Explorer index and browsable documentation view.",
+"path": "docs/handbook/skill-document.md",
+"kind": "doc",
+"text": "keep documentation true to the code use this skill to generate or refresh the documentation bundle: api reference, diagrams, architecture overview, docs explorer index and browsable documentation view. handbook reader-guide relates-to handbook-knowledge"
+},
+{
+"cat": "graph",
+"id": "handbook-skill-dream",
+"title": "Consolidate recurring lessons for human review",
+"summary": "Use this skill to run an offline consolidation pass over committed history, defect classes, mitigations and markers. It proposes learnings; humans approve, edit, reject or defer before anything is promoted.",
+"path": "docs/handbook/skill-dream.md",
+"kind": "doc",
+"text": "consolidate recurring lessons for human review use this skill to run an offline consolidation pass over committed history, defect classes, mitigations and markers. it proposes learnings; humans approve, edit, reject or defer before anything is promoted. handbook reader-guide relates-to handbook-improvement"
+},
+{
+"cat": "graph",
+"id": "handbook-skill-execute-with-coordination",
+"title": "Run a coordination plan without taking over the tracks",
+"summary": "Use this skill to execute a prepared coordination plan. The coordinator opens or briefs workers, watches seams, verifies returned evidence and joins the work.",
+"path": "docs/handbook/skill-execute-with-coordination.md",
+"kind": "doc",
+"text": "run a coordination plan without taking over the tracks use this skill to execute a prepared coordination plan. the coordinator opens or briefs workers, watches seams, verifies returned evidence and joins the work. handbook reader-guide relates-to handbook-coordination"
+},
+{
+"cat": "graph",
+"id": "handbook-skill-extendaibundle",
+"title": "Extend the AI-Forward Pack consistently",
+"summary": "Use this skill when you want to add or change the pack itself: a new skill, knowledge doc, template, script or adapter behavior. It runs the pack-change loop so every surface stays in sync.",
+"path": "docs/handbook/skill-extendaibundle.md",
+"kind": "doc",
+"text": "extend the ai-forward pack consistently use this skill when you want to add or change the pack itself: a new skill, knowledge doc, template, script or adapter behavior. it runs the pack-change loop so every surface stays in sync. handbook reader-guide relates-to handbook-improvement"
+},
+{
+"cat": "graph",
+"id": "handbook-skill-forensicreview",
+"title": "Review an existing repository for evidence-backed risk",
+"summary": "Use this skill for a deep review of an existing codebase. It rebuilds the picture from code and docs, checks architecture, design, implementation and documentation, and produces a prioritized remediation backlog.",
+"path": "docs/handbook/skill-forensicreview.md",
+"kind": "doc",
+"text": "review an existing repository for evidence-backed risk use this skill for a deep review of an existing codebase. it rebuilds the picture from code and docs, checks architecture, design, implementation and documentation, and produces a prioritized remediation backlog. handbook reader-guide relates-to handbook-workflow"
+},
+{
+"cat": "graph",
+"id": "handbook-skill-implement",
+"title": "Build the approved change with tests",
+"summary": "Use this skill after the requirement and design are clear enough to code. It implements through test-first increments, verifies the real behavior and produces evidence for review.",
+"path": "docs/handbook/skill-implement.md",
+"kind": "doc",
+"text": "build the approved change with tests use this skill after the requirement and design are clear enough to code. it implements through test-first increments, verifies the real behavior and produces evidence for review. handbook reader-guide relates-to handbook-workflow"
+},
+{
+"cat": "graph",
+"id": "handbook-skill-investigate",
+"title": "Find the verified cause before fixing a defect",
+"summary": "Use this skill when something is broken, slow, inconsistent or surprising. It reproduces or characterizes the symptom, proves the root cause, sweeps for siblings, proposes repair phases and then stops for human review.",
+"path": "docs/handbook/skill-investigate.md",
+"kind": "doc",
+"text": "find the verified cause before fixing a defect use this skill when something is broken, slow, inconsistent or surprising. it reproduces or characterizes the symptom, proves the root cause, sweeps for siblings, proposes repair phases and then stops for human review. handbook reader-guide relates-to handbook-workflow"
+},
+{
+"cat": "graph",
+"id": "handbook-skill-migrate",
+"title": "Change dependencies or architecture without losing behavior",
+"summary": "Use this skill for dependency upgrades, framework migrations and large refactors. It characterizes current behavior first, migrates in small vertical increments, and records intentional differences.",
+"path": "docs/handbook/skill-migrate.md",
+"kind": "doc",
+"text": "change dependencies or architecture without losing behavior use this skill for dependency upgrades, framework migrations and large refactors. it characterizes current behavior first, migrates in small vertical increments, and records intentional differences. handbook reader-guide relates-to handbook-workflow"
+},
+{
+"cat": "graph",
+"id": "handbook-skill-optimize-graph",
+"title": "Plan the work shape before spending effort",
+"summary": "Use this skill to turn a multi-step request into an execution graph: real dependencies, serial work, possible parallelism, budgets, loop exits and checkpoints. It optimizes for completeness and rigor before speed.",
+"path": "docs/handbook/skill-optimize-graph.md",
+"kind": "doc",
+"text": "plan the work shape before spending effort use this skill to turn a multi-step request into an execution graph: real dependencies, serial work, possible parallelism, budgets, loop exits and checkpoints. it optimizes for completeness and rigor before speed. handbook reader-guide relates-to handbook-workflow"
+},
+{
+"cat": "graph",
+"id": "handbook-skill-prepare-for-coordination",
+"title": "Prepare a safe multi-session work plan",
+"summary": "Use this skill before assigning work to several agents or humans. It classifies artifacts, identifies what must stay serial, and writes the coordination plan that execution will follow.",
+"path": "docs/handbook/skill-prepare-for-coordination.md",
+"kind": "doc",
+"text": "prepare a safe multi-session work plan use this skill before assigning work to several agents or humans. it classifies artifacts, identifies what must stay serial, and writes the coordination plan that execution will follow. handbook reader-guide relates-to handbook-coordination"
+},
+{
+"cat": "graph",
+"id": "handbook-skill-prompts",
+"title": "Reuse a past prompt from the project log",
+"summary": "Use this utility to browse logged prompts newest-first and copy one for paste-and-edit. It is a reuse lens over the audit log, not a command that reruns work automatically.",
+"path": "docs/handbook/skill-prompts.md",
+"kind": "doc",
+"text": "reuse a past prompt from the project log use this utility to browse logged prompts newest-first and copy one for paste-and-edit. it is a reuse lens over the audit log, not a command that reruns work automatically. handbook reader-guide relates-to handbook-knowledge"
+},
+{
+"cat": "graph",
+"id": "handbook-skill-searchprompts",
+"title": "Search past prompts by terms",
+"summary": "Use this utility when you remember words from a previous prompt and want to reuse the exact text. It is the filtered companion to prompts.",
+"path": "docs/handbook/skill-searchprompts.md",
+"kind": "doc",
+"text": "search past prompts by terms use this utility when you remember words from a previous prompt and want to reuse the exact text. it is the filtered companion to prompts. handbook reader-guide relates-to handbook-knowledge"
+},
+{
+"cat": "graph",
+"id": "handbook-skill-session-profiler",
+"title": "Measure how agent sessions actually behaved",
+"summary": "Use this skill to profile local harness telemetry and turn it into findings and fixes for cost, context growth, re-reads, task drift, fan-out and cross-harness coordination.",
+"path": "docs/handbook/skill-session-profiler.md",
+"kind": "doc",
+"text": "measure how agent sessions actually behaved use this skill to profile local harness telemetry and turn it into findings and fixes for cost, context growth, re-reads, task drift, fan-out and cross-harness coordination. handbook reader-guide relates-to handbook-improvement"
+},
+{
+"cat": "graph",
+"id": "handbook-skill-specify",
+"title": "Turn a request into a testable product specification",
+"summary": "Use this skill when you need the “what” and “why” of a change before anyone designs or implements it. It turns a prompt into a specification with functional, UX and UI layers, explicit non-goals and acceptance criteria.",
+"path": "docs/handbook/skill-specify.md",
+"kind": "doc",
+"text": "turn a request into a testable product specification use this skill when you need the “what” and “why” of a change before anyone designs or implements it. it turns a prompt into a specification with functional, ux and ui layers, explicit non-goals and acceptance criteria. handbook reader-guide relates-to handbook-design"
+},
+{
+"cat": "graph",
+"id": "handbook-skill-ui-design",
+"title": "Design or review a user-facing surface",
+"summary": "Use this skill when the interface itself needs craft: direction, information architecture fit, visual language, states, accessibility and a reviewable mockup.",
+"path": "docs/handbook/skill-ui-design.md",
+"kind": "doc",
+"text": "design or review a user-facing surface use this skill when the interface itself needs craft: direction, information architecture fit, visual language, states, accessibility and a reviewable mockup. handbook reader-guide relates-to handbook-interfaces"
+},
+{
+"cat": "graph",
+"id": "handbook-skill-updatepack",
+"title": "Update an installed AI-Forward Pack",
+"summary": "Use this skill when a repository already has AI-Forward and you want to refresh it to a newer local pack revision without hand-copying files or losing local deviations.",
+"path": "docs/handbook/skill-updatepack.md",
+"kind": "doc",
+"text": "update an installed ai-forward pack use this skill when a repository already has ai-forward and you want to refresh it to a newer local pack revision without hand-copying files or losing local deviations. handbook reader-guide relates-to handbook-get-started"
+},
+{
+"cat": "graph",
+"id": "handbook-skill-visualize",
+"title": "Create committed visual assets, not generated interfaces",
+"summary": "Use this skill to produce imagery, fictional personas, direction boards or motion that a surface displays. It never generates the interface itself.",
+"path": "docs/handbook/skill-visualize.md",
+"kind": "doc",
+"text": "create committed visual assets, not generated interfaces use this skill to produce imagery, fictional personas, direction boards or motion that a surface displays. it never generates the interface itself. handbook reader-guide relates-to handbook-interfaces"
+},
+{
+"cat": "graph",
+"id": "handbook-skills",
+"title": "Choose a workflow from the problem",
+"summary": "You do not need to memorize the skill names. Start with what you are trying to establish or change, then open the reference for the workflow that fits.",
+"path": "docs/handbook/skills.md",
+"kind": "doc",
+"text": "choose a workflow from the problem you do not need to memorize the skill names. start with what you are trying to establish or change, then open the reference for the workflow that fits. handbook reader-guide relates-to handbook-overview"
+},
+{
+"cat": "graph",
+"id": "handbook-troubleshooting",
+"title": "Recover without making the situation less safe",
+"summary": "When a workflow stops or an expected capability is absent, first identify which layer is failing: skill discovery, the request, a local script, a harness permission, or the behavior being built. A fix at the wrong layer can hide the…",
+"path": "docs/handbook/troubleshooting.md",
+"kind": "doc",
+"text": "recover without making the situation less safe when a workflow stops or an expected capability is absent, first identify which layer is failing: skill discovery, the request, a local script, a harness permission, or the behavior being built. a fix at the wrong layer can hide the symptom while weakening the safeguard that exposed it. handbook reader-guide relates-to handbook-overview"
+},
+{
+"cat": "graph",
+"id": "handbook-workflow",
+"title": "From request to reviewed change",
+"summary": "A useful request tells the agent what should be different when the work is finished. It does not have to prescribe the implementation. AI-Forward's workflows help turn that intent into decisions, actions and a handback you can review.",
+"path": "docs/handbook/workflow.md",
+"kind": "doc",
+"text": "from request to reviewed change a useful request tells the agent what should be different when the work is finished. it does not have to prescribe the implementation. ai-forward's workflows help turn that intent into decisions, actions and a handback you can review. handbook reader-guide relates-to handbook-overview"
 },
 {
 "cat": "graph",
@@ -3959,7 +4364,7 @@ window.PACK_INDEX = {
 "summary": "Repo-level privacy posture for the pack-evolution tooling: the CLI and doctor touch no personal data; project memory may incidentally record handles/names (no special-category data, mitigated by the scrub); the scrub is itself a privacy…",
 "path": "docs/security/privacy-review.md",
 "kind": "privacy-review",
-"text": "privacy review repo-level privacy posture for the pack-evolution tooling: the cli and doctor touch no personal data; project memory may incidentally record handles/names (no special-category data, mitigated by the scrub); the scrub is itself a privacy control; docs explorer navigation state remains local. the reviewed model-orchestration experiment was reverted before an executable provider-routing boundary was added. privacy linddun data-governance documents architecture documents forensic-review documents design-aiforward-cli documents design-coord-core-phase1 documents design-agent-coordination-doctrine documents design-typed-seam-requests documents design-leader-designation documents design-message-layer documents design-multi-harness-runner documents design-native-ownership-enforcement documents design-compile-readers documents design-board documents design-compile-stage documents design-coord-enforcement-phase2 documents design-coord-federation-phase3 documents design-pack-doctor documents design-project-memory documents design-rai-and-scrub documents design-docs-explorer-grounding-spatial-navigation"
+"text": "privacy review repo-level privacy posture for the pack-evolution tooling: the cli and doctor touch no personal data; project memory may incidentally record handles/names (no special-category data, mitigated by the scrub); the scrub is itself a privacy control; docs explorer navigation state remains local. the reviewed model-orchestration experiment was reverted before an executable provider-routing boundary was added. privacy linddun data-governance documents design-reader-first-handbook documents architecture documents forensic-review documents design-aiforward-cli documents design-coord-core-phase1 documents design-agent-coordination-doctrine documents design-typed-seam-requests documents design-leader-designation documents design-message-layer documents design-multi-harness-runner documents design-native-ownership-enforcement documents design-compile-readers documents design-board documents design-compile-stage documents design-coord-enforcement-phase2 documents design-coord-federation-phase3 documents design-pack-doctor documents design-project-memory documents design-rai-and-scrub documents design-docs-explorer-grounding-spatial-navigation"
 },
 {
 "cat": "graph",
@@ -4292,7 +4697,7 @@ window.PACK_INDEX = {
 "summary": "Repo-level security posture for the pack-evolution tooling. The scrub handles potentially sensitive file content, while the Docs Explorer crosses committed-Markdown, filesystem, browser-rendering, and optional dependency boundaries; the…",
 "path": "docs/security/threat-model.md",
 "kind": "threat-model",
-"text": "threat model repo-level security posture for the pack-evolution tooling. the scrub handles potentially sensitive file content, while the docs explorer crosses committed-markdown, filesystem, browser-rendering, and optional dependency boundaries; the remaining tools are local and read-mostly. security threat-model documents architecture documents design-aiforward-cli documents design-coord-core-phase1 documents design-agent-coordination-doctrine documents design-typed-seam-requests documents design-leader-designation documents design-message-layer documents design-multi-harness-runner documents design-native-ownership-enforcement documents design-compile-readers documents design-board documents design-compile-stage documents design-coord-enforcement-phase2 documents design-coord-federation-phase3 documents design-pack-doctor documents design-project-memory documents design-rai-and-scrub documents design-docs-explorer-grounding-spatial-navigation"
+"text": "threat model repo-level security posture for the pack-evolution tooling. the scrub handles potentially sensitive file content, while the docs explorer crosses committed-markdown, filesystem, browser-rendering, and optional dependency boundaries; the remaining tools are local and read-mostly. security threat-model documents design-reader-first-handbook documents architecture documents design-aiforward-cli documents design-coord-core-phase1 documents design-agent-coordination-doctrine documents design-typed-seam-requests documents design-leader-designation documents design-message-layer documents design-multi-harness-runner documents design-native-ownership-enforcement documents design-compile-readers documents design-board documents design-compile-stage documents design-coord-enforcement-phase2 documents design-coord-federation-phase3 documents design-pack-doctor documents design-project-memory documents design-rai-and-scrub documents design-docs-explorer-grounding-spatial-navigation"
 },
 {
 "cat": "guides",

@@ -89,6 +89,11 @@ Use `--brief` when humans will start the sessions themselves, possibly across ha
 
 The plan does not change between modes. Only the delivery mechanism changes.
 
+If your harness cannot launch workers directly, `--brief` gives you a practical
+fallback: start separate sessions in their assigned worktrees and paste each one's
+self-contained track brief into it. A **brief** is the full task instruction packet,
+including scope, ownership, limits and what the worker must return.
+
 ## Worktrees, paths and budgets
 
 Each worker gets its own worktree and branch named for the work. A worktree isolates files, not context; if the task changes, start a new session or compact deliberately. Workers use absolute paths inside their assigned tree. They do not enter another tree, install the coordination layer again, or claim append-only registers.

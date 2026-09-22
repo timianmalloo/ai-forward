@@ -1,0 +1,146 @@
+# Make plausible answers earn your trust
+
+An agent can give a fluent answer before it has established what the question means.
+It can also write a test that agrees with its own implementation while missing what
+the user actually needs. The **Rigor Protocol** is AI-Forward's method for slowing
+down those decisions without turning every task into a research project.
+
+Its working rhythm is: understand the problem, ask the questions that determine the
+answer, gather evidence, try to disprove the proposed answer, then make a decision
+with its limits stated. The important change is not more explanation from the agent.
+It is a better basis for acting.
+
+## When the method earns its place
+
+Use a light version for a small, well-understood change. Use more deliberate framing
+and independent review when a mistake could affect identity, money, private data,
+stored history, concurrency, or a public contract.
+
+You do not have to recite the protocol in every prompt. The pack's substantive
+workflows apply it. You should still know what to look for, because a workflow name
+does not prove the work inside it happened.
+
+## Five questions to carry through the work
+
+### 1. What problem are we actually solving?
+
+Ask the agent to identify the outcome, affected users and important boundaries before
+choosing an implementation. Consider more than one plausible interpretation when the
+request admits several.
+
+In HarborTasks, “export the tasks” could mean the current page, the current filter,
+or the whole project. It could include only the columns the person sees or every
+stored field. Deciding this is part of the feature, not a detail to leave to the
+developer who happens to write the query.
+
+### 2. Which unanswered questions would change the design?
+
+Prefer precise questions over a general request to “think harder.” Does the existing
+query return one page or all matches? Who may export the project? What should an empty
+result produce? Could a field value become a spreadsheet formula when opened?
+
+Some answers come from the code or a documented API contract. Others are product
+decisions for you. The agent should check what it can check and ask you for decisions
+that cannot be recovered from evidence.
+
+### 3. What establishes the answer?
+
+Ask for evidence appropriate to the claim. A source read can establish where a value
+comes from. A small executed experiment can establish an unfamiliar library's behavior.
+A test can establish a specific result for a defined input. None of those, alone,
+proves that an entire feature is correct.
+
+When an API or SDK is unfamiliar, the pack's **spike practice** calls for a small
+experiment before a larger design depends on it. The experiment should answer a
+named question and have a stopping point. It should not become an unbounded detour.
+
+For the export example, inspect the actual query and confirm its paging behavior.
+Do not infer “all matching tasks” from a function name that sounds comprehensive.
+
+### 4. What would make this answer wrong?
+
+This is the difference between confirmation and a useful challenge. Ask for an input
+or situation that would falsify the proposed result.
+
+Seed an illustrative project with 63 matching tasks while the page displays 20.
+If the requirement is “export all matches,” a test that exports only the visible
+twenty must fail. A test that constructs its own twenty-row list proves nothing
+about whether the real paging boundary was crossed.
+
+A specialist review is useful when it brings a different question. A test architect
+can challenge the oracle; a security reviewer can challenge project isolation; a
+domain expert can question the meaning of a field. Naming three reviewers does not
+help if all three repeat the author's assumptions.
+
+### 5. What can we now decide, and what remains open?
+
+The result should say what was established and what was not. “The export includes
+all 63 matches through the real query path; very large exports have not been profiled”
+is more useful than “everything works.”
+
+Keep the unresolved part actionable. Name the limit, its consequence, and the condition
+that would require more work. Do not turn uncertainty into a long disclaimer that
+leaves the reader unable to decide anything.
+
+## Try it on a real request
+
+In a slash-command harness, start with:
+
+```text
+/specify Add CSV export to HarborTasks. Export all tasks matching the current
+project and filter, not only the visible page. Do not expose fields the user
+cannot view. Identify any product decisions I need to make before implementation.
+```
+
+In Codex, use `$specify` with the same request. See [harness setup](#harnesses) for
+the distinction between a workflow name and the host's command syntax.
+
+An illustrative useful result would include:
+
+- a core scenario describing who exports what;
+- acceptance criteria for all matches, authorization and empty results;
+- an explicit decision about included columns;
+- open questions that would change the design;
+- a recommendation for the next appropriate step.
+
+Review those decisions before asking for [a detailed design](#skill-design-slice)
+or [implementation](#skill-implement). If you are diagnosing an export that already
+behaves incorrectly, start with [investigation](#skill-investigate) instead.
+
+## Keep the solution small without weakening it
+
+Checking the contract does not imply building a new abstraction. Once the problem is
+understood, prefer existing code, standard-library functions and platform features
+over new machinery. A small solution is valuable when it is sufficient, not when it
+omits validation or hides failure.
+
+Similarly, do not run every workflow for every task. A one-line fix may need a direct
+source check and a focused regression test. A change to stored history may need a
+design, migration strategy and point-in-time checks before code is safe to change.
+
+## Read a handback critically
+
+Look for the connection between the claim and its check:
+
+| Claim | A useful check | What it does not establish |
+|---|---|---|
+| The export covers the active filter | A seeded case through the actual query and export path | Performance for an unmeasured data volume |
+| Access stays within the user's project | An unauthorized-project negative case | Every possible security property |
+| A library supports cancellation | An experiment cancelling active work and inspecting the result | Behavior on an untested version or platform |
+| A page works | Rendering it through the real application composition | Every alternate state and interaction |
+
+Treat a green summary as an invitation to inspect the checks, not as a replacement
+for them. Tests should be able to fail for the defect they claim to prevent.
+
+## Tips and recovery
+
+If the agent rushes to code, ask it to name the load-bearing assumptions and check
+the cheapest one first. If it produces ceremony instead of progress, return to the
+outcome and the smallest check that could distinguish a correct answer from a wrong one.
+
+If it cannot establish a contract, keep that uncertainty visible and do not build a
+dependent design as though it were settled. If new evidence contradicts the plan,
+correct the plan; do not make the documentation describe a feature the code never built.
+
+**Next:** learn [how the workflows fit a change](#workflow), or go deeper into
+[modelling and design decisions](#design).

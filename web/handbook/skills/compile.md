@@ -34,14 +34,17 @@ The skill builds a structured prompt with goal, done-when, not-in-scope, tier, b
 Illustrative output shape:
 
 ```text
-Goal: deliver a reviewed CSV export design
-Done when: export scope, fields and empty result behavior are explicit
-Not in scope: implementation
-Decision requests: none
-Dispatchable: yes
+Goal: add CSV export for HarborTasks' active project and filter
+Done when: all matching tasks are exported without unauthorized fields
+Not in scope: scheduled exports or a new reporting subsystem
+Question to answer: which permitted columns should the export contain?
+Dispatchable: no, until that question is resolved
 ```
 
-It also logs the raw and compiled prompt together when the repository audit log is available.
+The question is not a new requirement or a decision for the compiler to guess.
+Answer it, review the revised prompt, and finish that compilation before dispatch.
+The workflow records the raw request and compiled form together in the repository
+audit history.
 
 ## Review before continuing
 

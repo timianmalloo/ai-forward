@@ -16,6 +16,13 @@ This repo is two things at once:
 For the pack's own story — why it exists, what's inside, how to use the twenty-eight skills — read
 [`pack/README.md`](pack/README.md) and [`pack/OVERVIEW.md`](pack/OVERVIEW.md).
 
+For a newcomer-oriented learning path, use the
+[AI-Forward handbook](https://timianmalloo.github.io/ai-forward/docs/portal/index.html).
+It starts with the problems the pack addresses, then walks through adoption,
+engineering practice, coordination, and the complete skill reference.
+The handbook's canonical content is `web/handbook/`; `tools/build-handbook.py`
+generates the public reader and its documentation-graph copies.
+
 **Codex users:** invoke `$collectknowledge` or `$specify` (CLI/IDE: `/skills` or `$`).
 Skills live in `.agents/skills/`; `AGENTS.md` supplies project instructions.
 See the [Codex setup and troubleshooting guide](docs/ai-forward-pack/codex.md).

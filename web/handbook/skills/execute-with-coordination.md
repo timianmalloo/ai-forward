@@ -8,7 +8,9 @@ Use `execute-with-coordination` only after a plan exists. Without a plan, run [p
 
 ## What you need
 
-You need a plan path or plan id, the coordination layer in a clean state, qualified harness behavior or manual brief fallback, and authority to rule on decisions.
+You need a plan path or plan id, the coordination layer in a clean state, qualified
+harness behavior or a manual brief fallback, and a designated Owner to rule on
+decisions. Acting as Coordinator alone does not grant the Owner's authority.
 
 ## Try it
 

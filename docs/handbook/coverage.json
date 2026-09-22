@@ -1,0 +1,420 @@
+{
+  "schema": "handbook-coverage/1",
+  "skills": [
+    {
+      "skill": "adddomainexperts",
+      "problem": "Use this skill when general engineering personas are not enough. It identifies the project's subject domain and adds local expert personas, such as accounting, clinical, geospatial or numerical-methods reviewers, with clear peer and adversary roles.",
+      "reader": "Engineer or technical lead shaping a change",
+      "prerequisites": "You need evidence of the domain and the kinds of decisions that require expert judgment. If existing domain skills or agents are available, prefer wiring them in rather than rewriting their capability.",
+      "guide_home": "#design",
+      "reference_home": "#skill-adddomainexperts",
+      "example": "/adddomainexperts Add domain review lenses for HarborTasks if its project\nplanning terms require specialized workflow or compliance knowledge.",
+      "scope_limits": "If the skill proposes too many experts, ask which decisions each one protects and delete the rest. If the domain is not yet established, run collectknowledge first. Check whether each proposed expert has a concrete decision to improve and a clear veto boundary. Reject vague experts whose findings no one could act on.",
+      "source_contract": "pack/commands/adddomainexperts/SKILL.md"
+    },
+    {
+      "skill": "addpacktorepo",
+      "problem": "Use this skill when a project does not yet have the AI-Forward Pack and you want the first install to respect the repository that already exists. It reads the target before writing, applies the pack deployment map, and reports what landed.",
+      "reader": "Repository maintainer or first-time adopter",
+      "prerequisites": "You need the local path to the target repository and access to the pack source. The target must be a Git repository. Be ready to review any planned change to existing AGENTS.md, CLAUDE.md, .github, .claude, .grok, .agents or docs files.",
+      "guide_home": "#get-started",
+      "reference_home": "#skill-addpacktorepo",
+      "example": "/addpacktorepo C:\\Projects\\harbortasks",
+      "scope_limits": "If the install is interrupted, rerun it; the operation is designed to be idempotent. If the skill detects an existing install, stop and run updatepack. On Windows, run scripts as python or py -3 when examples show python3. Confirm that existing instructions were preserved, docs/docs-index.js was not seeded, language-specific rules were scoped correctly, and optional CI files were added only if you accepted them.",
+      "source_contract": "pack/commands/addpacktorepo/SKILL.md"
+    },
+    {
+      "skill": "adopt",
+      "problem": "Use this skill after the pack is installed in a project that already has code and docs. It inventories what exists, recovers the architecture, adds graph frontmatter to worthwhile documents, and creates an adoption plan for gaps.",
+      "reader": "Repository maintainer or first-time adopter",
+      "prerequisites": "You need an installed pack and permission to edit docs. You do not need perfect existing documentation. The skill is meant to deal honestly with partial, stale or missing docs.",
+      "guide_home": "#get-started",
+      "reference_home": "#skill-adopt",
+      "example": "/adopt Recover HarborTasks' existing architecture and docs into the knowledge graph.",
+      "scope_limits": "If the inventory finds old plans that do not match code, record them as stale rather than making the graph endorse them. If graph generation fails, fix source frontmatter or links; do not patch only the generated index. Check whether the recovered architecture matches the code, whether terms have one meaning, and whether any document was kept but marked with overconfident metadata. Smaller honest coverage is better than a large guessed graph.",
+      "source_contract": "pack/commands/adopt/SKILL.md"
+    },
+    {
+      "skill": "also",
+      "problem": "Use this utility when you remember an important addition after a task has started. It captures the addition and folds it into the current work only where it belongs.",
+      "reader": "Person directing an agent's work",
+      "prerequisites": "You need the addition in plain language and the context of the active task. The agent decides whether it refines remaining work, becomes a follow-up, or requires a recompile.",
+      "guide_home": "#workflow",
+      "reference_home": "#skill-also",
+      "example": "/also For HarborTasks export, empty result sets should still produce a header row.",
+      "scope_limits": "If the agent chases the addition and forgets the original goal, ask it to restate the active goal and where the addition landed. If the addition is consequential, consider compile. Check whether the addition changes the done-when or not-in-scope. A late “also build import” is a new task, not an addition to export.",
+      "source_contract": "pack/commands/also/SKILL.md"
+    },
+    {
+      "skill": "apply-learnings",
+      "problem": "Use this skill after dream has promoted general, control-bearing learnings. It reconciles those learnings into target repositories and writes reviewable plans. It never merges or executes changes in the targets.",
+      "reader": "Team or pack maintainer improving the working method",
+      "prerequisites": "You need the local learning store, target repository paths, and access to each target's defect-class register. A target without the pack is skipped.",
+      "guide_home": "#improvement",
+      "reference_home": "#skill-apply-learnings",
+      "example": "/apply-learnings --repos C:\\Projects\\harbortasks,C:\\Projects\\dockledger",
+      "scope_limits": "Use a manifest when targeting differs per learning. If a learning lacks a control, skip it; prose memory alone is not enough to distribute. Check conflicts carefully. An incoming learning must not duplicate or contradict an existing local directive. Confirm no personal data, secrets or repo-specific raw details crossed into the plan.",
+      "source_contract": "pack/commands/apply-learnings/SKILL.md"
+    },
+    {
+      "skill": "auditlog",
+      "problem": "Use this utility to inspect the committed audit and change log: recent work, decisions, searches, exact past prompts and the local timeline viewer.",
+      "reader": "Engineer continuing or handing over a project",
+      "prerequisites": "The repository needs docs/audit/ from prior skill runs or explicit logging. If it does not exist, the honest answer is that no committed history is available yet.",
+      "guide_home": "#knowledge",
+      "reference_home": "#skill-auditlog",
+      "example": "/auditlog search export authorization",
+      "scope_limits": "If the log is absent, do not reconstruct history from memory. If a search is too broad, narrow by keyword, session or date. For a redo, insist on the exact prompt text, not a paraphrase. For decisions, check whether the change log entry is the meaningful record or only an audit action.",
+      "source_contract": "pack/commands/auditlog/SKILL.md"
+    },
+    {
+      "skill": "code-hygiene",
+      "problem": "Use this skill to identify dead code, commented-out code and recurring anti-patterns, then plan or execute cleanup without turning hygiene into risky churn.",
+      "reader": "Engineer implementing or repairing an existing system",
+      "prerequisites": "Bring the scope and mode: review or fix. For fix, bring the approved backlog items and acceptance checks.",
+      "guide_home": "#workflow",
+      "reference_home": "#skill-code-hygiene",
+      "example": "/code-hygiene review HarborTasks export and reporting code. Measure dead code,\ncommented-out blocks and anti-patterns; do not modify source.",
+      "scope_limits": "If review finds unrelated problems during another task, capture them as backlog rather than fixing immediately. If a cleanup phase fails tests, revert that phase rather than continuing through more files. Check whether each finding is real, whether intentional markers were excluded, and whether fixes are tied to tests. Do not approve broad cleanup that makes a feature harder to review.",
+      "source_contract": "pack/commands/code-hygiene/SKILL.md"
+    },
+    {
+      "skill": "collectknowledge",
+      "problem": "Use this skill when a project needs domain understanding before it can safely specify or design. It gathers external and internal knowledge into structured Markdown that later workflows can cite.",
+      "reader": "Engineer or technical lead shaping a change",
+      "prerequisites": "Bring the topic, intended decision and any trusted starting sources. The skill may use web or repository research where available, but each claim must remain source-backed and confidence-labeled.",
+      "guide_home": "#design",
+      "reference_home": "#skill-collectknowledge",
+      "example": "/collectknowledge Research CSV export safety for task-management data:\nspreadsheet injection, authorization boundaries, and empty export conventions.",
+      "scope_limits": "If the agent drifts into designing the feature, stop it and return to the evidence questions. If a source cannot be checked, keep the claim out of the verified findings. Check that primary sources are preferred, claims are not copied without context, and uncertain areas remain marked. If research affects safety, privacy or compliance, have the relevant human owner review it.",
+      "source_contract": "pack/commands/collectknowledge/SKILL.md"
+    },
+    {
+      "skill": "compile",
+      "problem": "Use this utility when a prose request is too ambiguous to hand directly to a workflow or worker. It turns the request into a goal state, traced clauses, assumptions and decision requests without adding scope.",
+      "reader": "Person directing an agent's work",
+      "prerequisites": "You need the raw request text or an audit-log prompt id. If the compiled prompt contains unanswered decision requests, a human must answer or edit before dispatch.",
+      "guide_home": "#workflow",
+      "reference_home": "#skill-compile",
+      "example": "/compile \"Add CSV export for HarborTasks. It should export all matches, not just\nthe visible page, and must not include unauthorized fields.\"",
+      "scope_limits": "If the compiler refuses a clause, fix the trace or remove the invented scope. If a decision request remains unanswered, do not let a worker choose a default silently. Check that the compiled version did not enlarge the request. If it added “also build the UI” when the raw request only asked for a plan, reject or edit it.",
+      "source_contract": "pack/commands/compile/SKILL.md"
+    },
+    {
+      "skill": "define-architecture",
+      "problem": "Use this skill when a project or major capability needs a top-level architecture: components, boundaries, data representation, integration contracts, AI tiering and durable decisions.",
+      "reader": "Engineer or technical lead shaping a change",
+      "prerequisites": "Bring a specification or clear problem statement, known constraints, target environments and any existing architecture docs. Be ready to run small spikes for unfamiliar APIs before depending on them.",
+      "guide_home": "#design",
+      "reference_home": "#skill-define-architecture",
+      "example": "/define-architecture From the HarborTasks export spec, define the architecture\nfor CSV export across service, authorization, storage and UI download boundaries.",
+      "scope_limits": "If the skill guesses a vendor API, stop and require a spike or source read. If it proposes many services for a small feature, ask which boundary each service protects. Review boundaries, data ownership, security and privacy implications, operational risks, rejected alternatives and any assumptions left open. Architecture decisions are expensive to reverse; do not approve them by skimming.",
+      "source_contract": "pack/commands/define-architecture/SKILL.md"
+    },
+    {
+      "skill": "design-slice",
+      "problem": "Use this skill to turn a specification or architecture decision into a technical blueprint for one feature or component. It names contracts, data shapes, patterns, errors, concurrency, telemetry and tests before implementation begins.",
+      "reader": "Engineer or technical lead shaping a change",
+      "prerequisites": "Bring the approved spec, relevant architecture decisions, existing code paths and known constraints. If a dependency is unfamiliar, the design should include a small contract spike.",
+      "guide_home": "#design",
+      "reference_home": "#skill-design-slice",
+      "example": "/design-slice Design HarborTasks CSV export from the approved spec. Include query\nscope, authorization, CSV serialization, error handling, telemetry and tests.",
+      "scope_limits": "If the design says “use existing helper” without opening it, require the source citation or mark the claim unverified. If the test plan cannot fail for the intended defect, redesign the oracle. Check that the design satisfies the spec, has one source of truth for each rule, handles boundary cases, and does not add speculative layers. Security, data or migration concerns must be resolved before implementation.",
+      "source_contract": "pack/commands/design-slice/SKILL.md"
+    },
+    {
+      "skill": "document",
+      "problem": "Use this skill to generate or refresh the documentation bundle: API reference, diagrams, architecture overview, Docs Explorer index and browsable documentation view.",
+      "reader": "Engineer continuing or handing over a project",
+      "prerequisites": "You need the code, relevant specs and designs, and permission to update docs. Documentation must reflect what exists, not what the plan hoped would exist.",
+      "guide_home": "#knowledge",
+      "reference_home": "#skill-document",
+      "example": "/document --changed Refresh docs for HarborTasks CSV export public API,\nsequence flow and Docs Explorer entries.",
+      "scope_limits": "If code and spec disagree, docs should describe code and flag the discrepancy. If generated graph output is wrong, fix source frontmatter or links, not only the generated index. Check examples, diagrams and API claims against code. An undocumented public member is a gap; a diagram contradicting code is worse than no diagram.",
+      "source_contract": "pack/commands/document/SKILL.md"
+    },
+    {
+      "skill": "dream",
+      "problem": "Use this skill to run an offline consolidation pass over committed history, defect classes, mitigations and markers. It proposes learnings; humans approve, edit, reject or defer before anything is promoted.",
+      "reader": "Team or pack maintainer improving the working method",
+      "prerequisites": "You need committed audit history and registers. Promotion requires a human review of the generated HTML and a decisions file.",
+      "guide_home": "#improvement",
+      "reference_home": "#skill-dream",
+      "example": "/dream --days 30 Focus on repeated coordination and prompt-scope problems.",
+      "scope_limits": "If the corpus has no valid signals, a valid empty dream is better than fabricated insight. If a proposal contains repo-specific names that should not cross boundaries, keep it local or reject it. Open the review view and inspect evidence, boundary and control for each proposal. Promote only items with falsifiable controls. Reject vague lessons that cannot fire when the problem recurs.",
+      "source_contract": "pack/commands/dream/SKILL.md"
+    },
+    {
+      "skill": "execute-with-coordination",
+      "problem": "Use this skill to execute a prepared coordination plan. The coordinator opens or briefs workers, watches seams, verifies returned evidence and joins the work.",
+      "reader": "Owner or coordinator of multiple tracks",
+      "prerequisites": "You need a plan path or plan id, the coordination layer in a clean state, qualified harness behavior or a manual brief fallback, and a designated Owner to rule on decisions. Acting as Coordinator alone does not grant the Owner's authority.",
+      "guide_home": "#coordination",
+      "reference_home": "#skill-execute-with-coordination",
+      "example": "/execute-with-coordination --brief docs/coordination/harbortasks-export.md",
+      "scope_limits": "If a worker stalls, use the plan's deadline and fallback. If tracks collide, fix ownership; never delete a worktree to resolve a conflict. Verify track evidence yourself. A worker saying “done” is not acceptance. Confirm no worker edited outside its owned authored paths and no join hides stale generated files.",
+      "source_contract": "pack/commands/execute-with-coordination/SKILL.md"
+    },
+    {
+      "skill": "extendaibundle",
+      "problem": "Use this skill when you want to add or change the pack itself: a new skill, knowledge doc, template, script or adapter behavior. It runs the pack-change loop so every surface stays in sync.",
+      "reader": "Team or pack maintainer improving the working method",
+      "prerequisites": "Bring the capability you want, why it belongs in the pack, and any evidence or learning behind it. Pack work must update source, generated installs and verification gates together.",
+      "guide_home": "#improvement",
+      "reference_home": "#skill-extendaibundle",
+      "example": "/extendaibundle Add a handbook skill page coverage check for canonical pack skills.",
+      "scope_limits": "If the change is only documentation website content, do not force a pack revision. If a new capability has no evaluation or control, narrow it until it is verifiable. Check that the change belongs in the pack, not only one repo. Verify no surface was missed and no generated copy drifted from source. Pack verification must pass before commit.",
+      "source_contract": "pack/commands/extendaibundle/SKILL.md"
+    },
+    {
+      "skill": "forensicreview",
+      "problem": "Use this skill for a deep review of an existing codebase. It rebuilds the picture from code and docs, checks architecture, design, implementation and documentation, and produces a prioritized remediation backlog.",
+      "reader": "Engineer implementing or repairing an existing system",
+      "prerequisites": "You need repository access and time for a broad read. Existing specs, architecture, ADRs and tests improve the review, but the skill can also report their absence as risk.",
+      "guide_home": "#workflow",
+      "reference_home": "#skill-forensicreview",
+      "example": "/forensicreview Review HarborTasks for risks around export, authorization,\ndocumentation drift and test coverage. Produce a prioritized backlog, not fixes.",
+      "scope_limits": "If the review becomes a catalogue of opinions, ask for evidence and impact. If it uncovers a live defect, route that specific issue to investigate. Check evidence for each finding. A useful finding points to code, tests, docs or runtime evidence and names the smallest next repair. Do not treat every advisory note as current-task scope.",
+      "source_contract": "pack/commands/forensicreview/SKILL.md"
+    },
+    {
+      "skill": "implement",
+      "problem": "Use this skill after the requirement and design are clear enough to code. It implements through test-first increments, verifies the real behavior and produces evidence for review.",
+      "reader": "Engineer implementing or repairing an existing system",
+      "prerequisites": "Bring the approved spec or design, the intended scope, and the proof expected. For HarborTasks export, that means all matching rows, authorized fields only, and empty headers are already accepted requirements.",
+      "guide_home": "#workflow",
+      "reference_home": "#skill-implement",
+      "example": "/implement Build the HarborTasks CSV export from docs/design/csv-export.md.\nProve all matching rows export, unauthorized fields are omitted, and empty results\nproduce headers.",
+      "scope_limits": "If tests fail for changed code, the task is not done. If the agent discovers the design is wrong, stop and update the design rather than patching around it. Review the diff, the tests and what they actually prove. A green suite is not enough if it never crosses the paging boundary or authorization path you care about.",
+      "source_contract": "pack/commands/implement/SKILL.md"
+    },
+    {
+      "skill": "investigate",
+      "problem": "Use this skill when something is broken, slow, inconsistent or surprising. It reproduces or characterizes the symptom, proves the root cause, sweeps for siblings, proposes repair phases and then stops for human review.",
+      "reader": "Engineer implementing or repairing an existing system",
+      "prerequisites": "Bring the symptom, environment, observed output, logs or failing tests. The skill also needs the spec or intended behavior; a defect is a gap between expected and actual behavior.",
+      "guide_home": "#workflow",
+      "reference_home": "#skill-investigate",
+      "example": "/investigate HarborTasks CSV export returns only 20 rows when the current filter\nmatches 63 tasks. Find the verified root cause and propose repair phases. Stop\nbefore implementation.",
+      "scope_limits": "If the agent names a cause before reproducing the symptom, send it back to evidence. If two causes remain possible, ask what data would distinguish them. Confirm the cause explains all evidence, not just the most convenient example. Review the sibling sweep and repair phases before approving implementation.",
+      "source_contract": "pack/commands/investigate/SKILL.md"
+    },
+    {
+      "skill": "migrate",
+      "problem": "Use this skill for dependency upgrades, framework migrations and large refactors. It characterizes current behavior first, migrates in small vertical increments, and records intentional differences.",
+      "reader": "Engineer implementing or repairing an existing system",
+      "prerequisites": "Bring the source and target versions, scope, constraints, rollback needs and the behavior that must remain equivalent. Existing tests help, but missing characterization is itself work.",
+      "guide_home": "#workflow",
+      "reference_home": "#skill-migrate",
+      "example": "/migrate Plan HarborTasks' CSV library upgrade from CsvA to CsvB. Preserve\nheaders, escaping, authorization behavior and empty export output.",
+      "scope_limits": "If the first increment touches too many surfaces, shrink to a walking skeleton. If a library behavior is unknown, run a small spike before building the migration on it. Check that current behavior was measured before change, not reconstructed from memory. Destructive or irreversible changes need a backward-compatible path and exercised rollback.",
+      "source_contract": "pack/commands/migrate/SKILL.md"
+    },
+    {
+      "skill": "optimize-graph",
+      "problem": "Use this skill to turn a multi-step request into an execution graph: real dependencies, serial work, possible parallelism, budgets, loop exits and checkpoints. It optimizes for completeness and rigor before speed.",
+      "reader": "Person directing an agent's work",
+      "prerequisites": "Bring the goal, constraints and known tasks. If you already have a compiled prompt, use that. Be honest where costs are estimated rather than measured.",
+      "guide_home": "#workflow",
+      "reference_home": "#skill-optimize-graph",
+      "example": "/optimize-graph Plan the HarborTasks CSV export work from specification through\ndesign and implementation. Do not run every skill unless the graph requires it.",
+      "scope_limits": "If the plan is slower and proves no more, reject the extra structure. If a loop says “refine until good,” ask for a concrete exit condition. Check that no proof or human decision was removed to make the plan faster. Every fan-out needs a width cap, exit condition, join rule and failure handling.",
+      "source_contract": "pack/commands/optimize-graph/SKILL.md"
+    },
+    {
+      "skill": "prepare-for-coordination",
+      "problem": "Use this skill before assigning work to several agents or humans. It classifies artifacts, identifies what must stay serial, and writes the coordination plan that execution will follow.",
+      "reader": "Owner or coordinator of multiple tracks",
+      "prerequisites": "Bring a scope, spec, architecture doc or milestone. The repository should have the coordination scripts installed. You need authority to decide ownership boundaries.",
+      "guide_home": "#coordination",
+      "reference_home": "#skill-prepare-for-coordination",
+      "example": "/prepare-for-coordination Plan HarborTasks CSV export. Test whether backend\nexport and UI affordance can run independently after the shared schema decision.",
+      "scope_limits": "If two tracks edit the same authored file, change the boundary instead of adding process around the collision. If harness capability is unverified, use brief mode. Check that every track has one owner, owned authored paths, a budget and concrete exit evidence. Shared schemas, vocabulary and unsettled product decisions usually stay serial.",
+      "source_contract": "pack/commands/prepare-for-coordination/SKILL.md"
+    },
+    {
+      "skill": "prompts",
+      "problem": "Use this utility to browse logged prompts newest-first and copy one for paste-and-edit. It is a reuse lens over the audit log, not a command that reruns work automatically.",
+      "reader": "Engineer continuing or handing over a project",
+      "prerequisites": "The prompt must have been logged. The pack encourages logging substantive prompts, but no CLI hook captures every prompt automatically.",
+      "guide_home": "#knowledge",
+      "reference_home": "#skill-prompts",
+      "example": "/prompts",
+      "scope_limits": "If nothing appears, add important prompts explicitly with prompt-log.py add. If you need the broader activity timeline, use auditlog. Make sure the reused prompt still matches today's task. A good old prompt can carry stale scope, paths or assumptions.",
+      "source_contract": "pack/commands/prompts/SKILL.md"
+    },
+    {
+      "skill": "searchprompts",
+      "problem": "Use this utility when you remember words from a previous prompt and want to reuse the exact text. It is the filtered companion to prompts.",
+      "reader": "Engineer continuing or handing over a project",
+      "prerequisites": "You need a prompt log. Matches contain all supplied terms, case-insensitive.",
+      "guide_home": "#knowledge",
+      "reference_home": "#skill-searchprompts",
+      "example": "/searchprompts export authorization",
+      "scope_limits": "If no matches appear, broaden the terms or use auditlog to search all entries, not only prompts. Read the full prompt before reuse. Search terms can find an old rejected approach as easily as an approved one.",
+      "source_contract": "pack/commands/searchprompts/SKILL.md"
+    },
+    {
+      "skill": "session-profiler",
+      "problem": "Use this skill to profile local harness telemetry and turn it into findings and fixes for cost, context growth, re-reads, task drift, fan-out and cross-harness coordination.",
+      "reader": "Team or pack maintainer improving the working method",
+      "prerequisites": "You need one or more local repositories with session telemetry available. Missing measurements must remain not recorded, not estimated as facts.",
+      "guide_home": "#improvement",
+      "reference_home": "#skill-session-profiler",
+      "example": "/session-profiler --days 7 --repo C:\\Projects\\harbortasks",
+      "scope_limits": "If a store is unavailable, report the gap. If the profile finds a real software defect, route it to investigate rather than treating it as a session-tuning issue. Check which findings are measured and which are inferred from transcript text. A tuning recommendation based on fewer than comparable sessions should stay tentative.",
+      "source_contract": "pack/commands/session-profiler/SKILL.md"
+    },
+    {
+      "skill": "specify",
+      "problem": "Use this skill when you need the “what” and “why” of a change before anyone designs or implements it. It turns a prompt into a specification with functional, UX and UI layers, explicit non-goals and acceptance criteria.",
+      "reader": "Engineer or technical lead shaping a change",
+      "prerequisites": "Bring the problem, the intended user or operator, constraints and any known non-goals. You do not need the implementation design yet.",
+      "guide_home": "#design",
+      "reference_home": "#skill-specify",
+      "example": "/specify Add CSV export to HarborTasks. Export all tasks matching the current\nproject and filter, not only the visible page. Include only fields the user may view.\nEmpty results should still download a CSV with headers.",
+      "scope_limits": "If the output describes implementation too early, ask it to move that material to assumptions or next steps. If the UX layer is missing without a reason, the spec is incomplete. Check that the core scenario is yours, non-goals are explicit, acceptance criteria are falsifiable, and open questions are not disguised as requirements. Approve product decisions before downstream design.",
+      "source_contract": "pack/commands/specify/SKILL.md"
+    },
+    {
+      "skill": "ui-design",
+      "problem": "Use this skill when the interface itself needs craft: direction, information architecture fit, visual language, states, accessibility and a reviewable mockup.",
+      "reader": "Engineer or designer responsible for a user-facing surface",
+      "prerequisites": "Bring the surface, task, users, existing spec or UX notes, and any design language. A settled UX layer is required before high-fidelity UI work.",
+      "guide_home": "#interfaces",
+      "reference_home": "#skill-ui-design",
+      "example": "/ui-design Review the HarborTasks export interaction: button placement, loading,\nempty export, permission error and completed download states.",
+      "scope_limits": "If the output tries to fix hierarchy with imagery, route imagery to visualize only after the interface design is sound. If UX flows are unsettled, return to specify. Review hard states, keyboard access, mobile behavior, copy, contrast and whether the archetype fits the task. Accessibility findings are not style preferences.",
+      "source_contract": "pack/commands/ui-design/SKILL.md"
+    },
+    {
+      "skill": "updatepack",
+      "problem": "Use this skill when a repository already has AI-Forward and you want to refresh it to a newer local pack revision without hand-copying files or losing local deviations.",
+      "reader": "Repository maintainer or first-time adopter",
+      "prerequisites": "You need a local AI-Forward source clone and the target repository's installed docs/ai-forward-pack/INSTALL.md. If the update reports conflicts or review rows, a human must decide how local changes survive.",
+      "guide_home": "#get-started",
+      "reference_home": "#skill-updatepack",
+      "example": "/updatepack C:\\Projects\\ai-forward --dry-run",
+      "scope_limits": "Always preview large jumps. If a script path in documentation says python3 on Windows, use python or py -3. If the update changes coordination or hooks, requalify the harness behavior before relying on it. Do not accept “done” while conflicts remain, docs/docs-index.js changed, duplicate managed blocks exist, or retained local text has nowhere to live. Read warnings from the doctor script; some are user-level choices, but they must be understood.",
+      "source_contract": "pack/commands/updatepack/SKILL.md"
+    },
+    {
+      "skill": "visualize",
+      "problem": "Use this skill to produce imagery, fictional personas, direction boards or motion that a surface displays. It never generates the interface itself.",
+      "reader": "Engineer or designer responsible for a user-facing surface",
+      "prerequisites": "You need the surface, slot list, design language, budget and a confirmed generation backend or other asset source. The skill must check entitlement before planning around a provider.",
+      "guide_home": "#interfaces",
+      "reference_home": "#skill-visualize",
+      "example": "/visualize Create a direction board for the HarborTasks export success panel.\nNo UI chrome, no readable text, no real people.",
+      "scope_limits": "If no backend is confirmed, stop rather than describing images. If the page layout is weak, run ui-design first; imagery will not fix structure. Reject assets with invented UI, unreadable text, real likenesses, missing alt text, unclear license, or provider URLs instead of committed files.",
+      "source_contract": "pack/commands/visualize/SKILL.md"
+    }
+  ],
+  "capabilities": [
+    {
+      "name": "Engineering method and proportionate effort",
+      "guide": "overview",
+      "sources": [
+        "agent-body-of-knowledge",
+        "agent-rules-of-the-road"
+      ]
+    },
+    {
+      "name": "Rigor, assumptions and unfamiliar contracts",
+      "guide": "rigor",
+      "sources": [
+        "rigor-protocol",
+        "no-guessing-protocol",
+        "spike-protocol",
+        "solution-selection-ladder"
+      ]
+    },
+    {
+      "name": "Verification across real user paths",
+      "guide": "rigor",
+      "sources": [
+        "testing-strategy",
+        "end-to-end-integrity"
+      ]
+    },
+    {
+      "name": "Problem framing and layered specifications",
+      "guide": "workflow",
+      "sources": [
+        "specification-standards",
+        "communication-and-task-discipline",
+        "execution-graph-optimization"
+      ]
+    },
+    {
+      "name": "Domain, data and AI-integrated architecture",
+      "guide": "design",
+      "sources": [
+        "domain-and-data-modelling",
+        "layered-optimized-architecture",
+        "csharp-style-guide"
+      ]
+    },
+    {
+      "name": "Specialist collaboration and independent review",
+      "guide": "design",
+      "sources": [
+        "agent-persona-catalog",
+        "persona-audit",
+        "persona-cards",
+        "collaborative-personas"
+      ]
+    },
+    {
+      "name": "Coordination and worktree isolation",
+      "guide": "coordination",
+      "sources": [
+        "agent-coordination",
+        "session-worktree-discipline"
+      ]
+    },
+    {
+      "name": "Security, privacy and responsible oversight",
+      "guide": "design",
+      "sources": [
+        "engineering-governance",
+        "responsible-ai-policy"
+      ]
+    },
+    {
+      "name": "Usable interfaces and generated visual assets",
+      "guide": "interfaces",
+      "sources": [
+        "ui-interaction-design",
+        "ui-design-craft",
+        "ui-archetype-grammar",
+        "ui-archetype-catalog",
+        "ui-craft-detection",
+        "technical-ui-design",
+        "ui-visual-assets"
+      ]
+    },
+    {
+      "name": "Project knowledge, graphs and optional lenses",
+      "guide": "knowledge",
+      "sources": [
+        "knowledge-visualization",
+        "project-memory-and-obsidian",
+        "code-knowledge-graph",
+        "obsidian-lens",
+        "audit-and-change-log"
+      ]
+    },
+    {
+      "name": "Measured improvement, context, cost and operation",
+      "guide": "improvement",
+      "sources": [
+        "continuous-improvement",
+        "instrumentation-over-inference",
+        "observability-and-instrumentation",
+        "ci-and-test-efficiency",
+        "ai-commercial-models"
+      ]
+    }
+  ]
+}

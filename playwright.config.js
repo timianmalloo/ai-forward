@@ -4,7 +4,7 @@ const { defineConfig } = require("@playwright/test");
 
 module.exports = defineConfig({
   testDir: "./tests/docs_explorer",
-  testMatch: "docs_explorer.spec.js",
+  testMatch: ["docs_explorer.spec.js", "handbook.spec.js"],
   timeout: 30_000,
   fullyParallel: false,
   use: {

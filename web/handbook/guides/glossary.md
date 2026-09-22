@@ -1,0 +1,119 @@
+# A small vocabulary for working together
+
+The pack uses a few terms repeatedly. They are useful when they make a decision or
+boundary clearer; they should not become a language you must decode before starting.
+
+## The pieces you use
+
+**AI-Forward Pack** — the instructions, workflows, specialist perspectives, templates
+and tools you adopt into a repository. This source repository develops the pack and
+also uses an installed copy.
+
+**Harness** — the application surrounding the model: its tool interface, workspace,
+permissions, hooks and session behavior. A model and a harness are not interchangeable.
+
+**Model** — the AI capability selected to produce responses. Availability and behavior
+depend on the provider and harness. Requesting a model is not by itself evidence of
+which model executed a turn.
+
+**Skill** — a reusable workflow for a kind of task. A skill can guide reasoning,
+call tools and produce artifacts. It is not necessarily an executable command-line
+program and invocation syntax varies by harness.
+
+**Persona** — a specialist perspective used to develop or challenge work. It can be
+enacted within a workflow or delegated where the host supports it.
+
+**Script** — a program that performs a concrete operation, such as checking a
+configuration or deriving an index. Scripts make mechanical steps reproducible.
+
+**Artifact** — a retained output such as a specification, design, implementation,
+test, decision or guide. Its presence alone does not prove its contents are correct.
+
+## Framing and verification
+
+**Goal state** — the intended outcome, the condition that establishes completion,
+and the work explicitly excluded from the task.
+
+**Rigor Protocol** — the pack's method for framing a problem, asking precise questions,
+checking evidence, challenging the proposed answer and deciding with limits stated.
+
+**Spike** — a small, bounded experiment to establish an unfamiliar technical contract
+before a design depends on it.
+
+**Compiled prompt** — a structured, harness-appropriate starting prompt derived from
+a request. It makes scope, references, assumptions and decisions inspectable. It
+does not create permission or start an agent.
+
+**Decision request** — an explicit unresolved choice sent to the person or role with
+authority to decide it, with the information needed to make that decision.
+
+**Oracle** — the rule a check uses to distinguish correct from incorrect behavior.
+A test that cannot fail for the relevant mistake has a weak or missing oracle.
+
+**Handback** — what a worker returns for review: its result, artifacts, checks,
+limitations and unresolved decisions.
+
+**Proof or verification record** — a retained explanation of what was checked and how.
+It is useful for inspection, not a magic label that makes the work correct.
+
+## Coordinated work
+
+**Owner** — the seat responsible for consequential decisions and acceptance. A
+worker's claim does not replace the Owner's review.
+
+**Coordinator** — the seat that divides work, assigns boundaries, handles seams and
+brings results together. The Owner and Coordinator may be held by the same authorized
+session, but the responsibilities remain distinct.
+
+**Worker / Sub-Agent** — a session or delegated agent carrying out an assigned track.
+It returns evidence and escalates decisions beyond its authority.
+
+**Track** — one bounded unit of a coordinated plan, with an owner, allowed scope,
+dependencies, budget, fallback and return evidence.
+
+**Worktree** — a separate checkout linked to one Git repository. It isolates working
+files and index state without making a separate copy of the repository's history.
+
+**Lease** — a time-bounded ownership claim used to avoid conflicting edits. It is
+not an operating-system sandbox or a substitute for tool permission.
+
+**Seam** — a dependency or shared boundary between tracks, such as an API contract
+that one track needs another to settle.
+
+**Leader designation** — the explicit record of the current coordination authority.
+The runtime does not elect an Owner merely because a model asks to lead.
+
+**Epoch** — a generation number used to distinguish a current designation from an
+older one. It helps prevent stale work from acting as the current coordinator.
+
+**Mailbox / doorbell** — stored messages and a notification that useful mail is
+available. Reading a message is not acceptance of its contents or completion of work.
+
+**Receipt** — structural evidence returned by a worker, such as an artifact digest
+and checkout identity. It is not semantic approval of the artifact.
+
+**Qualification** — checking the capabilities needed from an exact harness/profile,
+including configuration and relevant behavior. It is not a permanent certification
+of every version of that harness.
+
+**Join** — the controlled integration of reviewed track results, with the applicable
+ownership, decision and verification checks.
+
+## Knowledge and design
+
+**Knowledge graph** — a map of artifacts or code entities connected by meaningful
+relationships. Documentation and code graphs describe different parts of the system.
+
+**Canonical source** — the authoritative place to edit a piece of content or behavior.
+Generated copies are updated from it, not maintained independently.
+
+**Domain model** — the agreed meaning of the concepts, identities and rules in the
+problem. It precedes the choice of database tables or interface fields.
+
+**Grain** — what exactly one row or fact represents. A current task and a task's
+status-transition history have different grains.
+
+**Archetype** — a recurring interface or architecture shape chosen because it fits
+the task, not because it is a fashionable visual template.
+
+**Next:** return to [the working sequence](#workflow) or [coordination](#coordination).

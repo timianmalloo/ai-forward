@@ -491,8 +491,8 @@ test("the real generated index exposes the documentation bundle destination", as
   ).toBeVisible();
 });
 
-test("portal front door shows the prompt-to-coordination journey with markdown skill links", async ({ page }) => {
-  const portalUrl = pathToFileURL(path.join(process.cwd(), "docs", "portal", "index.html")).href;
+test("engineering reference preserves the earlier workflow reference links", async ({ page }) => {
+  const portalUrl = pathToFileURL(path.join(process.cwd(), "docs", "portal", "maintainer.html")).href;
   await page.goto(`${portalUrl}#from-prompt-to-coordinated-execution`);
 
   const journey = page.locator("#from-prompt-to-coordinated-execution").locator("..");
@@ -505,8 +505,8 @@ test("portal front door shows the prompt-to-coordination journey with markdown s
   await expect(journey).toContainText("unanswered `DR-n` requests");
 });
 
-test("coordination tab repeats the prompt-to-coordination journey", async ({ page }) => {
-  const portalUrl = pathToFileURL(path.join(process.cwd(), "docs", "portal", "index.html")).href;
+test("engineering reference preserves its coordination details", async ({ page }) => {
+  const portalUrl = pathToFileURL(path.join(process.cwd(), "docs", "portal", "maintainer.html")).href;
   await page.goto(portalUrl);
 
   await page.locator('button.sec[data-sec="coord"]').click();

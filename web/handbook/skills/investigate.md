@@ -2,6 +2,10 @@
 
 Use this skill when something is broken, slow, inconsistent or surprising. It reproduces or characterizes the symptom, proves the root cause, sweeps for siblings, proposes repair phases and then stops for human review.
 
+**Default outcome: a verified cause and repair plan, not code changes.** The workflow
+stops for your review before implementation. It continues into repair only if you
+explicitly authorized that investigation to do so.
+
 ## When to use it
 
 Use `investigate` for defects and incidents. If HarborTasks export downloads only 20 rows when 63 match, investigate before implementing a fix. The cause might be paging, authorization, a UI call, or a stale test fixture.

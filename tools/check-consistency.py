@@ -1004,6 +1004,8 @@ def check_docs_portal(findings):
     web/pack-index.js previously had no --check mode, so it was invisible to this gate and
     only ever caught by the source<->install drift gate - which does not run until this one
     is green. A pair where only one half is observable is how the other half hides."""
+    _check_derived_artifact(findings, "reader handbook",
+                            "build-handbook.py", "docs/portal/index.html")
     _check_derived_artifact(findings, "docs portal",
                             "build-docs-portal.py", "docs/portal/portal-data.js")
     _check_derived_artifact(findings, "web index",

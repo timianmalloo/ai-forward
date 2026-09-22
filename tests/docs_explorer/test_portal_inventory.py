@@ -20,7 +20,7 @@ import unittest
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
 EDITORIAL = os.path.join(ROOT, "tools", "docs-portal-editorial.json")
-PORTAL_HTML = os.path.join(ROOT, "docs", "portal", "index.html")
+PORTAL_HTML = os.path.join(ROOT, "docs", "portal", "maintainer.html")
 PORTAL_DATA = os.path.join(ROOT, "docs", "portal", "portal-data.js")
 COMMANDS = os.path.join(ROOT, "pack", "commands")
 KNOWLEDGE = os.path.join(ROOT, "pack", "knowledge")
