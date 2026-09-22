@@ -150,11 +150,26 @@ class RuntimeControls(unittest.TestCase):
                                    stdin=subprocess.PIPE, stderr=subprocess.PIPE)
         try:
             self.assertEqual(b"locked", process.stdout.readline().rstrip(b"\r\n"))
-            with self.assertRaisesRegex(ValueError, "runtime_control_busy"):
-                self.box.enqueue("al-busy", "abc", 1)
+            with mock.patch.object(self.api, "PUBLICATION_ATTEMPT_SECONDS", .35):
+                with self.assertRaisesRegex(ValueError, "runtime_control_busy"):
+                    self.box.enqueue("al-busy", "abc", 1)
             self.assertEqual([], list(self.path.glob("*.json")))
         finally:
             process.communicate(input=b"release", timeout=2)
+
+    def test_publication_error_is_not_retried_as_busy(self):
+        calls = 0
+
+        def fail_publish(*args, **kwargs):
+            nonlocal calls
+            calls += 1
+            raise PermissionError("publish failed")
+
+        with mock.patch.object(self.box, "_append", side_effect=fail_publish):
+            with self.assertRaises(PermissionError):
+                self.box.enqueue("al-first", "abc", 1)
+        self.assertEqual(1, calls)
+        self.assertEqual([], self.box.records())
 
     def test_decide_and_answer_use_time_after_retry_and_record_read(self):
         request = self.box.permission(self.request(), expires_at=10)

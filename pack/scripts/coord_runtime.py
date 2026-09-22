@@ -18,6 +18,7 @@ MAX_RECORDS = 128
 MAX_RECORD_BYTES = 256 * 1024
 LOCK_ATTEMPT_SECONDS = .05
 OPERATION_ATTEMPT_SECONDS = .35
+PUBLICATION_ATTEMPT_SECONDS = 2.0
 
 
 class _RuntimeControlBusy(ValueError):
@@ -100,8 +101,8 @@ class Controls:
         finally:
             os.close(fd)
 
-    def _retry_busy(self, action):
-        deadline = time.monotonic() + OPERATION_ATTEMPT_SECONDS
+    def _retry_busy(self, action, attempt_seconds=OPERATION_ATTEMPT_SECONDS):
+        deadline = time.monotonic() + attempt_seconds
         while True:
             try:
                 return action()
@@ -180,7 +181,7 @@ class Controls:
                         and not any(r["compilation_id"] == compilation_id for r in prompts))
                 return self._append(rows, "prompt", compilation_id=compilation_id,
                                     prompt_sha256=prompt_sha256)
-        return self._retry_busy(action)
+        return self._retry_busy(action, PUBLICATION_ATTEMPT_SECONDS)
 
     def finish(self):
         def action():
@@ -188,7 +189,7 @@ class Controls:
                 rows = self._records()
                 require(not any(r["kind"] == "finish" for r in rows))
                 return self._append(rows, "finish")
-        return self._retry_busy(action)
+        return self._retry_busy(action, PUBLICATION_ATTEMPT_SECONDS)
 
     def next_prompt(self):
         rows = self.records()
@@ -206,7 +207,7 @@ class Controls:
                 pending = [r for r in rows if r["kind"] == "prompt" and r["id"] not in sent]
                 require(bool(pending) and pending[0]["id"] == prompt_id)
                 return self._append(rows, "dispatch", prompt_id=prompt_id)
-        return self._retry_busy(action)
+        return self._retry_busy(action, PUBLICATION_ATTEMPT_SECONDS)
 
     def permission(self, request, expires_at):
         require(isinstance(request, dict) and isinstance(request.get("sessionId"), str)
@@ -223,7 +224,7 @@ class Controls:
         def action():
             with self.locked():
                 return self._append(self._records(), "permission", request=request, expires_at=expires_at)
-        return self._retry_busy(action)
+        return self._retry_busy(action, PUBLICATION_ATTEMPT_SECONDS)
 
     def decide(self, request_id, option_id, now=None):
         def action():
@@ -239,7 +240,7 @@ class Controls:
                 require(len(options) == 1 and options[0]["kind"] in ("allow_once", "reject_once", "reject_always"))
                 return self._append(rows, "decision", request_id=request_id,
                                     request_sha256=request["sha256"], option_id=option_id)
-        return self._retry_busy(action)
+        return self._retry_busy(action, PUBLICATION_ATTEMPT_SECONDS)
 
     def answer(self, request_id, now=None):
         rows = self.records()
