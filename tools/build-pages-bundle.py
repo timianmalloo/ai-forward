@@ -42,6 +42,8 @@ ROOT =os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # top-level dirs/files to publish (allowlist - nothing sensitive slips in by default)
 PUBLISH_DIRS = ["docs", "pack", "web"]
 PUBLISH_FILES = ["README.md", "CLAUDE.md", "AGENTS.md"]
+# Exact public viewers only; every other _site subtree remains pruned.
+PUBLISH_GENERATED = [os.path.join("docs", "_site", name) for name in ("bundle.html", "index.html")]
 # fine-grained local-only subtrees inside an otherwise-published dir (the publish boundary)
 LOCAL_ONLY = [
     os.path.join("docs", "dreams"),
@@ -136,6 +138,19 @@ def main():
         if os.path.isfile(p):
             shutil.copy2(p, os.path.join(out, f))
             stats["files"] += 1
+    for rel in PUBLISH_GENERATED:
+        source = os.path.join(ROOT, rel)
+        expected = os.path.join(os.path.realpath(ROOT), rel)
+        if os.path.islink(source) or os.path.normcase(os.path.realpath(source)) != os.path.normcase(expected):
+            print("PAGES-GENERATED-ALIAS: refuse an aliased generated viewer: " + rel, file=sys.stderr)
+            return 2
+        if not os.path.isfile(source):
+            print("PAGES-GENERATED-MISSING: regenerate the documentation viewer: " + rel, file=sys.stderr)
+            return 2
+        target = os.path.join(out, rel)
+        os.makedirs(os.path.dirname(target), exist_ok=True)
+        shutil.copy2(source, target)
+        stats["files"] += 1
     # publishable fleet learnings only (the rest of learnings/ stays local)
     for f in PUBLISH_LEARNINGS:
         p = os.path.join(ROOT, "learnings", f)
