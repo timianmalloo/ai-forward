@@ -44,6 +44,7 @@ class SessionStartHookTests(unittest.TestCase):
     def _run_hook(self, payload, env_extra=None, host="claude"):
         env = dict(os.environ)
         env.pop("AGENT_SESSION", None)
+        env["AGENT_HOST"] = host
         env.update(env_extra or {})
         return subprocess.run([sys.executable, str(self.hook), "--host", host], cwd=str(self.repo),
                               input=json.dumps(payload), capture_output=True, text=True, env=env, timeout=30)

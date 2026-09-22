@@ -61,7 +61,7 @@ class LivenessCase(unittest.TestCase):
 
     def env(self, session, extra=None):
         env = dict(os.environ)
-        for key in ("COORD_ROOT", "AGENT_SESSION", "AGENT_NAME", "AGENT_WI"):
+        for key in ("COORD_ROOT", "AGENT_SESSION", "AGENT_NAME", "AGENT_WI", "AGENT_HOST"):
             env.pop(key, None)
         env["COORD_ROOT"] = str(self.root)
         if session:

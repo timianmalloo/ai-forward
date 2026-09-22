@@ -83,9 +83,10 @@ summary: >-
 
 ## Verification commands
 
+Run these commands from the repository root.
+
 ```powershell
 $env:AGENT_SESSION='coord-ci-parity-20260922'
-Set-Location -LiteralPath 'C:\Projects\ai-forward-fix-coordination-ci-parity'
 python -m pytest tests\docs_explorer\test_coord_runtime.py tests\docs_explorer\test_bounded_process.py tests\docs_explorer\test_coord_transport.py -q
 python tools\build-api-docs.py
 pwsh tools\sync-pack.ps1
@@ -99,12 +100,23 @@ pwsh tools\verify-bundle.ps1
 - Targeted regression suite: `36 passed, 70 skipped, 9 subtests passed in 35.10s`; follow-up runtime suite: `9 passed, 3 skipped, 4 subtests passed in 1.07s`.
 - Full bundle verification: `BUNDLE CONSISTENT - all 17 gates passed`.
 
+### Integration follow-up: inherited harness identity
+
+Running the integrated gate with `AGENT_HOST=copilot` exposed thirteen hook-fixture
+failures: tests emulating Claude inherited the real caller's Copilot identity and
+correctly triggered duplicate-hook suppression instead of their intended fixture
+behavior. The four fixture helpers now remove or set `AGENT_HOST` explicitly.
+Tests that intentionally exercise cross-host suppression still provide that identity.
+The same Copilot-hosted targeted run then passed 121 tests and 30 subtests. This is
+another CI-ENV instance: a fixture's host identity must be an input it owns, not
+ambient state borrowed from the developer's session.
+
 ## Status & next action
 
 | | |
 |---|---|
 | **Completed** | Fixed the three caused CI regressions and synced generated install/runtime surfaces. |
-| **Remaining** | Linux/macOS CI must re-run to verify the POSIX-only jobs in their native runners. |
+| **Remaining** | Fresh Linux, macOS and Windows CI must confirm the integrated repair in their native runners. |
 | **Best next action** | Parent reviews this commit and pushes/re-runs CI. |
 
 ## Gate record

@@ -58,7 +58,7 @@ class TempRepo(unittest.TestCase):
         self.register = self.tmp / "docs" / "notes" / "rulings.md"
 
     def env(self, session="p5", **extra):
-        env = {k: v for k, v in os.environ.items() if k not in ("AGENT_SESSION", "COORD_ROOT", "AGENT_NAME")}
+        env = {k: v for k, v in os.environ.items() if k not in ("AGENT_SESSION", "COORD_ROOT", "AGENT_NAME", "AGENT_HOST")}
         env["COORD_ROOT"] = str(self.root)
         if session:
             env["AGENT_SESSION"] = session

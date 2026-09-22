@@ -1647,7 +1647,7 @@ window.PORTAL_DATA = {
     "links": [
       {
         "name": "Deep architecture and evolution",
-        "path": "../architecture-multi-harness-coordination.md"
+        "path": "../_site/bundle.html#architecture-multi-harness-coordination"
       },
       {
         "name": "Owner / Coordinator / Sub-Agent proposal",

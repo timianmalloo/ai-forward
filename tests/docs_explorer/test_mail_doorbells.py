@@ -54,7 +54,7 @@ class Fixture(unittest.TestCase):
         mail.append_mail(self.root, "p2", {"to": "p8", "kind": "note", "body": "not mine"}, now=now - 1)
 
     def env(self, session="p6"):
-        env = {k: v for k, v in os.environ.items() if k not in ("AGENT_SESSION", "COORD_ROOT")}
+        env = {k: v for k, v in os.environ.items() if k not in ("AGENT_SESSION", "COORD_ROOT", "AGENT_HOST")}
         if session:
             env["AGENT_SESSION"] = session
         return env
