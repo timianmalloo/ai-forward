@@ -19,6 +19,10 @@ REPO = Path(__file__).resolve().parents[2]
 SOURCE = REPO / "pack/scripts"
 PEER = Path(__file__).parent / "fixtures/coord_runner_peer.py"
 CAPS = dict.fromkeys(("worktree_isolation", "instructions", "hooks", "permissions"), "observed-only")
+# Readiness waits poll until a state appears and stop as soon as it does, so a generous
+# budget costs nothing on a healthy run. Each includes runner and peer process startup,
+# measured at 0.26-0.28 s idle and up to 2.8 s at 10x CPU oversubscription (TEST-TIME-A).
+START_WAIT_SECONDS = 10
 
 
 class PlatformAdmissionTests(unittest.TestCase):
@@ -401,10 +405,19 @@ class RunnerTests(unittest.TestCase):
             process.communicate(timeout=8)
         self.addCleanup(cleanup)
         marker = Path(prepared["workers"][0]["worktree"]) / "prompt-started"
-        until = time.monotonic() + 4
+        until = time.monotonic() + START_WAIT_SECONDS
         while not marker.exists() and time.monotonic() < until and process.poll() is None:
             time.sleep(0.02)
-        self.assertTrue(marker.exists(), "worker must start before injecting the fault")
+        if not marker.exists():
+            # Say why: a runner that exited first reports its transport code (for example
+            # deadline_exceeded with prompts_started 0), which a bare assertion hides.
+            detail = "runner still running after {0} s".format(START_WAIT_SECONDS)
+            if process.poll() is not None:
+                out, err = process.communicate(timeout=8)
+                lines = out.strip().splitlines() or [err.strip()]
+                detail = "runner exited {0} first; last output: {1}".format(
+                    process.returncode, lines[-1][-800:])
+            self.fail("worker must start before injecting the fault; " + detail)
         return process, marker
 
     def test_leader_change_cancels_owned_process_and_does_not_renew_successor(self):
@@ -431,14 +444,19 @@ class RunnerTests(unittest.TestCase):
             '    if (Path(repo) / "stall-leader").exists():\n        time.sleep(30)')
         script.write_text(source, encoding="utf-8")
         self.contract["workers"][0]["argv"][-1] = "hang"
-        self.contract["workers"][0]["deadline_seconds"] = 1
+        # The attempt deadline must fire AFTER the worker starts, while git is blocked, and
+        # it is measured from attempt start - so it also pays for peer startup. At 1 s,
+        # 10x CPU oversubscription made it fire first (deadline_exceeded, prompts_started
+        # 0), as on the macOS runner. 4 s covers the 2.8 s worst start measured. The bound
+        # stays far below the 30 s git stall, so a cleanup held by git still fails.
+        self.contract["workers"][0]["deadline_seconds"] = 4
         self.contract["workers"][0]["prompts"] *= 2
         start = time.monotonic()
         process, marker = self.running()
         (self.repo / "stall-leader").write_text("fault", encoding="utf-8")
-        stdout, stderr = process.communicate(timeout=6)
+        stdout, stderr = process.communicate(timeout=15)
         self.assertEqual(process.returncode, 3, stdout + stderr)
-        self.assertLess(time.monotonic() - start, 6)
+        self.assertLess(time.monotonic() - start, 15)
         with self.assertRaises(ProcessLookupError):
             os.kill(int(marker.read_text(encoding="utf-8")), 0)
 
@@ -611,7 +629,7 @@ class RunnerTests(unittest.TestCase):
         self.runtime_policy(permissions="ask")
         self.contract["workers"][0]["argv"][-1] = "permission"
         process, marker = self.running()
-        deadline = time.monotonic() + 4
+        deadline = time.monotonic() + START_WAIT_SECONDS
         pending = []
         while not pending and time.monotonic() < deadline:
             pending = self.cli("permissions", "--run", "test-run", "--worker", "worker-1")["requests"]
@@ -699,7 +717,7 @@ class RunnerTests(unittest.TestCase):
         self.cli("finish", "--run", "test-run", "--worker", "worker-1")
         # The completed first worker can be observed through its final transport
         # event while the second keeps the aggregate run active.
-        deadline = time.monotonic() + 3
+        deadline = time.monotonic() + START_WAIT_SECONDS
         response = None
         while time.monotonic() < deadline:
             result = subprocess.run([sys.executable, str(self.scripts / "coord-runner.py"), "finish",
@@ -790,7 +808,7 @@ class RunnerTests(unittest.TestCase):
             cwd=self.repo, env=self.env, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         try:
             marker = cwd / "queue-receipt.json"
-            deadline = time.monotonic() + 4
+            deadline = time.monotonic() + START_WAIT_SECONDS
             while not marker.exists() and process.poll() is None and time.monotonic() < deadline:
                 time.sleep(.02)
             self.assertTrue(marker.exists())

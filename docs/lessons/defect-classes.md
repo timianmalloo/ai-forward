@@ -17,7 +17,7 @@ summary: >-
 
 # Defect-class register
 
-**TEST-TIME-A / 2026-09-21 — timing floor measured from process startup.**
+**TEST-TIME-A / 2026-09-21 — timing floor measured from process startup** (now a class section below, with the 2026-09-22 recurrence).
 Class → a deadline test required a fixed first turn to finish before a small budget,
 so hosted-runner startup jitter changed the observed turn count and failed the test.
 Sweep → transport deadline tests on Linux and macOS. Derive → make the fixture's first
@@ -126,7 +126,7 @@ representation-contract failure, not a reason to bypass merges for authored file
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** project classes: controlled `34` · partially-controlled `21` · uncontrolled `8`; inherited table: controlled `11` · partially-controlled `4` · uncontrolled `22`
+**Status counts:** project classes: controlled `34` · partially-controlled `22` · uncontrolled `8`; inherited table: controlled `11` · partially-controlled `4` · uncontrolled `22`
 *Checked, not trusted: `tests/docs_explorer/test_defect_register_counts.py` tallies each entry's leading status and fails when this line disagrees, printing the corrected line (FR-076, class REC-A). Change a status, change this line. A status is one of the three schema values; a qualifier after it does not change the count.*
 **Recurrence since last review:** `0` — *a second occurrence of a known class means the control was wrong, not that someone was careless (CI4).*
 
@@ -151,6 +151,16 @@ representation-contract failure, not a reason to bypass merges for authored file
 ## Project classes
 
 *Classes discovered in this repository. Newest first.*
+
+### TEST-TIME-A — A test's time budget silently includes process startup it is not about
+- **Signature:** a test gives a subprocess a small wall-clock budget (a product deadline or a readiness wait) to prove something that happens after startup, but the budget is measured from launch. On an idle machine startup is a fraction of the budget; on a loaded runner it is most of it, and the test fails with a message about the thing it was testing.
+- **Why it survives:** it passes on every idle run, locally and on most CI runners; a re-run usually goes green, so it reads as a flake; and the failure message names the intended event ("worker must start …"), not the startup that ate the budget.
+- **Instances:**
+  - `2026-09-22` **ai-forward, `test_coord_runner.py::test_blocked_git_does_not_hold_attempt_cleanup`** — red on macOS CI for `6cd9569`, green on re-run. Reproduced 5/5 in WSL at 10x CPU oversubscription: the runner exited 3 before the worker started, its transport reporting `deadline_exceeded` with `prompts_started 0` at 1.22 s against the test's 1 s attempt deadline. The first reading, a too-short test wait, was wrong: the wait never ran out.
+  - `2026-09-21` **ai-forward, transport deadline tests** — a fixed first turn had to finish inside a small shared budget, so runner startup jitter changed the turn count (the paragraph at the top of this file).
+- **Class → sweep → derive:** swept every fixed `time.monotonic() + N` wait and every `deadline_seconds = 1` in `tests/docs_explorer/`. The two other one-second deadlines (`test_hang_is_bounded…`, `test_profile_helper_hang…`) assert failure or no dispatch, so an early deadline still produces their result. The four runner readiness waits include startup, so they now share `START_WAIT_SECONDS = 10`, free on a healthy run because each stops as soon as its state appears. The Windows process-death waits (`test_bounded_process.py`, `test_coord_transport.py`) start after the process is already running and were left unchanged.
+- **Control:** the deadline in the reproduced test is 4 s, above the 2.8 s worst start measured; its bound is 15 s, still far below the 30 s git stall it must beat. `running()` now fails with the runner's exit code and last output, so the next occurrence names its cause in the CI log. Green 5/5 under the same 10x load that was red 5/5. No mechanical detector for a startup-coupled budget exists; the loaded re-run is manual.
+- **Status:** `partially-controlled` — both instances fixed and the diagnosis is now self-reporting; nothing yet fails automatically when a new test couples a small budget to startup.
 
 ### LINT-A — A scanner matches its pattern inside string data, so its own fixtures drown the signal
 - **Signature:** a regex linter or harvester searches every line for a comment-marker pattern without asking whether the match is a comment. The linter's own tests write malformed markers as string literals, so every run reports those fixtures, and a real finding would be one more line in a list everyone has learned to skip.

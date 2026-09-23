@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-22T22:31:01Z",
+  "generated": "2026-09-23T00:10:48Z",
   "audit": [
     {
       "actor": null,
@@ -13158,6 +13158,55 @@ window.AUDIT_DATA = {
         "short": "61746e0d2",
         "branch": "fix/fr-076-077-instrument-trust",
         "pushed": null
+      }
+    },
+    {
+      "id": "al-01M35P5GWVK74798FMBVFKH5KJ",
+      "shortname": "fix (the macOS flake in test_coord_runner's worker-start wait)",
+      "datetime": "2026-09-22T23:10:42Z",
+      "session": "prompt-log",
+      "prompt": "fix (the macOS flake in test_coord_runner's worker-start wait)",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M35SKHXMEP9Y5KZ14Q2BTBNC",
+      "shortname": "coord-runner-start-wait",
+      "datetime": "2026-09-23T00:10:48Z",
+      "session": "claude-coord-start-wait",
+      "prompt": "fix (the macOS flake in test_coord_runner's worker-start wait)",
+      "summary": "Fixed the macOS CI failure of test_coord_runner.py::test_blocked_git_does_not_hold_attempt_cleanup (6cd9569). Reproduced 5/5 in WSL at 10x CPU oversubscription: the runner exited 3 before the worker started (transport deadline_exceeded, prompts_started 0, 1.22 s) because the test's 1 s attempt deadline also paid for peer startup (0.26-0.28 s idle, up to 2.8 s loaded). The first hypothesis, a short test wait, was falsified by the probe. Fix: deadline 4 s, bound 15 s (still below the 30 s git stall); running() reports the runner's exit code and last output; four runner readiness waits share START_WAIT_SECONDS = 10. Green 5/5 under the same load; all 56 runner tests pass idle in WSL; verify-bundle 18/18 on Windows (runner tests are POSIX-only and skip there). TEST-TIME-A promoted to a register class (second instance); the FR-076 counts check caught the new entry.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": "claude-code",
+      "artifacts": [
+        "tests/docs_explorer/test_coord_runner.py",
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Stop test_coord_runner's worker-start failure on a slow runner without weakening what the test proves; make the failure self-diagnosing; sweep the same shape.",
+      "done_when": "Reproduced red under load and green after the fix under the same load; full runner module green on POSIX; verify-bundle green; pushed to main with CI green.",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-22T23:10:42Z",
+      "duration_seconds": 3606.0,
+      "git": {
+        "sha": "6cd9569416dafd6806325c83d10faf563bff2c75",
+        "short": "6cd956941",
+        "branch": "fix/coord-runner-start-wait",
+        "pushed": true
       }
     }
   ],
