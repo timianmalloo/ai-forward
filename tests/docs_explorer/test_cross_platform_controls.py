@@ -264,5 +264,83 @@ class AgyHookShellTests(unittest.TestCase):
         self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
 
 
+STUB = ("import json, pathlib, sys\n"
+        "here = pathlib.Path(__file__).resolve()\n"
+        "with (here.parents[3] / 'reached.jsonl').open('a', encoding='utf-8') as out:\n"
+        "    out.write(json.dumps([here.name] + sys.argv[1:]) + chr(10))\n")
+
+
+class CopilotHookShellTests(unittest.TestCase):
+    """PLAT-A for Copilot. Measured 2026-09-24 (x-harness-x-model-bench capture window 1, reported by the
+    Leader): Copilot CLI 1.0.89-1 under ACP on Windows, pack on, ran 8 pack hooks and all 8 ended
+    success:false with a PowerShell ParserError on the pack's POSIX-shell hook command. Copilot runs hook
+    commands through PowerShell there. The only POSIX-shell commands the pack installs are the Claude-format
+    ones merged into .claude/settings.json, and Copilot 1.0.89-1 reads Claude settings: its runtime.node names
+    `.claude` `settings.json` `settings.local.json`, "Failed to read Claude settings from" and
+    ${CLAUDE_PROJECT_DIR} (Inferred from the binary; not observed in a hook log). So every command Copilot can
+    run - the .github/hooks arms, the emitted ownership entry and the Claude-format commands - must be one
+    quote-free launcher invocation that pwsh, cmd.exe and sh parse alike."""
+
+    def sources(self):
+        rows = []
+        copilot = json.loads((HOOKS / "copilot.ai-forward-hooks.json").read_text(encoding="utf-8"))
+        for entries in copilot["hooks"].values():
+            rows += [("copilot " + arm, entry[arm]) for entry in entries for arm in ("bash", "powershell")]
+        claude = json.loads((HOOKS / "claude-code.settings.hooks.json").read_text(encoding="utf-8"))
+        for entries in claude["hooks"].values():
+            rows += [("claude", hook["command"]) for entry in entries for hook in entry["hooks"]]
+        emitted = subprocess.run([sys.executable, str(COORD), "hook", "--config", "--host", "copilot"],
+                                 capture_output=True, text=True, encoding="utf-8", timeout=60)
+        self.assertEqual(0, emitted.returncode, emitted.stderr)
+        for entry in json.loads(emitted.stdout)["hooks"]["preToolUse"]:
+            rows += [("ownership " + arm, entry[arm]) for arm in ("bash", "powershell")]
+        self.assertGreaterEqual(len(rows), 20)
+        return rows
+
+    def test_every_command_copilot_runs_is_one_quote_free_launcher_invocation(self):
+        for source, command in self.sources():
+            with self.subTest(source=source, command=command):
+                for token in ("$", "`", "[ ", "'", '"', ";", "&&", "||", "%", "|", "<", ">"):
+                    self.assertNotIn(token, command, f"{token!r} is shell-specific: pwsh, cmd.exe and sh read it differently")
+                self.assertTrue(command.startswith(AGY_LAUNCHER), command)
+
+    def assert_every_command_reaches_its_script(self, launch):
+        import re
+        with tempfile.TemporaryDirectory() as tmp:
+            root = pathlib.Path(tmp) / "a checkout"
+            hooks, scripts = root / "docs/ai-forward-pack/hooks", root / "docs/ai-forward-pack/scripts"
+            hooks.mkdir(parents=True)
+            scripts.mkdir(parents=True)
+            subprocess.run(["git", "init", "-q", str(root)], check=True)
+            shutil.copyfile(HOOKS / "run-hook.sh", hooks / "run-hook.sh")
+            rows = self.sources()
+            for _source, command in rows:
+                name = re.search(r"([\w-]+\.py)", command).group(1)
+                for folder in (hooks, scripts):
+                    (folder / name).write_text(STUB, encoding="utf-8", newline="\n")
+            marker = root / "reached.jsonl"
+            for source, command in rows:
+                with self.subTest(source=source, command=command):
+                    marker.unlink(missing_ok=True)
+                    proc = subprocess.run(launch(command), cwd=str(root), input="{}", capture_output=True, text=True,
+                                          encoding="utf-8", timeout=60)
+                    self.assertEqual(0, proc.returncode, proc.stdout + proc.stderr)
+                    self.assertTrue(marker.is_file(), "the script was not reached: " + proc.stderr)
+                    name, arguments = re.search(r"([\w-]+\.py)(.*)$", command).groups()
+                    self.assertEqual([name] + arguments.split(), json.loads(marker.read_text(encoding="utf-8").splitlines()[-1]))
+
+    @unittest.skipUnless(shutil.which("pwsh") and shutil.which("git"), "pwsh is absent")
+    def test_every_command_copilot_runs_reaches_its_script_under_pwsh(self):
+        self.assert_every_command_reaches_its_script(lambda command: ["pwsh", "-NoProfile", "-Command", command])
+
+    @unittest.skipUnless(os.name == "nt" and shutil.which("git"), "cmd.exe exists only on Windows")
+    def test_every_command_copilot_runs_reaches_its_script_under_cmd(self):
+        self.assert_every_command_reaches_its_script(lambda command: "cmd /d /c " + command)
+
+    @unittest.skipUnless(shutil.which("sh") and shutil.which("git"), "sh or git is absent")
+    def test_every_command_copilot_runs_reaches_its_script_under_sh(self):
+        self.assert_every_command_reaches_its_script(lambda command: ["sh", "-c", command])
+
+
 if __name__ == "__main__":
     unittest.main()

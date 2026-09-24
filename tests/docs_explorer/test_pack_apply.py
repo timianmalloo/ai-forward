@@ -185,6 +185,24 @@ class InstalledRepoTests(unittest.TestCase):
         for line in pa.GITIGNORE_LINES:
             self.assertIn(line, gi)
 
+    def test_pack_hook_commands_in_settings_are_replaced_not_duplicated(self):
+        # PLAT-A (revision 95): the Claude-format hook commands changed form. The merge matched entries by exact
+        # command text, so an update kept each old POSIX-only command beside its replacement, and Copilot, which
+        # reads .claude/settings.json, would still run the old one through PowerShell. A repo's own hook stays.
+        old = ("py=$(python3 -c 'import sys;print(sys.executable)' 2>/dev/null); [ -x \"$py\" ] || "
+               "py=$(python -c 'import sys;print(sys.executable)'); \"$py\" docs/ai-forward-pack/hooks/heartbeat.py "
+               "--host claude --event PostToolUse")
+        mine = {"hooks": [{"type": "command", "command": "echo repo-local"}]}
+        _w(self.tmp, ".claude/settings.json", json.dumps({"hooks": {"PostToolUse": [
+            {"hooks": [{"type": "command", "command": old}]}, mine]}}))
+        self._apply()
+        post = json.loads(_r(self.tmp, ".claude/settings.json"))["hooks"]["PostToolUse"]
+        commands = [h["command"] for entry in post for h in entry["hooks"]]
+        self.assertNotIn(old, commands)
+        shipped = json.loads((ROOT / "pack/adapters/hooks/claude-code.settings.hooks.json").read_text(encoding="utf-8"))
+        wanted = [h["command"] for entry in shipped["hooks"]["PostToolUse"] for h in entry["hooks"]]
+        self.assertEqual(sorted(wanted + ["echo repo-local"]), sorted(commands))
+
     def test_repo_local_deviation_over_unchanged_pack_file_is_kept(self):
         rows = self._apply()
         self.assertIn("Repo-local addition", _r(self.tmp, ".claude/skills/also/SKILL.md"))
