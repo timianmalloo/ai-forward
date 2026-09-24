@@ -462,8 +462,15 @@ class TransportTests(unittest.TestCase):
             result["reported_version"], result["reported_version_source"]))
         self.assertEqual(2, sum(row.get("method") == "session/prompt" for row in self.requests()))
 
+    def test_watcher_exact_grok_response_is_accepted_on_a_later_release(self):
+        # Measured 2026-09-24 on grok 1.0.41 (Windows, x-harness-x-model-bench qualify-4): the identical
+        # skills-reload response arrives inside session/prompt. 1.0.34-only pinning failed every newer grok.
+        result = self.run_peer("watcher_later_version")
+        self.assertEqual(("complete", 2, 2, "1.0.41"), (
+            result["code"], result["turns_completed"], result["compatibility_responses"], result["reported_version"]))
+
     def test_watcher_other_profile_phase_shape_and_ids_remain_rejected(self):
-        for suffix in ("early", "other_version", "no_shell", "string_shell", "agentinfo_only",
+        for suffix in ("early", "other_version", "prerelease_version", "no_shell", "string_shell", "agentinfo_only",
                        "extra", "inner_extra", "bool", "float", "other_id", "bad_result"):
             with self.subTest(suffix=suffix):
                 result = self.run_peer("watcher_" + suffix)

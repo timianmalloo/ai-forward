@@ -219,7 +219,11 @@ while True:
             result.pop("agentInfo")
             result["_meta"] = {"grokShell": True, "agentVersion": "1.0.34"}
             if MODE == "watcher_other_version":
-                result["_meta"]["agentVersion"] = "1.0.35"
+                result["_meta"]["agentVersion"] = "1.0.33"  # below the first measured version
+            elif MODE == "watcher_later_version":
+                result["_meta"]["agentVersion"] = "1.0.41"  # measured 2026-09-24: the same exact response
+            elif MODE == "watcher_prerelease_version":
+                result["_meta"]["agentVersion"] = "1.0.41-rc1"
             elif MODE == "watcher_no_shell":
                 result["_meta"].pop("grokShell")
             elif MODE == "watcher_string_shell":
