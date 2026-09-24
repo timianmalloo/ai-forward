@@ -196,5 +196,65 @@ class NoMachinePathsLintTests(unittest.TestCase):
             self.assertIn("artifacts.yml", proc.stdout)
 
 
+AGY_LAUNCHER = 'git -c "alias.aif-hook=!sh docs/ai-forward-pack/hooks/run-hook.sh" aif-hook '
+
+
+class AgyHookShellTests(unittest.TestCase):
+    """PLAT-C: Antigravity runs hook commands through cmd.exe on Windows, from <repo>/.agents (measured
+    2026-09-24, agy 1.2.10: `%OS%` expanded, `$env:OS` did not; `cd` printed <repo>\\.agents). The pack's
+    POSIX-only commands (`py=$(...)`, `[ -x ...]`) therefore failed on every tool call, and agy reported each
+    tool step as ERROR even when the tool itself succeeded. An agy command must be one plain program
+    invocation that cmd.exe and sh parse alike; the interpreter is resolved at run time by the launcher,
+    which git runs through its own sh from the top of the working tree."""
+
+    def commands(self):
+        data = json.loads((HOOKS / "agy.ai-forward-hooks.json").read_text(encoding="utf-8"))
+        found = []
+
+        def walk(node):
+            if isinstance(node, dict):
+                for key, value in node.items():
+                    if key == "command" and isinstance(value, str):
+                        found.append(value)
+                    else:
+                        walk(value)
+            elif isinstance(node, list):
+                for item in node:
+                    walk(item)
+        walk(data)
+        return found
+
+    def test_every_agy_command_parses_alike_under_cmd_and_sh(self):
+        commands = self.commands()
+        self.assertTrue(commands)
+        for command in commands:
+            with self.subTest(command=command):
+                for token in ("$(", "`", "[ ", "'", ";", "&&", "||", "%"):
+                    self.assertNotIn(token, command, f"{token!r} is shell-specific: cmd.exe and sh read it differently")
+                self.assertTrue(command.startswith(AGY_LAUNCHER), "an agy hook runs through the launcher")
+                hook = command[len(AGY_LAUNCHER):].split()[0]
+                self.assertTrue((HOOKS / hook).is_file(), f"the launcher names a hook the pack ships: {hook}")
+                self.assertIn("--host agy", command)
+
+    def test_the_launcher_resolves_the_interpreter_at_run_time(self):
+        launcher = (HOOKS / "run-hook.sh").read_bytes()
+        self.assertNotIn(b"\r", launcher, "sh fails on CRLF")
+        text = launcher.decode("utf-8")
+        self.assertIn("import sys;print(sys.executable)", text)
+        self.assertIn("python3", text)
+        self.assertIn("python -c", text, "no fallback for python.org Windows")
+        self.assertIn('exec "$py" "docs/ai-forward-pack/hooks/$hook"', text)
+
+    @unittest.skipUnless(shutil.which("git") and (REPO / "docs/ai-forward-pack/hooks").is_dir(), "needs git and the installed pack")
+    def test_the_agy_reread_guard_command_runs_the_way_agy_runs_it(self):
+        command = next(c for c in self.commands() if "reread-guard.py" in c)
+        shell = ["cmd", "/d", "/c", command] if os.name == "nt" else ["sh", "-c", command]
+        payload = json.dumps({"toolCall": {"name": "view_file", "args": {"AbsolutePath": str(REPO / "README.md")}},
+                              "conversationId": "xp-agy-test"})
+        proc = subprocess.run(shell, input=payload, cwd=str(REPO / ".agents"), capture_output=True, text=True,
+                              encoding="utf-8", timeout=60)
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+
+
 if __name__ == "__main__":
     unittest.main()
