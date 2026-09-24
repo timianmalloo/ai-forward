@@ -40,9 +40,18 @@ dreams quote other repositories' prose verbatim, and a quote is not a citation (
 note-20260919-owner-review-register-and-scan-scope). docs/ai-forward-pack/ is skipped as the
 generated copy of pack/.
 
+THE SHORT FORM. A register may number its rulings `## R-n · date · seat · title` (measured in
+x-harness-x-model-bench, 2026-09-24): there the gate read no heading and no citation, and passed
+while checking nothing. So `## R-n` / `### R-n` also define number n, and `R-n` in prose (e.g.
+"R-7", "ruling R-4") also cites it: `R-n` and `Ruling n` name one number. The short form is
+strict because short ids are common: `R-` must not follow a letter, digit or hyphen (DR-1, PR-12,
+AR-R-7) and the number must not continue as `.d`, `-d` or a letter (spike R-2.3, R-3-4, R-12a).
+
 THE TWO DEFECTS. (1) A number cited with no heading. (2) A number defined by two headings. There is
 no frozen list: nothing predates this control, so the list that "may only shrink" starts empty and
-therefore does not exist.
+therefore does not exist. And one refusal to report clean (class PACK-P): a register with level-2/3
+headings of which none parses as a ruling is NOT CHECKED - the R-n register passed as "0 defined"
+because an unread register and an empty one printed the same.
 
 USAGE
   python3 verify-ruling-citations.py                 scan the repository at the cwd
@@ -61,14 +70,19 @@ EXIT  0 ok  ·  1 refused (defects listed, one per line)  ·  2 usage (--root is
 
 ## Functions
 
-### `definitions(root)`
+### `definitions(root, spellings=…)`
 
 number -> the register line numbers that define it (two lines = the collision).
 
-### `citations(root)`
+### `citations(root, spellings=…)`
 
 number -> the prose files (repo-relative, posix) that cite it. The register is scanned
 too: prose in it that names a number is a citation (a heading is the only definition).
+
+### `unread_headings(root)`
+
+How many level-2/3 register headings exist when NONE of them parsed as a definition (PACK-P):
+a register of headings in an unknown numbering is not an empty register, and must not read as one.
 
 ### `check(root)`
 
@@ -82,6 +96,6 @@ re-examines because it is what they just reasoned about.
 
 ## Coverage
 
-- Public functions: **4** · documented: **3** (**75%**)
+- Public functions: **5** · documented: **4** (**80%**)
 - Undocumented (recorded, not invented): `check`
 

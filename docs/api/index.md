@@ -9,7 +9,7 @@ links:
   - { to: architecture, rel: documents }
 review-by: "2027-03-03"
 summary: >-
-  Generated API reference for the pack's public surface — the deployed script bundle. 541 public functions across 44 modules, 47% carrying a docstring.
+  Generated API reference for the pack's public surface — the deployed script bundle. 542 public functions across 44 modules, 47% carrying a docstring.
 ---
 
 # API reference — the deployed script bundle
@@ -62,11 +62,11 @@ with no docstring is listed as a **coverage gap** rather than described from gue
 | [`verify-no-machine-paths.py`](verify-no-machine-paths.md) | 4 | 1 | — | verify-no-machine-paths.py - a tracked, machine-readable file never carries one machine's paths. |
 | [`verify-no-new-console-launches.py`](verify-no-new-console-launches.md) | 3 | 1 | — | verify-no-new-console-launches.py - no code launches a child with CREATE_NEW_CONSOLE. |
 | [`verify-portable-text-io.py`](verify-portable-text-io.md) | 3 | 0 | — | verify-portable-text-io.py - text the pack writes is LF and UTF-8 on every OS, and every CLI survives a legacy |
-| [`verify-ruling-citations.py`](verify-ruling-citations.md) | 4 | 3 | — | verify-ruling-citations.py - every ruling cited as authority resolves to exactly one heading that says what it |
+| [`verify-ruling-citations.py`](verify-ruling-citations.md) | 5 | 4 | — | verify-ruling-citations.py - every ruling cited as authority resolves to exactly one heading that says what it |
 | [`verify-skill-contracts.py`](verify-skill-contracts.md) | 5 | 2 | — | verify-skill-contracts.py - every skill declares its seat and cites the shared stage its shape needs. |
 | [`verify-subprocess-utf8.py`](verify-subprocess-utf8.md) | 3 | 1 | — | verify-subprocess-utf8.py - a text-mode subprocess states its encoding; the locale never decides. |
 | [`visual-assets-setup.py`](visual-assets-setup.md) | 12 | 5 | — | visual-assets-setup.py - wire up a generation backend for UI visual assets (AI-Forward). |
 | [`xaml-token-lint.py`](xaml-token-lint.md) | 9 | 0 | — | xaml-token-lint.py — first-slice token linter for XAML/native UI markup. |
 
-**Total** — 541 public functions across 44 modules, **253 documented (47%)**.
+**Total** — 542 public functions across 44 modules, **254 documented (47%)**.
 

@@ -1135,7 +1135,7 @@ window.DOCS_INDEX = {
       "phase": "",
       "reviewBy": "2027-03-03",
       "reviewSuggested": [],
-      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 541 public functions across 44 modules, 47% carrying a docstring.",
+      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 542 public functions across 44 modules, 47% carrying a docstring.",
       "tags": [
         "api",
         "scripts",
@@ -1149,7 +1149,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0990f4b48cca387805473057ec79c94067e293efab33307e0b8b3b953ac3d4d8"
+      "sourceSha256": "268c7863d444e4cca59f5cbfce7443f7c216e660fdf63fa940108b25ec8dfc48"
     },
     {
       "id": "api-marker-lint",
@@ -1649,7 +1649,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "026bf52d7e1e0dcb73994c98f77077b714b149f9ac2f1be0d80592695ce03d0a"
+      "sourceSha256": "e18a4768b561fc75f9a129ee5e375a2fc8e28dc4e80b2bbf512803fabc48c1f9"
     },
     {
       "id": "api-verify-skill-contracts",
@@ -4714,7 +4714,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "6e1d362d922434c53cab86670bd4f2d6c1779c1a08011a5bf3f2d0bc1de20256"
+      "sourceSha256": "71e9eca5b3be8bfd303e28eed66c87780626930409d476016f2026332fc64ae2"
     },
     {
       "id": "docs-index",
@@ -11821,5 +11821,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "f01b3317d1efad12ab517d8a2ae6e78e1df934a0a126c945f83988865942467b"
+  "graphSha256": "bfaf7ff6ab2d830f08f290d8e1ffbab72d5d9a5059ac52a78b36c674f25e3383"
 };
