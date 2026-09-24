@@ -367,7 +367,7 @@ class NativeHookTests(GitCase):
     # The Codex command must be one quote-free program invocation that pwsh, cmd.exe and sh parse alike,
     # and it must keep the caller's directory: Codex patch paths are relative to the hook's process cwd.
 
-    def codex_command_in_fixture(self):
+    def codex_command_in_fixture(self, host="codex"):
         # Shell metacharacters in the checkout path (Windows forbids only the double quote): the launcher
         # must neither expand them nor lose the path. Git for Windows' sh hands python.exe an absolute
         # /c/... argument holding ' ` or ; unconverted (measured 2026-09-24), so run-hook.sh stays relative.
@@ -383,9 +383,10 @@ class NativeHookTests(GitCase):
         hooks.mkdir(parents=True)
         shutil.copyfile(LAUNCHER, hooks / "run-hook.sh")
         (self.repo / "sub" / "deeper").mkdir(parents=True)
-        config = self.run_cli("hook", "--config", "--host", "codex")
+        config = self.run_cli("hook", "--config", "--host", host)
         self.assertEqual(0, config.returncode, config.stderr)
-        return json.loads(config.stdout)["hooks"]["PreToolUse"][0]["hooks"][0]["command"]
+        data = json.loads(config.stdout)
+        return (data["ownership-guard"] if host == "agy" else data["hooks"])["PreToolUse"][0]["hooks"][0]["command"]
 
     def assert_codex_command_reaches_the_hook(self, launch):
         command = self.codex_command_in_fixture()
@@ -428,6 +429,49 @@ class NativeHookTests(GitCase):
     def test_codex_hook_command_runs_under_cmd(self):
         # The raw command line, as a host hands it to cmd.exe; a list would be re-quoted by list2cmdline.
         self.assert_codex_command_reaches_the_hook(lambda command: "cmd /d /c " + command)
+
+    # PLAT-A for Agy's ownership guard. Agy runs hook commands through cmd.exe on Windows, from <repo>/.agents
+    # (measured 2026-09-24, agy 1.2.10). Revision 93 moved the six bundle commands to the launcher and left
+    # this emitter (`hook --config --host agy`) POSIX-only; W1-PACK recorded it in revision 94's register.
+    # Agy's TargetFile is absolute, so the hook needs no caller directory.
+
+    def assert_agy_command_reaches_the_hook(self, launch):
+        command = self.codex_command_in_fixture("agy")
+        env = dict(os.environ, AGENT_SESSION="worker", AGENT_NAME="worker")
+        env.pop("COORD_ROOT", None)
+        for target, expected in (("held.txt", "deny"), ("free.txt", "allow")):
+            with self.subTest(target=target):
+                payload = json.dumps({"toolCall": {"name": "write_to_file", "args": {"TargetFile": str(self.repo / target)}}})
+                result = subprocess.run(launch(command), cwd=self.repo / ".agents", env=env, input=payload,
+                                        capture_output=True, text=True, encoding="utf-8", timeout=60)
+                self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+                if expected == "deny":
+                    self.assertTrue(result.stdout.strip(), "the hook was not reached: " + result.stderr)
+                    self.assertEqual("deny", json.loads(result.stdout)["decision"])
+                    self.assertIn("owner-work", result.stdout)
+                else:
+                    self.assertEqual("", result.stdout.strip(), "ownership alone must not autoapprove Agy policy")
+                ledger = (self.repo / ".agents/decisions/worker.jsonl").read_text(encoding="utf-8").splitlines()
+                row = json.loads(ledger[-1])
+                self.assertEqual((target, "agy", "refused" if expected == "deny" else "allowed"),
+                                 (row["path"], row["hook_host"], row["kind"]), "the hook was not reached")
+        self.assertEqual([], [p.name for p in self.repo.parent.rglob("PWN_*")], "the checkout path was expanded")
+
+    def test_agy_ownership_hook_command_is_one_quote_free_invocation(self):
+        config = self.run_cli("hook", "--config", "--host", "agy")
+        command = json.loads(config.stdout)["ownership-guard"]["PreToolUse"][0]["hooks"][0]["command"]
+        for token in ("$", "`", "[ ", "'", '"', ";", "&&", "||", "%", "|", "<", ">"):
+            self.assertNotIn(token, command, f"{token!r} is shell-specific: cmd.exe and sh read it differently")
+        self.assertEqual("git -c alias.aif-hook=!sh aif-hook docs/ai-forward-pack/hooks/run-hook.sh "
+                         "../scripts/coord-core.py hook --host agy", command)
+
+    @unittest.skipUnless(shutil.which("sh") and shutil.which("git"), "sh or git is absent")
+    def test_agy_ownership_hook_command_runs_under_sh(self):
+        self.assert_agy_command_reaches_the_hook(lambda command: ["sh", "-c", command])
+
+    @unittest.skipUnless(os.name == "nt" and shutil.which("git"), "cmd.exe exists only on Windows")
+    def test_agy_ownership_hook_command_runs_under_cmd(self):
+        self.assert_agy_command_reaches_the_hook(lambda command: "cmd /d /c " + command)
 
     def test_native_decision_ledger_does_not_store_patch_content(self):
         patch = self.payload("*** Begin Patch\n*** Update File: held.txt\n@@\n-OWNER\n+SECRET_PATCH\n*** End Patch")
