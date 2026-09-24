@@ -481,6 +481,30 @@ class TransportTests(unittest.TestCase):
                     result["code"], result["turns_completed"], result["compatibility_responses"]))
                 self.assertNotIn("SECRET", json.dumps([result, self.events]))
 
+    # R-29 (x-harness-x-model-bench run w1-host-s4, 2026-09-24): Grok 1.0.41 failed protocol_error 3.36 s after
+    # its prompt started (0 turns, 6 compatibility responses, 22 extension notifications), and the result held
+    # nothing about the rejected message. A control that fails with no evidence can be neither diagnosed nor
+    # widened from a recording. The message is recorded as structure: protocol fields keep their values,
+    # every other string becomes its length, so no prompt, tool or model content leaves the transport.
+    def test_protocol_error_records_the_rejected_message_bounded_and_scrubbed(self):
+        result = self.run_peer("watcher_other_id")
+        self.assertEqual(("protocol_error", "session/prompt"), (result["code"], result["protocol_error_phase"]))
+        self.assertEqual({"jsonrpc": "2.0", "id": "foreign-response", "result": {"result": {"reloaded": 1}}},
+                         result["protocol_error_message"])
+        result = self.run_peer("watcher_extra")
+        self.assertEqual({"jsonrpc": "2.0", "id": "skills-reload", "result": {"result": {"reloaded": 1}},
+                          "extra": "<string 26>"}, result["protocol_error_message"])
+        self.assertNotIn("SECRET", json.dumps([result, self.events]))
+        result = self.run_peer("malformed")
+        self.assertEqual(({"unparseable_frame_bytes": 7}, "initialize"),
+                         (result["protocol_error_message"], result["protocol_error_phase"]))
+        result = self.run_peer("agy_foreign_step", transport="agy")
+        self.assertEqual(("protocol_error", "agy"), (result["code"], result["protocol_error_phase"]))
+        self.assertEqual("another-session", result["protocol_error_message"]["step_update"]["conversation_id"])
+        self.assertNotIn("SECRET", json.dumps([result, self.events]))
+        self.assertLessEqual(len(json.dumps(result["protocol_error_message"])), self.module.MAX_DETAIL_BYTES)
+        self.assertIsNone(self.run_peer()["protocol_error_message"])
+
     def test_watcher_acknowledgement_alone_cannot_credit_a_turn(self):
         result = self.run_peer("watcher_hang", deadline_seconds=.25)
         self.assertEqual(("deadline_exceeded", 0, 1), (
@@ -781,6 +805,7 @@ class SharedTransportContractsOnWindows(unittest.TestCase):
     test_agy_recoverable_error_contract = TransportTests.test_native_agy_tool_errors_are_counted_and_the_prompt_continues
     test_agy_error_streak_contract = TransportTests.test_native_agy_consecutive_errors_hit_the_loop_breaker_and_a_success_resets_it
     test_agy_denial_contract = TransportTests.test_native_agy_denial_blocks_all_later_prompts
+    test_protocol_error_detail_contract = TransportTests.test_protocol_error_records_the_rejected_message_bounded_and_scrubbed
 
 
 if __name__ == "__main__":
