@@ -44,6 +44,11 @@ READ_BYTES = 65536
 # native_tool_error_streak_max of qualification and wave results. breaks: a working attempt ends on
 # native_tool_error_limit (raise the cap), or a runaway loop spends the deadline under it (lower it).
 NATIVE_ERROR_STREAK_CAP = 5
+# R-29: a protocol_error records the frame it rejected, as structure and never as content. Protocol fields
+# keep their identifier values; every other string becomes its length. The whole is at most this many bytes.
+MAX_DETAIL_BYTES = 4096
+_PROTOCOL_KEYS = frozenset(("jsonrpc", "id", "method", "sessionId", "sessionUpdate", "stopReason", "event",
+                            "conversation_id", "state", "step_type", "type", "status", "protocolVersion"))
 POLL_SECONDS = 0.1
 CLEANUP_SECONDS = 4.0
 
@@ -85,6 +90,37 @@ class _Failure(Exception):
 
 def _identifier(value):
     return isinstance(value, str) and re.fullmatch(r"[A-Za-z0-9._:/+-]{1,256}", value) is not None
+
+
+def _structure(value, key=None, depth=0):
+    if value is None or isinstance(value, (bool, int, float)):
+        return value
+    if isinstance(value, str):
+        return value if key in _PROTOCOL_KEYS and _identifier(value) else "<string {}>".format(len(value))
+    if not isinstance(value, (dict, list)):
+        return "<{}>".format(type(value).__name__)
+    if depth >= 6:
+        return "<{} {}>".format(type(value).__name__, len(value))
+    if isinstance(value, dict):
+        return {(name if _identifier(name) and len(name) <= 64 else "<key {}>".format(len(name))):
+                _structure(item, name, depth + 1) for name, item in list(value.items())[:32]}
+    items = [_structure(item, None, depth + 1) for item in value[:16]]
+    return items + (["<{} more>".format(len(value) - 16)] if len(value) > 16 else [])
+
+
+def rejected_detail(frame):
+    """The frame a protocol_error rejected, as bounded structure (R-29); None when no frame arrived."""
+    if frame is None:
+        return None
+    try:
+        value = json.loads(frame.decode("utf-8"))
+    except (ValueError, UnicodeError, RecursionError):
+        return {"unparseable_frame_bytes": len(frame)}
+    detail = _structure(value)
+    if len(json.dumps(detail)) > MAX_DETAIL_BYTES:
+        keys = list(detail)[:32] if isinstance(detail, dict) else []
+        detail = {"oversized_frame_bytes": len(frame), "top_level_keys": keys}
+    return detail
 
 
 GROK_RELOAD_FLOOR = (1, 0, 34)  # the first grok release measured to inject the skills-reload response
@@ -137,6 +173,7 @@ class _Wire:
         self.stdout_eof = False
         self.stdout_listening = False
         self.last_frame_bytes = 0
+        self.last_frame = None
         self.safe_shutdown_output = False
 
     def attach(self, process):
@@ -218,6 +255,7 @@ class _Wire:
                 line = bytes(self.incoming[:newline])
                 del self.incoming[:newline + 1]
                 self.last_frame_bytes = newline + 1
+                self.last_frame = line
                 try:
                     value = json.loads(line.decode("utf-8"))
                 except (ValueError, UnicodeError, RecursionError):
@@ -226,6 +264,8 @@ class _Wire:
                     raise _Failure("protocol_error")
                 return value
             if self.stdout_eof:
+                if self.incoming:
+                    self.last_frame = bytes(self.incoming)
                 raise _Failure("protocol_error" if self.incoming else "early_eof")
             self.pump(min(POLL_SECONDS, max(0, self.deadline - time.monotonic())))
 
@@ -276,6 +316,7 @@ class _ThreadedWire:
         self.outgoing = bytearray()
         self.stdout_eof = False
         self.last_frame_bytes = 0
+        self.last_frame = None
         self.safe_shutdown_output = False
         self._closed = False
         self._writer_broken = False
@@ -401,8 +442,11 @@ class _ThreadedWire:
                     line = bytes(self.incoming[:newline])
                     del self.incoming[:newline + 1]
                     self.last_frame_bytes = newline + 1
+                    self.last_frame = line
                     self._condition.notify_all()  # a paused stdout reader may continue
                 elif self.stdout_eof:
+                    if self.incoming:
+                        self.last_frame = bytes(self.incoming)
                     raise _Failure("protocol_error" if self.incoming else "early_eof")
                 else:
                     line = None
@@ -481,6 +525,7 @@ class _Session:
         self.permission_handler = permission_handler
         self.max_turns = max_turns
         self.error_streak = 0
+        self.phase = None  # the request in flight, or "agy": where a protocol_error happened (R-29)
 
     def event(self, event, **fields):
         try:
@@ -609,6 +654,7 @@ class _Session:
     def rpc(self, method, params):
         self.sequence += 1
         request_id = self.sequence
+        self.phase = method
         self.wire.queue({"jsonrpc": "2.0", "id": request_id, "method": method, "params": params})
         while True:
             message = self.wire.receive()
@@ -789,6 +835,7 @@ class _Session:
 
     def agy(self, prompts):
         # Observed Agy 1.2.7 wire: init.conversation_id; result.result.status.
+        self.phase = "agy"
         for prompt in self.prompts(prompts):
             if self.turn:
                 # Native results have no observed per-turn id. Reject output
@@ -879,8 +926,9 @@ def run_session(transport, argv, cwd, env, prompts, deadline_seconds, output_lim
                   output_bytes_over_limit=0, native_denials=0, native_tool_errors=0,
                   native_tool_error_streak_max=0, prompts_started=0,
                   permission_allowed=0, permission_denials=0, loaded_cwd_verified=False,
-                  selected_model=None, selected_model_set=False)
-    wire = None
+                  selected_model=None, selected_model_set=False,
+                  protocol_error_phase=None, protocol_error_message=None)
+    wire = session = None
     try:
         if os.name not in ("posix", "nt"):
             raise _Failure("unsupported_platform", "blocked")
@@ -955,6 +1003,10 @@ def run_session(transport, argv, cwd, env, prompts, deadline_seconds, output_lim
         result.update(outcome="complete", code="complete")
     except _Failure as failure:
         result.update(outcome=failure.outcome, code=failure.code)
+        if failure.code == "protocol_error" and wire is not None:
+            # R-29: never a failure with nothing to read. Structure only; see rejected_detail.
+            result.update(protocol_error_phase=session.phase if session is not None else None,
+                          protocol_error_message=rejected_detail(wire.last_frame))
     except (OSError, ValueError, UnicodeError, RecursionError):
         result.update(outcome="failed", code="io_error")
     finally:

@@ -496,7 +496,8 @@ class TransportTests(unittest.TestCase):
                           "extra": "<string 26>"}, result["protocol_error_message"])
         self.assertNotIn("SECRET", json.dumps([result, self.events]))
         result = self.run_peer("malformed")
-        self.assertEqual(({"unparseable_frame_bytes": 7}, "initialize"),
+        # the peer prints "{broken" plus the platform line end; the frame is everything before "\n"
+        self.assertEqual(({"unparseable_frame_bytes": len("{broken" + os.linesep) - 1}, "initialize"),
                          (result["protocol_error_message"], result["protocol_error_phase"]))
         result = self.run_peer("agy_foreign_step", transport="agy")
         self.assertEqual(("protocol_error", "agy"), (result["code"], result["protocol_error_phase"]))
