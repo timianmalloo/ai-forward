@@ -4637,6 +4637,11 @@ def native_hook_config(host):
         # --caller-cwd, keeps the caller's directory, against which Codex patch paths resolve.
         command = ("git -c alias.aif-hook=!sh aif-hook docs/ai-forward-pack/hooks/run-hook.sh "
                    "--caller-cwd ../scripts/coord-core.py hook --host codex")
+    elif host == "agy":
+        # PLAT-A: Agy on Windows runs hook commands through cmd.exe from <repo>/.agents (measured 2026-09-24,
+        # agy 1.2.10), as its six bundle commands already do. Its TargetFile is absolute, so the launcher
+        # runs the hook from the top of the tree with no --caller-cwd.
+        command = "git -c alias.aif-hook=!sh aif-hook docs/ai-forward-pack/hooks/run-hook.sh ../scripts/coord-core.py hook --host agy"
     else:
         command = ("py=$(python3 -c 'import sys;print(sys.executable)' 2>/dev/null); "
                    "[ -x \"$py\" ] || py=$(python -c 'import sys;print(sys.executable)'); "
