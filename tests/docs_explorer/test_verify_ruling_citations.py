@@ -153,6 +153,20 @@ class Gate(Tree):
         self.assertIn("R-2 ", result.stdout)
         self.assertIn("R-6 ", result.stdout)
 
+    def test_register_headings_in_no_recognised_form_are_not_checked(self):
+        # PACK-P: the R-n miss passed because 0 definitions over a register full of headings read as clean.
+        # The next unrecognised numbering must fail loudly, not repeat that.
+        self.write("docs/notes/rulings.md", FRONT + "## RUL-1 · 2026-09-24 · Owner · x\n\ny\n\n### RUL-2 · z\n\nw\n")
+        result = self.check()
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+        self.assertIn("NOT CHECKED", result.stdout)
+        self.assertIn("2 heading(s)", result.stdout)
+
+    def test_a_register_with_only_its_title_is_empty_not_unreadable(self):
+        self.write("docs/notes/rulings.md", FRONT)
+        result = self.check()
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
     def test_look_alike_ids_are_not_citations(self):
         self.write("docs/plans/p.md", "Spike R-2.3 and R-10.1, story US-13, HB-PRE-002, DR-1, PR-12, HR-4,"
                    " XR-9, lower r-5, R-12a, R-3-4, AR-R-7x and SR-1 are not rulings.\n")
