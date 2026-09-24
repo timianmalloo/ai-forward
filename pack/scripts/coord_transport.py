@@ -31,6 +31,12 @@ from platform_process import (  # noqa: E402
 
 
 MAX_INPUT_BYTES = 16 * 1024 * 1024
+# RUN-A: the output bound (output_limit) marks an attempt, it never ends one: run w1-s1 lost a committed
+# slice to it (grok 1.0.41, 16 MiB at 906 s). Memory is bounded here instead, by the unparsed stdout
+# buffer: a reader pauses while the buffer holds complete frames, and only one unterminated frame larger
+# than this ends the attempt (buffer_limit_exceeded). Time is bounded by the attempt deadline.
+MAX_BUFFER_BYTES = 16 * 1024 * 1024
+READ_BYTES = 65536
 POLL_SECONDS = 0.1
 CLEANUP_SECONDS = 4.0
 
@@ -103,19 +109,27 @@ def _signal_group(process, sig):
     return "group_signal_failed"
 
 
+def _buffer_state(buffer):
+    """read; pause (complete frames wait for the parser); or overflow (one unterminated frame is too large)."""
+    if len(buffer) <= MAX_BUFFER_BYTES:
+        return "read"
+    return "pause" if buffer.find(b"\n") >= 0 else "overflow"
+
+
 class _Wire:
     """One bounded input frame and output buffer; no transcript or message queue."""
 
-    def __init__(self, deadline, output_limit, cancelled, result):
+    def __init__(self, deadline, cancelled, result):
         self.process = None
         self.deadline = deadline
-        self.output_limit = output_limit
         self.cancelled = cancelled
         self.result = result
         self.selector = selectors.DefaultSelector()
         self.incoming = bytearray()
         self.outgoing = bytearray()
         self.stdout_eof = False
+        self.stdout_listening = False
+        self.last_frame_bytes = 0
         self.safe_shutdown_output = False
 
     def attach(self, process):
@@ -123,7 +137,18 @@ class _Wire:
         for stream, label in ((process.stdout, "stdout"), (process.stderr, "stderr")):
             os.set_blocking(stream.fileno(), False)
             self.selector.register(stream, selectors.EVENT_READ, label)
+        self.stdout_listening = True
         os.set_blocking(process.stdin.fileno(), False)
+
+    def _listen_stdout(self, listen):
+        # Backpressure: complete frames the parser has not taken stay in the pipe, not in memory.
+        if self.stdout_eof or listen == self.stdout_listening:
+            return
+        if listen:
+            self.selector.register(self.process.stdout, selectors.EVENT_READ, "stdout")
+        else:
+            self.selector.unregister(self.process.stdout)
+        self.stdout_listening = listen
 
     def check(self):
         if time.monotonic() >= self.deadline:
@@ -145,6 +170,10 @@ class _Wire:
         self.outgoing.extend(payload)
 
     def pump(self, timeout):
+        state = _buffer_state(self.incoming)
+        if state == "overflow":
+            raise _Failure("buffer_limit_exceeded")
+        self._listen_stdout(state == "read")
         for key, _ in self.selector.select(timeout):
             if key.data == "stdin":
                 try:
@@ -157,23 +186,22 @@ class _Wire:
                 if not self.outgoing:
                     self.selector.unregister(key.fileobj)
                 continue
-            remaining = self.output_limit - self.result["stdout_bytes"] - self.result["stderr_bytes"]
-            if remaining < 0:
-                raise _Failure("output_limit_exceeded")
             try:
-                data = os.read(key.fd, min(65536, max(1, remaining + 1)))
+                data = os.read(key.fd, READ_BYTES)
             except BlockingIOError:
                 continue
             if not data:
                 self.selector.unregister(key.fileobj)
                 if key.data == "stdout":
                     self.stdout_eof = True
+                    self.stdout_listening = False
                 continue
+            # Every byte is counted; stderr is never retained. The output bound is applied once, at the end.
             self.result[key.data + "_bytes"] += len(data)
-            if len(data) > remaining:
-                raise _Failure("output_limit_exceeded")
             if key.data == "stdout":
                 self.incoming.extend(data)
+                if _buffer_state(self.incoming) == "overflow":
+                    raise _Failure("buffer_limit_exceeded")
 
     def receive(self):
         while True:
@@ -182,6 +210,7 @@ class _Wire:
             if newline >= 0:
                 line = bytes(self.incoming[:newline])
                 del self.incoming[:newline + 1]
+                self.last_frame_bytes = newline + 1
                 try:
                     value = json.loads(line.decode("utf-8"))
                 except (ValueError, UnicodeError, RecursionError):
@@ -231,15 +260,15 @@ class _Wire:
 
 
 class _ThreadedWire:
-    def __init__(self, deadline, output_limit, cancelled, result):
+    def __init__(self, deadline, cancelled, result):
         self.process = None
         self.deadline = deadline
-        self.output_limit = output_limit
         self.cancelled = cancelled
         self.result = result
         self.incoming = bytearray()
         self.outgoing = bytearray()
         self.stdout_eof = False
+        self.last_frame_bytes = 0
         self.safe_shutdown_output = False
         self._closed = False
         self._writer_broken = False
@@ -257,28 +286,29 @@ class _ThreadedWire:
         for thread in self._threads:
             thread.start()
 
-    def _consume_budget(self, label, data):
+    def _accept(self, label, data):
+        # Every byte is counted; stderr is never retained. The output bound is applied once, at the end.
         with self._condition:
-            remaining = self.output_limit - self.result["stdout_bytes"] - self.result["stderr_bytes"]
             self.result[label + "_bytes"] += len(data)
-            if len(data) > remaining:
-                self._output_error = "output_limit_exceeded"
-                self._condition.notify_all()
-                return False
             if label == "stdout":
                 self.incoming.extend(data)
+                if _buffer_state(self.incoming) == "overflow":
+                    self._output_error = "buffer_limit_exceeded"
+                    self._condition.notify_all()
+                    return False
             self._condition.notify_all()
             return True
 
     def _read_stdout(self):
         while True:
             with self._condition:
+                # Backpressure: complete frames the parser has not taken stay in the pipe, not in memory.
+                while not self._closed and _buffer_state(self.incoming) == "pause":
+                    self._condition.wait()
                 if self._closed:
                     return
-                remaining = self.output_limit - self.result["stdout_bytes"] - self.result["stderr_bytes"]
-                size = min(65536, max(1, remaining + 1))
             try:
-                data = self.process.stdout.read(size)
+                data = self.process.stdout.read(READ_BYTES)
             except OSError:
                 data = b""
             if not data:
@@ -286,7 +316,7 @@ class _ThreadedWire:
                     self.stdout_eof = True
                     self._condition.notify_all()
                 return
-            if not self._consume_budget("stdout", data):
+            if not self._accept("stdout", data):
                 return
 
     def _read_stderr(self):
@@ -294,18 +324,15 @@ class _ThreadedWire:
             with self._condition:
                 if self._closed:
                     return
-                remaining = self.output_limit - self.result["stdout_bytes"] - self.result["stderr_bytes"]
-                size = min(65536, max(1, remaining + 1))
             try:
-                data = self.process.stderr.read(size)
+                data = self.process.stderr.read(READ_BYTES)
             except OSError:
                 return
             if not data:
                 with self._condition:
                     self._condition.notify_all()
                 return
-            if not self._consume_budget("stderr", data):
-                return
+            self._accept("stderr", data)
 
     def _write_stdin(self):
         while True:
@@ -366,6 +393,8 @@ class _ThreadedWire:
                 if newline >= 0:
                     line = bytes(self.incoming[:newline])
                     del self.incoming[:newline + 1]
+                    self.last_frame_bytes = newline + 1
+                    self._condition.notify_all()  # a paused stdout reader may continue
                 elif self.stdout_eof:
                     raise _Failure("protocol_error" if self.incoming else "early_eof")
                 else:
@@ -612,9 +641,11 @@ class _Session:
                         raise _Failure("protocol_error")
                 elif message["method"].startswith("_"):
                     # ACP v1 extension notifications are optional, one-way data.
-                    # Count without retaining names/payloads or emitting per-item events;
-                    # the same wire deadline and byte limit still bound every receive.
+                    # Count without retaining names/payloads or emitting per-item events.
+                    # They are the progress stream, so their bytes are counted apart from the
+                    # output bound (RUN-A); the wire deadline and buffer bound still apply.
                     self.result["extension_notifications"] += 1
+                    self.result["extension_notification_bytes"] += self.wire.last_frame_bytes
                 else:
                     raise _Failure("protocol_error")
                 continue
@@ -824,7 +855,8 @@ def run_session(transport, argv, cwd, env, prompts, deadline_seconds, output_lim
               "duration_seconds": 0.0, "permission_requests": 0,
               "cleanup_error": None, "reported_version": None, "progress_updates": 0,
               "reported_version_source": None, "compatibility_responses": 0}
-    result.update(extension_notifications=0, native_denials=0, prompts_started=0,
+    result.update(extension_notifications=0, extension_notification_bytes=0, output_truncated=False,
+                  output_bytes_over_limit=0, native_denials=0, prompts_started=0,
                   permission_allowed=0, permission_denials=0, loaded_cwd_verified=False,
                   selected_model=None, selected_model_set=False)
     wire = None
@@ -863,7 +895,7 @@ def run_session(transport, argv, cwd, env, prompts, deadline_seconds, output_lim
         except (OSError, ValueError):
             raise _Failure("invalid_file_roots", "blocked") from None
         deadline = started + deadline_seconds
-        wire = (_ThreadedWire if os.name == "nt" else _Wire)(deadline, output_limit, cancelled, result)
+        wire = (_ThreadedWire if os.name == "nt" else _Wire)(deadline, cancelled, result)
         wire.check()
         try:
             if os.name == "nt":
@@ -915,5 +947,11 @@ def run_session(transport, argv, cwd, env, prompts, deadline_seconds, output_lim
             result.update(outcome="blocked", code="permission_denied")
         if result["cleanup_error"] and result["outcome"] == "complete":
             result.update(outcome="failed", code="cleanup_failed")
+        if type(output_limit) is int and 0 < output_limit <= MAX_INPUT_BYTES:
+            # RUN-A: output past the bound is marked, never fatal. Nothing past it is retained (no wire
+            # body ever is); it is still parsed, so the turn's own response can complete the attempt.
+            charged = result["stdout_bytes"] + result["stderr_bytes"] - result["extension_notification_bytes"]
+            result["output_bytes_over_limit"] = max(0, charged - output_limit)
+            result["output_truncated"] = result["output_bytes_over_limit"] > 0
         result["duration_seconds"] = round(time.monotonic() - started, 6)
     return result
