@@ -245,7 +245,12 @@ class AgyHookShellTests(unittest.TestCase):
         self.assertIn("import sys;print(sys.executable)", text)
         self.assertIn("python3", text)
         self.assertIn("python -c", text, "no fallback for python.org Windows")
-        self.assertIn('exec "$py" "docs/ai-forward-pack/hooks/$hook"', text)
+        # agy (no flag) runs the hook by its tree-relative path from the top of the tree; Codex's
+        # --caller-cwd returns to the caller's directory and names the hook relative to it (PLAT-C).
+        self.assertIn('script="${up}docs/ai-forward-pack/hooks/$1"', text)
+        self.assertIn('cd "./$GIT_PREFIX" || exit 2', text)
+        self.assertIn('exec "$py" "$script" "$@"', text)
+        self.assertNotIn("$(pwd)", text, "Git for Windows sh hands python.exe an unconverted /c/... path")
 
     @unittest.skipUnless(shutil.which("git") and (REPO / "docs/ai-forward-pack/hooks").is_dir(), "needs git and the installed pack")
     def test_the_agy_reread_guard_command_runs_the_way_agy_runs_it(self):

@@ -4630,10 +4630,18 @@ def native_hook_config(host):
             "timeoutSec": 10,
             "matcher": "^(edit|create|write|apply_patch|str_replace|search_replace|multiedit|notebookedit|edit_file|write_file|write_to_file|replace_file_content|multi_replace_file_content)$",
         }]}}
-    command = ("py=$(python3 -c 'import sys;print(sys.executable)' 2>/dev/null); "
-               "[ -x \"$py\" ] || py=$(python -c 'import sys;print(sys.executable)'); "
-               "root=$(git rev-parse --show-toplevel) || exit 2; "
-               "exec \"$py\" \"$root/docs/ai-forward-pack/scripts/coord-core.py\" hook --host " + host)
+    if host == "codex":
+        # PLAT-C: Codex on Windows runs hook commands through `pwsh -Command` (measured 2026-09-24,
+        # codex 0.156), which cannot parse the sh form below. One quote-free git invocation parses
+        # alike under pwsh, cmd.exe and sh; run-hook.sh resolves the interpreter and, with
+        # --caller-cwd, keeps the caller's directory, against which Codex patch paths resolve.
+        command = ("git -c alias.aif-hook=!sh aif-hook docs/ai-forward-pack/hooks/run-hook.sh "
+                   "--caller-cwd ../scripts/coord-core.py hook --host codex")
+    else:
+        command = ("py=$(python3 -c 'import sys;print(sys.executable)' 2>/dev/null); "
+                   "[ -x \"$py\" ] || py=$(python -c 'import sys;print(sys.executable)'); "
+                   "root=$(git rev-parse --show-toplevel) || exit 2; "
+                   "exec \"$py\" \"$root/docs/ai-forward-pack/scripts/coord-core.py\" hook --host " + host)
     matcher = {"codex": "apply_patch", "claude": "Write|Edit|MultiEdit|NotebookEdit",
                "grok": "Write|Edit|MultiEdit|NotebookEdit|write_file|edit_file|search_replace",
                "agy": "write_to_file|replace_file_content|multi_replace_file_content"}[host]

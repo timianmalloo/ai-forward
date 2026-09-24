@@ -368,6 +368,13 @@ class NativeHookTests(GitCase):
     # and it must keep the caller's directory: Codex patch paths are relative to the hook's process cwd.
 
     def codex_command_in_fixture(self):
+        # Shell metacharacters in the checkout path (Windows forbids only the double quote): the launcher
+        # must neither expand them nor lose the path. Git for Windows' sh hands python.exe an absolute
+        # /c/... argument holding ' ` or ; unconverted (measured 2026-09-24), so run-hook.sh stays relative.
+        hostile = "space ' $(touch PWN_DOLLAR) `touch PWN_TICK` & %OS% ;x" + ("" if os.name == "nt" else ' "')
+        renamed = self.repo.with_name(hostile)
+        self.repo.rename(renamed)
+        self.repo = renamed
         scripts = self.repo / "docs/ai-forward-pack/scripts"
         scripts.mkdir(parents=True)
         for name in ("coord-core.py", "coord_ids.py", "repo_identity.py"):
@@ -375,7 +382,7 @@ class NativeHookTests(GitCase):
         hooks = self.repo / "docs/ai-forward-pack/hooks"
         hooks.mkdir(parents=True)
         shutil.copyfile(LAUNCHER, hooks / "run-hook.sh")
-        (self.repo / "sub").mkdir()
+        (self.repo / "sub" / "deeper").mkdir(parents=True)
         config = self.run_cli("hook", "--config", "--host", "codex")
         self.assertEqual(0, config.returncode, config.stderr)
         return json.loads(config.stdout)["hooks"]["PreToolUse"][0]["hooks"][0]["command"]
@@ -384,12 +391,12 @@ class NativeHookTests(GitCase):
         command = self.codex_command_in_fixture()
         env = dict(os.environ, AGENT_SESSION="worker", AGENT_NAME="worker")
         env.pop("COORD_ROOT", None)
-        # From sub/: `../held.txt` is the leased file; `held.txt` is sub/held.txt, which nobody holds.
-        # The allow case fails if the launcher loses the caller's directory.
-        for target, expected in (("../held.txt", "deny"), ("held.txt", "allow")):
+        # From sub/deeper/: `../../held.txt` is the leased file; `held.txt` is sub/deeper/held.txt, which
+        # nobody holds. The allow case fails if the launcher loses the caller's directory.
+        for target, expected in (("../../held.txt", "deny"), ("held.txt", "allow")):
             with self.subTest(target=target):
                 patch = self.payload("*** Begin Patch\n*** Delete File: " + target + "\n*** End Patch")
-                result = subprocess.run(launch(command), cwd=self.repo / "sub", env=env, input=patch,
+                result = subprocess.run(launch(command), cwd=self.repo / "sub" / "deeper", env=env, input=patch,
                                         capture_output=True, text=True, encoding="utf-8", timeout=60)
                 self.assertEqual(0, result.returncode, result.stdout + result.stderr)
                 self.assertTrue(result.stdout.strip(), "the hook was not reached: " + result.stderr)
@@ -397,6 +404,7 @@ class NativeHookTests(GitCase):
                 self.assertEqual(expected, response["permissionDecision"], response)
                 if expected == "deny":
                     self.assertIn("owner-work", response["permissionDecisionReason"])
+        self.assertEqual([], [p.name for p in self.repo.parent.rglob("PWN_*")], "the checkout path was expanded")
 
     def test_codex_hook_command_is_one_quote_free_invocation(self):
         config = self.run_cli("hook", "--config", "--host", "codex")
