@@ -37,6 +37,13 @@ MAX_INPUT_BYTES = 16 * 1024 * 1024
 # than this ends the attempt (buffer_limit_exceeded). Time is bounded by the attempt deadline.
 MAX_BUFFER_BYTES = 16 * 1024 * 1024
 READ_BYTES = 65536
+# RUN-A: a native Agy tool error that is not a permission check is counted and the prompt continues
+# (run w1-s1 lost an attempt to one failed view_file). This many ERROR steps with no DONE step between
+# them end the attempt as native_tool_error_limit: a loop breaker whose firing is a defect signal.
+# assume: an agent that can recover reaches a DONE step within 5 errors in a row. confirm: the
+# native_tool_error_streak_max of qualification and wave results. breaks: a working attempt ends on
+# native_tool_error_limit (raise the cap), or a runaway loop spends the deadline under it (lower it).
+NATIVE_ERROR_STREAK_CAP = 5
 POLL_SECONDS = 0.1
 CLEANUP_SECONDS = 4.0
 
@@ -473,6 +480,7 @@ class _Session:
         self.next_prompt = next_prompt
         self.permission_handler = permission_handler
         self.max_turns = max_turns
+        self.error_streak = 0
 
     def event(self, event, **fields):
         try:
@@ -771,6 +779,14 @@ class _Session:
                    action_id="native-denial-" + str(self.result["native_denials"]))
         raise _Failure("permission_denied", "blocked")
 
+    def native_tool_error(self):
+        self.result["native_tool_errors"] += 1
+        self.error_streak += 1
+        self.result["native_tool_error_streak_max"] = max(self.result["native_tool_error_streak_max"], self.error_streak)
+        self.event("native_tool_error", native_tool_errors=self.result["native_tool_errors"], streak=self.error_streak)
+        if self.error_streak >= NATIVE_ERROR_STREAK_CAP:
+            raise _Failure("native_tool_error_limit")
+
     def agy(self, prompts):
         # Observed Agy 1.2.7 wire: init.conversation_id; result.result.status.
         for prompt in self.prompts(prompts):
@@ -808,11 +824,14 @@ class _Session:
                         error = info.get("error", {})
                         detail = error.get("message", "")
                         # This narrow signature is from Agy 1.2.7's native TOOL_ERROR,
-                        # not assistant prose. Other error steps also stop dispatch.
+                        # not assistant prose; it blocks. Any other error step is counted,
+                        # and the agent may recover from it (RUN-A).
                         if (step.get("step_type") == "tool" and error.get("type") == "TOOL_ERROR"
                                 and isinstance(detail, str) and detail.startswith("permission check failed for ")):
                             self.native_denial(1)
-                        raise _Failure("native_tool_error")
+                        self.native_tool_error()
+                    elif step.get("state") == "DONE":
+                        self.error_streak = 0
                 elif message.get("event") == "result":
                     response = message.get("result")
                     if (not isinstance(response, dict) or not self.result["session_id"]
@@ -826,6 +845,7 @@ class _Session:
                         self.native_denial(len(denied))
                     if response.get("status") != "SUCCESS":
                         raise _Failure("incomplete")
+                    self.error_streak = 0
                     self.result["turns_completed"] += 1
                     self.event("turn_completed", turn=self.turn)
                     break
@@ -856,7 +876,8 @@ def run_session(transport, argv, cwd, env, prompts, deadline_seconds, output_lim
               "cleanup_error": None, "reported_version": None, "progress_updates": 0,
               "reported_version_source": None, "compatibility_responses": 0}
     result.update(extension_notifications=0, extension_notification_bytes=0, output_truncated=False,
-                  output_bytes_over_limit=0, native_denials=0, prompts_started=0,
+                  output_bytes_over_limit=0, native_denials=0, native_tool_errors=0,
+                  native_tool_error_streak_max=0, prompts_started=0,
                   permission_allowed=0, permission_denials=0, loaded_cwd_verified=False,
                   selected_model=None, selected_model_set=False)
     wire = None
