@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-24T21:47:08Z",
+  "generated": "2026-09-24T22:56:36Z",
   "audit": [
     {
       "actor": null,
@@ -13241,6 +13241,40 @@ window.AUDIT_DATA = {
         "short": "a9a5af504",
         "branch": "fix/ruling-citations-r-n-and-codex-hook-windows",
         "pushed": true
+      }
+    },
+    {
+      "id": "al-01M3AT54ETVKZ9ZKCB0N6VC4RD",
+      "shortname": "rev95-runner-long-slices-hooks",
+      "datetime": "2026-09-24T22:56:36Z",
+      "session": "w1-pack-2",
+      "prompt": "W1-PACK-2 (coord-opus-cq, rulings R-11 and R-29 of x-harness-x-model-bench): fix the runner output bound and native tool errors, the agy ownership hook, the coord-decide R-n allocator, the Copilot hook commands, and protocol_error evidence upstream, red-first, as pack revision 95 on fix/runner-long-slices-and-agy-hook",
+      "summary": "Revision 95 on branch fix/runner-long-slices-and-agy-hook, stacked on revision 94 (da20720), red-first.\n(1) Output bound (RUN-B): output past output_limit is marked output_truncated / output_bytes_over_limit, never fatal; extension bytes counted apart; memory bounded by the unparsed buffer (buffer_limit_exceeded). Red 79f66c9, green dcc338c.\n(2) Native Agy tool errors (RUN-B): only the permission-error step and denied_actions block; other error steps counted, 5 in a row end as native_tool_error_limit. Red 053bee1, green 3706261.\n(3) Agy ownership-guard hook (PLAT-A): quote-free git launcher. Red 7044962, green d789975.\n(4) coord decide (PACK-P): reads R-n headings like the citation gate; unread register is NOT CHECKED. Red fc96d7a, green e10835b.\n(5) Copilot hooks (PLAT-A): every command Copilot runs (both .github/hooks arms, the ten Claude-format commands, claude/copilot ownership entries) is the launcher, proven under pwsh, cmd.exe and sh; pack-apply retires stale pack hook entries. Red ebc6cbd, green bfdda73. Source attribution (.claude/settings.json read by Copilot 1.0.89-1) is Inferred from its runtime.node.\n(6) protocol_error evidence (RUN-B): protocol_error_phase + scrubbed protocol_error_message. Red 4333a9f, green 8ef7e60. One diagnostic grok 1.0.41 attempt through the fixed transport completed (33.75 s, 1 turn, 79 extension notifications): not reproduced; compatibility path unchanged.\nRevision, contract docs and register: 086af11. verify-bundle 18/18; python suite 1262 passed / 138 skipped.",
+      "kind": "skill",
+      "skill": "extendaibundle",
+      "tool": null,
+      "actor": "claude-opus-5.5",
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Fix six pack defects upstream red-first as revision 95 stacked on revision 94",
+      "done_when": "each fix red then green, revision 95 changes entry and register, verify-bundle 18/18, branch pushed",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "started_at": "2026-09-24T22:00:22Z",
+      "duration_seconds": 3374.0,
+      "git": {
+        "sha": "086af11f27b185163a70382e59a074f344703697",
+        "short": "086af11f2",
+        "branch": "fix/runner-long-slices-and-agy-hook",
+        "pushed": false
       }
     }
   ],
