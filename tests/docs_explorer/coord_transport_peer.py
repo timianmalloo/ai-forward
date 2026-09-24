@@ -307,6 +307,21 @@ while True:
             continue
         if MODE == "slow_turn" and turn > 1:
             time.sleep(.35)
+        if MODE == "long_slice":
+            # The counts of run w1-s1 (x-harness-x-model-bench, 2026-09-24): in one prompt grok 1.0.41 sent
+            # 3138 session updates and 526 extension notifications, 16776903 stdout and 314 stderr bytes.
+            # The update bodies are padding; only the counts and the byte total are the measurement.
+            os.write(2, b"w" * 313 + b"\n")
+            for index in range(3138):
+                send({"jsonrpc": "2.0", "method": "session/update", "params": {
+                    "sessionId": "acp-fixture", "update": {"sessionUpdate": "agent_message_chunk",
+                                                           "content": {"text": "x" * 5300}}}})
+                if index < 526:
+                    send(RECORDED["extensions"][index % 3])
+        if MODE == "extension_burst":
+            for index in range(526):
+                notification = RECORDED["extensions"][index % 3]
+                send(dict(notification, params=dict(notification["params"], state="x" * 4000)))
         if MODE == "progress_flood":
             for _ in range(100):
                 send({"jsonrpc": "2.0", "method": "session/update", "params": {
