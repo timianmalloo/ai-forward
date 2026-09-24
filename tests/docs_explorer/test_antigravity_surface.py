@@ -52,6 +52,11 @@ class AntigravityInstallTests(unittest.TestCase):
         self.assertIn("--host agy", commands)
         self.assertIn("reread-guard.py", commands)
         self.assertIn("session-start.py", commands)
+        self.assertIn("run-hook.sh", commands)
+        launcher = os.path.join(tmp, "docs", "ai-forward-pack", "hooks", "run-hook.sh")
+        self.assertTrue(os.path.isfile(launcher), "the agy hook launcher must be installed (PLAT-C)")
+        with open(launcher, "rb") as fh:
+            self.assertNotIn(b"\r", fh.read(), "sh fails on CRLF")
 
         rules = _r(tmp, ".agents/rules/agy-surface.md")
         self.assertIsNotNone(rules, ".agents/rules/agy-surface.md must exist")

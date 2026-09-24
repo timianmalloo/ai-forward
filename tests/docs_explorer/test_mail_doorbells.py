@@ -200,8 +200,8 @@ class AdapterConfigs(unittest.TestCase):
         self.assertEqual(len(cmds), 1)
         self.assertIn("--host agy", cmds[0])
         self.assertIn("--event PreInvocation", cmds[0])
-        self.assertIn(self.RESOLVER, cmds[0])
-        self.assertIn("git rev-parse --show-toplevel", cmds[0])
+        # PLAT-C: agy hooks run through the git-alias launcher, which holds the interpreter resolver
+        self.assertIn("git -c alias.aif-hook=!sh aif-hook docs/ai-forward-pack/hooks/run-hook.sh mail-doorbell.py", cmds[0])
 
     def test_copilot_rings_at_pre_tool_use_and_blocks_at_agent_stop(self):
         data = self._load_json("copilot.ai-forward-hooks.json")["hooks"]

@@ -92,11 +92,11 @@ class SettingsEntryTests(unittest.TestCase):
 
 
 class HookAdapterConformanceTests(unittest.TestCase):
-    """PLAT-A: the three Claude-format adapters get the run-time resolver the Copilot
-    adapter already had in spirit (its bash/powershell arms)."""
+    """PLAT-A: the Claude-format adapters that run hooks through sh get the run-time resolver inline, as the
+    Copilot adapter already had in spirit (its bash/powershell arms). Antigravity runs hooks through cmd.exe
+    on Windows, so its resolver lives in run-hook.sh instead (PLAT-C, AgyHookShellTests)."""
 
-    ADAPTERS = ["claude-code.settings.hooks.json", "grok.ai-forward-hooks.json",
-                "agy.ai-forward-hooks.json"]
+    ADAPTERS = ["claude-code.settings.hooks.json", "grok.ai-forward-hooks.json"]
 
     def commands(self, name):
         data = json.loads((HOOKS / name).read_text(encoding="utf-8"))
@@ -196,7 +196,7 @@ class NoMachinePathsLintTests(unittest.TestCase):
             self.assertIn("artifacts.yml", proc.stdout)
 
 
-AGY_LAUNCHER = 'git -c "alias.aif-hook=!sh docs/ai-forward-pack/hooks/run-hook.sh" aif-hook '
+AGY_LAUNCHER = "git -c alias.aif-hook=!sh aif-hook docs/ai-forward-pack/hooks/run-hook.sh "
 
 
 class AgyHookShellTests(unittest.TestCase):
@@ -229,7 +229,9 @@ class AgyHookShellTests(unittest.TestCase):
         self.assertTrue(commands)
         for command in commands:
             with self.subTest(command=command):
-                for token in ("$(", "`", "[ ", "'", ";", "&&", "||", "%"):
+                # '"' too: agy (Go) escapes an inner quote as \" when it launches cmd.exe, and git then reads it
+                # literally (measured 2026-09-24: 'invalid key: "alias.aif-hook')
+                for token in ("$(", "`", "[ ", "'", '"', ";", "&&", "||", "%"):
                     self.assertNotIn(token, command, f"{token!r} is shell-specific: cmd.exe and sh read it differently")
                 self.assertTrue(command.startswith(AGY_LAUNCHER), "an agy hook runs through the launcher")
                 hook = command[len(AGY_LAUNCHER):].split()[0]
@@ -248,7 +250,8 @@ class AgyHookShellTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("git") and (REPO / "docs/ai-forward-pack/hooks").is_dir(), "needs git and the installed pack")
     def test_the_agy_reread_guard_command_runs_the_way_agy_runs_it(self):
         command = next(c for c in self.commands() if "reread-guard.py" in c)
-        shell = ["cmd", "/d", "/c", command] if os.name == "nt" else ["sh", "-c", command]
+        # On Windows the host hands cmd.exe the raw command line; a list would be re-quoted by list2cmdline
+        shell = "cmd /d /c " + command if os.name == "nt" else ["sh", "-c", command]
         payload = json.dumps({"toolCall": {"name": "view_file", "args": {"AbsolutePath": str(REPO / "README.md")}},
                               "conversationId": "xp-agy-test"})
         proc = subprocess.run(shell, input=payload, cwd=str(REPO / ".agents"), capture_output=True, text=True,

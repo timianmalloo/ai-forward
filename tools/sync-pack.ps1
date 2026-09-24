@@ -324,6 +324,7 @@ $hooksDst = Join-Path $docPack "hooks"
 New-Item -ItemType Directory -Force -Path $hooksDst | Out-Null
 # every hook adapter ships (an explicit list drifted twice: mail-doorbell.py at rev 77, heartbeat.py + owner-review-gate.py at rev 79 - class PACK-D)
 Copy-Item (Join-Path $pack "adapters\hooks\*.py") $hooksDst -Force
+Copy-Item (Join-Path $pack "adapters\hooks\*.sh") $hooksDst -Force  # run-hook.sh: the agy launcher (PLAT-C)
 Copy-Item (Join-Path $pack "adapters\hooks\copilot.ai-forward-hooks.json") $hooksDst -Force
 Copy-Item (Join-Path $pack "adapters\hooks\README.md")       $hooksDst -Force
 $ghHooks = Join-Path $repo ".github\hooks"
