@@ -4541,7 +4541,8 @@ def cmd_plugin_emit(out_dir, host=None):
         scripts = {}
         for event, entries in source["hooks"].items():
             for entry in entries:
-                match = re.search(r"hooks/([A-Za-z_-]+\.py)(.*)$", entry["bash"])
+                # the launcher form (PLAT-A): ".../hooks/run-hook.sh <hook>.py <args>"
+                match = re.search(r"(?:hooks/|run-hook\.sh )([A-Za-z_-]+\.py)(.*)$", entry["bash"])
                 if not match:
                     raise ValueError("Unsupported source-managed Copilot hook command")
                 name, arguments = match.groups()
@@ -4623,14 +4624,24 @@ def native_hook_config(host):
     it; runtime paths stay in quoted expansions, never eval or interpolated source code.
     """
     if host == "copilot":
+        # PLAT-A: Copilot on Windows runs hook commands through PowerShell (measured 2026-09-24, Copilot CLI
+        # 1.0.89-1). Both arms are the quote-free launcher, which pwsh, cmd.exe and sh parse alike and which
+        # resolves the interpreter; --caller-cwd keeps the caller's directory, as the old relative form needed.
+        command = ("git -c alias.aif-hook=!sh aif-hook docs/ai-forward-pack/hooks/run-hook.sh "
+                   "--caller-cwd ../scripts/coord-core.py hook --host copilot")
         return {"version": 1, "hooks": {"preToolUse": [{
             "type": "command",
-            "bash": "python3 docs/ai-forward-pack/scripts/coord-core.py hook --host copilot",
-            "powershell": "python docs/ai-forward-pack/scripts/coord-core.py hook --host copilot",
+            "bash": command,
+            "powershell": command,
             "timeoutSec": 10,
             "matcher": "^(edit|create|write|apply_patch|str_replace|search_replace|multiedit|notebookedit|edit_file|write_file|write_to_file|replace_file_content|multi_replace_file_content)$",
         }]}}
-    if host == "codex":
+    if host == "claude":
+        # PLAT-A: this entry is merged into .claude/settings.json, which Copilot CLI 1.0.89-1 also reads and runs
+        # through PowerShell on Windows (Inferred from its runtime.node). --caller-cwd keeps the caller's directory.
+        command = ("git -c alias.aif-hook=!sh aif-hook docs/ai-forward-pack/hooks/run-hook.sh "
+                   "--caller-cwd ../scripts/coord-core.py hook --host claude")
+    elif host == "codex":
         # PLAT-C: Codex on Windows runs hook commands through `pwsh -Command` (measured 2026-09-24,
         # codex 0.156), which cannot parse the sh form below. One quote-free git invocation parses
         # alike under pwsh, cmd.exe and sh; run-hook.sh resolves the interpreter and, with

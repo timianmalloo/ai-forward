@@ -92,11 +92,11 @@ class SettingsEntryTests(unittest.TestCase):
 
 
 class HookAdapterConformanceTests(unittest.TestCase):
-    """PLAT-A: the Claude-format adapters that run hooks through sh get the run-time resolver inline, as the
-    Copilot adapter already had in spirit (its bash/powershell arms). Antigravity runs hooks through cmd.exe
-    on Windows, so its resolver lives in run-hook.sh instead (PLAT-C, AgyHookShellTests)."""
+    """PLAT-A: the Grok adapter runs hooks through sh and carries the run-time resolver inline. Antigravity
+    runs hooks through cmd.exe on Windows (PLAT-C, AgyHookShellTests), and Copilot through PowerShell, which
+    also reads the Claude-format commands (CopilotHookShellTests), so those carry the resolver in run-hook.sh."""
 
-    ADAPTERS = ["claude-code.settings.hooks.json", "grok.ai-forward-hooks.json"]
+    ADAPTERS = ["grok.ai-forward-hooks.json"]
 
     def commands(self, name):
         data = json.loads((HOOKS / name).read_text(encoding="utf-8"))
@@ -294,6 +294,11 @@ class CopilotHookShellTests(unittest.TestCase):
         self.assertEqual(0, emitted.returncode, emitted.stderr)
         for entry in json.loads(emitted.stdout)["hooks"]["preToolUse"]:
             rows += [("ownership " + arm, entry[arm]) for arm in ("bash", "powershell")]
+        # the Claude ownership entry is merged into .claude/settings.json too, which Copilot reads (sweep)
+        emitted = subprocess.run([sys.executable, str(COORD), "hook", "--config", "--host", "claude"],
+                                 capture_output=True, text=True, encoding="utf-8", timeout=60)
+        rows += [("ownership claude", h["command"]) for entry in json.loads(emitted.stdout)["hooks"]["PreToolUse"]
+                 for h in entry["hooks"]]
         self.assertGreaterEqual(len(rows), 20)
         return rows
 
