@@ -63,16 +63,18 @@ would block). Copilot CLI hooks receive `{"sessionId","toolName","toolArgs"}` an
 `{"additionalContext": …}`; on `preToolUse` any non-zero exit other than 2 **denies** the call, so the
 guard exits 0 on every path including its own failures.
 
-**Interpreter (Windows and macOS).** The Claude Code, Grok Build and Antigravity commands resolve the
-interpreter **at run time**: `py=$(python3 -c 'import sys;print(sys.executable)' 2>/dev/null); [ -x "$py" ] || py=$(python -c …); "$py" <script>`.
+**Interpreter (Windows and macOS).** Every hook command resolves the interpreter **at run time**:
+`py=$(python3 -c 'import sys;print(sys.executable)' 2>/dev/null); [ -x "$py" ] || py=$(python -c …); "$py" <script>`.
 `python3` wins where it is real Python (Linux, macOS); on python.org Windows `python3` is a Store alias
 that exits 9009 without printing a path, so the fallback `python` is taken. Nothing machine-specific is
 written into the tracked config (class PLAT-B), and no one edits the command per machine (class
-PLAT-A). Cost: one extra interpreter start (~25 ms) per hook. The form needs a POSIX `sh`, which
-Claude Code uses on every platform (Git Bash on Windows); for Grok Build and Antigravity on Windows it is
-**observed-only** until a live session shows the hook firing there — the Antigravity command additionally
-anchors the script at `$(git rev-parse --show-toplevel)` because its hook cwd is not documented. The
-Copilot config keeps its `bash`/`powershell` arms, which are the same resolution done by the host.
+PLAT-A). Cost: one extra interpreter start (~25 ms) per hook. That form needs a POSIX `sh`, so only the
+Grok Build commands carry it inline. The Claude Code, Copilot CLI (both arms) and Antigravity commands,
+and the ownership entries `coord-core.py hook --config` emits for Claude, Codex, Copilot and Antigravity,
+are one quote-free launcher invocation, `git -c alias.aif-hook=!sh aif-hook docs/ai-forward-pack/hooks/run-hook.sh <hook>.py ...`,
+which `run-hook.sh` resolves as above. The reason is that Antigravity runs hooks through cmd.exe and
+Copilot through PowerShell on Windows, and Copilot also reads `.claude/settings.json` (PLAT-A, revision 95).
+Git runs the alias through its own `sh` from the top of the tree.
 
 Measured origin: the profiled TheTerrace session viewed `public.html` four times in three minutes,
 a 43 KB paged output whole twice, and one sub-agent read the same mockup six times — none of it errored.

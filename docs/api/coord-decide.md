@@ -34,9 +34,10 @@ WHAT THIS IS NOT. Not a store and not an allocator (class ID-A):
     request store.
   - the two mails (`decision-request`, `ruling`) go through P4's single writer, `append_mail`
     in coord-mail.py, imported by path (the coord-board.py idiom).
-  - the ruling number is read from the register's own headings: `### Ruling NN — <title>` in
-    docs/notes/rulings.md, the only file this script writes and the only definition site
-    (verify-ruling-citations.py is the gate).
+  - the ruling number is read from the register's own headings: `### Ruling NN — <title>` or
+    `## R-n · ...` in docs/notes/rulings.md, the only file this script writes and the only
+    definition site (verify-ruling-citations.py is the gate, and reads the same grammar). A
+    register whose headings none parse is NOT CHECKED: nothing is allocated from it (PACK-P).
 
 VERBS
   request  --to <owner-session> --options T --evidence T --recommendation T --reversibility T
@@ -96,6 +97,11 @@ coord-core.py (the request reader + resolve_root) and coord-mail.py (append_mail
 
 [{number, title, request}] in file order; an absent file is an empty register.
 
+### `unread_headings(path)`
+
+Level-2/3 headings in a register where NONE parses as a ruling (PACK-P): an unread register is not
+an empty one, and allocating 1 in it would collide with its own numbering.
+
 ### `next_number(rulings)`
 
 **Coverage gap** — no docstring in the source.
@@ -126,6 +132,6 @@ coord-core.py (the request reader + resolve_root) and coord-mail.py (append_mail
 
 ## Coverage
 
-- Public functions: **11** · documented: **2** (**18%**)
+- Public functions: **12** · documented: **3** (**25%**)
 - Undocumented (recorded, not invented): `refuse`, `iso_utc`, `next_number`, `append_ruling`, `decision_body`, `cmd_request`, `cmd_rule`, `cmd_list`, `build_parser`
 

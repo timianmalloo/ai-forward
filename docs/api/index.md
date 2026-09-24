@@ -9,7 +9,7 @@ links:
   - { to: architecture, rel: documents }
 review-by: "2027-03-03"
 summary: >-
-  Generated API reference for the pack's public surface — the deployed script bundle. 542 public functions across 44 modules, 47% carrying a docstring.
+  Generated API reference for the pack's public surface — the deployed script bundle. 544 public functions across 44 modules, 47% carrying a docstring.
 ---
 
 # API reference — the deployed script bundle
@@ -30,14 +30,14 @@ with no docstring is listed as a **coverage gap** rather than described from gue
 | [`context-budget.py`](context-budget.md) | 21 | 12 | 6 | context-budget.py — the always-on context budget, measured (AI-Forward Pack). |
 | [`coord-board.py`](coord-board.md) | 14 | 7 | 2 | coord-board.py — the board: human transparency over agent messages (spec-board, D12). |
 | [`coord-core.py`](coord-core.md) | 97 | 73 | 36 | coord-core.py - agent coordination, Phase 1 walking skeleton. |
-| [`coord-decide.py`](coord-decide.md) | 11 | 2 | 3 | coord-decide.py - the Owner seat's mechanism: decision request -> numbered ruling (D6). |
+| [`coord-decide.py`](coord-decide.md) | 12 | 3 | 3 | coord-decide.py - the Owner seat's mechanism: decision request -> numbered ruling (D6). |
 | [`coord-mail.py`](coord-mail.md) | 22 | 5 | 4 | coord-mail.py - the local message layer: per-session inbox files, ledger twins, bounded dispatch. |
 | [`coord-runner.py`](coord-runner.md) | 17 | 3 | 5 | Prepare and run an opt-in, qualified multi-harness coordination contract. |
 | [`coord_files.py`](coord_files.md) | 4 | 3 | — | Bounded regular-file reads with pinned, non-reparse Windows ancestors. |
 | [`coord_ids.py`](coord_ids.md) | 2 | 2 | — | coord_ids.py - collision-proof identifiers, in ONE place. |
 | [`coord_native.py`](coord_native.md) | 1 | 0 | — | Read-only Codex thread metadata over its measured local WebSocket endpoint. |
 | [`coord_runtime.py`](coord_runtime.md) | 3 | 0 | — | Private, bounded, append-only runtime controls for an already admitted run. |
-| [`coord_transport.py`](coord_transport.md) | 2 | 2 | — | Bounded POSIX ACP / Agy session IO. Native harness policy remains authoritative. |
+| [`coord_transport.py`](coord_transport.md) | 3 | 3 | — | Bounded POSIX ACP / Agy session IO. Native harness policy remains authoritative. |
 | [`design-lint.py`](design-lint.md) | 3 | 2 | — | design-lint.py — token-reference linter for design-language docs (AI-Forward). |
 | [`docs-graph.py`](docs-graph.md) | 37 | 3 | 10 | docs-graph.py — the AI-Forward Pack docs script bundle (knowledge-visualization.md V18). |
 | [`dream.py`](dream.md) | 21 | 4 | 4 | dream.py - the AI-Forward dreaming / continuous-improvement consolidation harness. |
@@ -68,5 +68,5 @@ with no docstring is listed as a **coverage gap** rather than described from gue
 | [`visual-assets-setup.py`](visual-assets-setup.md) | 12 | 5 | — | visual-assets-setup.py - wire up a generation backend for UI visual assets (AI-Forward). |
 | [`xaml-token-lint.py`](xaml-token-lint.md) | 9 | 0 | — | xaml-token-lint.py — first-slice token linter for XAML/native UI markup. |
 
-**Total** — 542 public functions across 44 modules, **254 documented (47%)**.
+**Total** — 544 public functions across 44 modules, **256 documented (47%)**.
 

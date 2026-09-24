@@ -255,7 +255,7 @@ class TransportTests(unittest.TestCase):
         self.assertEqual("cancelled", result["code"])
         replies = [r for r in self.requests() if r.get("id") == "permission-request" and "result" in r]
         self.assertTrue(any(r["result"]["outcome"] == {"outcome": "cancelled"} for r in replies))
-        # RUN-A: output past the bound is marked, not fatal; the deadline still ends a flood.
+        # RUN-B: output past the bound is marked, not fatal; the deadline still ends a flood.
         result = self.run_peer("runtime_permission_flood", permission_handler=lambda *args: None, output_limit=4096,
                                deadline_seconds=.3)
         self.assertEqual(("deadline_exceeded", True), (result["code"], result["output_truncated"]))
@@ -481,7 +481,7 @@ class TransportTests(unittest.TestCase):
                     result["code"], result["turns_completed"], result["compatibility_responses"]))
                 self.assertNotIn("SECRET", json.dumps([result, self.events]))
 
-    # R-29 (x-harness-x-model-bench run w1-host-s4, 2026-09-24): Grok 1.0.41 failed protocol_error 3.36 s after
+    # x-harness-x-model-bench run w1-host-s4 (2026-09-24): Grok 1.0.41 failed protocol_error 3.36 s after
     # its prompt started (0 turns, 6 compatibility responses, 22 extension notifications), and the result held
     # nothing about the rejected message. A control that fails with no evidence can be neither diagnosed nor
     # widened from a recording. The message is recorded as structure: protocol fields keep their values,
@@ -512,7 +512,7 @@ class TransportTests(unittest.TestCase):
             result["code"], result["turns_completed"], result["compatibility_responses"]))
 
     def test_watcher_compatibility_responses_share_attempt_resource_limits(self):
-        # RUN-A: a flood past the byte bound is marked and ended by the deadline, never credited as a turn.
+        # RUN-B: a flood past the byte bound is marked and ended by the deadline, never credited as a turn.
         result = self.run_peer("watcher_flood", output_limit=2048, deadline_seconds=.3)
         self.assertEqual(("deadline_exceeded", True, 0), (result["code"], result["output_truncated"], result["turns_completed"]))
         start = time.monotonic()
@@ -535,7 +535,7 @@ class TransportTests(unittest.TestCase):
                 self.assertEqual("protocol_error", self.run_peer(mode)["code"])
 
     def test_extension_flood_retains_output_and_cancellation_bounds(self):
-        # RUN-A: extension notifications are counted apart from the byte bound; the deadline ends a flood.
+        # RUN-B: extension notifications are counted apart from the byte bound; the deadline ends a flood.
         result = self.run_peer("extension_flood", output_limit=2048, deadline_seconds=.3)
         self.assertEqual(("deadline_exceeded", False), (result["code"], result["output_truncated"]))
         self.assertGreater(result["extension_notification_bytes"], 2048)
@@ -555,7 +555,7 @@ class TransportTests(unittest.TestCase):
                 self.assertTrue(any(e["event"] == "native_permission_denied" and e.get("action_id") for e in self.events))
                 self.assertNotIn("SECRET", json.dumps([result, self.events]))
 
-    # RUN-A, run w1-s1 (x-harness-x-model-bench, 2026-09-24): Agy 1.2.10 failed native_tool_error at 292 s
+    # RUN-B, run w1-s1 (x-harness-x-model-bench, 2026-09-24): Agy 1.2.10 failed native_tool_error at 292 s
     # because one view_file on <worktree>/.git/hooks/pre-commit failed (in a linked worktree .git is a file).
     # The agent could recover. Only the permission-error step and denied_actions block an attempt.
     def test_native_agy_tool_errors_are_counted_and_the_prompt_continues(self):
@@ -641,7 +641,7 @@ class TransportTests(unittest.TestCase):
                 self.assertEqual(code, self.run_peer(mode)["code"])
 
     def test_stdout_stderr_and_unterminated_floods_are_bounded(self):
-        # RUN-A: the output bound marks, it never fails. Memory is bounded by the unparsed buffer (one
+        # RUN-B: the output bound marks, it never fails. Memory is bounded by the unparsed buffer (one
         # unterminated frame), and time by the deadline. The buffer bound is lowered here to keep the test fast.
         self.module.MAX_BUFFER_BYTES = 64 * 1024
         for mode, code in (("stdout_flood", "buffer_limit_exceeded"), ("stderr_flood", "deadline_exceeded"),
@@ -710,7 +710,7 @@ class TransportTests(unittest.TestCase):
         result = self.run_peer(prompts=["first"], output_limit=count - 1)
         self.assertEqual(("complete", True, 1), (result["code"], result["output_truncated"], result["output_bytes_over_limit"]))
 
-    # RUN-A, run w1-s1 (x-harness-x-model-bench, 2026-09-24): grok 1.0.41 had committed all 7 commits of its
+    # RUN-B, run w1-s1 (x-harness-x-model-bench, 2026-09-24): grok 1.0.41 had committed all 7 commits of its
     # slice when the transport failed it at 906 s with output_limit_exceeded (16776903 stdout + 314 stderr
     # bytes, 526 extension notifications). An output bound must never fail a working attempt.
     def test_output_past_the_bound_is_marked_truncated_and_never_fails_the_attempt(self):
@@ -798,7 +798,7 @@ class SharedTransportContractsOnWindows(unittest.TestCase):
     test_model_selection_contract = TransportTests.test_expected_model_match_mismatch_and_missing_gate_fresh_session
     test_watcher_matching_contract = TransportTests.test_watcher_exact_grok_response_never_completes_the_pending_prompt
     test_watcher_resource_contract = TransportTests.test_watcher_compatibility_responses_share_attempt_resource_limits
-    # RUN-A: the runner that failed w1-s1 ran on this wire (_ThreadedWire), so the bound contract runs here too.
+    # RUN-B: the runner that failed w1-s1 ran on this wire (_ThreadedWire), so the bound contract runs here too.
     test_output_bound_contract = TransportTests.test_output_past_the_bound_is_marked_truncated_and_never_fails_the_attempt
     test_extension_bound_contract = TransportTests.test_extension_notifications_are_counted_apart_from_the_output_bound
     test_exact_bound_contract = TransportTests.test_exact_output_budget_and_one_byte_over

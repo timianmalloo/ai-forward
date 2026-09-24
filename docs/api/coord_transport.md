@@ -33,6 +33,10 @@ Validate explicit file access; content may append without changing identity.
 
 Only preparation may defer its exact future session log until worktree registration.
 
+### `rejected_detail(frame)`
+
+The frame a protocol_error rejected, as bounded structure (x-harness-x-model-bench run w1-host-s4); None when no frame arrived.
+
 ### `run_session(transport, argv, cwd, env, prompts, deadline_seconds, output_limit, emit, cancelled, before_prompt=…, additional_roots=…, next_prompt=…, permission_handler=…, max_turns=…, session_id=…, require_loaded_cwd=…, mode_id=…, expected_model=…)`
 
 Run admitted turns in one owned process group; return metadata, never bodies.
@@ -49,5 +53,5 @@ mode_id selects a literal advertised fresh-session mode before any prompt.
 
 ## Coverage
 
-- Public functions: **2** · documented: **2** (**100%**)
+- Public functions: **3** · documented: **3** (**100%**)
 

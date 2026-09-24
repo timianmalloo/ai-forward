@@ -823,7 +823,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "58c0d119bfb255e62342c00377b5211afd745501715905bb0a4434a54e5d9795"
+      "sourceSha256": "a2cc42e6d26ff2d62d85ee03a895f1f0d987431b837090534d6cda94d6726d95"
     },
     {
       "id": "api-coord-mail",
@@ -998,7 +998,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d4411acebc7b51494869adec43262d6e9461c071ec920abb469e3c792001d9a8"
+      "sourceSha256": "cce271c1461fa2b4105ee455504e209611b9e612841d34fee7a0f75e1f58d978"
     },
     {
       "id": "api-design-lint",
@@ -1135,7 +1135,7 @@ window.DOCS_INDEX = {
       "phase": "",
       "reviewBy": "2027-03-03",
       "reviewSuggested": [],
-      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 542 public functions across 44 modules, 47% carrying a docstring.",
+      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 544 public functions across 44 modules, 47% carrying a docstring.",
       "tags": [
         "api",
         "scripts",
@@ -1149,7 +1149,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "268c7863d444e4cca59f5cbfce7443f7c216e660fdf63fa940108b25ec8dfc48"
+      "sourceSha256": "e992d4f059fb43c1a48528e66af8fc3f34e7fb6e55b6f5d5d0491945400b61e3"
     },
     {
       "id": "api-marker-lint",
@@ -4714,7 +4714,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "71e9eca5b3be8bfd303e28eed66c87780626930409d476016f2026332fc64ae2"
+      "sourceSha256": "bd303a6078ce684601725310205575d8603d2fc13af622872eb741a817c7aed3"
     },
     {
       "id": "docs-index",
@@ -11821,5 +11821,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "bfaf7ff6ab2d830f08f290d8e1ffbab72d5d9a5059ac52a78b36c674f25e3383"
+  "graphSha256": "37b3ae69f044aedf5c269fdb478e52099fd1394b50be303d8bf308c0149fe428"
 };

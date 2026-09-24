@@ -31,20 +31,20 @@ from platform_process import (  # noqa: E402
 
 
 MAX_INPUT_BYTES = 16 * 1024 * 1024
-# RUN-A: the output bound (output_limit) marks an attempt, it never ends one: run w1-s1 lost a committed
+# RUN-B: the output bound (output_limit) marks an attempt, it never ends one: run w1-s1 lost a committed
 # slice to it (grok 1.0.41, 16 MiB at 906 s). Memory is bounded here instead, by the unparsed stdout
 # buffer: a reader pauses while the buffer holds complete frames, and only one unterminated frame larger
 # than this ends the attempt (buffer_limit_exceeded). Time is bounded by the attempt deadline.
 MAX_BUFFER_BYTES = 16 * 1024 * 1024
 READ_BYTES = 65536
-# RUN-A: a native Agy tool error that is not a permission check is counted and the prompt continues
+# RUN-B: a native Agy tool error that is not a permission check is counted and the prompt continues
 # (run w1-s1 lost an attempt to one failed view_file). This many ERROR steps with no DONE step between
 # them end the attempt as native_tool_error_limit: a loop breaker whose firing is a defect signal.
 # assume: an agent that can recover reaches a DONE step within 5 errors in a row. confirm: the
 # native_tool_error_streak_max of qualification and wave results. breaks: a working attempt ends on
 # native_tool_error_limit (raise the cap), or a runaway loop spends the deadline under it (lower it).
 NATIVE_ERROR_STREAK_CAP = 5
-# R-29: a protocol_error records the frame it rejected, as structure and never as content. Protocol fields
+# x-harness-x-model-bench run w1-host-s4: a protocol_error records the frame it rejected, as structure and never as content. Protocol fields
 # keep their identifier values; every other string becomes its length. The whole is at most this many bytes.
 MAX_DETAIL_BYTES = 4096
 _PROTOCOL_KEYS = frozenset(("jsonrpc", "id", "method", "sessionId", "sessionUpdate", "stopReason", "event",
@@ -109,7 +109,7 @@ def _structure(value, key=None, depth=0):
 
 
 def rejected_detail(frame):
-    """The frame a protocol_error rejected, as bounded structure (R-29); None when no frame arrived."""
+    """The frame a protocol_error rejected, as bounded structure (x-harness-x-model-bench run w1-host-s4); None when no frame arrived."""
     if frame is None:
         return None
     try:
@@ -525,7 +525,7 @@ class _Session:
         self.permission_handler = permission_handler
         self.max_turns = max_turns
         self.error_streak = 0
-        self.phase = None  # the request in flight, or "agy": where a protocol_error happened (R-29)
+        self.phase = None  # the request in flight, or "agy": where a protocol_error happened (x-harness-x-model-bench run w1-host-s4)
 
     def event(self, event, **fields):
         try:
@@ -697,7 +697,7 @@ class _Session:
                     # ACP v1 extension notifications are optional, one-way data.
                     # Count without retaining names/payloads or emitting per-item events.
                     # They are the progress stream, so their bytes are counted apart from the
-                    # output bound (RUN-A); the wire deadline and buffer bound still apply.
+                    # output bound (RUN-B); the wire deadline and buffer bound still apply.
                     self.result["extension_notifications"] += 1
                     self.result["extension_notification_bytes"] += self.wire.last_frame_bytes
                 else:
@@ -872,7 +872,7 @@ class _Session:
                         detail = error.get("message", "")
                         # This narrow signature is from Agy 1.2.7's native TOOL_ERROR,
                         # not assistant prose; it blocks. Any other error step is counted,
-                        # and the agent may recover from it (RUN-A).
+                        # and the agent may recover from it (RUN-B).
                         if (step.get("step_type") == "tool" and error.get("type") == "TOOL_ERROR"
                                 and isinstance(detail, str) and detail.startswith("permission check failed for ")):
                             self.native_denial(1)
@@ -1004,7 +1004,7 @@ def run_session(transport, argv, cwd, env, prompts, deadline_seconds, output_lim
     except _Failure as failure:
         result.update(outcome=failure.outcome, code=failure.code)
         if failure.code == "protocol_error" and wire is not None:
-            # R-29: never a failure with nothing to read. Structure only; see rejected_detail.
+            # x-harness-x-model-bench run w1-host-s4: never a failure with nothing to read. Structure only; see rejected_detail.
             result.update(protocol_error_phase=session.phase if session is not None else None,
                           protocol_error_message=rejected_detail(wire.last_frame))
     except (OSError, ValueError, UnicodeError, RecursionError):
@@ -1021,7 +1021,7 @@ def run_session(transport, argv, cwd, env, prompts, deadline_seconds, output_lim
         if result["cleanup_error"] and result["outcome"] == "complete":
             result.update(outcome="failed", code="cleanup_failed")
         if type(output_limit) is int and 0 < output_limit <= MAX_INPUT_BYTES:
-            # RUN-A: output past the bound is marked, never fatal. Nothing past it is retained (no wire
+            # RUN-B: output past the bound is marked, never fatal. Nothing past it is retained (no wire
             # body ever is); it is still parsed, so the turn's own response can complete the attempt.
             charged = result["stdout_bytes"] + result["stderr_bytes"] - result["extension_notification_bytes"]
             result["output_bytes_over_limit"] = max(0, charged - output_limit)
