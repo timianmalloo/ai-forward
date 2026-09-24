@@ -24,6 +24,8 @@ from windows_links import create_directory_alias
 
 REPO = Path(__file__).resolve().parents[2]
 SCRIPT = REPO / "pack" / "scripts" / "coord-core.py"
+LAUNCHER = REPO / "pack" / "adapters" / "hooks" / "run-hook.sh"
+CODEX_LAUNCHER = "git -c alias.aif-hook=!sh aif-hook docs/ai-forward-pack/hooks/run-hook.sh --caller-cwd "
 
 
 def load_module():
@@ -342,6 +344,9 @@ class NativeHookTests(GitCase):
         shutil.copyfile(SCRIPT, scripts / "coord-core.py")
         shutil.copyfile(SCRIPT.with_name("coord_ids.py"), scripts / "coord_ids.py")
         shutil.copyfile(SCRIPT.with_name("repo_identity.py"), scripts / "repo_identity.py")
+        hooks = self.repo / "docs/ai-forward-pack/hooks"
+        hooks.mkdir(parents=True)
+        shutil.copyfile(LAUNCHER, hooks / "run-hook.sh")
         for host in ["claude", "codex"]:
             config = self.run_cli("hook", "--config", "--host", host)
             self.assertEqual(0, config.returncode, config.stderr)
@@ -355,6 +360,66 @@ class NativeHookTests(GitCase):
             self.assertEqual("deny", json.loads(result.stdout)["hookSpecificOutput"]["permissionDecision"])
             self.assertFalse((unusual / "PWN_DOLLAR").exists())
             self.assertFalse((unusual / "PWN_TICK").exists())
+
+    # PLAT-C for Codex. Codex 0.156 on Windows runs commands through
+    # `C:\Program Files\PowerShell\7\pwsh.exe -Command ...` (measured 2026-09-24, x-harness-x-model-bench
+    # qualify-codex-1), and the emitted command was POSIX-only (`py=$(...)`, `[ -x ...]`, `exec "$py"`).
+    # The Codex command must be one quote-free program invocation that pwsh, cmd.exe and sh parse alike,
+    # and it must keep the caller's directory: Codex patch paths are relative to the hook's process cwd.
+
+    def codex_command_in_fixture(self):
+        scripts = self.repo / "docs/ai-forward-pack/scripts"
+        scripts.mkdir(parents=True)
+        for name in ("coord-core.py", "coord_ids.py", "repo_identity.py"):
+            shutil.copyfile(SCRIPT.with_name(name), scripts / name)
+        hooks = self.repo / "docs/ai-forward-pack/hooks"
+        hooks.mkdir(parents=True)
+        shutil.copyfile(LAUNCHER, hooks / "run-hook.sh")
+        (self.repo / "sub").mkdir()
+        config = self.run_cli("hook", "--config", "--host", "codex")
+        self.assertEqual(0, config.returncode, config.stderr)
+        return json.loads(config.stdout)["hooks"]["PreToolUse"][0]["hooks"][0]["command"]
+
+    def assert_codex_command_reaches_the_hook(self, launch):
+        command = self.codex_command_in_fixture()
+        env = dict(os.environ, AGENT_SESSION="worker", AGENT_NAME="worker")
+        env.pop("COORD_ROOT", None)
+        # From sub/: `../held.txt` is the leased file; `held.txt` is sub/held.txt, which nobody holds.
+        # The allow case fails if the launcher loses the caller's directory.
+        for target, expected in (("../held.txt", "deny"), ("held.txt", "allow")):
+            with self.subTest(target=target):
+                patch = self.payload("*** Begin Patch\n*** Delete File: " + target + "\n*** End Patch")
+                result = subprocess.run(launch(command), cwd=self.repo / "sub", env=env, input=patch,
+                                        capture_output=True, text=True, encoding="utf-8", timeout=60)
+                self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+                self.assertTrue(result.stdout.strip(), "the hook was not reached: " + result.stderr)
+                response = json.loads(result.stdout)["hookSpecificOutput"]
+                self.assertEqual(expected, response["permissionDecision"], response)
+                if expected == "deny":
+                    self.assertIn("owner-work", response["permissionDecisionReason"])
+
+    def test_codex_hook_command_is_one_quote_free_invocation(self):
+        config = self.run_cli("hook", "--config", "--host", "codex")
+        command = json.loads(config.stdout)["hooks"]["PreToolUse"][0]["hooks"][0]["command"]
+        for token in ("$", "`", "[ ", "'", '"', ";", "&&", "||", "%", "|", "<", ">"):
+            self.assertNotIn(token, command, f"{token!r} is shell-specific: pwsh, cmd.exe and sh read it differently")
+        self.assertTrue(command.startswith(CODEX_LAUNCHER), command)
+        self.assertTrue(command.endswith(" hook --host codex"), command)
+
+    @unittest.skipUnless(shutil.which("sh") and shutil.which("git"), "sh or git is absent")
+    def test_codex_hook_command_runs_under_sh(self):
+        self.assert_codex_command_reaches_the_hook(lambda command: ["sh", "-c", command])
+
+    @unittest.skipUnless(shutil.which("pwsh") and shutil.which("git"),
+                         "pwsh is absent: the Windows Codex shell form (pwsh -Command) is not proven on this machine")
+    def test_codex_hook_command_runs_under_pwsh(self):
+        self.assert_codex_command_reaches_the_hook(
+            lambda command: ["pwsh", "-NoProfile", "-NonInteractive", "-Command", command])
+
+    @unittest.skipUnless(os.name == "nt" and shutil.which("git"), "cmd.exe exists only on Windows")
+    def test_codex_hook_command_runs_under_cmd(self):
+        # The raw command line, as a host hands it to cmd.exe; a list would be re-quoted by list2cmdline.
+        self.assert_codex_command_reaches_the_hook(lambda command: "cmd /d /c " + command)
 
     def test_native_decision_ledger_does_not_store_patch_content(self):
         patch = self.payload("*** Begin Patch\n*** Update File: held.txt\n@@\n-OWNER\n+SECRET_PATCH\n*** End Patch")
