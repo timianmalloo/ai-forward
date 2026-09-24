@@ -93,6 +93,19 @@ while True:
             if MODE in ("agy_missing_error_id", "agy_preinit_error"):
                 step["step_update"].pop("conversation_id")
             send(step)
+        if MODE in ("agy_view_file_error", "agy_error_loop", "agy_error_streak_reset"):
+            # Reconstructed from run w1-s1 (x-harness-x-model-bench, 2026-09-24): a view_file TOOL_ERROR on
+            # <worktree>/.git/hooks/pre-commit that is not a permission check. The envelope is the recorded
+            # agy_permission_step shape; the exact message was not retained (the runner keeps no wire body).
+            error = json.loads(json.dumps(RECORDED["agy_permission_step"]))
+            error["step_update"].update(tool_name="view_file", tool_info={"name": "view_file", "error": {
+                "type": "TOOL_ERROR", "message": "SECRET placeholder: the w1-s1 message was not retained"}})
+            done = {"event": "step_update", "step_update": {"conversation_id": "agy-fixture", "step_index": 7,
+                                                            "state": "DONE", "step_type": "tool", "tool_name": "view_file"}}
+            for _ in range(1 if MODE == "agy_view_file_error" else 50):
+                send(error)
+                if MODE != "agy_error_loop":
+                    send(done)
         send({"event": "step_update", "step_update": {"response": SECRET}})
         result = {"event": "result", "result": {
             "conversation_id": "agy-fixture", "status": "FAILURE" if MODE == "agy_failure" else "SUCCESS",

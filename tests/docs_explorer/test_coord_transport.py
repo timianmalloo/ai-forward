@@ -530,8 +530,32 @@ class TransportTests(unittest.TestCase):
                 self.assertTrue(any(e["event"] == "native_permission_denied" and e.get("action_id") for e in self.events))
                 self.assertNotIn("SECRET", json.dumps([result, self.events]))
 
+    # RUN-A, run w1-s1 (x-harness-x-model-bench, 2026-09-24): Agy 1.2.10 failed native_tool_error at 292 s
+    # because one view_file on <worktree>/.git/hooks/pre-commit failed (in a linked worktree .git is a file).
+    # The agent could recover. Only the permission-error step and denied_actions block an attempt.
+    def test_native_agy_tool_errors_are_counted_and_the_prompt_continues(self):
+        for mode in ("agy_view_file_error", "agy_error_step"):
+            with self.subTest(mode=mode):
+                (self.root / "requests.jsonl").unlink(missing_ok=True)
+                self.events.clear()
+                result = self.run_peer(mode, transport="agy")
+                self.assertEqual(("complete", 2), (result["code"], result["turns_completed"]))
+                self.assertEqual((2, 0), (result["native_tool_errors"], result["native_denials"]))
+                self.assertEqual(2, len(self.requests()))
+                self.assertEqual(2, sum(event["event"] == "native_tool_error" for event in self.events))
+                self.assertNotIn("SECRET", json.dumps([result, self.events]))
+
+    def test_native_agy_consecutive_errors_hit_the_loop_breaker_and_a_success_resets_it(self):
+        result = self.run_peer("agy_error_loop", transport="agy", prompts=["first"])
+        self.assertEqual(("failed", "native_tool_error_limit", 0), (result["outcome"], result["code"], result["turns_completed"]))
+        cap = self.module.NATIVE_ERROR_STREAK_CAP
+        self.assertEqual((cap, cap), (result["native_tool_errors"], result["native_tool_error_streak_max"]))
+        result = self.run_peer("agy_error_streak_reset", transport="agy", prompts=["first"])
+        self.assertEqual(("complete", 1, 50, 1), (result["code"], result["turns_completed"], result["native_tool_errors"],
+                                                  result["native_tool_error_streak_max"]))
+
     def test_native_agy_errors_and_malformed_denials_cannot_complete(self):
-        for mode, code in [("agy_error_step", "native_tool_error"), ("agy_foreign_step", "protocol_error"),
+        for mode, code in [("agy_foreign_step", "protocol_error"),
                            ("agy_missing_error_id", "protocol_error"), ("agy_preinit_error", "protocol_error")] + [
                 ("agy_malformed_denials_" + str(i), "protocol_error") for i in range(5)]:
             with self.subTest(mode=mode):
@@ -754,6 +778,9 @@ class SharedTransportContractsOnWindows(unittest.TestCase):
     test_extension_bound_contract = TransportTests.test_extension_notifications_are_counted_apart_from_the_output_bound
     test_exact_bound_contract = TransportTests.test_exact_output_budget_and_one_byte_over
     test_flood_bound_contract = TransportTests.test_stdout_stderr_and_unterminated_floods_are_bounded
+    test_agy_recoverable_error_contract = TransportTests.test_native_agy_tool_errors_are_counted_and_the_prompt_continues
+    test_agy_error_streak_contract = TransportTests.test_native_agy_consecutive_errors_hit_the_loop_breaker_and_a_success_resets_it
+    test_agy_denial_contract = TransportTests.test_native_agy_denial_blocks_all_later_prompts
 
 
 if __name__ == "__main__":
