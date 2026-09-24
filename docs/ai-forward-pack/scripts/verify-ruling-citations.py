@@ -29,7 +29,9 @@ AR-R-7) and the number must not continue as `.d`, `-d` or a letter (spike R-2.3,
 
 THE TWO DEFECTS. (1) A number cited with no heading. (2) A number defined by two headings. There is
 no frozen list: nothing predates this control, so the list that "may only shrink" starts empty and
-therefore does not exist.
+therefore does not exist. And one refusal to report clean (class PACK-P): a register with level-2/3
+headings of which none parses as a ruling is NOT CHECKED - the R-n register passed as "0 defined"
+because an unread register and an empty one printed the same.
 
 USAGE
   python3 verify-ruling-citations.py                 scan the repository at the cwd
@@ -62,6 +64,7 @@ PROSE_SUFFIXES = {".md", ".html", ".txt"}
 SHORT = r"R-(\d{1,3})(?!\w|[.-]\d)"   # R-n: the number ends the id (not R-2.3, R-3-4, R-12a)
 CITATION = re.compile(r"\bRulings?\s+(\d{1,3})\b|(?<![\w-])" + SHORT)
 DEFINITION = re.compile(r"^#{2,3}[ \t]+(?:Ruling[ \t]+(\d{1,3})\b|" + SHORT + ")", re.M)
+HEADING = re.compile(r"^#{2,3}[ \t]+\S", re.M)
 
 
 def _number(match: "re.Match[str]") -> Tuple[int, str]:
@@ -114,12 +117,29 @@ def citations(root: Path, spellings: Dict[int, Set[str]] = None) -> Dict[int, Se
     return found
 
 
+def unread_headings(root: Path) -> int:
+    """How many level-2/3 register headings exist when NONE of them parsed as a definition (PACK-P):
+    a register of headings in an unknown numbering is not an empty register, and must not read as one."""
+    path = root / REGISTER
+    if not path.is_file():
+        return 0
+    text = path.read_text(encoding="utf-8", errors="replace")
+    if DEFINITION.search(text):
+        return 0
+    return len(HEADING.findall(text))
+
+
 def check(root: Path) -> Tuple[List[str], Dict[int, List[int]], Dict[int, Set[str]]]:
     defined_as: Dict[int, Set[str]] = {}
     cited_as: Dict[int, Set[str]] = {}
     defined = definitions(root, defined_as)
     cited = citations(root, cited_as)
     defects: List[str] = []
+    unread = unread_headings(root)
+    if unread:
+        defects.append("NOT CHECKED: {} has {} heading(s) and none is a ruling in a form this gate reads"
+                       " (`## Ruling n` or `## R-n`). A register the gate cannot read is not an empty register"
+                       " (class PACK-P).".format(REGISTER.as_posix(), unread))
     for number in sorted(defined):
         lines = defined[number]
         if len(lines) > 1:
@@ -161,6 +181,8 @@ def self_test() -> int:
           REGISTER.as_posix(): head + "## R-1 · 2026-09-24 · Owner · seats" + nl}, "R-99 is cited"),
         ("a short-form R-n cited and defined by a short-form heading",
          {"docs/plans/p.md": "Per R-7." + nl, REGISTER.as_posix(): head + "## R-7 · 2026-09-24 · Owner · x" + nl}, None),
+        ("a register whose headings are all in an unread numbering",
+         {REGISTER.as_posix(): head + "## RUL-1 · 2026-09-24 · Owner · x" + nl}, "NOT CHECKED"),
         ("look-alike ids are not citations",
          {"docs/plans/p.md": "Spike R-2.3, US-13, HB-PRE-002, DR-1, R-12a." + nl}, None),
     ]
