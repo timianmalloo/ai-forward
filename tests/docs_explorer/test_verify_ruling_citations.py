@@ -107,6 +107,59 @@ class Gate(Tree):
         result = self.run_gate("--root", str(self.tmp / "missing"))
         self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
 
+    def test_r_n_register_defines_and_r_n_citations_resolve(self):
+        # A register written as `## R-n · date · seat · title` (measured in x-harness-x-model-bench,
+        # 2026-09-24): the gate read no heading and no citation there, so it passed while checking nothing.
+        self.write("docs/notes/rulings.md", FRONT + "## R-7 · 2026-09-24 · Owner seat · task sources\n\nx\n\n"
+                   "### R-4 — sub-agents fall back\n\ny\n")
+        self.write("docs/plans/p.md", "Per R-7, and ruling R-4, we did this. See also (R-7).\n")
+        result = self.check()
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("2 ruling(s) cited", result.stdout)
+        self.assertIn("2 defined", result.stdout)
+
+    def test_dangling_r_n_citation_fails(self):
+        self.write("docs/notes/rulings.md", FRONT + "## R-1 · 2026-09-24 · Owner · seats\n\nx\n")
+        self.write("docs/plans/p.md", "As R-99 requires.\n")
+        result = self.check()
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+        self.assertIn("R-99", result.stdout)
+        self.assertIn("docs/plans/p.md", result.stdout)
+        self.assertIn("no heading", result.stdout)
+
+    def test_r_n_defined_twice_fails(self):
+        self.write("docs/notes/rulings.md", FRONT + "## R-3 · one\n\na\n\n### R-3 · again\n\nb\n")
+        result = self.check()
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+        self.assertIn("defined twice", result.stdout)
+
+    def test_both_spellings_name_one_number(self):
+        self.write("docs/notes/rulings.md", FRONT + "## R-5 · 2026-09-24 · Owner · N5\n\nx\n")
+        self.write("docs/plans/p.md", "Ruling 5 and R-5 are the same decision.\n")
+        result = self.check()
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("1 ruling(s) cited", result.stdout)
+        self.write("docs/notes/rulings.md", FRONT + "## R-5 · one\n\nx\n\n### Ruling 5 — two\n\ny\n")
+        result = self.check()
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+        self.assertIn("defined twice", result.stdout)
+
+    def test_r_n_heading_rules_match_the_ruling_form(self):
+        # a spike id heading is not a definition, and a four-level heading never defines
+        self.write("docs/notes/rulings.md", FRONT + "## R-2.3 — spike\n\nx\n\n#### R-6 — too deep\n\ny\n")
+        self.write("docs/plans/p.md", "Per R-2 and R-6.\n")
+        result = self.check()
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+        self.assertIn("R-2 ", result.stdout)
+        self.assertIn("R-6 ", result.stdout)
+
+    def test_look_alike_ids_are_not_citations(self):
+        self.write("docs/plans/p.md", "Spike R-2.3 and R-10.1, story US-13, HB-PRE-002, DR-1, PR-12, HR-4,"
+                   " XR-9, lower r-5, R-12a, R-3-4, AR-R-7x and SR-1 are not rulings.\n")
+        result = self.check()
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("0 ruling(s) cited", result.stdout)
+
     def test_this_repository_is_clean(self):
         result = self.run_gate("--root", str(REPO))
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
