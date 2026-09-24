@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-23T00:10:48Z",
+  "generated": "2026-09-24T21:47:08Z",
   "audit": [
     {
       "actor": null,
@@ -13206,6 +13206,40 @@ window.AUDIT_DATA = {
         "sha": "6cd9569416dafd6806325c83d10faf563bff2c75",
         "short": "6cd956941",
         "branch": "fix/coord-runner-start-wait",
+        "pushed": true
+      }
+    },
+    {
+      "id": "al-01M3AP5XS9Y1NHRZAED7RGNT9R",
+      "shortname": "rev94-ruling-rn-codex-hook",
+      "datetime": "2026-09-24T21:47:07Z",
+      "session": "w1-pack",
+      "prompt": "W1-PACK (coord-opus-cq): fix verify-ruling-citations R-n forms and the Codex hook --config command on Windows upstream, red-first, as a new pack revision on fix/ruling-citations-r-n-and-codex-hook-windows",
+      "summary": "Revision 94 on branch fix/ruling-citations-r-n-and-codex-hook-windows, from origin/main fc365ff, red-first.\n(1) verify-ruling-citations reads `## R-n` / `### R-n` definitions and `R-n` citations, and both spellings name one number. It is strict against look-alike ids (R-2.3, DR-1, US-13, HB-PRE-002, R-12a). A register whose headings all fail to parse is now NOT CHECKED (PACK-P). Red 4b51f16, green 0880f66. PACK-P red e7a42d8, green 195e854.\n(2) coord-core hook --config --host codex emits the quote-free git launcher form: `git -c alias.aif-hook=!sh aif-hook docs/ai-forward-pack/hooks/run-hook.sh --caller-cwd ../scripts/coord-core.py hook --host codex`. run-hook.sh gains --caller-cwd: it returns to $GIT_PREFIX and names the hook relatively, because Git for Windows sh passes an absolute /c/... argument holding a quote, backtick or ; to python.exe unconverted. Red 9d4d9f2 (pwsh ParserError reproduced), green e98585d. Revision and register: 83a32ff.\nOpen findings: the agy ownership-guard emitter is still POSIX-only under cmd.exe; coord-decide.py allocates with a Ruling-NN-only regex; x-harness-x-model-bench cites R-99 in its coordination plan.",
+      "kind": "skill",
+      "skill": "extendaibundle",
+      "tool": null,
+      "actor": "claude-opus-5.5",
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Fix two pack defects upstream red-first as revision 94 on its own branch",
+      "done_when": "R-n gate + Codex pwsh/cmd/sh hook tests green, revision bumped, verify-bundle 18/18, branch pushed",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "started_at": "2026-09-24T21:16:00Z",
+      "duration_seconds": 1867.0,
+      "git": {
+        "sha": "a9a5af5044ad412542f3b078c52c93c2c9d742dc",
+        "short": "a9a5af504",
+        "branch": "fix/ruling-citations-r-n-and-codex-hook-windows",
         "pushed": true
       }
     }
