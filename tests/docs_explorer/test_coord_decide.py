@@ -223,6 +223,42 @@ class Rule(TempRepo):
         self.assertEqual(json.loads(result.stdout.strip().splitlines()[-1])["ruling"], 5)
         self.assertIn("### Ruling 5 — ", self.register.read_text(encoding="utf-8"))
 
+    # PACK-P / ID-A (revision 94 register, open sweep item): verify-ruling-citations reads `## R-n` headings,
+    # the allocator read only `Ruling NN`. In x-harness-x-model-bench's register (`## R-n · date · seat · title`)
+    # `rule next` would have allocated 1 again: the collision the gate exists to catch.
+    def write_register(self, headings):
+        self.register.parent.mkdir(parents=True)
+        body = "".join("{}\n\nx\n\n".format(h) for h in headings)
+        self.register.write_text("---\nid: rulings\ntype: doc\n---\n\n# Rulings\n\n" + body, encoding="utf-8", newline="\n")
+
+    def test_next_reads_an_r_n_register_and_refuses_a_defined_short_form_number(self):
+        self.write_register(["## R-1 · 2026-09-23 · Owner seat · first",
+                             "## R-11 · 2026-09-24 · Owner seat (Fable) · DR-B: two runner limits go upstream"])
+        rid = self.make_request()["id"]
+        defined = self.rule(11, rid)
+        self.assertEqual(defined.returncode, 2, defined.stdout + defined.stderr)
+        self.assertIn("COORD-RULING-DEFINED", defined.stderr)
+        result = self.rule("next", rid)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertEqual(json.loads(result.stdout.strip().splitlines()[-1])["ruling"], 12)
+
+    def test_a_register_whose_headings_none_parse_is_not_checked(self):
+        self.write_register(["## Decision A · the first", "## Decision B · the second"])
+        before = self.register.read_bytes()
+        rid = self.make_request()["id"]
+        result = self.rule("next", rid)
+        self.assertEqual(result.returncode, 4, result.stdout + result.stderr)
+        self.assertIn("COORD-RULING-NOT-CHECKED", result.stderr)
+        self.assertEqual(before, self.register.read_bytes())
+
+    def test_the_allocator_reads_the_same_numbers_as_the_citation_gate(self):
+        self.write_register(["### Ruling 4 — by hand", "## Ruling 9", "### Ruling 3 no separator", "## R-7 · 2026-09-24 · t",
+                             "### R-5", "## R-2.3 spike", "### DR-1 · a decision record", "## R-12a", "## US-13 story"])
+        decide = _load("coord_decide_parity", DECIDE)
+        gate = _load("verify_ruling_citations_parity", SCRIPTS / "verify-ruling-citations.py")
+        self.assertEqual(sorted(gate.definitions(self.tmp)), sorted(r["number"] for r in decide.parse_register(self.register)))
+        self.assertEqual([3, 4, 5, 7, 9], sorted(gate.definitions(self.tmp)))
+
     def test_self_rule_refused(self):
         rid = self.make_request()["id"]
         result = self.rule(1, rid, session="p5")
