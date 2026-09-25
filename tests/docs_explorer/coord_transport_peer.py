@@ -137,6 +137,8 @@ while True:
             reload_response["result"]["result"]["reloaded"] = 1.0
         elif MODE == "watcher_other_id":
             reload_response["id"] = "foreign-response"
+        elif MODE == "watcher_workflows":
+            reload_response["id"] = "workflows-reload"
         elif MODE == "watcher_bad_result":
             reload_response["result"] = []
         send(reload_response)
@@ -233,7 +235,7 @@ while True:
             result["_meta"] = {"grokShell": True, "agentVersion": "1.0.34"}
             if MODE == "watcher_other_version":
                 result["_meta"]["agentVersion"] = "1.0.33"  # below the first measured version
-            elif MODE == "watcher_later_version":
+            elif MODE in ("watcher_later_version", "watcher_workflows"):
                 result["_meta"]["agentVersion"] = "1.0.41"  # measured 2026-09-24: the same exact response
             elif MODE == "watcher_prerelease_version":
                 result["_meta"]["agentVersion"] = "1.0.41-rc1"

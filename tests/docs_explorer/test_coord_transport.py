@@ -472,6 +472,14 @@ class TransportTests(unittest.TestCase):
         self.assertEqual(("complete", 2, 2, "1.0.41"), (
             result["code"], result["turns_completed"], result["compatibility_responses"], result["reported_version"]))
 
+    def test_watcher_workflows_reload_response_is_accepted(self):
+        # Measured 2026-09-25 on grok 1.0.41 (Windows, x-harness-x-model-bench run w3-grproc-1): the workflows
+        # watcher sends the same exact acknowledgement with id "workflows-reload" inside session/prompt; the run
+        # failed protocol_error 3.8 s in, with 0 turns. Any other foreign id stays rejected (watcher_other_id).
+        result = self.run_peer("watcher_workflows")
+        self.assertEqual(("complete", 2, 2, "1.0.41"), (
+            result["code"], result["turns_completed"], result["compatibility_responses"], result["reported_version"]))
+
     def test_watcher_other_profile_phase_shape_and_ids_remain_rejected(self):
         for suffix in ("early", "other_version", "prerelease_version", "no_shell", "string_shell", "agentinfo_only",
                        "extra", "inner_extra", "bool", "float", "other_id", "bad_result"):
