@@ -40,3 +40,6 @@ When a brief asks for `coord request ack <id> --blob $(git hash-object <path>)`,
 ## Scripts
 
 On Windows use `python` or `py -3`; on Linux/macOS use `python3`. `docs/ai-forward-pack/scripts/pack-doctor.py` names the working form for this machine.
+Pack hooks additionally require Node.js LTS and Git on both platforms. The shared
+launcher resolves the checkout even when Agy starts it in `.agents`; see
+`docs/ai-forward-pack/hooks/README.md`. Custom named bundles and workspace trust survive updates.

@@ -4,87 +4,87 @@
     "sessionStart": [
       {
         "type": "command",
-        "bash": "python3 docs/ai-forward-pack/hooks/session-start.py --host copilot",
-        "powershell": "python docs/ai-forward-pack/hooks/session-start.py --host copilot",
+        "bash": "node -e \"const e={...process.env};delete e.GIT_DIR;delete e.GIT_WORK_TREE;delete e.GIT_COMMON_DIR;const r=require('node:child_process').execFileSync('git',['rev-parse','--show-toplevel'],{encoding:'utf8',env:e,timeout:1000}).trim();require(r+'/docs/ai-forward-pack/hooks/run-hook.cjs').main(process.argv.slice(1))\" -- session-start.py --host copilot",
+        "powershell": "node -e \"const e={...process.env};delete e.GIT_DIR;delete e.GIT_WORK_TREE;delete e.GIT_COMMON_DIR;const r=require('node:child_process').execFileSync('git',['rev-parse','--show-toplevel'],{encoding:'utf8',env:e,timeout:1000}).trim();require(r+'/docs/ai-forward-pack/hooks/run-hook.cjs').main(process.argv.slice(1))\" -- session-start.py --host copilot; exit $LASTEXITCODE",
         "timeoutSec": 10
       }
     ],
     "subagentStart": [
       {
         "type": "command",
-        "bash": "python3 docs/ai-forward-pack/hooks/session-start.py --host copilot",
-        "powershell": "python docs/ai-forward-pack/hooks/session-start.py --host copilot",
+        "bash": "node -e \"const e={...process.env};delete e.GIT_DIR;delete e.GIT_WORK_TREE;delete e.GIT_COMMON_DIR;const r=require('node:child_process').execFileSync('git',['rev-parse','--show-toplevel'],{encoding:'utf8',env:e,timeout:1000}).trim();require(r+'/docs/ai-forward-pack/hooks/run-hook.cjs').main(process.argv.slice(1))\" -- session-start.py --host copilot",
+        "powershell": "node -e \"const e={...process.env};delete e.GIT_DIR;delete e.GIT_WORK_TREE;delete e.GIT_COMMON_DIR;const r=require('node:child_process').execFileSync('git',['rev-parse','--show-toplevel'],{encoding:'utf8',env:e,timeout:1000}).trim();require(r+'/docs/ai-forward-pack/hooks/run-hook.cjs').main(process.argv.slice(1))\" -- session-start.py --host copilot; exit $LASTEXITCODE",
         "timeoutSec": 10
       }
     ],
     "preToolUse": [
       {
         "type": "command",
-        "bash": "python3 docs/ai-forward-pack/hooks/reread-guard.py --host copilot",
-        "powershell": "python docs/ai-forward-pack/hooks/reread-guard.py --host copilot",
+        "bash": "node -e \"const e={...process.env};delete e.GIT_DIR;delete e.GIT_WORK_TREE;delete e.GIT_COMMON_DIR;const r=require('node:child_process').execFileSync('git',['rev-parse','--show-toplevel'],{encoding:'utf8',env:e,timeout:1000}).trim();require(r+'/docs/ai-forward-pack/hooks/run-hook.cjs').main(process.argv.slice(1))\" -- reread-guard.py --host copilot",
+        "powershell": "node -e \"const e={...process.env};delete e.GIT_DIR;delete e.GIT_WORK_TREE;delete e.GIT_COMMON_DIR;const r=require('node:child_process').execFileSync('git',['rev-parse','--show-toplevel'],{encoding:'utf8',env:e,timeout:1000}).trim();require(r+'/docs/ai-forward-pack/hooks/run-hook.cjs').main(process.argv.slice(1))\" -- reread-guard.py --host copilot; exit $LASTEXITCODE",
         "timeoutSec": 10,
         "matcher": "^view$"
       },
       {
         "type": "command",
-        "bash": "python3 docs/ai-forward-pack/hooks/mail-doorbell.py --host copilot --event preToolUse",
-        "powershell": "python docs/ai-forward-pack/hooks/mail-doorbell.py --host copilot --event preToolUse",
+        "bash": "node -e \"const e={...process.env};delete e.GIT_DIR;delete e.GIT_WORK_TREE;delete e.GIT_COMMON_DIR;const r=require('node:child_process').execFileSync('git',['rev-parse','--show-toplevel'],{encoding:'utf8',env:e,timeout:1000}).trim();require(r+'/docs/ai-forward-pack/hooks/run-hook.cjs').main(process.argv.slice(1))\" -- mail-doorbell.py --host copilot --event preToolUse",
+        "powershell": "node -e \"const e={...process.env};delete e.GIT_DIR;delete e.GIT_WORK_TREE;delete e.GIT_COMMON_DIR;const r=require('node:child_process').execFileSync('git',['rev-parse','--show-toplevel'],{encoding:'utf8',env:e,timeout:1000}).trim();require(r+'/docs/ai-forward-pack/hooks/run-hook.cjs').main(process.argv.slice(1))\" -- mail-doorbell.py --host copilot --event preToolUse; exit $LASTEXITCODE",
         "timeoutSec": 10
       }
     ],
     "postToolUse": [
       {
         "type": "command",
-        "bash": "python3 docs/ai-forward-pack/hooks/heartbeat.py --host copilot --event postToolUse",
-        "powershell": "python docs/ai-forward-pack/hooks/heartbeat.py --host copilot --event postToolUse",
+        "bash": "node -e \"const e={...process.env};delete e.GIT_DIR;delete e.GIT_WORK_TREE;delete e.GIT_COMMON_DIR;const r=require('node:child_process').execFileSync('git',['rev-parse','--show-toplevel'],{encoding:'utf8',env:e,timeout:1000}).trim();require(r+'/docs/ai-forward-pack/hooks/run-hook.cjs').main(process.argv.slice(1))\" -- heartbeat.py --host copilot --event postToolUse",
+        "powershell": "node -e \"const e={...process.env};delete e.GIT_DIR;delete e.GIT_WORK_TREE;delete e.GIT_COMMON_DIR;const r=require('node:child_process').execFileSync('git',['rev-parse','--show-toplevel'],{encoding:'utf8',env:e,timeout:1000}).trim();require(r+'/docs/ai-forward-pack/hooks/run-hook.cjs').main(process.argv.slice(1))\" -- heartbeat.py --host copilot --event postToolUse; exit $LASTEXITCODE",
         "timeoutSec": 10
       }
     ],
     "userPromptSubmitted": [
       {
         "type": "command",
-        "bash": "python3 docs/ai-forward-pack/hooks/reread-guard.py --host copilot",
-        "powershell": "python docs/ai-forward-pack/hooks/reread-guard.py --host copilot",
+        "bash": "node -e \"const e={...process.env};delete e.GIT_DIR;delete e.GIT_WORK_TREE;delete e.GIT_COMMON_DIR;const r=require('node:child_process').execFileSync('git',['rev-parse','--show-toplevel'],{encoding:'utf8',env:e,timeout:1000}).trim();require(r+'/docs/ai-forward-pack/hooks/run-hook.cjs').main(process.argv.slice(1))\" -- reread-guard.py --host copilot",
+        "powershell": "node -e \"const e={...process.env};delete e.GIT_DIR;delete e.GIT_WORK_TREE;delete e.GIT_COMMON_DIR;const r=require('node:child_process').execFileSync('git',['rev-parse','--show-toplevel'],{encoding:'utf8',env:e,timeout:1000}).trim();require(r+'/docs/ai-forward-pack/hooks/run-hook.cjs').main(process.argv.slice(1))\" -- reread-guard.py --host copilot; exit $LASTEXITCODE",
         "timeoutSec": 10
       }
     ],
     "agentStop": [
       {
         "type": "command",
-        "bash": "python3 docs/ai-forward-pack/hooks/mail-doorbell.py --host copilot --event agentStop",
-        "powershell": "python docs/ai-forward-pack/hooks/mail-doorbell.py --host copilot --event agentStop",
+        "bash": "node -e \"const e={...process.env};delete e.GIT_DIR;delete e.GIT_WORK_TREE;delete e.GIT_COMMON_DIR;const r=require('node:child_process').execFileSync('git',['rev-parse','--show-toplevel'],{encoding:'utf8',env:e,timeout:1000}).trim();require(r+'/docs/ai-forward-pack/hooks/run-hook.cjs').main(process.argv.slice(1))\" -- mail-doorbell.py --host copilot --event agentStop",
+        "powershell": "node -e \"const e={...process.env};delete e.GIT_DIR;delete e.GIT_WORK_TREE;delete e.GIT_COMMON_DIR;const r=require('node:child_process').execFileSync('git',['rev-parse','--show-toplevel'],{encoding:'utf8',env:e,timeout:1000}).trim();require(r+'/docs/ai-forward-pack/hooks/run-hook.cjs').main(process.argv.slice(1))\" -- mail-doorbell.py --host copilot --event agentStop; exit $LASTEXITCODE",
         "timeoutSec": 10
       },
       {
         "type": "command",
-        "bash": "python3 docs/ai-forward-pack/hooks/heartbeat.py --host copilot --event agentStop",
-        "powershell": "python docs/ai-forward-pack/hooks/heartbeat.py --host copilot --event agentStop",
+        "bash": "node -e \"const e={...process.env};delete e.GIT_DIR;delete e.GIT_WORK_TREE;delete e.GIT_COMMON_DIR;const r=require('node:child_process').execFileSync('git',['rev-parse','--show-toplevel'],{encoding:'utf8',env:e,timeout:1000}).trim();require(r+'/docs/ai-forward-pack/hooks/run-hook.cjs').main(process.argv.slice(1))\" -- heartbeat.py --host copilot --event agentStop",
+        "powershell": "node -e \"const e={...process.env};delete e.GIT_DIR;delete e.GIT_WORK_TREE;delete e.GIT_COMMON_DIR;const r=require('node:child_process').execFileSync('git',['rev-parse','--show-toplevel'],{encoding:'utf8',env:e,timeout:1000}).trim();require(r+'/docs/ai-forward-pack/hooks/run-hook.cjs').main(process.argv.slice(1))\" -- heartbeat.py --host copilot --event agentStop; exit $LASTEXITCODE",
         "timeoutSec": 10
       },
       {
         "type": "command",
-        "bash": "python3 docs/ai-forward-pack/hooks/owner-review-gate.py --host copilot --event agentStop",
-        "powershell": "python docs/ai-forward-pack/hooks/owner-review-gate.py --host copilot --event agentStop",
+        "bash": "node -e \"const e={...process.env};delete e.GIT_DIR;delete e.GIT_WORK_TREE;delete e.GIT_COMMON_DIR;const r=require('node:child_process').execFileSync('git',['rev-parse','--show-toplevel'],{encoding:'utf8',env:e,timeout:1000}).trim();require(r+'/docs/ai-forward-pack/hooks/run-hook.cjs').main(process.argv.slice(1))\" -- owner-review-gate.py --host copilot --event agentStop",
+        "powershell": "node -e \"const e={...process.env};delete e.GIT_DIR;delete e.GIT_WORK_TREE;delete e.GIT_COMMON_DIR;const r=require('node:child_process').execFileSync('git',['rev-parse','--show-toplevel'],{encoding:'utf8',env:e,timeout:1000}).trim();require(r+'/docs/ai-forward-pack/hooks/run-hook.cjs').main(process.argv.slice(1))\" -- owner-review-gate.py --host copilot --event agentStop; exit $LASTEXITCODE",
         "timeoutSec": 10
       }
     ],
     "subagentStop": [
       {
         "type": "command",
-        "bash": "python3 docs/ai-forward-pack/hooks/mail-doorbell.py --host copilot --event subagentStop",
-        "powershell": "python docs/ai-forward-pack/hooks/mail-doorbell.py --host copilot --event subagentStop",
+        "bash": "node -e \"const e={...process.env};delete e.GIT_DIR;delete e.GIT_WORK_TREE;delete e.GIT_COMMON_DIR;const r=require('node:child_process').execFileSync('git',['rev-parse','--show-toplevel'],{encoding:'utf8',env:e,timeout:1000}).trim();require(r+'/docs/ai-forward-pack/hooks/run-hook.cjs').main(process.argv.slice(1))\" -- mail-doorbell.py --host copilot --event subagentStop",
+        "powershell": "node -e \"const e={...process.env};delete e.GIT_DIR;delete e.GIT_WORK_TREE;delete e.GIT_COMMON_DIR;const r=require('node:child_process').execFileSync('git',['rev-parse','--show-toplevel'],{encoding:'utf8',env:e,timeout:1000}).trim();require(r+'/docs/ai-forward-pack/hooks/run-hook.cjs').main(process.argv.slice(1))\" -- mail-doorbell.py --host copilot --event subagentStop; exit $LASTEXITCODE",
         "timeoutSec": 10
       },
       {
         "type": "command",
-        "bash": "python3 docs/ai-forward-pack/hooks/heartbeat.py --host copilot --event subagentStop",
-        "powershell": "python docs/ai-forward-pack/hooks/heartbeat.py --host copilot --event subagentStop",
+        "bash": "node -e \"const e={...process.env};delete e.GIT_DIR;delete e.GIT_WORK_TREE;delete e.GIT_COMMON_DIR;const r=require('node:child_process').execFileSync('git',['rev-parse','--show-toplevel'],{encoding:'utf8',env:e,timeout:1000}).trim();require(r+'/docs/ai-forward-pack/hooks/run-hook.cjs').main(process.argv.slice(1))\" -- heartbeat.py --host copilot --event subagentStop",
+        "powershell": "node -e \"const e={...process.env};delete e.GIT_DIR;delete e.GIT_WORK_TREE;delete e.GIT_COMMON_DIR;const r=require('node:child_process').execFileSync('git',['rev-parse','--show-toplevel'],{encoding:'utf8',env:e,timeout:1000}).trim();require(r+'/docs/ai-forward-pack/hooks/run-hook.cjs').main(process.argv.slice(1))\" -- heartbeat.py --host copilot --event subagentStop; exit $LASTEXITCODE",
         "timeoutSec": 10
       },
       {
         "type": "command",
-        "bash": "python3 docs/ai-forward-pack/hooks/owner-review-gate.py --host copilot --event subagentStop",
-        "powershell": "python docs/ai-forward-pack/hooks/owner-review-gate.py --host copilot --event subagentStop",
+        "bash": "node -e \"const e={...process.env};delete e.GIT_DIR;delete e.GIT_WORK_TREE;delete e.GIT_COMMON_DIR;const r=require('node:child_process').execFileSync('git',['rev-parse','--show-toplevel'],{encoding:'utf8',env:e,timeout:1000}).trim();require(r+'/docs/ai-forward-pack/hooks/run-hook.cjs').main(process.argv.slice(1))\" -- owner-review-gate.py --host copilot --event subagentStop",
+        "powershell": "node -e \"const e={...process.env};delete e.GIT_DIR;delete e.GIT_WORK_TREE;delete e.GIT_COMMON_DIR;const r=require('node:child_process').execFileSync('git',['rev-parse','--show-toplevel'],{encoding:'utf8',env:e,timeout:1000}).trim();require(r+'/docs/ai-forward-pack/hooks/run-hook.cjs').main(process.argv.slice(1))\" -- owner-review-gate.py --host copilot --event subagentStop; exit $LASTEXITCODE",
         "timeoutSec": 10
       }
     ]

@@ -7,19 +7,29 @@ import tempfile
 
 
 # Keep the bootstrap installer standalone: the shared pure merge lives in that script.
-merge_named_hook_bundles = runpy.run_path(str(Path(__file__).with_name("pack-apply.py")))["merge_named_hook_bundles"]
+_merges = runpy.run_path(str(Path(__file__).with_name("pack-apply.py")))
+merge_named_hook_bundles = _merges["merge_named_hook_bundles"]
+merge_claude_settings = _merges["merge_claude_settings"]
 
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("source", type=Path)
     parser.add_argument("target", type=Path)
+    parser.add_argument("--claude-settings", action="store_true")
+    parser.add_argument("--legacy", type=Path)
     args = parser.parse_args(argv)
     try:
         if args.target.is_symlink():
             raise ValueError("Refuse a symlink hook target")
         old = args.target.read_text(encoding="utf-8") if args.target.exists() else None
-        merged = merge_named_hook_bundles(args.source.read_text(encoding="utf-8"), old)
+        source = args.source.read_text(encoding="utf-8")
+        if args.claude_settings:
+            import json
+            legacy = json.loads(args.legacy.read_text(encoding="utf-8")) if args.legacy else {}
+            merged = merge_claude_settings(source, old, legacy)
+        else:
+            merged = merge_named_hook_bundles(source, old)
         if old == merged:
             return 0
         args.target.parent.mkdir(parents=True, exist_ok=True)

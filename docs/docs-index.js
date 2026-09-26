@@ -4783,7 +4783,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "6766ccb45ad50f8119bdcfb4bca13d9680dbe7e07ccd30fe2bfdae2654e957cb"
+      "sourceSha256": "e4b40bb63e56097926e09a2f56e2113554edccc95a962c42750d7a1068755924"
     },
     {
       "id": "docs-index",
@@ -6869,6 +6869,27 @@ window.DOCS_INDEX = {
       "sourceSha256": "ecdcf99264da5971669fdff51a4d3ed3504b665ff424c564461305e41b2820f8"
     },
     {
+      "id": "plan-harness-config-portability",
+      "path": "docs/plans/harness-config-portability.md",
+      "title": "Portable five-harness pack configuration",
+      "type": "doc",
+      "status": "in-progress",
+      "owner": "release-engineer",
+      "phase": "implementation",
+      "reviewBy": "2026-10-26",
+      "reviewSuggested": [],
+      "summary": "Repair shell-dependent hook launch commands for all five supported harnesses, including downstream upgrades, without changing permissions or hook decisions.",
+      "tags": [
+        "hooks",
+        "windows",
+        "macos",
+        "configuration"
+      ],
+      "links": [],
+      "diagrams": [],
+      "sourceSha256": "398d0d2afef2fd1dcdad26c7179a467ed8130b7fb0887d578f8a1e671fa0adca"
+    },
+    {
       "id": "plan-multi-harness-runner",
       "path": "docs/plans/multi-harness-runner.md",
       "title": "Multi-harness runner: specification, compatibility decision, design and implementation",
@@ -7660,7 +7681,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "8b235b80fc0c210f1c100c730a38c578ebc83ebe583e421f7a3e356c48d81598"
+      "sourceSha256": "236ee405be4c9e6b219fd018b36435ee6d5401fe55ba0d41cf0bb777bbb3c295"
     },
     {
       "id": "ui-review-pack-explainer",
@@ -12004,5 +12025,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "75c1f005f7fe2b26287dc8ca09b278b128683cd8dfe1d4d7cec83fb8f65aa790"
+  "graphSha256": "bb4c62ab586e848e2999d06081c2e0630cce9414c097c3c3b07fee0b08848e13"
 };

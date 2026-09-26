@@ -3758,6 +3758,12 @@ window.PORTAL_DATA = {
         "summary": "Bounded execution graph for elevating the public AI-Forward handbook. It keeps the canonical web sources, generated Pages surface, UI proof, accessibility..."
       },
       {
+        "id": "plan-harness-config-portability",
+        "type": "doc",
+        "title": "Portable five-harness pack configuration",
+        "summary": "Repair shell-dependent hook launch commands for all five supported harnesses, including downstream upgrades, without changing permissions or hook decisions."
+      },
+      {
         "id": "plan-multi-harness-runner",
         "type": "doc",
         "title": "Multi-harness runner: specification, compatibility decision, design and implementation",

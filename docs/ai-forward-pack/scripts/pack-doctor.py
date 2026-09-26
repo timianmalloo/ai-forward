@@ -236,6 +236,60 @@ def check_hooks(root):
                    "copy adapters/hooks/copilot.ai-forward-hooks.json to .github/hooks/ai-forward.json, grok.ai-forward-hooks.json to .grok/hooks/ai-forward.json, agy.ai-forward-hooks.json to .agents/hooks.json, and merge adapters/hooks/claude-code.settings.hooks.json into .claude/settings.json (INSTALL 1.4 / 1.7 / 1.8)")
 
 
+def check_hook_launchers(root):
+    """Scan these five config roots, recursively through JSON commands; no custom-command allowlist."""
+    import shutil
+    import subprocess
+    files = (".claude/settings.json", ".github/hooks/ai-forward.json",
+             ".grok/hooks/ai-forward.json", ".agents/hooks.json", ".codex/hooks.json")
+    found = []
+
+    def walk(value):
+        if isinstance(value, dict):
+            for key, item in value.items():
+                if key in ("command", "bash", "powershell") and isinstance(item, str):
+                    yield item
+                else:
+                    yield from walk(item)
+        elif isinstance(value, list):
+            for item in value:
+                yield from walk(item)
+
+    for relative in files:
+        text = _read(os.path.join(root, relative))
+        if text is None:
+            continue
+        try:
+            config = json.loads(text)
+        except ValueError:
+            return _result("hook launchers", FAIL, "HOOK-CONFIG-INVALID: " + relative,
+                           "repair JSON/UTF-8 encoding without discarding local settings")
+        for command in walk(config):
+            if "py=$(python3" in command:
+                return _result("hook launchers", FAIL, "HOOK-SHELL: Bash-only launcher in " + relative,
+                               "refresh the pack; do not disable the hook as the permanent fix")
+            if "run-hook.cjs" in command:
+                found.append(relative)
+    if not found:
+        return _result("hook launchers", WARN, "portable pack launcher not configured", "refresh the pack")
+    node = shutil.which("node")
+    launcher = os.path.join(root, "docs", "ai-forward-pack", "hooks", "run-hook.cjs")
+    if not node or not os.path.isfile(launcher):
+        return _result("hook launchers", FAIL, "HOOK-RUNTIME-MISSING: Node.js or run-hook.cjs absent",
+                       "install Node.js LTS and refresh the complete hook bundle; Python 3 and Git are also required")
+    try:
+        result = subprocess.run([node, launcher, "--check"], capture_output=True, text=True,
+                                encoding="utf-8", timeout=5)
+    except (OSError, subprocess.TimeoutExpired):
+        return _result("hook launchers", FAIL, "HOOK-RUNTIME-FAILED: launcher probe could not finish",
+                       "check Node.js and Python installations")
+    if result.returncode != 0:
+        return _result("hook launchers", FAIL, "HOOK-RUNTIME-FAILED: " + result.stderr.strip(),
+                       "install a working Python 3.8+ on PATH")
+    return _result("hook launchers", PASS, "portable launcher and Python observed; configs: "
+                   + ", ".join(sorted(set(found))) + "; native event enforcement not qualified here")
+
+
 def check_block(root, fname):
     p = os.path.join(root, fname)
     if not os.path.exists(p):
@@ -739,6 +793,7 @@ def run(root):
         check_block(root, "AGENTS.md"),
         check_claude_md_import(root),
         check_hooks(root),
+        check_hook_launchers(root),
         check_claude_settings(root),
         check_copilot_settings(),
         check_graph(root),
