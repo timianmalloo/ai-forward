@@ -495,6 +495,23 @@ representation-contract failure, not a reason to bypass merges for authored file
 - **The correction discipline:** the log is append-only, so `cl-0025` was **not edited**. `cl-0026` appends the correction — the same rule the register-merge conservation control implemented in `cl-0025` exists to protect.
 - **Status:** `partially-controlled` — the safe input path exists for two fields and not for the third; the code half is controlled by tool choice, not by a mechanism that fails.
 
+### CI-ENV — Verification depends on an un-fetched comparison ref
+- **Signature:** tests read `origin/main` or `main`, but CI checks out only a feature
+  branch's shallow commit.
+- **Why it survives:** developer clones and main-branch runs carry the ref; feature
+  workflow-dispatch and pull-request checkouts need not.
+- **Instance:** 2026-09-26, run 36257413320 — all three platform jobs passed the
+  portability/upgrade assertions but failed the same three doctrine baseline tests.
+  Windows: 1,269 tests passed; Linux: 1,366; macOS: 1,367. Each failure reported an
+  invalid `origin/main` and `main` object, not a hook defect.
+- **Sweep/derive:** all three jobs share that checkout assumption. Each now fetches
+  only the required main tip explicitly before verification; no full-history download
+  and no fallback to the candidate file as its own baseline.
+- **Control:** the named `Fetch doctrine comparison baseline` step plus the existing
+  `SeededSectionTests` fail when the reference is unavailable. A shallow feature clone
+  reproduces the missing-ref failure before the fetch and passes afterwards.
+- **Status:** controlled.
+
 ### PACK-Q — An adapter written to a contract's *documented* shape, never to a *recorded* one
 - **Signature:** an integration is built against a vendor's envelope as described — in docs, in a schema, or by analogy to a sibling product — and the field names, nesting or cardinality of the real traffic differ. The adapter parses nothing, extracts nothing, and returns its **safe default**. Nothing throws. It reads as working, and the safe default is usually "allow".
 - **Why it survives:** the adapter is exercised only against the payload its author wrote, so every test passes. There is no error to see, because "field absent" and "field absent because I am reading the wrong envelope" are the same code path. It survives review too, because the code looks correct — it *is* correct, for a message nobody sends.

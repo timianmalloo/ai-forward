@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-26T16:59:05Z",
+  "generated": "2026-09-26T17:13:02Z",
   "audit": [
     {
       "actor": null,
@@ -13303,6 +13303,29 @@ window.AUDIT_DATA = {
       "fan_out": 5,
       "started_at": "2026-09-26T16:11:30Z",
       "duration_seconds": 2855.0
+    },
+    {
+      "id": "al-01M3FB9G0XCSMYMHFKXS0QYC1R",
+      "shortname": "portable-harness-ci-baseline",
+      "datetime": "2026-09-26T17:13:02Z",
+      "session": "copilot-harness-config",
+      "prompt": "Make all five harnesses work on Windows and macOS in AI-Forward and consuming repos; plan, execute, commit and push.",
+      "summary": "Run 36257413320 proved new hook/upgrade tests on Windows, macOS and Linux but failed three existing doctrine tests on each runner because a shallow feature checkout lacked origin/main. Reproduced in a fresh shallow clone: tests failed before fetch; after git fetch --no-tags --depth=1 origin main:refs/remotes/origin/main all three passed. Added that explicit prerequisite to each platform job without weakening tests.",
+      "kind": "script",
+      "skill": null,
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        ".github/workflows/pack-consistency.yml",
+        "docs/lessons/defect-classes.md",
+        "docs/plans/harness-config-portability.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Complete platform CI verification for the configuration repair.",
+      "done_when": "Windows/macOS/Linux workflow can run the existing doctrine assertions against its required comparison ref.",
+      "tier": "T1",
+      "fan_out": 0
     }
   ],
   "changes": [

@@ -114,3 +114,10 @@ documentation drift was repaired with the existing API/site builders. Only gener
 documentation and this evidence record changed after that suite. The final no-repeat
 bundle pass rechecks the remaining gates with `-SkipTests`; it does not replace the
 full-suite evidence above. Windows/macOS workflow results attach to the pushed commit.
+
+The first remote run, **36257413320**, passed the new portability/upgrade tests on
+Windows, macOS and Linux. All three jobs failed three pre-existing doctrine tests
+because a shallow feature-branch checkout contained neither `origin/main` nor `main`.
+The workflow now fetches that one comparison ref before tests on each platform;
+the tests retain their fail-closed missing-baseline behavior. This is a CI environment
+repair, not a relaxation of the compatibility assertions.
