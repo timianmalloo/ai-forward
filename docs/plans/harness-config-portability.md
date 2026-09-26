@@ -121,3 +121,9 @@ because a shallow feature-branch checkout contained neither `origin/main` nor `m
 The workflow now fetches that one comparison ref before tests on each platform;
 the tests retain their fail-closed missing-baseline behavior. This is a CI environment
 repair, not a relaxation of the compatibility assertions.
+
+Run **36258241063** passed the baseline tests and every hook/upgrade test on all
+three platforms. Its sole remaining failure was this change's stale defect-register
+tally (REC-A): adding CI-ENV increased controlled project classes from 34 to 35.
+The existing `test_defect_register_counts.py` control caught it; the stated count was
+corrected and rechecked locally before the final push.

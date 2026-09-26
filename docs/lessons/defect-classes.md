@@ -126,7 +126,7 @@ representation-contract failure, not a reason to bypass merges for authored file
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** project classes: controlled `34` · partially-controlled `23` · uncontrolled `8`; inherited table: controlled `11` · partially-controlled `4` · uncontrolled `22`
+**Status counts:** project classes: controlled `35` · partially-controlled `23` · uncontrolled `8`; inherited table: controlled `11` · partially-controlled `4` · uncontrolled `22`
 *Checked, not trusted: `tests/docs_explorer/test_defect_register_counts.py` tallies each entry's leading status and fails when this line disagrees, printing the corrected line (FR-076, class REC-A). Change a status, change this line. A status is one of the three schema values; a qualifier after it does not change the count.*
 **Recurrence since last review:** `0` — *a second occurrence of a known class means the control was wrong, not that someone was careless (CI4).*
 
