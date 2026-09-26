@@ -318,13 +318,15 @@ Copy-Item (Join-Path $pack "context-budget.json")    $docPack -Force
 # --- hooks: the re-read guard (CTX-D) runs at the tool seam on both hosts -------------
 # adapters/hooks/reread-guard.py -> docs/ai-forward-pack/hooks/ (the script both configs call);
 # the Copilot config -> .github/hooks/ai-forward.json (loaded from the repo automatically);
-# the Claude Code hooks object is NOT merged into .claude/settings.json by this script (a
-# JSON merge is a judgement call in a file that carries permissions) - INSTALL 1.5 says how.
+# Refresh exact shipped Claude commands using the installer's narrow merger; preserve
+# custom handlers/permission settings and refuse malformed targets without overwriting them.
 $hooksDst = Join-Path $docPack "hooks"
 New-Item -ItemType Directory -Force -Path $hooksDst | Out-Null
 # every hook adapter ships (an explicit list drifted twice: mail-doorbell.py at rev 77, heartbeat.py + owner-review-gate.py at rev 79 - class PACK-D)
 Copy-Item (Join-Path $pack "adapters\hooks\*.py") $hooksDst -Force
 Copy-Item (Join-Path $pack "adapters\hooks\*.sh") $hooksDst -Force  # run-hook.sh: the agy launcher (PLAT-C)
+& $pyExe @pyArgs (Join-Path $pack "scripts\named_hook_bundles.py") (Join-Path $pack "adapters\hooks\claude-code.settings.hooks.json") (Join-Path $repo ".claude\settings.json") --claude-settings
+if ($LASTEXITCODE -ne 0) { throw "Claude settings could not be refreshed safely" }
 Copy-Item (Join-Path $pack "adapters\hooks\copilot.ai-forward-hooks.json") $hooksDst -Force
 Copy-Item (Join-Path $pack "adapters\hooks\README.md")       $hooksDst -Force
 $ghHooks = Join-Path $repo ".github\hooks"
@@ -333,6 +335,13 @@ Copy-Item (Join-Path $pack "adapters\hooks\copilot.ai-forward-hooks.json") (Join
 $grokHooks = Join-Path $repo ".grok\hooks"
 New-Item -ItemType Directory -Force -Path $grokHooks | Out-Null
 Copy-Item (Join-Path $pack "adapters\hooks\grok.ai-forward-hooks.json") (Join-Path $grokHooks "ai-forward.json") -Force
+$optionalHooks = @((Join-Path $repo ".codex\hooks.json")) + @(Get-ChildItem $grokHooks -Filter *.json -File | ForEach-Object FullName)
+foreach ($target in $optionalHooks) {
+    if (Test-Path $target) {
+        & $pyExe @pyArgs (Join-Path $pack "scripts\named_hook_bundles.py") $target $target --ownership-only
+        if ($LASTEXITCODE -ne 0) { throw "Existing native hooks could not be refreshed safely: $target" }
+    }
+}
 Write-Host "  hooks: adapters/hooks/*.py -> docs/ai-forward-pack/hooks/, .github/hooks/ai-forward.json, .grok/hooks/ai-forward.json, .agents/hooks.json"
 Write-Host "  docs/ai-forward-pack: templates + scripts + pack docs"
 

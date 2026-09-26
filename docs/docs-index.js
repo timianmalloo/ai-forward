@@ -1135,7 +1135,7 @@ window.DOCS_INDEX = {
       "phase": "",
       "reviewBy": "2027-03-03",
       "reviewSuggested": [],
-      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 544 public functions across 44 modules, 47% carrying a docstring.",
+      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 548 public functions across 44 modules, 47% carrying a docstring.",
       "tags": [
         "api",
         "scripts",
@@ -1149,7 +1149,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e992d4f059fb43c1a48528e66af8fc3f34e7fb6e55b6f5d5d0491945400b61e3"
+      "sourceSha256": "fca25d870793088c989e28738c4a4a461ccc8f89cc5fcb9faaf77e4ddae512d6"
     },
     {
       "id": "api-marker-lint",
@@ -1199,7 +1199,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "88945e189bba21894324eb2e4605de3e33c9a333de30d705c71295f40a77fb6c"
+      "sourceSha256": "70ae560b7ec89ac7e83e0c29a4ae6bf2b760f0b03dd022bb8851e2149f3531f8"
     },
     {
       "id": "api-obsidian-setup",
@@ -1249,7 +1249,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "187c206c4a27119555087cd11dfe59ea69a59f0a9fba69b1b4b04ed0fe9567de"
+      "sourceSha256": "e89dd714f2b1180fa05c9571143fbd165cc6a80db55aa2994e81831d3ce01ad2"
     },
     {
       "id": "api-pack-doctor",
@@ -1274,7 +1274,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "5ff599c2eb24673c989095087b8cb96997a2e3074578f5883136ecf75626ebc4"
+      "sourceSha256": "7f914b5ea7e38ef8e6dfe4d0616269cc249aae72c9a80bed6aae0d959ff09bc7"
     },
     {
       "id": "api-platform_process",
@@ -4714,7 +4714,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "bd303a6078ce684601725310205575d8603d2fc13af622872eb741a817c7aed3"
+      "sourceSha256": "3e0d8c32eb344d0d9cafa140d95a815b641acf6f60fd26d43eb11a33b0a1e0ac"
     },
     {
       "id": "docs-index",
@@ -6758,6 +6758,36 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "277c03965ae56b5dcb1a3ca6cc87fd6f12da2c61496a2f281812048cf37ed771"
+    },
+    {
+      "id": "plan-harness-config-portability",
+      "path": "docs/plans/harness-config-portability.md",
+      "title": "Refresh and complete portable five-harness configuration",
+      "type": "doc",
+      "status": "implemented",
+      "owner": "release-engineer",
+      "phase": "implementation",
+      "reviewBy": "2026-10-26",
+      "reviewSuggested": [],
+      "summary": "Reuse the upstream Git launcher, close the remaining Grok and legacy-emitter gaps, and make source sync and downstream settings upgrades safe and repeatable.",
+      "tags": [
+        "hooks",
+        "windows",
+        "macos",
+        "configuration"
+      ],
+      "links": [
+        {
+          "to": "plan-cross-platform-readiness",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "9335b9c219ebe697070aa4b9855b8f850dcf9305f1bad60d3dae465ed8b43228"
     },
     {
       "id": "plan-multi-harness-runner",
@@ -11821,5 +11851,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "37b3ae69f044aedf5c269fdb478e52099fd1394b50be303d8bf308c0149fe428"
+  "graphSha256": "474bff479ef42022b44a7d8b35a7c11567e68208c6868c14dfa3eec4a5f88f2c"
 };

@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "py=$(python3 -c 'import sys;print(sys.executable)' 2>/dev/null); [ -x \"$py\" ] || py=$(python -c 'import sys;print(sys.executable)'); root=$(git rev-parse --show-toplevel) || exit 2; exec \"$py\" \"$root/docs/ai-forward-pack/scripts/coord-core.py\" hook --host grok",
+            "command": "git -c alias.aif-hook=!sh aif-hook docs/ai-forward-pack/hooks/run-hook.sh --caller-cwd ../scripts/coord-core.py hook --host grok",
             "timeout": 5
           }
         ]

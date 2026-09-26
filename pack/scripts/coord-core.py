@@ -4592,22 +4592,7 @@ def _print_settings_entry(repo):
     Windows path - output that reads correctly and is invalid the moment it is pasted.
     A serializer cannot make either mistake.
     """
-    # .claude/settings.json is TRACKED, so the entry must carry nothing about this machine
-    # (class PLAT-B): the interpreter is resolved at run time by the same shell form the
-    # pack's hook adapters use, and the script is named relative to the repo when it lives
-    # inside it. The earlier form printed `sys.executable` and an absolute script path.
-    me = Path(__file__).resolve()
-    try:
-        script = me.relative_to(Path(repo).resolve()).as_posix()
-    except ValueError:
-        script = me.as_posix()
-    entry = {"hooks": {"PreToolUse": [{
-        "matcher": "Write|Edit",
-        "hooks": [{"type": "command",
-                   "command": ("py=$(python3 -c 'import sys;print(sys.executable)' 2>/dev/null); "
-                               "[ -x \"$py\" ] || py=$(python -c 'import sys;print(sys.executable)'); "
-                               "\"$py\" \"{0}\" hook".format(script)),
-                   "timeout": 5}]}]}}
+    entry = native_hook_config("claude")
     print("")
     print("Add this to .claude/settings.json yourself - this tool does not edit it:")
     for line in json.dumps(entry, indent=2).splitlines():
@@ -4654,10 +4639,8 @@ def native_hook_config(host):
         # runs the hook from the top of the tree with no --caller-cwd.
         command = "git -c alias.aif-hook=!sh aif-hook docs/ai-forward-pack/hooks/run-hook.sh ../scripts/coord-core.py hook --host agy"
     else:
-        command = ("py=$(python3 -c 'import sys;print(sys.executable)' 2>/dev/null); "
-                   "[ -x \"$py\" ] || py=$(python -c 'import sys;print(sys.executable)'); "
-                   "root=$(git rev-parse --show-toplevel) || exit 2; "
-                   "exec \"$py\" \"$root/docs/ai-forward-pack/scripts/coord-core.py\" hook --host " + host)
+        command = ("git -c alias.aif-hook=!sh aif-hook docs/ai-forward-pack/hooks/run-hook.sh "
+                   "--caller-cwd ../scripts/coord-core.py hook --host " + host)
     matcher = {"codex": "apply_patch", "claude": "Write|Edit|MultiEdit|NotebookEdit",
                "grok": "Write|Edit|MultiEdit|NotebookEdit|write_file|edit_file|search_replace",
                "agy": "write_to_file|replace_file_content|multi_replace_file_content"}[host]

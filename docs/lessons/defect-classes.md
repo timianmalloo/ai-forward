@@ -499,6 +499,17 @@ representation-contract failure, not a reason to bypass merges for authored file
 - **Signature:** an integration is built against a vendor's envelope as described — in docs, in a schema, or by analogy to a sibling product — and the field names, nesting or cardinality of the real traffic differ. The adapter parses nothing, extracts nothing, and returns its **safe default**. Nothing throws. It reads as working, and the safe default is usually "allow".
 - **Why it survives:** the adapter is exercised only against the payload its author wrote, so every test passes. There is no error to see, because "field absent" and "field absent because I am reading the wrong envelope" are the same code path. It survives review too, because the code looks correct — it *is* correct, for a message nobody sends.
 - **Instances:**
+  - *2026-09-26* — A stale revision-92 checkout still ran Bash-only Claude commands in
+    Windows Copilot although upstream revision 95 already repaired the launcher.
+    **Class/sweep:** source sync omitted settings refresh; downstream migration used
+    a path substring that could erase custom policy; Grok and the old settings printer
+    still emitted the earlier shell form. **Derive:** reuse the upstream Git launcher
+    and share exact-command settings merge between source sync and downstream installs.
+    **Prevent:** `test_hook_settings_upgrade.py` observes the old merger failing on
+    custom wrappers, mixed handlers, BOM input, nested malformed settings and existing
+    opt-ins; the new merger preserves policy and is idempotent. `pack-doctor` now
+    diagnoses encoding/shell drift and executes the installed launcher. Fetch and
+    compare upstream before designing a replacement; the redundant prototype was not shipped.
   - *2026-08-24* — `coord-core.py`'s `PreToolUse` hook read `tool_input.file_path`, the Claude Code shape, established by execution in spike S5. Copilot CLI's real shape, extracted from **55,541 recorded invocations** in `~/.copilot/session-state/*/events.jsonl`, is `input.toolCalls[]` with `args` as a **JSON string**, the key `path` not `file_path`, an **absolute** path, and **N calls batched per invocation**. The hook found no path and returned **`allow` for every Copilot edit** — a silent no-op wearing the shape of enforcement. Caught by the conformance suite before it shipped, and only because the fixture was taken from the recorded corpus rather than written by hand.
   - *Same date, the near-miss* — the architecture had already recorded "Copilot consumes the Claude plugin format" from the *manifest* shape (`.claude-plugin/plugin.json`, identical `hooks.json`). That is true, and it made the **request** envelope look settled by association. A shared plugin format does not imply a shared payload format, and the difference was invisible until the payload itself was read.
   - *Same date, third instance, in the INVOCATION rather than the payload* — the emitted plugin bundle used a **quoted executable**: `"C:\…\python.exe" "C:/…coord-core.py" hook`. A live Copilot session denied **every** tool call with `(hook errored)`, and a silent probe hook proved the script **never executed at all**. The one plugin known to work on this machine quotes its *script* and never its *interpreter*. Fixed to `python "${CLAUDE_PLUGIN_ROOT}/hooks/hook.py"` with the launcher shipped inside the bundle; both live runs are the red and the green.

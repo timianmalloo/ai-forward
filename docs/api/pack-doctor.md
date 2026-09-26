@@ -82,6 +82,10 @@ travels with the repo; the user file is reported but never edited.
 
 F-07 / CTX-D. The re-read guard is a control only when a host runs it.
 
+### `check_hook_launchers(root)`
+
+Scan five config files recursively for legacy command tokens; no custom allowlist.
+
 ### `check_block(root, fname)`
 
 **Coverage gap** — no docstring in the source.
@@ -169,6 +173,6 @@ lesson into a control that fires at the moment of the mistake).
 
 ## Coverage
 
-- Public functions: **16** · documented: **11** (**69%**)
+- Public functions: **17** · documented: **12** (**71%**)
 - Undocumented (recorded, not invented): `check_installed`, `check_surface`, `check_block`, `check_graph`, `run`
 

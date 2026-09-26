@@ -2208,7 +2208,7 @@ window.PORTAL_DATA = {
         "id": "api-index",
         "type": "api",
         "title": "API reference — the deployed script bundle",
-        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 544 public functions across 44 modules, 47% carrying a docstring."
+        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 548 public functions across 44 modules, 47% carrying a docstring."
       },
       {
         "id": "api-marker-lint",
@@ -3733,6 +3733,12 @@ window.PORTAL_DATA = {
         "type": "doc",
         "title": "Plan: make the pack's scripts, hooks, tools and skills work unchanged on Windows and macOS",
         "summary": "Six phases, ranked by benefit ÷ cost, each landing with a control that was observed failing first: one interpreter resolver used everywhere; three lints..."
+      },
+      {
+        "id": "plan-harness-config-portability",
+        "type": "doc",
+        "title": "Refresh and complete portable five-harness configuration",
+        "summary": "Reuse the upstream Git launcher, close the remaining Grok and legacy-emitter gaps, and make source sync and downstream settings upgrades safe and repeatable."
       },
       {
         "id": "plan-multi-harness-runner",
@@ -6950,6 +6956,16 @@ window.PORTAL_DATA = {
         "from": "plan-cross-platform-readiness",
         "to": "investigation-cross-platform-readiness",
         "rel": "implements"
+      },
+      {
+        "from": "plan-harness-config-portability",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "plan-harness-config-portability",
+        "to": "plan-cross-platform-readiness",
+        "rel": "relates-to"
       },
       {
         "from": "plan-multi-harness-runner",

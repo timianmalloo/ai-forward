@@ -22,6 +22,13 @@ summary: >-
 Merge source-owned hook bundles while preserving project-owned bundle names.
 ```
 
+## CLI — options
+
+| Option | Help |
+|---|---|
+| `--claude-settings` | _(no help text — coverage gap)_ |
+| `--ownership-only` | _(no help text — coverage gap)_ |
+
 ## Coverage
 
 - Public functions: **0** · documented: **0** (**100%**)

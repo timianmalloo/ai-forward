@@ -34,7 +34,11 @@ HOOKS = REPO / "pack" / "adapters" / "hooks"
 def load(path, name):
     spec = importlib.util.spec_from_file_location(name, path)
     module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
+    sys.path.insert(0, str(path.parent))
+    try:
+        spec.loader.exec_module(module)
+    finally:
+        sys.path.pop(0)
     return module
 
 
@@ -87,8 +91,8 @@ class SettingsEntryTests(unittest.TestCase):
         self.assertNotIn(str(REPO), printed, "the entry is pasted into a TRACKED file")
         # Repo-relative, forward-slashed: pack/scripts/... in the pack repo itself,
         # docs/ai-forward-pack/scripts/... in a consuming repo.
-        self.assertRegex(printed, r'\\"(pack|docs/ai-forward-pack)/scripts/coord-core.py\\" hook')
-        self.assertIn("import sys;print(sys.executable)", printed)
+        self.assertIn("run-hook.sh --caller-cwd ../scripts/coord-core.py hook --host claude", printed)
+        self.assertNotIn("py=$(", printed)
 
 
 class HookAdapterConformanceTests(unittest.TestCase):
@@ -123,10 +127,8 @@ class HookAdapterConformanceTests(unittest.TestCase):
                     self.assertNotIn("../", command, "a path that escapes the repo")
                     self.assertNotRegex(command, r"[A-Za-z]:\\|/Users/|/home/|/opt/homebrew/",  # machine-path-ok: the assertion
                                         "a machine-specific path in a tracked hook config")
-                    self.assertIn("import sys;print(sys.executable)", command,
-                                  "the interpreter is fixed instead of resolved at run time")
-                    self.assertIn("python3", command)
-                    self.assertIn("python -c", command, "no fallback for python.org Windows")
+                    self.assertTrue(command.startswith(AGY_LAUNCHER))
+                    self.assertNotIn("$(", command)
 
     @unittest.skipUnless(shutil.which("sh"), "needs a POSIX sh (Git Bash provides one on Windows)")
     def test_the_claude_command_executes_under_sh_with_a_hook_payload(self):
@@ -286,19 +288,23 @@ class CopilotHookShellTests(unittest.TestCase):
         copilot = json.loads((HOOKS / "copilot.ai-forward-hooks.json").read_text(encoding="utf-8"))
         for entries in copilot["hooks"].values():
             rows += [("copilot " + arm, entry[arm]) for entry in entries for arm in ("bash", "powershell")]
-        claude = json.loads((HOOKS / "claude-code.settings.hooks.json").read_text(encoding="utf-8"))
-        for entries in claude["hooks"].values():
-            rows += [("claude", hook["command"]) for entry in entries for hook in entry["hooks"]]
+        for name, label in (("claude-code.settings.hooks.json", "claude"),
+                            ("grok.ai-forward-hooks.json", "grok")):
+            config = json.loads((HOOKS / name).read_text(encoding="utf-8"))
+            for entries in config["hooks"].values():
+                rows += [(label, hook["command"]) for entry in entries for hook in entry["hooks"]]
         emitted = subprocess.run([sys.executable, str(COORD), "hook", "--config", "--host", "copilot"],
                                  capture_output=True, text=True, encoding="utf-8", timeout=60)
         self.assertEqual(0, emitted.returncode, emitted.stderr)
         for entry in json.loads(emitted.stdout)["hooks"]["preToolUse"]:
             rows += [("ownership " + arm, entry[arm]) for arm in ("bash", "powershell")]
         # the Claude ownership entry is merged into .claude/settings.json too, which Copilot reads (sweep)
-        emitted = subprocess.run([sys.executable, str(COORD), "hook", "--config", "--host", "claude"],
-                                 capture_output=True, text=True, encoding="utf-8", timeout=60)
-        rows += [("ownership claude", h["command"]) for entry in json.loads(emitted.stdout)["hooks"]["PreToolUse"]
-                 for h in entry["hooks"]]
+        for host in ("claude", "grok", "codex"):
+            emitted = subprocess.run([sys.executable, str(COORD), "hook", "--config", "--host", host],
+                                     capture_output=True, text=True, encoding="utf-8", timeout=60)
+            self.assertEqual(0, emitted.returncode, emitted.stderr)
+            rows += [("ownership " + host, h["command"]) for entry in json.loads(emitted.stdout)["hooks"]["PreToolUse"]
+                     for h in entry["hooks"]]
         self.assertGreaterEqual(len(rows), 20)
         return rows
 

@@ -762,8 +762,8 @@ class InstallTests(GitCase):
         # named relative to the repo - the entry is pasted into a TRACKED file, so it must
         # carry nothing about this machine (the earlier form printed sys.executable in
         # `command` and an absolute script path in `args`).
-        self.assertTrue(hook["command"].rstrip().endswith(" hook"), hook["command"])
-        self.assertIn("import sys;print(sys.executable)", hook["command"])
+        self.assertTrue(hook["command"].rstrip().endswith(" hook --host claude"), hook["command"])
+        self.assertIn("run-hook.sh --caller-cwd", hook["command"])
         self.assertNotIn(sys.executable, hook["command"])
         self.assertNotIn("{{", out)
         self.assertNotIn("}}", out)

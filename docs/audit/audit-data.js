@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-24T22:56:36Z",
+  "generated": "2026-09-26T16:59:05Z",
   "audit": [
     {
       "actor": null,
@@ -13276,6 +13276,33 @@ window.AUDIT_DATA = {
         "branch": "fix/runner-long-slices-and-agy-hook",
         "pushed": false
       }
+    },
+    {
+      "id": "al-01M3FAFYEYNT2BDRHTN9FXC5SX",
+      "shortname": "portable-harness-config",
+      "datetime": "2026-09-26T16:59:05Z",
+      "session": "copilot-harness-config",
+      "prompt": "so - lets make sure of the following:\n- all harnesses must work in both Windows and MacOs\n- Ai-forward and repos with the pack applied are expected to support Copilot, Claude Code, Codex, Grok, Agy\n----\nbuild a plan to fix the config \nexecute the plan\ncommit and push",
+      "summary": "Revision 96 reuses upstream revision 95's Git launcher instead of the superseded Node prototype. Grok and the legacy settings emitter now use the shared launcher. Source sync and pack-apply share narrow exact-command migration, preserving custom policy and opt-ins, rejecting malformed UTF-8/JSON without overwrite, and repairing BOMs. Doctor detects stale commands and executes a benign launcher probe. Full local suite: 1267 passed, 143 platform/feature skips, 547 subtests passed. Independent upgrade-safety veto cleared. Generated API/site/graph outputs regenerated; final non-test gates and remote CI are the release checks.",
+      "kind": "skill",
+      "skill": "extendaibundle",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/plans/harness-config-portability.md",
+        "pack/scripts/pack-apply.py",
+        "pack/scripts/pack-doctor.py",
+        "tests/docs_explorer/test_hook_settings_upgrade.py"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Repair five-harness Windows/macOS configuration in source and downstream installations, then commit and push.",
+      "done_when": "Portable configurations and safe upgrades proven; changes committed and pushed with Windows/macOS CI evidence.",
+      "tier": "T2",
+      "fan_out": 5,
+      "started_at": "2026-09-26T16:11:30Z",
+      "duration_seconds": 2855.0
     }
   ],
   "changes": [
@@ -14910,6 +14937,29 @@ window.AUDIT_DATA = {
         "after": "b728a345a57de64c97870faf4df603fee56742e8",
         "branch": "feat/coordination-runtime-v2",
         "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M3FAFYB4TQ657G6105G8VQ3S",
+      "datetime": "2026-09-26T16:59:05Z",
+      "session": "copilot-harness-config",
+      "kind": "decision",
+      "skill": "extendaibundle",
+      "title": "Complete portable five-harness hook refresh without a new runtime",
+      "prompt": "Make all five harnesses work on Windows and macOS in AI-Forward and consuming repos; plan, execute, commit and push.",
+      "summary": "Reuse the fetched upstream Git launcher and close remaining Grok, legacy emitter, source-sync and downstream upgrade gaps in revision 96.",
+      "rationale": "A late fetch established that origin/main already contained the main launcher repair. The competing Node prototype was superseded, not shipped. The actual remaining failure class was stale or unsafe settings refresh: exact full-command migration preserves policy while strict decoding prevents silent permission-string corruption. Native host event qualification remains distinct from adapter execution.",
+      "artifacts": [
+        "docs/plans/harness-config-portability.md",
+        "pack/adapters/INSTALL.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "3b7940d6dc2bdb7001a0980bb75908255198fe8d",
+        "after": "3b7940d6dc2bdb7001a0980bb75908255198fe8d",
+        "branch": "fix/harness-config-upgrade",
+        "pushed": true,
         "commits": []
       }
     }

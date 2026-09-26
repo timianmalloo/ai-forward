@@ -9,7 +9,7 @@ links:
   - { to: architecture, rel: documents }
 review-by: "2027-03-03"
 summary: >-
-  Generated API reference for the pack's public surface — the deployed script bundle. 544 public functions across 44 modules, 47% carrying a docstring.
+  Generated API reference for the pack's public surface — the deployed script bundle. 548 public functions across 44 modules, 47% carrying a docstring.
 ---
 
 # API reference — the deployed script bundle
@@ -46,8 +46,8 @@ with no docstring is listed as a **coverage gap** rather than described from gue
 | [`marker-lint.py`](marker-lint.md) | 1 | 0 | — | marker-lint.py - completeness check for the pack's inline decision markers. |
 | [`named_hook_bundles.py`](named_hook_bundles.md) | 0 | 0 | — | Merge source-owned hook bundles while preserving project-owned bundle names. |
 | [`obsidian-setup.py`](obsidian-setup.md) | 17 | 7 | — | obsidian-setup.py - stand up (and analyze) the Obsidian lens over an AI-Forward docs graph. |
-| [`pack-apply.py`](pack-apply.md) | 16 | 9 | — | pack-apply.py — apply the AI-Forward deployment map to a repo, mechanically and reversibly. |
-| [`pack-doctor.py`](pack-doctor.md) | 16 | 11 | — | pack-doctor.py — AI-Forward install-health check (deployable; runs in a TARGET repo). |
+| [`pack-apply.py`](pack-apply.md) | 19 | 12 | — | pack-apply.py — apply the AI-Forward deployment map to a repo, mechanically and reversibly. |
+| [`pack-doctor.py`](pack-doctor.md) | 17 | 12 | — | pack-doctor.py — AI-Forward install-health check (deployable; runs in a TARGET repo). |
 | [`platform_process.py`](platform_process.md) | 4 | 0 | — | Cross-platform owned-process helpers for bounded local subprocesses. |
 | [`prompt-compile.py`](prompt-compile.md) | 22 | 7 | 4 | prompt-compile.py - the compile stage: a logged raw prompt -> a gated, harness-rendered prompt. |
 | [`prompt-log.py`](prompt-log.md) | 18 | 7 | 8 | prompt-log.py — the fast prompt-reuse lens over the project's audit log. |
@@ -68,5 +68,5 @@ with no docstring is listed as a **coverage gap** rather than described from gue
 | [`visual-assets-setup.py`](visual-assets-setup.md) | 12 | 5 | — | visual-assets-setup.py - wire up a generation backend for UI visual assets (AI-Forward). |
 | [`xaml-token-lint.py`](xaml-token-lint.md) | 9 | 0 | — | xaml-token-lint.py — first-slice token linter for XAML/native UI markup. |
 
-**Total** — 544 public functions across 44 modules, **256 documented (47%)**.
+**Total** — 548 public functions across 44 modules, **260 documented (47%)**.
 

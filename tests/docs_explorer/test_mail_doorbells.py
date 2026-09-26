@@ -158,7 +158,6 @@ class HookCli(Fixture):
 
 
 class AdapterConfigs(unittest.TestCase):
-    RESOLVER = "import sys;print(sys.executable)"
 
     def _commands(self, data):
         found = []
@@ -191,7 +190,7 @@ class AdapterConfigs(unittest.TestCase):
                     self.assertIn("--host " + host, cmds[0])
                     self.assertIn("--event " + event, cmds[0])
                     # Claude-format commands run through the launcher, which holds the resolver (PLAT-A, rev 95)
-                    self.assertIn(self.RESOLVER if host == "grok" else "run-hook.sh mail-doorbell.py", cmds[0])
+                    self.assertIn("run-hook.sh mail-doorbell.py", cmds[0])
             entries = [e for e in data["PreToolUse"] if any("mail-doorbell.py" in h["command"] for h in e["hooks"])]
             self.assertNotIn("matcher", entries[0], "the doorbell rings at every tool, not only Read")
 

@@ -86,9 +86,21 @@ _(no docstring — coverage gap)_
 
 ## Functions
 
+### `read_hook_settings(path)`
+
+Decode policy-bearing configuration strictly; absence alone is an empty install.
+
 ### `merge_named_hook_bundles(source_text, current_text=…)`
 
 Refresh source-owned names and retain project-owned names; reject invalid JSON.
+
+### `merge_hook_ownership(current_text)`
+
+Refresh existing native opt-ins only; never create or enable an ownership hook.
+
+### `merge_claude_settings(source_text, current_text=…)`
+
+Replace complete shipped commands, never custom wrappers or permission settings.
 
 ### `gitignore_negations(pattern)`
 
@@ -165,6 +177,6 @@ original's skill-surface needles and required-phrase checks where they can be re
 
 ## Coverage
 
-- Public functions: **16** · documented: **9** (**56%**)
+- Public functions: **19** · documented: **12** (**63%**)
 - Undocumented (recorded, not invented): `read`, `norm_nl`, `frontmatter`, `git`, `normalise`, `render_table`, `summarize`
 
