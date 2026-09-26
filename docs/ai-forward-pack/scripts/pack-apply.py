@@ -74,6 +74,50 @@ def merge_named_hook_bundles(source_text, current_text=None):
     current.update(source)
     return json.dumps(current, indent=2) + "\n"
 
+
+def merge_claude_settings(source_text, current_text=None, legacy=None):
+    """Refresh only exact shipped handlers; preserve custom hooks and permission state."""
+    source = json.loads(source_text)
+    current = json.loads(current_text.lstrip("\ufeff")) if current_text is not None else {}
+    for config in (source, current):
+        if not isinstance(config, dict) or not isinstance(config.get("hooks", {}), dict):
+            raise ValueError("Settings and hooks must be objects")
+        for entries in config.get("hooks", {}).values():
+            if not isinstance(entries, list):
+                raise ValueError("Hook events must be arrays")
+            for entry in entries:
+                if not isinstance(entry, dict) or not isinstance(entry.get("hooks"), list):
+                    raise ValueError("Hook entries must contain handler arrays")
+                if "matcher" in entry and not isinstance(entry["matcher"], str):
+                    raise ValueError("Hook matcher must be a string")
+                for handler in entry["hooks"]:
+                    if not isinstance(handler, dict):
+                        raise ValueError("Hook handlers must be objects")
+                    if handler.get("type") == "command" and not isinstance(handler.get("command"), str):
+                        raise ValueError("Command handlers require a command string")
+                    if "command" in handler and not isinstance(handler["command"], str):
+                        raise ValueError("Hook commands must be strings")
+    hooks = current.setdefault("hooks", {})
+    for event, entries in source.get("hooks", {}).items():
+        have = hooks.setdefault(event, [])
+        wanted = {handler.get("command") for entry in entries for handler in entry["hooks"]}
+        for entry in have:
+            for handler in entry["hooks"]:
+                replacement = (legacy or {}).get(handler.get("command"))
+                ownership = event == "PreToolUse" and replacement and replacement.endswith(
+                    " -- coord-core.py hook --host claude")
+                if (replacement in wanted or ownership) and not handler.get("args"):
+                    handler["command"] = replacement
+        existing = {handler.get("command") for entry in have for handler in entry["hooks"]}
+        for entry in entries:
+            if not any(handler.get("command") in existing for handler in entry["hooks"]):
+                have.append(entry)
+                existing.update(handler.get("command") for handler in entry["hooks"])
+    for key, value in source.items():
+        if key != "hooks":
+            current.setdefault(key, value)
+    return json.dumps(current, indent=2) + "\n"
+
 BEGIN = "<!-- AI-FORWARD-PACK:BEGIN"
 END = "<!-- AI-FORWARD-PACK:END -->"
 IMPORT_LINE = "@AGENTS.md"
@@ -537,7 +581,8 @@ class Applier(object):
             self.place("bundle", f, os.path.join(dp, f), read(os.path.join(self.pack, f)))
         hooks = os.path.join(self.pack, "adapters", "hooks")
         for f in ("reread-guard.py", "session-start.py", "mail-doorbell.py", "heartbeat.py", "coord_identity.py",
-                  "owner-review-gate.py", "copilot.ai-forward-hooks.json", "README.md"):
+                  "owner-review-gate.py", "run-hook.cjs", "legacy-commands.json",
+                  "copilot.ai-forward-hooks.json", "README.md"):
             self.place("hooks", "adapters/hooks/" + f, os.path.join(dp, "hooks", f), read(os.path.join(hooks, f)))
         self.place("hooks", "adapters/hooks/copilot.ai-forward-hooks.json",
                    os.path.join(self.target, ".github", "hooks", "ai-forward.json"), read(os.path.join(hooks, "copilot.ai-forward-hooks.json")))
@@ -579,34 +624,23 @@ class Applier(object):
 
     def _settings(self, snippet_text):
         dest = os.path.join(self.target, ".claude", "settings.json")
-        try:
-            snippet = json.loads(snippet_text or "{}")
-        except ValueError:
-            self.row("hooks", ".claude/settings.json", "ERROR", "fail", "pack snippet is not valid JSON")
-            return
         current_text = read(dest)
         try:
-            current = json.loads(current_text) if current_text else {}
-        except ValueError:
-            self.row("hooks", ".claude/settings.json", "CONFLICT", "fail", "existing settings.json is not valid JSON - merge by hand")
+            if os.path.islink(dest):
+                raise ValueError("symlink settings target")
+            legacy_text = read(os.path.join(self.pack, "adapters", "hooks", "legacy-commands.json"))
+            legacy = json.loads(legacy_text) if legacy_text else {}
+            merged = merge_claude_settings(snippet_text, current_text, legacy)
+        except (ValueError, TypeError):
+            self.row("hooks", ".claude/settings.json", "CONFLICT", "fail",
+                     "HOOK-SETTINGS-INVALID: existing settings retained; inspect JSON and nested hook shapes")
             return
-        merged = json.loads(json.dumps(current))
-        hooks = merged.setdefault("hooks", {})
-        for event, entries in (snippet.get("hooks") or {}).items():
-            have = hooks.setdefault(event, [])
-            for entry in entries:
-                wanted = {h.get("command") for h in entry.get("hooks", [])}
-                if not any(wanted & {h.get("command") for h in e.get("hooks", [])} for e in have):
-                    have.append(entry)
-        for k, v in snippet.items():
-            if k != "hooks" and k not in merged:
-                merged[k] = v
-        if merged == current:
+        if merged == current_text:
             self.row("hooks", ".claude/settings.json", "UNCHANGED", "ok")
             return
-        self._write(dest, json.dumps(merged, indent=2) + "\n")
+        self._write(dest, merged)
         self.row("hooks", ".claude/settings.json", "ADD" if current_text is None else "MERGE", "ok",
-                 "hooks + showThinkingSummaries merged; other keys untouched")
+                 "portable pack hooks refreshed; custom hooks and other settings retained; BOM-free UTF-8")
 
     def _tracked_under(self, path):
         """Which files does the TARGET repo track under this path? None = cannot tell.

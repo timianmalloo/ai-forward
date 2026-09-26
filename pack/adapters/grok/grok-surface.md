@@ -35,3 +35,6 @@ On Grok the doorbell and stop gate are `observed-only` until a live session show
 ## Scripts
 
 On Windows use `python` or `py -3`; on Linux/macOS use `python3`. `docs/ai-forward-pack/scripts/pack-doctor.py` names the working form for this machine.
+Pack hooks additionally require Node.js LTS and Git on both platforms. They use the
+shared shell-neutral launcher; see `docs/ai-forward-pack/hooks/README.md`. Refresh the
+complete bundle so Grok's native hooks and any cross-loaded Claude settings agree.

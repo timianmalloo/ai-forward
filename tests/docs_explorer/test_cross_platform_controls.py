@@ -87,8 +87,8 @@ class SettingsEntryTests(unittest.TestCase):
         self.assertNotIn(str(REPO), printed, "the entry is pasted into a TRACKED file")
         # Repo-relative, forward-slashed: pack/scripts/... in the pack repo itself,
         # docs/ai-forward-pack/scripts/... in a consuming repo.
-        self.assertRegex(printed, r'\\"(pack|docs/ai-forward-pack)/scripts/coord-core.py\\" hook')
-        self.assertIn("import sys;print(sys.executable)", printed)
+        self.assertIn(" -- coord-core.py hook --host claude", printed)
+        self.assertIn("run-hook.cjs", printed)
 
 
 class HookAdapterConformanceTests(unittest.TestCase):
@@ -123,10 +123,9 @@ class HookAdapterConformanceTests(unittest.TestCase):
                     self.assertNotIn("../", command, "a path that escapes the repo")
                     self.assertNotRegex(command, r"[A-Za-z]:\\|/Users/|/home/|/opt/homebrew/",  # machine-path-ok: the assertion
                                         "a machine-specific path in a tracked hook config")
-                    self.assertIn("import sys;print(sys.executable)", command,
-                                  "the interpreter is fixed instead of resolved at run time")
-                    self.assertIn("python3", command)
-                    self.assertIn("python -c", command, "no fallback for python.org Windows")
+                    self.assertTrue(command.startswith('node -e "'), command)
+                    self.assertIn("run-hook.cjs", command)
+                    self.assertNotIn("$(", command, "shell expansion breaks cross-loaded hooks")
 
     @unittest.skipUnless(shutil.which("sh"), "needs a POSIX sh (Git Bash provides one on Windows)")
     def test_the_claude_command_executes_under_sh_with_a_hook_payload(self):

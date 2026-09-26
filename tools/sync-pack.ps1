@@ -318,12 +318,16 @@ Copy-Item (Join-Path $pack "context-budget.json")    $docPack -Force
 # --- hooks: the re-read guard (CTX-D) runs at the tool seam on both hosts -------------
 # adapters/hooks/reread-guard.py -> docs/ai-forward-pack/hooks/ (the script both configs call);
 # the Copilot config -> .github/hooks/ai-forward.json (loaded from the repo automatically);
-# the Claude Code hooks object is NOT merged into .claude/settings.json by this script (a
-# JSON merge is a judgement call in a file that carries permissions) - INSTALL 1.5 says how.
+# Exact shipped Claude commands are refreshed by the same narrow merger as the installer.
+# Custom handlers and permission settings are retained; malformed targets are not overwritten.
 $hooksDst = Join-Path $docPack "hooks"
 New-Item -ItemType Directory -Force -Path $hooksDst | Out-Null
 # every hook adapter ships (an explicit list drifted twice: mail-doorbell.py at rev 77, heartbeat.py + owner-review-gate.py at rev 79 - class PACK-D)
 Copy-Item (Join-Path $pack "adapters\hooks\*.py") $hooksDst -Force
+Copy-Item (Join-Path $pack "adapters\hooks\run-hook.cjs") $hooksDst -Force
+Copy-Item (Join-Path $pack "adapters\hooks\legacy-commands.json") $hooksDst -Force
+& $pyExe @pyArgs (Join-Path $pack "scripts\named_hook_bundles.py") (Join-Path $pack "adapters\hooks\claude-code.settings.hooks.json") (Join-Path $repo ".claude\settings.json") --claude-settings --legacy (Join-Path $pack "adapters\hooks\legacy-commands.json")
+if ($LASTEXITCODE -ne 0) { throw "Claude settings could not be refreshed safely" }
 Copy-Item (Join-Path $pack "adapters\hooks\copilot.ai-forward-hooks.json") $hooksDst -Force
 Copy-Item (Join-Path $pack "adapters\hooks\README.md")       $hooksDst -Force
 $ghHooks = Join-Path $repo ".github\hooks"

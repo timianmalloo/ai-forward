@@ -3,6 +3,9 @@
 Codex reads the repository's `AGENTS.md` as project instructions and discovers skills
 from `.agents/skills/<name>/SKILL.md`. This directory is shared with Antigravity;
 Codex does not need Antigravity's `skills.json`, rules directory, or hooks configuration.
+Windows and macOS installations share the same pack skills. Optional native hooks
+require Node.js LTS, Python 3.8+ and Git; see `docs/ai-forward-pack/hooks/README.md`.
+The emitted launcher is shell-neutral; native `/hooks` approval remains required.
 
 ## Invoke a skill
 

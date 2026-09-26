@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "py=$(python3 -c 'import sys;print(sys.executable)' 2>/dev/null); [ -x \"$py\" ] || py=$(python -c 'import sys;print(sys.executable)'); \"$py\" docs/ai-forward-pack/hooks/reread-guard.py --host claude",
+            "command": "node -e \"const e={...process.env};delete e.GIT_DIR;delete e.GIT_WORK_TREE;delete e.GIT_COMMON_DIR;const r=require('node:child_process').execFileSync('git',['rev-parse','--show-toplevel'],{encoding:'utf8',env:e,timeout:1000}).trim();require(r+'/docs/ai-forward-pack/hooks/run-hook.cjs').main(process.argv.slice(1))\" -- reread-guard.py --host claude",
             "timeout": 10
           }
         ]
@@ -15,7 +15,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "py=$(python3 -c 'import sys;print(sys.executable)' 2>/dev/null); [ -x \"$py\" ] || py=$(python -c 'import sys;print(sys.executable)'); \"$py\" docs/ai-forward-pack/hooks/mail-doorbell.py --host claude --event PreToolUse",
+            "command": "node -e \"const e={...process.env};delete e.GIT_DIR;delete e.GIT_WORK_TREE;delete e.GIT_COMMON_DIR;const r=require('node:child_process').execFileSync('git',['rev-parse','--show-toplevel'],{encoding:'utf8',env:e,timeout:1000}).trim();require(r+'/docs/ai-forward-pack/hooks/run-hook.cjs').main(process.argv.slice(1))\" -- mail-doorbell.py --host claude --event PreToolUse",
             "timeout": 10
           }
         ]
@@ -26,7 +26,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "py=$(python3 -c 'import sys;print(sys.executable)' 2>/dev/null); [ -x \"$py\" ] || py=$(python -c 'import sys;print(sys.executable)'); \"$py\" docs/ai-forward-pack/hooks/reread-guard.py --host claude",
+            "command": "node -e \"const e={...process.env};delete e.GIT_DIR;delete e.GIT_WORK_TREE;delete e.GIT_COMMON_DIR;const r=require('node:child_process').execFileSync('git',['rev-parse','--show-toplevel'],{encoding:'utf8',env:e,timeout:1000}).trim();require(r+'/docs/ai-forward-pack/hooks/run-hook.cjs').main(process.argv.slice(1))\" -- reread-guard.py --host claude",
             "timeout": 10
           }
         ]
@@ -35,7 +35,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "py=$(python3 -c 'import sys;print(sys.executable)' 2>/dev/null); [ -x \"$py\" ] || py=$(python -c 'import sys;print(sys.executable)'); \"$py\" docs/ai-forward-pack/hooks/mail-doorbell.py --host claude --event UserPromptSubmit",
+            "command": "node -e \"const e={...process.env};delete e.GIT_DIR;delete e.GIT_WORK_TREE;delete e.GIT_COMMON_DIR;const r=require('node:child_process').execFileSync('git',['rev-parse','--show-toplevel'],{encoding:'utf8',env:e,timeout:1000}).trim();require(r+'/docs/ai-forward-pack/hooks/run-hook.cjs').main(process.argv.slice(1))\" -- mail-doorbell.py --host claude --event UserPromptSubmit",
             "timeout": 10
           }
         ]
@@ -46,7 +46,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "py=$(python3 -c 'import sys;print(sys.executable)' 2>/dev/null); [ -x \"$py\" ] || py=$(python -c 'import sys;print(sys.executable)'); \"$py\" docs/ai-forward-pack/hooks/session-start.py --host claude",
+            "command": "node -e \"const e={...process.env};delete e.GIT_DIR;delete e.GIT_WORK_TREE;delete e.GIT_COMMON_DIR;const r=require('node:child_process').execFileSync('git',['rev-parse','--show-toplevel'],{encoding:'utf8',env:e,timeout:1000}).trim();require(r+'/docs/ai-forward-pack/hooks/run-hook.cjs').main(process.argv.slice(1))\" -- session-start.py --host claude",
             "timeout": 15
           }
         ]
@@ -57,7 +57,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "py=$(python3 -c 'import sys;print(sys.executable)' 2>/dev/null); [ -x \"$py\" ] || py=$(python -c 'import sys;print(sys.executable)'); \"$py\" docs/ai-forward-pack/hooks/session-start.py --host claude",
+            "command": "node -e \"const e={...process.env};delete e.GIT_DIR;delete e.GIT_WORK_TREE;delete e.GIT_COMMON_DIR;const r=require('node:child_process').execFileSync('git',['rev-parse','--show-toplevel'],{encoding:'utf8',env:e,timeout:1000}).trim();require(r+'/docs/ai-forward-pack/hooks/run-hook.cjs').main(process.argv.slice(1))\" -- session-start.py --host claude",
             "timeout": 15
           }
         ]
@@ -68,7 +68,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "py=$(python3 -c 'import sys;print(sys.executable)' 2>/dev/null); [ -x \"$py\" ] || py=$(python -c 'import sys;print(sys.executable)'); \"$py\" docs/ai-forward-pack/hooks/heartbeat.py --host claude --event PostToolUse",
+            "command": "node -e \"const e={...process.env};delete e.GIT_DIR;delete e.GIT_WORK_TREE;delete e.GIT_COMMON_DIR;const r=require('node:child_process').execFileSync('git',['rev-parse','--show-toplevel'],{encoding:'utf8',env:e,timeout:1000}).trim();require(r+'/docs/ai-forward-pack/hooks/run-hook.cjs').main(process.argv.slice(1))\" -- heartbeat.py --host claude --event PostToolUse",
             "timeout": 10
           }
         ]
@@ -79,7 +79,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "py=$(python3 -c 'import sys;print(sys.executable)' 2>/dev/null); [ -x \"$py\" ] || py=$(python -c 'import sys;print(sys.executable)'); \"$py\" docs/ai-forward-pack/hooks/heartbeat.py --host claude --event Stop",
+            "command": "node -e \"const e={...process.env};delete e.GIT_DIR;delete e.GIT_WORK_TREE;delete e.GIT_COMMON_DIR;const r=require('node:child_process').execFileSync('git',['rev-parse','--show-toplevel'],{encoding:'utf8',env:e,timeout:1000}).trim();require(r+'/docs/ai-forward-pack/hooks/run-hook.cjs').main(process.argv.slice(1))\" -- heartbeat.py --host claude --event Stop",
             "timeout": 10
           }
         ]
@@ -88,7 +88,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "py=$(python3 -c 'import sys;print(sys.executable)' 2>/dev/null); [ -x \"$py\" ] || py=$(python -c 'import sys;print(sys.executable)'); \"$py\" docs/ai-forward-pack/hooks/owner-review-gate.py --host claude --event Stop",
+            "command": "node -e \"const e={...process.env};delete e.GIT_DIR;delete e.GIT_WORK_TREE;delete e.GIT_COMMON_DIR;const r=require('node:child_process').execFileSync('git',['rev-parse','--show-toplevel'],{encoding:'utf8',env:e,timeout:1000}).trim();require(r+'/docs/ai-forward-pack/hooks/run-hook.cjs').main(process.argv.slice(1))\" -- owner-review-gate.py --host claude --event Stop",
             "timeout": 10
           }
         ]
@@ -99,7 +99,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "py=$(python3 -c 'import sys;print(sys.executable)' 2>/dev/null); [ -x \"$py\" ] || py=$(python -c 'import sys;print(sys.executable)'); \"$py\" docs/ai-forward-pack/hooks/owner-review-gate.py --host claude --event SubagentStop",
+            "command": "node -e \"const e={...process.env};delete e.GIT_DIR;delete e.GIT_WORK_TREE;delete e.GIT_COMMON_DIR;const r=require('node:child_process').execFileSync('git',['rev-parse','--show-toplevel'],{encoding:'utf8',env:e,timeout:1000}).trim();require(r+'/docs/ai-forward-pack/hooks/run-hook.cjs').main(process.argv.slice(1))\" -- owner-review-gate.py --host claude --event SubagentStop",
             "timeout": 10
           }
         ]

@@ -1,5 +1,46 @@
 # Hooks — the controls that run at the tool seam
 
+## Windows and macOS prerequisites
+
+All five harnesses are supported by the pack on Windows and macOS: Copilot CLI,
+Claude Code, Codex CLI, Grok Build and Antigravity (`agy`). Install **Node.js LTS,
+Python 3.8+ and Git on PATH** before enabling pack hooks. Node is now a hook
+prerequisite even in a consuming repository that does not otherwise use JavaScript.
+No npm packages are needed by the launcher.
+
+`run-hook.cjs` is the single runtime launcher. The fixed `node -e` bootstrap parses
+under PowerShell and POSIX shells without shell-variable expansion, finds the current
+Git checkout from a root or subdirectory, and passes literal arguments to Python.
+It drops Git root overrides for discovery, rejects script targets outside the checkout,
+and allows only the shipped hook entry points. A nested repository must have its own
+pack; the launcher never falls back to a parent's installation.
+
+The operator manages runtime/PATH integrity and the harness approves repository code.
+The launcher is not a sandbox for malicious approved code. Python discovery has a
+one-second cumulative deadline with empty stdin and bounded output. Hook execution
+inherits stdin/stdout/stderr, runs once, preserves its exit status, and has a bounded
+deadline. Missing prerequisites and launch failures are explicit stderr errors, not
+successful no-ops. Host-specific error/timeout handling is not a portable authorization
+guarantee: verify native enforcement separately for each actual host/version.
+
+`pack-doctor.py` checks the installed launcher and Python, rejects Bash-only legacy
+commands and invalid configuration encoding. Run the complete pack update rather than
+copying JSON alone. Source sync and `pack-apply.py` use the same merger: exact previously
+shipped Claude commands are replaced, custom wrappers/handlers and permissions survive,
+malformed nested settings are not overwritten, and output is BOM-free UTF-8.
+The finite `legacy-commands.json` inventory is migration data, not executable hooks.
+
+| Harness | Default configuration | Ownership hooks |
+|---|---|---|
+| Copilot CLI | `.github/hooks/ai-forward.json`; also loads Claude settings | Explicit opt-in via `coord hook --config --host copilot` |
+| Claude Code | `.claude/settings.json` | Existing opt-ins preserved; none added on fresh install |
+| Codex CLI | `.agents/skills/`, `AGENTS.md`; no default lifecycle hooks | Review emitted `.codex/hooks.json` entry in native `/hooks` |
+| Grok Build | `.grok/hooks/ai-forward.json`; can also load Claude settings | Explicit opt-in via `coord hook --config --host grok` |
+| Antigravity | `.agents/hooks.json`, named bundles | Existing project-owned bundles preserved |
+
+The command tests cover Windows and macOS shells, fresh installs and upgrades. They do
+not claim that every host version emitted or honored every native event.
+
 Native ownership is an explicit project opt-in. `coord hook --config --host
 claude|codex|copilot|grok|agy` emits a reviewable entry; it changes no settings or trust.
 Grok can keep it in a separate `.grok/hooks/coord-ownership.json`. Agy uses a local
@@ -58,16 +99,13 @@ would block). Copilot CLI hooks receive `{"sessionId","toolName","toolArgs"}` an
 `{"additionalContext": …}`; on `preToolUse` any non-zero exit other than 2 **denies** the call, so the
 guard exits 0 on every path including its own failures.
 
-**Interpreter (Windows and macOS).** The Claude Code, Grok Build and Antigravity commands resolve the
-interpreter **at run time**: `py=$(python3 -c 'import sys;print(sys.executable)' 2>/dev/null); [ -x "$py" ] || py=$(python -c …); "$py" <script>`.
-`python3` wins where it is real Python (Linux, macOS); on python.org Windows `python3` is a Store alias
-that exits 9009 without printing a path, so the fallback `python` is taken. Nothing machine-specific is
-written into the tracked config (class PLAT-B), and no one edits the command per machine (class
-PLAT-A). Cost: one extra interpreter start (~25 ms) per hook. The form needs a POSIX `sh`, which
-Claude Code uses on every platform (Git Bash on Windows); for Grok Build and Antigravity on Windows it is
-**observed-only** until a live session shows the hook firing there — the Antigravity command additionally
-anchors the script at `$(git rev-parse --show-toplevel)` because its hook cwd is not documented. The
-Copilot config keeps its `bash`/`powershell` arms, which are the same resolution done by the host.
+**Correction to the earlier interpreter claim.** A POSIX resolver inside a `command`
+field is not portable merely because one host normally chooses `sh`. Copilot loads
+Claude settings too and executed those commands through PowerShell on Windows, denying
+every tool on a parser error. The earlier `sh`-only test passed while that path failed.
+Revision 93 replaces the invocation layer, including the native ownership emitters;
+the Python hook protocols are unchanged. Native event qualification remains the
+per-host record above, not a property inferred from shell compatibility.
 
 Measured origin: the profiled TheTerrace session viewed `public.html` four times in three minutes,
 a 43 KB paged output whole twice, and one sub-agent read the same mockup six times — none of it errored.

@@ -4583,6 +4583,18 @@ def cmd_plugin_emit(out_dir, host=None):
     return 0
 
 
+def portable_hook_command(script, *args):
+    """Fixed bootstrap syntax parses under PowerShell, cmd and POSIX shells."""
+    bootstrap = (
+        "const e={...process.env};"
+        "delete e.GIT_DIR;delete e.GIT_WORK_TREE;delete e.GIT_COMMON_DIR;"
+        "const r=require('node:child_process').execFileSync('git',"
+        "['rev-parse','--show-toplevel'],{encoding:'utf8',env:e,timeout:1000}).trim();"
+        "require(r+'/docs/ai-forward-pack/hooks/run-hook.cjs').main(process.argv.slice(1))"
+    )
+    return 'node -e "' + bootstrap + '" -- ' + " ".join((script, *args))
+
+
 def _print_settings_entry(repo):
     """Print the hook entry for a human to paste.
 
@@ -4591,22 +4603,11 @@ def _print_settings_entry(repo):
     Windows path - output that reads correctly and is invalid the moment it is pasted.
     A serializer cannot make either mistake.
     """
-    # .claude/settings.json is TRACKED, so the entry must carry nothing about this machine
-    # (class PLAT-B): the interpreter is resolved at run time by the same shell form the
-    # pack's hook adapters use, and the script is named relative to the repo when it lives
-    # inside it. The earlier form printed `sys.executable` and an absolute script path.
-    me = Path(__file__).resolve()
-    try:
-        script = me.relative_to(Path(repo).resolve()).as_posix()
-    except ValueError:
-        script = me.as_posix()
     entry = {"hooks": {"PreToolUse": [{
         "matcher": "Write|Edit",
         "hooks": [{"type": "command",
-                   "command": ("py=$(python3 -c 'import sys;print(sys.executable)' 2>/dev/null); "
-                               "[ -x \"$py\" ] || py=$(python -c 'import sys;print(sys.executable)'); "
-                               "\"$py\" \"{0}\" hook".format(script)),
-                   "timeout": 5}]}]}}
+                   "command": portable_hook_command("coord-core.py", "hook", "--host", "claude"),
+                   "timeout": 10}]}]}}
     print("")
     print("Add this to .claude/settings.json yourself - this tool does not edit it:")
     for line in json.dumps(entry, indent=2).splitlines():
@@ -4625,15 +4626,12 @@ def native_hook_config(host):
     if host == "copilot":
         return {"version": 1, "hooks": {"preToolUse": [{
             "type": "command",
-            "bash": "python3 docs/ai-forward-pack/scripts/coord-core.py hook --host copilot",
-            "powershell": "python docs/ai-forward-pack/scripts/coord-core.py hook --host copilot",
+            "bash": portable_hook_command("coord-core.py", "hook", "--host", host),
+            "powershell": portable_hook_command("coord-core.py", "hook", "--host", host) + "; exit $LASTEXITCODE",
             "timeoutSec": 10,
             "matcher": "^(edit|create|write|apply_patch|str_replace|search_replace|multiedit|notebookedit|edit_file|write_file|write_to_file|replace_file_content|multi_replace_file_content)$",
         }]}}
-    command = ("py=$(python3 -c 'import sys;print(sys.executable)' 2>/dev/null); "
-               "[ -x \"$py\" ] || py=$(python -c 'import sys;print(sys.executable)'); "
-               "root=$(git rev-parse --show-toplevel) || exit 2; "
-               "exec \"$py\" \"$root/docs/ai-forward-pack/scripts/coord-core.py\" hook --host " + host)
+    command = portable_hook_command("coord-core.py", "hook", "--host", host)
     matcher = {"codex": "apply_patch", "claude": "Write|Edit|MultiEdit|NotebookEdit",
                "grok": "Write|Edit|MultiEdit|NotebookEdit|write_file|edit_file|search_replace",
                "agy": "write_to_file|replace_file_content|multi_replace_file_content"}[host]
