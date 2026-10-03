@@ -72,4 +72,3 @@ Exit 0 when clean, 1 on a finding, 2 on a usage error. Stdlib only.
 
 - Public functions: **3** · documented: **1** (**33%**)
 - Undocumented (recorded, not invented): `repo_root`, `self_test`
-

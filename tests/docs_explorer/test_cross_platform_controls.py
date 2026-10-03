@@ -244,9 +244,11 @@ class AgyHookShellTests(unittest.TestCase):
         launcher = (HOOKS / "run-hook.sh").read_bytes()
         self.assertNotIn(b"\r", launcher, "sh fails on CRLF")
         text = launcher.decode("utf-8")
-        self.assertIn("import sys;print(sys.executable)", text)
+        self.assertIn("sys.version_info >= (3, 10)", text)
         self.assertIn("python3", text)
         self.assertIn("python -c", text, "no fallback for python.org Windows")
+        self.assertIn("uv python find --no-config --no-project", text)
+        self.assertIn("exec uv run --no-config --no-project --python", text)
         # agy (no flag) runs the hook by its tree-relative path from the top of the tree; Codex's
         # --caller-cwd returns to the caller's directory and names the hook relative to it (PLAT-C).
         self.assertIn('script="${up}docs/ai-forward-pack/hooks/$1"', text)

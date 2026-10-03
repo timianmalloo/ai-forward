@@ -39,6 +39,11 @@ class HandbookTests(unittest.TestCase):
         self.assertNotIn('src="https://', outputs["docs/portal/index.html"])
         self.assertEqual(outputs, self.api.build(self.root)[0])
 
+    def test_delivery_page_has_its_contributor_owner_without_reassigning_the_handbook(self):
+        outputs, _ = self.api.build(self.root)
+        self.assertIn('owner: "@ahutanu"', outputs["docs/handbook/skill-deliver.md"])
+        self.assertIn('owner: "@timianmalloo"', outputs["docs/handbook/skill-implement.md"])
+
     def test_missing_skill_guide_fails_instead_of_creating_an_empty_card(self):
         (self.root / "web/handbook/skills/compile.md").unlink()
         with self.assertRaisesRegex(ValueError, "HANDBOOK-SKILL-COVERAGE"):

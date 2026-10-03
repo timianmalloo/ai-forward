@@ -88,4 +88,3 @@ Every direction must FAIL on its fixture and the good skill must pass (DC-104).
 
 - Public functions: **5** · documented: **2** (**40%**)
 - Undocumented (recorded, not invented): `find_skills_root`, `default_root`, `scan`
-

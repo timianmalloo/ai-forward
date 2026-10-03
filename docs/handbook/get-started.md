@@ -20,10 +20,175 @@ Start with a repository you understand and a change you can review. The first us
 result is not a large plan or a swarm of agents. It is seeing whether the pack helps
 you frame a small request, inspect the output, and keep a reliable next step.
 
-You need Git, a working Python 3 interpreter, a supported coding-agent application,
-and permission to change the target repository. Some maintenance operations use
-PowerShell. The agent application still needs its own account, model access and
-tool permissions; installing AI-Forward does not supply or bypass those.
+You need [Git](https://git-scm.com/downloads),
+[uv](https://docs.astral.sh/uv/getting-started/installation/), network access and a
+supported coding app with its own account/model access. You also need permission
+to change the project. AI-Forward does not supply model access or bypass tool
+permissions. uv supplies a suitable Python interpreter without installing your
+project's dependencies.
+
+## Install in the project you want to work on
+
+Open a terminal in your project and copy this one line. It works in Windows
+PowerShell/Command Prompt and macOS/Linux terminals, with Git and uv on PATH:
+
+```text
+uv run --no-config --no-project --script https://raw.githubusercontent.com/timianmalloo/ai-forward/main/bootstrap.py
+```
+
+Setup defaults to the upstream repository and `main`; you do not need `--repo`
+or `--ref` for this normal path. If you are reviewing unmerged changes, use the
+reviewer's committed source or an explicit repository/ref selection instead.
+The standard upstream launcher becomes available when the contribution adding
+it is merged; do not treat an unmerged preview as a released version.
+
+Setup installs the pack files and checks their contents. It reports
+`AI-Forward installed`, `AI-Forward updated` or `AI-Forward already current`,
+with a revision and exact source commit. Installation is not a completed project
+task. Setup does not initialize Git, install project dependencies, commit, push,
+deploy or grant permissions. A plain project works too; GitHub hosting is not needed.
+When run from a subdirectory of a Git project, setup uses the enclosing Git root.
+In a plain project, the current directory is the chosen root. After setup, inspect the project diff
+(or the named created/updated files when there is no Git) before starting work.
+
+- To preview first, append `--dry-run`. It downloads/checks the source and shows the
+  plan without writing to your project.
+- To check or update an install, rerun the same line.
+- To pin a version, replace `main` in the wrapper URL and set `--ref` to the same
+  full commit id. This is optional reproducibility control; `main` can change.
+
+If setup names a conflict in existing instructions, hooks, Git settings or checks,
+keep the existing file and review the specific difference. Do not delete project
+policy or enable broad permissions to get past the stop. Use a credential-free
+repository URL with Git's credential helper, not a token in a URL.
+
+### If setup fails
+
+Start with the error that setup printed. Do not keep rerunning it or widen
+permissions without understanding that error.
+
+| What you see | Safe next action | Retry when |
+|---|---|---|
+| **Command not found: `git` or `uv`** | Install the missing prerequisite from the links above, then open a new terminal. | Its `--version` command works. |
+| **Source unavailable / 404 / network error** | Confirm the selected version contains the launcher and that its exact URL is reachable. An unmerged contribution requires a review source, not upstream `main`. If your network blocks GitHub, ask its owner for the approved network or local-source path. | The launcher and source repository are reachable. |
+| **Authentication failed while fetching source** | Use Git's credential helper and a credential-free repository URL. Do not put a token in the command. | `git ls-remote` can read the selected source with the approved account. |
+| **A project instruction, hook, Git policy or check conflicts** | Keep the existing item. Ask the policy owner to compare its intended behavior with the named pack change. | The owner has reconciled that specific conflict; do not use a force flag. |
+| **Project checks unavailable** | Install or obtain the project's approved test runtime, or record the exact unavailable check and its effect on confidence. | The real check can run, or the owner accepts the explicitly limited handback. |
+
+A blocked check is not a passed check. If the safe retry condition is still false,
+stop and report the exact error and path rather than guessing.
+
+## Start a fresh chat and ask for one result
+
+Open the project in your coding app. Start a fresh chat so it can discover the
+installed skill. This is a chat request, not a terminal command:
+
+```text
+/deliver Add CSV export for the active project and filter. Export every matching task, not only the visible page. Do not add scheduling or new roles.
+```
+
+Replace the example with a task in your project.
+
+| App | How to invoke the installed skill |
+|---|---|
+| Claude Code | `/deliver <your task>` |
+| Codex | `$deliver <your task>` |
+| Copilot CLI | Find `deliver` with `/skills`, then `/deliver <your task>`; you can also ask `Use the /deliver skill to <your task>`. If installed during a chat, enter `/skills reload`, then `/skills info deliver`. |
+| VS Code Copilot | `/deliver` when listed, or select/request the installed `deliver` skill; Agent Host sessions use skills rather than older prompt files |
+| Grok Build / Antigravity | Select or request the installed `deliver` skill by name |
+
+Copilot's [skill command reference](https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-command-reference#skills-reference)
+and [reload guidance](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-skills)
+explain its native skill invocation and discovery controls. A listed skill is a
+discovery check, not proof that a model will follow every instruction.
+
+[Deliver](#skill-deliver) reads the project, preserves your goal and selects the
+needed workflows. It continues through approved stages; you do not have to type
+the next skill name each time. It does not run every skill, adopt the entire
+repository or start a swarm by default.
+
+## Answer a pause without losing the task
+
+A pause is not abandonment. The agent should tell you what is blocked, show the
+relevant evidence, ask a specific question and give you a task id. Reply in the
+same chat. Your answer applies only to that decision; it does not approve unrelated
+work, grant the app tool permission or authorize deployment.
+
+Different pauses need different responses:
+
+- **A requirement is unclear:** answer the specific choice or correct the request.
+- **A defect has been diagnosed:** review its cause and proposed repair phases.
+  Diagnosis alone does not authorize a fix. An actual prior instruction can cover
+  the repair only if those phases remain within what you authorized.
+- **The coding app asks for tool permission:** review that action in the app's
+  permission flow. The pack cannot grant it on your behalf.
+- **A review blocks the work:** address the finding and have an independent reviewer
+  check it again. The author cannot clear its own veto.
+- **Release or deployment is proposed:** it needs its own authorization; completing
+  code does not supply that permission.
+
+Here is the shape of a useful pause:
+
+```text
+Task id: `csv-export-7f2a`
+Completed: the filtered-query path is identified; the 63-match case is red.
+Blocked: exporting the email column changes the agreed data boundary.
+Decision needed from: project owner.
+Question: exclude email, include it, or change the allowed export fields?
+Reply with: Approve “exclude email”; Change <your choice>; Decline this change; or Stop this task.
+Remaining after your answer: implement, run the real query-to-download check, and obtain independent review.
+```
+
+Your reply should be just as narrow. **Approve** accepts the named option;
+**Change** supplies a different choice; **Decline** rejects that proposed action;
+**Stop this task** ends this work. None of those answers clears a coding-app
+permission prompt or an independent review finding.
+
+Keep the task id. In a fresh chat **in the same project**, use:
+
+```text
+/deliver resume <task-id>
+```
+
+Use `$deliver resume <task-id>` in Codex. In Copilot CLI, ask it to use the `/deliver`
+skill to resume that id. Replace `<task-id>` with the id you received. The agent
+checks the saved request, project and evidence before reusing valid completed work.
+If files or requirements changed, it explains what must be checked again rather
+than inventing consent or silently resetting progress. Checkpoints are local;
+a different clone or computer does not automatically have them.
+
+**If the checkpoint is missing or damaged**, do not recreate its hash or claim that
+the old approvals still apply. Keep the last handback and any referenced evidence.
+Reopen the original project and check whether the record exists there. If it does
+not, start a new accepted task with the original goal, exclusions and remaining
+criteria; list the old work as evidence to revalidate, not as completed work to
+trust automatically. Ask again for any decision whose original source and scope
+cannot be shown. This preserves useful evidence without inventing progress or consent.
+
+## What a finished handback looks like
+
+A concise final answer can still be rigorous:
+
+```text
+Completed
+- Export uses the active project and filter and returned all 63 matching tasks.
+- Another project's tasks were excluded. The empty export kept the agreed header.
+- Changed: export handler, query adapter and focused acceptance test.
+
+Remaining
+- Deployment was not requested and did not run.
+- Safari download behavior was not checked because the approved browser runtime was unavailable.
+
+Best next action
+- Review the sample CSV and the Safari limitation; authorize deployment separately if wanted.
+```
+
+The evidence should point to the observed command, output or interaction for each
+original condition. A reasoned skip belongs under **Remaining** and narrows the
+claim. It does not become a pass because the rest of the task succeeded.
+
+The sections below retain the source-clone and stage-by-stage paths. They are
+alternatives, not extra steps required before the one-line setup and `deliver`.
 
 ## Choose where you are starting
 
@@ -51,7 +216,7 @@ Do not overwrite local policies merely to make the install look uniform.
 
 ## Understand what installation gives you
 
-For a first adoption into an existing application, the short path is:
+If you prefer the source-clone and stage-by-stage path for an existing application:
 
 1. From the AI-Forward clone, use `/addpacktorepo` with the application's path.
 2. Open the application repository and use `/adopt` to orient its existing code and
@@ -106,7 +271,7 @@ architecture document merely to make every folder nonempty.
 
 HarborTasks is our illustrative task-tracking service. Imagine it already has a
 project-scoped task list and a filter. The page displays 20 rows, but 63 tasks match.
-Ask for a specification, not an implementation:
+For the stage-by-stage alternative, ask for a specification, not an implementation:
 
 ```text
 /specify Add CSV export for the active project and filter in HarborTasks.

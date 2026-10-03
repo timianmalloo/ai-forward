@@ -40,4 +40,3 @@ Callers running substantive commands should set an explicit workload budget.
 ## Coverage
 
 - Public functions: **1** · documented: **1** (**100%**)
-

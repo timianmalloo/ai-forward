@@ -138,4 +138,3 @@ Require the native exact-ID policy before preparation and fingerprinting.
 
 - Public functions: **17** · documented: **3** (**18%**)
 - Undocumented (recorded, not invented): `load_module`, `require`, `encoded`, `digest`, `read_json`, `private_write`, `git`, `identity`, `text`, `integer`, `copilot_model`, `relative_path`, `child_env`, `file_hash`
-

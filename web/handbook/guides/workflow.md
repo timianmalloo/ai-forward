@@ -9,6 +9,30 @@ what is still unknown. Research cannot substitute for a product decision, a desi
 cannot prove a running feature, and an implementation cannot silently settle a
 question you intended to review.
 
+## Start with the outcome, not a command sequence
+
+Use [deliver](#skill-deliver) when you want one task completed without choosing
+every workflow yourself:
+
+```text
+/deliver Add CSV export for the current project and filter. Export all matches, not only the current page. Do not expand reporting scope.
+```
+
+In Codex, use `$deliver`. In Copilot CLI, find it with `/skills`, then use
+`/deliver <your task>`; you can also ask `Use the /deliver skill to <your task>`.
+In other supported apps, use the installed slash entry point when listed or request
+the `deliver` skill by name. These are chat requests, not terminal commands.
+[The quick start](#get-started) covers installation and discovery.
+
+The agent reads the project and selects stages from the uncertainty and risk that
+remain. It reuses valid specifications, designs and proof instead of writing
+substitutes. It continues between approved stages; you do not need to type the next
+skill name each time. It does not run the whole catalog or launch a team by default.
+
+There is no universal conveyor belt. Research cannot replace your product decision;
+a design cannot prove a running feature; a repair cannot quietly settle a choice
+you meant to review. A short route removes unnecessary work, not necessary evidence.
+
 ## State the finish line
 
 Begin with the outcome, a checkable completion condition and exclusions. Include
@@ -41,7 +65,43 @@ ambiguity visible early and gives you a basis for rejecting unrelated work.
 Small, well-understood work can take a short path. A change to identity, stored data
 or concurrency needs more deliberate decisions and checks even if the diff is small.
 
+## Know what a pause asks of you
+
+The task stays open when a consequential choice, permission or blocking review
+needs attention. The agent should show the relevant evidence, identify who can
+answer, ask a specific question and give you a task id.
+
+Reply in the same chat. An answer authorizes only the decision you answered. It does
+not grant the coding app tool permission, approve a release or clear another review.
+For a defect, inspect the demonstrated cause and proposed repair phases before
+approving. For a blocking review, address the finding and obtain independent
+re-review; the author cannot clear its own veto. Release and deployment retain
+their own permission gates.
+
+In a fresh chat **in the same project**, use:
+
+```text
+/deliver resume <task-id>
+```
+
+Codex uses `$deliver resume <task-id>`; in Copilot CLI, request the `/deliver` skill
+to resume that id. Replace `<task-id>` with the id you received. The agent checks the
+saved request, project and evidence before reusing valid work. Changed or missing
+inputs require an explanation and revalidation, not a silent reset or fabricated
+approval. Checkpoints are local, not automatically shared across clones or computers.
+
+The progress helper checks saved-state integrity and recorded gate bindings. It
+does not authenticate human consent or determine whether a test proves the meaning
+of your request. Those judgments still need the original decision and actual evidence.
+
 ## What compilation adds
+
+`deliver` reuses an accepted compiled request when one is available; otherwise it
+uses the existing compile workflow as part of the same task. The standalone
+`/compile` example below remains useful when that structured request is itself the
+result you want. Native coordinated tracks still need their own finished,
+dispatchable contracts after planning; the single-task entry point does not change
+that requirement or authorize coordination.
 
 In this pack, **compilation** means converting a prose request into a structured,
 harness-appropriate starting prompt. It is not compilation of application source code.

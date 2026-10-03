@@ -14,6 +14,7 @@ import sys
 import subprocess
 import tempfile
 import unittest
+from install_guidance import current_install_body
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 SCRIPT = ROOT / "pack" / "scripts" / "pack-apply.py"
@@ -55,12 +56,57 @@ def _r(root, rel):
 def _rows(rows):
     return {(r["path"], r["action"]) for r in rows}
 
-# INSTALL.md's frontmatter `changes:` list is an append-only HISTORY of shipped revisions,
-# replayed in order by a repo catching up. Rewriting a past entry would falsify the record,
-# and a later entry already carries the correction -- so both gates below read the BODY.
+# Retired refresh records are historical data, whether in legacy frontmatter or
+# the explicitly declared archive. Gates still scan all current body guidance.
 def install_body(text):
-    return text.split(chr(10) + "---" + chr(10), 1)[-1]
+    return current_install_body(text)
 
+
+
+class InstallHistoryClassificationTests(unittest.TestCase):
+    def test_explicit_refresh_history_is_not_current_guidance(self):
+        text = (ROOT / 'pack/adapters/INSTALL.md').read_text(encoding='utf-8')
+        body = install_body(text)
+        self.assertIsNone(re.search(r'check-ignore\s+(-v|--verbose)', body))
+        self.assertNotIn('coord install` INSIDE', body)
+        self.assertIn('Installing the AI-Forward Pack', body)
+
+    def test_current_bad_guidance_outside_history_remains_visible(self):
+        text = (ROOT / 'pack/adapters/INSTALL.md').read_text(encoding='utf-8')
+        text += '\nRun `coord install` INSIDE each tree. Verify with git check-ignore -v.\n'
+        body = install_body(text)
+        self.assertIn('coord install` INSIDE', body)
+        self.assertRegex(body, r'check-ignore\s+-v')
+
+    def test_incomplete_history_container_remains_visible(self):
+        text = ('<details>\n<summary>Detailed deltas through revision 99 — preserved history</summary>\n\n'
+                '```yaml\nchanges:\n  - { type: changed, summary: "Run `coord install` INSIDE each tree... [truncated]\n'
+                '```\n\n</details>\n')
+        self.assertIn('coord install` INSIDE', install_body(text))
+
+    def test_missing_history_terminator_does_not_consume_later_guidance(self):
+        text = (ROOT / 'pack/adapters/INSTALL.md').read_text(encoding='utf-8')
+        before, after = text.split('\n</details>\n', 1)
+        current = '\nRun `coord install` INSIDE each tree. Verify with git check-ignore -v.\n'
+        other = '<details>\n<summary>Unrelated example</summary>\n\n```text\nexample\n```\n\n</details>\n'
+        body = install_body(before + current + other + after)
+        self.assertIn('coord install` INSIDE', body)
+        self.assertRegex(body, r'check-ignore\s+-v')
+
+    def test_mixed_complete_and_incomplete_history_records_remain_visible(self):
+        text = ('<details>\n<summary>Detailed deltas through revision 99 — preserved history</summary>\n\n'
+                '```yaml\nchanges:\n  - { type: changed, summary: "Old record" }\n'
+                '  - { area: scripts, summary: "Run `coord install` INSIDE each tree; git check-ignore -v... [truncated]\n'
+                '```\n\n</details>\n')
+        body = install_body(text)
+        self.assertIn('coord install` INSIDE', body)
+        self.assertRegex(body, r'check-ignore\s+-v')
+
+    def test_other_collapsed_sections_remain_current_guidance(self):
+        text = '<details>\n<summary>Installation instructions</summary>\n\nRun `coord install` INSIDE each tree.\nUse git check-ignore -v.\n</details>\n'
+        body = install_body(text)
+        self.assertIn('coord install` INSIDE', body)
+        self.assertRegex(body, r'check-ignore\s+-v')
 
 
 class InstalledRepoTests(unittest.TestCase):

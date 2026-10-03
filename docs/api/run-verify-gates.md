@@ -93,4 +93,3 @@ that cannot fail is not a control).
 
 - Public functions: **5** · documented: **3** (**60%**)
 - Undocumented (recorded, not invented): `gates`, `parse_args_map`
-

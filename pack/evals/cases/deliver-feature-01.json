@@ -1,0 +1,55 @@
+{
+  "id": "deliver-feature-01",
+  "skill": "deliver",
+  "prompt": "Use /deliver to implement clamp(value, low, high) in app.py. Clamp to the inclusive bounds; preserve in-range values and raise ValueError for inverted bounds. This is small T0 work with complete requirements, no UI, no adoption, no release and no coordination. Exercise all provided boundary tests and the actual import path. Continue automatically through applicable stages; preserve real human/reviewer gates. Do not edit the verifier or add product docs/audit/index files.",
+  "setup": [
+    {
+      "path": "app.py",
+      "content": "def clamp(value, low, high):\n    raise NotImplementedError\n"
+    },
+    {
+      "path": "verify_clamp.py",
+      "content": "from app import clamp\nfor value, low, high, expected in [(-1, 0, 10, 0), (0, 0, 10, 0), (5, 0, 10, 5), (10, 0, 10, 10), (11, 0, 10, 10), (0, 0, 0, 0), (-2.5, -2, -1, -2), (-1.5, -2, -1, -1.5)]:\n    assert clamp(value, low, high) == expected\ntry:\n    clamp(5, 10, 0)\nexcept ValueError:\n    pass\nelse:\n    raise AssertionError('inverted bounds were accepted')\n"
+    }
+  ],
+  "assertions": [
+    {
+      "type": "cmd-exit",
+      "cmd": [
+        "python3",
+        "-I",
+        "-c",
+        "import hashlib; from pathlib import Path; actual = hashlib.sha256(Path('verify_clamp.py').read_text(encoding='utf-8').encode('utf-8')).hexdigest(); expected = '1d30c2d07f59e01a240d9df8811e07b18330bf0753e713a21dc65fa1a0069c80'; raise SystemExit(0 if actual == expected else 'verifier identity changed')"
+      ],
+      "exit": 0
+    },
+    {
+      "type": "cmd-exit",
+      "cmd": [
+        "python3",
+        "-I",
+        "-c",
+        "import sys; from pathlib import Path\nsys.path.insert(0, str(Path.cwd()))\ntry:\n    from app import clamp\n    for value, low, high, expected in [(-1, 0, 10, 0), (0, 0, 10, 0), (5, 0, 10, 5), (10, 0, 10, 10), (11, 0, 10, 10), (0, 0, 0, 0), (-2.5, -2, -1, -2), (-1.5, -2, -1, -1.5)]:\n        assert clamp(value, low, high) == expected\n    try:\n        clamp(5, 10, 0)\n    except ValueError:\n        pass\n    else:\n        raise AssertionError('inverted bounds were accepted')\nexcept BaseException as error:\n    raise SystemExit('clamp verification did not complete: ' + type(error).__name__ + ': ' + str(error))"
+      ],
+      "exit": 0
+    },
+    {
+      "type": "cmd-exit",
+      "cmd": [
+        "python3",
+        "-I",
+        "-c",
+        "import hashlib; from pathlib import Path; actual = hashlib.sha256(Path('verify_clamp.py').read_text(encoding='utf-8').encode('utf-8')).hexdigest(); expected = '1d30c2d07f59e01a240d9df8811e07b18330bf0753e713a21dc65fa1a0069c80'; raise SystemExit(0 if actual == expected else 'verifier identity changed')"
+      ],
+      "exit": 0
+    },
+    {
+      "type": "file-absent",
+      "path": "docs/audit/audit-log.jsonl"
+    },
+    {
+      "type": "file-absent",
+      "path": "docs/docs-index.js"
+    }
+  ]
+}

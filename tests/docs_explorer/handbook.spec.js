@@ -23,6 +23,10 @@ test("a newcomer finds purpose, a first task and the next workflow without histo
   await expect(page.getByRole("heading", { name: "Try AI-Forward on one small task", exact: true })).toBeVisible();
   await expect(page.locator("#article")).toContainText("63");
   await expect(page.locator("#article")).toContainText("$specify");
+  await expect(page.locator("#article")).toContainText("$deliver");
+  await expect(page.locator("#article")).toContainText("Best next action");
+  await expect(page.locator("#article")).toContainText("uv run --no-config --no-project --script");
+  await expect(page.locator("#article")).toContainText("bootstrap.py");
   expect(external).toEqual([]);
 });
 
@@ -42,6 +46,8 @@ test("planning and compilation are explained in the actual coordination journey"
   await expect(page.getByRole("heading", { name: "From request to reviewed change", exact: true })).toBeVisible();
   await expect(page.locator("#article")).toContainText("per-track prompts must be compiled after the plan");
   await expect(page.locator("#article")).toContainText("does not launch a process");
+  await expect(page.locator("#article")).toContainText("dispatchable compilation audit IDs");
+  await expect(page.locator("#article")).toContainText("Compile each native-launch track's complete contract");
   await page.goto(url + "#coord-prompt-to-execution");
   await expect(page.locator("#article")).toContainText("--brief");
   await expect(page.locator("#article")).toContainText("--launch");
@@ -50,7 +56,9 @@ test("planning and compilation are explained in the actual coordination journey"
 test("all skill references render complete practical sections", async ({ page }) => {
   const data = JSON.parse(html().match(dataPattern)[2]);
   const skills = data.pages.filter(entry => entry.kind === "skill");
-  expect(skills.length).toBe(28);
+  const commands = path.join(process.cwd(), "pack", "commands");
+  const canonical = fs.readdirSync(commands).filter(name => fs.existsSync(path.join(commands, name, "SKILL.md")));
+  expect(skills.map(skill => skill.id).sort()).toEqual(canonical.map(name => "skill-" + name).sort());
   for (const skill of skills) {
     await page.goto(url + "#" + skill.id);
     await expect(page.locator("#article h1")).toHaveText(skill.title);

@@ -130,4 +130,3 @@ instead of relying on expansion that was never verified (NG1/NG6).
 
 - Public functions: **12** · documented: **5** (**42%**)
 - Undocumented (recorded, not invented): `repo_paths`, `backend_status`, `cmd_backends`, `cmd_check`, `ensure_gitignore`, `ensure_manifest`, `cmd_init`
-

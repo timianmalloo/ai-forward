@@ -98,4 +98,3 @@ re-examines because it is what they just reasoned about.
 
 - Public functions: **5** · documented: **4** (**80%**)
 - Undocumented (recorded, not invented): `check`
-

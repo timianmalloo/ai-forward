@@ -137,4 +137,3 @@ shape, a hand-resolved file - stops at step 3 with NO join commit.
 
 - Public functions: **5** · documented: **3** (**60%**)
 - Undocumented (recorded, not invented): `repo_root`, `join`
-

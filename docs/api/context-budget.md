@@ -211,4 +211,3 @@ Every component of the static prefix this tool can see, per host, with a label e
 
 - Public functions: **21** · documented: **12** (**57%**)
 - Undocumented (recorded, not invented): `knowledge_dir`, `load_config`, `agents_dirs`, `always_on`, `cmd_report`, `cmd_prefix`, `skills_dir`, `scan_skills`, `cmd_skills`
-

@@ -51,4 +51,3 @@ Render a human-facing Markdown artifact as a self-contained HTML companion.
 
 - Public functions: **4** · documented: **0** (**0%**)
 - Undocumented (recorded, not invented): `render_inline`, `render_markdown`, `render_document`, `write_atomic`
-

@@ -1,0 +1,86 @@
+# Complete one task without choosing every workflow
+
+Use `deliver` when you want an outcome, not a lesson in the pack's command sequence.
+The agent selects applicable workflows, continues between approved stages, and keeps
+ownership of the original completion conditions. The expert skills remain available.
+
+## When to use it
+
+Use it for a feature, repair, migration or documentation task in a project with the
+pack installed. Give one coherent outcome. A small, understood change should take a
+short path; a risky change must keep the required design, review and verification.
+
+## What you need
+
+A supported coding application that discovers the installed skill, access to the
+project, and the constraints the agent cannot learn from its files. You do not need
+to know the names or ordering of the individual skills. Installing AI-Forward does
+not grant model access, tool permission or authority to deploy.
+
+## Try it
+
+Slash-command harnesses:
+
+```text
+/deliver Add CSV export for the current project and filter. Export all 63 matching tasks, not only the 20 visible rows. Do not add scheduling or new roles.
+```
+
+Codex:
+
+```text
+$deliver Add CSV export for the current project and filter. Export all 63 matching tasks, not only the 20 visible rows. Do not add scheduling or new roles.
+```
+
+With no task, the agent asks what outcome you want. It does not hand you the complete
+skill catalog and require you to design the workflow.
+
+## What happens
+
+The agent grounds in the request, current code, decisions and acceptance criteria.
+It uses the existing [compile](#skill-compile) and planning disciplines when needed,
+then selects the next step from what remains uncertain:
+
+- unfamiliar contracts → focused research;
+- unclear new behavior → specification;
+- changed system boundaries → architecture;
+- unsettled component contracts/failures → design;
+- visual interface → UI design before building;
+- known bounded change → implementation and meaningful checks;
+- defect → investigation and the required repair-review decision;
+- migration → characterization of old behavior before changing it;
+- justified independent tracks → prepare and execute coordination instead of adding
+  a second single-session implementation plan.
+
+It records why a stage was selected, reused or unnecessary. It does not run every
+skill, adopt the whole repository, generate domain experts or launch agents by default.
+
+## What you get
+
+A changed result or an explicit pause, with the same task and completion conditions
+preserved. The handback identifies changed artifacts, observed acceptance evidence,
+checks and skips, residual limits, and any decision still needed.
+
+Checkpoint integrity protects continuity, not semantic truth. A hash, a passing unit
+suite or a worker's completion message does not certify the user outcome.
+
+## Review before continuing
+
+Answer consequential questions and inspect hard-review findings. Investigation's
+repair-review stop remains unless you explicitly authorized continuing beforehand.
+Permission, release and deployment decisions are not auto-approved to make one command
+look uninterrupted. A natural reply continues the task; it does not start a new scope.
+
+## Tips and recovery
+
+- Keep your desired outcome and exclusions concrete; implementation choices may change.
+- After a fresh session, ask `deliver` to resume the recorded task. The agent validates
+  the checkpoint, contract, project and evidence before reusing completed work.
+- Changed/missing evidence or context triggers re-grounding, not a fabricated success.
+- Say stop to end the current track. A passing aside is not a new requirement.
+- If the skill is absent, refresh discovery using [harness setup](#harnesses).
+
+## Where to go next
+
+Review the actual result against your original completion conditions. Use another
+`deliver` request for another outcome, or [the individual workflows](#skills) when
+you want to direct a specific stage yourself.

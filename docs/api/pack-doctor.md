@@ -175,4 +175,3 @@ lesson into a control that fires at the moment of the mistake).
 
 - Public functions: **17** · documented: **12** (**71%**)
 - Undocumented (recorded, not invented): `check_installed`, `check_surface`, `check_block`, `check_graph`, `run`
-

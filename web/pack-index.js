@@ -11,7 +11,7 @@ window.PACK_INDEX = {
 {
 "id": "skills",
 "label": "Skills",
-"count": 29
+"count": 30
 },
 {
 "id": "templates",
@@ -21,7 +21,7 @@ window.PACK_INDEX = {
 {
 "id": "scripts",
 "label": "Scripts",
-"count": 46
+"count": 47
 },
 {
 "id": "personas",
@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 355
+"count": 360
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 538,
+"total": 545,
 "items": [
 {
 "cat": "knowledge",
@@ -513,6 +513,15 @@ window.PACK_INDEX = {
 "path": "pack/commands/define-architecture/SKILL.md",
 "kind": "skill",
 "text": "/define-architecture produce the top-level architecture from a prompt or spec. selects the loa archetype and tier allocation, establishes unfamiliar sdk/protocol contracts via mandatory spikes, runs the architect council adversarially, and records decisions as adrs. use for new systems or load-bearing architecture. skill: /define-architecture grounding (first action) input cast flow (rigor protocol, specialized to system shape) output artifacts definition of done (exit gate) documentation & discoverability (last action)"
+},
+{
+"cat": "skills",
+"id": "deliver",
+"title": "/deliver",
+"summary": "Deliver one task through only the applicable existing skills, from grounded intent to real-path proof. Use /deliver <request> or /deliver resume <task-id> to continue a paused task without repeating valid completed work.",
+"path": "pack/commands/deliver/SKILL.md",
+"kind": "skill",
+"text": "/deliver deliver one task through only the applicable existing skills, from grounded intent to real-path proof. use /deliver <request> or /deliver resume <task-id> to continue a paused task without repeating valid completed work. /deliver input ground once execute the applicable route pause / resume hand back the outcome"
 },
 {
 "cat": "skills",
@@ -1071,6 +1080,15 @@ window.PACK_INDEX = {
 "path": "pack/scripts/coord_transport.py",
 "kind": "script",
 "text": "coord_transport.py bounded posix acp / agy session io. native harness policy remains authoritative. this is a lifecycle adapter, not an editor proxy or an approval broker. only locally selected operational fields leave this module; wire bodies are discarded. file_root_identities __init__ _identifier _structure rejected_detail _grok_release_at_least _signal_group _buffer_state __init__ attach _listen_stdout check queue pump receive flush_input cleanup __init__ attach _accept _read_stdout _read_stderr _write_stdin check queue pump receive flush_input cleanup __init__ event admit callback wait prompts progress permission rpc acp native_denial native_tool_error agy run_session"
+},
+{
+"cat": "scripts",
+"id": "delivery.py",
+"title": "delivery.py",
+"summary": "Conditional delivery routing and local checkpoint integrity, not a workflow runner.",
+"path": "pack/scripts/delivery.py",
+"kind": "script",
+"text": "delivery.py conditional delivery routing and local checkpoint integrity, not a workflow runner. route read_json digest git identity absolute snapshot file_record validate_scoped_product_path check_records compiler contract local_area state_path save view load new_gate resume begin_repair recheck_repair outside close_outcome execute locked_execute main"
 },
 {
 "cat": "scripts",
@@ -1866,6 +1884,15 @@ window.PACK_INDEX = {
 },
 {
 "cat": "graph",
+"id": "api-delivery",
+"title": "API — delivery.py",
+"summary": "Conditional delivery routing and local checkpoint integrity, not a workflow runner.",
+"path": "docs/api/delivery.md",
+"kind": "api",
+"text": "api — delivery.py conditional delivery routing and local checkpoint integrity, not a workflow runner. api scripts generated refines api-index"
+},
+{
+"cat": "graph",
 "id": "api-design-lint",
 "title": "API — design-lint.py",
 "summary": "design-lint.py — token-reference linter for design-language docs (AI-Forward).",
@@ -1913,10 +1940,10 @@ window.PACK_INDEX = {
 "cat": "graph",
 "id": "api-index",
 "title": "API reference — the deployed script bundle",
-"summary": "Generated API reference for the pack's public surface — the deployed script bundle. 553 public functions across 45 modules, 47% carrying a docstring.",
+"summary": "Generated API reference for the pack's public surface — the deployed script bundle. 576 public functions across 46 modules, 45% carrying a docstring.",
 "path": "docs/api/index.md",
 "kind": "api",
-"text": "api reference — the deployed script bundle generated api reference for the pack's public surface — the deployed script bundle. 553 public functions across 45 modules, 47% carrying a docstring. api scripts generated index documents architecture"
+"text": "api reference — the deployed script bundle generated api reference for the pack's public surface — the deployed script bundle. 576 public functions across 46 modules, 45% carrying a docstring. api scripts generated index documents architecture"
 },
 {
 "cat": "graph",
@@ -2730,6 +2757,15 @@ window.PACK_INDEX = {
 },
 {
 "cat": "graph",
+"id": "design-one-command-adoption",
+"title": "One-command adoption boundaries and implementation",
+"summary": "A conditional skill entry point and source-driven portable bootstrap reduce manual workflow selection without replacing outcome ownership or changing trust boundaries.",
+"path": "docs/design/one-command-adoption.md",
+"kind": "design",
+"text": "one-command adoption boundaries and implementation a conditional skill entry point and source-driven portable bootstrap reduce manual workflow selection without replacing outcome ownership or changing trust boundaries. adoption delivery installation portability refines spec-one-command-adoption refines architecture"
+},
+{
+"cat": "graph",
 "id": "design-owner-review",
 "title": "Design — owner review (coord-decide.py · docs/notes/rulings.md · verify-ruling-citations.py · owner-review-gate.py)",
 "summary": "Detailed design for spec-owner-review. One stdlib CLI (coord-decide.py) that writes a decision request only by running coord-core.py's own `request add` and `request resolve`, sends its two mails only through coord-mail.py's append_mail…",
@@ -3267,6 +3303,15 @@ window.PACK_INDEX = {
 "path": "docs/handbook/skill-define-architecture.md",
 "kind": "doc",
 "text": "decide the system shape before building use this skill when a project or major capability needs a top-level architecture: components, boundaries, data representation, integration contracts, ai tiering and durable decisions. handbook reader-guide relates-to handbook-design"
+},
+{
+"cat": "graph",
+"id": "handbook-skill-deliver",
+"title": "Complete one task without choosing every workflow",
+"summary": "Use deliver when you want an outcome, not a lesson in the pack's command sequence. The agent selects applicable workflows, continues between approved stages, and keeps ownership of the original completion conditions. The expert skills…",
+"path": "docs/handbook/skill-deliver.md",
+"kind": "doc",
+"text": "complete one task without choosing every workflow use deliver when you want an outcome, not a lesson in the pack's command sequence. the agent selects applicable workflows, continues between approved stages, and keeps ownership of the original completion conditions. the expert skills remain available. handbook reader-guide relates-to handbook-workflow"
 },
 {
 "cat": "graph",
@@ -4611,6 +4656,15 @@ window.PACK_INDEX = {
 },
 {
 "cat": "graph",
+"id": "proof-one-command-adoption",
+"title": "Proof Pack — one-command adoption",
+"summary": "Executed evidence for conditional outcome delivery and portable source-driven setup, including old-code failures, preservation probes, native skill use and finite limits.",
+"path": "docs/proof/one-command-adoption.md",
+"kind": "proof-pack",
+"text": "proof pack — one-command adoption executed evidence for conditional outcome delivery and portable source-driven setup, including old-code failures, preservation probes, native skill use and finite limits. adoption delivery installation portability implements spec-one-command-adoption implements design-one-command-adoption"
+},
+{
+"cat": "graph",
 "id": "spec-acp-coordination",
 "title": "ACP for multi-harness coordination — capability-qualified sessions",
 "summary": "Specifies a common Agent Client Protocol session-control boundary below the pack's coordination rules. Grok-driven live probes establish three ACP paths and an Agy native-stream fallback, while separating transport support from effective…",
@@ -4770,6 +4824,15 @@ window.PACK_INDEX = {
 "path": "docs/specs/native-app-ui-skill-extension.md",
 "kind": "spec",
 "text": "native app ui skill extension — specification specification for extending the ai-forward ui skills so wpf, winui, avalonia and other native client applications receive the same rigorous ux/ui reasoning as web surfaces. the spec defines the required native medium declaration, native proof pack, xaml/resource token mapping, native review artifacts, and the constraints for generated visual assets. ui-design visualize native-ui wpf winui avalonia desktop specification depends-on kb-native-client-ui-design relates-to architecture"
+},
+{
+"cat": "graph",
+"id": "spec-one-command-adoption",
+"title": "One-command setup and outcome delivery",
+"summary": "Reduce first-run command selection without weakening outcome ownership. A portable bootstrap installs the existing pack deployment map; deliver selects applicable workflows, preserves human gates, and resumes one task from validated…",
+"path": "docs/specs/one-command-adoption.md",
+"kind": "spec",
+"text": "one-command setup and outcome delivery reduce first-run command selection without weakening outcome ownership. a portable bootstrap installs the existing pack deployment map; deliver selects applicable workflows, preserves human gates, and resumes one task from validated checkpoints. adoption usability delivery installation cross-platform refines architecture"
 },
 {
 "cat": "graph",

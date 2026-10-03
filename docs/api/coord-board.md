@@ -142,4 +142,3 @@ Import the message layer's writer module BY PATH (the file lands with P4 at the 
 
 - Public functions: **14** · documented: **7** (**50%**)
 - Undocumented (recorded, not invented): `apply_filters`, `not_checked_line`, `read_board`, `cmd_board`, `build_entry`, `cmd_post`, `build_parser`
-

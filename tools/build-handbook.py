@@ -66,7 +66,8 @@ def graph_markdown(page, manifest, body=None):
     related = "architecture" if page["id"] == "overview" else "handbook-" + page["guide"]
     record = {
         "id": "handbook-" + page["id"], "title": page["title"], "type": "doc",
-        "status": "accepted", "owner": manifest["owner"], "phase": "documentation",
+        "status": "accepted", "owner": manifest.get("owners", {}).get(page["id"], manifest["owner"]),
+        "phase": "documentation",
         "review-by": manifest["review_by"], "summary": page["summary"],
     }
     front = "\n".join(f"{key}: {json.dumps(value, ensure_ascii=False)}" for key, value in record.items())

@@ -179,4 +179,3 @@ original's skill-surface needles and required-phrase checks where they can be re
 
 - Public functions: **19** · documented: **12** (**63%**)
 - Undocumented (recorded, not invented): `read`, `norm_nl`, `frontmatter`, `git`, `normalise`, `render_table`, `summarize`
-

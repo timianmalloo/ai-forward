@@ -568,6 +568,7 @@ test("Spatial 3D selects and focuses a node without changing relationship semant
 
   const spatial = page.getByRole("region", { name: "Spatial 3D project graph" });
   await expect(spatial).toBeVisible();
+  await page.addStyleTag({ content: ":root { --motion-context: 2000ms !important; }" });
   await spatial.locator('[data-action="select"][data-node-id="child"]').click();
   await expect(spatial.locator("[data-spatial-svg]")).toHaveAttribute("data-camera-target-id", "child");
   await expect(spatial.locator("[data-spatial-svg]")).toHaveAttribute("data-camera-transitioning", "true");
@@ -1537,6 +1538,9 @@ test("IME composition defers rerender until composition ends", async ({ page }) 
   let search = page.getByRole("searchbox", { name: "Search artifacts and knowledge surfaces" });
   await search.fill("root");
   await expect(page.locator("[data-search-match='true']")).not.toHaveCount(0);
+  // The initial unfiltered render already has matches. Settle the preceding
+  // debounced search before testing whether composition changes its status.
+  await expect(page.getByRole("status")).toContainText('Search results available for "root"');
   search = page.getByRole("searchbox", { name: "Search artifacts and knowledge surfaces" });
   const identityBefore = await search.evaluate((element) => {
     window.__searchElement = element;
@@ -1597,20 +1601,21 @@ test("context styling, fitting, and label ceilings preserve the highest-priority
   await expect(page.locator('[data-node-id="root"]')).toHaveClass(/context/);
   await expect(page.locator('[data-node-id="child"]')).toHaveClass(/depth-1/);
   await expect(page.locator('[data-node-id="outside"]')).toHaveClass(/unrelated/);
-  await page.locator('[data-node-id="outside"]').evaluate((element) => {
+  const deEmphasizedFocus = await page.locator('[data-node-id="outside"]').evaluate((element) => {
+    // Focus and inspect in one browser task: spatial rerenders can replace SVG
+    // nodes between separate Playwright focus/style reads.
     element.tabIndex = 0;
     element.focus();
-  });
-  await expect(page.locator('[data-node-id="outside"]')).toBeFocused();
-  const deEmphasizedFocus = await page.locator('[data-node-id="outside"]').evaluate((element) => {
     const computed = getComputedStyle(element);
     return {
+      focused: document.activeElement === element,
       outlineStyle: computed.outlineStyle,
       outlineWidth: computed.outlineWidth,
       outlineOffset: computed.outlineOffset,
       boxShadow: computed.boxShadow,
     };
   });
+  expect(deEmphasizedFocus.focused).toBe(true);
   const visibleFocus =
     deEmphasizedFocus.outlineStyle !== "none" ||
     deEmphasizedFocus.boxShadow !== "none";

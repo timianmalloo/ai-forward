@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-28T00:46:53Z",
+  "generated": "2026-10-03T12:10:36Z",
   "audit": [
     {
       "actor": null,
@@ -13450,6 +13450,98 @@ window.AUDIT_DATA = {
         "branch": "feature/decision-interrogation-protocol",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M40E6642CRZCKPQKH6A6AGQA",
+      "shortname": "upstream-onboarding",
+      "datetime": "2026-10-03T08:30:45Z",
+      "session": "upstream-onboarding",
+      "prompt": "Normal upstream setup should use its existing main default without source/ref overrides.",
+      "summary": "Prepared local revision100 onboarding correction: upstream/main is the primary command; generic review/pinning overrides are optional. Documentation regression observed red before four guides were corrected. Default-source mirror and documentation controls passed5tests/16subtests. Full validation and independent reader review remain pending; no push or PR.",
+      "kind": "command",
+      "skill": null,
+      "tool": "pytest",
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Make the upstream contribution onboarding use Tim repository/main defaults, preserving installer semantics and honest pre-merge proof limits.",
+      "done_when": "Primary and generated guides use the canonical no-override command, real defaults checks and affected build/test/review gates pass, with no publication.",
+      "tier": "T1",
+      "fan_out": 1,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "git": {
+        "sha": "942c8507a4a2a12e294fee55a160bc402feed70d",
+        "short": "942c8507a",
+        "branch": "feat/one-command-adoption",
+        "pushed": true
+      }
+    },
+    {
+      "id": "al-01M40M10YMS8JX3N0X1EXB85Y6",
+      "shortname": "preserve-product-presentation",
+      "datetime": "2026-10-03T10:12:47Z",
+      "session": "one-command-adoption-presentation",
+      "prompt": "I am also not sure if I got well some changes, like the enclosed ones in the README where I hope we did not delete Tim's original phrasing and docs around AI forward but rather enhanced them adding our one commands for install and run without changing Tim's AI-Forward product presentation or other changes aside from adding or adjusting with our one commands? It may be that that I may be wrong and some things are simply shifted instead of deleted and GitHub shows wrongly here but please check on that and insist on highest standards, owning the outcome",
+      "summary": "Confirmed that onboarding had replaced original presentation and reference prose. Restored complete authoritative upstream text in five source guides, with one-line setup and conditional deliver guidance added alongside it. Explicit feature-only adjustments and red/green full-block preservation controls bind the correction; aggregate verification and independent review are still pending.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": "Alex Hutanu",
+      "artifacts": [
+        "README.md",
+        "pack/README.md",
+        "pack/OVERVIEW.md",
+        "web/handbook/guides/get-started.md",
+        "web/handbook/guides/workflow.md",
+        "docs/proof/one-command-adoption.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Preserve the original AI-Forward product presentation and unrelated guidance while retaining focused one-command adoption enhancements.",
+      "done_when": "Complete raw-source preservation, independent review, applicable documentation/build checks and exact fork publication readback pass; upstream PR stays with Alex.",
+      "tier": "T1",
+      "fan_out": 1,
+      "git": {
+        "sha": "39b7d382deabc87e21dfad87ef3f28861e81bde5",
+        "short": "39b7d382d",
+        "branch": "feat/one-command-adoption",
+        "pushed": true
+      }
+    },
+    {
+      "id": "al-01M40TRQREX4X4PA7030K76HPB",
+      "shortname": "delivery-checkpoint-boundaries",
+      "datetime": "2026-10-03T12:10:36Z",
+      "session": "adoption-boundary-repair",
+      "prompt": "Fix the three confirmed delivery checkpoint findings in the fork and explain updating the existing PR.",
+      "summary": "Red regressions reproduced verification completion/pause adoption, mode-only drift and inherited Git root/index selection. Focused post-fix suite passed80tests147subtests. Canonical runtime/docs and revision102 prepared; aggregate, independent and published native qualification remain separate.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": "@ahutanu",
+      "artifacts": [
+        "pack/scripts/delivery.py",
+        "tests/docs_explorer/test_delivery_checkpoint_guards.py",
+        "docs/proof/one-command-adoption.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Repair all three checkpoint boundaries without changing product presentation or unrelated workflows; update the same fork branch.",
+      "done_when": "Regression and existing controls pass, generated surfaces agree, independent review and full applicable checks pass, and the existing PR reads back the published commit.",
+      "tier": "T2",
+      "fan_out": 2,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-10-03T11:58:39Z",
+      "duration_seconds": 717.0
     }
   ],
   "changes": [

@@ -123,6 +123,17 @@
       "source_contract": "pack/commands/define-architecture/SKILL.md"
     },
     {
+      "skill": "deliver",
+      "problem": "Use deliver when you want an outcome, not a lesson in the pack's command sequence. The agent selects applicable workflows, continues between approved stages, and keeps ownership of the original completion conditions. The expert skills remain available.",
+      "reader": "Person directing an agent's work",
+      "prerequisites": "A supported coding application that discovers the installed skill, access to the project, and the constraints the agent cannot learn from its files. You do not need to know the names or ordering of the individual skills. Installing AI-Forward does not grant model access, tool permission or authority to deploy.",
+      "guide_home": "#workflow",
+      "reference_home": "#skill-deliver",
+      "example": "/deliver Add CSV export for the current project and filter. Export all 63 matching tasks, not only the 20 visible rows. Do not add scheduling or new roles.",
+      "scope_limits": "- Keep your desired outcome and exclusions concrete; implementation choices may change. - After a fresh session, ask deliver to resume the recorded task. The agent validates the checkpoint, contract, project and evidence before reusing completed work. - Changed/missing evidence or context triggers re-grounding, not a fabricated success. - Say stop to end the current track. A passing aside is not a new requirement. - If the skill is absent, refresh discovery using harness setup. Answer consequential questions and inspect hard-review findings. Investigation's repair-review stop remains unless you explicitly authorized continuing beforehand. Permission, release and deployment decisions are not auto-approved to make one command look uninterrupted. A natural reply continues the task; it does not start a new scope.",
+      "source_contract": "pack/commands/deliver/SKILL.md"
+    },
+    {
       "skill": "design-slice",
       "problem": "Use this skill to turn a specification or architecture decision into a technical blueprint for one feature or component. It names contracts, data shapes, patterns, errors, concurrency, telemetry and tests before implementation begins.",
       "reader": "Engineer or technical lead shaping a change",
