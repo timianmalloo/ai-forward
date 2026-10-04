@@ -3,27 +3,8 @@
 # before they merge. The deployed graph-health workflow is pack/ci/docs-health.yml.
 name: pack-consistency
 on:
-  push:
-    branches: [main]
-  pull_request:
-    paths:
-      - "pack/**"
-      - "tools/**"
-      - "tests/**"
-      - "docs/**"
-      - ".claude/**"
-      - ".github/instructions/**"
-      - ".github/prompts/**"
-      - ".github/agents/**"
-      - "package.json"
-      - "package-lock.json"
-      - "README.md"
-      - "CLAUDE.md"
-      - "AGENTS.md"
-      - "web/**"
-      - ".github/copilot-instructions.md"
-      - ".github/workflows/pack-consistency.yml"
   workflow_dispatch:
+
 
 permissions:
   contents: read
