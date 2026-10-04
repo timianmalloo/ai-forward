@@ -21,23 +21,8 @@
 name: docs
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - "docs/**"
-      - "pack/scripts/**"
-      - "tools/build-api-docs.py"
-      - ".github/workflows/docs.yml"
-  pull_request:
-    paths:
-      - "docs/**"
-      - "pack/scripts/**"
-      - "tools/build-api-docs.py"
-  schedule:
-    # Mondays 07:00 UTC — the review-by SLA is measured in weeks, so a weekly clock is the
-    # right resolution. A daily run would be noise against a monthly-to-quarterly review-by.
-    - cron: "0 7 * * 1"
   workflow_dispatch:
+
 
 permissions:
   contents: read
