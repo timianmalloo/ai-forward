@@ -525,7 +525,7 @@ class Runner:
                 require(Path(worker["worktree"]) != self.repo and rows[0].get("head") == manifest["base"],
                         "RUN-WORKTREE", "A worker must have a separate checkout at the invoking base commit.")
                 worker["argv"] = [arg.replace("{worktree}", worker["worktree"]) for arg in worker["argv"]]
-                private_write(directory / (worker["session"] + ".brief.json"), {"prompts": worker["prompt_texts"], "fallback": worker["fallback"]})
+                private_write(directory / (worker["session"] + ".brief.json"), {"prompts": worker["prompt_texts"]})   # FALLBACK-A: the contract keeps the fallback, the worker's brief never carries it
                 self.event(manifest, "worker_prepared", worker=worker["session"], branch=worker["branch"],
                            worktree=worker["worktree"], manual_brief=str(directory / (worker["session"] + ".brief.json")))
                 worker["argv"][0] = self.resolve_executable(worker)

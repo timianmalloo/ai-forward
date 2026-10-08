@@ -505,7 +505,7 @@ def render_sections(doc: dict) -> dict[str, str]:
     if len(drs) == 1:
         drs.append("- none")
     slot = ["Contract slot"] + [f"{k}: {doc.get('contract_slot', {}).get(k) if doc.get('contract_slot', {}).get(k) is not None else 'unset'}"
-                                for k in CONTRACT_KEYS]
+                                for k in CONTRACT_KEYS if k != "fallback"]   # FALLBACK-A: the Leader's copy, never the worker's
     prov = doc.get("provenance") or {}
     tokens = prov.get("compile_tokens")
     provenance = ["Provenance",
