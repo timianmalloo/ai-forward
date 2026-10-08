@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-28T00:46:53Z",
+  "generated": "2026-10-08T18:15:32Z",
   "audit": [
     {
       "actor": null,
@@ -13450,6 +13450,24 @@ window.AUDIT_DATA = {
         "branch": "feature/decision-interrogation-protocol",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M4EBMHE2YFNBT837FRR4RKY9",
+      "shortname": "fpack-fin phase 1 split",
+      "datetime": "2026-10-08T18:15:32Z",
+      "session": "fpack-fin",
+      "prompt": "fpack-fin phase 1 (F-PACK five items) dispatch, start 2026-10-08T17:39Z",
+      "summary": "split: IDN-A 4c8a3c5/f9070a3, CEIL-A 4b7b6cb/6598f91, CONSUME-A 8aa0815/ef30963, FALLBACK-A 33758f5/511d4e9, PRIM-A af2a8ab/3ed4252 green; verify-bundle exit 1 (test_pack_apply installs no primary-guard.py); served claude-sonnet-5-5; floor 71096, samples I1 104684 I2 122832 I3 131141 I4 141311 I5 166560 end 188k; tokens not recorded; no child processes beyond git, uv/pytest, pwsh, python",
+      "kind": "skill",
+      "skill": "extendaibundle",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "started_at": "2026-10-08T17:39:08Z",
+      "duration_seconds": 2184.0
     }
   ],
   "changes": [
