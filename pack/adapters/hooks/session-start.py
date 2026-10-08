@@ -36,6 +36,7 @@ Documented Copilot subagentStart currently lacks a stable child id, so unattribu
 subagentStart is ignored rather than consuming the parent's marker.
 """
 import argparse
+import importlib.util
 import json
 import os
 import subprocess
@@ -142,6 +143,26 @@ def _session_check_lines(cwd):
     return lines
 
 
+def _snapshot_primary(session_id, cwd):
+    """PRIM-A (b): record the primary checkout's status for a session in a linked worktree, so the
+    PostToolUse check in primary-guard.py can report a shell write into it. Fail-open; a pack
+    deployed without the guard simply has no snapshot."""
+    try:
+        path = os.path.join(HERE, "primary-guard.py")
+        if not os.path.isfile(path):
+            return
+        spec = importlib.util.spec_from_file_location("primary_guard", path)
+        guard = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(guard)
+        started = time.perf_counter()
+        decision = guard.take_snapshot(session_id, cwd)
+        found = guard.trees(cwd)
+        if found is not None:
+            guard.record(found[2], "SessionStart", "session-start", "", decision, started, session_id)
+    except Exception:  # noqa: BLE001 - fail-open: the snapshot must never fail the session
+        pass
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--host", choices=["claude", "grok", "agy", "copilot"], default="claude")
@@ -163,6 +184,7 @@ def main():
         agent_id = str(payload.get("agent_id") or payload.get("agentId") or "").strip()
         workspaces = payload.get("workspacePaths") or []
         cwd = workspaces[0] if workspaces else (payload.get("cwd") or payload.get("workspaceRoot") or os.getcwd())
+        _snapshot_primary(session_id, cwd)
         script = _audit_script(os.path.dirname(os.path.abspath(__file__)))
         if not script:
             return 0
