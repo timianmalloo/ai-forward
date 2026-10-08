@@ -206,6 +206,41 @@ class CliAndSelfTest(unittest.TestCase):
             self.assertEqual(r.returncode, 1)
             self.assertIn("raw not found: al-9999 — fix: ", r.stderr)
 
+    def _verify_with_floors(self, ceiling, floors):
+        """CEIL-A: run the CLI over a doc with this context_ceiling and a floors file (None: no file)."""
+        flags = getattr(subprocess, "CREATE_NO_WINDOW", 0)
+        with tempfile.TemporaryDirectory() as tmp:
+            doc = base_doc()
+            doc["goal_state"]["context_ceiling"] = ceiling
+            audit_root, path = self._repo(tmp, doc)
+            argv = [sys.executable, SCRIPT, "verify", path, "--audit-root", audit_root]
+            if floors is not None:
+                floors_path = os.path.join(tmp, "floors.json")
+                with open(floors_path, "w", encoding="utf-8", newline="\n") as fh:
+                    json.dump(floors, fh)
+                argv += ["--floors", floors_path]
+            return subprocess.run(argv, capture_output=True, text=True, encoding="utf-8",
+                                  check=False, creationflags=flags)
+
+    def test_a_ceiling_below_the_harness_floor_is_refused(self):
+        r = self._verify_with_floors("50k = below the floor", {"claude-code": 73000})
+        self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+        self.assertIn("ceiling below floor", r.stderr)
+        self.assertRegex(r.stderr.strip().splitlines()[0], GRAMMAR)
+
+    def test_a_ceiling_at_or_above_the_floor_passes(self):
+        r = self._verify_with_floors("200k = floor 73k + 127k work", {"claude-code": 73000})
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+        self.assertNotIn("floor not recorded", r.stdout)
+        r = self._verify_with_floors(73000, {"claude-code": 73000})
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+
+    def test_no_floors_file_or_no_row_says_not_recorded_and_does_not_refuse(self):
+        for floors in (None, {"codex": 90000}):
+            r = self._verify_with_floors("50k", floors)
+            self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+            self.assertIn("floor not recorded", r.stdout)
+
     def test_usage_exit_2(self):
         r = subprocess.run([sys.executable, SCRIPT, "verify", "/nonexistent/compiled.json"],
                            capture_output=True, text=True, encoding="utf-8", check=False)
