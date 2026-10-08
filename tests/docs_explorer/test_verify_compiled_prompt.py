@@ -139,6 +139,21 @@ class NineDirections(unittest.TestCase):
         doc["raw_sha256"] = hashlib.sha256(crlf.encode("utf-8")).hexdigest()
         self.assertEqual(vcp.verify_document(doc, crlf), [])
 
+    def test_a_not_compiled_document_marked_dispatchable_is_refused(self):
+        """CONSUME-A: coord-runner refuses a not-compiled compile, so the gate must not bless one."""
+        doc = base_doc()
+        doc["mode"] = "not-compiled"
+        for k in doc["goal_state"]:
+            doc["goal_state"][k] = "NOT COMPILED"
+        doc["clauses"] = []
+        doc["dispatchable"] = True
+        refusals = vcp.verify_document(doc, RAW)
+        self.assertIn("dispatchable not-compiled", codes(refusals), refusals)
+        for r in refusals:
+            self.assertRegex(r, GRAMMAR)
+        doc["dispatchable"] = False
+        self.assertEqual(vcp.verify_document(doc, RAW), [])
+
     def test_not_compiled_mode_skips_traces_keeps_fields_and_hash(self):
         doc = base_doc()
         doc["mode"] = "not-compiled"

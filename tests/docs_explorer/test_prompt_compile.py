@@ -426,6 +426,22 @@ class FinishAndDistanceTests(unittest.TestCase):
             self.assertEqual(r.returncode, 2)
             self.assertIn("mode", r.stderr)
 
+    def test_a_not_compiled_skeleton_and_its_finish_entry_are_not_dispatchable(self):
+        """CONSUME-A: the producer agrees with coord-runner, which refuses mode not-compiled."""
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = make_repo(tmp)
+            _, out = skeleton(repo, "--no-model")
+            with open(out, encoding="utf-8") as fh:
+                self.assertIs(json.load(fh)["dispatchable"], False)
+            captured = []
+            with mock.patch.object(pc, "append_compilation_entry", lambda a, e: captured.append(e) or "al-7"), \
+                 mock.patch.object(pc, "copy_to_clipboard", lambda text: None):
+                rc = pc.main(["finish", out, "--session", "s1", "--audit-root", repo["audit_root"],
+                              "--templates-dir", repo["templates"]])
+            self.assertEqual(rc, 0)
+            self.assertIs(captured[0]["dispatchable"], False)
+            self.assertIs(captured[0]["skeleton"]["dispatchable"], False)
+
     def test_no_model_finish_writes_not_compiled_and_compiled_false(self):
         with tempfile.TemporaryDirectory() as tmp:
             repo = make_repo(tmp)
