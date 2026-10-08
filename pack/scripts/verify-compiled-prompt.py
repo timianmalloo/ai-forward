@@ -171,6 +171,9 @@ def verify_document(doc: dict, raw_text: str, floors: dict | None = None) -> lis
     for name in GOAL_FIELDS:
         if _empty(goal_state.get(name)):
             add("field missing", name, "fill the field, or write NOT COMPILED in every field with --no-model")
+    if mode == "not-compiled" and doc.get("dispatchable") is True:
+        add("dispatchable not-compiled", "dispatchable",
+            "coord-runner refuses a not-compiled compile; mark it not dispatchable or compile it")
     floor = floor_for(doc, floors)
     ceiling = ceiling_tokens(goal_state.get("context_ceiling"))
     if floor is not None and ceiling is not None and ceiling < floor:

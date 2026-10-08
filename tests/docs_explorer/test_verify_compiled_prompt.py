@@ -160,6 +160,7 @@ class NineDirections(unittest.TestCase):
         for k in doc["goal_state"]:
             doc["goal_state"][k] = "NOT COMPILED"
         doc["clauses"] = []
+        doc["dispatchable"] = False
         self.assertEqual(vcp.verify_document(doc, RAW), [])
         doc["raw_sha256"] = "0" * 64
         self.assertIn("raw mismatch", codes(vcp.verify_document(doc, RAW)))
