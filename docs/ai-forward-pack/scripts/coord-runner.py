@@ -357,6 +357,11 @@ class Runner:
                     and doc.get("dispatchable") is True and doc.get("mode") != "not-compiled"
                     and not doc.get("decision_requests"), "RUN-COMPILE",
                     "Finish a verified, dispatchable compilation with no unanswered decision requests.")
+            # IDN-A: `finish --session <worker>` logs the worker's session on the entry; a
+            # compilation finished for another session is never dispatched to this one. A
+            # continuation is a re-finish of the same document under the new session.
+            require(entry.get("session") in (None, session), "RUN-COMPILE",
+                    "Re-finish the compilation under this worker's session (prompt-compile.py finish --session).")
             raw = entries.get(doc.get("raw_id"), {})
             require(raw.get("kind") == "prompt" and not gate.verify_document(doc, raw.get("prompt", "")),
                     "RUN-COMPILE", "Repair the compilation against its original audit prompt.")
@@ -520,7 +525,7 @@ class Runner:
                 require(Path(worker["worktree"]) != self.repo and rows[0].get("head") == manifest["base"],
                         "RUN-WORKTREE", "A worker must have a separate checkout at the invoking base commit.")
                 worker["argv"] = [arg.replace("{worktree}", worker["worktree"]) for arg in worker["argv"]]
-                private_write(directory / (worker["session"] + ".brief.json"), {"prompts": worker["prompt_texts"], "fallback": worker["fallback"]})
+                private_write(directory / (worker["session"] + ".brief.json"), {"prompts": worker["prompt_texts"]})   # FALLBACK-A: the contract keeps the fallback, the worker's brief never carries it
                 self.event(manifest, "worker_prepared", worker=worker["session"], branch=worker["branch"],
                            worktree=worker["worktree"], manual_brief=str(directory / (worker["session"] + ".brief.json")))
                 worker["argv"][0] = self.resolve_executable(worker)

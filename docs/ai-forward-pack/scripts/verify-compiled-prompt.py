@@ -10,6 +10,9 @@ logged or rendered.
 
 WHAT IT CHECKS, IN ORDER (each refusal `<code>: <target> - fix: <text>` on stderr, exit 1)
   field missing: <name>          the seven goal_state fields are non-empty ("NOT COMPILED" counts)
+  ceiling below floor: context_ceiling   (only with --floors <file> naming the harness's row) the
+                                 ceiling's leading figure is below the measured first reading;
+                                 no file or no row prints "floor not recorded", never refuses
   raw mismatch: <raw_id>         sha256(raw text) != raw_sha256
   assumption incomplete: #<n>    belief / confirm / breaks all non-empty
   added scope: <clause>          a done_when / not_in_scope clause with no trace
@@ -112,7 +115,46 @@ def load_raw(audit_root: str, raw_id: str) -> dict | None:
     return None
 
 
-def verify_document(doc: dict, raw_text: str) -> list[str]:
+_TOKENS_RE = re.compile(r"(\d+(?:\.\d+)?)\s*([kK]?)")
+
+
+def ceiling_tokens(value) -> int | None:
+    """The leading token figure of a context_ceiling ('200k = floor 73k + 127k' -> 200000), else None."""
+    if isinstance(value, bool):
+        return None
+    if isinstance(value, (int, float)):
+        return int(value)
+    match = _TOKENS_RE.search(str(value or ""))
+    if not match:
+        return None
+    return int(float(match.group(1)) * (1000 if match.group(2) else 1))
+
+
+def load_floors(path: str | None) -> dict | None:
+    """The consuming repo's floors file: JSON {harness: first-reading tokens}. None when absent or unreadable."""
+    if not path:
+        return None
+    try:
+        with open(path, encoding="utf-8") as handle:
+            data = json.load(handle)
+    except (OSError, json.JSONDecodeError):
+        return None
+    return data if isinstance(data, dict) else None
+
+
+def floor_for(doc: dict, floors: dict | None) -> int | None:
+    value = (floors or {}).get(doc.get("harness"))
+    return int(value) if isinstance(value, (int, float)) and not isinstance(value, bool) else None
+
+
+def floor_notice(doc: dict, floors: dict | None) -> str | None:
+    """CEIL-A degrades to 'not recorded', never to an assumed number."""
+    if floor_for(doc, floors) is None:
+        return f"floor not recorded for harness {doc.get('harness')}: context ceiling not compared"
+    return None
+
+
+def verify_document(doc: dict, raw_text: str, floors: dict | None = None) -> list[str]:
     """Every refusal for this compiled document against the raw text, in the fixed order."""
     mode = doc.get("mode")
     pass_through = mode == "pass-through"
@@ -129,6 +171,14 @@ def verify_document(doc: dict, raw_text: str) -> list[str]:
     for name in GOAL_FIELDS:
         if _empty(goal_state.get(name)):
             add("field missing", name, "fill the field, or write NOT COMPILED in every field with --no-model")
+    if mode == "not-compiled" and doc.get("dispatchable") is True:
+        add("dispatchable not-compiled", "dispatchable",
+            "coord-runner refuses a not-compiled compile; mark it not dispatchable or compile it")
+    floor = floor_for(doc, floors)
+    ceiling = ceiling_tokens(goal_state.get("context_ceiling"))
+    if floor is not None and ceiling is not None and ceiling < floor:
+        add("ceiling below floor", "context_ceiling",
+            f"the ceiling {ceiling} is below the harness's measured first reading {floor}; raise it to at least floor plus the largest item")
     if sha256_text(raw_text) != doc.get("raw_sha256"):
         add("raw mismatch", str(doc.get("raw_id")), "re-run skeleton against the raw prompt; never edit the raw text")
 
@@ -173,14 +223,14 @@ def trace_table(doc: dict) -> str:
     return "\n".join(rows)
 
 
-def verify_file(path: str, audit_root: str) -> tuple[list[str], dict | None]:
+def verify_file(path: str, audit_root: str, floors: dict | None = None) -> tuple[list[str], dict | None]:
     with open(path, encoding="utf-8") as handle:
         doc = json.load(handle)
     raw = load_raw(audit_root, str(doc.get("raw_id")))
     if raw is None:
         return [refusal("raw not found", str(doc.get("raw_id")),
                         "the id must be a kind:prompt entry in the audit log")], doc
-    return verify_document(doc, str(raw.get("prompt") or "")), doc
+    return verify_document(doc, str(raw.get("prompt") or ""), floors), doc
 
 
 # ----------------------------------------------------------------------------- self-test
@@ -274,6 +324,8 @@ def main(argv=None) -> int:
     v = sub.add_parser("verify", help="gate one compiled prompt JSON")
     v.add_argument("compiled")
     v.add_argument("--audit-root", help="the docs dir holding audit/audit-log.jsonl (default <repo>/docs)")
+    v.add_argument("--floors", help="the consuming repo's JSON {harness: first-reading tokens}; "
+                                    "without it, or without the harness's row, the ceiling check prints 'floor not recorded'")
     args = parser.parse_args(argv)
     # run-verify-gates.py runs every verify-*.py argument-free and counts a non-zero exit as a
     # failed gate: the bare form IS the self-test (Coordinator seam, 2026-09-19), never usage.
@@ -283,8 +335,9 @@ def main(argv=None) -> int:
         sys.stderr.write(f"usage: {args.compiled} — fix: pass an existing compiled JSON file\n")
         return 2
     audit_root = os.path.abspath(args.audit_root) if args.audit_root else os.path.join(_repo_root(), "docs")
+    floors = load_floors(args.floors)
     try:
-        refusals, doc = verify_file(args.compiled, audit_root)
+        refusals, doc = verify_file(args.compiled, audit_root, floors)
     except (json.JSONDecodeError, OSError) as exc:
         sys.stderr.write(f"usage: {args.compiled} — fix: not readable JSON ({exc})\n")
         return 2
@@ -293,6 +346,9 @@ def main(argv=None) -> int:
             sys.stderr.write(r + "\n")
         return 1
     print(trace_table(doc or {}))
+    notice = floor_notice(doc or {}, floors)
+    if notice:
+        print(notice)
     print("gate: pass")
     return 0
 

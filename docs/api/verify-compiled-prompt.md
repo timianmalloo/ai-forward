@@ -30,6 +30,9 @@ logged or rendered.
 
 WHAT IT CHECKS, IN ORDER (each refusal `<code>: <target> - fix: <text>` on stderr, exit 1)
   field missing: <name>          the seven goal_state fields are non-empty ("NOT COMPILED" counts)
+  ceiling below floor: context_ceiling   (only with --floors <file> naming the harness's row) the
+                                 ceiling's leading figure is below the measured first reading;
+                                 no file or no row prints "floor not recorded", never refuses
   raw mismatch: <raw_id>         sha256(raw text) != raw_sha256
   assumption incomplete: #<n>    belief / confirm / breaks all non-empty
   added scope: <clause>          a done_when / not_in_scope clause with no trace
@@ -61,6 +64,7 @@ EXIT  0 pass  ·  1 refused  ·  2 usage.  Stdlib only.
 | Option | Help |
 |---|---|
 | `--audit-root` | the docs dir holding audit/audit-log.jsonl (default <repo>/docs) |
+| `--floors` | the consuming repo's JSON {harness: first-reading tokens}; without it, or without the harness's row, the ceiling check prints 'floor not recorded' |
 | `--self-test` | _(no help text — coverage gap)_ |
 
 ## Functions
@@ -81,7 +85,23 @@ Line endings normalised, every whitespace run one space; case untouched.
 
 The kind:prompt entry with this id from <audit_root>/audit/audit-log.jsonl, else None.
 
-### `verify_document(doc, raw_text)`
+### `ceiling_tokens(value)`
+
+The leading token figure of a context_ceiling ('200k = floor 73k + 127k' -> 200000), else None.
+
+### `load_floors(path)`
+
+The consuming repo's floors file: JSON {harness: first-reading tokens}. None when absent or unreadable.
+
+### `floor_for(doc, floors)`
+
+**Coverage gap** — no docstring in the source.
+
+### `floor_notice(doc, floors)`
+
+CEIL-A degrades to 'not recorded', never to an assumed number.
+
+### `verify_document(doc, raw_text, floors=…)`
 
 Every refusal for this compiled document against the raw text, in the fixed order.
 
@@ -89,7 +109,7 @@ Every refusal for this compiled document against the raw text, in the fixed orde
 
 **Coverage gap** — no docstring in the source.
 
-### `verify_file(path, audit_root)`
+### `verify_file(path, audit_root, floors=…)`
 
 **Coverage gap** — no docstring in the source.
 
@@ -103,6 +123,6 @@ Every refusal the nine directions produce (for the grammar assertion).
 
 ## Coverage
 
-- Public functions: **9** · documented: **5** (**56%**)
-- Undocumented (recorded, not invented): `sha256_text`, `trace_table`, `verify_file`, `self_test`
+- Public functions: **13** · documented: **8** (**62%**)
+- Undocumented (recorded, not invented): `sha256_text`, `floor_for`, `trace_table`, `verify_file`, `self_test`
 

@@ -427,7 +427,7 @@ def build_skeleton(raw_text: str, raw_id: str, harness: str, root: str, template
         "template_version": template["version"], "mode": mode, "goal_state": goal_state, "clauses": clauses,
         "references": references, "graph_neighbours": neighbours, "assumptions": assumptions,
         "decision_requests": decision_requests, "contract_slot": {k: None for k in CONTRACT_KEYS},
-        "dispatchable": None if mode == "compiled" else True,
+        "dispatchable": {"compiled": None, "pass-through": True, "not-compiled": False}[mode],
         # engine_seconds is printed, not stored: the skeleton is a golden (byte-identical) artifact
         # and `finish` records the measured engine time of the run it writes.
         "provenance": {"engine_seconds": None, "compiler_model": None, "compile_tokens": None,
@@ -505,7 +505,7 @@ def render_sections(doc: dict) -> dict[str, str]:
     if len(drs) == 1:
         drs.append("- none")
     slot = ["Contract slot"] + [f"{k}: {doc.get('contract_slot', {}).get(k) if doc.get('contract_slot', {}).get(k) is not None else 'unset'}"
-                                for k in CONTRACT_KEYS]
+                                for k in CONTRACT_KEYS if k != "fallback"]   # FALLBACK-A: the Leader's copy, never the worker's
     prov = doc.get("provenance") or {}
     tokens = prov.get("compile_tokens")
     provenance = ["Provenance",
@@ -613,7 +613,8 @@ def cmd_finish(args) -> int:
         for r in refusals:
             sys.stderr.write(r + "\n")
         return 1
-    doc["dispatchable"] = not bool(doc.get("decision_requests"))
+    # CONSUME-A: coord-runner refuses mode not-compiled, so the producer never marks one dispatchable.
+    doc["dispatchable"] = doc["mode"] != "not-compiled" and not bool(doc.get("decision_requests"))
     prov = doc.setdefault("provenance", {})
     prov["compiler_model"] = args.compiler_model or prov.get("compiler_model")
     prov["compile_tokens"] = args.compile_tokens if args.compile_tokens is not None else prov.get("compile_tokens")
