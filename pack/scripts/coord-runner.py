@@ -357,6 +357,11 @@ class Runner:
                     and doc.get("dispatchable") is True and doc.get("mode") != "not-compiled"
                     and not doc.get("decision_requests"), "RUN-COMPILE",
                     "Finish a verified, dispatchable compilation with no unanswered decision requests.")
+            # IDN-A: `finish --session <worker>` logs the worker's session on the entry; a
+            # compilation finished for another session is never dispatched to this one. A
+            # continuation is a re-finish of the same document under the new session.
+            require(entry.get("session") in (None, session), "RUN-COMPILE",
+                    "Re-finish the compilation under this worker's session (prompt-compile.py finish --session).")
             raw = entries.get(doc.get("raw_id"), {})
             require(raw.get("kind") == "prompt" and not gate.verify_document(doc, raw.get("prompt", "")),
                     "RUN-COMPILE", "Repair the compilation against its original audit prompt.")
