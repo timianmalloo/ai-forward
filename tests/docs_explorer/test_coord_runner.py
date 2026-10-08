@@ -37,6 +37,54 @@ class PlatformAdmissionTests(unittest.TestCase):
         self.assertEqual("RUN-PLATFORM", raised.exception.code)
 
 
+class CompiledPromptFixture(unittest.TestCase):
+    """Runs on every platform (the POSIX-gated classes below skip on Windows): calls
+    Runner.compiled_prompts directly over a throwaway audit log."""
+
+    def setUp(self):
+        with mock.patch.object(sys, "path", [str(SOURCE), *sys.path]):
+            spec = importlib.util.spec_from_file_location("runner_compiled_fixture", SOURCE / "coord-runner.py")
+            self.runner = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(self.runner)
+        tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(tmp.cleanup)
+        self.cwd = Path(tmp.name)
+        raw = "Write receipt.json and stop."
+        compiled = {"schema": "compiled-prompt/1", "mode": "pass-through",
+            "raw_id": "raw-1", "raw_sha256": hashlib.sha256(raw.encode()).hexdigest(),
+            "goal_state": dict.fromkeys(("goal", "done_when", "not_in_scope", "tier",
+                "fan_out_cap", "context_ceiling", "main_line_budget"), "fixture"),
+            "decision_requests": [], "assumptions": [], "dispatchable": True,
+            "harness": "codex", "template": "fixture", "template_version": 1,
+            "clauses": [], "references": [], "graph_neighbours": [], "contract_slot": {}, "provenance": {}}
+        self.entries = [{"id": "raw-1", "kind": "prompt", "prompt": raw},
+            {"id": "compiled-1", "kind": "compilation", "dispatchable": True,
+             "compiled": compiled, "prompt": raw}]
+
+    def prompts(self, session):
+        audit = self.cwd / "docs/audit/audit-log.jsonl"
+        audit.parent.mkdir(parents=True, exist_ok=True)
+        audit.write_text("".join(json.dumps(e) + "\n" for e in self.entries), encoding="utf-8")
+        runner = object.__new__(self.runner.Runner)
+        runner.cwd = self.cwd
+        return runner.compiled_prompts(["compiled-1"], session)
+
+
+class CompilationIdentityTests(CompiledPromptFixture):
+    """IDN-A: a continuation is a re-finish under the new session, which logs a new compilation;
+    a compilation finished for session A is never dispatched to session B."""
+
+    def test_a_compilation_finished_for_another_session_is_refused(self):
+        self.entries[1]["session"] = "worker-A"
+        with self.assertRaises(self.runner.Refused) as raised:
+            self.prompts("worker-B")
+        self.assertEqual("RUN-COMPILE", raised.exception.code)
+
+    def test_a_compilation_finished_for_the_same_session_is_dispatched(self):
+        self.entries[1]["session"] = "worker-A"
+        self.assertEqual(1, len(self.prompts("worker-A")))
+
+
 class DispatchBaseTests(unittest.TestCase):
     """BASE-A (x-harness-x-model-bench, 2026-10-04): every dispatch based its worker trees on the
     invoking checkout's HEAD, so one dirty file in the primary froze the dispatch base. A contract
