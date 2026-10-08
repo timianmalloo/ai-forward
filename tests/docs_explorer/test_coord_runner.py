@@ -381,6 +381,13 @@ class RunnerTests(unittest.TestCase):
         self.contract_path.write_text(json.dumps(self.contract), encoding="utf-8")
         self.cli("prepare", "--contract", str(self.contract_path), expected=2)
 
+    def test_the_manual_brief_never_carries_the_leaders_fallback(self):
+        """FALLBACK-A: the contract's fallback is the Leader's copy; no render reaches the worker."""
+        prepared = self.prepare()
+        brief = json.loads(Path(prepared["workers"][0]["manual_brief"]).read_text(encoding="utf-8"))
+        self.assertNotIn("fallback", brief)
+        self.assertNotIn(self.contract["workers"][0]["fallback"], json.dumps(brief))
+
     def test_undispatchable_compilation_refuses(self):
         self.entries[1]["compiled"]["decision_requests"] = [{"id": "DR-1", "answer": None}]
         self.write_audit()

@@ -312,6 +312,16 @@ class RenderTests(unittest.TestCase):
             self.assertEqual(r.returncode, 1)
             self.assertTrue(r.stderr.startswith("forbidden construct: EnterWorktree — fix: "), r.stderr)
 
+    def test_the_contract_slot_never_renders_the_leaders_fallback(self):
+        """FALLBACK-A: fallback is the Leader's copy and stays in the contract; the worker never sees it."""
+        doc = json.loads(json.dumps({"contract_slot": {"width_cap": 1, "fallback": "SECRET_FALLBACK_TEXT"},
+                                     "goal_state": {}, "references": [], "assumptions": [],
+                                     "decision_requests": [], "clauses": [], "provenance": {}}))
+        slot = pc.render_sections(doc)["contract_slot"]
+        self.assertIn("width_cap: 1", slot)
+        self.assertNotIn("SECRET_FALLBACK_TEXT", slot)
+        self.assertNotIn("fallback", slot)
+
     def test_rendered_order_and_no_reference_body(self):
         with tempfile.TemporaryDirectory() as tmp:
             repo = make_repo(tmp)
