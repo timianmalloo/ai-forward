@@ -1,0 +1,92 @@
+{
+  "id": "deliver-feature-01",
+  "skill": "deliver",
+  "prompt": "Use /deliver to implement clamp(value, low, high) in app.py. Clamp to the inclusive bounds; preserve in-range values and raise ValueError for inverted bounds. This is a small new T1 feature with complete requirements, no UI, no adoption, no release and no coordination. Use strict red-to-green implementation and proportionate applicable design and independent review; reuse valid existing evidence where available. Exercise all provided boundary tests and the actual import path. Continue automatically through applicable stages; preserve real human/reviewer gates and report any unavailable independent review as a blocker, not completion. Do not edit the verifier or add product docs/audit/index files. Keep necessary task-local routing, checkpoint and review evidence out of product documentation.",
+  "setup": [
+    {
+      "path": "app.py",
+      "content": "def clamp(value, low, high):\n    raise NotImplementedError\n"
+    },
+    {
+      "path": "verify_clamp.py",
+      "content": "from app import clamp\nfor value, low, high, expected in [(-1, 0, 10, 0), (0, 0, 10, 0), (5, 0, 10, 5), (10, 0, 10, 10), (11, 0, 10, 10), (0, 0, 0, 0), (-2.5, -2, -1, -2), (-1.5, -2, -1, -1.5)]:\n    assert clamp(value, low, high) == expected\ntry:\n    clamp(5, 10, 0)\nexcept ValueError:\n    pass\nelse:\n    raise AssertionError('inverted bounds were accepted')\n"
+    }
+  ],
+  "assertions": [
+    {
+      "type": "cmd-exit",
+      "cmd": [
+        "python3",
+        "-I",
+        "-c",
+        "import hashlib; from pathlib import Path; actual = hashlib.sha256(Path('verify_clamp.py').read_text(encoding='utf-8').encode('utf-8')).hexdigest(); expected = '1d30c2d07f59e01a240d9df8811e07b18330bf0753e713a21dc65fa1a0069c80'; raise SystemExit(0 if actual == expected else 'verifier identity changed')"
+      ],
+      "exit": 0
+    },
+    {
+      "type": "cmd-exit",
+      "cmd": [
+        "python3",
+        "-I",
+        "-c",
+        "import sys; from pathlib import Path\nsys.path.insert(0, str(Path.cwd()))\ntry:\n    from app import clamp\n    for value, low, high, expected in [(-1, 0, 10, 0), (0, 0, 10, 0), (5, 0, 10, 5), (10, 0, 10, 10), (11, 0, 10, 10), (0, 0, 0, 0), (-2.5, -2, -1, -2), (-1.5, -2, -1, -1.5)]:\n        assert clamp(value, low, high) == expected\n    try:\n        clamp(5, 10, 0)\n    except ValueError:\n        pass\n    else:\n        raise AssertionError('inverted bounds were accepted')\nexcept BaseException as error:\n    raise SystemExit('clamp verification did not complete: ' + type(error).__name__ + ': ' + str(error))\nprint('CLAMP_ORACLE_COMPLETED', flush=True)\n"
+      ],
+      "exit": 0,
+      "stdout": "CLAMP_ORACLE_COMPLETED\n"
+    },
+    {
+      "type": "cmd-exit",
+      "cmd": [
+        "python3",
+        "-I",
+        "-c",
+        "import hashlib; from pathlib import Path; actual = hashlib.sha256(Path('verify_clamp.py').read_text(encoding='utf-8').encode('utf-8')).hexdigest(); expected = '1d30c2d07f59e01a240d9df8811e07b18330bf0753e713a21dc65fa1a0069c80'; raise SystemExit(0 if actual == expected else 'verifier identity changed')"
+      ],
+      "exit": 0
+    },
+    {
+      "type": "file-absent",
+      "path": "docs/audit/audit-log.jsonl"
+    },
+    {
+      "type": "file-absent",
+      "path": "docs/docs-index.js"
+    },
+    {
+      "type": "files-absent",
+      "case_sensitive": false,
+      "patterns": [
+        "docs",
+        "docs/*",
+        "*/docs",
+        "*/docs/*",
+        "documentation",
+        "documentation/*",
+        "*/documentation",
+        "*/documentation/*",
+        "*.md",
+        "*.markdown",
+        "*.mdx",
+        "*.rst",
+        "*.txt",
+        "*.adoc",
+        "*.html",
+        "*.htm",
+        "*.pdf",
+        "*.doc",
+        "*.docx",
+        "*.odt",
+        "*.rtf"
+      ],
+      "allow": [
+        ".pytest_cache/README.md",
+        "*/.pytest_cache/README.md",
+        ".git/ai-forward/delivery/**"
+      ]
+    }
+  ],
+  "qualification": {
+    "kind": "artifact",
+    "limits": "These assertions establish only finite clamp behavior, verifier identity and stated product-document exclusions. A deterministic file writer can pass; this is not qualification of /deliver orchestration, strict red-to-green execution, authentic independent review, permissions or live host behavior. Real bounded customer journeys require separately observed execution and review evidence. This oracle is not a malicious-code sandbox: inputs are trusted. The scope filter is finite: case-insensitive matching covers the listed document extensions (including .markdown) and docs/documentation directories, not universal content detection. It allows the existing dedicated .git/ai-forward/delivery/ proof area and exact .pytest_cache/README.md or */.pytest_cache/README.md generated bookkeeping paths, not arbitrary .git or dependency/cache documentation. All allow paths remain case-sensitive; this is pathname matching, not content authentication. Its pathname allowance does not semantically validate proof or bless proof symlinks; the runner does not follow directory links. Evidence validity and authentic independent review require separate helper checks and observed review."
+  }
+}

@@ -65,4 +65,3 @@ inline-flow style (`rounded: { sm: 6px, md: 8px }` / `spacing: { scale: [...] }`
 
 - Public functions: **3** · documented: **2** (**67%**)
 - Undocumented (recorded, not invented): `lint`
-

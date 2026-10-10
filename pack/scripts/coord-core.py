@@ -4699,6 +4699,13 @@ def cmd_plugin_emit(out_dir, host=None):
             print("COORD-PLUGIN-HOOKS  install the native Copilot hook bundle before emitting this profile")
             return 2
         source = json.loads((hook_dir / "copilot.ai-forward-hooks.json").read_text(encoding="utf-8"))
+        # Reuse the applier's exact managed startup syntax in source and installed layouts.
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("coord_plugin_pack_apply", here / "pack-apply.py")
+        if spec is None or spec.loader is None:
+            raise ValueError("Unsupported source-managed Copilot hook bundle")
+        applier = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(applier)
         events = {"preToolUse": "PreToolUse", "postToolUse": "PostToolUse",
                   "sessionStart": "SessionStart", "subagentStart": "SubagentStart",
                   "agentStop": "Stop", "subagentStop": "SubagentStop",
@@ -4706,9 +4713,15 @@ def cmd_plugin_emit(out_dir, host=None):
         scripts = {}
         for event, entries in source["hooks"].items():
             for entry in entries:
-                # the launcher form (PLAT-A): ".../hooks/run-hook.sh <hook>.py <args>"
-                match = re.search(r"(?:hooks/|run-hook\.sh )([A-Za-z_-]+\.py)(.*)$", entry["bash"])
+                # Only the complete canonical startup command; its shell body is not argv.
+                match = re.fullmatch(re.escape(applier.STARTUP_LAUNCHER) +
+                                     r"(session-start\.py)( --host copilot)", entry["bash"])
                 if not match:
+                    # Existing PLAT-A commands retain their script, host and event argv.
+                    match = re.fullmatch(re.escape(
+                        "git -c alias.aif-hook=!sh aif-hook docs/ai-forward-pack/hooks/run-hook.sh ") +
+                        r"([A-Za-z_-]+\.py)( --host copilot(?: --event [A-Za-z]+)?)", entry["bash"])
+                if not match or not (hook_dir / match.group(1)).is_file():
                     raise ValueError("Unsupported source-managed Copilot hook command")
                 name, arguments = match.groups()
                 scripts[name] = str(hook_dir / name)

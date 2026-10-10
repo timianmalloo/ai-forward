@@ -49,4 +49,3 @@ Pattern: serialized append-only mailbox; state is derived, never overwritten.
 
 - Public functions: **3** · documented: **0** (**0%**)
 - Undocumented (recorded, not invented): `encoded`, `digest`, `require`
-

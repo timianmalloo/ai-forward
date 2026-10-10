@@ -1,14 +1,14 @@
 window.PORTAL_DATA = {
   "meta": {
     "counts": {
-      "skills": 29,
+      "skills": 30,
       "personas": 23,
       "knowledge": 40,
       "templates": 29,
-      "scripts": 46
+      "scripts": 47
     },
     "whatIs": "AI-Forward is a committed Markdown methodology pack that installs into a repo so Claude Code, GitHub Copilot, and Grok Build direct work with a shared reasoning spine, adversarial persona review, and a library of workflow skills - nothing runs as a service; everything is versioned files and stdlib scripts.",
-    "skillCount": 29,
+    "skillCount": 30,
     "precisionNote": "This portal is the high-level, user-facing front door. It is a LENS over the repo's core knowledge, not a copy of it: the Foundations, UI, and Architecture sections list and link the structured artifacts (knowledge docs, ADRs, specs, designs) with derived summaries, while the artifacts themselves stay exactly where they are - as structured, individually-owned Markdown. Nothing here is hand-typed content that must be kept in sync; it is generated from those sources, so it cannot drift."
   },
   "sections": [
@@ -25,7 +25,7 @@ window.PORTAL_DATA = {
     {
       "id": "skills",
       "n": "3",
-      "title": "The 29 Skills"
+      "title": "The 30 Skills"
     },
     {
       "id": "agents",
@@ -86,8 +86,8 @@ window.PORTAL_DATA = {
     },
     {
       "h": "Install it into a repo",
-      "p": "Add the pack to a new or existing local repo. From an ai-forward clone, run the installer skill; a brownfield repo also runs /adopt to bootstrap its knowledge graph.",
-      "cmd": "/addpacktorepo   (or /adopt for an existing repo)"
+      "p": "Run the portable bootstrap in your project with Git and uv available. The upstream repository and main are defaults: no --repo or --ref is needed. It preserves project decisions and reports the verified source/revision. The launcher is available upstream after its contribution is merged; reviewers of unmerged work use a committed local source or explicit source/ref overrides. Adoption remains optional.",
+      "cmd": "uv run --no-config --no-project --script https://raw.githubusercontent.com/timianmalloo/ai-forward/main/bootstrap.py"
     },
     {
       "h": "Know how skills are invoked",
@@ -95,9 +95,9 @@ window.PORTAL_DATA = {
       "cmd": null
     },
     {
-      "h": "Run your first skill",
-      "p": "Start where the loop starts: collect the domain knowledge your work rests on, then specify. The pack grounds every skill in what the repo already knows.",
-      "cmd": "/collectknowledge   then   /specify"
+      "h": "Describe your desired outcome",
+      "p": "Deliver selects the applicable existing workflows and continues between approved stages. Human decisions, permissions and hard review objections remain real pauses; resume the same task with its original completion conditions.",
+      "cmd": "/deliver <outcome>   (Codex: $deliver)"
     },
     {
       "h": "Keep the repo learning",
@@ -198,6 +198,13 @@ window.PORTAL_DATA = {
     {
       "group": "Build & verify",
       "items": [
+        {
+          "cmd": "/deliver",
+          "desc": "Deliver one grounded task through applicable skills, with durable pause/resume and real-path proof.",
+          "when": "Completing one outcome without choosing each workflow manually.",
+          "produces": "Applicable stages, validated local checkpoints and original criteria-to-evidence handback",
+          "handoff": "Human decision when required; otherwise continue the approved task"
+        },
         {
           "cmd": "/document",
           "desc": "Generate/maintain the documentation bundle — JavaDoc-style API reference plus sequence, class, layered-architecture, and component diagrams, in committed markdown and a self-contained browsable HTML view; keep it fresh after commit.",
@@ -858,6 +865,11 @@ window.PORTAL_DATA = {
             "path": "../../docs/specs/native-app-ui-skill-extension.md"
           },
           {
+            "title": "One-command setup and outcome delivery",
+            "summary": "Reduce first-run command selection without weakening outcome ownership. A portable bootstrap installs the existing pack deployment map; deliver selects applicable workflows, preserves human gates, and resumes one task from validated checkpoints.",
+            "path": "../../docs/specs/one-command-adoption.md"
+          },
+          {
             "title": "Owner review mechanics — decision request → numbered ruling, a heading-defined register, a citation gate and a stop-hook gate",
             "summary": "Specifies P5 of the coordination proposal (D6): the Owner seat gets a mechanism. A decision request is P1's typed seam request carrying five decision fields (options, evidence, recommendation, reversibility, blast radius) plus a deadline and a fallback,...",
             "path": "../../docs/specs/owner-review.md"
@@ -981,6 +993,11 @@ window.PORTAL_DATA = {
             "title": "Native profile controls and final decision handback",
             "summary": "Reuse the native ownership guard for Grok and Agy, add a separately trusted Codex Stop hook, and enforce a final worker decision-state fence independently of bounded native Stop behavior.",
             "path": "../../docs/design/native-profile-controls.md"
+          },
+          {
+            "title": "One-command adoption boundaries and implementation",
+            "summary": "A conditional skill entry point and source-driven portable bootstrap reduce manual workflow selection without replacing outcome ownership or changing trust boundaries.",
+            "path": "../../docs/design/one-command-adoption.md"
           },
           {
             "title": "Design — owner review (coord-decide.py · docs/notes/rulings.md · verify-ruling-citations.py · owner-review-gate.py)",
@@ -2214,6 +2231,12 @@ window.PORTAL_DATA = {
         "summary": "Bounded POSIX ACP / Agy session IO. Native harness policy remains authoritative."
       },
       {
+        "id": "api-delivery",
+        "type": "api",
+        "title": "API — delivery.py",
+        "summary": "Conditional delivery routing and local checkpoint integrity, not a workflow runner."
+      },
+      {
         "id": "api-design-lint",
         "type": "api",
         "title": "API — design-lint.py",
@@ -2247,7 +2270,7 @@ window.PORTAL_DATA = {
         "id": "api-index",
         "type": "api",
         "title": "API reference — the deployed script bundle",
-        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 559 public functions across 45 modules, 48% carrying a docstring."
+        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 590 public functions across 46 modules, 46% carrying a docstring."
       },
       {
         "id": "api-marker-lint",
@@ -2634,6 +2657,12 @@ window.PORTAL_DATA = {
         "summary": "Reuse the native ownership guard for Grok and Agy, add a separately trusted Codex Stop hook, and enforce a final worker decision-state fence independently of..."
       },
       {
+        "id": "design-one-command-adoption",
+        "type": "design",
+        "title": "One-command adoption boundaries and implementation",
+        "summary": "A conditional skill entry point and source-driven portable bootstrap reduce manual workflow selection without replacing outcome ownership or changing trust..."
+      },
+      {
         "id": "design-owner-review",
         "type": "design",
         "title": "Design — owner review (coord-decide.py · docs/notes/rulings.md · verify-ruling-citations.py · owner-review-gate.py)",
@@ -2950,6 +2979,12 @@ window.PORTAL_DATA = {
         "type": "doc",
         "title": "Decide the system shape before building",
         "summary": "Use this skill when a project or major capability needs a top-level architecture: components, boundaries, data representation, integration contracts, AI..."
+      },
+      {
+        "id": "handbook-skill-deliver",
+        "type": "doc",
+        "title": "Complete one task without choosing every workflow",
+        "summary": "Use deliver when you want an outcome, not a lesson in the pack's command sequence. The agent selects applicable workflows, continues between approved stages,..."
       },
       {
         "id": "handbook-skill-design-slice",
@@ -3978,6 +4013,12 @@ window.PORTAL_DATA = {
         "summary": "Red-first source evidence for native ownership adapters, observable bounded Stop and final Owner-decision handback, plus two finite Agy profile diagnostics...."
       },
       {
+        "id": "proof-one-command-adoption",
+        "type": "proof-pack",
+        "title": "Proof Pack — one-command adoption",
+        "summary": "Executed evidence for conditional outcome delivery and portable source-driven setup, including old-code failures, preservation probes, native skill use and..."
+      },
+      {
         "id": "proposal-active-multi-harness-coordination",
         "type": "doc",
         "title": "Proposal: ledger and bus — active multi-harness coordination",
@@ -4138,6 +4179,12 @@ window.PORTAL_DATA = {
         "type": "spec",
         "title": "Native app UI skill extension — Specification",
         "summary": "Specification for extending the AI-Forward UI skills so WPF, WinUI, Avalonia and other native client applications receive the same rigorous UX/UI reasoning as..."
+      },
+      {
+        "id": "spec-one-command-adoption",
+        "type": "spec",
+        "title": "One-command setup and outcome delivery",
+        "summary": "Reduce first-run command selection without weakening outcome ownership. A portable bootstrap installs the existing pack deployment map; deliver selects..."
       },
       {
         "id": "spec-owner-review",
@@ -4439,6 +4486,11 @@ window.PORTAL_DATA = {
       },
       {
         "from": "api-coord_transport",
+        "to": "api-index",
+        "rel": "refines"
+      },
+      {
+        "from": "api-delivery",
         "to": "api-index",
         "rel": "refines"
       },
@@ -5308,6 +5360,16 @@ window.PORTAL_DATA = {
         "rel": "implements"
       },
       {
+        "from": "design-one-command-adoption",
+        "to": "architecture",
+        "rel": "refines"
+      },
+      {
+        "from": "design-one-command-adoption",
+        "to": "spec-one-command-adoption",
+        "rel": "refines"
+      },
+      {
         "from": "design-owner-review",
         "to": "defect-classes",
         "rel": "relates-to"
@@ -5870,6 +5932,11 @@ window.PORTAL_DATA = {
       {
         "from": "handbook-skill-define-architecture",
         "to": "handbook-design",
+        "rel": "relates-to"
+      },
+      {
+        "from": "handbook-skill-deliver",
+        "to": "handbook-workflow",
         "rel": "relates-to"
       },
       {
@@ -7513,6 +7580,16 @@ window.PORTAL_DATA = {
         "rel": "implements"
       },
       {
+        "from": "proof-one-command-adoption",
+        "to": "design-one-command-adoption",
+        "rel": "implements"
+      },
+      {
+        "from": "proof-one-command-adoption",
+        "to": "spec-one-command-adoption",
+        "rel": "implements"
+      },
+      {
         "from": "proposal-active-multi-harness-coordination",
         "to": "adr-0005-harness-runner-boundary",
         "rel": "depends-on"
@@ -8076,6 +8153,11 @@ window.PORTAL_DATA = {
         "from": "spec-native-app-ui-skill-extension",
         "to": "kb-native-client-ui-design",
         "rel": "depends-on"
+      },
+      {
+        "from": "spec-one-command-adoption",
+        "to": "architecture",
+        "rel": "refines"
       },
       {
         "from": "spec-owner-review",

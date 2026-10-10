@@ -51,7 +51,7 @@ Run affected skill cases on every pack edit; run all cases on model-version chan
 ```
 pack/           ← SINGLE SOURCE OF TRUTH — edit here only
   knowledge/    ← 40 knowledge docs (reasoning spine + vendored foundation)
-  commands/     ← 29 skills (SKILL.md + reference/ each)
+  commands/     ← 30 skills (SKILL.md + reference/ each)
   templates/    ← 29 artifact templates
   adapters/     ← INSTALL.md + Claude Code agents + Copilot agents/prompts + managed blocks
   evals/        ← pack regression suite (NOT deployed to target repos)
@@ -101,7 +101,7 @@ Each `pack/knowledge/<name>.md` installs as `.github/instructions/<name>.instruc
 - All writes go through `docs/ai-forward-pack/scripts/audit-log.py` (never hand-append JSONL); it regenerates `audit-data.js` + the viewer. The standard is `pack/knowledge/audit-and-change-log.md`.
 - The history is the committed counterpart to a session's ephemeral store — read it at grounding (`audit-log.py list`/`search`) so work compounds across sessions. Browse via `/auditlog` or `docs/audit/index.html`. Prompt **reuse** (`/prompts` + `/searchprompts`, engine `prompt-log.py`) is a second lens over the *same* audit log — `prompt-log.py add` writes a `kind:prompt` entry via `audit-log.py`; there is no separate prompt store.
 
-### The 29 skills and their natural order
+### The 30 skills and their natural order
 ```
 /collectknowledge → /adddomainexperts → /specify → /define-architecture → /design-slice → /implement → /document
                                                                                 ↑

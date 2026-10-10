@@ -41,16 +41,19 @@ class SessionStartHookTests(unittest.TestCase):
         self.hook = pack / "hooks" / "session-start.py"
         self.audit = pack / "scripts" / "audit-log.py"
 
-    def _run_hook(self, payload, env_extra=None, host="claude"):
+    def _run_hook(self, payload, env_extra=None, host="claude", cwd=None):
         env = dict(os.environ)
         env.pop("AGENT_SESSION", None)
         env["AGENT_HOST"] = host
         env.update(env_extra or {})
-        return subprocess.run([sys.executable, str(self.hook), "--host", host], cwd=str(self.repo),
+        return subprocess.run([sys.executable, str(self.hook), "--host", host], cwd=str(cwd or self.repo),
                               input=json.dumps(payload), capture_output=True, text=True, env=env, timeout=30)
 
-    def _starts(self):
-        p = self.repo / "docs" / "audit" / ".run-starts.json"
+    def _starts(self, cwd=None):
+        cwd = self.repo if cwd is None else cwd
+        # Audit opt-in is resolved against the payload cwd, independently of check discovery.
+        root = cwd / "docs" if (cwd / "docs" / "audit").is_dir() else cwd / ".agents" / "log"
+        p = root / "audit" / ".run-starts.json"
         return json.loads(p.read_text(encoding="utf-8")) if p.exists() else {}
 
     def _append(self, session="node-a", skill="implement"):
@@ -140,6 +143,195 @@ class SessionStartHookTests(unittest.TestCase):
                            host="grok")
         self.assertEqual("", r.stdout.strip(), "only Claude's SessionStart stdout is model context")
         self.assertIn("dirty", r.stderr)
+
+    def _assert_ancestor_check_not_run(self):
+        parent = self.repo.parent
+        (parent / ".agents").mkdir()
+        (parent / ".agents" / "session-checks.json").write_text(json.dumps({"checks": [{
+            "name": "ancestor-check",
+            "argv": ["{python}", "-c", "from pathlib import Path; Path('ancestor-ran').write_text('ran')"],
+        }]}), encoding="utf-8")
+        for cwd in (self.repo, self.repo / "src" / "nested"):
+            with self.subTest(cwd=cwd):
+                cwd.mkdir(parents=True, exist_ok=True)
+                (parent / "ancestor-ran").unlink(missing_ok=True)
+                r = self._run_hook({"hook_event_name": "SessionStart", "session_id": "plain-boundary",
+                                    "cwd": str(cwd)}, cwd=cwd)
+                self.assertEqual(r.returncode, 0, r.stderr)
+                self.assertIn("__harness__:plain-boundary", self._starts(cwd), "the marker still runs")
+                self.assertFalse((parent / "ancestor-ran").exists(),
+                                 "an installed plain project must not execute an ancestor declaration")
+                self.assertEqual("", r.stdout)
+                self.assertEqual("", r.stderr)
+
+    def test_installed_plain_boundary_resolves_payload_and_hook_aliases(self):
+        parent = self.repo.parent
+        (parent / '.agents').mkdir()
+        (parent / '.agents/session-checks.json').write_text(json.dumps({'checks': [{
+            'name': 'ancestor', 'argv': ['{python}', '-c',
+                'from pathlib import Path; Path("ancestor-ran").write_text("ran")']}]}), encoding='utf-8')
+        alias = parent / 'project-alias'
+        try:
+            alias.symlink_to(self.repo, target_is_directory=True)
+        except OSError:
+            if os.name == 'nt':
+                self.skipTest('Directory symlinks require host privileges; portable Windows case control is separate')
+            raise
+        original_hook = self.hook
+        for payload_cwd, hook in ((alias, original_hook),
+                                  (self.repo, alias / 'docs/ai-forward-pack/hooks/session-start.py')):
+            with self.subTest(payload_cwd=payload_cwd, hook=hook):
+                self.hook = hook
+                (parent / 'ancestor-ran').unlink(missing_ok=True)
+                result = self._run_hook({'hook_event_name': 'SessionStart', 'session_id': 'alias',
+                                         'cwd': str(payload_cwd)}, cwd=self.repo)
+                self.assertEqual(0, result.returncode, result.stderr)
+                self.assertFalse((parent / 'ancestor-ran').exists(), 'Aliases must not bypass the installed boundary')
+        self.hook = original_hook
+
+    def test_installed_hook_does_not_discover_checks_from_an_unrelated_payload_project(self):
+        outside = self.repo.parent / 'unrelated'
+        (outside / '.agents').mkdir(parents=True)
+        (outside / '.agents/session-checks.json').write_text(json.dumps({'checks': [{
+            'name': 'unrelated', 'argv': ['{python}', '-c',
+                'from pathlib import Path; Path("unrelated-ran").write_text("ran")']}]}), encoding='utf-8')
+        result = self._run_hook({'hook_event_name': 'SessionStart', 'session_id': 'outside',
+                                 'cwd': str(outside)}, cwd=self.repo)
+        self.assertEqual(0, result.returncode, result.stderr)
+        self.assertFalse((outside / 'unrelated-ran').exists(),
+                         'An installed hook must not discover commands outside its own project')
+
+    def test_windows_case_alias_keeps_the_installed_boundary(self):
+        # Run the actual function under Windows path semantics, not a native-host claim.
+        import importlib.util
+        import ntpath
+        from types import SimpleNamespace
+        spec = importlib.util.spec_from_file_location('startup_case_control', HOOK)
+        assert spec is not None and spec.loader is not None
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        def normalized(path):
+            return ntpath.normcase(ntpath.normpath(path))
+        ancestor = normalized(r'C:\.agents\session-checks.json')
+        path = SimpleNamespace(**{name: getattr(ntpath, name) for name in
+            ('abspath', 'realpath', 'normcase', 'join', 'dirname', 'commonpath')},
+            isfile=lambda p: normalized(p) == ancestor, exists=lambda p: False)
+        module.os = SimpleNamespace(path=path)
+        module.HERE = r'C:\Project\docs\ai-forward-pack\hooks'
+        module.CHECKS_FILE = r'.agents\session-checks.json'
+        for cwd in (r'C:\Project', r'C:\project', r'C:\project\src'):
+            with self.subTest(cwd=cwd):
+                self.assertEqual((None, None), module._checks_file(cwd))
+
+    def test_installed_plain_project_does_not_run_an_ancestor_check(self):
+        self._assert_ancestor_check_not_run()
+        self.assertFalse((self.repo / ".git").exists(), "plain projects need no Git initialization")
+
+    def _linked_project(self):
+        # A real linked worktree with a .git file, without creating a fixture commit.
+        primary = pathlib.Path(self.tmp) / "primary.git"
+        linked = pathlib.Path(self.tmp) / "linked"
+        env = {key: value for key, value in os.environ.items() if not key.startswith("GIT_")}
+        for command in (["git", "clone", "--bare", "--shared", "--quiet", str(ROOT), str(primary)],
+                        ["git", "-C", str(primary), "worktree", "add", "--detach", "--no-checkout",
+                         str(linked), "HEAD"]):
+            r = subprocess.run(command, capture_output=True, text=True, env=env, timeout=30)
+            self.assertEqual(r.returncode, 0, r.stderr)
+        shutil.copytree(self.repo / "docs", linked / "docs")
+        self.repo = linked
+        self.hook = linked / "docs" / "ai-forward-pack" / "hooks" / "session-start.py"
+        self.audit = linked / "docs" / "ai-forward-pack" / "scripts" / "audit-log.py"
+        self.assertTrue((linked / ".git").is_file())
+
+    def _assert_own_check_runs_from_subdirectory(self):
+        self._declare_checks({"name": "project-check", "argv": ["{python}", "-c",
+                             "from pathlib import Path; Path('project-ran').write_text(str(Path.cwd()))"]})
+        cwd = self.repo / "src" / "nested"
+        cwd.mkdir(parents=True, exist_ok=True)
+        r = self._run_hook({"hook_event_name": "SessionStart", "session_id": "plain-own", "cwd": str(cwd)}, cwd=cwd)
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertTrue(self.repo.samefile(pathlib.Path((self.repo / "project-ran").read_text())),
+                        'The check must execute in this project, not an unrelated directory')
+        self.assertIn("__harness__:plain-own", self._starts(cwd))
+        self.assertEqual("", r.stdout)
+        self.assertEqual("", r.stderr)
+
+    def test_own_check_directory_assertion_accepts_a_physical_project_alias(self):
+        alias = self.repo.parent / 'own-alias'
+        try:
+            alias.symlink_to(self.repo, target_is_directory=True)
+        except OSError:
+            if os.name == 'nt':
+                self.skipTest('Directory symlinks require host privileges')
+            raise
+        self.repo = alias
+        self._assert_own_check_runs_from_subdirectory()
+
+    def test_installed_plain_project_runs_its_own_check_from_a_subdirectory(self):
+        self._assert_own_check_runs_from_subdirectory()
+
+    def test_installed_linked_project_does_not_run_an_ancestor_check(self):
+        self._linked_project()
+        self._assert_ancestor_check_not_run()
+
+    def test_installed_linked_project_runs_its_own_check_from_a_subdirectory(self):
+        self._linked_project()
+        self._assert_own_check_runs_from_subdirectory()
+
+    def test_nearest_declaration_within_an_installed_project_wins(self):
+        self._declare_checks({"name": "root-check", "argv": ["{python}", "-c",
+                             "from pathlib import Path; Path('root-ran').write_text('ran')"]})
+        project = self.repo
+        self.repo = project / "src"
+        self.repo.mkdir()
+        self._declare_checks({"name": "nearest-check", "argv": ["{python}", "-c",
+                             "from pathlib import Path; Path('nearest-ran').write_text(str(Path.cwd()))"]})
+        self.repo = project
+        cwd = project / "src" / "nested"
+        cwd.mkdir()
+        r = self._run_hook({"hook_event_name": "SessionStart", "session_id": "nearest", "cwd": str(cwd)}, cwd=cwd)
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertTrue((project / "src").samefile(pathlib.Path((project / "src" / "nearest-ran").read_text())),
+                        'The nearest declared check must execute in its own directory')
+        self.assertFalse((project / "root-ran").exists())
+        self.assertIn("__harness__:nearest", self._starts(cwd))
+
+    def test_source_hook_keeps_git_root_discovery(self):
+        self.hook = HOOK
+        r = subprocess.run(["git", "init", "--quiet", str(self.repo)], capture_output=True, text=True, timeout=30)
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self._assert_own_check_runs_from_subdirectory()
+        (self.repo / ".agents" / "session-checks.json").unlink()
+        parent = self.repo.parent
+        (parent / ".agents").mkdir()
+        (parent / ".agents" / "session-checks.json").write_text(json.dumps({"checks": [{
+            "name": "ancestor-check", "argv": ["{python}", "-c",
+                                                   "from pathlib import Path; Path('ancestor-ran').write_text('ran')"],
+        }]}), encoding="utf-8")
+        r = self._run_hook({"hook_event_name": "SessionStart", "session_id": "source-boundary",
+                            "cwd": str(self.repo / "src" / "nested")}, cwd=self.repo / "src" / "nested")
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertFalse((parent / "ancestor-ran").exists())
+        self.assertIn("__harness__:source-boundary", self._starts(self.repo / "src" / "nested"))
+
+    def test_source_hook_keeps_linked_git_root_discovery(self):
+        self._linked_project()
+        self.hook = HOOK
+        self._assert_ancestor_check_not_run()
+        self._assert_own_check_runs_from_subdirectory()
+
+    def test_source_hook_keeps_plain_ancestor_discovery_without_an_installed_boundary(self):
+        self.hook = HOOK
+        parent = self.repo.parent
+        (parent / ".agents").mkdir()
+        (parent / ".agents" / "session-checks.json").write_text(json.dumps({"checks": [{
+            "name": "source-ancestor-check", "argv": ["{python}", "-c",
+                                                          "from pathlib import Path; Path('ancestor-ran').write_text('ran')"],
+        }]}), encoding="utf-8")
+        r = self._run_hook({"hook_event_name": "SessionStart", "session_id": "source-plain", "cwd": str(self.repo)})
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertTrue((parent / "ancestor-ran").exists(), "source hooks keep the existing ancestor search")
+        self.assertIn("__harness__:source-plain", self._starts())
 
     def test_the_hook_is_fail_open(self):
         r = subprocess.run([sys.executable, str(self.hook), "--host", "claude"], cwd=str(self.tmp),

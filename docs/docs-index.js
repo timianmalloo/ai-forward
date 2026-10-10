@@ -672,7 +672,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d17042500669f9cd5001fb600d80831b2c1f75c8328cbea1e2b3736263304df2"
+      "sourceSha256": "c22db7db78caedc1f120d7f56ffd3ae2b21cc2b0d9363d53b65a229e14400a31"
     },
     {
       "id": "api-audit-log",
@@ -697,7 +697,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e0f14ec1fc856642edce271a6cf0cd79f943d4900c951e6b766dab7a032bf955"
+      "sourceSha256": "72e396822f161f7a15a099fac9c43c8d4157f0e5dc1699af9a3964775ba453bf"
     },
     {
       "id": "api-bounded_process",
@@ -722,7 +722,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c6e345ea376641275027bf60f7a239b6d442cc14b5e2cbd3ac71ef22353289c9"
+      "sourceSha256": "90b8eddd92f83ddfebee28a753665ec769f60ae7fbb4c9b6d1457e5f55021215"
     },
     {
       "id": "api-conductor-join",
@@ -747,7 +747,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "48cbf76b1b4889d394dd35241fab5cd14a98284c6a6abfc6b0de7e7babd81bf2"
+      "sourceSha256": "1cb874a59258ca0e4d4f8012ddbbacb3d386b787857458908ab22ff3cb920c6d"
     },
     {
       "id": "api-context-budget",
@@ -772,7 +772,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "df1daf4fe3ffc191577bb5434c53e1b6997d73b002d30cd1446b2779021e1e30"
+      "sourceSha256": "9bb22f7d7113b1fb64bc05696b2b43b994266263f775fccb406b37b3508ef4ee"
     },
     {
       "id": "api-coord-board",
@@ -797,7 +797,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "cdd0d0ac53fe90847f09e70dabc53fb581f26207093479983f7ff3518877da2e"
+      "sourceSha256": "48e0e7db545a75ce23c144d528af38d83963915c671826078fb2dc452df1beb4"
     },
     {
       "id": "api-coord-core",
@@ -822,7 +822,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "fbe888e419d7e461d85b8ffcad2be80207cda73325d21cc54969475445d63e46"
+      "sourceSha256": "bd8bc41e2d962726252a1f8b0b745fe28b9d49956c1ec5c5e15524236160576f"
     },
     {
       "id": "api-coord-decide",
@@ -847,7 +847,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a2cc42e6d26ff2d62d85ee03a895f1f0d987431b837090534d6cda94d6726d95"
+      "sourceSha256": "4de2db810e7f5c37fbdb236e6bf816d56a0a5a9f343a6bdf0633bb949309e2e4"
     },
     {
       "id": "api-coord-mail",
@@ -872,7 +872,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e6e0d4850cea3f5b65c5ee6c34b4ce23fde14502d36d80a07ee9c5c31dab5bb7"
+      "sourceSha256": "5b1e7570719c40529c3cc3f93fe024437d24c8e1db662ef035cfd685b22bcb3c"
     },
     {
       "id": "api-coord-runner",
@@ -897,7 +897,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7e1fc043029e36330cee7d00b7ede401174bf46e441db046ae6c3d19cb8ced06"
+      "sourceSha256": "98567ef47f95e199f8555d5aa62cd13d8d9528204f67efeff92858be5f5521ec"
     },
     {
       "id": "api-coord_files",
@@ -922,7 +922,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ff461533c874856a8c9a949552ab00377961a6c6f45077814902cfde6e003b9b"
+      "sourceSha256": "98ef079efc2564dcabe11bba44e940da71befa7908413ab1d0b8c08c89652ad3"
     },
     {
       "id": "api-coord_ids",
@@ -947,7 +947,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f319b24eccefd6b23a2a59cdd2f30353999f1e3dc38e3699b651f874f51dc298"
+      "sourceSha256": "c725b853411d4a2f67ada0dcd1098b6284efdd9b16726292f0a52156b5303972"
     },
     {
       "id": "api-coord_native",
@@ -972,7 +972,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a742f43a708a2b42100a2652947211038760bb9034dee4e22a372ded9afba65b"
+      "sourceSha256": "de061bf4835dc5d0a66bf81ac67a26a88ed7fdf03d4716a3c93d1e63f0b3bb5f"
     },
     {
       "id": "api-coord_runtime",
@@ -997,7 +997,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f87b38c21936265f818e87797f3236b44fb956072f7c5064ac1ddb35e1dc9b8b"
+      "sourceSha256": "886f76eb16365d7d0acb5671cb143d2f6fe9168fd0210ce45e765d2ef43c792e"
     },
     {
       "id": "api-coord_transport",
@@ -1022,7 +1022,32 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "cce271c1461fa2b4105ee455504e209611b9e612841d34fee7a0f75e1f58d978"
+      "sourceSha256": "ffe04076f4a7d151f0eb5e9e22d3bc0ee8a70c21ab59fadf7cc0d883c2158606"
+    },
+    {
+      "id": "api-delivery",
+      "path": "docs/api/delivery.md",
+      "title": "API — delivery.py",
+      "type": "api",
+      "status": "accepted",
+      "owner": "@ahutanu",
+      "phase": "",
+      "reviewBy": "2027-03-03",
+      "reviewSuggested": [],
+      "summary": "Conditional delivery routing and local checkpoint integrity, not a workflow runner.",
+      "tags": [
+        "api",
+        "scripts",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "api-index",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "e5098dc01c82a24a25df5bc8add6dcd3507a4186611a814a6d2905de7ac152f2"
     },
     {
       "id": "api-design-lint",
@@ -1047,7 +1072,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "724d7f67639384ea5f8d9d2cbbe46b39c5444730ee0e47dc15d4101739127049"
+      "sourceSha256": "c949d611a7d46e23215b37604b5889dfc738dd65666da49e9caadd40d725cf9d"
     },
     {
       "id": "api-docs-graph",
@@ -1072,7 +1097,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "87ec08a190c8ffa59026820a1e0c4f38738529e3952c350af630ed516c563f79"
+      "sourceSha256": "8b2e0362b45b53e0071726babdba678a10a8c37379a5105b43f71afaeeb3aaa7"
     },
     {
       "id": "api-dream",
@@ -1097,7 +1122,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "18a5d3ff3929c3731429c1dba8b79539a303b083fc2d8bf1e051f395c569237e"
+      "sourceSha256": "0f79801787adb76a46940fb133c6848cc27f0baee04351fbfecc321cedfa0ea7"
     },
     {
       "id": "api-foundation-check",
@@ -1122,7 +1147,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a677459f296b1da76ac78aacda5b9af776a518c9c14a56304f92832c78249e88"
+      "sourceSha256": "867dfde00b4e06775dd0d653d3d90d6571834bfd657828ffb9e17ced62566150"
     },
     {
       "id": "api-graphify-setup",
@@ -1147,7 +1172,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b57e70f157c0faea8c55a23dfb2a8f7b24d6c449dd7c88e6fde657162640527d"
+      "sourceSha256": "8873d2d6541816bac8fb15d006beea9a48d7a548e6b5eb46c75117693eeec8d7"
     },
     {
       "id": "api-index",
@@ -1159,7 +1184,7 @@ window.DOCS_INDEX = {
       "phase": "",
       "reviewBy": "2027-03-03",
       "reviewSuggested": [],
-      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 559 public functions across 45 modules, 48% carrying a docstring.",
+      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 590 public functions across 46 modules, 46% carrying a docstring.",
       "tags": [
         "api",
         "scripts",
@@ -1173,7 +1198,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "2fca815d9848c5f4ebef30a92656b229457c31cfa57d9450f9348220c57ae1d9"
+      "sourceSha256": "32cfe8010e02e83104aec2e504fa9b0aa8bbee818eab6bee82e8b6d69e1a7d7b"
     },
     {
       "id": "api-marker-lint",
@@ -1198,7 +1223,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "99a62cdcf340b631a020ba5b67fa87a9943f9b8c21a35c5ed2b1121e69c0f9c2"
+      "sourceSha256": "903b7885e3b77ee63e132ef6745aab4ce5e74c41d8d86ff00ab9b839e0c496c9"
     },
     {
       "id": "api-named_hook_bundles",
@@ -1223,7 +1248,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "70ae560b7ec89ac7e83e0c29a4ae6bf2b760f0b03dd022bb8851e2149f3531f8"
+      "sourceSha256": "9e43e3cf8d43242dd06ccc860ad037749de7cbbbb42fc0de487b7ece0aaa2a19"
     },
     {
       "id": "api-obsidian-setup",
@@ -1248,7 +1273,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "40c69030222d3ff1c0cac6f2b783b9b8929706bebd7c4b4c1866d3cfc2f8e435"
+      "sourceSha256": "6f2a40349fdb08fa17c7cb5f3d29b5a34641e2e8a3786282d32f1a7c8075c006"
     },
     {
       "id": "api-pack-apply",
@@ -1273,7 +1298,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "2f9f0fb9ffa73b385734f14e438aa31a039dd44e4e19a3f4fe3fef8d7797afc9"
+      "sourceSha256": "59f8b0b865f935d4eadd6d252cd964280aaf7d78e6772d40ce013873b0a713f0"
     },
     {
       "id": "api-pack-doctor",
@@ -1298,7 +1323,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7f914b5ea7e38ef8e6dfe4d0616269cc249aae72c9a80bed6aae0d959ff09bc7"
+      "sourceSha256": "27f6dc3319505d015e722d27c8d52ac3b208e0c7c1594d7c79744aa26d5b5c0b"
     },
     {
       "id": "api-platform_process",
@@ -1323,7 +1348,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "81e9ba0662b681c2ab31e2546e25908a6c2e4a8eaf4fac972a11332ff380b7ad"
+      "sourceSha256": "e0fbec7fd0308d2beddae83bda444169b6c45620e92bb3000e2340bd7c74ccb1"
     },
     {
       "id": "api-prompt-compile",
@@ -1348,7 +1373,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7573d344c974c208bd4ad7e964cd03715da53f833321cc1a797908f41142d531"
+      "sourceSha256": "ef40541d07ff0f40043e43043ae0e6a47556a8cbbaeebb9ab2dd9521b2bcf41e"
     },
     {
       "id": "api-prompt-log",
@@ -1373,7 +1398,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "31518578f066d785716382cf36fcba3c31a22d5e88a1740bc2ff5d87ef0aac16"
+      "sourceSha256": "9db959f23ff6c28b0b25ef83eaeae12607a8114cc275949149cb3c28bd30cd07"
     },
     {
       "id": "api-render-markdown",
@@ -1398,7 +1423,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "df58405bf296068b0715a40c18b7f4bc9b51bab43efe26e76b89afb54b2be3e1"
+      "sourceSha256": "db3b5849f0906707f6a7cc5a06409344bf6ddacff7aa4ed6f816346366927512"
     },
     {
       "id": "api-repo_identity",
@@ -1423,7 +1448,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ebfa70a22e4bc82bbb6a2cc7e19d6ec7f09b09cb92ab45a79be915ead8bd03b8"
+      "sourceSha256": "521f73d4f816141f655ebfe79a9f3f426dcf051f39e852d796745761196d28c2"
     },
     {
       "id": "api-run-verify-gates",
@@ -1448,7 +1473,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c21d8563f065fe5282e269441969b9e8c9c5445bee46e9cb31323e26fa4cb999"
+      "sourceSha256": "abc2cc3381362f18c1ad144b7f8506b7e80769efa1aed11096851547e48a79dc"
     },
     {
       "id": "api-scrub",
@@ -1473,7 +1498,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f07e0b01340cda4d39c282309114c54d076c976754498379f57e66759775c931"
+      "sourceSha256": "ce082c1be9a8f7998ba8b946a1d8fdc5b4cc93f9dc99228162070f93a1b0f6c6"
     },
     {
       "id": "api-session-profile",
@@ -1498,7 +1523,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ac2e670cd94128d6df8aa9bec7a56e8ed9cdf6ba4503e67f2397d1ab5befebb5"
+      "sourceSha256": "c801f049ca5a5ca601bf323305ddd5bc7fc5ac10c844dc444fbaf9b970d34121"
     },
     {
       "id": "api-ui-craft-gate",
@@ -1523,7 +1548,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "26d846711c00ed3319be55c59bccc6e294feaae43a30d68b297b40cf201c0326"
+      "sourceSha256": "4ba30a582b48a57d6dc18998ec1d631f697ec83940abb9a0c39f47b14c2bc36b"
     },
     {
       "id": "api-verify-compiled-prompt",
@@ -1548,7 +1573,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b0efe1b922320259583ae458aa3786f01533f48fe9f864af7a17733a522c851f"
+      "sourceSha256": "c801f3f1b4c4354d6bcac3a481c0986422f06d86dd43766372f6983555f596f8"
     },
     {
       "id": "api-verify-documented-commands",
@@ -1573,7 +1598,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c2d8e08f1d0eded94aa69dc299d25557633087f00c7df7605ead5979d5fea9d2"
+      "sourceSha256": "426d97546dd20e0586f413300237f9a78a7046166a61526517c39099a5857a01"
     },
     {
       "id": "api-verify-no-conflict-markers",
@@ -1598,7 +1623,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c203d619f0b2d27c3f9628131eaef6379d09860d16e01f7a2cb35d66f9864bc0"
+      "sourceSha256": "c11aea2be9d5691d83253e6d0c643464d7152a750bcabcb5a2e8e725c479f3d3"
     },
     {
       "id": "api-verify-no-machine-paths",
@@ -1623,7 +1648,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "79d431cf592c9fc5f5c3117f1b63a0c4881380bba92c1774d083e703184c5f6a"
+      "sourceSha256": "80639e11be72cb41693512af00aadea67695d21780803edc920b0f826b676dbd"
     },
     {
       "id": "api-verify-no-new-console-launches",
@@ -1648,7 +1673,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "fb5b635cad98b0d08669bad368cf223e3ff81df86c7cbb13bd29443f06f6fe3b"
+      "sourceSha256": "e08b6999de657c09062e1d0a98aa3982abc6764fc6879ca1d4ad45c9c84b6fc4"
     },
     {
       "id": "api-verify-portable-text-io",
@@ -1673,7 +1698,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "2abbfe9a815d901d7316e0cd6ab9f50ae700229ed698f4388f64f2d18529983f"
+      "sourceSha256": "31e75433f8994bb922c0ca4527627c09774ca299dec82c31884fdec2f09bc0ca"
     },
     {
       "id": "api-verify-ruling-citations",
@@ -1698,7 +1723,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e18a4768b561fc75f9a129ee5e375a2fc8e28dc4e80b2bbf512803fabc48c1f9"
+      "sourceSha256": "dd3d0163d2c63c3ae1deee8c27b47b9c22fe41b89b292dda5c7544abf36e5457"
     },
     {
       "id": "api-verify-skill-contracts",
@@ -1723,7 +1748,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "1c89d7a705b64dde082ad705034ad5f073aec2024714e6bf58d8d59fbbbadbc7"
+      "sourceSha256": "c47cc11c40e86d1f980cc6005518d7660d9ce151613d293d5eb14d07c0405ca6"
     },
     {
       "id": "api-verify-subprocess-utf8",
@@ -1748,7 +1773,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d0cb93a9dbbeafb6a03dc4711c54dd3c55046fa7c0f92853cd135ee66abef36b"
+      "sourceSha256": "3f4526cf1c9c6fce0f57171b9c2aa19d07e8bf4ee254eeb19d2384a17a6b4325"
     },
     {
       "id": "api-visual-assets-setup",
@@ -1773,7 +1798,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "6c49cde082962150b6b5a456187ca86e6dd4a1d0a4f3b229dddb7900938d8374"
+      "sourceSha256": "cd2334aa318f01366c61b528a94bbf47cd61efa573d7a1cfacf1aa98655f7c32"
     },
     {
       "id": "api-xaml-token-lint",
@@ -1798,7 +1823,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "aab84cae092404faf5e1b6e2806ece8561f2d88e82ff102d6073d99e1621f5a6"
+      "sourceSha256": "f1df4239050bd3f6edb75adae4601e36dbee9a080e55eb6d4f8113f673b93611"
     },
     {
       "id": "architecture",
@@ -4225,6 +4250,36 @@ window.DOCS_INDEX = {
       "sourceSha256": "907c5fe45879f2b6e5b387fac5f996b895415b747cf27964399a74dca77bdd3c"
     },
     {
+      "id": "design-one-command-adoption",
+      "path": "docs/design/one-command-adoption.md",
+      "title": "One-command adoption boundaries and implementation",
+      "type": "design",
+      "status": "in-review",
+      "owner": "@ahutanu",
+      "phase": "pack-adoption",
+      "reviewBy": "2027-01-01",
+      "reviewSuggested": [],
+      "summary": "A conditional skill entry point and source-driven portable bootstrap reduce manual workflow selection without replacing outcome ownership or changing trust boundaries.",
+      "tags": [
+        "adoption",
+        "delivery",
+        "installation",
+        "portability"
+      ],
+      "links": [
+        {
+          "to": "spec-one-command-adoption",
+          "rel": "refines"
+        },
+        {
+          "to": "architecture",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "6e96c5fc7f988c68229ff3b817483d68a9929f5eccbb0057180183fa32af1bf8"
+    },
+    {
       "id": "design-owner-review",
       "path": "docs/design/owner-review.md",
       "title": "Design — owner review (coord-decide.py · docs/notes/rulings.md · verify-ruling-citations.py · owner-review-gate.py)",
@@ -4820,7 +4875,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "928ebf339416f210c3c7c824a40371495ebd3de609b693245e3d19908a47e497"
+      "sourceSha256": "5c35247c9b9eb99d22b43ed9f0383dd659c1d76fda9dcd67d717568cc11be9a4"
     },
     {
       "id": "docs-index",
@@ -5510,7 +5565,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9249baee239dc4a42405a7cb0e6689f72289bab6909105bb7ff3c9c39cc0ecf7"
+      "sourceSha256": "47b06bd2df0195b0702096ab72211fc177c95c31c8eaadb23db6a357b52bf127"
     },
     {
       "id": "handbook-design",
@@ -5558,7 +5613,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "6f99e060131250876a21140b4760be2d968c0407dbb3bae5984e65432d739e9e"
+      "sourceSha256": "469fb7a6dd0fae68880441763771baa0804d108047669e3fa547c633d783c738"
     },
     {
       "id": "handbook-glossary",
@@ -6039,6 +6094,30 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "9a758779106340e237ba08444a960421cb51399edd599d0baf38d84c5c2c3864"
+    },
+    {
+      "id": "handbook-skill-deliver",
+      "path": "docs/handbook/skill-deliver.md",
+      "title": "Complete one task without choosing every workflow",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@ahutanu",
+      "phase": "documentation",
+      "reviewBy": "2027-03-22",
+      "reviewSuggested": [],
+      "summary": "Use deliver when you want an outcome, not a lesson in the pack's command sequence. The agent selects applicable workflows, continues between approved stages, and keeps ownership of the original completion conditions. The expert skills remain available.",
+      "tags": [
+        "handbook",
+        "reader-guide"
+      ],
+      "links": [
+        {
+          "to": "handbook-workflow",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "d96b29f9b3075781228bb849dc841a77404690887f038b8b5ce5af6b9f734042"
     },
     {
       "id": "handbook-skill-design-slice",
@@ -6542,7 +6621,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "bf298febde9e4529a37a780e444f3311056927b0c02b2984b9ebb2d6a801246f"
+      "sourceSha256": "3124d99ea79f86c8316fbd021ae8ef3989f9373f86b2f898967ab4b40a44a6f7"
     },
     {
       "id": "hygiene-backlog",
@@ -10662,6 +10741,36 @@ window.DOCS_INDEX = {
       "sourceSha256": "149cd8d530ebaecbd89ef18524390291b0f13627afa3f90a354cdcae20b0e841"
     },
     {
+      "id": "proof-one-command-adoption",
+      "path": "docs/proof/one-command-adoption.md",
+      "title": "Proof Pack — one-command adoption",
+      "type": "proof-pack",
+      "status": "in-review",
+      "owner": "@ahutanu",
+      "phase": "pack-adoption",
+      "reviewBy": "2027-01-01",
+      "reviewSuggested": [],
+      "summary": "Executed evidence for conditional outcome delivery and portable source-driven setup, including old-code failures, preservation probes, native skill use and finite limits.",
+      "tags": [
+        "adoption",
+        "delivery",
+        "installation",
+        "portability"
+      ],
+      "links": [
+        {
+          "to": "spec-one-command-adoption",
+          "rel": "implements"
+        },
+        {
+          "to": "design-one-command-adoption",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "ea683a2cca1c3f99020c20ceac863bbc842eb99706f18e8d8a0ce5caf6d2e627"
+    },
+    {
       "id": "spec-acp-coordination",
       "path": "docs/specs/acp-coordination.md",
       "title": "ACP for multi-harness coordination — capability-qualified sessions",
@@ -11487,6 +11596,33 @@ window.DOCS_INDEX = {
       "sourceSha256": "2984ab64343317f5204e12b066d46f95f3ac0e2839209d25eeef307eb8e29fb6"
     },
     {
+      "id": "spec-one-command-adoption",
+      "path": "docs/specs/one-command-adoption.md",
+      "title": "One-command setup and outcome delivery",
+      "type": "spec",
+      "status": "in-review",
+      "owner": "@ahutanu",
+      "phase": "pack-adoption",
+      "reviewBy": "2027-01-01",
+      "reviewSuggested": [],
+      "summary": "Reduce first-run command selection without weakening outcome ownership. A portable bootstrap installs the existing pack deployment map; deliver selects applicable workflows, preserves human gates, and resumes one task from validated checkpoints.",
+      "tags": [
+        "adoption",
+        "usability",
+        "delivery",
+        "installation",
+        "cross-platform"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "a20aa64321e6655b2d56eacb291c767d1bc75045eddc93acad1668bfd4217747"
+    },
+    {
       "id": "spec-owner-review",
       "path": "docs/specs/owner-review.md",
       "title": "Owner review mechanics — decision request → numbered ruling, a heading-defined register, a citation gate and a stop-hook gate",
@@ -11775,6 +11911,14 @@ window.DOCS_INDEX = {
       "description": "Inspect a rendered design or design-language preview."
     },
     {
+      "id": "surface-design-one-command-adoption",
+      "path": "docs/design/one-command-adoption.html",
+      "title": "One Command Adoption",
+      "kind": "design-preview",
+      "description": "Inspect a rendered design or design-language preview.",
+      "artifactId": "design-one-command-adoption"
+    },
+    {
       "id": "surface-adr-0013-conversation-native-interrogation",
       "path": "docs/adr/0013-conversation-native-interrogation.html",
       "title": "0013 Conversation Native Interrogation",
@@ -12016,6 +12160,22 @@ window.DOCS_INDEX = {
       "artifactId": "proposal-active-multi-harness-coordination"
     },
     {
+      "id": "surface-proof-one-command-adoption",
+      "path": "docs/proof/one-command-adoption.html",
+      "title": "One Command Adoption",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "proof-one-command-adoption"
+    },
+    {
+      "id": "surface-specs-one-command-adoption",
+      "path": "docs/specs/one-command-adoption.html",
+      "title": "One Command Adoption",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "spec-one-command-adoption"
+    },
+    {
       "id": "surface-backtest-optimize-graph-index",
       "path": "docs/backtest/optimize-graph/index.html",
       "title": "optimize-graph back-test — AI-Forward",
@@ -12076,5 +12236,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "46b2501ef475b7580671a1bde8ef306875ede6d1f2248dd0d41c21fff217e7de"
+  "graphSha256": "8eb2ef84f11bddc3b700e9d4ba08166d5bc0a7b0ddb6ebb1f2fd35c83c42bd64"
 };

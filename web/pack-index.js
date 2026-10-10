@@ -11,7 +11,7 @@ window.PACK_INDEX = {
 {
 "id": "skills",
 "label": "Skills",
-"count": 29
+"count": 30
 },
 {
 "id": "templates",
@@ -21,7 +21,7 @@ window.PACK_INDEX = {
 {
 "id": "scripts",
 "label": "Scripts",
-"count": 46
+"count": 47
 },
 {
 "id": "personas",
@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 355
+"count": 360
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 538,
+"total": 545,
 "items": [
 {
 "cat": "knowledge",
@@ -513,6 +513,15 @@ window.PACK_INDEX = {
 "path": "pack/commands/define-architecture/SKILL.md",
 "kind": "skill",
 "text": "/define-architecture produce the top-level architecture from a prompt or spec. selects the loa archetype and tier allocation, establishes unfamiliar sdk/protocol contracts via mandatory spikes, runs the architect council adversarially, and records decisions as adrs. use for new systems or load-bearing architecture. skill: /define-architecture grounding (first action) input cast flow (rigor protocol, specialized to system shape) output artifacts definition of done (exit gate) documentation & discoverability (last action)"
+},
+{
+"cat": "skills",
+"id": "deliver",
+"title": "/deliver",
+"summary": "Deliver one task through only the applicable existing skills, from grounded intent to real-path proof. Use /deliver <request> or /deliver resume <task-id> to continue a paused task without repeating valid completed work.",
+"path": "pack/commands/deliver/SKILL.md",
+"kind": "skill",
+"text": "/deliver deliver one task through only the applicable existing skills, from grounded intent to real-path proof. use /deliver <request> or /deliver resume <task-id> to continue a paused task without repeating valid completed work. /deliver input ground once execute the applicable route pause / resume hand back the outcome"
 },
 {
 "cat": "skills",
@@ -1074,6 +1083,15 @@ window.PACK_INDEX = {
 },
 {
 "cat": "scripts",
+"id": "delivery.py",
+"title": "delivery.py",
+"summary": "Conditional delivery routing and local checkpoint integrity, not a workflow runner.",
+"path": "pack/scripts/delivery.py",
+"kind": "script",
+"text": "delivery.py conditional delivery routing and local checkpoint integrity, not a workflow runner. route read_json digest git identity absolute runtime_start_marker_name runtime_start_marker snapshot file_record capture_file read_json_record validate_scoped_product_path check_records compiler compilation contract local_area state_path save view load check_prestart check_scope_change check_prestart_conversion new_gate resume begin_repair recheck_repair outside close_outcome execute locked_execute main"
+},
+{
+"cat": "scripts",
 "id": "design-lint.py",
 "title": "design-lint.py",
 "summary": "design-lint.py — token-reference linter for design-language docs (AI-Forward).",
@@ -1160,7 +1178,7 @@ window.PACK_INDEX = {
 "summary": "pack-apply.py — apply the AI-Forward deployment map to a repo, mechanically and reversibly.",
 "path": "pack/scripts/pack-apply.py",
 "kind": "script",
-"text": "pack-apply.py pack-apply.py — apply the ai-forward deployment map to a repo, mechanically and reversibly. `/updatepack` and `/addpacktorepo` used to hand-apply install.md's deployment map, so every step a person could forget - re-pasting a managed block, deleting the wrapped copy of a doc whose load scope moved, converting claude.md to the `@agents.md` import, retiring a parity control that encoded the old invariant - was remembered or it was not. this script is the deployment map (install.md 1), run from the pack source against a target repo: pack-apply.py plan --source <ai-forward clone> --target <repo> # every action, no writes pack-apply.py apply --source <ai-forward clone> --target <repo> # do it, idempotently what it does, per artifact family (pack-owned names only - repo-local files are never touched): knowledge -> .claude/knowledge/<name>.md verbatim; .github/instructions/<name>.instructions.md (applyto-wrapped) for load: always|glob; .github/knowledge/<name>.md for load: skill|reference; the stale copy in the other copilot location is removed (ctx-e: a doc re-scoped to on-demand must stop attaching). skills -> .claude/skills/<name>/ (the whole directory: skill.md + reference/*.md); .github/prompts/<name>.prompt.md; .grok/skills/<name>/ (same files; grok build native, wins over claude-compat scan) agents -> .claude/agents/ (both sets); .github/agents/<name>.agent.md (renamed, `tools:` stripped); .grok/agents/<name>.md (`_agent` suffix stripped, `tools:` stripped) bundle -> docs/ai-forward-pack/{templates,scripts,hooks,readme,overview,research-synthesis, install,context-budget.json}; .github/hooks/ai-forward.json; .claude/settings.json (hooks merged, showthinkingsummaries set); .grok/hooks/ai-forward.json; .grok/rules/grok-surface.md (path map only — not knowledge docs); .gitignore lines; docs/index.html and docs/docs-index.js never created or overwritten by install — a content-creating skill instantiates the explorer shell, as its last action, once it has real content to show (v10; al0.2, pk-03) front doors -> agents.md: the managed block replaced wholesale between markers (appended if absent). claude.md: converted to `@agents.md` + the addendum block (ctx-b); the old file is backed up under docs/ai-forward-pack/retired/, and every paragraph that is not in agents.md (after toolchain-path normalisation) is kept above the addendum. controls -> a repo-local parity test that asserts claude.md carries the standing-method block (the old invariant) is rewritten into a shim asserting the new invariant through pack-doctor, its other assertions carried over where they can be read; the original is backed up beside the claude.md backup. repo-local deviations are honoured, not reverted: a destination that differs from the version the repo received at its installed revision is three-way merged (`git merge-file`) against the pack's old and new text; a clean merge lands as merge, a conflicting one is left untouched with the new pack text written under docs/ai-forward-pack/conflicts/ and reported as conflict for the skill to reconcile. the installed revision advances only in `apply`. re-running is a no-op. python 3.8+, stdlib only. exit 0 = applied/clean, 1 = conflicts or errors reported, 2 = usage. read_hook_settings merge_named_hook_bundles _refresh_legacy_ownership merge_hook_ownership merge_claude_settings gitignore_negations read norm_nl same frontmatter git default_source __init__ _project_name _stale_applier row rel _source_revision _target_revision _old_pack_text _write _remove place _transform_like _merge knowledge skills agents bundle _settings _tracked_under _gitignore_withhold _gitignore _gitattributes _editorconfig front_doors _retire_parity_controls advance run_baselines run grok_agent_filename strip_tools replace_block normalise _outside_block unique_paragraphs parity_shim render_table summarize main"
+"text": "pack-apply.py pack-apply.py — apply the ai-forward deployment map to a repo, mechanically and reversibly. `/updatepack` and `/addpacktorepo` used to hand-apply install.md's deployment map, so every step a person could forget - re-pasting a managed block, deleting the wrapped copy of a doc whose load scope moved, converting claude.md to the `@agents.md` import, retiring a parity control that encoded the old invariant - was remembered or it was not. this script is the deployment map (install.md 1), run from the pack source against a target repo: pack-apply.py plan --source <ai-forward clone> --target <repo> # every action, no writes pack-apply.py apply --source <ai-forward clone> --target <repo> # do it, idempotently what it does, per artifact family (pack-owned names only - repo-local files are never touched): knowledge -> .claude/knowledge/<name>.md verbatim; .github/instructions/<name>.instructions.md (applyto-wrapped) for load: always|glob; .github/knowledge/<name>.md for load: skill|reference; the stale copy in the other copilot location is removed (ctx-e: a doc re-scoped to on-demand must stop attaching). skills -> .claude/skills/<name>/ (the whole directory: skill.md + reference/*.md); .github/prompts/<name>.prompt.md; .grok/skills/<name>/ (same files; grok build native, wins over claude-compat scan) agents -> .claude/agents/ (both sets); .github/agents/<name>.agent.md (renamed, `tools:` stripped); .grok/agents/<name>.md (`_agent` suffix stripped, `tools:` stripped) bundle -> docs/ai-forward-pack/{templates,scripts,hooks,readme,overview,research-synthesis, install,context-budget.json}; .github/hooks/ai-forward.json; .claude/settings.json (hooks merged, showthinkingsummaries set); .grok/hooks/ai-forward.json; .grok/rules/grok-surface.md (path map only — not knowledge docs); .gitignore lines; docs/index.html and docs/docs-index.js never created or overwritten by install — a content-creating skill instantiates the explorer shell, as its last action, once it has real content to show (v10; al0.2, pk-03) front doors -> agents.md: the managed block replaced wholesale between markers (appended if absent). claude.md: converted to `@agents.md` + the addendum block (ctx-b); the old file is backed up under docs/ai-forward-pack/retired/, and every paragraph that is not in agents.md (after toolchain-path normalisation) is kept above the addendum. controls -> a repo-local parity test that asserts claude.md carries the standing-method block (the old invariant) is rewritten into a shim asserting the new invariant through pack-doctor, its other assertions carried over where they can be read; the original is backed up beside the claude.md backup. repo-local deviations are honoured, not reverted: a destination that differs from the version the repo received at its installed revision is three-way merged (`git merge-file`) against the pack's old and new text; a clean merge lands as merge, a conflicting one is left untouched with the new pack text written under docs/ai-forward-pack/conflicts/ and reported as conflict for the skill to reconcile. the installed revision advances only in `apply`. re-running is a no-op. python 3.8+, stdlib only. exit 0 = applied/clean, 1 = conflicts or errors reported, 2 = usage. read_hook_settings merge_named_hook_bundles _refresh_legacy_startup _refresh_legacy_ownership merge_hook_ownership merge_claude_settings gitignore_negations read norm_nl same frontmatter git default_source __init__ _project_name _stale_applier row rel _source_revision _target_revision _old_pack_text _write _remove place _transform_like _merge knowledge skills agents bundle _settings _tracked_under _gitignore_withhold _gitignore _gitattributes _editorconfig front_doors _retire_parity_controls advance run_baselines run grok_agent_filename strip_tools replace_block normalise _outside_block unique_paragraphs parity_shim render_table summarize main"
 },
 {
 "cat": "scripts",
@@ -1169,7 +1187,7 @@ window.PACK_INDEX = {
 "summary": "pack-doctor.py — AI-Forward install-health check (deployable; runs in a TARGET repo).",
 "path": "pack/scripts/pack-doctor.py",
 "kind": "script",
-"text": "pack-doctor.py pack-doctor.py — ai-forward install-health check (deployable; runs in a target repo). reports whether this repo has the pack installed and healthy: the installed revision, both tool surfaces present, the managed blocks intact, and the knowledge graph valid + fresh. one pass/warn/fail line per check with a suggested fix; exit 1 if any fail, or if any warn is present under --strict. distinct from tools/check-consistency.py (which validates the pack source — pack/ == docs). a target repo has no pack/, so this checks install health, not source consistency. design: docs/design/pack-doctor.md. stdlib only; composes docs-graph.py for the graph half. usage pack-doctor.py [--root <repo>] [--json] [--strict] exit: 0 all pass/warn (or all pass under --strict) · 1 any fail/strict warn. _result check_installed check_surface _read check_codex check_claude_md_import check_copilot_settings check_claude_settings check_hooks check_hook_launchers walk check_block check_graph _git_lines _jsonl_rows check_mail check_requests check_heartbeat _command_head check_coordination check_node_runner _works check_interpreter run main"
+"text": "pack-doctor.py pack-doctor.py — ai-forward install-health check (deployable; runs in a target repo). reports whether this repo has the pack installed and healthy: the installed revision, both tool surfaces present, the managed blocks intact, and the knowledge graph valid + fresh. one pass/warn/fail line per check with a suggested fix; exit 1 if any fail, or if any warn is present under --strict. distinct from tools/check-consistency.py (which validates the pack source — pack/ == docs). a target repo has no pack/, so this checks install health, not source consistency. design: docs/design/pack-doctor.md. stdlib only; composes docs-graph.py for the graph half. usage pack-doctor.py [--root <repo>] [--json] [--strict] exit: 0 all pass/warn (or all pass under --strict) · 1 any fail/strict warn. _result check_installed check_surface _read check_codex check_claude_md_import check_copilot_settings check_claude_settings check_hooks check_hook_launchers walk check_block check_graph _git_lines _jsonl_rows check_mail check_requests check_heartbeat _command_head _coordination_activation ownership_command check_coordination check_node_runner _works check_interpreter run main"
 },
 {
 "cat": "scripts",
@@ -1866,6 +1884,15 @@ window.PACK_INDEX = {
 },
 {
 "cat": "graph",
+"id": "api-delivery",
+"title": "API — delivery.py",
+"summary": "Conditional delivery routing and local checkpoint integrity, not a workflow runner.",
+"path": "docs/api/delivery.md",
+"kind": "api",
+"text": "api — delivery.py conditional delivery routing and local checkpoint integrity, not a workflow runner. api scripts generated refines api-index"
+},
+{
+"cat": "graph",
 "id": "api-design-lint",
 "title": "API — design-lint.py",
 "summary": "design-lint.py — token-reference linter for design-language docs (AI-Forward).",
@@ -1913,10 +1940,10 @@ window.PACK_INDEX = {
 "cat": "graph",
 "id": "api-index",
 "title": "API reference — the deployed script bundle",
-"summary": "Generated API reference for the pack's public surface — the deployed script bundle. 559 public functions across 45 modules, 48% carrying a docstring.",
+"summary": "Generated API reference for the pack's public surface — the deployed script bundle. 590 public functions across 46 modules, 46% carrying a docstring.",
 "path": "docs/api/index.md",
 "kind": "api",
-"text": "api reference — the deployed script bundle generated api reference for the pack's public surface — the deployed script bundle. 559 public functions across 45 modules, 48% carrying a docstring. api scripts generated index documents architecture"
+"text": "api reference — the deployed script bundle generated api reference for the pack's public surface — the deployed script bundle. 590 public functions across 46 modules, 46% carrying a docstring. api scripts generated index documents architecture"
 },
 {
 "cat": "graph",
@@ -2730,6 +2757,15 @@ window.PACK_INDEX = {
 },
 {
 "cat": "graph",
+"id": "design-one-command-adoption",
+"title": "One-command adoption boundaries and implementation",
+"summary": "A conditional skill entry point and source-driven portable bootstrap reduce manual workflow selection without replacing outcome ownership or changing trust boundaries.",
+"path": "docs/design/one-command-adoption.md",
+"kind": "design",
+"text": "one-command adoption boundaries and implementation a conditional skill entry point and source-driven portable bootstrap reduce manual workflow selection without replacing outcome ownership or changing trust boundaries. adoption delivery installation portability refines spec-one-command-adoption refines architecture"
+},
+{
+"cat": "graph",
 "id": "design-owner-review",
 "title": "Design — owner review (coord-decide.py · docs/notes/rulings.md · verify-ruling-citations.py · owner-review-gate.py)",
 "summary": "Detailed design for spec-owner-review. One stdlib CLI (coord-decide.py) that writes a decision request only by running coord-core.py's own `request add` and `request resolve`, sends its two mails only through coord-mail.py's append_mail…",
@@ -3267,6 +3303,15 @@ window.PACK_INDEX = {
 "path": "docs/handbook/skill-define-architecture.md",
 "kind": "doc",
 "text": "decide the system shape before building use this skill when a project or major capability needs a top-level architecture: components, boundaries, data representation, integration contracts, ai tiering and durable decisions. handbook reader-guide relates-to handbook-design"
+},
+{
+"cat": "graph",
+"id": "handbook-skill-deliver",
+"title": "Complete one task without choosing every workflow",
+"summary": "Use deliver when you want an outcome, not a lesson in the pack's command sequence. The agent selects applicable workflows, continues between approved stages, and keeps ownership of the original completion conditions. The expert skills…",
+"path": "docs/handbook/skill-deliver.md",
+"kind": "doc",
+"text": "complete one task without choosing every workflow use deliver when you want an outcome, not a lesson in the pack's command sequence. the agent selects applicable workflows, continues between approved stages, and keeps ownership of the original completion conditions. the expert skills remain available. handbook reader-guide relates-to handbook-workflow"
 },
 {
 "cat": "graph",
@@ -4611,6 +4656,15 @@ window.PACK_INDEX = {
 },
 {
 "cat": "graph",
+"id": "proof-one-command-adoption",
+"title": "Proof Pack — one-command adoption",
+"summary": "Executed evidence for conditional outcome delivery and portable source-driven setup, including old-code failures, preservation probes, native skill use and finite limits.",
+"path": "docs/proof/one-command-adoption.md",
+"kind": "proof-pack",
+"text": "proof pack — one-command adoption executed evidence for conditional outcome delivery and portable source-driven setup, including old-code failures, preservation probes, native skill use and finite limits. adoption delivery installation portability implements spec-one-command-adoption implements design-one-command-adoption"
+},
+{
+"cat": "graph",
 "id": "spec-acp-coordination",
 "title": "ACP for multi-harness coordination — capability-qualified sessions",
 "summary": "Specifies a common Agent Client Protocol session-control boundary below the pack's coordination rules. Grok-driven live probes establish three ACP paths and an Agy native-stream fallback, while separating transport support from effective…",
@@ -4770,6 +4824,15 @@ window.PACK_INDEX = {
 "path": "docs/specs/native-app-ui-skill-extension.md",
 "kind": "spec",
 "text": "native app ui skill extension — specification specification for extending the ai-forward ui skills so wpf, winui, avalonia and other native client applications receive the same rigorous ux/ui reasoning as web surfaces. the spec defines the required native medium declaration, native proof pack, xaml/resource token mapping, native review artifacts, and the constraints for generated visual assets. ui-design visualize native-ui wpf winui avalonia desktop specification depends-on kb-native-client-ui-design relates-to architecture"
+},
+{
+"cat": "graph",
+"id": "spec-one-command-adoption",
+"title": "One-command setup and outcome delivery",
+"summary": "Reduce first-run command selection without weakening outcome ownership. A portable bootstrap installs the existing pack deployment map; deliver selects applicable workflows, preserves human gates, and resumes one task from validated…",
+"path": "docs/specs/one-command-adoption.md",
+"kind": "spec",
+"text": "one-command setup and outcome delivery reduce first-run command selection without weakening outcome ownership. a portable bootstrap installs the existing pack deployment map; deliver selects applicable workflows, preserves human gates, and resumes one task from validated checkpoints. adoption usability delivery installation cross-platform refines architecture"
 },
 {
 "cat": "graph",

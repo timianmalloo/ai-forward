@@ -17,6 +17,43 @@ summary: >-
 
 # Defect-class register
 
+**DELIVERY-B / 2026-10-03 — reusing approval across changed artifact boundaries.**
+Class → a mutable progress snapshot can silently replace the version independently
+reviewed, while content-only fingerprints or inherited repository selectors miss
+behavior-changing drift. Sweep → verification completion and every pause, regular
+and recursive workspace entries, scoped-repair comparisons and the Git wrapper.
+Derive → verification is non-authoring; approval applies to the observed artifact,
+not later edits or another project. Prevent → real compiler/helper regression
+controls reject post-review product changes through closure and pauses, detect
+POSIX executable-bit changes outside repair scope, and bind explicit projects
+under inherited Git root/index/config variables. Local/external fresh proof,
+unchanged closure, scoped mode corrections and normal authoring remain valid.
+Status → deterministic cooperative controls; source labels do not authenticate
+consent, and finite tests do not establish universal model compliance.
+
+**DOC-P / 2026-10-03 — replacing the product story during feature onboarding.**
+Class → a clearer quick start can still silently replace the existing product
+presentation and reference instead of adding the requested capability beside it.
+Sweep → root README, pack README/overview and first-task/workflow handbook guides.
+Derive → begin with complete authoritative upstream bytes, add the short path and
+allow only explicit adjustments needed by the feature; counts and headings alone
+cannot establish prose preservation. Prevent → customer-documentation controls
+retain the original sections and compare complete product/reference blocks by hash;
+the previous rewrite and a retained-heading/replaced-paragraph mutation fail.
+Status → controlled for these source guides; semantic scope still needs review.
+
+**DOC-S / 2026-10-03 — treating a display excerpt as complete source.**
+Class → reconstructing a large artifact from line-abbreviated tool output can retain
+its record count while dropping the suffixes of long records. A verified write proves
+the supplied bytes landed, not that the original content was preserved.
+Sweep → canonical and installed refresh history. Derive → preserve authoritative raw
+source, not its display projection; compare the complete moved block byte-for-byte.
+Prevent → `test_refresh_history_has_no_abbreviated_recorded_entries` rejects incomplete
+refresh records on both surfaces. The revision-100 correction additionally compared
+the complete archive with the committed baseline before publication. The transient
+local loss was repaired from Git; no shortened history was committed or pushed.
+Status → controlled for this refresh-history shape, not a universal source-recovery claim.
+
 **TEST-TIME-A / 2026-09-21 — timing floor measured from process startup** (now a class section below, with the 2026-09-22 recurrence).
 Class → a deadline test required a fixed first turn to finish before a small budget,
 so hosted-runner startup jitter changed the observed turn count and failed the test.

@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>One Command Adoption</title><style>
+:root { color-scheme: light dark; --bg:#f7f5ef; --panel:#fff; --text:#20201d;
+  --muted:#66645f; --line:#d9d5ca; --accent:#3157a4; --code:#f0eee7; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#171816; --panel:#20221f; --text:#f2f1eb; --muted:#b8b6ae;
+    --line:#3d403a; --accent:#8fb0ff; --code:#292c27; }
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text);
+  font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif; }
+main { width:min(920px,calc(100% - 32px)); margin:32px auto; padding:40px;
+  background:var(--panel); border:1px solid var(--line); border-radius:12px; }
+h1,h2,h3,h4,h5,h6 { line-height:1.2; margin:1.5em 0 .55em; }
+h1 { margin-top:0; font-size:2.2rem; } h2 { border-bottom:1px solid var(--line); padding-bottom:.3em; }
+a { color:var(--accent); } code { background:var(--code); padding:.12em .35em; border-radius:4px; }
+pre { overflow:auto; padding:16px; background:var(--code); border-radius:8px; }
+pre code { padding:0; } blockquote { margin:1em 0; padding:.2em 1em; color:var(--muted);
+  border-left:4px solid var(--line); }
+table { width:100%; border-collapse:collapse; margin:1em 0; display:block; overflow:auto; }
+th,td { padding:.55em .75em; border:1px solid var(--line); text-align:left; vertical-align:top; }
+th { background:var(--code); } hr { border:0; border-top:1px solid var(--line); }
+.source { color:var(--muted); font-size:.9rem; margin-bottom:2rem; }
+@media (max-width:640px) { main { width:100%; margin:0; padding:24px 18px; border:0; border-radius:0; } }
+</style></head><body><main><div class="source">Rendered from one-command-adoption.md</div><h1>One-command setup and outcome delivery</h1>
+<h2>Problem and scope</h2>
+<p>A newcomer currently needs a source clone and knowledge of the pack&#x27;s individual skills and handoffs. The new first-run path is one setup command in the project, then <code>/deliver &lt;desired outcome&gt;</code> (<code>$deliver</code> in Codex). Expert skills remain available.</p>
+<p>The goal is lower interaction and discovery cost, not evidence of a measured increase in population adoption. Installing files is not proof a coding application loaded them. A workflow checkpoint is not proof of human consent or semantic correctness.</p>
+<h2>Part A — Functional requirements</h2>
+<h3>Setup</h3>
+<ul><li><strong>S1:</strong> One invocation deploys and verifies the current source deployment map into</li></ul>
+<p>the invoking project. Git worktree/subdirectory and plain project behavior is explicit.</p>
+<ul><li><strong>S2:</strong> Use the existing <code>pack-apply.py</code> program. Resolve an exact Git commit and</li></ul>
+<p>installed pack revision. Support explicit source/ref selection and local committed source for offline verification; never install uncommitted source silently.</p>
+<ul><li><strong>S3:</strong> Preserve product code, dirty/untracked work, accumulated documentation,</li></ul>
+<p>project-owned policy, custom hooks, permissions and trust. Managed additions are intentional; conflicting local deviations are refused rather than force-overwritten.</p>
+<ul><li><strong>S4:</strong> Preview writes nothing to the project. Repeating a successful install is</li></ul>
+<p>idempotent. A failed or incomplete installation is never reported as successful.</p>
+<ul><li><strong>S5:</strong> No Git initialization, invented identity, commit/push, global configuration,</li></ul>
+<p>release, registry publication, ownership opt-in or optional CI injection.</p>
+<ul><li><strong>S6:</strong> Give a concise result and exact next action, plus a machine-independent</li></ul>
+<p>receipt with source commit and pack revision. Distinguish warnings from failures.</p>
+<ul><li><strong>S7:</strong> One identical launcher syntax works in Linux/macOS/Windows shells. State</li></ul>
+<p><code>uv</code> and Git prerequisites; the launcher manages Python without installing the target project&#x27;s dependencies or creating a project environment/lockfile.</p>
+<h3>Deliver</h3>
+<ul><li><strong>D1:</strong> With a task, select applicable existing workflows from grounded repository</li></ul>
+<p>evidence, the requested outcome and unresolved questions. With no task, ask simply what outcome the user wants. Do not present the whole skill catalog as homework.</p>
+<ul><li><strong>D2:</strong> Preserve the original request, completion conditions and exclusions through</li></ul>
+<p>each handoff. Compare any compiled contract with original human intent; quote/hash provenance alone is not semantic equivalence.</p>
+<ul><li><strong>D3:</strong> Routine features use only necessary research/specification/architecture/design</li></ul>
+<p>stages. Small T0 changes take a short path. Risk triggers and migration cannot reduce the required tier or verification floors.</p>
+<ul><li><strong>D4:</strong> A defect uses investigation and its human repair-review stop, except where</li></ul>
+<p>the human explicitly preauthorized continuing. Migration characterizes old behavior before changing it. UI design precedes building a visual surface.</p>
+<ul><li><strong>D5:</strong> Coordinate only justified independent work. Prepare the division and contracts</li></ul>
+<p>before dispatch; coordination replaces single-session execution, not extra default agents. Preserve the task-specific investigation/characterization obligations.</p>
+<ul><li><strong>D6:</strong> Continue automatically between applicable approved stages. Required decisions,</li></ul>
+<p>permissions, hard-veto resolution and release authorization remain real pauses.</p>
+<ul><li><strong>D7:</strong> Resume the same task in a fresh session using a small durable checkpoint.</li></ul>
+<p>Validate project identity, contract, inputs and evidence; reject corrupt/stale/wrong context rather than assume completion. Do not repeat valid completed work.</p>
+<ul><li><strong>D8:</strong> Stop only on demonstrated completion, a concrete human gate/blocker or user</li></ul>
+<p>redirection. Return original criteria versus observed evidence, changed artifacts, actual checks/skips, residual limits and the decision still needed.</p>
+<ul><li><strong>D9:</strong> No default adoption, domain-expert generation, dreaming, profiling, deployment</li></ul>
+<p>or unrelated cleanup. Respect explicit question/review-only requests and the pack&#x27;s current audit/graph opt-in behavior.</p>
+<h3>Acceptance scenarios</h3>
+<ul><li>A known small correction needs no new architecture/specification ceremony; its real</li></ul>
+<p>regression check and original completion condition still apply.</p>
+<ul><li>A data/identity/migration task cannot route as T0/T1 merely because the diff is small.</li><li>An investigation finishes with a repair proposal and waits for the actual human</li></ul>
+<p>response; a fresh session resumes that task, not a newly invented replacement.</p>
+<ul><li>A migration cannot lose characterization by selecting coordinated execution.</li><li>A checkpoint whose evidence changes, whose contract changes or whose project differs</li></ul>
+<p>refuses reuse. A handback with a missing success criterion remains incomplete.</p>
+<ul><li>Installing into a project with existing instructions, custom hooks and a graph keeps</li></ul>
+<p>those decisions. A managed conflict or unsupported source fails before promotion.</p>
+<ul><li>Running the installer twice does not duplicate blocks or overwrite local deviations.</li><li>A plain project remains non-Git after installation; an unrelated large tree is not</li></ul>
+<p>copied merely to deploy the pack. Shell/path/Unicode handling is tested on actual OSes.</p>
+<h2>Part B — UX specification</h2>
+<p>The primary interface is two familiar entry points, not a workflow designer. Expert commands remain discoverable as progressive detail. Show the chosen path and reasons briefly; the user should not choose every stage manually.</p>
+<p>States: no task → ask for outcome; running → concise useful progress; decision → question/recommendation/consequence; paused → durable task identity and next action; resumed → confirm valid checkpoint and continue; error → specific obstacle and safe recovery; complete → result, evidence and remaining limits.</p>
+<p>A pause does not abandon the task or claim it was delivered. A successful installation explains that restarting/refreshing the coding application&#x27;s discovery may be needed. Do not resolve a warning by granting broad permissions.</p>
+<h2>Part C — UI specification</h2>
+<p>N/A for graphical tokens, animation and screen layout: the added surfaces are native coding-agent commands and plain terminal output. Accessible text carries every state; color is not required to understand success/error or a next action. Existing handbook styling is preserved. CLI examples are single-line and shell-independent where claimed.</p>
+<h2>Non-goals and evidence limits</h2>
+<p>No universal slash-command process runner, new coordination broker, semantic proof from structural receipts, authenticated same-user authority, or automatic human consent. No alteration of unrelated compiler/eval defects from a previous audit. Deterministic, fixture, native-harness and actual cross-platform evidence are labeled separately.</p></main></body></html>

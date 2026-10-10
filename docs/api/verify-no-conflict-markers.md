@@ -83,4 +83,3 @@ refused rather than reported clean.
 
 - Public functions: **4** · documented: **3** (**75%**)
 - Undocumented (recorded, not invented): `repo_root`
-

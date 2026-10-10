@@ -29,6 +29,7 @@ spikes/
 !.agents/artifacts.yml
 !.agents/skills*
 !.agents/hooks.json
+!.agents/session-checks.json
 !.agents/rules*
 !.agents/log/
 .agents/mail/
@@ -73,3 +74,9 @@ learnings/plans/
 # project history: absence degrades to 'no duration recorded', never to a wrong one.
 docs/audit/.run-starts.json
 docs/audit/.run-starts.json.tmp
+.agents/log/audit/.run-starts.json
+.agents/log/audit/.run-starts.json.tmp
+**/docs/audit/.run-starts.json
+**/docs/audit/.run-starts.json.tmp
+**/.agents/log/audit/.run-starts.json
+**/.agents/log/audit/.run-starts.json.tmp

@@ -68,4 +68,3 @@ Findings for one module's source text: (line, head) per undecoded text-mode call
 
 - Public functions: **3** · documented: **1** (**33%**)
 - Undocumented (recorded, not invented): `scan`, `self_test`
-

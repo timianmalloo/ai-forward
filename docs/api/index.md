@@ -9,7 +9,7 @@ links:
   - { to: architecture, rel: documents }
 review-by: "2027-03-03"
 summary: >-
-  Generated API reference for the pack's public surface — the deployed script bundle. 559 public functions across 45 modules, 48% carrying a docstring.
+  Generated API reference for the pack's public surface — the deployed script bundle. 590 public functions across 46 modules, 46% carrying a docstring.
 ---
 
 # API reference — the deployed script bundle
@@ -38,6 +38,7 @@ with no docstring is listed as a **coverage gap** rather than described from gue
 | [`coord_native.py`](coord_native.md) | 1 | 0 | — | Read-only Codex thread metadata over its measured local WebSocket endpoint. |
 | [`coord_runtime.py`](coord_runtime.md) | 3 | 0 | — | Private, bounded, append-only runtime controls for an already admitted run. |
 | [`coord_transport.py`](coord_transport.md) | 3 | 3 | — | Bounded POSIX ACP / Agy session IO. Native harness policy remains authoritative. |
+| [`delivery.py`](delivery.md) | 31 | 6 | — | Conditional delivery routing and local checkpoint integrity, not a workflow runner. |
 | [`design-lint.py`](design-lint.md) | 3 | 2 | — | design-lint.py — token-reference linter for design-language docs (AI-Forward). |
 | [`docs-graph.py`](docs-graph.md) | 37 | 3 | 10 | docs-graph.py — the AI-Forward Pack docs script bundle (knowledge-visualization.md V18). |
 | [`dream.py`](dream.md) | 21 | 4 | 4 | dream.py - the AI-Forward dreaming / continuous-improvement consolidation harness. |
@@ -69,5 +70,5 @@ with no docstring is listed as a **coverage gap** rather than described from gue
 | [`visual-assets-setup.py`](visual-assets-setup.md) | 12 | 5 | — | visual-assets-setup.py - wire up a generation backend for UI visual assets (AI-Forward). |
 | [`xaml-token-lint.py`](xaml-token-lint.md) | 9 | 0 | — | xaml-token-lint.py — first-slice token linter for XAML/native UI markup. |
 
-**Total** — 559 public functions across 45 modules, **266 documented (48%)**.
+**Total** — 590 public functions across 46 modules, **272 documented (46%)**.
 

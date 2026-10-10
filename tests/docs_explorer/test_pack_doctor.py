@@ -1,6 +1,8 @@
 import importlib.util
 import json
+import os
 import shutil
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -32,6 +34,9 @@ class PackDoctorInterpreterTests(unittest.TestCase):
 
     def setUp(self):
         self.module = load_module()
+        native_environment = mock.patch.dict(os.environ, {"UV_RUN_RECURSION_DEPTH": "0"})
+        native_environment.start()
+        self.addCleanup(native_environment.stop)
 
     def _fake(self, ok_labels):
         """Stub run_bounded so only the given argv[0..1] forms report Python 3."""
@@ -309,6 +314,184 @@ class PackDoctorNodeRunnerTests(unittest.TestCase):
         """A check nobody calls is not a control."""
         source = SCRIPT.read_text(encoding="utf-8")
         self.assertIn("check_node_runner()", source.split("def run(root)")[1][:800])
+
+
+class PackDoctorCoordinationModeTests(unittest.TestCase):
+    def setUp(self):
+        self.module = load_module()
+        temp = tempfile.TemporaryDirectory()
+        self.addCleanup(temp.cleanup)
+        self.root = Path(temp.name)
+        scripts = self.root / "docs" / "ai-forward-pack" / "scripts"
+        scripts.mkdir(parents=True)
+        shutil.copy2(SCRIPTS / "coord-core.py", scripts / "coord-core.py")
+        self.write(".agents/hooks.json", (REPO / "pack/adapters/hooks/agy.ai-forward-hooks.json").read_text(encoding="utf-8"))
+        # Isolate Git probes from user/global configuration and enclosing checkouts.
+        self.env = mock.patch.dict(os.environ, {"GIT_CONFIG_GLOBAL": os.devnull,
+                                               "GIT_CONFIG_NOSYSTEM": "1"})
+        self.env.start()
+        self.addCleanup(self.env.stop)
+
+    def write(self, relative, text):
+        target = self.root / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(text, encoding="utf-8", newline="\n")
+        return target
+
+    def git(self, *args):
+        return subprocess.run(["git", "-C", str(self.root), *args], check=True,
+                              capture_output=True, text=True, encoding="utf-8")
+
+    def test_fresh_plain_and_git_installs_do_not_require_optional_registry(self):
+        for git_checkout in (False, True):
+            with self.subTest(git_checkout=git_checkout):
+                if git_checkout:
+                    self.git("init", "-q")
+                result = self.module.check_coordination(str(self.root))
+                self.assertEqual("WARN", result["status"], result)
+                self.assertIn("NOT APPLICABLE", result["detail"])
+                self.assertIn("optional", result["detail"])
+                self.assertIn("serial", result["detail"])
+                self.assertFalse((self.root / ".agents/artifacts.yml").exists())
+
+
+    def test_missing_registry_fails_for_explicit_coordination_activation(self):
+        cases = ("attributes", "driver", "pre-commit", "custom-hooks-path", "native-claude",
+                 "native-copilot", "native-codex", "native-grok", "native-agy")
+        for activation in cases:
+            with self.subTest(activation=activation):
+                # Separate repositories keep every activation signal independent.
+                with tempfile.TemporaryDirectory() as temp:
+                    saved = self.root
+                    self.root = Path(temp)
+                    try:
+                        self.write("docs/ai-forward-pack/scripts/coord-core.py", "# installed\n")
+                        self.git("init", "-q")
+                        if activation == "attributes":
+                            self.write(".gitattributes", "* text=auto eol=lf\n*.jsonl merge=coord-register\n")
+                        elif activation == "driver":
+                            self.git("config", "--local", "merge.coord-register.driver", "coord-core.py merge-register %A %O %B %P")
+                        elif activation in ("pre-commit", "custom-hooks-path"):
+                            if activation == "custom-hooks-path":
+                                self.git("config", "--local", "core.hooksPath", "local hooks")
+                            hook_dir = self.git("rev-parse", "--git-path", "hooks").stdout.strip()
+                            hook = self.write(hook_dir + "/pre-commit", '#!/bin/sh\n# coord-core pre-commit floor\nexec python3 coord-core.py precommit\n')
+                            hook.chmod(0o755)
+                        else:
+                            host = activation.removeprefix("native-")
+                            config = subprocess.run([sys.executable, str(SCRIPTS / "coord-core.py"),
+                                                     "hook", "--config", "--host", host],
+                                                    check=True, capture_output=True, text=True)
+                            relative = {"claude": ".claude/settings.json", "copilot": ".github/hooks/ownership.json",
+                                        "codex": ".codex/hooks.json", "grok": ".grok/hooks/ownership.json",
+                                        "agy": ".agents/hooks.json"}[host]
+                            self.write(relative, config.stdout)
+                        result = self.module.check_coordination(str(self.root))
+                        self.assertEqual("FAIL", result["status"], result)
+                        self.assertIn("activated", result["detail"])
+                        self.assertIn("artifacts.yml", result["detail"])
+                    finally:
+                        self.root = saved
+
+
+    def test_disabled_ownership_and_commented_attributes_are_not_activation(self):
+        self.git("init", "-q")
+        self.write(".gitattributes", "# *.jsonl merge=coord-register\n* text=auto eol=lf\n")
+        config = subprocess.run([sys.executable, str(SCRIPTS / "coord-core.py"), "hook", "--config", "--host", "agy"],
+                                check=True, capture_output=True, text=True)
+        disabled = json.loads(config.stdout)
+        disabled["ownership-guard"]["enabled"] = False
+        self.write(".agents/hooks.json", json.dumps(disabled))
+        self.assertEqual("WARN", self.module.check_coordination(str(self.root))["status"])
+        # A stale default hook is not effective when Git points at a different directory.
+        self.write(".git/hooks/pre-commit", "#!/bin/sh\n# coord-core pre-commit floor\n").chmod(0o755)
+        self.git("config", "--local", "core.hooksPath", "other-hooks")
+        self.assertEqual("WARN", self.module.check_coordination(str(self.root))["status"])
+
+    def test_valid_minimal_registry_passes_and_malformed_registry_fails(self):
+        self.write(".agents/artifacts.yml", "README.md: authored\n")
+        self.assertEqual("PASS", self.module.check_coordination(str(self.root))["status"])
+        for text in ("README.md: unsupported-class\n", "not a registry row\n", "index.js: derived\n",
+                     ": authored\n", "README.md: authored\nREADME.md: register\n"):
+            with self.subTest(text=text):
+                self.write(".agents/artifacts.yml", text)
+                result = self.module.check_coordination(str(self.root))
+                self.assertEqual("FAIL", result["status"], result)
+                self.assertIn("registry does not parse", result["detail"])
+
+
+    def test_registry_non_utf8_is_reported_as_failure_not_a_crash(self):
+        (self.root / ".agents/artifacts.yml").write_bytes(b"README.md: authored\n\xff")
+        result = self.module.check_coordination(str(self.root))
+        self.assertEqual("FAIL", result["status"], result)
+        self.assertIn("unreadable", result["detail"])
+
+    def test_valid_registry_ignores_commented_merge_driver_declarations(self):
+        self.write(".agents/artifacts.yml", "README.md: authored\n")
+        self.write(".gitattributes", "# *.jsonl merge=coord-register\n")
+        result = self.module.check_coordination(str(self.root))
+        self.assertEqual("PASS", result["status"], result)
+
+
+class PackDoctorPortableInvocationTests(unittest.TestCase):
+    def assert_uv_remedy_uses_executable(self, fix, executable):
+        import shlex
+        from pathlib import PureWindowsPath
+        parts = fix.split("`")
+        self.assertEqual(3, len(parts), fix)
+        argv = shlex.split(parts[1])  # The documented uv command uses POSIX quoting, even on Windows.
+        self.assertEqual(["uv", "run", "--no-config", "--no-project", "--python"], argv[:5])
+        self.assertEqual(7, len(argv), argv)
+        path_type = PureWindowsPath if PureWindowsPath(executable).drive else Path
+        self.assertEqual(path_type(executable), path_type(argv[5]))
+        self.assertEqual("docs/ai-forward-pack/scripts/pack-doctor.py", argv[6])
+
+    def test_uv_remedy_oracle_compares_parsed_windows_executable(self):
+        executable = r"C:\Program Files\Python\python.exe"
+        fix = ('use `uv run --no-config --no-project --python '
+               '"C:/Program Files/Python/python.exe" '
+               'docs/ai-forward-pack/scripts/pack-doctor.py` with this existing interpreter')
+        self.assertNotIn(executable, fix)  # The old raw-string oracle is false.
+        self.assert_uv_remedy_uses_executable(fix, executable)
+        for wrong in (fix.replace("python.exe", "other.exe"),
+                      fix.replace("python.exe", "python.exe.backup"),
+                      fix.replace("uv run", "echo uv run")):
+            with self.subTest(wrong=wrong), self.assertRaises(AssertionError):
+                self.assert_uv_remedy_uses_executable(wrong + " " + executable, executable)
+
+    @unittest.skipUnless(shutil.which("uv"), "requires an already installed uv; never downloads")
+    def test_real_offline_uv_does_not_claim_caller_native_python_readiness(self):
+        uv = shutil.which("uv")
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            scripts = root / "docs/ai-forward-pack/scripts"
+            scripts.mkdir(parents=True)
+            shutil.copy2(SCRIPT, scripts / SCRIPT.name)
+            shutil.copy2(SCRIPTS / "bounded_process.py", scripts / "bounded_process.py")
+            shutil.copy2(SCRIPTS / "platform_process.py", scripts / "platform_process.py")
+            empty_path = root / "no native Python"
+            empty_path.mkdir()
+            env = dict(os.environ, PATH=str(empty_path), UV_PYTHON_DOWNLOADS="never")
+            for key in ("VIRTUAL_ENV", "CONDA_PREFIX", "UV_RUN_RECURSION_DEPTH"):
+                env.pop(key, None)
+            self.assertIsNone(shutil.which("python3", path=env["PATH"]))
+            self.assertIsNone(shutil.which("python", path=env["PATH"]))
+            command = [uv, "run", "--no-config", "--no-project", "--offline",
+                       "--python", sys.executable, str(scripts / SCRIPT.name), "--root", str(root), "--json"]
+            proc = subprocess.run(command, env=env, cwd=root, capture_output=True,
+                                  text=True, encoding="utf-8", timeout=120)
+            # The incomplete install may FAIL other checks; the doctor itself must run.
+            self.assertIn(proc.returncode, (0, 1), proc.stderr)
+            self.assertTrue(proc.stdout.strip(), proc.stderr)
+            output = json.loads(proc.stdout)
+            result = next(row for row in output["checks"] if row["name"] == "python interpreter")
+            self.assertEqual("WARN", result["status"], result)
+            self.assertIn("uv-managed", result["detail"])
+            self.assertIn("caller", result["detail"])
+            self.assertIn("not verified", result["detail"])
+            self.assertNotIn("documented commands run as written", result["detail"])
+            self.assertIn("uv run", result["fix"])
+            self.assert_uv_remedy_uses_executable(result["fix"], command[command.index("--python") + 1])
 
 
 if __name__ == "__main__":

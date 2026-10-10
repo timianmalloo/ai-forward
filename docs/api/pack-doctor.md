@@ -117,21 +117,12 @@ quiet fleet). One reader: coord-core.py's heartbeat_doctor_line, loaded beside t
 
 ### `check_coordination(root)`
 
-Is the coordination layer switched ON in this repo? (CTX-H)
+Optional for serial use; validate any registry or explicitly installed coordination.
 
-The layer ships inert: `coord-core.py` is deployed and nothing writes the one file the
-whole mechanism keys on. An uninstalled layer reports "0 decisions, nothing claimed",
-which is indistinguishable from a working layer that saw no traffic -- so the absence
-has to be checked here or it is not checked anywhere.
-
-Three states, three verdicts:
-  no script         the check does not apply
-  no/broken registry FAIL - every path is `authored`, nothing is ever regenerated
-  declared-not-registered WARN - .git/config is per-clone and never committed, so a
-                        fresh CLONE lands here. A worktree does NOT: it shares the
-                        parent's config and inherits the registration, which is why
-                        the remedy names the primary checkout and `coord install`
-                        refuses to run from a linked tree.
+Shipping coord-core.py and lifecycle hooks does not activate ownership/merge controls.
+Existing native ownership commands, effective Git hooks/config, and merge attributes
+are opt-ins. A missing enabled contract is a failure; an absent optional one is not.
+Fresh clones with declared but unregistered drivers retain the per-clone warning.
 
 ### `check_node_runner()`
 
@@ -175,4 +166,3 @@ lesson into a control that fires at the moment of the mistake).
 
 - Public functions: **17** · documented: **12** (**71%**)
 - Undocumented (recorded, not invented): `check_installed`, `check_surface`, `check_block`, `check_graph`, `run`
-

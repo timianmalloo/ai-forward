@@ -119,4 +119,3 @@ Compute the two gaps between intent and reality (GK11).
 
 - Public functions: **11** · documented: **4** (**36%**)
 - Undocumented (recorded, not invented): `ignore_template`, `out`, `write_text_lf`, `run`, `load_code_graph`, `load_docs_graph`, `render_join`
-

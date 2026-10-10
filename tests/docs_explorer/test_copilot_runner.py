@@ -77,6 +77,172 @@ class CopilotAdmission(unittest.TestCase):
         self.assertTrue(Path(compiler.default_templates_dir(), template.name).is_file())
 
 
+class CopilotPluginLifecycle(unittest.TestCase):
+    """Real installed hook subprocesses, not native host/model qualification."""
+
+    def assert_lifecycle_startup_target(self, lifecycle, expected):
+        import ast
+        assignments = [node for node in ast.parse(lifecycle).body
+                       if isinstance(node, ast.Assign)
+                       and any(isinstance(target, ast.Name) and target.id == "SCRIPTS"
+                               for target in node.targets)]
+        self.assertEqual(1, len(assignments), "expected one literal SCRIPTS mapping")
+        scripts = ast.literal_eval(assignments[0].value)
+        self.assertIsInstance(scripts, dict)
+        self.assertTrue(Path(scripts["session-start.py"]).samefile(expected), scripts)
+
+    def test_lifecycle_target_oracle_accepts_escaped_repr_and_physical_alias(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            physical = root / (r"C:\Users\runneradmin" if os.name != "nt" else "runneradmin")  # machine-path-ok: synthetic Windows repr-escaping fixture beneath the temporary root
+            physical.mkdir()
+            target = physical / "session-start.py"
+            target.write_text("# actual hook\n", encoding="utf-8")
+            alias = root / "physical-alias"  # Never collide with a native 8.3 alias of the target directory.
+            alias.mkdir()
+            expected = alias / target.name
+            os.link(target, expected)
+            wrong = root / "wrong-session-start.py"
+            wrong.write_text("# not the hook\n", encoding="utf-8")
+            lifecycle = "raise RuntimeError('inspection must never execute')\nSCRIPTS = " + repr(
+                {"session-start.py": str(target)}) + "\n"
+            self.assertNotIn(str(expected), lifecycle)  # Old serialized-path oracle fails.
+            self.assertNotIn(str(target), lifecycle)  # Even the physical path is repr-escaped.
+            self.assert_lifecycle_startup_target(lifecycle, target)
+            self.assert_lifecycle_startup_target(lifecycle, expected)
+            with self.assertRaises(AssertionError):
+                self.assert_lifecycle_startup_target(lifecycle, wrong)
+            misleading = lifecycle.replace(repr(str(target)), repr(str(wrong))) + "# " + str(expected)
+            self.assertIn(str(expected), misleading)  # A decoy comment fooled the old oracle.
+            with self.assertRaises(AssertionError):
+                self.assert_lifecycle_startup_target(misleading, expected)
+
+    def test_malformed_or_unknown_managed_commands_are_refused_before_writes(self):
+        import json
+        import shutil
+        from unittest.mock import patch
+        core = load("coord-core")
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            scripts = root / "scripts"
+            scripts.mkdir()
+            shutil.copy2(SCRIPTS / "pack-apply.py", scripts / "pack-apply.py")
+            hooks = root / "adapters/hooks"
+            shutil.copytree(SCRIPTS.parent / "adapters/hooks", hooks)
+            source_path = hooks / "copilot.ai-forward-hooks.json"
+            source = json.loads(source_path.read_text(encoding="utf-8"))
+            startup = source["hooks"]["sessionStart"][0]["bash"]
+            old = source["hooks"]["preToolUse"][0]["bash"]
+            commands = [startup.replace("exec sh", "echo unsafe;exec sh"),
+                        startup.replace("session-start.py", "reread-guard.py"),
+                        startup + " --event sessionStart", startup + "; echo unsafe",
+                        startup.replace("--host copilot", "--host claude"),
+                        old.replace("reread-guard.py", "unknown.py"),
+                        old.replace("reread-guard.py", "../reread-guard.py"),
+                        "echo unsafe; " + old, old + "; echo unsafe"]
+            for command in commands:
+                with self.subTest(command=command):
+                    candidate = {"version": 1, "hooks": {"sessionStart": [
+                        dict(source["hooks"]["sessionStart"][0], bash=command)]}}
+                    source_path.write_text(json.dumps(candidate), encoding="utf-8")
+                    with patch.object(core, "__file__", str(scripts / "coord-core.py")):
+                        with self.assertRaisesRegex(ValueError, "Unsupported source-managed Copilot hook command"):
+                            core.cmd_plugin_emit(root / "out", host="copilot")
+                    self.assertFalse((root / "out").exists())
+            source_path.write_text("{malformed", encoding="utf-8")
+            with patch.object(core, "__file__", str(scripts / "coord-core.py")), self.assertRaises(ValueError):
+                core.cmd_plugin_emit(root / "out", host="copilot")
+            self.assertFalse((root / "out").exists())
+
+    def test_installed_plugin_startup_writes_markers_from_json_stdin(self):
+        import json
+        import shlex
+        import subprocess
+        root = SCRIPTS.parents[1]
+        events = {"sessionStart": "SessionStart", "subagentStart": "SubagentStart",
+                  "preToolUse": "PreToolUse", "postToolUse": "PostToolUse",
+                  "userPromptSubmitted": "UserPromptSubmit", "agentStop": "Stop",
+                  "subagentStop": "SubagentStop"}
+        env = {key: value for key, value in os.environ.items()
+               if not key.startswith("GIT_") and key not in {"AGENT_SESSION", "AGENT_HOST"}}
+        with tempfile.TemporaryDirectory() as directory:
+            for plain in (False, True):
+                with self.subTest(plain=plain):
+                    project = Path(directory) / ("plain" if plain else "git")
+                    project.mkdir()
+                    if not plain:
+                        subprocess.run(["git", "init", "-q", str(project)], env=env,
+                                       check=True, capture_output=True)
+                    child = project / "src/nested"
+                    child.mkdir(parents=True)
+                    product = project / "product.txt"
+                    product.write_bytes(b"preserved\n")
+                    installed = subprocess.run(
+                        [sys.executable, "-B", str(SCRIPTS / "pack-apply.py"), "apply", "--install",
+                         "--source", str(root), "--target", str(project), "--json"],
+                        cwd=project, env=env, capture_output=True, text=True, encoding="utf-8", timeout=60)
+                    self.assertEqual(0, installed.returncode, installed.stdout + installed.stderr)
+                    settings = project / ".claude/settings.json"
+                    permissions = json.loads(settings.read_text(encoding="utf-8"))
+                    permissions["permissions"] = {"deny": ["Bash(*)"]}
+                    settings.write_text(json.dumps(permissions), encoding="utf-8")
+                    settings_before = settings.read_bytes()
+                    scripts = project / "docs/ai-forward-pack/scripts"
+                    plugin = project / "plugin"
+                    emitted = subprocess.run(
+                        [sys.executable, "-B", str(scripts / "coord-core.py"), "plugin", "--emit",
+                         str(plugin), "--host", "copilot"], cwd=project, env=env,
+                        capture_output=True, text=True, encoding="utf-8", timeout=30)
+                    self.assertEqual(0, emitted.returncode, emitted.stdout + emitted.stderr)
+                    hooks = json.loads((plugin / "hooks/hooks.json").read_text(encoding="utf-8"))["hooks"]
+                    source = json.loads((project / "docs/ai-forward-pack/hooks/copilot.ai-forward-hooks.json")
+                                        .read_text(encoding="utf-8"))["hooks"]
+                    self.assertEqual(set(events.values()), set(hooks))
+                    for event, entries in source.items():
+                        # PreToolUse keeps its existing ownership handler first.
+                        native = hooks[events[event]][1:] if event == "preToolUse" else hooks[events[event]]
+                        self.assertEqual(len(entries), len(native))
+                        for entry, handler in zip(entries, native):
+                            argv = shlex.split(entry["bash"])
+                            suffix = argv[argv.index("session-start.py"):] if event in (
+                                "sessionStart", "subagentStart") else argv[5:]
+                            command = handler["hooks"][0]
+                            self.assertEqual(suffix, shlex.split(command["command"])[2:])
+                            self.assertEqual(entry["timeoutSec"], command["timeout"])
+                            self.assertEqual("command", command["type"])
+                            if "matcher" in entry:
+                                self.assertEqual("Read" if entry["matcher"] == "^view$" else entry["matcher"],
+                                                 handler["matcher"])
+                    manifest = json.loads((plugin / ".claude-plugin/plugin.json").read_text(encoding="utf-8"))
+                    self.assertEqual("coord-agent-coordination", manifest["name"])
+                    self.assertEqual("0.1.0", manifest["version"])
+                    self.assertEqual(10, hooks["PreToolUse"][0]["hooks"][0]["timeout"])
+                    self.assertIn('[COORD, "hook", "--host", "copilot"]',
+                                  (plugin / "hooks/hook.py").read_text(encoding="utf-8"))
+                    lifecycle = (plugin / "hooks/lifecycle.py").read_text(encoding="utf-8")
+                    self.assert_lifecycle_startup_target(
+                        lifecycle, project / "docs/ai-forward-pack/hooks/session-start.py")
+                    for cwd in (project, child):
+                        for event in ("SessionStart", "SubagentStart"):
+                            session = ("plain" if plain else "git") + "-" + cwd.name + "-" + event
+                            payload = {"hook_event_name": event, "session_id": session, "cwd": str(cwd)}
+                            if event == "SubagentStart":
+                                payload["agent_id"] = "child-7"
+                            command = hooks[event][0]["hooks"][0]["command"]
+                            argv = shlex.split(command.replace("${CLAUDE_PLUGIN_ROOT}", str(plugin)))
+                            result = subprocess.run(argv, cwd=plugin, env=env, input=json.dumps(payload),
+                                                    capture_output=True, text=True, encoding="utf-8", timeout=30)
+                            self.assertEqual(0, result.returncode, result.stderr)
+                            marker = cwd / ".agents/log/audit/.run-starts.json"
+                            rows = json.loads(marker.read_text(encoding="utf-8"))
+                            key = ("__harness__:" + session if event == "SessionStart" else
+                                   "copilot-child.{}.{}.7.child-7".format(len(session), session))
+                            self.assertIn(key, rows)
+                    self.assertEqual(b"preserved\n", product.read_bytes())
+                    self.assertEqual(settings_before, settings.read_bytes())
+                    self.assertEqual(not plain, (project / ".git").exists())
+
+
 class CopilotComposition(unittest.TestCase):
     """Exercise the deployed runner with a synthetic ACP peer and real Git state."""
     git = runner_fixture.RunnerTests.git

@@ -175,4 +175,3 @@ by (ref, from) - the existing ack's id is returned then.
 
 - Public functions: **22** · documented: **5** (**23%**)
 - Undocumented (recorded, not invented): `mail_dir`, `inbox_path`, `ledger_path`, `iso_utc`, `parse_ts`, `read_file`, `acks_in`, `is_acked`, `unread`, `validate_entry`, `append_ack`, `cmd_send`, `cmd_read`, `cmd_ack`, `write_harness_status`, `cmd_dispatch`, `build_parser`
-
