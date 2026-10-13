@@ -1159,7 +1159,7 @@ window.DOCS_INDEX = {
       "phase": "",
       "reviewBy": "2027-03-03",
       "reviewSuggested": [],
-      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 559 public functions across 45 modules, 48% carrying a docstring.",
+      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 560 public functions across 45 modules, 48% carrying a docstring.",
       "tags": [
         "api",
         "scripts",
@@ -1173,7 +1173,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "2fca815d9848c5f4ebef30a92656b229457c31cfa57d9450f9348220c57ae1d9"
+      "sourceSha256": "a419cfc09ae46d5b1e6ef6440f9090c15573102f1d4b87cf02b0e9227c7cfcbf"
     },
     {
       "id": "api-marker-lint",
@@ -12076,5 +12076,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "ca79214924c27fb141c8b7c0deb1c8f89c22c13ea0dda9ca5be5af7eff2b124b"
+  "graphSha256": "4d57cfa70661d717b5c29c503c757ca3512b5319564c1c2b1835e3e4d974f75a"
 };
