@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-09-28T00:46:53Z",
+  "generated": "2026-10-13T20:54:07Z",
   "audit": [
     {
       "actor": null,
@@ -13450,6 +13450,44 @@ window.AUDIT_DATA = {
         "branch": "feature/decision-interrogation-protocol",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M4VGPGXWPBMKDYKEVRN7617H",
+      "shortname": "muse-sixth-harness-surface",
+      "datetime": "2026-10-13T20:54:07Z",
+      "session": "01a136c2-4fe2-72a0-9308-48312c5fd895",
+      "prompt": "ground yourself in the ai-forward repo and the ai-forward pack\nwhat does muse need to be able to use the skills and constitution etc from the pack\nbuild a plan for things that need to be done\nwrite an html outline of it and open in chrome for me to review\n---\ngo - execute on this plan",
+      "summary": "Made Muse the sixth AI-Forward Pack harness surface, generated from pack/ and never hand-edited: blessed the shared .agents/skills tree (no new skill copies), added the Muse path map pack/adapters/muse/muse-surface.md (deployed to docs/ai-forward-pack/muse-surface.md), an AGENTS.md managed-block pointer, a filesystem-only check_muse doctor check reusing the shared codex-skills.json inventory, pack-apply deployment, a red-first surface test (7 passed), and a measured muse_profile in context-budget.json. Hooks recorded unsupported (no Muse lifecycle-hook surface) with six manual discharge steps; personas observed-only via prompt-carried spawn objectives. Consistency gate clean. verify-bundle.ps1: 16 of 18 gates PASS; gate 2 (drift vs HEAD) cannot pass on an uncommitted tree by construction, and gate 8 fails on a pre-existing addpacktorepo SKILL.md baseline overage untouched by this work. Completed across recovered Muse session 01a136c2 (P0-P4, terminated mid-verify) and close-out in session 01a136f9. Not committed or pushed.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "pack/adapters/muse/muse-surface.md",
+        "tests/docs_explorer/test_muse_surface.py",
+        "muse-pack-plan.html"
+      ],
+      "tags": [
+        "muse",
+        "harness-surface"
+      ],
+      "outcome": "partial",
+      "goal": "Make Muse a first-class AI-Forward Pack harness - the sixth surface beside Claude Code, Copilot, Codex, Grok Build, and Antigravity - generated from pack/, never hand-edited.",
+      "done_when": "All 29 skills invocable in Muse; constitution reachable with correct load-scoping; personas convenable or documented fallback; pack scripts runnable on Windows; every capability measured live and labelled enforced/observed-only/unsupported; drift gate fails on Muse-surface drift.",
+      "tier": "T1",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false,
+        "regression": false
+      },
+      "change": "cl-01M4VGPD2KDWXV7HYECJGJA62S",
+      "git": {
+        "sha": "4a22f12c4cbc9cd403627995109ccfdc1c6fa9c6",
+        "short": "4a22f12c4",
+        "branch": "main",
+        "pushed": true
+      }
     }
   ],
   "changes": [
@@ -15155,6 +15193,35 @@ window.AUDIT_DATA = {
         "after": "eca5d29035f97f79aba300afb82cf9677cdcea01",
         "branch": "feature/decision-interrogation-protocol",
         "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M4VGPD2KDWXV7HYECJGJA62S",
+      "datetime": "2026-10-13T20:54:03Z",
+      "session": "01a136c2-4fe2-72a0-9308-48312c5fd895",
+      "kind": "architecture",
+      "skill": null,
+      "title": "Muse is the sixth harness surface",
+      "prompt": "ground yourself in the ai-forward repo and the ai-forward pack\nwhat does muse need to be able to use the skills and constitution etc from the pack\nbuild a plan for things that need to be done\nwrite an html outline of it and open in chrome for me to review\n---\ngo - execute on this plan",
+      "summary": "Muse becomes the sixth harness surface beside Claude Code, Copilot, Codex, Grok Build, and Antigravity. Muse already discovered the 29 pack skills through the shared .agents/skills tree built for Codex/Antigravity, but nothing made that deliberate: no path map, no doctor check, no drift gate, and its AGENTS.md-over-CLAUDE.md precedence was undocumented. This change blesses the shared skills surface, adds the Muse path map (knowledge resolves to .claude/knowledge/, skills invoke via read_skill, personas via prompt-carried spawn objectives, scripts use python/py -3 on Windows), a filesystem-only Muse readiness doctor check, pack-apply/sync deployment, a red-first surface test, and a measured muse_profile in context-budget.json. Hooks are recorded unsupported with named manual discharge steps (unwired beats guessed, PK-07).",
+      "rationale": "Follow the pack's own harness-onboarding pattern (INSTALL): spike the host's real contracts first, add a surface path map rather than a knowledge copy, generate the surface from pack/, add a doctor check that checks files and says so, qualify live per CO12, and gate drift in verify-bundle.",
+      "artifacts": [
+        "pack/adapters/muse/muse-surface.md",
+        "pack/scripts/pack-doctor.py",
+        "pack/scripts/pack-apply.py",
+        "tests/docs_explorer/test_muse_surface.py",
+        "pack/context-budget.json"
+      ],
+      "tags": [
+        "muse",
+        "harness-surface"
+      ],
+      "git": {
+        "before": null,
+        "after": "4a22f12c4cbc9cd403627995109ccfdc1c6fa9c6",
+        "branch": "main",
+        "pushed": true,
         "commits": []
       }
     }

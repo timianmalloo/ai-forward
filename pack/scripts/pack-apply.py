@@ -607,6 +607,9 @@ class Applier(object):
         self.place("bundle", "adapters/codex/codex.md",
                    os.path.join(self.target, "docs", "ai-forward-pack", "codex.md"),
                    read(os.path.join(self.pack, "adapters", "codex", "codex.md")))
+        self.place("bundle", "adapters/muse/muse-surface.md",
+                   os.path.join(self.target, "docs", "ai-forward-pack", "muse-surface.md"),
+                   read(os.path.join(self.pack, "adapters", "muse", "muse-surface.md")))
 
     def agents(self):
         cc = os.path.join(self.pack, "adapters", "claude-code", "agents")

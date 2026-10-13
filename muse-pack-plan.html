@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Muse × AI-Forward Pack — Integration Plan (outline for review)</title>
+<style>
+:root{--ink:#1a1e23;--mut:#5a6470;--line:#d8dde3;--accent:#0f766e;--warn:#b45309;--bad:#b91c1c;--paper:#fff;--soft:#f3f5f7}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:Georgia,'Times New Roman',serif;line-height:1.55}
+main{max-width:920px;margin:0 auto;padding:40px 28px 64px}
+h1{font-size:30px;line-height:1.2;margin:0 0 8px}h2{font-size:20px;margin:34px 0 10px;border-top:2px solid var(--ink);padding-top:16px}
+h3{font-size:16px;margin:20px 0 6px}.sub{color:var(--mut);font-family:ui-monospace,Consolas,monospace;font-size:13px}
+p,li{font-size:15px}ul{padding-left:22px}code{font-family:ui-monospace,Consolas,monospace;font-size:.88em;background:var(--soft);padding:1px 5px;border-radius:3px}
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin:12px 0}th,td{border:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top}
+th{background:var(--soft);font-family:ui-monospace,Consolas,monospace;font-size:12px}
+.tag{font-family:ui-monospace,Consolas,monospace;font-size:11px;padding:1px 6px;border-radius:3px;white-space:nowrap}
+.ok{background:#ccfbf1}.gap{background:#fee2e2}.part{background:#fef3c7}
+.callout{border:1px solid var(--line);border-left:4px solid var(--accent);padding:12px 16px;margin:16px 0;background:#f8faf9}
+.risk{border-left-color:var(--bad)}.phase{border:1px solid var(--line);padding:14px 18px;margin:12px 0}.phase h3{margin-top:0}
+footer{color:var(--mut);font-size:13px;margin-top:40px;border-top:1px solid var(--line);padding-top:12px}
+a{color:var(--accent)}
+</style></head><body><main>
+<h1>Muse × AI-Forward Pack — what Muse needs, and the plan to give it to it</h1>
+<p class="sub">Outline for review · ai-forward repo (pack r97, 29 skills, 41 knowledge docs) · Status: PLAN ONLY — nothing implemented. Reply “go” to execute, or mark changes on this page.</p>
+
+<div class="callout"><strong>One-line finding.</strong> Muse is already <em>half-wired by accident</em>: it loads <code>AGENTS.md</code> as project rules and discovers the 29 pack skills through the shared <code>.agents/skills/</code> surface built for Codex/Antigravity. What it lacks is everything that makes that deliberate — a Muse surface/path map, a sync target, persona registration, hook equivalents, a doctor check, a context-budget profile, and a drift gate. Today it works; nothing proves it works, and the next <code>sync-pack.ps1</code> change could silently break it.</div>
+
+<h2>1. Goal &amp; success criteria</h2>
+<p><strong>Goal:</strong> Muse becomes a first-class pack harness — the sixth surface beside Claude Code, Copilot, Codex, Grok Build, and Antigravity — generated from <code>pack/</code>, never hand-edited.</p>
+<ul>
+<li>All 29 skills invocable in Muse by name and by description-match, with <code>reference/*.md</code> stage files readable at the stage.</li>
+<li>The constitution reachable with correct load-scoping: the 13 <code>load: always</code> docs honoured, <code>skill</code>/<code>reference</code>/<code>glob</code> docs read on demand — never pasted wholesale into an always-loaded file (defect class CTX-B).</li>
+<li>23 personas convenable (Peer author / Adversary review, author never clears own veto), via Muse's real subagent mechanism or a documented inline fallback.</li>
+<li>Pack scripts (<code>docs/ai-forward-pack/scripts/*.py</code>, 45) runnable from Muse on Windows with the correct interpreter form.</li>
+<li>Every claim <em>measured</em> in a live Muse session (CO12 discipline: <code>enforced</code> / <code>observed-only</code> / <code>unsupported</code> per capability), and a gate that fails when the Muse surface drifts.</li>
+</ul>
+<p><strong>Not in scope:</strong> changing any skill's content, the other five harnesses' behaviour, Muse product changes, or committing/pushing anything.</p>
+
+<h2>2. What Muse needs — grounded gap matrix</h2>
+<p>Evidence: this live session (Verified), <code>pack/adapters/INSTALL.md</code> deployment map, <code>tools/sync-pack.ps1</code>, <code>pack/scripts/pack-doctor.py</code>, <code>pack/context-budget.json</code>. “Verified” = observed this session; “Inferred” = from code, not yet live-probed.</p>
+<table><tr><th>Capability the pack assumes</th><th>How existing harnesses get it</th><th>Muse today</th><th>Needed</th></tr>
+<tr><td>Constitution at grounding</td><td><code>AGENTS.md</code> (all) + surface path-map (<code>codex.md</code>, <code>grok-surface.md</code>, <code>agy-surface.md</code>)</td><td><span class="tag part">PARTIAL</span> <code>AGENTS.md</code> loaded (Verified); no Muse path map, so <code>.github/instructions/*.instructions.md</code> citations have no Muse resolution rule</td><td><code>muse-surface.md</code>: cite → <code>.claude/knowledge/&lt;name&gt;.md</code>; foundation read list; “a path reference is not evidence it is in context”</td></tr>
+<tr><td>Skill discovery + invocation</td><td><code>.claude/skills</code>, <code>.grok/skills</code>, <code>.agents/skills</code> + <code>skills.json</code>; <code>/name</code> or <code>$name</code></td><td><span class="tag part">PARTIAL</span> 29 skills discovered via <code>.agents/skills</code> (Verified, catalog + shadow diagnostics vs <code>.claude/skills</code>); accidental, unpinned, invocation spelling untested</td><td>Deliberate decision: own <code>.muse/skills</code> target <em>or</em> bless the shared <code>.agents/skills</code>; pin precedence; document <code>read_skill</code>/name invocation vs pack <code>/name</code> notation</td></tr>
+<tr><td>Load-scoped knowledge (41 docs: 13 always / glob / skill / reference)</td><td>Copilot <code>applyTo</code> wraps; others read on demand per surface doc</td><td><span class="tag gap">GAP</span> No loader; only the AGENTS.md summary block is in context (Verified)</td><td>Grounding rule in surface doc: always-set by citation, rest via <code>read_file</code> at the stage the skill names; no bulk paste</td></tr>
+<tr><td>Personas (23 agents, Peer/Adversary, vetoes)</td><td>Registered subagent types (<code>.claude/agents</code>, <code>.grok/agents</code>, Copilot <code>*_agent.md</code>)</td><td><span class="tag gap">GAP</span> Only <code>general-purpose</code> + <code>workflow-subagent</code> exist (Verified); <code>.claude/agents/*.md</code> unread by Muse</td><td>Spike Muse agent-definition format; generate/register personas, else prompt-injected spawn objectives + inline enactment fallback (Agy pattern)</td></tr>
+<tr><td>Hooks at the tool seam (re-read guard, session-start marker, mail doorbell, heartbeat, owner-review Stop gate, git-identity guard)</td><td>Per-host JSON bundles in <code>pack/adapters/hooks/</code>, <code>--host claude|copilot|grok|agy|codex</code>, Git+Python launcher</td><td><span class="tag gap">GAP</span> No Muse bundle; hook scripts don't know a <code>muse</code> host; Muse lifecycle ≠ Claude <code>settings.json</code> events (Inferred)</td><td>Spike Muse lifecycle/hook support first; wire what's real, degrade the rest to explicit in-skill steps (audit start marker, inbox check, stop checklist) labelled <code>observed-only</code></td></tr>
+<tr><td>Scripts &amp; commands</td><td><code>python3</code> POSIX / <code>python</code>·<code>py -3</code> Windows; single-line unchained (gate 1f)</td><td><span class="tag part">PARTIAL</span> PowerShell tool runs them (Verified this session); documented <code>python3</code> form fails on Windows by design</td><td>Surface doc interpreter rule + <code>pack-doctor</code> naming the working form; no script changes expected</td></tr>
+<tr><td>Coordination (coord mail/board/leader, worktrees WT1, audit &amp; prompt logs)</td><td><code>coord-*.py</code> + <code>$AGENT_SESSION</code> + host doorbells</td><td><span class="tag gap">GAP</span> No <code>AGENT_SESSION</code> equivalent wired; Muse session id exists but isn't exported to pack scripts (Inferred)</td><td>Map Muse session id → ledger identity; manual doorbell step until/unless hooks land; WT1 worktree rules already tool-agnostic</td></tr>
+<tr><td>Install, sync, diagnose, gate</td><td><code>sync-pack.ps1</code> targets + <code>pack-apply.py</code> + <code>pack-doctor.py</code> checks + <code>verify-bundle.ps1</code> 10 gates</td><td><span class="tag gap">GAP</span> Zero mentions of Muse in sync/doctor/consistency (Verified by search)</td><td>New sync target (or blessed-shared ruling), <code>pack-doctor</code> “Muse repository readiness” check, consistency + drift gate coverage</td></tr>
+<tr><td>Context budget</td><td><code>context-budget.json</code>: always-on 50,717 tok; prefix 92,931 (Copilot-assembled); 60k ceiling derived from 128k window</td><td><span class="tag gap">GAP</span> Muse's assembled prefix (system + AGENTS.md + skill catalog) unmeasured</td><td>Measure Muse prefix; add a Muse profile to the budget gate rather than reusing Copilot's numbers</td></tr>
+<tr><td>MCP &amp; slash surface</td><td><code>.mcp.json</code>; host slash menus</td><td><span class="tag gap">GAP</span> Muse MCP config format/compat unprobed (Inferred)</td><td>Spike; document or translate. <em>Security note:</em> repo <code>.mcp.json</code> currently contains live-looking API keys — rotate &amp; move to env regardless of this plan.</td></tr>
+</table>
+
+<h2>3. Approach</h2>
+<p>Follow the pack's own harness-onboarding pattern exactly — it has onboarded five harnesses and the moves are proven: <strong>(1)</strong> spike the host's real contracts before writing anything (Spike Protocol; INSTALL's “support ≠ identical events” rule), <strong>(2)</strong> add a surface path-map, never a knowledge copy, <strong>(3)</strong> generate the surface from <code>pack/</code> in <code>sync-pack.ps1</code> + <code>pack-apply.py</code>, <strong>(4)</strong> add a doctor check that checks files and says so, <strong>(5)</strong> qualify live and label each capability <code>enforced</code>/<code>observed-only</code>/<code>unsupported</code> (CO12), <strong>(6)</strong> gate drift. Source in <code>pack/adapters/muse/</code>; edit <code>pack/</code>, sync, commit all surfaces together.</p>
+<p><strong>Key decisions to confirm at <code>go</code>:</strong> (a) own <code>.muse/skills</code> vs blessed shared <code>.agents/skills</code> — recommendation: <em>bless shared, pin it, gate it</em> (zero new copies; shadowing already resolves there); (b) personas as registered Muse agent definitions if the spike allows, else prompt-injected — recommendation: <em>spike decides, fallback pre-written</em>; (c) hooks — recommendation: <em>no guessed wiring</em> (AGY PK-07 precedent: unwired beats guessed).</p>
+
+<h2>4. Steps (phases; each ends with its proof)</h2>
+<div class="phase"><h3>P0 — Spike Muse's contracts (no pack edits)</h3><ul>
+<li>Probe: skill discovery roots &amp; precedence, agent-definition format, lifecycle/hook support, MCP config, session-id env, context-prefix size. One probe per question, live in this repo.</li>
+<li><strong>Proof:</strong> spike note with each answer labelled Verified/Inferred + the failing probe where unsupported. Kills or confirms P3/P4 shapes before they're built.</li></ul></div>
+<div class="phase"><h3>P1 — Muse surface (the path map)</h3><ul>
+<li>Author <code>pack/adapters/muse/muse-surface.md</code> (sibling of <code>codex.md</code>): skills, knowledge resolution, persona modes, scripts/interpreter, coordination identity, hook status table.</li>
+<li>One Muse paragraph in the <code>AGENTS.md</code> managed block (via <code>pack/adapters/managed-blocks/AGENTS.block.md</code>) pointing at it — path map only, no knowledge paste (CTX-B).</li>
+<li><strong>Proof:</strong> fresh Muse session grounds from the surface doc alone and names resolved paths for 3 cited docs.</li></ul></div>
+<div class="phase"><h3>P2 — Generate, diagnose, gate</h3><ul>
+<li><code>sync-pack.ps1</code>: emit/verify the Muse surface (per P0 decision); <code>pack-apply.py</code> parity for consuming repos; INSTALL.md deployment map + revision/changelog entry.</li>
+<li><code>pack-doctor.py</code>: “Muse repository readiness” (skills inventory, surface doc, constitution, scripts — filesystem only, catalog not queried; Codex-check wording as template).</li>
+<li><code>tools/check-consistency.py</code> + a surface test (<code>tests/</code>, modelled on the Antigravity/Codex surface tests) so <code>verify-bundle.ps1</code> fails on Muse drift.</li>
+<li><strong>Proof:</strong> <code>pwsh tools/verify-bundle.ps1</code> green incl. new gate; doctor passes here and fails in a deliberately broken scratch copy.</li></ul></div>
+<div class="phase"><h3>P3 — Hooks &amp; coordination identity (only what P0 proved)</h3><ul>
+<li>For each of the 6 hook controls: wire Muse-native if supported (<code>--host muse</code> arm), else document the in-skill manual step. Session id → <code>AGENT_SESSION</code>-equivalent mapping for audit/mail/heartbeat ledgers.</li>
+<li><strong>Proof:</strong> live rows — audit start marker consumed with measured duration, doorbell count shown, stop-gate refusal if wired; each labelled enforced/observed-only/unsupported in the hooks README table.</li></ul></div>
+<div class="phase"><h3>P4 — Persona council</h3><ul>
+<li>Generate Muse agent definitions from <code>pack/adapters/claude-code/agents/</code> + Copilot adversaries (23) if P0 allows; else ship the prompt-injection + inline-enactment protocol in the surface doc. Respect persona self-sufficiency (no orientation re-reads, CTX-G) and per-spawn budgets.</li>
+<li><strong>Proof:</strong> one real skill run (e.g. <code>specify</code> Stage 4) convenes ≥2 adversaries, author doesn't clear own veto, verdicts recorded.</li></ul></div>
+<div class="phase"><h3>P5 — Live qualification &amp; budget</h3><ul>
+<li>Run 3 representative skills end-to-end in Muse (<code>specify</code>, <code>investigate</code>, <code>implement</code> dry slice); measure Muse's assembled prefix; add Muse profile to <code>context-budget.py</code> gate.</li>
+<li>Update INSTALL counts/readiness wording; close with audit-log + change-log entries (the pack's own last-action rule).</li>
+<li><strong>Proof:</strong> qualification table (skill × capability × status) + budget gate green; anything unproven stays <code>observed-only</code> in print.</li></ul></div>
+
+<h2>5. Validation plan (whole plan)</h2>
+<ul>
+<li><code>pwsh tools/verify-bundle.ps1</code> — all gates incl. new Muse drift gate (gate 2's sync-then-<code>git diff --exit-code</code> oracle covers the new target).</li>
+<li><code>python docs/ai-forward-pack/scripts/pack-doctor.py</code> — Muse check PASS here, FAIL in broken copy (doctor must be able to fail).</li>
+<li>Live-session proofs per phase above — files existing is never the claim; a Muse session <em>doing</em> it is.</li>
+<li>Highest-risk check: P0's hook/persona spikes — if both come back unsupported, P3/P4 shrink to documented manual protocol and the plan still succeeds, with smaller scope stated plainly.</li>
+</ul>
+
+<h2>6. Risks &amp; open questions</h2>
+<div class="callout risk"><strong>Risks.</strong> (1) Blessing shared <code>.agents/skills</code> couples Muse to Codex/Agy edits — mitigated by the drift gate. (2) Muse skill/agent formats may drift with Muse versions — doctor check must version-stamp what it qualified. (3) Always-on growth: the AGENTS.md Muse paragraph spends prefix — budget gate must ratchet it visibly, not absorb it silently (PACK-R).</div>
+<ul>
+<li><strong>Open:</strong> none blocking P0. The three <code>go</code>-time decisions in §3 have recommendations; P0 evidence may overturn (a)/(b) — that's its job.</li>
+<li><strong>Flagged, out of scope:</strong> live-looking keys in <code>.mcp.json</code> — owner to rotate; plan only stops citing that file as a template.</li>
+</ul>
+
+<footer>Plan only — no pack files changed. Source artifacts: <code>pack/</code> (canonical) → generated <code>.claude/</code>, <code>.github/</code>, <code>.grok/</code>, <code>.agents/</code>, <code>docs/</code> via <code>tools/sync-pack.ps1</code>. This outline: <code>muse-pack-plan.html</code> (review copy, not committed).</footer>
+</main></body></html>

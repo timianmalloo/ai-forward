@@ -287,6 +287,8 @@ $codexDocs = Join-Path $repo "docs/ai-forward-pack"
 New-Item -ItemType Directory -Force -Path $codexDocs | Out-Null
 $codexInventory | ConvertTo-Json -Depth 4 | Set-Content (Join-Path $codexDocs "codex-skills.json") -Encoding UTF8
 Copy-Item (Join-Path $pack "adapters/codex/codex.md") (Join-Path $codexDocs "codex.md") -Force
+Copy-Item (Join-Path $pack "adapters/muse/muse-surface.md") (Join-Path $codexDocs "muse-surface.md") -Force
+Write-Host "  docs/ai-forward-pack: codex.md + muse-surface.md"
 
 $agyRules = Join-Path $repo ".agents\rules"
 Reset-Dir $agyRules

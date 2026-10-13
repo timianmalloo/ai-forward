@@ -57,6 +57,15 @@ Exit: 0 all PASS/WARN (or all PASS under --strict) · 1 any FAIL/strict WARN.
 
 Check the deployed pack contract, never claim a running Codex catalog was read.
 
+### `check_muse(root)`
+
+Check the deployed Muse contract, never claim a running Muse catalog was read.
+
+Muse discovers the shared .agents/skills surface (the Codex/Antigravity
+tree) and reads AGENTS.md; its own contribution is the path map
+docs/ai-forward-pack/muse-surface.md plus the AGENTS.md pointer to it.
+The skill inventory is the shared codex-skills.json manifest.
+
 ### `check_claude_md_import(root)`
 
 CTX-B / F-01. Copilot CLI loads BOTH AGENTS.md and CLAUDE.md as custom instructions
@@ -173,6 +182,6 @@ lesson into a control that fires at the moment of the mistake).
 
 ## Coverage
 
-- Public functions: **17** · documented: **12** (**71%**)
+- Public functions: **18** · documented: **13** (**72%**)
 - Undocumented (recorded, not invented): `check_installed`, `check_surface`, `check_block`, `check_graph`, `run`
 
