@@ -256,6 +256,8 @@ class MarkerOutsideTheTree(unittest.TestCase):
         for name in ("dispatch.py", "session-start.py", "coord_identity.py"):
             shutil.copy(HOOKS / name, pack / "hooks" / name)
         shutil.copy(SCRIPTS / "audit-log.py", pack / "scripts" / "audit-log.py")
+        (pack / "templates").mkdir()
+        shutil.copy(REPO / "pack" / "templates" / "audit-explorer.template.html", pack / "templates")
         self.hook, self.audit = pack / "hooks" / "dispatch.py", pack / "scripts" / "audit-log.py"
         for args in (["init", "-q", "-b", "main"], ["add", "-A"],
                      ["-c", "user.name=t", "-c", "user.email=t@t", "commit", "-q", "-m", "pack"]):
@@ -282,6 +284,24 @@ class MarkerOutsideTheTree(unittest.TestCase):
         log = self.repo / ".agents" / "log" / "audit" / "audit-log.jsonl"
         entry = json.loads(log.read_text(encoding="utf-8").splitlines()[-1])
         self.assertEqual(entry.get("duration_source"), "session-start-hook", entry)
+
+    def append(self):
+        env = {k: v for k, v in os.environ.items() if k not in ("AGENT_SESSION", "AGENT_HOST")}
+        done = subprocess.run([sys.executable, str(self.audit), "append", "--shortname", "close",
+                               "--session", "node-a", "--kind", "manual", "--prompt", "p", "--summary", "s"],
+                              cwd=str(self.repo), capture_output=True, text=True, env=env, timeout=60)
+        self.assertEqual(done.returncode, 0, done.stderr)
+
+    def test_the_fallback_log_writes_only_its_jsonl_and_an_opted_in_log_keeps_its_views(self):
+        """Fails if an append in the AL0.2 fallback renders the viewer (~520 lines per bench cell), or if
+        a repo that opted in (docs/audit/ exists) loses its rendered views. Owner decision, 2026-10-14."""
+        self.append()
+        fallback = self.repo / ".agents" / "log" / "audit"
+        self.assertEqual(sorted(p.name for p in fallback.iterdir()), ["audit-log.jsonl"])
+        (self.repo / "docs" / "audit").mkdir()
+        self.append()
+        opted = sorted(p.name for p in (self.repo / "docs" / "audit").iterdir())
+        self.assertEqual(opted, ["audit-data.js", "audit-log.jsonl", "audit-log.md", "index.html"])
 
 
 if __name__ == "__main__":

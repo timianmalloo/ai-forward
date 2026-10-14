@@ -229,6 +229,17 @@ to no duration (IO8).
 An explicit --root is never 'unasked', so it is returned untouched. The default is
 resolved against what is ALREADY on disk, never created by this check itself.
 
+### `is_fallback_root(root)`
+
+Is `root` the AL0.2 local fallback (`.agents/log`) rather than a repo's own audit setup?
+
+### `render_after_write(root, project=…)`
+
+The views a write refreshes. Owner decision 2026-10-14 (bench B15, AL0.2): in the fallback
+a write keeps ONLY the JSONL - the viewer, its data file and the hub (~510 lines) were most of
+what the pack left in every task's working copy, for a repo that never asked for a viewer.
+`render` stays available there as an explicit ask. A repo with docs/audit/ keeps its views.
+
 ### `audit_dir(root)`
 
 **Coverage gap** — no docstring in the source.
@@ -401,6 +412,6 @@ Ingest a session-export JSON array of turns into the audit log (build on session
 
 ## Coverage
 
-- Public functions: **41** · documented: **24** (**59%**)
+- Public functions: **43** · documented: **26** (**60%**)
 - Undocumented (recorded, not invented): `now_iso`, `record_start`, `audit_dir`, `log_path`, `read_log`, `append_log`, `git`, `git_context`, `commits_between`, `find_template`, `cmd_append`, `cmd_change`, `cmd_list`, `cmd_search`, `cmd_get`, `cmd_render`, `cmd_git_context`
 

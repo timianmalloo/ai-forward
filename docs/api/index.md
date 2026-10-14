@@ -9,7 +9,7 @@ links:
   - { to: architecture, rel: documents }
 review-by: "2027-03-03"
 summary: >-
-  Generated API reference for the pack's public surface — the deployed script bundle. 561 public functions across 45 modules, 48% carrying a docstring.
+  Generated API reference for the pack's public surface — the deployed script bundle. 563 public functions across 45 modules, 48% carrying a docstring.
 ---
 
 # API reference — the deployed script bundle
@@ -24,7 +24,7 @@ with no docstring is listed as a **coverage gap** rather than described from gue
 | Module | Public fns | Documented | CLI | Summary |
 |---|---:|---:|---:|---|
 | [`apply-learnings.py`](apply-learnings.md) | 16 | 9 | 2 | apply-learnings.py - the AI-Forward federation / push mechanism. |
-| [`audit-log.py`](audit-log.md) | 41 | 24 | 13 | audit-log.py — the AI-Forward Pack audit & change log bundle (audit-and-change-log.md). |
+| [`audit-log.py`](audit-log.md) | 43 | 26 | 13 | audit-log.py — the AI-Forward Pack audit & change log bundle (audit-and-change-log.md). |
 | [`bounded_process.py`](bounded_process.md) | 1 | 1 | — | Bounded subprocess execution for pack-owned tool invocations. |
 | [`conductor-join.py`](conductor-join.md) | 5 | 3 | — | conductor-join.py - the join, as a script: every step gated by its exit code, none by a |
 | [`context-budget.py`](context-budget.md) | 21 | 12 | 6 | context-budget.py — the always-on context budget, measured (AI-Forward Pack). |
@@ -69,5 +69,5 @@ with no docstring is listed as a **coverage gap** rather than described from gue
 | [`visual-assets-setup.py`](visual-assets-setup.md) | 12 | 5 | — | visual-assets-setup.py - wire up a generation backend for UI visual assets (AI-Forward). |
 | [`xaml-token-lint.py`](xaml-token-lint.md) | 9 | 0 | — | xaml-token-lint.py — first-slice token linter for XAML/native UI markup. |
 
-**Total** — 561 public functions across 45 modules, **268 documented (48%)**.
+**Total** — 563 public functions across 45 modules, **270 documented (48%)**.
 

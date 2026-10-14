@@ -2001,14 +2001,14 @@ window.PORTAL_DATA = {
         },
         "skill": {
           "docs": 19,
-          "tokens": 82763
+          "tokens": 82984
         },
         "glob": {
           "docs": 6,
           "tokens": 25898
         }
       },
-      "corpusTokens": 183876,
+      "corpusTokens": 184097,
       "alwaysPct": 28
     }
   },
@@ -2247,7 +2247,7 @@ window.PORTAL_DATA = {
         "id": "api-index",
         "type": "api",
         "title": "API reference — the deployed script bundle",
-        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 561 public functions across 45 modules, 48% carrying a docstring."
+        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 563 public functions across 45 modules, 48% carrying a docstring."
       },
       {
         "id": "api-marker-lint",
