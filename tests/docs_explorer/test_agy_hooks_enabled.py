@@ -13,6 +13,8 @@ import json
 import unittest
 from pathlib import Path
 
+from hook_wiring import wired_scripts
+
 REPO = Path(__file__).resolve().parents[2]
 CONFIG = REPO / "pack" / "adapters" / "hooks" / "agy.ai-forward-hooks.json"
 
@@ -24,14 +26,14 @@ class AgyHooksEnabledTests(unittest.TestCase):
         missing = sorted(name for name, section in doc.items() if section.get("enabled") is not True)
         self.assertEqual([], missing, f"Antigravity activates a named hook section only with enabled: true; missing on {missing}")
 
-    def test_sections_keep_their_events(self):
-        doc = json.loads(CONFIG.read_text(encoding="utf-8"))
-        events = {name: sorted(k for k in section if k != "enabled") for name, section in doc.items()}
-        self.assertEqual(events["heartbeat"], ["PostToolUse", "Stop"])
-        self.assertEqual(events["mail-doorbell"], ["PreInvocation"])
-        self.assertEqual(events["session-start"], ["PreInvocation"])
-        self.assertEqual(events["reread-guard"], ["PreToolUse"])
-        self.assertEqual(events["owner-review-gate"], ["Stop"], "Antigravity has a Stop event; the gate is wired on it")
+    def test_hooks_keep_their_events(self):
+        # one `ai-forward` section, one dispatcher command per event (B15); the dispatcher's routes
+        # say which hooks run there
+        self.assertEqual(wired_scripts("agy", "PostToolUse"), ["heartbeat.py"])
+        self.assertEqual(wired_scripts("agy", "PreInvocation"), ["session-start.py", "mail-doorbell.py"])
+        self.assertEqual(wired_scripts("agy", "PreToolUse"), ["reread-guard.py"])
+        self.assertEqual(wired_scripts("agy", "Stop"), ["heartbeat.py", "owner-review-gate.py"],
+                         "Antigravity has a Stop event; the gate is wired on it")
 
     def test_event_shapes_follow_the_host_docs(self):
         """Tool events (PreToolUse/PostToolUse) take [{matcher, hooks:[handler]}]; lifecycle events
@@ -52,7 +54,6 @@ class AgyHooksEnabledTests(unittest.TestCase):
                         else:
                             self.assertIn("command", entry, f"{name}.{event}: lifecycle events take handlers directly")
                             self.assertNotIn("hooks", entry)
-        self.assertTrue(any("owner-review-gate.py" in h.get("command", "") for h in doc["owner-review-gate"]["Stop"]))
 
 
 if __name__ == "__main__":

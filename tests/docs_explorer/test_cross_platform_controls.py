@@ -278,8 +278,11 @@ class AgyHookShellTests(unittest.TestCase):
         self.assertNotIn(b"\r", launcher, "sh fails on CRLF")
         text = launcher.decode("utf-8")
         self.assertIn("import sys;print(sys.executable)", text)
-        self.assertIn("python3", text)
-        self.assertIn("python -c", text, "no fallback for python.org Windows")
+        self.assertIn("first=python3; second=python", text, "python3 first where it is real Python")
+        # python.org Windows has no python3.exe; its Store alias costs ~200 ms per hook call (B15)
+        self.assertIn('if [ "$OS" = "Windows_NT" ]; then first=python; second=python3; fi', text)
+        self.assertIn('py=$($first -c', text)
+        self.assertIn('py=$($second -c', text, "no fallback interpreter")
         # agy (no flag) runs the hook by its tree-relative path from the top of the tree; Codex's
         # --caller-cwd returns to the caller's directory and names the hook relative to it (PLAT-C).
         self.assertIn('script="${up}docs/ai-forward-pack/hooks/$1"', text)
@@ -289,7 +292,7 @@ class AgyHookShellTests(unittest.TestCase):
 
     @unittest.skipUnless(shutil.which("git") and (REPO / "docs/ai-forward-pack/hooks").is_dir(), "needs git and the installed pack")
     def test_the_agy_reread_guard_command_runs_the_way_agy_runs_it(self):
-        command = next(c for c in self.commands() if "reread-guard.py" in c)
+        command = next(c for c in self.commands() if "--event PreToolUse" in c)  # the re-read guard's event
         # On Windows the host hands cmd.exe the raw command line; a list would be re-quoted by list2cmdline
         shell = "cmd /d /c " + command if os.name == "nt" else ["sh", "-c", command]
         payload = json.dumps({"toolCall": {"name": "view_file", "args": {"AbsolutePath": str(REPO / "README.md")}},

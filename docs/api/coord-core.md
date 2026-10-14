@@ -175,6 +175,19 @@ Resolve COORD_ROOT, refusing anything outside the repository.
 COORD_ROOT is attacker-controllable input that selects which file becomes trusted
 state (STRIDE B1, elevation of privilege). Found at the design gate, not in the draft.
 
+### `coordination_active(root)`
+
+Is coordination ON for this repository? Only when its record holds something: a session
+ledger (`log/<session>.jsonl`, written by `session start`, mail twins, heartbeats), an inbox
+(`mail/*.jsonl`) or the request store. A session identity in the environment is not enough,
+and neither is the `log/` directory alone - the audit log's local fallback (AL0.2) creates
+`log/audit/` in repositories that never coordinate.
+
+The coordination hooks (doorbell, heartbeat, owner-review gate) return at once when this is
+False, so a repository that never coordinates pays nothing for them and gains no ledger
+(bench decision B15: they ran on every tool call in cells that never coordinate).
+Filesystem only: this runs on the hook hot path.
+
 ### `overlaps(a, b)`
 
 Do two path patterns intersect? Prefer a false positive: a false refusal costs a
@@ -883,6 +896,6 @@ it; runtime paths stay in quoted expansions, never eval or interpolated source c
 
 ## Coverage
 
-- Public functions: **99** · documented: **74** (**75%**)
+- Public functions: **100** · documented: **75** (**75%**)
 - Undocumented (recorded, not invented): `make_event`, `check`, `read_decisions`, `request_log_path`, `read_request_events`, `cmd_leader`, `regen_command`, `record_regen_owed`, `regen_owed`, `clear_regen_owed`, `detect_harness`, `cmd_precommit`, `cmd_guard`, `session_contract_path`, `owner_rows_for_path`, `cmd_session_list`, `cmd_collaborate`, `cmd_request`, `cmd_worktree`, `cmd_session`, `cmd_metrics`, `cmd_track`, `cmd_install`, `cmd_staged_markers`, `cmd_doctor`
 

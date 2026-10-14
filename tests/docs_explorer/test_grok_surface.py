@@ -64,8 +64,9 @@ class GrokInstallTests(unittest.TestCase):
         hooks = json.loads(_r(tmp, ".grok/hooks/ai-forward.json"))
         commands = json.dumps(hooks)
         self.assertIn("--host grok", commands)
-        self.assertIn("reread-guard.py", commands)
-        self.assertIn("session-start.py", commands)
+        self.assertIn("dispatch.py", commands)  # one dispatcher per event runs the hooks (B15)
+        for hook in ("dispatch.py", "reread-guard.py", "session-start.py"):
+            self.assertTrue(os.path.isfile(os.path.join(tmp, "docs", "ai-forward-pack", "hooks", hook)), hook)
 
         rules = _r(tmp, ".grok/rules/grok-surface.md")
         self.assertIsNotNone(rules)

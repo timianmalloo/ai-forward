@@ -11,6 +11,8 @@ import subprocess
 import sys
 import unittest
 
+from hook_wiring import routes, wired_scripts
+
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 GUARD = ROOT / "pack" / "adapters" / "hooks" / "git-identity-guard.py"
 
@@ -138,28 +140,15 @@ class HookConfigsWireTheGuardWhereGrounded(unittest.TestCase):
     """The guard is wired into every host config whose PreToolUse deny contract this pack
     has grounded (claude, grok, copilot) and deliberately absent from agy's (unverified)."""
 
-    def test_claude_settings_snippet_wires_pretooluse(self):
-        snippet = json.loads((ROOT / "pack" / "adapters" / "hooks" / "claude-code.settings.hooks.json")
-                             .read_text(encoding="utf-8"))
-        cmds = [h["command"] for entry in snippet["hooks"].get("PreToolUse", []) for h in entry.get("hooks", [])]
-        self.assertTrue(any("git-identity-guard.py" in c for c in cmds), "PreToolUse must run the guard")
+    # Read through the dispatcher (B15): each config registers dispatch.py once per event.
+    def test_claude_grok_and_copilot_run_the_guard_at_pretooluse(self):
+        for host, event in (("claude", "PreToolUse"), ("grok", "PreToolUse"), ("copilot", "preToolUse")):
+            self.assertIn("git-identity-guard.py", wired_scripts(host, event), host + " must run the guard")
 
-    def test_grok_config_wires_pretooluse(self):
-        config = json.loads((ROOT / "pack" / "adapters" / "hooks" / "grok.ai-forward-hooks.json")
-                            .read_text(encoding="utf-8"))
-        cmds = [h["command"] for entry in config["hooks"].get("PreToolUse", []) for h in entry.get("hooks", [])]
-        self.assertTrue(any("git-identity-guard.py" in c for c in cmds), "PreToolUse must run the guard")
-
-    def test_copilot_config_wires_pretooluse(self):
-        config = json.loads((ROOT / "pack" / "adapters" / "hooks" / "copilot.ai-forward-hooks.json")
-                            .read_text(encoding="utf-8"))
-        cmds = [h.get("bash", "") for h in config["hooks"].get("preToolUse", [])]
-        self.assertTrue(any("git-identity-guard.py" in c for c in cmds), "preToolUse must run the guard")
-
-    def test_agy_config_does_not_claim_the_guard(self):
-        config = json.loads((ROOT / "pack" / "adapters" / "hooks" / "agy.ai-forward-hooks.json")
-                            .read_text(encoding="utf-8"))
-        self.assertNotIn("git-identity-guard", json.dumps(config),
+    def test_agy_does_not_claim_the_guard(self):
+        agy = [script for event in routes()["agy"] for script in wired_scripts("agy", event)]
+        self.assertTrue(agy)
+        self.assertNotIn("git-identity-guard.py", agy,
                          "agy's PreToolUse deny contract is unverified; do not claim enforcement")
 
 

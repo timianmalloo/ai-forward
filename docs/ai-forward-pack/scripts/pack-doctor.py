@@ -283,14 +283,17 @@ def check_hooks(root):
         have.append("Grok Build (.grok/hooks/ai-forward.json)")
     if os.path.isfile(agy):
         have.append("Antigravity (.agents/hooks.json)")
-    if "reread-guard" in cc:
+    # B15: the guard runs inside the per-event dispatcher (dispatch.py); older installs name it directly.
+    if "reread-guard" in cc or "dispatch.py --host claude" in cc:
         have.append("Claude Code (.claude/settings.json)")
-    guard = os.path.isfile(os.path.join(root, "docs", "ai-forward-pack", "hooks", "reread-guard.py"))
-    if have and guard:
+    hooks_dir = os.path.join(root, "docs", "ai-forward-pack", "hooks")
+    missing = [f for f in ("reread-guard.py", "dispatch.py") if not os.path.isfile(os.path.join(hooks_dir, f))]
+    if have and not missing:
         return _result("re-read guard hook", PASS, "installed for " + ", ".join(have))
-    if have and not guard:
-        return _result("re-read guard hook", FAIL, "hook config present but docs/ai-forward-pack/hooks/reread-guard.py is missing",
-                       "copy adapters/hooks/reread-guard.py to docs/ai-forward-pack/hooks/ (INSTALL 1.5)")
+    if have:
+        return _result("re-read guard hook", FAIL, "hook config present but docs/ai-forward-pack/hooks/{0} is missing"
+                       .format(" and ".join(missing)),
+                       "copy adapters/hooks/reread-guard.py and dispatch.py to docs/ai-forward-pack/hooks/ (INSTALL 1.5)")
     return _result("re-read guard hook", WARN, "not installed on any host",
                    "copy adapters/hooks/copilot.ai-forward-hooks.json to .github/hooks/ai-forward.json, grok.ai-forward-hooks.json to .grok/hooks/ai-forward.json, agy.ai-forward-hooks.json to .agents/hooks.json, and merge adapters/hooks/claude-code.settings.hooks.json into .claude/settings.json (INSTALL 1.4 / 1.7 / 1.8)")
 

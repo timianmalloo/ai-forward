@@ -331,6 +331,12 @@ class HeartbeatTickTests(LivenessCase):
 
 class HookTests(LivenessCase):
 
+    def setUp(self):
+        super().setUp()
+        # a repository that coordinates: s1 is registered (B15 - the hook is idle without a record)
+        self.m.append_event(self.root, {"kind": "session-start", "session": "s1", "agent": "s1", "wi": "WI-0",
+                                        "path": "-", "at": NOW, "worktree": "r"})
+
     def payload(self, event="PostToolUse", tool="Edit", path="docs/x.md"):
         return {"hook_event_name": event, "session_id": "abc", "cwd": str(self.repo),
                 "tool_name": tool, "tool_input": {"file_path": path}}
@@ -347,20 +353,8 @@ class HookTests(LivenessCase):
         self.assertEqual((rows[0]["calls"], rows[0]["files"], rows[0]["host"], rows[0]["event"]),
                          (1, 1, "claude", "Stop"))
 
-    def test_copilot_config_wires_post_tool_use_and_subagent_stop(self):
-        config = json.loads(HOOK_JSONS["copilot"].read_text(encoding="utf-8"))["hooks"]
-        self.assertIn("sessionStart", config)
-        self.assertIn("subagentStart", config)
-        self.assertIn("postToolUse", config)
-        self.assertIn("subagentStop", config)
-        self.assertTrue(any("session-start.py --host copilot" in entry.get("bash", "")
-                            for entry in config["sessionStart"]))
-        self.assertTrue(any("heartbeat.py --host copilot --event postToolUse" in entry.get("bash", "")
-                            for entry in config["postToolUse"]))
-        sub_stop = "\n".join(entry.get("bash", "") for entry in config["subagentStop"])
-        self.assertIn("mail-doorbell.py --host copilot --event subagentStop", sub_stop)
-        self.assertIn("heartbeat.py --host copilot --event subagentStop", sub_stop)
-        self.assertIn("owner-review-gate.py --host copilot --event subagentStop", sub_stop)
+    # Which host event runs heartbeat.py is pinned per host by test_hook_cost.py (ROUTES_BEFORE):
+    # every config registers the dispatcher once per event, and its routes name the hooks (B15).
 
     def test_malformed_stdin_exits_0_prints_nothing_and_counts_the_call(self):
         """Fails if garbage on stdin denies the tool call (Copilot semantics) or is not counted."""
@@ -373,9 +367,12 @@ class HookTests(LivenessCase):
 
     def test_without_a_session_nothing_is_written(self):
         """Fails if a hook with no AGENT_SESSION writes a ledger or a scratch file."""
+        before = (self.root / "log" / "s1.jsonl").read_bytes()
         done = self.run_hook(self.payload(), session=None)
         self.assertEqual((done.returncode, done.stdout), (0, ""))
-        self.assertEqual(sorted(p.name for p in (self.root / "log").iterdir()), [])
+        self.assertEqual(sorted(p.name for p in (self.root / "log").iterdir()), ["s1.jsonl"])
+        self.assertEqual((self.root / "log" / "s1.jsonl").read_bytes(), before)
+        self.assertFalse((self.repo / ".git" / "coord" / "heartbeat").exists(), "no scratch file either")
 
     def test_a_traversal_path_is_counted_never_stored_or_opened(self):
         """Fails if the file path from stdin reaches the ledger text."""
@@ -386,22 +383,7 @@ class HookTests(LivenessCase):
         rows = [r for r in self.ledger("s1") if r["kind"] == "heartbeat"]
         self.assertEqual(rows[0]["files"], 1)
 
-    def test_hook_json_entries_per_host(self):
-        """Fails if a host's hook config does not run heartbeat.py at its documented seam."""
-        claude = json.loads(HOOK_JSONS["claude"].read_text(encoding="utf-8"))["hooks"]
-        for event in ("PostToolUse", "Stop"):
-            commands = [h["command"] for entry in claude[event] for h in entry["hooks"]]
-            self.assertTrue(any("heartbeat.py --host claude" in c for c in commands), event)
-        grok = json.loads(HOOK_JSONS["grok"].read_text(encoding="utf-8"))["hooks"]
-        self.assertTrue(any("heartbeat.py --host grok" in h["command"]
-                            for entry in grok["PreToolUse"] for h in entry["hooks"]))
-        agy = json.loads(HOOK_JSONS["agy"].read_text(encoding="utf-8"))["heartbeat"]
-        self.assertTrue(any("heartbeat.py" in h["command"] and "--host agy" in h["command"]
-                            for event in ("PostToolUse", "Stop") for entry in agy[event]
-                            for h in (entry["hooks"] if "hooks" in entry else [entry])))
-        copilot = json.loads(HOOK_JSONS["copilot"].read_text(encoding="utf-8"))["hooks"]
-        for event in ("postToolUse", "agentStop", "subagentStop"):
-            self.assertTrue(any("heartbeat.py --host copilot" in h["bash"] for h in copilot[event]), event)
+    def test_hook_json_entries_name_no_machine_path(self):
         for path in HOOK_JSONS.values():
             self.assertNotIn("/Users/", path.read_text(encoding="utf-8"))
 

@@ -47,9 +47,12 @@ class SettingsUpgradeTests(unittest.TestCase):
         post = result["hooks"]["PostToolUse"]
         self.assertEqual(custom, post[0])
         self.assertEqual("Read", post[1]["matcher"])
-        self.assertEqual(7, post[1]["hooks"][0]["timeout"])
-        self.assertTrue(post[1]["hooks"][0]["command"].startswith("git -c alias.aif-hook="))
-        self.assertEqual(managed["hooks"][1], post[1]["hooks"][1])
+        # B15: the shipped per-hook command is retired (the dispatcher runs the heartbeat); the
+        # custom handler beside it keeps its entry and matcher
+        self.assertEqual([managed["hooks"][1]], post[1]["hooks"])
+        self.assertEqual([e["hooks"][0]["command"] for e in post[2:]],
+                         ["git -c alias.aif-hook=!sh aif-hook docs/ai-forward-pack/hooks/run-hook.sh "
+                          "dispatch.py --host claude --event PostToolUse"])
         self.assertEqual(original["permissions"], result["permissions"])
 
     def test_bom_normalized_and_second_update_identical(self):

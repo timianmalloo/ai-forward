@@ -13,7 +13,9 @@ import sys
 import tempfile
 import time
 import unittest
+
 from pathlib import Path
+from hook_wiring import commands, wired
 
 ROOT = Path(__file__).resolve().parents[2]
 HOOKS = ROOT / "pack" / "adapters" / "hooks"
@@ -159,59 +161,27 @@ class HookCli(Fixture):
 
 class AdapterConfigs(unittest.TestCase):
 
-    def _commands(self, data):
-        found = []
-
-        def walk(node):
-            if isinstance(node, dict):
-                for key, value in node.items():
-                    if key in ("command", "bash", "powershell") and isinstance(value, str):
-                        found.append(value)
-                    else:
-                        walk(value)
-            elif isinstance(node, list):
-                for item in node:
-                    walk(item)
-        walk(data)
-        return [c for c in found if "mail-doorbell.py" in c]
-
-    def _load_json(self, name):
-        return json.loads((HOOKS / name).read_text(encoding="utf-8"))
+    # Read through the dispatcher (B15): one dispatch.py command per event, its routes name the hooks.
+    def assert_rings(self, host, event):
+        doorbell = [argv for script, argv in wired(host, event) if script == "mail-doorbell.py"]
+        self.assertEqual(len(doorbell), 1, (host, event))
+        self.assertEqual(doorbell[0], ["--host", host, "--event", event])
+        matchers = [m for ev, m, c in commands(host) if ev == event and "dispatch.py" in c]
+        self.assertFalse(any(matchers), "the doorbell rings at every tool, not only reads")
 
     def test_claude_and_grok_ring_at_pre_tool_use_and_user_prompt_submit(self):
-        for name in ("claude-code.settings.hooks.json", "grok.ai-forward-hooks.json"):
-            data = self._load_json(name)["hooks"]
-            host = "claude" if name.startswith("claude") else "grok"
+        for host in ("claude", "grok"):
             for event in ("PreToolUse", "UserPromptSubmit"):
-                with self.subTest(name=name, event=event):
-                    cmds = [h["command"] for entry in data[event] for h in entry.get("hooks", [])
-                            if "mail-doorbell.py" in h["command"]]
-                    self.assertEqual(len(cmds), 1)
-                    self.assertIn("--host " + host, cmds[0])
-                    self.assertIn("--event " + event, cmds[0])
-                    # Claude-format commands run through the launcher, which holds the resolver (PLAT-A, rev 95)
-                    self.assertIn("run-hook.sh mail-doorbell.py", cmds[0])
-            entries = [e for e in data["PreToolUse"] if any("mail-doorbell.py" in h["command"] for h in e["hooks"])]
-            self.assertNotIn("matcher", entries[0], "the doorbell rings at every tool, not only Read")
+                with self.subTest(host=host, event=event):
+                    self.assert_rings(host, event)
 
     def test_agy_rings_at_pre_invocation_as_inject_steps(self):
-        data = self._load_json("agy.ai-forward-hooks.json")
-        cmds = [h["command"] for h in data["mail-doorbell"]["PreInvocation"]]
-        self.assertEqual(len(cmds), 1)
-        self.assertIn("--host agy", cmds[0])
-        self.assertIn("--event PreInvocation", cmds[0])
-        # PLAT-C: agy hooks run through the git-alias launcher, which holds the interpreter resolver
-        self.assertIn("git -c alias.aif-hook=!sh aif-hook docs/ai-forward-pack/hooks/run-hook.sh mail-doorbell.py", cmds[0])
+        self.assert_rings("agy", "PreInvocation")
 
     def test_copilot_rings_at_pre_tool_use_and_blocks_at_agent_stop(self):
-        data = self._load_json("copilot.ai-forward-hooks.json")["hooks"]
         for event in ("preToolUse", "agentStop"):
             with self.subTest(event=event):
-                entries = [e for e in data[event] if "mail-doorbell.py" in e.get("bash", "")]
-                self.assertEqual(len(entries), 1)
-                self.assertIn("--host copilot --event " + event, entries[0]["bash"])
-                self.assertIn("--host copilot --event " + event, entries[0]["powershell"])
-                self.assertNotIn("matcher", entries[0])
+                self.assert_rings("copilot", event)
 
     def test_readme_documents_the_doorbell(self):
         readme = (HOOKS / "README.md").read_text(encoding="utf-8")

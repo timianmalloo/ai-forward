@@ -102,7 +102,8 @@ class InstalledRepoTests(unittest.TestCase):
         result = json.loads(_r(self.tmp, ".agents/hooks.json"))
         managed = json.loads((ROOT / "pack/adapters/hooks/agy.ai-forward-hooks.json").read_text())
         self.assertEqual(custom, result["ownership-guard"])
-        self.assertEqual(managed["heartbeat"], result["heartbeat"])
+        for name, section in managed.items():
+            self.assertEqual(section, result[name])
         before = _r(self.tmp, ".agents/hooks.json")
         self._apply()
         self.assertEqual(before, _r(self.tmp, ".agents/hooks.json"))

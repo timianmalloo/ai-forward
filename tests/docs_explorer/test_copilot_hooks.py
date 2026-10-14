@@ -217,7 +217,13 @@ class CopilotHooksTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(core.hook_decision_of(json.loads(result.stdout)), "deny")
 
+    def coordinating(self):
+        """A coordination record exists (B15: the heartbeat is idle in a repository without one)."""
+        (self.root / "log" / "coordinator.jsonl").write_text(json.dumps(
+            {"kind": "session-start", "session": "coordinator", "at": time.time(), "seq": 1}) + "\n", encoding="utf-8")
+
     def test_heartbeat_uses_child_identity_not_parent_env_for_copilot_subagent(self):
+        self.coordinating()
         payload = {
             "hookEventName": "postToolUse",
             "sessionId": "cp-top",
@@ -240,6 +246,7 @@ class CopilotHooksTests(unittest.TestCase):
         self.assertEqual(rows[0]["host"], "copilot")
 
     def test_heartbeat_counts_apply_patch_targets_without_recording_patch_text(self):
+        self.coordinating()
         env = self.env("holder", AGENT_HOST="copilot")
         payload = {
             "hookEventName": "postToolUse",

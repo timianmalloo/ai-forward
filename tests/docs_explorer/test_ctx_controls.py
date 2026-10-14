@@ -86,11 +86,13 @@ class PackDoctorCtxTests(unittest.TestCase):
         self._write(".github/hooks/ai-forward.json", "{}")
         self.assertEqual(self.doc.FAIL, self.doc.check_hooks(self.tmp)["status"])
         self._write("docs/ai-forward-pack/hooks/reread-guard.py", "# guard")
+        self._write("docs/ai-forward-pack/hooks/dispatch.py", "# dispatcher")
         self.assertEqual(self.doc.PASS, self.doc.check_hooks(self.tmp)["status"])
 
     def test_grok_hooks_alone_pass(self):
         self._write(".grok/hooks/ai-forward.json", "{}")
         self._write("docs/ai-forward-pack/hooks/reread-guard.py", "# guard")
+        self._write("docs/ai-forward-pack/hooks/dispatch.py", "# dispatcher")
         r = self.doc.check_hooks(self.tmp)
         self.assertEqual(self.doc.PASS, r["status"], r)
         self.assertIn("Grok Build", r["detail"])
@@ -98,6 +100,7 @@ class PackDoctorCtxTests(unittest.TestCase):
     def test_agy_hooks_alone_pass(self):
         self._write(".agents/hooks.json", "{}")
         self._write("docs/ai-forward-pack/hooks/reread-guard.py", "# guard")
+        self._write("docs/ai-forward-pack/hooks/dispatch.py", "# dispatcher")
         r = self.doc.check_hooks(self.tmp)
         self.assertEqual(self.doc.PASS, r["status"], r)
         self.assertIn("Antigravity", r["detail"])
