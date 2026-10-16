@@ -75,8 +75,8 @@
     },
     {
       "h": "Install it into a repo",
-      "p": "Add the pack to a new or existing local repo. From an ai-forward clone, run the installer skill; a brownfield repo also runs /adopt to bootstrap its knowledge graph.",
-      "cmd": "/addpacktorepo   (or /adopt for an existing repo)"
+      "p": "Run the portable bootstrap in your project with Git and uv available. The upstream repository and main are defaults: no --repo or --ref is needed. It preserves project decisions and reports the verified source/revision. The launcher is available upstream after its contribution is merged; reviewers of unmerged work use a committed local source or explicit source/ref overrides. Adoption remains optional.",
+      "cmd": "uv run --no-config --no-project --script https://raw.githubusercontent.com/timianmalloo/ai-forward/main/bootstrap.py"
     },
     {
       "h": "Know how skills are invoked",
@@ -84,9 +84,9 @@
       "cmd": null
     },
     {
-      "h": "Run your first skill",
-      "p": "Start where the loop starts: collect the domain knowledge your work rests on, then specify. The pack grounds every skill in what the repo already knows.",
-      "cmd": "/collectknowledge   then   /specify"
+      "h": "Describe your desired outcome",
+      "p": "Deliver selects the applicable existing workflows and continues between approved stages. Human decisions, permissions and hard review objections remain real pauses; resume the same task with its original completion conditions.",
+      "cmd": "/deliver <outcome>   (Codex: $deliver)"
     },
     {
       "h": "Keep the repo learning",
@@ -125,6 +125,12 @@
     }
   ],
   "skillMeta": {
+    "deliver": {
+      "group": "Build & verify",
+      "when": "Completing one outcome without choosing each workflow manually.",
+      "produces": "Applicable stages, validated local checkpoints and original criteria-to-evidence handback",
+      "handoff": "Human decision when required; otherwise continue the approved task"
+    },
     "code-hygiene": {
       "group": "Continuous improvement",
       "when": "Holding a codebase to the coding guidelines - finding and removing dead code, commented-out code, and anti-patterns.",

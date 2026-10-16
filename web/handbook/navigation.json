@@ -1,6 +1,7 @@
 {
   "schema": "ai-forward-handbook/1",
   "owner": "@timianmalloo",
+  "owners": {"skill-deliver": "@ahutanu"},
   "review_by": "2027-03-22",
   "groups": [
     {"title": "Start here", "pages": ["overview", "get-started", "workflow"]},
@@ -12,7 +13,7 @@
   "skill_groups": [
     {"title": "Set up the pack", "reader": "Repository maintainer or first-time adopter", "guide": "get-started", "skills": ["addpacktorepo", "updatepack", "adopt"]},
     {"title": "Understand and plan", "reader": "Engineer or technical lead shaping a change", "guide": "design", "skills": ["collectknowledge", "adddomainexperts", "create-proposal", "specify", "define-architecture", "design-slice"]},
-    {"title": "Shape the request", "reader": "Person directing an agent's work", "guide": "workflow", "skills": ["compile", "optimize-graph", "also"]},
+    {"title": "Shape the request", "reader": "Person directing an agent's work", "guide": "workflow", "skills": ["deliver", "compile", "optimize-graph", "also"]},
     {"title": "Build and improve software", "reader": "Engineer implementing or repairing an existing system", "guide": "workflow", "skills": ["implement", "investigate", "forensicreview", "code-hygiene", "migrate"]},
     {"title": "Design an experience", "reader": "Engineer or designer responsible for a user-facing surface", "guide": "interfaces", "skills": ["ui-design", "visualize"]},
     {"title": "Coordinate parallel work", "reader": "Owner or coordinator of multiple tracks", "guide": "coordination", "skills": ["prepare-for-coordination", "execute-with-coordination"]},

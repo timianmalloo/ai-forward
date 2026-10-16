@@ -141,4 +141,3 @@ Scaffold a learnings×repos manifest from the fleet store + render the compose H
 
 - Public functions: **16** · documented: **9** (**56%**)
 - Undocumented (recorded, not invented): `now_iso`, `find_root`, `read_jsonl`, `scrub`, `slug`, `target_has_pack`, `cmd_push`
-

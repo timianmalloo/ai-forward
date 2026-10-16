@@ -50,4 +50,3 @@ _(no docstring — coverage gap)_
 
 - Public functions: **4** · documented: **0** (**0%**)
 - Undocumented (recorded, not invented): `spawn_windows_gate`, `release_windows_gate`, `terminate_owned_process`, `wait_after_termination`
-

@@ -79,4 +79,3 @@ external resources, and refuses paths outside the declared root.
 
 - Public functions: **9** · documented: **0** (**0%**)
 - Undocumented (recorded, not invented): `is_resource`, `is_allowed_dimension`, `finding`, `lint_text`, `resolve_under_root`, `is_under_root`, `expand_paths`, `lint_file`, `print_text`
-

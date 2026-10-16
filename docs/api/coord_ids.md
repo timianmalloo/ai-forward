@@ -66,4 +66,3 @@ register must never render the same as "not found" over a full one.
 ## Coverage
 
 - Public functions: **2** · documented: **2** (**100%**)
-

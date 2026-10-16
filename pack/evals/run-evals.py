@@ -9,11 +9,26 @@ A skill is prompt-code; this is its regression suite. Each case is a JSON file:
 Assertion types (all run against --workspace):
   {"type":"file-exists","path":"docs/design/x.md"}
   {"type":"file-absent","path":"src/tmp.cs"}
+  {"type":"files-absent","patterns":["docs/*","*.md"],"allow":[".pytest_cache/README.md"]}
+       // fnmatchcase workspace-relative paths, including directories; '*' spans '/'
+       // optional boolean case_sensitive=false case-folds deny patterns only; allow stays exact
+       // at most 10,000 entries, no directory-link traversal; unreadable trees fail
+  {"type":"grep-transcript","pattern":"<regex>"} // bounded --exec stdout or explicit --transcript
   {"type":"grep","path":"...","pattern":"<regex>"}          // must match
   {"type":"not-grep","path":"...","pattern":"<regex>"}      // must not match
   {"type":"frontmatter-valid","path":"..."}                 // via scripts/docs-graph.py parser
   {"type":"index-has","id":"design-x"}                      // docs/docs-index.js contains entry
   {"type":"cmd-exit","cmd":["python3","docs/ai-forward-pack/scripts/docs-graph.py","validate"],"exit":0}
+       // optional "stdout" demands exact independently captured output (LF/CRLF equivalent)
+       // in addition to exit, deadline, output bounds and containment checks
+Unknown or malformed assertions fail, never silently pass.
+
+Artifact predicates do not qualify a skill trajectory. Transcript regexes establish only
+observed text, not actual actions, independent review or authorization. A caller-supplied
+--transcript is an explicit bounded capture, not authenticated execution evidence. For
+manual checks use --case --check --transcript FILE; --exec uses its own captured stdout.
+Delivery's artifact case carries explicit qualification limits; real customer journeys and
+review semantics require separate execution/reviewer evidence, not stage labels or files.
 
 Flow per case: (1) `--setup` seeds the workspace; (2) YOU run the skill against it (paste
 case["prompt"] into Claude Code / Copilot); (3) `--check` evaluates assertions. Or run all
@@ -26,6 +41,7 @@ With `--exec --cases`, each case runs in its own
 """
 
 import argparse
+import fnmatch
 import importlib.util
 import json
 import os
@@ -139,22 +155,66 @@ def shell_command(command):
     return ["/bin/sh", "-c", command]
 
 
-def check(case, ws):
+def files_matching(workspace, patterns, allow, case_sensitive=True):
+    """Find scoped artifacts without reading contents or following directory links."""
+    if not isinstance(case_sensitive, bool):
+        raise ValueError("case_sensitive must be a boolean")
+    for label, values in (("patterns", patterns), ("allow", allow)):
+        if not isinstance(values, list) or any(not isinstance(value, str) or not value for value in values):
+            raise ValueError(f"{label} must be a list of nonempty glob strings")
+    if not patterns:
+        raise ValueError("patterns must not be empty")
+    match_patterns = patterns if case_sensitive else [pattern.casefold() for pattern in patterns]
+
+    def unreadable(error):
+        raise error
+
+    matches = []
+    observed = 0
+    for directory, folders, files in os.walk(workspace, followlinks=False, onerror=unreadable):
+        for name in folders + files:
+            observed += 1
+            if observed > 10000:
+                raise ValueError("workspace exceeds 10000 entry assertion limit")
+            relative = os.path.relpath(os.path.join(directory, name), workspace).replace(os.sep, "/")
+            match_path = relative if case_sensitive else relative.casefold()
+            if any(fnmatch.fnmatchcase(match_path, pattern) for pattern in match_patterns) and not any(
+                fnmatch.fnmatchcase(relative, pattern) for pattern in allow
+            ):
+                matches.append(relative)
+    return sorted(matches)
+
+
+def check(case, ws, transcript=None):
     fails = []
     dg = load_graph_module(ws)
     for a in case.get("assertions", []):
-        t = a["type"]
+        t = "assertion"
         try:
+            t = a["type"]
             p = workspace_path(ws, a["path"]) if a.get("path") else None
-            if t == "file-exists" and not os.path.exists(p):
-                fails.append(f"file-exists: {a['path']}")
-            elif t == "file-absent" and os.path.exists(p):
-                fails.append(f"file-absent: {a['path']}")
+            if t == "file-exists":
+                if not os.path.exists(workspace_path(ws, a["path"])):
+                    fails.append(f"file-exists: {a['path']}")
+            elif t == "file-absent":
+                if os.path.exists(workspace_path(ws, a["path"])):
+                    fails.append(f"file-absent: {a['path']}")
+            elif t == "files-absent":
+                matches = files_matching(ws, a["patterns"], a.get("allow", []), a.get("case_sensitive", True))
+                if matches:
+                    fails.append("files-absent: " + ", ".join(matches[:20]))
             elif t == "grep":
                 if not os.path.exists(p) or not re.search(
                     a["pattern"], read_text_bounded(p), re.S
                 ):
                     fails.append(f"grep '{a['pattern']}' in {a['path']}")
+            elif t == "grep-transcript":
+                if transcript is None:
+                    fails.append("grep-transcript: transcript not supplied (use --exec or --transcript)")
+                elif len(transcript.encode("utf-8")) > MAX_ASSERTION_FILE_BYTES:
+                    fails.append("grep-transcript: transcript exceeds byte assertion limit")
+                elif not re.search(a["pattern"], transcript, re.S):
+                    fails.append(f"grep-transcript '{a['pattern']}'")
             elif t == "not-grep":
                 if os.path.exists(p) and re.search(
                     a["pattern"], read_text_bounded(p), re.S
@@ -189,6 +249,12 @@ def check(case, ws):
                 fails.extend(
                     process_failures(r, f"cmd-exit {a['cmd']}", a.get("exit", 0))
                 )
+                # Exit 0 alone can mean os._exit(0), not completion of the oracle.
+                # The owning runner observes the child's complete bounded stdout.
+                if "stdout" in a and r.stdout.replace("\r\n", "\n") != a["stdout"].replace("\r\n", "\n"):
+                    fails.append("cmd-exit: stdout did not match expected completion output")
+            else:
+                fails.append(f"unsupported assertion type: {t}")
         except Exception as e:
             fails.append(f"{t}: error {e}")
     return fails
@@ -232,7 +298,7 @@ def run_exec(case, ws, template, timeout_seconds):
         memory_limit=2 * 1024 * 1024 * 1024,
         process_limit=64,
     )
-    fails = check(case, ws)
+    fails = check(case, ws, transcript=r.stdout)
     fails[0:0] = process_failures(r, "exec command", 0)
     return fails
 
@@ -250,6 +316,10 @@ def main():
     )
     ap.add_argument("--check", action="store_true", help="evaluate assertions")
     ap.add_argument(
+        "--transcript", default=None, metavar="FILE",
+        help="explicit captured stdout for --case --check (bounded UTF-8; not proof of actions)",
+    )
+    ap.add_argument(
         "--exec",
         default=None,
         metavar="CMD",
@@ -262,6 +332,14 @@ def main():
         help="hard deadline in seconds for each --exec command (default: 1800)",
     )
     args = ap.parse_args()
+    transcript = None
+    if args.transcript:
+        if not args.case or not args.check or args.exec:
+            ap.error("--transcript requires --case --check without --exec")
+        try:
+            transcript = read_text_bounded(args.transcript)
+        except (OSError, UnicodeError, ValueError) as error:
+            ap.error(f"cannot read bounded transcript: {error}")
     files = (
         [args.case]
         if args.case
@@ -294,7 +372,7 @@ def main():
             print(f"setup: {case_id} -> {args.workspace}")
             print(f"PROMPT for the agent:\n{case['prompt']}\n")
         if args.check:
-            fails = check(case, args.workspace)
+            fails = check(case, args.workspace, transcript=transcript)
             print(
                 f"{'PASS' if not fails else 'FAIL'}  {case_id}"
                 + ("" if not fails else "\n  - " + "\n  - ".join(fails))

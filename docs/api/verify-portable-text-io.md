@@ -76,4 +76,3 @@ EXIT  0 clean  ·  1 findings  ·  2 usage
 
 - Public functions: **3** · documented: **0** (**0%**)
 - Undocumented (recorded, not invented): `scan_source`, `scan`, `self_test`
-

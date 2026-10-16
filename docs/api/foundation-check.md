@@ -54,4 +54,3 @@ Exit: 0 clean, 1 drift/missing.
 
 - Public functions: **2** · documented: **0** (**0%**)
 - Undocumented (recorded, not invented): `nhash`, `read_manifest`
-

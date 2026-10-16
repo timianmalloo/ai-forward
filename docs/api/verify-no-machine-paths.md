@@ -89,4 +89,3 @@ fixture is accepted, and an opted-out line is skipped. Exit 0 only if all three 
 
 - Public functions: **5** · documented: **2** (**40%**)
 - Undocumented (recorded, not invented): `tracked_files`, `in_scope`, `scan`
-

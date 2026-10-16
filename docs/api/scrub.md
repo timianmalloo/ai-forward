@@ -60,4 +60,3 @@ Return text with every match replaced by [REDACTED:<category>] (idempotent).
 ## Coverage
 
 - Public functions: **2** · documented: **2** (**100%**)
-
