@@ -85,9 +85,19 @@ class DeliveryStartupCompositionTests(unittest.TestCase):
                                 input=json.dumps({"sessionId": session, "workspaceRoot": str(cwd)}),
                                 text=True, encoding="utf-8", capture_output=True, timeout=30)
         self.assertEqual(0, result.returncode, result.stderr)
+        store = hook_marker(cwd)
+        self.assertIn("__harness__:" + session, json.loads(store.read_text(encoding="utf-8")))
+        return self.tree_marker(cwd, store)
+
+    def tree_marker(self, cwd, store):
+        """The in-tree marker delivery must treat as runtime state. Outside git the hook writes it.
+        Inside git the hook writes the git dir (upstream B15), so the in-tree file exists only as
+        a leftover from an earlier revision: seed one, so the drift protections stay exercised."""
         audit_root = cwd / "docs" if (cwd / "docs/audit").is_dir() else cwd / ".agents/log"
         marker = audit_root / "audit/.run-starts.json"
-        self.assertIn("__harness__:" + session, json.loads(marker.read_text(encoding="utf-8")))
+        if marker != store and not marker.exists():
+            marker.parent.mkdir(parents=True, exist_ok=True)
+            marker.write_bytes(store.read_bytes())
         return marker
 
     def reviewed_permission_pause(self):
@@ -235,8 +245,9 @@ class DeliveryStartupCompositionTests(unittest.TestCase):
                                             input=json.dumps({"sessionId": session, "cwd": str(child)}),
                                             capture_output=True, text=True, encoding="utf-8", timeout=30)
                     self.assertEqual(0, result.returncode, result.stdout + result.stderr)
-                    marker = child / ".agents/log/audit/.run-starts.json"
-                    self.assertIn("__harness__:" + session, json.loads(marker.read_text(encoding="utf-8")))
+                    store = hook_marker(child)
+                    self.assertIn("__harness__:" + session, json.loads(store.read_text(encoding="utf-8")))
+                    marker = self.tree_marker(child, store)
                     self.assertEqual(paused["snapshot"], self.run_cli("status", "--task", "demo")["snapshot"])
                 original = marker.read_bytes()
                 marker.unlink()
@@ -284,9 +295,9 @@ class DeliveryStartupCompositionTests(unittest.TestCase):
                     input=json.dumps({"sessionId": "before-" + shape, "cwd": str(child)}),
                     capture_output=True, text=True, encoding="utf-8", timeout=30)
                 self.assertEqual(0, result.returncode, result.stdout + result.stderr)
-                store = "docs/audit" if shape == "negated-empty-directory" else ".agents/log/audit"
-                marker = child / store / ".run-starts.json"
-                self.assertIn("__harness__:before-" + shape, json.loads(marker.read_text(encoding="utf-8")))
+                store = hook_marker(child)
+                self.assertIn("__harness__:before-" + shape, json.loads(store.read_text(encoding="utf-8")))
+                marker = self.tree_marker(child, store)
                 original = marker.read_bytes()
                 paused = self.reviewed_permission_pause()
                 checkpoint = next(Path(paused["local_area"]).rglob("demo.json"))
@@ -469,8 +480,15 @@ class DeliveryStartupCompositionTests(unittest.TestCase):
                                                 text=True, encoding="utf-8", timeout=30)
                         self.assertEqual(0, result.returncode, result.stdout + result.stderr)
                         store = "docs/audit" if opted_in else ".agents/log/audit"
-                        self.assertFalse((cwd / store / ".run-starts.json.tmp").exists(), "hook must consume tracked tmp")
-                        self.assertTrue((cwd / store / ".run-starts.json").is_file())
+                        if plain:
+                            self.assertFalse((cwd / store / ".run-starts.json.tmp").exists(), "hook must consume tracked tmp")
+                            self.assertTrue((cwd / store / ".run-starts.json").is_file())
+                        else:
+                            # Inside git the hook writes the git dir (upstream B15) and leaves the
+                            # tracked in-tree temporaries alone; they stay runtime state either way.
+                            self.assertTrue((cwd / store / ".run-starts.json.tmp").is_file())
+                            self.assertIn("__harness__:tracked-tmp-" + cwd.name,
+                                          json.loads(hook_marker(cwd).read_text(encoding="utf-8")))
                         with self.subTest(cwd=cwd.relative_to(self.repo), opted_in=opted_in):
                             status = self.run_cli("status", "--task", "demo")
                             self.assertEqual(paused["snapshot"], status["snapshot"])
@@ -493,6 +511,10 @@ class DeliveryStartupCompositionTests(unittest.TestCase):
                 self.run_cli("start", "--task", "explicit", "--facts", self.facts(design_ready=True),
                              "--audit-root", self.audit, "--compiled-id", self.compiled_id, "--input", marker)
                 self.hook_start(child, "after-input")
+                if not plain:
+                    # Inside git the hook no longer rewrites the in-tree file (upstream B15);
+                    # rewrite it the way a leftover writer would.
+                    marker.write_text('{"rewritten": true}', encoding="utf-8")
                 self.assertIn("input drift:", self.run_cli("status", "--task", "explicit", ok=False).stderr)
 
     def test_exact_persisted_startup_commands_reach_hook_from_root_and_child(self):

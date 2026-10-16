@@ -338,7 +338,7 @@ class BootstrapTests(unittest.TestCase):
         source = self.clone_source()
         snippet = source / "pack/adapters/hooks/agy.ai-forward-hooks.json"
         bundles = json.loads(snippet.read_text(encoding="utf-8"))
-        bundles["source-selected-pulse"] = bundles.pop("heartbeat")
+        bundles["source-selected-pulse"] = bundles.pop("ai-forward")
         snippet.write_text(json.dumps(bundles), encoding="utf-8", newline="\n")
         self.git("add", "pack/adapters/hooks/agy.ai-forward-hooks.json", cwd=source)
         self.git("commit", "-m", "Fixture: source-selected hook name", cwd=source)
