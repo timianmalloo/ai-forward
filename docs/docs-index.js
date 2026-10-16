@@ -4280,6 +4280,44 @@ window.DOCS_INDEX = {
       "sourceSha256": "6e96c5fc7f988c68229ff3b817483d68a9929f5eccbb0057180183fa32af1bf8"
     },
     {
+      "id": "design-optional-formal-verification",
+      "path": "docs/design/optional-formal-verification.md",
+      "title": "Optional formal verification and claim-scoped evidence",
+      "type": "design",
+      "status": "draft",
+      "owner": "@lucioctinoco",
+      "phase": "formal-verification-pilot",
+      "reviewBy": "2026-11-16",
+      "reviewSuggested": [],
+      "summary": "Proposed design for optional Verus checking of one small Rust example, with results recorded in the existing Proof Pack. Covers the example's contract, how each check is recorded, when a result can be trusted, failure handling and tests. Verus has not been run yet.",
+      "tags": [
+        "formal-verification",
+        "verus",
+        "evidence",
+        "proof-pack"
+      ],
+      "links": [
+        {
+          "to": "spec-optional-formal-verification",
+          "rel": "implements"
+        },
+        {
+          "to": "plan-optional-formal-verification-implementation",
+          "rel": "relates-to"
+        },
+        {
+          "to": "architecture",
+          "rel": "depends-on"
+        },
+        {
+          "to": "api-bounded_process",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "448504d944ce78b9d87cb483352169a3104c9bc345ca206bcac79b273fe239ab"
+    },
+    {
       "id": "design-owner-review",
       "path": "docs/design/owner-review.md",
       "title": "Design — owner review (coord-decide.py · docs/notes/rulings.md · verify-ruling-citations.py · owner-review-gate.py)",
@@ -7112,6 +7150,54 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "fb30d636f0c68014b333a7182f767e54d66af70659c3c027f266805d9a4539bb"
+    },
+    {
+      "id": "plan-optional-formal-verification-implementation",
+      "path": "docs/plans/optional-formal-verification-implementation.md",
+      "title": "Optional formal verification: implementation preparation",
+      "type": "doc",
+      "status": "proposed",
+      "owner": "@lucioctinoco",
+      "phase": "formal-verification-pilot",
+      "reviewBy": "2026-11-16",
+      "reviewSuggested": [],
+      "summary": "Proposed plan for building the optional Verus formal-verification capability. Explains what is done, what Tim needs to decide, the small experiment that must succeed before implementation, and the checks the finished feature must pass.",
+      "tags": [
+        "formal-verification",
+        "verus",
+        "planning",
+        "qualification"
+      ],
+      "links": [
+        {
+          "to": "spec-optional-formal-verification",
+          "rel": "relates-to"
+        },
+        {
+          "to": "plan-optional-formal-verification-spec",
+          "rel": "relates-to"
+        },
+        {
+          "to": "architecture",
+          "rel": "depends-on"
+        },
+        {
+          "to": "kb-graph-and-loop-engineering",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-optional-formal-verification",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "The Steps",
+          "mermaid": "flowchart LR\n    S1[1. Branch] --> S2[2. Plan]\n    S2 --> S3[3. Plan review]\n    S3 --> S4[4. Draft design]\n    S4 --> S5[5. Tim scope review]\n    S5 --> S6[6. Verus experiment]\n    S6 --> S7[7. Final design]\n    S7 --> S8[8. Implement]\n    S8 --> S9[9. Package]"
+        }
+      ],
+      "sourceSha256": "53ec3f0be8ef1755bc705d59726943dd07541091306f42906a2bb10ace9b889c"
     },
     {
       "id": "plan-optional-formal-verification-spec",
@@ -10122,6 +10208,10 @@ window.DOCS_INDEX = {
       ],
       "links": [
         {
+          "to": "design-optional-formal-verification",
+          "rel": "documents"
+        },
+        {
           "to": "design-reader-first-handbook",
           "rel": "documents"
         },
@@ -10203,7 +10293,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "80ddde518e4c324248a18f249f1aadad41f589a19ba11f271675de6a53cd6f2c"
+      "sourceSha256": "300f830b3dbf4856d6dc7e319fea239ecc620785ee3ff13eee532a0086585da8"
     },
     {
       "id": "forensic-review-rev48-proof",
@@ -11859,6 +11949,10 @@ window.DOCS_INDEX = {
       ],
       "links": [
         {
+          "to": "design-optional-formal-verification",
+          "rel": "documents"
+        },
+        {
           "to": "design-reader-first-handbook",
           "rel": "documents"
         },
@@ -11936,7 +12030,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "93d9ee9c71540085ea2cc024fae791646d5c525057a1e491e6e3a0c5c1804b9a"
+      "sourceSha256": "068a3b218e950431a9d0d11c7dd9d1868a5dbf4c8eae455b3ac62d169039a28b"
     }
   ],
   "surfaces": [
@@ -11985,6 +12079,14 @@ window.DOCS_INDEX = {
       "kind": "design-preview",
       "description": "Inspect a rendered design or design-language preview.",
       "artifactId": "design-one-command-adoption"
+    },
+    {
+      "id": "surface-design-optional-formal-verification",
+      "path": "docs/design/optional-formal-verification.html",
+      "title": "Optional Formal Verification",
+      "kind": "design-preview",
+      "description": "Inspect a rendered design or design-language preview.",
+      "artifactId": "design-optional-formal-verification"
     },
     {
       "id": "surface-adr-0013-conversation-native-interrogation",
@@ -12252,6 +12354,14 @@ window.DOCS_INDEX = {
       "artifactId": "backtest-optimize-graph"
     },
     {
+      "id": "surface-plans-optional-formal-verification-implementation",
+      "path": "docs/plans/optional-formal-verification-implementation.html",
+      "title": "Optional Formal Verification Implementation",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "plan-optional-formal-verification-implementation"
+    },
+    {
       "id": "surface-proposals-owner-coordinator-subagent-coordination",
       "path": "docs/proposals/owner-coordinator-subagent-coordination.html",
       "title": "Owner / Coordinator / Sub-Agent coordination",
@@ -12266,6 +12376,14 @@ window.DOCS_INDEX = {
       "kind": "knowledge-tool",
       "description": "Open an interactive knowledge artifact.",
       "artifactId": "mockup-documentation-portal"
+    },
+    {
+      "id": "surface-security-privacy-review",
+      "path": "docs/security/privacy-review.html",
+      "title": "Privacy Review",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "privacy-review"
     },
     {
       "id": "surface-proposals-context-prefix-budget",
@@ -12302,7 +12420,15 @@ window.DOCS_INDEX = {
       "title": "Proposal — Where else to promote directives from prose to structure",
       "kind": "knowledge-tool",
       "description": "Open an interactive knowledge artifact."
+    },
+    {
+      "id": "surface-security-threat-model",
+      "path": "docs/security/threat-model.html",
+      "title": "Threat Model",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "threat-model"
     }
   ],
-  "graphSha256": "69bc1e4c4189eaa65d6459b7d0d2f9b13b4dacb1b4026b4e8427fe4b32d4d48e"
+  "graphSha256": "5bc8d974e4252951dbc7e942b002975ac4592e9ea41197541466b23a72550e23"
 };

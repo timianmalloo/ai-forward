@@ -7,6 +7,7 @@ owner: "@timianmalloo"
 phase: "pack-evolution"
 tags: [security, threat-model]
 links:
+  - { to: design-optional-formal-verification, rel: documents }
   - { to: design-reader-first-handbook, rel: documents }
   - { to: architecture, rel: documents }
   - { to: design-aiforward-cli, rel: documents }
@@ -177,6 +178,12 @@ The pack-evolution capabilities are **local developer/CI tooling** — no networ
 | [design-native-profile-controls](design/native-profile-controls.md) | Decision facts → final readiness | T/E: malformed or self-resolved terminal hides open decision | Mitigate: strict bounded projection validates terminal shape and rejects decision requester self-resolution; historical untyped remains open. |
 | [design-native-profile-controls](design/native-profile-controls.md) | Config source → installed named hooks | T/E: regeneration removes local guard | Mitigate: shared named-bundle merge and actual sync/installer regression. Malformed input leaves target unchanged. |
 | [design-native-profile-controls](design/native-profile-controls.md) | Native Stop → host control | E: emitted refusal mistaken for enforcement | Detect through native runtime control. Script receipt proves emission only; runner independently blocks final readiness. |
+| [design-optional-formal-verification](design/optional-formal-verification.md) | Source/config -> process argv | E/T: text in the source or settings injects commands or turns checking off | mitigate | Fixed, tested command list with no shell; reject options that change scope; source is treated as data | Shell-like text and disable/filter options never change the command |
+| [design-optional-formal-verification](design/optional-formal-verification.md) | Filesystem -> snapshot/evidence | T/I: path tricks or swapped links read or overwrite unrelated files | mitigate | Stay inside the repository; accept regular files only; private directories; fixed snapshot identity; write without overwrite | Path-escape, link, non-regular file, swap and collision attempts |
+| [design-optional-formal-verification](design/optional-formal-verification.md) | Process -> acceptance | S/T: fake success, wrong tool or unreviewed assumptions | mitigate | Tie results to tested tool versions and checked scope; require a matching contract and trust review | Forged or malformed output, changed binary, added-assumption cases |
+| [design-optional-formal-verification](design/optional-formal-verification.md) | Attempt record -> reviewer | R: a result cannot be traced | mitigate | Permanent attempt ID, input digests, the actual command and limited diagnostics | Missing ID or output cannot satisfy acceptance |
+| [design-optional-formal-verification](design/optional-formal-verification.md) | Tool execution -> environment | D/E: resource abuse or malicious build code | mitigate | Separately approved isolation (the bounded helper is not a sandbox); no build scripts or macros in version 1 | Output flood, process cleanup and denied-containment cases |
+| [design-optional-formal-verification](design/optional-formal-verification.md) | Local writer -> manifest | T: someone with legitimate file access forges evidence | accept | Version 1 has no cryptographic attestation. Relies on a reviewed source and tool baseline plus reproducible live runs. Digests catch inconsistency, not deliberate forgery by the same user. **Proposed for acceptance, not yet accepted.** | Tamper-detection tests, with no claim that they stop a malicious local owner |
 | [design-rai-and-scrub](design/rai-and-scrub.md) | file content → scrub | **I** (the scrub's own output leaks the secret it found) | mitigate | output prints only the **redacted** form; never the raw match | `scrub_check_output_has_no_raw_secret` |
 | [design-rai-and-scrub](design/rai-and-scrub.md) | file content → scrub | **T** (`--write` damages content beyond the match) | mitigate | atomic temp+replace; sub only the matched span | `scrub_write_preserves_nonmatching` |
 | [design-rai-and-scrub](design/rai-and-scrub.md) | invocation args | **E** (path traversal to write outside repo) | mitigate | resolve + confine to provided paths; argv-list, no `shell=True`; default scope is `docs/`+`pack/` Markdown | `scrub_confined_to_given_paths` |
@@ -188,7 +195,7 @@ The pack-evolution capabilities are **local developer/CI tooling** — no networ
 | [design-reader-first-handbook](design/reader-first-handbook.md) | A dependency changes silently | Prevent/detect | Pinned local marked 18.0.14, retained MIT license/provenance, SHA-256 guard; no runtime CDN. |
 | [design-reader-first-handbook](design/reader-first-handbook.md) | Unknown page or damaged data strands the reader | Recover | Visible recovery, overview/source link and working navigation; browser checks cover both states. |
 
-<!-- rolled up from 16 artifact(s) by docs-graph.py rollup on 2026-09-22 -->
+<!-- rolled up from 17 artifact(s) by docs-graph.py rollup on 2026-10-16 -->
 
 <!-- END GENERATED -->
 
@@ -196,6 +203,7 @@ The pack-evolution capabilities are **local developer/CI tooling** — no networ
 
 | Accepted risk | Component | Rationale | Residual |
 |---|---|---|---|
+| Proposed, not yet accepted: same-user fabrication of local proof records | optional-formal-verification draft | No cryptographic attestation proposed; reviewed tool/source baseline and reproducible scoped evidence, not digest-based authentication | A fully malicious authorized local writer remains trusted; pending final design/risk review, no implementation approval inferred |
 | Same-user forgery of local qualification or coordination files; deliberately escaped process groups | multi-harness-runner | Opt-in local runner composes existing same-user coordination; qualification is explicitly an Owner attestation and POSIX groups contain cooperative descendants | Never advertise native policy/hook enforcement or a malicious-process sandbox; requalify changed bindings and use manual briefs for unmet boundaries |
 | Regex scrub misses some PII/secrets (false negatives) | rai-and-scrub | stdlib-only constraint; NLP/entropy tools are dependencies the pack forbids | Real enforcement transferred to gitleaks/Presidio in CI (named in the RAI policy) |
 | CLI degrades if `pwsh` absent | aiforward-cli | PowerShell is the canonical sync engine; not all machines have it | Detect-and-print-manual-command; no silent failure |

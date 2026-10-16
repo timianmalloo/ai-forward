@@ -1005,6 +1005,11 @@ window.PORTAL_DATA = {
             "path": "../../docs/design/one-command-adoption.md"
           },
           {
+            "title": "Optional formal verification and claim-scoped evidence",
+            "summary": "Proposed design for optional Verus checking of one small Rust example, with results recorded in the existing Proof Pack. Covers the example's contract, how each check is recorded, when a result can be trusted, failure handling and tests. Verus has not been...",
+            "path": "../../docs/design/optional-formal-verification.md"
+          },
+          {
             "title": "Design — owner review (coord-decide.py · docs/notes/rulings.md · verify-ruling-citations.py · owner-review-gate.py)",
             "summary": "Detailed design for spec-owner-review. One stdlib CLI (coord-decide.py) that writes a decision request only by running coord-core.py's own `request add` and `request resolve`, sends its two mails only through coord-mail.py's append_mail imported by path, and...",
             "path": "../../docs/design/owner-review.md"
@@ -2668,6 +2673,12 @@ window.PORTAL_DATA = {
         "summary": "A conditional skill entry point and source-driven portable bootstrap reduce manual workflow selection without replacing outcome ownership or changing trust..."
       },
       {
+        "id": "design-optional-formal-verification",
+        "type": "design",
+        "title": "Optional formal verification and claim-scoped evidence",
+        "summary": "Proposed design for optional Verus checking of one small Rust example, with results recorded in the existing Proof Pack. Covers the example's contract, how..."
+      },
+      {
         "id": "design-owner-review",
         "type": "design",
         "title": "Design — owner review (coord-decide.py · docs/notes/rulings.md · verify-ruling-citations.py · owner-review-gate.py)",
@@ -3866,6 +3877,12 @@ window.PORTAL_DATA = {
         "type": "doc",
         "title": "optimize-graph live run 01 — commit the rev-40 change set",
         "summary": "First live /optimize-graph run, on the prompt that asked for it. Records the plan, the planned-vs-actual ledger (GO18), and the run's headline measurement —..."
+      },
+      {
+        "id": "plan-optional-formal-verification-implementation",
+        "type": "doc",
+        "title": "Optional formal verification: implementation preparation",
+        "summary": "Proposed plan for building the optional Verus formal-verification capability. Explains what is done, what Tim needs to decide, the small experiment that must..."
       },
       {
         "id": "plan-optional-formal-verification-spec",
@@ -5385,6 +5402,26 @@ window.PORTAL_DATA = {
         "from": "design-one-command-adoption",
         "to": "spec-one-command-adoption",
         "rel": "refines"
+      },
+      {
+        "from": "design-optional-formal-verification",
+        "to": "api-bounded_process",
+        "rel": "depends-on"
+      },
+      {
+        "from": "design-optional-formal-verification",
+        "to": "architecture",
+        "rel": "depends-on"
+      },
+      {
+        "from": "design-optional-formal-verification",
+        "to": "plan-optional-formal-verification-implementation",
+        "rel": "relates-to"
+      },
+      {
+        "from": "design-optional-formal-verification",
+        "to": "spec-optional-formal-verification",
+        "rel": "implements"
       },
       {
         "from": "design-owner-review",
@@ -7227,6 +7264,31 @@ window.PORTAL_DATA = {
         "rel": "depends-on"
       },
       {
+        "from": "plan-optional-formal-verification-implementation",
+        "to": "architecture",
+        "rel": "depends-on"
+      },
+      {
+        "from": "plan-optional-formal-verification-implementation",
+        "to": "design-optional-formal-verification",
+        "rel": "relates-to"
+      },
+      {
+        "from": "plan-optional-formal-verification-implementation",
+        "to": "kb-graph-and-loop-engineering",
+        "rel": "depends-on"
+      },
+      {
+        "from": "plan-optional-formal-verification-implementation",
+        "to": "plan-optional-formal-verification-spec",
+        "rel": "relates-to"
+      },
+      {
+        "from": "plan-optional-formal-verification-implementation",
+        "to": "spec-optional-formal-verification",
+        "rel": "relates-to"
+      },
+      {
         "from": "plan-optional-formal-verification-spec",
         "to": "kb-graph-and-loop-engineering",
         "rel": "depends-on"
@@ -7304,6 +7366,11 @@ window.PORTAL_DATA = {
       {
         "from": "privacy-review",
         "to": "design-native-ownership-enforcement",
+        "rel": "documents"
+      },
+      {
+        "from": "privacy-review",
+        "to": "design-optional-formal-verification",
         "rel": "documents"
       },
       {
@@ -8339,6 +8406,11 @@ window.PORTAL_DATA = {
       {
         "from": "threat-model",
         "to": "design-native-ownership-enforcement",
+        "rel": "documents"
+      },
+      {
+        "from": "threat-model",
+        "to": "design-optional-formal-verification",
         "rel": "documents"
       },
       {

@@ -7,6 +7,7 @@ owner: "@timianmalloo"
 phase: "pack-evolution"
 tags: [privacy, linddun, data-governance]
 links:
+  - { to: design-optional-formal-verification, rel: documents }
   - { to: design-reader-first-handbook, rel: documents }
   - { to: architecture, rel: documents }
   - { to: forensic-review, rel: documents }
@@ -91,12 +92,14 @@ downstream dispatch risk was retired by removing the capability, not by acceptin
 | [design-multi-harness-runner](design/multi-harness-runner.md) | Worker metadata → ledger | Session linkability | Accepted for durable audit; only bounded operational fields, hashes and explicit unknown cost |
 | [design-native-ownership-enforcement](design/native-ownership-enforcement.md) | Hook input/environment → local decision facts | L/I: session/path/cwd can identify the local workspace or account directory | mitigate | Existing decision grain with host/cwd metadata; no raw patches or credentials. Export only allowlisted shapes/hashes and cwd-match booleans. | Existing local ledger lifecycle; raw diagnostics remain private and can be removed locally. Committed sanitized proof follows Git retention. |
 | [design-native-profile-controls](design/native-profile-controls.md) | Stop and decision projection → local facts/status | Linkability of session/cwd/request IDs | Existing local ledger retention; validated IDs capped32 plus count; no question/body/prompt/config contents. Tests assert sentinel absence. |
+| [design-optional-formal-verification](design/optional-formal-verification.md) | Verifier diagnostics -> local evidence | I/D: paths or source text may identify people or reveal secrets | mitigate | Keep raw diagnostics private and size-limited by default; publish only after explicit opt-in to publication and existing scrubbing or manual review; keep a digest link to approved evidence | Follows the adopting repository's local retention. Deleting private diagnostics makes the evidence `unknown`, never silently complete. |
+| [design-optional-formal-verification](design/optional-formal-verification.md) | Manifest -> committed Proof Pack | L/I: attempt and reviewer IDs link work to people | mitigate | Use requirement and obligation IDs and repository-relative paths only; no environment dumps, home paths or new reviewer contact fields | Follows the repository's existing Git retention and access policy |
 | [design-reader-first-handbook](design/reader-first-handbook.md) | Raw operational history reaches public prose | Prevent | Curated website source corpus only; publish boundary still excludes raw audit/dream/manifests/working ledgers. |
 | [design-reader-first-handbook](design/reader-first-handbook.md) | Search terms become tracking data | Prevent | Search stays in page memory; no analytics, cookies, provider calls or outbound requests. |
 | [design-reader-first-handbook](design/reader-first-handbook.md) | Illustrations are mistaken for real customer records | Prevent | Fictional HarborTasks and explicitly illustrative outputs; no customer material or live model runs needed. |
 | [design-reader-first-handbook](design/reader-first-handbook.md) | Third-party scripts or images observe reading activity | Prevent | Locally embedded parser; system fonts; image embeddings disabled with visible text fallback; browser request inventory is empty. |
 
-<!-- rolled up from 6 artifact(s) by docs-graph.py rollup on 2026-09-22 -->
+<!-- rolled up from 7 artifact(s) by docs-graph.py rollup on 2026-10-16 -->
 
 <!-- END GENERATED -->
 
