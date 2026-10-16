@@ -105,4 +105,3 @@ Every refusal the nine directions produce (for the grammar assertion).
 
 - Public functions: **9** · documented: **5** (**56%**)
 - Undocumented (recorded, not invented): `sha256_text`, `trace_table`, `verify_file`, `self_test`
-

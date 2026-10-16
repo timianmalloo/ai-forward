@@ -158,4 +158,3 @@ docs/profiles/<sp-id>/profile.json in the window - session-profile.py output (da
 
 - Public functions: **21** · documented: **4** (**19%**)
 - Undocumented (recorded, not invented): `find_root`, `now_iso`, `read_jsonl`, `append_jsonl`, `scrub`, `is_tainted`, `load_corpus`, `score`, `build_proposals`, `dream_id`, `render_data_js`, `render_html`, `append_diary`, `cmd_run`, `cmd_capture_mitigation`, `cmd_apply_decisions`, `cmd_list`
-

@@ -47,4 +47,3 @@ Open a non-reparse regular file; a writable shared handle supports locking.
 
 - Public functions: **4** · documented: **3** (**75%**)
 - Undocumented (recorded, not invented): `read_regular`
-

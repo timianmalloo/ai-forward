@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>One Command Adoption</title><style>
+:root { color-scheme: light dark; --bg:#f7f5ef; --panel:#fff; --text:#20201d;
+  --muted:#66645f; --line:#d9d5ca; --accent:#3157a4; --code:#f0eee7; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#171816; --panel:#20221f; --text:#f2f1eb; --muted:#b8b6ae;
+    --line:#3d403a; --accent:#8fb0ff; --code:#292c27; }
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text);
+  font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif; }
+main { width:min(920px,calc(100% - 32px)); margin:32px auto; padding:40px;
+  background:var(--panel); border:1px solid var(--line); border-radius:12px; }
+h1,h2,h3,h4,h5,h6 { line-height:1.2; margin:1.5em 0 .55em; }
+h1 { margin-top:0; font-size:2.2rem; } h2 { border-bottom:1px solid var(--line); padding-bottom:.3em; }
+a { color:var(--accent); } code { background:var(--code); padding:.12em .35em; border-radius:4px; }
+pre { overflow:auto; padding:16px; background:var(--code); border-radius:8px; }
+pre code { padding:0; } blockquote { margin:1em 0; padding:.2em 1em; color:var(--muted);
+  border-left:4px solid var(--line); }
+table { width:100%; border-collapse:collapse; margin:1em 0; display:block; overflow:auto; }
+th,td { padding:.55em .75em; border:1px solid var(--line); text-align:left; vertical-align:top; }
+th { background:var(--code); } hr { border:0; border-top:1px solid var(--line); }
+.source { color:var(--muted); font-size:.9rem; margin-bottom:2rem; }
+@media (max-width:640px) { main { width:100%; margin:0; padding:24px 18px; border:0; border-radius:0; } }
+</style></head><body><main><div class="source">Rendered from one-command-adoption.md</div><h1>One-command adoption design</h1>
+<h2>Delivery is a skill, not a new execution service</h2>
+<p><code>pack/commands/deliver/SKILL.md</code> is the authoritative entry point. The existing host/model executes the selected skills. <code>delivery.py</code> only derives a conditional stage list and validates local checkpoint integrity; it does not call models, execute arbitrary commands, approve permissions or certify semantic acceptance.</p>
+<p>Ground the original request and reuse an accepted/current contract, plan, spec or design. Select stages for real unresolved questions. T0 stays short; explicit security, identity, data, contract, money and concurrency risks, and migrations, retain the Rules-of-the-Road T2 floor. Coordinated migrations characterize old behavior before track implementation and retain coverage, equivalence and rollback obligations. Independent tracks prepare their contracts before execution. Review-only requests and empty invocations do not enter a product-editing pipeline.</p>
+<p>Checkpoint records preserve raw/compiled intent, project identity, routing facts, completed-stage evidence, input/workspace fingerprints, gates and final criteria observations. Git state is worktree-local; plain projects use a project-keyed local state area without creating Git history. Atomic replacement and an exclusive writer lock avoid cooperative simultaneous task updates. A crash lock requires inspection, not an invented completion or automatic clearance.</p>
+<p>A pause carries a question, authority, task/gate binding and partial proof. A reply receipt is valid only after the host/agent has checked the original authorized reply or independent review. Source labels and actor names are cooperative bookkeeping, not cryptographic authentication. Hashes detect drift; they do not prove a report is true. Hard vetoes, host tool permissions and release consent remain independent controls. The original criteria must be matched to real observations before closure.</p>
+<h2>Setup reuses the committed source deployment map</h2>
+<p>The stdlib PEP 723 <code>bootstrap.py</code> is run through <code>uv</code> with <code>--no-config --no-project --script</code>. Git and uv are explicit prerequisites. This supplies an appropriate interpreter without resolving target dependencies, creating a target environment or lockfile, or changing global runtime/trust configuration. The shared installed hook launcher prefers native Python and uses uv only when Python is not on PATH.</p>
+<p>The bootstrap resolves the project root, obtains the selected committed source and prints its exact Git commit and pack revision. <code>--source</code> supports a local committed checkout; <code>--repo</code> and <code>--ref</code> select a remote source. The source applier is used, not a possibly stale installed applier. Before upstream merge, the fork preview explicitly selects the fork branch; it must not silently install upstream main.</p>
+<ol><li>Strictly decode existing policy-bearing settings and validate the managed blocks.</li><li>Compute the source applier&#x27;s dry plan in a bounded subprocess. Its action rows and</li></ol>
+<p>observed write/remove destinations supply the staging footprint, including backups and legacy removals. There is no second deployment copy map.</p>
+<ol><li>Stage only the managed/baseline context in a disposable directory. Preserve relevant</li></ol>
+<p>Git history/index context. Do not walk/hash/copy the entire target or dependency binaries; necessary parity discovery honors ignored-untracked paths.</p>
+<ol><li>Apply the actual source program in staging. Run a fresh source plan there to verify</li></ol>
+<p>no required actions remain. Child exit zero alone is insufficient.</p>
+<ol><li>Recheck original owned paths for drift and unsafe objects. Promote only verified</li></ol>
+<p>changes, then read actual target bytes back. Ordinary I/O failure attempts rollback; unsafe/incomplete recovery retains originals and reports the exact boundary.</p>
+<ol><li>Report the installed source receipt and the next <code>/deliver</code> action.</li></ol>
+<p>Unrelated product work, untracked files, owned graph/index data and custom instructions/settings remain outside this operation. Managed symlinks, hardlinks, nonregular files and Windows reparse points refuse; conflicts/REVIEW are not forced. Repeat runs recompute the map and preserve local deviations. There is no Git init, identity invention, commit, push, deployment or new ownership/trust opt-in.</p>
+<p>The source plan&#x27;s observed reads and writes are run in isolated Python children (<code>-I -B</code>) so ordinary target <code>json.py</code>/<code>subprocess.py</code> names are not executable import paths and previews do not write bytecode into the target. Source-named existing hook bundle changes, unverified removals, writes to an existing <code>.gitattributes</code>, and active product control rewrites require reconciliation before target writes. This is deliberately conservative, including old stock hook refreshes; it does not guess ownership from a filename. Credential-bearing/query/fragment source URLs refuse before Git, preventing transport credentials from appearing in tracked receipts.</p>
+<h2>Limits are explicit</h2>
+<ul><li>A remote installer executes the selected trusted source. It is not a malicious-source</li></ul>
+<p>sandbox; pin both the bootstrap URL and source ref when requiring immutable inputs.</p>
+<ul><li>Target comparison is cooperative drift detection, not a concurrent-writer lock or</li></ul>
+<p>power-loss/SIGKILL-atomic transaction.</p>
+<ul><li>Plain-project workspace hashing does not reinterpret every possible ignore format;</li></ul>
+<p>load-bearing runtime/ignored/external files require explicit input registration.</p>
+<ul><li>Current inherited compiler limitations remain inherited. The new entry point does not</li></ul>
+<p>make quote provenance a semantic guarantee or silently waive nondispatchable contracts.</p>
+<ul><li>Filesystem projection and deterministic tests do not qualify model behavior on every</li></ul>
+<p>host. Native scenarios and real Windows/macOS/Linux executions are recorded separately.</p>
+<h2>Verification homes</h2>
+<p>Focused regression controls live in <code>test_delivery.py</code>, <code>test_bootstrap.py</code>, <code>test_adoption_entrypoints.py</code> and <code>test_uv_hook_launcher.py</code>. The existing complete bundle, portability, source/parity, API, portal and browser gates remain in force. The adoption workflow exercises native Windows/macOS/Linux and Windows cmd invocation against the exact source SHA. Verification results belong in the linked Proof Pack, not in an unconditional claim of semantic or host enforcement.</p></main></body></html>

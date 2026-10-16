@@ -174,4 +174,3 @@ The offending key of a malformed compiled document, else None.
 
 - Public functions: **22** · documented: **7** (**32%**)
 - Undocumented (recorded, not invented): `default_templates_dir`, `read_entries`, `find_entry`, `docs_graph`, `read_template`, `load_template`, `build_skeleton`, `render_sections`, `render_document`, `edit_distance`, `cmd_skeleton`, `cmd_finish`, `render_self_test`, `cmd_render`, `cmd_distance`
-

@@ -32,4 +32,3 @@ Merge source-owned hook bundles while preserving project-owned bundle names.
 ## Coverage
 
 - Public functions: **0** · documented: **0** (**100%**)
-

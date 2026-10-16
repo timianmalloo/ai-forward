@@ -144,7 +144,8 @@ def render(name, tree, source_rel):
     L.append(f'title: "API — {slug}.py"')
     L.append("type: api")
     L.append("status: accepted")
-    L.append('owner: "@timianmalloo"')
+    owner = "@ahutanu" if slug == "delivery" else "@timianmalloo"
+    L.append(f'owner: "{owner}"')
     L.append("tags: [api, scripts, generated]")
     L.append("links:")
     L.append("  - { to: api-index, rel: refines }")
@@ -217,7 +218,7 @@ def render(name, tree, source_rel):
     if gaps:
         L.append(f"- Undocumented (recorded, not invented): {', '.join('`%s`' % g for g in gaps)}")
     L.append("")
-    return "\n".join(L) + "\n", len(fns), documented
+    return "\n".join(L).rstrip("\n") + "\n", len(fns), documented
 
 
 def index_page(rows, totals):

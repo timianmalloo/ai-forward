@@ -54,4 +54,3 @@ mode_id selects a literal advertised fresh-session mode before any prompt.
 ## Coverage
 
 - Public functions: **3** · documented: **3** (**100%**)
-

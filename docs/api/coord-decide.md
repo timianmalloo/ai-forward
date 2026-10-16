@@ -134,4 +134,3 @@ an empty one, and allocating 1 in it would collide with its own numbering.
 
 - Public functions: **12** · documented: **3** (**25%**)
 - Undocumented (recorded, not invented): `refuse`, `iso_utc`, `next_number`, `append_ruling`, `decision_body`, `cmd_request`, `cmd_rule`, `cmd_list`, `build_parser`
-

@@ -97,4 +97,3 @@ DX23 - measure before you diagnose. Counts are the diagnosis.
 
 - Public functions: **6** · documented: **4** (**67%**)
 - Undocumented (recorded, not invented): `render_markdown`, `render_text`
-

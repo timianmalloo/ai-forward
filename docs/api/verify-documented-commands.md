@@ -105,4 +105,3 @@ The portability tokens one command line carries (empty when allowlisted).
 
 - Public functions: **6** · documented: **3** (**50%**)
 - Undocumented (recorded, not invented): `scan`, `report`, `self_test`
-

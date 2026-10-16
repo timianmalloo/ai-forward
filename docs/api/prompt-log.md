@@ -169,4 +169,3 @@ Exercise the data layer end-to-end in a temp store (no TTY needed).
 
 - Public functions: **18** · documented: **7** (**39%**)
 - Undocumented (recorded, not invented): `resolve_store`, `append_entry`, `newest_first`, `cmd_add`, `cmd_list`, `cmd_search`, `cmd_show`, `cmd_get`, `cmd_browse`, `cmd_pick`, `build_parser`
-

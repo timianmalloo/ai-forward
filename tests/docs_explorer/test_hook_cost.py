@@ -26,6 +26,17 @@ HOOKS = REPO / "pack" / "adapters" / "hooks"
 SCRIPTS = REPO / "pack" / "scripts"
 DISPATCH = HOOKS / "dispatch.py"
 LAUNCHER = "git -c alias.aif-hook=!sh aif-hook docs/ai-forward-pack/hooks/run-hook.sh "
+# Startup entries on Claude, Grok and Copilot run the dispatcher through the bounded upward
+# search for run-hook.sh (plain-project startup from a child directory, revision 108).
+START_EVENTS = ("SessionStart", "SubagentStart", "sessionStart", "subagentStart")
+
+
+def launcher_for(host, event):
+    if host in ("claude", "grok", "copilot") and event in START_EVENTS:
+        return _load(SCRIPTS / "pack-apply.py", "pack_apply_launcher").STARTUP_LAUNCHER
+    return LAUNCHER
+
+
 PACK_HOOKS = ("reread-guard.py", "mail-doorbell.py", "heartbeat.py", "git-identity-guard.py",
               "owner-review-gate.py", "session-start.py", "dispatch.py")
 
@@ -101,7 +112,7 @@ class OneProcessPerEvent(unittest.TestCase):
                     per_event.setdefault(event, []).append(command)
             self.assertEqual(sorted(per_event), sorted(ROUTES_BEFORE[host]), host)
             for event, commands in per_event.items():
-                self.assertEqual(commands, [LAUNCHER + "dispatch.py --host {} --event {}".format(host, event)],
+                self.assertEqual(commands, [launcher_for(host, event) + "dispatch.py --host {} --event {}".format(host, event)],
                                  "{} {}".format(host, event))
 
     def test_the_dispatcher_runs_every_hook_each_surface_ran_before(self):
@@ -185,7 +196,7 @@ class Migration(unittest.TestCase):
         for event in ROUTES_BEFORE["claude"]:
             commands = [h["command"] for e in merged["hooks"][event] for h in e["hooks"]]
             pack = [c for c in commands if any(hook in c for hook in PACK_HOOKS)]
-            self.assertEqual(pack, [LAUNCHER + "dispatch.py --host claude --event " + event], event)
+            self.assertEqual(pack, [launcher_for("claude", event) + "dispatch.py --host claude --event " + event], event)
         self.assertEqual(merged, json.loads(self.pa.merge_claude_settings(snippet, json.dumps(merged))))
 
     def test_agy_refresh_retires_the_per_hook_sections_and_keeps_project_owned_ones(self):

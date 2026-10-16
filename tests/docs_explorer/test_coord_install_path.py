@@ -69,13 +69,21 @@ class DoctorCoordinationTests(unittest.TestCase):
         """A repo without the coordination script is not failing to install it."""
         self.assertNotEqual(self.check()["status"], self.m.FAIL)
 
-    def test_the_script_without_a_registry_is_a_FAIL(self):
-        """THE finding. The layer shipped, nothing turned it on, and nothing noticed."""
+    def test_the_script_without_a_registry_is_optional_for_serial_work(self):
+        """Shipped scripts do not opt a serial project into coordination."""
         self.install_script()
+        result = self.check()
+        self.assertEqual(result["status"], self.m.WARN)
+        self.assertIn("NOT APPLICABLE", result["detail"])
+        self.assertNotIn("classify init", result["fix"])
+        # Preserve the original detection guarantee once coordination is enabled.
+        (self.root / ".gitattributes").write_text(
+            "* text=auto eol=lf\ndocs/audit/audit-log.jsonl merge=coord-register\n",
+            encoding="utf-8", newline="\n")
         result = self.check()
         self.assertEqual(result["status"], self.m.FAIL)
         self.assertIn("classify init", result["fix"],
-                      "the doctor must name the command that fixes it")
+                      "the doctor must name the missing enabled contract")
 
     def test_a_parsing_registry_is_a_PASS(self):
         self.install_script()

@@ -59,4 +59,3 @@ Stdlib only; Python 3.8+.
 
 - Public functions: **1** · documented: **0** (**0%**)
 - Undocumented (recorded, not invented): `scan`
-

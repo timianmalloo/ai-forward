@@ -256,4 +256,3 @@ Extract the markdown table under --heading from every matching artifact and merg
 
 - Public functions: **37** · documented: **3** (**8%**)
 - Undocumented (recorded, not invented): `canonical_json`, `sha256_text`, `normalized_source`, `parse_scalar`, `split_flow`, `parse_flow_map`, `extract_mermaid_blocks`, `discover_html_surfaces`, `scan`, `scan_context`, `read_context_source`, `sniff_kind`, `analyze`, `cmd_inventory`, `count_by`, `policy_hash`, `graph_hash`, `project_identity`, `project_root_id`, `cmd_derive`, `cmd_freshness`, `edit_frontmatter_flags`, `cmd_flag`, `cmd_clear_flag`, `cmd_snapshot`, `cmd_stub`, `context_graph`, `traverse_context`, `markdown_chunks`, `context_health`, `active_changes`, `packet_bytes`, `cmd_context`, `write_context_error`
-

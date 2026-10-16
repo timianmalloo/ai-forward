@@ -13,7 +13,7 @@ This repo is two things at once:
    `.grok/`, `.agents/`, `docs/`) so the skills, agents, and knowledge are active in Claude Code, Copilot,
    Grok Build, Antigravity, and Codex *while you work on the pack itself*. Dogfooding: the pack is built using the pack.
 
-For the pack's own story — why it exists, what's inside, how to use the twenty-nine skills — read
+For the pack's own story — why it exists, what's inside, how to use the thirty skills — read
 [`pack/README.md`](pack/README.md) and [`pack/OVERVIEW.md`](pack/OVERVIEW.md).
 
 For a newcomer-oriented learning path, use the
@@ -27,6 +27,114 @@ generates the public reader and its documentation-graph copies.
 Skills live in `.agents/skills/`; `AGENTS.md` supplies project instructions.
 See the [Codex setup and troubleshooting guide](docs/ai-forward-pack/codex.md).
 
+## Start with one outcome
+
+Install once, then describe the result you want. You do not need to clone AI-Forward
+or learn its workflow sequence first. Start with a small change you can review.
+
+The standard setup installs the upstream `main` version. You need [Git](https://git-scm.com/downloads),
+[uv](https://docs.astral.sh/uv/getting-started/installation/), network access and a
+supported coding app with its own account/model access.
+
+### 1. Install in your project
+
+Open a terminal in the project you want to work on, then copy this one line. It works
+in Windows PowerShell/Command Prompt and macOS/Linux terminals, with Git and uv on
+PATH. A project without Git is welcome too; setup will not initialize it for you.
+
+```text
+uv run --no-config --no-project --script https://raw.githubusercontent.com/timianmalloo/ai-forward/main/bootstrap.py
+```
+
+No `--repo` or `--ref` is needed: setup already defaults to this upstream repository
+and `main`. For unmerged changes, see [testing a contribution](#test-unmerged-changes).
+
+Success reports `AI-Forward installed`, `AI-Forward updated` or
+`AI-Forward already current`, with the revision and exact source commit. That means
+the pack files are ready—not that a project task has been completed. Open this
+project in your coding app and start a fresh chat so it can discover the new skill.
+
+### 2. Ask for one result
+
+In Claude Code or a coding app that exposes the installed `/deliver` entry point:
+
+```text
+/deliver Add CSV export for the current project and filter. Export every matching task, not only the visible page. Do not add scheduling or new roles.
+```
+
+This is a chat request, not a terminal command. Replace the example with a task in
+your project. Say what correct behavior looks like and what must stay unchanged.
+
+| Coding app | How to start |
+|---|---|
+| Claude Code | `/deliver <your task>` |
+| Codex | `$deliver <your task>`; use `/skills` or `$` to find installed skills |
+| Copilot CLI | Find `deliver` with `/skills`, then `/deliver <your task>`. You can also ask `Use the /deliver skill to <your task>`. If installed during a chat, use `/skills reload`, then `/skills info deliver`. |
+| VS Code Copilot | Use `/deliver` when listed, or select/request the installed `deliver` skill. Agent Host sessions use skills, not the older prompt-file route. |
+| Grok Build / Antigravity | Select or request the installed `deliver` skill by name using your app's skill support |
+
+The agent chooses the needed workflows and continues through approved work. It does
+not run every skill, map your entire repository or start a swarm by default.
+Individual skills remain available when you want to direct a particular stage.
+
+### 3. Review the result—or answer a necessary question
+
+A useful handback shows changed files, checks that exercised your requested result,
+any limits and any decision still needed. A plan or a passing test alone is not the
+finish line. If 63 tasks match a filter but the page shows 20, the export must include
+all 63. A test that serializes only the visible 20 does not prove that.
+
+When a decision, permission or blocking review is needed, the agent explains what
+is blocked, asks a specific question and saves its place with a task id. Reply in
+the same chat. Your reply authorizes only the decision you actually answered; it
+does not grant unrelated permissions or authorize deployment. A blocking review
+requires the finding addressed and independently re-reviewed, not the author's own
+approval.
+
+In a fresh chat **in the same project**, use:
+
+```text
+/deliver resume <task-id>
+```
+
+Codex uses `$deliver resume <task-id>`; in Copilot CLI, ask it to use the `/deliver`
+skill to resume that id. Replace `<task-id>` with the id the agent gave you.
+The agent checks the saved request, project and evidence before reusing completed
+work. If something changed, it explains what needs checking again rather than
+silently starting over or inventing approval. Checkpoints are local; another clone
+or computer does not automatically have them.
+
+For a guided first task, read the [quick start](web/handbook/guides/get-started.md)
+and [delivery guide](web/handbook/skills/deliver.md). Open `docs/portal/index.html`
+locally for the searchable handbook built from this checkout.
+
+### Setup options and safe stops
+
+- **Preview:** append `--dry-run` to the setup line. It downloads/checks the source
+  and shows the plan without writing to your project.
+- **Repeat or update:** rerun the same line. Unchanged installed files stay current;
+  newer source is reconciled against the installed version. Review the result.
+- **Pin a version:** replace the branch in both the wrapper URL and `--ref` with
+  the same full commit id. A branch can move; matching pins make a run reproducible.
+- **Use local committed source:** `--source <clone-path>` uses a local Git clone's
+  committed HEAD, not its uncommitted edits.
+
+Setup does not change model/trust permissions, install project dependencies,
+commit, push or deploy. If existing instructions, hooks, Git settings or checks
+conflict, it stops and names the item for review. Keep the existing file and
+reconcile the specific conflict; do not delete it or grant blanket permissions just
+to make setup pass. Use a credential-free repository URL and Git's credential
+helper, not a token in a URL.
+
+Installing files is not proof that a model loaded or followed them. If `deliver`
+is missing, check discovery before relying on it. The local progress helper checks
+saved state; it does not authenticate a human decision or judge whether a result
+meets the meaning of your request.
+
+Manual reconciliation and source-clone installation are expert alternatives,
+not additional onboarding steps. Source and version overrides are optional;
+they do not belong in the normal setup command.
+
 ## Layout
 
 ```
@@ -34,7 +142,7 @@ ai-forward/
 ├─ pack/                  ← CANONICAL SOURCE — edit here to expand the pack
 │   ├─ README.md  OVERVIEW.md  research-synthesis.md
 │   ├─ knowledge/         ← the reasoning spine + 23-persona roster + vendored foundation
-│   ├─ commands/          ← the 29 skills (SKILL.md + reference/ each)
+│   ├─ commands/          ← the 30 skills (SKILL.md + reference/ each)
 │   ├─ templates/         ← the artifacts each skill produces
 │   ├─ adapters/          ← INSTALL.md + Claude Code / Copilot agents + prompts + managed blocks
 │   ├─ evals/             ← the pack's own regression suite
@@ -112,8 +220,8 @@ The natural order and what each skill produces are in [`pack/OVERVIEW.md`](pack/
 pwsh tools/package-pack.ps1   # writes dist/ai-forward-pack.zip
 ```
 
-Recipients drop the pack into their own repo by manual reconciliation — the deployment map and
-update procedure are in [`pack/adapters/INSTALL.md`](pack/adapters/INSTALL.md). (`tools/sync-pack.ps1`
+Recipients can use the one-line setup above or drop the pack into their own repo by manual
+reconciliation — the deployment map and update procedure are in [`pack/adapters/INSTALL.md`](pack/adapters/INSTALL.md). (`tools/sync-pack.ps1`
 mirrors the Claude Code, Copilot, Grok Build, and Antigravity surfaces needed *here*; the distributable in
 `pack/` carries the same wiring for consuming repos.)
 
@@ -132,6 +240,16 @@ fourteen reasoning skills, the /auditlog and prompt-log utilities, and the UI ar
 rendered mockups of each. The full knowledge graph is browsable at [`docs/index.html`](docs/index.html)
 (the Docs Explorer), and the architecture of record is in [`docs/architecture.md`](docs/architecture.md).
 Both are generated and maintained by the `/document` skill.
+
+### Test unmerged changes
+
+Normal setup reads upstream `main`; it does not install an unmerged pull request.
+The upstream launcher becomes available when the contribution adding it is merged.
+Before then, reviewers can run the launcher from a committed local clone with
+`--source <clone-path>`, or select a review source with `--repo <repository-url>`
+and `--ref <branch-or-commit>`. Match the launcher to that same reviewed source.
+These options are for reviewing contributions or choosing a version, not prerequisites
+for using the released pack. No global Git settings or trust changes are needed.
 
 ## License
 

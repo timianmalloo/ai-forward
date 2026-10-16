@@ -321,4 +321,3 @@ The compile section alone, from the audit log - needs no harness store, so it an
 
 - Public functions: **41** · documented: **20** (**49%**)
 - Undocumented (recorded, not invented): `parse_ts`, `iso`, `pct`, `est_tokens`, `model_family`, `norm_path`, `git`, `in_repo`, `copilot_home`, `copilot_settings`, `copilot_sessions`, `claude_home`, `claude_sessions`, `profile_claude`, `render_compile_section`, `render_markdown`, `cmd_discover`, `profile_id`, `cmd_profile`, `cmd_compare`, `cmd_fixes`
-

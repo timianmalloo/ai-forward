@@ -35,4 +35,3 @@ Unknown framing fails closed. It never resumes, prompts, approves or cancels a t
 
 - Public functions: **1** · documented: **0** (**0%**)
 - Undocumented (recorded, not invented): `thread_metadata`
-

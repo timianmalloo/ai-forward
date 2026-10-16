@@ -28,6 +28,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from install_guidance import current_install_body
 
 REPO = Path(__file__).resolve().parents[2]
 SCRIPTS = REPO / "pack" / "scripts"
@@ -263,13 +264,12 @@ class NoPackSurfaceStillTeachesTheWrongModel(unittest.TestCase):
                 continue
             if "__pycache__" in path.parts:
                 continue
-            text = re.sub(r"\s+", " ", path.read_text(encoding="utf-8", errors="replace"))
-            # INSTALL.md's frontmatter `changes:` list is an append-only HISTORY of
-            # shipped revisions, replayed in order by a repo catching up. Rewriting a past
-            # entry would falsify that record, and the new entry carries the correction --
-            # so the gate reads the BODY, which is the instruction people follow today.
+            text = path.read_text(encoding="utf-8", errors="replace")
+            # Retired refresh data is not today's guidance. Keep every current
+            # instruction and every other collapsed section under the same guard.
             if path.name == "INSTALL.md":
-                text = text.split(" --- ", 1)[-1]
+                text = current_install_body(text)
+            text = re.sub(r"\s+", " ", text)
             for pattern in self.FORBIDDEN:
                 if re.search(pattern, text, re.IGNORECASE):
                     offenders.append("{}: {}".format(path.relative_to(REPO), pattern))

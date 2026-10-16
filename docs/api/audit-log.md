@@ -414,4 +414,3 @@ Ingest a session-export JSON array of turns into the audit log (build on session
 
 - Public functions: **43** · documented: **26** (**60%**)
 - Undocumented (recorded, not invented): `now_iso`, `record_start`, `audit_dir`, `log_path`, `read_log`, `append_log`, `git`, `git_context`, `commits_between`, `find_template`, `cmd_append`, `cmd_change`, `cmd_list`, `cmd_search`, `cmd_get`, `cmd_render`, `cmd_git_context`
-

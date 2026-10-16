@@ -66,4 +66,3 @@ Returns a non-empty string; falls back to "repo" only when there is no name to b
 ## Coverage
 
 - Public functions: **1** · documented: **1** (**100%**)
-
