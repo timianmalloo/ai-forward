@@ -11,6 +11,7 @@ from unittest import mock
 import test_delivery as fixtures
 import test_delivery_checkpoint_guards as guards
 from test_pack_apply import pa
+from test_delivery_startup_composition import hook_marker
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -46,8 +47,9 @@ class InstalledSessionResumeTests(unittest.TestCase):
                                                  '--actor', 'author', '--evidence', proof)
                         receipt = fixture.receipt(paused)
                         session_start('fresh-fixture')
-                        marker = fixture.repo / '.agents/log/audit/.run-starts.json'
-                        self.assertTrue(marker.is_file(), 'The actual installed hook must write its fallback')
+                        marker = hook_marker(fixture.repo)
+                        self.assertIn('__harness__:fresh-fixture', json.loads(marker.read_text(encoding='utf-8')),
+                                      'The actual installed hook must write its run-start store')
                         self.assertFalse((fixture.repo / 'docs/audit').exists(), 'Do not opt into product audit')
                         self.assertEqual(product, app.read_bytes())
                         resumed = fixture.run_cli('resume', '--task', 'demo', '--receipt', receipt)
