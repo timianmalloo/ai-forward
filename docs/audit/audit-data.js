@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-10-16T15:23:33Z",
+  "generated": "2026-10-16T23:32:52Z",
   "audit": [
     {
       "actor": null,
@@ -13581,6 +13581,42 @@ window.AUDIT_DATA = {
         "short": "17666d359",
         "branch": "docs/formal-verification-spec",
         "pushed": null
+      }
+    },
+    {
+      "id": "al-01M53GZAKF7807FVFCT6M6P9MQ",
+      "shortname": "sync-pack-mirror-plat-d",
+      "datetime": "2026-10-16T23:32:51Z",
+      "session": "e2a67074-035a-430f-8d5b-0b66be06edbe",
+      "prompt": "yes, find the sync-pack root cause / yes, do the sync-pack fix as a separate PR / go, do steps 2-5",
+      "summary": "Root cause of sync-pack's \"The directory is not empty\" failures, measured: D: is exFAT, which has no POSIX delete semantics, and Reset-Dir deleted and recreated 15 generated trees on every run. The copy-then-delete failed 1 time in 20 in an unwatched D: folder, 0 in 40 on NTFS C:, and 3 of 3 in the PR #6 worktree. Defender real-time scanning is on; that it held the files is inferred, not observed.\n\nFix: sync-pack builds every generated surface in a staging tree in the system temp directory and mirrors it into place once all of them are built. Only changed files are written, only stale ones deleted, and empty folders pruned. A failed run leaves the mirrored surfaces untouched.\n\nControl: tests/docs_explorer/test_sync_pack_mirror.py (3 tests). The file-ID and failed-run tests were observed red on the old code; all 3 now pass. Registered as PLAT-D (controlled), with the sweep: four other recursive deletes checked; none can damage committed output.\n\nVerification: verify-bundle -SkipTests ran twice back to back on D: and passed both times. Full pytest: 1363 passed; the 3 failures were the register count (fixed) and a Windows transport test that passes 3 of 3 in isolation (flaky only under full-suite load; unrelated code).\n\nPre-existing and out of scope: Set-Content writes CRLF on Windows, so line-ending-only status noise remains in .github/agents, .grok/agents and some JSON. It is not drift, because .gitattributes normalizes it.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": "claude-code",
+      "artifacts": [
+        "tools/sync-pack.ps1",
+        "tests/docs_explorer/test_sync_pack_mirror.py",
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [
+        "defect-class",
+        "PLAT-D"
+      ],
+      "outcome": "success",
+      "goal": "Find and fix the root cause of sync-pack half-deleting generated surfaces on D:, as a separate PR",
+      "done_when": "Mirror sync landed with a red-first test, PLAT-D registered with a sweep, gates pass twice on D:, PR opened",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true
+      },
+      "git": {
+        "sha": "269f962e6dcd47d7464a73c24d7fdeec1ae3390b",
+        "short": "269f962e6",
+        "branch": "fix/sync-pack-mirror",
+        "pushed": true
       }
     }
   ],
