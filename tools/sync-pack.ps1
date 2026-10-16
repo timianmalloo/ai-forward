@@ -65,23 +65,66 @@ foreach ($c in @(@{ exe = 'python3'; args = @() }, @{ exe = 'python'; args = @()
 }
 if (-not $pyExe) { throw 'No working Python 3 found as python3, python, or py -3 - the derived indexes cannot be regenerated.' }
 
+# Generated surfaces are built in a staging tree and MIRRORED into place (class PLAT-D).
+# Deleting and recreating each surface removed every file on every run. On a volume without
+# POSIX delete semantics (exFAT, FAT32), a file an on-access scanner still holds stays
+# delete-pending, so removing its parent failed with "The directory is not empty" and the run
+# aborted with committed surfaces half-deleted. The mirror writes only changed files, deletes
+# only stale ones, and runs once every staged surface is built, so a run that fails before
+# that point leaves the mirrored surfaces exactly as they were.
+$stageRoot = Join-Path ([IO.Path]::GetTempPath()) ("sync-pack-" + [guid]::NewGuid().ToString("N"))
+$staged = [ordered]@{}
+trap { Remove-Item $stageRoot -Recurse -Force -ErrorAction SilentlyContinue; break }
+
 function Reset-Dir([string]$path) {
-    if (Test-Path $path) { Remove-Item $path -Recurse -Force }
-    New-Item -ItemType Directory -Force -Path $path | Out-Null
+    # Returns the staging directory that stands in for $path until Complete-Mirror runs.
+    $stage = Join-Path $stageRoot ([IO.Path]::GetRelativePath($repo, $path))
+    New-Item -ItemType Directory -Force -Path $stage | Out-Null
+    $staged[$stage] = $path
+    return $stage
+}
+
+function Sync-Mirror([string]$src, [string]$dst) {
+    New-Item -ItemType Directory -Force -Path $dst | Out-Null
+    $want = New-Object 'System.Collections.Generic.HashSet[string]' ([StringComparer]::Ordinal)
+    foreach ($file in Get-ChildItem $src -File -Recurse -Force) {
+        $rel = [IO.Path]::GetRelativePath($src, $file.FullName)
+        [void]$want.Add($rel)
+        $target = Join-Path $dst $rel
+        if ((Test-Path $target -PathType Leaf) -and (Get-Item $target -Force).Length -eq $file.Length -and
+            (Get-FileHash $target).Hash -eq (Get-FileHash $file.FullName).Hash) { continue }
+        New-Item -ItemType Directory -Force -Path (Split-Path $target) | Out-Null
+        Copy-Item $file.FullName $target -Force
+    }
+    foreach ($file in Get-ChildItem $dst -File -Recurse -Force) {
+        if (-not $want.Contains([IO.Path]::GetRelativePath($dst, $file.FullName))) { Remove-Item $file.FullName -Force }
+    }
+    foreach ($dir in Get-ChildItem $dst -Directory -Recurse -Force | Sort-Object { $_.FullName.Length } -Descending) {
+        if (Get-ChildItem $dir.FullName -Force | Select-Object -First 1) { continue }
+        # simplify: an empty directory that stays delete-pending is only warned about - git does not
+        # track empty directories, so it cannot drift. Upgrade to a bounded retry if one ever matters.
+        try { Remove-Item $dir.FullName -Force } catch { Write-Warning "could not remove empty $($dir.FullName): $($_.Exception.Message)" }
+    }
+}
+
+function Complete-Mirror {
+    foreach ($stage in $staged.Keys) { Sync-Mirror $stage $staged[$stage] }
+    $staged.Clear()
+    Remove-Item $stageRoot -Recurse -Force -ErrorAction SilentlyContinue
 }
 
 Write-Host "Syncing pack/ -> .claude/ + .github/{instructions,prompts,agents}/ + .grok/ + .agents/ + docs/ (project: $ProjectName)" -ForegroundColor Cyan
 
 # --- .claude/knowledge ---------------------------------------------------------
 $kDst = Join-Path $repo ".claude\knowledge"
-Reset-Dir $kDst
+$kDst = Reset-Dir $kDst
 Copy-Item (Join-Path $pack "knowledge\*.md") $kDst -Force
 $kCount = (Get-ChildItem $kDst -File).Count
 Write-Host "  knowledge: $kCount docs"
 
 # --- .claude/skills ------------------------------------------------------------
 $sDst = Join-Path $repo ".claude\skills"
-Reset-Dir $sDst
+$sDst = Reset-Dir $sDst
 $skillCount = 0
 foreach ($cmd in Get-ChildItem (Join-Path $pack "commands") -Directory) {
     $skill = Join-Path $cmd.FullName "SKILL.md"
@@ -99,7 +142,7 @@ Write-Host "  skills: $skillCount"
 
 # --- .claude/agents (12 claude-code lenses + 11 drop-in copilot adversaries) ----
 $aDst = Join-Path $repo ".claude\agents"
-Reset-Dir $aDst
+$aDst = Reset-Dir $aDst
 Copy-Item (Join-Path $pack "adapters\claude-code\agents\*.md") $aDst -Force
 Copy-Item (Join-Path $pack "adapters\copilot\agents\*_agent.md") $aDst -Force
 $aCount = (Get-ChildItem $aDst -File).Count
@@ -139,8 +182,8 @@ function Get-LoadScope([string]$path) {
 
 $ghInst = Join-Path $repo ".github\instructions"
 $ghKnow = Join-Path $repo ".github\knowledge"
-Reset-Dir $ghInst
-Reset-Dir $ghKnow
+$ghInst = Reset-Dir $ghInst
+$ghKnow = Reset-Dir $ghKnow
 foreach ($kFile in Get-ChildItem (Join-Path $pack "knowledge") -Filter "*.md") {
     if ($kFile.Name -eq "FOUNDATION.md") {
         Copy-Item $kFile.FullName $ghInst -Force
@@ -172,7 +215,7 @@ Write-Host "  .github/knowledge:    $ghKnowCount on-demand (skill/reference)"
 
 # --- .github/prompts (Copilot skill prompts — dogfood) ------------------------
 $ghPrompts = Join-Path $repo ".github\prompts"
-Reset-Dir $ghPrompts
+$ghPrompts = Reset-Dir $ghPrompts
 Copy-Item (Join-Path $pack "adapters\copilot\prompts\*.prompt.md") $ghPrompts -Force
 $ghPromptsCount = (Get-ChildItem $ghPrompts -File).Count
 Write-Host "  .github/prompts: $ghPromptsCount prompts"
@@ -185,7 +228,7 @@ Write-Host "  .github/prompts: $ghPromptsCount prompts"
 # at this boundary per INSTALL §1.2 — one source per persona, one frontmatter edit.
 # Shipping only the first group left Copilot with 11 of 23 personas (FR-032).
 $ghAgents = Join-Path $repo ".github\agents"
-Reset-Dir $ghAgents
+$ghAgents = Reset-Dir $ghAgents
 # Copilot's documented convention is `<name>.agent.md` (docs.github.com, "Create custom
 # agents for CLI"). `*_agent.md` is the pack's SOURCE naming (INSTALL 1.2), so the deploy
 # step RENAMES rather than copying verbatim - shipping the source name deployed a
@@ -216,7 +259,7 @@ Write-Host "  .github/agents: $ghAgentsCount agents"
 # Knowledge is NOT copied into .grok/rules/ (CTX-B: Grok loads every *.md there
 # on every turn). The path map is the only rules file.
 $grokSkills = Join-Path $repo ".grok\skills"
-Reset-Dir $grokSkills
+$grokSkills = Reset-Dir $grokSkills
 $grokSkillCount = 0
 foreach ($cmd in Get-ChildItem (Join-Path $pack "commands") -Directory) {
     $skill = Join-Path $cmd.FullName "SKILL.md"
@@ -242,7 +285,7 @@ function Write-StrippedAgent([string]$src, [string]$dest) {
     Set-Content -Path $dest -Value $out -Encoding UTF8
 }
 $grokAgents = Join-Path $repo ".grok\agents"
-Reset-Dir $grokAgents
+$grokAgents = Reset-Dir $grokAgents
 foreach ($cc in Get-ChildItem (Join-Path $pack "adapters\claude-code\agents") -Filter *.md -File) {
     Write-StrippedAgent $cc.FullName (Join-Path $grokAgents $cc.Name)
 }
@@ -254,13 +297,13 @@ $grokAgentsCount = (Get-ChildItem $grokAgents -File).Count
 Write-Host "  .grok/agents: $grokAgentsCount"
 
 $grokRules = Join-Path $repo ".grok\rules"
-Reset-Dir $grokRules
+$grokRules = Reset-Dir $grokRules
 Copy-Item (Join-Path $pack "adapters\grok\grok-surface.md") (Join-Path $grokRules "grok-surface.md") -Force
 Write-Host "  .grok/rules: grok-surface.md (path map only)"
 
 # --- .agents/skills shared by Codex and Antigravity (INSTALL 1.8 / 1.9) ---------
 $agySkills = Join-Path $repo ".agents\skills"
-Reset-Dir $agySkills
+$agySkills = Reset-Dir $agySkills
 $agySkillCount = 0
 foreach ($cmd in Get-ChildItem (Join-Path $pack "commands") -Directory) {
     $skill = Join-Path $cmd.FullName "SKILL.md"
@@ -291,7 +334,7 @@ Copy-Item (Join-Path $pack "adapters/muse/muse-surface.md") (Join-Path $codexDoc
 Write-Host "  docs/ai-forward-pack: codex.md + muse-surface.md"
 
 $agyRules = Join-Path $repo ".agents\rules"
-Reset-Dir $agyRules
+$agyRules = Reset-Dir $agyRules
 Copy-Item (Join-Path $pack "adapters\antigravity\agy-surface.md") (Join-Path $agyRules "agy-surface.md") -Force
 Write-Host "  .agents/rules: agy-surface.md (path map only)"
 
@@ -305,10 +348,10 @@ Write-Host "  .agents/hooks.json + .agents/skills.json"
 
 # --- docs/ai-forward-pack (templates, scripts, pack docs) ----------------------
 $docPack = Join-Path $repo "docs\ai-forward-pack"
-Reset-Dir (Join-Path $docPack "templates")
-Reset-Dir (Join-Path $docPack "scripts")
-Copy-Item (Join-Path $pack "templates\*") (Join-Path $docPack "templates") -Recurse -Force
-Copy-Item (Join-Path $pack "scripts\*")   (Join-Path $docPack "scripts")   -Recurse -Force
+$docTemplates = Reset-Dir (Join-Path $docPack "templates")
+$docScripts   = Reset-Dir (Join-Path $docPack "scripts")
+Copy-Item (Join-Path $pack "templates\*") $docTemplates -Recurse -Force
+Copy-Item (Join-Path $pack "scripts\*")   $docScripts   -Recurse -Force
 Copy-Item (Join-Path $pack "README.md")              $docPack -Force
 Copy-Item (Join-Path $pack "OVERVIEW.md")            $docPack -Force
 Copy-Item (Join-Path $pack "research-synthesis.md")  $docPack -Force
@@ -346,6 +389,9 @@ foreach ($target in $optionalHooks) {
 }
 Write-Host "  hooks: adapters/hooks/*.py -> docs/ai-forward-pack/hooks/, .github/hooks/ai-forward.json, .grok/hooks/ai-forward.json, .agents/hooks.json"
 Write-Host "  docs/ai-forward-pack: templates + scripts + pack docs"
+
+# Every staged surface is complete; mirror them into place before anything reads the tree.
+Complete-Mirror
 
 # --- docs/index.html (Docs Explorer; regenerated from template) ----------------
 # docs/docs-index.js is intentionally NOT created/overwritten -- skills accumulate it (V10).
