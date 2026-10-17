@@ -2770,6 +2770,18 @@ window.PORTAL_DATA = {
         "summary": "Historical remediation backlog from the model-orchestration forensic review. The capability was reverted; orchestration-specific items are closed by removal...."
       },
       {
+        "id": "forensic-review-rev108",
+        "type": "doc",
+        "title": "Forensic review — ai-forward at revision 108",
+        "summary": "Forensic assessment of ai-forward at 332c297 (pack revision 108). Every gate passes except the Python suite, whose 10 failures are environmental and..."
+      },
+      {
+        "id": "forensic-review-rev108-backlog",
+        "type": "doc",
+        "title": "Forensic review backlog — ai-forward revision 108 (FR-086 … FR-101)",
+        "summary": "Sixteen items from the revision-108 forensic review, FR-086 to FR-101, each with evidence, falsifiable acceptance criteria and a next skill. No P0 or P1. Four..."
+      },
+      {
         "id": "forensic-review-rev42",
         "type": "doc",
         "title": "Forensic Review — AI-Forward repository (revision 42)",
@@ -3766,6 +3778,18 @@ window.PORTAL_DATA = {
         "summary": "An actual Grok search_replace call exposed a missing supported tool name in both native and inherited ownership guards. One instrumented diagnostic captures..."
       },
       {
+        "id": "note-20261017-require-ci-before-merge",
+        "type": "decision-note",
+        "title": "Decision — require CI to pass before anything reaches main",
+        "summary": "The owner decided on 2026-10-17 that CI must pass before a change reaches main, reversing the 2026-08-26 decision not to require pack-consistency. Re-open..."
+      },
+      {
+        "id": "note-20261017-session-profiles-published",
+        "type": "decision-note",
+        "title": "Decision — session profiles stay published on Pages and in the repo",
+        "summary": "During the rev108 forensic review the Privacy persona issued a hard-veto BLOCK because docs/profiles (session-profiler output with verbatim prompts, home paths..."
+      },
+      {
         "id": "note-autopilot-open-questions-decisions",
         "type": "decision-note",
         "title": "Decisions on PACK-O open questions (logging, class granularity, autopilot caps)",
@@ -3812,6 +3836,12 @@ window.PORTAL_DATA = {
         "type": "doc",
         "title": "Bounded ACP compatibility specification and spike",
         "summary": "Bounds a Grok-driven compatibility experiment across Grok, Claude Code, Codex and Antigravity before selecting a shared ACP transport. The independent parent..."
+      },
+      {
+        "id": "plan-ci-speed-and-required-checks",
+        "type": "plan",
+        "title": "Plan — fast CI, automatic triggers, then required checks on main",
+        "summary": "Execution plan for the three accepted CI changes (parallel pytest, drop the duplicate adoption-entrypoints test list, branch-scoped cancel-in-progress) and the..."
       },
       {
         "id": "plan-codex-discovery",
@@ -4034,6 +4064,12 @@ window.PORTAL_DATA = {
         "type": "doc",
         "title": "Proposal: ledger and bus — active multi-harness coordination",
         "summary": "The pack's coordination layer is a git-tracked ledger. AI-DE already built the live surfaces (Loomkeeper board, standing files, MCP board tools, AgentPlane)..."
+      },
+      {
+        "id": "proposal-ci-speed-2026-10-17",
+        "type": "doc",
+        "title": "Proposal: make CI fast again without weakening the gate",
+        "summary": "pack-consistency went from 4.5 min wall-clock (run 35489970000, 2026-09-20) to 46.8 min (run 38983040683, 2026-10-16). Over 95% of every job is one step: the..."
       },
       {
         "id": "proposal-hosting-and-dream-manifest",
@@ -5602,6 +5638,56 @@ window.PORTAL_DATA = {
         "rel": "refines"
       },
       {
+        "from": "forensic-review-rev108",
+        "to": "architecture",
+        "rel": "documents"
+      },
+      {
+        "from": "forensic-review-rev108",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "forensic-review-rev108",
+        "to": "forensic-review-rev108-backlog",
+        "rel": "relates-to"
+      },
+      {
+        "from": "forensic-review-rev108",
+        "to": "forensic-review-rev59",
+        "rel": "supersedes"
+      },
+      {
+        "from": "forensic-review-rev108",
+        "to": "note-20261017-require-ci-before-merge",
+        "rel": "relates-to"
+      },
+      {
+        "from": "forensic-review-rev108",
+        "to": "note-20261017-session-profiles-published",
+        "rel": "relates-to"
+      },
+      {
+        "from": "forensic-review-rev108-backlog",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "forensic-review-rev108-backlog",
+        "to": "forensic-review-rev108",
+        "rel": "relates-to"
+      },
+      {
+        "from": "forensic-review-rev108-backlog",
+        "to": "forensic-review-rev59-backlog",
+        "rel": "relates-to"
+      },
+      {
+        "from": "forensic-review-rev108-backlog",
+        "to": "plan-ci-speed-and-required-checks",
+        "rel": "relates-to"
+      },
+      {
         "from": "forensic-review-rev42",
         "to": "architecture",
         "rel": "documents"
@@ -7047,6 +7133,31 @@ window.PORTAL_DATA = {
         "rel": "refines"
       },
       {
+        "from": "note-20261017-require-ci-before-merge",
+        "to": "forensic-review-rev108",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20261017-require-ci-before-merge",
+        "to": "note-required-status-checks",
+        "rel": "supersedes"
+      },
+      {
+        "from": "note-20261017-require-ci-before-merge",
+        "to": "plan-ci-speed-and-required-checks",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20261017-require-ci-before-merge",
+        "to": "proposal-ci-speed-2026-10-17",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20261017-session-profiles-published",
+        "to": "forensic-review-rev108",
+        "rel": "relates-to"
+      },
+      {
         "from": "note-autopilot-open-questions-decisions",
         "to": "defect-classes",
         "rel": "relates-to"
@@ -7104,6 +7215,21 @@ window.PORTAL_DATA = {
       {
         "from": "plan-acp-compatibility-spike",
         "to": "spec-message-layer",
+        "rel": "depends-on"
+      },
+      {
+        "from": "plan-ci-speed-and-required-checks",
+        "to": "forensic-review-rev108-backlog",
+        "rel": "relates-to"
+      },
+      {
+        "from": "plan-ci-speed-and-required-checks",
+        "to": "note-20261017-require-ci-before-merge",
+        "rel": "depends-on"
+      },
+      {
+        "from": "plan-ci-speed-and-required-checks",
+        "to": "proposal-ci-speed-2026-10-17",
         "rel": "depends-on"
       },
       {
@@ -7645,6 +7771,16 @@ window.PORTAL_DATA = {
         "from": "proposal-active-multi-harness-coordination",
         "to": "spec-agent-coordination",
         "rel": "refines"
+      },
+      {
+        "from": "proposal-ci-speed-2026-10-17",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "proposal-ci-speed-2026-10-17",
+        "to": "note-required-status-checks",
+        "rel": "relates-to"
       },
       {
         "from": "proposal-hosting-and-dream-manifest",

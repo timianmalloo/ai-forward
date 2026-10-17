@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Forensic Review Rev108</title><style>
+:root { color-scheme: light dark; --bg:#f7f5ef; --panel:#fff; --text:#20201d;
+  --muted:#66645f; --line:#d9d5ca; --accent:#3157a4; --code:#f0eee7; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#171816; --panel:#20221f; --text:#f2f1eb; --muted:#b8b6ae;
+    --line:#3d403a; --accent:#8fb0ff; --code:#292c27; }
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text);
+  font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif; }
+main { width:min(920px,calc(100% - 32px)); margin:32px auto; padding:40px;
+  background:var(--panel); border:1px solid var(--line); border-radius:12px; }
+h1,h2,h3,h4,h5,h6 { line-height:1.2; margin:1.5em 0 .55em; }
+h1 { margin-top:0; font-size:2.2rem; } h2 { border-bottom:1px solid var(--line); padding-bottom:.3em; }
+a { color:var(--accent); } code { background:var(--code); padding:.12em .35em; border-radius:4px; }
+pre { overflow:auto; padding:16px; background:var(--code); border-radius:8px; }
+pre code { padding:0; } blockquote { margin:1em 0; padding:.2em 1em; color:var(--muted);
+  border-left:4px solid var(--line); }
+table { width:100%; border-collapse:collapse; margin:1em 0; display:block; overflow:auto; }
+th,td { padding:.55em .75em; border:1px solid var(--line); text-align:left; vertical-align:top; }
+th { background:var(--code); } hr { border:0; border-top:1px solid var(--line); }
+.source { color:var(--muted); font-size:.9rem; margin-bottom:2rem; }
+@media (max-width:640px) { main { width:100%; margin:0; padding:24px 18px; border:0; border-radius:0; } }
+</style></head><body><main><div class="source">Rendered from forensic-review-rev108.md</div><h1>Forensic review — ai-forward at revision 108</h1>
+<h2>Scope and baseline</h2>
+<table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>Commit</td><td><code>332c297</code> on <code>main</code> (PR #12 merged; clean tree)</td></tr><tr><td>Pack revision</td><td>108 (<code>pack/adapters/INSTALL.md:5</code>)</td></tr><tr><td>Supersedes</td><td><code>forensic-review-rev59</code></td></tr><tr><td>Findings</td><td><strong>FR-086 … FR-101</strong> (ids continue from FR-085)</td></tr><tr><td>Surface</td><td>30 skills · 23 personas · 40 knowledge docs · 29 templates · 47 scripts (<code>check-consistency.py</code>)</td></tr></tbody></table>
+<h3>Baseline commands — run before judging, recorded as evidence</h3>
+<table><thead><tr><th>Command</th><th>Result</th></tr></thead><tbody><tr><td><code>pwsh tools/verify-bundle.ps1</code> (tree of PR #12)</td><td><strong>17 of 18 gates pass</strong>; gate 1 failed on stale <code>docs/api</code> and <code>docs/_site</code>, fixed in PR #12 and re-run green on the final tree</td></tr><tr><td>Gate 3 — <code>python -m pytest tests -q</code></td><td><strong>1679 passed, 10 failed, 180 skipped</strong> (39 min 29 s)</td></tr><tr><td>Gate 3 failures, same 10 on unmodified <code>main</code> <code>c267bd4</code></td><td>5 symlink tests raise <code>WinError 1314</code> instead of skipping (Developer Mode off) · 2 <code>test_delivery_session_start</code> tests read <code>AGENT_SESSION</code> leaked from <code>.claude/settings.local.json</code> · 3 <code>test_uv_hook_launcher</code> tests cannot spawn <code>sh</code> — see FR-099</td></tr><tr><td><code>docs-graph.py validate</code></td><td>pass — 362 artifacts; 2 stale (V13) suggestions, non-failing</td></tr><tr><td>Workflow <code>uses:</code></td><td>9 distinct actions, <strong>all pinned to a 40-character SHA</strong></td></tr><tr><td>Workflow <code>permissions:</code></td><td><code>contents: read</code> everywhere; <code>pages: write</code> + <code>id-token: write</code> on Pages; <code>attestations: write</code> on the benchmark</td></tr></tbody></table>
+<p>The ten gate-3 failures are not attributable to this revision: they were reproduced on the parent commit with no change applied.</p>
+<h2>What was checked and found sound</h2>
+<ul><li><strong>Supply chain.</strong> Every action is SHA-pinned; the deployed scripts remain stdlib-only.</li><li><strong>Workflow privilege.</strong> No workflow holds more than its job needs.</li><li><strong>Source↔install boundary.</strong> Gate 2 (<code>sync-pack.ps1</code> then <code>git diff --exit-code</code>) passes; a</li></ul>
+<p>re-sync on the final tree produced no diff.</p>
+<ul><li><strong>Defect register integrity.</strong> <code>test_defect_register_counts.py</code> passes after two new classes</li></ul>
+<p>(WT-D, WT-E).</p>
+<ul><li><strong>Primary-checkout protection (PRIM-A).</strong> A linked-tree session writing into the primary is</li></ul>
+<p>still refused by name on every host.</p>
+<h2>Findings in this revision</h2>
+<p><strong>P2 — material governance, security or operability debt</strong></p>
+<ul><li><strong>FR-086</strong> — <code>dispatch.py</code> sets <code>sys.pycache_prefix</code> to a fixed name under the shared temp</li></ul>
+<p>directory. On a multi-user POSIX host, another user can pre-create it and plant byte-code.</p>
+<ul><li><strong>FR-087</strong> — Every workflow is <code>workflow_dispatch</code> only since <code>156943d</code>. Combined with</li></ul>
+<p>FR-082 (no required check), nothing runs CI on a push or PR unless someone remembers.</p>
+<ul><li><strong>FR-088</strong> — <code>git-identity-guard.py</code> misses six ways of setting an identity and blocks</li></ul>
+<p>quoted text that merely mentions the pattern (executed probe below).</p>
+<ul><li><strong>FR-089</strong> — The edit-ownership hook answers <code>allow</code> for any free in-repo write. On Claude</li></ul>
+<p>Code a PreToolUse <code>allow</code> skips the permission prompt, so the hook grants writes the user&#x27;s permission mode would have asked about.</p>
+<p><strong>P3 — localized hygiene</strong> — FR-090 … FR-100 (stale counts, hand-copied gate lists, link-unsafe writes, bootstrap from a mutable ref, a 46-minute Windows job, no six-harness ADR, an unsourced <code>.codex/hooks.json</code>, a lock with manual-only recovery, executable session-check config, test isolation, native-host outside-path refusals).</p>
+<p><strong>Resolved during the review</strong> — FR-101: the hook&#x27;s needless prompts (WT-D, WT-E), PR #12.</p>
+<h3>Executed probe — FR-088</h3>
+<p><code>evaluate()</code> from <code>pack/adapters/hooks/git-identity-guard.py</code>, run directly on each command:</p>
+<table><thead><tr><th>Command</th><th>Result</th><th>Correct?</th></tr></thead><tbody><tr><td><code>git config user.name Bot</code></td><td>BLOCK</td><td>yes (control)</td></tr><tr><td><code>git config user.name</code></td><td>allow</td><td>yes (read)</td></tr><tr><td><code>git -C . config user.name Bot</code></td><td>allow</td><td><strong>no</strong></td></tr><tr><td><code>git config --file .git/config user.email b@x</code></td><td>allow</td><td><strong>no</strong></td></tr><tr><td><code>git config --worktree user.name Bot</code></td><td>allow</td><td><strong>no</strong></td></tr><tr><td><code>git config set user.name Bot</code></td><td>allow</td><td><strong>no</strong></td></tr><tr><td><code>GIT_AUTHOR_NAME=Bot GIT_AUTHOR_EMAIL=b@x git commit -m x</code></td><td>allow</td><td><strong>no</strong></td></tr><tr><td><code>git commit --author=&quot;Bot &lt;b@x&gt;&quot; -m x</code></td><td>allow</td><td><strong>no</strong></td></tr><tr><td><code>echo &#x27;docs: git config user.name X is forbidden&#x27; &gt; notes.md</code></td><td>BLOCK</td><td><strong>no</strong> (over-match)</td></tr></tbody></table>
+<h2>Assessment by layer</h2>
+<h3>Architecture — sound, under-recorded</h3>
+<p>The source → install → consumer direction still holds and is gated. The gap is in the record: the pack now targets six harnesses (Claude Code, Copilot, Codex, Grok, Antigravity, Muse) and no ADR records that decision or its cost (FR-095). <code>architecture.md</code> still describes revision 53 (FR-090).</p>
+<h3>Design — sound, with two trust-boundary gaps</h3>
+<p>Two hooks overstep their domain. The identity guard is too narrow (FR-088). The ownership hook is too broad: it speaks for paths it does not own (WT-E, fixed) and grants writes it only needed not to refuse (FR-089). Both share one shape: <strong>a guard&#x27;s answer must stay inside the question it was built to answer.</strong></p>
+<h3>Implementation — sound, platform-sensitive</h3>
+<p>Correctness is well covered: 1679 tests. The debt is portability. Ten tests depend on the host&#x27;s symlink privilege, a leaked environment variable, or a POSIX shell (FR-099). Temp-dir and link handling assume a single-user machine (FR-086, FR-092).</p>
+<h3>Operations — the weakest layer</h3>
+<p>CI no longer runs by itself (FR-087), nothing requires it (FR-082), and the Windows job quadrupled to ~47 minutes on the PR #6 branches (FR-094). The accepted CI proposal (<code>proposal-ci-speed-2026-10-17</code>) and its plan (<code>plan-ci-speed-and-required-checks</code>) address all three; the plan is recorded as next steps and <strong>not yet executed</strong>.</p>
+<h2>Carried forward from revision 59</h2>
+<table><thead><tr><th>Item</th><th>State at rev108</th></tr></thead><tbody><tr><td>FR-076, FR-077</td><td>resolved 2026-09-22 (unchanged)</td></tr><tr><td>FR-078 coordination layer not run on its own repo</td><td><strong>partial</strong> — gate 8b proves it is installed; the repo still does not route work through it</td></tr><tr><td>FR-079 docstring coverage</td><td>open — 279 of 599 public functions documented (47%)</td></tr><tr><td>FR-080 federation de-dup defeated by abstraction</td><td>open — now also covers the <code>apply-learnings</code> &quot;conflict&quot; branch</td></tr><tr><td>FR-081 fleet provenance lost on application</td><td>open</td></tr><tr><td>FR-082 no required status check</td><td>open — decision accepted (<code>note-20261017-require-ci-before-merge</code>), plan not executed</td></tr><tr><td>FR-083 budget gate on a fitted constant</td><td>open</td></tr><tr><td>FR-084 Node 20 runtime actions</td><td>open</td></tr><tr><td>FR-085 no coverage measurement</td><td>open</td></tr></tbody></table>
+<h2>Rejected candidates</h2>
+<p>Recorded so they are not raised again:</p>
+<ul><li><strong>&quot;FR-083 came true.&quot;</strong> The claim rested on a hypothetical chars-per-token ratio, not a</li></ul>
+<p>measurement. The backstop has not been observed to fail.</p>
+<ul><li><strong>`INSTALL.md` size.</strong> Large, but it is a reference archive read on demand, not an always-on</li></ul>
+<p>load; gate 8 measures what is always on.</p>
+<ul><li><strong>Published session profiles (privacy BLOCK).</strong> Overruled by the owner: publishing</li></ul>
+<p><code>docs/profiles</code> is intended (<code>note-20261017-session-profiles-published</code>). No backlog item.</p>
+<h2>Readiness verdict</h2>
+<p><strong>Healthy, with an operations gap.</strong> No P0 or P1. The code is well tested and the supply chain is clean. The real risk is that CI has stopped being automatic at the same time as nothing requires it, so a red <code>main</code> is caught only by a local <code>verify-bundle.ps1</code> run. FR-087 and FR-082 together are the first thing to close.</p>
+<h2>Confidence ledger</h2>
+<table><thead><tr><th>Finding</th><th>Confidence</th><th>Basis</th></tr></thead><tbody><tr><td>FR-086</td><td><strong>Verified</strong> (code) · exploit <strong>Inferred</strong></td><td><code>pack/adapters/hooks/dispatch.py:142</code>; planting not executed</td></tr><tr><td>FR-087</td><td><strong>Verified</strong></td><td><code>git show 156943d</code>; every workflow <code>on:</code> is <code>workflow_dispatch</code> only</td></tr><tr><td>FR-088</td><td><strong>Verified</strong> (executed)</td><td>probe table above</td></tr><tr><td>FR-089</td><td><strong>Verified</strong> (code) · effect <strong>Inferred</strong></td><td><code>coord-core.py</code> <code>cmd_hook</code> returns <code>allow</code> for free paths; the prompt-skip is Claude Code&#x27;s documented PreToolUse contract, not observed here</td></tr><tr><td>FR-090</td><td><strong>Verified</strong></td><td><code>architecture.md:16,47,61,158</code>; <code>AGENTS.md:11</code>; <code>.github/copilot-instructions.md:21</code>; <code>project-memory.md:59</code></td></tr><tr><td>FR-091</td><td><strong>Verified</strong></td><td><code>verify-bundle.ps1:88-239</code> against <code>pack-consistency.yml:27-361</code></td></tr><tr><td>FR-092</td><td><strong>Verified</strong> (code)</td><td><code>reread-guard.py:53-72</code>; <code>pack-apply.py:542-547</code></td></tr><tr><td>FR-093</td><td><strong>Verified</strong> (code) · download <strong>Inferred</strong></td><td><code>README.md:46,50</code>; <code>bootstrap.py:527</code>; no download observed</td></tr><tr><td>FR-094</td><td><strong>Verified</strong> on PR #6 branches · <code>main</code> <strong>not measured</strong></td><td>runs 38983040683 (46.7 min), 38953998178 (49.6 min)</td></tr><tr><td>FR-095</td><td><strong>Verified</strong></td><td><code>docs/adr/0001–0013</code>; no harness-support ADR</td></tr><tr><td>FR-096</td><td><strong>Verified</strong></td><td>no <code>pack/</code> source; <code>sync-pack.ps1:391-395</code> refreshes only if present</td></tr><tr><td>FR-097</td><td><strong>Verified</strong></td><td><code>delivery.py:1007-1018</code>; <code>checkpoints.md:81</code></td></tr><tr><td>FR-098</td><td><strong>Verified</strong></td><td><code>session-start.py:83-89,134-143</code>; <code>hooks/README.md:101-105</code></td></tr><tr><td>FR-099</td><td><strong>Verified</strong> (executed)</td><td>same 10 failures on <code>c267bd4</code> and <code>332c297</code></td></tr><tr><td>FR-100</td><td><strong>Verified</strong> (executed)</td><td><code>test_native_hosts_still_fail_closed_on_an_outside_path</code></td></tr><tr><td>FR-101</td><td><strong>Verified</strong> (executed)</td><td>red-first tests; PR #12</td></tr></tbody></table>
+<h2>Residual risk</h2>
+<ul><li><strong>The persona lens outputs were not persisted.</strong> The lenses and adversaries ran in session</li></ul>
+<p><code>00bb7bcd</code>, but only their conclusions survived, in session memory. Every finding here was re-checked against the code or by execution in session <code>4bdeb954</code>. The per-lens verdict table of earlier reviews is therefore absent, not reconstructed.</p>
+<ul><li><strong>Two effects are inferred, not observed:</strong> byte-code planting (FR-086) and the prompt-skip of</li></ul>
+<p><code>allow</code> (FR-089). Each names its confirming check in the backlog.</p>
+<ul><li><strong>Self-review.</strong> The same agent authored much of the reviewed revision, including WT-D, whose</li></ul>
+<p><code>ask</code> this review then found was wrong (WT-E). That is the expected failure mode, and the reason every claim above was executed rather than recalled.</p></main></body></html>

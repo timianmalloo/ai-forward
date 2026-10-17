@@ -2,7 +2,7 @@
 id: forensic-review-rev59
 title: "Forensic review — ai-forward at revision 59"
 type: doc
-status: accepted
+status: superseded
 owner: "@timianmalloo"
 phase: "assessment"
 tags: [forensic-review, assessment, governance, rev59]

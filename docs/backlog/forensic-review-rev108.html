@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Forensic Review Rev108</title><style>
+:root { color-scheme: light dark; --bg:#f7f5ef; --panel:#fff; --text:#20201d;
+  --muted:#66645f; --line:#d9d5ca; --accent:#3157a4; --code:#f0eee7; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#171816; --panel:#20221f; --text:#f2f1eb; --muted:#b8b6ae;
+    --line:#3d403a; --accent:#8fb0ff; --code:#292c27; }
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text);
+  font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif; }
+main { width:min(920px,calc(100% - 32px)); margin:32px auto; padding:40px;
+  background:var(--panel); border:1px solid var(--line); border-radius:12px; }
+h1,h2,h3,h4,h5,h6 { line-height:1.2; margin:1.5em 0 .55em; }
+h1 { margin-top:0; font-size:2.2rem; } h2 { border-bottom:1px solid var(--line); padding-bottom:.3em; }
+a { color:var(--accent); } code { background:var(--code); padding:.12em .35em; border-radius:4px; }
+pre { overflow:auto; padding:16px; background:var(--code); border-radius:8px; }
+pre code { padding:0; } blockquote { margin:1em 0; padding:.2em 1em; color:var(--muted);
+  border-left:4px solid var(--line); }
+table { width:100%; border-collapse:collapse; margin:1em 0; display:block; overflow:auto; }
+th,td { padding:.55em .75em; border:1px solid var(--line); text-align:left; vertical-align:top; }
+th { background:var(--code); } hr { border:0; border-top:1px solid var(--line); }
+.source { color:var(--muted); font-size:.9rem; margin-bottom:2rem; }
+@media (max-width:640px) { main { width:100%; margin:0; padding:24px 18px; border:0; border-radius:0; } }
+</style></head><body><main><div class="source">Rendered from forensic-review-rev108.md</div><h1>Forensic review backlog — revision 108</h1>
+<p><strong>Status: `proposed`.</strong> FR-101 is <strong>resolved</strong> (PR #12, 2026-10-17). The rest are not implemented and await triage. Open items carried from revision 59 (FR-078 … FR-085) stay in <code>forensic-review-rev59-backlog</code>; their current state is tabled in the review.</p>
+<p>Priorities: <strong>P0</strong> exploitable / data-loss / irreversible · <strong>P1</strong> high-likelihood correctness, security or migration risk · <strong>P2</strong> material maintainability, operability or governance debt · <strong>P3</strong> localized hygiene.</p>
+<hr>
+<h2>Phase 1 — Make CI automatic again (P2)</h2>
+<h3>FR-087 · risk · P2 — Every workflow runs only on manual dispatch</h3>
+<ul><li><strong>Location:</strong> <code>.github/workflows/*.yml</code> (<code>on:</code> blocks); commit <code>156943d</code>.</li><li><strong>Evidence:</strong> all five workflows declare only <code>workflow_dispatch</code>. <code>156943d</code> removed the</li></ul>
+<p><code>push</code> / <code>pull_request</code> triggers from <code>docs.yml</code>, <code>pack-consistency.yml</code> and <code>pages.yml</code>.</p>
+<ul><li><strong>Consequence:</strong> with FR-082 (no required check), no push or PR runs CI unless someone</li></ul>
+<p>dispatches it. A red <code>main</code> is caught only by a local gate run.</p>
+<ul><li><strong>Remediation:</strong> execute <code>plan-ci-speed-and-required-checks</code> (P0–P9): restore PR triggers on a</li></ul>
+<p>fast ring, then make that ring a required check.</p>
+<ul><li><strong>Acceptance:</strong> (a) opening a PR starts <code>pack-consistency</code> with no manual step; (b) branch</li></ul>
+<p>protection lists it under <code>required_status_checks</code>; (c) a deliberately red PR cannot merge.</p>
+<ul><li><strong>Dependencies:</strong> FR-082, FR-094. <strong>Owner:</strong> SRE. <strong>Next skill:</strong> <code>/implement</code> on the plan.</li></ul>
+<h2>Phase 2 — Trust boundaries (P2)</h2>
+<h3>FR-088 · issue · P2 — The git-identity guard misses six identity-setting forms and over-matches text</h3>
+<ul><li><strong>Location:</strong> <code>pack/adapters/hooks/git-identity-guard.py:55-60</code> (<code>GIT_IDENTITY_SET_RX</code>).</li><li><strong>Evidence (executed):</strong> <code>evaluate()</code> allows <code>git -C . config user.name X</code>,</li></ul>
+<p><code>git config --file … user.email X</code>, <code>git config --worktree user.name X</code>, <code>git config set user.name X</code>, <code>GIT_AUTHOR_NAME=… git commit</code>, and <code>git commit --author=…</code>. It blocks <code>echo &#x27;docs: git config user.name X is forbidden&#x27; &gt; notes.md</code>. Table in the review.</p>
+<ul><li><strong>Violated contract:</strong> AL0.2 / PK-07 — never invent a git identity.</li><li><strong>Consequence:</strong> the control passes the commands it exists to stop, and a false block on</li></ul>
+<p>documentation text teaches the user to switch it off.</p>
+<ul><li><strong>Remediation:</strong> tokenize with <code>shlex</code>, skip leading <code>VAR=</code> assignments and git global</li></ul>
+<p>options (<code>-C</code>, <code>-c</code>, <code>--git-dir</code>, <code>--work-tree</code>); block a <code>config</code> write of <code>user.*</code> under any scope or <code>set</code> form, <code>--author</code> on <code>commit</code>, and <code>GIT_AUTHOR_*</code> / <code>GIT_COMMITTER_*</code> assignment. Match only command words, never quoted arguments.</p>
+<ul><li><strong>Acceptance:</strong> each row of the probe table becomes a test with the correct verdict, observed</li></ul>
+<p>failing first.</p>
+<ul><li><strong>Owner:</strong> Security &amp; Identity. <strong>Next skill:</strong> <code>/implement</code>.</li></ul>
+<h3>FR-089 · risk · P2 — The ownership hook&#x27;s <code>allow</code> skips the user&#x27;s permission prompt</h3>
+<ul><li><strong>Location:</strong> <code>pack/scripts/coord-core.py</code> <code>cmd_hook</code> — the `&quot;coordination: {} path(s) free</li></ul>
+<p>or mine&quot;<code> and </code>&quot;no write to a coordinated path&quot;` returns.</p>
+<ul><li><strong>Evidence:</strong> for a free in-repo path the Claude host prints <code>permissionDecision: &quot;allow&quot;</code>.</li></ul>
+<p><code>hook_response</code> already treats agy differently (&quot;ownership is not permission to autoapprove a tool&quot;) and Copilot gets <code>{}</code>. Claude gets an explicit grant.</p>
+<ul><li><strong>Consequence (Inferred):</strong> a Claude Code PreToolUse <code>allow</code> bypasses the permission prompt,</li></ul>
+<p>so a user in default mode is not asked before in-repo edits. The hook needed only not to refuse; it grants instead.</p>
+<ul><li><strong>Confirming check:</strong> in a default-mode Claude Code session in a coordinated repo, edit a free</li></ul>
+<p>path. A prompt means the inference is wrong and this item drops to P3 hygiene.</p>
+<ul><li><strong>Remediation:</strong> return no decision (<code>{}</code>) wherever ownership is satisfied, as WT-E now does</li></ul>
+<p>for outside paths; keep <code>deny</code> for held leases and PRIM-A.</p>
+<ul><li><strong>Acceptance:</strong> tests assert <code>{}</code> for free and own-lease paths on the Claude host; held and</li></ul>
+<p>primary paths still <code>deny</code>.</p>
+<ul><li><strong>Owner:</strong> Security &amp; Identity. <strong>Next skill:</strong> <code>/investigate</code> then <code>/implement</code>.</li></ul>
+<h3>FR-086 · risk · P2 — Hook byte-code cache in a fixed directory under shared temp</h3>
+<ul><li><strong>Location:</strong> <code>pack/adapters/hooks/dispatch.py:142</code>.</li><li><strong>Evidence:</strong> <code>sys.pycache_prefix = os.path.join(tempfile.gettempdir(), &quot;ai-forward-pycache&quot;)</code>.</li><li><strong>Consequence (Inferred):</strong> on a multi-user POSIX host <code>/tmp</code> is shared. Another user can</li></ul>
+<p>create <code>ai-forward-pycache</code> first and plant <code>.pyc</code> files that the hooks then import. A Windows temp directory is per-user, so the exposure is POSIX only.</p>
+<ul><li><strong>Remediation:</strong> a per-user, owner-only directory (for example under</li></ul>
+<p><code>$XDG_CACHE_HOME</code> or <code>~/.cache</code>, created mode <code>0700</code> and verified owned by the current uid), or <code>sys.dont_write_bytecode = True</code> in hook processes.</p>
+<ul><li><strong>Acceptance:</strong> a test pre-creates the directory as foreign or world-writable and asserts the</li></ul>
+<p>hook refuses to use it.</p>
+<ul><li><strong>Owner:</strong> Security &amp; Identity. <strong>Next skill:</strong> <code>/implement</code>.</li></ul>
+<h2>Phase 3 — Operability and portability (P3)</h2>
+<h3>FR-094 · risk · P3 — The Windows CI job grew to ~47 minutes</h3>
+<ul><li><strong>Evidence:</strong> <code>pack-consistency.yml:165</code> (<code>windows-latest</code>). 46.7 min on run 38983040683 and</li></ul>
+<p>49.6 min on run 38953998178 (both PR #6 branches), against 8.6–12.0 min before. Not yet measured on <code>main</code>.</p>
+<ul><li><strong>Remediation:</strong> covered by the CI plan; profile first (CE1).</li><li><strong>Acceptance:</strong> a measured Windows-job duration on <code>main</code>, and a target recorded in the plan.</li><li><strong>Next skill:</strong> <code>/session-profiler</code> or the plan&#x27;s profiling step.</li></ul>
+<h3>FR-099 · issue · P3 — Ten tests fail for environmental reasons instead of skipping</h3>
+<ul><li><strong>Evidence:</strong> the same 10 failures on <code>c267bd4</code> and <code>332c297</code>: 5 symlink tests raise</li></ul>
+<p><code>WinError 1314</code> (no Developer Mode), 2 <code>test_delivery_session_start</code> tests read <code>AGENT_SESSION</code> leaked from <code>.claude/settings.local.json</code>, 3 <code>test_uv_hook_launcher</code> tests cannot spawn <code>sh</code>.</p>
+<ul><li><strong>Consequence:</strong> a permanently red gate 3 on Windows hides a real new failure among known ones.</li><li><strong>Remediation:</strong> skip on a failed symlink-capability probe; clear <code>AGENT_SESSION</code> in those</li></ul>
+<p>tests&#x27; environment; skip the launcher tests when <code>sh</code> is not on <code>PATH</code>.</p>
+<ul><li><strong>Acceptance:</strong> gate 3 is green on this machine with Developer Mode off.</li><li><strong>Owner:</strong> Test Architect. <strong>Next skill:</strong> <code>/implement</code>.</li></ul>
+<h3>FR-100 · issue · P3 — Native hosts refuse every write outside the repository</h3>
+<ul><li><strong>Evidence:</strong> <code>_not_checked</code> returns <code>deny</code> for codex, grok, agy and copilot;</li></ul>
+<p><code>test_native_hosts_still_fail_closed_on_an_outside_path</code> pins it.</p>
+<ul><li><strong>Consequence:</strong> on those hosts an agent cannot write user memory or a scratch directory at</li></ul>
+<p>all. WT-E fixed this for Claude only, because the native fail-closed rule is a recorded design, not an accident.</p>
+<ul><li><strong>Remediation:</strong> decide per host whether &quot;no decision&quot; is expressible (Copilot <code>{}</code> and agy</li></ul>
+<p><code>&quot;&quot;</code> already are); where it is, apply WT-E. Record the decision.</p>
+<ul><li><strong>Acceptance:</strong> a decision note per host, and tests matching it.</li><li><strong>Next skill:</strong> <code>/design-slice</code>.</li></ul>
+<h3>FR-097 · todo · P3 — The delivery checkpoint lock has manual-only recovery</h3>
+<ul><li><strong>Evidence:</strong> <code>pack/scripts/delivery.py:1007-1018</code> (<code>O_CREAT|O_EXCL</code>, no pid or age check);</li></ul>
+<p><code>checkpoints.md:81</code> tells the operator to remove a stale lock by hand.</p>
+<ul><li><strong>Consequence:</strong> a crash blocks the task until a human notices. Deliberate, but undiagnosed:</li></ul>
+<p>the error does not say how old the lock is or which pid wrote it.</p>
+<ul><li><strong>Remediation:</strong> write pid and time into the lock; report both in the &quot;busy&quot; error; keep</li></ul>
+<p>breaking it manual.</p>
+<ul><li><strong>Acceptance:</strong> the busy message names pid and age; a test covers it.</li></ul>
+<h3>FR-098 · risk · P3 — <code>session-checks.json</code> is committed config that runs commands</h3>
+<ul><li><strong>Evidence:</strong> <code>pack/adapters/hooks/session-start.py:83-89,134-143</code> runs up to five declared</li></ul>
+<p>argv entries with <code>subprocess.run</code>; <code>pack-apply.py:268</code> un-ignores the file; <code>hooks/README.md:101-105</code> says it runs with same-user project trust, not in a sandbox.</p>
+<ul><li><strong>Consequence:</strong> cloning a repo and opening a session runs whatever a contributor committed</li></ul>
+<p>there, before any review in that session.</p>
+<ul><li><strong>Remediation:</strong> pin a hash of the file at first approval and refuse to run a changed file</li></ul>
+<p>until re-approved, or require a per-user opt-in outside the repo.</p>
+<ul><li><strong>Acceptance:</strong> a changed <code>session-checks.json</code> does not execute until approved; tested.</li><li><strong>Owner:</strong> Security &amp; Identity. <strong>Next skill:</strong> <code>/design-slice</code>.</li></ul>
+<h3>FR-092 · risk · P3 — Hook state and installer writes follow links</h3>
+<ul><li><strong>Evidence:</strong> <code>reread-guard.py:53-72</code> writes a predictable</li></ul>
+<p><code>&lt;tempdir&gt;/ai-forward-reread-guard-&lt;session&gt;.json</code> via <code>open(tmp, &quot;w&quot;)</code> then <code>os.replace</code>, with no link check; <code>pack-apply.py:542-547</code> (<code>_write</code>) opens the destination with no link or containment check (only hook-settings files are checked, lines 71 and 771).</p>
+<ul><li><strong>Consequence:</strong> a planted link at the <code>.tmp</code> name, or a junction in a target parent</li></ul>
+<p>directory, redirects the write.</p>
+<ul><li><strong>Remediation:</strong> <code>O_EXCL</code> / <code>O_NOFOLLOW</code> for the temp file in a per-user directory; resolve and</li></ul>
+<p>contain every <code>pack-apply</code> destination under the target root.</p>
+<ul><li><strong>Acceptance:</strong> tests plant each link and assert the write is refused.</li></ul>
+<h3>FR-093 · risk · P3 — One-command setup runs from mutable <code>main</code></h3>
+<ul><li><strong>Evidence:</strong> <code>README.md:46</code> runs</li></ul>
+<p><code>uv run … https://raw.githubusercontent.com/timianmalloo/ai-forward/main/bootstrap.py</code>; <code>bootstrap.py:527</code> defaults the ref to <code>main</code>; no <code>--no-python-downloads</code>.</p>
+<ul><li><strong>Consequence:</strong> what a user installs changes with every push. uv may also fetch an</li></ul>
+<p>interpreter (Inferred from uv&#x27;s default; not observed).</p>
+<ul><li><strong>Remediation:</strong> document a tagged or SHA-pinned command as the default, keep <code>main</code> as an</li></ul>
+<p>explicit opt-in, and state the interpreter policy.</p>
+<ul><li><strong>Acceptance:</strong> README&#x27;s primary command names a tag or SHA.</li></ul>
+<h3>FR-090 · issue · P3 — Documented counts are stale</h3>
+<ul><li><strong>Evidence:</strong> <code>architecture.md</code> says revision 53 (lines 16, 47), &quot;24 skills&quot; (61), &quot;10 gates&quot;</li></ul>
+<p>(158). Actual: revision 108, 30 skills, 18 gates. <code>AGENTS.md:11</code> says &quot;ten gates&quot;; <code>.github/copilot-instructions.md:21</code> and <code>docs/project-memory.md:59</code> say &quot;nine&quot;.</p>
+<ul><li><strong>Remediation:</strong> regenerate <code>architecture.md</code> under <code>/document</code>; replace prose gate counts with</li></ul>
+<p>a reference to <code>verify-bundle.ps1</code>, or have <code>check-consistency.py</code> check them.</p>
+<ul><li><strong>Acceptance:</strong> <code>check-consistency.py</code> fails on a wrong gate count, observed failing first.</li><li><strong>Next skill:</strong> <code>/document</code>.</li></ul>
+<h3>FR-091 · issue · P3 — CI&#x27;s gate steps are hand-copied from <code>verify-bundle.ps1</code> and drift</h3>
+<ul><li><strong>Evidence:</strong> the ubuntu job splits gate 8 into two steps and runs 7 → 8 → 8b; the script runs</li></ul>
+<p>8b → 7 → 8. The OS subsets on Windows and macOS are documented as deliberate.</p>
+<ul><li><strong>Remediation:</strong> have CI call <code>verify-bundle.ps1</code> (or a gate list it exports), with</li></ul>
+<p>per-OS exclusions declared in one place.</p>
+<ul><li><strong>Acceptance:</strong> adding a gate to the script changes CI with no workflow edit.</li></ul>
+<h3>FR-095 · todo · P3 — No ADR records the six-harness support decision</h3>
+<ul><li><strong>Evidence:</strong> <code>docs/adr/0001–0013</code> cover no harness-support decision; Muse appears in no ADR</li></ul>
+<p>or note.</p>
+<ul><li><strong>Remediation:</strong> one ADR: which harnesses, why, the per-harness cost (surfaces, gates,</li></ul>
+<p><code>AGENTS.md</code> bytes), and the criteria to add or drop one.</p>
+<ul><li><strong>Next skill:</strong> <code>/define-architecture</code> (ADR only).</li></ul>
+<h3>FR-096 · todo · P3 — <code>.codex/hooks.json</code> has no pack source file</h3>
+<ul><li><strong>Evidence:</strong> no file under <code>pack/</code> is copied to it; <code>sync-pack.ps1:391-395</code> refreshes it only</li></ul>
+<p>if it exists; its PreToolUse entry is produced by <code>coord-core.py hook --config --host codex</code>.</p>
+<ul><li><strong>Consequence:</strong> a fresh clone without the file never gets it from sync; its content is</li></ul>
+<p>defined in code, not in the source tree the rest of the install comes from.</p>
+<ul><li><strong>Remediation:</strong> generate it unconditionally in sync, or add a source file and gate it under</li></ul>
+<p>gate 2.</p>
+<ul><li><strong>Acceptance:</strong> deleting <code>.codex/hooks.json</code> and running sync recreates it.</li></ul>
+<h2>Resolved during the review</h2>
+<h3>FR-101 · issue · P3 — The edit-ownership hook prompted for writes it does not govern — <strong>resolved</strong></h3>
+<ul><li><strong>What happened:</strong> WT-D — writes from the primary into a linked worktree of the same</li></ul>
+<p>repository got <code>ask</code>. WT-E — writes outside every checkout (user memory, a scratchpad) got <code>ask</code>, which forces a prompt even in bypass mode.</p>
+<ul><li><strong>Resolution (PR #12, `4c5cf91`, `b808e73`):</strong> sibling worktrees are checked in place; outside</li></ul>
+<p>paths get no decision on the Claude host; an in-tree alias that escapes still fails closed. Both classes are <code>controlled</code> in <code>defect-classes.md</code>, with red-first tests.</p>
+<h2>Summary</h2>
+<table><thead><tr><th>Id</th><th>Priority</th><th>Kind</th><th>Title</th><th>Next skill</th></tr></thead><tbody><tr><td>FR-087</td><td>P2</td><td>risk</td><td>CI runs only on manual dispatch</td><td><code>/implement</code> (CI plan)</td></tr><tr><td>FR-088</td><td>P2</td><td>issue</td><td>Git-identity guard bypasses</td><td><code>/implement</code></td></tr><tr><td>FR-089</td><td>P2</td><td>risk</td><td>Ownership hook <code>allow</code> skips the prompt</td><td><code>/investigate</code></td></tr><tr><td>FR-086</td><td>P2</td><td>risk</td><td>Byte-code cache in shared temp</td><td><code>/implement</code></td></tr><tr><td>FR-094</td><td>P3</td><td>risk</td><td>Windows CI job ~47 min</td><td>profile</td></tr><tr><td>FR-099</td><td>P3</td><td>issue</td><td>Ten environmental test failures</td><td><code>/implement</code></td></tr><tr><td>FR-100</td><td>P3</td><td>issue</td><td>Native hosts refuse outside writes</td><td><code>/design-slice</code></td></tr><tr><td>FR-097</td><td>P3</td><td>todo</td><td>Lock with manual-only recovery</td><td><code>/implement</code></td></tr><tr><td>FR-098</td><td>P3</td><td>risk</td><td>Executable session-check config</td><td><code>/design-slice</code></td></tr><tr><td>FR-092</td><td>P3</td><td>risk</td><td>Link-following writes</td><td><code>/implement</code></td></tr><tr><td>FR-093</td><td>P3</td><td>risk</td><td>Setup from mutable <code>main</code></td><td><code>/implement</code></td></tr><tr><td>FR-090</td><td>P3</td><td>issue</td><td>Stale documented counts</td><td><code>/document</code></td></tr><tr><td>FR-091</td><td>P3</td><td>issue</td><td>Hand-copied CI gate list</td><td><code>/implement</code></td></tr><tr><td>FR-095</td><td>P3</td><td>todo</td><td>No six-harness ADR</td><td><code>/define-architecture</code></td></tr><tr><td>FR-096</td><td>P3</td><td>todo</td><td><code>.codex/hooks.json</code> unsourced</td><td><code>/implement</code></td></tr><tr><td>FR-101</td><td>P3</td><td>issue</td><td>Hook prompted outside its domain</td><td>resolved</td></tr></tbody></table></main></body></html>
