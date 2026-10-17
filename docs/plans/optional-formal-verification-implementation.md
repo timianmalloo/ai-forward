@@ -26,13 +26,12 @@ summary: >-
 This plan explains how we get from the merged
 [specification](../specs/optional-formal-verification.md) to a working feature.
 
-- **Done:** the contribution branch is set up, and a
-  [proposed design](../design/optional-formal-verification.md) is written and
-  independently reviewed.
-- **Waiting on Tim:** the specification asks Tim to accept or revise its scope.
-  He has not done that yet, so implementation cannot start.
-- **Next:** open a draft PR from Lucio's fork so Tim can review the scope and
-  the proposed design together.
+- **Done:** this plan and a
+  [proposed design](../design/optional-formal-verification.md) are written,
+  independently reviewed, and open for Tim's review in
+  [draft PR #8](https://github.com/timianmalloo/ai-forward/pull/8).
+- **Waiting on Tim:** the specification asks him to accept or revise four scope
+  decisions (listed below). Implementation cannot start until he does.
 - **After Tim decides:** run a small experiment to confirm that Verus works the
   way the design assumes. Then finish the design and build the feature.
 
@@ -41,16 +40,11 @@ Nothing has been installed, run, or implemented yet.
 ### Terms used in this plan
 
 - **Verus:** a tool that checks, mathematically, that Rust code meets a
-  written contract.
+  written contract for every input the contract covers.
 - **Contract:** a precise statement of what a function must do, such as "accept
   a range only if it fits inside the buffer."
-- **Obligation:** one claim the verifier is asked to check.
-- **Proof Pack:** AI-Forward's existing record of what was claimed, how it was
-  checked, and what risk remains.
 - **Qualification experiment:** a small, throwaway test that confirms one exact
   Verus version works in one approved environment before we design around it.
-- **Stale result:** a verification result whose inputs (code, contract or tool
-  version) have changed since it ran, so it no longer counts.
 
 ## Who Decides What
 
@@ -73,7 +67,7 @@ What this means in practice:
 | Activity | Allowed now? |
 |---|---|
 | Drafting and reviewing the design | Yes. Lucio asked for it, and nothing in the specification blocks it. |
-| Opening a draft PR for review | Yes. This is how Tim sees the proposal. |
+| Opening a draft PR for review | Done: [#8](https://github.com/timianmalloo/ai-forward/pull/8). |
 | Installing Verus or running experiments | No. Waits for Tim's scope decision and an approved environment. |
 | Implementation | No. Waits for Tim's scope decision, the experiment, and the final design review. |
 | Changing the scope, such as replacing the synthetic example with OpenVMM | Only if Tim approves a specification change. |
@@ -89,26 +83,11 @@ need his approval one by one. Existing tests and reviewer checks still apply.
 | 2 | Write this plan | This document | Steps, decisions and checks are written down | Done |
 | 3 | Independent plan review | Astra review of this plan | Findings handled | Done: no substantive findings |
 | 4 | Draft the design | [Proposed design](../design/optional-formal-verification.md) | Astra reviewed it; findings fixed and rechecked | Done: one major finding fixed and rechecked |
-| 5 | Tim's scope review | Draft PR with this plan and the design | Tim accepts or revises the scope | **Next** |
+| 5 | Tim's scope review | Draft PR with this plan and the design | Tim accepts or revises the scope | **In review:** draft PR #8 |
 | 6 | Qualification experiment | Evidence that one Verus version works as assumed | A correct example passes and a broken example fails | Not started |
 | 7 | Finalize the design | Accepted design and decision record | Required reviewers find no blocking issues | Not started |
 | 8 | Implement | Code, tests and examples, built test-first | The Proof Pack correctly accepts or rejects real results | Not started |
 | 9 | Package and release | Updated AI-Forward pack for both Claude and Copilot | Sync and bundle checks pass; live demo evidence attached | Not started |
-
-```mermaid
-flowchart LR
-    S1[1. Branch] --> S2[2. Plan]
-    S2 --> S3[3. Plan review]
-    S3 --> S4[4. Draft design]
-    S4 --> S5[5. Tim scope review]
-    S5 --> S6[6. Verus experiment]
-    S6 --> S7[7. Final design]
-    S7 --> S8[8. Implement]
-    S8 --> S9[9. Package]
-```
-
-The steps run in order. Each step depends on the one before it, so running
-them in parallel would not save time.
 
 ## Step 6: The Qualification Experiment
 
@@ -127,7 +106,7 @@ before we build anything around it. It does not deliver the feature.
 4. **Run it both ways.** The correct version must pass. Then introduce a
    deliberate bug, such as changing `<=` to `<`, and confirm that it fails
    against the same, unchanged contract. A zero exit code or a "passed" count
-   alone is not proof; confirm which obligations were actually checked.
+   alone is not proof; confirm which claims were actually checked.
 5. **Record what happened.** Keep the inputs, versions, command, output and
    duration. If Verus was unavailable, unsupported or inconclusive, say so.
 
@@ -223,6 +202,10 @@ final design review, and after the first real end-to-end result.
 - Design review: one review found one major defect. Review approval was not tied
   to the English wording of the claim, so approval could survive a change in
   meaning. The fix was independently rechecked and found resolved.
+- Readability rewrite: a separate Astra check compared the rewritten plan and
+  design with the reviewed decisions. It found three weakened requirements
+  (monotonic duration, explicit opt-in before publishing diagnostics, all
+  deterministic tests running without Verus). All three were restored and rechecked.
 - Change from the original plan: the first version told design drafting to wait
   for Tim. That was corrected, because the specification blocks implementation,
   not design drafting.
@@ -234,5 +217,7 @@ Two existing stale suggestions remain (`audit-log`,
 `forensic-review-backlog-20260712`) and are outside this contribution.
 These checks confirm documentation consistency, not Verus feasibility.
 
-**Delivery state:** the work exists only in the separate worktree. It is not
-committed, pushed or opened as a PR.
+**Delivery state:** committed on `design/optional-formal-verification` and
+open for Tim's review as
+[draft PR #8](https://github.com/timianmalloo/ai-forward/pull/8). Nothing is
+installed, run or implemented.

@@ -4315,7 +4315,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "448504d944ce78b9d87cb483352169a3104c9bc345ca206bcac79b273fe239ab"
+      "sourceSha256": "3692cf2210505c83a82d4c4ffadcf99d7fa82c2feec57831fa4a79b32560c8d7"
     },
     {
       "id": "design-owner-review",
@@ -7190,14 +7190,8 @@ window.DOCS_INDEX = {
           "rel": "relates-to"
         }
       ],
-      "diagrams": [
-        {
-          "kind": "flowchart",
-          "title": "The Steps",
-          "mermaid": "flowchart LR\n    S1[1. Branch] --> S2[2. Plan]\n    S2 --> S3[3. Plan review]\n    S3 --> S4[4. Draft design]\n    S4 --> S5[5. Tim scope review]\n    S5 --> S6[6. Verus experiment]\n    S6 --> S7[7. Final design]\n    S7 --> S8[8. Implement]\n    S8 --> S9[9. Package]"
-        }
-      ],
-      "sourceSha256": "53ec3f0be8ef1755bc705d59726943dd07541091306f42906a2bb10ace9b889c"
+      "diagrams": [],
+      "sourceSha256": "dbd7e2d119591c6545cc81e407db40857f5b791ae8c8c74fea28f95fc1ccfbb4"
     },
     {
       "id": "plan-optional-formal-verification-spec",
@@ -12430,5 +12424,5 @@ window.DOCS_INDEX = {
       "artifactId": "threat-model"
     }
   ],
-  "graphSha256": "5bc8d974e4252951dbc7e942b002975ac4592e9ea41197541466b23a72550e23"
+  "graphSha256": "8c54d102af0e5365ac9c69175b57b3c98e8d96843fe35c142a8d8e7cf47cd59f"
 };

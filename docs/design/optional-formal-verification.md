@@ -48,7 +48,8 @@ and deliberately broken code fail. A passing check never replaces existing
 tests and never approves a whole feature.
 
 **Scope status.** Tim merged the specification unchanged, but its own text says
-implementation waits for his scope decision. This draft is for that review.
+implementation waits for his scope decision. This draft is for that review, in
+[draft PR #8](https://github.com/timianmalloo/ai-forward/pull/8).
 It keeps the specification's synthetic example rather than reopening the choice.
 Installing tools and production work still need separate permission.
 
@@ -528,7 +529,9 @@ An independent Astra (`gpt-6-astra`) review returned REVISE with one major
 finding: matching obligation IDs did not prove the reviewed English meaning was
 unchanged. The fix ties review approval to the content of the English
 obligation and its requirement, in the manifest, the acceptance check and the
-tests. A separate Astra recheck confirmed the finding resolved. Other design
+tests. A separate Astra recheck confirmed the finding resolved. After a later
+readability rewrite, another Astra check found three weakened requirements;
+all three were restored and rechecked. Other design
 gates remain open. No veto was cleared by the author, and no live proof is claimed.
 
 **Design checklist.**
@@ -549,6 +552,6 @@ This draft must not be handed to `/implement` as an accepted design.
 
 | Item | State |
 |---|---|
-| Completed | Proposed design and example contract; experiment worksheet; acceptance and test plan; independent review, with its one finding fixed and rechecked |
+| Completed | Proposed design and example contract; experiment worksheet; acceptance and test plan; independent review, with its one finding fixed and rechecked; readability rewrite, checked for unchanged meaning |
 | Remaining | Tim's scope decision; live experiment; final design, ADR and applicable gates |
-| Best next action | Open a draft PR so Tim can review the scope and this design |
+| Best next action | Tim's scope decision in [draft PR #8](https://github.com/timianmalloo/ai-forward/pull/8); then the qualification experiment |

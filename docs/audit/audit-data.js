@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-10-17T16:42:43Z",
+  "generated": "2026-10-17T16:42:55Z",
   "audit": [
     {
       "actor": null,
@@ -13850,6 +13850,30 @@ window.AUDIT_DATA = {
       ],
       "outcome": "success",
       "tier": "T1"
+    },
+    {
+      "id": "al-01M556CKJJ21PBXHXY8S90FE34",
+      "shortname": "formal-verification-pr-readability",
+      "datetime": "2026-10-17T15:06:21Z",
+      "session": "4609a3a2-e03c-4fcc-ba80-4a5df288fb29",
+      "prompt": "can we review this draft PR for readability and conciseness?  Tim (the reviewer) will most likely not have the background in formal proofs or Verus, but at the same time I don't want to overwhelm here with unnecessary primers or references.  I would like it to be written in simple English language and focus on what he needs to understand and where we would go next.",
+      "summary": "Reviewed draft PR #8 for a reader without formal-verification background. Drafted a shorter PR description that leads with the four scope decisions, a plain explanation of the feature, the proposed same-user forgery risk acceptance, and next steps. Updated stale plan and design status lines to reflect the open PR, removed plan glossary terms the reviewer does not need and a diagram that duplicated the steps table, and recorded the readability fidelity check. No requirement changed. Docs graph: zero defects, two pre-existing stale suggestions; consistency clean. Push and PR description update await contributor approval.",
+      "kind": "manual",
+      "skill": null,
+      "tool": "edit",
+      "actor": "GitHub Copilot",
+      "artifacts": [
+        "plan-optional-formal-verification-implementation",
+        "design-optional-formal-verification"
+      ],
+      "tags": [
+        "formal-verification"
+      ],
+      "outcome": "partial",
+      "goal": "Make draft PR #8 readable and concise for a reviewer without formal-verification background, focused on his decisions and the next steps.",
+      "done_when": "PR description and plan/design status are plain, current and decision-first, with no requirement weakened, docs checks green, and publication left to contributor approval.",
+      "tier": "T0",
+      "fan_out": 0
     }
   ],
   "changes": [

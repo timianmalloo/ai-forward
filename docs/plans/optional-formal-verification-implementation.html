@@ -25,45 +25,29 @@ th { background:var(--code); } hr { border:0; border-top:1px solid var(--line); 
 </style></head><body><main><div class="source">Rendered from optional-formal-verification-implementation.md</div><h1>Optional Formal Verification: Implementation Plan</h1>
 <h2>Summary</h2>
 <p>This plan explains how we get from the merged <a href="../specs/optional-formal-verification.md">specification</a> to a working feature.</p>
-<ul><li><strong>Done:</strong> the contribution branch is set up, and a</li></ul>
-<p><a href="../design/optional-formal-verification.md">proposed design</a> is written and independently reviewed.</p>
-<ul><li><strong>Waiting on Tim:</strong> the specification asks Tim to accept or revise its scope.</li></ul>
-<p>He has not done that yet, so implementation cannot start.</p>
-<ul><li><strong>Next:</strong> open a draft PR from Lucio&#x27;s fork so Tim can review the scope and</li></ul>
-<p>the proposed design together.</p>
+<ul><li><strong>Done:</strong> this plan and a</li></ul>
+<p><a href="../design/optional-formal-verification.md">proposed design</a> are written, independently reviewed, and open for Tim&#x27;s review in <a href="https://github.com/timianmalloo/ai-forward/pull/8">draft PR #8</a>.</p>
+<ul><li><strong>Waiting on Tim:</strong> the specification asks him to accept or revise four scope</li></ul>
+<p>decisions (listed below). Implementation cannot start until he does.</p>
 <ul><li><strong>After Tim decides:</strong> run a small experiment to confirm that Verus works the</li></ul>
 <p>way the design assumes. Then finish the design and build the feature.</p>
 <p>Nothing has been installed, run, or implemented yet.</p>
 <h3>Terms used in this plan</h3>
 <ul><li><strong>Verus:</strong> a tool that checks, mathematically, that Rust code meets a</li></ul>
-<p>written contract.</p>
+<p>written contract for every input the contract covers.</p>
 <ul><li><strong>Contract:</strong> a precise statement of what a function must do, such as &quot;accept</li></ul>
 <p>a range only if it fits inside the buffer.&quot;</p>
-<ul><li><strong>Obligation:</strong> one claim the verifier is asked to check.</li><li><strong>Proof Pack:</strong> AI-Forward&#x27;s existing record of what was claimed, how it was</li></ul>
-<p>checked, and what risk remains.</p>
 <ul><li><strong>Qualification experiment:</strong> a small, throwaway test that confirms one exact</li></ul>
 <p>Verus version works in one approved environment before we design around it.</p>
-<ul><li><strong>Stale result:</strong> a verification result whose inputs (code, contract or tool</li></ul>
-<p>version) have changed since it ran, so it no longer counts.</p>
 <h2>Who Decides What</h2>
 <p>The specification is merged but not yet accepted. Its gate record says: &quot;Human acceptance: Pending Tim&#x27;s review. No implementation, toolchain installation, commit, push, or PR is authorized by this document.&quot; It also says <code>/implement</code> runs only &quot;after the scope is approved and Verus is available in an approved environment.&quot;</p>
 <p>Merging made the specification available to experiment with. It did not answer the four decisions the specification asks Tim to make:</p>
 <ol><li>the opt-in boundary (verification stays off unless chosen);</li><li>Verus as the first and only verifier;</li><li>the evidence requirements;</li><li>the worked example (a synthetic validator first; OpenVMM later, if at all).</li></ol>
 <p>What this means in practice:</p>
-<table><thead><tr><th>Activity</th><th>Allowed now?</th></tr></thead><tbody><tr><td>Drafting and reviewing the design</td><td>Yes. Lucio asked for it, and nothing in the specification blocks it.</td></tr><tr><td>Opening a draft PR for review</td><td>Yes. This is how Tim sees the proposal.</td></tr><tr><td>Installing Verus or running experiments</td><td>No. Waits for Tim&#x27;s scope decision and an approved environment.</td></tr><tr><td>Implementation</td><td>No. Waits for Tim&#x27;s scope decision, the experiment, and the final design review.</td></tr><tr><td>Changing the scope, such as replacing the synthetic example with OpenVMM</td><td>Only if Tim approves a specification change.</td></tr></tbody></table>
+<table><thead><tr><th>Activity</th><th>Allowed now?</th></tr></thead><tbody><tr><td>Drafting and reviewing the design</td><td>Yes. Lucio asked for it, and nothing in the specification blocks it.</td></tr><tr><td>Opening a draft PR for review</td><td>Done: <a href="https://github.com/timianmalloo/ai-forward/pull/8">#8</a>.</td></tr><tr><td>Installing Verus or running experiments</td><td>No. Waits for Tim&#x27;s scope decision and an approved environment.</td></tr><tr><td>Implementation</td><td>No. Waits for Tim&#x27;s scope decision, the experiment, and the final design review.</td></tr><tr><td>Changing the scope, such as replacing the synthetic example with OpenVMM</td><td>Only if Tim approves a specification change.</td></tr></tbody></table>
 <p>Tim decides scope. Routine technical choices belong in the design and do not need his approval one by one. Existing tests and reviewer checks still apply.</p>
 <h2>The Steps</h2>
-<table><thead><tr><th>#</th><th>Step</th><th>What it produces</th><th>Finished when</th><th>Status</th></tr></thead><tbody><tr><td>1</td><td>Set up the branch</td><td>A branch in Lucio&#x27;s fork, based on Tim&#x27;s latest <code>main</code></td><td>Branch matches upstream; pushes go to the fork</td><td>Done</td></tr><tr><td>2</td><td>Write this plan</td><td>This document</td><td>Steps, decisions and checks are written down</td><td>Done</td></tr><tr><td>3</td><td>Independent plan review</td><td>Astra review of this plan</td><td>Findings handled</td><td>Done: no substantive findings</td></tr><tr><td>4</td><td>Draft the design</td><td><a href="../design/optional-formal-verification.md">Proposed design</a></td><td>Astra reviewed it; findings fixed and rechecked</td><td>Done: one major finding fixed and rechecked</td></tr><tr><td>5</td><td>Tim&#x27;s scope review</td><td>Draft PR with this plan and the design</td><td>Tim accepts or revises the scope</td><td><strong>Next</strong></td></tr><tr><td>6</td><td>Qualification experiment</td><td>Evidence that one Verus version works as assumed</td><td>A correct example passes and a broken example fails</td><td>Not started</td></tr><tr><td>7</td><td>Finalize the design</td><td>Accepted design and decision record</td><td>Required reviewers find no blocking issues</td><td>Not started</td></tr><tr><td>8</td><td>Implement</td><td>Code, tests and examples, built test-first</td><td>The Proof Pack correctly accepts or rejects real results</td><td>Not started</td></tr><tr><td>9</td><td>Package and release</td><td>Updated AI-Forward pack for both Claude and Copilot</td><td>Sync and bundle checks pass; live demo evidence attached</td><td>Not started</td></tr></tbody></table>
-<pre><code class="language-mermaid">flowchart LR
-    S1[1. Branch] --&gt; S2[2. Plan]
-    S2 --&gt; S3[3. Plan review]
-    S3 --&gt; S4[4. Draft design]
-    S4 --&gt; S5[5. Tim scope review]
-    S5 --&gt; S6[6. Verus experiment]
-    S6 --&gt; S7[7. Final design]
-    S7 --&gt; S8[8. Implement]
-    S8 --&gt; S9[9. Package]</code></pre>
-<p>The steps run in order. Each step depends on the one before it, so running them in parallel would not save time.</p>
+<table><thead><tr><th>#</th><th>Step</th><th>What it produces</th><th>Finished when</th><th>Status</th></tr></thead><tbody><tr><td>1</td><td>Set up the branch</td><td>A branch in Lucio&#x27;s fork, based on Tim&#x27;s latest <code>main</code></td><td>Branch matches upstream; pushes go to the fork</td><td>Done</td></tr><tr><td>2</td><td>Write this plan</td><td>This document</td><td>Steps, decisions and checks are written down</td><td>Done</td></tr><tr><td>3</td><td>Independent plan review</td><td>Astra review of this plan</td><td>Findings handled</td><td>Done: no substantive findings</td></tr><tr><td>4</td><td>Draft the design</td><td><a href="../design/optional-formal-verification.md">Proposed design</a></td><td>Astra reviewed it; findings fixed and rechecked</td><td>Done: one major finding fixed and rechecked</td></tr><tr><td>5</td><td>Tim&#x27;s scope review</td><td>Draft PR with this plan and the design</td><td>Tim accepts or revises the scope</td><td><strong>In review:</strong> draft PR #8</td></tr><tr><td>6</td><td>Qualification experiment</td><td>Evidence that one Verus version works as assumed</td><td>A correct example passes and a broken example fails</td><td>Not started</td></tr><tr><td>7</td><td>Finalize the design</td><td>Accepted design and decision record</td><td>Required reviewers find no blocking issues</td><td>Not started</td></tr><tr><td>8</td><td>Implement</td><td>Code, tests and examples, built test-first</td><td>The Proof Pack correctly accepts or rejects real results</td><td>Not started</td></tr><tr><td>9</td><td>Package and release</td><td>Updated AI-Forward pack for both Claude and Copilot</td><td>Sync and bundle checks pass; live demo evidence attached</td><td>Not started</td></tr></tbody></table>
 <h2>Step 6: The Qualification Experiment</h2>
 <p>The goal is to learn whether Verus actually checks what the design assumes, before we build anything around it. It does not deliver the feature.</p>
 <ol><li><strong>Pick the environment.</strong> Record one approved operating system, Verus</li></ol>
@@ -73,7 +57,7 @@ th { background:var(--code); } hr { border:0; border-top:1px solid var(--line); 
 <ol><li><strong>Set limits.</strong> Choose a time and resource limit before running. Check the</li></ol>
 <p>real Rust code, not a separate model of it.</p>
 <ol><li><strong>Run it both ways.</strong> The correct version must pass. Then introduce a</li></ol>
-<p>deliberate bug, such as changing <code>&lt;=</code> to <code>&lt;</code>, and confirm that it fails against the same, unchanged contract. A zero exit code or a &quot;passed&quot; count alone is not proof; confirm which obligations were actually checked.</p>
+<p>deliberate bug, such as changing <code>&lt;=</code> to <code>&lt;</code>, and confirm that it fails against the same, unchanged contract. A zero exit code or a &quot;passed&quot; count alone is not proof; confirm which claims were actually checked.</p>
 <ol><li><strong>Record what happened.</strong> Keep the inputs, versions, command, output and</li></ol>
 <p>duration. If Verus was unavailable, unsupported or inconclusive, say so.</p>
 <p>If the experiment cannot be completed, report it as blocked. Do not mark the design ready.</p>
@@ -102,8 +86,10 @@ th { background:var(--code); } hr { border:0; border-top:1px solid var(--line); 
 <p>substantive findings, no correction needed.</p>
 <ul><li>Design review: one review found one major defect. Review approval was not tied</li></ul>
 <p>to the English wording of the claim, so approval could survive a change in meaning. The fix was independently rechecked and found resolved.</p>
+<ul><li>Readability rewrite: a separate Astra check compared the rewritten plan and</li></ul>
+<p>design with the reviewed decisions. It found three weakened requirements (monotonic duration, explicit opt-in before publishing diagnostics, all deterministic tests running without Verus). All three were restored and rechecked.</p>
 <ul><li>Change from the original plan: the first version told design drafting to wait</li></ul>
 <p>for Tim. That was corrected, because the specification blocks implementation, not design drafting.</p>
 <ul><li>Tokens and cost: not recorded.</li></ul>
 <p><strong>Documentation checks [Verified]:</strong> HTML rendered; graph, portal and web indexes regenerated; graph validation reports 359 artifacts and zero defects. Two existing stale suggestions remain (<code>audit-log</code>, <code>forensic-review-backlog-20260712</code>) and are outside this contribution. These checks confirm documentation consistency, not Verus feasibility.</p>
-<p><strong>Delivery state:</strong> the work exists only in the separate worktree. It is not committed, pushed or opened as a PR.</p></main></body></html>
+<p><strong>Delivery state:</strong> committed on <code>design/optional-formal-verification</code> and open for Tim&#x27;s review as <a href="https://github.com/timianmalloo/ai-forward/pull/8">draft PR #8</a>. Nothing is installed, run or implemented.</p></main></body></html>
