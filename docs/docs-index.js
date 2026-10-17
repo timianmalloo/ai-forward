@@ -4875,7 +4875,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "21e763f8bd827b77c3c61863fb5cd7e8d37cf9759846372348e9c36cddfef77a"
+      "sourceSha256": "f1de03a9faa6030c056a74f337a80a0cb891444712dd0c3bf4b2da0584af8c55"
     },
     {
       "id": "docs-index",
@@ -12304,5 +12304,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "c3410e287d028c5b445195d6708fe8038b30e79899e49b623ee193a53a5584b5"
+  "graphSha256": "5fe35ddb9e50212c4cbc351dd8dcc2235675587458e892fe9603332f33969c6d"
 };
