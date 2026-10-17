@@ -658,14 +658,24 @@ class SiblingWorktreeWriteTests(PrimaryWriteGuardTests):
         self.assertIn("outside this repository", answer["permissionDecisionReason"])
 
     def test_an_in_tree_alias_to_an_outside_target_still_fails_closed(self):
+        # WT-E2: the escape must be found however the repository path is SPELLED. CI caught
+        # `{}` on macOS (/var -> /private/var) and Windows (8.3 RUNNER~1 short names), where
+        # the lexical path never sat under the resolved root; `via` reproduces both here.
         outside = Path(self.tmp.name) / "escape-target"
         outside.mkdir()
         alias = self.repo / "escape"
         create_directory_alias(alias, outside)
-        self.addCleanup(alias.rmdir)
-        answer = self.decision(self.hook_from(self.repo, alias / "x.md"))
-        self.assertEqual("ask", answer["permissionDecision"])
-        self.assertIn("outside this repository", answer["permissionDecisionReason"])
+        if os.name == "nt":
+            self.addCleanup(alias.rmdir)  # a junction; a POSIX symlink goes with the temp dir
+        via = Path(self.tmp.name) / "repo-by-another-spelling"
+        create_directory_alias(via, self.repo)
+        if os.name == "nt":
+            self.addCleanup(via.rmdir)
+        for spelled in (alias / "x.md", via / "escape" / "x.md"):
+            with self.subTest(path=str(spelled)):
+                answer = self.decision(self.hook_from(self.repo, spelled))
+                self.assertEqual("ask", answer["permissionDecision"])
+                self.assertIn("outside this repository", answer["permissionDecisionReason"])
 
 
 class HookTests(GitCase):

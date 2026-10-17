@@ -153,6 +153,8 @@ th { background:var(--code); } hr { border:0; border-top:1px solid var(--line); 
 <p>repository got <code>ask</code>. WT-E — writes outside every checkout (user memory, a scratchpad) got <code>ask</code>, which forces a prompt even in bypass mode.</p>
 <ul><li><strong>Resolution (PR #12, `4c5cf91`, `b808e73`):</strong> sibling worktrees are checked in place; outside</li></ul>
 <p>paths get no decision on the Claude host; an in-tree alias that escapes still fails closed. Both classes are <code>controlled</code> in <code>defect-classes.md</code>, with red-first tests.</p>
+<ul><li><strong>Correction (revision 111):</strong> the WT-E alias check compared spellings, so on macOS and Windows</li></ul>
+<p>runners an escaping in-tree alias got no decision instead of failing closed. The first CI baseline on <code>main</code> found it; fixed as WT-E2.</p>
 <h3>FR-102 · issue · P2 — Bundle changes shipped without a revision bump — <strong>resolved</strong></h3>
 <ul><li><strong>What happened:</strong> PR #12 (<code>coord-core.py</code>) and the Muse re-measure (<code>context-budget.json</code>,</li></ul>
 <p><code>muse-surface.md</code>) changed deployed files at revision 108. pack-apply resolves a merge base from the commits whose INSTALL text matches the installed copy (<code>pack-apply.py:521-538</code>), so revision 108 named two versions of each file. <code>test_bootstrap</code> failed with CONFLICT on <code>context-budget.json</code>, and a same-revision refresh keeps the old bytes as a &quot;local deviation&quot; (<code>pack-apply.py:576-579</code>), so the hook fix could not reach any consumer.</p>

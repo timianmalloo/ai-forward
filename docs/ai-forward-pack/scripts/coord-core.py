@@ -2279,6 +2279,22 @@ def _in_primary_from_linked_tree(target, base):
     return True
 
 
+def _escapes_from_checkout(lexical, base):
+    """WT-E2: does some component of `lexical` sit inside `base` and resolve out of it?
+
+    Found by resolving each prefix, never by comparing spellings: the lexical path need not
+    sit under the resolved root (/var -> /private/var on macOS, 8.3 short names on Windows).
+    """
+    def inside(path):
+        try:
+            path.resolve().relative_to(base)
+            return True
+        except ValueError:
+            return False
+    return any(inside(prefix.parent) and not inside(prefix)
+               for prefix in [*reversed(lexical.parents), lexical] if prefix.parent != prefix)
+
+
 def _native_paths(path, repo, cwd):
     """Check lexical and symlink-resolved targets, relative to the actual process cwd.
 
@@ -2303,12 +2319,7 @@ def _native_paths(path, repo, cwd):
         sibling = _linked_sibling_top(canonical, base)
         if sibling is not None:
             raise SiblingCheckoutWrite(sibling) from None
-        try:
-            lexical.relative_to(base)
-            via_alias = True
-        except ValueError:
-            via_alias = False
-        raise OutsideCheckout(str(canonical), via_alias=via_alias) from None
+        raise OutsideCheckout(str(canonical), via_alias=_escapes_from_checkout(lexical, base)) from None
     for target in (lexical, canonical):
         try:
             relative = target.relative_to(base).as_posix()
