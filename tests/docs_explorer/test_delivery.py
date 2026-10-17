@@ -9,6 +9,8 @@ import tempfile
 import unittest
 from typing import Any, Literal, overload
 
+from windows_links import create_directory_alias, remove_test_path
+
 ROOT = Path(__file__).resolve().parents[2]
 SCRIPT = ROOT / "pack/scripts/delivery.py"
 
@@ -238,10 +240,10 @@ class DeliveryTests(unittest.TestCase):
         a.mkdir()
         b.mkdir()
         link = self.repo / "dependency"
-        link.symlink_to(a, target_is_directory=True)
+        create_directory_alias(link, a)  # a junction on Windows: no symlink privilege needed
         self.start()
-        link.unlink()
-        link.symlink_to(b, target_is_directory=True)
+        remove_test_path(link)
+        create_directory_alias(link, b)
         self.assertIn("input drift:", self.run_cli("status", "--task", "demo", ok=False).stderr)
 
     def test_plain_default_state_home_and_project_identity_binding(self):
@@ -512,7 +514,7 @@ class DeliveryTests(unittest.TestCase):
         outside = Path(self.tmp.name) / "outside"
         outside.mkdir()
         link = Path(self.tmp.name) / "linked-state"
-        link.symlink_to(outside, target_is_directory=True)
+        create_directory_alias(link, outside)
         for root in (self.repo, self.repo.parent, link):
             with self.subTest(root=root):
                 failed = self.run_cli("start", "--task", "unsafe", "--facts", self.facts(),

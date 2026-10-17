@@ -9,6 +9,7 @@ import tempfile
 
 import unittest
 import test_delivery as fixtures
+from windows_links import file_symlinks_allowed
 
 
 class DeliveryRepairTests(unittest.TestCase):
@@ -67,6 +68,8 @@ class DeliveryRepairTests(unittest.TestCase):
         self.assertIsNone(self.run_cli("status", "--task", "demo")["next"])
 
     def test_recheck_cannot_replace_scoped_file_with_external_symlink(self):
+        if not file_symlinks_allowed(Path(self.tmp.name)):  # a file has no unprivileged link form (a junction is a folder)
+            self.skipTest("file symlinks not permitted on this host (Windows: Developer Mode or the symlink privilege)")
         app = self.repo / "app.py"
         app.write_text("# product\n", encoding="utf-8")
         self.start(contract_tier="T1", design_ready=True)

@@ -613,9 +613,11 @@ class DeliverFeatureArtifactTests(unittest.TestCase):
                 cwd = root / location
                 env = dict(os.environ, PYTEST_DISABLE_PLUGIN_AUTOLOAD="1", PYTEST_ADDOPTS="",
                            PYTEST_PLUGINS="", PYTHONDONTWRITEBYTECODE="1")
+                # --confcutdir: on Windows `-c nul` makes pytest's config dir `\\.\`, and the conftest search then
+                # walks the whole temp folder (measured 2026-10-17: 88 s, and a temp file vanishing mid-walk fails it).
                 result = subprocess.run(
                     [sys.executable, "-B", "-m", "pytest", "-q", "-c", os.devnull,
-                     "--rootdir", str(cwd)], cwd=cwd, env=env,
+                     "--rootdir", str(cwd), "--confcutdir", str(cwd)], cwd=cwd, env=env,
                     capture_output=True, text=True, timeout=30,
                 )
                 self.assertEqual(0, result.returncode, result.stdout + result.stderr)

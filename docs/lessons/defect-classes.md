@@ -163,7 +163,7 @@ representation-contract failure, not a reason to bypass merges for authored file
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** project classes: controlled `40` · partially-controlled `24` · uncontrolled `8`; inherited table: controlled `14` · partially-controlled `4` · uncontrolled `22`
+**Status counts:** project classes: controlled `41` · partially-controlled `24` · uncontrolled `8`; inherited table: controlled `14` · partially-controlled `4` · uncontrolled `22`
 *Checked, not trusted: `tests/docs_explorer/test_defect_register_counts.py` tallies each entry's leading status and fails when this line disagrees, printing the corrected line (FR-076, class REC-A). Change a status, change this line. A status is one of the three schema values; a qualifier after it does not change the count.*
 **Recurrence since last review:** `0` — *a second occurrence of a known class means the control was wrong, not that someone was careless (CI4).*
 
@@ -986,6 +986,37 @@ representation-contract failure, not a reason to bypass merges for authored file
   cleanup, and tests for early EOF, exit between poll/signal, setup failure, descendants
   after successful completion and descendants after parent exit in `test_coord_transport.py`.
 - **Status:** controlled for the POSIX pilot; Windows interactive containment is unsupported.
+
+### WIN-LINK-A — A link check that asks only `is_symlink()` misses a Windows junction
+- **Signature:** a safety rule refuses or records a filesystem link by `Path.is_symlink()` or
+  `os.path.islink()`. A Windows junction is a reparse point those calls do not report, and any
+  process can make one (`mklink /J`), while a symlink needs Developer Mode or a privilege. Git
+  also walks into a junction and lists the files behind it, where it lists a symlink itself.
+- **Why it survived:** the tests made their links with `symlink_to`, which an unprivileged Windows
+  host refuses (WinError 1314), so on such a host they failed for the privilege and never reached
+  the check. Two delivery checks already asked for reparse points; three did not.
+- **Instance (2026-10-17, revision 110, found while making the suite pass on an unprivileged host):**
+  `delivery.py` accepted a state root behind a junction and wrote delivery state outside the
+  project. It did not see input drift when a junctioned dependency folder was re-pointed. In a git
+  project it hashed a marker file read through a junction from outside the project, instead of
+  recording the link. The tests made their directory links as junctions
+  (`windows_links.create_directory_alias`), and all three failures were observed before the fix.
+- **Class → sweep → derive:** every `is_symlink()`/`islink()` check in `pack/` and `tools/`. File
+  checks are safe, since a junction is always a folder (`named_hook_bundles.py`, `pack-apply.py`,
+  `build-handbook.py`, `delivery.py`'s file inputs); `build-pages-bundle.py` also compares
+  `realpath`. `coord-runner.py`'s run-store folder checks have the gap but run only on POSIX (the
+  runner is a POSIX pilot); give them the rule when the runner admits Windows.
+- **Control:** `delivery.is_link` (a symlink, or any reparse point) is the one link rule in
+  `delivery.py`, and `_link_ancestor` maps a listed path under a link to the link. The directory-link
+  tests in `test_delivery.py` and `test_delivery_outcome_repairs.py` now use junctions, so they run
+  unprivileged. A file link has no unprivileged form, so those cases skip with the reason when
+  `windows_links.file_symlinks_allowed` is False.
+- **Status:** controlled (delivery); the coord-runner gap is recorded for its Windows admission.
+- **Same review, inherited PACK-C (platform assumption) in the tests:** `test_uv_hook_launcher.py`
+  derived `sh.exe` from `git.exe`'s grandparent, which is wrong when git resolves from `mingw64/bin`.
+  `test_run_evals.py`'s `-c nul` made pytest's config dir `\\.\` on Windows, so the conftest
+  search walked the whole temp folder (88 s; a vanishing temp file failed it). Both were fixed
+  (walk up to `usr/bin/sh.exe`; `--confcutdir`).
 
 ## Inherited classes (seeded from the pack)
 

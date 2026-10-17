@@ -18,7 +18,7 @@ import subprocess
 import unittest
 from pathlib import Path
 
-from test_upstream_adoption_integration import recovered_revision_108_install
+from test_upstream_adoption_integration import recovered_revision_108_install, recovered_revision_109_install
 
 REPO = Path(__file__).resolve().parents[2]
 INSTALL = "pack/adapters/INSTALL.md"
@@ -53,7 +53,7 @@ class Revision109MetadataTests(unittest.TestCase):
     """Revision 109: the one delta that ships WT-D, WT-E and the Muse 1.4.10 re-measure."""
 
     def test_revision_109_is_the_one_hook_scope_and_muse_delta(self):
-        frontmatter = (REPO / INSTALL).read_bytes().split(b"---\n", 2)[1].decode("utf-8")
+        frontmatter = recovered_revision_109_install().split(b"---\n", 2)[1].decode("utf-8")
         self.assertRegex(frontmatter, r"(?m)^revision: 109$")
         self.assertIn("bundle_version: '2026.10.17.1'", frontmatter)
         self.assertEqual(1, frontmatter.count("  - { type: changed,"))
@@ -70,7 +70,7 @@ class Revision109MetadataTests(unittest.TestCase):
                 self.assertIn(instruction, deploy)
 
     def test_reversal_recovers_the_published_revision_108_source(self):
-        raw = (REPO / INSTALL).read_bytes()
+        raw = recovered_revision_109_install()
         self.assertEqual(285919, len(recovered_revision_108_install(raw)))
         corrupted = raw.replace(b"area: upstream-hook-cost-refresh", b"area: upstream-hook-cost-refresH", 1)
         self.assertNotEqual(raw, corrupted)

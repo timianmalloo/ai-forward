@@ -28,6 +28,23 @@ def create_directory_alias(link: Path, target: Path, *, dangling: bool = False) 
     return "symlink"
 
 
+def file_symlinks_allowed(folder: Path) -> bool:
+    """Whether this process may create a file symlink here. Windows grants it only with Developer Mode or the
+    SeCreateSymbolicLinkPrivilege (WinError 1314 otherwise); a directory alias needs neither (a junction)."""
+    target, link = Path(folder) / ".symlink-probe-target", Path(folder) / ".symlink-probe"
+    target.write_text("", encoding="utf-8")
+    try:
+        link.symlink_to(target)
+    except OSError:
+        if os.name == "nt":
+            return False
+        raise
+    finally:
+        remove_test_path(link)
+        remove_test_path(target)
+    return True
+
+
 def remove_test_path(path: Path) -> None:
     path = Path(path)
     if not path.exists() and not path.is_symlink():

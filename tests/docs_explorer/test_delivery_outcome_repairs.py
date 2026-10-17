@@ -17,6 +17,7 @@ from typing import Any, Literal, overload
 
 import test_delivery as fixtures
 import test_delivery_checkpoint_guards as guards
+from windows_links import create_directory_alias, file_symlinks_allowed
 
 ROOT = fixtures.ROOT
 SCRIPT = Path(os.environ.get("DELIVERY_REPAIR_SCRIPT", fixtures.SCRIPT))
@@ -693,6 +694,7 @@ class DeliveryOutcomeRepairsTests(unittest.TestCase):
         assert spec is not None and spec.loader is not None
         helper = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(helper)
+        file_links = file_symlinks_allowed(Path(self.tmp.name))  # the directory link below is a junction on Windows
         for plain in (False, True):
             with self.subTest(plain=plain):
                 self.project(f"marker-links-{plain}", plain)
@@ -701,17 +703,19 @@ class DeliveryOutcomeRepairsTests(unittest.TestCase):
                 marker.parent.mkdir(parents=True)
                 marker.write_text("{}", encoding="utf-8")
                 self.assertTrue(helper.runtime_start_marker(marker, self.repo.resolve()))
-                outside = Path(self.tmp.name) / ("external-marker-" + str(plain))
-                outside.write_text("{}", encoding="utf-8")
-                marker.unlink()
-                marker.symlink_to(outside)
-                self.assertFalse(helper.runtime_start_marker(marker, self.repo.resolve()))
+                if file_links:
+                    outside = Path(self.tmp.name) / ("external-marker-" + str(plain))
+                    outside.write_text("{}", encoding="utf-8")
+                    marker.unlink()
+                    marker.symlink_to(outside)
+                    self.assertFalse(helper.runtime_start_marker(marker, self.repo.resolve()))
                 started = self.start()
-                replacement = Path(self.tmp.name) / ("external-other-" + str(plain))
-                replacement.write_text("{}", encoding="utf-8")
-                marker.unlink()
-                marker.symlink_to(replacement)
-                self.assertIn("input drift:", self.run_cli("status", "--task", "demo", ok=False).stderr)
+                if file_links:
+                    replacement = Path(self.tmp.name) / ("external-other-" + str(plain))
+                    replacement.write_text("{}", encoding="utf-8")
+                    marker.unlink()
+                    marker.symlink_to(replacement)
+                    self.assertIn("input drift:", self.run_cli("status", "--task", "demo", ok=False).stderr)
                 marker.unlink()
                 marker.mkdir()
                 self.assertFalse(helper.runtime_start_marker(marker, self.repo.resolve()))
@@ -725,10 +729,12 @@ class DeliveryOutcomeRepairsTests(unittest.TestCase):
                 external_folder = Path(self.tmp.name) / ("external-audit-" + str(plain))
                 external_folder.mkdir()
                 (external_folder / marker.name).write_text("{}", encoding="utf-8")
-                marker.parent.symlink_to(external_folder, target_is_directory=True)
+                create_directory_alias(marker.parent, external_folder)
                 self.assertFalse(helper.runtime_start_marker(marker, self.repo.resolve()))
                 audit_key = str(Path("src/docs/audit")) if plain else "src/docs/audit"
                 self.assertIn(audit_key, helper.snapshot(self.repo, started["local_area"], details=True)["entries"])
+                if not file_links:
+                    self.skipTest("file symlinks not permitted on this host; the directory link ran as a junction")
 
     def test_verify_serial_drift_and_unchanged_transition_controls(self):
         for plain in (False, True):

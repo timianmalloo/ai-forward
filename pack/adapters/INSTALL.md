@@ -1,12 +1,12 @@
 ---
 doc: INSTALL
 purpose: 'Deployment map and refresh changelog used by the portable bootstrap. For expert manual refreshes, `changes` lists the source paths and marked instruction sections to update. Preserve project-owned files and policy; the first-use path is one-line setup followed by a deliver request.'
-bundle_version: '2026.10.17.1'
-revision: 109
+bundle_version: '2026.10.17.2'
+revision: 110
 counts: { lenses: 23, skills: 30, knowledge_docs: 40, templates: 29, scripts: 47 }
 refresh_protocol: 'Compare your repo last-applied revision to the `revision` above. If it is lower, apply each entry in `changes` in order — re-copy the listed `paths` to their mapped destinations (deployment map in the body), re-apply the Copilot frontmatter wraps, and where an entry `deploy` says RE-PASTE, replace the managed blocks wholesale between their markers. Never overwrite an accumulated docs/docs-index.js.'
 changes:
-  - { type: changed, area: hook-scope-and-muse-remeasure, paths: ['scripts/coord-core.py', 'adapters/muse/muse-surface.md', 'context-budget.json', 'adapters/INSTALL.md'], deploy: 'Use the updated SOURCE clone, not an installed applier: `python3 <ai-forward-clone>/pack/scripts/pack-apply.py plan --target <project>` then `python3 <ai-forward-clone>/pack/scripts/pack-apply.py apply --target <project>`. Refresh coord-core.py, muse-surface.md, context-budget.json and INSTALL together. This is the normal revision 108 to 109 refresh: an installation at revision 108 that kept coord-core.py as a local deviation must take the new bytes, because revision 108 was published with more than one coord-core.py and context-budget.json. Preserve project-owned settings, custom hook entries and wrappers, local deviations and durable audit/history. Refresh does not run coordination install or change permission policy.', summary: 'THE EDIT-OWNERSHIP HOOK STOPS PROMPTING FOR WRITES IT DOES NOT GOVERN. WT-D: a write from the primary checkout into a linked worktree of the same repository is checked in that tree (same ledger, same leases) instead of answering `ask` as an unreadable payload. WT-E: on the Claude host a write to a path in no checkout of the repository (user memory, a session scratchpad) gets no decision (`{}`), so the session's own permission mode decides; `ask` forced a prompt even in bypass mode, and `allow` was rejected because it would grant writes anywhere on disk. An in-tree alias whose target escapes still fails closed; PRIM-A still denies; the native hosts keep their recorded fail-closed deny. ALSO: the Muse profile is re-measured on Muse 1.4.10 (52 loaded = 30 pack + 21 bundled + 1 plugin; 27215 startup bytes; no trim). Counts unchanged.' }
+  - { type: changed, area: hook-times-and-junctions, paths: ['adapters/hooks/dispatch.py', 'scripts/delivery.py', 'adapters/INSTALL.md'], deploy: 'The normal revision 109 to 110 refresh: copy dispatch.py to docs/ai-forward-pack/hooks/ and delivery.py to docs/ai-forward-pack/scripts/ ; nothing to configure. delivery.py now treats a Windows junction as a link everywhere it checks links (WIN-LINK-A). A dispatch appends one timing line (host, event, hooks, start, ms, exit) only where <git-dir>/ai-forward/hook-times.jsonl already exists; the pack never creates it, so an install that does not ask writes nothing (12 us per dispatch to check).', summary: 'HOOK TIME WHERE ASKED. Claude Code''s record keeps no start for a hook, so a session''s hook time was not recorded (bench REC-UNREAD-A, 2026-10-17). The dispatcher now times itself from main() to its exit code into a file the caller creates in the checkout''s git dir, never the working tree; the host''s git -> sh -> python launch is outside the time. ALSO: a state root or marker behind a Windows junction is a link, not a folder (WIN-LINK-A). Counts unchanged.' }
 ---
 
 ## Changelog — what changed since the last version
@@ -21,6 +21,15 @@ changes:
 So at any moment: the frontmatter `changes` = the latest delta (the refresh guide), and this section = the full rolling history.
 
 ### Prior revisions
+
+<details>
+<summary>Revision 109 — 17 October 2026 — hook scope and Muse re-measure</summary>
+
+```yaml
+changes:
+  - { type: changed, area: hook-scope-and-muse-remeasure, paths: ['scripts/coord-core.py', 'adapters/muse/muse-surface.md', 'context-budget.json', 'adapters/INSTALL.md'], deploy: 'Use the updated SOURCE clone, not an installed applier: `python3 <ai-forward-clone>/pack/scripts/pack-apply.py plan --target <project>` then `python3 <ai-forward-clone>/pack/scripts/pack-apply.py apply --target <project>`. Refresh coord-core.py, muse-surface.md, context-budget.json and INSTALL together. This is the normal revision 108 to 109 refresh: an installation at revision 108 that kept coord-core.py as a local deviation must take the new bytes, because revision 108 was published with more than one coord-core.py and context-budget.json. Preserve project-owned settings, custom hook entries and wrappers, local deviations and durable audit/history. Refresh does not run coordination install or change permission policy.', summary: 'THE EDIT-OWNERSHIP HOOK STOPS PROMPTING FOR WRITES IT DOES NOT GOVERN. WT-D: a write from the primary checkout into a linked worktree of the same repository is checked in that tree (same ledger, same leases) instead of answering `ask` as an unreadable payload. WT-E: on the Claude host a write to a path in no checkout of the repository (user memory, a session scratchpad) gets no decision (`{}`), so the session's own permission mode decides; `ask` forced a prompt even in bypass mode, and `allow` was rejected because it would grant writes anywhere on disk. An in-tree alias whose target escapes still fails closed; PRIM-A still denies; the native hosts keep their recorded fail-closed deny. ALSO: the Muse profile is re-measured on Muse 1.4.10 (52 loaded = 30 pack + 21 bundled + 1 plugin; 27215 startup bytes; no trim). Counts unchanged.' }
+```
+</details>
 
 <details>
 <summary>Revision 108 — 16 October 2026 — one-command setup and upstream hook cost refresh</summary>

@@ -73,6 +73,11 @@ Conditional delivery routing and local checkpoint integrity, not a workflow runn
 
 Match a marker suffix lexically, without granting a runtime exemption.
 
+### `is_link(path)`
+
+A symlink, or a Windows reparse point such as a junction, which `is_symlink()` does not report and which an
+unprivileged process can create. Every link check here uses this one rule.
+
 ### `runtime_start_marker(path, root, allow_missing=…)`
 
 Exact regular stores; snapshots may also omit genuinely absent stores.
@@ -202,5 +207,5 @@ authoring this record; arbitrary nonempty evidence is not reconciliation.
 
 ## Coverage
 
-- Public functions: **36** · documented: **9** (**25%**)
+- Public functions: **37** · documented: **10** (**27%**)
 - Undocumented (recorded, not invented): `route`, `read_json`, `digest`, `git`, `identity`, `snapshot`, `file_record`, `read_json_record`, `check_records`, `compiler`, `compilation`, `contract`, `local_area`, `state_path`, `save`, `view`, `load`, `check_prestart_conversion`, `gate_binding`, `check_gate_binding`, `new_gate`, `resume`, `begin_repair`, `recheck_repair`, `close_outcome`, `execute`, `locked_execute`
