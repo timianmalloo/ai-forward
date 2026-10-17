@@ -5,7 +5,8 @@ import json
 import re
 import unittest
 
-from test_upstream_adoption_integration import ROOT, UPSTREAM_MAIN_SHA, recovered_revision_107_install
+from test_upstream_adoption_integration import (ROOT, UPSTREAM_MAIN_SHA, recovered_revision_107_install,
+                                                recovered_revision_108_install)
 
 _spec = importlib.util.spec_from_file_location('pack_apply_r108', ROOT / 'pack/scripts/pack-apply.py')
 pack_apply = importlib.util.module_from_spec(_spec)
@@ -38,7 +39,7 @@ class StartupRefreshRunsOnceTests(unittest.TestCase):
 
 class UpstreamHookCostRefreshMetadataTests(unittest.TestCase):
     def test_revision_108_is_the_one_upstream_100_to_102_integration_delta(self):
-        raw = (ROOT / 'pack/adapters/INSTALL.md').read_bytes()
+        raw = recovered_revision_108_install()
         frontmatter = raw.split(b'---\n', 2)[1].decode('utf-8')
         self.assertRegex(frontmatter, r"(?m)^revision: 108$")
         self.assertIn("bundle_version: '2026.10.16.1'", frontmatter)
@@ -60,7 +61,7 @@ class UpstreamHookCostRefreshMetadataTests(unittest.TestCase):
         self.assertNotRegex(raw, rb'(?m)^(?:<<<<<<<|=======|>>>>>>>|\|\|\|\|\|\|\|)(?: |$)')
 
     def test_upstream_100_to_102_rows_retained_verbatim_with_distinct_provenance(self):
-        raw = (ROOT / 'pack/adapters/INSTALL.md').read_bytes()
+        raw = recovered_revision_108_install()
         blocks = re.findall(rb'<details>\n<summary>.*?\n</details>', raw, re.S)
         self.assertEqual(11, len(blocks), 'Add two archives without deleting any existing history')
         self.assertIn(UPSTREAM_MAIN_SHA.encode('ascii'), blocks[1])
@@ -78,7 +79,7 @@ class UpstreamHookCostRefreshMetadataTests(unittest.TestCase):
         recovered = recovered_revision_107_install()
         self.assertEqual((276537, 'dea0ad85ea801dd7757e63420a254b12e6331eaefb07f99b12e6e79f672a04e8'),
                          (len(recovered), hashlib.sha256(recovered).hexdigest()))
-        raw = (ROOT / 'pack/adapters/INSTALL.md').read_bytes()
+        raw = recovered_revision_108_install()
         corrupted = raw.replace(b'area: delivery-repair-history', b'area: delivery-repair-historY', 1)
         self.assertNotEqual(raw, corrupted)
         with self.assertRaises(AssertionError):

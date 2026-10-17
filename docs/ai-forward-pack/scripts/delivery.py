@@ -116,6 +116,29 @@ def runtime_start_marker_name(path, root):
     return any(relative.parts[-len(Path(name).parts):] == Path(name).parts for name in RUNTIME_START_MARKERS)
 
 
+def is_link(path):
+    """A symlink, or a Windows reparse point such as a junction, which `is_symlink()` does not report and which an
+    unprivileged process can create. Every link check here uses this one rule."""
+    try:
+        info = Path(path).lstat()
+    except OSError:
+        return False
+    return stat.S_ISLNK(info.st_mode) or bool(getattr(info, "st_file_attributes", 0)
+                                              & getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0))
+
+
+def _link_ancestor(repo, name):
+    """The nearest folder of `name` (relative to `repo`, in `name`'s own separators) that is a link, or None."""
+    sep = "\\" if "\\" in name else "/"
+    parts = name.split(sep)
+    current = Path(repo)
+    for depth, part in enumerate(parts[:-1], start=1):
+        current = current / part
+        if is_link(current):
+            return sep.join(parts[:depth])
+    return None
+
+
 def runtime_start_marker(path, root, allow_missing=False):
     """Exact regular stores; snapshots may also omit genuinely absent stores."""
     if not runtime_start_marker_name(path, root):
@@ -133,8 +156,7 @@ def runtime_start_marker(path, root, allow_missing=False):
             return (allow_missing and path.resolve() == path.absolute()
                     and not any(runtime_start_marker_name(parent, root) for parent in path.parents
                                 if parent != root and parent.is_relative_to(root)))
-        if (stat.S_ISLNK(info.st_mode) or getattr(info, "st_file_attributes", 0)
-                & getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0)):
+        if is_link(current):
             return False
         if current == path:
             return stat.S_ISREG(info.st_mode) and path.resolve().is_relative_to(root)
@@ -153,12 +175,12 @@ def snapshot(repo, local_area=None, details=False, _depth=0):
         names = []
         for directory, folders, files in os.walk(repo, followlinks=False):
             names.extend(str(Path(directory, name).relative_to(repo))
-                         for name in folders if Path(directory, name).is_symlink()
+                         for name in folders if is_link(Path(directory, name))
                          or runtime_start_marker_name(Path(directory, name), repo))
             folders[:] = [name for name in folders
                           if name not in {".git", "node_modules", "__pycache__", ".venv", "venv"}
                           and not (local_area and Path(directory, name).is_relative_to(Path(local_area)))
-                          and not Path(directory, name).is_symlink()]
+                          and not is_link(Path(directory, name))]
             names.extend(str(Path(directory, name).relative_to(repo)) for name in files)
     else:
         names = git(repo, "ls-files", "-z", "--cached", "--others", "--exclude-standard").split("\0")
@@ -176,9 +198,7 @@ def snapshot(repo, local_area=None, details=False, _depth=0):
             folders[:] = [name for name in folders
                           if name not in {".git", "node_modules", "__pycache__", ".venv", "venv"}
                           and not (local_area and Path(directory, name).is_relative_to(Path(local_area)))
-                          and not Path(directory, name).is_symlink()
-                          and not (getattr(Path(directory, name).lstat(), "st_file_attributes", 0)
-                                   & getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0))]
+                          and not is_link(Path(directory, name))]
             relative = Path(directory).relative_to(repo).parts
             if relative[-2:] != ("docs", "audit") and relative[-3:] != (".agents", "log", "audit"):
                 continue
@@ -199,14 +219,17 @@ def snapshot(repo, local_area=None, details=False, _depth=0):
             indexed.setdefault(name, []).append(metadata)
             if metadata.startswith("160000 "):
                 gitlinks.setdefault(name, []).append(metadata)
+    # Git lists a symlink itself but walks into a Windows junction and lists the files behind it: record the link
+    # (its target text), never content read through it from outside the project.
+    names = [_link_ancestor(repo, name) or name for name in names if name]
     files = {}
-    for name in sorted(set(filter(None, names))):
+    for name in sorted(set(names)):
         path = Path(repo) / name
         if local_area and path.is_relative_to(Path(local_area)):
             continue
         if runtime_start_marker(path, repo, allow_missing=True):
             continue
-        if path.is_symlink():
+        if is_link(path):
             files[name] = {"link": os.readlink(path)}
         elif runtime_start_marker_name(path, repo) and path.is_dir():
             files[name] = {"directory": True}
@@ -342,7 +365,7 @@ def local_area(repo, state_root=None):
     if state_root is not None:
         requested = Path(state_root)
         area = requested.resolve()
-        if requested.is_symlink() or Path(project["root"]).is_relative_to(area):
+        if is_link(requested) or Path(project["root"]).is_relative_to(area):
             raise ValueError("state path refused: choose a dedicated nonsymlink local area, not the project or its ancestor")
         return area
     if "git_dir" in project:

@@ -296,6 +296,42 @@ class MarkerOutsideTheTree(unittest.TestCase):
         entry = json.loads(log.read_text(encoding="utf-8").splitlines()[-1])
         self.assertEqual(entry.get("duration_source"), "session-start-hook", entry)
 
+    def test_a_dispatch_times_itself_only_where_the_git_dir_asks(self):
+        """Fails if a dispatch writes timing nobody asked for, or does not time itself where the bench
+        asked by creating <git-dir>/ai-forward/hook-times.jsonl (bench REC-UNREAD-A, 2026-10-17:
+        Claude Code keeps no start for a hook, so its hook time was not recorded)."""
+        env = {k: v for k, v in os.environ.items() if k not in ("AGENT_SESSION", "AGENT_HOST")}
+        payload = json.dumps({"hook_event_name": "SessionStart", "session_id": "abc", "cwd": str(self.repo)})
+
+        def run():
+            proc = subprocess.run([sys.executable, str(self.hook), "--host", "claude", "--event", "SessionStart"],
+                                  cwd=str(self.repo), input=payload, capture_output=True, text=True, env=env,
+                                  timeout=60)
+            self.assertEqual(proc.returncode, 0, proc.stderr)
+
+        times = self.repo / ".git" / "ai-forward" / "hook-times.jsonl"
+        run()
+        self.assertFalse(times.exists(), "a dispatch created the timing file")
+        times.write_text("", encoding="utf-8")
+        run()
+        run()
+        rows = [json.loads(line) for line in times.read_text(encoding="utf-8").splitlines()]
+        self.assertEqual([(r["host"], r["event"], r["hooks"], r["exit"]) for r in rows],
+                         [("claude", "SessionStart", ["session-start.py"], 0)] * 2)
+        self.assertTrue(all(isinstance(r["ms"], (int, float)) and r["ms"] >= 0 and r["start"] for r in rows), rows)
+        self.assertEqual(self.status(), "", "the timing changed the working tree")
+
+    def test_revision_109_is_the_hook_times_delta(self):
+        """Fails if revision 109's frontmatter is not its own one-row delta, or a path it lists is missing."""
+        raw = (REPO / "pack" / "adapters" / "INSTALL.md").read_bytes()
+        frontmatter = raw.split(b"---\n", 2)[1].decode("utf-8")
+        self.assertRegex(frontmatter, r"(?m)^revision: 109$")
+        self.assertIn("bundle_version: '2026.10.17.1'", frontmatter)
+        self.assertEqual(1, frontmatter.count("  - { type: changed,"))
+        self.assertIn("hook-times.jsonl", frontmatter)
+        for path in ("adapters/hooks/dispatch.py", "adapters/INSTALL.md"):
+            self.assertTrue((REPO / "pack" / path).is_file(), path)
+
     def append(self):
         env = {k: v for k, v in os.environ.items() if k not in ("AGENT_SESSION", "AGENT_HOST")}
         done = subprocess.run([sys.executable, str(self.audit), "append", "--shortname", "close",

@@ -63,8 +63,11 @@ class UVHookLauncherTests(unittest.TestCase):
                 # fixture's empty private root is only for the no-Python baseline.
                 env.pop('UV_PYTHON_INSTALL_DIR', None)
             if os.name == "nt":
-                git_root = Path(git).parent.parent
-                directories = [str(Path(git).parent), str(git_root / "usr/bin"),
+                # Git for Windows keeps sh.exe in <install>/usr/bin; git.exe resolves from cmd/ or from
+                # mingw64/bin/ depending on PATH, so walk up to the install that holds it.
+                shell_dir = next((p / "usr/bin" for p in Path(git).parents if (p / "usr/bin/sh.exe").is_file()), None)
+                assert shell_dir is not None, f"no usr/bin/sh.exe above {git}"
+                directories = [str(Path(git).parent), str(shell_dir),
                                str(Path(uv).parent), str(Path(os.environ["SystemRoot"]) / "System32")]
             else:
                 shim = root / "commands"
