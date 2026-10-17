@@ -2232,7 +2232,12 @@ class SiblingCheckoutWrite(ValueError):
 
 
 class OutsideCheckout(ValueError):
-    """A target in no checkout of this repository."""
+    """A target in no checkout of this repository. `via_alias` is True when the spelled path
+    was inside the checkout and only its resolved target escapes -- that one fails closed."""
+
+    def __init__(self, target, via_alias=False):
+        super().__init__(target)
+        self.via_alias = via_alias
 
 
 def _linked_sibling_top(target, base):
@@ -2298,7 +2303,12 @@ def _native_paths(path, repo, cwd):
         sibling = _linked_sibling_top(canonical, base)
         if sibling is not None:
             raise SiblingCheckoutWrite(sibling) from None
-        raise OutsideCheckout(str(canonical)) from None
+        try:
+            lexical.relative_to(base)
+            via_alias = True
+        except ValueError:
+            via_alias = False
+        raise OutsideCheckout(str(canonical), via_alias=via_alias) from None
     for target in (lexical, canonical):
         try:
             relative = target.relative_to(base).as_posix()
@@ -2595,8 +2605,13 @@ def cmd_hook(root, session, agent, now, stdin_text, repo=None, host=None, cwd=No
                              "  remedy    write it in your own tree; the primary receives work by merge"
                              .format(_safe(str(exc), 300)), host)
     except OutsideCheckout as exc:
-        return _not_checked("the write target is outside this repository's checkouts ({})"
-                            .format(_safe(str(exc), 300)), host)
+        reason = "the write target is outside this repository's checkouts ({})".format(_safe(str(exc), 300))
+        if exc.via_alias or host in ("codex", "grok", "agy", "copilot"):
+            return _not_checked(reason, host)
+        # WT-E: no lease can cover a path outside every checkout, so this hook has no opinion.
+        # `ask` overrode the session's own permission mode on every write to user memory or a
+        # scratchpad; `allow` would grant a write anywhere on disk. No decision defers to the mode.
+        return "{}"
     except Exception as exc:
         return _not_checked("unreadable hook payload ({})".format(exc.__class__.__name__), host)
 

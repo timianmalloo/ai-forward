@@ -640,13 +640,32 @@ class SiblingWorktreeWriteTests(PrimaryWriteGuardTests):
         self.assertEqual("deny", self.decision(
             self.hook_from(self.repo, self.linked.resolve() / "held.md"))["permissionDecision"])
 
-    def test_an_outside_path_still_asks_and_says_why(self):
+    def test_an_outside_path_gets_no_decision_so_the_session_mode_decides(self):
+        # WT-E: a path in no checkout of this repository can hold no lease. Answering `ask`
+        # overrode the session's permission mode on every write to user memory or a scratchpad;
+        # answering `allow` would grant a write anywhere on disk. No decision is the only fit.
         outside = Path(self.tmp.name) / "elsewhere"
         outside.mkdir()
-        answer = self.decision(self.hook_from(self.repo, outside.resolve() / "x.md"))
+        result = self.hook_from(self.repo, outside.resolve() / "x.md")
+        self.assertEqual(0, result.returncode, result.stderr)
+        self.assertEqual({}, json.loads(result.stdout))
+
+    def test_native_hosts_still_fail_closed_on_an_outside_path(self):
+        outside = Path(self.tmp.name) / "elsewhere"
+        outside.mkdir()
+        answer = self.decision(self.hook_from(self.repo, outside.resolve() / "x.md", host="codex"))
+        self.assertEqual("deny", answer["permissionDecision"])
+        self.assertIn("outside this repository", answer["permissionDecisionReason"])
+
+    def test_an_in_tree_alias_to_an_outside_target_still_fails_closed(self):
+        outside = Path(self.tmp.name) / "escape-target"
+        outside.mkdir()
+        alias = self.repo / "escape"
+        create_directory_alias(alias, outside)
+        self.addCleanup(alias.rmdir)
+        answer = self.decision(self.hook_from(self.repo, alias / "x.md"))
         self.assertEqual("ask", answer["permissionDecision"])
         self.assertIn("outside this repository", answer["permissionDecisionReason"])
-        self.assertNotIn("unreadable hook payload", answer["permissionDecisionReason"])
 
 
 class HookTests(GitCase):
