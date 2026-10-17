@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Optional Formal Verification Implementation</title><style>
+:root { color-scheme: light dark; --bg:#f7f5ef; --panel:#fff; --text:#20201d;
+  --muted:#66645f; --line:#d9d5ca; --accent:#3157a4; --code:#f0eee7; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#171816; --panel:#20221f; --text:#f2f1eb; --muted:#b8b6ae;
+    --line:#3d403a; --accent:#8fb0ff; --code:#292c27; }
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text);
+  font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif; }
+main { width:min(920px,calc(100% - 32px)); margin:32px auto; padding:40px;
+  background:var(--panel); border:1px solid var(--line); border-radius:12px; }
+h1,h2,h3,h4,h5,h6 { line-height:1.2; margin:1.5em 0 .55em; }
+h1 { margin-top:0; font-size:2.2rem; } h2 { border-bottom:1px solid var(--line); padding-bottom:.3em; }
+a { color:var(--accent); } code { background:var(--code); padding:.12em .35em; border-radius:4px; }
+pre { overflow:auto; padding:16px; background:var(--code); border-radius:8px; }
+pre code { padding:0; } blockquote { margin:1em 0; padding:.2em 1em; color:var(--muted);
+  border-left:4px solid var(--line); }
+table { width:100%; border-collapse:collapse; margin:1em 0; display:block; overflow:auto; }
+th,td { padding:.55em .75em; border:1px solid var(--line); text-align:left; vertical-align:top; }
+th { background:var(--code); } hr { border:0; border-top:1px solid var(--line); }
+.source { color:var(--muted); font-size:.9rem; margin-bottom:2rem; }
+@media (max-width:640px) { main { width:100%; margin:0; padding:24px 18px; border:0; border-radius:0; } }
+</style></head><body><main><div class="source">Rendered from optional-formal-verification-implementation.md</div><h1>Optional Formal Verification: Implementation Plan</h1>
+<h2>Summary</h2>
+<p>This plan explains how we get from the merged <a href="../specs/optional-formal-verification.md">specification</a> to a working feature.</p>
+<ul><li><strong>Done:</strong> this plan and a</li></ul>
+<p><a href="../design/optional-formal-verification.md">proposed design</a> are written, independently reviewed, and open for Tim&#x27;s review in <a href="https://github.com/timianmalloo/ai-forward/pull/8">draft PR #8</a>.</p>
+<ul><li><strong>Waiting on Tim:</strong> the specification asks him to accept or revise four scope</li></ul>
+<p>decisions (listed below). Implementation cannot start until he does.</p>
+<ul><li><strong>After Tim decides:</strong> run a small experiment to confirm that Verus works the</li></ul>
+<p>way the design assumes. Then finish the design and build the feature.</p>
+<p>Nothing has been installed, run, or implemented yet.</p>
+<h3>Terms used in this plan</h3>
+<ul><li><strong>Verus:</strong> a tool that checks, mathematically, that Rust code meets a</li></ul>
+<p>written contract for every input the contract covers.</p>
+<ul><li><strong>Contract:</strong> a precise statement of what a function must do, such as &quot;accept</li></ul>
+<p>a range only if it fits inside the buffer.&quot;</p>
+<ul><li><strong>Qualification experiment:</strong> a small, throwaway test that confirms one exact</li></ul>
+<p>Verus version works in one approved environment before we design around it.</p>
+<h2>Who Decides What</h2>
+<p>The specification is merged but not yet accepted. Its gate record says: &quot;Human acceptance: Pending Tim&#x27;s review. No implementation, toolchain installation, commit, push, or PR is authorized by this document.&quot; It also says <code>/implement</code> runs only &quot;after the scope is approved and Verus is available in an approved environment.&quot;</p>
+<p>Merging made the specification available to experiment with. It did not answer the four decisions the specification asks Tim to make:</p>
+<ol><li>the opt-in boundary (verification stays off unless chosen);</li><li>Verus as the first and only verifier;</li><li>the evidence requirements;</li><li>the worked example (a synthetic validator first; OpenVMM later, if at all).</li></ol>
+<p>What this means in practice:</p>
+<table><thead><tr><th>Activity</th><th>Allowed now?</th></tr></thead><tbody><tr><td>Drafting and reviewing the design</td><td>Yes. Lucio asked for it, and nothing in the specification blocks it.</td></tr><tr><td>Opening a draft PR for review</td><td>Done: <a href="https://github.com/timianmalloo/ai-forward/pull/8">#8</a>.</td></tr><tr><td>Installing Verus or running experiments</td><td>No. Waits for Tim&#x27;s scope decision and an approved environment.</td></tr><tr><td>Implementation</td><td>No. Waits for Tim&#x27;s scope decision, the experiment, and the final design review.</td></tr><tr><td>Changing the scope, such as replacing the synthetic example with OpenVMM</td><td>Only if Tim approves a specification change.</td></tr></tbody></table>
+<p>Tim decides scope. Routine technical choices belong in the design and do not need his approval one by one. Existing tests and reviewer checks still apply.</p>
+<h2>The Steps</h2>
+<table><thead><tr><th>#</th><th>Step</th><th>What it produces</th><th>Finished when</th><th>Status</th></tr></thead><tbody><tr><td>1</td><td>Set up the branch</td><td>A branch in Lucio&#x27;s fork, based on Tim&#x27;s latest <code>main</code></td><td>Branch matches upstream; pushes go to the fork</td><td>Done</td></tr><tr><td>2</td><td>Write this plan</td><td>This document</td><td>Steps, decisions and checks are written down</td><td>Done</td></tr><tr><td>3</td><td>Independent plan review</td><td>Astra review of this plan</td><td>Findings handled</td><td>Done: no substantive findings</td></tr><tr><td>4</td><td>Draft the design</td><td><a href="../design/optional-formal-verification.md">Proposed design</a></td><td>Astra reviewed it; findings fixed and rechecked</td><td>Done: one major finding fixed and rechecked</td></tr><tr><td>5</td><td>Tim&#x27;s scope review</td><td>Draft PR with this plan and the design</td><td>Tim accepts or revises the scope</td><td><strong>In review:</strong> draft PR #8</td></tr><tr><td>6</td><td>Qualification experiment</td><td>Evidence that one Verus version works as assumed</td><td>A correct example passes and a broken example fails</td><td>Not started</td></tr><tr><td>7</td><td>Finalize the design</td><td>Accepted design and decision record</td><td>Required reviewers find no blocking issues</td><td>Not started</td></tr><tr><td>8</td><td>Implement</td><td>Code, tests and examples, built test-first</td><td>The Proof Pack correctly accepts or rejects real results</td><td>Not started</td></tr><tr><td>9</td><td>Package and release</td><td>Updated AI-Forward pack for both Claude and Copilot</td><td>Sync and bundle checks pass; live demo evidence attached</td><td>Not started</td></tr></tbody></table>
+<h2>Step 6: The Qualification Experiment</h2>
+<p>The goal is to learn whether Verus actually checks what the design assumes, before we build anything around it. It does not deliver the feature.</p>
+<ol><li><strong>Pick the environment.</strong> Record one approved operating system, Verus</li></ol>
+<p>version, Rust toolchain and solver. Do not assume Windows works just because this planning ran on Windows. Installing anything needs separate permission.</p>
+<ol><li><strong>Write the example.</strong> Use a tiny Rust function that checks whether a</li></ol>
+<p>requested range fits inside a buffer. Write its contract first, including which inputs are valid and which are rejected. The contract must require valid inputs to be accepted, so a function that rejects everything cannot pass.</p>
+<ol><li><strong>Set limits.</strong> Choose a time and resource limit before running. Check the</li></ol>
+<p>real Rust code, not a separate model of it.</p>
+<ol><li><strong>Run it both ways.</strong> The correct version must pass. Then introduce a</li></ol>
+<p>deliberate bug, such as changing <code>&lt;=</code> to <code>&lt;</code>, and confirm that it fails against the same, unchanged contract. A zero exit code or a &quot;passed&quot; count alone is not proof; confirm which claims were actually checked.</p>
+<ol><li><strong>Record what happened.</strong> Keep the inputs, versions, command, output and</li></ol>
+<p>duration. If Verus was unavailable, unsupported or inconclusive, say so.</p>
+<p>If the experiment cannot be completed, report it as blocked. Do not mark the design ready.</p>
+<h2>What the Finished Feature Must Do</h2>
+<p>These rows summarize the specification&#x27;s acceptance criteria (FV-01 to FV-18 and UX-01 to UX-04).</p>
+<table><thead><tr><th>Criteria</th><th>Requirement in plain terms</th></tr></thead><tbody><tr><td>FV-01 to FV-03</td><td>When verification is off, nothing changes: no Verus checks, installs or extra files. Declined, non-Rust and unsupported work is labeled as such.</td></tr><tr><td>FV-04 to FV-06</td><td>Each claim links to a requirement and is written in English, with examples, assumptions and a named reviewer. If the meaning or the trusted assumptions change, the claim goes back for review.</td></tr><tr><td>FV-07 to FV-09</td><td>Results use seven distinct outcomes: passed, failed, inconclusive, unavailable, unsupported, cancelled, not run. Timeouts, crashes, empty output and wrong-scope output are never reported as passed.</td></tr><tr><td>FV-10 to FV-12</td><td>A result is current only if the code, contract, dependencies, tool versions and settings still match. A mismatch makes it stale; missing information makes it unknown. Old results are kept, not overwritten.</td></tr><tr><td>FV-13 to FV-15</td><td>Existing tests and reviews still apply. No automatic uploads, installs, credential use or elevated permissions. No new mandatory review panel.</td></tr><tr><td>FV-16 to FV-18</td><td>A live demo shows the correct example passing and the broken example failing. Tests cover unavailable tools, interruptions, empty checks and stale results, on every supported host.</td></tr><tr><td>Evidence storage</td><td>An interrupted write never looks like complete evidence. Two runs at once are refused rather than mixed.</td></tr><tr><td>UX-01 to UX-04</td><td>Output shows the outcome and claim first, lists assumptions together, explains failures and next actions, and never implies the whole feature is approved.</td></tr></tbody></table>
+<p>Simulated test output checks the plumbing; it cannot replace the live demo.</p>
+<h2>Files Likely to Change</h2>
+<p>The design decides exact names. Expected areas:</p>
+<ul><li>existing <code>/design-slice</code> and <code>/implement</code> guidance, which loads formal</li></ul>
+<p>verification only when it is chosen;</p>
+<ul><li>a small helper script, only if the experiment shows one is needed;</li><li>the synthetic example and its tests;</li><li>the Proof Pack template and the code that reads it;</li><li>installation metadata and the generated copies of the pack.</li></ul>
+<p>Pack changes are made in <code>pack/</code>, follow <code>/extendaibundle</code>, update the revision notes, run <code>pwsh tools/sync-pack.ps1</code> and <code>pwsh tools/verify-bundle.ps1</code>, and ship generated outputs in the same change. Rolling back turns the option off without deleting old evidence or existing checks.</p>
+<h2>Checks That Cannot Be Skipped</h2>
+<ul><li>Tim&#x27;s scope approval.</li><li>The required independent reviews, including any reviewer with veto power.</li><li>The test types required by the repository&#x27;s Testing Strategy.</li><li>Tracing every changed file and every saved field to the code that reads it.</li><li>Seeing each new check fail before it passes (red-first).</li><li>Live Verus evidence, not just simulated output.</li><li>Audit and change-log entries.</li><li>Matching source and generated installations.</li></ul>
+<h2>Appendix: Planning Record</h2>
+<p>This section records how the plan was made, as required by the repository&#x27;s execution-graph standard. Most readers can skip it.</p>
+<p><strong>Baseline [Verified]:</strong> upstream <code>269f962e6dcd47d7464a73c24d7fdeec1ae3390b</code>, fetched and rechecked on 2026-10-16. Branch <code>design/optional-formal-verification</code> is based on <code>upstream/main</code>. <code>origin</code> is Lucio&#x27;s fork and is the branch&#x27;s push remote.</p>
+<p><strong>Sources read [Verified]:</strong> repository instructions, architecture, the <code>/design-slice</code> flow, Proof Pack and <code>/implement</code> entry contracts, the original specification authoring record, and the formal-verification audit history. This plan is project documentation, not generated pack content. Graph context for <code>spec-optional-formal-verification</code> and <code>kb-graph-and-loop-engineering</code> was truncated, so it is not evidence of a complete traversal; the specification and its authoring record were read directly.</p>
+<p><strong>Approach [Inferred]:</strong> prove feasibility inside <code>/design-slice</code> first. Do not build a parser, runner framework, database, new command or new review panel before knowing what one pinned Verus version actually establishes. Reuse the Proof Pack, existing workflow roles and subprocess helpers.</p>
+<p><strong>Graph model [Inferred, not timing data]:</strong> the original model had eight steps in a single chain; this document numbers nine after adding the draft-design step. With one chain, total work equals the longest path, so parallel agents give no speedup. No time, cost or token saving is claimed.</p>
+<p><strong>Review limits:</strong> one independent Astra review per artifact, no nested agents and no automatic retries. Reviews were read-only; the plan review was capped at 15 tool calls and 180 seconds. An incomplete review counts as unresolved, never as a pass. One correction pass was allowed per review. If a limit is reached, report a blocker; do not treat it as acceptance.</p>
+<p><strong>Re-plan points:</strong> after Tim&#x27;s scope decision, after the experiment, after the final design review, and after the first real end-to-end result.</p>
+<p><strong>Planned vs actual:</strong></p>
+<ul><li>Plan review: one planned, one completed; READY FOR DISCUSSION, no</li></ul>
+<p>substantive findings, no correction needed.</p>
+<ul><li>Design review: one review found one major defect. Review approval was not tied</li></ul>
+<p>to the English wording of the claim, so approval could survive a change in meaning. The fix was independently rechecked and found resolved.</p>
+<ul><li>Readability rewrite: a separate Astra check compared the rewritten plan and</li></ul>
+<p>design with the reviewed decisions. It found three weakened requirements (monotonic duration, explicit opt-in before publishing diagnostics, all deterministic tests running without Verus). All three were restored and rechecked.</p>
+<ul><li>Change from the original plan: the first version told design drafting to wait</li></ul>
+<p>for Tim. That was corrected, because the specification blocks implementation, not design drafting.</p>
+<ul><li>Tokens and cost: not recorded.</li></ul>
+<p><strong>Documentation checks [Verified]:</strong> HTML rendered; graph, portal and web indexes regenerated; graph validation reports 359 artifacts and zero defects. Two existing stale suggestions remain (<code>audit-log</code>, <code>forensic-review-backlog-20260712</code>) and are outside this contribution. These checks confirm documentation consistency, not Verus feasibility.</p>
+<p><strong>Delivery state:</strong> committed on <code>design/optional-formal-verification</code> and open for Tim&#x27;s review as <a href="https://github.com/timianmalloo/ai-forward/pull/8">draft PR #8</a>. Nothing is installed, run or implemented.</p></main></body></html>

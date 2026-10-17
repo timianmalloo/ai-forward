@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-10-17T14:31:12Z",
+  "generated": "2026-10-17T16:42:55Z",
   "audit": [
     {
       "actor": null,
@@ -13734,6 +13734,146 @@ window.AUDIT_DATA = {
         "branch": "fix/sync-pack-lf-endings",
         "pushed": true
       }
+    },
+    {
+      "id": "al-01M532S20MCFM4GGAR4AZT7WYB",
+      "shortname": "formal-verification-begin",
+      "datetime": "2026-10-16T19:24:45Z",
+      "session": "43f1946f-4a49-4f3b-93e4-741718402441",
+      "prompt": "ok, are we rebased with the latest?  If so, let's begin!",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M532YBTFST3P4RQD8RHZZ8PK",
+      "shortname": "formal-verification-implementation-preparation",
+      "datetime": "2026-10-16T19:27:39Z",
+      "session": "43f1946f-4a49-4f3b-93e4-741718402441",
+      "prompt": "ok, are we rebased with the latest?  If so, let's begin!",
+      "summary": "Fast-forwarded primary main to 269f962; configured origin as contributor fork and upstream as canonical repo; prepared isolated design branch and proposed execution plan with HTML and derived indexes. Independent Astra planning review: READY FOR DISCUSSION, no substantive findings. Documentation graph and consistency checks passed with two pre-existing stale suggestions. Scope approval remains pending; no toolchain installed, verifier run, implementation code, commit, push or PR.",
+      "kind": "skill",
+      "skill": "optimize-graph",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/plans/optional-formal-verification-implementation.md",
+        "docs/plans/optional-formal-verification-implementation.html"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "compiled": false,
+      "goal": "Prepare the contribution branch and a reviewable execution plan for the existing proposed formal-verification specification.",
+      "done_when": "Branch starts at current upstream, qualification and delivery sequence is reviewable, and unresolved approval is explicit.",
+      "tier": "T1",
+      "fan_out": 1,
+      "started_at": "2026-10-16T19:24:44Z",
+      "duration_seconds": 175.0,
+      "git": {
+        "sha": "269f962e6dcd47d7464a73c24d7fdeec1ae3390b",
+        "short": "269f962e6",
+        "branch": "design/optional-formal-verification",
+        "pushed": true
+      }
+    },
+    {
+      "id": "al-01M533HQ6J83HKYQGFYNXNBDAM",
+      "shortname": "formal-verification-detailed-design",
+      "datetime": "2026-10-16T19:38:14Z",
+      "session": "43f1946f-4a49-4f3b-93e4-741718402441",
+      "prompt": "let's proceed.",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M533P8JGJ36Y1K1XN8ZES9XR",
+      "shortname": "design-optional-formal-verification",
+      "datetime": "2026-10-16T19:40:42Z",
+      "session": "43f1946f-4a49-4f3b-93e4-741718402441",
+      "prompt": "let's proceed.",
+      "summary": "Drafted concrete design and experiment instructions; updated preparation plan to remove the unwarranted blanket design stop; refreshed native threat/privacy rollups, HTML views and graph/portal/web indexes. Astra independently reviewed draft, identified one major meaning-binding defect, and independently rechecked the correction resolved. Documentation graph and consistency checks passed; two pre-existing stale suggestions remain. No verifier qualification, installation, implementation, commit, push or PR; accepted design gate remains open.",
+      "kind": "skill",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/design/optional-formal-verification.md",
+        "docs/design/optional-formal-verification.html",
+        "docs/plans/optional-formal-verification-implementation.md",
+        "docs/security/threat-model.md",
+        "docs/security/privacy-review.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "compiled": false,
+      "goal": "Produce a concrete proposed detailed design and bounded experiment instructions from the merged spec, with independent Astra review.",
+      "done_when": "Draft artifacts, reviewed findings, updated documentation integration and explicit unqualified/open-gate status persist in the isolated worktree.",
+      "tier": "T1",
+      "fan_out": 1,
+      "started_at": "2026-10-16T19:33:04Z",
+      "duration_seconds": 458.0,
+      "git": {
+        "sha": "269f962e6dcd47d7464a73c24d7fdeec1ae3390b",
+        "short": "269f962e6",
+        "branch": "design/optional-formal-verification",
+        "pushed": true
+      }
+    },
+    {
+      "id": "al-01M534MTF88YT8Q3RA1RBR480B",
+      "shortname": "formal-verification-readability-and-pr",
+      "datetime": "2026-10-16T19:57:24Z",
+      "session": "43f1946f-4a49-4f3b-93e4-741718402441",
+      "prompt": "Yes, do that, then open the draft PR.",
+      "summary": "Rewrote the formal-verification plan and proposed design for readability (plain language, glossary, result first) without changing decisions. Astra fidelity check against a 72-item decision checklist found three weakened requirements (monotonic duration, explicit opt-in to diagnostic publication, all deterministic tests offline); all fixed and rechecked. Plan now records that implementation waits for Tim's scope decision. Contributor authorized committing and opening a draft scope/design review PR from the fork.",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": "GitHub Copilot",
+      "artifacts": [
+        "plan-optional-formal-verification-implementation",
+        "design-optional-formal-verification"
+      ],
+      "tags": [
+        "formal-verification"
+      ],
+      "outcome": "success",
+      "tier": "T1"
+    },
+    {
+      "id": "al-01M556CKJJ21PBXHXY8S90FE34",
+      "shortname": "formal-verification-pr-readability",
+      "datetime": "2026-10-17T15:06:21Z",
+      "session": "4609a3a2-e03c-4fcc-ba80-4a5df288fb29",
+      "prompt": "can we review this draft PR for readability and conciseness?  Tim (the reviewer) will most likely not have the background in formal proofs or Verus, but at the same time I don't want to overwhelm here with unnecessary primers or references.  I would like it to be written in simple English language and focus on what he needs to understand and where we would go next.",
+      "summary": "Reviewed draft PR #8 for a reader without formal-verification background. Drafted a shorter PR description that leads with the four scope decisions, a plain explanation of the feature, the proposed same-user forgery risk acceptance, and next steps. Updated stale plan and design status lines to reflect the open PR, removed plan glossary terms the reviewer does not need and a diagram that duplicated the steps table, and recorded the readability fidelity check. No requirement changed. Docs graph: zero defects, two pre-existing stale suggestions; consistency clean. Push and PR description update await contributor approval.",
+      "kind": "manual",
+      "skill": null,
+      "tool": "edit",
+      "actor": "GitHub Copilot",
+      "artifacts": [
+        "plan-optional-formal-verification-implementation",
+        "design-optional-formal-verification"
+      ],
+      "tags": [
+        "formal-verification"
+      ],
+      "outcome": "partial",
+      "goal": "Make draft PR #8 readable and concise for a reviewer without formal-verification background, focused on his decisions and the next steps.",
+      "done_when": "PR description and plan/design status are plain, current and decision-first, with no requirement weakened, docs checks green, and publication left to contributor approval.",
+      "tier": "T0",
+      "fan_out": 0
     }
   ],
   "changes": [
@@ -15467,6 +15607,29 @@ window.AUDIT_DATA = {
         "before": null,
         "after": "4a22f12c4cbc9cd403627995109ccfdc1c6fa9c6",
         "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M533P86CPXPK9ZCC2N563W69",
+      "datetime": "2026-10-16T19:40:42Z",
+      "session": "43f1946f-4a49-4f3b-93e4-741718402441",
+      "kind": "design",
+      "skill": "design-slice",
+      "title": "Draft optional formal-verification evidence and experiment design",
+      "prompt": "let's proceed.",
+      "summary": "Proposed synthetic iff-valid range contract, immutable attempt records, content-bound review, derived applicability, actual acceptance predicate, failure/privacy/threat/telemetry/test matrix and qualification worksheet. Astra found missing English-meaning binding; correction independently rechecked resolved. Draft remains unqualified and not implementation-ready.",
+      "rationale": "Use the merged specification as the proposed design baseline without inventing a blanket extra approval stop; keep scope status explicit and qualify version-sensitive verifier behavior before accepted implementation handoff.",
+      "artifacts": [
+        "docs/design/optional-formal-verification.md",
+        "docs/plans/optional-formal-verification-implementation.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "269f962e6dcd47d7464a73c24d7fdeec1ae3390b",
+        "after": "269f962e6dcd47d7464a73c24d7fdeec1ae3390b",
+        "branch": "design/optional-formal-verification",
         "pushed": true,
         "commits": []
       }

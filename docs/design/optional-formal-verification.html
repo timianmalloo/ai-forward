@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Optional Formal Verification</title><style>
+:root { color-scheme: light dark; --bg:#f7f5ef; --panel:#fff; --text:#20201d;
+  --muted:#66645f; --line:#d9d5ca; --accent:#3157a4; --code:#f0eee7; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#171816; --panel:#20221f; --text:#f2f1eb; --muted:#b8b6ae;
+    --line:#3d403a; --accent:#8fb0ff; --code:#292c27; }
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text);
+  font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif; }
+main { width:min(920px,calc(100% - 32px)); margin:32px auto; padding:40px;
+  background:var(--panel); border:1px solid var(--line); border-radius:12px; }
+h1,h2,h3,h4,h5,h6 { line-height:1.2; margin:1.5em 0 .55em; }
+h1 { margin-top:0; font-size:2.2rem; } h2 { border-bottom:1px solid var(--line); padding-bottom:.3em; }
+a { color:var(--accent); } code { background:var(--code); padding:.12em .35em; border-radius:4px; }
+pre { overflow:auto; padding:16px; background:var(--code); border-radius:8px; }
+pre code { padding:0; } blockquote { margin:1em 0; padding:.2em 1em; color:var(--muted);
+  border-left:4px solid var(--line); }
+table { width:100%; border-collapse:collapse; margin:1em 0; display:block; overflow:auto; }
+th,td { padding:.55em .75em; border:1px solid var(--line); text-align:left; vertical-align:top; }
+th { background:var(--code); } hr { border:0; border-top:1px solid var(--line); }
+.source { color:var(--muted); font-size:.9rem; margin-bottom:2rem; }
+@media (max-width:640px) { main { width:100%; margin:0; padding:24px 18px; border:0; border-radius:0; } }
+</style></head><body><main><div class="source">Rendered from optional-formal-verification.md</div><h1>Design: Optional Formal Verification</h1>
+<ul><li><strong>Status:</strong> Draft for discussion. Not ready for implementation.</li><li><strong>Specification:</strong> <a href="../specs/optional-formal-verification.md">FV-01 to FV-18 and UX-01 to UX-04</a>.</li><li><strong>Plan:</strong> <a href="../plans/optional-formal-verification-implementation.md">implementation plan</a>.</li><li><strong>Architecture:</strong> <a href="../architecture.md">source, build, install and consumer pipeline</a>.</li><li><strong>Author / date:</strong> GitHub Copilot for @lucioctinoco, 2026-10-16.</li><li><strong>Baseline:</strong> <code>269f962e6dcd47d7464a73c24d7fdeec1ae3390b</code>.</li><li><strong>Not done yet:</strong> no code written, Verus not installed or run.</li></ul>
+<h2>Summary</h2>
+<p>A developer chooses to have one specific claim about their Rust code checked by Verus. Here is how it works:</p>
+<ol><li>A reviewer confirms that the claim, written in English and as a formal</li></ol>
+<p>contract, says the right thing.</p>
+<ol><li>A small local helper runs one tested version of Verus on the selected code.</li><li>The helper saves a record of exactly what was checked and what happened.</li><li>The result appears in the existing Proof Pack.</li><li>Before anyone relies on the result, the helper checks that the code, contract,</li></ol>
+<p>tools and settings still match what was checked.</p>
+<p>The first demonstration is a tiny function that checks whether a requested range fits inside a buffer. It is not OpenVMM. We must see correct code pass and deliberately broken code fail. A passing check never replaces existing tests and never approves a whole feature.</p>
+<p><strong>Scope status.</strong> Tim merged the specification unchanged, but its own text says implementation waits for his scope decision. This draft is for that review, in <a href="https://github.com/timianmalloo/ai-forward/pull/8">draft PR #8</a>. It keeps the specification&#x27;s synthetic example rather than reopening the choice. Installing tools and production work still need separate permission.</p>
+<h3>Terms</h3>
+<ul><li><strong>Verus:</strong> a tool that mathematically checks Rust code against a written contract.</li><li><strong>Contract:</strong> a precise statement of what a function must do.</li><li><strong>Obligation:</strong> one claim the verifier is asked to check.</li><li><strong>Attempt:</strong> one run of the verifier (or one decision not to run it), with its record.</li><li><strong>Manifest:</strong> the saved record of one attempt.</li><li><strong>Trust declaration:</strong> the list of things the check assumes but does not</li></ul>
+<p>prove, such as the correctness of the Rust compiler.</p>
+<ul><li><strong>Applicability:</strong> whether an old result still applies to the current code:</li></ul>
+<p><code>current</code>, <code>stale</code> (something it checked has changed) or <code>unknown</code> (we cannot tell).</p>
+<ul><li><strong>Qualification:</strong> testing one exact Verus version in one approved</li></ul>
+<p>environment before relying on it.</p>
+<ul><li><strong>Digest:</strong> a SHA-256 fingerprint of a file&#x27;s exact contents.</li></ul>
+<h2>Responsibility</h2>
+<p>This component does one thing: it turns one chosen, reviewed claim into evidence that the existing Proof Pack can use.</p>
+<p>It does <strong>not</strong> add an orchestrator, model provider, proof service, database, new reviewer panel or upload path.</p>
+<p><strong>First slice:</strong> one example function, one contract, one approved local environment, saved attempt records, and a real acceptance check in the Proof Pack. Tests may simulate the verifier&#x27;s output, but a live Verus run must show that the simulations match real behavior.</p>
+<p><strong>Off by default.</strong> When nobody opts in, the existing design and implementation workflows do not look for, install or run Verus. They create no extra files and add no reviewers. Verification guidance loads only after someone chooses it. Declining leaves the normal workflow unchanged.</p>
+<h2>Data shapes</h2>
+<p><strong>The attempt is the central record.</strong> Each attempt gets its own ID, separate from its outcome. Everything in one attempt (code, contract, obligations, trust declaration, command and output) refers to the same snapshot of the code. An attempt cannot declare itself accepted.</p>
+<p><strong>Supporting values:</strong> the obligation ID, the list of files checked, the tested toolchain ID, file digests and the trust declaration. Requirements and reviewers are referenced by ID, not copied.</p>
+<p><strong>Storage.</strong> Each attempt writes one final manifest plus a limited amount of diagnostic output. These are plain files, not a database or a second ledger. This includes attempts that stopped before running Verus. An interrupted attempt leaves only private temporary files, which can never be accepted. Saved records are never edited later, for example to change &quot;passed&quot; to &quot;failed&quot;.</p>
+<p><strong>Applicability is calculated when the result is used, never stored.</strong> A saved <code>accepted: true</code> flag could outlive the inputs it described, so there isn&#x27;t one.</p>
+<p><strong>Review approval is a separate input.</strong> It is tied to the exact content of: the English obligation, the requirement it comes from, the formal contract and the trust declaration. Matching IDs are not enough, because the wording behind an ID can change. Product acceptance remains the job of the existing checks.</p>
+<p><strong>Other rules:</strong></p>
+<ul><li>Durations can be added up only for runs that did not overlap.</li><li>Outcomes and applicability are categories; they cannot be added up.</li><li>A correction or retry creates a new attempt; it never overwrites an old one.</li><li>There is no existing evidence format to migrate. A decision record (ADR) and</li></ul>
+<p>compatibility tests are required before this format is accepted.</p>
+<h2>The Example Function</h2>
+<p><strong>Proposed interface (not yet compiled or tested):</strong> <code>validate_range(buffer_len, offset, length) -&gt; optional (start, end)</code>. It uses the target platform&#x27;s unsigned machine-sized integer. It checks a range against a buffer length. It does not allocate or read memory, authorize access, or prove anything about later I/O.</p>
+<p>A range is <strong>valid</strong> when all three of these are true:</p>
+<pre><code class="language-text">aligned(offset) := offset mod 4 = 0
+valid := aligned(offset) AND offset &lt;= buffer_len
+         AND length &lt;= buffer_len - offset</code></pre>
+<p>These definitions are mathematical, so they cannot overflow. In the code, the subtraction happens only after confirming <code>offset &lt;= buffer_len</code>, so it cannot underflow either.</p>
+<ul><li>The offset must be a multiple of four. This is a rule of the example, not of Verus.</li><li>The length can be any value.</li><li>Empty ranges are allowed at any aligned offset up to the end of the buffer,</li></ul>
+<p>including offset zero of an empty buffer.</p>
+<p><strong>What the contract requires:</strong></p>
+<ol><li>The function returns a range <strong>if and only if</strong> the input is valid. The</li></ol>
+<p>&quot;if&quot; half stops a function that rejects everything from passing.</p>
+<ol><li>A returned range is exactly <code>(offset, offset + length)</code>.</li><li>The range&#x27;s end is at most <code>buffer_len</code>.</li><li>No arithmetic in the code overflows.</li></ol>
+<p>The contract covers every possible input; it does not exclude bad ones.</p>
+<table><thead><tr><th>Input <code>(buffer_len, offset, length)</code></th><th>Required result</th><th>Why</th></tr></thead><tbody><tr><td><code>(16, 4, 12)</code></td><td>Accept <code>(4, 16)</code></td><td>Ends exactly at the buffer&#x27;s end</td></tr><tr><td><code>(16, 4, 13)</code></td><td>Reject</td><td>One byte past the end</td></tr><tr><td><code>(16, 3, 1)</code></td><td>Reject</td><td>Offset not a multiple of four</td></tr><tr><td><code>(16, 20, 0)</code></td><td>Reject</td><td>Offset outside the buffer</td></tr><tr><td><code>(0, 0, 0)</code></td><td>Accept <code>(0, 0)</code></td><td>Empty range in an empty buffer</td></tr><tr><td><code>(16, 16, 0)</code></td><td>Accept <code>(16, 16)</code></td><td>Empty range at the end</td></tr><tr><td><code>(MAX, 0, MAX)</code></td><td>Accept <code>(0, MAX)</code></td><td>Largest values, no overflow</td></tr><tr><td><code>(MAX, MAX - 3, 4)</code></td><td>Reject</td><td>End would overflow (on 32- and 64-bit targets)</td></tr></tbody></table>
+<p><strong>Deliberate bugs for the demonstration:</strong></p>
+<ul><li>Change only the code&#x27;s comparison from <code>length &lt;= buffer_len - offset</code> to</li></ul>
+<p><code>&lt;</code>. The exact-end input <code>(16, 4, 12)</code> is then wrongly rejected, so the unchanged contract must fail.</p>
+<ul><li>Separately, make the code accept an out-of-bounds range. The safety part of</li></ul>
+<p>the contract must fail.</p>
+<p>Never change the contract, trust declaration or selected obligations to make the demonstration pass or fail.</p>
+<p>Verus syntax, proof helpers and build commands are deliberately left out. The qualification experiment must establish them for the exact version used.</p>
+<h2>Contracts</h2>
+<h3>Operations (not yet a command-line interface)</h3>
+<p>The helper does three things:</p>
+<ol><li><strong>Run</strong> a reviewed attempt.</li><li><strong>Assess</strong> whether its evidence still applies.</li><li><strong>Report</strong> the result.</li></ol>
+<p>These can live in one Python module in the pack. No service or plugin interface is needed. Command names wait until after the experiment.</p>
+<p><strong>Inputs to a run:</strong> explicit opt-in, repository root, one reviewed obligation and trust declaration, a single source file, the tested toolchain ID, an approved fixed command, and finite resource limits.</p>
+<p><strong>Rejected before running:</strong> paths outside the repository, symbolic links and other non-regular files, duplicate IDs, incomplete reviews and untested commands.</p>
+<h3>The attempt manifest (proposed version 1)</h3>
+<table><thead><tr><th>Fields</th><th>Written by</th><th>Used by / for</th></tr></thead><tbody><tr><td>Format version, attempt ID, obligation and requirement IDs</td><td>The step that publishes the attempt</td><td>The loader checks format and identity; the Proof Pack keeps traceability</td></tr><tr><td>Digests of the English obligation and requirement, formal contract and reviewed trust declaration</td><td>The snapshot step</td><td>Acceptance confirms the exact reviewed wording, not just matching IDs or a model-written label</td></tr><tr><td>Repository-relative source paths and their digests</td><td>The snapshot step</td><td>Acceptance compares the checked files with the current ones</td></tr><tr><td>Toolchain ID: tool, library and solver versions, target, relevant settings</td><td>The tested recipe and snapshot step</td><td>Rejects incompatible results; detects a changed environment</td></tr><tr><td>Outcome, stable reason code, whether Verus actually ran</td><td>The outcome classifier</td><td>Decides eligibility; drives the recovery message</td></tr><tr><td>Actual command, exit result, which obligations were checked, evidence references</td><td>The run itself, as interpreted for the tested version</td><td>Confirms the intended work was done; allows reproduction</td></tr><tr><td>Start and end times, plus elapsed duration measured with a monotonic clock</td><td>The run step</td><td>Reports how long it took; never invented when Verus did not run</td></tr><tr><td>Diagnostic file paths, digests and sizes</td><td>The publish step</td><td>Confirms evidence is complete and unaltered before reporting</td></tr></tbody></table>
+<p>If Verus never ran, run-only fields are empty and give a reason. The manifest never contains home-directory paths, environment dumps, credentials or raw prompts.</p>
+<p><strong>Rejected when loading:</strong> unknown format versions, missing required fields, duplicate keys and unsafe paths. Unknown optional fields may be ignored only if they cannot affect scope, trust or acceptance.</p>
+<h3>What this design depends on</h3>
+<table><thead><tr><th>Dependency</th><th>What we know and how</th><th>Limits</th></tr></thead><tbody><tr><td>Proof Pack</td><td><code>pack/templates/proof-pack.template.md</code>, read [Verified]</td><td>Already records claim, oracle, confidence and residual risk. Gets optional verification fields, not a second ledger.</td></tr><tr><td>Design and implement workflows</td><td>Existing skill and stage files, read [Verified]</td><td>Review happens before running. Normal tests and reviews still apply.</td></tr><tr><td><code>run_bounded</code></td><td><code>pack/scripts/bounded_process.py</code>, read [Verified]</td><td>Enforces time and output limits, cancellation and cleanup. <strong>It is not a sandbox.</strong></td></tr><tr><td>Process containment</td><td>Same helper&#x27;s per-platform code, read [Verified]</td><td>On Linux/macOS, memory limits apply per process, not in total. On Windows, job limits can fail to apply.</td></tr><tr><td>Verus contracts and trust</td><td><a href="https://verus-lang.github.io/verus/guide/requires_ensures.html">Contracts guide</a> and <a href="https://verus-lang.github.io/verus/guide/">overview</a>, read [Verified]</td><td>Assumptions, unsafe code, Verus&#x27;s supported Rust subset and the unchecked compiler and verifier remain trusted.</td></tr><tr><td>Verus output, checked scope, link to compiled code</td><td>Not yet tested [Flagged]</td><td>No output format, version or supported OS is promised yet.</td></tr></tbody></table>
+<p>Use <code>run_bounded</code> with limits chosen for this workload, not its ten-second default. Clean shutdown does not mean the proof passed. If the environment cannot enforce a required limit, report <code>unsupported</code> or <code>unavailable</code> instead of quietly running with weaker limits.</p>
+<h2>How Evidence Is Accepted</h2>
+<h3>Pinning down exactly what was checked</h3>
+<p>Version 1 supports a single self-contained source file and a fixed, reviewed library baseline. Cargo workspaces, build scripts, external macros and unknown dependencies are unsupported until we can record everything they pull in. Code in other languages is never silently rewritten in Rust.</p>
+<p>Steps:</p>
+<ol><li>Create a private temporary directory unique to the attempt.</li><li>Read the source file once, take its digest, and run Verus on that copy.</li><li>Confirm, using the tested version&#x27;s output, that this exact copy and these</li></ol>
+<p>obligations were checked, and that no option turned checking off.</p>
+<ol><li>Record the full set of library, toolchain, solver, setting and target</li></ol>
+<p>versions under the toolchain ID. If any is unknown, there is no current evidence.</p>
+<p>The copy and environment must not change during the run. Comparing digests before and after is not enough, because a file could change and change back mid-run. If the approved environment cannot guarantee this, stop qualification and say so. Unpinned dependencies from the surrounding system are rejected.</p>
+<h3>The acceptance check</h3>
+<p>Evidence counts only when <strong>all</strong> of these are true:</p>
+<pre><code class="language-text">historical outcome is passed
+AND the manifest and required diagnostics are complete and their digests match
+AND the intended obligations were checked, as confirmed by the tested version&#x27;s output
+AND the reviewed obligation, requirement, contract and trust declaration match the recorded digests
+AND the current inputs and environment match the checked ones
+AND the existing required tests, reviews and permissions are satisfied</code></pre>
+<p>This check is what decides acceptance. Reading or displaying a manifest does not.</p>
+<ul><li>An assessment applies only to the exact code tree it checked. If anything</li></ul>
+<p>relevant changes afterwards, it must be re-run.</p>
+<ul><li>A timestamp or branch name does not identify inputs.</li><li>A hand-edited &quot;passed&quot; record is not verifier evidence. Anyone with write</li></ul>
+<p>access to the repository is trusted, so reviewers rely on reproducible runs. Version 1 does not claim cryptographic attestation.</p>
+<p><strong>Applicability rules:</strong></p>
+<ul><li>A known change to a checked input makes the result <code>stale</code>.</li><li>Missing information, missing or corrupt evidence, or any other inability</li></ul>
+<p>to compare makes it <code>unknown</code>.</p>
+<ul><li>Only a complete, exact match is <code>current</code>.</li><li>Any outcome other than <code>passed</code> is never eligible, whatever its applicability.</li><li>The original outcome always stays visible.</li></ul>
+<h2>Patterns</h2>
+<ul><li><strong>One adapter for Verus:</strong> a single version-specific boundary separates raw</li></ul>
+<p>process output from acceptance decisions. No registry for multiple verifiers.</p>
+<ul><li><strong>Write-once records:</strong> one final record per attempt. No event-sourcing framework.</li><li><strong>Calculated applicability:</strong> worked out from current inputs, never stored as a flag.</li></ul>
+<p><strong>Smallest solution that works:</strong> the feature only runs after opt-in. It reuses the Proof Pack, existing roles and <code>run_bounded</code>, and uses Python&#x27;s standard library for hashing, JSON and files. No new dependency or database is justified. Existing private atomic-write helpers show precedent but are not assumed to be reusable public APIs. The experiment picks the simplest write-without-overwrite method it can actually demonstrate.</p>
+<h2>Error &amp; concurrency model</h2>
+<table><thead><tr><th>Outcome</th><th>Meaning</th></tr></thead><tbody><tr><td><code>passed</code></td><td>The tested Verus version&#x27;s output confirms the intended obligations and safety checks succeeded. A zero exit code alone is not enough.</td></tr><tr><td><code>failed</code></td><td>Verus output shows a declared obligation or safety condition was not met.</td></tr><tr><td><code>inconclusive</code></td><td>No conclusion was possible: timeout, crash, output too large, malformed or unknown output, or failed containment or cleanup.</td></tr><tr><td><code>unavailable</code></td><td>The approved tool or permission to run it is missing.</td></tr><tr><td><code>unsupported</code></td><td>The target, dependencies, version or required limits cannot be supported.</td></tr><tr><td><code>cancelled</code></td><td>Someone cancelled the run. Later success output cannot override this.</td></tr><tr><td><code>not-run</code></td><td>The attempt was planned or withdrawn and Verus never ran.</td></tr></tbody></table>
+<ul><li>Cancellation, timeout, resource-limit and cleanup failures take priority</li></ul>
+<p>over output that looks like a pass.</p>
+<ul><li>No automatic retries and no automatic proof repair. A retry is a new, explicit attempt.</li><li>If the meaning or the trust declaration changes, the claim goes back for</li></ul>
+<p>review. Withdrawing a claim is recorded, but it is not a proof.</p>
+<ul><li>Attempts that never ran Verus have no invented output or duration.</li></ul>
+<p><strong>Concurrency:</strong></p>
+<ul><li>Only one attempt at a time may write to an evidence folder; others are refused.</li><li>Separate worktrees that share an evidence folder must agree on its identity.</li><li>If a previous owner seems to have died, report it for manual recovery.</li></ul>
+<p>Never take over silently.</p>
+<ul><li>A finished record is published once from private temporary files and never</li></ul>
+<p>overwrites an existing attempt, even in a race.</p>
+<ul><li>An interrupted or unverifiable publish leaves no acceptable evidence.</li></ul>
+<h2>Failure-mode analysis</h2>
+<table><thead><tr><th>What goes wrong</th><th>Caused by which choice</th><th>Response</th><th>How it is handled</th><th>Reason code</th><th>Test</th></tr></thead><tbody><tr><td>Empty or malformed obligation, or bad path</td><td>Explicit file inputs</td><td>Prevent</td><td>Validate before running; Verus does not start</td><td><code>FV_INPUT_INVALID</code></td><td>Empty, duplicate, path-escape, symbolic link and non-regular file cases</td></tr><tr><td>Tool missing or permission denied</td><td>Local approved execution</td><td>Detect</td><td>Do not run; report <code>unavailable</code> with setup steps</td><td><code>FV_UNAVAILABLE</code></td><td>Missing program and denied-launch cases</td></tr><tr><td>Unsupported version, feature or dependency</td><td>Version-specific adapter</td><td>Prevent</td><td>Report <code>unsupported</code>; never substitute a hand-written model</td><td><code>FV_UNSUPPORTED</code></td><td>Untested version, dependency and settings</td></tr><tr><td>Zero or wrong obligations checked, or unrecognized output</td><td>Version-specific output reading</td><td>Detect</td><td>Report <code>inconclusive</code>, never <code>passed</code></td><td><code>FV_SCOPE_UNCONFIRMED</code></td><td>Empty success, filtered run and wrong-function results</td></tr><tr><td>Counterexample or unmet guarantee</td><td>Formal checking</td><td>Detect</td><td>Report <code>failed</code>; keep the diagnostic and the unchanged contract</td><td><code>FV_OBLIGATION_FAILED</code></td><td>Live bug run plus a recorded copy of its output</td></tr><tr><td>Timeout, crash, output flood or cancellation</td><td>Running a subprocess</td><td>Mitigate</td><td>Clean up within limits; never a pass; keep limited output</td><td><code>FV_EXECUTION_INCOMPLETE</code></td><td>Real timeout, flood and cancel runs plus classification</td></tr><tr><td>Inputs changed or not fully known</td><td>Snapshot and acceptance</td><td>Prevent</td><td>Run on a fixed copy; mark <code>stale</code> or <code>unknown</code> before acceptance</td><td><code>FV_INPUTS_CHANGED</code> / <code>FV_IDENTITY_UNKNOWN</code></td><td>Change source, settings and toolchain, including mid-run change-and-revert</td></tr><tr><td>Partial write or missing diagnostic</td><td>File-based evidence</td><td>Prevent</td><td>No acceptable record; history preserved</td><td><code>FV_EVIDENCE_INCOMPLETE</code></td><td>Interrupt at each publish step; delete output</td></tr><tr><td>Two writers or duplicate attempt</td><td>Unique attempt publishing</td><td>Prevent</td><td>Refuse overlap; never replace or mix records</td><td><code>FV_ATTEMPT_BUSY</code></td><td>Two real writers, ID collision and abandoned-ownership cases</td></tr><tr><td>English meaning changed, contract weakened or new assumption added</td><td>Human review of meaning</td><td>Prevent</td><td>Require a new review tied to the new content, even if IDs did not change</td><td><code>FV_REVIEW_REQUIRED</code></td><td>English-only change, stronger precondition, weaker guarantee, added assumption</td></tr><tr><td>Evidence changed after assessment</td><td>Separate acceptance step</td><td>Prevent</td><td>Tie assessment to the exact code tree; recheck when used</td><td><code>FV_INPUTS_CHANGED</code></td><td>Change the candidate between assessment and acceptance</td></tr></tbody></table>
+<h2>Adversarial analysis (STRIDE-lite)</h2>
+<p>These controls are requirements for future code. None exist yet.</p>
+<table><thead><tr><th>Trust boundary</th><th>STRIDE threat</th><th>Disposition</th><th>Control / rationale</th><th>Negative test</th></tr></thead><tbody><tr><td>Source/config -&gt; process argv</td><td>E/T: text in the source or settings injects commands or turns checking off</td><td>mitigate</td><td>Fixed, tested command list with no shell; reject options that change scope; source is treated as data</td><td>Shell-like text and disable/filter options never change the command</td></tr><tr><td>Filesystem -&gt; snapshot/evidence</td><td>T/I: path tricks or swapped links read or overwrite unrelated files</td><td>mitigate</td><td>Stay inside the repository; accept regular files only; private directories; fixed snapshot identity; write without overwrite</td><td>Path-escape, link, non-regular file, swap and collision attempts</td></tr><tr><td>Process -&gt; acceptance</td><td>S/T: fake success, wrong tool or unreviewed assumptions</td><td>mitigate</td><td>Tie results to tested tool versions and checked scope; require a matching contract and trust review</td><td>Forged or malformed output, changed binary, added-assumption cases</td></tr><tr><td>Attempt record -&gt; reviewer</td><td>R: a result cannot be traced</td><td>mitigate</td><td>Permanent attempt ID, input digests, the actual command and limited diagnostics</td><td>Missing ID or output cannot satisfy acceptance</td></tr><tr><td>Tool execution -&gt; environment</td><td>D/E: resource abuse or malicious build code</td><td>mitigate</td><td>Separately approved isolation (the bounded helper is not a sandbox); no build scripts or macros in version 1</td><td>Output flood, process cleanup and denied-containment cases</td></tr><tr><td>Local writer -&gt; manifest</td><td>T: someone with legitimate file access forges evidence</td><td>accept</td><td>Version 1 has no cryptographic attestation. Relies on a reviewed source and tool baseline plus reproducible live runs. Digests catch inconsistency, not deliberate forgery by the same user. <strong>Proposed for acceptance, not yet accepted.</strong></td><td>Tamper-detection tests, with no claim that they stop a malicious local owner</td></tr></tbody></table>
+<h2>Privacy analysis (LINDDUN-lite)</h2>
+<p>The example uses no personal data. In real repositories, verifier output can still contain paths, source code or names, so the general feature is not claimed to be free of personal data.</p>
+<table><thead><tr><th>Data flow / category</th><th>LINDDUN finding</th><th>Disposition</th><th>Control / rationale</th><th>Retention &amp; rights path</th></tr></thead><tbody><tr><td>Verifier diagnostics -&gt; local evidence</td><td>I/D: paths or source text may identify people or reveal secrets</td><td>mitigate</td><td>Keep raw diagnostics private and size-limited by default; publish only after explicit opt-in to publication and existing scrubbing or manual review; keep a digest link to approved evidence</td><td>Follows the adopting repository&#x27;s local retention. Deleting private diagnostics makes the evidence <code>unknown</code>, never silently complete.</td></tr><tr><td>Manifest -&gt; committed Proof Pack</td><td>L/I: attempt and reviewer IDs link work to people</td><td>mitigate</td><td>Use requirement and obligation IDs and repository-relative paths only; no environment dumps, home paths or new reviewer contact fields</td><td>Follows the repository&#x27;s existing Git retention and access policy</td></tr></tbody></table>
+<h2>UI &amp; interaction design</h2>
+<p><strong>Where it appears:</strong> the existing conversation and Markdown output. No new visual interface, design tokens, <code>DESIGN.md</code> or images. Status never depends on color. Command names wait for the experiment.</p>
+<p>Example report (illustrative; not a real result):</p>
+<pre><code class="language-text">Outcome: passed | Obligation: descriptor-range-v1 | Applicability: stale
+Not eligible for current acceptance: source identity changed.
+Historical scope: synthetic descriptor validator, &lt;recorded target/toolchain&gt;.
+Contract and trust: &lt;review references and identities&gt;.
+Evidence: &lt;repository-relative reviewed evidence reference&gt;.
+Not established: memory authorization, downstream I/O, whole-feature correctness.
+Next action: re-run the unchanged reviewed obligation for the current inputs.</code></pre>
+<p><strong>States:</strong></p>
+<ul><li><strong>Off or declined:</strong> the normal workflow continues.</li><li><strong>First use:</strong> explains what setup is missing.</li><li><strong>Running:</strong> shows that a time-limited attempt is in progress.</li><li><strong>Nothing selected:</strong> a clear input error.</li><li><strong>Finished:</strong> every outcome gives a reason and a next action.</li><li><strong>Stale or unknown:</strong> shown next to the original outcome.</li></ul>
+<p>Long diagnostics are cut off with a visible notice. If cutting them off makes the result unreadable, the outcome is <code>inconclusive</code>. No animations, hover-only information, custom keyboard controls or new dashboard. Review of the contract and trust declaration happens before running and before acceptance, and any change in meaning sends it back.</p>
+<h2>Telemetry</h2>
+<ul><li>One local <code>formal_verification.attempt</code> span per request. Its ID follows the</li></ul>
+<p>attempt through snapshot, run, publish and acceptance.</p>
+<ul><li>Events: requested, rejected before running, launched, completed, publish</li></ul>
+<p>incomplete, acceptance assessed. Reason codes are listed in the failure table.</p>
+<ul><li>Counters come from final outcomes. Duration is recorded only when Verus actually ran.</li><li>Output size and number of checked obligations show volume. This helper does</li></ul>
+<p>not use a language model, so no token or cost data is recorded.</p>
+<ul><li>Uses the repository&#x27;s existing logging conventions and Python&#x27;s standard</li></ul>
+<p>library. No tracing backend or new SDK is needed.</p>
+<ul><li>There is no HTTP interface, so the RFC 9457 error format does not apply.</li><li>Tests confirm the attempt ID, reason and duration are present or absent as</li></ul>
+<p>expected, output is limited, and no planted secret or home path appears in the public report.</p>
+<h2>Test plan</h2>
+<p>The repository&#x27;s Testing Strategy assigns test types by trigger. These apply:</p>
+<table><thead><tr><th>Directive</th><th>Why it applies here</th></tr></thead><tbody><tr><td>D0</td><td>Always required</td></tr><tr><td>T1/D1</td><td>Range-checking and eligibility logic</td></tr><tr><td>T2/D2</td><td>Input validation, parsing and identity</td></tr><tr><td>T4/D4</td><td>Real process and filesystem behavior</td></tr><tr><td>T7/D6</td><td>Versioned manifest and recorded output samples</td></tr><tr><td>T8/D7</td><td>Simulated verifier processes</td></tr><tr><td>T12/A4</td><td>The opted-in workflow from start to finish</td></tr><tr><td>T13/A5</td><td>Quality of suggested contracts</td></tr><tr><td>T14/A6</td><td>Changed skill guidance</td></tr></tbody></table>
+<p>If a new public tool contract or cross-layer interface is added, T6/D5-provider or T3/D3 must be added before implementation. T5 and T9–T11 do not apply: there is no remote API, new model adapter, MCP server or acceptance of model-written JSON.</p>
+<table><thead><tr><th>Test group</th><th>What must be tried, and what must happen</th><th>Requirements</th></tr></thead><tbody><tr><td>Example logic and mutations</td><td>Exact end, empty, misaligned, maximum and overflow inputs; reject-everything and accept-too-much versions; the <code>&lt;</code> mutation and a deleted check must fail</td><td>FV-04/05/16</td></tr><tr><td>Live Verus run</td><td>Real correct code passes; buggy code fails against the identical contract and trust declaration; checked scope confirmed from output, not a total count</td><td>FV-07/08/16</td></tr><tr><td>Output reading and recorded samples</td><td>Zero or wrong obligations, unknown version, malformed or truncated output; every recorded sample matched by live output from the same version</td><td>FV-07/09/17; D6/D7</td></tr><tr><td>Real files and processes</td><td>Interrupted publish, overlapping attempts, ID collisions, history unchanged, cancellation, containment errors, output floods and cleanup</td><td>FV-09/10/14/17</td></tr><tr><td>Acceptance check</td><td>Each changed input becomes <code>stale</code>; missing or corrupt becomes <code>unknown</code>; changed English, precondition or assumption needs re-review even with the same IDs; old outcomes stay; a late change cannot reuse an assessment</td><td>FV-04/05/06/10/11/12</td></tr><tr><td>Workflow and content checks</td><td>Off paths make zero Verus checks, for Rust and other languages; declining changes nothing; Claude and Copilot behave the same; empty or meaningless contracts are rejected in review</td><td>FV-01/02/03/13/15/18; UX-01/04</td></tr><tr><td>The real report</td><td>Every outcome and applicability shows scope, reason and next action; no broad correctness claims, leaked secrets or invented measurements</td><td>FV-10/12; UX-02/03</td></tr></tbody></table>
+<ul><li>All deterministic tests run without Verus. The live test is reported as</li></ul>
+<p>blocked when Verus is missing; it never counts as a silent pass.</p>
+<ul><li>Each new check is seen failing before the code makes it pass.</li><li>Small exhaustive and property tests supplement the full proof; they do not</li></ul>
+<p>replace it.</p>
+<ul><li>Use the test tools already installed. Any new property-testing library goes</li></ul>
+<p>through the existing dependency process.</p>
+<h2>Files Likely to Change</h2>
+<table><thead><tr><th>Area</th><th>Proposed files</th></tr></thead><tbody><tr><td>Example and reviewed obligation</td><td><code>pack/examples/formal-verification/README.md</code> and <code>descriptor.rs</code>, plus a reproducible code-only mutation under the same contract</td></tr><tr><td>Run, record and acceptance logic</td><td><code>pack/scripts/formal-verification.py</code>, only if the experiment shows it is needed; uses the existing <code>bounded_process</code></td></tr><tr><td>Tests and recorded samples</td><td>Following existing Python test and eval conventions, placed next to the closest existing example</td></tr><tr><td>Workflow guidance</td><td>Existing <code>pack/commands/design-slice/</code> and <code>pack/commands/implement/</code> stage files, loading verification guidance only on demand; no new required stage when off</td></tr><tr><td>Proof Pack and report</td><td>Optional fields in <code>pack/templates/proof-pack.template.md</code>, the report renderer and the acceptance check</td></tr><tr><td>Packaging</td><td><code>pack/adapters/INSTALL.md</code>, the on-demand reference and the sync map; every generated host copy, keeping Claude and Copilot equivalent</td></tr></tbody></table>
+<p>No application database or client schema is added. The manifest loader, acceptance check and Markdown report are the only new data, logic and display layers. The manifest table above traces who writes and who reads each field. Later pack changes use <code>/extendaibundle</code> for wiring, revision notes and sync and bundle checks. Never hand-edit generated pack copies.</p>
+<h2>Before the Live Experiment</h2>
+<p>Fill in and review these before any live run:</p>
+<ul><li>operating system and CPU architecture;</li><li>Verus release and download digest;</li><li>Rust, library and solver versions;</li><li>target and settings;</li><li>the approved isolation method;</li><li>time, memory, process and output limits;</li><li>the selected obligation, and who reviews the contract and trust declaration;</li><li>how the snapshot is kept unchanged.</li></ul>
+<p>None of these has been decided yet.</p>
+<p><strong>What the experiment must show:</strong> the real code is checked directly; exactly which obligations were checked; which assumptions are trusted; the correct version passes and the buggy one fails; the output format; that limits are actually enforced; that no outside dependency changes the result; and that the run can be reproduced. Publish only reviewed, size-limited evidence.</p>
+<p>If the chosen Verus version cannot show what was checked and what was trusted, report the gap and revise the design. Do not build a general-purpose parser to paper over it.</p>
+<h2>Conformance notes</h2>
+<p>The pack stays a source, build and install pipeline. It does not become a Rust application or a model-routing runtime, and no new runtime archetype is added. The record format, helper location, alignment rule and resource policy are proposals [Inferred], not approved decisions or observed behavior.</p>
+<h2>Flagged risks &amp; residual unknowns</h2>
+<ul><li><strong>Known from reading [Verified]:</strong> the repository code and the Verus</li></ul>
+<p>documentation cited above. These are observations of source and documentation, not of behavior.</p>
+<ul><li><strong>Not yet known [Flagged]:</strong> whether Verus checks the right code correctly,</li></ul>
+<p>how to read its output, whether checked code matches compiled code, the full set of toolchain inputs, isolation, file-publishing behavior and Windows support.</p>
+<ul><li>Digests show that files did not change. They do not show that a contract</li></ul>
+<p>says the right thing.</p>
+<ul><li>Human review of the claim and trust declaration, and the existing tests,</li></ul>
+<p>remain essential.</p>
+<h2>Gate record</h2>
+<p>An independent Astra (<code>gpt-6-astra</code>) review returned REVISE with one major finding: matching obligation IDs did not prove the reviewed English meaning was unchanged. The fix ties review approval to the content of the English obligation and its requirement, in the manifest, the acceptance check and the tests. A separate Astra recheck confirmed the finding resolved. After a later readability rewrite, another Astra check found three weakened requirements; all three were restored and rechecked. Other design gates remain open. No veto was cleared by the author, and no live proof is claimed.</p>
+<p><strong>Design checklist.</strong></p>
+<ul><li><strong>Drafted:</strong> responsibility, data model, field readers, phasing, failure,</li></ul>
+<p>threat and privacy analyses, text states, telemetry and test plan.</p>
+<ul><li><strong>Still needed:</strong></li><li>the live experiment;</li><li>a final decision record (ADR) for the record format;</li><li>observed behavior of publishing and acceptance;</li><li>independent clearance of any applicable veto reviews.</li><li><strong>Not applicable:</strong> visual design artifacts, because the existing Markdown</li></ul>
+<p>output is reused.</p>
+<p>This draft must not be handed to <code>/implement</code> as an accepted design.</p>
+<h2>Status &amp; next action</h2>
+<table><thead><tr><th>Item</th><th>State</th></tr></thead><tbody><tr><td>Completed</td><td>Proposed design and example contract; experiment worksheet; acceptance and test plan; independent review, with its one finding fixed and rechecked; readability rewrite, checked for unchanged meaning</td></tr><tr><td>Remaining</td><td>Tim&#x27;s scope decision; live experiment; final design, ADR and applicable gates</td></tr><tr><td>Best next action</td><td>Tim&#x27;s scope decision in <a href="https://github.com/timianmalloo/ai-forward/pull/8">draft PR #8</a>; then the qualification experiment</td></tr></tbody></table></main></body></html>

@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 362
+"count": 364
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 547,
+"total": 549,
 "items": [
 {
 "cat": "knowledge",
@@ -2766,6 +2766,15 @@ window.PACK_INDEX = {
 },
 {
 "cat": "graph",
+"id": "design-optional-formal-verification",
+"title": "Optional formal verification and claim-scoped evidence",
+"summary": "Proposed design for optional Verus checking of one small Rust example, with results recorded in the existing Proof Pack. Covers the example's contract, how each check is recorded, when a result can be trusted, failure handling and tests.…",
+"path": "docs/design/optional-formal-verification.md",
+"kind": "design",
+"text": "optional formal verification and claim-scoped evidence proposed design for optional verus checking of one small rust example, with results recorded in the existing proof pack. covers the example's contract, how each check is recorded, when a result can be trusted, failure handling and tests. verus has not been run yet. formal-verification verus evidence proof-pack implements spec-optional-formal-verification relates-to plan-optional-formal-verification-implementation depends-on architecture depends-on api-bounded_process"
+},
+{
+"cat": "graph",
 "id": "design-owner-review",
 "title": "Design — owner review (coord-decide.py · docs/notes/rulings.md · verify-ruling-citations.py · owner-review-gate.py)",
 "summary": "Detailed design for spec-owner-review. One stdlib CLI (coord-decide.py) that writes a decision request only by running coord-core.py's own `request add` and `request resolve`, sends its two mails only through coord-mail.py's append_mail…",
@@ -3639,6 +3648,15 @@ window.PACK_INDEX = {
 },
 {
 "cat": "graph",
+"id": "plan-optional-formal-verification-implementation",
+"title": "Optional formal verification: implementation preparation",
+"summary": "Proposed plan for building the optional Verus formal-verification capability. Explains what is done, what Tim needs to decide, the small experiment that must succeed before implementation, and the checks the finished feature must pass.",
+"path": "docs/plans/optional-formal-verification-implementation.md",
+"kind": "doc",
+"text": "optional formal verification: implementation preparation proposed plan for building the optional verus formal-verification capability. explains what is done, what tim needs to decide, the small experiment that must succeed before implementation, and the checks the finished feature must pass. formal-verification verus planning qualification relates-to spec-optional-formal-verification relates-to plan-optional-formal-verification-spec depends-on architecture depends-on kb-graph-and-loop-engineering relates-to design-optional-formal-verification"
+},
+{
+"cat": "graph",
 "id": "plan-optional-formal-verification-spec",
 "title": "Optional formal verification: specification authoring and review",
 "summary": "Bounded AI-Forward optimize-graph and specify execution record for producing a proposed formal-verification feature spec. Records review scope, validation, unresolved decisions, and the human-review stop before implementation.",
@@ -4508,7 +4526,7 @@ window.PACK_INDEX = {
 "summary": "Repo-level privacy posture for the pack-evolution tooling: the CLI and doctor touch no personal data; project memory may incidentally record handles/names (no special-category data, mitigated by the scrub); the scrub is itself a privacy…",
 "path": "docs/security/privacy-review.md",
 "kind": "privacy-review",
-"text": "privacy review repo-level privacy posture for the pack-evolution tooling: the cli and doctor touch no personal data; project memory may incidentally record handles/names (no special-category data, mitigated by the scrub); the scrub is itself a privacy control; docs explorer navigation state remains local. the reviewed model-orchestration experiment was reverted before an executable provider-routing boundary was added. privacy linddun data-governance documents design-reader-first-handbook documents architecture documents forensic-review documents design-aiforward-cli documents design-coord-core-phase1 documents design-agent-coordination-doctrine documents design-typed-seam-requests documents design-leader-designation documents design-message-layer documents design-multi-harness-runner documents design-native-ownership-enforcement documents design-compile-readers documents design-board documents design-compile-stage documents design-coord-enforcement-phase2 documents design-coord-federation-phase3 documents design-pack-doctor documents design-project-memory documents design-rai-and-scrub documents design-docs-explorer-grounding-spatial-navigation"
+"text": "privacy review repo-level privacy posture for the pack-evolution tooling: the cli and doctor touch no personal data; project memory may incidentally record handles/names (no special-category data, mitigated by the scrub); the scrub is itself a privacy control; docs explorer navigation state remains local. the reviewed model-orchestration experiment was reverted before an executable provider-routing boundary was added. privacy linddun data-governance documents design-optional-formal-verification documents design-reader-first-handbook documents architecture documents forensic-review documents design-aiforward-cli documents design-coord-core-phase1 documents design-agent-coordination-doctrine documents design-typed-seam-requests documents design-leader-designation documents design-message-layer documents design-multi-harness-runner documents design-native-ownership-enforcement documents design-compile-readers documents design-board documents design-compile-stage documents design-coord-enforcement-phase2 documents design-coord-federation-phase3 documents design-pack-doctor documents design-project-memory documents design-rai-and-scrub documents design-docs-explorer-grounding-spatial-navigation"
 },
 {
 "cat": "graph",
@@ -4886,7 +4904,7 @@ window.PACK_INDEX = {
 "summary": "Repo-level security posture for the pack-evolution tooling. The scrub handles potentially sensitive file content, while the Docs Explorer crosses committed-Markdown, filesystem, browser-rendering, and optional dependency boundaries; the…",
 "path": "docs/security/threat-model.md",
 "kind": "threat-model",
-"text": "threat model repo-level security posture for the pack-evolution tooling. the scrub handles potentially sensitive file content, while the docs explorer crosses committed-markdown, filesystem, browser-rendering, and optional dependency boundaries; the remaining tools are local and read-mostly. security threat-model documents design-reader-first-handbook documents architecture documents design-aiforward-cli documents design-coord-core-phase1 documents design-agent-coordination-doctrine documents design-typed-seam-requests documents design-leader-designation documents design-message-layer documents design-multi-harness-runner documents design-native-ownership-enforcement documents design-compile-readers documents design-board documents design-compile-stage documents design-coord-enforcement-phase2 documents design-coord-federation-phase3 documents design-pack-doctor documents design-project-memory documents design-rai-and-scrub documents design-docs-explorer-grounding-spatial-navigation"
+"text": "threat model repo-level security posture for the pack-evolution tooling. the scrub handles potentially sensitive file content, while the docs explorer crosses committed-markdown, filesystem, browser-rendering, and optional dependency boundaries; the remaining tools are local and read-mostly. security threat-model documents design-optional-formal-verification documents design-reader-first-handbook documents architecture documents design-aiforward-cli documents design-coord-core-phase1 documents design-agent-coordination-doctrine documents design-typed-seam-requests documents design-leader-designation documents design-message-layer documents design-multi-harness-runner documents design-native-ownership-enforcement documents design-compile-readers documents design-board documents design-compile-stage documents design-coord-enforcement-phase2 documents design-coord-federation-phase3 documents design-pack-doctor documents design-project-memory documents design-rai-and-scrub documents design-docs-explorer-grounding-spatial-navigation"
 },
 {
 "cat": "guides",
