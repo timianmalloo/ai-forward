@@ -19,6 +19,12 @@ stay green while a full local run flakes. The fix removes the trigger once, at s
 the harness's GIT_CONFIG_* injection so the test session has a consistent git configuration that no
 patch.dict round-trip can corrupt. The tests create their own throwaway repos and set their own
 identity, so the injected safe.* settings are not needed; it is restored at session end.
+
+The same holds for the harness's SESSION identity (FR-099, 2026-10-17). A developer's
+`.claude/settings.local.json` sets AGENT_SESSION; the installed session-start hook keys its
+run-start marker by it, so two `test_delivery_session_start` subtests found `tim-interactive`
+where they expected their fixture session - locally only, never on CI, which has no session.
+Tests that need a session set their own explicitly.
 """
 import os
 
@@ -37,6 +43,9 @@ def _stable_git_config_env():
         for name in names:
             if name in os.environ:
                 removed[name] = os.environ.pop(name)
+    for name in ("AGENT_SESSION", "AGENT_HOST", "AGENT_NAME"):
+        if name in os.environ:
+            removed[name] = os.environ.pop(name)
     try:
         yield
     finally:
