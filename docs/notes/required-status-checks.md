@@ -2,7 +2,7 @@
 id: note-required-status-checks
 title: "Decision — do not make pack-consistency a required status check on main"
 type: decision-note
-status: accepted
+status: superseded
 owner: "@timianmalloo"
 phase: "pack-evolution"
 tags: [decision, branch-protection, ci, release, accepted-risk]
@@ -20,6 +20,8 @@ summary: >-
 ---
 
 # Decision — do not make `pack-consistency` a required status check on `main`
+
+> **Superseded 2026-10-17** by `note-20261017-require-ci-before-merge`: re-open trigger 1 fired (a second contributor), and the accepted-risk premise failed when every workflow became manual-only on 2026-10-04. Kept as the record of the earlier reasoning.
 
 **Date:** 2026-08-26 · **Context:** FR-062, revision-48 forensic review · **Confidence:** Verified (the protection state and the GitHub semantics were both read, not recalled)
 
