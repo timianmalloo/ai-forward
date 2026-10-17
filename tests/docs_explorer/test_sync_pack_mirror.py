@@ -56,6 +56,17 @@ class SyncPackMirrorTests(unittest.TestCase):
         self.assert_synced(self.sync())
         self.assertFalse((self.repo / ".claude/skills/retired-skill").exists())
 
+    def test_generated_text_is_written_with_lf_line_endings(self):
+        """The repo stores LF (.gitattributes eol=lf). Set-Content joins lines with CRLF on
+        Windows, so every sync rewrote these files and git status listed them as modified."""
+        self.assert_synced(self.sync())
+        written = [path for rel in (".github/agents", ".grok/agents")
+                   for path in (self.repo / rel).rglob("*") if path.is_file()]
+        written += [self.repo / "docs/ai-forward-pack/codex-skills.json",
+                    self.repo / ".agents/skills.json"]
+        crlf = [str(path.relative_to(self.repo)) for path in written if b"\r" in path.read_bytes()]
+        self.assertEqual([], crlf[:5], "%d generated files carry CR line endings" % len(crlf))
+
     def test_a_failed_run_leaves_generated_surfaces_untouched(self):
         self.assert_synced(self.sync())
         before = self.files()
