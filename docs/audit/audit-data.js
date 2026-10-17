@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-10-17T14:31:12Z",
+  "generated": "2026-10-17T16:59:38Z",
   "audit": [
     {
       "actor": null,
@@ -13712,6 +13712,21 @@ window.AUDIT_DATA = {
       "duration_seconds": 717.0
     },
     {
+      "id": "al-01M553BNB7FCSDA9B0KG578FCQ",
+      "shortname": "work through all of these now (tasks 1-10: edit hook ask, baseline verif…",
+      "datetime": "2026-10-17T14:13:24Z",
+      "session": "prompt-log",
+      "prompt": "work through all of these now (tasks 1-10: edit hook ask, baseline verify-bundle, git identity, review PR 8, formal-verification decision, Muse re-measure, CRLF sync noise, stale branches, CFD worktrees, symlink test gaps)",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
       "id": "al-01M554C8C8VM17N32Y4Q25NHZQ",
       "shortname": "sync-pack-lf-endings",
       "datetime": "2026-10-17T14:31:12Z",
@@ -13734,6 +13749,21 @@ window.AUDIT_DATA = {
         "branch": "fix/sync-pack-lf-endings",
         "pushed": true
       }
+    },
+    {
+      "id": "al-01M554M7C66CDD9CMJAYTKRA9F",
+      "shortname": "resume from session state (merge LF sync fix, restore CRLF noise, Muse r…",
+      "datetime": "2026-10-17T14:35:33Z",
+      "session": "prompt-log",
+      "prompt": "resume from session state (merge LF sync fix, restore CRLF noise, Muse re-measure on 1.4.10)",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [
