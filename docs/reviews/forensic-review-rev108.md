@@ -20,8 +20,9 @@ summary: >-
   No P0 or P1. Four P2 findings: a byte-code cache in a fixed shared temp directory, CI that
   runs only on manual dispatch, a git-identity guard with six verified bypasses, and an
   edit-ownership hook whose `allow` skips the user's permission prompt. Eleven P3 items are
-  hygiene, portability and documentation drift. The hook's needless prompts (WT-D, WT-E) were
-  fixed during the review (PR #12).
+  hygiene, portability and documentation drift. Two were fixed during the review: the hook's
+  needless prompts (WT-D, WT-E; PR #12) and bundle changes shipped without a revision bump
+  (PACK-W; revision 109).
 ---
 
 # Forensic review — ai-forward at revision 108
@@ -33,7 +34,7 @@ summary: >-
 | Commit | `332c297` on `main` (PR #12 merged; clean tree) |
 | Pack revision | 108 (`pack/adapters/INSTALL.md:5`) |
 | Supersedes | `forensic-review-rev59` |
-| Findings | **FR-086 … FR-101** (ids continue from FR-085) |
+| Findings | **FR-086 … FR-102** (ids continue from FR-085) |
 | Surface | 30 skills · 23 personas · 40 knowledge docs · 29 templates · 47 scripts (`check-consistency.py`) |
 
 ### Baseline commands — run before judging, recorded as evidence
@@ -81,6 +82,9 @@ unsourced `.codex/hooks.json`, a lock with manual-only recovery, executable sess
 config, test isolation, native-host outside-path refusals).
 
 **Resolved during the review** — FR-101: the hook's needless prompts (WT-D, WT-E), PR #12.
+FR-102: those fixes and the Muse re-measure changed deployed files without a revision bump, so
+pack-apply saw two versions of revision 108 and the hook fix could not reach a consumer. Fixed
+by releasing revision 109; class PACK-W now has a gate-3 control.
 
 ### Executed probe — FR-088
 
@@ -179,6 +183,7 @@ together are the first thing to close.
 | FR-099 | **Verified** (executed) | same 10 failures on `c267bd4` and `332c297` |
 | FR-100 | **Verified** (executed) | `test_native_hosts_still_fail_closed_on_an_outside_path` |
 | FR-101 | **Verified** (executed) | red-first tests; PR #12 |
+| FR-102 | **Verified** (executed) | `test_bootstrap` CONFLICT reproduced alone; control red on `332c297`, green on revision 109 |
 
 ## Residual risk
 

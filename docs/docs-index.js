@@ -5195,7 +5195,7 @@ window.DOCS_INDEX = {
       "phase": "assessment",
       "reviewBy": "2027-04-17",
       "reviewSuggested": [],
-      "summary": "Forensic assessment of ai-forward at 332c297 (pack revision 108). Every gate passes except the Python suite, whose 10 failures are environmental and pre-existing on unmodified main. No P0 or P1. Four P2 findings: a byte-code cache in a fixed shared temp directory, CI that runs only on manual dispatch, a git-identity guard with six verified bypasses, and an edit-ownership hook whose `allow` skips the user's permission prompt. Eleven P3 items are hygiene, portability and documentation drift. The hook's needless prompts (WT-D, WT-E) were fixed during the review (PR #12).",
+      "summary": "Forensic assessment of ai-forward at 332c297 (pack revision 108). Every gate passes except the Python suite, whose 10 failures are environmental and pre-existing on unmodified main. No P0 or P1. Four P2 findings: a byte-code cache in a fixed shared temp directory, CI that runs only on manual dispatch, a git-identity guard with six verified bypasses, and an edit-ownership hook whose `allow` skips the user's permission prompt. Eleven P3 items are hygiene, portability and documentation drift. Two were fixed during the review: the hook's needless prompts (WT-D, WT-E; PR #12) and bundle changes shipped without a revision bump (PACK-W; revision 109).",
       "tags": [
         "forensic-review",
         "assessment",
@@ -5230,19 +5230,19 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "427c398c85038cc9c465dce60642ab9d196eda618c798543b755d9a5dd0e2ca2"
+      "sourceSha256": "e836f2546e3f8a7d4de46cf0d4d7434df3b7d48930db169f4588f0455b7e399f"
     },
     {
       "id": "forensic-review-rev108-backlog",
       "path": "docs/backlog/forensic-review-rev108.md",
-      "title": "Forensic review backlog — ai-forward revision 108 (FR-086 … FR-101)",
+      "title": "Forensic review backlog — ai-forward revision 108 (FR-086 … FR-102)",
       "type": "doc",
       "status": "proposed",
       "owner": "@timianmalloo",
       "phase": "assessment",
       "reviewBy": "2027-04-17",
       "reviewSuggested": [],
-      "summary": "Sixteen items from the revision-108 forensic review, FR-086 to FR-101, each with evidence, falsifiable acceptance criteria and a next skill. No P0 or P1. Four P2: shared-temp byte-code cache, manual-only CI, git-identity guard bypasses, and an ownership hook that grants writes. Eleven P3. FR-101 (the hook's needless prompts) was resolved in PR #12. The rest await triage.",
+      "summary": "Seventeen items from the revision-108 forensic review, FR-086 to FR-102, each with evidence, falsifiable acceptance criteria and a next skill. No P0 or P1. Four P2: shared-temp byte-code cache, manual-only CI, git-identity guard bypasses, and an ownership hook that grants writes. Eleven P3. Two were resolved during the review: FR-101 (the hook's needless prompts, PR #12) and FR-102 (bundle changes shipped without a revision bump, revision 109). The rest await triage.",
       "tags": [
         "forensic-review",
         "backlog",
@@ -5269,7 +5269,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ebc5f01fd358c8acddd140d81af8a7aa9077602d4357ce931233a85bbe972a34"
+      "sourceSha256": "6f824f5e53caef54143e954333dba1bde7565d63a80404eb0506a7ab2f368ea0"
     },
     {
       "id": "forensic-review-rev42",
@@ -12547,5 +12547,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "7f9e434e3f3ffce0d5eb0916cc0bb8e81f1eafa4ef7e37a4b95f39a37c46f310"
+  "graphSha256": "c1d9c2ce5795cc538ea0f964f3fafe49eadb530b852df779879781814868e36c"
 };
