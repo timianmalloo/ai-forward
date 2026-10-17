@@ -450,7 +450,7 @@ if (Test-Path $buildHandbook) {
 }
 $deriveGraph = Join-Path $repo "docs/ai-forward-pack/scripts/docs-graph.py"
 if (Test-Path $deriveGraph) {
-    & $pyExe @pyArgs $deriveGraph derive | ForEach-Object { Write-Host "  $_" }
+    & $pyExe @pyArgs $deriveGraph --root (Join-Path $repo "docs") derive | ForEach-Object { Write-Host "  $_" }
     if ($LASTEXITCODE -ne 0) { throw "docs-graph derive failed (exit $LASTEXITCODE)" }
 }
 

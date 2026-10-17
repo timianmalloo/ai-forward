@@ -175,7 +175,7 @@ try {
     }
 
     Gate "5. knowledge-graph validation" {
-        & $pyExe @pyArgs (Join-Path $repo "docs/ai-forward-pack/scripts/docs-graph.py") validate | Out-Null
+        & $pyExe @pyArgs (Join-Path $repo "docs/ai-forward-pack/scripts/docs-graph.py") --root (Join-Path $repo "docs") validate | Out-Null
     }
 
     Gate "6. vendored-foundation drift" {
