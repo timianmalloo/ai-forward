@@ -19,7 +19,7 @@ import unittest
 from pathlib import Path
 
 from test_upstream_adoption_integration import (recovered_revision_108_install, recovered_revision_109_install,
-                                               recovered_revision_110_install)
+                                               recovered_revision_110_install, recovered_revision_111_install)
 
 REPO = Path(__file__).resolve().parents[2]
 INSTALL = "pack/adapters/INSTALL.md"
@@ -83,7 +83,7 @@ class Revision111MetadataTests(unittest.TestCase):
     """Revision 111: the one delta that fixes the alias-escape spelling check (WT-E2)."""
 
     def test_revision_111_is_the_one_alias_escape_delta(self):
-        raw = (REPO / INSTALL).read_bytes()
+        raw = recovered_revision_111_install()
         frontmatter = raw.split(b"---\n", 2)[1].decode("utf-8")
         self.assertRegex(frontmatter, r"(?m)^revision: 111$")
         self.assertIn("bundle_version: '2026.10.17.3'", frontmatter)
@@ -95,6 +95,25 @@ class Revision111MetadataTests(unittest.TestCase):
         with self.assertRaises(AssertionError):
             recovered_revision_110_install(raw.replace(b"area: hook-times-and-junctions",
                                                        b"area: hook-times-and-junctionS", 1))
+
+
+class Revision112MetadataTests(unittest.TestCase):
+    """Revision 112: the one delta that stops charging unparsed extension frames (RUN-B2)."""
+
+    def test_revision_112_is_the_one_transport_tail_delta(self):
+        raw = (REPO / INSTALL).read_bytes()
+        frontmatter = raw.split(b"---\n", 2)[1].decode("utf-8")
+        self.assertRegex(frontmatter, r"(?m)^revision: 112$")
+        self.assertIn("bundle_version: '2026.10.17.4'", frontmatter)
+        self.assertEqual(1, frontmatter.count("  - { type: changed,"))
+        self.assertIn("area: transport-unparsed-extension-tail", frontmatter)
+        for path in ("scripts/coord_transport.py", "commands/execute-with-coordination/reference/launch.md",
+                     "adapters/INSTALL.md"):
+            self.assertTrue((REPO / "pack" / path).is_file(), path)
+        self.assertEqual(290647, len(recovered_revision_111_install(raw)))
+        with self.assertRaises(AssertionError):
+            recovered_revision_111_install(raw.replace(b"area: alias-escape-spelling",
+                                                       b"area: alias-escape-spellinG", 1))
 
 
 if __name__ == "__main__":

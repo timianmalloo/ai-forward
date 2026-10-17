@@ -161,6 +161,29 @@ def _buffer_state(buffer):
     return "pause" if buffer.find(b"\n") >= 0 else "overflow"
 
 
+def _is_extension_notification(line):
+    """The parser's own test for an ACP extension notification, applied to one unparsed frame."""
+    try:
+        message = json.loads(line.decode("utf-8"))
+    except (ValueError, UnicodeError, RecursionError):
+        return False
+    return (isinstance(message, dict) and message.get("jsonrpc") == "2.0"
+            and isinstance(message.get("method"), str) and message["method"].startswith("_")
+            and not {"id", "result", "error"} & message.keys()
+            and ("params" not in message or isinstance(message["params"], (dict, list))))
+
+
+def _charged_output_bytes(result, unparsed):
+    """RUN-B2: output bytes charged to the bound. stdout_bytes counts every byte READ, extension
+    bytes only frames PARSED, so complete extension frames still unparsed when the attempt ends
+    are extension bytes too. A trailing partial frame stays charged: it cannot be classified."""
+    tail_extension = 0
+    for line in bytes(unparsed).split(b"\n")[:-1]:
+        if _is_extension_notification(line):
+            tail_extension += len(line) + 1
+    return result["stdout_bytes"] + result["stderr_bytes"] - result["extension_notification_bytes"] - tail_extension
+
+
 class _Wire:
     """One bounded input frame and output buffer; no transcript or message queue."""
 
@@ -1050,7 +1073,7 @@ def run_session(transport, argv, cwd, env, prompts, deadline_seconds, output_lim
         if type(output_limit) is int and 0 < output_limit <= MAX_INPUT_BYTES:
             # RUN-B: output past the bound is marked, never fatal. Nothing past it is retained (no wire
             # body ever is); it is still parsed, so the turn's own response can complete the attempt.
-            charged = result["stdout_bytes"] + result["stderr_bytes"] - result["extension_notification_bytes"]
+            charged = _charged_output_bytes(result, wire.incoming if wire is not None else b"")
             result["output_bytes_over_limit"] = max(0, charged - output_limit)
             result["output_truncated"] = result["output_bytes_over_limit"] > 0
         result["duration_seconds"] = round(time.monotonic() - started, 6)
