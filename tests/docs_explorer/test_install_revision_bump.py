@@ -13,9 +13,12 @@ Uncommitted edits are not judged; the gate runs on the tree that is about to be 
 
 Seen failing first on `332c297`, the tip after PR #12, whose last pack commit left INSTALL alone.
 """
+import re
 import subprocess
 import unittest
 from pathlib import Path
+
+from test_upstream_adoption_integration import recovered_revision_108_install
 
 REPO = Path(__file__).resolve().parents[2]
 INSTALL = "pack/adapters/INSTALL.md"
@@ -44,6 +47,35 @@ class InstallRevisionBumpTests(unittest.TestCase):
         sha = unbumped_pack_commit()
         self.assertIsNone(sha, "commit {} changed pack/ without {}: bump `revision`, write this "
                           "revision's `changes`, archive the previous ones".format(sha, INSTALL))
+
+
+class Revision109MetadataTests(unittest.TestCase):
+    """Revision 109: the one delta that ships WT-D, WT-E and the Muse 1.4.10 re-measure."""
+
+    def test_revision_109_is_the_one_hook_scope_and_muse_delta(self):
+        frontmatter = (REPO / INSTALL).read_bytes().split(b"---\n", 2)[1].decode("utf-8")
+        self.assertRegex(frontmatter, r"(?m)^revision: 109$")
+        self.assertIn("bundle_version: '2026.10.17.1'", frontmatter)
+        self.assertEqual(1, frontmatter.count("  - { type: changed,"))
+        self.assertIn("area: hook-scope-and-muse-remeasure", frontmatter)
+        paths = re.search(r"paths: \[(.*?)\], deploy:", frontmatter)
+        assert paths is not None
+        for path in re.findall(r"'([^']+)'", paths.group(1)):
+            with self.subTest(source_path=path):
+                self.assertTrue((REPO / "pack" / path).is_file(), path)
+        deploy = frontmatter.split("deploy: '", 1)[1].split("', summary:", 1)[0]
+        for instruction in ("SOURCE clone, not an installed applier", "revision 108 to 109",
+                            "coord-core.py", "local deviation"):
+            with self.subTest(instruction=instruction):
+                self.assertIn(instruction, deploy)
+
+    def test_reversal_recovers_the_published_revision_108_source(self):
+        raw = (REPO / INSTALL).read_bytes()
+        self.assertEqual(285919, len(recovered_revision_108_install(raw)))
+        corrupted = raw.replace(b"area: upstream-hook-cost-refresh", b"area: upstream-hook-cost-refresH", 1)
+        self.assertNotEqual(raw, corrupted)
+        with self.assertRaises(AssertionError):
+            recovered_revision_108_install(corrupted)
 
 
 if __name__ == "__main__":
