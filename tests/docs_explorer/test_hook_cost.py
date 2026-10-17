@@ -21,7 +21,7 @@ import unittest
 import uuid
 from pathlib import Path
 
-from test_upstream_adoption_integration import recovered_revision_109_install
+from test_upstream_adoption_integration import recovered_revision_109_install, recovered_revision_110_install
 
 REPO = Path(__file__).resolve().parents[2]
 HOOKS = REPO / "pack" / "adapters" / "hooks"
@@ -326,7 +326,7 @@ class MarkerOutsideTheTree(unittest.TestCase):
     def test_revision_110_is_the_hook_times_delta(self):
         """Fails if revision 110's frontmatter is not its own one-row delta, a path it lists is missing, or the
         reversal to the published revision 109 no longer recovers its exact bytes."""
-        raw = (REPO / "pack" / "adapters" / "INSTALL.md").read_bytes()
+        raw = recovered_revision_110_install()
         frontmatter = raw.split(b"---\n", 2)[1].decode("utf-8")
         self.assertRegex(frontmatter, r"(?m)^revision: 110$")
         self.assertIn("bundle_version: '2026.10.17.2'", frontmatter)

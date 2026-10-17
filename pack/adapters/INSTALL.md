@@ -1,12 +1,12 @@
 ---
 doc: INSTALL
 purpose: 'Deployment map and refresh changelog used by the portable bootstrap. For expert manual refreshes, `changes` lists the source paths and marked instruction sections to update. Preserve project-owned files and policy; the first-use path is one-line setup followed by a deliver request.'
-bundle_version: '2026.10.17.2'
-revision: 110
+bundle_version: '2026.10.17.3'
+revision: 111
 counts: { lenses: 23, skills: 30, knowledge_docs: 40, templates: 29, scripts: 47 }
 refresh_protocol: 'Compare your repo last-applied revision to the `revision` above. If it is lower, apply each entry in `changes` in order — re-copy the listed `paths` to their mapped destinations (deployment map in the body), re-apply the Copilot frontmatter wraps, and where an entry `deploy` says RE-PASTE, replace the managed blocks wholesale between their markers. Never overwrite an accumulated docs/docs-index.js.'
 changes:
-  - { type: changed, area: hook-times-and-junctions, paths: ['adapters/hooks/dispatch.py', 'scripts/delivery.py', 'adapters/INSTALL.md'], deploy: 'The normal revision 109 to 110 refresh: copy dispatch.py to docs/ai-forward-pack/hooks/ and delivery.py to docs/ai-forward-pack/scripts/ ; nothing to configure. delivery.py now treats a Windows junction as a link everywhere it checks links (WIN-LINK-A). A dispatch appends one timing line (host, event, hooks, start, ms, exit) only where <git-dir>/ai-forward/hook-times.jsonl already exists; the pack never creates it, so an install that does not ask writes nothing (12 us per dispatch to check).', summary: 'HOOK TIME WHERE ASKED. Claude Code''s record keeps no start for a hook, so a session''s hook time was not recorded (bench REC-UNREAD-A, 2026-10-17). The dispatcher now times itself from main() to its exit code into a file the caller creates in the checkout''s git dir, never the working tree; the host''s git -> sh -> python launch is outside the time. ALSO: a state root or marker behind a Windows junction is a link, not a folder (WIN-LINK-A). Counts unchanged.' }
+  - { type: changed, area: alias-escape-spelling, paths: ['scripts/coord-core.py', 'adapters/INSTALL.md'], deploy: 'Use the updated SOURCE clone, not an installed applier: `python3 <ai-forward-clone>/pack/scripts/pack-apply.py plan --target <project>` then `python3 <ai-forward-clone>/pack/scripts/pack-apply.py apply --target <project>`. The normal revision 110 to 111 refresh: copy coord-core.py to docs/ai-forward-pack/scripts/ and refresh INSTALL. Preserve project-owned settings, custom hook entries and wrappers, local deviations and durable audit/history. Refresh does not run coordination install or change permission policy.', summary: 'SECURITY FIX TO REVISION 109 (WT-E2). WT-E gives no decision for a write outside every checkout, but must still fail closed for an in-tree alias whose target escapes. It decided "via an alias" by comparing the LEXICAL path with the RESOLVED root, which only works when the two are spelled alike: on macOS (/var -> /private/var) and on Windows runners (8.3 short names such as RUNNER~1) an escaping alias got `{}` and the session permission mode decided instead of the hook. Found by the first CI baseline run on main. The escape point is now found by resolving each path prefix: a component whose parent resolves inside the checkout but which itself resolves outside it. The test reaches the repository through a second spelling, so the shape is red on any machine. Counts unchanged.' }
 ---
 
 ## Changelog — what changed since the last version
@@ -21,6 +21,15 @@ changes:
 So at any moment: the frontmatter `changes` = the latest delta (the refresh guide), and this section = the full rolling history.
 
 ### Prior revisions
+
+<details>
+<summary>Revision 110 — 17 October 2026 — hook times and junctions</summary>
+
+```yaml
+changes:
+  - { type: changed, area: hook-times-and-junctions, paths: ['adapters/hooks/dispatch.py', 'scripts/delivery.py', 'adapters/INSTALL.md'], deploy: 'The normal revision 109 to 110 refresh: copy dispatch.py to docs/ai-forward-pack/hooks/ and delivery.py to docs/ai-forward-pack/scripts/ ; nothing to configure. delivery.py now treats a Windows junction as a link everywhere it checks links (WIN-LINK-A). A dispatch appends one timing line (host, event, hooks, start, ms, exit) only where <git-dir>/ai-forward/hook-times.jsonl already exists; the pack never creates it, so an install that does not ask writes nothing (12 us per dispatch to check).', summary: 'HOOK TIME WHERE ASKED. Claude Code''s record keeps no start for a hook, so a session''s hook time was not recorded (bench REC-UNREAD-A, 2026-10-17). The dispatcher now times itself from main() to its exit code into a file the caller creates in the checkout''s git dir, never the working tree; the host''s git -> sh -> python launch is outside the time. ALSO: a state root or marker behind a Windows junction is a link, not a folder (WIN-LINK-A). Counts unchanged.' }
+```
+</details>
 
 <details>
 <summary>Revision 109 — 17 October 2026 — hook scope and Muse re-measure</summary>

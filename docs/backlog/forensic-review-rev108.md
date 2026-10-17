@@ -210,6 +210,9 @@ security or migration risk · **P2** material maintainability, operability or go
 - **Resolution (PR #12, `4c5cf91`, `b808e73`):** sibling worktrees are checked in place; outside
   paths get no decision on the Claude host; an in-tree alias that escapes still fails closed.
   Both classes are `controlled` in `defect-classes.md`, with red-first tests.
+- **Correction (revision 111):** the WT-E alias check compared spellings, so on macOS and Windows
+  runners an escaping in-tree alias got no decision instead of failing closed. The first CI
+  baseline on `main` found it; fixed as WT-E2.
 
 ### FR-102 · issue · P2 — Bundle changes shipped without a revision bump — **resolved**
 - **What happened:** PR #12 (`coord-core.py`) and the Muse re-measure (`context-budget.json`,

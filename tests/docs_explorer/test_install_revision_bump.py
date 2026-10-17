@@ -18,7 +18,8 @@ import subprocess
 import unittest
 from pathlib import Path
 
-from test_upstream_adoption_integration import recovered_revision_108_install, recovered_revision_109_install
+from test_upstream_adoption_integration import (recovered_revision_108_install, recovered_revision_109_install,
+                                               recovered_revision_110_install)
 
 REPO = Path(__file__).resolve().parents[2]
 INSTALL = "pack/adapters/INSTALL.md"
@@ -76,6 +77,24 @@ class Revision109MetadataTests(unittest.TestCase):
         self.assertNotEqual(raw, corrupted)
         with self.assertRaises(AssertionError):
             recovered_revision_108_install(corrupted)
+
+
+class Revision111MetadataTests(unittest.TestCase):
+    """Revision 111: the one delta that fixes the alias-escape spelling check (WT-E2)."""
+
+    def test_revision_111_is_the_one_alias_escape_delta(self):
+        raw = (REPO / INSTALL).read_bytes()
+        frontmatter = raw.split(b"---\n", 2)[1].decode("utf-8")
+        self.assertRegex(frontmatter, r"(?m)^revision: 111$")
+        self.assertIn("bundle_version: '2026.10.17.3'", frontmatter)
+        self.assertEqual(1, frontmatter.count("  - { type: changed,"))
+        self.assertIn("area: alias-escape-spelling", frontmatter)
+        for path in ("scripts/coord-core.py", "adapters/INSTALL.md"):
+            self.assertTrue((REPO / "pack" / path).is_file(), path)
+        self.assertEqual(289089, len(recovered_revision_110_install(raw)))
+        with self.assertRaises(AssertionError):
+            recovered_revision_110_install(raw.replace(b"area: hook-times-and-junctions",
+                                                       b"area: hook-times-and-junctionS", 1))
 
 
 if __name__ == "__main__":
