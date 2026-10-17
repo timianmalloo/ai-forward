@@ -1,6 +1,6 @@
 ---
 id: forensic-review-rev108-backlog
-title: "Forensic review backlog — ai-forward revision 108 (FR-086 … FR-101)"
+title: "Forensic review backlog — ai-forward revision 108 (FR-086 … FR-102)"
 type: doc
 status: proposed
 owner: "@timianmalloo"
@@ -13,15 +13,17 @@ links:
   - { to: plan-ci-speed-and-required-checks, rel: relates-to }
 review-by: "2027-04-17"
 summary: >-
-  Sixteen items from the revision-108 forensic review, FR-086 to FR-101, each with evidence,
+  Seventeen items from the revision-108 forensic review, FR-086 to FR-102, each with evidence,
   falsifiable acceptance criteria and a next skill. No P0 or P1. Four P2: shared-temp byte-code
   cache, manual-only CI, git-identity guard bypasses, and an ownership hook that grants writes.
-  Eleven P3. FR-101 (the hook's needless prompts) was resolved in PR #12. The rest await triage.
+  Eleven P3. Two were resolved during the review: FR-101 (the hook's needless prompts, PR #12)
+  and FR-102 (bundle changes shipped without a revision bump, revision 109). The rest await
+  triage.
 ---
 
 # Forensic review backlog — revision 108
 
-**Status: `proposed`.** FR-101 is **resolved** (PR #12, 2026-10-17). The rest are not
+**Status: `proposed`.** FR-101 and FR-102 are **resolved** (2026-10-17). The rest are not
 implemented and await triage. Open items carried from revision 59 (FR-078 … FR-085) stay in
 `forensic-review-rev59-backlog`; their current state is tabled in the review.
 
@@ -209,6 +211,18 @@ security or migration risk · **P2** material maintainability, operability or go
   paths get no decision on the Claude host; an in-tree alias that escapes still fails closed.
   Both classes are `controlled` in `defect-classes.md`, with red-first tests.
 
+### FR-102 · issue · P2 — Bundle changes shipped without a revision bump — **resolved**
+- **What happened:** PR #12 (`coord-core.py`) and the Muse re-measure (`context-budget.json`,
+  `muse-surface.md`) changed deployed files at revision 108. pack-apply resolves a merge base
+  from the commits whose INSTALL text matches the installed copy (`pack-apply.py:521-538`), so
+  revision 108 named two versions of each file. `test_bootstrap` failed with CONFLICT on
+  `context-budget.json`, and a same-revision refresh keeps the old bytes as a "local deviation"
+  (`pack-apply.py:576-579`), so the hook fix could not reach any consumer.
+- **Resolution:** revision 109 records all three changes and archives 108.
+  `tests/docs_explorer/test_install_revision_bump.py` (gate 3) fails when the newest commit
+  touching `pack/` does not touch `pack/adapters/INSTALL.md`, observed failing first on
+  `332c297`. Class PACK-W, `controlled`. Limit: a depth-1 clone passes vacuously.
+
 ## Summary
 
 | Id | Priority | Kind | Title | Next skill |
@@ -229,3 +243,4 @@ security or migration risk · **P2** material maintainability, operability or go
 | FR-095 | P3 | todo | No six-harness ADR | `/define-architecture` |
 | FR-096 | P3 | todo | `.codex/hooks.json` unsourced | `/implement` |
 | FR-101 | P3 | issue | Hook prompted outside its domain | resolved |
+| FR-102 | P2 | issue | Bundle change without a revision bump | resolved |

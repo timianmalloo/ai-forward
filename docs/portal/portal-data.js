@@ -2778,8 +2778,8 @@ window.PORTAL_DATA = {
       {
         "id": "forensic-review-rev108-backlog",
         "type": "doc",
-        "title": "Forensic review backlog — ai-forward revision 108 (FR-086 … FR-101)",
-        "summary": "Sixteen items from the revision-108 forensic review, FR-086 to FR-101, each with evidence, falsifiable acceptance criteria and a next skill. No P0 or P1. Four..."
+        "title": "Forensic review backlog — ai-forward revision 108 (FR-086 … FR-102)",
+        "summary": "Seventeen items from the revision-108 forensic review, FR-086 to FR-102, each with evidence, falsifiable acceptance criteria and a next skill. No P0 or P1...."
       },
       {
         "id": "forensic-review-rev42",
