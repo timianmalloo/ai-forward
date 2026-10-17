@@ -1088,7 +1088,7 @@ window.PACK_INDEX = {
 "summary": "Conditional delivery routing and local checkpoint integrity, not a workflow runner.",
 "path": "pack/scripts/delivery.py",
 "kind": "script",
-"text": "delivery.py conditional delivery routing and local checkpoint integrity, not a workflow runner. route read_json digest git identity absolute runtime_start_marker_name runtime_start_marker snapshot file_record capture_file read_json_record validate_scoped_product_path check_records compiler compilation contract local_area state_path save view check_displaced_partials valid_snapshot validate_progress load check_prestart check_scope_change check_prestart_conversion gate_binding check_gate_binding new_gate resume begin_repair recheck_repair outside close_outcome execute locked_execute main"
+"text": "delivery.py conditional delivery routing and local checkpoint integrity, not a workflow runner. route read_json digest git identity absolute runtime_start_marker_name is_link _link_ancestor runtime_start_marker snapshot file_record capture_file read_json_record validate_scoped_product_path check_records compiler compilation contract local_area state_path save view check_displaced_partials valid_snapshot validate_progress load check_prestart check_scope_change check_prestart_conversion gate_binding check_gate_binding new_gate resume begin_repair recheck_repair outside close_outcome execute locked_execute main"
 },
 {
 "cat": "scripts",
@@ -1940,10 +1940,10 @@ window.PACK_INDEX = {
 "cat": "graph",
 "id": "api-index",
 "title": "API reference — the deployed script bundle",
-"summary": "Generated API reference for the pack's public surface — the deployed script bundle. 599 public functions across 46 modules, 47% carrying a docstring.",
+"summary": "Generated API reference for the pack's public surface — the deployed script bundle. 600 public functions across 46 modules, 47% carrying a docstring.",
 "path": "docs/api/index.md",
 "kind": "api",
-"text": "api reference — the deployed script bundle generated api reference for the pack's public surface — the deployed script bundle. 599 public functions across 46 modules, 47% carrying a docstring. api scripts generated index documents architecture"
+"text": "api reference — the deployed script bundle generated api reference for the pack's public surface — the deployed script bundle. 600 public functions across 46 modules, 47% carrying a docstring. api scripts generated index documents architecture"
 },
 {
 "cat": "graph",
