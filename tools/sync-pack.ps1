@@ -76,6 +76,14 @@ $stageRoot = Join-Path ([IO.Path]::GetTempPath()) ("sync-pack-" + [guid]::NewGui
 $staged = [ordered]@{}
 trap { Remove-Item $stageRoot -Recurse -Force -ErrorAction SilentlyContinue; break }
 
+# Generated text is written LF, UTF-8 without BOM: the repo stores LF (.gitattributes eol=lf).
+# Set-Content joins lines with CRLF on Windows, so every sync rewrote these files and git
+# status listed them as modified though their content was unchanged.
+function Write-LfText([string]$path, $lines) {
+    [IO.File]::WriteAllText($path, ((@($lines) -join "`n") -replace "`r", "") + "`n",
+                            [Text.UTF8Encoding]::new($false))
+}
+
 function Reset-Dir([string]$path) {
     # Returns the staging directory that stands in for $path until Complete-Mirror runs.
     $stage = Join-Path $stageRoot ([IO.Path]::GetRelativePath($repo, $path))
@@ -249,7 +257,7 @@ foreach ($cc in Get-ChildItem (Join-Path $pack "adapters\claude-code\agents") -F
         $inTools = $false
         $out.Add($line)
     }
-    Set-Content -Path $dest -Value $out -Encoding UTF8
+    Write-LfText $dest $out
 }
 $ghAgentsCount = (Get-ChildItem $ghAgents -File).Count
 Write-Host "  .github/agents: $ghAgentsCount agents"
@@ -282,7 +290,7 @@ function Write-StrippedAgent([string]$src, [string]$dest) {
         $inTools = $false
         $out.Add($line)
     }
-    Set-Content -Path $dest -Value $out -Encoding UTF8
+    Write-LfText $dest $out
 }
 $grokAgents = Join-Path $repo ".grok\agents"
 $grokAgents = Reset-Dir $grokAgents
@@ -328,7 +336,7 @@ foreach ($cmd in Get-ChildItem (Join-Path $pack "commands") -Directory | Sort-Ob
 }
 $codexDocs = Join-Path $repo "docs/ai-forward-pack"
 New-Item -ItemType Directory -Force -Path $codexDocs | Out-Null
-$codexInventory | ConvertTo-Json -Depth 4 | Set-Content (Join-Path $codexDocs "codex-skills.json") -Encoding UTF8
+Write-LfText (Join-Path $codexDocs "codex-skills.json") ($codexInventory | ConvertTo-Json -Depth 4)
 Copy-Item (Join-Path $pack "adapters/codex/codex.md") (Join-Path $codexDocs "codex.md") -Force
 Copy-Item (Join-Path $pack "adapters/muse/muse-surface.md") (Join-Path $codexDocs "muse-surface.md") -Force
 Write-Host "  docs/ai-forward-pack: codex.md + muse-surface.md"
@@ -343,7 +351,7 @@ $agyHooksDst = Join-Path $repo ".agents\hooks.json"
 if ($LASTEXITCODE -ne 0) { throw "Antigravity named hook merge failed; current hooks were retained." }
 
 $agySkillsJson = "{`n  `"entries`": [`n    { `"path`": `".agents/skills`" },`n    { `"path`": `".claude/skills`" }`n  ]`n}"
-Set-Content (Join-Path $repo ".agents\skills.json") -Value $agySkillsJson -Encoding UTF8
+Write-LfText (Join-Path $repo ".agents\skills.json") $agySkillsJson
 Write-Host "  .agents/hooks.json + .agents/skills.json"
 
 # --- docs/ai-forward-pack (templates, scripts, pack docs) ----------------------
@@ -416,7 +424,7 @@ function Update-ManagedBlock([string]$file, [string]$blockFile) {
         Set-Content $file -Value $new -Encoding UTF8 -NoNewline
         Write-Host "  ${label}: managed block re-pasted"
     } else {
-        Add-Content $file -Value ("`n" + $block) -Encoding UTF8
+        Add-Content $file -Value ("`n" + $block + "`n") -Encoding UTF8 -NoNewline
         Write-Host "  ${label}: managed block appended"
     }
 }

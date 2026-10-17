@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-10-16T23:48:59Z",
+  "generated": "2026-10-17T14:31:12Z",
   "audit": [
     {
       "actor": null,
@@ -13710,6 +13710,30 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-10-03T11:58:39Z",
       "duration_seconds": 717.0
+    },
+    {
+      "id": "al-01M554C8C8VM17N32Y4Q25NHZQ",
+      "shortname": "sync-pack-lf-endings",
+      "datetime": "2026-10-17T14:31:12Z",
+      "session": "d8b96d80-aa92-44bb-979f-bd7bf6a7daeb",
+      "prompt": "work through all of these now (task 7: CRLF noise after a local sync)",
+      "summary": "sync-pack wrote four generated outputs with Set-Content, which joins lines with CRLF on Windows: the stripped persona copies in .github/agents and .grok/agents, docs/ai-forward-pack/codex-skills.json and .agents/skills.json. The repo stores LF, so every local sync rewrote ~40 files and git status listed them as modified. Fix: one Write-LfText helper (LF, UTF-8 without BOM) at all four sites, and the managed-block append no longer adds a trailing CRLF. Control: test_sync_pack_mirror.py::test_generated_text_is_written_with_lf_line_endings, observed red on the old script, then all 4 sync-pack tests green. After a real sync, git status lists no generated file. Recorded as a PLAT-A instance: the newline control (verify-portable-text-io) covered Python writers only. Sweep: the other Set-Content calls write -Raw text with -NoNewline and keep LF.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "goal": "sync-pack writes generated text with LF so a local sync leaves git status clean",
+      "done_when": "a red-first test passes and a real sync leaves only intended changes",
+      "tier": "T1",
+      "git": {
+        "sha": "c267bd40bd9b364a6020803cca25e0da502ad0dc",
+        "short": "c267bd40b",
+        "branch": "fix/sync-pack-lf-endings",
+        "pushed": true
+      }
     }
   ],
   "changes": [
