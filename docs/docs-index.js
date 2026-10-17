@@ -3218,6 +3218,72 @@ window.DOCS_INDEX = {
       "sourceSha256": "ed3cd648dfa2331a84706731b9f3285393c47a30235adc4ea75ce60505d6b432"
     },
     {
+      "id": "note-20261017-require-ci-before-merge",
+      "path": "docs/notes/note-20261017-require-ci-before-merge.md",
+      "title": "Decision — require CI to pass before anything reaches main",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2027-04-17",
+      "reviewSuggested": [],
+      "summary": "The owner decided on 2026-10-17 that CI must pass before a change reaches main, reversing the 2026-08-26 decision not to require pack-consistency. Re-open trigger 1 of that decision fired (a second contributor now lands work on main), and its accepted-risk premise (\"CI goes red, the next push fixes it\") stopped holding when every workflow became manual-only on 2026-10-04. Not yet executed: it depends on CI running on pull_request first.",
+      "tags": [
+        "decision",
+        "branch-protection",
+        "ci",
+        "release",
+        "required-status-checks"
+      ],
+      "links": [
+        {
+          "to": "note-required-status-checks",
+          "rel": "supersedes"
+        },
+        {
+          "to": "proposal-ci-speed-2026-10-17",
+          "rel": "relates-to"
+        },
+        {
+          "to": "plan-ci-speed-and-required-checks",
+          "rel": "relates-to"
+        },
+        {
+          "to": "forensic-review-rev108",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "25a6086031769262bf760dc54f86e70c3314c2c5bf55e24aa69c21114287d2a9"
+    },
+    {
+      "id": "note-20261017-session-profiles-published",
+      "path": "docs/notes/note-20261017-session-profiles-published.md",
+      "title": "Decision — session profiles stay published on Pages and in the repo",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "assessment",
+      "reviewBy": "2027-04-17",
+      "reviewSuggested": [],
+      "summary": "During the rev108 forensic review the Privacy persona issued a hard-veto BLOCK because docs/profiles (session-profiler output with verbatim prompts, home paths and cwd values that name other repositories) is served on GitHub Pages and tracked in the public repo. The owner ruled that judgement wrong: publishing the profiles is intended and acceptable. No containment is taken; this note is the recorded basis, so later reviews do not re-raise it.",
+      "tags": [
+        "decision",
+        "privacy",
+        "pages",
+        "publish-boundary",
+        "owner-ruling"
+      ],
+      "links": [
+        {
+          "to": "forensic-review-rev108",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "49e143eb9ea3188dffd51bfb1656dca0cf0a74404c4ff1d716036b0ffa4d4f2c"
+    },
+    {
       "id": "note-autopilot-open-questions-decisions",
       "path": "docs/notes/autopilot-open-questions-decisions.md",
       "title": "Decisions on PACK-O open questions (logging, class granularity, autopilot caps)",
@@ -3372,7 +3438,7 @@ window.DOCS_INDEX = {
       "path": "docs/notes/required-status-checks.md",
       "title": "Decision — do not make pack-consistency a required status check on main",
       "type": "decision-note",
-      "status": "accepted",
+      "status": "superseded",
       "owner": "@timianmalloo",
       "phase": "pack-evolution",
       "reviewBy": "2027-02-26",
@@ -3396,7 +3462,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0aafd71674a56549465f3ff88b7145f7c2dd9d16dafdbe7517046f411c5dc8f3"
+      "sourceSha256": "3a94338675ef77e07ae8fa3e517d5a3f97e12e97ee7f728c21d2d43ea3cf67d5"
     },
     {
       "id": "design-agent-coordination-doctrine",
@@ -5120,6 +5186,92 @@ window.DOCS_INDEX = {
       "sourceSha256": "6c4e8d947e823f9469d0f76eabe6cf2059f14662712f1e983faf0319d4fd49aa"
     },
     {
+      "id": "forensic-review-rev108",
+      "path": "docs/reviews/forensic-review-rev108.md",
+      "title": "Forensic review — ai-forward at revision 108",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "assessment",
+      "reviewBy": "2027-04-17",
+      "reviewSuggested": [],
+      "summary": "Forensic assessment of ai-forward at 332c297 (pack revision 108). Every gate passes except the Python suite, whose 10 failures are environmental and pre-existing on unmodified main. No P0 or P1. Four P2 findings: a byte-code cache in a fixed shared temp directory, CI that runs only on manual dispatch, a git-identity guard with six verified bypasses, and an edit-ownership hook whose `allow` skips the user's permission prompt. Eleven P3 items are hygiene, portability and documentation drift. The hook's needless prompts (WT-D, WT-E) were fixed during the review (PR #12).",
+      "tags": [
+        "forensic-review",
+        "assessment",
+        "governance",
+        "security",
+        "rev108"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        },
+        {
+          "to": "forensic-review-rev108-backlog",
+          "rel": "relates-to"
+        },
+        {
+          "to": "forensic-review-rev59",
+          "rel": "supersedes"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-20261017-require-ci-before-merge",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-20261017-session-profiles-published",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "427c398c85038cc9c465dce60642ab9d196eda618c798543b755d9a5dd0e2ca2"
+    },
+    {
+      "id": "forensic-review-rev108-backlog",
+      "path": "docs/backlog/forensic-review-rev108.md",
+      "title": "Forensic review backlog — ai-forward revision 108 (FR-086 … FR-101)",
+      "type": "doc",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "assessment",
+      "reviewBy": "2027-04-17",
+      "reviewSuggested": [],
+      "summary": "Sixteen items from the revision-108 forensic review, FR-086 to FR-101, each with evidence, falsifiable acceptance criteria and a next skill. No P0 or P1. Four P2: shared-temp byte-code cache, manual-only CI, git-identity guard bypasses, and an ownership hook that grants writes. Eleven P3. FR-101 (the hook's needless prompts) was resolved in PR #12. The rest await triage.",
+      "tags": [
+        "forensic-review",
+        "backlog",
+        "rev108",
+        "governance",
+        "security"
+      ],
+      "links": [
+        {
+          "to": "forensic-review-rev108",
+          "rel": "relates-to"
+        },
+        {
+          "to": "forensic-review-rev59-backlog",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        },
+        {
+          "to": "plan-ci-speed-and-required-checks",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "ebc5f01fd358c8acddd140d81af8a7aa9077602d4357ce931233a85bbe972a34"
+    },
+    {
       "id": "forensic-review-rev42",
       "path": "docs/reviews/forensic-review-rev42.md",
       "title": "Forensic Review — AI-Forward repository (revision 42)",
@@ -5452,7 +5604,7 @@ window.DOCS_INDEX = {
       "path": "docs/reviews/forensic-review-rev59.md",
       "title": "Forensic review — ai-forward at revision 59",
       "type": "doc",
-      "status": "accepted",
+      "status": "superseded",
       "owner": "@timianmalloo",
       "phase": "assessment",
       "reviewBy": "2027-03-04",
@@ -5483,7 +5635,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e338a7cb8319cebb90670e765b1e8db29c8fb7d1af4e320dd87c3419c96c84d1"
+      "sourceSha256": "c473127272b1c781932dd227d42cb93b8da7bdf959850d8a84f0d27c8f842a26"
     },
     {
       "id": "forensic-review-rev59-backlog",
@@ -7432,6 +7584,38 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "d9554229edaa9f754ed12a6fab3362abdb4dba28304475882c2cdec44bac496f"
+    },
+    {
+      "id": "proposal-ci-speed-2026-10-17",
+      "path": "docs/proposals/ci-speed-2026-10-17.md",
+      "title": "Proposal: make CI fast again without weakening the gate",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2026-11-30",
+      "reviewSuggested": [],
+      "summary": "pack-consistency went from 4.5 min wall-clock (run 35489970000, 2026-09-20) to 46.8 min (run 38983040683, 2026-10-16). Over 95% of every job is one step: the serial pytest suite, run three times (ubuntu, windows, macOS). Two causes: a steady creep (ubuntu pytest 129 s -> 349 s over four weeks) and a step jump from PR #6 (one-command setup and delivery), which added ~8,100 test lines that spawn processes and was 4x slower on Windows. The top three changes are: parallelise pytest with xdist per job, stop adoption-entrypoints re-running 28 test files that pack-consistency already runs, and add concurrency cancel-in-progress plus a duration-budget control. Projected wall-clock: about 12-15 min (Inferred), with no gate removed.",
+      "tags": [
+        "proposal",
+        "ci",
+        "performance",
+        "test-efficiency",
+        "github-actions",
+        "cost"
+      ],
+      "links": [
+        {
+          "to": "note-required-status-checks",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "f749e56ed3c900b5b97b2247d52337b3fbf3d1c387c9a8d99606faa02551868b"
     },
     {
       "id": "proposal-hosting-and-dream-manifest",
@@ -9984,6 +10168,41 @@ window.DOCS_INDEX = {
       "sourceSha256": "91ce98d8cc9e1cadc6623525bee9ab8df465e4d142aa6a28bf98ee9a64a7a86f"
     },
     {
+      "id": "plan-ci-speed-and-required-checks",
+      "path": "docs/plans/ci-speed-and-required-checks.md",
+      "title": "Plan — fast CI, automatic triggers, then required checks on main",
+      "type": "plan",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2026-12-17",
+      "reviewSuggested": [],
+      "summary": "Execution plan for the three accepted CI changes (parallel pytest, drop the duplicate adoption-entrypoints test list, branch-scoped cancel-in-progress) and the owner's decision to require CI before merge. Recorded as next steps on 2026-10-17; nothing in it is executed yet. The order is forced: measure, make the gate fast, restore pull_request triggers, then switch on the required check, because a required check that never reports blocks every merge.",
+      "tags": [
+        "plan",
+        "ci",
+        "performance",
+        "branch-protection",
+        "next-steps"
+      ],
+      "links": [
+        {
+          "to": "proposal-ci-speed-2026-10-17",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-20261017-require-ci-before-merge",
+          "rel": "depends-on"
+        },
+        {
+          "to": "forensic-review-rev108-backlog",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "5c78d0a0270295b9564baa1bad64bea05adc70356e671b8fc625bc552ca32552"
+    },
+    {
       "id": "plan-coordination-runtime-v2",
       "path": "docs/plans/coordination-runtime-v2.md",
       "title": "Coordination runtime expansion and portable proof",
@@ -12055,6 +12274,14 @@ window.DOCS_INDEX = {
       "artifactId": "architecture-decision-interrogation"
     },
     {
+      "id": "surface-proposals-ci-speed-2026-10-17",
+      "path": "docs/proposals/ci-speed-2026-10-17.html",
+      "title": "CI speed proposal",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "proposal-ci-speed-2026-10-17"
+    },
+    {
       "id": "surface-knowledge-continuous-improvement-and-dreaming-overview",
       "path": "docs/knowledge/continuous-improvement-and-dreaming/overview.html",
       "title": "Continuous Improvement & Dreaming — techniques overview",
@@ -12220,6 +12447,22 @@ window.DOCS_INDEX = {
       "artifactId": "coordination-end-to-end"
     },
     {
+      "id": "surface-backlog-forensic-review-rev108",
+      "path": "docs/backlog/forensic-review-rev108.html",
+      "title": "Forensic Review Rev108",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "forensic-review-rev108-backlog"
+    },
+    {
+      "id": "surface-reviews-forensic-review-rev108",
+      "path": "docs/reviews/forensic-review-rev108.html",
+      "title": "Forensic Review Rev108",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "forensic-review-rev108"
+    },
+    {
       "id": "surface-proposals-active-multi-harness-coordination",
       "path": "docs/proposals/active-multi-harness-coordination.html",
       "title": "Ledger and bus — active multi-harness coordination",
@@ -12304,5 +12547,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "e55d2747cff1d8d27803f6aa4b5ef50c6a5444e81b8b63adf503592432906b9d"
+  "graphSha256": "7f9e434e3f3ffce0d5eb0916cc0bb8e81f1eafa4ef7e37a4b95f39a37c46f310"
 };

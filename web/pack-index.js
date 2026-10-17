@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 362
+"count": 368
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 547,
+"total": 553,
 "items": [
 {
 "cat": "knowledge",
@@ -2505,6 +2505,24 @@ window.PACK_INDEX = {
 },
 {
 "cat": "graph",
+"id": "note-20261017-require-ci-before-merge",
+"title": "Decision — require CI to pass before anything reaches main",
+"summary": "The owner decided on 2026-10-17 that CI must pass before a change reaches main, reversing the 2026-08-26 decision not to require pack-consistency. Re-open trigger 1 of that decision fired (a second contributor now lands work on main), and…",
+"path": "docs/notes/note-20261017-require-ci-before-merge.md",
+"kind": "decision-note",
+"text": "decision — require ci to pass before anything reaches main the owner decided on 2026-10-17 that ci must pass before a change reaches main, reversing the 2026-08-26 decision not to require pack-consistency. re-open trigger 1 of that decision fired (a second contributor now lands work on main), and its accepted-risk premise (\"ci goes red, the next push fixes it\") stopped holding when every workflow became manual-only on 2026-10-04. not yet executed: it depends on ci running on pull_request first. decision branch-protection ci release required-status-checks supersedes note-required-status-checks relates-to proposal-ci-speed-2026-10-17 relates-to plan-ci-speed-and-required-checks relates-to forensic-review-rev108"
+},
+{
+"cat": "graph",
+"id": "note-20261017-session-profiles-published",
+"title": "Decision — session profiles stay published on Pages and in the repo",
+"summary": "During the rev108 forensic review the Privacy persona issued a hard-veto BLOCK because docs/profiles (session-profiler output with verbatim prompts, home paths and cwd values that name other repositories) is served on GitHub Pages and…",
+"path": "docs/notes/note-20261017-session-profiles-published.md",
+"kind": "decision-note",
+"text": "decision — session profiles stay published on pages and in the repo during the rev108 forensic review the privacy persona issued a hard-veto block because docs/profiles (session-profiler output with verbatim prompts, home paths and cwd values that name other repositories) is served on github pages and tracked in the public repo. the owner ruled that judgement wrong: publishing the profiles is intended and acceptable. no containment is taken; this note is the recorded basis, so later reviews do not re-raise it. decision privacy pages publish-boundary owner-ruling relates-to forensic-review-rev108"
+},
+{
+"cat": "graph",
 "id": "note-autopilot-open-questions-decisions",
 "title": "Decisions on PACK-O open questions (logging, class granularity, autopilot caps)",
 "summary": "The user's answers to the three open questions from the task-discipline / front-matter proposal (revision 3), which gate the next change: making PACK-O controllable.",
@@ -2997,6 +3015,24 @@ window.PACK_INDEX = {
 "path": "docs/backlog/forensic-review-20260712-model-orchestration.md",
 "kind": "doc",
 "text": "forensic review backlog — model orchestration historical remediation backlog from the model-orchestration forensic review. the capability was reverted; orchestration-specific items are closed by removal. fr-008 and residual fr-010 remain independent repository findings. backlog model-orchestration refines forensic-review-20260712 depends-on architecture"
+},
+{
+"cat": "graph",
+"id": "forensic-review-rev108",
+"title": "Forensic review — ai-forward at revision 108",
+"summary": "Forensic assessment of ai-forward at 332c297 (pack revision 108). Every gate passes except the Python suite, whose 10 failures are environmental and pre-existing on unmodified main. No P0 or P1. Four P2 findings: a byte-code cache in a…",
+"path": "docs/reviews/forensic-review-rev108.md",
+"kind": "doc",
+"text": "forensic review — ai-forward at revision 108 forensic assessment of ai-forward at 332c297 (pack revision 108). every gate passes except the python suite, whose 10 failures are environmental and pre-existing on unmodified main. no p0 or p1. four p2 findings: a byte-code cache in a fixed shared temp directory, ci that runs only on manual dispatch, a git-identity guard with six verified bypasses, and an edit-ownership hook whose `allow` skips the user's permission prompt. eleven p3 items are hygiene, portability and documentation drift. the hook's needless prompts (wt-d, wt-e) were fixed during the review (pr #12). forensic-review assessment governance security rev108 documents architecture relates-to forensic-review-rev108-backlog supersedes forensic-review-rev59 relates-to defect-classes relates-to note-20261017-require-ci-before-merge relates-to note-20261017-session-profiles-published"
+},
+{
+"cat": "graph",
+"id": "forensic-review-rev108-backlog",
+"title": "Forensic review backlog — ai-forward revision 108 (FR-086 … FR-101)",
+"summary": "Sixteen items from the revision-108 forensic review, FR-086 to FR-101, each with evidence, falsifiable acceptance criteria and a next skill. No P0 or P1. Four P2: shared-temp byte-code cache, manual-only CI, git-identity guard bypasses,…",
+"path": "docs/backlog/forensic-review-rev108.md",
+"kind": "doc",
+"text": "forensic review backlog — ai-forward revision 108 (fr-086 … fr-101) sixteen items from the revision-108 forensic review, fr-086 to fr-101, each with evidence, falsifiable acceptance criteria and a next skill. no p0 or p1. four p2: shared-temp byte-code cache, manual-only ci, git-identity guard bypasses, and an ownership hook that grants writes. eleven p3. fr-101 (the hook's needless prompts) was resolved in pr #12. the rest await triage. forensic-review backlog rev108 governance security relates-to forensic-review-rev108 relates-to forensic-review-rev59-backlog relates-to defect-classes relates-to plan-ci-speed-and-required-checks"
 },
 {
 "cat": "graph",
@@ -3738,6 +3774,15 @@ window.PACK_INDEX = {
 },
 {
 "cat": "graph",
+"id": "proposal-ci-speed-2026-10-17",
+"title": "Proposal: make CI fast again without weakening the gate",
+"summary": "pack-consistency went from 4.5 min wall-clock (run 35489970000, 2026-09-20) to 46.8 min (run 38983040683, 2026-10-16). Over 95% of every job is one step: the serial pytest suite, run three times (ubuntu, windows, macOS). Two causes: a…",
+"path": "docs/proposals/ci-speed-2026-10-17.md",
+"kind": "doc",
+"text": "proposal: make ci fast again without weakening the gate pack-consistency went from 4.5 min wall-clock (run 35489970000, 2026-09-20) to 46.8 min (run 38983040683, 2026-10-16). over 95% of every job is one step: the serial pytest suite, run three times (ubuntu, windows, macos). two causes: a steady creep (ubuntu pytest 129 s -> 349 s over four weeks) and a step jump from pr #6 (one-command setup and delivery), which added ~8,100 test lines that spawn processes and was 4x slower on windows. the top three changes are: parallelise pytest with xdist per job, stop adoption-entrypoints re-running 28 test files that pack-consistency already runs, and add concurrency cancel-in-progress plus a duration-budget control. projected wall-clock: about 12-15 min (inferred), with no gate removed. proposal ci performance test-efficiency github-actions cost relates-to note-required-status-checks relates-to defect-classes"
+},
+{
+"cat": "graph",
 "id": "proposal-hosting-and-dream-manifest",
 "title": "Proposal / dialog: GitHub Pages hosting + the Dream Manifest",
 "summary": "An RFC/dialog opener on (1) whether to host the Documentation Portal and surfaces on GitHub Pages, (2) how that impacts dream output and privacy, and (3) a proposed Dream Manifest - a first-class, reviewable, hostable artifact recording…",
@@ -4473,6 +4518,15 @@ window.PACK_INDEX = {
 "path": "docs/coordination/coordination-p3-xp.md",
 "kind": "plan",
 "text": "coordination plan - p3 liveness, the cross-platform residue, and the stale knowledge review (after p0/p1) three tracks after the p0/p1 landing: p3 progress liveness and the running track with the kick ladder (coord-core.py, hook adapters — so it waits for p1's coord-core changes); the cross-platform residue (documented commands that run in any shell, the three master-branch tests); and a review of the seven pack-evolution knowledge docs whose review dates passed on 2026-09-12 and have kept the docs workflow red since. disjoint paths; coordinator owns the shared surfaces and the join. coordination worktrees parallelism liveness cross-platform docs-freshness p3 implements proposal-owner-coordinator-subagent-coordination refines coordination-p0-p1 relates-to plan-cross-platform-readiness"
+},
+{
+"cat": "graph",
+"id": "plan-ci-speed-and-required-checks",
+"title": "Plan — fast CI, automatic triggers, then required checks on main",
+"summary": "Execution plan for the three accepted CI changes (parallel pytest, drop the duplicate adoption-entrypoints test list, branch-scoped cancel-in-progress) and the owner's decision to require CI before merge. Recorded as next steps on…",
+"path": "docs/plans/ci-speed-and-required-checks.md",
+"kind": "plan",
+"text": "plan — fast ci, automatic triggers, then required checks on main execution plan for the three accepted ci changes (parallel pytest, drop the duplicate adoption-entrypoints test list, branch-scoped cancel-in-progress) and the owner's decision to require ci before merge. recorded as next steps on 2026-10-17; nothing in it is executed yet. the order is forced: measure, make the gate fast, restore pull_request triggers, then switch on the required check, because a required check that never reports blocks every merge. plan ci performance branch-protection next-steps depends-on proposal-ci-speed-2026-10-17 depends-on note-20261017-require-ci-before-merge relates-to forensic-review-rev108-backlog"
 },
 {
 "cat": "graph",

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-10-17T16:59:38Z",
+  "generated": "2026-10-17T19:53:28Z",
   "audit": [
     {
       "actor": null,
@@ -13764,6 +13764,28 @@ window.AUDIT_DATA = {
       "artifacts": [],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-01M55DBAJYRDMN24CQ32JXYCH2",
+      "shortname": "forensic-review-rev108",
+      "datetime": "2026-10-17T17:07:59Z",
+      "session": "4bdeb954-c8f8-421a-86f9-bf7cbee4806e",
+      "prompt": "resume from session state",
+      "summary": "Forensic review rev108 written: docs/reviews/forensic-review-rev108.{md,html} and docs/backlog/forensic-review-rev108.{md,html}; rev59 marked superseded. 16 findings FR-086..FR-101: four P2 (shared-temp pycache, manual-only CI, git-identity guard with six executed bypasses, ownership hook allow skips the prompt), eleven P3, FR-101 resolved by PR #12 (WT-D, WT-E). Lens outputs from session 00bb7bcd were not persisted; every finding re-checked against code or by execution in session 4bdeb954 (P3s via a verification sub-agent with file:line evidence). Baseline: 17/18 gates; gate 3 = 1679 passed, 10 failed (environmental, reproduced on c267bd4), 180 skipped. Graph derive/validate pass (362 artifacts); health snapshot appended.",
+      "kind": "skill",
+      "skill": "forensicreview",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/reviews/forensic-review-rev108.md",
+        "docs/backlog/forensic-review-rev108.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Finish the rev108 forensic review and backlog",
+      "done_when": "review + backlog md/html committed, rev59 superseded, graph validates",
+      "tier": "T1"
     }
   ],
   "changes": [
