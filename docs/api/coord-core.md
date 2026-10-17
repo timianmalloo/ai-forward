@@ -131,6 +131,14 @@ _(no docstring — coverage gap)_
 
 A target outside this linked worktree and inside the repository's primary checkout.
 
+### `SiblingCheckoutWrite`
+
+WT-D: a target inside another LINKED worktree of this repository; `top` is that tree.
+
+### `OutsideCheckout`
+
+A target in no checkout of this repository. `via_alias` is True when the spelled path
+
 ## Functions
 
 ### `repo_root(cwd)`
