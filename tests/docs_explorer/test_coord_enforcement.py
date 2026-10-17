@@ -610,6 +610,45 @@ class PrimaryWriteGuardTests(GitCase):
         self.assertNotIn("COORD-PRIMARY-WRITE", in_place.stdout)
 
 
+class SiblingWorktreeWriteTests(PrimaryWriteGuardTests):
+    """WT-D (2026-10-17): WT1 isolates work in a linked worktree, but a session in the primary
+    writing into that worktree got Claude's generic `ask` on every edit, reasoned as an
+    "unreadable hook payload". A linked worktree of the SAME repository is checked in that
+    tree, leases included; anything else outside the checkout still fails closed, honestly."""
+
+    def setUp(self):
+        super().setUp()
+        # A live record, as a coordinated repo has; with none, every write is "not checked".
+        self.run_cli("claim", "--wi", "unrelated", "--path", "elsewhere.md", session="owner")
+
+    def decision(self, result):
+        self.assertEqual(0, result.returncode, result.stderr)
+        return json.loads(result.stdout)["hookSpecificOutput"]
+
+    def test_a_primary_session_writing_into_a_linked_tree_is_checked_there_and_allowed(self):
+        answer = self.decision(self.hook_from(self.repo, self.linked.resolve() / "work.md"))
+        self.assertEqual("allow", answer["permissionDecision"], answer["permissionDecisionReason"])
+
+    def test_a_linked_tree_writing_into_a_sibling_linked_tree_is_allowed(self):
+        sibling = Path(self.tmp.name) / "sibling-tree"
+        self.git("worktree", "add", "-q", "-b", "sibling", str(sibling))
+        self.assertEqual("allow", self.decision(
+            self.hook_from(self.linked, sibling.resolve() / "work.md"))["permissionDecision"])
+
+    def test_a_lease_held_by_another_session_still_denies_in_the_linked_tree(self):
+        self.run_cli("claim", "--wi", "owner-work", "--path", "held.md", session="owner")
+        self.assertEqual("deny", self.decision(
+            self.hook_from(self.repo, self.linked.resolve() / "held.md"))["permissionDecision"])
+
+    def test_an_outside_path_still_asks_and_says_why(self):
+        outside = Path(self.tmp.name) / "elsewhere"
+        outside.mkdir()
+        answer = self.decision(self.hook_from(self.repo, outside.resolve() / "x.md"))
+        self.assertEqual("ask", answer["permissionDecision"])
+        self.assertIn("outside this repository", answer["permissionDecisionReason"])
+        self.assertNotIn("unreadable hook payload", answer["permissionDecisionReason"])
+
+
 class HookTests(GitCase):
     PAYLOAD = '{{"session_id":"{sid}","tool_name":"Edit","tool_input":{{"file_path":"{p}"}}}}'
 
