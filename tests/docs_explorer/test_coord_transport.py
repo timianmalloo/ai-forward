@@ -22,6 +22,38 @@ def load_module():
     return module
 
 
+class OutputChargeTests(unittest.TestCase):
+    """RUN-B2: complete extension frames still unparsed when an attempt ends are extension bytes.
+
+    stdout_bytes counts every byte READ (up to 64 KiB a read); extension bytes were counted only
+    for frames already PARSED. At a deadline the unparsed tail was charged as output, so an
+    extension flood marked `output_truncated` on macOS CI (run 39064545888). Pure accounting, so
+    it runs on every platform rather than racing a peer."""
+
+    def setUp(self):
+        self.transport = load_module()
+        self.ext = json.dumps({"jsonrpc": "2.0", "method": "_x/progress", "params": {"n": 1}}).encode() + b"\n"
+
+    def charged(self, parsed_ext_frames, tail, head=b'{"jsonrpc":"2.0","id":1,"result":{}}\n'):
+        stdout = len(head) + parsed_ext_frames * len(self.ext) + len(tail)
+        result = {"stdout_bytes": stdout, "stderr_bytes": 0,
+                  "extension_notification_bytes": parsed_ext_frames * len(self.ext)}
+        return self.transport._charged_output_bytes(result, bytearray(tail)), len(head)
+
+    def test_complete_extension_frames_in_the_tail_are_not_charged(self):
+        partial = self.ext[:10]
+        charged, head = self.charged(3, self.ext * 40 + partial)
+        self.assertEqual(head + len(partial), charged)
+
+    def test_other_complete_frames_in_the_tail_are_still_charged(self):
+        other = json.dumps({"jsonrpc": "2.0", "method": "session/update", "params": {}}).encode() + b"\n"
+        for frame in (other, b"not json\n", json.dumps({"jsonrpc": "2.0", "id": 7, "method": "_x"}).encode() + b"\n",
+                      json.dumps({"jsonrpc": "2.0", "method": "_x", "params": "SECRET"}).encode() + b"\n"):
+            with self.subTest(frame=frame[:40]):
+                charged, head = self.charged(0, self.ext + frame)
+                self.assertEqual(head + len(frame), charged)
+
+
 @unittest.skipUnless(os.name == "posix", "POSIX pilot; Windows admission tested separately")
 class TransportTests(unittest.TestCase):
     def setUp(self):

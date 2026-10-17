@@ -225,7 +225,8 @@ data at most 512 KiB. A stopped stdin reader, output flood or unterminated JSON 
 wait or allocate indefinitely. The output bound marks an attempt and never ends one (RUN-B):
 every byte is counted, output past the bound is parsed for protocol control but retained
 nowhere, and the result records `output_truncated` and `output_bytes_over_limit`. Extension
-notification bytes (`extension_notification_bytes`) are not charged to it. The deadline, the
+notification bytes (`extension_notification_bytes`) are not charged to it, including complete
+extension frames still unparsed when the attempt ends; only a trailing partial frame is. The deadline, the
 turn cap or a real error ends an attempt. Memory is bounded by the unparsed stdout buffer
 (16 MiB): a reader pauses while complete frames wait, and only a single unterminated frame
 over it fails, as `buffer_limit_exceeded`. POSIX process groups contain cooperative descendants; this

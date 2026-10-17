@@ -1,12 +1,12 @@
 ---
 doc: INSTALL
 purpose: 'Deployment map and refresh changelog used by the portable bootstrap. For expert manual refreshes, `changes` lists the source paths and marked instruction sections to update. Preserve project-owned files and policy; the first-use path is one-line setup followed by a deliver request.'
-bundle_version: '2026.10.17.3'
-revision: 111
+bundle_version: '2026.10.17.4'
+revision: 112
 counts: { lenses: 23, skills: 30, knowledge_docs: 40, templates: 29, scripts: 47 }
 refresh_protocol: 'Compare your repo last-applied revision to the `revision` above. If it is lower, apply each entry in `changes` in order — re-copy the listed `paths` to their mapped destinations (deployment map in the body), re-apply the Copilot frontmatter wraps, and where an entry `deploy` says RE-PASTE, replace the managed blocks wholesale between their markers. Never overwrite an accumulated docs/docs-index.js.'
 changes:
-  - { type: changed, area: alias-escape-spelling, paths: ['scripts/coord-core.py', 'adapters/INSTALL.md'], deploy: 'Use the updated SOURCE clone, not an installed applier: `python3 <ai-forward-clone>/pack/scripts/pack-apply.py plan --target <project>` then `python3 <ai-forward-clone>/pack/scripts/pack-apply.py apply --target <project>`. The normal revision 110 to 111 refresh: copy coord-core.py to docs/ai-forward-pack/scripts/ and refresh INSTALL. Preserve project-owned settings, custom hook entries and wrappers, local deviations and durable audit/history. Refresh does not run coordination install or change permission policy.', summary: 'SECURITY FIX TO REVISION 109 (WT-E2). WT-E gives no decision for a write outside every checkout, but must still fail closed for an in-tree alias whose target escapes. It decided "via an alias" by comparing the LEXICAL path with the RESOLVED root, which only works when the two are spelled alike: on macOS (/var -> /private/var) and on Windows runners (8.3 short names such as RUNNER~1) an escaping alias got `{}` and the session permission mode decided instead of the hook. Found by the first CI baseline run on main. The escape point is now found by resolving each path prefix: a component whose parent resolves inside the checkout but which itself resolves outside it. The test reaches the repository through a second spelling, so the shape is red on any machine. Counts unchanged.' }
+  - { type: changed, area: transport-unparsed-extension-tail, paths: ['scripts/coord_transport.py', 'commands/execute-with-coordination/reference/launch.md', 'adapters/INSTALL.md'], deploy: 'Use the updated SOURCE clone, not an installed applier: `python3 <ai-forward-clone>/pack/scripts/pack-apply.py plan --target <project>` then `python3 <ai-forward-clone>/pack/scripts/pack-apply.py apply --target <project>`. The normal revision 111 to 112 refresh: copy coord_transport.py to docs/ai-forward-pack/scripts/, refresh the execute-with-coordination launch reference on every installed skill surface, and refresh INSTALL. Preserve project-owned settings, custom hook entries and wrappers, local deviations and durable audit/history. Refresh does not run coordination install or change permission policy.', summary: 'RUN-B2: THE OUTPUT BOUND NO LONGER CHARGES UNPARSED EXTENSION FRAMES. stdout_bytes counts every byte read (up to 64 KiB a read) while extension_notification_bytes counted only frames already parsed, so complete extension notifications still in the unparsed buffer when an attempt ended were charged as output and an extension flood could mark output_truncated, contradicting the documented contract. Seen as a timing-dependent failure on macOS CI (run 39064545888). The charge is now computed by one pure function that classifies each complete unparsed frame with the parser''s own extension test; a trailing partial frame stays charged. Counts unchanged.' }
 ---
 
 ## Changelog — what changed since the last version
@@ -21,6 +21,15 @@ changes:
 So at any moment: the frontmatter `changes` = the latest delta (the refresh guide), and this section = the full rolling history.
 
 ### Prior revisions
+
+<details>
+<summary>Revision 111 — 17 October 2026 — alias escape spelling</summary>
+
+```yaml
+changes:
+  - { type: changed, area: alias-escape-spelling, paths: ['scripts/coord-core.py', 'adapters/INSTALL.md'], deploy: 'Use the updated SOURCE clone, not an installed applier: `python3 <ai-forward-clone>/pack/scripts/pack-apply.py plan --target <project>` then `python3 <ai-forward-clone>/pack/scripts/pack-apply.py apply --target <project>`. The normal revision 110 to 111 refresh: copy coord-core.py to docs/ai-forward-pack/scripts/ and refresh INSTALL. Preserve project-owned settings, custom hook entries and wrappers, local deviations and durable audit/history. Refresh does not run coordination install or change permission policy.', summary: 'SECURITY FIX TO REVISION 109 (WT-E2). WT-E gives no decision for a write outside every checkout, but must still fail closed for an in-tree alias whose target escapes. It decided "via an alias" by comparing the LEXICAL path with the RESOLVED root, which only works when the two are spelled alike: on macOS (/var -> /private/var) and on Windows runners (8.3 short names such as RUNNER~1) an escaping alias got `{}` and the session permission mode decided instead of the hook. Found by the first CI baseline run on main. The escape point is now found by resolving each path prefix: a component whose parent resolves inside the checkout but which itself resolves outside it. The test reaches the repository through a second spelling, so the shape is red on any machine. Counts unchanged.' }
+```
+</details>
 
 <details>
 <summary>Revision 110 — 17 October 2026 — hook times and junctions</summary>

@@ -1079,7 +1079,7 @@ window.PACK_INDEX = {
 "summary": "Bounded POSIX ACP / Agy session IO. Native harness policy remains authoritative.",
 "path": "pack/scripts/coord_transport.py",
 "kind": "script",
-"text": "coord_transport.py bounded posix acp / agy session io. native harness policy remains authoritative. this is a lifecycle adapter, not an editor proxy or an approval broker. only locally selected operational fields leave this module; wire bodies are discarded. file_root_identities __init__ _identifier _structure rejected_detail _grok_release_at_least _signal_group _buffer_state __init__ attach _listen_stdout check queue pump receive flush_input cleanup __init__ attach _accept _read_stdout _read_stderr _write_stdin check queue pump receive flush_input cleanup __init__ event admit callback wait prompts progress permission rpc acp native_denial native_tool_error agy run_session"
+"text": "coord_transport.py bounded posix acp / agy session io. native harness policy remains authoritative. this is a lifecycle adapter, not an editor proxy or an approval broker. only locally selected operational fields leave this module; wire bodies are discarded. file_root_identities __init__ _identifier _structure rejected_detail _grok_release_at_least _signal_group _buffer_state _is_extension_notification _charged_output_bytes __init__ attach _listen_stdout check queue pump receive flush_input cleanup __init__ attach _accept _read_stdout _read_stderr _write_stdin check queue pump receive flush_input cleanup __init__ event admit callback wait prompts progress permission rpc acp native_denial native_tool_error agy run_session"
 },
 {
 "cat": "scripts",
