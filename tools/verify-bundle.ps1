@@ -143,7 +143,11 @@ try {
         Skip "3. python test suite" "-SkipTests was passed (CI still runs it)"
         Skip "4. docs explorer core contracts" "-SkipTests was passed (CI still runs it)"
     } else {
-        Gate "3. python test suite" { & $pyExe @pyArgs -m pytest tests -q }
+        # CI-speed P1: parallel when pytest-xdist is installed (measured 1021 s vs ~2380 s serial on
+        # a Windows dev box); serial otherwise, so a contributor without it still has the gate.
+        & $pyExe @pyArgs -c "import xdist" 2>$null
+        $pytestParallel = if ($LASTEXITCODE -eq 0) { @("-n", "4") } else { @() }
+        Gate "3. python test suite" { & $pyExe @pyArgs -m pytest tests -q @pytestParallel }
         $node = Get-Command node -ErrorAction SilentlyContinue
         if ($node) {
             Gate "4. docs explorer core contracts" {
