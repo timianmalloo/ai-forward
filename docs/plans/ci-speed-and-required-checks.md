@@ -66,3 +66,29 @@ Each node lists its dependencies. Only real data dependencies are shown.
 ## Measurement
 
 Record planned vs actual per node in this file as it executes: wall-clock per job, and test counts collected/passed/skipped per job.
+
+### Actuals (2026-10-17/18)
+
+Pytest-step seconds per job, from `gh run view --json jobs` (step start → completion).
+
+| Node | Runs | ubuntu | macOS | Windows | Result |
+|---|---|---|---|---|---|
+| P0 baseline, serial (`main` `cbf5079`) | 39064545888 | 927 | 1263 | 2590 | **red on all three**: found WT-E2 (security regression) and RUN-B2; fixed in PRs #15, #16 |
+| Serial, after the fixes | 39068485991 | 923 | 1288 | 2943 | green on all three, the first fully green run |
+| P1 `-n 4` | 39072532730 / 534222 / 535673 | 360 / 402 / 326 | 626 / 550 / 477 | 1358 / 1169 / 1382 | 9/9 green, 0 races; Windows ≤ 1,200 s met 1 of 3 |
+| P1 Windows `-n 8` | 39074268339 / 269865 / 271836 | 410 / 405 / 374 | 819 / 795 / 916 | 1272 / 1157 / 1288 | **rejected**: Windows red 3/3 on load-sensitive tests for a 6% gain; ubuntu exposed one `-n 4` race (P1a) |
+| Local `verify-bundle.ps1`, Windows dev box | — | — | — | 2,390 s serial → **1,119 s** at `-n 4` | identical results |
+
+**Deviation from the goal state (owner ruling, 2026-10-18).** At `-n 4` the Windows job stays at
+~23 min wall-clock, so "a PR's run completes in ≤ 20 min" is not met. The owner chose to require
+all three jobs and accept the measured ~23 min; further speed is C4 (slow fixtures), already out of
+scope here. `-n 8` was measured and rejected, not assumed.
+
+**P1a race fixed:** `test_exit_between_poll_and_signal_rechecks_macos_zombie_error` simulated
+macOS's EPERM while the peer could still be alive; it now waits for a real unreaped exit
+(`waitid` with `WNOWAIT`). **P5 deviation:** `pack-consistency`'s `pull_request` is restored
+**unfiltered**. The pre-`156943d` `paths` filter would stop a required check reporting on a PR
+outside it (risk 1 above). P6 pins this in `test_ci_required_checks.py`. **P2 deviation:** the
+concurrency group is on `pack-consistency` and `docs` only. `adoption-entrypoints` stays exactly
+manual-only, as `test_upstream_adoption_integration` pins by policy; with no PR trigger a group
+there would do nothing.

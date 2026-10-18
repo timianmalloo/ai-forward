@@ -10200,7 +10200,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "5c78d0a0270295b9564baa1bad64bea05adc70356e671b8fc625bc552ca32552"
+      "sourceSha256": "4285ef597b84922912898f0018675fb95dd41ee1590651436cb3b17e3f8999a2"
     },
     {
       "id": "plan-coordination-runtime-v2",
@@ -12274,6 +12274,14 @@ window.DOCS_INDEX = {
       "artifactId": "architecture-decision-interrogation"
     },
     {
+      "id": "surface-plans-ci-speed-and-required-checks",
+      "path": "docs/plans/ci-speed-and-required-checks.html",
+      "title": "Ci Speed And Required Checks",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "plan-ci-speed-and-required-checks"
+    },
+    {
       "id": "surface-proposals-ci-speed-2026-10-17",
       "path": "docs/proposals/ci-speed-2026-10-17.html",
       "title": "CI speed proposal",
@@ -12547,5 +12555,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "d34c1b92de1c99a4985e6bfdf191fb610f6ef368b14a76a3b1a8315bebf0189c"
+  "graphSha256": "244ac7c10617dc233557ccba4c899297f5fd5b30b0b56d176d8df964cd95522e"
 };
