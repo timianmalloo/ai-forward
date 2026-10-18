@@ -24,6 +24,12 @@ on:
   workflow_dispatch:
 
 
+# CI-speed C3: a newer push to the same PR supersedes the older run. Dispatches and main pushes
+# are keyed by run id, so they are never cancelled and never queue behind each other.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.ref || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 permissions:
   contents: read
 

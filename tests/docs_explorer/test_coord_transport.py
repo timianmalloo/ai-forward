@@ -818,6 +818,13 @@ class TransportTests(unittest.TestCase):
         def signal_group(pid, sig):
             calls.append(sig)
             if len(calls) == 1:
+                # macOS returns EPERM only for an exited, unreaped child. Raise it only once the
+                # peer really is that zombie (WNOWAIT: observe the exit, do not reap it); under
+                # xdist load the peer could still be alive here, and the code rightly refused.
+                deadline = time.monotonic() + 10
+                while os.waitid(os.P_PID, pid, os.WEXITED | os.WNOWAIT | os.WNOHANG) is None:
+                    self.assertLess(time.monotonic(), deadline, "the early_eof peer never exited")
+                    time.sleep(.01)
                 raise PermissionError("simulated macOS exit race")
             return original(pid, sig)
         with mock.patch.object(self.module.os, "killpg", side_effect=signal_group):
