@@ -6,7 +6,8 @@ between workers can lose tests while the summary line still reads green. This co
 of tests pytest collects with the number of test cases in the run's JUnit report, and fails when
 they differ.
 
-Usage: check-test-counts.py --junit <report.xml> [pytest collection args, default: tests]
+Usage: check-test-counts.py --junit <report.xml> [--junit <stage2.xml> ...] [pytest collection args, default: tests]
+A run split into stages (parallel, then the serial `wallclock` stage) passes one --junit per stage.
 """
 import argparse
 import re
@@ -31,19 +32,20 @@ def collected(args):
     return int(match.group(1))
 
 
-def reported(junit):
-    cases = {(case.get("classname"), case.get("name")) for case in ET.parse(junit).getroot().iter("testcase")}
+def reported(junits):
+    cases = {(case.get("classname"), case.get("name"))
+             for junit in junits for case in ET.parse(junit).getroot().iter("testcase")}
     return len(cases)
 
 
 def main(argv=None):
     ap = argparse.ArgumentParser()
-    ap.add_argument("--junit", required=True)
+    ap.add_argument("--junit", required=True, action="append")
     args, rest = ap.parse_known_args(argv)
     want, got = collected(rest or ["tests"]), reported(args.junit)
     print("collected {}, reported {}".format(want, got))
     if want != got:
-        print("FAIL: {} collected test(s) have no result in {}".format(want - got, args.junit))
+        print("FAIL: {} collected test(s) have no result in {}".format(want - got, ", ".join(args.junit)))
         return 1
     return 0
 
