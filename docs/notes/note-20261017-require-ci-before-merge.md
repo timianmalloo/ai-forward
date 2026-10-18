@@ -45,3 +45,17 @@ Make the `pack-consistency` jobs **required status checks** on `main`.
 
 - The gate's median wall-clock on `main` exceeds 30 minutes for two weeks after the speed work lands.
 - A required check blocks an urgent fix and there is no documented break-glass path.
+
+## Implemented (2026-10-18)
+
+Applied after `plan-ci-speed-and-required-checks` P1–P6 landed (PR #17). Protection now requires
+`consistency`, `consistency-windows` and `consistency-macos`, each bound to the GitHub Actions app
+(id 15368) so no other integration can satisfy them, with `strict: true`; every other setting is
+unchanged. Proof, observed:
+
+- **A red PR cannot merge.** PR #18 broke gate 1 on purpose; with two checks red,
+  `mergeStateStatus` was `BLOCKED` and `gh pr merge` refused. It was closed unmerged.
+- **A green PR can.** The PR carrying this note merged once its three checks passed.
+
+Measured cost: the Windows job sets the pace at ~25 min (pytest ~1,500 s including the serial
+`wallclock` stage). The first re-open trigger above stays the guard against that growing.
