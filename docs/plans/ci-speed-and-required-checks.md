@@ -84,6 +84,13 @@ Pytest-step seconds per job, from `gh run view --json jobs` (step start → comp
 all three jobs and accept the measured ~23 min; further speed is C4 (slow fixtures), already out of
 scope here. `-n 8` was measured and rejected, not assumed.
 
+**P1a serial stage (owner ruling, 2026-10-18).** Each Windows round at `-n 4` failed a
+different wall-clock test (deadline, process-kill and concurrent-writer assertions), so the cause
+was contention, not the tests. Those tests are marked `wallclock` in one list
+(`tests/docs_explorer/conftest.py`) and run serially after the parallel stage, with their real
+deadlines (~44 s on Windows). `check-test-counts.py` checks both stages' JUnit reports together.
+Local `verify-bundle.ps1`: **all 18 gates pass, 925 s.**
+
 **P1a race fixed:** `test_exit_between_poll_and_signal_rechecks_macos_zombie_error` simulated
 macOS's EPERM while the peer could still be alive; it now waits for a real unreaped exit
 (`waitid` with `WNOWAIT`). **P5 deviation:** `pack-consistency`'s `pull_request` is restored

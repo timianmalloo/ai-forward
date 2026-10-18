@@ -85,8 +85,10 @@ jobs:
       - name: Python test suite
         run: |
           python3 -m pip install --disable-pip-version-check --quiet pytest pytest-xdist
-          python3 -m pytest tests -q -n 4 --junitxml=pytest-report.xml
-          python3 tools/check-test-counts.py --junit pytest-report.xml
+          python3 -m pytest tests -q -n 4 -m "not wallclock" --junitxml=pytest-parallel.xml
+          # The wallclock tests assert real time; contention under xdist made them fail (P1a).
+          python3 -m pytest tests -q -m wallclock --junitxml=pytest-wallclock.xml
+          python3 tools/check-test-counts.py --junit pytest-parallel.xml --junit pytest-wallclock.xml
 
       - name: Docs Explorer core contracts
         run: |
@@ -296,8 +298,10 @@ jobs:
         shell: bash
         run: |
           python -m pip install --disable-pip-version-check --quiet pytest pytest-xdist
-          python -m pytest tests -q -n 4 --junitxml=pytest-report.xml
-          python tools/check-test-counts.py --junit pytest-report.xml
+          python -m pytest tests -q -n 4 -m "not wallclock" --junitxml=pytest-parallel.xml
+          # The wallclock tests assert real time; contention under xdist made them fail (P1a).
+          python -m pytest tests -q -m wallclock --junitxml=pytest-wallclock.xml
+          python tools/check-test-counts.py --junit pytest-parallel.xml --junit pytest-wallclock.xml
 
   # The macOS half of P0: stock macOS has no `python`; the documented `python3` form runs.
   # This is where the Mac-only test failures (T-1/T-2/T-3 in the investigation) are seen by
@@ -374,5 +378,7 @@ jobs:
       - name: Python test suite
         run: |
           python3 -m pip install --disable-pip-version-check --quiet pytest pytest-xdist
-          python3 -m pytest tests -q -n 4 --junitxml=pytest-report.xml
-          python3 tools/check-test-counts.py --junit pytest-report.xml
+          python3 -m pytest tests -q -n 4 -m "not wallclock" --junitxml=pytest-parallel.xml
+          # The wallclock tests assert real time; contention under xdist made them fail (P1a).
+          python3 -m pytest tests -q -m wallclock --junitxml=pytest-wallclock.xml
+          python3 tools/check-test-counts.py --junit pytest-parallel.xml --junit pytest-wallclock.xml

@@ -144,10 +144,17 @@ try {
         Skip "4. docs explorer core contracts" "-SkipTests was passed (CI still runs it)"
     } else {
         # CI-speed P1: parallel when pytest-xdist is installed (measured 1021 s vs ~2380 s serial on
-        # a Windows dev box); serial otherwise, so a contributor without it still has the gate.
+        # a Windows dev box); serial otherwise, so a contributor without it still has the gate. The
+        # `wallclock` tests (tests/docs_explorer/conftest.py) assert real time and run serially after.
         & $pyExe @pyArgs -c "import xdist" 2>$null
-        $pytestParallel = if ($LASTEXITCODE -eq 0) { @("-n", "4") } else { @() }
-        Gate "3. python test suite" { & $pyExe @pyArgs -m pytest tests -q @pytestParallel }
+        $xdist = $LASTEXITCODE -eq 0
+        Gate "3. python test suite" {
+            if (-not $xdist) { & $pyExe @pyArgs -m pytest tests -q; return }
+            & $pyExe @pyArgs -m pytest tests -q -n 4 -m "not wallclock"
+            # Gate reads only the last exit code: a red parallel stage must fail the gate itself.
+            if ($LASTEXITCODE -ne 0) { throw "parallel stage failed (exit $LASTEXITCODE)" }
+            & $pyExe @pyArgs -m pytest tests -q -m wallclock
+        }
         $node = Get-Command node -ErrorAction SilentlyContinue
         if ($node) {
             Gate "4. docs explorer core contracts" {

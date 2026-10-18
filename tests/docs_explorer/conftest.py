@@ -30,6 +30,28 @@ import os
 
 import pytest
 
+# CI-speed P1a (owner ruling, 2026-10-18). These tests assert real wall-clock deadlines, process
+# kills and concurrent-writer ordering. Under `-n 4` on a 4-vCPU Windows runner the contention
+# made each one fail in turn (runs 39074268339..39148797169), not the code. They run in a serial
+# stage after the parallel one (`-m wallclock`), keeping their real deadlines. This is the only list.
+WALLCLOCK = (
+    "test_coord_transport.py",
+    "test_bounded_process.py",
+    "test_benchmark_harness.py",
+    "test_docs_graph.py::DocsGraphTests::test_atomic_append_serializes_concurrent_writers_without_losing_lines",
+)
+
+
+def pytest_configure(config):
+    config.addinivalue_line("markers", "wallclock: asserts real time; runs in the serial stage, never under xdist")
+
+
+def pytest_collection_modifyitems(config, items):
+    for item in items:
+        nodeid = item.nodeid.replace("\\", "/")
+        if any(nodeid.startswith("tests/docs_explorer/" + entry) for entry in WALLCLOCK):
+            item.add_marker(pytest.mark.wallclock)
+
 
 @pytest.fixture(scope="session", autouse=True)
 def _stable_git_config_env():
