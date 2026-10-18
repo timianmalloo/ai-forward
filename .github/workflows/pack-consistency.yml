@@ -3,6 +3,11 @@
 # before they merge. The deployed graph-health workflow is pack/ci/docs-health.yml.
 name: pack-consistency
 on:
+  push:
+    branches: [main]
+  # Unfiltered on purpose: this workflow's jobs are required checks, and a path-filtered
+  # required check never reports on a PR outside its paths, which blocks that PR forever.
+  pull_request:
   workflow_dispatch:
 
 
