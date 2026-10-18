@@ -821,10 +821,15 @@ class TransportTests(unittest.TestCase):
                 # macOS returns EPERM only for an exited, unreaped child. Raise it only once the
                 # peer really is that zombie (WNOWAIT: observe the exit, do not reap it); under
                 # xdist load the peer could still be alive here, and the code rightly refused.
+                # If the code's own poll() already reaped it, waitid raises ChildProcessError -- an
+                # OSError that must not escape this mock, or the code reports the wrong failure.
                 deadline = time.monotonic() + 10
-                while os.waitid(os.P_PID, pid, os.WEXITED | os.WNOWAIT | os.WNOHANG) is None:
-                    self.assertLess(time.monotonic(), deadline, "the early_eof peer never exited")
-                    time.sleep(.01)
+                try:
+                    while os.waitid(os.P_PID, pid, os.WEXITED | os.WNOWAIT | os.WNOHANG) is None:
+                        self.assertLess(time.monotonic(), deadline, "the early_eof peer never exited")
+                        time.sleep(.01)
+                except ChildProcessError:
+                    pass  # already exited and reaped: the precondition holds
                 raise PermissionError("simulated macOS exit race")
             return original(pid, sig)
         with mock.patch.object(self.module.os, "killpg", side_effect=signal_group):
