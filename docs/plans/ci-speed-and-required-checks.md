@@ -99,7 +99,12 @@ serial stage) against the ~23 min accepted: within the first re-open trigger (30
 dispatch; a second push cancelled the PR's older run (C3). P7: protection requires the three
 contexts, bound to the GitHub Actions app (15368), `strict: true`, all other settings read back
 unchanged; red PR #18 was `BLOCKED` and refused. P8: `AGENTS.md`'s push section and the decision
-note match the read-back. **P9 (duration budget) is the one node left.** The `docs` workflow is
+note match the read-back; green PR #19 merged through the required checks. **P9 landed:** a
+non-required `duration-budget` job compares each job's wall-clock with the trailing median of
+green `main` push runs since 2026-10-18 and fails above 1.5×; with fewer than 5 such runs it
+reports "not enough history" rather than a stale baseline (the pre-parallel history put Windows
+at 522 s, which would have failed every run). Its proof, ≥ 10 points over two weeks, accrues on
+`main`; every node's change is executed. The `docs` workflow is
 red on two pre-existing V13 stale `review-by` dates (not a required check; a real review clears it).
 
 **P1a race fixed:** `test_exit_between_poll_and_signal_rechecks_macos_zombie_error` simulated

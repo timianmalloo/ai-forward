@@ -13,6 +13,8 @@ from pathlib import Path
 
 WORKFLOW = Path(__file__).resolve().parents[2] / ".github" / "workflows" / "pack-consistency.yml"
 REQUIRED = ("consistency", "consistency-windows", "consistency-macos")
+# Jobs that run on every PR but must never be required: the duration budget fails on runner noise.
+NOT_REQUIRED = ("duration-budget",)
 
 
 def _block(text, key):
@@ -33,7 +35,8 @@ class RequiredChecksTests(unittest.TestCase):
 
     def test_job_ids_are_the_required_check_contexts(self):
         jobs = [m.group(1) for line in _block(self.text, "jobs") for m in [re.match(r"^  ([A-Za-z0-9_-]+):\s*$", line)] if m]
-        self.assertEqual(sorted(REQUIRED), sorted(jobs))
+        self.assertEqual(sorted(REQUIRED + NOT_REQUIRED), sorted(jobs),
+                         "a new job is either a required check (REQUIRED + protection) or listed in NOT_REQUIRED")
         names = [line for line in _block(self.text, "jobs") if re.match(r"^    name:", line)]
         self.assertEqual([], names, "a job `name:` changes its check context; update REQUIRED and protection together")
 
