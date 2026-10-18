@@ -23,7 +23,7 @@ summary: >-
 
 # Forensic review backlog — revision 108
 
-**Status: `proposed`.** FR-101 and FR-102 are **resolved** (2026-10-17). The rest are not
+**Status: `proposed`.** FR-087, FR-101 and FR-102 are **resolved**; FR-099 is partly resolved (2026-10-17/18). The rest are not
 implemented and await triage. Open items carried from revision 59 (FR-078 … FR-085) stay in
 `forensic-review-rev59-backlog`; their current state is tabled in the review.
 
@@ -46,6 +46,10 @@ security or migration risk · **P2** material maintainability, operability or go
 - **Acceptance:** (a) opening a PR starts `pack-consistency` with no manual step; (b) branch
   protection lists it under `required_status_checks`; (c) a deliberately red PR cannot merge.
 - **Dependencies:** FR-082, FR-094. **Owner:** SRE. **Next skill:** `/implement` on the plan.
+- **Resolved 2026-10-18** (CI-speed P5–P7). (a) Opening PR #17 started `pack-consistency` and
+  `docs` with no dispatch. (b) Protection requires `consistency`, `consistency-windows` and
+  `consistency-macos`, bound to the GitHub Actions app, `strict`. (c) Deliberately red PR #18 was
+  `BLOCKED` and `gh pr merge` refused. This also closes rev59's FR-082.
 
 ## Phase 2 — Trust boundaries (P2)
 
@@ -116,6 +120,11 @@ security or migration risk · **P2** material maintainability, operability or go
   tests' environment; skip the launcher tests when `sh` is not on `PATH`.
 - **Acceptance:** gate 3 is green on this machine with Developer Mode off.
 - **Owner:** Test Architect. **Next skill:** `/implement`.
+- **Partly resolved 2026-10-18.** The `AGENT_SESSION` leak is fixed for every test: the
+  `docs_explorer` conftest drops the harness's `AGENT_SESSION` / `AGENT_HOST` / `AGENT_NAME`.
+  Since revision 110 the symlink and `uv` tests pass or skip on the owner's machine, and the
+  local suite is fully green. **Still open:** no general skip guard for a host without symlink
+  privilege or a POSIX `sh`, so acceptance holds on this machine, not in general.
 
 ### FR-100 · issue · P3 — Native hosts refuse every write outside the repository
 - **Evidence:** `_not_checked` returns `deny` for codex, grok, agy and copilot;
@@ -230,12 +239,12 @@ security or migration risk · **P2** material maintainability, operability or go
 
 | Id | Priority | Kind | Title | Next skill |
 |---|---|---|---|---|
-| FR-087 | P2 | risk | CI runs only on manual dispatch | `/implement` (CI plan) |
+| FR-087 | P2 | risk | CI runs only on manual dispatch | resolved |
 | FR-088 | P2 | issue | Git-identity guard bypasses | `/implement` |
 | FR-089 | P2 | risk | Ownership hook `allow` skips the prompt | `/investigate` |
 | FR-086 | P2 | risk | Byte-code cache in shared temp | `/implement` |
 | FR-094 | P3 | risk | Windows CI job ~47 min | profile |
-| FR-099 | P3 | issue | Ten environmental test failures | `/implement` |
+| FR-099 | P3 | issue | Ten environmental test failures | partly resolved |
 | FR-100 | P3 | issue | Native hosts refuse outside writes | `/design-slice` |
 | FR-097 | P3 | todo | Lock with manual-only recovery | `/implement` |
 | FR-098 | P3 | risk | Executable session-check config | `/design-slice` |

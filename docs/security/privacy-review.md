@@ -7,6 +7,7 @@ owner: "@timianmalloo"
 phase: "pack-evolution"
 tags: [privacy, linddun, data-governance]
 links:
+  - { to: design-session-profiler, rel: documents }
   - { to: design-reader-first-handbook, rel: documents }
   - { to: architecture, rel: documents }
   - { to: forensic-review, rel: documents }
@@ -78,7 +79,6 @@ downstream dispatch risk was retired by removing the capability, not by acceptin
 ## 3. Generated register (LINDDUN-lite, rolled up from the designs)
 
 <!-- BEGIN GENERATED: docs-graph.py rollup -->
-
 | source | Threat | Data and disposition | Verification |
 |---|---|---|---|
 | [design-coordination-runtime-v2](design/coordination-runtime-v2.md) | Linkability and identifiability | Run/worker IDs intentionally link execution; raw prompts and native action details remain private local files. | Sentinel-secret output tests; sanitized native observation records. |
@@ -96,7 +96,7 @@ downstream dispatch risk was retired by removing the capability, not by acceptin
 | [design-reader-first-handbook](design/reader-first-handbook.md) | Illustrations are mistaken for real customer records | Prevent | Fictional HarborTasks and explicitly illustrative outputs; no customer material or live model runs needed. |
 | [design-reader-first-handbook](design/reader-first-handbook.md) | Third-party scripts or images observe reading activity | Prevent | Locally embedded parser; system fonts; image embeddings disabled with visible text fallback; browser request inventory is empty. |
 
-<!-- rolled up from 6 artifact(s) by docs-graph.py rollup on 2026-09-22 -->
+<!-- rolled up from 6 artifact(s) by docs-graph.py rollup on 2026-10-18 -->
 
 <!-- END GENERATED -->
 
@@ -116,5 +116,9 @@ These designs carry no LINDDUN section. Two of them plausibly touch no personal 
 |---|---|---|
 | [`agent-focus-controls.md`](../design/agent-focus-controls.md) | no `Privacy analysis (LINDDUN-lite)` section | the design shipped without the analysis its gate requires |
 | [`coord-collaboration-phase4.md`](../design/coord-collaboration-phase4.md) | no `Privacy analysis (LINDDUN-lite)` section | the design shipped without the analysis its gate requires |
+| [`decision-interrogation.md`](../design/decision-interrogation.md) | no `Privacy analysis (LINDDUN-lite)` section | the design shipped without the analysis its gate requires |
 | [`marker-completeness-lint.md`](../design/marker-completeness-lint.md) | no `Privacy analysis (LINDDUN-lite)` section | the design shipped without the analysis its gate requires |
+| [`one-command-adoption.md`](../design/one-command-adoption.md) | no `Privacy analysis (LINDDUN-lite)` section | the design shipped without the analysis its gate requires; it fetches and runs remote code (FR-093) |
+| [`session-profiler.md`](../design/session-profiler.md) | no `Privacy analysis (LINDDUN-lite)` section | the design shipped without the analysis its gate requires; it reads harness session telemetry |
+| [`skill-evolution.md`](../design/skill-evolution.md) | no `Privacy analysis (LINDDUN-lite)` section | the design shipped without the analysis its gate requires |
 | [`tier2-proof-pack-sections.md`](../design/tier2-proof-pack-sections.md) | no `Privacy analysis (LINDDUN-lite)` section | the design shipped without the analysis its gate requires |

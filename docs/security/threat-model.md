@@ -7,6 +7,19 @@ owner: "@timianmalloo"
 phase: "pack-evolution"
 tags: [security, threat-model]
 links:
+  - { to: design-agent-focus-controls, rel: documents }
+  - { to: design-coord-collaboration-phase4, rel: documents }
+  - { to: design-coordination-runtime-v2, rel: documents }
+  - { to: design-decision-interrogation, rel: documents }
+  - { to: design-liveness-and-track, rel: documents }
+  - { to: design-marker-completeness-lint, rel: documents }
+  - { to: design-native-app-ui-skill-extension, rel: documents }
+  - { to: design-native-profile-controls, rel: documents }
+  - { to: design-one-command-adoption, rel: documents }
+  - { to: design-owner-review, rel: documents }
+  - { to: design-session-profiler, rel: documents }
+  - { to: design-skill-evolution, rel: documents }
+  - { to: design-tier2-proof-pack-sections, rel: documents }
   - { to: design-reader-first-handbook, rel: documents }
   - { to: architecture, rel: documents }
   - { to: design-aiforward-cli, rel: documents }
@@ -83,7 +96,6 @@ The pack-evolution capabilities are **local developer/CI tooling** — no networ
 ## 2. Generated register (STRIDE-lite, rolled up from the designs)
 
 <!-- BEGIN GENERATED: docs-graph.py rollup -->
-
 | source | Boundary | Threat | Disposition |
 |---|---|---|---|
 | [design-agent-coordination-doctrine](design/agent-coordination-doctrine.md) | Knowledge doc → every model prefix | **Tampering / injection**: a repo write that turns a doctrine line into an instruction to the model (the doc *is* instruction text by design) | **Transfer** — repo write access is the trust boundary (branch protection on `main`, `required_conversation_resolution`); the doc carries no external content and cites by id, so no untrusted text is inlined. **Accept** the residual: the pack's own text is trusted by construction (ADR-0011's untrusted-heading rule applies to *messages*, not to committed doctrine). |
@@ -188,7 +200,7 @@ The pack-evolution capabilities are **local developer/CI tooling** — no networ
 | [design-reader-first-handbook](design/reader-first-handbook.md) | A dependency changes silently | Prevent/detect | Pinned local marked 18.0.14, retained MIT license/provenance, SHA-256 guard; no runtime CDN. |
 | [design-reader-first-handbook](design/reader-first-handbook.md) | Unknown page or damaged data strands the reader | Recover | Visible recovery, overview/source link and working navigation; browser checks cover both states. |
 
-<!-- rolled up from 16 artifact(s) by docs-graph.py rollup on 2026-09-22 -->
+<!-- rolled up from 16 artifact(s) by docs-graph.py rollup on 2026-10-18 -->
 
 <!-- END GENERATED -->
 
@@ -211,5 +223,9 @@ The register above can only roll up analyses that exist. These designs carry non
 | Design | Gap | Why it matters |
 |---|---|---|
 | [`agent-focus-controls.md`](../design/agent-focus-controls.md) | no `Adversarial analysis (STRIDE-lite)` section | the design shipped without the analysis its gate requires |
+| [`decision-interrogation.md`](../design/decision-interrogation.md) | no `Adversarial analysis (STRIDE-lite)` section | the design shipped without the analysis its gate requires |
 | [`marker-completeness-lint.md`](../design/marker-completeness-lint.md) | no `Adversarial analysis (STRIDE-lite)` section | the design shipped without the analysis its gate requires |
+| [`one-command-adoption.md`](../design/one-command-adoption.md) | no `Adversarial analysis (STRIDE-lite)` section | the design shipped without the analysis its gate requires; it fetches and runs remote code (FR-093) |
+| [`session-profiler.md`](../design/session-profiler.md) | no `Adversarial analysis (STRIDE-lite)` section | the design shipped without the analysis its gate requires; it reads harness session telemetry |
+| [`skill-evolution.md`](../design/skill-evolution.md) | no `Adversarial analysis (STRIDE-lite)` section | the design shipped without the analysis its gate requires |
 | [`tier2-proof-pack-sections.md`](../design/tier2-proof-pack-sections.md) | no `Adversarial analysis (STRIDE-lite)` section | the design shipped without the analysis its gate requires |

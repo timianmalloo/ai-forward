@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-10-17T19:53:30Z",
+  "generated": "2026-10-18T22:56:51Z",
   "audit": [
     {
       "actor": null,
@@ -13786,6 +13786,31 @@ window.AUDIT_DATA = {
       "goal": "Finish the rev108 forensic review and backlog",
       "done_when": "review + backlog md/html committed, rev59 superseded, graph validates",
       "tier": "T1"
+    },
+    {
+      "id": "al-01M58KPVG47B6AKZ40P27AM9X2",
+      "shortname": "document-rev113",
+      "datetime": "2026-10-18T22:56:51Z",
+      "session": "4bdeb954-c8f8-421a-86f9-bf7cbee4806e",
+      "prompt": "Regenerate the documentation bundle at current main (54ae8f8, pack revision 113): architecture.md to current truth (it still says revision 53 / 24 skills / 10 gates — FR-090), README/AGENTS counts, API reference, the four diagram families where stale, and the Docs Explorer index. Work in worktree D:/Projects/ai-forward-docs on a new branch; main is protected (PR + 3 required checks, rebase merge).",
+      "summary": "/document at main 54ae8f8 (pack revision 113). architecture.md re-verified: counts (30 skills, 40 knowledge + FOUNDATION, 47 scripts, 368 artifacts, 2 stale review-by), six harness surfaces, sync write scope incl. .agents/.grok/.codex/.github/hooks and derive --root, always-on ~51.0K est tokens of ~184.1K, 18 gates with the parallel+serial gate 3, the required-check PR-only workflow, the hook trust seam and FR findings; the three Mermaid diagrams updated to match. _meta.json re-measured (API 46 modules, 600 public fns, 280 documented = 47%). Threat model and privacy review: registers regenerated (rows unchanged), 4 designs missing STRIDE/LINDDUN recorded as gaps, 13 missing documents links added (privacy: session-profiler). Backlog of record: FR-087 resolved, FR-099 partly. Index derived (368), graph-health snapshot appended, _site rebuilt. Independent Documentation Steward adversary pass: caught one author error (.github/hooks struck from the sync scope wrongly) plus three overstatements; all fixed. Remaining findings: FR-095 (no six-harness ADR), audit-log and forensic-review-backlog-20260712 past review-by, 53% of public functions undocumented (FR-079), duplicate RUN-B id in the defect register, primary checkout D:/Projects/ai-forward behind main.",
+      "kind": "skill",
+      "skill": "document",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/architecture.md",
+        "docs/index.md",
+        "docs/_meta.json"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Bring the documentation bundle to current main (revision 113)",
+      "done_when": "architecture.md states measured rev-113 facts; _meta, rollups, index, snapshot, _site refreshed; adversary pass; merged via required checks",
+      "tier": "T1",
+      "started_at": "2026-10-18T22:49:16Z",
+      "duration_seconds": 455.0
     }
   ],
   "changes": [
