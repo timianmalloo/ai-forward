@@ -15,6 +15,21 @@ SCRIPT = REPO / "pack/scripts/coord_transport.py"
 PEER = Path(__file__).with_name("coord_transport_peer.py")
 
 
+def _cleanup_when_released(temp, seconds=5.0):
+    """Windows releases a reaped child's handles on the peer's cwd asynchronously, and under xdist
+    load cleanup can win that race (WinError 32, run 39146711491). Retry while the directory is
+    held, bounded: a handle still open after `seconds` is a real leak and fails the test."""
+    deadline = time.monotonic() + seconds
+    while True:
+        try:
+            temp.cleanup()
+            return
+        except PermissionError:
+            if os.name != "nt" or time.monotonic() >= deadline:
+                raise
+            time.sleep(.1)
+
+
 def load_module():
     spec = importlib.util.spec_from_file_location("coord_transport", SCRIPT)
     module = importlib.util.module_from_spec(spec)
@@ -59,7 +74,7 @@ class TransportTests(unittest.TestCase):
     def setUp(self):
         self.module = load_module()
         self.temp = tempfile.TemporaryDirectory()
-        self.addCleanup(self.temp.cleanup)
+        self.addCleanup(_cleanup_when_released, self.temp)
         self.root = Path(self.temp.name)
         self.events = []
 
@@ -879,7 +894,7 @@ class TestWindowsTransport(unittest.TestCase):
     def setUp(self):
         self.module = load_module()
         self.temp = tempfile.TemporaryDirectory()
-        self.addCleanup(self.temp.cleanup)
+        self.addCleanup(_cleanup_when_released, self.temp)
         self.root = Path(self.temp.name)
         self.events = []
 
