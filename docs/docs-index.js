@@ -10200,7 +10200,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "8fd3fcaa3fbedb433edee467ceab8a598e39dc6df7211dc5220dee22079d8c3e"
+      "sourceSha256": "2e0da61f3ffffdab6d7f30f099126c1fa39e694df3c897dd6680d4a5f66f51f6"
     },
     {
       "id": "plan-coordination-runtime-v2",
@@ -12563,5 +12563,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "545dc398a1d38ccad16349430655103e22a50b2dc733ab61e86a66f4c51b3821"
+  "graphSha256": "475bce46f95fd1a9ff59cdd15468d539877cf8a1b3468061b3fbaabf81df1a4a"
 };

@@ -382,3 +382,23 @@ jobs:
           # The wallclock tests assert real time; contention under xdist made them fail (P1a).
           python3 -m pytest tests -q -m wallclock --junitxml=pytest-wallclock.xml
           python3 tools/check-test-counts.py --junit pytest-parallel.xml --junit pytest-wallclock.xml
+
+  # CI-speed C6 / P9: per-job wall-clock against the trailing median of green main runs. Not a
+  # required check -- runner timings are noisy -- but it fails red above 1.5x so growth is seen.
+  # `--since` is the day the parallel suite landed: older runs are a different suite shape.
+  duration-budget:
+    needs: [consistency, consistency-windows, consistency-macos]
+    if: always()
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - name: Duration budget
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          python3 tools/ci-duration-budget.py --repo "${{ github.repository }}" --run "${{ github.run_id }}"
+          --workflow pack-consistency.yml --jobs consistency,consistency-windows,consistency-macos
+          --since 2026-10-18
