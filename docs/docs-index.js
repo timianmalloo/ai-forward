@@ -3254,7 +3254,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "25a6086031769262bf760dc54f86e70c3314c2c5bf55e24aa69c21114287d2a9"
+      "sourceSha256": "a29fdce06e5faf806db2cc125f2566a6533043df7a43cd6acd70f784270c61d1"
     },
     {
       "id": "note-20261017-session-profiles-published",
@@ -10200,7 +10200,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d3ea19d7a09544f4be38df79ccc227076a08a47a38ed5e4f7b2a07b5fa4f8917"
+      "sourceSha256": "8fd3fcaa3fbedb433edee467ceab8a598e39dc6df7211dc5220dee22079d8c3e"
     },
     {
       "id": "plan-coordination-runtime-v2",
@@ -12479,6 +12479,14 @@ window.DOCS_INDEX = {
       "artifactId": "proposal-active-multi-harness-coordination"
     },
     {
+      "id": "surface-notes-note-20261017-require-ci-before-merge",
+      "path": "docs/notes/note-20261017-require-ci-before-merge.html",
+      "title": "Note 20261017 Require Ci Before Merge",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "note-20261017-require-ci-before-merge"
+    },
+    {
       "id": "surface-proof-one-command-adoption",
       "path": "docs/proof/one-command-adoption.html",
       "title": "One Command Adoption",
@@ -12555,5 +12563,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "97febc428165f54a06f1894c0ec2b16e529777fb00a08311b45d15950904685a"
+  "graphSha256": "545dc398a1d38ccad16349430655103e22a50b2dc733ab61e86a66f4c51b3821"
 };

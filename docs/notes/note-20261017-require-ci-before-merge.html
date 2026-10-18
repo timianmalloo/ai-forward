@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Note 20261017 Require Ci Before Merge</title><style>
+:root { color-scheme: light dark; --bg:#f7f5ef; --panel:#fff; --text:#20201d;
+  --muted:#66645f; --line:#d9d5ca; --accent:#3157a4; --code:#f0eee7; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#171816; --panel:#20221f; --text:#f2f1eb; --muted:#b8b6ae;
+    --line:#3d403a; --accent:#8fb0ff; --code:#292c27; }
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text);
+  font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif; }
+main { width:min(920px,calc(100% - 32px)); margin:32px auto; padding:40px;
+  background:var(--panel); border:1px solid var(--line); border-radius:12px; }
+h1,h2,h3,h4,h5,h6 { line-height:1.2; margin:1.5em 0 .55em; }
+h1 { margin-top:0; font-size:2.2rem; } h2 { border-bottom:1px solid var(--line); padding-bottom:.3em; }
+a { color:var(--accent); } code { background:var(--code); padding:.12em .35em; border-radius:4px; }
+pre { overflow:auto; padding:16px; background:var(--code); border-radius:8px; }
+pre code { padding:0; } blockquote { margin:1em 0; padding:.2em 1em; color:var(--muted);
+  border-left:4px solid var(--line); }
+table { width:100%; border-collapse:collapse; margin:1em 0; display:block; overflow:auto; }
+th,td { padding:.55em .75em; border:1px solid var(--line); text-align:left; vertical-align:top; }
+th { background:var(--code); } hr { border:0; border-top:1px solid var(--line); }
+.source { color:var(--muted); font-size:.9rem; margin-bottom:2rem; }
+@media (max-width:640px) { main { width:100%; margin:0; padding:24px 18px; border:0; border-radius:0; } }
+</style></head><body><main><div class="source">Rendered from note-20261017-require-ci-before-merge.md</div><h1>Decision — require CI to pass before anything reaches <code>main</code></h1>
+<p><strong>Date:</strong> 2026-10-17 · <strong>Decided by:</strong> the owner · <strong>Supersedes:</strong> <code>note-required-status-checks</code> (2026-08-26) · <strong>Status of execution:</strong> not started — see <code>plan-ci-speed-and-required-checks</code></p>
+<h2>Why the earlier decision no longer holds</h2>
+<ul><li><strong>Re-open trigger 1 fired.</strong> A second contributor now lands work on <code>main</code> (commit <code>f92cf31</code>, PR #6). Verified from <code>git log</code>.</li><li><strong>The accepted risk&#x27;s premise is false.</strong> The earlier note accepted that &quot;a red commit on <code>main</code> means CI is red and the next push fixes it&quot;. Since commit <code>156943d</code> (2026-10-04) every workflow is <code>workflow_dispatch</code> only, so CI never turns red on its own. Verified from the workflow triggers (forensic review rev108).</li></ul>
+<h2>The decision</h2>
+<p>Make the <code>pack-consistency</code> jobs <strong>required status checks</strong> on <code>main</code>.</p>
+<h2>Consequences, stated before execution</h2>
+<ul><li><strong>Direct pushes to `main` end.</strong> With <code>enforce_admins: true</code>, a required check gates pushes as well as merges, with no admin bypass. Every change goes through a pull request. This includes agent work: WT1&#x27;s &quot;merge back&quot; becomes &quot;open a PR, rebase-merge when green&quot;.</li><li><strong>Ordering is forced.</strong> A required check reports only if the workflow runs on <code>pull_request</code>. Restoring the triggers (proposal change C7) must land <strong>before</strong> the requirement is switched on, or no PR can merge.</li><li><strong>Speed becomes a cost on every change.</strong> A 46.8-minute gate would block each merge for most of an hour. The CI speed changes (C1–C3) are sequenced ahead of the requirement for that reason, not as a precondition of the decision.</li><li><strong>The check names must be stable.</strong> Required checks are matched by job name; renaming a job in <code>pack-consistency.yml</code> silently drops the requirement. The plan pins the names and adds a test.</li></ul>
+<h2>Re-open triggers</h2>
+<ul><li>The gate&#x27;s median wall-clock on <code>main</code> exceeds 30 minutes for two weeks after the speed work lands.</li><li>A required check blocks an urgent fix and there is no documented break-glass path.</li></ul>
+<h2>Implemented (2026-10-18)</h2>
+<p>Applied after <code>plan-ci-speed-and-required-checks</code> P1–P6 landed (PR #17). Protection now requires <code>consistency</code>, <code>consistency-windows</code> and <code>consistency-macos</code>, each bound to the GitHub Actions app (id 15368) so no other integration can satisfy them, with <code>strict: true</code>; every other setting is unchanged. Proof, observed:</p>
+<ul><li><strong>A red PR cannot merge.</strong> PR #18 broke gate 1 on purpose; with two checks red,</li></ul>
+<p><code>mergeStateStatus</code> was <code>BLOCKED</code> and <code>gh pr merge</code> refused. It was closed unmerged.</p>
+<ul><li><strong>A green PR can.</strong> The PR carrying this note merged once its three checks passed.</li></ul>
+<p>Measured cost: the Windows job sets the pace at ~25 min (pytest ~1,500 s including the serial <code>wallclock</code> stage). The first re-open trigger above stays the guard against that growing.</p></main></body></html>

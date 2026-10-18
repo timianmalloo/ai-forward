@@ -85,7 +85,7 @@
     "skills_source": ".agents/skills",
     "skills_count": 30,
     "catalog_cap_bytes": 32768,
-    "agents_md_bytes": 29570,
+    "agents_md_bytes": 29443,
     "skills_loaded_observed": 52,
     "catalog_startup_bytes_observed": 27215,
     "catalog_trim_observed": "none: 52 loaded (30 pack + 21 bundled + 1 plugin) sum to 27215 startup bytes (pack 12963), under the cap; 30 .claude/skills duplicates shadowed",

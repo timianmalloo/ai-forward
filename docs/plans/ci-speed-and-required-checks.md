@@ -91,6 +91,17 @@ was contention, not the tests. Those tests are marked `wallclock` in one list
 deadlines (~44 s on Windows). `check-test-counts.py` checks both stages' JUnit reports together.
 Local `verify-bundle.ps1`: **all 18 gates pass, 925 s.**
 
+**P1a closed (round 4, runs 39164203833 / 39164205990 / 39164207785):** 9/9 jobs green;
+collected = reported = 1,875 in every job. Windows job ~25.5 min (pytest ~1,500 s incl. the
+serial stage) against the ~23 min accepted: within the first re-open trigger (30 min).
+
+**P5–P8 done (2026-10-18).** P5: opening PR #17 started `pack-consistency` and `docs` with no
+dispatch; a second push cancelled the PR's older run (C3). P7: protection requires the three
+contexts, bound to the GitHub Actions app (15368), `strict: true`, all other settings read back
+unchanged; red PR #18 was `BLOCKED` and refused. P8: `AGENTS.md`'s push section and the decision
+note match the read-back. **P9 (duration budget) is the one node left.** The `docs` workflow is
+red on two pre-existing V13 stale `review-by` dates (not a required check; a real review clears it).
+
 **P1a race fixed:** `test_exit_between_poll_and_signal_rechecks_macos_zombie_error` simulated
 macOS's EPERM while the peer could still be alive; it now waits for a real unreaped exit
 (`waitid` with `WNOWAIT`). **P5 deviation:** `pack-consistency`'s `pull_request` is restored

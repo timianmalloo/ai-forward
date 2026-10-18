@@ -8,28 +8,26 @@ See `README.md` for the full layout. `CLAUDE.md` is `@AGENTS.md` plus a short Cl
 addendum, so this file is the single instruction set for every harness (INSTALL 1.1).
 
 When you change anything under `pack/`, re-run `tools/sync-pack.ps1`, then run
-**`pwsh tools/verify-bundle.ps1`** *before committing* — it runs the same ten gates CI does,
-and a green test suite is not the same as a green gate (the tests pass while the counts and
-drift gates fail). Commit `pack/`, `.claude/`, `.github/`, and `docs/` together so source and
-install stay in lockstep.
+**`pwsh tools/verify-bundle.ps1`** *before committing* — the gates CI runs (gate 3 in parallel
+with `pytest-xdist`); a green test suite is not a green gate (tests pass while the counts and
+drift gates fail). Commit `pack/`, `.claude/`, `.github/`, and `docs/` together.
 
-**Pushing to `main` — it is protected, and the rule bites the documented workflow.** `main`
-requires **linear history**, so it rejects merge commits. The pack's own worktree-per-session
-discipline (WT1) integrates by *merging* a branch back, which produces exactly what the rule
-forbids — so a first integration fails with
-`remote: error: GH006 … This branch must not contain merge commits`. **Recovery:** rebuild the
-change as a linear commit off `origin/main` (rebase, or re-apply the tree onto a fresh branch)
-and push that. Verified via `gh api repos/timianmalloo/ai-forward/branches/main/protection`:
+**Changes reach `main` only by PR — direct pushes are rejected, admins included.** `main`
+requires **linear history** and three green `pack-consistency` checks (`consistency`,
+`consistency-windows`, `consistency-macos`; ~25 min, Windows sets the pace), with the PR up to
+date with `main`. Merge with `gh pr merge <n> --rebase --delete-branch`. WT1's merge-back makes a
+merge commit the rule rejects (`GH006`): rebuild as linear commits off `origin/main`. Read back via
+`gh api repos/timianmalloo/ai-forward/branches/main/protection`:
 
 ```json
 { "enforce_admins": true, "required_linear_history": true, "allow_force_pushes": false,
   "allow_deletions": false, "required_conversation_resolution": true,
-  "required_status_checks": "absent" }
+  "required_status_checks": { "strict": true,
+    "checks": ["consistency", "consistency-windows", "consistency-macos"] } }
 ```
 
-`required_status_checks` is deliberately absent — see `docs/notes/required-status-checks.md`
-for that decision and its re-open triggers. Because nothing blocks a red push, **running
-`verify-bundle.ps1` before you push is the only thing standing between you and a red `main`.**
+Decision and re-open triggers: `docs/notes/note-20261017-require-ci-before-merge.md`. Run
+`verify-bundle.ps1` before pushing anyway: ~15 min locally fails sooner than ~25 in CI.
 
 <!-- AI-FORWARD-PACK:BEGIN (managed block — keep this block intact when reconciling; replace it wholesale on pack updates) -->
 ## AI-Forward Pack + Agent Knowledge Pack
