@@ -142,7 +142,7 @@ ai-forward/
 ├─ pack/                  ← CANONICAL SOURCE — edit here to expand the pack
 │   ├─ README.md  OVERVIEW.md  research-synthesis.md
 │   ├─ knowledge/         ← the reasoning spine + 23-persona roster + vendored foundation
-│   ├─ commands/          ← the 30 skills (SKILL.md + reference/ each)
+│   ├─ commands/          ← the 31 skills (SKILL.md + reference/ each)
 │   ├─ templates/         ← the artifacts each skill produces
 │   ├─ adapters/          ← INSTALL.md + Claude Code / Copilot agents + prompts + managed blocks
 │   ├─ evals/             ← the pack's own regression suite
