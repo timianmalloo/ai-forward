@@ -1,8 +1,8 @@
 {
   "generator": "/document (AI-Forward Pack)",
-  "generated": "2026-09-04",
-  "documentedCommit": "a87b187ee071d9466928a586dc55eb87a09b8b68",
-  "documentedCommitShort": "a87b187",
+  "generated": "2026-10-18",
+  "documentedCommit": "54ae8f8cd75a6a96ee7e82d844f0aab250ef270f",
+  "documentedCommitShort": "54ae8f8",
   "subject": "AI-Forward — pack source (pack/) + live dogfood install (.claude/, .github/, docs/)",
   "surfaces": {
     "markdownBundle": [
@@ -27,22 +27,30 @@
   },
   "coverage": {
     "publicSurface": "pack/scripts/*.py — the bundle deployed to consuming repos as docs/ai-forward-pack/scripts/. tools/* is repo-local build tooling and is deliberately out of surface.",
-    "apiModules": 19,
-    "publicFunctions": 267,
-    "publicFunctionsDocumented": 108,
-    "publicFunctionsCoveragePct": 40,
+    "apiModules": 46,
+    "publicFunctions": 600,
+    "publicFunctionsDocumented": 280,
+    "publicFunctionsCoveragePct": 47,
     "coverageGapPolicy": "A public function with no docstring is emitted as a recorded gap in docs/api/, never as fabricated prose.",
-    "knowledgeDocs": 39,
-    "skills": 24,
+    "knowledgeDocs": 40,
+    "skills": 30,
     "agents": 23,
-    "graphArtifacts": 162,
-    "alwaysOnKnowledgeTokensEst": 43708,
-    "defectClasses": 25,
-    "fleetClasses": 37
+    "graphArtifacts": 368,
+    "alwaysOnKnowledgeTokensEst": 51002,
+    "fleetClasses": 37,
+    "packRevision": 113,
+    "harnessSurfaces": 6,
+    "verifyGates": 18,
+    "testsCollected": 1875,
+    "defectClasses": {
+      "projectClasses": 73,
+      "inheritedRows": 43,
+      "source": "docs/lessons/defect-classes.md Status counts line (checked by test_defect_register_counts.py)"
+    }
   },
   "confidence": {
     "apiReference": "Verified — extracted by tools/build-api-docs.py with ast from the modules' own docstrings and argparse definitions; drift-gated by check-consistency.py.",
-    "diagrams": "Verified — every node/edge re-traced to tools/sync-pack.ps1 and the directory layout on 2026-09-03; two stale claims corrected (see architecture.md).",
+    "diagrams": "Verified — every changed node/edge re-traced on 2026-10-18 to tools/sync-pack.ps1, pack/adapters/hooks/dispatch.py ROUTES, .claude/settings.json and the branch-protection read-back; two drafted labels failed their check and were corrected (see architecture.md gate record).",
     "cliReference": "Verified — traced to each script's argparse definition.",
     "coverageNumbers": "Verified — computed from the source, not asserted.",
     "explainerContent": "Verified — true to pack/knowledge and pack/commands.",
@@ -50,13 +58,14 @@
   },
   "gate": {
     "mode": "fail-on-change, warn-on-schedule",
-    "changeBased": ".github/workflows/pack-consistency.yml (counts + derived-artifact drift) and tools/verify-bundle.ps1 gate 1",
-    "timeBased": ".github/workflows/docs.yml (weekly; V13 review-by decay, V16 flags, orphans)",
+    "changeBased": ".github/workflows/pack-consistency.yml — required on main since 2026-10-18 (consistency, consistency-windows, consistency-macos) — and tools/verify-bundle.ps1 gate 1",
+    "timeBased": ".github/workflows/docs.yml (push, PR and weekly; V13 review-by decay, V16 flags, orphans). Red on 2026-10-18 for two pre-existing stale review-by dates; not a required check.",
     "hookOption": "Not used. .git/hooks is not versioned, so a hook cannot be relied on across clones or in CI."
   },
   "knownGaps": [
-    "60% of public functions in pack/scripts/ carry no docstring. Each is listed individually in its module's docs/api/ page under Coverage. This is the largest open documentation debt and is recorded rather than fabricated.",
+    "53% of public functions in pack/scripts/ carry no docstring (280 of 600 documented). Each is listed individually in its module's docs/api/ page under Coverage. This is the largest open documentation debt (FR-079) and is recorded rather than fabricated.",
     "pack/scripts/docs-explorer-core.js has no generated API page: the extractor is Python-only (ast). Its behaviour is covered by tests/docs_explorer/docs_explorer_core.test.js.",
-    "tools/*.py and tools/*.ps1 have no generated reference by design — repo-local build tooling, not part of the deployed surface. They are documented in architecture.md's CLI table."
+    "tools/*.py and tools/*.ps1 have no generated reference by design — repo-local build tooling, not part of the deployed surface. They are documented in architecture.md's CLI table.",
+    "No ADR records the six-harness support decision (FR-095)."
   ]
 }

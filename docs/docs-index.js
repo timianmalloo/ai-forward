@@ -1833,9 +1833,9 @@ window.DOCS_INDEX = {
       "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "documentation",
-      "reviewBy": "2026-12-14",
+      "reviewBy": "2027-01-18",
       "reviewSuggested": [],
-      "summary": "The architecture of record for this repository: a dual-purpose repo that is both the canonical SOURCE of the AI-Forward Pack (pack/) and a live INSTALL of it (.claude/, docs/), kept in lockstep by tools/sync-pack.ps1. Includes the four diagram families and the tool/CLI reference, verified against pack revision 53 on 2026-08-30.",
+      "summary": "The architecture of record for this repository: a dual-purpose repo that is both the canonical SOURCE of the AI-Forward Pack (pack/) and a live INSTALL of it (.claude/, docs/), kept in lockstep by tools/sync-pack.ps1. Includes the four diagram families and the tool/CLI reference, verified against pack revision 113 on 2026-10-18.",
       "tags": [
         "pack",
         "knowledge-graph",
@@ -1852,17 +1852,17 @@ window.DOCS_INDEX = {
         {
           "kind": "flowchart",
           "title": "Component map & boundaries",
-          "mermaid": "flowchart TB\n  subgraph SRC[\"pack/ — canonical source (edit here)\"]\n    K[\"knowledge/*.md<br/>(reasoning spine + roster + foundation)\"]\n    C[\"commands/&lt;name&gt;/SKILL.md<br/>(the 24 skills)\"]\n    T[\"templates/*<br/>(artifacts each skill emits)\"]\n    A[\"adapters/<br/>(Claude Code + Copilot agents, INSTALL.md)\"]\n    SC[\"scripts/ (20) · evals/ · ci/ · examples/\"]\n    CB[\"context-budget.json<br/>(always-on budget baseline)\"]\n    PD[\"README · OVERVIEW · research-synthesis\"]\n  end\n\n  subgraph TOOLS[\"tools/ — build\"]\n    SYNC[\"sync-pack.ps1\"]\n    PKG[\"package-pack.ps1\"]\n    GEN[\"build-docs-portal.py<br/>build-web-index.py<br/>build-api-docs.py\"]\n  end\n\n  subgraph INSTALL[\"generated install (do not hand-edit)\"]\n    CK[\".claude/knowledge/*.md<br/>(all 39, verbatim)\"]\n    CS[\".claude/skills/*\"]\n    CA[\".claude/agents/*.md\"]\n    GI[\".github/instructions/<br/>always + glob-scoped\"]\n    GK[\".github/knowledge/<br/>skill + reference, on demand\"]\n    GP[\".github/prompts/ · .github/agents/\"]\n    DP[\"docs/ai-forward-pack/<br/>templates + scripts + pack docs\"]\n    EXP[\"docs/index.html<br/>(Docs Explorer)\"]\n    IDX[\"docs/docs-index.js<br/>(derived graph index)\"]\n    PORT[\"docs/portal/portal-data.js<br/>(Documentation Portal data)\"]\n    WIX[\"web/pack-index.js\"]\n    ARCH[\"docs/architecture.md · index.md · api/ · _meta.json<br/>(this bundle)\"]\n  end\n\n  subgraph CONSUMERS[\"consumers\"]\n    CC[\"Claude Code / Copilot<br/>(read .claude/ + .github/)\"]\n    WEBE[\"web/ai-forward-pack-explainer.html<br/>(interactive explainer)\"]\n    PAGES[\"GitHub Pages<br/>(portal is the front door)\"]\n    ZIP[\"dist/ai-forward-pack.zip\"]\n  end\n\n  K --> SYNC\n  C --> SYNC\n  T --> SYNC\n  A --> SYNC\n  CB --> SYNC\n  SYNC --> CK & CS & CA & DP & EXP\n  SYNC -- \"routes on each doc's load: scope\" --> GI & GK\n  SYNC --> GP\n  C -. \"skills reference\" .-> CK\n  CA -. \"agents reference\" .-> CK\n  ARCH --> GRAPH[\"docs-graph.py derive\"]\n  GRAPH --> IDX\n  SYNC --> GRAPH\n  SYNC --> GEN\n  GEN --> PORT & WIX\n  ARCH --> GEN\n  IDX --> EXP & PORT\n  CK --> CC\n  CS --> CC\n  CA --> CC\n  GI --> CC\n  PORT --> PAGES\n  WEBE --> PAGES\n  SRC --> PKG --> ZIP\n  CK -. \"derived content\" .-> WEBE"
+          "mermaid": "flowchart TB\n  subgraph SRC[\"pack/ — canonical source (edit here)\"]\n    K[\"knowledge/*.md<br/>(reasoning spine + roster + foundation)\"]\n    C[\"commands/&lt;name&gt;/SKILL.md<br/>(the 30 skills)\"]\n    T[\"templates/*<br/>(artifacts each skill emits)\"]\n    A[\"adapters/<br/>(6 harness surfaces · hooks · managed blocks · INSTALL.md)\"]\n    SC[\"scripts/ (47) · evals/ · ci/ · examples/\"]\n    CB[\"context-budget.json<br/>(always-on budget baseline)\"]\n    PD[\"README · OVERVIEW · research-synthesis\"]\n  end\n\n  subgraph TOOLS[\"tools/ — build\"]\n    SYNC[\"sync-pack.ps1\"]\n    PKG[\"package-pack.ps1\"]\n    GEN[\"build-docs-portal.py<br/>build-web-index.py<br/>build-api-docs.py\"]\n  end\n\n  subgraph INSTALL[\"generated install (do not hand-edit)\"]\n    CK[\".claude/knowledge/*.md<br/>(40 + FOUNDATION.md, verbatim)\"]\n    CS[\".claude/skills/*\"]\n    CA[\".claude/agents/*.md\"]\n    AG[\".agents/skills · .grok/ · .codex/<br/>(Codex · Muse · Antigravity · Grok)\"]\n    HK[\"hook configs + scripts<br/>(.claude/settings.json · .github/hooks/ai-forward.json ·<br/>.agents/hooks.json · .grok/hooks · docs/ai-forward-pack/hooks/)\"]\n    GI[\".github/instructions/<br/>always + glob-scoped\"]\n    GK[\".github/knowledge/<br/>skill + reference, on demand\"]\n    GP[\".github/prompts/ · .github/agents/\"]\n    DP[\"docs/ai-forward-pack/<br/>templates + scripts + pack docs\"]\n    EXP[\"docs/index.html<br/>(Docs Explorer)\"]\n    IDX[\"docs/docs-index.js<br/>(derived graph index)\"]\n    PORT[\"docs/portal/portal-data.js<br/>(Documentation Portal data)\"]\n    WIX[\"web/pack-index.js\"]\n    ARCH[\"docs/architecture.md · index.md · api/ · _meta.json<br/>(this bundle)\"]\n  end\n\n  subgraph CONSUMERS[\"consumers\"]\n    CC[\"Claude Code · Copilot · Codex ·<br/>Grok · Antigravity · Muse\"]\n    WEBE[\"web/ai-forward-pack-explainer.html<br/>(interactive explainer)\"]\n    PAGES[\"GitHub Pages<br/>(portal is the front door)\"]\n    ZIP[\"dist/ai-forward-pack.zip\"]\n  end\n\n  K --> SYNC\n  C --> SYNC\n  T --> SYNC\n  A --> SYNC\n  CB --> SYNC\n  SYNC --> CK & CS & CA & DP & EXP & AG & HK\n  AG --> CC\n  HK -. \"PreToolUse: edit ownership (coord-core) ·<br/>git identity · re-read · mail\" .-> CC\n  SYNC -- \"routes on each doc's load: scope\" --> GI & GK\n  SYNC --> GP\n  C -. \"skills reference\" .-> CK\n  CA -. \"agents reference\" .-> CK\n  ARCH --> GRAPH[\"docs-graph.py derive\"]\n  GRAPH --> IDX\n  SYNC --> GRAPH\n  SYNC --> GEN\n  GEN --> PORT & WIX\n  ARCH --> GEN\n  IDX --> EXP & PORT\n  CK --> CC\n  CS --> CC\n  CA --> CC\n  GI --> CC\n  PORT --> PAGES\n  WEBE --> PAGES\n  SRC --> PKG --> ZIP\n  CK -. \"derived content\" .-> WEBE"
         },
         {
           "kind": "sequence",
           "title": "Key flow — the sandbox / dogfood loop (sequence)",
-          "mermaid": "sequenceDiagram\n  actor Dev as Author\n  participant Pack as pack/ (source)\n  participant Sync as tools/sync-pack.ps1\n  participant Install as .claude/ + docs/\n  participant CC as Claude Code (this repo)\n  participant Graph as docs-graph.py\n  participant Verify as tools/verify-bundle.ps1\n  participant Explorer as docs/index.html\n\n  Dev->>Pack: edit a knowledge doc / SKILL.md / persona / template\n  Dev->>Sync: pwsh tools/sync-pack.ps1\n  Sync->>Install: mirror knowledge, skills, agents, templates, scripts\n  Sync->>Install: route each knowledge doc by its load: scope<br/>(instructions vs .github/knowledge)\n  Sync->>Install: re-paste the CLAUDE.md / AGENTS.md managed blocks\n  Sync->>Graph: docs-graph.py derive\n  Graph->>Install: write docs/docs-index.js from frontmatter\n  Sync->>Install: build-web-index.py, build-docs-portal.py\n  Note over Sync,Install: derivation runs INSIDE sync (FR-068), so the<br/>index can never lag a run that added an artifact\n  Dev->>CC: try the change (regenerated skills/agents are now live)\n  CC-->>Dev: run a skill; dogfood the edit\n  Dev->>Verify: pwsh tools/verify-bundle.ps1\n  Verify->>Verify: 10 gates — counts · drift · tests · explorer ·<br/>graph · foundation · audit · evals · context budget\n  Verify-->>Dev: CONSISTENT, or the first thing that is wrong\n  Graph->>Explorer: index loaded; hierarchy · graph · mind map · health render\n  Dev->>Pack: commit pack/ + .claude/ + .github/ + docs/ together (lockstep)"
+          "mermaid": "sequenceDiagram\n  actor Dev as Author\n  participant Pack as pack/ (source)\n  participant Sync as tools/sync-pack.ps1\n  participant Install as .claude/ + docs/\n  participant CC as Claude Code (this repo)\n  participant Graph as docs-graph.py\n  participant Verify as tools/verify-bundle.ps1\n  participant Explorer as docs/index.html\n  participant GH as GitHub (main, protected)\n\n  Dev->>Pack: edit a knowledge doc / SKILL.md / persona / template\n  Dev->>Sync: pwsh tools/sync-pack.ps1\n  Sync->>Install: mirror knowledge, skills, agents, templates, scripts\n  Sync->>Install: route each knowledge doc by its load: scope<br/>(instructions vs .github/knowledge)\n  Sync->>Install: re-paste the CLAUDE.md / AGENTS.md managed blocks\n  Sync->>Graph: docs-graph.py derive\n  Graph->>Install: write docs/docs-index.js from frontmatter\n  Sync->>Install: build-web-index.py, build-docs-portal.py\n  Note over Sync,Install: derivation runs INSIDE sync (FR-068), so the<br/>index can never lag a run that added an artifact\n  Dev->>CC: try the change (regenerated skills/agents are now live)\n  CC-->>Dev: run a skill; dogfood the edit\n  Dev->>Verify: pwsh tools/verify-bundle.ps1\n  Verify->>Verify: 18 gates — counts · portability · contracts · drift ·<br/>tests (xdist -n 4, then serial wallclock) · explorer ·<br/>graph · foundation · audit · coordination · evals · context budget\n  Verify-->>Dev: PASS (~15 min), or the first thing that is wrong\n  Graph->>Explorer: index loaded; hierarchy · graph · mind map · health render\n  Dev->>Pack: commit pack/ + .claude/ + .github/ + docs/ together (lockstep)\n  Dev->>GH: open a PR (direct pushes are rejected)\n  GH->>GH: pack-consistency: consistency · consistency-windows ·<br/>consistency-macos (required, ~25 min) + duration-budget\n  GH-->>Dev: rebase-merge once green and up to date with main"
         },
         {
           "kind": "flowchart",
           "title": "Layered view (source → consumer)",
-          "mermaid": "flowchart TB\n  subgraph L4[\"Consumer layer\"]\n    direction LR\n    cc[Claude Code / Copilot]:::c\n    ex[Docs Explorer + web explainer]:::c\n    z[dist/ zip for other repos]:::c\n  end\n  subgraph L3[\"Install layer (generated, committed)\"]\n    direction LR\n    claude[.claude/ knowledge·skills·agents]:::i\n    gh[.github/ instructions·knowledge·prompts·agents]:::i\n    docs[docs/ pack-docs·scripts·templates·index·api·portal]:::i\n  end\n  subgraph L2[\"Build layer\"]\n    direction LR\n    sync[sync-pack.ps1]:::b\n    pkg[package-pack.ps1]:::b\n    gen[derivation: docs-graph · portal · web-index · api-docs]:::b\n  end\n  subgraph L1[\"Source layer (single source of truth)\"]\n    pack[pack/ knowledge·commands·templates·adapters·scripts]:::s\n  end\n  L1 --> L2 --> L3 --> L4\n  classDef s fill:#1d2b4d,stroke:#5a7cff,color:#dde6ff\n  classDef b fill:#13324a,stroke:#5ad1c7,color:#dffaf6\n  classDef i fill:#2a2440,stroke:#a98bff,color:#efeaff\n  classDef c fill:#163024,stroke:#56d364,color:#dcffe4"
+          "mermaid": "flowchart TB\n  subgraph L4[\"Consumer layer\"]\n    direction LR\n    cc[Claude Code · Copilot · Codex · Grok · Antigravity · Muse]:::c\n    ex[Docs Explorer + web explainer]:::c\n    z[dist/ zip for other repos]:::c\n  end\n  subgraph L3[\"Install layer (generated, committed)\"]\n    direction LR\n    claude[.claude/ knowledge·skills·agents]:::i\n    gh[.github/ instructions·knowledge·prompts·agents]:::i\n    other[.agents/ · .grok/ · .codex/ — other harness surfaces]:::i\n    docs[docs/ pack-docs·scripts·templates·index·api·portal]:::i\n  end\n  subgraph L2[\"Build layer\"]\n    direction LR\n    sync[sync-pack.ps1]:::b\n    pkg[package-pack.ps1]:::b\n    gen[derivation: docs-graph · portal · web-index · api-docs]:::b\n  end\n  subgraph L1[\"Source layer (single source of truth)\"]\n    pack[pack/ knowledge·commands·templates·adapters·scripts]:::s\n  end\n  L1 --> L2 --> L3 --> L4\n  classDef s fill:#1d2b4d,stroke:#5a7cff,color:#dde6ff\n  classDef b fill:#13324a,stroke:#5ad1c7,color:#dffaf6\n  classDef i fill:#2a2440,stroke:#a98bff,color:#efeaff\n  classDef c fill:#163024,stroke:#56d364,color:#dcffe4"
         },
         {
           "kind": "class",
@@ -1870,7 +1870,7 @@ window.DOCS_INDEX = {
           "mermaid": "classDiagram\n  class Signature {\n    +Name name\n    +FacetList facets\n    +StyleHints? hints\n    +validate() conflicts\n    +roundTrip() bool  %% G10: identify AND generate\n  }\n  class Facet {\n    <<abstract>>\n    +String key\n  }\n  class SingleValuedFacet {\n    +Value value  %% Type, Arch, Layout, Density, Pacing, ...\n  }\n  class MultiValuedFacet {\n    +Value[] values  %% Nav, Input, Feedback, Motion, A11y (joined with +)\n  }\n  class StyleHints {\n    +String[] hints  %% bounded NL decoration, applied last\n  }\n  class Archetype {\n    +String id          %% A1..F2\n    +String name\n    +Exemplar[] exemplars\n    +Signature canonical\n    +String codegenDescriptor\n  }\n  Signature \"1\" o-- \"4..*\" Facet : composes\n  Facet <|-- SingleValuedFacet\n  Facet <|-- MultiValuedFacet\n  Signature \"0..1\" *-- \"1\" StyleHints : decorated by\n  Archetype \"1\" *-- \"1\" Signature : canonical\n  Archetype \"1\" o-- \"1..*\" Exemplar\n  note for Signature \"G4: MUST carry Type, Arch, Layout, Pacing.\\nG1: always composed with a concrete U1–U20 / S1–S10 spec.\""
         }
       ],
-      "sourceSha256": "a0f30f4ec87df22849af2f9dcd68c6d4984b3a39149cecfda3d1775b328d2174"
+      "sourceSha256": "bda8e6df0348dd139c98f90fff38b47ff847f627466618278e5c73e53422355b"
     },
     {
       "id": "architecture-agent-coordination",
@@ -5269,7 +5269,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7128fa59622fe6eae7418314328a4566c41abdca0fef3812f820b9acb424749b"
+      "sourceSha256": "10179e20afc23ba15dff694b6a46d86433dbf330c2845c6eb3635890e45815bf"
     },
     {
       "id": "forensic-review-rev42",
@@ -10341,6 +10341,10 @@ window.DOCS_INDEX = {
       ],
       "links": [
         {
+          "to": "design-session-profiler",
+          "rel": "documents"
+        },
+        {
           "to": "design-reader-first-handbook",
           "rel": "documents"
         },
@@ -10422,7 +10426,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "80ddde518e4c324248a18f249f1aadad41f589a19ba11f271675de6a53cd6f2c"
+      "sourceSha256": "a80411b82e81e2507373b37b52626b1d10da5e7cd7144c4c0522d5515f950230"
     },
     {
       "id": "forensic-review-rev48-proof",
@@ -12078,6 +12082,58 @@ window.DOCS_INDEX = {
       ],
       "links": [
         {
+          "to": "design-agent-focus-controls",
+          "rel": "documents"
+        },
+        {
+          "to": "design-coord-collaboration-phase4",
+          "rel": "documents"
+        },
+        {
+          "to": "design-coordination-runtime-v2",
+          "rel": "documents"
+        },
+        {
+          "to": "design-decision-interrogation",
+          "rel": "documents"
+        },
+        {
+          "to": "design-liveness-and-track",
+          "rel": "documents"
+        },
+        {
+          "to": "design-marker-completeness-lint",
+          "rel": "documents"
+        },
+        {
+          "to": "design-native-app-ui-skill-extension",
+          "rel": "documents"
+        },
+        {
+          "to": "design-native-profile-controls",
+          "rel": "documents"
+        },
+        {
+          "to": "design-one-command-adoption",
+          "rel": "documents"
+        },
+        {
+          "to": "design-owner-review",
+          "rel": "documents"
+        },
+        {
+          "to": "design-session-profiler",
+          "rel": "documents"
+        },
+        {
+          "to": "design-skill-evolution",
+          "rel": "documents"
+        },
+        {
+          "to": "design-tier2-proof-pack-sections",
+          "rel": "documents"
+        },
+        {
           "to": "design-reader-first-handbook",
           "rel": "documents"
         },
@@ -12155,7 +12211,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "93d9ee9c71540085ea2cc024fae791646d5c525057a1e491e6e3a0c5c1804b9a"
+      "sourceSha256": "2339cb4777b78d9231b0d65350123d8d9142aece5d33f741a856c9e7b1714ac2"
     }
   ],
   "surfaces": [
@@ -12563,5 +12619,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "475bce46f95fd1a9ff59cdd15468d539877cf8a1b3468061b3fbaabf81df1a4a"
+  "graphSha256": "32c848a2c7276c1d955b41ae3ffbce4a2e73082b39909d948038557f108952c9"
 };

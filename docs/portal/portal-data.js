@@ -7454,6 +7454,11 @@ window.PORTAL_DATA = {
       },
       {
         "from": "privacy-review",
+        "to": "design-session-profiler",
+        "rel": "documents"
+      },
+      {
+        "from": "privacy-review",
         "to": "design-typed-seam-requests",
         "rel": "documents"
       },
@@ -8419,6 +8424,11 @@ window.PORTAL_DATA = {
       },
       {
         "from": "threat-model",
+        "to": "design-agent-focus-controls",
+        "rel": "documents"
+      },
+      {
+        "from": "threat-model",
         "to": "design-aiforward-cli",
         "rel": "documents"
       },
@@ -8439,6 +8449,11 @@ window.PORTAL_DATA = {
       },
       {
         "from": "threat-model",
+        "to": "design-coord-collaboration-phase4",
+        "rel": "documents"
+      },
+      {
+        "from": "threat-model",
         "to": "design-coord-core-phase1",
         "rel": "documents"
       },
@@ -8454,12 +8469,32 @@ window.PORTAL_DATA = {
       },
       {
         "from": "threat-model",
+        "to": "design-coordination-runtime-v2",
+        "rel": "documents"
+      },
+      {
+        "from": "threat-model",
+        "to": "design-decision-interrogation",
+        "rel": "documents"
+      },
+      {
+        "from": "threat-model",
         "to": "design-docs-explorer-grounding-spatial-navigation",
         "rel": "documents"
       },
       {
         "from": "threat-model",
         "to": "design-leader-designation",
+        "rel": "documents"
+      },
+      {
+        "from": "threat-model",
+        "to": "design-liveness-and-track",
+        "rel": "documents"
+      },
+      {
+        "from": "threat-model",
+        "to": "design-marker-completeness-lint",
         "rel": "documents"
       },
       {
@@ -8474,7 +8509,27 @@ window.PORTAL_DATA = {
       },
       {
         "from": "threat-model",
+        "to": "design-native-app-ui-skill-extension",
+        "rel": "documents"
+      },
+      {
+        "from": "threat-model",
         "to": "design-native-ownership-enforcement",
+        "rel": "documents"
+      },
+      {
+        "from": "threat-model",
+        "to": "design-native-profile-controls",
+        "rel": "documents"
+      },
+      {
+        "from": "threat-model",
+        "to": "design-one-command-adoption",
+        "rel": "documents"
+      },
+      {
+        "from": "threat-model",
+        "to": "design-owner-review",
         "rel": "documents"
       },
       {
@@ -8495,6 +8550,21 @@ window.PORTAL_DATA = {
       {
         "from": "threat-model",
         "to": "design-reader-first-handbook",
+        "rel": "documents"
+      },
+      {
+        "from": "threat-model",
+        "to": "design-session-profiler",
+        "rel": "documents"
+      },
+      {
+        "from": "threat-model",
+        "to": "design-skill-evolution",
+        "rel": "documents"
+      },
+      {
+        "from": "threat-model",
+        "to": "design-tier2-proof-pack-sections",
         "rel": "documents"
       },
       {
