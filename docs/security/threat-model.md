@@ -200,7 +200,7 @@ The pack-evolution capabilities are **local developer/CI tooling** — no networ
 | [design-reader-first-handbook](design/reader-first-handbook.md) | A dependency changes silently | Prevent/detect | Pinned local marked 18.0.14, retained MIT license/provenance, SHA-256 guard; no runtime CDN. |
 | [design-reader-first-handbook](design/reader-first-handbook.md) | Unknown page or damaged data strands the reader | Recover | Visible recovery, overview/source link and working navigation; browser checks cover both states. |
 
-<!-- rolled up from 16 artifact(s) by docs-graph.py rollup on 2026-10-18 -->
+<!-- rolled up from 16 artifact(s) by docs-graph.py rollup on 2026-10-19 -->
 
 <!-- END GENERATED -->
 
@@ -223,9 +223,5 @@ The register above can only roll up analyses that exist. These designs carry non
 | Design | Gap | Why it matters |
 |---|---|---|
 | [`agent-focus-controls.md`](../design/agent-focus-controls.md) | no `Adversarial analysis (STRIDE-lite)` section | the design shipped without the analysis its gate requires |
-| [`decision-interrogation.md`](../design/decision-interrogation.md) | no `Adversarial analysis (STRIDE-lite)` section | the design shipped without the analysis its gate requires |
 | [`marker-completeness-lint.md`](../design/marker-completeness-lint.md) | no `Adversarial analysis (STRIDE-lite)` section | the design shipped without the analysis its gate requires |
-| [`one-command-adoption.md`](../design/one-command-adoption.md) | no `Adversarial analysis (STRIDE-lite)` section | the design shipped without the analysis its gate requires; it fetches and runs remote code (FR-093) |
-| [`session-profiler.md`](../design/session-profiler.md) | no `Adversarial analysis (STRIDE-lite)` section | the design shipped without the analysis its gate requires; it reads harness session telemetry |
-| [`skill-evolution.md`](../design/skill-evolution.md) | no `Adversarial analysis (STRIDE-lite)` section | the design shipped without the analysis its gate requires |
 | [`tier2-proof-pack-sections.md`](../design/tier2-proof-pack-sections.md) | no `Adversarial analysis (STRIDE-lite)` section | the design shipped without the analysis its gate requires |

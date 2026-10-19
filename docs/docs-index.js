@@ -3962,7 +3962,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "8f7efee872426c1e831f255977ae2c8e3a344fa80120c7a88284ac10a209f079"
+      "sourceSha256": "9b567cb495efeb8a1c75c5f57155bf4594d016c5f63cd4fcd4063b3832f8a307"
     },
     {
       "id": "design-docs-explorer-grounding-spatial-navigation",
@@ -4374,7 +4374,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "6e96c5fc7f988c68229ff3b817483d68a9929f5eccbb0057180183fa32af1bf8"
+      "sourceSha256": "7937416c1e2fcdb7085837556d6cbc5967b526aaea36d170699efbb5fdf9b1da"
     },
     {
       "id": "design-owner-review",
@@ -4571,7 +4571,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "eef4e4c8b9bf1ed5a4c6a48e190c199b61c6c4a9cefc7a54fac559edff5d87cb"
+      "sourceSha256": "7b3c6c3609e2fe6ff4674b4ace3b4158e298dece6733a6e075d732dd8f6ea3c9"
     },
     {
       "id": "design-skill-evolution",
@@ -4617,7 +4617,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "6230e266599a25bc52d209a59fdfab99e586edf843fbde49d9cf31d1a4180cca"
+      "sourceSha256": "f3df30231cad57654f07cc9c15560e9b99fbc6f87c157571cfd697ef633ff7b1"
     },
     {
       "id": "design-tier2-proof-pack-sections",
@@ -4798,7 +4798,7 @@ window.DOCS_INDEX = {
       "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "",
-      "reviewBy": "2026-09-25",
+      "reviewBy": "2027-04-19",
       "reviewSuggested": [],
       "summary": "The project's durable, committed activity & decision history — an append-only audit log of every meaningful prompt/skill/script and a curated change log of design decisions — the committed counterpart to a session's ephemeral store, so work compounds across sessions. This node represents the bundle in the knowledge graph.",
       "tags": [
@@ -4819,7 +4819,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c0f651f39d848e9b3919782a0f5701b7d6b40a38426d5219d3ae3a8524344f79"
+      "sourceSha256": "8cbe2f627ed5cd6c9ddddef384e3f36c233c9b851b07af62b4dabda6753e8650"
     },
     {
       "id": "backtest-optimize-graph",
@@ -5193,12 +5193,12 @@ window.DOCS_INDEX = {
       "path": "docs/backlog/forensic-review-20260712-model-orchestration.md",
       "title": "Forensic Review Backlog — Model orchestration",
       "type": "doc",
-      "status": "proposed",
+      "status": "resolved",
       "owner": "@timianmalloo",
       "phase": "pack-evolution",
-      "reviewBy": "2026-10-10",
+      "reviewBy": "2027-04-19",
       "reviewSuggested": [],
-      "summary": "Historical remediation backlog from the model-orchestration forensic review. The capability was reverted; orchestration-specific items are closed by removal. FR-008 and residual FR-010 remain independent repository findings.",
+      "summary": "Historical remediation backlog from the model-orchestration forensic review. The capability was reverted; orchestration-specific items are closed by removal. Reviewed 2026-10-19: the two residual items, FR-008 (bundle/CI oracle) and FR-010 (public docs), are resolved by later work. Nothing here is open.",
       "tags": [
         "backlog",
         "model-orchestration"
@@ -5214,7 +5214,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "6c4e8d947e823f9469d0f76eabe6cf2059f14662712f1e983faf0319d4fd49aa"
+      "sourceSha256": "56ed414f8cdcd8e01a45231af9ff9ef16e7c54de4144f68b60930f3f230892a6"
     },
     {
       "id": "forensic-review-rev108",
@@ -5300,7 +5300,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "5b7f52b3e4421b5aa219d98398d36d10b9755a5019672c1fd3296235f7dc05b2"
+      "sourceSha256": "698e524306e30222a73cf6b9b74e57e92c83545dac1f1efef7cd8b32b71d30c5"
     },
     {
       "id": "forensic-review-rev42",
@@ -10457,7 +10457,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a80411b82e81e2507373b37b52626b1d10da5e7cd7144c4c0522d5515f950230"
+      "sourceSha256": "7fd92ddfbbd98b8c9f50de3417fc65c2ec472bd46761b083fead11d507e223ac"
     },
     {
       "id": "forensic-review-rev48-proof",
@@ -12242,7 +12242,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "2339cb4777b78d9231b0d65350123d8d9142aece5d33f741a856c9e7b1714ac2"
+      "sourceSha256": "fe730d0053b702c7e5f7d2d92d3ea224949c178d7b2fc8df66d6f1fce39e40fd"
     }
   ],
   "surfaces": [
@@ -12658,5 +12658,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "17d7876f84d0a544351f3dda22241d3b1027cd5137a61e14709b0df8af34f13b"
+  "graphSha256": "e84e22b8e1650ded53228d119478fa2b9c7fa6f453246676c047c2b68f25549d"
 };

@@ -3020,10 +3020,10 @@ window.PACK_INDEX = {
 "cat": "graph",
 "id": "forensic-review-backlog-20260712",
 "title": "Forensic Review Backlog — Model orchestration",
-"summary": "Historical remediation backlog from the model-orchestration forensic review. The capability was reverted; orchestration-specific items are closed by removal. FR-008 and residual FR-010 remain independent repository findings.",
+"summary": "Historical remediation backlog from the model-orchestration forensic review. The capability was reverted; orchestration-specific items are closed by removal. Reviewed 2026-10-19: the two residual items, FR-008 (bundle/CI oracle) and FR-010…",
 "path": "docs/backlog/forensic-review-20260712-model-orchestration.md",
 "kind": "doc",
-"text": "forensic review backlog — model orchestration historical remediation backlog from the model-orchestration forensic review. the capability was reverted; orchestration-specific items are closed by removal. fr-008 and residual fr-010 remain independent repository findings. backlog model-orchestration refines forensic-review-20260712 depends-on architecture"
+"text": "forensic review backlog — model orchestration historical remediation backlog from the model-orchestration forensic review. the capability was reverted; orchestration-specific items are closed by removal. reviewed 2026-10-19: the two residual items, fr-008 (bundle/ci oracle) and fr-010 (public docs), are resolved by later work. nothing here is open. backlog model-orchestration refines forensic-review-20260712 depends-on architecture"
 },
 {
 "cat": "graph",
