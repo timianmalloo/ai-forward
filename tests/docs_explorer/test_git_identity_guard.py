@@ -94,6 +94,74 @@ class EvaluateTests(unittest.TestCase):
         self.assertIsNone(reason)
 
 
+class ProbeTableTests(unittest.TestCase):
+    """FR-088: the commands `evaluate()` allowed although each one sets an identity, and the
+    text it blocked although nothing runs git. The guard reads command words, not text."""
+
+    SETS_AN_IDENTITY = (
+        "git -C . config user.name X",
+        "git config --file .git/config user.email X",
+        "git config -f .git/config user.email X",
+        "git config --worktree user.name X",
+        "git config set user.name X",
+        "git config set --global user.email X",
+        "git config --replace-all user.name X",
+        "git config author.name X",
+        "git config committer.email X",
+        "git --git-dir=.git config user.name X",
+        "git -c core.pager=cat -c user.email=a@b commit -m x",
+        "git --config-env=user.name=NAME commit -m x",
+        "GIT_AUTHOR_NAME=X git commit -m y",
+        "GIT_COMMITTER_EMAIL=x@y git commit -m y",
+        "env GIT_AUTHOR_EMAIL=x@y git commit -m y",
+        "export GIT_AUTHOR_NAME=X",
+        "$env:GIT_AUTHOR_NAME = 'X'",
+        "$env:GIT_COMMITTER_EMAIL='x@y'",
+        "git commit --author='X <x@y>' -m y",
+        "git commit --author 'X <x@y>' -m y",
+        "/usr/bin/git config user.name X",
+        "git.exe config user.name X",
+        "git status\ngit config user.name X",
+        "bash -c \"git config user.name X\"",
+        "pwsh -Command \"git config user.email X\"",
+    )
+
+    SETS_NOTHING = (
+        "echo 'docs: git config user.name X is forbidden' > notes.md",
+        "grep -n \"git config user.name\" docs/a.md",
+        "git commit -m 'never run git config user.name X'",
+        "git commit -m \"--author=X is wrong\"",
+        "git -C . config user.name",
+        "git config get user.name",
+        "git config --get-all user.email",
+        "git config --unset user.name",
+        "git config --list",
+        "git log --author=X",
+        "echo GIT_AUTHOR_NAME=X",
+        "git commit --reset-author -m y",
+    )
+
+    def _decide(self, command):
+        return self.g.evaluate("claude", {"hook_event_name": "PreToolUse", "tool_name": "Bash",
+                                          "tool_input": {"command": command}})
+
+    def setUp(self):
+        self.g = _load()
+
+    def test_every_identity_setting_form_is_blocked(self):
+        for command in self.SETS_AN_IDENTITY:
+            with self.subTest(command=command):
+                self.assertIsNotNone(self._decide(command))
+
+    def test_text_that_only_mentions_an_identity_is_never_blocked(self):
+        for command in self.SETS_NOTHING:
+            with self.subTest(command=command):
+                self.assertIsNone(self._decide(command))
+
+    def test_unbalanced_quotes_still_catch_a_set(self):
+        self.assertIsNotNone(self._decide("git config user.name 'X"))
+
+
 class MainSubprocessTests(unittest.TestCase):
     def _run(self, host, payload):
         return subprocess.run([sys.executable, str(GUARD), "--host", host], input=json.dumps(payload),

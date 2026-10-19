@@ -20,7 +20,7 @@ from pathlib import Path
 
 from test_upstream_adoption_integration import (recovered_revision_108_install, recovered_revision_109_install,
                                                recovered_revision_110_install, recovered_revision_111_install,
-                                               recovered_revision_112_install)
+                                               recovered_revision_112_install, recovered_revision_113_install)
 
 REPO = Path(__file__).resolve().parents[2]
 INSTALL = "pack/adapters/INSTALL.md"
@@ -121,7 +121,7 @@ class Revision113MetadataTests(unittest.TestCase):
     """Revision 113: the one delta that records the new AGENTS.md size in the Muse profile."""
 
     def test_revision_113_is_the_one_muse_bytes_delta(self):
-        raw = (REPO / INSTALL).read_bytes()
+        raw = recovered_revision_113_install()
         frontmatter = raw.split(b"---\n", 2)[1].decode("utf-8")
         self.assertRegex(frontmatter, r"(?m)^revision: 113$")
         self.assertIn("bundle_version: '2026.10.18.1'", frontmatter)
@@ -133,6 +133,26 @@ class Revision113MetadataTests(unittest.TestCase):
         with self.assertRaises(AssertionError):
             recovered_revision_112_install(raw.replace(b"area: transport-unparsed-extension-tail",
                                                        b"area: transport-unparsed-extension-taiL", 1))
+
+
+class Revision114MetadataTests(unittest.TestCase):
+    """Revision 114: the one delta that stops the edit hook asking (EDIT-ASK) and hardens the
+    identity guard (FR-088) and the byte-code cache (FR-086)."""
+
+    def test_revision_114_is_the_one_edits_never_ask_delta(self):
+        raw = (REPO / INSTALL).read_bytes()
+        frontmatter = raw.split(b"---\n", 2)[1].decode("utf-8")
+        self.assertRegex(frontmatter, r"(?m)^revision: 114$")
+        self.assertIn("bundle_version: '2026.10.19.1'", frontmatter)
+        self.assertEqual(1, frontmatter.count("  - { type: changed,"))
+        self.assertIn("area: edits-never-ask-and-guard-hardening", frontmatter)
+        for path in ("scripts/coord-core.py", "adapters/hooks/git-identity-guard.py",
+                     "adapters/hooks/dispatch.py", "adapters/INSTALL.md"):
+            self.assertTrue((REPO / "pack" / path).is_file(), path)
+        self.assertEqual(293252, len(recovered_revision_113_install(raw)))
+        with self.assertRaises(AssertionError):
+            recovered_revision_113_install(raw.replace(b"area: muse-agents-md-bytes",
+                                                       b"area: muse-agents-md-byteS", 1))
 
 
 if __name__ == "__main__":

@@ -10,6 +10,7 @@ Two are written to fail first:
   P21  a rate over an empty corpus is not a measurement (architecture R4).
 """
 import importlib.util
+import inspect
 import json
 import os
 import re
@@ -501,7 +502,8 @@ class NativeHookTests(GitCase):
             payload = json.dumps({"tool_name": "Edit", "tool_input": {"file_path": path}})
             self.assertEqual("deny", self.decision(payload, "claude")["permissionDecision"])
         payload = json.dumps({"tool_name": "Write", "tool_input": {}})
-        self.assertEqual("ask", self.decision(payload, "claude")["permissionDecision"])
+        result = self.run_cli("hook", "--host", "claude", stdin=payload, session="worker")
+        self.assertEqual({}, json.loads(result.stdout), "no decision, never a grant (EDIT-ASK)")
 
     def test_case_alias_is_checked_on_case_insensitive_filesystem(self):
         alternate = self.repo / "HELD.TXT"
@@ -674,7 +676,7 @@ class SiblingWorktreeWriteTests(PrimaryWriteGuardTests):
         for spelled in (alias / "x.md", via / "escape" / "x.md"):
             with self.subTest(path=str(spelled)):
                 answer = self.decision(self.hook_from(self.repo, spelled))
-                self.assertEqual("ask", answer["permissionDecision"])
+                self.assertEqual("deny", answer["permissionDecision"])  # EDIT-ASK: refused, not asked
                 self.assertIn("outside this repository", answer["permissionDecisionReason"])
 
 
@@ -719,18 +721,16 @@ class HookTests(GitCase):
         self.assertIn("no write to a coordinated path",
                       out["hookSpecificOutput"]["permissionDecisionReason"])
 
-    def test_P8_hook_asks_on_malformed_payload_and_never_raises(self):
-        """G1. A hook that crashes on a bad payload blocks every edit in the session."""
+    def test_P8_hook_never_raises_or_asks_on_malformed_payload(self):
+        """G1. A hook that crashes on a bad payload blocks every edit in the session.
+        EDIT-ASK: it answers no decision (`{}`) or `allow`, never `ask`."""
         self.commit("a.txt")
         for payload in ("not json", "", "[]", "null", '{"tool_input": 7}'):
             result = self.run_cli("hook", session="s1", stdin=payload)
             self.assertEqual(result.returncode, 0, "payload %r crashed the hook" % payload)
             out = json.loads(result.stdout)
-            decision = out["hookSpecificOutput"]["permissionDecision"]
-            self.assertIn(decision, ("ask", "allow"))
-            if decision == "ask":
-                self.assertIn("NOT CHECKED",
-                              out["hookSpecificOutput"]["permissionDecisionReason"])
+            self.assertIn(out.get("hookSpecificOutput", {}).get("permissionDecision"),
+                          (None, "allow"), payload)
 
     def test_P9_hook_always_exits_zero(self):
         """The contract asymmetry: the harness reads the JSON, not the exit code. A
@@ -742,8 +742,7 @@ class HookTests(GitCase):
             self.assertEqual(result.returncode, 0)
         result = self.run_cli("hook", session=None, stdin=self.PAYLOAD.format(sid="x", p="a"))
         self.assertEqual(result.returncode, 0)
-        self.assertEqual(json.loads(result.stdout)["hookSpecificOutput"]["permissionDecision"],
-                         "ask")
+        self.assertEqual({}, json.loads(result.stdout), "no identity is no decision (EDIT-ASK)")
 
     def test_P10_hook_ignores_session_id_in_payload(self):
         """A1 / B4 spoofing. Identity comes from the environment, never from the payload."""
@@ -770,10 +769,67 @@ class HookTests(GitCase):
         for bad in ("../" * 40 + "etc/passwd", "src/" + "a" * 9000):
             result, out = self.hook(bad)
             self.assertEqual(result.returncode, 0)
-            self.assertIn(out["hookSpecificOutput"]["permissionDecision"], ("ask", "deny"))
+            self.assertEqual("deny", out["hookSpecificOutput"]["permissionDecision"])
 
 
 # --------------------------------------------------------------------- pre-commit
+
+class EditsNeverPromptTests(GitCase):
+    """EDIT-ASK (owner ruling, 2026-10-19): an edit never asks for permission. Claude Code
+    reads a PreToolUse `ask` as "prompt now" even under bypass permissions, and the hook
+    returned it whenever it could not check -- no AGENT_SESSION, no record, an unreadable
+    payload -- so a consuming repo was prompted on every edit. The hook now grants a write it
+    checked (`allow`), refuses one it must (`deny`), or has no opinion (`{}`) and leaves the
+    prompt to the session's own permission mode. FR-089 closes under the same ruling: `allow`
+    on a free path is the intent."""
+
+    def run_hook(self, payload, session="s1", host="claude"):
+        args = ["hook"] + (["--host", host] if host else [])
+        text = payload if isinstance(payload, str) else json.dumps(payload)
+        result = self.run_cli(*args, session=session, stdin=text)
+        self.assertEqual(0, result.returncode, result.stderr)
+        return json.loads(result.stdout)
+
+    @staticmethod
+    def edit(path):
+        return {"tool_name": "Edit", "tool_input": {"file_path": path}}
+
+    def test_an_unverifiable_edit_gets_no_decision_never_ask(self):
+        self.commit("a.txt")
+        cases = (("no record", self.edit("a.txt"), "s1"),
+                 ("no identity", self.edit("a.txt"), None),
+                 ("unreadable payload", "not json", "s1"),
+                 ("not an object", "[]", "s1"),
+                 ("a write without a path", {"tool_name": "Write", "tool_input": {}}, "s1"))
+        for host in (None, "claude"):
+            for label, payload, session in cases:
+                with self.subTest(host=host, case=label):
+                    self.assertEqual({}, self.run_hook(payload, session, host))
+
+    def test_a_checked_edit_is_granted_or_refused_never_asked(self):
+        self.commit("a.txt")
+        self.assertEqual(0, self.run_cli("claim", "--wi", "w", "--path", "held.txt",
+                                         session="owner").returncode)
+        for host in (None, "claude"):
+            for path, session, expected in (("free.txt", "s1", "allow"),
+                                            ("held.txt", "owner", "allow"),
+                                            ("held.txt", "s1", "deny")):
+                with self.subTest(host=host, path=path, session=session):
+                    out = self.run_hook(self.edit(path), session, host)
+                    self.assertEqual(expected, out["hookSpecificOutput"]["permissionDecision"])
+        # A traversal: the lexical check refuses it; the native Claude host resolves it to a
+        # path outside every checkout, which WT-E leaves to the session's mode.
+        escape = self.edit("../" * 40 + "etc/passwd")
+        self.assertEqual("deny", self.run_hook(escape, "s1", None)["hookSpecificOutput"]["permissionDecision"])
+        self.assertEqual({}, self.run_hook(escape, "s1", "claude"))
+
+    def test_no_hook_source_line_answers_ask_on_the_claude_host(self):
+        # The class, swept: a new `ask` branch fails here before it reaches a session.
+        for fn in (self.m.hook_response, self.m._not_checked, self.m.cmd_hook, self.m.main):
+            lines = [line.strip() for line in inspect.getsource(fn).splitlines()
+                     if re.search(r"""['"]ask['"]""", line)]
+            self.assertEqual([], lines, fn.__name__)
+
 
 class PreCommitTests(GitCase):
     def test_P13_precommit_refuses_unclaimed_staged_file(self):

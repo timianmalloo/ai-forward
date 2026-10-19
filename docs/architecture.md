@@ -304,13 +304,15 @@ The **public surface is the deployed script bundle** — `pack/scripts/*.py`, wh
 ## Cross-cutting concerns
 
 - **Identity & trust boundaries:** no auth surface of its own, but the pack **does** run at the
-  agent's tool seam. PreToolUse hooks decide edits (`coord-core.py hook`: lease ownership; outside the repo
-  it gives no decision on Claude and refuses on the native hosts, FR-100 — WT-E/WT-E2) and refuse git-identity forgery
-  (`git-identity-guard.py`, with six known bypasses — FR-088). Open trust findings from the
-  revision-108 review: shared-temp byte-code cache (FR-086), the ownership hook's `allow` skipping
-  the user's prompt (FR-089), link-following writes (FR-092), setup from mutable `main` (FR-093),
+  agent's tool seam. PreToolUse hooks decide edits (`coord-core.py hook`: lease ownership). On
+  Claude the hook never asks (`note-20261019-edits-never-ask`, revision 114): `allow` for a checked
+  free or own path, `deny` for a held lease or a suspect path, and no decision otherwise, including
+  outside the repo (WT-E/WT-E2). The native hosts refuse what they cannot check (FR-100). The hooks
+  also refuse git-identity forgery, judged on command words (`git-identity-guard.py`, FR-088
+  resolved). Byte code is cached per user (FR-086 resolved). Open trust findings from the
+  revision-108 review: link-following writes (FR-092), setup from mutable `main` (FR-093),
   executable `session-checks.json` (FR-098). `[Verified: .claude/settings.json; pack/adapters/hooks/; docs/backlog/forensic-review-rev108.md]`
-- **Failure & resilience:** the build tools are the only runtime besides the hooks; `sync-pack.ps1` is idempotent (it mirrors source over install each run) and derives with `--root`. The guard hooks (git identity, re-read) fail open on an unreadable payload; the edit-ownership hook fails closed (`ask` on Claude, `deny` on the native hosts). `[Verified: sync-pack.ps1; git-identity-guard.py:105; coord-core.py cmd_hook]`
+- **Failure & resilience:** the build tools are the only runtime besides the hooks; `sync-pack.ps1` is idempotent (it mirrors source over install each run) and derives with `--root`. The guard hooks (git identity, re-read) fail open on an unreadable payload; the edit-ownership hook never prompts on Claude: a check it cannot run gets no decision, so the session's mode decides, and a suspect path gets `deny`. The native hosts fail closed with `deny`. `[Verified: sync-pack.ps1; git-identity-guard.py:105; coord-core.py cmd_hook]`
 - **Observability:** the audit log records every skill run with measured `duration_seconds`; the hook dispatcher can time itself into `hook-times.jsonl` (revision 110); CI records per-job durations against a trailing median (`duration-budget`). `[Verified: audit-log.py; dispatch.py; pack-consistency.yml]`
 - **Data governance / privacy:** no personal data is stored or processed by the tools. Session profiles under `docs/profiles` are published by the owner's ruling (`note-20261017-session-profiles-published`). `[Verified]`
 
@@ -326,8 +328,9 @@ The **public surface is the deployed script bundle** — `pack/scripts/*.py`, wh
 |---|---|
 | **Completed** | Architecture overview + 4 diagram families; tool/CLI reference; interactive explainer; MoC index; `_meta.json`; `docs-index.js` regenerated; findings recorded. **2026-06-22 audit:** design-doc status tables refreshed (rev-8 Doc Drift), `project-memory` ledger instantiated, explainer headless-verified, knowledge-docs-in-graph decision recorded. |
 | **2026-10-18** | Re-verified at revision 113: counts, six harness surfaces, sync scope, 18 gates, the required-check workflow, the hook trust seam. CI-speed plan P0–P9 executed (`plan-ci-speed-and-required-checks`). |
-| **Remaining** | Revision-108 backlog (`forensic-review-rev108-backlog`): open P2s FR-086, FR-088, FR-089; P3s FR-090–FR-100 less those resolved. FR-087 (manual-only CI) is resolved by CI-speed P5. FR-099 (environmental test failures) is partly resolved: the `AGENT_SESSION` leak is fixed for every test, and since revision 110 the symlink and `uv` tests pass or skip on the owner's machine, but no general skip guard exists for a host without symlink privilege or `sh`. Two artifacts are past `review-by` and keep the `docs` workflow red until reviewed. |
-| **Best next action** | Triage the rev108 P2s (FR-088 and FR-089 are the trust-boundary pair); write the six-harness ADR (FR-095). |
+| **Remaining** | Revision-108 backlog (`forensic-review-rev108-backlog`): the P2s are closed (FR-086 and FR-088 in revision 114, FR-089 by owner ruling); P3s FR-090–FR-100 less those resolved. FR-087 (manual-only CI) is resolved by CI-speed P5. FR-099 (environmental test failures) is partly resolved: the `AGENT_SESSION` leak is fixed for every test, and since revision 110 the symlink and `uv` tests pass or skip on the owner's machine, but no general skip guard exists for a host without symlink privilege or `sh`. Two artifacts are past `review-by` and keep the `docs` workflow red until reviewed. |
+| **2026-10-19** | Revision 114: edits never ask (EDIT-ASK), git-identity guard on command words (FR-088), per-user byte-code cache (FR-086). |
+| **Best next action** | Write the six-harness ADR (FR-095); triage the rev108 P3s. |
 
 ## Gate record
 

@@ -15,7 +15,8 @@ exit code and output keep their meaning:
     Equal values are kept, two strings are joined by a newline, two lists are joined, and two
     objects are merged key by key. Output that is not a JSON object is passed through as text.
 
-Byte-code caches go under the OS temp dir (sys.pycache_prefix), never into the working tree.
+Byte-code caches go under the user's own cache home (sys.pycache_prefix), never into the working
+tree, and never into a cache another user can write (FR-086): then no byte code is written.
 
 Hook time, where it is asked for (bench REC-UNREAD-A, 2026-10-17: Claude Code's record keeps no
 start for a hook, so a session's hook time was not recorded). When <git-dir>/ai-forward/
@@ -32,8 +33,8 @@ import importlib.util
 import io
 import json
 import os
+import stat
 import sys
-import tempfile
 import time
 from datetime import datetime, timezone
 
@@ -134,6 +135,29 @@ def _run(script, argv, raw):
     return (code or 0), out.getvalue()
 
 
+def _bytecode_cache():
+    """The per-user byte-code cache, or None when it is not private (FR-086).
+
+    A fixed name under the shared temp dir let another user of a POSIX host create it first
+    and plant `.pyc` files the hooks would import. This one is under the user's own cache
+    home and refused unless it and its parent are directories only their owner can write.
+    """
+    base = os.path.join(os.environ.get("XDG_CACHE_HOME") or os.path.join(os.path.expanduser("~"), ".cache"),
+                        "ai-forward")
+    path = os.path.join(base, "pycache")
+    try:
+        os.makedirs(path, mode=0o700, exist_ok=True)
+        if os.name != "nt":
+            for directory in (base, path):
+                info = os.lstat(directory)
+                if (not stat.S_ISDIR(info.st_mode) or info.st_uid != os.getuid()
+                        or info.st_mode & 0o022):
+                    return None
+    except OSError:
+        return None
+    return path
+
+
 def _git_dir(path):
     """The git dir of the checkout holding `path` (`.git`, or the directory a linked worktree's
     `.git` file names), or None outside git. Filesystem only (audit-log.py's rule)."""
@@ -187,7 +211,11 @@ def main(argv=None):
     if not route:
         return 0  # an event this surface does not wire: nothing to run, never a denial
     try:
-        sys.pycache_prefix = os.path.join(tempfile.gettempdir(), "ai-forward-pycache")
+        cache = _bytecode_cache()
+        if cache:
+            sys.pycache_prefix = cache
+        else:
+            sys.dont_write_bytecode = True
         stdin = io.TextIOWrapper(sys.stdin.buffer, encoding="utf-8", errors="replace") \
             if hasattr(sys.stdin, "buffer") else sys.stdin
         raw = "" if stdin.isatty() else stdin.read()

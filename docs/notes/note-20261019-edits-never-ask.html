@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Note 20261019 Edits Never Ask</title><style>
+:root { color-scheme: light dark; --bg:#f7f5ef; --panel:#fff; --text:#20201d;
+  --muted:#66645f; --line:#d9d5ca; --accent:#3157a4; --code:#f0eee7; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#171816; --panel:#20221f; --text:#f2f1eb; --muted:#b8b6ae;
+    --line:#3d403a; --accent:#8fb0ff; --code:#292c27; }
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text);
+  font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif; }
+main { width:min(920px,calc(100% - 32px)); margin:32px auto; padding:40px;
+  background:var(--panel); border:1px solid var(--line); border-radius:12px; }
+h1,h2,h3,h4,h5,h6 { line-height:1.2; margin:1.5em 0 .55em; }
+h1 { margin-top:0; font-size:2.2rem; } h2 { border-bottom:1px solid var(--line); padding-bottom:.3em; }
+a { color:var(--accent); } code { background:var(--code); padding:.12em .35em; border-radius:4px; }
+pre { overflow:auto; padding:16px; background:var(--code); border-radius:8px; }
+pre code { padding:0; } blockquote { margin:1em 0; padding:.2em 1em; color:var(--muted);
+  border-left:4px solid var(--line); }
+table { width:100%; border-collapse:collapse; margin:1em 0; display:block; overflow:auto; }
+th,td { padding:.55em .75em; border:1px solid var(--line); text-align:left; vertical-align:top; }
+th { background:var(--code); } hr { border:0; border-top:1px solid var(--line); }
+.source { color:var(--muted); font-size:.9rem; margin-bottom:2rem; }
+@media (max-width:640px) { main { width:100%; margin:0; padding:24px 18px; border:0; border-radius:0; } }
+</style></head><body><main><div class="source">Rendered from note-20261019-edits-never-ask.md</div><h1>Decision — an edit never asks for permission</h1>
+<p><strong>Date:</strong> 2026-10-19 · <strong>Decided by:</strong> the owner · <strong>Executed:</strong> revision 114 (<code>coord-core.py</code>)</p>
+<h2>The ruling</h2>
+<p>The owner, in session: <em>&quot;I should not have to give permission for edits … when I run in bypass permissions or some form of YOLO the asking for permissions gets in the way … so ensure that on edits I DON&#x27;T have to provide permission.&quot;</em></p>
+<h2>What the hook answers on the Claude host</h2>
+<table><thead><tr><th>Condition</th><th>Answer</th><th>Effect</th></tr></thead><tbody><tr><td>Checked, and the path is free or under your own lease</td><td><code>allow</code></td><td>No prompt in any mode</td></tr><tr><td>Checked, and another session holds the lease</td><td><code>deny</code></td><td>Refused with the holder named</td></tr><tr><td>A traversal (<code>../…</code>), or an alias inside the checkout whose target is outside it</td><td><code>deny</code></td><td>Refused; the path itself is suspect</td></tr><tr><td>A write into the primary checkout from a linked worktree (PRIM-A)</td><td><code>deny</code></td><td>Unchanged</td></tr><tr><td>A path outside every checkout of the repository (WT-E)</td><td><code>{}</code></td><td>The session&#x27;s mode decides</td></tr><tr><td>Not checked: no <code>AGENT_SESSION</code>, no coordination record, an unreadable record or payload</td><td><code>{}</code></td><td>The session&#x27;s mode decides</td></tr></tbody></table>
+<p><code>ask</code> is not among the answers. Claude Code prompts on a PreToolUse <code>ask</code> even in bypass mode, so before this ruling every &quot;not checked&quot; condition prompted on every edit. That covers any consuming repo with no coordination record. Codex, Grok, Antigravity and Copilot keep their recorded fail-closed <code>deny</code> (FR-100 tracks the cost).</p>
+<h2>Why <code>{}</code> and not <code>allow</code> for &quot;not checked&quot;</h2>
+<p><code>allow</code> would be a grant the hook did not earn: with no record or no identity it cannot know whether the path is leased. <code>{}</code> adds nothing. In bypass mode there is no prompt; in default mode Claude Code prompts as it would with no pack installed. That is the user&#x27;s own choice of mode, not the hook&#x27;s.</p>
+<h2>Controls</h2>
+<ul><li><code>tests/docs_explorer/test_coord_enforcement.py::EditsNeverPromptTests</code>. It pins each row above on</li></ul>
+<p>the default and <code>--host claude</code> paths. It also fails on any <code>&quot;ask&quot;</code> literal in <code>hook_response</code>, <code>_not_checked</code>, <code>cmd_hook</code> or <code>main</code>.</p>
+<ul><li>Register: class <strong>EDIT-ASK</strong> in <code>docs/lessons/defect-classes.md</code>.</li></ul>
+<h2>Re-open triggers</h2>
+<ul><li>A coordinated multi-agent run loses work because an unverified edit (<code>{}</code> in bypass mode) went</li></ul>
+<p>through over a lease the hook could not read.</p>
+<ul><li>Claude Code adds a hook answer that defers to the mode but still shows the agent a reason.</li></ul>
+<p>The &quot;not checked&quot; text could then travel with <code>{}</code>.</p></main></body></html>

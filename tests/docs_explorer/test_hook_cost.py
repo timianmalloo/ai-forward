@@ -20,6 +20,7 @@ import tempfile
 import unittest
 import uuid
 from pathlib import Path
+from unittest import mock
 
 from test_upstream_adoption_integration import recovered_revision_109_install, recovered_revision_110_install
 
@@ -173,6 +174,36 @@ class OneProcessPerEvent(unittest.TestCase):
         self.assertEqual(merged, {"hookSpecificOutput": {"hookEventName": "PreToolUse",
                                                          "systemMessage": "reread", "additionalContext": "mail"}})
         self.assertEqual(merge(["", ""]), "")
+
+
+class BytecodeCacheIsPrivate(unittest.TestCase):
+    """FR-086: the dispatcher kept byte code in `<temp>/ai-forward-pycache`, a fixed name. On a
+    shared POSIX host /tmp is shared, so another user could create it first and plant `.pyc`
+    files the hooks then import. The cache is now per user and refused unless only its owner
+    can write it; with no usable cache, no byte code is written."""
+
+    def setUp(self):
+        self.d = _load(DISPATCH, "dispatch_cache")
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.env = mock.patch.dict(os.environ, {"XDG_CACHE_HOME": self.tmp.name})
+        self.env.start()
+        self.addCleanup(self.env.stop)
+
+    def test_the_cache_is_per_user_not_a_fixed_name_in_shared_temp(self):
+        path = self.d._bytecode_cache()
+        self.assertEqual(Path(self.tmp.name, "ai-forward", "pycache"), Path(path))
+        self.assertNotIn("ai-forward-pycache", DISPATCH.read_text(encoding="utf-8"))
+
+    @unittest.skipIf(os.name == "nt", "Windows temp and profile directories are per user")
+    def test_a_cache_others_can_write_is_refused(self):
+        for planted in (Path(self.tmp.name, "ai-forward", "pycache"), Path(self.tmp.name, "ai-forward")):
+            with self.subTest(planted=str(planted)):
+                planted.mkdir(parents=True, exist_ok=True)
+                os.chmod(planted, 0o777)
+                self.assertIsNone(self.d._bytecode_cache())
+                os.chmod(planted, 0o700)
+        self.assertIsNotNone(self.d._bytecode_cache())
 
 
 class Migration(unittest.TestCase):

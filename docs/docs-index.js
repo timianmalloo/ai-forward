@@ -897,7 +897,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "98567ef47f95e199f8555d5aa62cd13d8d9528204f67efeff92858be5f5521ec"
+      "sourceSha256": "98efc6f5454f2076449edeac30af5f05507bb0734e5906c0b52e840098276f39"
     },
     {
       "id": "api-coord_files",
@@ -1870,7 +1870,7 @@ window.DOCS_INDEX = {
           "mermaid": "classDiagram\n  class Signature {\n    +Name name\n    +FacetList facets\n    +StyleHints? hints\n    +validate() conflicts\n    +roundTrip() bool  %% G10: identify AND generate\n  }\n  class Facet {\n    <<abstract>>\n    +String key\n  }\n  class SingleValuedFacet {\n    +Value value  %% Type, Arch, Layout, Density, Pacing, ...\n  }\n  class MultiValuedFacet {\n    +Value[] values  %% Nav, Input, Feedback, Motion, A11y (joined with +)\n  }\n  class StyleHints {\n    +String[] hints  %% bounded NL decoration, applied last\n  }\n  class Archetype {\n    +String id          %% A1..F2\n    +String name\n    +Exemplar[] exemplars\n    +Signature canonical\n    +String codegenDescriptor\n  }\n  Signature \"1\" o-- \"4..*\" Facet : composes\n  Facet <|-- SingleValuedFacet\n  Facet <|-- MultiValuedFacet\n  Signature \"0..1\" *-- \"1\" StyleHints : decorated by\n  Archetype \"1\" *-- \"1\" Signature : canonical\n  Archetype \"1\" o-- \"1..*\" Exemplar\n  note for Signature \"G4: MUST carry Type, Arch, Layout, Pacing.\\nG1: always composed with a concrete U1–U20 / S1–S10 spec.\""
         }
       ],
-      "sourceSha256": "bda8e6df0348dd139c98f90fff38b47ff847f627466618278e5c73e53422355b"
+      "sourceSha256": "abf91c4739374a144b6f02a025a14eaded78136e6ebc55143d9325ed6ad69f91"
     },
     {
       "id": "architecture-agent-coordination",
@@ -3282,6 +3282,37 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "49e143eb9ea3188dffd51bfb1656dca0cf0a74404c4ff1d716036b0ffa4d4f2c"
+    },
+    {
+      "id": "note-20261019-edits-never-ask",
+      "path": "docs/notes/note-20261019-edits-never-ask.md",
+      "title": "Decision — an edit never asks for permission",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2027-04-19",
+      "reviewSuggested": [],
+      "summary": "The owner ruled on 2026-10-19 that the pack's edit hooks never make the user approve an edit. The edit-ownership hook answers allow for a path it checked and found free or owned, deny for a held lease or a suspect path, and no decision otherwise, so the session's own permission mode decides. It never answers ask, which Claude Code turns into a prompt even in bypass mode. Closes FR-089 (the allow is the intent) and defines class EDIT-ASK. Executed in revision 114.",
+      "tags": [
+        "decision",
+        "hooks",
+        "permissions",
+        "coordination",
+        "edit-ownership"
+      ],
+      "links": [
+        {
+          "to": "forensic-review-rev108-backlog",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "4f4ce9fa572ae354b60c47815ecc7d8b4937485c3dc70eb1051e742026027f62"
     },
     {
       "id": "note-autopilot-open-questions-decisions",
@@ -4941,7 +4972,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "eca1b4f8a03fe142ff96dced8b3f125ff9389b13b4ee80b7e0fe68f3b8a1e845"
+      "sourceSha256": "a508072ad6662384a22cc0b1fb7a45188a37408d4a25f03ecda4098b66a3f4a5"
     },
     {
       "id": "docs-index",
@@ -5242,7 +5273,7 @@ window.DOCS_INDEX = {
       "phase": "assessment",
       "reviewBy": "2027-04-17",
       "reviewSuggested": [],
-      "summary": "Seventeen items from the revision-108 forensic review, FR-086 to FR-102, each with evidence, falsifiable acceptance criteria and a next skill. No P0 or P1. Four P2: shared-temp byte-code cache, manual-only CI, git-identity guard bypasses, and an ownership hook that grants writes. Eleven P3. Two were resolved during the review: FR-101 (the hook's needless prompts, PR #12) and FR-102 (bundle changes shipped without a revision bump, revision 109). The rest await triage.",
+      "summary": "Seventeen items from the revision-108 forensic review, FR-086 to FR-102, each with evidence, falsifiable acceptance criteria and a next skill. No P0 or P1. Four P2: shared-temp byte-code cache, manual-only CI, git-identity guard bypasses, and an ownership hook that grants writes. Eleven P3. Two were resolved during the review: FR-101 (the hook's needless prompts, PR #12) and FR-102 (bundle changes shipped without a revision bump, revision 109). FR-087 was resolved on 2026-10-18. FR-086 and FR-088 were resolved in revision 114, and FR-089 by owner ruling. The rest await triage.",
       "tags": [
         "forensic-review",
         "backlog",
@@ -5269,7 +5300,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "10179e20afc23ba15dff694b6a46d86433dbf330c2845c6eb3635890e45815bf"
+      "sourceSha256": "5b7f52b3e4421b5aa219d98398d36d10b9755a5019672c1fd3296235f7dc05b2"
     },
     {
       "id": "forensic-review-rev42",
@@ -12543,6 +12574,14 @@ window.DOCS_INDEX = {
       "artifactId": "note-20261017-require-ci-before-merge"
     },
     {
+      "id": "surface-notes-note-20261019-edits-never-ask",
+      "path": "docs/notes/note-20261019-edits-never-ask.html",
+      "title": "Note 20261019 Edits Never Ask",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "note-20261019-edits-never-ask"
+    },
+    {
       "id": "surface-proof-one-command-adoption",
       "path": "docs/proof/one-command-adoption.html",
       "title": "One Command Adoption",
@@ -12619,5 +12658,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "32c848a2c7276c1d955b41ae3ffbce4a2e73082b39909d948038557f108952c9"
+  "graphSha256": "17d7876f84d0a544351f3dda22241d3b1027cd5137a61e14709b0df8af34f13b"
 };
