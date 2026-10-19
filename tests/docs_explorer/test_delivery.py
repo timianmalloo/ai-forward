@@ -92,7 +92,8 @@ class DeliveryTests(unittest.TestCase):
         # FR-107: checkpoints had no deletion path; the only unlink was the writer lock, so a
         # plain project's state under ~/.local/state outlived the project.
         self.start()
-        checkpoint = self.repo / ".git" / "ai-forward" / "delivery" / "demo.json"
+        # Resolved: macOS /var -> /private/var and Windows 8.3 names spell the same path differently.
+        checkpoint = (self.repo / ".git" / "ai-forward" / "delivery" / "demo.json").resolve()
         self.assertTrue(checkpoint.is_file())
         neighbour = checkpoint.with_name("other.json")
         neighbour.write_text("{}", encoding="utf-8")

@@ -243,7 +243,9 @@ sequenceDiagram
             self.assertTrue(all(len(chunk["sha256"]) == 64 for chunk in first["chunks"]))
 
     def test_context_hash_and_paths_are_stable_for_relative_and_absolute_roots(self):
-        with tempfile.TemporaryDirectory(dir=REPO) as temp:
+        # Outside the repository: a temp dir inside REPO raced the mirror test's copytree of the
+        # whole repo under xdist (it vanished mid-copy). The relative root is taken from its own cwd.
+        with tempfile.TemporaryDirectory() as temp:
             root = Path(temp) / "docs"
             root.mkdir()
             self._write_artifact(
@@ -253,9 +255,9 @@ sequenceDiagram
                 links=[],
                 body="## Contract\n\nStable checkout identity.\n",
             )
-            relative_root = root.relative_to(REPO)
+            relative_root = root.relative_to(temp)
 
-            relative = self._run_context(relative_root, "root", max_bytes=8192)
+            relative = self._run_context(relative_root, "root", max_bytes=8192, cwd=temp)
             absolute = self._run_context(root.resolve(), "root", max_bytes=8192)
 
             self.assertEqual(relative["graphSha256"], absolute["graphSha256"])
@@ -1381,7 +1383,7 @@ sequenceDiagram
         self.assertNotIn(seeded_token, raw)
         self.assertNotIn(seeded_user, raw)
 
-    def _run_context(self, root, artifact_id, max_bytes):
+    def _run_context(self, root, artifact_id, max_bytes, cwd=None):
         result = self._run_raw(
             root,
             "--id",
@@ -1394,12 +1396,13 @@ sequenceDiagram
             "2",
             "--max-bytes",
             str(max_bytes),
+            cwd=cwd,
         )
         self.assertEqual(0, result.returncode, result.stderr.decode("utf-8"))
         self.assertEqual(b"", result.stderr)
         return json.loads(result.stdout.decode("utf-8"))
 
-    def _run_raw(self, root, *arguments):
+    def _run_raw(self, root, *arguments, cwd=None):
         return subprocess.run(
             [
                 sys.executable,
@@ -1411,6 +1414,7 @@ sequenceDiagram
             ],
             capture_output=True,
             check=False,
+            cwd=cwd,
         )
 
     def _context_args(self, root, max_bytes=8192):
