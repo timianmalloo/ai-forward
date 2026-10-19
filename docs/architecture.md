@@ -48,8 +48,10 @@ Generated knowledge documents under `.claude/knowledge/` and `docs/ai-forward-pa
 
 The pack ships to **six harness surfaces**: Claude Code (`.claude/`), GitHub Copilot (`.github/`),
 Codex and Muse (`.agents/skills/`, plus `.codex/`), Grok Build (`.grok/`) and Antigravity
-(`.agents/`). Each has an adapter under `pack/adapters/<harness>/`; no ADR records the
-six-harness decision yet (FR-095). `[Verified: pack/adapters/, repo root]`
+(`.agents/`). Each has an adapter under `pack/adapters/<harness>/`. Supporting every harness a
+developer uses is the pack's fundamental purpose, not an option: **ADR-0014** (meet the developer in
+their harness) requires a native surface per harness, in the host's own shapes, verified on the host,
+with parity as the floor. Local LLMs are in scope and not yet supported (FR-108). `[Verified: pack/adapters/, repo root; docs/adr/0014]`
 
 ## Archetype & rationale
 

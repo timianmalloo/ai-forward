@@ -768,6 +768,11 @@ window.PORTAL_DATA = {
             "title": "Use conversation-native decision interrogation",
             "summary": "Chooses shared prompt guidance and native host questions instead of a new decision-runtime subsystem.",
             "path": "../../docs/adr/0013-conversation-native-interrogation.md"
+          },
+          {
+            "title": "ADR-0014: Meet the developer in their harness — every harness they use is a first-class target",
+            "summary": "The pack's fundamental purpose is to meet the developer where they are. Every harness a developer uses is supported natively and verified on that host, not reached through another host's compatibility layer. Six are supported today (Claude Code, GitHub...",
+            "path": "../../docs/adr/0014-meet-the-developer-in-their-harness.md"
           }
         ]
       },
@@ -2144,6 +2149,12 @@ window.PORTAL_DATA = {
         "type": "adr",
         "title": "Use conversation-native decision interrogation",
         "summary": "Chooses shared prompt guidance and native host questions instead of a new decision-runtime subsystem."
+      },
+      {
+        "id": "adr-0014-meet-the-developer-in-their-harness",
+        "type": "adr",
+        "title": "ADR-0014: Meet the developer in their harness — every harness they use is a first-class target",
+        "summary": "The pack's fundamental purpose is to meet the developer where they are. Every harness a developer uses is supported natively and verified on that host, not..."
       },
       {
         "id": "api-apply-learnings",
@@ -4472,6 +4483,21 @@ window.PORTAL_DATA = {
         "from": "adr-0013-conversation-native-interrogation",
         "to": "architecture-decision-interrogation",
         "rel": "refines"
+      },
+      {
+        "from": "adr-0014-meet-the-developer-in-their-harness",
+        "to": "architecture",
+        "rel": "relates-to"
+      },
+      {
+        "from": "adr-0014-meet-the-developer-in-their-harness",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "adr-0014-meet-the-developer-in-their-harness",
+        "to": "forensic-review-rev108-backlog",
+        "rel": "relates-to"
       },
       {
         "from": "api-apply-learnings",

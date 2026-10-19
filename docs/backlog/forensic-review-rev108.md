@@ -216,6 +216,10 @@ security or migration risk · **P2** material maintainability, operability or go
 - **Remediation:** one ADR: which harnesses, why, the per-harness cost (surfaces, gates,
   `AGENTS.md` bytes), and the criteria to add or drop one.
 - **Next skill:** `/define-architecture` (ADR only).
+- **Resolved 2026-10-19** by `adr-0014-meet-the-developer-in-their-harness`. The owner's framing: harness
+  support is not a cost to justify but the pack's fundamental purpose, to meet the developer where they
+  are. The ADR records the six supported harnesses, the obligations (a native surface, the host's own
+  shapes, verified on the host, parity as the floor), and that a harness is never dropped for cost.
 
 ### FR-096 · todo · P3 — `.codex/hooks.json` has no pack source file
 - **Evidence:** no file under `pack/` is copied to it; `sync-pack.ps1:391-395` refreshes it only
@@ -282,6 +286,16 @@ surfaced these. None is fixed.
 - **Remediation:** a `delivery.py forget <task>` verb, or document the path.
 - **Next skill:** `/implement`.
 
+### FR-108 · todo · P2 — Local LLMs have no support
+- **Evidence:** no file under `pack/`, `docs/adr/` or `docs/notes/` mentions Ollama, LM Studio, llama.cpp,
+  vLLM or a local model. The owner codes with local LLMs (ADR-0014).
+- **Consequence:** in a repo with the pack applied, a local-model session gets whatever its host happens
+  to load, with no path map, no tuning for smaller context windows, and no verification.
+- **Remediation:** first establish which harness or tool runs the local models and how it discovers
+  instructions and skills (Spike Protocol), then give it a native surface under ADR-0014's obligations.
+- **Owner:** the owner (which setup), then Domain Researcher. **Next skill:** `/investigate` (spike), then
+  `/implement`.
+
 ## Resolved during the review
 
 ### FR-101 · issue · P3 — The edit-ownership hook prompted for writes it does not govern — **resolved**
@@ -324,7 +338,7 @@ surfaced these. None is fixed.
 | FR-093 | P3 | risk | Setup from mutable `main` | `/implement` |
 | FR-090 | P3 | issue | Stale documented counts | `/document` |
 | FR-091 | P3 | issue | Hand-copied CI gate list | `/implement` |
-| FR-095 | P3 | todo | No six-harness ADR | `/define-architecture` |
+| FR-095 | P3 | todo | No six-harness ADR | resolved (ADR-0014) |
 | FR-096 | P3 | todo | `.codex/hooks.json` unsourced | `/implement` |
 | FR-101 | P3 | issue | Hook prompted outside its domain | resolved |
 | FR-102 | P2 | issue | Bundle change without a revision bump | resolved |
@@ -333,3 +347,4 @@ surfaced these. None is fixed.
 | FR-105 | P3 | risk | Profiler runs the target repo's code | `/implement` |
 | FR-106 | P3 | risk | Decision answers carry no source | `/implement` |
 | FR-107 | P3 | todo | No checkpoint deletion path | `/implement` |
+| FR-108 | P2 | todo | Local LLMs have no support | owner input, then `/investigate` |

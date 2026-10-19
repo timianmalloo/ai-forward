@@ -650,6 +650,42 @@ window.DOCS_INDEX = {
       "sourceSha256": "438d940cb60f3448799147dfa913df50c29ffcbdabef47f44925706231ec1780"
     },
     {
+      "id": "adr-0014-meet-the-developer-in-their-harness",
+      "path": "docs/adr/0014-meet-the-developer-in-their-harness.md",
+      "title": "ADR-0014: Meet the developer in their harness — every harness they use is a first-class target",
+      "type": "adr",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2027-04-19",
+      "reviewSuggested": [],
+      "summary": "The pack's fundamental purpose is to meet the developer where they are. Every harness a developer uses is supported natively and verified on that host, not reached through another host's compatibility layer. Six are supported today (Claude Code, GitHub Copilot, Codex, Grok Build, Antigravity, Muse); local LLMs are in scope and not yet supported. A harness is never dropped or degraded to save effort or bytes. Resolves FR-095.",
+      "tags": [
+        "harness",
+        "adapters",
+        "purpose",
+        "multi-harness",
+        "local-llm",
+        "owner-ruling"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        },
+        {
+          "to": "forensic-review-rev108-backlog",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "38c54aa52a65f595178de7a30d540f979db5bd1ee14889ff791eda59164b87b1"
+    },
+    {
       "id": "api-apply-learnings",
       "path": "docs/api/apply-learnings.md",
       "title": "API — apply-learnings.py",
@@ -1870,7 +1906,7 @@ window.DOCS_INDEX = {
           "mermaid": "classDiagram\n  class Signature {\n    +Name name\n    +FacetList facets\n    +StyleHints? hints\n    +validate() conflicts\n    +roundTrip() bool  %% G10: identify AND generate\n  }\n  class Facet {\n    <<abstract>>\n    +String key\n  }\n  class SingleValuedFacet {\n    +Value value  %% Type, Arch, Layout, Density, Pacing, ...\n  }\n  class MultiValuedFacet {\n    +Value[] values  %% Nav, Input, Feedback, Motion, A11y (joined with +)\n  }\n  class StyleHints {\n    +String[] hints  %% bounded NL decoration, applied last\n  }\n  class Archetype {\n    +String id          %% A1..F2\n    +String name\n    +Exemplar[] exemplars\n    +Signature canonical\n    +String codegenDescriptor\n  }\n  Signature \"1\" o-- \"4..*\" Facet : composes\n  Facet <|-- SingleValuedFacet\n  Facet <|-- MultiValuedFacet\n  Signature \"0..1\" *-- \"1\" StyleHints : decorated by\n  Archetype \"1\" *-- \"1\" Signature : canonical\n  Archetype \"1\" o-- \"1..*\" Exemplar\n  note for Signature \"G4: MUST carry Type, Arch, Layout, Pacing.\\nG1: always composed with a concrete U1–U20 / S1–S10 spec.\""
         }
       ],
-      "sourceSha256": "abf91c4739374a144b6f02a025a14eaded78136e6ebc55143d9325ed6ad69f91"
+      "sourceSha256": "22519f0d29c4651a41780c4a0299fe327ed1155895b65c0507d27543d38219bb"
     },
     {
       "id": "architecture-agent-coordination",
@@ -5300,7 +5336,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0f4d34fbfe5a3123ac0bc24a2a4404f9b6dad8aad711e9c4354a83d6bbc88697"
+      "sourceSha256": "766199e9a504ca9c30af4d0aaf450a24e4815337432bd90d2f0d50a5b8dc167e"
     },
     {
       "id": "forensic-review-rev42",
@@ -12301,6 +12337,14 @@ window.DOCS_INDEX = {
       "artifactId": "adr-0013-conversation-native-interrogation"
     },
     {
+      "id": "surface-adr-0014-meet-the-developer-in-their-harness",
+      "path": "docs/adr/0014-meet-the-developer-in-their-harness.html",
+      "title": "0014 Meet The Developer In Their Harness",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "adr-0014-meet-the-developer-in-their-harness"
+    },
+    {
       "id": "surface-specs-acp-coordination",
       "path": "docs/specs/acp-coordination.html",
       "title": "ACP multi-harness coordination specification",
@@ -12658,5 +12702,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "1514172b5e676324950ac1ee17f2284f721ee81c3de9ee42439d95c4f43977ae"
+  "graphSha256": "be80b067bf3a9a4761f591b57a4338ab6f8005d99c56d19616eeddd94ea8d983"
 };
