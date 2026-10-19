@@ -51,7 +51,8 @@ a measurement path that does not exist reports "not recorded", never a plausible
 Subcommands
   discover   list the sessions found for the repo(s) in the window
   profile    per-turn metrics + findings + fixes for the selected sessions; writes
-             docs/profiles/<sp-id>/{profile.json,profile.md} in the FIRST --repo (or --out-root)
+             <profiles>/<sp-id>/{profile.json,profile.md} for the FIRST --repo (or --out-root):
+             docs/profiles/ in the pack source repo or with --publish, else <git-dir>/ai-forward/profiles/
   compare    aggregate the same metrics by model family x harness (the tuning view)
   fixes      print the fix catalog (finding id -> pack surface -> control)
 
@@ -81,6 +82,7 @@ Python 3.8+, stdlib only. Windows-safe (utf-8 stdout, read-only SQLite URI).
 | `--limit` | newest N sessions |
 | `--out-root` | repo root that receives docs/profiles/ (default: first --repo) |
 | `--print-markdown` | _(no help text — coverage gap)_ |
+| `--publish` | write docs/profiles/ (tracked) in a repo that is not the pack source (FR-104) |
 | `--repo` | repo path (repeatable); the first one receives docs/profiles/ |
 | `--session-id` | audit session id to record |
 | `--session` | restrict to session id(s) or prefixes |
@@ -296,9 +298,21 @@ give the group its compiled share and pooled edit-distance median (never a media
 
 **Coverage gap** — no docstring in the source.
 
-### `profile_id(root)`
+### `profiles_dir(root, publish)`
+
+Where this run's profile goes, and whether that place is committed (FR-104, owner ruling
+2026-10-19). Only the pack's own source repository commits profiles by default; any other
+repository gets the checkout's untracked git dir (or the user's state dir outside git)
+unless the operator passes --publish.
+
+### `profile_id(d)`
 
 **Coverage gap** — no docstring in the source.
+
+### `scrubbed(value, scrub)`
+
+Every string in a profile, scrubbed. FR-103: prompts, titles, paths and shell evidence were
+copied into committed profiles as typed, so a token in a gated command line was published.
 
 ### `cmd_profile(args)`
 
@@ -319,5 +333,5 @@ The compile section alone, from the audit log - needs no harness store, so it an
 
 ## Coverage
 
-- Public functions: **41** · documented: **20** (**49%**)
+- Public functions: **43** · documented: **22** (**51%**)
 - Undocumented (recorded, not invented): `parse_ts`, `iso`, `pct`, `est_tokens`, `model_family`, `norm_path`, `git`, `in_repo`, `copilot_home`, `copilot_settings`, `copilot_sessions`, `claude_home`, `claude_sessions`, `profile_claude`, `render_compile_section`, `render_markdown`, `cmd_discover`, `profile_id`, `cmd_profile`, `cmd_compare`, `cmd_fixes`
