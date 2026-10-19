@@ -3281,7 +3281,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "49e143eb9ea3188dffd51bfb1656dca0cf0a74404c4ff1d716036b0ffa4d4f2c"
+      "sourceSha256": "a8fb460e00d2475526f5e9379fbc0153d9e62430455fb70a1d0bafd88950287a"
     },
     {
       "id": "note-20261019-edits-never-ask",
@@ -4571,7 +4571,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7b3c6c3609e2fe6ff4674b4ace3b4158e298dece6733a6e075d732dd8f6ea3c9"
+      "sourceSha256": "2c44d0304537bbbcc3efd5a2ab98fa67faaf30b323c112c3a6743e917ca93fea"
     },
     {
       "id": "design-skill-evolution",
@@ -4972,7 +4972,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a508072ad6662384a22cc0b1fb7a45188a37408d4a25f03ecda4098b66a3f4a5"
+      "sourceSha256": "be10dcd5f5cf97e1a8da49e5eb1a26c58c37727399c71bbe0f98fa100629fefe"
     },
     {
       "id": "docs-index",
@@ -5300,7 +5300,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "698e524306e30222a73cf6b9b74e57e92c83545dac1f1efef7cd8b32b71d30c5"
+      "sourceSha256": "0f4d34fbfe5a3123ac0bc24a2a4404f9b6dad8aad711e9c4354a83d6bbc88697"
     },
     {
       "id": "forensic-review-rev42",
@@ -12658,5 +12658,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "e84e22b8e1650ded53228d119478fa2b9c7fa6f453246676c047c2b68f25549d"
+  "graphSha256": "699ae0e3461af635aa6610f4734af3b284e735af7e1676c720cb24b4c31fadff"
 };

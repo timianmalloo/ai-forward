@@ -11,8 +11,10 @@ import json
 import os
 import pathlib
 import sqlite3
+import subprocess
 import tempfile
 import unittest
+import unittest.mock
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 SCRIPT = ROOT / "pack" / "scripts" / "session-profile.py"
@@ -227,6 +229,106 @@ class ClaudeTranscriptTests(unittest.TestCase):
         os.makedirs(empty)
         rc = sp.main(["--repo", self.repo, "--days", "0", "--copilot-home", empty, "--claude-home", empty, "discover"])
         self.assertEqual(1, rc)
+
+
+class NoSecretReachesAProfileTests(unittest.TestCase):
+    """FR-103: the profiler copied prompt previews, session titles, piped-gate command lines and
+    failed-heredoc output into docs/profiles as typed, and profiles are committed and published.
+    A token planted in a shell command came back in the evidence intact (2026-10-19). Every
+    string is now scrubbed before anything is printed or written."""
+
+    SECRETS = ("ghp_PLANTEDsecretTOKEN1234567890", "github_pat_11PLANTED0123456789abcdefghij",
+               "hunter2PLANTEDpass", "-----BEGIN OPENSSH PRIVATE KEY-----", "planted.person@example.com")
+
+    def setUp(self):
+        self.tmp = tempfile.mkdtemp()
+        self.repo = os.path.join(self.tmp, "repo")
+        os.makedirs(self.repo)
+        self.empty = os.path.join(self.tmp, "empty")
+        os.makedirs(self.empty)
+        self.chome = os.path.join(self.tmp, "claude")
+        d = os.path.join(self.chome, "projects", sp.claude_slug(self.repo))
+        os.makedirs(d)
+        tok, pat, pw, key, mail = self.SECRETS
+        recs = [
+            {"type": "ai-title", "aiTitle": "rotate " + pat, "sessionId": "c1"},
+            {"type": "user", "message": {"role": "user", "content": "use GH_TOKEN=" + tok + " and mail " + mail + "\n" + key},
+             "origin": {"kind": "human"}, "timestamp": _ts(0), "cwd": self.repo, "sessionId": "c1"},
+            {"type": "assistant", "message": {"id": "m1", "model": "claude-opus-5", "role": "assistant", "content": [
+                {"type": "text", "text": "**Goal:** x. **Done when:** y. **Tier:** T0"},
+                {"type": "tool_use", "id": "b1", "name": "Bash", "input": {
+                    "command": "export GH_TOKEN=" + tok + " && python -m pytest tests -q | tail -5", "description": "Run tests"}},
+                {"type": "tool_use", "id": "h1", "name": "Bash", "input": {
+                    "command": "python - <<'EOF'\nprint(1)\nEOF", "description": "Probe"}}],
+                "usage": {"input_tokens": 10, "cache_read_input_tokens": 50000, "cache_creation_input_tokens": 1000, "output_tokens": 200}},
+             "timestamp": _ts(1), "cwd": self.repo, "sessionId": "c1"},
+            {"type": "user", "message": {"role": "user", "content": [
+                {"type": "tool_result", "tool_use_id": "b1", "content": "ok"},
+                {"type": "tool_result", "tool_use_id": "h1", "content": "SyntaxError: password=" + pw}]},
+             "timestamp": _ts(2), "cwd": self.repo, "sessionId": "c1"},
+        ]
+        with open(os.path.join(d, "c1.jsonl"), "w", encoding="utf-8") as fh:
+            for r in recs:
+                fh.write(json.dumps(r) + "\n")
+
+    def _run(self, *extra):
+        out = io.StringIO()
+        with unittest.mock.patch("sys.stdout", out):
+            rc = sp.main(["--repo", self.repo, "--days", "0", "--copilot-home", self.empty,
+                          "--claude-home", self.chome, "profile", *extra])
+        self.assertEqual(0, rc, out.getvalue())
+        return out.getvalue()
+
+    def test_no_planted_secret_reaches_the_written_profile(self):
+        self._run("--publish")
+        written = ""
+        for dirpath, _, files in os.walk(os.path.join(self.repo, "docs", "profiles")):
+            for name in files:
+                with open(os.path.join(dirpath, name), encoding="utf-8") as fh:
+                    written += fh.read()
+        self.assertIn("[REDACTED]", written, "the fixture must reach the scrubbed fields")
+        for secret in self.SECRETS:
+            with self.subTest(secret=secret):
+                self.assertNotIn(secret, written)
+
+    def test_no_planted_secret_reaches_json_only_output(self):
+        printed = self._run("--json-only")
+        for secret in self.SECRETS:
+            with self.subTest(secret=secret):
+                self.assertNotIn(secret, printed)
+
+
+class ProfilesStayLocalOutsideThePackTests(NoSecretReachesAProfileTests):
+    """FR-104 (owner ruling, 2026-10-19): only the pack's own source repository commits session
+    profiles. Elsewhere a profile goes to the checkout's untracked git dir unless the operator
+    passes --publish, and either way the run says where it went and what a profile carries."""
+
+    def setUp(self):
+        super().setUp()
+        subprocess.run(["git", "init", "-q", self.repo], check=True, capture_output=True)
+
+    def _profiles(self):
+        return os.path.join(self.repo, "docs", "profiles")
+
+    def test_a_consuming_repo_gets_an_untracked_local_profile_and_a_notice(self):
+        printed = self._run()
+        self.assertFalse(os.path.exists(os.path.join(self.repo, "docs")), "nothing under the tracked tree")
+        local = os.path.join(self.repo, ".git", "ai-forward", "profiles", "sp-0001", "profile.md")
+        self.assertTrue(os.path.isfile(local), printed)
+        self.assertIn("not committed", printed)
+        self.assertIn("--publish", printed)
+
+    def test_publish_writes_docs_profiles_with_a_notice(self):
+        printed = self._run("--publish")
+        self.assertTrue(os.path.isfile(os.path.join(self._profiles(), "sp-0001", "profile.md")))
+        self.assertIn("tracked", printed)
+
+    def test_the_pack_source_repo_publishes_by_default(self):
+        install = os.path.join(self.repo, "pack", "adapters", "INSTALL.md")
+        os.makedirs(os.path.dirname(install))
+        open(install, "w", encoding="utf-8").close()
+        self._run()
+        self.assertTrue(os.path.isfile(os.path.join(self._profiles(), "sp-0001", "profile.md")))
 
 
 class CatalogTests(unittest.TestCase):

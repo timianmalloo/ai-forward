@@ -75,6 +75,8 @@ SECRET_RE = [
     re.compile(r"\b(?:sk|pk|ghp|gho|xox[baprs])[-_][A-Za-z0-9]{16,}\b"),
     re.compile(r"\b[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}\b"),  # email (PII)
     re.compile(r"\bAKIA[0-9A-Z]{16}\b"),
+    re.compile(r"\bgithub_pat_[A-Za-z0-9_]{20,}"),           # FR-103: fine-grained GitHub token
+    re.compile(r"-----BEGIN [A-Z ]*PRIVATE KEY-----"),        # FR-103: a pasted private key
 ]
 UNTRUSTED_ORIGINS = {"untrusted", "system", "tool", "subagent", "cron", "heartbeat"}
 

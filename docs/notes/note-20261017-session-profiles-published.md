@@ -43,6 +43,18 @@ intended and acceptable. The facts above stand; the "no basis for publication" c
 - The rev108 backlog carries no item for it. The machine-path gate's scope (`docs/` is not in
   `verify-no-machine-paths.py` `SURFACES`) is unaffected by this ruling and is not reopened here.
 
+## Addendum 2026-10-19 — scope and scrub (FR-103, FR-104; revision 115)
+
+- **Scope (owner ruling):** *"repos that install the pack should not get session profiles
+  committed without notice — just this pack."* This ruling covers the pack's own source
+  repository only. Elsewhere `session-profile.py` writes to the untracked
+  `<git-dir>/ai-forward/profiles/` and says so. `--publish` writes `docs/profiles/`, with a
+  notice that the folder is tracked.
+- **Scrub:** re-open trigger 1 was close to firing. A token planted in a piped-gate shell
+  command reached a profile verbatim (FR-103); the 8 committed profiles scanned clean. Every
+  string is now scrubbed with `dream.py`'s patterns before anything is written, and that also
+  covers emails. The publication ruling above is unchanged.
+
 ## Re-open triggers
 
 - A profile is found to contain a secret, a credential, or a third party's personal data.
