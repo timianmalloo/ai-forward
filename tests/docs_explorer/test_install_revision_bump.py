@@ -20,7 +20,8 @@ from pathlib import Path
 
 from test_upstream_adoption_integration import (recovered_revision_108_install, recovered_revision_109_install,
                                                recovered_revision_110_install, recovered_revision_111_install,
-                                               recovered_revision_112_install, recovered_revision_113_install)
+                                               recovered_revision_112_install, recovered_revision_113_install,
+                                               recovered_revision_114_install)
 
 REPO = Path(__file__).resolve().parents[2]
 INSTALL = "pack/adapters/INSTALL.md"
@@ -140,7 +141,7 @@ class Revision114MetadataTests(unittest.TestCase):
     identity guard (FR-088) and the byte-code cache (FR-086)."""
 
     def test_revision_114_is_the_one_edits_never_ask_delta(self):
-        raw = (REPO / INSTALL).read_bytes()
+        raw = recovered_revision_114_install()
         frontmatter = raw.split(b"---\n", 2)[1].decode("utf-8")
         self.assertRegex(frontmatter, r"(?m)^revision: 114$")
         self.assertIn("bundle_version: '2026.10.19.1'", frontmatter)
@@ -153,6 +154,26 @@ class Revision114MetadataTests(unittest.TestCase):
         with self.assertRaises(AssertionError):
             recovered_revision_113_install(raw.replace(b"area: muse-agents-md-bytes",
                                                        b"area: muse-agents-md-byteS", 1))
+
+
+class Revision115MetadataTests(unittest.TestCase):
+    """Revision 115: the one delta that scrubs session profiles (FR-103) and keeps them local
+    outside the pack source repository (FR-104)."""
+
+    def test_revision_115_is_the_one_profile_scrub_delta(self):
+        raw = (REPO / INSTALL).read_bytes()
+        frontmatter = raw.split(b"---\n", 2)[1].decode("utf-8")
+        self.assertRegex(frontmatter, r"(?m)^revision: 115$")
+        self.assertIn("bundle_version: '2026.10.19.2'", frontmatter)
+        self.assertEqual(1, frontmatter.count("  - { type: changed,"))
+        self.assertIn("area: profile-scrub-and-local-default", frontmatter)
+        for path in ("scripts/session-profile.py", "scripts/dream.py", "commands/session-profiler/SKILL.md",
+                     "adapters/copilot/prompts/session-profiler.prompt.md", "adapters/INSTALL.md"):
+            self.assertTrue((REPO / "pack" / path).is_file(), path)
+        self.assertEqual(295302, len(recovered_revision_114_install(raw)))
+        with self.assertRaises(AssertionError):
+            recovered_revision_114_install(raw.replace(b"area: edits-never-ask-and-guard-hardening",
+                                                       b"area: edits-never-ask-and-guard-hardeninG", 1))
 
 
 if __name__ == "__main__":

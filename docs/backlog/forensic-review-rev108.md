@@ -249,6 +249,7 @@ surfaced these. None is fixed.
 - **Acceptance:** a test plants `ghp_…`, `KEY=…` and a private-key header in a prompt, a piped gate
   and a failed heredoc, and asserts that none appears in either output. Observed failing first.
 - **Owner:** Security & Identity. **Next skill:** `/implement`.
+- **Resolved 2026-10-19** (revision 115). `cmd_profile` scrubs every string with `dream.py`'s `scrub`, which gained `github_pat_` and private-key patterns, before `--json-only`, both files and the index. It refuses to write if the scrubber is missing. `NoSecretReachesAProfileTests` plants a token, a fine-grained PAT, a password, a key header and an email across the prompt, title, piped gate and failed heredoc, and was **observed red** on all five first. On 8 real sessions the scrub fired only on two email addresses. Residual: pattern-based. New class SCRUB-A.
 
 ### FR-104 · risk · P2 — A consuming repo's profiles are committed with no notice or opt-in
 - **Evidence:** `cmd_profile` writes prompt prefixes, absolute paths, session titles and command
@@ -259,6 +260,7 @@ surfaced these. None is fixed.
   for consuming repos. The owner also confirms whether command and tool-output fragments fall under
   the 2026-10-17 ruling (its re-open trigger 3).
 - **Owner:** Privacy & Data Governance. **Next skill:** owner ruling, then `/implement`.
+- **Resolved 2026-10-19 by owner ruling** (*"just this pack"*; revision 115). Only the pack source repository commits profiles by default. Elsewhere they go to the untracked `<git-dir>/ai-forward/profiles/` and the run says so; `--publish` writes `docs/profiles/` with a tracked notice. `ProfilesStayLocalOutsideThePackTests`, observed red first. The ruling is recorded in `note-20261017-session-profiles-published` (addendum).
 
 ### FR-105 · risk · P3 — The profiler runs code found in the repository it writes into
 - **Evidence:** `_audit` runs the target repo's own `audit-log.py` with `sys.executable` and no
@@ -326,8 +328,8 @@ surfaced these. None is fixed.
 | FR-096 | P3 | todo | `.codex/hooks.json` unsourced | `/implement` |
 | FR-101 | P3 | issue | Hook prompted outside its domain | resolved |
 | FR-102 | P2 | issue | Bundle change without a revision bump | resolved |
-| FR-103 | P1 | risk | Profiler commits secrets unscrubbed | `/implement` |
-| FR-104 | P2 | risk | Consumer profiles with no notice or opt-in | owner ruling |
+| FR-103 | P1 | risk | Profiler commits secrets unscrubbed | resolved |
+| FR-104 | P2 | risk | Consumer profiles with no notice or opt-in | resolved (ruling) |
 | FR-105 | P3 | risk | Profiler runs the target repo's code | `/implement` |
 | FR-106 | P3 | risk | Decision answers carry no source | `/implement` |
 | FR-107 | P3 | todo | No checkpoint deletion path | `/implement` |

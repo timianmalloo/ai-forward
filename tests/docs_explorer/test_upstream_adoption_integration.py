@@ -20,10 +20,40 @@ ROOT = Path(__file__).resolve().parents[2]
 UPSTREAM_MAIN_SHA = '0900e784594a2ce27d5110ca5b24ad170e5dbf7e'
 
 
+def recovered_revision_114_install(raw=None):
+    """Reverse only the revision115 metadata/archive, with immutable byte oracles (published 114 at 8cf6736)."""
+    if raw is None:
+        raw = (ROOT / 'pack/adapters/INSTALL.md').read_bytes()
+    prefix, frontmatter, body = raw.split(b'---\n', 2)
+    blocks = re.findall(rb'<details>\n<summary>.*?\n</details>', body, re.S)
+    if not blocks or 'Revision 114 — 19 October 2026'.encode('utf-8') not in blocks[0]:
+        raise AssertionError('The complete revision114 archive must precede all older history')
+    archive = blocks[0]
+    rows = archive.split(b'```yaml\nchanges:\n', 1)[1].split(b'\n```', 1)[0]
+    if (len(rows), hashlib.sha256(rows).hexdigest()) != (
+            1928, 'df8805cfee7ded2fd4cc18ea9477090efd762b7bf30529c39b96c9e54699c554'):
+        raise AssertionError('The recovered revision114 delta is not byte-exact')
+    if body.count(archive + b'\n\n') != 1:
+        raise AssertionError('The revision114 archive must occur exactly once')
+    body = body.replace(archive + b'\n\n', b'', 1)
+    if (len(body), hashlib.sha256(body).hexdigest()) != (
+            292497, 'b156b765c94c69a523c0bca0a5a1053cbb39856c30c4241d7f36a76541d7731d'):
+        raise AssertionError('Reversal must recover every revision114 body/history byte')
+    prior_frontmatter = frontmatter.split(b'changes:\n', 1)[0] + b'changes:\n' + rows + b'\n'
+    prior_frontmatter = prior_frontmatter.replace(b'revision: 115\n', b'revision: 114\n', 1)
+    prior_frontmatter = prior_frontmatter.replace(b"bundle_version: '2026.10.19.2'",
+                                                b"bundle_version: '2026.10.19.1'", 1)
+    recovered = b'---\n'.join((prefix, prior_frontmatter, body))
+    if (len(recovered), hashlib.sha256(recovered).hexdigest()) != (
+            295302, '5a6b2baac1de7de882bc2fc736fae1eef929cfe02d9079e378479d9558196d38'):
+        raise AssertionError('Reversal must recover the complete revision114 source, not a projection')
+    return recovered
+
+
 def recovered_revision_113_install(raw=None):
     """Reverse only the revision114 metadata/archive, with immutable byte oracles (published 113 at b1a37b5)."""
     if raw is None:
-        raw = (ROOT / 'pack/adapters/INSTALL.md').read_bytes()
+        raw = recovered_revision_114_install()
     prefix, frontmatter, body = raw.split(b'---\n', 2)
     blocks = re.findall(rb'<details>\n<summary>.*?\n</details>', body, re.S)
     if not blocks or 'Revision 113 — 18 October 2026'.encode('utf-8') not in blocks[0]:
