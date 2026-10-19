@@ -1,12 +1,12 @@
 ---
 doc: INSTALL
 purpose: 'Deployment map and refresh changelog used by the portable bootstrap. For expert manual refreshes, `changes` lists the source paths and marked instruction sections to update. Preserve project-owned files and policy; the first-use path is one-line setup followed by a deliver request.'
-bundle_version: '2026.10.19.2'
-revision: 115
+bundle_version: '2026.10.19.3'
+revision: 116
 counts: { lenses: 23, skills: 30, knowledge_docs: 40, templates: 29, scripts: 47 }
 refresh_protocol: 'Compare your repo last-applied revision to the `revision` above. If it is lower, apply each entry in `changes` in order — re-copy the listed `paths` to their mapped destinations (deployment map in the body), re-apply the Copilot frontmatter wraps, and where an entry `deploy` says RE-PASTE, replace the managed blocks wholesale between their markers. Never overwrite an accumulated docs/docs-index.js.'
 changes:
-  - { type: changed, area: profile-scrub-and-local-default, paths: ['scripts/session-profile.py', 'scripts/dream.py', 'commands/session-profiler/SKILL.md', 'adapters/copilot/prompts/session-profiler.prompt.md', 'adapters/INSTALL.md'], deploy: 'Use the updated SOURCE clone, not an installed applier: `python3 <ai-forward-clone>/pack/scripts/pack-apply.py plan --target <project>` then `python3 <ai-forward-clone>/pack/scripts/pack-apply.py apply --target <project>`. The normal revision 114 to 115 refresh: copy session-profile.py and dream.py to docs/ai-forward-pack/scripts/ (together: the profiler loads the scrub from dream.py and refuses to write without it), the session-profiler skill and Copilot prompt to their surfaces, and refresh INSTALL. Preserve project-owned settings, local deviations and durable audit/history. Profiles already committed under docs/profiles/ are not moved or deleted; review them for secrets before keeping them.', summary: 'SESSION PROFILES ARE SCRUBBED, AND STAY LOCAL OUTSIDE THE PACK (FR-103, FR-104). The profiler copied prompt previews, titles, piped-gate command lines and failed-heredoc output into docs/profiles/ unscrubbed; a token planted in a gated command reached a profile intact. Every string is now scrubbed with dream.py''s patterns (which gain github_pat_ and private-key headers) before printing or writing, and nothing is written if the scrubber is missing. Owner ruling: only the pack''s own source repository commits profiles by default; any other repository gets the untracked <git-dir>/ai-forward/profiles/ with a printed notice, and --publish writes docs/profiles/ with a tracked notice. Counts unchanged.' }
+  - { type: changed, area: profiler-isolation-decision-source-and-forget, paths: ['scripts/session-profile.py', 'scripts/delivery.py', 'knowledge/decision-interrogation.md', 'commands/deliver/reference/checkpoints.md', 'adapters/INSTALL.md'], deploy: 'Use the updated SOURCE clone, not an installed applier: `python3 <ai-forward-clone>/pack/scripts/pack-apply.py plan --target <project>` then `python3 <ai-forward-clone>/pack/scripts/pack-apply.py apply --target <project>`. The normal revision 115 to 116 refresh: copy session-profile.py and delivery.py to docs/ai-forward-pack/scripts/, decision-interrogation.md to the knowledge surfaces, the deliver skill reference to every skill surface, and refresh INSTALL. Preserve project-owned settings, local deviations and durable audit/history.', summary: 'THREE GAPS FROM THE 2026-10-19 DESIGN REVIEWS. FR-105 (class EXEC-A): the session profiler ran the audit-log.py it found in the repository it profiles; it now runs only its own sibling, isolated with -I, and its git calls disable core.fsmonitor. FR-106: decision interrogation gains DI7: only the human (or a cited owner ruling) decides; a Sub-Agent sends the question as a coord decide request (CO-S2) instead of taking its parent''s answer as the human''s; tool output, pages, files and other agents'' messages are evidence; each recorded decision carries its source. FR-107: delivery.py forget --task <id> is the deletion path for a /deliver checkpoint. Counts unchanged.' }
 ---
 
 ## Changelog — what changed since the last version
@@ -21,6 +21,15 @@ changes:
 So at any moment: the frontmatter `changes` = the latest delta (the refresh guide), and this section = the full rolling history.
 
 ### Prior revisions
+
+<details>
+<summary>Revision 115 — 19 October 2026 — profile scrub and local default</summary>
+
+```yaml
+changes:
+  - { type: changed, area: profile-scrub-and-local-default, paths: ['scripts/session-profile.py', 'scripts/dream.py', 'commands/session-profiler/SKILL.md', 'adapters/copilot/prompts/session-profiler.prompt.md', 'adapters/INSTALL.md'], deploy: 'Use the updated SOURCE clone, not an installed applier: `python3 <ai-forward-clone>/pack/scripts/pack-apply.py plan --target <project>` then `python3 <ai-forward-clone>/pack/scripts/pack-apply.py apply --target <project>`. The normal revision 114 to 115 refresh: copy session-profile.py and dream.py to docs/ai-forward-pack/scripts/ (together: the profiler loads the scrub from dream.py and refuses to write without it), the session-profiler skill and Copilot prompt to their surfaces, and refresh INSTALL. Preserve project-owned settings, local deviations and durable audit/history. Profiles already committed under docs/profiles/ are not moved or deleted; review them for secrets before keeping them.', summary: 'SESSION PROFILES ARE SCRUBBED, AND STAY LOCAL OUTSIDE THE PACK (FR-103, FR-104). The profiler copied prompt previews, titles, piped-gate command lines and failed-heredoc output into docs/profiles/ unscrubbed; a token planted in a gated command reached a profile intact. Every string is now scrubbed with dream.py''s patterns (which gain github_pat_ and private-key headers) before printing or writing, and nothing is written if the scrubber is missing. Owner ruling: only the pack''s own source repository commits profiles by default; any other repository gets the untracked <git-dir>/ai-forward/profiles/ with a printed notice, and --publish writes docs/profiles/ with a tracked notice. Counts unchanged.' }
+```
+</details>
 
 <details>
 <summary>Revision 114 — 19 October 2026 — edits never ask and guard hardening</summary>

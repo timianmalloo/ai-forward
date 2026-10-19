@@ -889,6 +889,14 @@ def close_outcome(state, path):
 def execute(args):
     if args.verb == "route":
         return route(read_json(args.facts))
+    if args.verb == "forget":
+        # FR-107: the one deletion path. Removes only this task's checkpoint, under the writer
+        # lock, and the plain-project digest directory if that leaves it empty.
+        path = state_path(args.repo, args.task, args.state_root)
+        if not path.is_file():
+            raise ValueError("unknown task: no checkpoint for {0} in this project".format(args.task))
+        path.unlink()
+        return {"task": args.task, "forgotten": str(path)}
     if args.verb == "prestart":
         path = state_path(args.repo, args.task, args.state_root)
         if path.exists():
@@ -1041,12 +1049,18 @@ def locked_execute(args):
         return execute(args)
     finally:
         path.unlink()
+        if args.verb == "forget" and path.parent != local_area(args.repo, args.state_root):
+            try:
+                path.parent.rmdir()   # the plain project's digest directory, only if now empty
+            except OSError:
+                pass
 
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest="verb", required=True)
-    for verb in ("route", "prestart", "start", "status", "complete", "pause", "resume", "repair", "recheck"):
+    for verb in ("route", "prestart", "start", "status", "complete", "pause", "resume", "repair", "recheck",
+                 "forget"):
         command = commands.add_parser(verb)
         if verb in ("route", "start"):
             command.add_argument("--facts", type=Path, required=True)

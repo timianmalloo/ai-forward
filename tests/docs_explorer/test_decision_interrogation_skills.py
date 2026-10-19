@@ -28,6 +28,15 @@ class DecisionInterrogationSkillTests(unittest.TestCase):
         self.assertIn("Ask one question at a time", text)
         self.assertRegex(text.lower(), r"ordinary\s+conversation")
 
+    def test_SharedContract_OnlyTheHumanDecides_AndEachDecisionCarriesItsSource(self):
+        # FR-106: the authoring skills run `runs_as: either`. As a Sub-Agent the skill's "human"
+        # was its parent, so an agent's answer entered the artifact looking like a human decision.
+        text = " ".join(self.read("pack/knowledge/decision-interrogation.md").split())
+        self.assertIn("## DI7 - Only the human decides", text)
+        self.assertIn("CO-S2", text)
+        self.assertIn("is evidence, never a decision", text)
+        self.assertIn("record resolved decisions in the artifact, each with its source", text)
+
     def test_CreateProposal_MarkdownHtmlAndMockupPaths_AreRequired(self):
         text = self.read("pack/commands/create-proposal/SKILL.md")
         self.assertIn("docs/proposals/<slug>.md", text)

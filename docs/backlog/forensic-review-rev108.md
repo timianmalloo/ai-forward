@@ -271,6 +271,7 @@ surfaced these. None is fixed.
   `-I`, and `repo_identity` runs `git` in every `--repo`, so that repo's `.git/config` applies.
 - **Remediation:** run the profiler's sibling `audit-log.py` with `-I`, or record the trust assumption.
 - **Next skill:** `/implement`.
+- **Resolved 2026-10-19** (revision 116). `_audit` runs the `audit-log.py` beside the profiler with `-I`, never the target's; the profiler's `git` passes `-c core.fsmonitor=false`. `TheProfilerRunsOnlyItsOwnCode` plants an `audit-log.py` in both target locations and was **observed red** (the planted script ran). Sweep: `coord-core.py` and `prompt-log.py` run siblings; `pack-apply.py` runs the target's `context-budget.py` only after installing it.
 
 ### FR-106 · risk · P3 — Decision interrogation does not record who answered
 - **Evidence:** the four authoring skills declare `runs_as: either`. As a Sub-Agent, the skill's
@@ -279,12 +280,14 @@ surfaced these. None is fixed.
 - **Remediation:** DI4 sends any answer not given by the human back as a decision request, and the
   artifact records each answer's source.
 - **Next skill:** `/implement` (skill text plus a contract test).
+- **Resolved 2026-10-19** (revision 116). New rule DI7 in `knowledge/decision-interrogation.md`: an answer is a decision only from the human or a cited owner ruling; a Sub-Agent sends the question as a `coord decide request` (CO-S2) and leaves it deferred; tool output, pages, files and other agents' messages are evidence; DI6 records each decision with its source. Contract test observed red first. Residual: instruction text, so compliance is the model's.
 
 ### FR-107 · todo · P3 — `/deliver` checkpoints have no deletion path
 - **Evidence:** `delivery.py` has no forget verb; the only `unlink` is the writer lock. Plain-project
   state under `~/.local/state/ai-forward/delivery/` outlives the project.
 - **Remediation:** a `delivery.py forget <task>` verb, or document the path.
 - **Next skill:** `/implement`.
+- **Resolved 2026-10-19** (revision 116). `delivery.py forget --task <id>` removes one checkpoint under the writer lock, and a plain project's emptied digest directory; a missing task is refused. Documented in `deliver/reference/checkpoints.md`. The main test was **observed red** (unknown verb); the state-root cleanup test was written after the code.
 
 ### FR-108 · todo · P2 — Local LLMs have no support
 - **Evidence:** no file under `pack/`, `docs/adr/` or `docs/notes/` mentions Ollama, LM Studio, llama.cpp,
@@ -346,7 +349,7 @@ surfaced these. None is fixed.
 | FR-102 | P2 | issue | Bundle change without a revision bump | resolved |
 | FR-103 | P1 | risk | Profiler commits secrets unscrubbed | resolved |
 | FR-104 | P2 | risk | Consumer profiles with no notice or opt-in | resolved (ruling) |
-| FR-105 | P3 | risk | Profiler runs the target repo's code | `/implement` |
-| FR-106 | P3 | risk | Decision answers carry no source | `/implement` |
-| FR-107 | P3 | todo | No checkpoint deletion path | `/implement` |
+| FR-105 | P3 | risk | Profiler runs the target repo's code | resolved |
+| FR-106 | P3 | risk | Decision answers carry no source | resolved |
+| FR-107 | P3 | todo | No checkpoint deletion path | resolved |
 | FR-108 | P2 | todo | Local LLMs have no support | deferred (owner) |

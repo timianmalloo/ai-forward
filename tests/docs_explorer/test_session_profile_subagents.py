@@ -20,6 +20,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest import mock
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 SCRIPT = ROOT / "pack" / "scripts" / "session-profile.py"
@@ -328,6 +329,46 @@ class TheScriptsOwnAuditEntryLeavesTheSkillsMarkerAlone(unittest.TestCase):
         entries = [json.loads(l) for l in open(os.path.join(repo, "docs", "audit", "audit-log.jsonl"), encoding="utf-8") if l.strip()]
         self.assertEqual(1, len(entries))
         self.assertIn("duration_seconds", entries[0], "the script measures its own run")
+
+
+class TheProfilerRunsOnlyItsOwnCode(unittest.TestCase):
+    """FR-105: `_audit` ran the `audit-log.py` it found in the repository it writes into, with
+    no `-I`, so profiling a repository executed that repository's code. The profiler now runs
+    the audit-log.py beside itself, isolated, and never one found in the target."""
+
+    def test_a_planted_audit_script_in_the_target_never_runs(self):
+        tmp = tempfile.mkdtemp()
+        repo = os.path.join(tmp, "repo")
+        os.makedirs(os.path.join(repo, "docs", "audit"))
+        planted = os.path.join(tmp, "planted-ran")
+        for rel in (("docs", "ai-forward-pack", "scripts"), ("pack", "scripts")):
+            d = os.path.join(repo, *rel)
+            os.makedirs(d)
+            with open(os.path.join(d, "audit-log.py"), "w", encoding="utf-8") as fh:
+                fh.write("open({0!r}, 'w').close()\n".format(planted))
+        sp._audit(repo, "sp-0001", 1, 0, "profiler")
+        self.assertFalse(os.path.exists(planted), "the profiler executed the target repository's script")
+        entries = [json.loads(l) for l in open(os.path.join(repo, "docs", "audit", "audit-log.jsonl"),
+                                                 encoding="utf-8") if l.strip()]
+        self.assertEqual(["session-profile-sp-0001"], [e["shortname"] for e in entries])
+
+    def test_git_in_the_target_cannot_start_its_fsmonitor(self):
+        calls = []
+
+        def fake(argv, **kw):
+            calls.append(argv)
+            return subprocess.CompletedProcess(argv, 0, "", "")
+        with mock.patch.object(sp.subprocess, "run", side_effect=fake):
+            sp.git(["rev-parse", "--show-toplevel"], tempfile.mkdtemp())
+        self.assertEqual(["git", "-c", "core.fsmonitor=false", "rev-parse"], calls[0][:4])
+
+    def test_the_audit_script_runs_isolated(self):
+        calls = []
+        with mock.patch.object(sp.subprocess, "run", side_effect=lambda argv, **kw: calls.append(argv)):
+            sp._audit(tempfile.mkdtemp(), "sp-0001", 1, 0, "profiler")
+        self.assertEqual(1, len(calls))
+        self.assertEqual(["-I", os.path.join(str(ROOT / "pack" / "scripts"), "audit-log.py")],
+                         [calls[0][1], os.path.normpath(calls[0][2])])
 
 
 if __name__ == "__main__":

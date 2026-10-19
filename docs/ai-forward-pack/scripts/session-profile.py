@@ -561,7 +561,8 @@ def git(args, cwd):
     try:
         # text=True alone decodes with locale.getpreferredencoding() — cp1252 on a Windows
         # console — so a non-ASCII branch name or author line raises UnicodeDecodeError.
-        out = subprocess.run(["git"] + args, cwd=cwd, capture_output=True, text=True,
+        # FR-105: git runs inside the profiled repository; its config may not start a program.
+        out = subprocess.run(["git", "-c", "core.fsmonitor=false"] + args, cwd=cwd, capture_output=True, text=True,
                              encoding="utf-8", errors="replace", timeout=20)
         return out.stdout if out.returncode == 0 else ""
     except (OSError, subprocess.SubprocessError):
@@ -2010,13 +2011,13 @@ def _audit(root, pid, n_sessions, n_findings, session, artifact=None):
     """The script's own entry. It passes its OWN start (--started), so it never consumes the
     /session-profiler skill's marker - measured twice: the skill's closing entry read 16 s of a
     3-minute run because this append had eaten the marker (pack finding #2, Addenda C/D)."""
-    script = os.path.join(root, "docs", "ai-forward-pack", "scripts", "audit-log.py")
-    if not os.path.isfile(script):
-        script = os.path.join(root, "pack", "scripts", "audit-log.py")
+    # FR-105: the audit-log.py beside this script, isolated (-I). The one found in the target
+    # repository was run before, so profiling a repository executed that repository's code.
+    script = os.path.join(os.path.dirname(os.path.abspath(__file__)), "audit-log.py")
     if not os.path.isfile(script):
         return
     try:
-        subprocess.run([sys.executable, script, "append", "--shortname", "session-profile-" + pid, "--kind", "script",
+        subprocess.run([sys.executable, "-I", script, "append", "--shortname", "session-profile-" + pid, "--kind", "script",
                         "--skill", "session-profiler", "--session", session or "session-profile-job",
                         "--started", _RUN_STARTED,
                         "--prompt", "session-profile.py profile", "--summary",
