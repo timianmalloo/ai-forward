@@ -2572,8 +2572,17 @@ def hook_response(decision, reason, host=None):
         "permissionDecisionReason": reason}})
 
 
-def _not_checked(reason, host=None):
-    return hook_response("deny" if host in ("codex", "grok", "agy", "copilot") else "ask", "NOT CHECKED  -\n  held by   unknown - this check did"
+def _not_checked(reason, host=None, refuse=False):
+    """The answer when the ownership check could not run. The native hosts refuse.
+
+    EDIT-ASK (owner ruling, 2026-10-19): an edit never asks. Claude Code reads `ask` as
+    "prompt now" even under bypass permissions, so on Claude a path that is itself suspect
+    (`refuse`: traversal, an alias out of the checkout) is refused, and anything else gets no
+    decision -- the session's own permission mode decides, as it would with no hook at all.
+    """
+    if host not in ("codex", "grok", "agy", "copilot") and not refuse:
+        return "{}"
+    return hook_response("deny", "NOT CHECKED  -\n  held by   unknown - this check did"
                          " not run\n  because   {}\n"
                          "  remedy    fix the condition above; this is not a pass"
                          .format(reason), host)
@@ -2609,7 +2618,7 @@ def cmd_hook(root, session, agent, now, stdin_text, repo=None, host=None, cwd=No
             repo = str(exc.top)
             calls = parse_hook_request(event, repo, host=host, cwd=cwd)
     except PrimaryCheckoutWrite as exc:
-        # PRIM-A: refused by name on every host (Claude's generic not-checked answer is `ask`).
+        # PRIM-A: refused by name on every host (Claude's generic not-checked answer is `{}`).
         return hook_response("deny", "COORD-PRIMARY-WRITE  refused  {}\n"
                              "  because   this session works in a linked worktree and the path is in"
                              " the primary checkout, the Leader's fast-forward target\n"
@@ -2618,7 +2627,7 @@ def cmd_hook(root, session, agent, now, stdin_text, repo=None, host=None, cwd=No
     except OutsideCheckout as exc:
         reason = "the write target is outside this repository's checkouts ({})".format(_safe(str(exc), 300))
         if exc.via_alias or host in ("codex", "grok", "agy", "copilot"):
-            return _not_checked(reason, host)
+            return _not_checked(reason, host, refuse=True)
         # WT-E: no lease can cover a path outside every checkout, so this hook has no opinion.
         # `ask` overrode the session's own permission mode on every write to user memory or a
         # scratchpad; `allow` would grant a write anywhere on disk. No decision defers to the mode.
@@ -2644,7 +2653,7 @@ def cmd_hook(root, session, agent, now, stdin_text, repo=None, host=None, cwd=No
     for path in paths:
         bad = _reject_path(str(path))                   # B4 tampering
         if bad:
-            return _not_checked(bad, host)
+            return _not_checked(bad, host, refuse=True)
         # B4 spoofing: identity is the ENVIRONMENT's, never the payload's sessionId.
         decision = check(root, str(path), session, now, covers=covers)
         append_decision(root, session, agent, path, decision,
@@ -2659,8 +2668,9 @@ def cmd_hook(root, session, agent, now, stdin_text, repo=None, host=None, cwd=No
     if worst is None:
         return hook_response("allow", "coordination: {} path(s) free or mine"
                              .format(len(paths)), host)
-    mapped = {"deny": "deny", "not_checked": "deny" if host in ("codex", "grok", "agy", "copilot") else "ask"}[worst["decision"]]
-    return hook_response(mapped, render(worst), host)
+    if worst["decision"] == "not_checked":
+        return _not_checked(render(worst), host)
+    return hook_response("deny", render(worst), host)
 
 
 def cmd_precommit(root, repo, session, agent, now):

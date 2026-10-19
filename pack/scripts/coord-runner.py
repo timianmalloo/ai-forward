@@ -41,7 +41,7 @@ MAX_DOCUMENT = 2 * 1024 * 1024
 # parallel test run on a 28-core host (x-harness-x-model-bench, 2026-09-29, brief
 # al-01M3Q4K73M91FWPR48PACHH04W). The old fixed 2 s per-check bound left under 650 ms of
 # headroom there and, under heavier load, turned a live lease into a false RUN-LEADER
-# (RUN-B). LEADER_CHECK_TIMEOUT gives a single check >3.5x that measured worst case.
+# (RUN-C). LEADER_CHECK_TIMEOUT gives a single check >3.5x that measured worst case.
 LEADER_CHECK_TIMEOUT = 5
 # assume: a housekeeping leader check (no operation deadline of its own -- the periodic
 # in-run check, the renewal, and the post-completion re-check) tolerates slow checks until
@@ -58,7 +58,7 @@ LEADER_CHECK_TIMEOUT = 5
 
 
 def housekeeping_check(check, lease, epoch):
-    """One bounded leader check for a caller with no operation deadline (RUN-B).
+    """One bounded leader check for a caller with no operation deadline (RUN-C).
 
     True while authority stands. A definitive refusal or a changed epoch ends it at once. A
     check that only ran slow (LeaderCheckSlow) is not lost authority while the last observed
@@ -100,7 +100,7 @@ class LeaderCheckSlow(Refused):
     """A bounded leader-check subprocess did not finish inside its timeout. Carries the
     same RUN-LEADER code as any other refusal, so an unaware caller behaves exactly as
     before; only Runner.leader_retrying tells this apart, to retry while a check's
-    deadline still allows it instead of treating load as lost authority (RUN-B)."""
+    deadline still allows it instead of treating load as lost authority (RUN-C)."""
 
     def __init__(self, remedy):
         super().__init__("RUN-LEADER", remedy)
@@ -780,7 +780,7 @@ class Runner:
         """Retry a leader check while its deadline allows -- never a fixed per-attempt
         timeout. Only a definitive epoch/liveness answer (raised by leader() as a plain
         Refused), the deadline itself, or a stopped run ends the retry; a bounded-subprocess
-        timeout (LeaderCheckSlow) is retried instead of read as lost authority (RUN-B)."""
+        timeout (LeaderCheckSlow) is retried instead of read as lost authority (RUN-C)."""
         while True:
             require(not stopped(), "RUN-LEADER", "The run was stopped; no further check is admitted.")
             window = min(LEADER_CHECK_TIMEOUT, deadline - time.time())
@@ -952,7 +952,7 @@ class Runner:
         def fence(remaining=None):
             """Positive confirmation of authority. `remaining` is the caller's operation
             deadline; None (a housekeeping check) retries slow checks until the observed
-            lease could expire before the next answer (RUN-B)."""
+            lease could expire before the next answer (RUN-C)."""
             if cancelled():
                 return False
             try:
@@ -1094,7 +1094,7 @@ class Runner:
                     done, pending = wait(pending, timeout=0.1, return_when=FIRST_COMPLETED)
                     results.extend(f.result() for f in done)
                     if not stop.is_set() and time.monotonic() >= next_check:
-                        # RUN-B: one bounded check per tick, so a slow check never blocks the
+                        # RUN-C: one bounded check per tick, so a slow check never blocks the
                         # loop for longer than LEADER_CHECK_TIMEOUT nor cancels a live lease.
                         def check(window):
                             return self.leader(owner, timeout=window)

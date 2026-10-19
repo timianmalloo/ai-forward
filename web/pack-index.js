@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 368
+"count": 369
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 553,
+"total": 554,
 "items": [
 {
 "cat": "knowledge",
@@ -2523,6 +2523,15 @@ window.PACK_INDEX = {
 },
 {
 "cat": "graph",
+"id": "note-20261019-edits-never-ask",
+"title": "Decision — an edit never asks for permission",
+"summary": "The owner ruled on 2026-10-19 that the pack's edit hooks never make the user approve an edit. The edit-ownership hook answers allow for a path it checked and found free or owned, deny for a held lease or a suspect path, and no decision…",
+"path": "docs/notes/note-20261019-edits-never-ask.md",
+"kind": "decision-note",
+"text": "decision — an edit never asks for permission the owner ruled on 2026-10-19 that the pack's edit hooks never make the user approve an edit. the edit-ownership hook answers allow for a path it checked and found free or owned, deny for a held lease or a suspect path, and no decision otherwise, so the session's own permission mode decides. it never answers ask, which claude code turns into a prompt even in bypass mode. closes fr-089 (the allow is the intent) and defines class edit-ask. executed in revision 114. decision hooks permissions coordination edit-ownership relates-to forensic-review-rev108-backlog relates-to defect-classes"
+},
+{
+"cat": "graph",
 "id": "note-autopilot-open-questions-decisions",
 "title": "Decisions on PACK-O open questions (logging, class granularity, autopilot caps)",
 "summary": "The user's answers to the three open questions from the task-discipline / front-matter proposal (revision 3), which gate the next change: making PACK-O controllable.",
@@ -3032,7 +3041,7 @@ window.PACK_INDEX = {
 "summary": "Seventeen items from the revision-108 forensic review, FR-086 to FR-102, each with evidence, falsifiable acceptance criteria and a next skill. No P0 or P1. Four P2: shared-temp byte-code cache, manual-only CI, git-identity guard bypasses,…",
 "path": "docs/backlog/forensic-review-rev108.md",
 "kind": "doc",
-"text": "forensic review backlog — ai-forward revision 108 (fr-086 … fr-102) seventeen items from the revision-108 forensic review, fr-086 to fr-102, each with evidence, falsifiable acceptance criteria and a next skill. no p0 or p1. four p2: shared-temp byte-code cache, manual-only ci, git-identity guard bypasses, and an ownership hook that grants writes. eleven p3. two were resolved during the review: fr-101 (the hook's needless prompts, pr #12) and fr-102 (bundle changes shipped without a revision bump, revision 109). the rest await triage. forensic-review backlog rev108 governance security relates-to forensic-review-rev108 relates-to forensic-review-rev59-backlog relates-to defect-classes relates-to plan-ci-speed-and-required-checks"
+"text": "forensic review backlog — ai-forward revision 108 (fr-086 … fr-102) seventeen items from the revision-108 forensic review, fr-086 to fr-102, each with evidence, falsifiable acceptance criteria and a next skill. no p0 or p1. four p2: shared-temp byte-code cache, manual-only ci, git-identity guard bypasses, and an ownership hook that grants writes. eleven p3. two were resolved during the review: fr-101 (the hook's needless prompts, pr #12) and fr-102 (bundle changes shipped without a revision bump, revision 109). fr-087 was resolved on 2026-10-18. fr-086 and fr-088 were resolved in revision 114, and fr-089 by owner ruling. the rest await triage. forensic-review backlog rev108 governance security relates-to forensic-review-rev108 relates-to forensic-review-rev59-backlog relates-to defect-classes relates-to plan-ci-speed-and-required-checks"
 },
 {
 "cat": "graph",

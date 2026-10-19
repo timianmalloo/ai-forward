@@ -1,12 +1,12 @@
 ---
 doc: INSTALL
 purpose: 'Deployment map and refresh changelog used by the portable bootstrap. For expert manual refreshes, `changes` lists the source paths and marked instruction sections to update. Preserve project-owned files and policy; the first-use path is one-line setup followed by a deliver request.'
-bundle_version: '2026.10.18.1'
-revision: 113
+bundle_version: '2026.10.19.1'
+revision: 114
 counts: { lenses: 23, skills: 30, knowledge_docs: 40, templates: 29, scripts: 47 }
 refresh_protocol: 'Compare your repo last-applied revision to the `revision` above. If it is lower, apply each entry in `changes` in order — re-copy the listed `paths` to their mapped destinations (deployment map in the body), re-apply the Copilot frontmatter wraps, and where an entry `deploy` says RE-PASTE, replace the managed blocks wholesale between their markers. Never overwrite an accumulated docs/docs-index.js.'
 changes:
-  - { type: changed, area: muse-agents-md-bytes, paths: ['context-budget.json', 'adapters/INSTALL.md'], deploy: 'Use the updated SOURCE clone, not an installed applier: `python3 <ai-forward-clone>/pack/scripts/pack-apply.py plan --target <project>` then `python3 <ai-forward-clone>/pack/scripts/pack-apply.py apply --target <project>`. The normal revision 112 to 113 refresh: copy context-budget.json to docs/ai-forward-pack/ and refresh INSTALL. Preserve project-owned settings, local deviations and durable audit/history.', summary: 'The Muse profile records this repo''s AGENTS.md size (agents_md_bytes 29570 -> 29443): its push section now describes the PR-only workflow that branch protection enforces (required pack-consistency checks, strict). A file-size fact, not a re-measure: the skills-catalog figures measured on Muse 1.4.10 are unchanged. Counts unchanged.' }
+  - { type: changed, area: edits-never-ask-and-guard-hardening, paths: ['scripts/coord-core.py', 'scripts/coord-runner.py', 'adapters/hooks/git-identity-guard.py', 'adapters/hooks/dispatch.py', 'adapters/INSTALL.md'], deploy: 'Use the updated SOURCE clone, not an installed applier: `python3 <ai-forward-clone>/pack/scripts/pack-apply.py plan --target <project>` then `python3 <ai-forward-clone>/pack/scripts/pack-apply.py apply --target <project>`. The normal revision 113 to 114 refresh: copy coord-core.py to docs/ai-forward-pack/scripts/, git-identity-guard.py and dispatch.py to docs/ai-forward-pack/hooks/, and refresh INSTALL. Preserve project-owned settings, custom hook entries and wrappers, local deviations and durable audit/history. Refresh does not run coordination install or change permission policy.', summary: 'AN EDIT NEVER ASKS FOR PERMISSION (EDIT-ASK, owner ruling). On the Claude host the edit-ownership hook answered `ask` whenever it could not check (no AGENT_SESSION, no coordination record, an unreadable payload), and Claude Code prompts on `ask` even in bypass mode, so a consuming repo was asked on every edit. It now answers `allow` for a checked free or own path (FR-089 closed: the grant is the intent), `deny` for a held lease, a traversal or an alias out of the checkout, and no decision (`{}`) otherwise, so the session''s own permission mode decides. FR-088: the git-identity guard reads command words (shlex), not text: it now refuses `git -C`, `--file`, `--worktree`, `config set`, author/committer keys, `--config-env`, `commit --author`, and GIT_AUTHOR_*/GIT_COMMITTER_* assignments (shell or $env:), through one bash -c / pwsh -Command layer, and no longer refuses an echo or commit message that only mentions one. FR-086: the dispatcher''s byte-code cache moves from a fixed name in shared temp to the user''s cache home, refused unless only its owner can write it. Counts unchanged.' }
 ---
 
 ## Changelog — what changed since the last version
@@ -21,6 +21,15 @@ changes:
 So at any moment: the frontmatter `changes` = the latest delta (the refresh guide), and this section = the full rolling history.
 
 ### Prior revisions
+
+<details>
+<summary>Revision 113 — 18 October 2026 — muse agents md bytes</summary>
+
+```yaml
+changes:
+  - { type: changed, area: muse-agents-md-bytes, paths: ['context-budget.json', 'adapters/INSTALL.md'], deploy: 'Use the updated SOURCE clone, not an installed applier: `python3 <ai-forward-clone>/pack/scripts/pack-apply.py plan --target <project>` then `python3 <ai-forward-clone>/pack/scripts/pack-apply.py apply --target <project>`. The normal revision 112 to 113 refresh: copy context-budget.json to docs/ai-forward-pack/ and refresh INSTALL. Preserve project-owned settings, local deviations and durable audit/history.', summary: 'The Muse profile records this repo''s AGENTS.md size (agents_md_bytes 29570 -> 29443): its push section now describes the PR-only workflow that branch protection enforces (required pack-consistency checks, strict). A file-size fact, not a re-measure: the skills-catalog figures measured on Muse 1.4.10 are unchanged. Counts unchanged.' }
+```
+</details>
 
 <details>
 <summary>Revision 112 — 17 October 2026 — transport unparsed extension tail</summary>

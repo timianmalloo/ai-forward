@@ -11,10 +11,13 @@ and refuses the shell command itself, so the rule holds even when the agent forg
 It does not filter by tool name (Bash, run_terminal_cmd, ... differ per host and are not
 all verified in this pack) -- it inspects whatever command-like string the tool call
 carries (`command`/`cmd`/`script`/`shellCommand`/`commandLine`, the shapes already used
-elsewhere in this hook family) and matches only the narrow git-identity-SET pattern:
-`git config [--global|--local|--system] [--add] user.name/email <value>`, or an inline
-`-c user.name=...` / `-c user.email=...`. A bare `git config user.name` (reading, not
-setting) never matches, so a legitimate check-before-you-commit is never refused.
+elsewhere in this hook family). It splits the text into simple commands with `shlex` and
+refuses one that SETS an identity: a `git config` write of user/author/committer name or
+email in any scope or `set` form, an inline `-c` or `--config-env` override, `--author` on
+`commit`, or a `GIT_AUTHOR_*` / `GIT_COMMITTER_*` assignment (shell or `$env:`). It looks
+through git's global options and one `bash -c` / `pwsh -Command` layer, and never inside a
+quoted argument. A read (`git config user.name`, `--get`, `get`) never matches, so a
+legitimate check-before-you-commit is never refused.
 
 Per-host block form (grounded from the hosts' own contracts the rest of this hook family
 already relies on, `pack/adapters/hooks/README.md`):
@@ -34,6 +37,7 @@ Usage: git-identity-guard.py --host claude|grok|copilot
 import argparse
 import json
 import re
+import shlex
 import sys
 
 # The host pipes a JSON payload in and reads a line out. Same console-encoding guard as
@@ -49,9 +53,25 @@ for _stream, _kw in ((sys.stdin, {"encoding": "utf-8", "errors": "replace"}),
 
 COMMAND_KEYS = ("command", "cmd", "script", "shellCommand", "commandLine")
 
-# `git config [...] user.name/email <value>` (a value follows -- reading alone never
-# matches, nor does a read followed by a shell operator or redirect: `&&`, `||`, `|`, `;`,
-# `>`, `<`, `2>`) or the inline per-invocation override `-c user.name=...`/`-c user.email=...`.
+# FR-088: the guard reads COMMAND WORDS. A regex over the raw text let six setting forms
+# through (`git -C . config`, `--file`, `--worktree`, `config set`, `GIT_AUTHOR_*=`, `--author`)
+# and refused `echo '... git config user.name X ...'`, which runs no git at all.
+IDENTITY_KEY_RX = re.compile(r"(?:user|author|committer)\.(?:name|email)$", re.IGNORECASE)
+IDENTITY_ENV_RX = re.compile(r"(?:\$env:)?GIT_(?:AUTHOR|COMMITTER)_(?:NAME|EMAIL)$", re.IGNORECASE)
+OPERATORS = set("();<>|&\n")
+SHELLS = {"bash": "-c", "sh": "-c", "zsh": "-c", "dash": "-c", "cmd": "/c",
+          "pwsh": "-command", "powershell": "-command"}
+GIT_OPTS_WITH_VALUE = {"-C", "-c", "--git-dir", "--work-tree", "--namespace", "--config-env",
+                       "--super-prefix", "--exec-path"}
+CONFIG_OPTS_WITH_VALUE = {"-f", "--file", "--blob", "--type", "--default", "--comment", "--value"}
+CONFIG_READ_OPTS = {"--get", "--get-all", "--get-regexp", "--get-urlmatch", "--list", "-l",
+                    "--unset", "--unset-all", "--get-color", "--get-colorbool", "-e", "--edit"}
+COMMIT_OPTS_WITH_VALUE = {"-m", "--message", "-F", "--file", "-C", "--reuse-message", "-c",
+                          "--reedit-message", "-t", "--template", "--fixup", "--squash",
+                          "--trailer", "--cleanup", "-S", "--gpg-sign"}
+
+# The fallback for text shlex cannot split (an unbalanced quote): the narrow pattern this
+# guard used before FR-088. Over-matching is the safe error in a command that will not parse.
 GIT_IDENTITY_SET_RX = re.compile(
     r"git\s+config\s+(?:--global\s+|--local\s+|--system\s+)?(?:--add\s+)?"
     r"user\.(?:name|email)\s*(?:=|\s+(?![|&;<>]|\d+>)\S)"
@@ -84,15 +104,124 @@ def _command_text(host, payload):
     return None
 
 
+def _simple_commands(text):
+    """The command text split into simple commands (lists of words) at shell operators and
+    newlines. Raises ValueError on text shlex cannot split."""
+    lex = shlex.shlex(text, posix=True, punctuation_chars="".join(OPERATORS))
+    lex.whitespace = " \t\r"
+    lex.whitespace_split = True
+    commands, words = [], []
+    for token in lex:
+        if token and set(token) <= OPERATORS:
+            if token[0] in "<>" and words and words[-1].isdigit():
+                words.pop()                         # the `2` of `2>`: a descriptor, not a value
+            commands.append(words)
+            words = []
+        else:
+            words.append(token)
+    commands.append(words)
+    return [c for c in commands if c]
+
+
+def _sets_env_identity(word, following):
+    """`GIT_AUTHOR_NAME=x`, `$env:GIT_AUTHOR_NAME='x'`, or `$env:GIT_AUTHOR_NAME = 'x'`."""
+    name, eq, _ = word.partition("=")
+    return bool(IDENTITY_ENV_RX.match(name)) and (bool(eq) or following[:1] == ["="])
+
+
+def _config_sets_identity(args):
+    positional, reading, adding = [], False, False
+    i = 0
+    while i < len(args):
+        arg = args[i]
+        if arg in CONFIG_OPTS_WITH_VALUE:
+            i += 2
+            continue
+        if arg.startswith("-"):
+            reading = reading or arg.split("=", 1)[0] in CONFIG_READ_OPTS
+            adding = adding or arg in ("--add", "--replace-all")
+        else:
+            positional.append(arg)
+        i += 1
+    if reading or not positional:
+        return False
+    if positional[0] == "set":
+        return len(positional) > 1 and bool(IDENTITY_KEY_RX.match(positional[1]))
+    key = positional[0].split("=", 1)[0]
+    if not IDENTITY_KEY_RX.match(key):
+        return False
+    return "=" in positional[0] or len(positional) > 1 or adding
+
+
+def _commit_sets_author(args):
+    i = 0
+    while i < len(args):
+        arg = args[i]
+        if arg in COMMIT_OPTS_WITH_VALUE:
+            i += 2
+            continue
+        if arg == "--author" or arg.startswith("--author="):
+            return True
+        i += 1
+    return False
+
+
+def _git_sets_identity(args):
+    """`args` follow the git executable: global options, then the subcommand and its own."""
+    i = 0
+    while i < len(args) and args[i].startswith("-"):
+        option, eq, value = args[i].partition("=")
+        if option in GIT_OPTS_WITH_VALUE and not eq:
+            value = args[i + 1] if i + 1 < len(args) else ""
+            i += 1
+        if option in ("-c", "--config-env") and IDENTITY_KEY_RX.match(value.split("=", 1)[0]):
+            return True
+        i += 1
+    if i >= len(args):
+        return False
+    rest = args[i + 1:]
+    return {"config": _config_sets_identity, "commit": _commit_sets_author}.get(
+        args[i], lambda _: False)(rest)
+
+
+def _sets_identity(text, depth=0):
+    for words in _simple_commands(text):
+        i = 0
+        while i < len(words):                       # leading assignments, `env`, `export`
+            word = words[i]
+            if _sets_env_identity(word, words[i + 1:]):
+                return True
+            if word.lower() in ("env", "export", "set", "setx") or "=" in word:
+                i += 1
+                continue
+            break
+        if i >= len(words):
+            continue
+        program = re.split(r"[\\/]", words[i])[-1].lower()
+        program = program[:-4] if program.endswith(".exe") else program
+        if program == "git" and _git_sets_identity(words[i + 1:]):
+            return True
+        flag = SHELLS.get(program)
+        if flag and depth < 3:
+            args = [w.lower() for w in words[i + 1:]]
+            if flag in args and args.index(flag) + 1 < len(args):
+                inner = words[i + 1 + args.index(flag) + 1]
+                if _sets_identity(inner, depth + 1):
+                    return True
+    return False
+
+
 def evaluate(host, payload):
     """Pure decision: returns a reason string to block on, or None to allow. Exercised
     directly by the tests."""
     command = _command_text(host, payload)
     if not command:
         return None
-    if GIT_IDENTITY_SET_RX.search(command):
-        return REASON
-    return None
+    try:
+        found = _sets_identity(command)
+    except ValueError:
+        found = bool(GIT_IDENTITY_SET_RX.search(command))
+    return REASON if found else None
 
 
 def main(argv=None):

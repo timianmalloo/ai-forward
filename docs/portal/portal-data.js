@@ -3790,6 +3790,12 @@ window.PORTAL_DATA = {
         "summary": "During the rev108 forensic review the Privacy persona issued a hard-veto BLOCK because docs/profiles (session-profiler output with verbatim prompts, home paths..."
       },
       {
+        "id": "note-20261019-edits-never-ask",
+        "type": "decision-note",
+        "title": "Decision — an edit never asks for permission",
+        "summary": "The owner ruled on 2026-10-19 that the pack's edit hooks never make the user approve an edit. The edit-ownership hook answers allow for a path it checked and..."
+      },
+      {
         "id": "note-autopilot-open-questions-decisions",
         "type": "decision-note",
         "title": "Decisions on PACK-O open questions (logging, class granularity, autopilot caps)",
@@ -7155,6 +7161,16 @@ window.PORTAL_DATA = {
       {
         "from": "note-20261017-session-profiles-published",
         "to": "forensic-review-rev108",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20261019-edits-never-ask",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20261019-edits-never-ask",
+        "to": "forensic-review-rev108-backlog",
         "rel": "relates-to"
       },
       {

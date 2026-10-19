@@ -17,13 +17,14 @@ summary: >-
   falsifiable acceptance criteria and a next skill. No P0 or P1. Four P2: shared-temp byte-code
   cache, manual-only CI, git-identity guard bypasses, and an ownership hook that grants writes.
   Eleven P3. Two were resolved during the review: FR-101 (the hook's needless prompts, PR #12)
-  and FR-102 (bundle changes shipped without a revision bump, revision 109). The rest await
-  triage.
+  and FR-102 (bundle changes shipped without a revision bump, revision 109). FR-087 was resolved
+  on 2026-10-18. FR-086 and FR-088 were resolved in revision 114, and FR-089 by owner ruling. The
+  rest await triage.
 ---
 
 # Forensic review backlog — revision 108
 
-**Status: `proposed`.** FR-087, FR-101 and FR-102 are **resolved**; FR-099 is partly resolved (2026-10-17/18). The rest are not
+**Status: `proposed`.** FR-086, FR-087, FR-088, FR-101 and FR-102 are **resolved**, FR-089 by owner ruling; FR-099 is partly resolved (2026-10-17/18). The rest are not
 implemented and await triage. Open items carried from revision 59 (FR-078 … FR-085) stay in
 `forensic-review-rev59-backlog`; their current state is tabled in the review.
 
@@ -69,6 +70,10 @@ security or migration risk · **P2** material maintainability, operability or go
 - **Acceptance:** each row of the probe table becomes a test with the correct verdict, observed
   failing first.
 - **Owner:** Security & Identity. **Next skill:** `/implement`.
+- **Resolved 2026-10-19** (revision 114). The guard splits simple commands with `shlex` and judges
+  command words. `ProbeTableTests` holds the six probe rows and 19 more setting forms (refused),
+  and the `echo` row with 11 more mentions (allowed); it was **observed red** on 21 before the fix.
+  An unsplittable command falls back to the old pattern. Class PK-07 (instance added).
 
 ### FR-089 · risk · P2 — The ownership hook's `allow` skips the user's permission prompt
 - **Location:** `pack/scripts/coord-core.py` `cmd_hook` — the `"coordination: {} path(s) free
@@ -86,6 +91,12 @@ security or migration risk · **P2** material maintainability, operability or go
 - **Acceptance:** tests assert `{}` for free and own-lease paths on the Claude host; held and
   primary paths still `deny`.
 - **Owner:** Security & Identity. **Next skill:** `/investigate` then `/implement`.
+- **Resolved 2026-10-19 by owner ruling, not by the remediation above.** The owner ruled that an
+  edit never asks for permission: the `allow` on a checked free or own path is the intent. The
+  same ruling removed the hook's remaining `ask` (revision 114, class EDIT-ASK). Every "not
+  checked" condition answered `ask` on Claude, and Claude Code prompts on `ask` even in bypass
+  mode. Now an unverifiable edit gets `{}` (the session's mode decides), and a suspect path gets
+  `deny`. `EditsNeverPromptTests` pins the `allow` this item questioned.
 
 ### FR-086 · risk · P2 — Hook byte-code cache in a fixed directory under shared temp
 - **Location:** `pack/adapters/hooks/dispatch.py:142`.
@@ -99,6 +110,11 @@ security or migration risk · **P2** material maintainability, operability or go
 - **Acceptance:** a test pre-creates the directory as foreign or world-writable and asserts the
   hook refuses to use it.
 - **Owner:** Security & Identity. **Next skill:** `/implement`.
+- **Resolved 2026-10-19** (revision 114). The cache is `$XDG_CACHE_HOME/ai-forward/pycache` (else
+  `~/.cache/…`), created `0700`. On POSIX it is refused unless it and its parent are directories
+  owned by the current uid with no group or other write; with no usable cache no byte code is
+  written. `BytecodeCacheIsPrivate` plants a world-writable directory at each level (POSIX
+  runners; Windows profiles are per user) and was **observed red** (`AttributeError`) first.
 
 ## Phase 3 — Operability and portability (P3)
 
@@ -240,9 +256,9 @@ security or migration risk · **P2** material maintainability, operability or go
 | Id | Priority | Kind | Title | Next skill |
 |---|---|---|---|---|
 | FR-087 | P2 | risk | CI runs only on manual dispatch | resolved |
-| FR-088 | P2 | issue | Git-identity guard bypasses | `/implement` |
-| FR-089 | P2 | risk | Ownership hook `allow` skips the prompt | `/investigate` |
-| FR-086 | P2 | risk | Byte-code cache in shared temp | `/implement` |
+| FR-088 | P2 | issue | Git-identity guard bypasses | resolved |
+| FR-089 | P2 | risk | Ownership hook `allow` skips the prompt | resolved (ruling) |
+| FR-086 | P2 | risk | Byte-code cache in shared temp | resolved |
 | FR-094 | P3 | risk | Windows CI job ~47 min | profile |
 | FR-099 | P3 | issue | Ten environmental test failures | partly resolved |
 | FR-100 | P3 | issue | Native hosts refuse outside writes | `/design-slice` |

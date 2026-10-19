@@ -76,7 +76,7 @@ class DispatchBaseTests(unittest.TestCase):
 
 
 class HousekeepingCheckTests(unittest.TestCase):
-    """RUN-B recurrence (x-harness-x-model-bench run w2-lgc-e1e4, 2026-10-05): the periodic leader
+    """RUN-C recurrence (x-harness-x-model-bench run w2-lgc-e1e4, 2026-10-05): the periodic leader
     check cancelled the run with RUN-LEADER at 1,298 s while the lease had 833 s left; the host was
     running a full pytest suite and two worker gates. A check with no operation deadline of its own
     gave up after a fixed 10 s of slow checks. Slowness is not lost authority while the observed
@@ -552,7 +552,7 @@ class RunnerTests(unittest.TestCase):
         script.write_text(source, encoding="utf-8")
 
     def test_slow_leader_check_does_not_cancel_a_valid_lease(self):
-        # RUN-B: a leader check slower than the old fixed 2 s bound (here 7 s, past
+        # RUN-C: a leader check slower than the old fixed 2 s bound (here 7 s, past
         # LEADER_CHECK_TIMEOUT too, so the first attempt is genuinely killed and retried)
         # must not cancel a run whose lease (TTL 300 s via pin()) is still live.
         self.slow_leader_ref_read_once(7)
@@ -568,7 +568,7 @@ class RunnerTests(unittest.TestCase):
         self.assertIsNone(result["code"])
 
     def test_sustained_slow_leader_checks_do_not_cancel_a_valid_lease(self):
-        # RUN-B recurrence (run w2-lgc-e1e4): every leader check runs past LEADER_CHECK_TIMEOUT
+        # RUN-C recurrence (run w2-lgc-e1e4): every leader check runs past LEADER_CHECK_TIMEOUT
         # for longer than the old 10 s budget, while the lease (TTL 300 s via pin()) stays live.
         script = self.scripts / "coord-core.py"
         source = script.read_text(encoding="utf-8")

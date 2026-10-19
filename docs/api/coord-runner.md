@@ -68,7 +68,7 @@ _(no docstring — coverage gap)_
 
 ### `housekeeping_check(check, lease, epoch)`
 
-One bounded leader check for a caller with no operation deadline (RUN-B).
+One bounded leader check for a caller with no operation deadline (RUN-C).
 
 True while authority stands. A definitive refusal or a changed epoch ends it at once. A
 check that only ran slow (LeaderCheckSlow) is not lost authority while the last observed
