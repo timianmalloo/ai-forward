@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-10-18T22:56:51Z",
+  "generated": "2026-10-19T14:05:31Z",
   "audit": [
     {
       "actor": null,
@@ -13811,6 +13811,29 @@ window.AUDIT_DATA = {
       "tier": "T1",
       "started_at": "2026-10-18T22:49:16Z",
       "duration_seconds": 455.0
+    },
+    {
+      "id": "al-01M5A7PN8908XB2HEMHDVE9MR4",
+      "shortname": "rulings-rev114-and-reviews",
+      "datetime": "2026-10-19T14:05:31Z",
+      "session": "4bdeb954-c8f8-421a-86f9-bf7cbee4806e",
+      "prompt": "1: yes do it\n2: i should not have to give permission for edits, that is what i had to go fix in the ai-forward pack, when i run in bypass permissions or some form of YOLO the asking for permissions gets in the way ... so ensure that on edits i DONT have to provide permission\n3: yes do it\n4: you should be able to run that",
+      "summary": "Delivered the four rulings. PR #22 (revision 114, merged 90dc7ff): EDIT-ASK, the edit-ownership hook never answers `ask` on Claude (unverifiable -> {}, suspect path -> deny, checked -> allow/deny; FR-089 closed by owner ruling, note-20261019-edits-never-ask); FR-088, git-identity guard judges shlex command words (probe table red on 21 first); FR-086, per-user owner-only byte-code cache; second RUN-B renamed RUN-C. PR #23: audit-log.md and forensic-review-20260712 backlog reviewed (freshness 0 findings); STRIDE and LINDDUN sections for decision-interrogation, one-command-adoption, session-profiler, skill-evolution (Security and Privacy lenses, from code); gap rows removed, registers regenerated; FR-103 (P1, profiler copies a planted token verbatim; 8 committed profiles scanned clean) to FR-107 recorded. Primary checkout fast-forwarded to main. Open: FR-095 ADR, FR-104 owner ruling, FR-103 fix.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/note-20261019-edits-never-ask.md",
+        "docs/backlog/forensic-review-rev108.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Deliver the four rulings: FR-088; edits never ask; the two overdue reviews; FR-086, RUN-B dup, four design sections, primary fast-forward",
+      "done_when": "Each item merged to main through a PR with green required checks",
+      "tier": "T1",
+      "fan_out": 2
     }
   ],
   "changes": [
