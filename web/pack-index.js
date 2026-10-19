@@ -36,7 +36,7 @@ window.PACK_INDEX = {
 {
 "id": "graph",
 "label": "Knowledge graph (docs/)",
-"count": 369
+"count": 370
 },
 {
 "id": "guides",
@@ -44,7 +44,7 @@ window.PACK_INDEX = {
 "count": 9
 }
 ],
-"total": 554,
+"total": 555,
 "items": [
 {
 "cat": "knowledge",
@@ -1746,6 +1746,15 @@ window.PACK_INDEX = {
 "path": "docs/adr/0013-conversation-native-interrogation.md",
 "kind": "adr",
 "text": "use conversation-native decision interrogation chooses shared prompt guidance and native host questions instead of a new decision-runtime subsystem. skills conversation refines architecture-decision-interrogation"
+},
+{
+"cat": "graph",
+"id": "adr-0014-meet-the-developer-in-their-harness",
+"title": "ADR-0014: Meet the developer in their harness — every harness they use is a first-class target",
+"summary": "The pack's fundamental purpose is to meet the developer where they are. Every harness a developer uses is supported natively and verified on that host, not reached through another host's compatibility layer. Six are supported today (Claude…",
+"path": "docs/adr/0014-meet-the-developer-in-their-harness.md",
+"kind": "adr",
+"text": "adr-0014: meet the developer in their harness — every harness they use is a first-class target the pack's fundamental purpose is to meet the developer where they are. every harness a developer uses is supported natively and verified on that host, not reached through another host's compatibility layer. six are supported today (claude code, github copilot, codex, grok build, antigravity, muse); local llms are in scope and not yet supported. a harness is never dropped or degraded to save effort or bytes. resolves fr-095. harness adapters purpose multi-harness local-llm owner-ruling relates-to architecture relates-to defect-classes relates-to forensic-review-rev108-backlog"
 },
 {
 "cat": "graph",
