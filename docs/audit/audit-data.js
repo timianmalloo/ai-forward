@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-10-19T14:05:31Z",
+  "generated": "2026-10-19T16:31:07Z",
   "audit": [
     {
       "actor": null,
@@ -13834,6 +13834,28 @@ window.AUDIT_DATA = {
       "done_when": "Each item merged to main through a PR with green required checks",
       "tier": "T1",
       "fan_out": 2
+    },
+    {
+      "id": "al-01M5AG17NBPYKNVW76WK1DY1SN",
+      "shortname": "fr103-fr104-adr0014",
+      "datetime": "2026-10-19T16:31:06Z",
+      "session": "4bdeb954-c8f8-421a-86f9-bf7cbee4806e",
+      "prompt": "yes [start the FR-103 fix]\nFR-104 : repos that install the pack should not get session profiles committed without notice - just this pack\nFR-095 : why do you need a reason for supporting each harness\ni still dont understand the issue with FR-095\nHere is the fundamental point. The AI-Forward Pack MUST meet the developer where they are. For example, i use all of those harnesses and local LLM's as well, and if the pack does not support them properly out of the box then coding in a repo with the pack applied in a harness becomes sub optimal. So this is a fundamental priority of the pack - i have seen first hand that unless you explicitly support the different harnesses different issues pop in terms of the skills, knowledge, scripts etc\nso this is not a cost... this is the fundamental purpose of the pack\nhold off on local LLM for now, i will work through that later",
+      "summary": "FR-103 and FR-104 fixed in pack revision 115 (PR #24, merged bf88c08). session-profile.py scrubs every profile string with dream.py's scrub (plus github_pat_ and private-key patterns) and writes nothing without it; planted-secret tests were red on all five first. Owner ruling \"just this pack\": only the pack source repo commits profiles by default; elsewhere <git-dir>/ai-forward/profiles/ with a notice, --publish for docs/profiles/. Class SCRUB-A. Gate 8 failure (skill +133 tokens) fixed by trimming the text, not raising the baseline. ADR-0014 \"meet the developer in their harness\" written from the owner's framing (harness support is the pack's fundamental purpose, not a cost); resolves FR-095. FR-108 (local LLMs unsupported) recorded and deferred by the owner.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/adr/0014-meet-the-developer-in-their-harness.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "goal": "Fix FR-103 (no secret reaches a profile) and FR-104 per ruling; record the harness-support principle as ADR-0014",
+      "done_when": "Revision 115 and ADR-0014 merged through PRs with green checks",
+      "tier": "T1",
+      "fan_out": 0
     }
   ],
   "changes": [
