@@ -88,6 +88,30 @@ class DeliveryTests(unittest.TestCase):
                     "actor": actor, "source": source, "decision": decision,
                     "evidence": str(evidence)})
 
+    def test_forget_deletes_the_checkpoint_and_nothing_else(self):
+        # FR-107: checkpoints had no deletion path; the only unlink was the writer lock, so a
+        # plain project's state under ~/.local/state outlived the project.
+        self.start()
+        checkpoint = self.repo / ".git" / "ai-forward" / "delivery" / "demo.json"
+        self.assertTrue(checkpoint.is_file())
+        neighbour = checkpoint.with_name("other.json")
+        neighbour.write_text("{}", encoding="utf-8")
+        forgotten = self.run_cli("forget", "--task", "demo")
+        self.assertEqual({"task": "demo", "forgotten": str(checkpoint)}, forgotten)
+        self.assertFalse(checkpoint.exists())
+        self.assertFalse(checkpoint.with_suffix(".lock").exists())
+        self.assertTrue(neighbour.exists(), "forget removes only the named task")
+        self.run_cli("status", "--task", "demo", ok=False)
+        self.assertIn("unknown task", self.run_cli("forget", "--task", "demo", ok=False).stderr)
+
+    def test_forget_removes_the_emptied_project_directory_under_a_state_root(self):
+        self.state_root = Path(self.tmp.name) / "state"
+        self.start()
+        [project_dir] = [p for p in self.state_root.iterdir() if p.is_dir()]
+        self.run_cli("forget", "--task", "demo")
+        self.assertFalse(project_dir.exists())
+        self.assertTrue(self.state_root.is_dir(), "the state root itself is the operator's")
+
     def test_defect_gate_requires_explicit_bound_human_decision(self):
         self.start(kind="defect")
         evidence = self.write("diagnosis.json", {"root_cause": "verified", "phases": [1]})

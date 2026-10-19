@@ -3998,7 +3998,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9b567cb495efeb8a1c75c5f57155bf4594d016c5f63cd4fcd4063b3832f8a307"
+      "sourceSha256": "e44efc9a9152c510455d30bbc413cfac17861fcfbec2023ff69f2372239e4cb6"
     },
     {
       "id": "design-docs-explorer-grounding-spatial-navigation",
@@ -4410,7 +4410,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7937416c1e2fcdb7085837556d6cbc5967b526aaea36d170699efbb5fdf9b1da"
+      "sourceSha256": "3827487e43283381f0c831f3ba19aea61a7b2c6722a9ec3803d94a26d8d0b3db"
     },
     {
       "id": "design-owner-review",
@@ -4607,7 +4607,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "2c44d0304537bbbcc3efd5a2ab98fa67faaf30b323c112c3a6743e917ca93fea"
+      "sourceSha256": "0c458b03ddc707e2511717737fbda155dbfef31dfe6c2b688d5bc8ebc1c0a560"
     },
     {
       "id": "design-skill-evolution",
@@ -5008,7 +5008,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "be10dcd5f5cf97e1a8da49e5eb1a26c58c37727399c71bbe0f98fa100629fefe"
+      "sourceSha256": "dbffb412433c4d31fdea4428c5371e562bf5f726172fe9d8662d4401435d078a"
     },
     {
       "id": "docs-index",
@@ -5336,7 +5336,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "3b10d5adfddf521aaeb13a49661a01830b4411b79f5bb3a0a2685418bccda379"
+      "sourceSha256": "50ed6fea80be6046744914f6595c0c73f5cdf98f3f2315f78c613b39e82b9d9a"
     },
     {
       "id": "forensic-review-rev42",
@@ -12702,5 +12702,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "5bbc4a17ac75c7c7bea3c86fd1d52df4a88df119a6b1c8a638bc9f89bbd42ad1"
+  "graphSha256": "80283d5e41ed5018fd3556fe12fa2b9f35c735f8bc7af2898f84ae6e56725c5b"
 };

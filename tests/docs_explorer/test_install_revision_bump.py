@@ -15,13 +15,14 @@ Seen failing first on `332c297`, the tip after PR #12, whose last pack commit le
 """
 import re
 import subprocess
+import tempfile
 import unittest
 from pathlib import Path
 
 from test_upstream_adoption_integration import (recovered_revision_108_install, recovered_revision_109_install,
                                                recovered_revision_110_install, recovered_revision_111_install,
                                                recovered_revision_112_install, recovered_revision_113_install,
-                                               recovered_revision_114_install)
+                                               recovered_revision_114_install, recovered_revision_115_install)
 
 REPO = Path(__file__).resolve().parents[2]
 INSTALL = "pack/adapters/INSTALL.md"
@@ -33,6 +34,20 @@ def _last_commit(ref, path):
     return out.stdout.strip() if out.returncode == 0 else None
 
 
+def _git(repo, *args):
+    out = subprocess.run(["git", "-C", str(repo), *args], capture_output=True, text=True, encoding="utf-8")
+    return out.stdout.strip() if out.returncode == 0 else ""
+
+
+def history_is_cut(repo):
+    """True when a shallow clone's boundary is where the check would look: the newest commit that
+    touched pack/ has no fetched parent, so it appears to have changed every path."""
+    if _git(repo, "rev-parse", "--is-shallow-repository") != "true":
+        return False
+    sha = _git(repo, "log", "-1", "--format=%H", "HEAD", "--", "pack")
+    return bool(sha) and not _git(repo, "log", "-1", "--format=%P", sha)
+
+
 def unbumped_pack_commit(ref="HEAD"):
     """The newest commit at `ref` that changed pack/ without INSTALL.md, else None."""
     pack, install = _last_commit(ref, "pack"), _last_commit(ref, INSTALL)
@@ -41,12 +56,36 @@ def unbumped_pack_commit(ref="HEAD"):
     return None if pack == install else pack
 
 
+class ShallowCloneTests(unittest.TestCase):
+    """PACK-W recurred on 2026-10-19: PR #24's last commit changed pack/ without INSTALL and CI passed,
+    because a depth-1 checkout holds one grafted commit that seems to touch every path. The check
+    now fails on a clone whose history is cut, instead of passing vacuously."""
+
+    def test_a_depth_one_clone_is_reported_as_cut(self):
+        if not (REPO / ".git").exists():
+            self.skipTest("no git checkout")
+        with tempfile.TemporaryDirectory() as tmp:
+            clone = Path(tmp) / "shallow"
+            subprocess.run(["git", "clone", "-q", "--depth", "1", REPO.as_uri(), str(clone)],
+                           check=True, capture_output=True)
+            self.assertTrue(history_is_cut(clone))
+
+    def test_this_checkout_with_history_is_not_cut(self):
+        if not (REPO / ".git").exists():
+            self.skipTest("no git checkout")
+        if _git(REPO, "rev-parse", "--is-shallow-repository") == "true":
+            self.skipTest("this checkout is itself shallow; the check above judges it")
+        self.assertFalse(history_is_cut(REPO))
+
+
 class InstallRevisionBumpTests(unittest.TestCase):
     def setUp(self):
         if not (REPO / ".git").exists() or _last_commit("HEAD", "pack") is None:
             self.skipTest("no git history for pack/")
 
     def test_the_newest_pack_change_carries_an_install_revision(self):
+        self.assertFalse(history_is_cut(REPO), "this clone is too shallow to see which commit last changed "
+                         "pack/ (a depth-1 checkout passes vacuously); fetch at least the PR's commits")
         sha = unbumped_pack_commit()
         self.assertIsNone(sha, "commit {} changed pack/ without {}: bump `revision`, write this "
                           "revision's `changes`, archive the previous ones".format(sha, INSTALL))
@@ -161,7 +200,7 @@ class Revision115MetadataTests(unittest.TestCase):
     outside the pack source repository (FR-104)."""
 
     def test_revision_115_is_the_one_profile_scrub_delta(self):
-        raw = (REPO / INSTALL).read_bytes()
+        raw = recovered_revision_115_install()
         frontmatter = raw.split(b"---\n", 2)[1].decode("utf-8")
         self.assertRegex(frontmatter, r"(?m)^revision: 115$")
         self.assertIn("bundle_version: '2026.10.19.2'", frontmatter)
@@ -174,6 +213,25 @@ class Revision115MetadataTests(unittest.TestCase):
         with self.assertRaises(AssertionError):
             recovered_revision_114_install(raw.replace(b"area: edits-never-ask-and-guard-hardening",
                                                        b"area: edits-never-ask-and-guard-hardeninG", 1))
+
+
+class Revision116MetadataTests(unittest.TestCase):
+    """Revision 116: the one delta for FR-105 (profiler isolation), FR-106 (DI7) and FR-107 (forget)."""
+
+    def test_revision_116_is_the_one_isolation_source_and_forget_delta(self):
+        raw = (REPO / INSTALL).read_bytes()
+        frontmatter = raw.split(b"---\n", 2)[1].decode("utf-8")
+        self.assertRegex(frontmatter, r"(?m)^revision: 116$")
+        self.assertIn("bundle_version: '2026.10.19.3'", frontmatter)
+        self.assertEqual(1, frontmatter.count("  - { type: changed,"))
+        self.assertIn("area: profiler-isolation-decision-source-and-forget", frontmatter)
+        for path in ("scripts/session-profile.py", "scripts/delivery.py", "knowledge/decision-interrogation.md",
+                     "commands/deliver/reference/checkpoints.md", "adapters/INSTALL.md"):
+            self.assertTrue((REPO / "pack" / path).is_file(), path)
+        self.assertEqual(297106, len(recovered_revision_115_install(raw)))
+        with self.assertRaises(AssertionError):
+            recovered_revision_115_install(raw.replace(b"area: profile-scrub-and-local-default",
+                                                       b"area: profile-scrub-and-local-defaulT", 1))
 
 
 if __name__ == "__main__":

@@ -66,6 +66,8 @@ Trust boundaries: (1) harness telemetry written outside the repo by Claude Code 
 
 **Revision 115 update (2026-10-19):** the disclosure threat above is now mitigated. `cmd_profile` scrubs every string (`scrubbed`, using `dream.py` `scrub`, which gained `github_pat_` and private-key patterns) before `--json-only`, both files and the index, and returns 2 without writing if the scrubber is missing. Outside the pack source repository profiles default to the untracked `<git-dir>/ai-forward/profiles/` (`profiles_dir`). Pinned by `NoSecretReachesAProfileTests` and `ProfilesStayLocalOutsideThePackTests`, both observed failing first. Residual: pattern-based, so a secret in an unknown shape passes.
 
+**Revision 116 update (2026-10-19), elevation:** the profiler runs only the `audit-log.py` beside itself, with `-I`, never one found in the target (FR-105, `TheProfilerRunsOnlyItsOwnCode`, observed failing first). Its `git` calls in each `--repo` pass `-c core.fsmonitor=false`. Residual: the target's `.git/config` still applies to those read-only `git` commands.
+
 ## Privacy analysis (LINDDUN-lite)
 | Data flow / category | LINDDUN finding | Disposition | Control / rationale | Retention & rights path |
 |---|---|---|---|---|

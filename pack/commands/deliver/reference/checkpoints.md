@@ -173,6 +173,20 @@ After real-path verification, `complete --stage verify` also requires `--closure
 
 List original criteria in their original order, each with nonempty observation and real evidence. Record actual changed paths, commands/results, reasoned skips and limits. Nonempty remaining gates cannot be declared closed. A matching structure is not proof the observation is true; apply CT25a/end-to-end-integrity and existing Proof Pack/reviewer checks, then hand back this map in chat. Audit via `audit-log.py` with only observed watcher signals and the existing compiled-from linkage; honor AL0.2 opt-in roots. No unsolicited graph bootstrap, default adoption, Git identity change or commit.
 
+## Forgetting a task
+
+```text
+delivery.py forget --task <id> [--state-root <dir>]
+```
+
+`forget` deletes one task's checkpoint under the writer lock, and nothing else (FR-107). For a plain
+project it also removes the per-project digest directory once it is empty. A missing task is
+refused (`unknown task`). Use it only when the human asks for the task to be dropped: the
+checkpoint is the only record of in-progress authors, gates and evidence, and the committed audit
+log keeps the prompt. A plain project's state lives outside the project (`$XDG_STATE_HOME` or
+`~/.local/state/ai-forward/delivery/`), so deleting the project does not delete it; this is the
+deletion path.
+
 ## Host reachability
 
 The pack installer copies complete skill directories to `.claude/skills`, `.agents/skills` and `.grok/skills`, and Copilot wrappers to `.github/prompts`. These resources therefore travel with the skill. Claude Code and VS Code support `/deliver`; Copilot CLI supports `/skills` discovery followed by `/deliver`, or requesting a named skill as `Use the /deliver skill ...` (not a custom shell command). `resume <id>` is interpreted by this skill, not a new host-native command. No `allowed-tools` preapproval is added.
