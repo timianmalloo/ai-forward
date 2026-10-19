@@ -9,7 +9,7 @@ links:
   - { to: architecture, rel: documents }
 review-by: "2027-03-03"
 summary: >-
-  Generated API reference for the pack's public surface — the deployed script bundle. 600 public functions across 46 modules, 47% carrying a docstring.
+  Generated API reference for the pack's public surface — the deployed script bundle. 602 public functions across 46 modules, 47% carrying a docstring.
 ---
 
 # API reference — the deployed script bundle
@@ -56,7 +56,7 @@ with no docstring is listed as a **coverage gap** rather than described from gue
 | [`repo_identity.py`](repo_identity.md) | 1 | 1 | — | repo_identity.py - the canonical project name, in ONE place (class PACK-P). |
 | [`run-verify-gates.py`](run-verify-gates.md) | 5 | 3 | — | run-verify-gates.py - every verify-*.py gate, one exit status, no pipe. |
 | [`scrub.py`](scrub.md) | 2 | 2 | — | scrub.py — first-pass PII/secret redaction for Markdown (deployable). |
-| [`session-profile.py`](session-profile.md) | 41 | 20 | 5 | session-profile.py — measure how agent sessions actually ran, across harnesses and models. |
+| [`session-profile.py`](session-profile.md) | 43 | 22 | 5 | session-profile.py — measure how agent sessions actually ran, across harnesses and models. |
 | [`ui-craft-gate.py`](ui-craft-gate.md) | 6 | 4 | — | ui-craft-gate.py - the UI craft gate for AI-Forward. |
 | [`verify-compiled-prompt.py`](verify-compiled-prompt.md) | 9 | 5 | 1 | verify-compiled-prompt.py - the compile-stage gate: a compiled prompt never adds scope. |
 | [`verify-documented-commands.py`](verify-documented-commands.md) | 6 | 3 | — | verify-documented-commands.py - every documented command under pack/ runs in any shell. |
@@ -70,5 +70,5 @@ with no docstring is listed as a **coverage gap** rather than described from gue
 | [`visual-assets-setup.py`](visual-assets-setup.md) | 12 | 5 | — | visual-assets-setup.py - wire up a generation backend for UI visual assets (AI-Forward). |
 | [`xaml-token-lint.py`](xaml-token-lint.md) | 9 | 0 | — | xaml-token-lint.py — first-slice token linter for XAML/native UI markup. |
 
-**Total** — 600 public functions across 46 modules, **280 documented (47%)**.
+**Total** — 602 public functions across 46 modules, **282 documented (47%)**.
 

@@ -1184,7 +1184,7 @@ window.DOCS_INDEX = {
       "phase": "",
       "reviewBy": "2027-03-03",
       "reviewSuggested": [],
-      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 600 public functions across 46 modules, 47% carrying a docstring.",
+      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 602 public functions across 46 modules, 47% carrying a docstring.",
       "tags": [
         "api",
         "scripts",
@@ -1198,7 +1198,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e2ff3d384f54831477966635977599bae940c759a021631f13cb9b9b064f57c2"
+      "sourceSha256": "7ce517bc4805627492e782d62c826c1c08aca32dea790560e0ef25d544e72e66"
     },
     {
       "id": "api-marker-lint",
@@ -1523,7 +1523,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c801f049ca5a5ca601bf323305ddd5bc7fc5ac10c844dc444fbaf9b970d34121"
+      "sourceSha256": "8ac1f83f180f09e48c9510f62b22579ed34942d35a4da3965f9ada29fdcd792e"
     },
     {
       "id": "api-ui-craft-gate",
@@ -12658,5 +12658,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "699ae0e3461af635aa6610f4734af3b284e735af7e1676c720cb24b4c31fadff"
+  "graphSha256": "1514172b5e676324950ac1ee17f2284f721ee81c3de9ee42439d95c4f43977ae"
 };
