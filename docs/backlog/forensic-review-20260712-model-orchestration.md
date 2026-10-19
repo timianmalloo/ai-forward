@@ -2,33 +2,34 @@
 id: forensic-review-backlog-20260712
 title: "Forensic Review Backlog — Model orchestration"
 type: doc
-status: proposed
+status: resolved
 owner: "@timianmalloo"
 phase: "pack-evolution"
 tags: [backlog, model-orchestration]
 links:
   - { to: forensic-review-20260712, rel: refines }
   - { to: architecture, rel: depends-on }
-review-by: 2026-10-10
+review-by: "2027-04-19"
 review-suggested: []
 summary: >-
   Historical remediation backlog from the model-orchestration forensic review. The capability
-  was reverted; orchestration-specific items are closed by removal. FR-008 and residual FR-010
-  remain independent repository findings.
+  was reverted; orchestration-specific items are closed by removal. Reviewed 2026-10-19: the two
+  residual items, FR-008 (bundle/CI oracle) and FR-010 (public docs), are resolved by later work.
+  Nothing here is open.
 ---
 
 # Forensic Review Backlog — Model orchestration
 
 *Historical backlog for `docs/reviews/forensic-review.md`. The user selected revert rather than
-remediation. FR-001–FR-007 and FR-009 are **closed by removal**. FR-008 and the pre-existing
-deployment-map portion of FR-010 remain proposed repository work.*
+remediation. FR-001–FR-007 and FR-009 are **closed by removal**. FR-008 and FR-010 were
+**resolved by later work** (reviewed 2026-10-19; evidence under each item). Nothing here is open.*
 
 ## Delivery phases
 
 | Phase | Goal | Items |
 |---|---|---|
 | Closed by revert | Removed model orchestration and all active claims/wiring | FR-001–FR-007, FR-009 |
-| Residual repository work | Improve bundle proof and reconcile pre-existing Copilot peer-agent deployment docs | FR-008, FR-010 |
+| Residual repository work (resolved 2026-10-19) | Improve bundle proof and reconcile pre-existing Copilot peer-agent deployment docs | FR-008, FR-010 |
 
 ---
 
@@ -180,7 +181,7 @@ deployment-map portion of FR-010 remain proposed repository work.*
 
 ## FR-008 — Make bundle/CI consistency a real oracle
 
-- **Kind / priority / status:** issue · **P2** · proposed
+- **Kind / priority / status:** issue · **P2** · resolved (2026-10-19 review)
 - **Evidence:** `verify-bundle.ps1:59-76` does not fail on dirty sync; stale web index
   reproduction; CI omits Python tests and runs only Ubuntu; consistency ignores router/peer
   parity.
@@ -199,6 +200,12 @@ deployment-map portion of FR-010 remain proposed repository work.*
 - **Dependencies:** FR-005 manifests simplify parity
 - **Suggested owner:** Release Engineer + Test Architect
 - **Next skill:** `/implement`
+- **Resolved (verified 2026-10-19).** (1) Gate 2 of `tools/verify-bundle.ps1` runs `sync-pack.ps1`
+  then `git diff --exit-code`, so a stale generated file such as `web/pack-index.js` exits
+  nonzero. (2) and (3) are moot: `model-router.py` and `test_model_router.py` were removed with
+  the capability, and `.claude/agents/` and `.github/agents/` each hold 23 personas. (4)
+  `pack-consistency.yml` runs the whole Python suite on ubuntu, Windows and macOS. All three jobs
+  are required checks on `main` (`note-20261017-require-ci-before-merge`).
 
 ## FR-009 — Add provider/data governance before automatic dispatch
 
@@ -223,7 +230,7 @@ deployment-map portion of FR-010 remain proposed repository work.*
 
 ## FR-010 — Reconcile remaining public documentation
 
-- **Kind / priority / status:** todo · **P3** · proposed
+- **Kind / priority / status:** todo · **P3** · resolved (2026-10-19 review)
 - **Evidence:** missing OVERVIEW bullet; wrong Claude router path; INSTALL promises/deployment
   and single-agent prose contradict current repo/CLI; decision-note blast radius overstates.
 - **Affected scope:** pack docs and managed blocks.
@@ -240,10 +247,17 @@ deployment-map portion of FR-010 remain proposed repository work.*
 - **Dependencies:** FR-001, FR-005
 - **Suggested owner:** Documentation Steward + Enterprise Architect
 - **Next skill:** `/document`
+- **Resolved (verified 2026-10-19).** No file under `pack/`, nor `AGENTS.md`, `CLAUDE.md` or
+  `README.md`, mentions `model-router` or model orchestration, so nothing claims the removed
+  behaviour. The orchestrator persona exists on both surfaces (`.claude/agents/orchestrator.md`,
+  `.github/agents/orchestrator.agent.md`). The policy note is `superseded` by
+  `note-20260712-revert-model-orchestration`, so no ADR is needed. Count and path claims are
+  gated by `check-consistency.py` (gate 1) and were re-verified at revision 113 (`architecture.md`).
 
 ---
 
 ## Human triage
 
-No model-orchestration implementation is approved. Triage only FR-008 and the residual
-deployment-map/doc mismatch in FR-010 if they are worth addressing independently.
+No model-orchestration implementation is approved. The 2026-10-19 review found FR-008 and
+FR-010 resolved by later work; nothing remains to triage. Re-open only if model orchestration
+is proposed again.

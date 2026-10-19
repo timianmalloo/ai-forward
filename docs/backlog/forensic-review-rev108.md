@@ -226,6 +226,60 @@ security or migration risk · **P2** material maintainability, operability or go
   gate 2.
 - **Acceptance:** deleting `.codex/hooks.json` and running sync recreates it.
 
+## Found 2026-10-19 — the four designs' security and privacy sections
+
+Writing the missing STRIDE and LINDDUN sections for `decision-interrogation`, `one-command-adoption`,
+`session-profiler` and `skill-evolution` (Security & Identity and Privacy lenses, from the code)
+surfaced these. None is fixed.
+
+### FR-103 · risk · P1 — The session profiler commits secrets from shell commands unscrubbed
+- **Location:** `pack/scripts/session-profile.py` `shell_shape_counts` (piped-gate and failed-heredoc
+  evidence, 90 chars), `profile_copilot` / `profile_claude` (prompt previews, 160 chars).
+- **Evidence (executed):** `shell_shape_counts([("t1", "export GH_TOKEN=ghp_PLANTED… && python -m
+  pytest tests -q | tail -5")], {})` returned `gate piped: export GH_TOKEN=ghp_PLANTED… …` with the
+  token intact. `session-profile.py` has no scrub; `dream.py`'s `scrub` runs only on what `/dream`
+  mines. The design's failure-mode row claimed a review-before-commit step the skill does not have
+  (corrected in the design).
+- **Consequence:** a secret typed into a gated shell line, or into a prompt, lands in
+  `docs/profiles/<sp-id>/profile.{json,md}`. Here those are committed and published on Pages.
+  A pattern scan of the 8 committed profiles on 2026-10-19 found no token, key or password, so
+  nothing is exposed now.
+- **Remediation:** apply one scrub (reuse `dream.py`'s) to every prompt, title and evidence string
+  before writing.
+- **Acceptance:** a test plants `ghp_…`, `KEY=…` and a private-key header in a prompt, a piped gate
+  and a failed heredoc, and asserts that none appears in either output. Observed failing first.
+- **Owner:** Security & Identity. **Next skill:** `/implement`.
+
+### FR-104 · risk · P2 — A consuming repo's profiles are committed with no notice or opt-in
+- **Evidence:** `cmd_profile` writes prompt prefixes, absolute paths, session titles and command
+  fragments into the target repo's tracked `docs/profiles/`. `note-20261017-session-profiles-published`
+  covers this repository only. The skill tells the operator neither what the output carries nor
+  that it may be published.
+- **Remediation (owner decision):** a notice plus opt-in, or a git-ignored default output path
+  for consuming repos. The owner also confirms whether command and tool-output fragments fall under
+  the 2026-10-17 ruling (its re-open trigger 3).
+- **Owner:** Privacy & Data Governance. **Next skill:** owner ruling, then `/implement`.
+
+### FR-105 · risk · P3 — The profiler runs code found in the repository it writes into
+- **Evidence:** `_audit` runs the target repo's own `audit-log.py` with `sys.executable` and no
+  `-I`, and `repo_identity` runs `git` in every `--repo`, so that repo's `.git/config` applies.
+- **Remediation:** run the profiler's sibling `audit-log.py` with `-I`, or record the trust assumption.
+- **Next skill:** `/implement`.
+
+### FR-106 · risk · P3 — Decision interrogation does not record who answered
+- **Evidence:** the four authoring skills declare `runs_as: either`. As a Sub-Agent, the skill's
+  "human" is its parent, and none of the four cites CO-S2. A parent agent's answer enters the
+  artifact looking like a human decision.
+- **Remediation:** DI4 sends any answer not given by the human back as a decision request, and the
+  artifact records each answer's source.
+- **Next skill:** `/implement` (skill text plus a contract test).
+
+### FR-107 · todo · P3 — `/deliver` checkpoints have no deletion path
+- **Evidence:** `delivery.py` has no forget verb; the only `unlink` is the writer lock. Plain-project
+  state under `~/.local/state/ai-forward/delivery/` outlives the project.
+- **Remediation:** a `delivery.py forget <task>` verb, or document the path.
+- **Next skill:** `/implement`.
+
 ## Resolved during the review
 
 ### FR-101 · issue · P3 — The edit-ownership hook prompted for writes it does not govern — **resolved**
@@ -272,3 +326,8 @@ security or migration risk · **P2** material maintainability, operability or go
 | FR-096 | P3 | todo | `.codex/hooks.json` unsourced | `/implement` |
 | FR-101 | P3 | issue | Hook prompted outside its domain | resolved |
 | FR-102 | P2 | issue | Bundle change without a revision bump | resolved |
+| FR-103 | P1 | risk | Profiler commits secrets unscrubbed | `/implement` |
+| FR-104 | P2 | risk | Consumer profiles with no notice or opt-in | owner ruling |
+| FR-105 | P3 | risk | Profiler runs the target repo's code | `/implement` |
+| FR-106 | P3 | risk | Decision answers carry no source | `/implement` |
+| FR-107 | P3 | todo | No checkpoint deletion path | `/implement` |
