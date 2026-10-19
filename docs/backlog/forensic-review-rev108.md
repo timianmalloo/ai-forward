@@ -293,6 +293,8 @@ surfaced these. None is fixed.
   to load, with no path map, no tuning for smaller context windows, and no verification.
 - **Remediation:** first establish which harness or tool runs the local models and how it discovers
   instructions and skills (Spike Protocol), then give it a native surface under ADR-0014's obligations.
+- **Deferred 2026-10-19 by the owner** ("I will work through that later"). Do not start until the owner
+  names the local-model setup.
 - **Owner:** the owner (which setup), then Domain Researcher. **Next skill:** `/investigate` (spike), then
   `/implement`.
 
@@ -347,4 +349,4 @@ surfaced these. None is fixed.
 | FR-105 | P3 | risk | Profiler runs the target repo's code | `/implement` |
 | FR-106 | P3 | risk | Decision answers carry no source | `/implement` |
 | FR-107 | P3 | todo | No checkpoint deletion path | `/implement` |
-| FR-108 | P2 | todo | Local LLMs have no support | owner input, then `/investigate` |
+| FR-108 | P2 | todo | Local LLMs have no support | deferred (owner) |
