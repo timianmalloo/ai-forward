@@ -14,7 +14,7 @@ drift gates fail). Commit `pack/`, `.claude/`, `.github/`, and `docs/` together.
 
 **Changes reach `main` only by PR — direct pushes are rejected, admins included.** `main`
 requires **linear history** and three green `pack-consistency` checks (`consistency`,
-`consistency-windows`, `consistency-macos`; ~25 min, Windows sets the pace), with the PR up to
+`consistency-windows`, `consistency-macos`; ~9 min, tests in 3 shards per OS), with the PR up to
 date with `main`. Merge with `gh pr merge <n> --rebase --delete-branch`. WT1's merge-back makes a
 merge commit the rule rejects (`GH006`): rebuild as linear commits off `origin/main`. Read back via
 `gh api repos/timianmalloo/ai-forward/branches/main/protection`:
@@ -27,7 +27,7 @@ merge commit the rule rejects (`GH006`): rebuild as linear commits off `origin/m
 ```
 
 Decision and re-open triggers: `docs/notes/note-20261017-require-ci-before-merge.md`. Run
-`verify-bundle.ps1` before pushing anyway: ~15 min locally fails sooner than ~25 in CI.
+`verify-bundle.ps1` before pushing anyway (~15–23 min): a red CI round costs a push.
 
 <!-- AI-FORWARD-PACK:BEGIN (managed block — keep this block intact when reconciling; replace it wholesale on pack updates) -->
 ## AI-Forward Pack + Agent Knowledge Pack

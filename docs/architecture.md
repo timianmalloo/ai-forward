@@ -168,18 +168,18 @@ sequenceDiagram
   CC-->>Dev: run a skill; dogfood the edit
   Dev->>Verify: pwsh tools/verify-bundle.ps1
   Verify->>Verify: tools/gates.py — 22 gates: counts · portability · contracts · drift ·<br/>tests (xdist -n 4, then serial wallclock) · explorer ·<br/>graph · foundation · audit · coordination · evals · context budget · platform proofs
-  Verify-->>Dev: PASS (~15 min), or the first thing that is wrong
+  Verify-->>Dev: PASS (~15–23 min), or the first thing that is wrong
   Graph->>Explorer: index loaded; hierarchy · graph · mind map · health render
   Dev->>Pack: commit pack/ + .claude/ + .github/ + docs/ together (lockstep)
   Dev->>GH: open a PR (direct pushes are rejected)
-  GH->>GH: pack-consistency: consistency · consistency-windows ·<br/>consistency-macos (required, ~25 min) + duration-budget
+  GH->>GH: pack-consistency: consistency · consistency-windows ·<br/>consistency-macos (required, ~9 min: tests in 3 shards per OS) + duration-budget
   GH-->>Dev: rebase-merge once green and up to date with main
 ```
 
 The gate is part of the loop, not an afterthought. Since 2026-10-18 `main` requires linear
 history **and** the three `pack-consistency` checks, bound to the GitHub Actions app, with
 `strict` up-to-date PRs, admins included; a red PR is `BLOCKED` (proved by PR #18).
-`verify-bundle.ps1` runs the same gates locally in ~15 min and fails sooner than CI.
+`verify-bundle.ps1` runs the same gate list (`tools/gates.py`) locally in ~15–23 min. Since revision 117 the Windows and macOS test suites run in three shards each; on run 39348961446 the slowest required path took 8 min 36 s (a Windows shard), against 18 min unsharded.
 `[Verified: gh api …/branches/main/protection; tools/verify-bundle.ps1; .github/workflows/pack-consistency.yml; docs/notes/note-20261017-require-ci-before-merge.md]`
 
 ## Reverted model-orchestration experiment (historical)

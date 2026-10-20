@@ -1893,7 +1893,7 @@ window.DOCS_INDEX = {
         {
           "kind": "sequence",
           "title": "Key flow — the sandbox / dogfood loop (sequence)",
-          "mermaid": "sequenceDiagram\n  actor Dev as Author\n  participant Pack as pack/ (source)\n  participant Sync as tools/sync-pack.ps1\n  participant Install as .claude/ + docs/\n  participant CC as Claude Code (this repo)\n  participant Graph as docs-graph.py\n  participant Verify as tools/verify-bundle.ps1\n  participant Explorer as docs/index.html\n  participant GH as GitHub (main, protected)\n\n  Dev->>Pack: edit a knowledge doc / SKILL.md / persona / template\n  Dev->>Sync: pwsh tools/sync-pack.ps1\n  Sync->>Install: mirror knowledge, skills, agents, templates, scripts\n  Sync->>Install: route each knowledge doc by its load: scope<br/>(instructions vs .github/knowledge)\n  Sync->>Install: re-paste the CLAUDE.md / AGENTS.md managed blocks\n  Sync->>Graph: docs-graph.py derive\n  Graph->>Install: write docs/docs-index.js from frontmatter\n  Sync->>Install: build-web-index.py, build-docs-portal.py\n  Note over Sync,Install: derivation runs INSIDE sync (FR-068), so the<br/>index can never lag a run that added an artifact\n  Dev->>CC: try the change (regenerated skills/agents are now live)\n  CC-->>Dev: run a skill; dogfood the edit\n  Dev->>Verify: pwsh tools/verify-bundle.ps1\n  Verify->>Verify: tools/gates.py — 22 gates: counts · portability · contracts · drift ·<br/>tests (xdist -n 4, then serial wallclock) · explorer ·<br/>graph · foundation · audit · coordination · evals · context budget · platform proofs\n  Verify-->>Dev: PASS (~15 min), or the first thing that is wrong\n  Graph->>Explorer: index loaded; hierarchy · graph · mind map · health render\n  Dev->>Pack: commit pack/ + .claude/ + .github/ + docs/ together (lockstep)\n  Dev->>GH: open a PR (direct pushes are rejected)\n  GH->>GH: pack-consistency: consistency · consistency-windows ·<br/>consistency-macos (required, ~25 min) + duration-budget\n  GH-->>Dev: rebase-merge once green and up to date with main"
+          "mermaid": "sequenceDiagram\n  actor Dev as Author\n  participant Pack as pack/ (source)\n  participant Sync as tools/sync-pack.ps1\n  participant Install as .claude/ + docs/\n  participant CC as Claude Code (this repo)\n  participant Graph as docs-graph.py\n  participant Verify as tools/verify-bundle.ps1\n  participant Explorer as docs/index.html\n  participant GH as GitHub (main, protected)\n\n  Dev->>Pack: edit a knowledge doc / SKILL.md / persona / template\n  Dev->>Sync: pwsh tools/sync-pack.ps1\n  Sync->>Install: mirror knowledge, skills, agents, templates, scripts\n  Sync->>Install: route each knowledge doc by its load: scope<br/>(instructions vs .github/knowledge)\n  Sync->>Install: re-paste the CLAUDE.md / AGENTS.md managed blocks\n  Sync->>Graph: docs-graph.py derive\n  Graph->>Install: write docs/docs-index.js from frontmatter\n  Sync->>Install: build-web-index.py, build-docs-portal.py\n  Note over Sync,Install: derivation runs INSIDE sync (FR-068), so the<br/>index can never lag a run that added an artifact\n  Dev->>CC: try the change (regenerated skills/agents are now live)\n  CC-->>Dev: run a skill; dogfood the edit\n  Dev->>Verify: pwsh tools/verify-bundle.ps1\n  Verify->>Verify: tools/gates.py — 22 gates: counts · portability · contracts · drift ·<br/>tests (xdist -n 4, then serial wallclock) · explorer ·<br/>graph · foundation · audit · coordination · evals · context budget · platform proofs\n  Verify-->>Dev: PASS (~15–23 min), or the first thing that is wrong\n  Graph->>Explorer: index loaded; hierarchy · graph · mind map · health render\n  Dev->>Pack: commit pack/ + .claude/ + .github/ + docs/ together (lockstep)\n  Dev->>GH: open a PR (direct pushes are rejected)\n  GH->>GH: pack-consistency: consistency · consistency-windows ·<br/>consistency-macos (required, ~9 min: tests in 3 shards per OS) + duration-budget\n  GH-->>Dev: rebase-merge once green and up to date with main"
         },
         {
           "kind": "flowchart",
@@ -1906,7 +1906,7 @@ window.DOCS_INDEX = {
           "mermaid": "classDiagram\n  class Signature {\n    +Name name\n    +FacetList facets\n    +StyleHints? hints\n    +validate() conflicts\n    +roundTrip() bool  %% G10: identify AND generate\n  }\n  class Facet {\n    <<abstract>>\n    +String key\n  }\n  class SingleValuedFacet {\n    +Value value  %% Type, Arch, Layout, Density, Pacing, ...\n  }\n  class MultiValuedFacet {\n    +Value[] values  %% Nav, Input, Feedback, Motion, A11y (joined with +)\n  }\n  class StyleHints {\n    +String[] hints  %% bounded NL decoration, applied last\n  }\n  class Archetype {\n    +String id          %% A1..F2\n    +String name\n    +Exemplar[] exemplars\n    +Signature canonical\n    +String codegenDescriptor\n  }\n  Signature \"1\" o-- \"4..*\" Facet : composes\n  Facet <|-- SingleValuedFacet\n  Facet <|-- MultiValuedFacet\n  Signature \"0..1\" *-- \"1\" StyleHints : decorated by\n  Archetype \"1\" *-- \"1\" Signature : canonical\n  Archetype \"1\" o-- \"1..*\" Exemplar\n  note for Signature \"G4: MUST carry Type, Arch, Layout, Pacing.\\nG1: always composed with a concrete U1–U20 / S1–S10 spec.\""
         }
       ],
-      "sourceSha256": "a926e5d4a6826ceea1ad080bb7858c0b2b8c06d3c4280df5629f05b3ddd0942a"
+      "sourceSha256": "b20a9bf57e55052e901a1947c6d1a97831f775ab4e04db9167756f2f251a41df"
     },
     {
       "id": "architecture-agent-coordination",
@@ -5376,7 +5376,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "933376ba2042158d4237c3d49584be8505685d8c04bd534e566f86d2c9e762c1"
+      "sourceSha256": "96c3cba6a22325489438f5dd379f1ebe6edfaae88a338eeddabf872dd4c72a06"
     },
     {
       "id": "forensic-review-rev42",
@@ -12742,5 +12742,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "649cbcf1e0f3110d28271d61f317a1ce99304fd9a388d4a717fda2409ddc6bab"
+  "graphSha256": "b9664e003db07e096d3a245b68ba4a4e339e7a0aca8d7e89f57a7bb73d719ba3"
 };

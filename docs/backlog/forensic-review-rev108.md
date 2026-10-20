@@ -124,7 +124,7 @@ security or migration risk · **P2** material maintainability, operability or go
 - **Remediation:** covered by the CI plan; profile first (CE1).
 - **Acceptance:** a measured Windows-job duration on `main`, and a target recorded in the plan.
 - **Next skill:** `/session-profiler` or the plan's profiling step.
-- **Resolved 2026-10-19 (revision 117).** Profiled first: on run 39302201214 the Windows job spent 37 s on setup and every non-test gate and 17 min 10 s on the test suite; macOS spent 15 min 50 s on it. The suite now runs in three shards per OS (crc32 of the test id, `conftest.in_shard`), each on its own runner; shard 1 also runs the other gates. Target: every required check under 10 min. MEASURED_PLACEHOLDER
+- **Resolved 2026-10-19 (revision 117).** Profiled first: on run 39302201214 the Windows job spent 37 s on setup and every non-test gate and 17 min 10 s on the test suite; macOS spent 15 min 50 s on it. The suite now runs in three shards per OS (crc32 of the test id, `conftest.in_shard`), each on its own runner; shard 1 also runs the other gates. Target: every required check under 10 min. Measured on PR #27: sharding alone (run 39347686483) took the slowest Windows shard to 11 min 2 s (parallel stage 484–620 s per shard, a long tail); adding xdist `--dist worksteal` took it to 8 min 36 s on run 39348961446 (Windows 6:38–8:36, macOS 3:31–4:48, ubuntu 7:52), against 18 min for the unsharded Windows job. Target met.
 
 ### FR-099 · issue · P3 — Ten tests fail for environmental reasons instead of skipping
 - **Evidence:** the same 10 failures on `c267bd4` and `332c297`: 5 symlink tests raise
