@@ -647,7 +647,11 @@ class BootstrapTests(unittest.TestCase):
     def test_success_exit_with_incomplete_deployment_is_not_accepted(self):
         source = self.clone_source()
         script = source / "pack/scripts/pack-apply.py"
-        script.write_text(script.read_text(encoding="utf-8").replace("        self.agents()", "        if self.dry:\n            self.agents()"), encoding="utf-8", newline="\n")
+        # Keep the call's own indentation: run() nests it in a try block since FR-092.
+        text, count = re.subn(r"(?m)^(\s*)self\.agents\(\)$", lambda m: "{0}if self.dry:\n{0}    self.agents()".format(m.group(1)),
+                              script.read_text(encoding="utf-8"))
+        self.assertEqual(1, count)
+        script.write_text(text, encoding="utf-8", newline="\n")
         self.git("add", "pack/scripts/pack-apply.py", cwd=source)
         self.git("commit", "-m", "Fixture: apply omits knowledge", cwd=source)
         self.write("user.txt", "keep\n")

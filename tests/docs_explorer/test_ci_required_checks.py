@@ -14,7 +14,10 @@ from pathlib import Path
 WORKFLOW = Path(__file__).resolve().parents[2] / ".github" / "workflows" / "pack-consistency.yml"
 REQUIRED = ("consistency", "consistency-windows", "consistency-macos")
 # Jobs that run on every PR but must never be required: the duration budget fails on runner noise.
-NOT_REQUIRED = ("duration-budget",)
+# FR-094: the test shards are not required either; each required OS check is an aggregator job
+# that passes only when every shard of that OS passed (SHARDS maps aggregator -> shard job).
+SHARDS = {"consistency-windows": "windows-shard", "consistency-macos": "macos-shard"}
+NOT_REQUIRED = ("duration-budget",) + tuple(SHARDS.values())
 
 
 def _block(text, key):
@@ -37,8 +40,23 @@ class RequiredChecksTests(unittest.TestCase):
         jobs = [m.group(1) for line in _block(self.text, "jobs") for m in [re.match(r"^  ([A-Za-z0-9_-]+):\s*$", line)] if m]
         self.assertEqual(sorted(REQUIRED + NOT_REQUIRED), sorted(jobs),
                          "a new job is either a required check (REQUIRED + protection) or listed in NOT_REQUIRED")
-        names = [line for line in _block(self.text, "jobs") if re.match(r"^    name:", line)]
-        self.assertEqual([], names, "a job `name:` changes its check context; update REQUIRED and protection together")
+        named, job = [], None
+        for line in _block(self.text, "jobs"):
+            m = re.match(r"^  ([A-Za-z0-9_-]+):\s*$", line)
+            job = m.group(1) if m else job
+            if re.match(r"^    name:", line):
+                named.append(job)
+        self.assertEqual(sorted(SHARDS.values()), sorted(named),
+                         "a job `name:` changes its check context; only the unrequired shard jobs may carry one")
+
+    def test_each_required_os_check_waits_for_every_shard(self):
+        for aggregator, shard in SHARDS.items():
+            with self.subTest(job=aggregator):
+                body = self.text.split("\n  " + aggregator + ":\n", 1)[1]
+                body = body[:body.find("\n\n")] if "\n\n" in body else body
+                self.assertIn("needs: " + shard, body)
+                self.assertIn("if: always()", body, "a skipped aggregator would report no check at all")
+                self.assertIn("needs." + shard + ".result }}\" = success", body)
 
     def test_pull_request_runs_on_every_pr(self):
         on = _block(self.text, "on")
