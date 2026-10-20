@@ -5,97 +5,61 @@ CLAUDE.md and AGENTS.md. A proxy nothing holds to its original is Mock Fiction a
 the remedy: if the two drift, the front door teaches every agent to trust a control that no
 longer represents the gate, and CTRL-D re-opens wearing the fix's own clothes.
 
-The two files cannot share a literal list - one is PowerShell, the other is YAML consumed by
-GitHub - so the shared declaration lives HERE, and drift in either direction fails:
-  * a gate present in verify-bundle.ps1 with no CI step  -> local passes, CI has no such gate
-  * a CI step with no local gate                         -> CI fails on something never run locally
-  * a gate/step in neither list                          -> the declaration itself is stale
-
-Deliberately NOT string-scraping one file and diffing it against the other: that just moves the
-drift into the scraper. The canonical list below is the contract; both files are checked against
-it, and adding a gate means editing three places on purpose.
+FR-091 (revision 117) made the drift structurally impossible: tools/gates.py is the one list both
+call (`test_gates.CallersUseTheListTests` pins that). What stays here is the canonical set: no gate
+may silently leave the list, stop running locally, or stop running in CI.
 """
 
-import re
+import importlib.util
 import unittest
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
-VERIFY_BUNDLE = REPO / "tools" / "verify-bundle.ps1"
-CI_WORKFLOW = REPO / ".github" / "workflows" / "pack-consistency.yml"
 
-# (gate id, substring that must appear in verify-bundle.ps1, substring in the CI step name)
+# (gate id, substring of its name in tools/gates.py)
 CANONICAL_GATES = [
-    ("counts",        "1. counts, skill/prompt parity",      "Count & skill-list consistency"),
-    ("machine-paths", "1b. no machine-specific paths",       "No machine-specific paths in tracked files"),
-    ("subprocess-utf8", "1c. subprocess text decodes state utf-8", "Subprocess text decodes state utf-8"),
-    ("text-io",       "1d. text writes and consoles are portable", "Text writes and consoles are portable"),
-    ("skill-contracts", "1e. skill contracts: seat, CO-S0 before dispatch, CO-S2 on hard stops", "Skill contracts: seat, CO-S0 before dispatch, CO-S2 on hard stops"),
-    ("documented-commands", "1f. documented commands run in any shell", "Documented commands run in any shell"),
-    ("ruling-citations", "1g. ruling citations resolve to one heading each", "Ruling citations resolve to one heading each"),
-    ("markers",       "1h. inline markers carry their required fields", "Inline markers carry their required fields"),
-    ("drift",         "2. source<->install drift",           "Source↔install drift"),
-    ("pytest",        "3. python test suite",                "Python test suite"),
-    ("docs-explorer", "4. docs explorer core contracts",     "Docs Explorer core contracts"),
-    ("explainer",     "4b. explainer render",                "Explainer render + accessibility proof"),
-    ("graph",         "5. knowledge-graph validation",       "Knowledge-graph validation"),
-    ("foundation",    "6. vendored-foundation drift",        "Vendored-foundation drift"),
-    ("audit",         "6b. audit log is fully readable",     "Audit log is fully readable"),
-    ("evals",         "7. eval cases well-formed",           "Eval cases well-formed"),
-    ("budget",        "8. always-on context budget",         "Always-on context budget"),
-    ("coordination",  "8b. coordination layer installed",    "Coordination layer installed"),
+    ("1", "counts, skill/prompt parity"),
+    ("1b", "no machine-specific paths"),
+    ("1c", "subprocess text decodes state utf-8"),
+    ("1d", "text writes and consoles are portable"),
+    ("1e", "skill contracts: seat, CO-S0 before dispatch, CO-S2 on hard stops"),
+    ("1f", "documented commands run in any shell"),
+    ("1g", "ruling citations resolve to one heading each"),
+    ("1h", "inline markers carry their required fields"),
+    ("2", "source<->install drift"),
+    ("3", "python test suite"),
+    ("4", "docs explorer core contracts"),
+    ("4b", "explainer render"),
+    ("5", "knowledge-graph validation"),
+    ("6", "vendored-foundation drift"),
+    ("6b", "audit log is fully readable"),
+    ("7", "eval cases well-formed"),
+    ("8", "always-on context budget"),
+    ("8b", "coordination layer installed"),
 ]
 
 
-def _local_gate_labels():
-    """Labels passed to the Gate helper in verify-bundle.ps1 (Skip uses the same labels)."""
-    text = VERIFY_BUNDLE.read_text(encoding="utf-8", errors="ignore")
-    return set(re.findall(r'^\s*Gate\s+"([^"]+)"', text, re.M))
-
-
-def _ci_step_names():
-    text = CI_WORKFLOW.read_text(encoding="utf-8", errors="ignore")
-    return set(m.strip() for m in re.findall(r"^\s+- name:\s*(.+?)\s*$", text, re.M))
+def gates():
+    spec = importlib.util.spec_from_file_location("gates_for_parity", REPO / "tools" / "gates.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return {gate[0]: gate for gate in module.GATES}
 
 
 class GateParityTests(unittest.TestCase):
-    def test_both_files_exist(self):
-        self.assertTrue(VERIFY_BUNDLE.is_file(), f"missing {VERIFY_BUNDLE}")
-        self.assertTrue(CI_WORKFLOW.is_file(), f"missing {CI_WORKFLOW}")
-
-    def test_every_canonical_gate_runs_locally(self):
-        labels = _local_gate_labels()
-        for gate_id, local_sub, _ in CANONICAL_GATES:
+    def test_every_canonical_gate_is_in_the_list_and_runs_locally(self):
+        listed = gates()
+        for gate_id, name in CANONICAL_GATES:
             with self.subTest(gate=gate_id):
-                self.assertTrue(
-                    any(local_sub in label for label in labels),
-                    f"gate '{gate_id}' is declared canonical but no Gate in verify-bundle.ps1 "
-                    f"matches {local_sub!r}. Local verification no longer mirrors CI, and the "
-                    f"front door (FR-061) points agents at it.")
+                self.assertIn(gate_id, listed, "a canonical gate left tools/gates.py")
+                self.assertIn(name, listed[gate_id][1])
+                self.assertTrue(listed[gate_id][4], "a canonical gate no longer runs locally")
 
-    def test_every_canonical_gate_runs_in_ci(self):
-        names = _ci_step_names()
-        for gate_id, _, ci_sub in CANONICAL_GATES:
+    def test_every_canonical_gate_runs_in_some_ci_job(self):
+        listed = gates()
+        for gate_id, _name in CANONICAL_GATES:
             with self.subTest(gate=gate_id):
-                self.assertTrue(
-                    any(ci_sub in name for name in names),
-                    f"gate '{gate_id}' is declared canonical but no step in "
-                    f"pack-consistency.yml matches {ci_sub!r}.")
-
-    def test_no_local_gate_is_undeclared(self):
-        """A gate added locally but never declared here is drift the other checks cannot see."""
-        labels = _local_gate_labels()
-        declared = [sub for _, sub, _ in CANONICAL_GATES]
-        undeclared = [l for l in labels if not any(sub in l for sub in declared)]
-        self.assertEqual(
-            [], sorted(undeclared),
-            "verify-bundle.ps1 runs gates not declared in CANONICAL_GATES; add them here and "
-            "to pack-consistency.yml, or the local run and CI have silently diverged.")
-
-    def test_gate_counts_agree(self):
-        self.assertEqual(
-            len(CANONICAL_GATES), len(_local_gate_labels()),
-            "verify-bundle.ps1 gate count differs from the canonical declaration.")
+                self.assertTrue(listed[gate_id][3], "a canonical gate runs in no CI job")
 
 
 if __name__ == "__main__":
