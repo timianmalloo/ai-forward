@@ -102,6 +102,32 @@ is lower-leverage than FC-1/FC-2 is recorded; it is the cheap increment, not a n
 | Unknown `--session` | zero substantive turns → clean "no substantive turns for session X" exit 0. |
 | Corrupt log line | `read_log` already tolerates/So it is handled upstream (FR-052); selfcheck inherits it. |
 
+## Adversarial analysis (STRIDE-lite)
+Trust boundary: the audit log (`docs/audit/audit-log.jsonl`, or the `.agents/log` fallback from `resolve_default_root`), which any agent or human with write access can append to → `audit-log.py selfcheck` → stdout, read by a model, a human or a CI step. FC-2 and FC-3 are directive text only and cross no runtime boundary; repo write access governs them like any other pack text. `selfcheck` writes nothing: `cmd_selfcheck` has no append call (`pack/scripts/audit-log.py:1242-1327`, Verified). Its only subprocess is read-only `git` under `--since`. It makes no network or model call.
+
+| Boundary | Threat | Disposition | Control, evidence and test |
+|---|---|---|---|
+| Audit log → `selfcheck` | **T**: a malformed or hand-broken line drops a substantive turn, so `--gate` passes without it | mitigate (partial) | `read_log` skips the line, warns on stderr and records it in `LOG_READ_SKIPS` (`audit-log.py:524-543`). `cmd_selfcheck` never reads `LOG_READ_SKIPS`, so the gate can pass while lines are skipped (Verified by reading `:1242-1327`). `audit-log.py verify` is the check that fails on it (`:1131-1151`). No selfcheck test covers a corrupt line. |
+| Audit entry fields → `--gate` | **S/T**: an agent writes its own `done_when`, `tier` and `fan_out`; filler text satisfies the gate | accept | The gate checks presence only (`:1250-1254`); the design states it is "never a verdict". Transferred to repo write access and PR review on `main`. No test, by design. |
+| `--since <ref>` → `git show` | **T/E**: the ref is passed to git with no `--end-of-options`, so a value that starts with `-` is read as a git option | accept (Inferred) | `ids_at_ref` passes `"<ref>:<path>"` as one argv item, no shell (`:481-499`), so there is no command injection. A probe with `--since=--output=<tmp>/planted` on Windows wrote no file (Verified 2026-10-19; the appended `:<path>` makes the name invalid there). On POSIX git may write diff output to that path (Inferred, not run). The value comes from the operator's own command line, never from log content. No test. |
+| Unreadable `--since` base → `--gate` | **T**: a missing ref or a shallow clone weakens the ratchet | mitigate | `ids_at_ref` returns `None` and `cmd_selfcheck` then filters nothing (`:1255-1260`), so the gate reports more, not less. Test: `test_gate_since_grandfathers_historical_but_catches_new` (`tests/docs_explorer/test_audit_selfcheck.py:119`). |
+| stdout → model reader | **T** (prompt injection): `done_when` and `summary` text from earlier turns re-enters a model's context | accept | Text mode truncates to 60 and 80 characters (`:1321-1324`); `--json` prints the full strings, JSON-escaped (`:1267-1280`). No control-character strip, unlike `coord-core.py` `_safe`. The text is committed repo content, the same trust as any file the model reads. No test. |
+| Audit log size → run time | **D**: the whole log is loaded into memory on every run | accept | `read_log` has no cap (`:524-543`). Growing the log needs repo write; the log is append-only by design. |
+
+**Design vs code:** the design says `selfcheck` "exits 0 always". The code now has `--gate`, which exits 1 on a gap, a tier gap or an over-cap fan-out (`:1261`, `:1280`, `:1327`; INSTALL.md revision entry "GOAL-STATE GATE"). The tables above analyse the code.
+
+## Privacy analysis (LINDDUN-lite)
+| Data flow / category | LINDDUN finding | Disposition | Control / rationale | Retention & rights path |
+|---|---|---|---|---|
+| Audit log → `selfcheck` (read) | D: the log holds each substantive turn's verbatim prompt and its session id; `selfcheck` reads every entry | mitigate | Output carries only `shortname`, `id`, `done_when`, `summary`, budget counts and fan-out numbers (`cmd_selfcheck`, `audit-log.py:1263-1324`). The `prompt` field is never printed (Verified by reading). | No new store; `selfcheck` writes nothing. The log keeps its own Git retention. |
+| `done_when` / `summary` → stdout or CI log | I: free text written by an agent may quote a path, a name or a pasted value | accept | Truncated to 60 / 80 characters in text mode; full in `--json`. No scrub. The same text is already committed in the log. | Terminal only, or the CI host's log retention where a repo wires `--gate` into CI. |
+| `--session <id>` filter | L: links one session's turns together | accept | By design. Session ids are pseudonymous work identifiers already in the log. | As the log. |
+| FC-2 goal-state block → audit `goal` / `done_when` fields | U/I: every substantive turn now records its goal text in a committed store | accept | Work description, not a personal-data category. The verbatim prompt is already recorded (AL5b), so FC-2 adds structure, not a new data class. | Git retention of `docs/audit/audit-log.jsonl`; the only rights path is a history rewrite. |
+
+No personal-data category is introduced. No egress: `selfcheck` imports no network module and calls no model. Non-compliance: nothing beyond the audit log's existing posture.
+
+**Security and privacy review (2026-10-19):** both sections were written from the code as it is now, not from the plan, to close the gap rows in `docs/security/threat-model.md` §4 and `docs/security/privacy-review.md` §5.
+
 ## Blast radius & rollback
 Pure-additive: one new subcommand (no change to existing commands), one extracted constant, three
 directive edits, one test. Rollback = `git revert`. No store, schema, CI-behaviour, or runtime config

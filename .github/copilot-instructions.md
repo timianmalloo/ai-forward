@@ -18,7 +18,7 @@ All tooling is PowerShell scripts in `tools/`:
 # After editing anything under pack/ — regenerates .claude/ and docs/
 pwsh tools/sync-pack.ps1
 
-# THEN verify before committing — runs the same nine gates CI does.
+# THEN verify before committing — runs tools/gates.py, the same gate list CI runs.
 # A green test suite is not a green gate: gates 1 and 2 (counts, source↔install drift)
 # fail on trees where every test passes. Skipping this is defect class CTRL-D.
 pwsh tools/verify-bundle.ps1

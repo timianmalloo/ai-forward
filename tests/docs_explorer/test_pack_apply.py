@@ -313,6 +313,46 @@ class FreshAndGuardTests(unittest.TestCase):
                          pa.normalise("see `.claude/knowledge/rigor-protocol.md`   now"))
 
 
+class WritesStayInTheTargetTests(unittest.TestCase):
+    """FR-092: `_write` opened every destination with no link or containment check, so a junction
+    or symlink planted in a target directory redirected pack files outside the repository."""
+
+    def setUp(self):
+        from windows_links import create_directory_alias
+        self.target = tempfile.mkdtemp()
+        self.outside = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, self.target, True)
+        self.addCleanup(shutil.rmtree, self.outside, True)
+        os.makedirs(os.path.join(self.target, "docs"))
+        self.alias = os.path.join(self.target, "docs", "ai-forward-pack")
+        create_directory_alias(pathlib.Path(self.alias), pathlib.Path(self.outside))
+        if os.name == "nt":
+            self.addCleanup(os.rmdir, self.alias)
+
+    def test_a_directory_alias_out_of_the_target_is_refused_and_nothing_lands_outside(self):
+        rows = pa.Applier(str(ROOT), self.target, dry=False, install=True, baselines=False, project="Demo").run()
+        refused = [r for r in rows if r["action"] == "REFUSED"]
+        self.assertEqual(1, len(refused), rows[-3:])
+        self.assertEqual("fail", refused[0]["status"])
+        self.assertIn("outside the target", refused[0]["note"])
+        self.assertEqual([], os.listdir(self.outside))
+
+    def test_a_file_symlink_at_a_destination_is_refused(self):
+        applier = pa.Applier(str(ROOT), self.target, dry=False, install=True, baselines=False, project="Demo")
+        victim = os.path.join(self.outside, "victim.md")
+        with open(victim, "w", encoding="utf-8") as handle:
+            handle.write("keep")
+        link = os.path.join(self.target, "CLAUDE.md")
+        try:
+            os.symlink(victim, link)
+        except OSError:
+            self.skipTest("no file symlink privilege")
+        with self.assertRaises(pa.UnsafeDestination):
+            applier._write(link, "pack text")
+        with open(victim, encoding="utf-8") as handle:
+            self.assertEqual("keep", handle.read())
+
+
 class DocsExplorerOptInNotSatisfiedByInstallTests(unittest.TestCase):
     """pack-onoff-analysis.html #3 (class PK-03): `docs-graph.py derive`'s default write of
     docs/docs-index.js is opt-in -- `_opted_into_docs_explorer` reads docs/index.html or the

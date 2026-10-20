@@ -112,9 +112,20 @@ coord request resolve <id> --resolution <text>
 | Terminal output -> model reader | Prompt injection via event fields | Output is structured fields; no free-text intent in this slice. |
 | Request reason -> model reader | Prompt injection through seam request prose | Request prose is rendered as data in a fixed JSON/text shape; no execution or shell path consumes it. |
 
-## Privacy analysis
+## Privacy analysis (LINDDUN-lite)
 
-No personal data is introduced. Session IDs, agent names, worktree paths, and repo-relative claim paths are local operational metadata already present in the coordination record.
+Line numbers below are for `pack/scripts/coord-core.py` on 2026-10-19; the function names are the stable reference.
+
+| Data flow / category | LINDDUN finding | Disposition | Control / rationale | Retention & rights path |
+|---|---|---|---|---|
+| `coord request add` → `.agents/requests.jsonl` | D/I: free text (`text`, `reason`, `fallback`, `contract`), `from` / `to` role names, session id and agent name (`cmd_request`, `:3067`) | mitigate | The store is git-ignored by `.agents/*` (`.gitignore:28`; `git check-ignore` Verified 2026-10-19). The tracked ledger twin carries id, action, `to` and `deadline_at`, but no text (`_request_twin`, `:3046`). | Lives as long as the local file. No delete verb exists; every action appends. Deletion is removing the file by hand. |
+| Session record → `session list` / `collaborate check` / `summary` | L/I: session id, agent name, worktree, claim paths and timestamps link one session to its work | accept | Already in the tracked ledger `.agents/log/*.jsonl` (re-included by `.gitignore:34`). New writers store the worktree basename (`_worktree_label`, `:2785`). `active_sessions` projects the stored value as is (`:2823`), so legacy rows show an absolute path: 6 tracked ledgers hold `C:/Projects/...` values (Verified by `git grep` 2026-10-19; no home directory was found). | Git retention of the ledger; the only rights path is a history rewrite. |
+| Session-contract template → `docs/collaboration/session-contracts.md` | I: an `owner: "@<owner>"` handle and per-session agent and tool names in a committed doc (`pack/templates/session-contract.template.md:6`, `:21`) | accept | A handle is the same identifier the repo's frontmatter already carries. | Git retention. |
+| Request text → terminal / model reader | D: request text is shown to whoever runs `request list` or `collaborate summary` | mitigate | Text mode strips control characters and caps length with `_safe` (`:406`, `:3118`); `--json` escapes it. The reader is the same local user. | Terminal only. |
+
+No new personal-data category. Session ids and agent names are pseudonymous work identifiers. No egress: the slice calls no model and no network service. Unawareness and non-compliance: nothing beyond the existing coordination record.
+
+**Privacy review (2026-10-19):** this section replaces the one-line privacy note, written from the code as it is now, to close the gap row in `docs/security/privacy-review.md` §5. The STRIDE section above is unchanged.
 
 ## Telemetry
 

@@ -167,7 +167,7 @@ sequenceDiagram
   Dev->>CC: try the change (regenerated skills/agents are now live)
   CC-->>Dev: run a skill; dogfood the edit
   Dev->>Verify: pwsh tools/verify-bundle.ps1
-  Verify->>Verify: 18 gates — counts · portability · contracts · drift ·<br/>tests (xdist -n 4, then serial wallclock) · explorer ·<br/>graph · foundation · audit · coordination · evals · context budget
+  Verify->>Verify: tools/gates.py — 22 gates: counts · portability · contracts · drift ·<br/>tests (xdist -n 4, then serial wallclock) · explorer ·<br/>graph · foundation · audit · coordination · evals · context budget · platform proofs
   Verify-->>Dev: PASS (~15 min), or the first thing that is wrong
   Graph->>Explorer: index loaded; hierarchy · graph · mind map · health render
   Dev->>Pack: commit pack/ + .claude/ + .github/ + docs/ together (lockstep)
@@ -292,7 +292,7 @@ The **public surface is the deployed script bundle** — `pack/scripts/*.py`, wh
 |---|---|---|
 | `pwsh tools/sync-pack.ps1` | Regenerate `.claude/`, `.github/`, and `docs/` from `pack/`. | Run after every `pack/` edit. Also runs `docs-graph.py derive`, `build-web-index.py`, and `build-docs-portal.py`. |
 | `pwsh tools/package-pack.ps1` | Build `dist/ai-forward-pack.zip` for sharing. | Carries full Claude Code + Copilot wiring. |
-| `pwsh tools/verify-bundle.ps1` | Run the complete **18-gate** local proof, matching CI's gate set. | Gate 2 synchronizes and compares generated surfaces (commit first: it is `git diff --exit-code`); gate 3 runs `pytest -n 4 -m "not wallclock"` then the `wallclock` tests serially when `pytest-xdist` is installed; gate 8 is the always-on context budget. ~15 min on a Windows dev box. |
+| `pwsh tools/verify-bundle.ps1` | Run every gate in `tools/gates.py`, the one list CI runs too (FR-091); `python tools/gates.py list` prints it. | Gate 2 synchronizes and compares generated surfaces (commit first: it is `git diff --exit-code`); gate 3 runs `pytest -n 4 -m "not wallclock"` then the `wallclock` tests serially when `pytest-xdist` is installed; gate 8 is the always-on context budget. ~15 min on a Windows dev box. |
 | `python tools/check-test-counts.py --junit <xml> [--junit <xml>]` | Fail when pytest's collected count differs from the JUnit test cases. | CI runs it after both test stages, so a parallel run cannot silently drop a test. |
 | `python tools/ci-duration-budget.py …` | Per-job wall-clock against the trailing median of green `main` runs. | The non-required `duration-budget` job; fails above 1.5×, reports "not enough history" below 5 comparable runs. |
 | `python tools/build-api-docs.py [--check]` | Generate `docs/api/` from `pack/scripts/`. | `--check` is the drift gate; prose comes only from source docstrings, gaps are recorded not invented. |

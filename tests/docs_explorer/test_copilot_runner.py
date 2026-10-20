@@ -23,7 +23,8 @@ class CopilotAdmission(unittest.TestCase):
         import json
         core = load("coord-core")
         self.assertEqual({}, json.loads(core.hook_response("allow", "unleased", "copilot")))
-        self.assertEqual("deny", core.hook_decision_of(json.loads(core._not_checked("bad payload", "copilot"))))
+        self.assertEqual({}, json.loads(core._not_checked("bad payload", "copilot")))  # HOST-P
+        self.assertEqual("deny", core.hook_decision_of(json.loads(core._not_checked("bad", "copilot", refuse=True))))
 
     def test_plugin_pascalcase_edit_alias_keeps_the_gpt_freeform_patch(self):
         core = load("coord-core")

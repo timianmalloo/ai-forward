@@ -1,6 +1,7 @@
 """Delivery routing/checkpoint behavior in real disposable Git repositories."""
 from pathlib import Path
 import json
+import time
 import os
 import shutil
 import subprocess
@@ -349,6 +350,35 @@ class DeliveryTests(unittest.TestCase):
                       "--authority", "human", "--question", "Approve?", ok=False).stderr)
         self.assertIsNone(self.run_cli("status", "--task", "demo")["gate"])
         self.assertTrue(lock.exists())
+
+    def test_a_busy_lock_names_its_writer_and_age(self):
+        # FR-097: a crash leaves the lock; the refusal says who wrote it and how long ago, so the
+        # operator can tell a live writer from a dead one. Breaking it stays manual.
+        self.start()
+        lock = self.repo / ".git/ai-forward/delivery/demo.lock"
+        lock.write_text(json.dumps({"pid": 424242, "created": time.time() - 7200}), encoding="utf-8")
+        error = self.run_cli("pause", "--task", "demo", "--kind", "decision",
+                             "--authority", "human", "--question", "Approve?", ok=False).stderr
+        self.assertIn("pid 424242", error)
+        self.assertRegex(error, r"age 2h0\dm|age 1h59m")
+        self.assertTrue(lock.exists())
+        lock.write_text("active writer", encoding="utf-8")   # a lock from before revision 117
+        self.assertIn("holder unknown", self.run_cli("pause", "--task", "demo", "--kind", "decision",
+                      "--authority", "human", "--question", "Approve?", ok=False).stderr)
+
+    def test_the_lock_records_this_writer_while_it_runs(self):
+        import argparse
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("delivery_lock_probe", SCRIPT)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        seen = []
+        module.execute = lambda args: seen.append(json.loads(
+            (self.repo / ".git/ai-forward/delivery/demo.lock").read_text(encoding="utf-8")))
+        module.locked_execute(argparse.Namespace(verb="pause", repo=self.repo, task="demo", state_root=None))
+        self.assertEqual(os.getpid(), seen[0]["pid"])
+        self.assertLess(abs(time.time() - seen[0]["created"]), 60)
+        self.assertFalse((self.repo / ".git/ai-forward/delivery/demo.lock").exists())
 
     def test_empty_native_entrypoint_asks_for_outcome_before_any_work(self):
         skill = (ROOT / "pack/commands/deliver/SKILL.md").read_text(encoding="utf-8")

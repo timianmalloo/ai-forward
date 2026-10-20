@@ -43,11 +43,15 @@ in Windows PowerShell/Command Prompt and macOS/Linux terminals, with Git and uv 
 PATH. A project without Git is welcome too; setup will not initialize it for you.
 
 ```text
-uv run --no-config --no-project --script https://raw.githubusercontent.com/timianmalloo/ai-forward/main/bootstrap.py
+uv run --no-config --no-project --script https://raw.githubusercontent.com/timianmalloo/ai-forward/v2026.10.19.4/bootstrap.py
 ```
 
-No `--repo` or `--ref` is needed: setup already defaults to this upstream repository
-and `main`. For unmerged changes, see [testing a contribution](#test-unmerged-changes).
+No `--repo` or `--ref` is needed: setup installs release `v2026.10.19.4` from this
+upstream repository, so the same command installs the same files every time. To
+install unreleased work from `main` instead, opt in explicitly:
+`uv run --no-config --no-project --script https://raw.githubusercontent.com/timianmalloo/ai-forward/main/bootstrap.py --ref main`.
+If no suitable Python is installed, uv downloads one; add `--no-python-downloads`
+after `uv run` to forbid that. For unmerged changes, see [testing a contribution](#test-unmerged-changes).
 
 Success reports `AI-Forward installed`, `AI-Forward updated` or
 `AI-Forward already current`, with the revision and exact source commit. That means

@@ -12,7 +12,7 @@ The portable setup is the short path. In the project you want to work on, with
 Git and [uv](https://docs.astral.sh/uv/getting-started/installation/) on PATH, run:
 
 ```text
-uv run --no-config --no-project --script https://raw.githubusercontent.com/timianmalloo/ai-forward/main/bootstrap.py
+uv run --no-config --no-project --script https://raw.githubusercontent.com/timianmalloo/ai-forward/v2026.10.19.4/bootstrap.py
 ```
 
 This works in Windows PowerShell/Command Prompt and macOS/Linux terminals. Setup

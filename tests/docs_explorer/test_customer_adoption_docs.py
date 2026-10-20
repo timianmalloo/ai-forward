@@ -11,7 +11,7 @@ import tempfile
 import unittest
 
 ROOT = Path(__file__).resolve().parents[2]
-UPSTREAM = 'https://raw.githubusercontent.com/timianmalloo/ai-forward/main/bootstrap.py'
+UPSTREAM = 'https://raw.githubusercontent.com/timianmalloo/ai-forward/v2026.10.19.4/bootstrap.py'
 
 class CustomerAdoptionDocsTests(unittest.TestCase):
     def test_original_product_presentation_remains_alongside_short_path(self):

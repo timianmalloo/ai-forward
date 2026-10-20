@@ -73,6 +73,10 @@ for _stream in (sys.stdout, sys.stderr):
             pass
 
 DEFAULT_REPO = "https://github.com/timianmalloo/ai-forward.git"
+# FR-093: setup installs a release, not whatever `main` holds at that moment. This names the
+# release tag this launcher belongs to; the README command fetches the launcher at the same tag.
+# `--ref main` is the explicit opt-in to unreleased work.
+RELEASE_REF = "v2026.10.19.4"
 RECEIPT = "docs/ai-forward-pack/bootstrap-receipt.json"
 
 
@@ -498,7 +502,7 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--source", type=Path, help="offline Git source clone; uses committed HEAD")
     parser.add_argument("--repo", default=DEFAULT_REPO, help="source Git repository URL")
-    parser.add_argument("--ref", help="source branch, tag, or commit (default: main; local source: HEAD)")
+    parser.add_argument("--ref", help="source branch, tag, or commit (default: the release " + RELEASE_REF + "; local source: HEAD)")
     parser.add_argument("--target", type=Path, help="existing project directory (default: cwd or enclosing Git root)")
     parser.add_argument("--dry-run", action="store_true", help="show deployment plan; no target writes")
     args = parser.parse_args(argv)
@@ -524,7 +528,7 @@ def main(argv=None):
             source = Path(folder) / "source"
             origin = str(args.source.resolve()) if args.source else args.repo
             run(["git", "clone", "--no-checkout", "--no-hardlinks", "--", origin, str(source)])
-            ref = args.ref or ("HEAD" if args.source else "main")
+            ref = args.ref or ("HEAD" if args.source else RELEASE_REF)
             try:
                 commit = run(["git", "rev-parse", "--verify", "--end-of-options", ref + "^{commit}"], cwd=source).strip()
             except BootstrapError:

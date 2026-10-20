@@ -1,6 +1,14 @@
 # Pack-source consistency gate for the AI-Forward repo ITSELF (not deployed to targets).
-# Catches count/skill-list drift, vendored-foundation drift, and malformed eval cases
-# before they merge. The deployed graph-health workflow is pack/ci/docs-health.yml.
+# The deployed graph-health workflow is pack/ci/docs-health.yml.
+#
+# FR-091: every gate lives in tools/gates.py, the same list tools/verify-bundle.ps1 runs. This file
+# only prepares each runner and calls it, so adding a gate needs no workflow edit and CI can no
+# longer drift from the local proof. `gates.py list --ci --os <os>` prints what a job runs.
+#
+# FR-094: the test suite was 17 of the 18 minutes on Windows and 16 on macOS. Each of those OSes
+# now runs its tests in three shards on three runners (shard 1 also runs the other gates), and a
+# small job with the required check's name passes only when every shard passed. Branch protection
+# keeps requiring `consistency`, `consistency-windows` and `consistency-macos`, unchanged.
 name: pack-consistency
 on:
   push:
@@ -27,373 +35,89 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           fetch-depth: 50   # PACK-W reads which commit last changed pack/; depth 1 passes vacuously
+      # The doctrine comparison baseline. At the SAME depth as the checkout: a depth-1 fetch of
+      # main on a push to main marks HEAD itself shallow and cuts the history PACK-W reads.
       - name: Fetch doctrine comparison baseline
-        run: git fetch --no-tags --depth=1 origin main:refs/remotes/origin/main
+        run: git fetch --no-tags --depth=50 origin main:refs/remotes/origin/main
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with: { python-version: "3.x" }
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: "22"
           cache: npm
-
-      # Documented counts + skill/prompt parity must match the filesystem.
-      - name: Count & skill-list consistency
-        run: python3 tools/check-consistency.py
-
-      # PLAT-B. A tracked, machine-readable file never carries one machine's paths. The
-      # coordination registry shipped a Windows python.exe path and only `coord regen` on a
-      # Mac noticed; pack-doctor passed because it checked parse, not resolution.
-      - name: No machine-specific paths in tracked files
-        run: python3 pack/scripts/verify-no-machine-paths.py
-
-      # PLAT-A (P2/P3): the sweeps that stay - every text-mode subprocess states utf-8; every
-      # text write is LF and every printing CLI guards a cp1252 console.
-      - name: Subprocess text decodes state utf-8
-        run: python3 pack/scripts/verify-subprocess-utf8.py
-      - name: Text writes and consoles are portable
-        run: python3 pack/scripts/verify-portable-text-io.py
-
-      - name: "Skill contracts: seat, CO-S0 before dispatch, CO-S2 on hard stops"
-        run: python3 pack/scripts/verify-skill-contracts.py
-
-      # PLAT-A (XP): a documented command only one shell can run. ID-A (P5): a ruling cited
-      # as authority must resolve to exactly one heading in docs/notes/rulings.md.
-      - name: Documented commands run in any shell
-        run: python3 pack/scripts/verify-documented-commands.py
-      - name: Ruling citations resolve to one heading each
-        run: python3 pack/scripts/verify-ruling-citations.py
-      # FR-077 (LINT-A): gating is safe only because the scan is empty; a marker missing its
-      # trigger, confirm route or consequence now fails here instead of scrolling past.
-      - name: Inline markers carry their required fields
-        run: python3 pack/scripts/marker-lint.py --gate
-
-      # FR-033. The repository's foundational invariant: pack/ is source, .claude/ and
-      # .github/ are generated. verify-bundle.ps1 has always checked this locally and CI
-      # never ran it, so source↔install drift — the one failure mode the whole architecture
-      # exists to prevent — could merge. A re-sync that produces a diff IS the drift, so
-      # `git diff --exit-code` is the whole oracle; it fails the step by itself.
-      - name: Source↔install drift (pack/ is the only source of truth)
-        shell: pwsh
-        run: |
-          pwsh tools/sync-pack.ps1
-          Write-Host "If the next command fails, pack/ and the generated surfaces have drifted."
-          Write-Host "Fix: run 'pwsh tools/sync-pack.ps1' locally and commit the result."
-          git --no-pager diff --stat -- .claude .github/instructions .github/prompts .github/agents docs web CLAUDE.md AGENTS.md
-          git diff --exit-code -- .claude .github/instructions .github/prompts .github/agents docs web CLAUDE.md AGENTS.md
-
-      # FR-034. The largest suite in the repository (112 tests covering docs-graph,
-      # audit-log, check-consistency, pack-doctor, run-evals, bounded_process) was advisory
-      # until now — it passed locally and gated nothing.
-      - name: Python test suite
+      - name: Install test tools
         run: |
           python3 -m pip install --disable-pip-version-check --quiet pytest pytest-xdist
-          python3 -m pytest tests -q -n 4 -m "not wallclock" --junitxml=pytest-parallel.xml
-          # The wallclock tests assert real time; contention under xdist made them fail (P1a).
-          python3 -m pytest tests -q -m wallclock --junitxml=pytest-wallclock.xml
-          python3 tools/check-test-counts.py --junit pytest-parallel.xml --junit pytest-wallclock.xml
-
-      - name: Docs Explorer core contracts
-        run: |
           npm ci
-          npm run test:docs-explorer:core
+      - name: Gates (tools/gates.py)
+        run: python3 tools/gates.py run --ci
 
-      # FR-051. The public explainer is client-rendered, so a static scan sees a shell and
-      # reports clean for the wrong reason (CD20 / class E2E-H). This runs the page's own
-      # vendored bundles in a DOM shim and asserts the result: no third-party origin, the
-      # libraries define their globals, #root has a real mount, and the WCAG landmarks and
-      # skip link exist. Observed failing on the pre-fix page with 12 assertions red.
-      - name: Explainer render + accessibility proof
-        run: node tools/verify-explainer-render.js
-
-      # FR-034. The knowledge graph gate: schema-valid frontmatter, no dangling links,
-      # no orphans, no index drift.
-      - name: Knowledge-graph validation
-        run: python3 docs/ai-forward-pack/scripts/docs-graph.py validate
-
-      # Vendored-foundation drift
-      - name: Vendored-foundation drift
-        run: python3 pack/scripts/foundation-check.py
-
-      # FR-052. The audit log is this project's durable memory and the corpus /dream
-      # consolidates over. read_log survives a malformed line on purpose, so a corrupted
-      # entry would otherwise be invisible to every reader while the tooling reports success.
-      - name: Audit log is fully readable
-        run: python3 pack/scripts/audit-log.py verify
-
-      # Every eval case is valid JSON with compilable regex assertions.
-      - name: Eval cases well-formed
-        run: |
-          python3 - <<'PY'
-          import glob, json, re, sys
-          bad = 0
-          for f in sorted(glob.glob("pack/evals/cases/*.json")):
-              try:
-                  case = json.load(open(f, encoding="utf-8"))
-                  for a in case.get("assertions", []):
-                      if "pattern" in a:
-                          re.compile(a["pattern"])
-              except Exception as e:
-                  print(f"  - {f}: {e}"); bad += 1
-          print(f"{len(glob.glob('pack/evals/cases/*.json'))} eval cases checked")
-          sys.exit(1 if bad else 0)
-          PY
-
-      # FR-072 / P2, reshaped by FR-073. The always-on knowledge set is the static prefix of
-      # every model call: re-read every turn, billed every turn, and subtracted from the
-      # window before the user has said anything. Ungated it re-grows one "surely one more
-      # doc is free" at a time - which is how a profiled session reached a 184K always-on
-      # prefix that failed 27 of 39 delegated runs outright.
-      #
-      # A ratchet, not a ceiling: growth is allowed, growth that leaves the recorded baseline
-      # untouched is not. The baseline lives in pack/context-budget.json so the growth shows
-      # up in a diff a reviewer can question.
-      - name: Always-on context budget
-        run: python3 pack/scripts/context-budget.py gate
-
-      # CTX-H: coord-core.py shipped for two revisions switched off, and nothing noticed --
-      # an uninstalled layer reports "0 decisions, nothing claimed", which is indistinguishable
-      # from a working layer that saw no traffic. This repo is itself a pack install, so its
-      # own layer being ON is the only end-to-end proof the install path works. A WARN is
-      # expected here: .git/config is per-clone, so a fresh CI checkout never has the driver
-      # registered. Only a missing or unparseable registry FAILs.
-      - name: Coordination layer installed
-        run: |
-          python3 pack/scripts/pack-doctor.py --root . --json > pack-doctor.json || true
-          python3 -c "import json,sys; c=[x for x in json.load(open('pack-doctor.json'))['checks'] if x['name']=='coordination']; sys.exit('pack-doctor has no coordination check') if not c else None; print(c[0]['status'], '-', c[0]['detail']); sys.exit('coordination layer not installed - fix: ' + c[0]['fix']) if c[0]['status']=='FAIL' else None"
-
-      # Every persona declares the knowledge lens it actually needs (P3). An agent with no
-      # declared lens inherits the whole set, which is what put a main-thread-sized prefix
-      # on every sub-agent run.
-      - name: Agent knowledge lenses declared
-        run: python3 pack/scripts/context-budget.py agents
-
-  # ---------------------------------------------------------------------------------------
-  # Cross-platform readiness (docs/plans/cross-platform-readiness.md P0). Until this job
-  # existed every `os.name == "nt"` branch in pack/scripts was dead code in CI, and the
-  # tracked registry carried one developer's python.exe path for a week. This job runs the
-  # Python gates on Windows with the documented Windows interpreter form (`python`), then
-  # the Windows-only proofs: every script answers --help under the legacy cp1252 code page
-  # (XP-14), the registry regenerates byte-identically (PLAT-B), docs-index.js regenerates
-  # byte-identically (XP-07), and the pre-commit hook `coord install` writes runs under Git
-  # Bash `sh`. Node/browser gates stay on the ubuntu job (one runner, one truth for them).
-  # A red step here is a measurement the plan's later phases close, not a reason to mute it.
-  # ---------------------------------------------------------------------------------------
-  consistency-windows:
+  # Cross-platform readiness (docs/plans/cross-platform-readiness.md P0): the Python gates on
+  # Windows with the documented Windows interpreter form (`python`), plus the Windows-only proofs
+  # (cp1252 --help, byte-identical regeneration, the pre-commit hook under Git Bash `sh`). Bash is
+  # the shell so `sh` is on PATH, the way Claude Code runs hook commands on Windows.
+  windows-shard:
+    name: windows shard ${{ matrix.shard }}/3
     runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix: { shard: [1, 2, 3] }
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           fetch-depth: 50   # PACK-W reads which commit last changed pack/; depth 1 passes vacuously
       - name: Fetch doctrine comparison baseline
-        run: git fetch --no-tags --depth=1 origin main:refs/remotes/origin/main
+        run: git fetch --no-tags --depth=50 origin main:refs/remotes/origin/main
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with: { python-version: "3.x" }
-
-      - name: Interpreter form on this runner (pack-doctor names it)
-        shell: pwsh
-        run: python pack/scripts/pack-doctor.py --root . | Select-String -Pattern "python interpreter" -Context 0,1
-
-      - name: Count & skill-list consistency
-        shell: pwsh
-        run: python tools/check-consistency.py
-
-      - name: No machine-specific paths in tracked files
-        shell: pwsh
-        run: python pack/scripts/verify-no-machine-paths.py
-
-      - name: Subprocess text decodes state utf-8
-        shell: pwsh
-        run: python pack/scripts/verify-subprocess-utf8.py
-      - name: Text writes and consoles are portable
-        shell: pwsh
-        run: python pack/scripts/verify-portable-text-io.py
-
-      - name: "Skill contracts: seat, CO-S0 before dispatch, CO-S2 on hard stops (Windows)"
-        shell: pwsh
-        run: python pack/scripts/verify-skill-contracts.py
-
-      - name: Documented commands run in any shell (Windows)
-        shell: pwsh
-        run: python pack/scripts/verify-documented-commands.py
-      - name: Ruling citations resolve to one heading each (Windows)
-        shell: pwsh
-        run: python pack/scripts/verify-ruling-citations.py
-      - name: Inline markers carry their required fields (Windows)
-        shell: pwsh
-        run: python pack/scripts/marker-lint.py --gate
-
-      - name: Source↔install drift (pwsh on Windows)
-        shell: pwsh
-        run: |
-          pwsh tools/sync-pack.ps1
-          git --no-pager diff --stat -- .claude .github/instructions .github/prompts .github/agents docs web CLAUDE.md AGENTS.md
-          git diff --exit-code -- .claude .github/instructions .github/prompts .github/agents docs web CLAUDE.md AGENTS.md
-
-      - name: Knowledge-graph validation
-        shell: pwsh
-        run: python docs/ai-forward-pack/scripts/docs-graph.py validate
-
-      - name: Vendored-foundation drift
-        shell: pwsh
-        run: python pack/scripts/foundation-check.py
-
-      - name: Audit log is fully readable
-        shell: pwsh
-        run: python pack/scripts/audit-log.py verify
-
-      - name: Always-on context budget
-        shell: pwsh
-        run: python pack/scripts/context-budget.py gate
-
-      # XP-14: `--help` must not raise UnicodeEncodeError on a cp1252 console. Every script
-      # answered --help with exit 0 on macOS on 2026-09-19; the legacy code page is the part
-      # only Windows can prove.
-      - name: Every script answers --help under cp1252
-        shell: pwsh
-        run: |
-          chcp 1252 | Out-Null
-          $env:PYTHONIOENCODING = ""
-          $failed = @()
-          Get-ChildItem pack/scripts/*.py, pack/adapters/hooks/*.py | ForEach-Object {
-            $null = & python $_.FullName --help 2>&1
-            if ($LASTEXITCODE -ne 0) { $failed += "$($_.Name) (exit $LASTEXITCODE)" }
-          }
-          if ($failed.Count) { Write-Host "FAIL --help under cp1252:"; $failed | ForEach-Object { Write-Host "  $_" }; exit 1 }
-          Write-Host "every script answers --help under cp1252"
-
-      # PLAT-B: the registry must regenerate byte-identically here, i.e. carry the token,
-      # never this runner's interpreter path.
-      - name: Registry regenerates byte-identically (coord classify init --force)
-        shell: pwsh
-        run: |
-          python docs/ai-forward-pack/scripts/coord-core.py classify init --force
-          git --no-pager diff -- .agents/artifacts.yml
-          git diff --exit-code -- .agents/artifacts.yml
-
-      # XP-07: docs-index.js is a `derived` artifact merged by byte identity; a CRLF write on
-      # Windows would make every regeneration a spurious diff.
-      - name: docs-index.js regenerates byte-identically on Windows
-        shell: pwsh
-        run: |
-          python docs/ai-forward-pack/scripts/docs-graph.py derive
-          git --no-pager diff --stat -- docs/docs-index.js
-          git diff --exit-code -- docs/docs-index.js
-
-      # The pre-commit floor `coord install` writes is `#!/bin/sh` + an absolute interpreter
-      # path; Git for Windows runs it through its bundled sh. Prove it here, with
-      # AGENT_SESSION unset (advisory path, exit 0) and set (enforcing path, exit 0 on a
-      # clean index).
-      - name: Pre-commit hook runs under Git Bash sh
+      - name: Install test tools
         shell: bash
-        run: |
-          python docs/ai-forward-pack/scripts/coord-core.py install
-          test -f .git/hooks/pre-commit
-          sh .git/hooks/pre-commit
-          AGENT_SESSION=ci-windows sh .git/hooks/pre-commit
-          python pack/scripts/pack-doctor.py --root . --json > pack-doctor.json
-          python -c "import json,sys; c=[x for x in json.load(open('pack-doctor.json'))['checks'] if x['name']=='coordination'][0]; print(c['status'], '-', c['detail']); sys.exit(1 if c['status']=='FAIL' else 0)"
-
-      # LAST, so a red test never hides the Windows-only proofs above (first run, 2026-09-19:
-      # 735 passed, 3 failed - the selfcheck --since test that also fails on macOS, and two
-      # Codex-surface tests reading UTF-8 through cp1252, the P2 class). Under Git Bash so
-      # `sh` is on PATH: the hook-adapter conformance test executes the settings.json command
-      # string the way Claude Code does on Windows.
-      - name: Python test suite (Git Bash)
+        run: python -m pip install --disable-pip-version-check --quiet pytest pytest-xdist
+      - name: Gates (tools/gates.py)
         shell: bash
-        run: |
-          python -m pip install --disable-pip-version-check --quiet pytest pytest-xdist
-          python -m pytest tests -q -n 4 -m "not wallclock" --junitxml=pytest-parallel.xml
-          # The wallclock tests assert real time; contention under xdist made them fail (P1a).
-          python -m pytest tests -q -m wallclock --junitxml=pytest-wallclock.xml
-          python tools/check-test-counts.py --junit pytest-parallel.xml --junit pytest-wallclock.xml
+        run: python tools/gates.py run --ci --shard ${{ matrix.shard }}/3
+
+  consistency-windows:
+    needs: windows-shard
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Every Windows shard passed
+        run: test "${{ needs.windows-shard.result }}" = success
 
   # The macOS half of P0: stock macOS has no `python`; the documented `python3` form runs.
-  # This is where the Mac-only test failures (T-1/T-2/T-3 in the investigation) are seen by
-  # something other than a developer's terminal.
-  consistency-macos:
+  macos-shard:
+    name: macos shard ${{ matrix.shard }}/3
     runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix: { shard: [1, 2, 3] }
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           fetch-depth: 50   # PACK-W reads which commit last changed pack/; depth 1 passes vacuously
       - name: Fetch doctrine comparison baseline
-        run: git fetch --no-tags --depth=1 origin main:refs/remotes/origin/main
+        run: git fetch --no-tags --depth=50 origin main:refs/remotes/origin/main
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with: { python-version: "3.x" }
+      - name: Install test tools
+        run: python3 -m pip install --disable-pip-version-check --quiet pytest pytest-xdist
+      - name: Gates (tools/gates.py)
+        run: python3 tools/gates.py run --ci --shard ${{ matrix.shard }}/3
 
-      - name: Count & skill-list consistency
-        run: python3 tools/check-consistency.py
-
-      - name: No machine-specific paths in tracked files
-        run: python3 pack/scripts/verify-no-machine-paths.py
-
-      # PLAT-A (P2/P3): the sweeps that stay - every text-mode subprocess states utf-8; every
-      # text write is LF and every printing CLI guards a cp1252 console.
-      - name: Subprocess text decodes state utf-8
-        run: python3 pack/scripts/verify-subprocess-utf8.py
-      - name: Text writes and consoles are portable
-        run: python3 pack/scripts/verify-portable-text-io.py
-
-      - name: "Skill contracts: seat, CO-S0 before dispatch, CO-S2 on hard stops"
-        run: python3 pack/scripts/verify-skill-contracts.py
-
-      # PLAT-A (XP): a documented command only one shell can run. ID-A (P5): a ruling cited
-      # as authority must resolve to exactly one heading in docs/notes/rulings.md.
-      - name: Documented commands run in any shell
-        run: python3 pack/scripts/verify-documented-commands.py
-      - name: Ruling citations resolve to one heading each
-        run: python3 pack/scripts/verify-ruling-citations.py
-      # FR-077 (LINT-A): gating is safe only because the scan is empty; a marker missing its
-      # trigger, confirm route or consequence now fails here instead of scrolling past.
-      - name: Inline markers carry their required fields
-        run: python3 pack/scripts/marker-lint.py --gate
-
-      - name: Source↔install drift (pwsh on macOS)
-        shell: pwsh
-        run: |
-          pwsh tools/sync-pack.ps1
-          git --no-pager diff --stat -- .claude .github/instructions .github/prompts .github/agents docs web CLAUDE.md AGENTS.md
-          git diff --exit-code -- .claude .github/instructions .github/prompts .github/agents docs web CLAUDE.md AGENTS.md
-
-      - name: Knowledge-graph validation
-        run: python3 docs/ai-forward-pack/scripts/docs-graph.py validate
-
-      - name: Vendored-foundation drift
-        run: python3 pack/scripts/foundation-check.py
-
-      - name: Audit log is fully readable
-        run: python3 pack/scripts/audit-log.py verify
-
-      - name: Always-on context budget
-        run: python3 pack/scripts/context-budget.py gate
-
-      - name: Registry regenerates byte-identically (coord classify init --force)
-        run: |
-          python3 docs/ai-forward-pack/scripts/coord-core.py classify init --force
-          git --no-pager diff -- .agents/artifacts.yml
-          git diff --exit-code -- .agents/artifacts.yml
-
-      - name: Coordination layer installed
-        run: |
-          python3 pack/scripts/pack-doctor.py --root . --json > pack-doctor.json || true
-          python3 -c "import json,sys; c=[x for x in json.load(open('pack-doctor.json'))['checks'] if x['name']=='coordination']; sys.exit('pack-doctor has no coordination check') if not c else None; print(c[0]['status'], '-', c[0]['detail']); sys.exit('coordination layer not installed - fix: ' + c[0]['fix']) if c[0]['status']=='FAIL' else None"
-
-      # LAST, so a red test never hides the proofs above (first run, 2026-09-19: 725 passed,
-      # 1 failed - the selfcheck --since test, which fails on macOS, Windows and a developer
-      # Mac and passes only on ubuntu; T-3 in the investigation).
-      - name: Python test suite
-        run: |
-          python3 -m pip install --disable-pip-version-check --quiet pytest pytest-xdist
-          python3 -m pytest tests -q -n 4 -m "not wallclock" --junitxml=pytest-parallel.xml
-          # The wallclock tests assert real time; contention under xdist made them fail (P1a).
-          python3 -m pytest tests -q -m wallclock --junitxml=pytest-wallclock.xml
-          python3 tools/check-test-counts.py --junit pytest-parallel.xml --junit pytest-wallclock.xml
+  consistency-macos:
+    needs: macos-shard
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Every macOS shard passed
+        run: test "${{ needs.macos-shard.result }}" = success
 
   # CI-speed C6 / P9: per-job wall-clock against the trailing median of green main runs. Not a
   # required check -- runner timings are noisy -- but it fails red above 1.5x so growth is seen.
-  # `--since` is the day the parallel suite landed: older runs are a different suite shape.
+  # `--since` is the day the sharded layout landed: older runs are a different job shape.
   duration-budget:
-    needs: [consistency, consistency-windows, consistency-macos]
+    needs: [consistency, windows-shard, macos-shard]
     if: always()
     runs-on: ubuntu-latest
     permissions:
@@ -406,5 +130,6 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: >-
           python3 tools/ci-duration-budget.py --repo "${{ github.repository }}" --run "${{ github.run_id }}"
-          --workflow pack-consistency.yml --jobs consistency,consistency-windows,consistency-macos
-          --since 2026-10-18
+          --workflow pack-consistency.yml
+          --jobs "consistency,windows shard 1/3,windows shard 2/3,windows shard 3/3,macos shard 1/3,macos shard 2/3,macos shard 3/3"
+          --since 2026-10-19

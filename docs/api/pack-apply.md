@@ -82,6 +82,10 @@ Python 3.8+, stdlib only. Exit 0 = applied/clean, 1 = conflicts or errors report
 
 ## Types
 
+### `UnsafeDestination`
+
+FR-092: a destination that is a link, or that resolves outside the target repository.
+
 ### `Applier`
 
 _(no docstring — coverage gap)_

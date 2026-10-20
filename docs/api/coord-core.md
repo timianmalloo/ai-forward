@@ -98,7 +98,7 @@ Design: docs/design/coord-core-phase1.md
 | `--flush` | _(no help text — coverage gap)_ |
 | `--force` | install from a linked worktree anyway. It overwrites the repository's shared registration with a path that dies with this tree - the recorded exception, never the default |
 | `--from-role` | _(no help text — coverage gap)_ |
-| `--host` | native response contract (Codex indeterminate checks deny) |
+| `--host` | native response contract (each host's own decision shape) |
 | `--include-unmerged` | cleanup: also remove a clean tree whose branch has commits NOT on the default branch (a pushed but unmerged branch is HELD by default - DC-142). The count is printed either way. |
 | `--json` | _(no help text — coverage gap)_ |
 | `--long-edit` | the recorded reason for a --ttl above the cap; it is written into the claim event so a queued peer can read why it waits |
@@ -126,6 +126,10 @@ Design: docs/design/coord-core-phase1.md
 ### `CoordError`
 
 _(no docstring — coverage gap)_
+
+### `UnreadableWrite`
+
+A native patch whose targets cannot be read. Refused as a unit on every host: the
 
 ### `PrimaryCheckoutWrite`
 
@@ -591,6 +595,13 @@ The PreToolUse envelope. ALWAYS printed, and the caller ALWAYS exits 0 - the
 harness reads the decision in the JSON, not the exit code. Conflating them would make
 a crashed hook indistinguishable from a refusal.
 
+### `no_decision(host=…)`
+
+The hook has no opinion: the host's own permission mode decides, as with no hook at all.
+
+Each host's documented neutral answer. Codex and Grok read exit 0 with empty stdout as
+"continue"; Copilot reads `{}`; agy reads empty success; Claude reads `{}`.
+
 ### `cmd_hook(root, session, agent, now, stdin_text, repo=…, host=…, cwd=…)`
 
 G1: this must never raise. A hook that crashes on a bad payload blocks every edit.
@@ -904,5 +915,5 @@ it; runtime paths stay in quoted expansions, never eval or interpolated source c
 
 ## Coverage
 
-- Public functions: **100** · documented: **75** (**75%**)
+- Public functions: **101** · documented: **76** (**75%**)
 - Undocumented (recorded, not invented): `make_event`, `check`, `read_decisions`, `request_log_path`, `read_request_events`, `cmd_leader`, `regen_command`, `record_regen_owed`, `regen_owed`, `clear_regen_owed`, `detect_harness`, `cmd_precommit`, `cmd_guard`, `session_contract_path`, `owner_rows_for_path`, `cmd_session_list`, `cmd_collaborate`, `cmd_request`, `cmd_worktree`, `cmd_session`, `cmd_metrics`, `cmd_track`, `cmd_install`, `cmd_staged_markers`, `cmd_doctor`

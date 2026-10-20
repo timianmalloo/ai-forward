@@ -733,3 +733,28 @@ class ProofCoverageTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class GateCountProseTests(unittest.TestCase):
+    """FR-090: prose said "nine gates" and "18 gates" while the gate list held more. A stated gate
+    count in a live doc must equal the list in tools/gates.py; a dated history row is exempt."""
+
+    def setUp(self):
+        self.cc = load_module()
+
+    def findings_for(self, text, name="AGENTS.md"):
+        with tempfile.TemporaryDirectory() as tmp:
+            (Path(tmp) / name).write_text(text, encoding="utf-8")
+            findings = []
+            with mock.patch.object(self.cc, "ROOT", tmp), mock.patch.object(self.cc, "GATE_COUNT_SURFACE", [name]):
+                self.cc.check_gate_counts(findings, count=22)
+        return findings
+
+    def test_a_wrong_count_is_a_finding(self):
+        self.assertEqual(1, len(self.findings_for("runs the same nine gates CI does\n")))
+
+    def test_the_right_count_and_a_history_row_pass(self):
+        self.assertEqual([], self.findings_for("all 22 gates\n| **2026-10-18** | Re-verified: 18 gates. |\n"))
+
+    def test_the_count_is_the_gate_list(self):
+        self.assertEqual(len(self.cc._gate_list()), self.cc._gate_list_count())

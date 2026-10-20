@@ -17,10 +17,11 @@ Open a terminal in your project and copy this one line. It works in Windows
 PowerShell/Command Prompt and macOS/Linux terminals, with Git and uv on PATH:
 
 ```text
-uv run --no-config --no-project --script https://raw.githubusercontent.com/timianmalloo/ai-forward/main/bootstrap.py
+uv run --no-config --no-project --script https://raw.githubusercontent.com/timianmalloo/ai-forward/v2026.10.19.4/bootstrap.py
 ```
 
-Setup defaults to the upstream repository and `main`; you do not need `--repo`
+Setup installs release `v2026.10.19.4` from the upstream repository (add `--ref main`
+to opt in to unreleased work); you do not need `--repo`
 or `--ref` for this normal path. If you are reviewing unmerged changes, use the
 reviewer's committed source or an explicit repository/ref selection instead.
 The standard upstream launcher becomes available when the contribution adding

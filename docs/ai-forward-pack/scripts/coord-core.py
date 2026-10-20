@@ -1288,7 +1288,7 @@ def _build_parser():
     # --- Phase 2: enforcement ---
     hook = sub.add_parser("hook", help="PreToolUse adapter: stdin JSON in, decision JSON out")
     hook.add_argument("--host", choices=["claude", "codex", "copilot", "grok", "agy"],
-                      help="native response contract (Codex indeterminate checks deny)")
+                      help="native response contract (each host's own decision shape)")
     hook.add_argument("--config", action="store_true",
                       help="print a project hook entry as JSON; never install or trust it")
     sub.add_parser("precommit", help="the universal floor: refuse unclaimed staged paths")
@@ -2165,13 +2165,15 @@ def _patch_paths(command):
     This is a bounded target recognizer, not a patch applier. Body text never becomes a
     target. A future native grammar extension needs a contract test before it is accepted.
     """
-    if not isinstance(command, str) or len(command.encode("utf-8")) > 1048576:
-        raise ValueError("missing or oversized patch")
+    if not isinstance(command, str):
+        raise ValueError("missing patch")          # no target at all: no decision, as on Claude
+    if len(command.encode("utf-8")) > 1048576:
+        raise UnreadableWrite("oversized patch")
     # splitlines also splits Unicode filename characters such as U+2028, inventing a
     # different target. Native patches use LF/CRLF records; preserve every other byte.
     lines = [line[:-1] if line.endswith("\r") else line for line in command.strip().split("\n")]
     if len(lines) < 3 or lines[0] != "*** Begin Patch" or lines[-1] != "*** End Patch":
-        raise ValueError("invalid patch envelope")
+        raise UnreadableWrite("invalid patch envelope")
     paths, operation, moved, body = [], None, False, False
     headers = {"*** Add File: ": "add", "*** Delete File: ": "delete",
                "*** Update File: ": "update"}
@@ -2180,13 +2182,13 @@ def _patch_paths(command):
         if header:
             path = line[len(header):]
             if not path or path != path.strip():
-                raise ValueError("invalid patch target")
+                raise UnreadableWrite("invalid patch target")
             paths.append(path)
             operation, moved, body = headers[header], False, False
         elif line.startswith("*** Move to: ") and operation == "update" and not moved and not body:
             path = line[len("*** Move to: "):]
             if not path or path != path.strip():
-                raise ValueError("invalid move target")
+                raise UnreadableWrite("invalid move target")
             paths.append(path)
             moved = True
         elif operation == "add" and line.startswith("+"):
@@ -2195,9 +2197,9 @@ def _patch_paths(command):
                                         or line == "*** End of File"):
             body = True
         else:
-            raise ValueError("unrecognized patch syntax")
+            raise UnreadableWrite("unrecognized patch syntax")
     if not paths or len(paths) > 256:
-        raise ValueError("patch must have 1..256 targets")
+        raise UnreadableWrite("patch must have 1..256 targets")
     return paths
 
 
@@ -2217,6 +2219,11 @@ def _physical_spelling(path):
                     break
         result = result / part
     return result
+
+
+class UnreadableWrite(ValueError):
+    """A native patch whose targets cannot be read. Refused as a unit on every host: the
+    host may apply what this recognizer cannot see, so no decision would half-allow it."""
 
 
 class PrimaryCheckoutWrite(ValueError):
@@ -2389,8 +2396,10 @@ def parse_hook_request(event, repo, host=None, cwd=None):
         if not isinstance(args, dict):
             raise ValueError("invalid native arguments")
         if call.get("name") in ("write_to_file", "replace_file_content", "multi_replace_file_content"):
-            if not isinstance(args.get("TargetFile"), str) or not Path(args["TargetFile"]).is_absolute():
-                raise ValueError("native TargetFile must be absolute; hook cwd is not the tool resolver")
+            if not isinstance(args.get("TargetFile"), str) or not args["TargetFile"]:
+                raise ValueError("native write has no target")   # nothing to judge: no decision
+            if not Path(args["TargetFile"]).is_absolute():
+                raise UnreadableWrite("native TargetFile must be absolute; hook cwd is not the tool resolver")
         # Native tool schemas, not generic aliases, choose the authoritative path.
         event = {"tool_name": call.get("name"), "tool_input": {"file_path": args.get("TargetFile")}}
     if host in ("grok", "agy") and (not isinstance(event.get("tool_name"), str)
@@ -2572,20 +2581,38 @@ def hook_response(decision, reason, host=None):
         "permissionDecisionReason": reason}})
 
 
+def no_decision(host=None):
+    """The hook has no opinion: the host's own permission mode decides, as with no hook at all.
+
+    Each host's documented neutral answer. Codex and Grok read exit 0 with empty stdout as
+    "continue"; Copilot reads `{}`; agy reads empty success; Claude reads `{}`.
+    """
+    return "" if host in ("codex", "grok", "agy") else "{}"
+
+
 def _not_checked(reason, host=None, refuse=False):
-    """The answer when the ownership check could not run. The native hosts refuse.
+    """The answer when the ownership check could not run.
 
     EDIT-ASK (owner ruling, 2026-10-19): an edit never asks. Claude Code reads `ask` as
-    "prompt now" even under bypass permissions, so on Claude a path that is itself suspect
-    (`refuse`: traversal, an alias out of the checkout) is refused, and anything else gets no
-    decision -- the session's own permission mode decides, as it would with no hook at all.
+    "prompt now" even under bypass permissions, so a path that is itself suspect (`refuse`:
+    traversal, an alias out of the checkout) is refused, and anything else gets no decision --
+    the session's own permission mode decides, as it would with no hook at all.
+    HOST-P (owner ruling, 2026-10-19, FR-100): every host answers as Claude does. Worktrees,
+    user memory and scratch directories sit outside the repository, so a native host that
+    refused them could not do ordinary work.
     """
-    if host not in ("codex", "grok", "agy", "copilot") and not refuse:
-        return "{}"
+    if not refuse:
+        return no_decision(host)
     return hook_response("deny", "NOT CHECKED  -\n  held by   unknown - this check did"
                          " not run\n  because   {}\n"
                          "  remedy    fix the condition above; this is not a pass"
                          .format(reason), host)
+
+
+def _emit(output):
+    """Print a hook answer. An empty answer prints nothing: a blank line is not empty stdout."""
+    if output:
+        print(output)
 
 
 def cmd_hook(root, session, agent, now, stdin_text, repo=None, host=None, cwd=None):
@@ -2626,12 +2653,15 @@ def cmd_hook(root, session, agent, now, stdin_text, repo=None, host=None, cwd=No
                              .format(_safe(str(exc), 300)), host)
     except OutsideCheckout as exc:
         reason = "the write target is outside this repository's checkouts ({})".format(_safe(str(exc), 300))
-        if exc.via_alias or host in ("codex", "grok", "agy", "copilot"):
+        if exc.via_alias:
             return _not_checked(reason, host, refuse=True)
         # WT-E: no lease can cover a path outside every checkout, so this hook has no opinion.
         # `ask` overrode the session's own permission mode on every write to user memory or a
-        # scratchpad; `allow` would grant a write anywhere on disk. No decision defers to the mode.
-        return "{}"
+        # scratchpad; `allow` would grant a write anywhere on disk. No decision defers to the
+        # mode -- on every host (HOST-P).
+        return no_decision(host)
+    except UnreadableWrite as exc:
+        return _not_checked("unreadable patch ({})".format(_safe(str(exc), 300)), host, refuse=True)
     except Exception as exc:
         return _not_checked("unreadable hook payload ({})".format(exc.__class__.__name__), host)
 
@@ -4945,13 +4975,13 @@ def main(argv=None):
     except Exception as exc:
         if args.cmd != "hook":
             raise
-        print(_not_checked("hook root unavailable ({})".format(type(exc).__name__), args.host))
+        _emit(_not_checked("hook root unavailable ({})".format(type(exc).__name__), args.host))
         return 0
     if err:
         payload = {"decision": "not_checked", "path": "-"}
         payload.update(err)
         if args.cmd == "hook":
-            print(_not_checked(render(payload), args.host))
+            _emit(_not_checked(render(payload), args.host))
             return 0
         print(render(payload), file=sys.stderr)
         return 4
@@ -4963,7 +4993,7 @@ def main(argv=None):
         bad = session_id_error(session)
         if bad:
             if args.cmd == "hook":
-                print(_not_checked(bad, args.host))
+                _emit(_not_checked(bad, args.host))
                 return 0
             print(bad, file=sys.stderr)
             return 2

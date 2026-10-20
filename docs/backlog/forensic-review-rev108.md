@@ -24,8 +24,7 @@ summary: >-
 
 # Forensic review backlog — revision 108
 
-**Status: `proposed`.** FR-086, FR-087, FR-088, FR-101 and FR-102 are **resolved**, FR-089 by owner ruling; FR-099 is partly resolved (2026-10-17/18). The rest are not
-implemented and await triage. Open items carried from revision 59 (FR-078 … FR-085) stay in
+**Status: `proposed`.** Every revision-108 finding is closed except FR-108 (local LLMs, deferred by the owner). FR-089, FR-095, FR-098, FR-100, FR-093 and FR-104 were closed by owner ruling; the rest were fixed, the last batch in revision 117 (2026-10-19). Open: FR-109 and FR-111, found by the 2026-10-19 design analyses. Open items carried from revision 59 (FR-078 … FR-085) stay in
 `forensic-review-rev59-backlog`; their current state is tabled in the review.
 
 Priorities: **P0** exploitable / data-loss / irreversible · **P1** high-likelihood correctness,
@@ -125,6 +124,7 @@ security or migration risk · **P2** material maintainability, operability or go
 - **Remediation:** covered by the CI plan; profile first (CE1).
 - **Acceptance:** a measured Windows-job duration on `main`, and a target recorded in the plan.
 - **Next skill:** `/session-profiler` or the plan's profiling step.
+- **Resolved 2026-10-19 (revision 117).** Profiled first: on run 39302201214 the Windows job spent 37 s on setup and every non-test gate and 17 min 10 s on the test suite; macOS spent 15 min 50 s on it. The suite now runs in three shards per OS (crc32 of the test id, `conftest.in_shard`), each on its own runner; shard 1 also runs the other gates. Target: every required check under 10 min. MEASURED_PLACEHOLDER
 
 ### FR-099 · issue · P3 — Ten tests fail for environmental reasons instead of skipping
 - **Evidence:** the same 10 failures on `c267bd4` and `332c297`: 5 symlink tests raise
@@ -141,6 +141,7 @@ security or migration risk · **P2** material maintainability, operability or go
   Since revision 110 the symlink and `uv` tests pass or skip on the owner's machine, and the
   local suite is fully green. **Still open:** no general skip guard for a host without symlink
   privilege or a POSIX `sh`, so acceptance holds on this machine, not in general.
+- **Resolved 2026-10-19 (revision 117).** `tests/docs_explorer/env_guards.py`, installed by the conftest for the whole suite, turns exactly two causes into a skip with the reason: a symlink refused with WinError 1314, and a launched `sh`/`bash` that is not on PATH. Every other error still fails. `test_env_guards.py` proves both skips and that other errors, a non-shell program and a present-but-failing `sh` still fail. Not observed on a host without the privilege (this machine has it); the mechanism is proven with injected errors.
 
 ### FR-100 · issue · P3 — Native hosts refuse every write outside the repository
 - **Evidence:** `_not_checked` returns `deny` for codex, grok, agy and copilot;
@@ -152,6 +153,7 @@ security or migration risk · **P2** material maintainability, operability or go
   `""` already are); where it is, apply WT-E. Record the decision.
 - **Acceptance:** a decision note per host, and tests matching it.
 - **Next skill:** `/design-slice`.
+- **Resolved 2026-10-19 by owner ruling (revision 117).** *"All harnesses should allow edit outside the repo because work trees are outside the repo … all harnesses should work like what we have with claude."* Every host now gives no decision for a path outside every checkout and for an input it cannot judge, in its own neutral shape (Codex/Grok: empty stdout; Copilot: `{}`; Antigravity: empty). A suspect path and an unreadable patch stay refused on every host. `note-20261019-rev108-p3-rulings`; tests in `test_coord_enforcement.py` and `test_copilot_hooks.py`.
 
 ### FR-097 · todo · P3 — The delivery checkpoint lock has manual-only recovery
 - **Evidence:** `pack/scripts/delivery.py:1007-1018` (`O_CREAT|O_EXCL`, no pid or age check);
@@ -161,6 +163,7 @@ security or migration risk · **P2** material maintainability, operability or go
 - **Remediation:** write pid and time into the lock; report both in the "busy" error; keep
   breaking it manual.
 - **Acceptance:** the busy message names pid and age; a test covers it.
+- **Resolved 2026-10-19 (revision 117).** The lock holds the writer's pid and creation time; the busy error names both and the path to remove (`pid 424242, age 2h00m`), or `holder unknown` for an older lock. Breaking it stays manual. `test_a_busy_lock_names_its_writer_and_age`, `test_the_lock_records_this_writer_while_it_runs`.
 
 ### FR-098 · risk · P3 — `session-checks.json` is committed config that runs commands
 - **Evidence:** `pack/adapters/hooks/session-start.py:83-89,134-143` runs up to five declared
@@ -172,6 +175,7 @@ security or migration risk · **P2** material maintainability, operability or go
   until re-approved, or require a per-user opt-in outside the repo.
 - **Acceptance:** a changed `session-checks.json` does not execute until approved; tested.
 - **Owner:** Security & Identity. **Next skill:** `/design-slice`.
+- **Resolved 2026-10-19 by owner ruling, option (a) (revision 117).** A declaration runs only when its sha256 matches the one approved for that path in `$XDG_CONFIG_HOME/ai-forward/session-checks-approved.json`, outside every repository; otherwise the session reports `NOT RUN` with the approve command. `session-start.py --approve-checks <path>` prints each argv and records the hash. Tests: an unapproved file does not run, an approved one runs until its bytes change.
 
 ### FR-092 · risk · P3 — Hook state and installer writes follow links
 - **Evidence:** `reread-guard.py:53-72` writes a predictable
@@ -183,6 +187,7 @@ security or migration risk · **P2** material maintainability, operability or go
 - **Remediation:** `O_EXCL` / `O_NOFOLLOW` for the temp file in a per-user directory; resolve and
   contain every `pack-apply` destination under the target root.
 - **Acceptance:** tests plant each link and assert the write is refused.
+- **Resolved 2026-10-19 (revision 117).** The re-read guard keeps its state in a private per-user directory under the cache home (refused unless owner-only on POSIX) and writes through `mkstemp` (exclusive, random name) then `os.replace`. `pack-apply._write` refuses a destination that is a link or whose deepest existing directory resolves outside the target, checked before and after creating directories; `run()` stops with a `REFUSED` row before the revision advances. Tests plant a junction/symlink out of the target and a link at the old temp name.
 
 ### FR-093 · risk · P3 — One-command setup runs from mutable `main`
 - **Evidence:** `README.md:46` runs
@@ -193,6 +198,7 @@ security or migration risk · **P2** material maintainability, operability or go
 - **Remediation:** document a tagged or SHA-pinned command as the default, keep `main` as an
   explicit opt-in, and state the interpreter policy.
 - **Acceptance:** README's primary command names a tag or SHA.
+- **Resolved 2026-10-19 by owner ruling (revision 117).** `bootstrap.py` defaults `--ref` to `RELEASE_REF` (`v2026.10.19.4`); README, pack README, OVERVIEW and the handbook fetch the launcher at that tag; `--ref main` is the explicit opt-in and the README states the interpreter policy (`--no-python-downloads`). `InstallCommandIsPinnedTests`. The tag is created on the revision-117 merge commit.
 
 ### FR-090 · issue · P3 — Documented counts are stale
 - **Evidence:** `architecture.md` says revision 53 (lines 16, 47), "24 skills" (61), "10 gates"
@@ -202,6 +208,7 @@ security or migration risk · **P2** material maintainability, operability or go
   a reference to `verify-bundle.ps1`, or have `check-consistency.py` check them.
 - **Acceptance:** `check-consistency.py` fails on a wrong gate count, observed failing first.
 - **Next skill:** `/document`.
+- **Resolved 2026-10-19 (revision 117).** `check-consistency.py` fails on a stated gate count that differs from `tools/gates.py` in the live docs (INSTALL's changelog and dated history rows exempt); observed failing first on `copilot-instructions.md` ("nine") and `architecture.md` ("18"), both now fixed. The skill, lens and script counts were already checked.
 
 ### FR-091 · issue · P3 — CI's gate steps are hand-copied from `verify-bundle.ps1` and drift
 - **Evidence:** the ubuntu job splits gate 8 into two steps and runs 7 → 8 → 8b; the script runs
@@ -209,6 +216,7 @@ security or migration risk · **P2** material maintainability, operability or go
 - **Remediation:** have CI call `verify-bundle.ps1` (or a gate list it exports), with
   per-OS exclusions declared in one place.
 - **Acceptance:** adding a gate to the script changes CI with no workflow edit.
+- **Resolved 2026-10-19 (revision 117).** `tools/gates.py` is the only gate list. `verify-bundle.ps1` calls it; each CI job prepares its runner and runs `gates.py run --ci`, where a skip fails. Moving the list exposed the drift: CI had run two of the four context-budget ratchets and checked three fewer drift paths than the script. `test_gates.py` fails if a gate is copied into the workflow.
 
 ### FR-095 · todo · P3 — No ADR records the six-harness support decision
 - **Evidence:** `docs/adr/0001–0013` cover no harness-support decision; Muse appears in no ADR
@@ -229,6 +237,7 @@ security or migration risk · **P2** material maintainability, operability or go
 - **Remediation:** generate it unconditionally in sync, or add a source file and gate it under
   gate 2.
 - **Acceptance:** deleting `.codex/hooks.json` and running sync recreates it.
+- **Resolved 2026-10-19 (revision 117).** `pack/adapters/hooks/codex.hooks.json` is the source; sync copies it to `.codex/hooks.json` unconditionally, then refreshes its ownership entry. `CodexHookSourceTests`. Consumer installs still create `.codex/hooks.json` only on request, unchanged.
 
 ## Found 2026-10-19 — the four designs' security and privacy sections
 
@@ -301,6 +310,31 @@ surfaced these. None is fixed.
 - **Owner:** the owner (which setup), then Domain Researcher. **Next skill:** `/investigate` (spike), then
   `/implement`.
 
+### FR-109 · issue · P3 — The security rollups mix table shapes
+- **Evidence:** `docs-graph.py rollup` takes the first design's table header for the whole register.
+  Design tables are 3 to 6 columns wide, so in `docs/security/threat-model.md` a wider row loses its
+  last cells when rendered, and in `privacy-review.md` a narrower row shows blank cells.
+- **Remediation:** give each design analysis one fixed column set (a template and a lint), or render
+  one table per source.
+- **Acceptance:** every register row renders every cell; a test fails on a mismatched row.
+
+### FR-110 · issue · P2 — marker-lint and dream skipped a whole repo under an `ai-forward-pack` path — **resolved**
+- **Evidence:** the 2026-10-19 STRIDE section of `marker-completeness-lint`. `marker-lint.py` and
+  `dream.py` skipped every directory whose FULL path contained `ai-forward-pack`, the root included,
+  so a repo checked out under such a directory scanned 0 files and `--gate` passed with a bad marker.
+- **Resolved 2026-10-19 (revision 117).** Both judge the path below the root (class SKIP-P);
+  `test_a_root_whose_path_names_the_mirror_is_still_scanned` and the dream twin, observed failing first.
+
+### FR-111 · todo · P3 — Four minor residuals from the 2026-10-19 design analyses
+- `audit-log.py` passes `--since` to `git show` with no `--end-of-options` (`audit-log.py:495`); the
+  value comes only from the operator's command line (Inferred low risk; POSIX not tested).
+- `selfcheck` never reads `LOG_READ_SKIPS` (`audit-log.py:1242-1327`), so `--gate` can pass while
+  corrupt lines are skipped.
+- The Proof Pack "Observed once?" column has no rule against pasting values or personal data
+  (`proof-pack.template.md:87-97`).
+- `active_sessions` shows legacy absolute worktree paths (`coord-core.py`); six tracked ledgers hold them.
+- **Acceptance:** each is fixed with a test, or recorded as accepted with a reason.
+
 ## Resolved during the review
 
 ### FR-101 · issue · P3 — The edit-ownership hook prompted for writes it does not govern — **resolved**
@@ -334,17 +368,17 @@ surfaced these. None is fixed.
 | FR-088 | P2 | issue | Git-identity guard bypasses | resolved |
 | FR-089 | P2 | risk | Ownership hook `allow` skips the prompt | resolved (ruling) |
 | FR-086 | P2 | risk | Byte-code cache in shared temp | resolved |
-| FR-094 | P3 | risk | Windows CI job ~47 min | profile |
-| FR-099 | P3 | issue | Ten environmental test failures | partly resolved |
-| FR-100 | P3 | issue | Native hosts refuse outside writes | `/design-slice` |
-| FR-097 | P3 | todo | Lock with manual-only recovery | `/implement` |
-| FR-098 | P3 | risk | Executable session-check config | `/design-slice` |
-| FR-092 | P3 | risk | Link-following writes | `/implement` |
-| FR-093 | P3 | risk | Setup from mutable `main` | `/implement` |
-| FR-090 | P3 | issue | Stale documented counts | `/document` |
-| FR-091 | P3 | issue | Hand-copied CI gate list | `/implement` |
+| FR-094 | P3 | risk | Windows CI job ~47 min | resolved |
+| FR-099 | P3 | issue | Ten environmental test failures | resolved |
+| FR-100 | P3 | issue | Native hosts refuse outside writes | resolved (ruling) |
+| FR-097 | P3 | todo | Lock with manual-only recovery | resolved |
+| FR-098 | P3 | risk | Executable session-check config | resolved (ruling) |
+| FR-092 | P3 | risk | Link-following writes | resolved |
+| FR-093 | P3 | risk | Setup from mutable `main` | resolved (ruling) |
+| FR-090 | P3 | issue | Stale documented counts | resolved |
+| FR-091 | P3 | issue | Hand-copied CI gate list | resolved |
 | FR-095 | P3 | todo | No six-harness ADR | resolved (ADR-0014) |
-| FR-096 | P3 | todo | `.codex/hooks.json` unsourced | `/implement` |
+| FR-096 | P3 | todo | `.codex/hooks.json` unsourced | resolved |
 | FR-101 | P3 | issue | Hook prompted outside its domain | resolved |
 | FR-102 | P2 | issue | Bundle change without a revision bump | resolved |
 | FR-103 | P1 | risk | Profiler commits secrets unscrubbed | resolved |
@@ -353,3 +387,6 @@ surfaced these. None is fixed.
 | FR-106 | P3 | risk | Decision answers carry no source | resolved |
 | FR-107 | P3 | todo | No checkpoint deletion path | resolved |
 | FR-108 | P2 | todo | Local LLMs have no support | deferred (owner) |
+| FR-109 | P3 | issue | Rollups mix table shapes | `/implement` |
+| FR-110 | P2 | issue | marker-lint skipped a repo under an `ai-forward-pack` path | resolved |
+| FR-111 | P3 | todo | Four minor residuals from the design analyses | `/implement` |

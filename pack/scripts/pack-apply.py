@@ -66,6 +66,10 @@ for _stream in (sys.stdout, sys.stderr):
 MANIFEST = "FOUNDATION.md"
 
 
+class UnsafeDestination(ValueError):
+    """FR-092: a destination that is a link, or that resolves outside the target repository."""
+
+
 def read_hook_settings(path):
     """Decode policy-bearing configuration strictly; absence alone is an empty install."""
     if os.path.islink(path):
@@ -539,10 +543,28 @@ class Applier(object):
         return old
 
     # ---- primitive writes
+    def _contain(self, dest):
+        """Refuse a destination that is a link or that resolves outside the target (FR-092).
+
+        Checked on the deepest directory that already exists, before any is created, so a planted
+        junction or symlink in a parent cannot redirect the write either.
+        """
+        root = os.path.realpath(self.target)
+        if os.path.islink(dest):
+            raise UnsafeDestination("{0} is a link".format(self.rel(dest)))
+        probe = os.path.dirname(os.path.abspath(dest))
+        while not os.path.exists(probe) and os.path.dirname(probe) != probe:
+            probe = os.path.dirname(probe)
+        real = os.path.realpath(probe)
+        if os.path.normcase(os.path.commonpath([real, root])) != os.path.normcase(root):
+            raise UnsafeDestination("{0} resolves outside the target ({1})".format(self.rel(dest), real))
+
     def _write(self, dest, text):
         if self.dry:
             return
+        self._contain(dest)
         os.makedirs(os.path.dirname(dest), exist_ok=True)
+        self._contain(dest)   # nothing raced a link into the directories just made
         with open(dest, "w", encoding="utf-8", newline="\n") as fh:
             fh.write(norm_nl(text))
 
@@ -1099,12 +1121,17 @@ class Applier(object):
             return self.rows
         if self.target_rev == self.source_rev and not self.force:
             self.row("meta", "revision", "UNCHANGED", "ok", "already at revision {0} (use --force to re-apply)".format(self.source_rev))
-        self.knowledge()
-        self.skills()
-        self.agents()
-        self.bundle()
-        self.front_doors()
-        self.advance()
+        try:
+            self.knowledge()
+            self.skills()
+            self.agents()
+            self.bundle()
+            self.front_doors()
+            self.advance()
+        except UnsafeDestination as exc:
+            # A planted link makes the target suspect: stop before the revision advances.
+            self.row("meta", "target", "REFUSED", "fail", "{0}; nothing written there - remove the link".format(exc))
+            return self.rows
         self.run_baselines()
         return self.rows
 

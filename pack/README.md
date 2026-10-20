@@ -48,7 +48,7 @@ access and a supported coding app with its own account/model access.
 Open a terminal in the project you want to work on and copy this one line:
 
 ```text
-uv run --no-config --no-project --script https://raw.githubusercontent.com/timianmalloo/ai-forward/main/bootstrap.py
+uv run --no-config --no-project --script https://raw.githubusercontent.com/timianmalloo/ai-forward/v2026.10.19.4/bootstrap.py
 ```
 
 Setup defaults to the upstream repository and `main`; no `--repo` or `--ref` is

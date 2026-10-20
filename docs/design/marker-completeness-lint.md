@@ -83,3 +83,27 @@ flows call; a repo may opt into `--gate` in its own CI.
 - **Self-reference** (the lint's own tests contain marker-like fixtures) → tests run against a
   tmp `--root`, never the repo; `.md` excluded by default so directive examples are not scanned.
 - **Empty corpus reads as clean** → explicit "0 markers found" vs "N complete" (E14).
+
+## Adversarial analysis (STRIDE-lite)
+Trust boundary: repository source files, which any contributor can write → `marker-lint.py` → stdout and the gate's exit code. The gate is now a required step: `tools/verify-bundle.ps1:126` and `.github/workflows/pack-consistency.yml:68`, `:223`, `:349` run `marker-lint.py --gate`. The script imports only `argparse json os re sys` (`pack/scripts/marker-lint.py:22-26`). It opens files for reading only, runs no subprocess and makes no network call (Verified by reading).
+
+| Boundary | Threat | Disposition | Control, evidence and test |
+|---|---|---|---|
+| `--root` path → file walk | **T** (gate fails open): the skip test runs on the whole `dirpath`, root included. A root whose path contains `ai-forward-pack`, or a directory such as `dreams-old`, scans 0 files, and `--gate` exits 0 | **not mitigated** | `_iter_files`, `marker-lint.py:65`. Verified 2026-10-19: one triggerless `simplify:` marker under `<tmp>/clone-plain` gave exit 1; the same file under `<tmp>/clone-ai-forward-pack` printed "0 markers found in 0 file(s)" and gave exit 0. The E14 line prints, but the gate still passes. The `dreams` case is Inferred from the substring test. No test. Fix: match path components relative to the root, and fail `--gate` when 0 files are scanned. |
+| Source tree → skip set | **T**: a contributor hides an incomplete marker in a skipped tree (`.claude`, `.github`, `dist`, `_site` at any depth) | accept | `SKIP_DIRS` (`:57`) exists so generated copies are not linted twice; the source of those copies (`pack/`) is linted. Repo review is the control. |
+| Marker text → classifier | **S**: a cue word satisfies the check without meaning (`simplify: fine, revisit later`) | accept | Word-boundary keyword cues (`:47-55`). The design checks semantic presence, not truth. Review is the control. |
+| File content → memory | **D**: each file is read whole with no size cap | accept | `f.read()` (`:111-112`). Input is repo-controlled; the CI job timeout bounds it. |
+| File symlink → read | **I**: `os.walk` does not descend directory symlinks (`followlinks` defaults to False, `:62`), but a file symlink is opened, and up to 200 characters of a matching marker line from its target are printed | accept (Inferred) | `:111`, `:125`. Needs repo write to plant; prints only lines that match `MARKER_RX` (`:43`). No test. |
+| Output → terminal, CI log or model | **T** (injection): marker text is echoed verbatim | accept | Up to 200 characters (`:125`, `:147`); `--json` escapes it. No control-character strip. The text is already committed comment content. |
+
+**Design vs code:** the design says the lint is not wired into verify-bundle as a hard gate. It now is (see above). The design's contract also lists `[paths...]`; the parser takes no positional paths (`main`, `:133-138`). The tables above analyse the code.
+
+## Privacy analysis (LINDDUN-lite)
+| Data flow / category | LINDDUN finding | Disposition | Control / rationale | Retention & rights path |
+|---|---|---|---|---|
+| Code comments → stdout / `--json` | none: no personal data, because the lint reads only code files (`CODE_EXT`, `marker-lint.py:56`; `.md` only with `--include-md`) and prints only the marker comments it finds (up to 200 characters, `:125`) | n/a | A name or secret in a marker comment is already committed repository content. No scrub. | No store; the lint writes nothing. Output lives in the terminal or the CI log. |
+| Lint → third party | none: no egress | n/a | No network module is imported (`:22-26`); no model is called. | — |
+
+This component touches no personal data: its only input is source code and its only output is lint findings about that code.
+
+**Security and privacy review (2026-10-19):** both sections were written from the code as it is now, not from the plan, to close the gap rows in `docs/security/threat-model.md` §4 and `docs/security/privacy-review.md` §5.

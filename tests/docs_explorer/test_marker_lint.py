@@ -111,6 +111,22 @@ class MarkerLintTests(unittest.TestCase):
         r = self._run(self.tmp, "--gate")
         self.assertEqual(r.returncode, 0)
 
+    def test_a_root_whose_path_names_the_mirror_is_still_scanned(self):
+        # SKIP-P (found 2026-10-19 by the marker-completeness-lint STRIDE review): the mirror skip
+        # matched the FULL path, root included, so a repo checked out under any directory named
+        # `ai-forward-pack` scanned 0 files and --gate passed with a bad marker in it.
+        root = self.tmp / "work" / "ai-forward-pack-demo"
+        root.mkdir(parents=True)
+        self._write(root, "bad.py", "# simplify: hardcoded\n")
+        mirror = root / "docs" / "ai-forward-pack"
+        mirror.mkdir(parents=True)
+        self._write(mirror, "vendored.py", "# simplify: hardcoded\n")
+        r = subprocess.run([sys.executable, str(SCRIPT), "--root", str(root), "--gate"],
+                           capture_output=True, text=True)
+        self.assertNotEqual(0, r.returncode, r.stdout + r.stderr)
+        self.assertIn("bad.py", r.stdout + r.stderr)
+        self.assertNotIn("vendored.py", r.stdout + r.stderr, "the mirror under the root stays skipped")
+
     # ---- empty corpus is distinguishable from a clean one (E14) ----
     def test_empty_corpus_reports_zero(self):
         self._write(self.tmp, "k.py", "print('no markers here')\n")
@@ -171,6 +187,22 @@ class DreamMarkerHarvestTests(unittest.TestCase):
                 "# simplify: naive scan - index it when n grows\n", encoding="utf-8")
             srcs = [m["src"] for m in dream.grep_markers(td)]
         self.assertEqual(srcs, ["a.py#L2"])
+
+    def test_harvest_reads_a_root_whose_path_names_the_mirror(self):
+        # SKIP-P sweep: the same whole-path filter as marker-lint, in the second reader.
+        import importlib.util
+        import tempfile
+        spec = importlib.util.spec_from_file_location(
+            "dream_mod", ROOT / "docs" / "ai-forward-pack" / "scripts" / "dream.py")
+        dream = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(dream)
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td) / "ai-forward-pack-demo"
+            (root / "docs" / "ai-forward-pack").mkdir(parents=True)
+            (root / "a.py").write_text("# simplify: naive scan - index it when n grows\n", encoding="utf-8")
+            (root / "docs" / "ai-forward-pack" / "b.py").write_text("# simplify: mirror copy\n", encoding="utf-8")
+            srcs = [m["src"] for m in dream.grep_markers(str(root))]
+        self.assertEqual(srcs, ["a.py#L1"])
 
 
 if __name__ == "__main__":

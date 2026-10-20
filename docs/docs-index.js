@@ -858,7 +858,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c0863675835c2b58ab9adedca46b33e5bbd1b775d19c6d885e30a737dcfb2ea3"
+      "sourceSha256": "377be79d07fcf08c6acdd5a62e15468da01c4133934c347d7c173565cd049f2e"
     },
     {
       "id": "api-coord-decide",
@@ -1220,7 +1220,7 @@ window.DOCS_INDEX = {
       "phase": "",
       "reviewBy": "2027-03-03",
       "reviewSuggested": [],
-      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 602 public functions across 46 modules, 47% carrying a docstring.",
+      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 603 public functions across 46 modules, 47% carrying a docstring.",
       "tags": [
         "api",
         "scripts",
@@ -1234,7 +1234,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7ce517bc4805627492e782d62c826c1c08aca32dea790560e0ef25d544e72e66"
+      "sourceSha256": "2991b77fb9194c60834c4dda59f49f74e050da90e9cf3a729fb4fda0c1655283"
     },
     {
       "id": "api-marker-lint",
@@ -1334,7 +1334,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "59f8b0b865f935d4eadd6d252cd964280aaf7d78e6772d40ce013873b0a713f0"
+      "sourceSha256": "248d443d14ea807a2b7d619ca8a6b54aa922d659cf9f35da4fecf99daf7916d9"
     },
     {
       "id": "api-pack-doctor",
@@ -1893,7 +1893,7 @@ window.DOCS_INDEX = {
         {
           "kind": "sequence",
           "title": "Key flow — the sandbox / dogfood loop (sequence)",
-          "mermaid": "sequenceDiagram\n  actor Dev as Author\n  participant Pack as pack/ (source)\n  participant Sync as tools/sync-pack.ps1\n  participant Install as .claude/ + docs/\n  participant CC as Claude Code (this repo)\n  participant Graph as docs-graph.py\n  participant Verify as tools/verify-bundle.ps1\n  participant Explorer as docs/index.html\n  participant GH as GitHub (main, protected)\n\n  Dev->>Pack: edit a knowledge doc / SKILL.md / persona / template\n  Dev->>Sync: pwsh tools/sync-pack.ps1\n  Sync->>Install: mirror knowledge, skills, agents, templates, scripts\n  Sync->>Install: route each knowledge doc by its load: scope<br/>(instructions vs .github/knowledge)\n  Sync->>Install: re-paste the CLAUDE.md / AGENTS.md managed blocks\n  Sync->>Graph: docs-graph.py derive\n  Graph->>Install: write docs/docs-index.js from frontmatter\n  Sync->>Install: build-web-index.py, build-docs-portal.py\n  Note over Sync,Install: derivation runs INSIDE sync (FR-068), so the<br/>index can never lag a run that added an artifact\n  Dev->>CC: try the change (regenerated skills/agents are now live)\n  CC-->>Dev: run a skill; dogfood the edit\n  Dev->>Verify: pwsh tools/verify-bundle.ps1\n  Verify->>Verify: 18 gates — counts · portability · contracts · drift ·<br/>tests (xdist -n 4, then serial wallclock) · explorer ·<br/>graph · foundation · audit · coordination · evals · context budget\n  Verify-->>Dev: PASS (~15 min), or the first thing that is wrong\n  Graph->>Explorer: index loaded; hierarchy · graph · mind map · health render\n  Dev->>Pack: commit pack/ + .claude/ + .github/ + docs/ together (lockstep)\n  Dev->>GH: open a PR (direct pushes are rejected)\n  GH->>GH: pack-consistency: consistency · consistency-windows ·<br/>consistency-macos (required, ~25 min) + duration-budget\n  GH-->>Dev: rebase-merge once green and up to date with main"
+          "mermaid": "sequenceDiagram\n  actor Dev as Author\n  participant Pack as pack/ (source)\n  participant Sync as tools/sync-pack.ps1\n  participant Install as .claude/ + docs/\n  participant CC as Claude Code (this repo)\n  participant Graph as docs-graph.py\n  participant Verify as tools/verify-bundle.ps1\n  participant Explorer as docs/index.html\n  participant GH as GitHub (main, protected)\n\n  Dev->>Pack: edit a knowledge doc / SKILL.md / persona / template\n  Dev->>Sync: pwsh tools/sync-pack.ps1\n  Sync->>Install: mirror knowledge, skills, agents, templates, scripts\n  Sync->>Install: route each knowledge doc by its load: scope<br/>(instructions vs .github/knowledge)\n  Sync->>Install: re-paste the CLAUDE.md / AGENTS.md managed blocks\n  Sync->>Graph: docs-graph.py derive\n  Graph->>Install: write docs/docs-index.js from frontmatter\n  Sync->>Install: build-web-index.py, build-docs-portal.py\n  Note over Sync,Install: derivation runs INSIDE sync (FR-068), so the<br/>index can never lag a run that added an artifact\n  Dev->>CC: try the change (regenerated skills/agents are now live)\n  CC-->>Dev: run a skill; dogfood the edit\n  Dev->>Verify: pwsh tools/verify-bundle.ps1\n  Verify->>Verify: tools/gates.py — 22 gates: counts · portability · contracts · drift ·<br/>tests (xdist -n 4, then serial wallclock) · explorer ·<br/>graph · foundation · audit · coordination · evals · context budget · platform proofs\n  Verify-->>Dev: PASS (~15 min), or the first thing that is wrong\n  Graph->>Explorer: index loaded; hierarchy · graph · mind map · health render\n  Dev->>Pack: commit pack/ + .claude/ + .github/ + docs/ together (lockstep)\n  Dev->>GH: open a PR (direct pushes are rejected)\n  GH->>GH: pack-consistency: consistency · consistency-windows ·<br/>consistency-macos (required, ~25 min) + duration-budget\n  GH-->>Dev: rebase-merge once green and up to date with main"
         },
         {
           "kind": "flowchart",
@@ -1906,7 +1906,7 @@ window.DOCS_INDEX = {
           "mermaid": "classDiagram\n  class Signature {\n    +Name name\n    +FacetList facets\n    +StyleHints? hints\n    +validate() conflicts\n    +roundTrip() bool  %% G10: identify AND generate\n  }\n  class Facet {\n    <<abstract>>\n    +String key\n  }\n  class SingleValuedFacet {\n    +Value value  %% Type, Arch, Layout, Density, Pacing, ...\n  }\n  class MultiValuedFacet {\n    +Value[] values  %% Nav, Input, Feedback, Motion, A11y (joined with +)\n  }\n  class StyleHints {\n    +String[] hints  %% bounded NL decoration, applied last\n  }\n  class Archetype {\n    +String id          %% A1..F2\n    +String name\n    +Exemplar[] exemplars\n    +Signature canonical\n    +String codegenDescriptor\n  }\n  Signature \"1\" o-- \"4..*\" Facet : composes\n  Facet <|-- SingleValuedFacet\n  Facet <|-- MultiValuedFacet\n  Signature \"0..1\" *-- \"1\" StyleHints : decorated by\n  Archetype \"1\" *-- \"1\" Signature : canonical\n  Archetype \"1\" o-- \"1..*\" Exemplar\n  note for Signature \"G4: MUST carry Type, Arch, Layout, Pacing.\\nG1: always composed with a concrete U1–U20 / S1–S10 spec.\""
         }
       ],
-      "sourceSha256": "22519f0d29c4651a41780c4a0299fe327ed1155895b65c0507d27543d38219bb"
+      "sourceSha256": "a926e5d4a6826ceea1ad080bb7858c0b2b8c06d3c4280df5629f05b3ddd0942a"
     },
     {
       "id": "architecture-agent-coordination",
@@ -3351,6 +3351,46 @@ window.DOCS_INDEX = {
       "sourceSha256": "4f4ce9fa572ae354b60c47815ecc7d8b4937485c3dc70eb1051e742026027f62"
     },
     {
+      "id": "note-20261019-rev108-p3-rulings",
+      "path": "docs/notes/note-20261019-rev108-p3-rulings.md",
+      "title": "Decision — every host answers like Claude, session checks need approval, setup installs a release",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2027-04-19",
+      "reviewSuggested": [],
+      "summary": "Three owner rulings of 2026-10-19 on the revision-108 P3 findings, executed in revision 117. FR-100: every host answers an edit outside the repository as Claude does (no decision), because worktrees, memory and scratch folders are outside it. FR-098: a committed session-checks.json runs only after a human approves its exact bytes on that machine. FR-093: the documented one-line setup installs a release tag, with main as an explicit opt-in. The same revision gives CI one gate list (FR-091) and splits the Windows and macOS test suites into three shards (FR-094).",
+      "tags": [
+        "decision",
+        "hooks",
+        "permissions",
+        "supply-chain",
+        "ci",
+        "session-checks"
+      ],
+      "links": [
+        {
+          "to": "forensic-review-rev108-backlog",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-20261019-edits-never-ask",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0014-meet-the-developer-in-their-harness",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "76ee7d3b45462f0818f21ef8487fc871c736f800d5aa3929df6e03560e15d9f9"
+    },
+    {
       "id": "note-autopilot-open-questions-decisions",
       "path": "docs/notes/autopilot-open-questions-decisions.md",
       "title": "Decisions on PACK-O open questions (logging, class granularity, autopilot caps)",
@@ -3602,7 +3642,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "586707d7def73f1914ecc38c67a8d492b685bf659605a3a3ee089fb16a7f642f"
+      "sourceSha256": "def003dab2496e38973ebfd26c578b0c1a5a577ecb3cafc38ae7166787c70e16"
     },
     {
       "id": "design-aiforward-cli",
@@ -3811,7 +3851,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "46f3e34ebf8fbd6ef9ca8d84b5748b173195936ef4a61f13efca1a35cd2d854f"
+      "sourceSha256": "7c99f442cc6d559d7f2dc8f4ba73a733815bb496258de2a6d2e3b345f5aaae26"
     },
     {
       "id": "design-coord-core-phase1",
@@ -4177,7 +4217,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ea314d0fcf650f5815fee5f7da2d777e2da1e7ed195d643ce09480505a5e3558"
+      "sourceSha256": "dab4628a7c7396259de9f61798a76d6c651b7172f60348450271a3b89d1c37d7"
     },
     {
       "id": "design-message-layer",
@@ -4680,7 +4720,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "28068e1639907e23f54fb31b877d4d6f8b351178daa851fdb960a5d447693c8c"
+      "sourceSha256": "a32aa0b8f3b5abc845e47fdcf8fe2f78d1b1503ad77c5a1aab09bd19255fffb1"
     },
     {
       "id": "design-typed-seam-requests",
@@ -5008,7 +5048,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "dbffb412433c4d31fdea4428c5371e562bf5f726172fe9d8662d4401435d078a"
+      "sourceSha256": "7b5508077c78267ff20738f97c0ea47148dcc3161078b5ecc289114b6134e86d"
     },
     {
       "id": "docs-index",
@@ -5336,7 +5376,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "50ed6fea80be6046744914f6595c0c73f5cdf98f3f2315f78c613b39e82b9d9a"
+      "sourceSha256": "933376ba2042158d4237c3d49584be8505685d8c04bd534e566f86d2c9e762c1"
     },
     {
       "id": "forensic-review-rev42",
@@ -5832,7 +5872,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "469fb7a6dd0fae68880441763771baa0804d108047669e3fa547c633d783c738"
+      "sourceSha256": "55ca35ea6068f9f16e2c40e1d23a1bfef7a7161783006eb4fb315c8a92c5e363"
     },
     {
       "id": "handbook-glossary",
@@ -10493,7 +10533,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7fd92ddfbbd98b8c9f50de3417fc65c2ec472bd46761b083fead11d507e223ac"
+      "sourceSha256": "cef3a129d3001b72ee206103a9fdced8997eb70b3ef158e4f2ced4d206f69269"
     },
     {
       "id": "forensic-review-rev48-proof",
@@ -12278,7 +12318,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "fe730d0053b702c7e5f7d2d92d3ea224949c178d7b2fc8df66d6f1fce39e40fd"
+      "sourceSha256": "ed97224abaf77d2562fda04afaca8f9f5434c7b8de4a15639dde997dad5b3a43"
     }
   ],
   "surfaces": [
@@ -12702,5 +12742,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "80283d5e41ed5018fd3556fe12fa2b9f35c735f8bc7af2898f84ae6e56725c5b"
+  "graphSha256": "649cbcf1e0f3110d28271d61f317a1ce99304fd9a388d4a717fda2409ddc6bab"
 };

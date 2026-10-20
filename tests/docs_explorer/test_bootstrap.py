@@ -18,6 +18,7 @@ from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[2]
 SCRIPT = ROOT / "bootstrap.py"
+RELEASE_REF = re.search(r'^RELEASE_REF = "([^"]+)"$', SCRIPT.read_text(encoding="utf-8"), re.M).group(1)
 
 
 class BootstrapTests(unittest.TestCase):
@@ -75,7 +76,9 @@ class BootstrapTests(unittest.TestCase):
                 shutil.copy2(origin, destination)
         self.git('add', '-A', cwd=source)
         self.git('commit', '--allow-empty', '-qm', 'Disposable current-source fixture', cwd=source)
-        commit = self.git('rev-parse', 'main', cwd=source)
+        self.git('tag', RELEASE_REF, cwd=source)   # FR-093: the default is the release, not main
+        self.git('commit', '--allow-empty', '-qm', 'Unreleased work on main', cwd=source)
+        commit = self.git('rev-parse', RELEASE_REF + '^{commit}', cwd=source)
         upstream = 'https://github.com/timianmalloo/ai-forward.git'
         self.git('config', '--file', self.env['GIT_CONFIG_GLOBAL'],
                  f'url.{source.as_uri()}.insteadOf', upstream, cwd=self.base)
@@ -92,7 +95,7 @@ class BootstrapTests(unittest.TestCase):
             self.assertEqual(0, result.returncode, result.stdout + result.stderr)
             receipt = json.loads((self.target / 'docs/ai-forward-pack/bootstrap-receipt.json').read_text(encoding='utf-8'))
             self.assertEqual(upstream, receipt['source_repository'])
-            self.assertEqual('main', receipt['requested_ref'])
+            self.assertEqual(RELEASE_REF, receipt['requested_ref'])
             self.assertEqual(commit, receipt['source_commit'])
             self.assertEqual((source / 'pack/commands/deliver/SKILL.md').read_bytes(),
                              (self.target / '.agents/skills/deliver/SKILL.md').read_bytes())
@@ -1090,3 +1093,25 @@ class BootstrapTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class InstallCommandIsPinnedTests(unittest.TestCase):
+    """FR-093: the documented one-line setup installs a release tag, never mutable `main` by default."""
+
+    COPIES = ("README.md", "pack/README.md", "pack/OVERVIEW.md", "web/handbook/guides/get-started.md")
+    URL = re.compile(r"https://raw\.githubusercontent\.com/timianmalloo/ai-forward/([^/\s]+)/bootstrap\.py([^\n`]*)")
+
+    def test_the_release_ref_is_a_version_tag(self):
+        self.assertRegex(RELEASE_REF, r"^v\d{4}\.\d{2}\.\d{2}\.\d+$")
+
+    def test_every_documented_command_fetches_the_release_or_opts_in_to_main(self):
+        for relative in self.COPIES:
+            text = (ROOT / relative).read_text(encoding="utf-8")
+            found = self.URL.findall(text)
+            with self.subTest(file=relative):
+                self.assertTrue(found, "no install command")
+                self.assertIn(RELEASE_REF, [ref for ref, _ in found], "the primary command is not the release")
+                for ref, rest in found:
+                    if ref != RELEASE_REF:
+                        self.assertEqual("main", ref)
+                        self.assertIn("--ref main", rest, "a main launcher must opt in explicitly")

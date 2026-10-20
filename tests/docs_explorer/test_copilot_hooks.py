@@ -130,30 +130,31 @@ class CopilotHooksTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(core.hook_decision_of(json.loads(result.stdout)), "deny")
 
-    def test_batch_write_with_non_json_args_fails_closed(self):
+    def test_batch_write_with_non_json_args_gets_no_decision(self):
+        # HOST-P (FR-100): an unreadable call gets no decision, as on Claude; the mode decides.
         payload = self.plugin_payload()
         payload["input"]["toolCalls"][0]["args"] = "not-json"
         result = self.run_script(SCRIPT, "hook", "--host", "copilot",
                                  stdin=json.dumps(payload), env=self.env("other"))
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertEqual(core.hook_decision_of(json.loads(result.stdout)), "deny")
+        self.assertEqual({}, json.loads(result.stdout))
 
-    def test_batch_write_without_path_fails_closed(self):
+    def test_batch_write_without_path_gets_no_decision(self):
         payload = self.plugin_payload()
         payload["input"]["toolCalls"][0]["args"] = json.dumps({})
         result = self.run_script(SCRIPT, "hook", "--host", "copilot",
                                  stdin=json.dumps(payload), env=self.env("other"))
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertEqual(core.hook_decision_of(json.loads(result.stdout)), "deny")
+        self.assertEqual({}, json.loads(result.stdout))
 
-    def test_batch_apply_patch_without_command_fails_closed(self):
+    def test_batch_apply_patch_without_command_gets_no_decision(self):
         payload = self.plugin_payload()
         payload["input"]["toolCalls"][0]["name"] = "apply_patch"
         payload["input"]["toolCalls"][0]["args"] = json.dumps({})
         result = self.run_script(SCRIPT, "hook", "--host", "copilot",
                                  stdin=json.dumps(payload), env=self.env("other"))
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertEqual(core.hook_decision_of(json.loads(result.stdout)), "deny")
+        self.assertEqual({}, json.loads(result.stdout))
 
     def test_native_raw_apply_patch_allows_holder_and_denies_other_holder(self):
         self.claim("holder", "leased.txt")
@@ -168,21 +169,23 @@ class CopilotHooksTests(unittest.TestCase):
         self.assertEqual(allowed.returncode, 0, allowed.stderr)
         self.assertEqual(core.hook_decision_of(json.loads(allowed.stdout)), "allow")
 
-    def test_native_raw_apply_patch_malformed_or_traversal_fails_closed(self):
-        bad_patches = (
-            "not a patch",
-            "*** Begin Patch\n*** Update File: ../outside.txt\n@@\n-a\n+b\n*** End Patch\n",
-            "*** Begin Patch\n*** Update File: leased.txt\n*** Move to: ../outside.txt\n@@\n-a\n+b\n*** End Patch\n",
-        )
-        for patch in bad_patches:
-            with self.subTest(patch=patch[:30]):
-                result = self.run_script(SCRIPT, "hook", "--host", "copilot",
-                                         stdin=json.dumps(self.native_patch_payload(patch)),
-                                         env=self.env("other"))
-                self.assertEqual(result.returncode, 0, result.stderr)
-                self.assertEqual(core.hook_decision_of(json.loads(result.stdout)), "deny")
+    def test_native_raw_apply_patch_malformed_fails_closed(self):
+        result = self.run_script(SCRIPT, "hook", "--host", "copilot",
+                                 stdin=json.dumps(self.native_patch_payload("not a patch")),
+                                 env=self.env("other"))
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(core.hook_decision_of(json.loads(result.stdout)), "deny")
 
-    def test_batch_write_to_absolute_outside_path_fails_closed(self):
+    def test_native_raw_apply_patch_outside_the_checkout_gets_no_decision(self):
+        # HOST-P (FR-100): `../x` is where a sibling worktree lives; outside every checkout no
+        # lease applies. A patch that also touches a leased path is still judged on that path.
+        outside = "*** Begin Patch\n*** Update File: ../outside.txt\n@@\n-a\n+b\n*** End Patch\n"
+        result = self.run_script(SCRIPT, "hook", "--host", "copilot",
+                                 stdin=json.dumps(self.native_patch_payload(outside)), env=self.env("other"))
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual({}, json.loads(result.stdout))
+
+    def test_batch_write_to_absolute_outside_path_gets_no_decision(self):
         outside = self.tmp / "outside.txt"
         outside.write_text("secret\n", encoding="utf-8")
         payload = self.plugin_payload()
@@ -190,7 +193,7 @@ class CopilotHooksTests(unittest.TestCase):
         result = self.run_script(SCRIPT, "hook", "--host", "copilot",
                                  stdin=json.dumps(payload), env=self.env("other"))
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertEqual(core.hook_decision_of(json.loads(result.stdout)), "deny")
+        self.assertEqual({}, json.loads(result.stdout))
 
     def test_batch_write_to_symlink_or_junction_target_outside_fails_closed(self):
         outside_dir = self.tmp / "outside-dir"
