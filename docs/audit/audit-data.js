@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-10-19T23:13:00Z",
+  "generated": "2026-10-20T00:26:27Z",
   "audit": [
     {
       "actor": null,
@@ -13871,6 +13871,25 @@ window.AUDIT_DATA = {
       "artifacts": [],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-01M5BB7MD8BS9RPAX97F56NRK7",
+      "shortname": "rev117-rev108-p3-sweep",
+      "datetime": "2026-10-20T00:26:27Z",
+      "session": "4bdeb954",
+      "prompt": "2a / 3 yes all harnesses work like claude / 4 pin to a release tag / 5 finish / 6-9 fix / 10 add the skip check / 11 tune windows CI / 12, 13 address these",
+      "summary": "Revision 117: native-host parity (FR-100), session-check approval (FR-098), release-pinned setup (FR-093), tools/gates.py one gate list (FR-091), sharded Windows/macOS CI (FR-094), FR-090/092/096/097/099, FR-110 SKIP-P, CI-ENV baseline-depth fix; all 31 designs carry STRIDE+LINDDUN",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/backlog/forensic-review-rev108.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Close FR-090..FR-100 and the four designs' STRIDE/LINDDUN per the owner's rulings",
+      "done_when": "merged to main with green required checks, backlog updated, release tag pushed"
     }
   ],
   "changes": [
