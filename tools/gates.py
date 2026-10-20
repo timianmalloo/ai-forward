@@ -93,7 +93,9 @@ def tests(ctx):
         return run(PY, "-m", "pytest", "tests", "-q", env=env)
     with tempfile.TemporaryDirectory(prefix="aif-gates-") as folder:
         parallel, serial = os.path.join(folder, "parallel.xml"), os.path.join(folder, "wallclock.xml")
-        green = run(PY, "-m", "pytest", "tests", "-q", "-n", "4", "-m", "not wallclock",
+        # FR-094: worksteal re-balances when a worker runs dry, so a few minute-long tests no longer
+        # leave three workers idle behind one (sharded run 39347686483: 484-620 s per shard).
+        green = run(PY, "-m", "pytest", "tests", "-q", "-n", "4", "--dist", "worksteal", "-m", "not wallclock",
                     "--junitxml=" + parallel, env=env)
         # The wallclock tests assert real time; contention under xdist failed them (P1a). A shard
         # holding none of them exits 5 (no tests collected), which is not a failure.
