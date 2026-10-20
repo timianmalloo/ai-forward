@@ -87,7 +87,7 @@ window.PORTAL_DATA = {
     {
       "h": "Install it into a repo",
       "p": "Run the portable bootstrap in your project with Git and uv available. The upstream repository and main are defaults: no --repo or --ref is needed. It preserves project decisions and reports the verified source/revision. The launcher is available upstream after its contribution is merged; reviewers of unmerged work use a committed local source or explicit source/ref overrides. Adoption remains optional.",
-      "cmd": "uv run --no-config --no-project --script https://raw.githubusercontent.com/timianmalloo/ai-forward/main/bootstrap.py"
+      "cmd": "uv run --no-config --no-project --script https://raw.githubusercontent.com/timianmalloo/ai-forward/v2026.10.19.4/bootstrap.py"
     },
     {
       "h": "Know how skills are invoked",
@@ -2286,7 +2286,7 @@ window.PORTAL_DATA = {
         "id": "api-index",
         "type": "api",
         "title": "API reference — the deployed script bundle",
-        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 602 public functions across 46 modules, 47% carrying a docstring."
+        "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 603 public functions across 46 modules, 47% carrying a docstring."
       },
       {
         "id": "api-marker-lint",
@@ -3805,6 +3805,12 @@ window.PORTAL_DATA = {
         "type": "decision-note",
         "title": "Decision — an edit never asks for permission",
         "summary": "The owner ruled on 2026-10-19 that the pack's edit hooks never make the user approve an edit. The edit-ownership hook answers allow for a path it checked and..."
+      },
+      {
+        "id": "note-20261019-rev108-p3-rulings",
+        "type": "decision-note",
+        "title": "Decision — every host answers like Claude, session checks need approval, setup installs a release",
+        "summary": "Three owner rulings of 2026-10-19 on the revision-108 P3 findings, executed in revision 117. FR-100: every host answers an edit outside the repository as..."
       },
       {
         "id": "note-autopilot-open-questions-decisions",
@@ -7198,6 +7204,26 @@ window.PORTAL_DATA = {
         "from": "note-20261019-edits-never-ask",
         "to": "forensic-review-rev108-backlog",
         "rel": "relates-to"
+      },
+      {
+        "from": "note-20261019-rev108-p3-rulings",
+        "to": "adr-0014-meet-the-developer-in-their-harness",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20261019-rev108-p3-rulings",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20261019-rev108-p3-rulings",
+        "to": "forensic-review-rev108-backlog",
+        "rel": "relates-to"
+      },
+      {
+        "from": "note-20261019-rev108-p3-rulings",
+        "to": "note-20261019-edits-never-ask",
+        "rel": "refines"
       },
       {
         "from": "note-autopilot-open-questions-decisions",

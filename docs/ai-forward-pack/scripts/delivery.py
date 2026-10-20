@@ -14,6 +14,7 @@ import stat
 import subprocess
 import sys
 import tempfile
+import time
 from typing import Any, cast
 
 # PLAT-A: direct routes/refusals must not depend on compiler imports to configure stdio.
@@ -1035,6 +1036,16 @@ def execute(args):
     return view(state)
 
 
+def _lock_holder(path):
+    """The lock's writer and age, or "holder unknown" for a lock this helper cannot read."""
+    try:
+        holder = json.loads(path.read_text(encoding="utf-8"))
+        pid, age = int(holder["pid"]), max(0, int(time.time() - float(holder["created"])))
+    except (OSError, ValueError, TypeError, KeyError):
+        return "holder unknown"
+    return "pid {}, age {}h{:02d}m".format(pid, age // 3600, age % 3600 // 60)
+
+
 def locked_execute(args):
     if args.verb in ("route", "status"):
         return execute(args)
@@ -1043,8 +1054,11 @@ def locked_execute(args):
     try:
         descriptor = os.open(path, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
     except FileExistsError:
-        raise ValueError("checkpoint busy: another writer or interrupted operation holds the lock") from None
+        raise ValueError("checkpoint busy: another writer or interrupted operation holds the lock ({}); "
+                         "if that process is gone, remove {}".format(_lock_holder(path), path)) from None
     try:
+        # FR-097: who holds it and since when, so a stale lock can be told from a live writer.
+        os.write(descriptor, json.dumps({"pid": os.getpid(), "created": time.time()}).encode("utf-8"))
         os.close(descriptor)
         return execute(args)
     finally:

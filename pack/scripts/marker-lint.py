@@ -61,8 +61,12 @@ def _iter_files(root, include_md):
     exts = CODE_EXT + ((".md",) if include_md else ())
     for dirpath, dirnames, filenames in os.walk(root):
         dirnames[:] = [d for d in dirnames if d not in SKIP_DIRS]
-        # never lint the generated pack mirror or the dream output
-        if "ai-forward-pack" in dirpath or (os.sep + "dreams") in dirpath:
+        # never lint the generated pack mirror or the dream output. SKIP-P: judged on the path
+        # BELOW the root - matching the whole path skipped every file of a repo checked out
+        # under a directory whose name contained `ai-forward-pack`, so --gate passed on 0 files.
+        parts = os.path.relpath(dirpath, root).split(os.sep)
+        if "ai-forward-pack" in parts or "dreams" in parts:
+            dirnames[:] = []
             continue
         for fn in filenames:
             if fn.endswith(exts):

@@ -388,14 +388,18 @@ Copy-Item (Join-Path $pack "adapters\hooks\copilot.ai-forward-hooks.json") (Join
 $grokHooks = Join-Path $repo ".grok\hooks"
 New-Item -ItemType Directory -Force -Path $grokHooks | Out-Null
 Copy-Item (Join-Path $pack "adapters\hooks\grok.ai-forward-hooks.json") (Join-Path $grokHooks "ai-forward.json") -Force
-$optionalHooks = @((Join-Path $repo ".codex\hooks.json")) + @(Get-ChildItem $grokHooks -Filter *.json -File | ForEach-Object FullName)
+# FR-096: .codex/hooks.json has a pack source, so a fresh clone gets it from sync like Grok's.
+$codexHooks = Join-Path $repo ".codex"
+New-Item -ItemType Directory -Force -Path $codexHooks | Out-Null
+Copy-Item (Join-Path $pack "adapters\hooks\codex.hooks.json") (Join-Path $codexHooks "hooks.json") -Force
+$optionalHooks = @((Join-Path $codexHooks "hooks.json")) + @(Get-ChildItem $grokHooks -Filter *.json -File | ForEach-Object FullName)
 foreach ($target in $optionalHooks) {
     if (Test-Path $target) {
         & $pyExe @pyArgs (Join-Path $pack "scripts\named_hook_bundles.py") $target $target --ownership-only
         if ($LASTEXITCODE -ne 0) { throw "Existing native hooks could not be refreshed safely: $target" }
     }
 }
-Write-Host "  hooks: adapters/hooks/*.py -> docs/ai-forward-pack/hooks/, .github/hooks/ai-forward.json, .grok/hooks/ai-forward.json, .agents/hooks.json"
+Write-Host "  hooks: adapters/hooks/*.py -> docs/ai-forward-pack/hooks/, .github/hooks/ai-forward.json, .grok/hooks/ai-forward.json, .codex/hooks.json, .agents/hooks.json"
 Write-Host "  docs/ai-forward-pack: templates + scripts + pack docs"
 
 # Every staged surface is complete; mirror them into place before anything reads the tree.

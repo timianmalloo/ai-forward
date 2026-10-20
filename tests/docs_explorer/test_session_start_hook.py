@@ -42,13 +42,64 @@ class SessionStartHookTests(unittest.TestCase):
         self.hook = pack / "hooks" / "session-start.py"
         self.audit = pack / "scripts" / "audit-log.py"
 
-    def _run_hook(self, payload, env_extra=None, host="claude", cwd=None):
+    def _env(self, host="claude", env_extra=None):
         env = dict(os.environ)
         env.pop("AGENT_SESSION", None)
         env["AGENT_HOST"] = host
+        env["XDG_CONFIG_HOME"] = str(pathlib.Path(self.tmp) / "user-config")   # FR-098 approvals
         env.update(env_extra or {})
+        return env
+
+    def _approve_all(self):
+        """FR-098: the tests below exercise checks a human has approved; approve each declaration."""
+        for declared in pathlib.Path(self.tmp).rglob("session-checks.json"):
+            result = subprocess.run([sys.executable, str(HOOK), "--approve-checks", str(declared)],
+                                    capture_output=True, text=True, env=self._env(), timeout=30)
+            self.assertEqual(0, result.returncode, result.stderr)
+
+    def _run_hook(self, payload, env_extra=None, host="claude", cwd=None, approve=True):
+        if approve:
+            self._approve_all()
         return subprocess.run([sys.executable, str(self.hook), "--host", host], cwd=str(cwd or self.repo),
-                              input=json.dumps(payload), capture_output=True, text=True, env=env, timeout=30)
+                              input=json.dumps(payload), capture_output=True, text=True,
+                              env=self._env(host, env_extra), timeout=30)
+
+    def test_an_unapproved_declaration_does_not_run_and_says_how_to_approve(self):
+        # FR-098 (owner ruling 2a): a committed session-checks.json runs commands, so a clone must
+        # not run it until a human approved those exact bytes on this machine.
+        marker = self.repo / "ran"
+        self._declare_checks({"name": "planted", "argv": ["{python}", "-c",
+                              "from pathlib import Path; Path('ran').write_text('x')"]})
+        r = self._run_hook({"hook_event_name": "SessionStart", "session_id": "s1", "cwd": str(self.repo)},
+                           approve=False)
+        self.assertEqual(0, r.returncode, r.stderr)
+        self.assertFalse(marker.exists(), "an unapproved check ran")
+        self.assertIn("NOT RUN", r.stdout)
+        self.assertIn("--approve-checks", r.stdout)
+        self.assertIn("__harness__:s1", self._starts(), "the audit marker is still written")
+
+    def test_an_approved_declaration_runs_until_its_bytes_change(self):
+        marker = self.repo / "ran"
+        self._declare_checks({"name": "fine", "argv": ["{python}", "-c",
+                              "from pathlib import Path; Path('ran').write_text('x')"]})
+        payload = {"hook_event_name": "SessionStart", "session_id": "s1", "cwd": str(self.repo)}
+        self._run_hook(payload)
+        self.assertTrue(marker.exists(), "the approved check did not run")
+        marker.unlink()
+        self._declare_checks({"name": "fine", "argv": ["{python}", "-c",
+                              "from pathlib import Path; Path('ran').write_text('changed')"]})
+        r = self._run_hook(payload, approve=False)
+        self.assertFalse(marker.exists(), "a changed declaration ran without a new approval")
+        self.assertIn("changed since", r.stdout)
+
+    def test_approving_prints_what_it_approves(self):
+        self._declare_checks({"name": "shown", "argv": ["{python}", "-c", "pass"]})
+        declared = self.repo / ".agents" / "session-checks.json"
+        result = subprocess.run([sys.executable, str(HOOK), "--approve-checks", str(declared)],
+                                capture_output=True, text=True, env=self._env(), timeout=30)
+        self.assertEqual(0, result.returncode, result.stderr)
+        self.assertIn("shown", result.stdout)
+        self.assertIn("-c pass", result.stdout)
 
     def _starts(self, cwd=None):
         cwd = self.repo if cwd is None else cwd

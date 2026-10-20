@@ -9,6 +9,7 @@ import pathlib
 import subprocess
 import sys
 import unittest
+import unittest.mock
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 GUARD = ROOT / "pack" / "adapters" / "hooks" / "reread-guard.py"
@@ -206,3 +207,45 @@ class ProcessContractTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class StateIsPrivateTests(unittest.TestCase):
+    """FR-092: the guard's state lived at a predictable name in the shared temp dir and was written
+    through `<name>.tmp` with a plain open, so a planted link at either name redirected the write.
+    It now lives in the user's own cache home, and the temp file is created exclusively."""
+
+    def setUp(self):
+        import tempfile
+        self.g = _load()
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.cache = pathlib.Path(self.tmp.name) / "cache"
+        patcher = unittest.mock.patch.dict(os.environ, {"XDG_CACHE_HOME": str(self.cache)})
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
+    def test_state_is_under_the_user_cache_not_shared_temp(self):
+        path = pathlib.Path(self.g.state_path("s1"))
+        self.assertEqual(self.cache / "ai-forward" / "reread-guard", path.parent)
+        if os.name != "nt":
+            self.assertEqual(0o700, path.parent.stat().st_mode & 0o777)
+
+    def test_a_planted_link_at_the_old_tmp_name_is_never_written_through(self):
+        path = self.g.state_path("s1")
+        victim = pathlib.Path(self.tmp.name) / "victim.txt"
+        victim.write_text("keep", encoding="utf-8")
+        try:
+            os.symlink(victim, path + ".tmp")
+        except OSError:
+            self.skipTest("no file symlink privilege")
+        self.g.save(path, {"k": 1})
+        self.assertEqual("keep", victim.read_text(encoding="utf-8"))
+        self.assertEqual({"k": 1}, self.g.load(path))
+
+    @unittest.skipIf(os.name == "nt", "POSIX ownership and mode bits")
+    def test_a_group_writable_state_dir_is_refused(self):
+        base = self.cache / "ai-forward" / "reread-guard"
+        base.mkdir(parents=True)
+        base.chmod(0o777)
+        self.assertIsNone(self.g.state_path("s1"))
+        self.g.save(None, {"k": 1})   # no private dir: nothing is saved, nothing raises

@@ -36,10 +36,13 @@ Documented Copilot subagentStart currently lacks a stable child id, so unattribu
 subagentStart is ignored rather than consuming the parent's marker.
 """
 import argparse
+import hashlib
 import json
 import os
+import stat
 import subprocess
 import sys
+import tempfile
 import time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -117,17 +120,87 @@ def _checks_file(cwd):
         here = parent
 
 
+# FR-098 (owner ruling 2026-10-19, option a): the declaration is committed config that runs
+# commands, so cloning a repo must not run what a contributor committed. A human approves the
+# exact bytes once per machine; a new or changed file is reported, never run, until re-approved.
+# The approvals live in the user's own config home, outside every repository.
+APPROVALS_FILE = "session-checks-approved.json"
+
+
+def _approvals_path():
+    """The user's approval store, or None when its directory is not private."""
+    base = os.path.join(os.environ.get("XDG_CONFIG_HOME") or os.path.join(os.path.expanduser("~"), ".config"),
+                        "ai-forward")
+    try:
+        os.makedirs(base, mode=0o700, exist_ok=True)
+        if os.name != "nt":
+            info = os.lstat(base)
+            if not stat.S_ISDIR(info.st_mode) or info.st_uid != os.getuid() or info.st_mode & 0o022:
+                return None
+    except OSError:
+        return None
+    return os.path.join(base, APPROVALS_FILE)
+
+
+def _approvals():
+    path = _approvals_path()
+    try:
+        with open(path, encoding="utf-8") as handle:
+            data = json.load(handle)
+        return data if isinstance(data, dict) else {}
+    except (OSError, TypeError, ValueError):
+        return {}
+
+
+def _approval_key(path):
+    return os.path.normcase(os.path.realpath(path))
+
+
+def approve_checks(path):
+    """Record the sha256 of this declaration as approved; print exactly what it will run."""
+    store = _approvals_path()
+    if store is None:
+        print("session checks: cannot approve - the approval directory is not private", file=sys.stderr)
+        return 2
+    with open(path, "rb") as handle:
+        raw = handle.read()
+    declared = json.loads(raw.decode("utf-8")).get("checks")
+    if not isinstance(declared, list):
+        print("session checks: {} has no checks list".format(path), file=sys.stderr)
+        return 2
+    print("approving {} (sha256 {}):".format(path, hashlib.sha256(raw).hexdigest()[:12]))
+    for check in declared[:CHECK_LIMIT]:
+        check = check if isinstance(check, dict) else {}
+        argv = check.get("argv") if isinstance(check.get("argv"), list) else []
+        print("  {}: {}".format(check.get("name") or "unnamed", " ".join(str(a) for a in argv)))
+    approvals = _approvals()
+    approvals[_approval_key(path)] = hashlib.sha256(raw).hexdigest()
+    descriptor, tmp = tempfile.mkstemp(prefix=".approvals-", suffix=".tmp", dir=os.path.dirname(store))
+    with os.fdopen(descriptor, "w", encoding="utf-8", newline="\n") as handle:
+        json.dump(approvals, handle, indent=2, sort_keys=True)
+    os.replace(tmp, store)
+    return 0
+
+
 def _session_check_lines(cwd):
     top, path = _checks_file(cwd)
     if not path:
         return []
     try:
-        with open(path, encoding="utf-8") as handle:
-            declared = json.load(handle).get("checks")
+        with open(path, "rb") as handle:
+            raw = handle.read()
+        declared = json.loads(raw.decode("utf-8")).get("checks")
         if not isinstance(declared, list):
             raise ValueError("checks is not a list")
     except (OSError, ValueError, AttributeError) as exc:
         return ["session checks NOT CHECKED: {} is unreadable ({})".format(CHECKS_FILE, exc.__class__.__name__)]
+    approved = _approvals().get(_approval_key(path))
+    digest = hashlib.sha256(raw).hexdigest()
+    if approved != digest:
+        return ["session checks NOT RUN: {} is {} on this machine (sha256 {}). It runs commands: review "
+                "it, then approve it with: {} {} --approve-checks {}".format(
+                    path, "changed since it was approved" if approved else "not approved",
+                    digest[:12], os.path.basename(sys.executable), os.path.abspath(__file__), path)]
     lines, deadline = [], time.monotonic() + CHECK_BUDGET_SECONDS
     for check in declared[:CHECK_LIMIT]:
         name = str(check.get("name") or "unnamed")[:80] if isinstance(check, dict) else "unnamed"
@@ -159,7 +232,11 @@ def _session_check_lines(cwd):
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--host", choices=["claude", "grok", "agy", "copilot"], default="claude")
+    parser.add_argument("--approve-checks", metavar="PATH",
+                        help="approve this session-checks.json on this machine (FR-098), then exit")
     args = parser.parse_args(argv)
+    if args.approve_checks:
+        return approve_checks(args.approve_checks)
     try:
         if args.host == "claude" and os.environ.get("AGENT_HOST") == "copilot":
             return 0

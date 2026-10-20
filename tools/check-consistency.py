@@ -17,6 +17,7 @@ Checks (all FAIL the run):
 
 Exit 0 clean, 1 on any finding.
 """
+import importlib.util
 import json, math, os, re, sys
 
 # Windows consoles default to cp1252, which cannot encode the glyphs this tool prints
@@ -532,6 +533,43 @@ def check_prose(truth, findings):
                         f"filesystem has {want}")
 
 
+# INSTALL.md is a changelog: its entries record the gates a past revision had or added.
+GATE_COUNT_SURFACE = [rel for rel in DOC_SURFACE if not rel.endswith("INSTALL.md")] + [os.path.join("docs", "architecture.md")]
+
+
+def _gate_list():
+    """The gates in tools/gates.py, the one list the local proof and CI run (FR-091)."""
+    spec = importlib.util.spec_from_file_location("gates_for_counts", os.path.join(ROOT, "tools", "gates.py"))
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module.GATES
+
+
+def _gate_list_count():
+    return len(_gate_list())
+
+
+def check_gate_counts(findings, count=None):
+    """FR-090: a gate count stated in a live doc equals the gate list. Prose said "nine" and "18"
+    while the list held more. A dated history row (`| **YYYY-...`) records a past count; exempt."""
+    count = _gate_list_count() if count is None else count
+    small = {"two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7, "eight": 8, "nine": 9}
+    words = "|".join(sorted(list(NUMWORDS) + list(small), key=len, reverse=True))
+    rx = re.compile(r"(?<![\w-])(\d+|" + words + r")\s+gates\b", re.I)
+    value = lambda token: small.get(token.lower()) or _val(token)
+    for rel in GATE_COUNT_SURFACE:
+        text = _read(os.path.join(ROOT, rel))
+        if text is None:
+            continue
+        for number, line in enumerate(text.splitlines(), 1):
+            if line.lstrip().startswith("| **"):
+                continue
+            for m in rx.finditer(line):
+                if value(m.group(1)) != count:
+                    findings.append("{}:{}: '{}' but tools/gates.py lists {} gates".format(
+                        rel, number, m.group(0).strip(), count))
+
+
 def check_deployed_agent_parity(truth, findings):
     """FR-032. Every other check here reads the pack SOURCE. That is exactly why the
     Copilot surface could ship 11 of 23 personas for twelve revisions while this script
@@ -1036,6 +1074,7 @@ def main():
     check_promised_paths(findings)
     check_managed_blocks(truth, findings)
     check_prose(truth, findings)
+    check_gate_counts(findings)
     check_front_door_names_verifier(findings)
     check_workflow_action_pinning(findings)
     check_forensic_review_currency(findings)

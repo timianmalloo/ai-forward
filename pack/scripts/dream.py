@@ -141,8 +141,11 @@ def grep_markers(root):
     out = []
     for dirpath, dirnames, filenames in os.walk(root):
         dirnames[:] = [d for d in dirnames if d not in skip]
-        # do not walk the dreams output or the pack mirror
-        if os.sep + "dreams" in dirpath or os.sep + "ai-forward-pack" in dirpath:
+        # do not walk the dreams output or the pack mirror -- judged BELOW the root (SKIP-P):
+        # a root under a directory named `ai-forward-pack...` must still be harvested.
+        parts = os.path.relpath(dirpath, root).split(os.sep)
+        if "dreams" in parts or "ai-forward-pack" in parts:
+            dirnames[:] = []
             continue
         for fn in filenames:
             if not fn.endswith((".py", ".ps1", ".ts", ".js", ".cs", ".go", ".rs", ".md")):

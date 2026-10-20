@@ -26,10 +26,12 @@ for _stream in (sys.stdout, sys.stderr):
 def collected(args):
     out = subprocess.run([sys.executable, "-m", "pytest", "--collect-only", "-q", "-p", "no:cacheprovider", *args],
                          capture_output=True, text=True, encoding="utf-8")
-    match = re.search(r"(\d+) tests? collected", out.stdout)
+    # A sharded run (FR-094) deselects the other shards' tests: pytest prints "N/M tests collected
+    # (K deselected)", and N - the tests this shard runs - is the count its reports must match.
+    match = re.search(r"(?:(\d+)/)?(\d+) tests? collected", out.stdout)
     if out.returncode != 0 or not match:
         raise SystemExit("could not collect: exit {}\n{}".format(out.returncode, out.stdout[-2000:]))
-    return int(match.group(1))
+    return int(match.group(1) or match.group(2))
 
 
 def reported(junits):

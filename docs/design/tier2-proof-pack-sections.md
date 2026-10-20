@@ -58,3 +58,22 @@ data-carrying field change). If it catches a miss that the unit suite would have
 (the E2E-A / DM-C shapes), promote it from opt-in to standard for field-changing T1/T2 work;
 otherwise leave it opt-in. That is the same "measure the skip, then promote" loop that
 justified CT19 and Tier-1, applied to Tier-2 itself.
+
+## Adversarial analysis (STRIDE-lite)
+Trust boundary: the committed Proof-Pack template → the model that fills it during `/implement` → a committed Proof Pack a reviewer reads. The change is Markdown only: one opt-in section in `pack/templates/proof-pack.template.md:61-97` and one pointer sentence each in `pack/knowledge/end-to-end-integrity.md:40` and `pack/knowledge/instrumentation-over-inference.md:28` (Verified by reading). No script, store, network call or permission is added.
+
+| Boundary | Threat | Disposition | Control, evidence and test |
+|---|---|---|---|
+| Template → model prefix | **T** (injection): a repo write turns template comment text into an instruction to the model | transfer | Repo write access and branch protection on `main` are the control, as for all pack text. The template inlines no external content (`proof-pack.template.md:61-97`). |
+| Filled Proof Pack → reviewer | **S/R**: an agent ticks "Reached?" or "Observed once?" with no evidence behind it | accept | Opt-in by design, with no lint ("Not in scope" above). The reviewer and the test suite are the control. No test; the design records why one would be Coverage Theater. |
+| Template → runtime | **E/D**: none | n/a | No executable surface exists to elevate through or exhaust. |
+
+## Privacy analysis (LINDDUN-lite)
+| Data flow / category | LINDDUN finding | Disposition | Control / rationale | Retention & rights path |
+|---|---|---|---|---|
+| Operator-questions table → committed Proof Pack | I/D: "Observed once?" asks for evidence of a real observation, so an author may paste a log line or metric sample that carries a user value or a secret | accept | The table asks for the emitting source (`proof-pack.template.md:87-97`), but nothing in the template says to cite a field name rather than a value. The pack's no-secrets / no-PII rule for committed docs is the only control. No test. | Git retention of the Proof Pack; the only rights path is a history rewrite. |
+| Change-surface tables → committed Proof Pack | none: rows name files, members and fields, which is code structure, not personal data (`:67-85`) | n/a | — | Git retention. |
+
+No new personal-data category, store or egress. The template is filled in the existing harness conversation, so no new third party sees it.
+
+**Security and privacy review (2026-10-19):** both sections were written from the shipped template and directives, not from the plan, to close the gap rows in `docs/security/threat-model.md` §4 and `docs/security/privacy-review.md` §5.

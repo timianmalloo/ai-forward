@@ -25,10 +25,16 @@ The same holds for the harness's SESSION identity (FR-099, 2026-10-17). A develo
 run-start marker by it, so two `test_delivery_session_start` subtests found `tim-interactive`
 where they expected their fixture session - locally only, never on CI, which has no session.
 Tests that need a session set their own explicitly.
+
+FR-099 (2026-10-19): a test needing a file-symlink privilege or a POSIX `sh` the machine lacks is
+skipped with the reason, never failed - `env_guards` turns exactly those two causes into a skip.
 """
 import os
+import zlib
 
 import pytest
+
+import env_guards
 
 # CI-speed P1a (owner ruling, 2026-10-18). These tests assert real wall-clock deadlines, process
 # kills and concurrent-writer ordering. Under `-n 4` on a 4-vCPU Windows runner the contention
@@ -46,11 +52,25 @@ def pytest_configure(config):
     config.addinivalue_line("markers", "wallclock: asserts real time; runs in the serial stage, never under xdist")
 
 
+def in_shard(nodeid, shard):
+    """FR-094: test shard I/N holds the tests whose id hashes to I-1 mod N. crc32 of the
+    slash-normalized id is the same in every process and on every OS, so the N shards are disjoint
+    and together hold every test - each shard job runs its part on its own runner."""
+    index, count = shard
+    return zlib.crc32(nodeid.replace("\\", "/").encode("utf-8")) % count == index - 1
+
+
 def pytest_collection_modifyitems(config, items):
     for item in items:
         nodeid = item.nodeid.replace("\\", "/")
         if any(nodeid.startswith("tests/docs_explorer/" + entry) for entry in WALLCLOCK):
             item.add_marker(pytest.mark.wallclock)
+    shard = os.environ.get("AIF_TEST_SHARD")
+    if shard:
+        index, count = (int(part) for part in shard.split("/"))
+        kept = [item for item in items if in_shard(item.nodeid, (index, count))]
+        config.hook.pytest_deselected(items=[item for item in items if item not in kept])
+        items[:] = kept
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -68,7 +88,9 @@ def _stable_git_config_env():
     for name in ("AGENT_SESSION", "AGENT_HOST", "AGENT_NAME"):
         if name in os.environ:
             removed[name] = os.environ.pop(name)
+    restore_guards = env_guards.install()
     try:
         yield
     finally:
+        restore_guards()
         os.environ.update(removed)

@@ -22,7 +22,8 @@ from pathlib import Path
 from test_upstream_adoption_integration import (recovered_revision_108_install, recovered_revision_109_install,
                                                recovered_revision_110_install, recovered_revision_111_install,
                                                recovered_revision_112_install, recovered_revision_113_install,
-                                               recovered_revision_114_install, recovered_revision_115_install)
+                                               recovered_revision_114_install, recovered_revision_115_install,
+                                               recovered_revision_116_install)
 
 REPO = Path(__file__).resolve().parents[2]
 INSTALL = "pack/adapters/INSTALL.md"
@@ -219,7 +220,7 @@ class Revision116MetadataTests(unittest.TestCase):
     """Revision 116: the one delta for FR-105 (profiler isolation), FR-106 (DI7) and FR-107 (forget)."""
 
     def test_revision_116_is_the_one_isolation_source_and_forget_delta(self):
-        raw = (REPO / INSTALL).read_bytes()
+        raw = recovered_revision_116_install()
         frontmatter = raw.split(b"---\n", 2)[1].decode("utf-8")
         self.assertRegex(frontmatter, r"(?m)^revision: 116$")
         self.assertIn("bundle_version: '2026.10.19.3'", frontmatter)
@@ -232,6 +233,26 @@ class Revision116MetadataTests(unittest.TestCase):
         with self.assertRaises(AssertionError):
             recovered_revision_115_install(raw.replace(b"area: profile-scrub-and-local-default",
                                                        b"area: profile-scrub-and-local-defaulT", 1))
+
+
+class Revision117MetadataTests(unittest.TestCase):
+    """Revision 117: the one delta closing the revision-108 P3 findings (FR-090..FR-100, FR-110)."""
+
+    def test_revision_117_is_the_one_host_parity_approval_and_release_pin_delta(self):
+        raw = (REPO / INSTALL).read_bytes()
+        frontmatter = raw.split(b"---\n", 2)[1].decode("utf-8")
+        self.assertRegex(frontmatter, r"(?m)^revision: 117$")
+        self.assertIn("bundle_version: '2026.10.19.4'", frontmatter)
+        self.assertEqual(1, frontmatter.count("  - { type: changed,"))
+        self.assertIn("area: native-host-parity-session-check-approval-and-release-pin", frontmatter)
+        for path in ("scripts/coord-core.py", "scripts/delivery.py", "scripts/pack-apply.py", "scripts/marker-lint.py",
+                     "scripts/dream.py", "adapters/hooks/reread-guard.py", "adapters/hooks/session-start.py",
+                     "adapters/hooks/codex.hooks.json", "adapters/INSTALL.md"):
+            self.assertTrue((REPO / "pack" / path).is_file(), path)
+        self.assertEqual(298720, len(recovered_revision_116_install(raw)))
+        with self.assertRaises(AssertionError):
+            recovered_revision_116_install(raw.replace(b"area: profiler-isolation-decision-source-and-forget",
+                                                       b"area: profiler-isolation-decision-source-and-forgeT", 1))
 
 
 if __name__ == "__main__":

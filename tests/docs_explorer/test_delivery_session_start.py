@@ -2,6 +2,7 @@
 Bound review/permission receipts are synthetic fixtures, not authentic consent.
 """
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -79,6 +80,13 @@ class InstalledSessionResumeTests(unittest.TestCase):
                         settings.write_text(json.dumps({'checks': [{'name': 'declared check',
                             'argv': ['{python}', str(check), str(external)],
                             'remedy': 'Inspect the startup check result.'}]}), encoding='utf-8')
+                        # FR-098: a declaration runs only once a human approved its bytes here.
+                        approvals = mock.patch.dict(os.environ, {'XDG_CONFIG_HOME': str(Path(fixture.tmp.name) / 'user-config')})
+                        approvals.start()
+                        self.addCleanup(approvals.stop)
+                        subprocess.run([sys.executable, str(installed / 'hooks/session-start.py'),
+                            '--approve-checks', str(settings)], capture_output=True, text=True,
+                            encoding='utf-8', check=True, timeout=30)
                         # Native hosts start once before the reviewed checkpoint.
                         # Include that seam so normal Python import caches predate review.
                         subprocess.run([sys.executable, str(installed / 'hooks/session-start.py'),

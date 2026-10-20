@@ -76,7 +76,7 @@
     {
       "h": "Install it into a repo",
       "p": "Run the portable bootstrap in your project with Git and uv available. The upstream repository and main are defaults: no --repo or --ref is needed. It preserves project decisions and reports the verified source/revision. The launcher is available upstream after its contribution is merged; reviewers of unmerged work use a committed local source or explicit source/ref overrides. Adoption remains optional.",
-      "cmd": "uv run --no-config --no-project --script https://raw.githubusercontent.com/timianmalloo/ai-forward/main/bootstrap.py"
+      "cmd": "uv run --no-config --no-project --script https://raw.githubusercontent.com/timianmalloo/ai-forward/v2026.10.19.4/bootstrap.py"
     },
     {
       "h": "Know how skills are invoked",

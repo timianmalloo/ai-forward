@@ -139,3 +139,25 @@ class CodexSurfaceTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class CodexHookSourceTests(unittest.TestCase):
+    """FR-096: `.codex/hooks.json` comes from a pack source, so sync recreates it on a fresh clone."""
+
+    SOURCE = ROOT / "pack/adapters/hooks/codex.hooks.json"
+
+    def test_the_installed_file_is_the_pack_source(self):
+        self.assertEqual(self.SOURCE.read_bytes(), (ROOT / ".codex/hooks.json").read_bytes())
+
+    def test_sync_writes_it_unconditionally(self):
+        sync = (ROOT / "tools/sync-pack.ps1").read_text(encoding="utf-8")
+        self.assertIn('Copy-Item (Join-Path $pack "adapters\hooks\codex.hooks.json") '
+                      '(Join-Path $codexHooks "hooks.json") -Force', sync)
+
+    def test_its_ownership_entry_is_the_one_coord_core_emits(self):
+        import subprocess
+        emitted = subprocess.run([sys.executable, str(ROOT / "pack/scripts/coord-core.py"), "hook", "--config",
+                                  "--host", "codex"], capture_output=True, text=True, encoding="utf-8", timeout=60)
+        self.assertEqual(0, emitted.returncode, emitted.stderr)
+        source = json.loads(self.SOURCE.read_text(encoding="utf-8"))
+        self.assertEqual(json.loads(emitted.stdout)["hooks"]["PreToolUse"], source["hooks"]["PreToolUse"])

@@ -36,6 +36,10 @@ def load_module():
     return module
 
 
+# HOST-P: each host's documented "no decision" answer (codex/grok: exit 0, empty stdout).
+NO_DECISION = {"claude": "{}", "copilot": "{}", "codex": "", "grok": "", "agy": ""}
+
+
 class GitCase(unittest.TestCase):
     """A real repository, because every contract here is git plumbing."""
 
@@ -193,6 +197,8 @@ class NativeHookTests(GitCase):
                     self.assertNotIn("PRIVATE_AFTER", records)
 
     def test_grok_recorded_search_replace_malformed_and_unknown_stay_unchecked(self):
+        # HOST-P (FR-100): an outside path and an unrecorded tool get no decision, as on Claude;
+        # a recorded write tool whose target is malformed stays refused.
         cases = [("missing", None), ("empty", ""), ("typed", []),
                  ("outside", str(self.repo.parent / "outside")), ("unknown", "held.txt")]
         for kind, path in cases:
@@ -205,8 +211,11 @@ class NativeHookTests(GitCase):
                     event["tool_input"]["file_path"] = path
                 result = self.run_cli("hook", "--host", "grok", stdin=json.dumps(event), session="worker")
                 self.assertEqual(0, result.returncode, result.stderr)
-                self.assertEqual("deny", json.loads(result.stdout)["decision"])
-                self.assertIn("NOT CHECKED", result.stdout)
+                if kind in ("outside", "unknown", "missing", "empty", "typed"):
+                    self.assertEqual("", result.stdout.strip())
+                else:
+                    self.assertEqual("deny", json.loads(result.stdout)["decision"])
+                    self.assertIn("NOT CHECKED", result.stdout)
                 self.assertFalse((self.repo / ".agents/decisions/worker.jsonl").exists())
 
     def test_grok_generated_matcher_selects_recorded_native_tool_without_aliases(self):
@@ -221,22 +230,25 @@ class NativeHookTests(GitCase):
             ("agy", lambda p: {"toolCall": {"name": "write_to_file", "args": {"TargetFile": str(self.repo / p) if p else p}}}),
         ):
             for path, session, deny in (("held.txt", "worker", True), ("held.txt", "owner", False),
-                                         ("free.txt", "worker", False), ("../escape", "worker", True)):
+                                         ("free.txt", "worker", False), ("../escape", "worker", None)):
                 with self.subTest(host=host, path=path, session=session):
                     payload = dict(make(path), sessionId="owner", cwd="/forged")
                     result = self.run_cli("hook", "--host", host, stdin=json.dumps(payload), session=session)
                     self.assertEqual(0, result.returncode, result.stderr)
                     if deny:
                         self.assertEqual("deny", json.loads(result.stdout)["decision"])
+                    elif deny is None:   # HOST-P: outside every checkout, no decision
+                        self.assertEqual("", result.stdout.strip())
                     elif host == "agy":
                         self.assertEqual("", result.stdout.strip(), "ownership alone must not autoapprove Agy policy")
                     else:
                         self.assertNotEqual("deny", json.loads(result.stdout).get("decision"))
             for payload in (make(None), {}, {"toolCall": []}, {"toolName": "edit_file", "toolInput": []}):
                 with self.subTest(host=host, malformed=payload):
+                    # HOST-P: a call with no readable target gets no decision, as on Claude.
                     result = self.run_cli("hook", "--host", host, stdin=json.dumps(payload), session="worker")
                     self.assertEqual(0, result.returncode, result.stderr)
-                    self.assertEqual("deny", json.loads(result.stdout)["decision"])
+                    self.assertEqual("", result.stdout.strip())
 
     def test_agy_uses_native_target_not_unrelated_generic_path(self):
         payload = {"toolCall": {"name": "write_to_file", "args": {"TargetFile": str(self.repo / "held.txt"), "file_path": "free.txt"}}}
@@ -253,6 +265,9 @@ class NativeHookTests(GitCase):
 
 
     def decision(self, payload, host=None, session="worker", cwd=None, extra_env=None):
+        return json.loads(self.raw(payload, host, session, cwd, extra_env))["hookSpecificOutput"]
+
+    def raw(self, payload, host=None, session="worker", cwd=None, extra_env=None):
         args = ["hook"] + (["--host", host] if host else [])
         env = dict(os.environ, AGENT_SESSION=session or "", AGENT_NAME=session or "")
         env.pop("COORD_ROOT", None)
@@ -260,7 +275,7 @@ class NativeHookTests(GitCase):
         run = subprocess.run([sys.executable, str(SCRIPT), *args], cwd=cwd or self.repo,
                              env=env, input=payload, text=True, encoding="utf-8", capture_output=True, timeout=10)
         self.assertEqual(0, run.returncode, run.stderr)
-        return json.loads(run.stdout)["hookSpecificOutput"]
+        return run.stdout
 
     def test_native_patch_held_path_is_denied_before_new_host_flag_exists(self):
         patch = "*** Begin Patch\n*** Update File: held.txt\n@@\n-OWNER\n+SECRET_PATCH\n*** End Patch"
@@ -294,17 +309,24 @@ class NativeHookTests(GitCase):
                  "*** Begin Patch\n*** Add File: free\n+" + "x" * 1048576 + "\n*** End Patch"]
         for patch in cases:
             with self.subTest(kind=type(patch).__name__, length=len(patch) if isinstance(patch, str) else 0):
+                if not isinstance(patch, str):    # HOST-P: no patch at all is no decision
+                    self.assertEqual("", self.raw(self.payload(patch), "codex"))
+                    continue
                 output = self.decision(self.payload(patch), "codex")
                 self.assertEqual("deny", output["permissionDecision"])
                 self.assertIn("NOT CHECKED", output["permissionDecisionReason"])
 
-    def test_codex_indeterminate_hook_inputs_use_supported_deny(self):
-        for payload in ["not JSON", "[]", "{}", '{"tool_name":"apply_patch","tool_input":{}}']:
+    def test_codex_indeterminate_hook_inputs_get_no_decision(self):
+        # HOST-P (FR-100): an input the hook cannot judge gets no decision on every host, as on
+        # Claude -- the session's own mode decides. Only a patch it cannot read is refused.
+        for payload in ["not JSON", "[]", "{}"]:
             with self.subTest(payload=payload):
-                self.assertEqual("deny", self.decision(payload, "codex")["permissionDecision"])
+                self.assertEqual("", self.raw(payload, "codex"))
         patch = self.payload("*** Begin Patch\n*** Delete File: held.txt\n*** End Patch")
-        self.assertEqual("deny", self.decision(patch, "codex", session=None)["permissionDecision"])
-        self.assertEqual("deny", self.decision(patch, "codex", extra_env={"COORD_ROOT": str(self.repo.parent)})["permissionDecision"])
+        self.assertEqual("", self.raw(patch, "codex", session=None))
+        self.assertEqual("", self.raw(patch, "codex", extra_env={"COORD_ROOT": str(self.repo.parent)}))
+        self.assertEqual("", self.raw('{"tool_name":"apply_patch","tool_input":{}}', "codex"))
+        self.assertEqual("deny", self.decision(self.payload("not a patch"), "codex")["permissionDecision"])
 
     def test_native_paths_use_process_cwd_and_refuse_escape(self):
         sub = self.repo / "sub"
@@ -313,8 +335,9 @@ class NativeHookTests(GitCase):
         patch = self.payload("*** Begin Patch\n*** Delete File: held.txt\n*** End Patch")
         self.assertEqual("deny", self.decision(patch, "codex", cwd=sub)["permissionDecision"])
         for path in ["../outside", str(self.repo.parent / "outside")]:
+            # HOST-P: a sibling worktree is spelled `../tree`; outside every checkout, no decision.
             payload = self.payload("*** Begin Patch\n*** Delete File: " + path + "\n*** End Patch")
-            self.assertEqual("deny", self.decision(payload, "codex")["permissionDecision"])
+            self.assertEqual("", self.raw(payload, "codex"))
 
     def test_native_symlink_alias_cannot_hide_a_held_or_external_path(self):
         if os.name == "nt":
@@ -557,7 +580,7 @@ class NativeHookTests(GitCase):
         patch = self.payload("*** Begin Patch\n*** Add File: empty/FUTURE\n+new\n*** End Patch")
         self.assertEqual("deny", self.decision(patch, "codex")["permissionDecision"])
 
-    def test_unreadable_and_non_object_ledger_state_denies_instead_of_crashing(self):
+    def test_unreadable_and_non_object_ledger_state_gets_no_decision_instead_of_crashing(self):
         log = self.repo / ".agents/log/owner.jsonl"
         original = log.read_text()
         patch = self.payload("*** Begin Patch\n*** Delete File: held.txt\n*** End Patch")
@@ -568,7 +591,7 @@ class NativeHookTests(GitCase):
                     log.mkdir()
                 else:
                     log.write_text(corrupt)
-                self.assertEqual("deny", self.decision(patch, "codex")["permissionDecision"])
+                self.assertEqual("", self.raw(patch, "codex"))  # HOST-P: not checked is no decision
                 if log.is_dir():
                     log.rmdir()
                 log.write_text(original)
@@ -652,12 +675,16 @@ class SiblingWorktreeWriteTests(PrimaryWriteGuardTests):
         self.assertEqual(0, result.returncode, result.stderr)
         self.assertEqual({}, json.loads(result.stdout))
 
-    def test_native_hosts_still_fail_closed_on_an_outside_path(self):
+    def test_every_host_gives_no_decision_on_an_outside_path(self):
+        # HOST-P (owner ruling 2026-10-19, FR-100): worktrees, memory and scratch directories are
+        # outside the repository, so every host answers as Claude does, in its own neutral shape.
         outside = Path(self.tmp.name) / "elsewhere"
         outside.mkdir()
-        answer = self.decision(self.hook_from(self.repo, outside.resolve() / "x.md", host="codex"))
-        self.assertEqual("deny", answer["permissionDecision"])
-        self.assertIn("outside this repository", answer["permissionDecisionReason"])
+        for host, neutral in NO_DECISION.items():
+            with self.subTest(host=host):
+                result = self.hook_from(self.repo, outside.resolve() / "x.md", host=host)
+                self.assertEqual(0, result.returncode, result.stderr)
+                self.assertEqual(neutral, result.stdout.strip())
 
     def test_an_in_tree_alias_to_an_outside_target_still_fails_closed(self):
         # WT-E2: the escape must be found however the repository path is SPELLED. CI caught
@@ -674,10 +701,11 @@ class SiblingWorktreeWriteTests(PrimaryWriteGuardTests):
         if os.name == "nt":
             self.addCleanup(via.rmdir)
         for spelled in (alias / "x.md", via / "escape" / "x.md"):
-            with self.subTest(path=str(spelled)):
-                answer = self.decision(self.hook_from(self.repo, spelled))
-                self.assertEqual("deny", answer["permissionDecision"])  # EDIT-ASK: refused, not asked
-                self.assertIn("outside this repository", answer["permissionDecisionReason"])
+            for host in ("claude", "codex"):
+                with self.subTest(path=str(spelled), host=host):
+                    answer = self.decision(self.hook_from(self.repo, spelled, host=host))
+                    self.assertEqual("deny", answer["permissionDecision"])  # EDIT-ASK: refused, not asked
+                    self.assertIn("outside this repository", answer["permissionDecisionReason"])
 
 
 class HookTests(GitCase):

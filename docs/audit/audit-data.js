@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-10-19T16:31:07Z",
+  "generated": "2026-10-19T23:13:00Z",
   "audit": [
     {
       "actor": null,
@@ -13856,6 +13856,21 @@ window.AUDIT_DATA = {
       "done_when": "Revision 115 and ADR-0014 merged through PRs with green checks",
       "tier": "T1",
       "fan_out": 0
+    },
+    {
+      "id": "al-01M5B7142H9KNF64V7SAJGP1P2",
+      "shortname": "rev108-p3-sweep",
+      "datetime": "2026-10-19T23:12:59Z",
+      "session": "prompt-log",
+      "prompt": "2a (pin session-checks at approval) / 3 yes: all harnesses should allow edit outside the repo because work trees are outside the repo, all harnesses should work like claude / 4: pinned to a release tag / 5 finish / 6-9 fix / 10 add the skip check / 11 really work on tuning windows CI job / 12, 13 address these",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [
