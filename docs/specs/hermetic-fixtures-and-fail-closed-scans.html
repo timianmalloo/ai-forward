@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Hermetic Fixtures And Fail Closed Scans</title><style>
+:root { color-scheme: light dark; --bg:#f7f5ef; --panel:#fff; --text:#20201d;
+  --muted:#66645f; --line:#d9d5ca; --accent:#3157a4; --code:#f0eee7; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#171816; --panel:#20221f; --text:#f2f1eb; --muted:#b8b6ae;
+    --line:#3d403a; --accent:#8fb0ff; --code:#292c27; }
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text);
+  font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif; }
+main { width:min(920px,calc(100% - 32px)); margin:32px auto; padding:40px;
+  background:var(--panel); border:1px solid var(--line); border-radius:12px; }
+h1,h2,h3,h4,h5,h6 { line-height:1.2; margin:1.5em 0 .55em; }
+h1 { margin-top:0; font-size:2.2rem; } h2 { border-bottom:1px solid var(--line); padding-bottom:.3em; }
+a { color:var(--accent); } code { background:var(--code); padding:.12em .35em; border-radius:4px; }
+pre { overflow:auto; padding:16px; background:var(--code); border-radius:8px; }
+pre code { padding:0; } blockquote { margin:1em 0; padding:.2em 1em; color:var(--muted);
+  border-left:4px solid var(--line); }
+table { width:100%; border-collapse:collapse; margin:1em 0; display:block; overflow:auto; }
+th,td { padding:.55em .75em; border:1px solid var(--line); text-align:left; vertical-align:top; }
+th { background:var(--code); } hr { border:0; border-top:1px solid var(--line); }
+.source { color:var(--muted); font-size:.9rem; margin-bottom:2rem; }
+@media (max-width:640px) { main { width:100%; margin:0; padding:24px 18px; border:0; border-radius:0; } }
+</style></head><body><main><div class="source">Rendered from hermetic-fixtures-and-fail-closed-scans.md</div><h1>Spec: hermetic git fixtures and fail-closed corpus scans</h1>
+<p>This spec states <em>what</em> must be true and <em>why</em>. The <em>how</em> belongs to <code>/design-slice</code>: helper names, signatures, the exit code chosen for a walk fault. Source evidence: <code>docs/investigations/bootstrap-release-tag-collision.md</code> and <code>docs/investigations/surface-limit-flake.md</code>.</p>
+<h2>Part A — Functional specification</h2>
+<h3>Problem</h3>
+<p>Two kinds of verification in this repo give answers that depend on things outside what they check.</p>
+<ol><li><strong>TEST-C.</strong> Some bootstrap tests use the developer&#x27;s own checkout (<code>ROOT</code>) as their git</li></ol>
+<p>upstream. Either they clone it, or they hand it straight to <code>run_bootstrap</code>, whose <code>--source</code> defaults to <code>ROOT</code> (<code>test_bootstrap.py:40</code>). They then create or name refs as if the upstream had none of its own. Since the 2026-10-19 release tag, one test fails in every developer clone and passes in CI, which has no tags. Two more tests carry the same dependence. One of them already passes in CI for the wrong reason: on a detached HEAD the branch name is empty (<code>:967</code>).</p>
+<ol><li><strong>CTRL-G.</strong> Several scans render a verdict over a set of files, but silently skip a file they</li></ol>
+<p>cannot read. They do this in four ways:</p>
+<ul><li>an <code>except OSError: continue</code> around the read;</li><li>an <code>lstat</code> failure that is reported as &quot;not a regular file&quot;;</li><li><code>os.walk</code> with no <code>onerror</code>, which ignores directory-listing errors by default</li></ul>
+<p>(<code>os.walk.__doc__</code>, verified 2026-10-22);</p>
+<ul><li>a strict UTF-8 decode of a truncated read.</li></ul>
+<p>This turns a fail-closed limit into fail-open (the flaky <code>SURFACE_LIMIT</code> test). It drops entries from the derived index without a trace. And it lets a lint gate pass a file it never read.</p>
+<p>Both classes produce a <strong>wrong verdict with no signal</strong>. A false red costs a gate run (~80 min locally). A false green is worse: a check that reports it examined what it did not.</p>
+<h3>Target users &amp; personas</h3>
+<ul><li><strong>Pack maintainer</strong> runs <code>verify-bundle.ps1</code> before every push. They need a red to mean a real</li></ul>
+<p>defect.</p>
+<ul><li><strong>CI</strong> (<code>pack-consistency</code>, three OSes) needs the same verdict a maintainer gets locally.</li><li><strong>Consuming-repo user</strong> runs <code>docs-graph.py derive</code> / <code>validate</code> and the shipped gate scripts.</li></ul>
+<p>They need the index and the gates to be complete, or to say clearly that they are not.</p>
+<h3>Core scenario</h3>
+<p>A maintainer runs the full gate locally, in a clone that holds every release tag, on a Windows machine with on-access scanning. Every test that passes in CI passes locally. If a file could not be read during a scan, the run names that file and the error, and the verdict that depends on it fails. It never silently passes or silently drops the file.</p>
+<h3>In scope / Out of scope (explicit non-goals)</h3>
+<p><strong>In scope</strong></p>
+<ul><li>The TEST-C fixtures in <code>tests/docs_explorer/test_bootstrap.py</code>: <code>clone_source()</code>,</li></ul>
+<p><code>run_bootstrap()</code>&#x27;s default source, the <code>preview</code> test (<code>:717</code>), and <code>:966-978</code>.</p>
+<ul><li>In <code>pack/scripts/docs-graph.py</code>: HTML-surface admission, both walks, and surfacing the</li></ul>
+<p>findings in <code>validate</code>.</p>
+<ul><li>One shared &quot;read or report&quot; rule for every other CTRL-G site in <code>pack/scripts</code>. The sites are</li></ul>
+<p>found and driven by the class control, not hand-listed.</p>
+<ul><li>One class control per class, run in gate 3 (the test suite).</li></ul>
+<p><strong>Out of scope</strong></p>
+<ul><li><strong>Retrying</strong> transient I/O. Retry would hide the signal this spec exists to surface.</li><li>Changing <strong>CI&#x27;s</strong> checkout (tags, depth).</li><li>Any change to <code>bootstrap.py</code> or to the release-pin mechanism.</li><li>New <em>deployed</em> scripts. The controls are repository tests, so they add no script count.</li><li>A per-site injection test for each latent sibling gate. The shared rule is tested once, and the</li></ul>
+<p>control forces every site onto it. The one exception is the security-relevant secret scan (S5).</p>
+<h3>Conceptual domain model (DM1/DM4)</h3>
+<p><strong>Bounded context:</strong> <em>verification of the pack</em> (tests and gates).</p>
+<p><strong>Ubiquitous language</strong></p>
+<table><thead><tr><th>Term</th><th>Meaning</th></tr></thead><tbody><tr><td><strong>Corpus</strong></td><td>The set of items a scan is asked to judge: what its enumeration yields (a walk, a glob, or <code>git ls-files</code>) after the documented exclusions.</td></tr><tr><td><strong>Admission</strong></td><td>The point where the scan counts an item into the corpus. It happens <strong>before</strong> any read.</td></tr><tr><td><strong>Documented exclusion</strong></td><td>An item left out by rule before admission: a template directory, <code>index.html</code>, or a symlink/reparse <em>surface</em>. It is neither counted nor reported.</td></tr><tr><td><strong>Finding (unreadable)</strong></td><td>The record that an admitted item, or a directory, could not be judged. It names the path and the error class.</td></tr><tr><td><strong>Legitimate skip</strong></td><td>An admitted item that vanished mid-scan (<code>FileNotFoundError</code>). It is the only silent skip allowed.</td></tr><tr><td><strong>Skip-ok reason</strong></td><td>A <code># skip-ok: &lt;reason&gt;</code> marker that declares an enumeration best-effort (discovery, not a verdict).</td></tr><tr><td><strong>Ambient ref</strong></td><td>A tag, branch or HEAD state a test got from the developer checkout instead of creating it.</td></tr></tbody></table>
+<p><strong>Aggregate — scan run</strong> (root; one execution). <strong>Invariant:</strong> <code>admitted = judged + findings + legitimate skips</code>. A verdict is rendered only once every admitted item is in exactly one of those buckets. Findings and counts are value objects.</p>
+<p><strong>TEST-C rule:</strong> every ref a test names, the test created.</p>
+<h3>User stories &amp; acceptance criteria (testable)</h3>
+<p>Each criterion is either <strong>fail-first</strong>, meaning it was observed failing on the unfixed code before the fix, or <strong>characterization</strong>, meaning it is green first and pins behaviour the fix must keep.</p>
+<p><strong>S1 — A release tag cannot break a bootstrap test (TEST-C). Fail-first.</strong></p>
+<pre><code class="language-gherkin">Scenario: the upstream already carries the release tag
+  Given clone_source takes its origin as a parameter
+  And the test builds a temporary origin (clone --no-tags of ROOT) and plants tag RELEASE_REF in it
+  When the no-source-overrides scenario builds its upstream from that origin
+  Then the scenario passes
+  And the same body fails with &quot;already exists&quot; when clone_source does not pass --no-tags
+      # red shown on any checkout, CI included: the test plants the tag itself</code></pre>
+<p><strong>S2 — The latent siblings are hermetic. Fail-first.</strong> In each case below, the test runs against a temporary origin it built, never against <code>ROOT</code>. Red is shown by running the pre-fix test body with <code>ROOT</code> swapped for a temporary clone in which the test planted the ambient ref.</p>
+<pre><code class="language-gherkin">Scenario: a planted tag shares the branch&#x27;s name
+  Given the origin carries branch &quot;preview&quot; and a tag &quot;preview&quot; on a different commit
+  When the preview test bootstraps with --ref preview
+  Then the receipt records the branch commit
+  And the fix names the branch unambiguously (refs/heads/preview)
+
+Scenario: the origin&#x27;s HEAD is detached
+  Given the test&#x27;s origin is on a detached HEAD
+  When the refspec-fallback test builds its refspec
+  Then the refspec names a branch the test created (never &quot;refs/heads/:...&quot;)
+
+Scenario: the unknown-ref test owns its origin
+  Given a fresh origin built by the test, with no ref named &quot;does-not-exist&quot;
+  When the unknown-ref test bootstraps with --ref does-not-exist
+  Then the bootstrap fails, and the target is unchanged
+  # red demo: the pre-fix body, run against a clone of ROOT with &quot;does-not-exist&quot; planted, succeeds</code></pre>
+<p><strong>S3 — HTML-surface admission is deterministic (CTRL-G instance). Fail-first unless marked.</strong></p>
+<pre><code class="language-gherkin">Scenario Outline: one read fault among SURFACE_LIMIT + 1 admitted surfaces
+  Given 101 HTML surfaces under the docs root
+  And one &lt;fault&gt; on one surface
+  When discover_html_surfaces runs
+  Then it raises SURFACE_LIMIT_EXCEEDED
+  Examples: | fault                                   |
+            | os.open PermissionError                 |
+            | os.lstat OSError                        |
+            | _is_reparse_point OSError               |
+            | _SourceChangedError during read         |
+  # os.open and os.lstat observed red on 2026-10-22; the reparse and source-changed rows are
+  # fail-first, to be observed red before the fix
+
+Scenario: an unreadable surface under the limit
+  Given 5 surfaces and one raises PermissionError on read
+  When derive runs
+  Then the index holds the 4 readable surfaces
+  And stderr carries one finding naming the file and &quot;PermissionError&quot;
+
+Scenario: a directory that cannot be listed
+  Given a subdirectory whose listing raises OSError
+  When discover_html_surfaces runs
+  Then a finding names that directory   # its files were never admitted, so the limit cannot count them
+
+Scenario: a valid UTF-8 surface larger than the title read cap
+  Given a valid UTF-8 surface whose multi-byte character straddles SURFACE_TITLE_BYTES
+  When derive runs
+  Then the surface is indexed with its title   # observed red 2026-10-22: _surface_title returns None
+
+Scenario: a surface that is not UTF-8
+  Given a surface whose bytes are not valid UTF-8
+  When derive runs
+  Then a finding names the file and the decode error, on every run
+
+Scenario: a symlinked surface (characterization)
+  Given a surface that is a symlink or reparse point
+  When derive runs
+  Then it is excluded, with no finding and no count   # documented exclusion, as today</code></pre>
+<p><strong>S4 — `validate` fails on surface and walk findings. Fail-first. This adds new wiring.</strong> Today <code>validate</code> (<code>cmd_inventory</code>, <code>docs-graph.py:900</code>) scans markdown only. Surface discovery runs only in <code>derive</code> (<code>:1103</code>). That is why this behaviour is new.</p>
+<pre><code class="language-gherkin">Scenario: a surface finding reaches the gate
+  Given one surface raises PermissionError on read
+  When docs-graph.py validate runs
+  Then it exits non-zero, and the finding is counted under &quot;problems&quot;
+
+Scenario: a markdown directory that cannot be listed
+  Given a docs subdirectory whose listing raises OSError
+  When validate runs
+  Then it exits non-zero with a finding naming the directory
+
+Scenario: derive stays non-blocking (characterization)
+  Given any finding
+  When derive runs
+  Then it writes the index, reports the finding on stderr, and exits 0 as today</code></pre>
+<p><strong>S5 — One shared read-or-report rule for the other CTRL-G sites.</strong></p>
+<pre><code class="language-gherkin">Scenario: the shared rule (fail-first, tested once)
+  Given an in-scope file that exists but raises PermissionError on open
+  When it is read through the shared rule
+  Then a finding is produced, and the caller&#x27;s verdict fails
+
+Scenario: a file gone mid-scan (characterization)
+  Given an in-scope file that raises FileNotFoundError on open
+  Then it is skipped without a finding
+
+Scenario: every gate that uses the rule turns its findings into a failing exit (fail-first)
+  Given each scanning gate migrated onto the shared rule
+  And one in-scope file that raises PermissionError
+  When the gate runs
+  Then its exit code is non-zero
+  # one parametrised test over the gates, so a gate that calls the rule and discards its findings is caught
+
+Scenario: the secret scan fails closed (fail-first; the security-relevant site)
+  Given a file in the visual-assets-setup committed-secret scan that raises PermissionError
+  When the scan runs
+  Then it reports the file instead of passing
+
+Scenario: binary files in verify-no-conflict-markers (characterization)
+  Given an in-scope binary file
+  Then it is skipped as today
+  And the decode skip and the OSError path are separate handlers
+  And its --self-test (which asserts &quot;an unreadable corpus counts as nothing read&quot;) is updated to the new rule</code></pre>
+<p><strong>S6 — The classes cannot quietly return (controls). Fail-first: each control is observed red on the tree before its fix.</strong></p>
+<pre><code class="language-gherkin">Scenario: TEST-C control
+  Given a test in tests/ that
+    - runs git clone with ROOT as the source and no --no-tags, or
+    - calls a helper whose git source defaults to ROOT
+  When gate 3 runs
+  Then the control test fails and names the file and line
+  # read-only clones get --no-tags too; no allowlist unless the first run proves one is needed
+
+Scenario: CTRL-G control (matched by AST, not by text)
+  Given a for-loop over the result of os.walk, Path.walk, Path.rglob, Path.glob, glob.glob or a git ls-files call
+  And inside it an except clause catching OSError, any OSError subclass, Exception, or a bare except
+      (alone or in a tuple)
+  And that clause&#x27;s body is only continue, pass, return None or return False
+  And there is no &quot;# skip-ok: &lt;reason&gt;&quot; on the except line
+  Then the control test fails and names the file and line
+  Or: an os.walk with no onerror, or a Path.walk with no on_error, and no &quot;# skip-ok:&quot; fails the control
+  Or: any Path.rglob / Path.glob used for a verdict with no &quot;# skip-ok:&quot; fails it
+      # Python 3.12&#x27;s rglob has no error hook: move to Path.walk(on_error=) or declare it best-effort
+  # TEST-C &quot;helper whose git source defaults to ROOT&quot; means a function parameter default of ROOT,
+  # or a `&lt;param&gt; or ROOT` expression feeding a git source. Each is pinned by a fixture.
+
+Scenario: control fixtures
+  Given positive and negative fixture snippets for each rule
+  Then the control flags every positive and none of the negatives</code></pre>
+<h3>Non-functional requirements (ISO/IEC 25010 checklist)</h3>
+<table><thead><tr><th>Characteristic</th><th>Requirement</th></tr></thead><tbody><tr><td>Functional suitability</td><td>Every fail-first criterion is observed red on unfixed code. Every characterization criterion is green before and after (Test Architect veto).</td></tr><tr><td>Reliability</td><td>Scan verdicts depend only on the corpus. A fault yields a named finding, never a different verdict without a signal. The TEST-C tests give the same result in any clone, with or without tags, and on attached or detached HEAD.</td></tr><tr><td>Performance efficiency</td><td><strong>At most one open per admitted file</strong>, asserted by one test that counts calls at the shared rule&#x27;s own open seam. <code>discover_html_surfaces</code> reaches the same seam through <code>_open_verified_binary</code>. <code>os.open</code> is not the counter, because <code>Path.read_text</code>/<code>io.open</code> never call it. No retry.</td></tr><tr><td>Maintainability</td><td>One rule per class, held in the register and enforced by one AST-defined control. <code># skip-ok:</code> reasons sit at the call site.</td></tr><tr><td>Portability</td><td>Same behaviour on Windows, Linux and macOS. Fault injection is in-process.</td></tr><tr><td>Security</td><td>The committed-secret scan stops failing open (S5).</td></tr><tr><td>Usability (operator)</td><td>A finding is one line: the repo-relative path and the exception class.</td></tr><tr><td>Compatibility</td><td><code>docs-index.js</code> gains no fields. <code>validate</code> gains new <em>defects</em>; the INSTALL <code>changes</code> entry says so.</td></tr></tbody></table>
+<h3>Boundary set</h3>
+<ul><li><code>SURFACE_LIMIT</code> = 100: 100 admitted surfaces pass, and 101 raise, whether or not they are</li></ul>
+<p>readable.</p>
+<ul><li>0 surfaces: no finding, no raise.</li><li>A symlink/reparse <em>surface</em> is a documented exclusion. A symlink in the <em>markdown</em> walk stays a</li></ul>
+<p>problem, as today (<code>docs-graph.py:528</code>). <code>_safe_path_kind</code> must distinguish &quot;is a link&quot; from &quot;lstat failed&quot;: today both return False (<code>:247-253</code>).</p>
+<ul><li><code>FileNotFoundError</code> mid-scan is a legitimate skip. Every other <code>OSError</code>, a</li></ul>
+<p><code>UnicodeDecodeError</code> on a complete read, and a <code>_SourceChangedError</code> are all findings.</p>
+<ul><li>A directory-listing fault cannot raise the limit, because its files were never admitted. It</li></ul>
+<p>produces a finding and fails <code>validate</code>.</p>
+<h3>Comparables &amp; user evidence (sourced)</h3>
+<ul><li><strong>[Verified]</strong> <code>os.walk</code> ignores <code>scandir</code> errors unless <code>onerror</code> is passed (Python 3.12.10</li></ul>
+<p><code>os.walk.__doc__</code>, 2026-10-22).</p>
+<ul><li><strong>[Verified]</strong> <code>git clone --[no-]tags</code> (<code>git clone -h</code>, 2026-10-22).</li><li><strong>[Verified]</strong> In-repo comparable: <code>_markdown_candidates</code> (<code>docs-graph.py:501-541</code>) counts on</li></ul>
+<p>admission and records rejected paths as problems.</p>
+<ul><li><strong>[Verified]</strong> <code>derive</code> reports problems on stderr without blocking (<code>:1055,1168</code>). <code>validate</code></li></ul>
+<p>fails on problems (FR-056, <code>:904-940</code>), but it runs only the markdown scan (<code>:901</code>).</p>
+<ul><li><strong>[Verified]</strong> <code>_surface_title</code> reads <code>SURFACE_TITLE_BYTES</code> (256 KiB) and decodes strictly</li></ul>
+<p>(<code>:594</code>). A probe on a valid file with <code>é</code> across the cap returned <code>None</code> (2026-10-22).</p>
+<ul><li><strong>[Verified]</strong> User evidence:</li><li>the bootstrap test failed in 3 of 3 local runs on 2026-10-22;</li><li>the surface test failed in 1 of 3;</li><li>CI was green on the same commit.</li><li><strong>[Inferred]</strong> Hermetic fixtures are standard practice (pytest <code>tmp_path</code>, Bazel hermeticity).</li></ul>
+<p>No external citation was fetched, and nothing depends on it.</p>
+<h3>Applicable governance lenses</h3>
+<table><thead><tr><th>Lens</th><th>Applies</th><th>Answer</th></tr></thead><tbody><tr><td>Quality attributes</td><td>Yes</td><td>NFR table</td></tr><tr><td>Threat model</td><td>Partly</td><td>Secret scan fails closed (S5). No new trust boundary.</td></tr><tr><td>Privacy</td><td>No</td><td>—</td></tr><tr><td>Accessibility</td><td>No</td><td>No UI</td></tr><tr><td>Performance</td><td>Yes</td><td>One open per admitted file, asserted</td></tr><tr><td>Release / rollback</td><td>Yes</td><td>Each slice reverts on its own. <code>pack/</code> slices carry an INSTALL revision bump (PACK-W, <code>test_install_revision_bump.py</code>). Tests-only slices do not.</td></tr><tr><td>Observability</td><td>Yes</td><td>Every finding is emitted on the normal path, with no flag. This makes the next occurrence of the run-1 trigger diagnosable.</td></tr></tbody></table>
+<h3>AI-integrated allocation</h3>
+<p>N/A — no model-backed capability.</p>
+<h3>Delivery slices (each independently shippable)</h3>
+<table><thead><tr><th>Slice</th><th>Covers</th><th>Touches <code>pack/</code> (revision bump)</th><th>Depends on</th></tr></thead><tbody><tr><td>1</td><td>S1, S2, S6 TEST-C control</td><td>No</td><td>—</td></tr><tr><td>2</td><td>S3, S4 (<code>docs-graph.py</code>)</td><td>Yes</td><td>—</td></tr><tr><td>3</td><td>S5 shared rule; S6 CTRL-G control, which drives every remaining site onto the rule or <code># skip-ok:</code></td><td>Yes</td><td>2</td></tr></tbody></table>
+<p>Slices 1 and 2 are independent. Slices 2 and 3 may share one revision bump in one PR.</p>
+<h3>Amendments from design (2026-10-22, recorded, not silent)</h3>
+<ul><li><strong>S5 &quot;shared rule … tested once&quot; becomes an inline rule per site.</strong></li><li>Why not a module: a shared module would be a new deployed script (script count, INSTALL</li></ul>
+<p>counts, and a cross-script import a partial upgrade can break).</p>
+<ul><li>What holds the rule instead: the AST control (S6) holds it at every site, and a fault-injection</li></ul>
+<p>test per gate proves each verdict fails.</p>
+<ul><li><strong>S6 TEST-C is narrowed from &quot;a helper whose source defaults to ROOT&quot; to the ref-naming shapes:</strong></li><li>a named non-HEAD <code>--ref</code> resolved against the root;</li><li>a ref read run in the root;</li><li>a root clone without <code>--no-tags</code>.</li></ul>
+<p>A HEAD-only <code>run_bootstrap()</code> names no ref, and flagging its many callers would cost a full repo clone each for no failure prevented.</p>
+<ul><li><strong>&quot;The path does not exist&quot; includes `NotADirectoryError`</strong> (a parent is a file), alongside</li></ul>
+<p><code>FileNotFoundError</code>.</p>
+<ul><li><strong>CTRL-G&#x27;s control is scoped to the zones that can drop an item:</strong> corpus loops in scanner</li></ul>
+<p>modules, plus the same-module functions those loops call. A module-wide rule flagged 59 handlers, most of them optional single-file probes.</p>
+<ul><li><strong>The `_is_reparse_point` fault row is dropped from S3.</strong> On the real path it always receives</li></ul>
+<p>metadata, so it cannot raise; a test there would pass vacuously.</p>
+<h2>Part B — UX specification</h2>
+<p>N/A — no user-facing interface. The only operator-visible output is a one-line finding (NFR, Usability).</p>
+<h2>Part C — UI specification</h2>
+<p>N/A — no visual UI.</p>
+<h2>Flagged risks &amp; residual unknowns</h2>
+<ul><li><strong>Revision collision.</strong> <code>feat/installrayfin</code> (uncommitted) takes INSTALL revision 118. Slices 2</li></ul>
+<p>and 3 take the next revision after whichever PR merges first.</p>
+<ul><li><strong>What triggered run 1 is still unknown.</strong> After slice 2 the next occurrence names its fault. A</li></ul>
+<p>recurrence with <em>no</em> finding would mean the diagnosis was wrong.</p>
+<ul><li><strong>Breadth of the CTRL-G control.</strong> <code>pack/scripts</code> holds about 105 <code>except OSError</code> sites, per</li></ul>
+<p>the reviewer&#x27;s count. The AST rule flags only those inside an enumeration loop, but the first run may still surface more sites than the 7 + 19 named so far. Each is moved onto the shared rule or given a <code># skip-ok:</code> reason; review checks the reasons.</p>
+<ul><li><strong>New findings in consuming repos.</strong> After slices 2 and 3, an unreadable file that used to pass</li></ul>
+<p>silently becomes a visible <code>validate</code> defect. This is intended, and the INSTALL <code>changes</code> entry says so.</p>
+<h2>Gate record</h2>
+<p><strong>Round 1 (2026-10-22), on the first draft:</strong></p>
+<ul><li><strong>Test Architect — BLOCK.</strong> Three findings were blockers:</li><li>the S1 and S2 Givens could not be set up, because they required mutating <code>ROOT</code>, and</li></ul>
+<p><code>clone_source</code> hard-coded <code>ROOT</code>;</p>
+<ul><li>the directory-fault case could not raise the limit.</li></ul>
+<p>The majors were:</p>
+<ul><li><code>validate</code> needs new wiring (it was claimed as reuse);</li><li>the symlink rule conflicted with the markdown path and with <code>_safe_path_kind</code>;</li><li>the controls were too loose: text matching, and they missed <code>ls-files</code> loops;</li><li>the binary skip shares a tuple with <code>OSError</code>, and its <code>--self-test</code> must change;</li><li>the ±3% performance budget was not measurable;</li><li>preservation criteria were mislabelled as fail-first.</li></ul>
+<p>Every one is resolved in this revision. The S1 and S2 Givens now use origins the test builds; S3 has a separate directory finding; S4 states the new wiring; the boundary set is rewritten; the controls are AST-defined; S5 has its binary scenario; the performance criterion is &quot;one open per file&quot;; and criteria are labelled fail-first or characterization.</p>
+<ul><li><strong>The Simplifier — soft veto.</strong> The main finding: S5 and S6 restated one rule three times</li></ul>
+<p>with per-site tests. Resolved by merging them into one shared rule, one test, and one control that drives the sites. Only the secret scan keeps its own test. The second fixture aggregate and the ±3% NFR were cut. The TEST-C allowlist was dropped: read-only clones get <code>--no-tags</code> too. The non-UTF-8 scenario was kept, because <code>_surface_title</code> decodes strictly (<code>:594</code>), so the drop is real.</p>
+<ul><li><strong>Found while resolving:</strong> the 256 KiB truncation drops a valid UTF-8 surface (probe returned</li></ul>
+<p><code>None</code>). Added to S3.</p>
+<ul><li><strong>Round 2 (2026-10-22):</strong></li><li><strong>The Simplifier — PASS, soft veto cleared.</strong> It judged the Test Architect&#x27;s additions</li></ul>
+<p>justified. Nit applied: the two unobserved S3 fault rows are labelled &quot;to be observed&quot;.</p>
+<ul><li><strong>Test Architect — PASS-WITH-CONDITIONS, hard veto cleared for the spec gate.</strong> Four</li></ul>
+<p>non-blocking findings were applied: the open counter moved to the shared rule&#x27;s seam; a parametrised exit-code test per gate; the self-contradictory S2 scenario rewritten; and the AST rule extended to OSError subclasses, <code>Exception</code>, bare <code>except</code>, <code>Path.walk</code>, the rglob hook gap, and the <code>source or ROOT</code> default.</p>
+<ul><li><strong>The implementation gate still needs a Proof Pack.</strong> Every fail-first criterion must be shown</li></ul>
+<p>red and then green.</p></main></body></html>

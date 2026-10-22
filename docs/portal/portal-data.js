@@ -845,6 +845,11 @@ window.PORTAL_DATA = {
             "path": "../../docs/specs/dreaming-continuous-improvement.md"
           },
           {
+            "title": "Spec - hermetic git fixtures (TEST-C) and fail-closed corpus scans (CTRL-G)",
+            "summary": "The durable fixes for two verified defect classes. TEST-C: a test never uses the developer checkout as a git upstream it names refs in. CTRL-G: a scan that renders a verdict over a corpus accounts for every item it admitted, and reports every item it could...",
+            "path": "../../docs/specs/hermetic-fixtures-and-fail-closed-scans.md"
+          },
+          {
             "title": "Leader designation in a git ref — coord leader pin|who|renew|release|reclaim over refs/coord/leader, and the join fence",
             "summary": "Specifies P2 of the coordination proposal: a designated (never elected) leader held in the git ref refs/coord/leader by compare-and-swap, with a monotonic epoch, a 300 s lease renewed at 100 s, a 30 s quiet period after an expiry, and a join that refuses a...",
             "path": "../../docs/specs/leader-designation.md"
@@ -963,6 +968,11 @@ window.PORTAL_DATA = {
             "title": "Docs Explorer — Grounding and Spatial Navigation Design",
             "summary": "Detailed design for making the repository knowledge graph a deterministic grounding interface for coding agents and a clearer human exploration surface. It separates selected-node neighborhood context from mind-map rooting, adds provenance-bounded context...",
             "path": "../../docs/design/docs-explorer-grounding-and-spatial-navigation.md"
+          },
+          {
+            "title": "Design - hermetic git fixtures (TEST-C) and fail-closed corpus scans (CTRL-G)",
+            "summary": "How the three spec slices are built. Slice 1 makes the bootstrap fixtures clone with --no-tags and run against origins the tests own, guarded by an AST control over tests/. Slice 2 makes docs-graph count surfaces on admission, give both walks an onerror,...",
+            "path": "../../docs/design/hermetic-fixtures-and-fail-closed-scans.md"
           },
           {
             "title": "Design — leader designation (coord leader verbs over refs/coord/leader · the join fence · doctor/metrics · CO-L)",
@@ -2619,6 +2629,12 @@ window.PORTAL_DATA = {
         "summary": "Detailed design for making the repository knowledge graph a deterministic grounding interface for coding agents and a clearer human exploration surface. It..."
       },
       {
+        "id": "design-hermetic-fixtures-and-fail-closed-scans",
+        "type": "design",
+        "title": "Design - hermetic git fixtures (TEST-C) and fail-closed corpus scans (CTRL-G)",
+        "summary": "How the three spec slices are built. Slice 1 makes the bootstrap fixtures clone with --no-tags and run against origins the tests own, guarded by an AST control..."
+      },
+      {
         "id": "design-language-docs-explorer",
         "type": "design-language",
         "title": "Docs Explorer — Design Language",
@@ -3159,6 +3175,12 @@ window.PORTAL_DATA = {
         "summary": "The hosted explainer stayed blank after a fix was declared, because the fix lived only in the working tree — it was never deployed, so the live URL still..."
       },
       {
+        "id": "investigation-bootstrap-release-tag-collision",
+        "type": "doc",
+        "title": "Investigation - test_bootstrap fails with 'tag v2026.10.19.4 already exists' in a developer clone",
+        "summary": "test_no_source_overrides_use_upstream_main_defaults clones the developer's checkout, tags and all, then creates the release tag v2026.10.19.4 on the assumption..."
+      },
+      {
         "id": "investigation-cross-platform-readiness",
         "type": "investigation",
         "title": "Investigation: does the AI-Forward Pack — scripts, hooks, tools, skills — work on both Windows and macOS?",
@@ -3169,6 +3191,12 @@ window.PORTAL_DATA = {
         "type": "doc",
         "title": "Investigation - FR-071: audit-log suggest self-reports its own closeout",
         "summary": "audit-log.py `suggest` lists every commit since the last change-log entry with no filter, so it surfaces bookkeeping/closeout commits (including the very..."
+      },
+      {
+        "id": "investigation-surface-limit-flake",
+        "type": "doc",
+        "title": "Investigation - the HTML surface limit fails open when one file is transiently unreadable",
+        "summary": "test_html_surface_discovery_fails_closed_above_surface_limit failed once in two full gate runs. discover_html_surfaces counts only files whose title it could..."
       },
       {
         "id": "kb-acp-compatibility",
@@ -4035,6 +4063,12 @@ window.PORTAL_DATA = {
         "summary": "Proof that pack-apply and sync-pack deploy a native Grok Build surface (.grok/skills, agents, hooks, rules), that knowledge is not dumped into .grok/rules/,..."
       },
       {
+        "id": "proof-hermetic-fixtures-and-fail-closed-scans",
+        "type": "proof-pack",
+        "title": "Proof Pack — hermetic git fixtures and fail-closed corpus scans",
+        "summary": "Executed evidence for the three slices. Bootstrap fixtures no longer inherit tags from the developer checkout, docs-graph counts every surface before reading..."
+      },
+      {
         "id": "proof-liveness-and-track",
         "type": "proof-pack",
         "title": "Proof Pack — progress liveness, the running track and the kick ladder (P3)",
@@ -4219,6 +4253,12 @@ window.PORTAL_DATA = {
         "type": "spec",
         "title": "Dreaming — continuous-improvement consolidation, review, and cross-repo federation",
         "summary": "Specification for AI-Forward's dreaming capability: a /dream consolidation skill that mines the committed corpus (audit/change logs, defect-class register,..."
+      },
+      {
+        "id": "spec-hermetic-fixtures-and-fail-closed-scans",
+        "type": "spec",
+        "title": "Spec - hermetic git fixtures (TEST-C) and fail-closed corpus scans (CTRL-G)",
+        "summary": "The durable fixes for two verified defect classes. TEST-C: a test never uses the developer checkout as a git upstream it names refs in. CTRL-G: a scan that..."
       },
       {
         "id": "spec-leader-designation",
@@ -5261,6 +5301,21 @@ window.PORTAL_DATA = {
         "rel": "tested-by"
       },
       {
+        "from": "design-hermetic-fixtures-and-fail-closed-scans",
+        "to": "investigation-bootstrap-release-tag-collision",
+        "rel": "relates-to"
+      },
+      {
+        "from": "design-hermetic-fixtures-and-fail-closed-scans",
+        "to": "investigation-surface-limit-flake",
+        "rel": "relates-to"
+      },
+      {
+        "from": "design-hermetic-fixtures-and-fail-closed-scans",
+        "to": "spec-hermetic-fixtures-and-fail-closed-scans",
+        "rel": "implements"
+      },
+      {
         "from": "design-language-docs-explorer",
         "to": "design-docs-explorer-grounding-spatial-navigation",
         "rel": "refines"
@@ -6216,6 +6271,11 @@ window.PORTAL_DATA = {
         "rel": "relates-to"
       },
       {
+        "from": "investigation-bootstrap-release-tag-collision",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
         "from": "investigation-cross-platform-readiness",
         "to": "architecture-agent-coordination",
         "rel": "relates-to"
@@ -6243,6 +6303,11 @@ window.PORTAL_DATA = {
       {
         "from": "investigation-fr-071",
         "to": "forensic-review-rev53-backlog",
+        "rel": "relates-to"
+      },
+      {
+        "from": "investigation-surface-limit-flake",
+        "to": "defect-classes",
         "rel": "relates-to"
       },
       {
@@ -7711,6 +7776,26 @@ window.PORTAL_DATA = {
         "rel": "implements"
       },
       {
+        "from": "proof-hermetic-fixtures-and-fail-closed-scans",
+        "to": "design-hermetic-fixtures-and-fail-closed-scans",
+        "rel": "implements"
+      },
+      {
+        "from": "proof-hermetic-fixtures-and-fail-closed-scans",
+        "to": "investigation-bootstrap-release-tag-collision",
+        "rel": "relates-to"
+      },
+      {
+        "from": "proof-hermetic-fixtures-and-fail-closed-scans",
+        "to": "investigation-surface-limit-flake",
+        "rel": "relates-to"
+      },
+      {
+        "from": "proof-hermetic-fixtures-and-fail-closed-scans",
+        "to": "spec-hermetic-fixtures-and-fail-closed-scans",
+        "rel": "implements"
+      },
+      {
         "from": "proof-liveness-and-track",
         "to": "design-liveness-and-track",
         "rel": "tested-by"
@@ -8269,6 +8354,21 @@ window.PORTAL_DATA = {
         "from": "spec-dreaming",
         "to": "kb-continuous-improvement-and-dreaming",
         "rel": "implements"
+      },
+      {
+        "from": "spec-hermetic-fixtures-and-fail-closed-scans",
+        "to": "defect-classes",
+        "rel": "relates-to"
+      },
+      {
+        "from": "spec-hermetic-fixtures-and-fail-closed-scans",
+        "to": "investigation-bootstrap-release-tag-collision",
+        "rel": "refines"
+      },
+      {
+        "from": "spec-hermetic-fixtures-and-fail-closed-scans",
+        "to": "investigation-surface-limit-flake",
+        "rel": "refines"
       },
       {
         "from": "spec-leader-designation",

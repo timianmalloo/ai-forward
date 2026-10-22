@@ -57,10 +57,21 @@ class BootstrapTests(unittest.TestCase):
         self.assertEqual(0, result.returncode, result.stderr)
         return result.stdout.strip()
 
-    def clone_source(self):
+    def clone_source(self, origin=ROOT):
         source = self.base / "source"
-        self.git("clone", "--no-hardlinks", str(ROOT), str(source), cwd=self.base)
+        self.git("clone", "--no-tags", "--no-hardlinks", str(origin), str(source), cwd=self.base)
         return source
+
+    def test_clone_source_inherits_no_refs_from_its_origin(self):
+        # TEST-C: the developer checkout carries every fetched release tag; CI's does not.
+        origin = self.base / "origin"
+        origin.mkdir()
+        self.git("init", "-q", cwd=origin)
+        self.git("commit", "--allow-empty", "-qm", "origin", cwd=origin)
+        self.git("tag", RELEASE_REF, cwd=origin)
+        self.git("tag", "preview", cwd=origin)
+        source = self.clone_source(origin)
+        self.assertEqual("", self.git("tag", "--list", cwd=source))
 
     def test_no_source_overrides_use_upstream_main_defaults(self):
         # A disposable post-merge mirror exercises the real default command
@@ -732,7 +743,7 @@ class BootstrapTests(unittest.TestCase):
         self.assertEqual(0, first.returncode, first.stdout + first.stderr)
         local = self.target / ".claude/skills/also/SKILL.md"
         local.write_text(local.read_text(encoding="utf-8") + "\nLocal extension must survive.\n", encoding="utf-8", newline="\n")
-        result = self.run_bootstrap("--ref", "preview", source=source)
+        result = self.run_bootstrap("--ref", "refs/heads/preview", source=source)
         self.assertEqual(0, result.returncode, result.stdout + result.stderr)
         self.assertIn("updated", result.stdout)
         self.assertIn("MERGE", result.stdout)
@@ -965,17 +976,20 @@ class BootstrapTests(unittest.TestCase):
         self.assertEqual(commit, receipt["source_commit"])
 
     def test_fetch_fallback_does_not_interpret_requested_ref_as_a_refspec(self):
-        branch = self.git("branch", "--show-current", cwd=ROOT)
-        for ref in (f"refs/heads/{branch}:refs/heads/redirected", "refs/heads/*"):
+        # TEST-C: a branch this test created, never ROOT's (empty on CI's detached HEAD).
+        source = self.clone_source()
+        self.git("checkout", "-q", "-B", "fixture-branch", cwd=source)
+        for ref in ("refs/heads/fixture-branch:refs/heads/redirected", "refs/heads/*"):
             with self.subTest(ref=ref):
                 before = self.snapshot()
-                result = self.run_bootstrap("--ref", ref)
+                result = self.run_bootstrap("--ref", ref, source=source)
                 self.assertNotEqual(0, result.returncode, result.stdout + result.stderr)
                 self.assertEqual(before, self.snapshot())
 
     def test_unknown_ref_fails_without_target_writes(self):
+        source = self.clone_source()
         before = self.snapshot()
-        result = self.run_bootstrap("--ref", "does-not-exist")
+        result = self.run_bootstrap("--ref", "does-not-exist", source=source)
         self.assertNotEqual(0, result.returncode)
         self.assertEqual(before, self.snapshot())
 

@@ -106,7 +106,7 @@ class BootstrapPreservationTests(unittest.TestCase):
 
     def test_source_selected_archive_collision_is_not_a_duplicate_backup_path_map(self):
         source = self.base / "source"
-        self.git("clone", "--no-hardlinks", "--", str(ROOT), str(source), cwd=self.base)
+        self.git("clone", "--no-tags", "--no-hardlinks", "--", str(ROOT), str(source), cwd=self.base)
         self.git("checkout", "--detach", self.source_commit, cwd=source)
         applier = source / "pack/scripts/pack-apply.py"
         original = applier.read_text(encoding="utf-8")
@@ -222,7 +222,7 @@ class BootstrapPreservationTests(unittest.TestCase):
     @unittest.skipIf(os.name == "nt", "Literal glob characters are POSIX filename fixtures")
     def test_source_selected_attribute_paths_are_literal_and_root_anchored(self):
         source = self.base / "source"
-        self.git("clone", "--no-hardlinks", "--", str(ROOT), str(source), cwd=self.base)
+        self.git("clone", "--no-tags", "--no-hardlinks", "--", str(ROOT), str(source), cwd=self.base)
         self.git("checkout", "--detach", self.source_commit, cwd=source)
         name = "literal [a]*? Ω"
         self.git("mv", "pack/commands/also", "pack/commands/" + name, cwd=source)

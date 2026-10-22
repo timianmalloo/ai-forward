@@ -76,7 +76,7 @@ def _read(path):
     try:
         with open(path, encoding="utf-8", errors="replace") as fh:
             return fh.read()
-    except OSError:
+    except OSError:  # skip-ok: every caller turns a None read into a failed missing/empty check
         return None
 
 
@@ -908,7 +908,7 @@ def check_interpreter():
     for label, argv in candidates:
         try:
             proc = run_bounded(argv, timeout_seconds=15)
-        except (OSError, ValueError):
+        except (OSError, ValueError):  # skip-ok: an interpreter that cannot be launched is the expected miss this probe looks for
             # Only "this command could not be launched" is an expected miss. A TypeError
             # here would be a bug in this call, and swallowing it would turn a programming
             # error into a plausible-looking FAIL - which is exactly how this check shipped

@@ -565,7 +565,7 @@ def git(args, cwd):
         out = subprocess.run(["git", "-c", "core.fsmonitor=false"] + args, cwd=cwd, capture_output=True, text=True,
                              encoding="utf-8", errors="replace", timeout=20)
         return out.stdout if out.returncode == 0 else ""
-    except (OSError, subprocess.SubprocessError):
+    except (OSError, subprocess.SubprocessError):  # skip-ok: advisory profiler input; a failed git read is left out of the report
         return ""
 
 
@@ -931,7 +931,7 @@ def claude_sessions(identity, since, home):
     for name in sorted(os.listdir(projects)):
         if name.lower() not in wanted:
             continue
-        for path in sorted(glob.glob(os.path.join(projects, name, "*.jsonl"))):
+        for path in sorted(glob.glob(os.path.join(projects, name, "*.jsonl"))):  # skip-ok: advisory profiler input; an unlistable project is left out of the report
             sid = os.path.splitext(_basename(path))[0]
             mtime = _dt.datetime.fromtimestamp(os.path.getmtime(path), _dt.timezone.utc)
             if since and mtime < since:
@@ -949,7 +949,7 @@ def claude_sessions(identity, since, home):
                                 continue
                             title = r.get("aiTitle") or title
                             cwd = cwd or r.get("cwd")
-            except OSError:
+            except OSError:  # skip-ok: advisory profiler input; an unreadable session is left out of the report
                 pass
             out.append({"harness": "claude", "id": sid, "path": path, "project": name,
                         "updated": iso(mtime), "started": None, "title": title, "cwd": cwd})
@@ -986,13 +986,13 @@ def read_subagents(session_dir):
     if not os.path.isdir(store):
         return [], NOT_RECORDED
     nodes = []
-    for path in sorted(glob.glob(os.path.join(store, "agent-*.jsonl"))):
+    for path in sorted(glob.glob(os.path.join(store, "agent-*.jsonl"))):  # skip-ok: advisory profiler input; an unlistable store is left out of the report
         aid = _basename(path)[len("agent-"):-len(".jsonl")]
         meta = {}
         try:
             with open(path[:-len(".jsonl")] + ".meta.json", encoding="utf-8") as fh:
                 meta = json.load(fh) or {}
-        except (OSError, ValueError):
+        except (OSError, ValueError):  # skip-ok: advisory profiler input; an unreadable sidecar is left out of the report
             pass
         recs = _load_events(path)
         seen, rows, models = set(), [], collections.Counter()

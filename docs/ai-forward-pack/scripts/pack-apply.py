@@ -359,11 +359,18 @@ PATH_NORMALISERS = [
 
 
 # --------------------------------------------------------------------------- io helpers
+def _unlisted(error):
+    """CTRL-G: an unlistable pack source directory would install a partial pack and report success."""
+    raise error
+
+
 def read(path):
+    """The file's text, or None when it does not exist. Any other failure raises (CTRL-G): an
+    unreadable file read as absent would install a partial pack, or overwrite what it never read."""
     try:
         with open(path, encoding="utf-8", errors="replace", newline="") as fh:
             return fh.read()
-    except OSError:
+    except (FileNotFoundError, NotADirectoryError):
         return None
 
 
@@ -681,7 +688,7 @@ class Applier(object):
             if not os.path.isfile(os.path.join(sdir, "SKILL.md")):
                 continue
             inventory[name] = []
-            for base, _dirs, files in os.walk(sdir):
+            for base, _dirs, files in os.walk(sdir, onerror=_unlisted):
                 for f in sorted(files):
                     src = os.path.join(base, f)
                     rel_in_skill = os.path.relpath(src, sdir)
@@ -747,7 +754,7 @@ class Applier(object):
         dp = os.path.join(self.target, "docs", "ai-forward-pack")
         for sub in ("templates", "scripts"):
             src_dir = os.path.join(self.pack, sub)
-            for base, _dirs, files in os.walk(src_dir):
+            for base, _dirs, files in os.walk(src_dir, onerror=_unlisted):
                 if "__pycache__" in base:
                     continue
                 for f in sorted(files):
@@ -1046,7 +1053,7 @@ class Applier(object):
         the original is backed up. Only PowerShell/Python files outside the pack's own directories
         are considered, and only when their text names CLAUDE.md together with a parity marker."""
         skip = (".git", "node_modules", "docs/ai-forward-pack", ".claude", ".github/instructions", ".github/knowledge")
-        for base, dirs, files in os.walk(self.target):
+        for base, dirs, files in os.walk(self.target):  # skip-ok: best-effort retirement in the target; an unlistable directory keeps its files, the pre-install state
             rel_base = self.rel(base)
             if any(rel_base == s or rel_base.startswith(s + "/") for s in skip):
                 dirs[:] = []
@@ -1326,7 +1333,12 @@ def main(argv=None):
         return 2
     app = Applier(args.source, args.target, dry=(args.cmd == "plan"), project=args.project, install=args.install, allow_stale=args.allow_stale,
                   force=args.force, baselines=not args.no_baselines)
-    rows = app.run()
+    try:
+        rows = app.run()
+    except OSError as error:   # CTRL-G: read() raises rather than mistake unreadable for absent
+        print("pack-apply: stopped - {0} could not be read ({1}); nothing after it was applied".format(
+            error.filename or "a file", error.__class__.__name__), file=sys.stderr)
+        return 1
     if args.json:
         print(json.dumps({"mode": args.cmd, "source_revision": app.source_rev, "target_revision": app.target_rev, "rows": rows}, indent=2))
     else:
