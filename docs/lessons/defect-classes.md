@@ -163,7 +163,7 @@ representation-contract failure, not a reason to bypass merges for authored file
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** project classes: controlled `41` · partially-controlled `24` · uncontrolled `8`; inherited table: controlled `23` · partially-controlled `4` · uncontrolled `22`
+**Status counts:** project classes: controlled `43` · partially-controlled `24` · uncontrolled `8`; inherited table: controlled `23` · partially-controlled `4` · uncontrolled `22`
 *Checked, not trusted: `tests/docs_explorer/test_defect_register_counts.py` tallies each entry's leading status and fails when this line disagrees, printing the corrected line (FR-076, class REC-A). Change a status, change this line. A status is one of the three schema values; a qualifier after it does not change the count.*
 **Recurrence since last review:** `0` — *a second occurrence of a known class means the control was wrong, not that someone was careless (CI4).*
 
@@ -583,6 +583,66 @@ representation-contract failure, not a reason to bypass merges for authored file
   now uses the checkout's depth; `test_the_baseline_fetch_never_cuts_the_checkout_history` fails
   when they differ, observed failing on the revision-116 workflow (`{'50'}` vs `{'1'}`).
 - **Status:** controlled.
+
+### TEST-C — A fixture clones the developer's checkout and inherits its ambient refs
+- **Signature:** a test runs `git clone ROOT` (tags, branches and config included), then creates
+  or names a ref and assumes the name is free. It fails as `fatal: tag '<n>' already exists`, or
+  it resolves the wrong object when a tag and a branch share a name.
+- **Why it survives:** CI checks out without tags (`fetch-depth: 50`), so the ambient set is empty
+  there and the test is green. It is CI-ENV with the polarity inverted: CI-ENV is a ref *missing*
+  in CI; TEST-C is a ref *present* locally. CI-ENV's control (fetch the missing ref) cannot see it.
+  The fixture's belief was never marked `assume:`.
+- **Instance:** 2026-10-22 — `test_no_source_overrides_use_upstream_main_defaults` fails in every
+  developer clone since the 2026-10-19 release tag `v2026.10.19.4`. Verified necessary and
+  sufficient in a no-tags clone. Latent siblings: `test_bootstrap.py:717` (`preview`) and
+  `:966-978` (resolve named refs against ROOT itself; a detached CI HEAD empties the branch).
+  `docs/investigations/bootstrap-release-tag-collision.md`.
+- **Control:** `tests/docs_explorer/test_hermetic_git_fixtures.py`, an AST rule over `tests/` that
+  fails on three shapes:
+  - a `git clone` of the repo root without `--no-tags`;
+  - a named non-HEAD `--ref` resolved against the root (an explicit `--source`/`--repo`, or
+    `run_bootstrap` with no `source=`);
+  - a ref read (`branch --show-current`, `rev-parse <ref>` …) run in the root.
+
+  It was observed red on the pre-fix tree: 5 clones, plus `test_bootstrap.py:968/972/978`.
+  `test_clone_source_inherits_no_refs_from_its_origin` (a self-built tagged origin, so it is red
+  in CI too) was observed failing before `--no-tags` was added.
+- **Status:** controlled (`fix/hermetic-fixtures-fail-closed-scans`, 2026-10-22).
+
+### CTRL-G — A control silently skips an item it could not read, so its verdict covers less than its input
+- **Signature:** `except OSError: continue` (or `return None`) around a read inside a loop over a
+  corpus, with no problem recorded. A limit counted after the skip becomes fail-open, and a derived
+  artifact loses an entry without a trace. A lint gate passes a file it never examined.
+- **Why it survives:** the skip looks like robustness, and the transient that triggers it is rare
+  (a scanner holding a freshly written file), so isolated runs never show it: 480 of 480 clean. The
+  drop leaves no record, so the failure cannot be diagnosed from the run that hit it.
+- **Instance:** 2026-10-22 — `test_html_surface_discovery_fails_closed_above_surface_limit` failed
+  once in two full gate runs. `discover_html_surfaces` counts only titled files, so one injected
+  `PermissionError` among 101 files returns 100 and no limit error. The markdown path
+  (`_markdown_candidates`) already counts on admission and records problems. Siblings with the
+  same shape: seven scanning gates (`marker-lint`, `verify-no-conflict-markers`,
+  `verify-no-machine-paths`, `verify-portable-text-io`, `verify-subprocess-utf8`, `scrub`, the
+  `visual-assets-setup` secret scan). Sibling shape 2: an `os.walk`/`rglob` with no `onerror`
+  drops a subtree silently (19 sites in 14 scripts). `lstat` faults in `_safe_path_kind` defeat
+  the limit too (verified by injection). `docs/investigations/surface-limit-flake.md`.
+- **Control:** `tests/docs_explorer/test_fail_closed_scans.py`. Its AST rule covers every *scanner
+  module* in `pack/scripts` (one that walks, globs, lists or runs `git ls-files`), and fails on:
+  - a silent handler (`continue`/`pass`/`return None|False|""|0|[]|{}`) that catches more than
+    "the path does not exist" (`FileNotFoundError`/`NotADirectoryError`), when it sits inside a
+    corpus loop or a same-module function such a loop calls;
+  - any `os.walk` without `onerror`, or `Path.walk` without `on_error`;
+  - any `rglob`, `glob` or `iglob` (they read an unlistable directory as empty; `iterdir` raises);
+  - a handler that only assigns an empty value (`ts = None`), which drops the item the same way.
+
+  A best-effort site declares `# skip-ok: <reason>`. It was observed red on 42 sites, and on 12
+  more once the pre-merge review extended it to `glob`, `Path.walk` and empty assignments. One
+  fault-injection test per gate was observed failing on the `HEAD` scripts
+  (`FAIL_CLOSED_SCRIPTS=<pre-fix tree>`: 12 of 12). `SurfaceAdmissionTests` in
+  `test_docs_graph.py` (11 fail-first) covers the limit, the walk, the title cap and `validate`.
+- **Instance 2 (found while specifying):** a valid UTF-8 surface over 256 KiB, whose title read cut
+  a multi-byte character, was silently dropped on every run. The title read now decodes
+  incrementally.
+- **Status:** controlled (`fix/hermetic-fixtures-fail-closed-scans`, 2026-10-22).
 
 ### PACK-Q — An adapter written to a contract's *documented* shape, never to a *recorded* one
 - **Signature:** an integration is built against a vendor's envelope as described — in docs, in a schema, or by analogy to a sibling product — and the field names, nesting or cardinality of the real traffic differ. The adapter parses nothing, extracts nothing, and returns its **safe default**. Nothing throws. It reads as working, and the safe default is usually "allow".

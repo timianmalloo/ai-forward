@@ -119,7 +119,8 @@ appended -- which is why this is checked BEFORE appending, not after.
 
 ### `read(path)`
 
-**Coverage gap** — no docstring in the source.
+The file's text, or None when it does not exist. Any other failure raises (CTRL-G): an
+unreadable file read as absent would install a partial pack, or overwrite what it never read.
 
 ### `norm_nl(text)`
 
@@ -183,5 +184,5 @@ original's skill-surface needles and required-phrase checks where they can be re
 
 ## Coverage
 
-- Public functions: **19** · documented: **12** (**63%**)
-- Undocumented (recorded, not invented): `read`, `norm_nl`, `frontmatter`, `git`, `normalise`, `render_table`, `summarize`
+- Public functions: **19** · documented: **13** (**68%**)
+- Undocumented (recorded, not invented): `norm_nl`, `frontmatter`, `git`, `normalise`, `render_table`, `summarize`

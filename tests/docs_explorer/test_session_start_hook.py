@@ -289,7 +289,7 @@ class SessionStartHookTests(unittest.TestCase):
         primary = pathlib.Path(self.tmp) / "primary.git"
         linked = pathlib.Path(self.tmp) / "linked"
         env = {key: value for key, value in os.environ.items() if not key.startswith("GIT_")}
-        for command in (["git", "clone", "--bare", "--shared", "--quiet", str(ROOT), str(primary)],
+        for command in (["git", "clone", "--bare", "--shared", "--quiet", "--no-tags", str(ROOT), str(primary)],
                         ["git", "-C", str(primary), "worktree", "add", "--detach", "--no-checkout",
                          str(linked), "HEAD"]):
             r = subprocess.run(command, capture_output=True, text=True, env=env, timeout=30)

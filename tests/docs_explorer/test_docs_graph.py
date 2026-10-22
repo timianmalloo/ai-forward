@@ -403,7 +403,7 @@ sequenceDiagram
                 encoding="utf-8",
             )
 
-            surfaces = module.discover_html_surfaces(str(root), [])
+            surfaces = module.discover_html_surfaces(str(root), [], [])
 
         self.assertEqual(
             "window.__surfaceOwned = true",
@@ -420,7 +420,7 @@ sequenceDiagram
             )
 
             module = load_module()
-            surfaces = module.discover_html_surfaces(str(root), [])
+            surfaces = module.discover_html_surfaces(str(root), [], [])
 
         self.assertEqual("First title", surfaces[0]["title"])
 
@@ -436,7 +436,7 @@ sequenceDiagram
                 )
 
             with self.assertRaises(module.DocsGraphError) as captured:
-                module.discover_html_surfaces(str(root), [])
+                module.discover_html_surfaces(str(root), [], [])
 
         self.assertEqual("SURFACE_LIMIT_EXCEEDED", captured.exception.code)
         self.assertEqual(4, captured.exception.exit_code)
@@ -455,7 +455,7 @@ sequenceDiagram
             with mock.patch.object(module.os, "lstat", return_value=fake_stat), mock.patch(
                 "builtins.open", side_effect=AssertionError("symlink should not be opened")
             ):
-                surfaces = module.discover_html_surfaces(str(root), [])
+                surfaces = module.discover_html_surfaces(str(root), [], [])
 
         self.assertEqual([], surfaces)
 
@@ -1614,6 +1614,224 @@ class DeriveOptInWriteTests(unittest.TestCase):
             result = self._derive(repo, "--out", str(dst))
             self.assertEqual(0, result.returncode, result.stdout + result.stderr)
             self.assertTrue(dst.exists(), "an explicit --out is honoured even in a fresh repo")
+
+
+class SurfaceAdmissionTests(unittest.TestCase):
+    """CTRL-G. Surface discovery counted only the files whose title it could read and dropped
+    the rest without a trace, so one transient read fault among 101 surfaces returned 100 and
+    the fail-closed limit never fired (the flaky surface-limit test). Every surface is now counted
+    on admission and every fault is a finding. docs/investigations/surface-limit-flake.md.
+    The fault tests were observed failing on the pre-fix code."""
+
+    FAULTY = "tool-050.html"
+
+    def _surfaces(self, root, count):
+        root.mkdir(parents=True, exist_ok=True)
+        for index in range(count):
+            (root / f"tool-{index:03d}.html").write_text(f"<title>Tool {index}</title>", encoding="utf-8")
+
+    def _failing(self, real, name, error):
+        def call(path, *args, **kwargs):
+            if os.fspath(path).endswith(name):
+                if isinstance(error, OSError) and error.filename is None:
+                    error.filename = os.fspath(path)   # as a real OS error carries it
+                raise error
+            return real(path, *args, **kwargs)
+        return call
+
+    def _assert_limit(self, module, root, patch):
+        with patch, self.assertRaises(module.DocsGraphError) as captured:
+            module.discover_html_surfaces(str(root), [], [])
+        self.assertEqual("SURFACE_LIMIT_EXCEEDED", captured.exception.code)
+
+    def test_a_read_fault_cannot_lower_the_surface_count(self):
+        module = load_module()
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp) / "docs"
+            self._surfaces(root, module.SURFACE_LIMIT + 1)
+            fault = self._failing(os.open, self.FAULTY, PermissionError(13, "in use by another process"))
+            self._assert_limit(module, root, mock.patch.object(module.os, "open", side_effect=fault))
+
+    def test_an_lstat_fault_cannot_lower_the_surface_count(self):
+        module = load_module()
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp) / "docs"
+            self._surfaces(root, module.SURFACE_LIMIT + 1)
+            fault = self._failing(os.lstat, self.FAULTY, PermissionError(13, "in use by another process"))
+            self._assert_limit(module, root, mock.patch.object(module.os, "lstat", side_effect=fault))
+
+    def test_a_source_change_during_read_cannot_lower_the_surface_count(self):
+        module = load_module()
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp) / "docs"
+            self._surfaces(root, module.SURFACE_LIMIT + 1)
+            changed = module._SourceChangedError("source changed during read")
+            fault = self._failing(module._verify_open_snapshot, self.FAULTY, changed)
+            self._assert_limit(module, root, mock.patch.object(module, "_verify_open_snapshot", side_effect=fault))
+
+    def test_an_unreadable_surface_under_the_limit_is_a_finding(self):
+        module = load_module()
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp) / "docs"
+            self._surfaces(root, 5)
+            (root / "tool-004.html").rename(root / self.FAULTY)
+            problems = []
+            fault = self._failing(os.open, self.FAULTY, PermissionError(13, "in use by another process"))
+            with mock.patch.object(module.os, "open", side_effect=fault):
+                surfaces = module.discover_html_surfaces(str(root), [], problems)
+        self.assertEqual(4, len(surfaces))
+        self.assertEqual(1, len(problems), problems)
+        self.assertTrue(problems[0]["file"].endswith(self.FAULTY), problems)
+        self.assertIn("PermissionError", problems[0]["problem"])
+
+    def test_a_directory_that_cannot_be_listed_is_a_finding(self):
+        module = load_module()
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp) / "docs"
+            self._surfaces(root / "sub", 2)
+            problems = []
+            fault = self._failing(os.scandir, "sub", PermissionError(13, "denied"))
+            with mock.patch.object(module.os, "scandir", side_effect=fault):
+                module.discover_html_surfaces(str(root), [], problems)
+        self.assertEqual(1, len(problems), problems)
+        self.assertTrue(problems[0]["file"].endswith("sub"), problems)
+        self.assertIn("unreadable directory", problems[0]["problem"])
+
+    def test_a_directory_whose_lstat_fails_is_a_finding(self):
+        module = load_module()
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp) / "docs"
+            self._surfaces(root / "sub", 2)
+            problems = []
+            fault = self._failing(os.lstat, "sub", PermissionError(13, "denied"))
+            with mock.patch.object(module.os, "lstat", side_effect=fault):
+                module.discover_html_surfaces(str(root), [], problems)
+        self.assertEqual(1, len(problems), problems)
+        self.assertTrue(problems[0]["file"].endswith("sub"), problems)
+
+    def test_a_title_read_that_cuts_a_character_keeps_the_title(self):
+        module = load_module()
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp) / "docs"
+            root.mkdir()
+            head = b"<title>Big</title>"
+            pad = b"a" * (module.SURFACE_TITLE_BYTES - len(head) - 1)
+            (root / "big.html").write_bytes(head + pad + "é".encode("utf-8") + b"tail")
+            problems = []
+            surfaces = module.discover_html_surfaces(str(root), [], problems)
+        self.assertEqual(["Big"], [surface["title"] for surface in surfaces])
+        self.assertEqual([], problems)
+
+    def test_a_file_of_exactly_the_cap_is_decoded_in_full(self):
+        """A file whose size is the cap is complete, so a character cut at its end is invalid UTF-8,
+        not a read that stopped mid-character. One byte of look-ahead tells the two apart."""
+        module = load_module()
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp) / "docs"
+            root.mkdir()
+            head = b"<title>Cut</title>"
+            pad = b"a" * (module.SURFACE_TITLE_BYTES - len(head) - 1)
+            (root / "cut.html").write_bytes(head + pad + b"\xc3")
+            problems = []
+            module.discover_html_surfaces(str(root), [], problems)
+        self.assertEqual(1, len(problems), problems)
+        self.assertIn("UnicodeDecodeError", problems[0]["problem"])
+
+    def test_validate_fails_closed_above_the_surface_limit(self):
+        """validate now counts surfaces, so it stops above the limit as derive does (exit 4 is
+        the error's code; outside `context` it propagates, as SCAN_LIMIT_EXCEEDED does)."""
+        module = load_module()
+        with tempfile.TemporaryDirectory() as temp:
+            root = self._clean_docs(temp)
+            self._surfaces(root, module.SURFACE_LIMIT + 1)
+            with self.assertRaises(module.DocsGraphError) as captured:
+                self._main(module, "--root", str(root), "validate")
+        self.assertEqual("SURFACE_LIMIT_EXCEEDED", captured.exception.code)
+        self.assertEqual(4, captured.exception.exit_code)
+
+    def test_a_surface_that_is_not_utf8_is_a_finding(self):
+        module = load_module()
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp) / "docs"
+            root.mkdir()
+            (root / "latin.html").write_bytes(b"<title>Caf\xe9</title>")
+            problems = []
+            module.discover_html_surfaces(str(root), [], problems)
+        self.assertEqual(1, len(problems), problems)
+        self.assertIn("UnicodeDecodeError", problems[0]["problem"])
+
+    def test_at_most_one_open_per_admitted_surface(self):
+        module = load_module()
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp) / "docs"
+            self._surfaces(root, 5)
+            opened = []
+            real = module._open_verified_binary
+
+            def counting(path, *args, **kwargs):
+                opened.append(path)
+                return real(path, *args, **kwargs)
+
+            with mock.patch.object(module, "_open_verified_binary", side_effect=counting):
+                module.discover_html_surfaces(str(root), [], [])
+        self.assertLessEqual(len(opened), 5)
+        self.assertEqual(len(opened), len(set(opened)))
+
+    def _main(self, module, *argv):
+        out, err = io.StringIO(), io.StringIO()
+        with mock.patch.object(sys, "argv", ["docs-graph.py", *argv]), \
+                mock.patch.object(sys, "stdout", out), mock.patch.object(sys, "stderr", err):
+            try:
+                module.main()
+                code = 0
+            except SystemExit as exit_:
+                code = exit_.code
+        return code, out.getvalue(), err.getvalue()
+
+    def _clean_docs(self, temp):
+        root = Path(temp) / "docs"
+        root.mkdir()
+        (root / "a.md").write_text(ValidateGateSemanticsTests.ART.format(aid="a", target="a", flag="[]"),
+                                   encoding="utf-8")
+        self._surfaces(root, 2)
+        return root
+
+    def test_validate_fails_on_an_unreadable_surface(self):
+        module = load_module()
+        with tempfile.TemporaryDirectory() as temp:
+            root = self._clean_docs(temp)
+            self.assertEqual(0, self._main(module, "--root", str(root), "derive")[0])
+            self.assertEqual(0, self._main(module, "--root", str(root), "validate")[0])
+            fault = self._failing(os.open, "tool-001.html", PermissionError(13, "in use by another process"))
+            with mock.patch.object(module.os, "open", side_effect=fault):
+                code, out, _ = self._main(module, "--root", str(root), "validate")
+        self.assertEqual(1, code, out)
+        problems = json.loads(out)["problems"]
+        self.assertTrue(any("tool-001.html" in p["file"] and "PermissionError" in p["problem"]
+                            for p in problems), problems)
+
+    def test_validate_fails_on_a_markdown_directory_that_cannot_be_listed(self):
+        module = load_module()
+        with tempfile.TemporaryDirectory() as temp:
+            root = self._clean_docs(temp)
+            (root / "notes").mkdir()
+            self.assertEqual(0, self._main(module, "--root", str(root), "derive")[0])
+            fault = self._failing(os.scandir, "notes", PermissionError(13, "denied"))
+            with mock.patch.object(module.os, "scandir", side_effect=fault):
+                code, out, _ = self._main(module, "--root", str(root), "validate")
+        self.assertEqual(1, code, out)
+        self.assertTrue(any(p["file"].endswith("notes") for p in json.loads(out)["problems"]), out)
+
+    def test_derive_reports_a_surface_finding_without_blocking(self):
+        module = load_module()
+        with tempfile.TemporaryDirectory() as temp:
+            root = self._clean_docs(temp)
+            fault = self._failing(os.open, "tool-001.html", PermissionError(13, "in use by another process"))
+            with mock.patch.object(module.os, "open", side_effect=fault):
+                code, _, err = self._main(module, "--root", str(root), "derive")
+        self.assertEqual(0, code, err)
+        self.assertIn("tool-001.html", err)
+        self.assertIn("PermissionError", err)
 
 
 if __name__ == "__main__":

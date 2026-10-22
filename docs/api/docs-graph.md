@@ -136,9 +136,11 @@ Returns (dict, error). Supports: scalars, '>-' folded blocks, '- item' lists,
 
 **Coverage gap** — no docstring in the source.
 
-### `discover_html_surfaces(root, artifacts)`
+### `discover_html_surfaces(root, artifacts, problems)`
 
-**Coverage gap** — no docstring in the source.
+Every surface is counted when it is admitted, BEFORE it is read, and every path that
+could not be examined is a finding in `problems` (CTRL-G): counting only the files that
+read cleanly let one transient fault among 101 surfaces slip under SURFACE_LIMIT.
 
 ### `scan(root, metadata_only=…, artifact_limit=…)`
 
@@ -254,5 +256,5 @@ Extract the markdown table under --heading from every matching artifact and merg
 
 ## Coverage
 
-- Public functions: **37** · documented: **3** (**8%**)
-- Undocumented (recorded, not invented): `canonical_json`, `sha256_text`, `normalized_source`, `parse_scalar`, `split_flow`, `parse_flow_map`, `extract_mermaid_blocks`, `discover_html_surfaces`, `scan`, `scan_context`, `read_context_source`, `sniff_kind`, `analyze`, `cmd_inventory`, `count_by`, `policy_hash`, `graph_hash`, `project_identity`, `project_root_id`, `cmd_derive`, `cmd_freshness`, `edit_frontmatter_flags`, `cmd_flag`, `cmd_clear_flag`, `cmd_snapshot`, `cmd_stub`, `context_graph`, `traverse_context`, `markdown_chunks`, `context_health`, `active_changes`, `packet_bytes`, `cmd_context`, `write_context_error`
+- Public functions: **37** · documented: **4** (**11%**)
+- Undocumented (recorded, not invented): `canonical_json`, `sha256_text`, `normalized_source`, `parse_scalar`, `split_flow`, `parse_flow_map`, `extract_mermaid_blocks`, `scan`, `scan_context`, `read_context_source`, `sniff_kind`, `analyze`, `cmd_inventory`, `count_by`, `policy_hash`, `graph_hash`, `project_identity`, `project_root_id`, `cmd_derive`, `cmd_freshness`, `edit_frontmatter_flags`, `cmd_flag`, `cmd_clear_flag`, `cmd_snapshot`, `cmd_stub`, `context_graph`, `traverse_context`, `markdown_chunks`, `context_health`, `active_changes`, `packet_bytes`, `cmd_context`, `write_context_error`

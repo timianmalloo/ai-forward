@@ -602,7 +602,7 @@ def git(args, root):
         r = subprocess.run(["git", *args], cwd=cwd, capture_output=True, text=True,
                            encoding="utf-8", errors="replace", timeout=15)
         return r.stdout.strip() if r.returncode == 0 else None
-    except (OSError, subprocess.SubprocessError):
+    except (OSError, subprocess.SubprocessError):  # skip-ok: a git probe; None means no git context, recorded as absent
         return None
 
 
@@ -754,7 +754,7 @@ def read_ledger_mail(root):
                     try:
                         ts = datetime.datetime.fromtimestamp(
                             float(rec["at"]), datetime.timezone.utc).strftime(ISO)
-                    except (TypeError, ValueError, OverflowError, OSError):
+                    except (TypeError, ValueError, OverflowError, OSError):  # skip-ok: a timestamp conversion, not a read; the row is kept with an empty time
                         ts = None
                 row = {"id": rec["mail_id"], "ts": ts or "", "from": rec.get("from") or "",
                        "to": rec.get("to") or "", "kind": rec.get("kind") or "",

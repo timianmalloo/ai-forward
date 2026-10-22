@@ -117,13 +117,19 @@ def runtime_start_marker_name(path, root):
     return any(relative.parts[-len(Path(name).parts):] == Path(name).parts for name in RUNTIME_START_MARKERS)
 
 
+def _unlisted(error):
+    """CTRL-G: a snapshot that silently drops an unlistable directory would compare equal across a change."""
+    raise error
+
+
 def is_link(path):
     """A symlink, or a Windows reparse point such as a junction, which `is_symlink()` does not report and which an
     unprivileged process can create. Every link check here uses this one rule."""
     try:
         info = Path(path).lstat()
-    except OSError:
+    except (FileNotFoundError, NotADirectoryError):
         return False
+    # Any other failure raises: a link check that cannot look must not answer "not a link" (CTRL-G).
     return stat.S_ISLNK(info.st_mode) or bool(getattr(info, "st_file_attributes", 0)
                                               & getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0))
 
@@ -174,7 +180,7 @@ def snapshot(repo, local_area=None, details=False, _depth=0):
     repo = Path(project["root"])
     if project.get("kind") == "plain":
         names = []
-        for directory, folders, files in os.walk(repo, followlinks=False):
+        for directory, folders, files in os.walk(repo, followlinks=False, onerror=_unlisted):
             names.extend(str(Path(directory, name).relative_to(repo))
                          for name in folders if is_link(Path(directory, name))
                          or runtime_start_marker_name(Path(directory, name), repo))
@@ -195,7 +201,7 @@ def snapshot(repo, local_area=None, details=False, _depth=0):
         # Git omits FIFOs/sockets and can miss explicitly unignored empty
         # directories. Discover exact stores independently of Git/ignore policy;
         # never add ordinary ignored regular files or traverse filesystem links.
-        for directory, folders, _ in os.walk(repo, followlinks=False):
+        for directory, folders, _ in os.walk(repo, followlinks=False, onerror=_unlisted):
             folders[:] = [name for name in folders
                           if name not in {".git", "node_modules", "__pycache__", ".venv", "venv"}
                           and not (local_area and Path(directory, name).is_relative_to(Path(local_area)))

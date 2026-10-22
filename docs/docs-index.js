@@ -1133,7 +1133,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "8b2e0362b45b53e0071726babdba678a10a8c37379a5105b43f71afaeeb3aaa7"
+      "sourceSha256": "355072a2279bd6314db304a67a71270d7316c6ac2776da022e2f070ddf04965c"
     },
     {
       "id": "api-dream",
@@ -1234,7 +1234,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "2991b77fb9194c60834c4dda59f49f74e050da90e9cf3a729fb4fda0c1655283"
+      "sourceSha256": "b15611cafd5c368160d35cb23b5b2b3f9f4b8b11ef5ea7f1c3a4286f492556b7"
     },
     {
       "id": "api-marker-lint",
@@ -1334,7 +1334,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "248d443d14ea807a2b7d619ca8a6b54aa922d659cf9f35da4fecf99daf7916d9"
+      "sourceSha256": "1153d3e76e4650516a6c1444e4ba3e5afd18c7b48e47a705a33d3b9b7e9c1591"
     },
     {
       "id": "api-pack-doctor",
@@ -4085,6 +4085,43 @@ window.DOCS_INDEX = {
       "sourceSha256": "38a09a51a44004a2939929a9c81f95d19b2c074492484fa31a1f097578b76f1f"
     },
     {
+      "id": "design-hermetic-fixtures-and-fail-closed-scans",
+      "path": "docs/design/hermetic-fixtures-and-fail-closed-scans.md",
+      "title": "Design - hermetic git fixtures (TEST-C) and fail-closed corpus scans (CTRL-G)",
+      "type": "design",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2027-04-20",
+      "reviewSuggested": [],
+      "summary": "How the three spec slices are built. Slice 1 makes the bootstrap fixtures clone with --no-tags and run against origins the tests own, guarded by an AST control over tests/. Slice 2 makes docs-graph count surfaces on admission, give both walks an onerror, decode the title read incrementally, and run surface discovery in validate. Slice 3 applies one read-or-report rule inline at every corpus-scan site in pack/scripts, guarded by an AST control. It adds no new module.",
+      "tags": [
+        "design",
+        "test-hermeticity",
+        "fail-closed",
+        "docs-graph",
+        "bootstrap",
+        "TEST-C",
+        "CTRL-G"
+      ],
+      "links": [
+        {
+          "to": "spec-hermetic-fixtures-and-fail-closed-scans",
+          "rel": "implements"
+        },
+        {
+          "to": "investigation-surface-limit-flake",
+          "rel": "relates-to"
+        },
+        {
+          "to": "investigation-bootstrap-release-tag-collision",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "cc7c897aeb660d22617ad9ecf7efee8af3ea49cea5168e37535e3b6e5564b62d"
+    },
+    {
       "id": "design-leader-designation",
       "path": "docs/design/leader-designation.md",
       "title": "Design — leader designation (coord leader verbs over refs/coord/leader · the join fence · doctor/metrics · CO-L)",
@@ -5048,7 +5085,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7b5508077c78267ff20738f97c0ea47148dcc3161078b5ecc289114b6134e86d"
+      "sourceSha256": "a66f59f986ef46b17cf5507b0fb0bfafae43ebd40d7c0f89e3c1a3ac9c6e07fd"
     },
     {
       "id": "docs-index",
@@ -6944,6 +6981,34 @@ window.DOCS_INDEX = {
       "sourceSha256": "33d6658a43a3ecae5976e0a31b135922eb02d6ee7457564163ba1db0a8fa15e9"
     },
     {
+      "id": "investigation-bootstrap-release-tag-collision",
+      "path": "docs/investigations/bootstrap-release-tag-collision.md",
+      "title": "Investigation - test_bootstrap fails with 'tag v2026.10.19.4 already exists' in a developer clone",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "test_no_source_overrides_use_upstream_main_defaults clones the developer's checkout, tags and all, then creates the release tag v2026.10.19.4 on the assumption that the clone has none. Since the 2026-10-19 release the tag exists in every developer clone, so the fixture fails; CI never sees it because it checks out without tags. Verified necessary and sufficient. Class TEST-C (a fixture inherits ambient refs from the checkout it clones) registered; phased repair proposed, not applied.",
+      "tags": [
+        "investigation",
+        "test-hermeticity",
+        "bootstrap",
+        "git-refs",
+        "TEST-C",
+        "CI-ENV"
+      ],
+      "links": [
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "e27d6fe6cc165c00669e07695d051ae3318b293f00877fd59eb4007d4a2fb9de"
+    },
+    {
       "id": "investigation-fr-071",
       "path": "docs/investigations/fr-071-audit-suggest-self-report.md",
       "title": "Investigation - FR-071: audit-log suggest self-reports its own closeout",
@@ -6977,6 +7042,33 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "63fcb57885b0f16559cde363bfa4c587c351afec3685450f628c47101610eaf1"
+    },
+    {
+      "id": "investigation-surface-limit-flake",
+      "path": "docs/investigations/surface-limit-flake.md",
+      "title": "Investigation - the HTML surface limit fails open when one file is transiently unreadable",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "test_html_surface_discovery_fails_closed_above_surface_limit failed once in two full gate runs. discover_html_surfaces counts only files whose title it could read, and drops any file that raises an OSError without reporting it. One transient read failure among 101 files leaves 100, so the fail-closed limit never fires. The mechanism is verified by fault injection; the transient's source (likely an on-access scanner) is inferred. Class CTRL-G registered; phased repair proposed, not applied.",
+      "tags": [
+        "investigation",
+        "flaky-test",
+        "docs-graph",
+        "fail-open",
+        "CTRL-G"
+      ],
+      "links": [
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "4ba4df5f009970abb87117cfefa5fcf49f5e493b77467012065175e5a6516ea4"
     },
     {
       "id": "lens-code-doc-join",
@@ -10874,6 +10966,47 @@ window.DOCS_INDEX = {
       "sourceSha256": "6a07665a54acbfb5d1a5321d494913ee0b3d06af9173d3e47f9d48f25ad4df88"
     },
     {
+      "id": "proof-hermetic-fixtures-and-fail-closed-scans",
+      "path": "docs/proof/hermetic-fixtures-and-fail-closed-scans.md",
+      "title": "Proof Pack — hermetic git fixtures and fail-closed corpus scans",
+      "type": "proof-pack",
+      "status": "in-review",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2027-04-20",
+      "reviewSuggested": [],
+      "summary": "Executed evidence for the three slices. Bootstrap fixtures no longer inherit tags from the developer checkout, docs-graph counts every surface before reading it, and every corpus scan in pack/scripts reports what it could not read. Each control and fail-first test was seen red on the pre-fix code.",
+      "tags": [
+        "proof",
+        "test-hermeticity",
+        "fail-closed",
+        "docs-graph",
+        "bootstrap",
+        "TEST-C",
+        "CTRL-G"
+      ],
+      "links": [
+        {
+          "to": "spec-hermetic-fixtures-and-fail-closed-scans",
+          "rel": "implements"
+        },
+        {
+          "to": "design-hermetic-fixtures-and-fail-closed-scans",
+          "rel": "implements"
+        },
+        {
+          "to": "investigation-surface-limit-flake",
+          "rel": "relates-to"
+        },
+        {
+          "to": "investigation-bootstrap-release-tag-collision",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "395486803052423d15caaa9281c1286fdb1329eca0d2a600da70f2e13df408f7"
+    },
+    {
       "id": "proof-liveness-and-track",
       "path": "docs/proof/liveness-and-track.md",
       "title": "Proof Pack — progress liveness, the running track and the kick ladder (P3)",
@@ -11707,6 +11840,43 @@ window.DOCS_INDEX = {
       "sourceSha256": "3a1b4242dc83c313fbc9b3e14877e875e9e44eb3b5eeb59025efd5abd1b0a13d"
     },
     {
+      "id": "spec-hermetic-fixtures-and-fail-closed-scans",
+      "path": "docs/specs/hermetic-fixtures-and-fail-closed-scans.md",
+      "title": "Spec - hermetic git fixtures (TEST-C) and fail-closed corpus scans (CTRL-G)",
+      "type": "spec",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "pack-evolution",
+      "reviewBy": "2027-04-20",
+      "reviewSuggested": [],
+      "summary": "The durable fixes for two verified defect classes. TEST-C: a test never uses the developer checkout as a git upstream it names refs in. CTRL-G: a scan that renders a verdict over a corpus accounts for every item it admitted, and reports every item it could not read instead of skipping it silently. Delivered in four slices. Each slice has failing-first tests, and an AST-defined control drives the remaining latent sites onto one shared rule.",
+      "tags": [
+        "spec",
+        "test-hermeticity",
+        "fail-closed",
+        "docs-graph",
+        "bootstrap",
+        "TEST-C",
+        "CTRL-G"
+      ],
+      "links": [
+        {
+          "to": "investigation-bootstrap-release-tag-collision",
+          "rel": "refines"
+        },
+        {
+          "to": "investigation-surface-limit-flake",
+          "rel": "refines"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "0d87e7d789d130d0c65702442aa8873711415c655832daeb69511e8734f4c52e"
+    },
+    {
       "id": "spec-leader-designation",
       "path": "docs/specs/leader-designation.md",
       "title": "Leader designation in a git ref — coord leader pin|who|renew|release|reclaim over refs/coord/leader, and the join fence",
@@ -12361,6 +12531,14 @@ window.DOCS_INDEX = {
       "description": "Inspect a rendered design or design-language preview."
     },
     {
+      "id": "surface-design-hermetic-fixtures-and-fail-closed-scans",
+      "path": "docs/design/hermetic-fixtures-and-fail-closed-scans.html",
+      "title": "Hermetic Fixtures And Fail Closed Scans",
+      "kind": "design-preview",
+      "description": "Inspect a rendered design or design-language preview.",
+      "artifactId": "design-hermetic-fixtures-and-fail-closed-scans"
+    },
+    {
       "id": "surface-design-one-command-adoption",
       "path": "docs/design/one-command-adoption.html",
       "title": "One Command Adoption",
@@ -12642,6 +12820,14 @@ window.DOCS_INDEX = {
       "artifactId": "forensic-review-rev108"
     },
     {
+      "id": "surface-specs-hermetic-fixtures-and-fail-closed-scans",
+      "path": "docs/specs/hermetic-fixtures-and-fail-closed-scans.html",
+      "title": "Hermetic Fixtures And Fail Closed Scans",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "spec-hermetic-fixtures-and-fail-closed-scans"
+    },
+    {
       "id": "surface-proposals-active-multi-harness-coordination",
       "path": "docs/proposals/active-multi-harness-coordination.html",
       "title": "Ledger and bus — active multi-harness coordination",
@@ -12742,5 +12928,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "b9664e003db07e096d3a245b68ba4a4e339e7a0aca8d7e89f57a7bb73d719ba3"
+  "graphSha256": "b777b4119db94049aa74a4436d637e772ad418b272b42d9ec30443427a107415"
 };

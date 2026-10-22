@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-forward",
-  "generated": "2026-10-20T00:26:27Z",
+  "generated": "2026-10-22T21:52:32Z",
   "audit": [
     {
       "actor": null,
@@ -13890,6 +13890,93 @@ window.AUDIT_DATA = {
       "outcome": "success",
       "goal": "Close FR-090..FR-100 and the four designs' STRIDE/LINDDUN per the owner's rulings",
       "done_when": "merged to main with green required checks, backlog updated, release tag pushed"
+    },
+    {
+      "id": "al-01M5JSKWAX1XJ4578Z1XHKM2Y7",
+      "shortname": "investigate-bootstrap-tag-and-surface-flake",
+      "datetime": "2026-10-22T19:08:23Z",
+      "session": "344c575b-ce7f-4851-a276-57d80fa5ab79",
+      "prompt": "/investigate this main: test_bootstrap … no_source_overrides… fails with \"tag v2026.10.19.4 already exists\" also /investigate the flaky test",
+      "summary": "A (Verified): clone_source() inherits the developer clone's tags; the 2026-10-19 release tag collides with the fixture's git tag; CI fetches no tags. Class TEST-C. B (mechanism Verified by injection, trigger Inferred): discover_html_surfaces counts only successfully read files and drops lstat/read/walk failures silently, so one transient fault defeats SURFACE_LIMIT. Class CTRL-G with 7 gate siblings and 19 walks without onerror. Phased repair plans proposed; nothing implemented; stopped for review.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/investigations/bootstrap-release-tag-collision.md",
+        "docs/investigations/surface-limit-flake.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "started_at": "2026-10-22T19:05:02Z",
+      "duration_seconds": 201.0
+    },
+    {
+      "id": "al-01M5JSKXG1WXNG2F7XQ2RSS1ND",
+      "shortname": "specify-hermetic-fixtures-and-fail-closed-scans",
+      "datetime": "2026-10-22T19:24:14Z",
+      "session": "344c575b-ce7f-4851-a276-57d80fa5ab79",
+      "prompt": "/specify use the two reports to spec the work needed for the durable fixes",
+      "summary": "Spec for the durable TEST-C and CTRL-G fixes. 3 slices: (1) hermetic bootstrap fixtures + TEST-C AST control, tests only; (2) docs-graph admission counting, walk onerror, validate wiring, title-cap truncation fix; (3) one shared read-or-report rule driven onto every site by an AST CTRL-G control. Two review rounds: Test Architect veto cleared at the spec gate, Simplifier cleared. New verified defect found: a valid UTF-8 surface over 256 KiB with a multi-byte char straddling the cap loses its title.",
+      "kind": "skill",
+      "skill": "specify",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/specs/hermetic-fixtures-and-fail-closed-scans.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "started_at": "2026-10-22T19:23:17Z",
+      "duration_seconds": 57.0
+    },
+    {
+      "id": "al-01M5JSKXQ9YZXVHPRF54G1VHTJ",
+      "shortname": "design-slice-hermetic-fixtures-and-fail-closed-scans",
+      "datetime": "2026-10-22T21:52:31Z",
+      "session": "344c575b-ce7f-4851-a276-57d80fa5ab79",
+      "prompt": "go through the /design-slice -> /implement  loop based on this spec",
+      "summary": "Design for slices 1-3: --no-tags hermetic fixtures with a TEST-C AST control; docs-graph counts surfaces on admission with onerror walks and an incremental title decode; an inline read-or-report rule at every corpus-scan site guarded by a CTRL-G AST control. Simplifier PASS; Test Architect BLOCK with 7 findings, all resolved.",
+      "kind": "skill",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/design/hermetic-fixtures-and-fail-closed-scans.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false
+    },
+    {
+      "id": "al-01M5JSKYC09C0RR2J9Y15J90VM",
+      "shortname": "implement-hermetic-fixtures-and-fail-closed-scans",
+      "datetime": "2026-10-22T21:52:32Z",
+      "session": "344c575b-ce7f-4851-a276-57d80fa5ab79",
+      "prompt": "go through the /design-slice -> /implement  loop based on this spec",
+      "summary": "Slices 1-3 built red-first: hermetic --no-tags fixtures (TEST-C control red on 8 sites), docs-graph admission counting and surface findings in validate (11 fail-first), and fail-closed scans across pack/scripts (CTRL-G control red on 42 + 12 sites; 15 per-gate fault tests red on the pre-fix scripts). Two pre-merge review rounds applied. INSTALL revision 118. Proof Pack committed.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/hermetic-fixtures-and-fail-closed-scans.md",
+        "tests/docs_explorer/test_fail_closed_scans.py",
+        "tests/docs_explorer/test_hermetic_git_fixtures.py",
+        "pack/scripts/docs-graph.py",
+        "pack/adapters/INSTALL.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "compiled": false,
+      "tier": "T1",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      }
     }
   ],
   "changes": [
@@ -15623,6 +15710,28 @@ window.AUDIT_DATA = {
         "before": null,
         "after": "4a22f12c4cbc9cd403627995109ccfdc1c6fa9c6",
         "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M5JSKY3A80P9298GCY9MV1WD",
+      "datetime": "2026-10-22T21:52:31Z",
+      "session": "344c575b-ce7f-4851-a276-57d80fa5ab79",
+      "kind": "design",
+      "skill": "design-slice",
+      "title": "Corpus scans fail closed; git fixtures are hermetic",
+      "prompt": "go through the /design-slice -> /implement  loop based on this spec",
+      "summary": "Only a path that does not exist may be skipped silently; any other read or listing failure is a finding, or the site declares # skip-ok. Fixtures clone with --no-tags from origins the tests own.",
+      "rationale": "An inline rule per site instead of a shared module: each site's finding shape differs and the AST control enforces the rule wherever it is written.",
+      "artifacts": [
+        "docs/design/hermetic-fixtures-and-fail-closed-scans.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "30b184b",
+        "after": "30b184b062358860cf5ce27554ba2b8bff069b3e",
+        "branch": "fix/hermetic-fixtures-fail-closed-scans",
         "pushed": true,
         "commits": []
       }

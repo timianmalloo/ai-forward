@@ -330,7 +330,7 @@ def read_events(root):
     events, errors, files = [], [], 0
     if not logdir.is_dir():
         return events, errors, files
-    for logfile in sorted(logdir.glob("*.jsonl")):
+    for logfile in sorted(p for p in logdir.iterdir() if p.match("*.jsonl")):   # CTRL-G: iterdir raises
         files += 1
         with open(logfile, "r", encoding="utf-8") as fh:
             for lineno, line in enumerate(fh, start=1):
@@ -489,7 +489,7 @@ def append_decision(root, session, agent, path, decision, hook_context=None):
             os.write(fd, payload.encode("utf-8"))
         finally:
             os.close(fd)
-    except Exception:
+    except Exception:  # skip-ok: bookkeeping append; a failure must not change the verdict it records
         pass    # never let a bookkeeping failure change a verdict
 
 
@@ -498,7 +498,7 @@ def read_decisions(root):
     out = []
     if not logdir.is_dir():
         return out
-    for logfile in sorted(logdir.glob("*.jsonl")):
+    for logfile in sorted(p for p in logdir.iterdir() if p.match("*.jsonl")):   # CTRL-G: iterdir raises
         with open(logfile, "r", encoding="utf-8") as fh:
             for line in fh:
                 if not line.strip():
@@ -688,7 +688,7 @@ def current_blob(repo, path):
     try:
         with open(target, "rb") as fh:
             return blob_sha(fh.read())
-    except OSError:
+    except OSError:  # skip-ok: a blob probe for one known path; None reads as no current blob
         return None
 
 
@@ -2139,7 +2139,7 @@ def _relativise(path, repo, cwd=None):
         resolved = _norm(str(Path(path).resolve()))
         if resolved not in forms:
             forms.append(resolved)
-    except (OSError, ValueError):
+    except (OSError, ValueError):  # skip-ok: path-spelling normalisation; an unresolvable spelling is not added
         pass
     for base in (cwd, repo):
         if not base:
@@ -2149,7 +2149,7 @@ def _relativise(path, repo, cwd=None):
             resolved_base = _norm(str(Path(base).resolve()))
             if resolved_base not in bases:
                 bases.append(resolved_base)
-        except (OSError, ValueError):
+        except (OSError, ValueError):  # skip-ok: path-spelling normalisation; an unresolvable base is not added
             pass
         for candidate in forms:
             for b in bases:
@@ -3926,7 +3926,7 @@ def worktree_mtimes(repo):
                 name = line[3:].split(" -> ")[-1].strip().strip('"')
                 try:
                     stamp = os.path.getmtime(os.path.join(path, name))
-                except OSError:
+                except OSError:  # skip-ok: a staleness heuristic; a missing stamp only lowers the estimate
                     continue
                 newest = stamp if newest is None else max(newest, stamp)
         if newest is not None:
@@ -4612,7 +4612,7 @@ def driver_path_status(repo):
         for record in records[1:]:          # records[0] is the primary checkout
             try:
                 linked.append(Path(record["path"]).resolve())
-            except (OSError, KeyError):
+            except (OSError, KeyError):  # skip-ok: records the failure: checked=False marks the ledger unverified
                 checked = False
     for line in out.splitlines():
         key, _sp, command = line.partition(" ")

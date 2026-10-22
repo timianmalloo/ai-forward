@@ -122,10 +122,15 @@ def scan(root: str) -> tuple[list[str], int]:
         if rel in exempt:
             continue
         path = os.path.join(root, rel)
+        if os.path.isdir(path):
+            continue   # a submodule's gitlink: not a file
         try:
             with open(path, "rb") as handle:
                 raw = handle.read()
-        except OSError:
+        except FileNotFoundError:
+            continue   # tracked but gone from the worktree
+        except OSError as error:   # CTRL-G: not read is not clean
+            hits.append("{0}: could not be read ({1}) - not checked".format(rel, error.__class__.__name__))
             continue
         if b"\0" in raw[:4096]:
             continue

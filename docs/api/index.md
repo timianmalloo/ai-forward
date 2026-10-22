@@ -40,14 +40,14 @@ with no docstring is listed as a **coverage gap** rather than described from gue
 | [`coord_transport.py`](coord_transport.md) | 3 | 3 | — | Bounded POSIX ACP / Agy session IO. Native harness policy remains authoritative. |
 | [`delivery.py`](delivery.md) | 37 | 10 | — | Conditional delivery routing and local checkpoint integrity, not a workflow runner. |
 | [`design-lint.py`](design-lint.md) | 3 | 2 | — | design-lint.py — token-reference linter for design-language docs (AI-Forward). |
-| [`docs-graph.py`](docs-graph.md) | 37 | 3 | 10 | docs-graph.py — the AI-Forward Pack docs script bundle (knowledge-visualization.md V18). |
+| [`docs-graph.py`](docs-graph.md) | 37 | 4 | 10 | docs-graph.py — the AI-Forward Pack docs script bundle (knowledge-visualization.md V18). |
 | [`dream.py`](dream.md) | 21 | 4 | 4 | dream.py - the AI-Forward dreaming / continuous-improvement consolidation harness. |
 | [`foundation-check.py`](foundation-check.md) | 2 | 0 | — | foundation-check.py — vendored-foundation drift detection (AI-Forward Pack). |
 | [`graphify-setup.py`](graphify-setup.md) | 11 | 4 | — | graphify-setup.py - stand up the CODE knowledge graph and join it to the docs graph. |
 | [`marker-lint.py`](marker-lint.md) | 1 | 0 | — | marker-lint.py - completeness check for the pack's inline decision markers. |
 | [`named_hook_bundles.py`](named_hook_bundles.md) | 0 | 0 | — | Merge source-owned hook bundles while preserving project-owned bundle names. |
 | [`obsidian-setup.py`](obsidian-setup.md) | 17 | 7 | — | obsidian-setup.py - stand up (and analyze) the Obsidian lens over an AI-Forward docs graph. |
-| [`pack-apply.py`](pack-apply.md) | 19 | 12 | — | pack-apply.py — apply the AI-Forward deployment map to a repo, mechanically and reversibly. |
+| [`pack-apply.py`](pack-apply.md) | 19 | 13 | — | pack-apply.py — apply the AI-Forward deployment map to a repo, mechanically and reversibly. |
 | [`pack-doctor.py`](pack-doctor.md) | 18 | 13 | — | pack-doctor.py — AI-Forward install-health check (deployable; runs in a TARGET repo). |
 | [`platform_process.py`](platform_process.md) | 4 | 0 | — | Cross-platform owned-process helpers for bounded local subprocesses. |
 | [`prompt-compile.py`](prompt-compile.md) | 22 | 7 | 4 | prompt-compile.py - the compile stage: a logged raw prompt -> a gated, harness-rendered prompt. |
@@ -70,5 +70,5 @@ with no docstring is listed as a **coverage gap** rather than described from gue
 | [`visual-assets-setup.py`](visual-assets-setup.md) | 12 | 5 | — | visual-assets-setup.py - wire up a generation backend for UI visual assets (AI-Forward). |
 | [`xaml-token-lint.py`](xaml-token-lint.md) | 9 | 0 | — | xaml-token-lint.py — first-slice token linter for XAML/native UI markup. |
 
-**Total** — 603 public functions across 46 modules, **283 documented (47%)**.
+**Total** — 603 public functions across 46 modules, **285 documented (47%)**.
 

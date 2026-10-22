@@ -139,7 +139,7 @@ def grep_markers(root):
     # A comment leader glued to a quote or escape is a string literal, not a marker (LINT-A).
     rx = re.compile(r"(?:^|(?<=\s))(?:#|//)\s?(simplify|assume|ponytail):\s*(.+)")
     out = []
-    for dirpath, dirnames, filenames in os.walk(root):
+    for dirpath, dirnames, filenames in os.walk(root):  # skip-ok: advisory miner; a missed file lowers recall, dream renders no pass/fail
         dirnames[:] = [d for d in dirnames if d not in skip]
         # do not walk the dreams output or the pack mirror -- judged BELOW the root (SKIP-P):
         # a root under a directory named `ai-forward-pack...` must still be harvested.
@@ -159,7 +159,7 @@ def grep_markers(root):
                             rel = os.path.relpath(fp, root).replace(os.sep, "/")
                             out.append({"marker": mm.group(1), "text": mm.group(2).strip()[:200],
                                         "src": "{0}#L{1}".format(rel, i), "origin": "owner"})
-            except OSError:
+            except OSError:  # skip-ok: advisory miner; a missed file lowers recall, dream renders no pass/fail
                 pass
     return out
 
@@ -204,7 +204,7 @@ def load_profiles(root, cutoff):
         try:
             with open(path, encoding="utf-8") as fh:
                 pr = json.load(fh)
-        except (OSError, ValueError):
+        except (OSError, ValueError):  # skip-ok: advisory miner; an unreadable profile is left out of a proposal
             continue
         ts = pr.get("generated") or ""
         try:

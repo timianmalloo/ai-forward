@@ -23,7 +23,7 @@ from test_upstream_adoption_integration import (recovered_revision_108_install, 
                                                recovered_revision_110_install, recovered_revision_111_install,
                                                recovered_revision_112_install, recovered_revision_113_install,
                                                recovered_revision_114_install, recovered_revision_115_install,
-                                               recovered_revision_116_install)
+                                               recovered_revision_116_install, recovered_revision_117_install)
 
 REPO = Path(__file__).resolve().parents[2]
 INSTALL = "pack/adapters/INSTALL.md"
@@ -67,7 +67,7 @@ class ShallowCloneTests(unittest.TestCase):
             self.skipTest("no git checkout")
         with tempfile.TemporaryDirectory() as tmp:
             clone = Path(tmp) / "shallow"
-            subprocess.run(["git", "clone", "-q", "--depth", "1", REPO.as_uri(), str(clone)],
+            subprocess.run(["git", "clone", "-q", "--no-tags", "--depth", "1", REPO.as_uri(), str(clone)],
                            check=True, capture_output=True)
             self.assertTrue(history_is_cut(clone))
 
@@ -239,7 +239,7 @@ class Revision117MetadataTests(unittest.TestCase):
     """Revision 117: the one delta closing the revision-108 P3 findings (FR-090..FR-100, FR-110)."""
 
     def test_revision_117_is_the_one_host_parity_approval_and_release_pin_delta(self):
-        raw = (REPO / INSTALL).read_bytes()
+        raw = recovered_revision_117_install()
         frontmatter = raw.split(b"---\n", 2)[1].decode("utf-8")
         self.assertRegex(frontmatter, r"(?m)^revision: 117$")
         self.assertIn("bundle_version: '2026.10.19.4'", frontmatter)
@@ -253,6 +253,27 @@ class Revision117MetadataTests(unittest.TestCase):
         with self.assertRaises(AssertionError):
             recovered_revision_116_install(raw.replace(b"area: profiler-isolation-decision-source-and-forget",
                                                        b"area: profiler-isolation-decision-source-and-forgeT", 1))
+
+
+class Revision118MetadataTests(unittest.TestCase):
+    """Revision 118: the one delta making corpus scans fail closed (CTRL-G)."""
+
+    def test_revision_118_is_the_one_fail_closed_scan_delta(self):
+        raw = (REPO / INSTALL).read_bytes()
+        frontmatter = raw.split(b"---\n", 2)[1].decode("utf-8")
+        self.assertRegex(frontmatter, r"(?m)^revision: 118$")
+        self.assertIn("bundle_version: '2026.10.22.1'", frontmatter)
+        self.assertIn("skills: 30,", frontmatter)
+        self.assertIn("scripts: 47 }", frontmatter)
+        self.assertEqual(1, frontmatter.count("  - { type: "))
+        self.assertIn("area: fail-closed-corpus-scans", frontmatter)
+        for path in ("scripts/docs-graph.py", "scripts/marker-lint.py", "scripts/scrub.py", "scripts/pack-apply.py",
+                     "scripts/delivery.py", "scripts/xaml-token-lint.py", "adapters/INSTALL.md"):
+            self.assertTrue((REPO / "pack" / path).is_file(), path)
+        self.assertEqual(301270, len(recovered_revision_117_install(raw)))
+        with self.assertRaises(AssertionError):
+            recovered_revision_117_install(raw.replace(b"area: native-host-parity-session-check-approval-and-release-pin",
+                                                       b"area: native-host-parity-session-check-approval-and-release-piN", 1))
 
 
 if __name__ == "__main__":

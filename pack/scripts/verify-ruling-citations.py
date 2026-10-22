@@ -95,6 +95,11 @@ def definitions(root: Path, spellings: Dict[int, Set[str]] = None) -> Dict[int, 
     return found
 
 
+def _unlisted(error):
+    """CTRL-G: a prose directory that cannot be listed would silently drop its citations."""
+    raise error
+
+
 def citations(root: Path, spellings: Dict[int, Set[str]] = None) -> Dict[int, Set[str]]:
     """number -> the prose files (repo-relative, posix) that cite it. The register is scanned
     too: prose in it that names a number is a citation (a heading is the only definition)."""
@@ -103,7 +108,11 @@ def citations(root: Path, spellings: Dict[int, Set[str]] = None) -> Dict[int, Se
         base = root / top
         if not base.is_dir():
             continue
-        for path in sorted(base.rglob("*")):
+        listed = []
+        for dirpath, dirnames, filenames in os.walk(base, onerror=_unlisted):
+            dirnames[:] = [d for d in dirnames if d not in SKIP_PARTS]
+            listed.extend(Path(dirpath, name) for name in filenames)
+        for path in sorted(listed):
             if not path.is_file() or path.suffix.lower() not in PROSE_SUFFIXES:
                 continue
             if SKIP_PARTS.intersection(path.relative_to(root).parts):
