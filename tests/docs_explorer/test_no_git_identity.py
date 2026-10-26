@@ -29,9 +29,11 @@ IDENTITY_PATTERN = re.compile(
 # (filename, 1-based line number) -> why this one is not a violation. Each entry names the
 # fixture it belongs to; anything not listed here that matches the pattern fails the sweep.
 ALLOWED = {
-    ("conductor-join.py", 310): "self_test() -- a throwaway tempfile.TemporaryDirectory repo "
+    ("conductor-join.py", 638): "self_test() -- a throwaway tempfile.TemporaryDirectory repo "
                                  "the module creates and owns itself, never a caller's repo",
-    ("conductor-join.py", 311): "self_test() -- see the line above",
+    ("conductor-join.py", 639): "self_test() -- see the line above",
+    ("conductor-join.py", 837): "self_test()'s r2_case -- a throwaway tempfile.TemporaryDirectory repo",
+    ("conductor-join.py", 838): "self_test()'s r2_case -- see the line above",
 }
 
 
@@ -81,8 +83,14 @@ class NoScriptSetsGitIdentityTests(unittest.TestCase):
         """Pins the allowlist to real content, not just a line number: if conductor-join.py
         is edited and the identity call moves or is reworded, this fails loudly instead of
         silently widening the allowlist's blind spot."""
+        import ast
+
         path = SCRIPTS_DIR / "conductor-join.py"
-        lines = path.read_text(encoding="utf-8").splitlines()
+        source = path.read_text(encoding="utf-8")
+        lines = source.splitlines()
+        # The function's real span, not a window above the line: the R2 cases sit deep inside it.
+        body = next(node for node in ast.walk(ast.parse(source))
+                    if isinstance(node, ast.FunctionDef) and node.name == "self_test")
         for (name, lineno), _why in ALLOWED.items():
             self.assertEqual("conductor-join.py", name)
             self.assertTrue(
@@ -90,8 +98,8 @@ class NoScriptSetsGitIdentityTests(unittest.TestCase):
                 "ALLOWED line {0} no longer matches a git-identity call in {1} -- update the "
                 "allowlist to the call's real location".format(lineno, name),
             )
-            self.assertIn(
-                "self_test", "\n".join(lines[max(0, lineno - 40):lineno]),
+            self.assertTrue(
+                body.lineno < lineno <= body.end_lineno,
                 "the allowed call at line {0} must still be inside self_test()".format(lineno),
             )
 

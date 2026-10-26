@@ -33,6 +33,12 @@ class JoinFenceCase(unittest.TestCase):
         self.git("config", "user.name", "join")
         (self.repo / "docs" / "audit").mkdir(parents=True)
         (self.repo / "README.md").write_text("base\n", encoding="utf-8", newline="\n")
+        # A consuming tree: the join stages only the derived outputs its registry declares (exit 14
+        # without one); the audit hub is absent, so the join's own append creates and commits it.
+        (self.repo / ".agents").mkdir()
+        (self.repo / ".agents" / "artifacts.yml").write_text(
+            "docs/audit/audit-data.js: derived python audit-log.py render\n"
+            "docs/audit/index.html: derived python audit-log.py render\n", encoding="utf-8", newline="\n")
         contract = {"regenerate": [], "gates": []}
         (self.repo / "join.json").write_text(json.dumps(contract), encoding="utf-8", newline="\n")
         self.git("add", "-A")

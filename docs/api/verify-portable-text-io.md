@@ -41,7 +41,12 @@ With the `ast` module: (1) `open(..., mode)` where the mode contains w, a or + a
 keyword, and `Path.write_text(...)` with no `newline` keyword, in TEXT mode (a `b` in the mode
 exempts the call); (2) a module containing `if __name__ == "__main__"` and a `print(` must
 contain `.reconfigure(` on a stream (the guard) - modules that never print are exempt;
-(3) `mkstemp(... text=True)`.
+(3) `mkstemp(... text=True)`; (4) a POSIX-only `os` attribute (POSIX_ONLY_OS below: O_NOFOLLOW, O_NONBLOCK,
+killpg, getuid ...) or `signal` name (POSIX_ONLY_SIGNAL: SIGKILL, SIGHUP, SIGALRM, alarm ...) used outside a function that tests `os.name`, `sys.platform`, `platform.system()` or
+`hasattr/getattr(os, ...)` or `hasattr/getattr(signal, ...)`. `getattr(os, "O_NOFOLLOW", 0)` names the attribute as a string and is never a
+finding. Those attributes do not exist in Python on Windows, so the bare use raises AttributeError there
+(class PLAT-A, the POSIX-flag half; PC readiness, PR #33, 2026-10-12). Where the flag was a symlink guard,
+keep an explicit `lstat`/`islink` check on Windows (coord-core.py:547-552 is the example).
 
 USAGE
   python3 verify-portable-text-io.py               scan this repository

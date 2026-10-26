@@ -23,7 +23,8 @@ from test_upstream_adoption_integration import (recovered_revision_108_install, 
                                                recovered_revision_110_install, recovered_revision_111_install,
                                                recovered_revision_112_install, recovered_revision_113_install,
                                                recovered_revision_114_install, recovered_revision_115_install,
-                                               recovered_revision_116_install, recovered_revision_117_install)
+                                               recovered_revision_116_install, recovered_revision_117_install,
+                                               recovered_revision_118_install)
 
 REPO = Path(__file__).resolve().parents[2]
 INSTALL = "pack/adapters/INSTALL.md"
@@ -259,7 +260,7 @@ class Revision118MetadataTests(unittest.TestCase):
     """Revision 118: the one delta making corpus scans fail closed (CTRL-G)."""
 
     def test_revision_118_is_the_one_fail_closed_scan_delta(self):
-        raw = (REPO / INSTALL).read_bytes()
+        raw = recovered_revision_118_install()
         frontmatter = raw.split(b"---\n", 2)[1].decode("utf-8")
         self.assertRegex(frontmatter, r"(?m)^revision: 118$")
         self.assertIn("bundle_version: '2026.10.22.1'", frontmatter)
@@ -274,6 +275,27 @@ class Revision118MetadataTests(unittest.TestCase):
         with self.assertRaises(AssertionError):
             recovered_revision_117_install(raw.replace(b"area: native-host-parity-session-check-approval-and-release-pin",
                                                        b"area: native-host-parity-session-check-approval-and-release-piN", 1))
+
+
+class Revision119MetadataTests(unittest.TestCase):
+    """Revision 119: the one delta upstreaming a consuming repo's fixes (join R2, loaders, regen, rollup, craft gate)."""
+
+    def test_revision_119_is_the_one_upstream_consumer_fixes_delta(self):
+        raw = (REPO / INSTALL).read_bytes()
+        frontmatter = raw.split(b"---\n", 2)[1].decode("utf-8")
+        self.assertRegex(frontmatter, r"(?m)^revision: 119$")
+        self.assertIn("bundle_version: '2026.10.26.1'", frontmatter)
+        self.assertIn("skills: 30,", frontmatter)
+        self.assertIn("scripts: 47 }", frontmatter)
+        self.assertEqual(1, frontmatter.count("  - { type: "))
+        self.assertIn("area: upstream-consumer-fixes-join-r2-loaders-regen-rollup-posix-craft-gate", frontmatter)
+        for path in ("scripts/conductor-join.py", "scripts/prompt-log.py", "scripts/coord-core.py", "scripts/docs-graph.py",
+                     "scripts/ui-craft-gate.py", "scripts/coord_transport.py", "adapters/INSTALL.md"):
+            self.assertTrue((REPO / "pack" / path).is_file(), path)
+        self.assertEqual(304409, len(recovered_revision_118_install(raw)))
+        with self.assertRaises(AssertionError):
+            recovered_revision_118_install(raw.replace(b"area: fail-closed-corpus-scans",
+                                                       b"area: fail-closed-corpus-scanS", 1))
 
 
 if __name__ == "__main__":

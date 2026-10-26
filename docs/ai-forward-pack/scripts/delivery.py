@@ -338,6 +338,7 @@ def compiler():
     spec = importlib.util.spec_from_file_location("delivery_compile", Path(__file__).with_name("prompt-compile.py"))
     assert spec is not None and spec.loader is not None
     module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
     spec.loader.exec_module(module)
     return module
 

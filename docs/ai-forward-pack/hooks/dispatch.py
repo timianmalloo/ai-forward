@@ -123,6 +123,7 @@ def _run(script, argv, raw):
         name = "aif_hook_" + script[:-3].replace("-", "_")
         spec = importlib.util.spec_from_file_location(name, os.path.join(HERE, script))
         module = importlib.util.module_from_spec(spec)
+        sys.modules[spec.name] = module
         with contextlib.redirect_stdout(out):
             spec.loader.exec_module(module)
             code = module.main(argv)
