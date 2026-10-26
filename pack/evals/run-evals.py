@@ -137,6 +137,7 @@ def load_graph_module(workspace):
         if os.path.exists(candidate):
             spec = importlib.util.spec_from_file_location("dg", candidate)
             module = importlib.util.module_from_spec(spec)
+            sys.modules[spec.name] = module
             spec.loader.exec_module(module)
             return module
     return None

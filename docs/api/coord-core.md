@@ -843,12 +843,14 @@ Anything it cannot classify as derived gets conventional conflict markers AND re
 (REG-C's sibling, 2026-10-05): with exit 0, `git merge` read the marker file as a clean
 merge and auto-committed it. The markers keep the unmerged path from looking clean (S12b).
 
-### `cmd_regen(root, repo, timeout=…)`
+### `cmd_regen(root, checkout, timeout=…)`
 
 Run the regenerations the driver deferred. Returns (exit_code, results).
 
 A failed regeneration STAYS OWED and reports non-zero: a stale derived artifact looks
-finished, which is worse than a conflict.
+finished, which is worse than a conflict. The debt and registry are repository-wide,
+but the generated file belongs to the invoking checkout, never the primary checkout
+merely because it owns the shared coordination store.
 
 ### `driver_status(repo)`
 

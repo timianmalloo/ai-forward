@@ -87,6 +87,7 @@ Conventions
 | `--project` | _(no help text — coverage gap)_ |
 | `--query` | _(no help text — coverage gap)_ |
 | `--reason` | _(no help text — coverage gap)_ |
+| `--relative-to` | directory containing the destination document; default: documentation root |
 | `--review-by` | _(no help text — coverage gap)_ |
 | `--root` | docs root (default: docs) |
 | `--summary` | _(no help text — coverage gap)_ |

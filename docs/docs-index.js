@@ -783,7 +783,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "1cb874a59258ca0e4d4f8012ddbbacb3d386b787857458908ab22ff3cb920c6d"
+      "sourceSha256": "d926b94415c23618d47ce810dfd51ec332ec6af6d940ea380c9a27ef1acb8cf4"
     },
     {
       "id": "api-context-budget",
@@ -858,7 +858,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "377be79d07fcf08c6acdd5a62e15468da01c4133934c347d7c173565cd049f2e"
+      "sourceSha256": "7e6b5f3645565069864f374a54c025528c98dd5541a315900e9d08c2330ed935"
     },
     {
       "id": "api-coord-decide",
@@ -1133,7 +1133,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "355072a2279bd6314db304a67a71270d7316c6ac2776da022e2f070ddf04965c"
+      "sourceSha256": "651dcbde94671891fa7c3376a028a4bf9e5020799a21fdd4fa77a419d73b7204"
     },
     {
       "id": "api-dream",
@@ -1220,7 +1220,7 @@ window.DOCS_INDEX = {
       "phase": "",
       "reviewBy": "2027-03-03",
       "reviewSuggested": [],
-      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 603 public functions across 46 modules, 47% carrying a docstring.",
+      "summary": "Generated API reference for the pack's public surface — the deployed script bundle. 606 public functions across 46 modules, 48% carrying a docstring.",
       "tags": [
         "api",
         "scripts",
@@ -1234,7 +1234,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b15611cafd5c368160d35cb23b5b2b3f9f4b8b11ef5ea7f1c3a4286f492556b7"
+      "sourceSha256": "40e380a6af00d4a7cff51933ccefeac3154356f12a9c251a3ee3ff7746e80cf8"
     },
     {
       "id": "api-marker-lint",
@@ -1584,7 +1584,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4ba30a582b48a57d6dc18998ec1d631f697ec83940abb9a0c39f47b14c2bc36b"
+      "sourceSha256": "38e7ff2a7177bd317f4221a30da34cf391067c163c20d6c2b3a92d4b5a0ebf8d"
     },
     {
       "id": "api-verify-compiled-prompt",
@@ -1734,7 +1734,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "31e75433f8994bb922c0ca4527627c09774ca299dec82c31884fdec2f09bc0ca"
+      "sourceSha256": "1e571b42f720ab900679c131674a3c91bcd393e0be6967579f6dbbec75b9dd2e"
     },
     {
       "id": "api-verify-ruling-citations",
@@ -12928,5 +12928,5 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     }
   ],
-  "graphSha256": "b777b4119db94049aa74a4436d637e772ad418b272b42d9ec30443427a107415"
+  "graphSha256": "eccdb70bba7a342a2ce466fd004ecccdb34e3ec35426cb1766bb6e934ba4f87f"
 };

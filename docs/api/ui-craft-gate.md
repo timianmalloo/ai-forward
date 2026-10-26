@@ -69,6 +69,10 @@ Return an argv prefix that runs the detector, or None.
 Order: explicit --impeccable > `impeccable` on PATH > local node_modules >
 `npx impeccable`. Establishing the tool rather than assuming it is NG1.
 
+### `check_targets(targets)`
+
+Return (refusal, notes) for the local targets: a refusal when the detector would read nothing of them.
+
 ### `run_detector(prefix, targets)`
 
 Run `detect --json` and return the parsed finding list.
@@ -95,5 +99,5 @@ DX23 - measure before you diagnose. Counts are the diagnosis.
 
 ## Coverage
 
-- Public functions: **6** · documented: **4** (**67%**)
+- Public functions: **7** · documented: **5** (**71%**)
 - Undocumented (recorded, not invented): `render_markdown`, `render_text`
