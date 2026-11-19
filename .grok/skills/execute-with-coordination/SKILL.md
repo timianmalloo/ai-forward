@@ -24,10 +24,11 @@ CO-S0 applies first — the sentence is `reference/co-s0.md`. `audit-log.py star
 4. `docs/lessons/defect-classes.md` — the **CTX-\*** and **WT** classes.
 
 ## Input
-Optionally a plan id or path, a track subset, and a mode. No input: the newest plan in `docs/coordination/`. Three execution modes, and **the plan does not change between them** — only who reads it:
+Optionally a plan id or path, a track subset, and a mode. No input: the newest plan in `docs/coordination/`. Four execution modes, and **the plan does not change between them** — only who reads it:
 - **`--agents`** (default) — you spawn one sub-agent per track, each in its own worktree.
 - **`--brief`** — you emit one self-contained brief per track for a human to paste into a session they start themselves, possibly on a different harness. You then act as coordinator across those sessions through the plan and the seam log rather than through delegation.
 - **`--launch`** (opt-in, profile-qualified) — `coord-runner.py` prepares isolated tracks and launches qualified ACP (Claude/Codex/Grok/Copilot) or Agy native-stream workers. Any designated Owner can operate it. POSIX/Windows containment is platform-specific. Read `reference/launch.md` and, for Copilot, `reference/copilot.md`. Unknown instructions, hooks, trust or permissions block with a retained brief; ACP support is not qualification.
+- **`--swarm`** (Antigravity native, when the `swarm` tool is present) — runs tracks on Agy's message board (`workspace: "share"` for authors, `"inherit"` for verifiers), waits via `swarm_wait`, and joins via `conductor-join.py`. Read `reference/agy-swarm.md`.
 
 ## Cast
 - **Peers:** Orchestrator (coordinator). Track agents are the personas the plan names — they are *delegates*, not council members.
