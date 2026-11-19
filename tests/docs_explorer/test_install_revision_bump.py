@@ -24,7 +24,7 @@ from test_upstream_adoption_integration import (recovered_revision_108_install, 
                                                recovered_revision_112_install, recovered_revision_113_install,
                                                recovered_revision_114_install, recovered_revision_115_install,
                                                recovered_revision_116_install, recovered_revision_117_install,
-                                               recovered_revision_118_install)
+                                               recovered_revision_118_install, recovered_revision_119_install)
 
 REPO = Path(__file__).resolve().parents[2]
 INSTALL = "pack/adapters/INSTALL.md"
@@ -281,7 +281,7 @@ class Revision119MetadataTests(unittest.TestCase):
     """Revision 119: the one delta upstreaming a consuming repo's fixes (join R2, loaders, regen, rollup, craft gate)."""
 
     def test_revision_119_is_the_one_upstream_consumer_fixes_delta(self):
-        raw = (REPO / INSTALL).read_bytes()
+        raw = recovered_revision_119_install()
         frontmatter = raw.split(b"---\n", 2)[1].decode("utf-8")
         self.assertRegex(frontmatter, r"(?m)^revision: 119$")
         self.assertIn("bundle_version: '2026.10.26.1'", frontmatter)
@@ -296,6 +296,29 @@ class Revision119MetadataTests(unittest.TestCase):
         with self.assertRaises(AssertionError):
             recovered_revision_118_install(raw.replace(b"area: fail-closed-corpus-scans",
                                                        b"area: fail-closed-corpus-scanS", 1))
+
+
+class Revision120MetadataTests(unittest.TestCase):
+    """Revision 120: Antigravity native swarm coordination (`--swarm`) with zero cross-harness regression."""
+
+    def test_revision_120_is_the_one_agy_swarm_coordination_delta(self):
+        raw = (REPO / INSTALL).read_bytes()
+        frontmatter = raw.split(b"---\n", 2)[1].decode("utf-8")
+        self.assertRegex(frontmatter, r"(?m)^revision: 120$")
+        self.assertIn("bundle_version: '2026.11.19.1'", frontmatter)
+        self.assertIn("skills: 30,", frontmatter)
+        self.assertIn("scripts: 47 }", frontmatter)
+        self.assertEqual(1, frontmatter.count("  - { type: "))
+        self.assertIn("area: agy-native-swarm-coordination", frontmatter)
+        for path in ("commands/prepare-for-coordination/SKILL.md", "commands/execute-with-coordination/SKILL.md",
+                     "commands/execute-with-coordination/reference/agy-swarm.md",
+                     "adapters/antigravity/agy-surface.md", "adapters/INSTALL.md"):
+            self.assertTrue((REPO / "pack" / path).is_file(), path)
+        self.assertEqual(308750, len(recovered_revision_119_install(raw)))
+        with self.assertRaises(AssertionError):
+            recovered_revision_119_install(
+                raw.replace(b"area: upstream-consumer-fixes-join-r2-loaders-regen-rollup-posix-craft-gate",
+                            b"area: upstream-consumer-fixes-join-r2-loaders-regen-rollup-posix-craft-gatE", 1))
 
 
 if __name__ == "__main__":

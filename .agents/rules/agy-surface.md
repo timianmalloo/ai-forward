@@ -21,6 +21,10 @@ To convene the persona council:
 
 Author in Peer Mode, review in Adversary Mode; the author never clears its own hard veto.
 
+## Swarm Coordination
+
+When the native `swarm` tool is present, `/prepare-for-coordination` can qualify `agy-swarm` tracks (with an optional `### Swarm topology (AGY)` sub-table) and `/execute-with-coordination --swarm` runs tracks on Agy's shared message board (`workspace: "share"` for authors, `"inherit"` for read-only verifiers, `"branch"` for spikes), using `swarm_wait` for zero-token sleep, `swarm model` for quota failover, and `conductor-join.py` before any `swarm kill`. Full protocol: `.agents/skills/execute-with-coordination/reference/agy-swarm.md`.
+
 ## Hooks
 
 `.agents/hooks.json` wires one named section, `ai-forward` (`enabled` is explicit; the host defaults it to true), with one command per event: `dispatch.py --host agy --event <event>` runs that event's hooks in one process (B15). A refresh removes the five per-hook sections earlier revisions shipped and keeps project-owned sections. Shape per event, from the host's own docs: `PreToolUse`/`PostToolUse` handlers sit under a `matcher` + `hooks` wrapper (`""` matches every tool); `PreInvocation` and `Stop` take handlers directly — a `PostToolUse` handler written in the direct form loads without complaint and never fires (measured 2026-09-20). The hooks it runs:

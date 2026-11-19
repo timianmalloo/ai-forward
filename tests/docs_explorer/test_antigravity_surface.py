@@ -64,6 +64,20 @@ class AntigravityInstallTests(unittest.TestCase):
         self.assertIn(".agents/skills/", rules)
         self.assertIn(".claude/knowledge/", rules)
         self.assertNotIn("applyTo:", rules, "Copilot wraps must not be the agy knowledge path")
+        self.assertIn("execute-with-coordination/reference/agy-swarm.md", rules)
+
+        swarm_ref = _r(tmp, ".agents/skills/execute-with-coordination/reference/agy-swarm.md")
+        self.assertIsNotNone(swarm_ref, "agy-swarm.md reference must land under .agents/skills/")
+        self.assertIn("conductor-join.py", swarm_ref)
+        self.assertIn("swarm_wait", swarm_ref)
+
+        ewc = _r(tmp, ".agents/skills/execute-with-coordination/SKILL.md")
+        for mode in ("--agents", "--brief", "--launch", "--swarm"):
+            self.assertIn(mode, ewc, f"execute-with-coordination must preserve {mode}")
+
+        pfc = _r(tmp, ".agents/skills/prepare-for-coordination/SKILL.md")
+        self.assertIn("agy-swarm", pfc)
+        self.assertIn("Swarm topology (AGY)", pfc)
 
 
 if __name__ == "__main__":
